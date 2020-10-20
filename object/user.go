@@ -24,8 +24,11 @@ type User struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Title string `xorm:"varchar(100)" json:"title"`
-	Url   string `xorm:"varchar(2000)" json:"url"`
+	Password     string `xorm:"varchar(100)" json:"password"`
+	PasswordType string `xorm:"varchar(100)" json:"passwordType"`
+	DisplayName  string `xorm:"varchar(100)" json:"displayName"`
+	Email        string `xorm:"varchar(100)" json:"email"`
+	Phone        string `xorm:"varchar(100)" json:"phone"`
 }
 
 func GetUsers(owner string) []*User {

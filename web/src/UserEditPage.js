@@ -64,23 +64,53 @@ class UserEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '10px'}} >
+        <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Title:
+            Password Type:
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.title} onChange={e => {
-              this.updateUserField('title', e.target.value);
+            <Input value={this.state.user.passwordType} onChange={e => {
+              this.updateUserField('passwordType', e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '10px'}} >
+        <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Link:
+            Password:
           </Col>
           <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.user.url} onChange={e => {
-              this.updateUserField('url', e.target.value);
+            <Input value={this.state.user.password} onChange={e => {
+              this.updateUserField('password', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Display Name:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.displayName} onChange={e => {
+              this.updateUserField('displayName', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Email:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.email} onChange={e => {
+              this.updateUserField('email', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Phone:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.phone} onChange={e => {
+              this.updateUserField('phone', e.target.value);
             }} />
           </Col>
         </Row>

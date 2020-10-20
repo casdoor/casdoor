@@ -30,9 +30,12 @@ class UserListPage extends React.Component {
     return {
       owner: "admin", // this.props.account.username,
       name: `user_${this.state.users.length}`,
-      title: `New User - ${this.state.users.length}`,
       createdTime: moment().format(),
-      Url: "",
+      password: "123456",
+      passwordType: "plain",
+      displayName: `New User - ${this.state.users.length}`,
+      email: "user@example.com",
+      phone: "1-12345678",
     }
   }
 
@@ -80,13 +83,6 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: 'Title',
-        dataIndex: 'title',
-        key: 'title',
-        // width: '80px',
-        sorter: (a, b) => a.title.localeCompare(b.title),
-      },
-      {
         title: 'Created Time',
         dataIndex: 'createdTime',
         key: 'createdTime',
@@ -97,26 +93,45 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: 'Url',
-        dataIndex: 'url',
-        key: 'url',
+        title: 'PasswordType',
+        dataIndex: 'passwordType',
+        key: 'passwordType',
         width: '150px',
-        sorter: (a, b) => a.url.localeCompare(b.url),
-        render: (text, record, index) => {
-          return (
-            <a target="_blank" href={text}>
-              {
-                text
-              }
-            </a>
-          )
-        }
+        sorter: (a, b) => a.passwordType.localeCompare(b.passwordType),
+      },
+      {
+        title: 'Password',
+        dataIndex: 'password',
+        key: 'password',
+        width: '150px',
+        sorter: (a, b) => a.password.localeCompare(b.password),
+      },
+      {
+        title: 'Display Name',
+        dataIndex: 'displayName',
+        key: 'displayName',
+        // width: '100px',
+        sorter: (a, b) => a.displayName.localeCompare(b.displayName),
+      },
+      {
+        title: 'Email',
+        dataIndex: 'email',
+        key: 'email',
+        width: '150px',
+        sorter: (a, b) => a.email.localeCompare(b.email),
+      },
+      {
+        title: 'Phone',
+        dataIndex: 'phone',
+        key: 'phone',
+        width: '120px',
+        sorter: (a, b) => a.phone.localeCompare(b.phone),
       },
       {
         title: 'Action',
         dataIndex: '',
         key: 'op',
-        width: '220px',
+        width: '170px',
         render: (text, record, index) => {
           return (
             <div>
