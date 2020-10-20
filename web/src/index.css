@@ -11,3 +11,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.logo {
+  background: url("logo.png");
+  background-size: 108px, 33px;
+  width: 108px;
+  height: 27px;
+  /*background: rgba(0, 0, 0, 0.2);*/
+  margin: 17px 10px 16px 20px;
+  float: left;
+}
