@@ -76,7 +76,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            链接：
+            Link:
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined/>} value={this.state.user.url} onChange={e => {

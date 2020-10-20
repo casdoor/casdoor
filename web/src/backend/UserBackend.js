@@ -16,7 +16,6 @@ export function getUser(owner, name) {
 
 export function updateUser(owner, name, user) {
   let newUser = Setting.deepCopy(user);
-  newUser.ticket = JSON.stringify(user.ticket);
   return fetch(`${Setting.ServerUrl}/api/update-user?id=${owner}/${encodeURIComponent(name)}`, {
     method: 'POST',
     credentials: 'include',
@@ -26,7 +25,6 @@ export function updateUser(owner, name, user) {
 
 export function addUser(user) {
   let newUser = Setting.deepCopy(user);
-  newUser.ticket = JSON.stringify(user.ticket);
   return fetch(`${Setting.ServerUrl}/api/add-user`, {
     method: 'POST',
     credentials: 'include',
@@ -36,7 +34,6 @@ export function addUser(user) {
 
 export function deleteUser(user) {
   let newUser = Setting.deepCopy(user);
-  newUser.ticket = JSON.stringify(user.ticket);
   return fetch(`${Setting.ServerUrl}/api/delete-user`, {
     method: 'POST',
     credentials: 'include',
