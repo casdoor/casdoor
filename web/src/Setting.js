@@ -21,7 +21,7 @@ export let ServerUrl = '';
 export function initServerUrl() {
   const hostname = window.location.hostname;
   if (hostname === 'localhost') {
-    ServerUrl = `http://${hostname}:10000`;
+    ServerUrl = `http://${hostname}:7000`;
   }
 }
 
@@ -31,6 +31,17 @@ export function parseJson(s) {
   } else {
     return JSON.parse(s);
   }
+}
+
+export function myParseInt(i) {
+  const res = parseInt(i);
+  return isNaN(res) ? 0 : res;
+}
+
+export function openLink(link) {
+  // this.props.history.push(link);
+  const w = window.open('about:blank');
+  w.location.href = link;
 }
 
 export function goToLink(link) {
@@ -47,9 +58,44 @@ export function showMessage(type, text) {
   }
 }
 
+export function deepCopy(obj) {
+  return Object.assign({}, obj);
+}
+
+export function addRow(array, row) {
+  return [...array, row];
+}
+
+export function prependRow(array, row) {
+  return [row, ...array];
+}
+
+export function deleteRow(array, i) {
+  // return array = array.slice(0, i).concat(array.slice(i + 1));
+  return [...array.slice(0, i), ...array.slice(i + 1)];
+}
+
+export function swapRow(array, i, j) {
+  return [...array.slice(0, i), array[j], ...array.slice(i + 1, j), array[i], ...array.slice(j + 1)];
+}
+
 export function isMobile() {
   // return getIsMobileView();
   return isMobileDevice;
+}
+
+export function getFormattedDate(date) {
+  if (date === undefined) {
+    return null;
+  }
+
+  date = date.replace('T', ' ');
+  date = date.replace('+08:00', ' ');
+  return date;
+}
+
+export function getFormattedDateShort(date) {
+  return date.slice(0, 10);
 }
 
 export function getShortName(s) {

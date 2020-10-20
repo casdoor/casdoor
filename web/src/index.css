@@ -21,3 +21,11 @@ code {
   margin: 17px 10px 16px 20px;
   float: left;
 }
+
+.ant-table.ant-table-middle .ant-table-title, .ant-table.ant-table-middle .ant-table-footer, .ant-table.ant-table-middle thead > tr > th, .ant-table.ant-table-middle tbody > tr > td {
+  padding: 1px 8px !important;
+}
+
+.ant-list-sm .ant-list-item {
+  padding: 2px !important;
+}

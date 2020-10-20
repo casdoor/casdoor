@@ -17,11 +17,14 @@ package main
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
+	"github.com/casdoor/casdoor/object"
 
 	_ "github.com/casdoor/casdoor/routers"
 )
 
 func main() {
+	object.InitAdapter()
+
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "PUT", "PATCH"},
