@@ -15,17 +15,19 @@
 package object
 
 import (
+	"os"
 	"runtime"
 
-	"github.com/astaxie/beego"
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/joho/godotenv/autoload"
+
 	"xorm.io/xorm"
 )
 
 var adapter *Adapter
 
 func InitAdapter() {
-	adapter = NewAdapter("mysql", beego.AppConfig.String("dataSourceName"))
+	adapter = NewAdapter("mysql", os.Getenv("dataSourceName"))
 }
 
 // Adapter represents the MySQL adapter for policy storage.

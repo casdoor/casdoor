@@ -15,34 +15,49 @@
 package main
 
 import (
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/plugins/cors"
-	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/routers"
+	"context"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
-	_ "github.com/casdoor/casdoor/routers"
+	"github.com/casdoor/casdoor/object"
+
+	"github.com/casdoor/casdoor/handler"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	object.InitAdapter()
 
-	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH"},
-		AllowHeaders:     []string{"Origin", "Content-Type"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-	}))
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-	//beego.DelStaticPath("/static")
-	beego.SetStaticPath("/static", "web/build/static")
-	// https://studygolang.com/articles/2303
-	beego.InsertFilter("/", beego.BeforeRouter, routers.TransparentStatic) // must has this for default page
-	beego.InsertFilter("/*", beego.BeforeRouter, routers.TransparentStatic)
+	srv := &http.Server{
+		Addr:    os.Getenv("httpport"),
+		Handler: handler.New(),
+	}
 
-	beego.BConfig.WebConfig.Session.SessionProvider = "file"
-	beego.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
-	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 365
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
 
-	beego.Run()
+		log.Printf("listen and serve on %s", srv.Addr)
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Println("Shutdown Server ...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal("Server Shutdown:", err)
+	}
+	log.Println("Server exiting")
 }
