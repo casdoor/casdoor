@@ -14,19 +14,17 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import App from './app';
+import { ConfigProvider } from 'antd';
+import enUS from 'antd/es/locale/en_US';
 import { BrowserRouter } from 'react-router-dom';
+import './index.css';
 
 ReactDOM.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <ConfigProvider locale={enUS}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </ConfigProvider>,
   document.getElementById('root')
 );
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();

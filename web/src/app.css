@@ -30,12 +30,12 @@
 }
 
 #content-wrap {
-  padding-bottom: 70px;    /* Footer height */
+  padding-bottom: 70px; /* Footer height */
 }
 
 #footer {
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 70px;            /* Footer height */
+  height: 70px; /* Footer height */
 }
