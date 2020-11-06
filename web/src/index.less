@@ -1,0 +1,38 @@
+@import '~antd/dist/antd.less';
+
+@primary-color: #0052cc; // primary color for all components
+@link-color: #0052cc; // link color
+@success-color: #36b37e; // success state color
+@warning-color: #ffab00; // warning state color
+@error-color: #ff5630; // error state color
+
+@font-size-base: 14px; // major text font size
+@heading-color: rgba(0, 0, 0, 0.85); // heading text color
+@text-color: rgba(0, 0, 0, 0.65); // major text color
+@text-color-secondary: rgba(0, 0, 0, 0.45); // secondary text color
+@disabled-color: rgba(0, 0, 0, 0.25); // disable state color
+@border-radius-base: 2px; // major border radius
+@border-color-base: #d9d9d9; // major border color
+@box-shadow-base: 0 3px 6px -4px rgba(0, 0, 0, 0.12),
+0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05); // major shadow for layers
+
+.logo {
+  background: url('logo.png');
+  background-size: 108px, 33px;
+  width: 108px;
+  height: 27px;
+  /*background: rgba(0, 0, 0, 0.2);*/
+  margin: 17px 10px 16px 20px;
+  float: left;
+}
+
+.ant-table.ant-table-middle .ant-table-title,
+.ant-table.ant-table-middle .ant-table-footer,
+.ant-table.ant-table-middle thead > tr > th,
+.ant-table.ant-table-middle tbody > tr > td {
+  padding: 1px 8px !important;
+}
+
+.ant-list-sm .ant-list-item {
+  padding: 2px !important;
+}

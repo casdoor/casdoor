@@ -12,19 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './app';
-import { ConfigProvider } from 'antd';
-import enUS from 'antd/es/locale/en_US';
-import { BrowserRouter } from 'react-router-dom';
-import './index.less';
+const CracoLessPlugin = require('craco-less');
 
-ReactDOM.render(
-  <ConfigProvider locale={enUS}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </ConfigProvider>,
-  document.getElementById('root')
-);
+const emotionPresetOptions = {};
+const emotionBabelPreset = require('@emotion/babel-preset-css-prop').default(undefined, emotionPresetOptions);
+
+module.exports = {
+  babel: {
+    plugins: [...emotionBabelPreset.plugins],
+  },
+  plugins: [
+    {
+      plugin: CracoLessPlugin,
+      options: {
+        lessLoaderOptions: {
+          lessOptions: {
+            javascriptEnabled: true,
+          },
+        },
+      },
+    },
+  ],
+};
