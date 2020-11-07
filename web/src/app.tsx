@@ -14,14 +14,25 @@
 
 import React, { useEffect, useState } from 'react';
 import * as Setting from './setting';
-import { DownOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
+import {
+  DownOutlined,
+  LogoutOutlined,
+  SettingOutlined,
+  PieChartOutlined,
+  AppstoreOutlined,
+  DesktopOutlined,
+  ContainerOutlined,
+  MailOutlined,
+  UnorderedListOutlined,
+} from '@ant-design/icons';
 import { Avatar, BackTop, Dropdown, Layout, Menu } from 'antd';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import * as AccountBackend from './backend/account-backend';
-import './app.css';
 import { UserRoutes } from './user/user-routes';
+import tw, { styled } from 'twin.macro';
 
 const { Header, Footer } = Layout;
+const { SubMenu } = Menu;
 
 interface Account {
   username: string;
@@ -34,21 +45,13 @@ function isStartPages() {
   );
 }
 
-function AppFooter() {
+function AppHeader() {
   return (
-    <Footer
-      id="footer"
-      style={{
-        borderTop: '1px solid #e8e8e8',
-        backgroundColor: 'white',
-        textAlign: 'center',
-      }}
-    >
-      Made with <span style={{ color: 'rgb(255, 255, 255)' }}>❤️</span> by{' '}
-      <a style={{ fontWeight: 'bold', color: 'black' }} rel="noreferrer" target="_blank" href="https://casbin.org">
-        Casbin
-      </a>
-    </Footer>
+    <Header css={tw`fixed w-screen px-0`}>
+      {/*eslint-disable-next-line*/}
+      {Setting.isMobile() ? null : <a href="/" className="logo" />}
+      <AppMenu />
+    </Header>
   );
 }
 
@@ -110,87 +113,120 @@ function AppMenu() {
   }
 
   return (
-    <Menu
-      // theme="dark"
-      mode={Setting.isMobile() && isStartPages() ? 'inline' : 'horizontal'}
-      defaultSelectedKeys={[`${selectedMenuKey}`]}
-      style={{ lineHeight: '64px' }}
-    >
-      <Menu.Item key="home">
-        <a href="/">Home</a>
-      </Menu.Item>
-      <Menu.Item key="user">
-        <a href="/users">Users</a>
-      </Menu.Item>
-      {account ? (
-        <Dropdown
-          key="4"
-          overlay={
-            <Menu onClick={handleRightDropdownClick}>
-              <Menu.Item key="account">
-                <SettingOutlined />
-                My Account
-              </Menu.Item>
-              <Menu.Item key="logout">
-                <LogoutOutlined />
-                Logout
-              </Menu.Item>
-            </Menu>
-          }
-        >
-          {/*eslint-disable-next-line*/}
-          <a className="ant-dropdown-link" href="#" style={{ float: 'right' }}>
-            <Avatar
-              style={{
-                backgroundColor: Setting.getAvatarColor(account.name),
-                verticalAlign: 'middle',
-              }}
-              size="large"
-            >
-              {Setting.getShortName(account.name)}
-            </Avatar>
-            &nbsp; &nbsp;
-            {Setting.isMobile() ? null : Setting.getShortName(account.name)} &nbsp;
-            <DownOutlined />
-            &nbsp; &nbsp; &nbsp;
-          </a>
-        </Dropdown>
-      ) : (
-        <>
-          <Menu.Item key="register" style={{ float: 'right', marginRight: '20px' }}>
-            <a href="/register">Register</a>
-          </Menu.Item>
-          <Menu.Item key="login" style={{ float: 'right' }}>
-            <a href="/login">Login</a>
-          </Menu.Item>
-        </>
-      )}
-    </Menu>
+    <div css={tw`h-16`}>
+      <Menu
+        // theme="dark"
+        mode={Setting.isMobile() && isStartPages() ? 'inline' : 'horizontal'}
+        defaultSelectedKeys={[`${selectedMenuKey}`]}
+      >
+        <Menu.Item key="home">
+          <a href="/">Home</a>
+        </Menu.Item>
+        <Menu.Item key="user">
+          <a href="/users">Users</a>
+        </Menu.Item>
+        {account ? (
+          <Dropdown
+            key="4"
+            overlay={
+              <Menu onClick={handleRightDropdownClick}>
+                <Menu.Item key="account">
+                  <SettingOutlined />
+                  My Account
+                </Menu.Item>
+                <Menu.Item key="logout">
+                  <LogoutOutlined />
+                  Logout
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            {/*eslint-disable-next-line*/}
+            <a className="ant-dropdown-link" href="#" style={{ float: 'right' }}>
+              <Avatar
+                style={{
+                  backgroundColor: Setting.getAvatarColor(account.name),
+                  verticalAlign: 'middle',
+                }}
+                size="large"
+              >
+                {Setting.getShortName(account.name)}
+              </Avatar>
+              &nbsp; &nbsp;
+              {Setting.isMobile() ? null : Setting.getShortName(account.name)} &nbsp;
+              <DownOutlined />
+              &nbsp; &nbsp; &nbsp;
+            </a>
+          </Dropdown>
+        ) : (
+          <>
+            <Menu.Item key="register" style={{ float: 'right', marginRight: '20px' }}>
+              <a href="/register">Register</a>
+            </Menu.Item>
+            <Menu.Item key="login" style={{ float: 'right' }}>
+              <a href="/login">Login</a>
+            </Menu.Item>
+          </>
+        )}
+      </Menu>
+    </div>
   );
 }
 
-function AppHeader() {
+function AppFooter() {
   return (
-    <Header style={{ padding: '0', marginBottom: '3px' }}>
-      {/*eslint-disable-next-line*/}
-      {Setting.isMobile() ? null : <a href="/" className="logo" />}
-      <AppMenu />
-    </Header>
+    <Footer css={tw`bg-white text-center px-0 py-0`}>
+      <div>
+        Made with <span css={tw`text-white`}>❤️</span> by{' '}
+        <a css={tw`font-bold text-black`} rel="noreferrer" target="_blank" href="https://casbin.org">
+          Casbin
+        </a>
+      </div>
+    </Footer>
   );
 }
 
 function App() {
+  const navigator = useNavigate();
   return (
-    <div id="parent-area">
+    <>
       <AppHeader />
       <BackTop />
-      <div id="content-wrap">
-        <Routes>
-          <Route path="users/*" element={<UserRoutes />} />
-        </Routes>
+      <div css={tw`flex h-screen pt-16`}>
+        <div css={tw`flex flex-col justify-between w-64 overflow-y-auto static py-4 shadow`}>
+          <Menu
+            onClick={({ key }) => navigator(key as string)}
+            style={{ border: 'none' }}
+            defaultSelectedKeys={['applications-list']}
+            defaultOpenKeys={['applications']}
+            mode="inline"
+          >
+            <SubMenu key="applications" title="Applications">
+              <Menu.Item key="applications-list">List</Menu.Item>
+            </SubMenu>
+            <SubMenu key="identities" title="Identities">
+              <Menu.Item key="groups">Groups</Menu.Item>
+              <Menu.Item key="users">Users</Menu.Item>
+            </SubMenu>
+            <SubMenu key="permissions" title="Permissions">
+              <Menu.Item key="authorization">Authorization</Menu.Item>
+              <Menu.Item key="policies">Policies</Menu.Item>
+            </SubMenu>
+            <SubMenu key="audit-logs" title="Audit Logs">
+              <Menu.Item key="user-activity">User Activity</Menu.Item>
+              <Menu.Item key="admin-activity">Admin Activity</Menu.Item>
+            </SubMenu>
+          </Menu>
+
+          <AppFooter />
+        </div>
+        <div css={tw`flex flex-1 flex-col overflow-x-hidden overflow-y-auto px-6 py-8`}>
+          <Routes>
+            <Route path="users/*" element={<UserRoutes />} />
+          </Routes>
+        </div>
       </div>
-      <AppFooter />
-    </div>
+    </>
   );
 }
 

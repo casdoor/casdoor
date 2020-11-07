@@ -12,19 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './app';
-import { ConfigProvider } from 'antd';
-import enUS from 'antd/es/locale/en_US';
-import { BrowserRouter } from 'react-router-dom';
-import './index.less';
+import 'twin.macro';
+import styledImport from '@emotion/styled';
+import { css as cssImport } from '@emotion/core';
 
-ReactDOM.render(
-  <ConfigProvider locale={enUS}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </ConfigProvider>,
-  document.getElementById('root')
-);
+import 'tailwindcss/dist/base.min.css';
+
+declare module 'twin.macro' {
+  // The styled and css imports
+  const styled: typeof styledImport;
+  const css: typeof cssImport;
+}
+
+declare module 'react' {
+  // The css prop
+  interface HTMLAttributes<T> extends DOMAttributes<T> {
+    css?: CSSProp;
+  }
+  // The inline svg css prop
+  interface SVGProps<T> extends SVGProps<SVGSVGElement> {
+    css?: CSSProp;
+  }
+}

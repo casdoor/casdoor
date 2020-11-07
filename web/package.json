@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.2.2",
+    "@emotion/core": "^10.1.1",
+    "@emotion/styled": "^10.0.27",
     "antd": "^4.7.2",
     "axios": "^0.21.0",
     "history": "^5.0.0",
@@ -11,13 +13,13 @@
     "react": "^17.0.1",
     "react-device-detect": "^1.14.0",
     "react-dom": "^17.0.1",
-    "react-router-dom": "^6.0.0-beta.0"
+    "react-router-dom": "^6.0.0-beta.0",
+    "twin.macro": "^1.12.0"
   },
   "scripts": {
-    "start": "set PORT=7001 && react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test"
   },
   "eslintConfig": {
     "extends": [
@@ -38,6 +40,8 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^5.7.0",
+    "@emotion/babel-preset-css-prop": "^10.1.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -45,6 +49,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "craco-less": "^1.17.0",
     "prettier": "2.1.2",
     "react-scripts": "^4.0.0",
     "typescript": "^4.0.3"
