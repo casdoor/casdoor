@@ -3,7 +3,9 @@ package handler
 import (
 	"net/http"
 
-	"github.com/casdoor/casdoor/handler/user"
+	"github.com/casdoor/casdoor/internal/handler/user"
+	"github.com/casdoor/casdoor/internal/store"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +20,7 @@ var corsConfig = cors.Config{
 	MaxAge:       300,
 }
 
-func New() http.Handler {
+func New(userStore *store.UserStore) http.Handler {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
@@ -27,11 +29,12 @@ func New() http.Handler {
 	//r.StaticFS("/", http.Dir("web/build/index.html"))
 
 	apiGroup := r.Group("/api")
-	apiGroup.GET("/get-users", user.GetUsers)
-	apiGroup.GET("/get-user", user.GetUser)
-	apiGroup.POST("/update-user", user.UpdateUser)
-	apiGroup.POST("/add-user", user.AddUser)
-	apiGroup.POST("/delete-user", user.DeleteUser)
+	userHandler := user.New(userStore)
+	apiGroup.GET("/get-users", userHandler.GetUsers)
+	apiGroup.GET("/get-user", userHandler.GetUser)
+	apiGroup.POST("/update-user", userHandler.UpdateUser)
+	apiGroup.POST("/add-user", userHandler.AddUser)
+	apiGroup.POST("/delete-user", userHandler.DeleteUser)
 
 	return r
 }
