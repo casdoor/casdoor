@@ -22,31 +22,35 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/casdoor/casdoor/object"
-
-	"github.com/casdoor/casdoor/handler"
-	"github.com/joho/godotenv"
+	"github.com/casdoor/casdoor/internal/config"
+	"github.com/casdoor/casdoor/internal/handler"
+	"github.com/casdoor/casdoor/internal/store"
+	"github.com/casdoor/casdoor/internal/store/shared"
 )
 
 func main() {
-	object.InitAdapter()
-
-	err := godotenv.Load()
+	cfg, err := config.NewConfig()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal(err)
 	}
 
+	db, err := shared.NewDB(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	userStore := store.NewUserStore(db)
+
 	srv := &http.Server{
-		Addr:    os.Getenv("httpport"),
-		Handler: handler.New(),
+		Addr:    cfg.HTTPPort,
+		Handler: handler.New(userStore),
 	}
 
 	go func() {
+		log.Printf("listen and serve on %s", srv.Addr)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
 		}
-
-		log.Printf("listen and serve on %s", srv.Addr)
 	}()
 
 	quit := make(chan os.Signal)
