@@ -14,22 +14,12 @@
 
 import React, { useEffect, useState } from 'react';
 import * as Setting from './setting';
-import {
-  DownOutlined,
-  LogoutOutlined,
-  SettingOutlined,
-  PieChartOutlined,
-  AppstoreOutlined,
-  DesktopOutlined,
-  ContainerOutlined,
-  MailOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { Avatar, BackTop, Dropdown, Layout, Menu } from 'antd';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import * as AccountBackend from './backend/account-backend';
 import { UserRoutes } from './user/user-routes';
-import tw, { styled } from 'twin.macro';
+import tw from 'twin.macro';
 
 const { Header, Footer } = Layout;
 const { SubMenu } = Menu;
@@ -121,9 +111,6 @@ function AppMenu() {
       >
         <Menu.Item key="home">
           <a href="/">Home</a>
-        </Menu.Item>
-        <Menu.Item key="user">
-          <a href="/users">Users</a>
         </Menu.Item>
         {account ? (
           <Dropdown
@@ -221,9 +208,11 @@ function App() {
           <AppFooter />
         </div>
         <div css={tw`flex flex-1 flex-col overflow-x-hidden overflow-y-auto px-6 py-8`}>
-          <Routes>
-            <Route path="users/*" element={<UserRoutes />} />
-          </Routes>
+          <div css={tw`container ml-auto mr-auto`}>
+            <Routes>
+              <Route path="users/*" element={<UserRoutes />} />
+            </Routes>
+          </div>
         </div>
       </div>
     </>

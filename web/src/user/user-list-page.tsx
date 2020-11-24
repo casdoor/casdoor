@@ -13,11 +13,12 @@
 // limitations under the License.
 
 import React, { useEffect, useState } from 'react';
-import { Button, Popconfirm, Row, Table, Col } from 'antd';
+import { Button, Popconfirm, Table } from 'antd';
 import { getFormattedDate, showMessage } from '../setting';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import * as userBackend from '../backend/user-backend';
+import tw from 'twin.macro';
 
 function UserTable() {
   const [users, setUsers] = useState<Array<any>>([]);
@@ -156,23 +157,22 @@ function UserTable() {
   ];
   return (
     <div>
-      <Table
-        columns={columns}
-        dataSource={users}
-        rowKey="name"
-        size="middle"
-        bordered
-        pagination={{ pageSize: 100 }}
-        title={() => (
-          <div>
-            Users&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button type="primary" size="small" onClick={addUser}>
-              Add
-            </Button>
-          </div>
-        )}
-        loading={users === null}
-      />
+      <div css={tw`flex items-center justify-between`}>
+        <h1 css={tw`m-0 text-2xl`}>Users</h1>
+        <Button type="primary" size="middle" onClick={addUser}>
+          Add
+        </Button>
+      </div>
+      <div css={tw`py-4`}>
+        <Table
+          columns={columns}
+          dataSource={users}
+          rowKey="name"
+          size="middle"
+          pagination={{ pageSize: 100 }}
+          loading={users === null || users === undefined}
+        />
+      </div>
     </div>
   );
 }
@@ -180,13 +180,7 @@ function UserTable() {
 function UserListPage() {
   return (
     <>
-      <Row style={{ width: '100%' }}>
-        <Col span={1} />
-        <Col span={22}>
-          <UserTable />
-        </Col>
-        <Col span={1} />
-      </Row>
+      <UserTable />
     </>
   );
 }
