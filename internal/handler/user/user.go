@@ -18,7 +18,13 @@ func New(userStore *store.UserStore) *Handler {
 
 func (h *Handler) GetUsers(g *gin.Context) {
 	owner := g.GetString("owner")
-	g.JSON(http.StatusOK, h.userStore.GetUsers(owner))
+	user, err := h.userStore.GetUsers(owner)
+	if err != nil {
+		_ = g.Error(err)
+		return
+	}
+
+	g.JSON(http.StatusOK, user)
 }
 
 func (h *Handler) GetUser(g *gin.Context) {

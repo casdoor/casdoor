@@ -40,10 +40,11 @@ func main() {
 	}
 
 	userStore := store.NewUserStore(db)
+	applicationStore := store.NewApplicationStore(db)
 
 	srv := &http.Server{
 		Addr:    cfg.HTTPPort,
-		Handler: handler.New(userStore),
+		Handler: handler.New(userStore, applicationStore),
 	}
 
 	go func() {

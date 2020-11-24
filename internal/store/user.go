@@ -31,14 +31,14 @@ func NewUserStore(db *shared.DB) *UserStore {
 	}
 }
 
-func (u *UserStore) GetUsers(owner string) []*object.User {
+func (u *UserStore) GetUsers(owner string) ([]*object.User, error) {
 	var users []*object.User
 	err := u.db.GetEngine().Desc("created_time").Find(&users, &object.User{Owner: owner})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return users
+	return users, nil
 }
 
 func (u *UserStore) getUser(owner string, name string) (*object.User, error) {

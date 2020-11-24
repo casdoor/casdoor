@@ -38,7 +38,18 @@ func NewDB(cfg *config.Config) (*DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("xorm.NewEngine: %v", err)
 	}
+	err = engine.Ping()
+	if err != nil {
+		return nil, fmt.Errorf("engine.Ping(): %v", err)
+	}
+
 	db.engine = engine
+
+	err = db.createTable()
+	if err != nil {
+		return nil, fmt.Errorf("db.createTable(): %v", err)
+	}
+
 	return db, nil
 }
 
@@ -47,6 +58,6 @@ func (db *DB) GetEngine() *xorm.Engine {
 }
 
 func (db *DB) createTable() error {
-	err := db.engine.Sync2(new(object.User))
+	err := db.engine.Sync2(new(object.User), new(object.Application))
 	return err
 }

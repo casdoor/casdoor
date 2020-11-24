@@ -3,6 +3,8 @@ package handler
 import (
 	"net/http"
 
+	"github.com/casdoor/casdoor/internal/handler/application"
+
 	"github.com/casdoor/casdoor/internal/handler/user"
 	"github.com/casdoor/casdoor/internal/store"
 
@@ -20,7 +22,7 @@ var corsConfig = cors.Config{
 	MaxAge:       300,
 }
 
-func New(userStore *store.UserStore) http.Handler {
+func New(userStore *store.UserStore, applicationStore *store.ApplicationStore) http.Handler {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
@@ -35,6 +37,10 @@ func New(userStore *store.UserStore) http.Handler {
 	apiGroup.POST("/update-user", userHandler.UpdateUser)
 	apiGroup.POST("/add-user", userHandler.AddUser)
 	apiGroup.POST("/delete-user", userHandler.DeleteUser)
+
+	applicationHandler := application.New(applicationStore)
+	apiGroup.GET("/applications", applicationHandler.List)
+	apiGroup.POST("/applications", applicationHandler.Create)
 
 	return r
 }
