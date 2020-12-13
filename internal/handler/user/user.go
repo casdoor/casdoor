@@ -28,7 +28,7 @@ func (h *Handler) GetUsers(g *gin.Context) {
 }
 
 func (h *Handler) GetUser(g *gin.Context) {
-	id := g.GetString("id")
+	id := g.Query("id")
 	u, err := h.userStore.GetUser(id)
 	if err != nil {
 		_ = g.Error(err)

@@ -50,6 +50,16 @@ func (h *Handler) Create(g *gin.Context) {
 	}
 }
 
+func (h *Handler) Get(g *gin.Context) {
+	id := g.Param("id")
+	app, err := h.applicationStore.Get(id)
+	if err != nil {
+		_ = g.Error(err)
+		return
+	}
+	g.JSON(http.StatusOK, app)
+}
+
 func (h *Handler) List(g *gin.Context) {
 	limit, _ := strconv.Atoi(g.DefaultQuery("limit", "20"))
 	offset, _ := strconv.Atoi(g.DefaultQuery("offset", "0"))
@@ -59,4 +69,19 @@ func (h *Handler) List(g *gin.Context) {
 		return
 	}
 	g.JSON(http.StatusOK, apps)
+}
+
+func (h *Handler) Update(g *gin.Context) {
+	app := &object.Application{}
+	err := g.BindJSON(app)
+	if err != nil {
+		_ = g.Error(err)
+		return
+	}
+
+	err = h.applicationStore.Update(app)
+	if err != nil {
+		_ = g.Error(err)
+		return
+	}
 }

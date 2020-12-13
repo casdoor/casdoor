@@ -39,3 +39,14 @@ func (a *ApplicationStore) List(limit, offset int) ([]*object.Application, error
 	err := a.db.GetEngine().Desc("created_time").Limit(limit, offset).Find(&apps)
 	return apps, err
 }
+
+func (a *ApplicationStore) Get(id string) (*object.Application, error) {
+	var app *object.Application
+	err := a.db.GetEngine().ID(id).Find(app)
+	return app, err
+}
+
+func (a *ApplicationStore) Update(app *object.Application) error {
+	_, err := a.db.GetEngine().Update(app)
+	return err
+}

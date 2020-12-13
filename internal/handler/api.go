@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/casdoor/casdoor/internal/handler/login"
 	"net/http"
 
 	"github.com/casdoor/casdoor/internal/handler/application"
@@ -40,7 +41,12 @@ func New(userStore *store.UserStore, applicationStore *store.ApplicationStore) h
 
 	applicationHandler := application.New(applicationStore)
 	apiGroup.GET("/applications", applicationHandler.List)
+	apiGroup.GET("/applications/:id", applicationHandler.Get)
 	apiGroup.POST("/applications", applicationHandler.Create)
+	apiGroup.PATCH("/applications", applicationHandler.Update)
+
+	loginHandler := login.New(userStore)
+	apiGroup.GET("/login/github", gin.WrapF(loginHandler.LoginByGithub))
 
 	return r
 }
