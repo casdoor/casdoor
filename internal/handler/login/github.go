@@ -15,11 +15,8 @@
 package login
 
 import (
-	"crypto/rand"
-	"encoding/base64"
 	"github.com/casdoor/casdoor/internal/store"
 	"net/http"
-	"time"
 )
 
 type Handler struct {
@@ -30,20 +27,12 @@ func New(userStore *store.UserStore) *Handler {
 	return &Handler{userStore: userStore}
 }
 
-func generateStateOauthCookie(w http.ResponseWriter) string {
-	var expiration = time.Now().Add(20 * time.Minute)
-
-	b := make([]byte, 16)
-	rand.Read(b)
-	state := base64.URLEncoding.EncodeToString(b)
-	cookie := http.Cookie{Name: "oauthstate", Value: state, Expires: expiration}
-	http.SetCookie(w, &cookie)
-
-	return state
-}
-
 func (h *Handler) LoginByGithub(w http.ResponseWriter, r *http.Request) {
-	oauthState := generateStateOauthCookie(w)
+	oauthState, err := generateGithubOauthStateToCookie(w)
+	if err != nil {
+		_, _ = w.Write([]byte("github: failed to generate github Oauth state"))
+		return
+	}
 	u := githubOauthConfig.AuthCodeURL(oauthState)
 	http.Redirect(w, r, u, http.StatusFound)
 }
