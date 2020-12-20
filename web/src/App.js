@@ -25,6 +25,8 @@ import UserListPage from "./UserListPage";
 import UserEditPage from "./UserEditPage";
 import ProviderListPage from "./ProviderListPage";
 import ProviderEditPage from "./ProviderEditPage";
+import ApplicationListPage from "./ApplicationListPage";
+import ApplicationEditPage from "./ApplicationEditPage";
 
 const { Header, Footer } = Layout;
 
@@ -56,6 +58,8 @@ class App extends Component {
       this.setState({ selectedMenuKey: 2 });
     } else if (uri.includes('providers')) {
       this.setState({ selectedMenuKey: 3 });
+    } else if (uri.includes('applications')) {
+      this.setState({ selectedMenuKey: 4 });
     } else {
       this.setState({ selectedMenuKey: -1 });
     }
@@ -216,6 +220,13 @@ class App extends Component {
         </a>
       </Menu.Item>
     );
+    res.push(
+      <Menu.Item key="4">
+        <a href="/applications">
+          Applications
+        </a>
+      </Menu.Item>
+    );
 
     return res;
   }
@@ -273,6 +284,8 @@ class App extends Component {
           <Route exact path="/users/:userName" component={UserEditPage}/>
           <Route exact path="/providers" component={ProviderListPage}/>
           <Route exact path="/providers/:providerName" component={ProviderEditPage}/>
+          <Route exact path="/applications" component={ApplicationListPage}/>
+          <Route exact path="/applications/:applicationName" component={ApplicationEditPage}/>
         </Switch>
       </div>
     )

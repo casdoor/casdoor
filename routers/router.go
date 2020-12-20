@@ -50,4 +50,10 @@ func initAPI() {
 	beego.Router("/api/update-provider", &controllers.ApiController{}, "POST:UpdateProvider")
 	beego.Router("/api/add-provider", &controllers.ApiController{}, "POST:AddProvider")
 	beego.Router("/api/delete-provider", &controllers.ApiController{}, "POST:DeleteProvider")
+
+	beego.Router("/api/get-applications", &controllers.ApiController{}, "GET:GetApplications")
+	beego.Router("/api/get-application", &controllers.ApiController{}, "GET:GetApplication")
+	beego.Router("/api/update-application", &controllers.ApiController{}, "POST:UpdateApplication")
+	beego.Router("/api/add-application", &controllers.ApiController{}, "POST:AddApplication")
+	beego.Router("/api/delete-application", &controllers.ApiController{}, "POST:DeleteApplication")
 }

@@ -89,12 +89,22 @@ func (a *Adapter) close() {
 }
 
 func (a *Adapter) createTable() {
-	err := a.engine.Sync2(new(User))
+	err := a.engine.Sync2(new(Organization))
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.engine.Sync2(new(Organization))
+	err = a.engine.Sync2(new(User))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.engine.Sync2(new(Provider))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.engine.Sync2(new(Application))
 	if err != nil {
 		panic(err)
 	}
