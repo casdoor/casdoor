@@ -11,8 +11,6 @@ class OrganizationEditPage extends React.Component {
       classes: props,
       organizationName: props.match.params.organizationName,
       organization: null,
-      tasks: [],
-      resources: [],
     };
   }
 

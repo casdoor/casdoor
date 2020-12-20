@@ -11,8 +11,6 @@ class ProviderEditPage extends React.Component {
       classes: props,
       providerName: props.match.params.providerName,
       provider: null,
-      tasks: [],
-      resources: [],
     };
   }
 

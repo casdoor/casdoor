@@ -11,8 +11,6 @@ class UserEditPage extends React.Component {
       classes: props,
       userName: props.match.params.userName,
       user: null,
-      tasks: [],
-      resources: [],
     };
   }
 

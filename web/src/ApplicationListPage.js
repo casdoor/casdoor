@@ -100,7 +100,7 @@ class ApplicationListPage extends React.Component {
         title: 'Providers',
         dataIndex: 'providers',
         key: 'providers',
-        width: '150px',
+        width: '300px',
         sorter: (a, b) => a.providers.localeCompare(b.providers),
       },
       {

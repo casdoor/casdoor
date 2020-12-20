@@ -1,8 +1,11 @@
 import React from "react";
-import {Button, Card, Col, Input, Row} from 'antd';
+import {Button, Card, Col, Input, Row, Select} from 'antd';
 import {LinkOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
+import * as ProviderBackend from "./backend/ProviderBackend";
+
+const { Option } = Select;
 
 class ApplicationEditPage extends React.Component {
   constructor(props) {
@@ -11,13 +14,13 @@ class ApplicationEditPage extends React.Component {
       classes: props,
       applicationName: props.match.params.applicationName,
       application: null,
-      tasks: [],
-      resources: [],
+      providers: [],
     };
   }
 
   componentWillMount() {
     this.getApplication();
+    this.getProviders();
   }
 
   getApplication() {
@@ -25,6 +28,15 @@ class ApplicationEditPage extends React.Component {
       .then((application) => {
         this.setState({
           application: application,
+        });
+      });
+  }
+
+  getProviders() {
+    ProviderBackend.getProviders("admin")
+      .then((res) => {
+        this.setState({
+          providers: res,
         });
       });
   }
@@ -79,9 +91,15 @@ class ApplicationEditPage extends React.Component {
             Providers:
           </Col>
           <Col span={22} >
-            <Input value={this.state.application.providers} onChange={e => {
-              this.updateApplicationField('providers', e.target.value);
-            }} />
+            <Select mode="tags" style={{width: '100%'}}
+                    value={this.state.application.providers}
+                    onChange={value => {
+                      this.updateApplicationField('providers', value);
+                    }} >
+              {
+                this.state.providers.map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
       </Card>
