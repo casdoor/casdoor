@@ -19,6 +19,8 @@ import {DownOutlined, LogoutOutlined, SettingOutlined} from '@ant-design/icons';
 import {Avatar, BackTop, Dropdown, Layout, Menu} from 'antd';
 import {Switch, Route, withRouter, Redirect} from 'react-router-dom'
 import * as AccountBackend from "./backend/AccountBackend";
+import OrganizationListPage from "./OrganizationListPage";
+import OrganizationEditPage from "./OrganizationEditPage";
 import UserListPage from "./UserListPage";
 import UserEditPage from "./UserEditPage";
 
@@ -46,8 +48,10 @@ class App extends Component {
     const uri = location.pathname;
     if (uri === '/') {
       this.setState({ selectedMenuKey: 0 });
-    } else if (uri.includes('users')) {
+    } else if (uri.includes('organizations')) {
       this.setState({ selectedMenuKey: 1 });
+    } else if (uri.includes('users')) {
+      this.setState({ selectedMenuKey: 2 });
     } else {
       this.setState({ selectedMenuKey: -1 });
     }
@@ -189,6 +193,13 @@ class App extends Component {
     );
     res.push(
       <Menu.Item key="1">
+        <a href="/organizations">
+          Organizations
+        </a>
+      </Menu.Item>
+    );
+    res.push(
+      <Menu.Item key="2">
         <a href="/users">
           Users
         </a>
@@ -245,6 +256,8 @@ class App extends Component {
           </Menu>
         </Header>
         <Switch>
+          <Route exact path="/organizations" component={OrganizationListPage}/>
+          <Route exact path="/organizations/:organizationName" component={OrganizationEditPage}/>
           <Route exact path="/users" component={UserListPage}/>
           <Route exact path="/users/:userName" component={UserEditPage}/>
         </Switch>
