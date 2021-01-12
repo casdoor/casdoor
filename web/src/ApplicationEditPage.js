@@ -4,6 +4,7 @@ import {LinkOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
+import Face from "./Face";
 
 const { Option } = Select;
 
@@ -127,6 +128,16 @@ class ApplicationEditPage extends React.Component {
                 this.state.providers.map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
               }
             </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Face Preview:
+          </Col>
+          <Col span={22} >
+            <div style={{width: "500px", height: "600px", border: "1px solid rgb(217,217,217)"}}>
+              <Face application={this.state.application} />
+            </div>
           </Col>
         </Row>
       </Card>
