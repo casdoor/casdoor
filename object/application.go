@@ -25,6 +25,7 @@ type Application struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	DisplayName string   `xorm:"varchar(100)" json:"displayName"`
+	Logo        string   `xorm:"varchar(100)" json:"logo"`
 	Providers   []string `xorm:"varchar(100)" json:"providers"`
 }
 

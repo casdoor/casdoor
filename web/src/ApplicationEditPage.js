@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Col, Input, Row, Select} from 'antd';
+import {AutoComplete, Button, Card, Col, Input, Row, Select} from 'antd';
 import {LinkOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
@@ -84,6 +84,33 @@ class ApplicationEditPage extends React.Component {
             <Input value={this.state.application.displayName} onChange={e => {
               this.updateApplicationField('displayName', e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Logo:
+          </Col>
+          <Col span={22} >
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={1}>
+                URL:
+              </Col>
+              <Col span={23} >
+                <Input prefix={<LinkOutlined/>} value={this.state.application.logo} onChange={e => {
+                  this.updateApplicationField('logo', e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={1}>
+                Preview:
+              </Col>
+              <Col span={23} >
+                <a target="_blank" href={this.state.application.logo}>
+                  <img src={this.state.application.logo} alt={this.state.application.logo} height={90} style={{marginBottom: '20px'}}/>
+                </a>
+              </Col>
+            </Row>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

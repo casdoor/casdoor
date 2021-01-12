@@ -32,6 +32,7 @@ class ApplicationListPage extends React.Component {
       name: `application_${this.state.applications.length}`,
       createdTime: moment().format(),
       displayName: `New Application - ${this.state.applications.length}`,
+      logo: "https://cdn.jsdelivr.net/gh/casbin/static/img/logo@2x.png",
       providers: [],
     }
   }
@@ -95,6 +96,21 @@ class ApplicationListPage extends React.Component {
         key: 'displayName',
         // width: '100px',
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
+      },
+      {
+        title: 'Logo',
+        dataIndex: 'logo',
+        key: 'logo',
+        width: '100px',
+        render: (text, record, index) => {
+          return (
+            <div>
+              <a target="_blank" href={text}>
+                <img src={text} alt={text} width={150} style={{marginBottom: '20px'}}/>
+              </a>
+            </div>
+          )
+        }
       },
       {
         title: 'Providers',
