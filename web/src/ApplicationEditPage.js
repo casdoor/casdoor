@@ -1,5 +1,5 @@
 import React from "react";
-import {AutoComplete, Button, Card, Col, Input, Row, Select} from 'antd';
+import { Button, Card, Col, Input, Row, Select} from 'antd';
 import {LinkOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";

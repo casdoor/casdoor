@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import {message} from "antd";
-import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
 
 export let ServerUrl = '';

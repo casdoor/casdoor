@@ -106,7 +106,7 @@ class ApplicationListPage extends React.Component {
         render: (text, record, index) => {
           return (
             <div>
-              <a target="_blank" href={text}>
+              <a target="_blank" rel="noopener noreferrer" href={text}>
                 <img src={text} alt={text} width={150} style={{marginBottom: '20px'}}/>
               </a>
             </div>
