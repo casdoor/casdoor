@@ -1,5 +1,6 @@
 import React from "react";
 import {Button, Col, Popconfirm, Row, Table} from 'antd';
+import { Link } from 'react-router-dom'
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
@@ -76,7 +77,7 @@ class ApplicationListPage extends React.Component {
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record, index) => {
           return (
-            <a href={`/applications/${text}`}>{text}</a>
+            <Link to={`/applications/${text}`}>{text}</Link>
           )
         }
       },

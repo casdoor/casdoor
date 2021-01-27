@@ -1,5 +1,6 @@
 import React from "react";
 import {Button, Col, Popconfirm, Row, Table} from 'antd';
+import { Link } from 'react-router-dom'
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -75,7 +76,7 @@ class OrganizationListPage extends React.Component {
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record, index) => {
           return (
-            <a href={`/organizations/${text}`}>{text}</a>
+            <Link to={`/organizations/${text}`}>{text}</Link>
           )
         }
       },

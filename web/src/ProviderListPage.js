@@ -1,6 +1,7 @@
 import React from "react";
 import {Button, Col, Popconfirm, Row, Table} from 'antd';
 import moment from "moment";
+import {Link} from 'react-router-dom'
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
 
@@ -78,7 +79,7 @@ class ProviderListPage extends React.Component {
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record, index) => {
           return (
-            <a href={`/providers/${text}`}>{text}</a>
+            <Link to={`/providers/${text}`}>{text}</Link>
           )
         }
       },

@@ -1,5 +1,6 @@
 import React from "react";
 import {Button, Col, Popconfirm, Row, Table} from 'antd';
+import { Link } from 'react-router-dom'
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
@@ -78,7 +79,7 @@ class UserListPage extends React.Component {
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record, index) => {
           return (
-            <a href={`/users/${text}`}>{text}</a>
+            <Link to={`/users/${text}`}>{text}</Link>
           )
         }
       },

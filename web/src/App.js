@@ -17,7 +17,7 @@ import './App.css';
 import * as Setting from "./Setting";
 import {DownOutlined, LogoutOutlined, SettingOutlined} from '@ant-design/icons';
 import {Avatar, BackTop, Dropdown, Layout, Menu} from 'antd';
-import {Switch, Route, withRouter, Redirect} from 'react-router-dom'
+import {Switch, Route, withRouter, Redirect, Link} from 'react-router-dom'
 import * as AccountBackend from "./backend/AccountBackend";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -161,23 +161,23 @@ class App extends Component {
     } else {
       res.push(
         <Menu.Item key="1" style={{float: 'right', marginRight: '20px'}}>
-          <a href="/register">
+          <Link to="/register">
             Register
-          </a>
+          </Link>
         </Menu.Item>
       );
       res.push(
         <Menu.Item key="2" style={{float: 'right'}}>
-          <a href="/login">
+          <Link to="/login">
             Login
-          </a>
+          </Link>
         </Menu.Item>
       );
       res.push(
         <Menu.Item key="4" style={{float: 'right'}}>
-          <a href="/">
+          <Link to="/">
             Home
-          </a>
+          </Link>
         </Menu.Item>
       );
     }
@@ -194,37 +194,37 @@ class App extends Component {
 
     res.push(
       <Menu.Item key="0">
-        <a href="/">
+        <Link to="/">
           Home
-        </a>
+        </Link>
       </Menu.Item>
     );
     res.push(
       <Menu.Item key="1">
-        <a href="/organizations">
+        <Link to="/organizations">
           Organizations
-        </a>
+        </Link>
       </Menu.Item>
     );
     res.push(
       <Menu.Item key="2">
-        <a href="/users">
+        <Link to="/users">
           Users
-        </a>
+        </Link>
       </Menu.Item>
     );
     res.push(
       <Menu.Item key="3">
-        <a href="/providers">
+        <Link to="/providers">
           Providers
-        </a>
+        </Link>
       </Menu.Item>
     );
     res.push(
       <Menu.Item key="4">
-        <a href="/applications">
+        <Link to="/applications">
           Applications
-        </a>
+        </Link>
       </Menu.Item>
     );
 
@@ -261,7 +261,7 @@ class App extends Component {
       <div>
         <Header style={{ padding: '0', marginBottom: '3px'}}>
           {
-            Setting.isMobile() ? null : <a className="logo" href={"/"} />
+            Setting.isMobile() ? null : <Link className="logo" to={"/"} />
           }
           <Menu
             // theme="dark"
