@@ -105,6 +105,13 @@ class OrganizationListPage extends React.Component {
         key: 'websiteUrl',
         width: '300px',
         sorter: (a, b) => a.websiteUrl.localeCompare(b.websiteUrl),
+        render: (text, record, index) => {
+          return (
+            <a target="_blank" href={text}>
+              {text}
+            </a>
+          )
+        }
       },
       {
         title: 'Action',

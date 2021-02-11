@@ -129,6 +129,13 @@ class ProviderListPage extends React.Component {
         key: 'providerUrl',
         width: '150px',
         sorter: (a, b) => a.providerUrl.localeCompare(b.providerUrl),
+        render: (text, record, index) => {
+          return (
+            <a target="_blank" href={text}>
+              {text}
+            </a>
+          )
+        }
       },
       {
         title: 'Action',

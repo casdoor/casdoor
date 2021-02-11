@@ -114,11 +114,32 @@ class ApplicationListPage extends React.Component {
         }
       },
       {
+        title: 'Organization',
+        dataIndex: 'organization',
+        key: 'organization',
+        width: '200px',
+        sorter: (a, b) => a.organization.localeCompare(b.organization),
+        render: (text, record, index) => {
+          return (
+            <a href={`/organizations/${text}`}>
+              {text}
+            </a>
+          )
+        }
+      },
+      {
         title: 'Providers',
         dataIndex: 'providers',
         key: 'providers',
-        width: '300px',
+        width: '200px',
         sorter: (a, b) => a.providers.localeCompare(b.providers),
+        render: (text, record, index) => {
+          return (
+            <a href={`/providers/${text}`}>
+              {text}
+            </a>
+          )
+        }
       },
       {
         title: 'Action',
