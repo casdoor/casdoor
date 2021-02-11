@@ -2,6 +2,8 @@ import React from "react";
 import {Button, Checkbox, Col, Form, Input, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
+import * as AccountBackend from "./backend/AccountBackend";
+import * as Setting from "./Setting";
 
 class Face extends React.Component {
   constructor(props) {
@@ -34,12 +36,25 @@ class Face extends React.Component {
     }
   }
 
+  onFinish(values) {
+    AccountBackend.login(values)
+      .then((res) => {
+        if (res.status === 'ok') {
+          this.props.onLogined();
+          Setting.showMessage("success", `Logged in successfully`);
+          Setting.goToLink("/");
+        } else {
+          Setting.showMessage("error", `Log in failed：${res.msg}`);
+        }
+      });
+  };
+
   renderForm() {
     return (
       <Form
         name="normal_login"
         initialValues={{ remember: true }}
-        // onFinish={this.onFinish.bind(this)}
+        onFinish={this.onFinish.bind(this)}
         style={{width: "250px"}}
         size="large"
       >

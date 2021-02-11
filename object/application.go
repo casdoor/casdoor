@@ -24,9 +24,10 @@ type Application struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName string   `xorm:"varchar(100)" json:"displayName"`
-	Logo        string   `xorm:"varchar(100)" json:"logo"`
-	Providers   []string `xorm:"varchar(100)" json:"providers"`
+	DisplayName  string   `xorm:"varchar(100)" json:"displayName"`
+	Logo         string   `xorm:"varchar(100)" json:"logo"`
+	Organization string   `xorm:"varchar(100)" json:"organization"`
+	Providers    []string `xorm:"varchar(100)" json:"providers"`
 }
 
 func GetApplications(owner string) []*Application {

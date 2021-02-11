@@ -1,9 +1,10 @@
 import React from "react";
-import {AutoComplete, Button, Card, Col, Input, Row, Select} from 'antd';
+import {Button, Card, Col, Input, Row, Select} from 'antd';
 import {LinkOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
 import Face from "./Face";
 
 const { Option } = Select;
@@ -15,12 +16,14 @@ class ApplicationEditPage extends React.Component {
       classes: props,
       applicationName: props.match.params.applicationName,
       application: null,
+      organizations: [],
       providers: [],
     };
   }
 
   componentWillMount() {
     this.getApplication();
+    this.getOrganizations();
     this.getProviders();
   }
 
@@ -29,6 +32,15 @@ class ApplicationEditPage extends React.Component {
       .then((application) => {
         this.setState({
           application: application,
+        });
+      });
+  }
+
+  getOrganizations() {
+    OrganizationBackend.getOrganizations("admin")
+      .then((res) => {
+        this.setState({
+          organizations: res,
         });
       });
   }
@@ -112,6 +124,18 @@ class ApplicationEditPage extends React.Component {
                 </a>
               </Col>
             </Row>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Organization:
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: '100%'}} value={this.state.application.organization} onChange={(value => {this.updateApplicationField('organization', value);})}>
+              {
+                this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
