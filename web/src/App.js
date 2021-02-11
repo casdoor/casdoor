@@ -17,7 +17,7 @@ import './App.css';
 import * as Setting from "./Setting";
 import {DownOutlined, LogoutOutlined, SettingOutlined} from '@ant-design/icons';
 import {Avatar, BackTop, Dropdown, Layout, Menu} from 'antd';
-import {Switch, Route, withRouter, Redirect} from 'react-router-dom'
+import {Switch, Route, withRouter, Redirect, Link} from 'react-router-dom'
 import * as AccountBackend from "./backend/AccountBackend";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -80,16 +80,9 @@ class App extends Component {
     AccountBackend.getAccount()
       .then((res) => {
         const account = Setting.parseJson(res.data);
-        if (window.location.pathname === '/' && account === null) {
-          Setting.goToLink("/");
-        }
         this.setState({
           account: account,
         });
-
-        if (account !== undefined && account !== null) {
-          window.mouselogUserId = account.username;
-        }
       });
   }
 
@@ -161,24 +154,17 @@ class App extends Component {
       res.push(this.renderRightDropdown());
     } else {
       res.push(
-        <Menu.Item key="1" style={{float: 'right', marginRight: '20px'}}>
-          <a href="/register">
+        <Menu.Item key="100" style={{float: 'right', marginRight: '20px'}}>
+          <Link to="/register">
             Register
-          </a>
+          </Link>
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="2" style={{float: 'right'}}>
-          <a href="/login">
+        <Menu.Item key="101" style={{float: 'right'}}>
+          <Link to="/login">
             Login
-          </a>
-        </Menu.Item>
-      );
-      res.push(
-        <Menu.Item key="4" style={{float: 'right'}}>
-          <a href="/">
-            Home
-          </a>
+          </Link>
         </Menu.Item>
       );
     }
@@ -195,37 +181,37 @@ class App extends Component {
 
     res.push(
       <Menu.Item key="0">
-        <a href="/">
+        <Link to="/">
           Home
-        </a>
+        </Link>
       </Menu.Item>
     );
     res.push(
       <Menu.Item key="1">
-        <a href="/organizations">
+        <Link to="/organizations">
           Organizations
-        </a>
+        </Link>
       </Menu.Item>
     );
     res.push(
       <Menu.Item key="2">
-        <a href="/users">
+        <Link to="/users">
           Users
-        </a>
+        </Link>
       </Menu.Item>
     );
     res.push(
       <Menu.Item key="3">
-        <a href="/providers">
+        <Link to="/providers">
           Providers
-        </a>
+        </Link>
       </Menu.Item>
     );
     res.push(
       <Menu.Item key="4">
-        <a href="/applications">
+        <Link to="/applications">
           Applications
-        </a>
+        </Link>
       </Menu.Item>
     );
 

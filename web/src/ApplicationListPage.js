@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 import {Button, Col, Popconfirm, Row, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
@@ -76,7 +77,9 @@ class ApplicationListPage extends React.Component {
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record, index) => {
           return (
-            <a href={`/applications/${text}`}>{text}</a>
+            <Link to={`/applications/${text}`}>
+              {text}
+            </Link>
           )
         }
       },
@@ -104,11 +107,9 @@ class ApplicationListPage extends React.Component {
         width: '100px',
         render: (text, record, index) => {
           return (
-            <div>
-              <a target="_blank" href={text}>
-                <img src={text} alt={text} width={150} style={{marginBottom: '20px'}}/>
-              </a>
-            </div>
+            <a target="_blank" href={text}>
+              <img src={text} alt={text} width={150} />
+            </a>
           )
         }
       },
@@ -127,7 +128,7 @@ class ApplicationListPage extends React.Component {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => Setting.goToLink(`/applications/${record.name}`)}>Edit</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/applications/${record.name}`)}>Edit</Button>
               <Popconfirm
                 title={`Sure to delete application: ${record.name} ?`}
                 onConfirm={() => this.deleteApplication(index)}
