@@ -60,6 +60,15 @@ func GetUser(id string) *User {
 	return getUser(owner, name)
 }
 
+func HasUser(id string) bool {
+	return GetUser(id) != nil
+}
+
+func IsPasswordCorrect(userId string, password string) bool {
+	user := GetUser(userId)
+	return user.Password == password
+}
+
 func UpdateUser(id string, user *User) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if getUser(owner, name) == nil {
