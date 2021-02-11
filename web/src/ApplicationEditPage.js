@@ -135,6 +135,13 @@ class ApplicationEditPage extends React.Component {
             Face Preview:
           </Col>
           <Col span={22} >
+            <a style={{marginBottom: '10px'}} target="_blank" href={`/doors/${this.state.application.name}`}>
+              {
+                `${window.location.host}/doors/${this.state.application.name}`
+              }
+            </a>
+            <br/>
+            <br/>
             <div style={{width: "500px", height: "600px", border: "1px solid rgb(217,217,217)"}}>
               <Face application={this.state.application} />
             </div>

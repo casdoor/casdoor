@@ -27,6 +27,7 @@ import ProviderListPage from "./ProviderListPage";
 import ProviderEditPage from "./ProviderEditPage";
 import ApplicationListPage from "./ApplicationListPage";
 import ApplicationEditPage from "./ApplicationEditPage";
+import Face from "./Face";
 
 const { Header, Footer } = Layout;
 
@@ -308,7 +309,19 @@ class App extends Component {
     )
   }
 
+  isDoorPages() {
+    return window.location.pathname.startsWith('/doors/');
+  }
+
   render() {
+    if (this.isDoorPages()) {
+      return (
+        <Switch>
+          <Route exact path="/doors/:applicationName" component={Face}/>
+        </Switch>
+      )
+    }
+
     return (
       <div id="parent-area">
         <BackTop />

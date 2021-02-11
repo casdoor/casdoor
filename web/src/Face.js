@@ -1,13 +1,37 @@
 import React from "react";
 import {Button, Checkbox, Col, Form, Input, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
+import * as ApplicationBackend from "./backend/ApplicationBackend";
 
 class Face extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
+      applicationName: props.match === undefined ? null : props.match.params.applicationName,
+      application: null,
     };
+  }
+
+  componentWillMount() {
+    this.getApplication();
+  }
+
+  getApplication() {
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
+      .then((application) => {
+        this.setState({
+          application: application,
+        });
+      });
+  }
+
+  getApplicationObj() {
+    if (this.props.application !== undefined) {
+      return this.props.application;
+    } else {
+      return this.state.application;
+    }
   }
 
   renderForm() {
@@ -64,13 +88,15 @@ class Face extends React.Component {
   }
 
   render() {
+    const application = this.getApplicationObj();
+
     return (
       <Row>
         <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
           <div style={{marginTop: "80px", textAlign: "center"}}>
-            <img src={this.props.application.logo} alt={this.props.application.displayName} style={{marginBottom: '50px'}}/>
+            <img src={application?.logo} alt={application?.displayName} style={{marginBottom: '50px'}}/>
             {
-              this.renderForm(this.props.application)
+              this.renderForm(application)
             }
           </div>
         </Col>
