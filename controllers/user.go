@@ -20,6 +20,11 @@ import (
 	"github.com/casdoor/casdoor/object"
 )
 
+func (c *ApiController) GetGlobalUsers() {
+	c.Data["json"] = object.GetGlobalUsers()
+	c.ServeJSON()
+}
+
 func (c *ApiController) GetUsers() {
 	owner := c.Input().Get("owner")
 

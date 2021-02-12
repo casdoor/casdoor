@@ -31,6 +31,16 @@ type User struct {
 	Phone        string `xorm:"varchar(100)" json:"phone"`
 }
 
+func GetGlobalUsers() []*User {
+	users := []*User{}
+	err := adapter.engine.Desc("created_time").Find(&users)
+	if err != nil {
+		panic(err)
+	}
+
+	return users
+}
+
 func GetUsers(owner string) []*User {
 	users := []*User{}
 	err := adapter.engine.Desc("created_time").Find(&users, &User{Owner: owner})

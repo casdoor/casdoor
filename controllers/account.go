@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -92,16 +93,17 @@ func (c *ApiController) Login() {
 		panic(err)
 	}
 
-	user, password := form.Username, form.Password
-	msg := object.CheckUserLogin(user, password)
+	userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
+	password := form.Password
+	msg := object.CheckUserLogin(userId, password)
 
 	if msg != "" {
 		resp = Response{Status: "error", Msg: msg, Data: ""}
 	} else {
-		c.SetSessionUser(user)
+		c.SetSessionUser(userId)
 
-		util.LogInfo(c.Ctx, "API: [%s] logged in", user)
-		resp = Response{Status: "ok", Msg: "", Data: user}
+		util.LogInfo(c.Ctx, "API: [%s] logged in", userId)
+		resp = Response{Status: "ok", Msg: "", Data: userId}
 	}
 
 	c.Data["json"] = resp

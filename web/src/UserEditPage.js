@@ -1,28 +1,42 @@
 import React from "react";
-import {Button, Card, Col, Input, Row} from 'antd';
-import {LinkOutlined} from "@ant-design/icons";
+import {Button, Card, Col, Input, Row, Select} from 'antd';
 import * as UserBackend from "./backend/UserBackend";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
+
+const { Option } = Select;
 
 class UserEditPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
+      organizationName: props.match.params.organizationName,
       userName: props.match.params.userName,
       user: null,
+      organizations: [],
     };
   }
 
   componentWillMount() {
     this.getUser();
+    this.getOrganizations();
   }
 
   getUser() {
-    UserBackend.getUser("admin", this.state.userName)
+    UserBackend.getUser(this.state.organizationName, this.state.userName)
       .then((user) => {
         this.setState({
           user: user,
+        });
+      });
+  }
+
+  getOrganizations() {
+    OrganizationBackend.getOrganizations("admin")
+      .then((res) => {
+        this.setState({
+          organizations: res,
         });
       });
   }
@@ -53,6 +67,18 @@ class UserEditPage extends React.Component {
         </div>
       } style={{marginLeft: '5px'}} type="inner">
         <Row style={{marginTop: '10px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Organization:
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: '100%'}} value={this.state.user.owner} onChange={(value => {this.updateUserField('owner', value);})}>
+              {
+                this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
             Name:
           </Col>
@@ -118,16 +144,18 @@ class UserEditPage extends React.Component {
 
   submitUserEdit() {
     let user = Setting.deepCopy(this.state.user);
-    UserBackend.updateUser(this.state.user.owner, this.state.userName, user)
+    UserBackend.updateUser(this.state.organizationName, this.state.userName, user)
       .then((res) => {
         if (res) {
           Setting.showMessage("success", `Successfully saved`);
           this.setState({
+            organizationName: this.state.user.owner,
             userName: this.state.user.name,
           });
-          this.props.history.push(`/users/${this.state.user.name}`);
+          this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
         } else {
           Setting.showMessage("error", `failed to save: server side failure`);
+          this.updateUserField('owner', this.state.organizationName);
           this.updateUserField('name', this.state.userName);
         }
       })

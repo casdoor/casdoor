@@ -40,7 +40,7 @@ class Face extends React.Component {
     AccountBackend.login(values)
       .then((res) => {
         if (res.status === 'ok') {
-          this.props.onLogined();
+          this.props.onLoggedIn();
           Setting.showMessage("success", `Logged in successfully`);
           Setting.goToLink("/");
         } else {
@@ -53,7 +53,10 @@ class Face extends React.Component {
     return (
       <Form
         name="normal_login"
-        initialValues={{ remember: true }}
+        initialValues={{
+          organization: this.getApplicationObj().organization,
+          remember: true
+        }}
         onFinish={this.onFinish.bind(this)}
         style={{width: "250px"}}
         size="large"
@@ -104,12 +107,15 @@ class Face extends React.Component {
 
   render() {
     const application = this.getApplicationObj();
+    if (application === null) {
+      return null;
+    }
 
     return (
       <Row>
         <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
           <div style={{marginTop: "80px", textAlign: "center"}}>
-            <img src={application?.logo} alt={application?.displayName} style={{marginBottom: '50px'}}/>
+            <img src={application.logo} alt={application.displayName} style={{marginBottom: '50px'}}/>
             {
               this.renderForm(application)
             }

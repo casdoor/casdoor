@@ -1,5 +1,12 @@
 import * as Setting from "../Setting";
 
+export function getGlobalUsers() {
+  return fetch(`${Setting.ServerUrl}/api/get-global-users`, {
+    method: "GET",
+    credentials: "include"
+  }).then(res => res.json());
+}
+
 export function getUsers(owner) {
   return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}`, {
     method: "GET",

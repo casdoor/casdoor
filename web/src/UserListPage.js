@@ -19,7 +19,7 @@ class UserListPage extends React.Component {
   }
 
   getUsers() {
-    UserBackend.getUsers("admin")
+    UserBackend.getGlobalUsers()
       .then((res) => {
         this.setState({
           users: res,
@@ -72,6 +72,20 @@ class UserListPage extends React.Component {
   renderTable(users) {
     const columns = [
       {
+        title: 'Organization',
+        dataIndex: 'owner',
+        key: 'owner',
+        width: '120px',
+        sorter: (a, b) => a.owner.localeCompare(b.owner),
+        render: (text, record, index) => {
+          return (
+            <a href={`/organizations/${text}`}>
+              {text}
+            </a>
+          )
+        }
+      },
+      {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
@@ -79,7 +93,7 @@ class UserListPage extends React.Component {
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record, index) => {
           return (
-            <Link to={`/users/${text}`}>
+            <Link to={`/users/${record.owner}/${text}`}>
               {text}
             </Link>
           )
@@ -138,7 +152,7 @@ class UserListPage extends React.Component {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/users/${record.name}`)}>Edit</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/users/${record.owner}/${record.name}`)}>Edit</Button>
               <Popconfirm
                 title={`Sure to delete user: ${record.name} ?`}
                 onConfirm={() => this.deleteUser(index)}

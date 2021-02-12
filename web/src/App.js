@@ -66,7 +66,7 @@ class App extends Component {
     }
   }
 
-  onLogined() {
+  onLoggedIn() {
     this.getAccount();
   }
 
@@ -226,7 +226,7 @@ class App extends Component {
     }
   }
 
-  renderLoginIfNotLogined(component) {
+  renderLoginIfNotLoggedIn(component) {
     if (this.state.account === null) {
       return <Redirect to='/login' />
     } else if (this.state.account === undefined) {
@@ -265,14 +265,14 @@ class App extends Component {
           </Menu>
         </Header>
         <Switch>
-          <Route exact path="/organizations" component={OrganizationListPage}/>
-          <Route exact path="/organizations/:organizationName" component={OrganizationEditPage}/>
-          <Route exact path="/users" component={UserListPage}/>
-          <Route exact path="/users/:userName" component={UserEditPage}/>
-          <Route exact path="/providers" component={ProviderListPage}/>
-          <Route exact path="/providers/:providerName" component={ProviderEditPage}/>
-          <Route exact path="/applications" component={ApplicationListPage}/>
-          <Route exact path="/applications/:applicationName" component={ApplicationEditPage}/>
+          <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/users/:organizationName/:userName" render={(props) => this.renderLoginIfNotLoggedIn(<UserEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/applications/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)}/>
         </Switch>
       </div>
     )

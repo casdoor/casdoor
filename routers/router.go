@@ -44,6 +44,7 @@ func initAPI() {
 	beego.Router("/api/add-organization", &controllers.ApiController{}, "POST:AddOrganization")
 	beego.Router("/api/delete-organization", &controllers.ApiController{}, "POST:DeleteOrganization")
 
+	beego.Router("/api/get-global-users", &controllers.ApiController{}, "GET:GetGlobalUsers")
 	beego.Router("/api/get-users", &controllers.ApiController{}, "GET:GetUsers")
 	beego.Router("/api/get-user", &controllers.ApiController{}, "GET:GetUser")
 	beego.Router("/api/update-user", &controllers.ApiController{}, "POST:UpdateUser")
