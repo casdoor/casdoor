@@ -28,6 +28,9 @@ import ProviderEditPage from "./ProviderEditPage";
 import ApplicationListPage from "./ApplicationListPage";
 import ApplicationEditPage from "./ApplicationEditPage";
 import Face from "./Face";
+import AccountPage from "./account/AccountPage";
+import LoginPage from "./account/LoginPage";
+import HomePage from "./HomePage";
 
 const { Header, Footer } = Layout;
 
@@ -175,9 +178,9 @@ class App extends Component {
   renderMenu() {
     let res = [];
 
-    // if (this.state.account === null || this.state.account === undefined) {
-    //   return [];
-    // }
+    if (this.state.account === null || this.state.account === undefined) {
+      return [];
+    }
 
     res.push(
       <Menu.Item key="0">
@@ -218,7 +221,7 @@ class App extends Component {
     return res;
   }
 
-  renderHomeIfLogined(component) {
+  renderHomeIfLoggedIn(component) {
     if (this.state.account !== null && this.state.account !== undefined) {
       return <Redirect to='/' />
     } else {
@@ -265,6 +268,9 @@ class App extends Component {
           </Menu>
         </Header>
         <Switch>
+          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<LoginPage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
+          <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
+          <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
@@ -303,7 +309,7 @@ class App extends Component {
     if (this.isDoorPages()) {
       return (
         <Switch>
-          <Route exact path="/doors/:applicationName" component={Face}/>
+          <Route exact path="/doors/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<Face account={this.state.account} onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
         </Switch>
       )
     }

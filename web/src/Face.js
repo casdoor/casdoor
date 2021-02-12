@@ -10,7 +10,7 @@ class Face extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      applicationName: props.match === undefined ? null : props.match.params.applicationName,
+      applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
     };
   }

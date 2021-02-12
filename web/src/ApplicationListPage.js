@@ -73,7 +73,7 @@ class ApplicationListPage extends React.Component {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
-        width: '120px',
+        width: '150px',
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record, index) => {
           return (
@@ -104,7 +104,7 @@ class ApplicationListPage extends React.Component {
         title: 'Logo',
         dataIndex: 'logo',
         key: 'logo',
-        width: '100px',
+        width: '250px',
         render: (text, record, index) => {
           return (
             <a target="_blank" href={text}>
