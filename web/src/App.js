@@ -31,6 +31,7 @@ import Face from "./Face";
 import AccountPage from "./account/AccountPage";
 import LoginPage from "./account/LoginPage";
 import HomePage from "./HomePage";
+import CustomGithubCorner from "./CustomGithubCorner";
 
 const { Header, Footer } = Layout;
 
@@ -317,6 +318,7 @@ class App extends Component {
     return (
       <div id="parent-area">
         <BackTop />
+        <CustomGithubCorner />
         <div id="content-wrap">
           {
             this.renderContent()
