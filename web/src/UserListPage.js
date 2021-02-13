@@ -125,7 +125,7 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: 'PasswordType',
+        title: 'Password Type',
         dataIndex: 'passwordType',
         key: 'passwordType',
         width: '150px',
@@ -162,8 +162,15 @@ class UserListPage extends React.Component {
         title: 'Email',
         dataIndex: 'email',
         key: 'email',
-        width: '150px',
+        width: '180px',
         sorter: (a, b) => a.email.localeCompare(b.email),
+        render: (text, record, index) => {
+          return (
+            <a href={`mailto:${text}`}>
+              {text}
+            </a>
+          )
+        }
       },
       {
         title: 'Phone',
