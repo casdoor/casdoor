@@ -17,40 +17,34 @@ import {withRouter} from "react-router-dom";
 import * as Setting from "../Setting";
 import * as AccountBackend from "../backend/AccountBackend";
 
-class CallbackBox extends React.Component {
+class AuthCallback extends React.Component {
   constructor(props) {
     super(props);
+    const params = new URLSearchParams(this.props.location.search);
     this.state = {
       classes: props,
       providerType: props.match.params.providerType,
       providerName: props.match.params.providerName,
       addition: props.match.params.addition,
-      state: "",
-      code: "",
+      state: params.get("state"),
+      code: params.get("code"),
       isAuthenticated: false,
       isSignedUp: false,
       email: ""
     };
-    const params = new URLSearchParams(this.props.location.search);
-    this.state.code = params.get("code");
-    this.state.state = params.get("state");
   }
 
   getAuthenticatedInfo() {
     let redirectUrl;
     redirectUrl = `${Setting.ClientUrl}/callback/${this.state.providerType}/${this.state.providerName}/${this.state.addition}`;
-    switch (this.state.providerType) {
-      case "github":
-        AccountBackend.githubLogin(this.state.providerName, this.state.code, this.state.state, redirectUrl, this.state.addition)
-          .then((res) => {
-            if (res.status === "ok") {
-              window.location.href = '/';
-            }else {
-              Setting.showMessage("error", res?.msg);
-            }
-          });
-        break;
-    }
+    AccountBackend.authLogin(this.state.providerName, this.state.code, this.state.state, redirectUrl, this.state.addition)
+      .then((res) => {
+        if (res.status === "ok") {
+          window.location.href = '/';
+        }else {
+          Setting.showMessage("error", res?.msg);
+        }
+      });
   }
 
   componentDidMount() {
@@ -68,4 +62,4 @@ class CallbackBox extends React.Component {
   }
 }
 
-export default withRouter(CallbackBox);
+export default withRouter(AuthCallback);

@@ -51,7 +51,7 @@ export function logout() {
   }).then(res => res.json());
 }
 
-export function githubLogin(providerName, code, state, redirectUrl, addition) {
+export function authLogin(providerName, code, state, redirectUrl, addition) {
   console.log(redirectUrl)
   return fetch(`${Setting.ServerUrl}/api/auth/github?provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUrl}&addition=${addition}`, {
     method: 'GET',

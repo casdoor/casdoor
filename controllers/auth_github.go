@@ -89,7 +89,7 @@ func (c *ApiController) AuthGithub() {
 		if err != nil {
 			panic(err)
 		}
-		req.Header.Add("Authorization", "token " + token.AccessToken)
+		req.Header.Add("Authorization", "token "+token.AccessToken)
 		response, err := httpClient.Do(req)
 		if err != nil {
 			panic(err)
@@ -115,7 +115,7 @@ func (c *ApiController) AuthGithub() {
 		if err != nil {
 			panic(err)
 		}
-		req.Header.Add("Authorization", "token " + token.AccessToken)
+		req.Header.Add("Authorization", "token "+token.AccessToken)
 		response2, err := httpClient.Do(req)
 		if err != nil {
 			panic(err)
@@ -175,6 +175,5 @@ func (c *ApiController) AuthGithub() {
 	}
 
 	c.Data["json"] = resp
-
 	c.ServeJSON()
 }

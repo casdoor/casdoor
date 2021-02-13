@@ -32,7 +32,7 @@ import AccountPage from "./account/AccountPage";
 import LoginPage from "./account/LoginPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
-import CallbackBox from "./common/AuthBox";
+import AuthCallback from "./common/AuthCallback";
 
 const { Header, Footer } = Layout;
 
@@ -274,7 +274,7 @@ class App extends Component {
         </Header>
         <Switch>
           <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<LoginPage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
-          <Route exact path="/callback/:providerType/:providerName/:addition" component={CallbackBox}/>
+          <Route exact path="/callback/:providerType/:providerName/:addition" component={AuthCallback}/>
           <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
           <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>
