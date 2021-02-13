@@ -17,6 +17,7 @@ import {Button, Card, Col, Input, Row, Select} from 'antd';
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
+import {LinkOutlined} from "@ant-design/icons";
 
 const { Option } = Select;
 
@@ -104,6 +105,43 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
+            Display Name:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.displayName} onChange={e => {
+              this.updateUserField('displayName', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Avatar:
+          </Col>
+          <Col span={22} >
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={1}>
+                URL:
+              </Col>
+              <Col span={23} >
+                <Input prefix={<LinkOutlined/>} value={this.state.user.avatar} onChange={e => {
+                  this.updateUserField('avatar', e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={1}>
+                Preview:
+              </Col>
+              <Col span={23} >
+                <a target="_blank" href={this.state.user.avatar}>
+                  <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: '20px'}}/>
+                </a>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
             Password Type:
           </Col>
           <Col span={22} >
@@ -119,16 +157,6 @@ class UserEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.user.password} onChange={e => {
               this.updateUserField('password', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
-            Display Name:
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.displayName} onChange={e => {
-              this.updateUserField('displayName', e.target.value);
             }} />
           </Col>
         </Row>

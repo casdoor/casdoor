@@ -49,6 +49,7 @@ class UserListPage extends React.Component {
       password: "123456",
       passwordType: "plain",
       displayName: `New User - ${this.state.users.length}`,
+      avatar: "https://casbin.org/img/casbin.svg",
       email: "user@example.com",
       phone: "1-12345678",
     }
@@ -143,6 +144,19 @@ class UserListPage extends React.Component {
         key: 'displayName',
         // width: '100px',
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
+      },
+      {
+        title: 'Avatar',
+        dataIndex: 'avatar',
+        key: 'avatar',
+        width: '100px',
+        render: (text, record, index) => {
+          return (
+            <a target="_blank" href={text}>
+              <img src={text} alt={text} width={50} />
+            </a>
+          )
+        }
       },
       {
         title: 'Email',
