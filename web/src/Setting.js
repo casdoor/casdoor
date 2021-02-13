@@ -116,6 +116,14 @@ export function getShortName(s) {
   return s.split('/').slice(-1)[0];
 }
 
+export function getShortText(s, maxLength=35) {
+  if (s.length > maxLength) {
+    return `${s.slice(0, maxLength)}...`;
+  } else {
+    return s;
+  }
+}
+
 function getRandomInt(s) {
   let hash = 0;
   if (s.length !== 0) {

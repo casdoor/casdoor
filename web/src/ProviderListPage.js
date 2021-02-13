@@ -130,13 +130,13 @@ class ProviderListPage extends React.Component {
         width: '150px',
         sorter: (a, b) => a.clientId.localeCompare(b.clientId),
       },
-      {
-        title: 'Client Secret',
-        dataIndex: 'clientSecret',
-        key: 'clientSecret',
-        width: '150px',
-        sorter: (a, b) => a.clientSecret.localeCompare(b.clientSecret),
-      },
+      // {
+      //   title: 'Client Secret',
+      //   dataIndex: 'clientSecret',
+      //   key: 'clientSecret',
+      //   width: '150px',
+      //   sorter: (a, b) => a.clientSecret.localeCompare(b.clientSecret),
+      // },
       {
         title: 'Provider Url',
         dataIndex: 'providerUrl',
@@ -146,7 +146,9 @@ class ProviderListPage extends React.Component {
         render: (text, record, index) => {
           return (
             <a target="_blank" href={text}>
-              {text}
+              {
+                Setting.getShortText(text)
+              }
             </a>
           )
         }

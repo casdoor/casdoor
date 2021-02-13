@@ -35,6 +35,10 @@ class Face extends React.Component {
   }
 
   getApplication() {
+    if (this.state.applicationName === null) {
+      return;
+    }
+
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
         this.setState({
@@ -117,9 +121,16 @@ class Face extends React.Component {
           </div>
         </Form.Item>
         <Form.Item>
-          <img width={30} height={30} src={Auth.GithubAuthLogo} alt={"GitHub"}
-               style={{cursor: "pointer"}} onClick={() => Auth.getGithubAuthCode("signup")}
-          />
+          {
+            this.getApplicationObj().providerObjs.map(provider => {
+              return (
+                <img width={30} height={30} src={Auth.getAuthLogo(provider)} alt={provider.displayName} style={{cursor: "pointer", margin: "3px"}} onClick={() => {
+                  window.location.href = Auth.getAuthUrl(provider, "signup");
+                }}
+                />
+              );
+            })
+          }
         </Form.Item>
       </Form>
     );

@@ -24,10 +24,11 @@ type Application struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName  string   `xorm:"varchar(100)" json:"displayName"`
-	Logo         string   `xorm:"varchar(100)" json:"logo"`
-	Organization string   `xorm:"varchar(100)" json:"organization"`
-	Providers    []string `xorm:"varchar(100)" json:"providers"`
+	DisplayName  string      `xorm:"varchar(100)" json:"displayName"`
+	Logo         string      `xorm:"varchar(100)" json:"logo"`
+	Organization string      `xorm:"varchar(100)" json:"organization"`
+	Providers    []string    `xorm:"varchar(100)" json:"providers"`
+	ProviderObjs []*Provider `xorm:"-" json:"providerObjs"`
 }
 
 func GetApplications(owner string) []*Application {
@@ -48,6 +49,18 @@ func getApplication(owner string, name string) *Application {
 	}
 
 	if existed {
+		providers := GetProviders(owner)
+		m := map[string]*Provider{}
+		for _, provider := range providers {
+			provider.ClientSecret = ""
+			provider.ProviderUrl = ""
+			m[provider.Name] = provider
+		}
+
+		application.ProviderObjs = []*Provider{}
+		for _, providerName := range application.Providers {
+			application.ProviderObjs = append(application.ProviderObjs, m[providerName])
+		}
 		return &application
 	} else {
 		return nil

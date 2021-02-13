@@ -28,7 +28,7 @@ type Provider struct {
 	Type         string `xorm:"varchar(100)" json:"type"`
 	ClientId     string `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret string `xorm:"varchar(100)" json:"clientSecret"`
-	ProviderUrl  string `xorm:"varchar(100)" json:"providerUrl"`
+	ProviderUrl  string `xorm:"varchar(200)" json:"providerUrl"`
 }
 
 func GetProviders(owner string) []*Provider {
