@@ -30,7 +30,7 @@ import ApplicationEditPage from "./ApplicationEditPage";
 import Face from "./Face";
 import AccountPage from "./account/AccountPage";
 import LoginPage from "./account/LoginPage";
-import HomePage from "./HomePage";
+import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
 
 const { Header, Footer } = Layout;
@@ -270,7 +270,7 @@ class App extends Component {
         </Header>
         <Switch>
           <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<LoginPage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
-          <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
+          <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
           <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} {...props} />)}/>

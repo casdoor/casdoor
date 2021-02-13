@@ -58,6 +58,10 @@ export function showMessage(type, text) {
   }
 }
 
+export function isAdminUser(account) {
+  return account.owner === "built-in";
+}
+
 export function deepCopy(obj) {
   return Object.assign({}, obj);
 }
