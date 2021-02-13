@@ -18,6 +18,7 @@ import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as AccountBackend from "./backend/AccountBackend";
 import * as Setting from "./Setting";
+import * as Auth from "./common/Auth";
 
 class Face extends React.Component {
   constructor(props) {
@@ -114,6 +115,11 @@ class Face extends React.Component {
           <div style={{float: "right"}}>
             No account yet, <a href="/register">sign up now</a>
           </div>
+        </Form.Item>
+        <Form.Item>
+          <img width={30} height={30} src={Auth.GithubAuthLogo} alt={"GitHub"}
+               style={{cursor: "pointer"}} onClick={() => Auth.getGithubAuthCode("signup")}
+          />
         </Form.Item>
       </Form>
     );

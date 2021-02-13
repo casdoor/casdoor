@@ -16,12 +16,22 @@ import {message} from "antd";
 import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
 
-export let ServerUrl = '';
+export let ServerUrl = "";
+export let ClientUrl = "";
 
 export function initServerUrl() {
   const hostname = window.location.hostname;
-  if (hostname === 'localhost') {
+  if (hostname === "localhost") {
     ServerUrl = `http://${hostname}:8000`;
+  }
+}
+
+export function initClientUrl() {
+  const hostname = window.location.hostname;
+  if (hostname === "localhost") {
+    ClientUrl = `http://${hostname}:7001`;
+  } else {
+    ClientUrl = `https://${hostname}`;
   }
 }
 
