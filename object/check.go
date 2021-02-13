@@ -1,5 +1,7 @@
 package object
 
+import "fmt"
+
 func CheckUserRegister(userId string, password string) string {
 	if len(userId) == 0 || len(password) == 0 {
 		return "username and password cannot be blank"
@@ -22,10 +24,14 @@ func CheckUserLogin(userId string, password string) string {
 	return ""
 }
 
+func (user *User) getId() string {
+	return fmt.Sprintf("%s/%s", user.Owner, user.Name)
+}
+
 func HasMail(email string) string {
 	user := GetMail(email)
 	if user != nil {
-		return user.Email
+		return user.getId()
 	}
 	return ""
 }
@@ -33,7 +39,7 @@ func HasMail(email string) string {
 func HasGithub(github string) string {
 	user := GetGithub(github)
 	if user != nil {
-		return user.Github
+		return user.getId()
 	}
 	return ""
 }
