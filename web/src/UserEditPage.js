@@ -95,6 +95,14 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
+            ID:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.id} disabled={true} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
             Name:
           </Col>
           <Col span={22} >

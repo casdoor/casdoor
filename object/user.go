@@ -24,6 +24,7 @@ type User struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
+	Id           string `xorm:"varchar(100)" json:"id"`
 	Password     string `xorm:"varchar(100)" json:"password"`
 	PasswordType string `xorm:"varchar(100)" json:"passwordType"`
 	DisplayName  string `xorm:"varchar(100)" json:"displayName"`
@@ -96,6 +97,7 @@ func UpdateUser(id string, user *User) bool {
 }
 
 func AddUser(user *User) bool {
+	user.Id = util.GenerateId()
 	affected, err := adapter.engine.Insert(user)
 	if err != nil {
 		panic(err)

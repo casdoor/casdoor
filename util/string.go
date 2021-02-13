@@ -17,6 +17,8 @@ package util
 import (
 	"errors"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 func GetOwnerAndNameFromId(id string) (string, string) {
@@ -26,4 +28,8 @@ func GetOwnerAndNameFromId(id string) (string, string) {
 	}
 
 	return tokens[0], tokens[1]
+}
+
+func GenerateId() string {
+	return uuid.NewString()
 }
