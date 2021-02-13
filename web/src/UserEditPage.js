@@ -26,8 +26,8 @@ class UserEditPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      organizationName: props.match.params.organizationName,
-      userName: props.match.params.userName,
+      organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
+      userName: props.userName !== undefined ? props.userName : props.match.params.userName,
       user: null,
       organizations: [],
     };
@@ -194,7 +194,10 @@ class UserEditPage extends React.Component {
             organizationName: this.state.user.owner,
             userName: this.state.user.name,
           });
-          this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
+
+          if (this.props.history !== undefined) {
+            this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
+          }
         } else {
           Setting.showMessage("error", `failed to save: server side failure`);
           this.updateUserField('owner', this.state.organizationName);
