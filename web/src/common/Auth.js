@@ -42,13 +42,14 @@ export function getAuthLogo(provider) {
 }
 
 export function getAuthUrl(provider, method) {
+  const redirectUri = `${Setting.ClientUrl}/callback/${provider.type}/${provider.name}/${method}`;
   if (provider.type === "google") {
-    return `${GoogleAuthUri}?client_id=${provider.clientId}&redirect_uri=${Setting.ClientUrl}/callback/google/${method}&scope=${GoogleAuthScope}&response_type=code&state=${AuthState}`;
+    return `${GoogleAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GoogleAuthScope}&response_type=code&state=${AuthState}`;
   } else if (provider.type === "github") {
-    return `${GithubAuthUri}?client_id=${provider.clientId}&redirect_uri=${Setting.ClientUrl}/callback/github/${method}&scope=${GithubAuthScope}&response_type=code&state=${AuthState}`;
+    return `${GithubAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GithubAuthScope}&response_type=code&state=${AuthState}`;
   } else if (provider.type === "qq") {
-    return `${QqAuthUri}?client_id=${provider.clientId}&redirect_uri=${Setting.ClientUrl}/callback/qq/${method}&scope=${QqAuthScope}&response_type=code&state=${AuthState}`;
+    return `${QqAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${QqAuthScope}&response_type=code&state=${AuthState}`;
   } else if (provider.type === "wechat") {
-    return `${WeChatAuthUri}?appid=${provider.clientId}&redirect_uri=${Setting.ClientUrl}/callback/wechat/${method}&scope=${WeChatAuthScope}&response_type=code&state=${AuthState}#wechat_redirect`;
+    return `${WeChatAuthUri}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${WeChatAuthScope}&response_type=code&state=${AuthState}#wechat_redirect`;
   }
 }

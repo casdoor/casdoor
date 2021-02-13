@@ -32,6 +32,7 @@ import AccountPage from "./account/AccountPage";
 import LoginPage from "./account/LoginPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
+import CallbackBox from "./common/AuthBox";
 
 const { Header, Footer } = Layout;
 
@@ -155,9 +156,9 @@ class App extends Component {
   renderAccount() {
     let res = [];
 
-    if (this.state.account !== null && this.state.account !== undefined) {
-      res.push(this.renderRightDropdown());
-    } else {
+    if (this.state.account === undefined) {
+      return null;
+    } else if (this.state.account === null) {
       res.push(
         <Menu.Item key="100" style={{float: 'right', marginRight: '20px'}}>
           <Link to="/register">
@@ -172,6 +173,8 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
+    } else {
+      res.push(this.renderRightDropdown());
     }
 
     return res;
@@ -271,6 +274,7 @@ class App extends Component {
         </Header>
         <Switch>
           <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<LoginPage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
+          <Route exact path="/callback/:providerType/:providerName/:addition" component={CallbackBox}/>
           <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
           <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>

@@ -21,3 +21,19 @@ func CheckUserLogin(userId string, password string) string {
 
 	return ""
 }
+
+func HasMail(email string) string {
+	user := GetMail(email)
+	if user != nil {
+		return user.Email
+	}
+	return ""
+}
+
+func HasGithub(github string) string {
+	user := GetGithub(github)
+	if user != nil {
+		return user.Github
+	}
+	return ""
+}

@@ -31,6 +31,8 @@ type User struct {
 	Avatar       string `xorm:"varchar(100)" json:"avatar"`
 	Email        string `xorm:"varchar(100)" json:"email"`
 	Phone        string `xorm:"varchar(100)" json:"phone"`
+
+	Github string `xorm:"varchar(100)" json:"github"`
 }
 
 func GetGlobalUsers() []*User {
@@ -108,6 +110,43 @@ func AddUser(user *User) bool {
 
 func DeleteUser(user *User) bool {
 	affected, err := adapter.engine.Id(core.PK{user.Owner, user.Name}).Delete(&User{})
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
+}
+
+func GetMail(email string) *User {
+	user := User{Email: email}
+	existed, err := adapter.engine.Get(&user)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &user
+	} else {
+		return nil
+	}
+}
+
+func GetGithub(github string) *User {
+	user := User{Github: github}
+	existed, err := adapter.engine.Get(&user)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &user
+	} else {
+		return nil
+	}
+}
+
+func LinkUserAccount(user, field, value string) bool {
+	affected, err := adapter.engine.Table(new(User)).ID(user).Update(map[string]interface{}{field: value})
 	if err != nil {
 		panic(err)
 	}
