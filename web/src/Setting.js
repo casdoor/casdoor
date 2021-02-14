@@ -17,7 +17,6 @@ import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
 
 export let ServerUrl = "";
-export let ClientUrl = "";
 
 export function initServerUrl() {
   const hostname = window.location.hostname;

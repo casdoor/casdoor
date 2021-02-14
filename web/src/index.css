@@ -29,3 +29,7 @@ code {
 .ant-list-sm .ant-list-item {
   padding: 2px !important;
 }
+
+.ant-layout-header {
+  background-color: white !important;
+}

@@ -32,6 +32,7 @@ import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
 
 import Face from "./auth/Face";
+import * as Auth from "./auth/AuthBackend";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 
@@ -47,6 +48,7 @@ class App extends Component {
     };
 
     Setting.initServerUrl();
+    Auth.setAuthServerUrl(Setting.ServerUrl);
   }
 
   componentWillMount() {

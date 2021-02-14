@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from "../Setting";
+let ServerUrl = "https://door.casbin.com";
 
-const ServerUrl = Setting.ServerUrl;
+export function setAuthServerUrl(serverUrl) {
+  ServerUrl = serverUrl;
+}
 
 export function getAccount() {
   return fetch(`${ServerUrl}/api/get-account`, {
