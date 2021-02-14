@@ -27,12 +27,12 @@ import ProviderEditPage from "./ProviderEditPage";
 import ApplicationListPage from "./ApplicationListPage";
 import ApplicationEditPage from "./ApplicationEditPage";
 import AccountPage from "./account/AccountPage";
-import LoginPage from "./account/LoginPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
 
+import * as Auth from "./auth/Auth";
 import Face from "./auth/Face";
-import * as Auth from "./auth/AuthBackend";
+import LoginPage from "./auth/LoginPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 
@@ -48,7 +48,10 @@ class App extends Component {
     };
 
     Setting.initServerUrl();
-    Auth.setAuthServerUrl(Setting.ServerUrl);
+    Auth.initAuthWithConfig({
+      serverUrl: Setting.ServerUrl,
+      appName: "app-built-in",
+    });
   }
 
   componentWillMount() {
@@ -76,12 +79,6 @@ class App extends Component {
 
   onLoggedIn() {
     this.getAccount();
-  }
-
-  onUpdateAccount(account) {
-    this.setState({
-      account: account
-    });
   }
 
   getAccount() {

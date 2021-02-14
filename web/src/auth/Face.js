@@ -15,9 +15,8 @@
 import React from "react";
 import {Button, Checkbox, Col, Form, Input, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
-import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as AuthBackend from "./AuthBackend";
-import * as Auth from "./Auth";
+import * as Provider from "./Provider";
 import * as Util from "./Util";
 
 class Face extends React.Component {
@@ -39,7 +38,7 @@ class Face extends React.Component {
       return;
     }
 
-    ApplicationBackend.getApplication("admin", this.state.applicationName)
+    AuthBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
         this.setState({
           application: application,
@@ -129,8 +128,8 @@ class Face extends React.Component {
           {
             this.getApplicationObj().providerObjs.map(provider => {
               return (
-                <img width={30} height={30} src={Auth.getAuthLogo(provider)} alt={provider.displayName} style={{cursor: "pointer", margin: "3px"}} onClick={() => {
-                  window.location.href = Auth.getAuthUrl(provider, "signup");
+                <img width={30} height={30} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{cursor: "pointer", margin: "3px"}} onClick={() => {
+                  window.location.href = Provider.getAuthUrl(provider, "signup");
                 }}
                 />
               );

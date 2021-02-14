@@ -12,21 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-let ServerUrl = "https://door.casbin.com";
-
-export function setAuthServerUrl(serverUrl) {
-  ServerUrl = serverUrl;
-}
+import {authConfig} from "./Auth";
 
 export function getAccount() {
-  return fetch(`${ServerUrl}/api/get-account`, {
+  return fetch(`${authConfig.serverUrl}/api/get-account`, {
     method: 'GET',
     credentials: 'include'
   }).then(res => res.json());
 }
 
 export function register(values) {
-  return fetch(`${ServerUrl}/api/register`, {
+  return fetch(`${authConfig.serverUrl}/api/register`, {
     method: 'POST',
     credentials: "include",
     body: JSON.stringify(values),
@@ -34,7 +30,7 @@ export function register(values) {
 }
 
 export function login(values) {
-  return fetch(`${ServerUrl}/api/login`, {
+  return fetch(`${authConfig.serverUrl}/api/login`, {
     method: 'POST',
     credentials: "include",
     body: JSON.stringify(values),
@@ -42,15 +38,22 @@ export function login(values) {
 }
 
 export function logout() {
-  return fetch(`${ServerUrl}/api/logout`, {
+  return fetch(`${authConfig.serverUrl}/api/logout`, {
     method: 'POST',
     credentials: "include",
   }).then(res => res.json());
 }
 
 export function authLogin(providerName, code, state, redirectUrl, method) {
-  return fetch(`${ServerUrl}/api/auth/login?provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUrl}&method=${method}`, {
+  return fetch(`${authConfig.serverUrl}/api/auth/login?provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUrl}&method=${method}`, {
     method: 'GET',
     credentials: 'include',
+  }).then(res => res.json());
+}
+
+export function getApplication(owner, name) {
+  return fetch(`${authConfig.serverUrl}/api/get-application?id=${owner}/${encodeURIComponent(name)}`, {
+    method: "GET",
+    credentials: "include"
   }).then(res => res.json());
 }

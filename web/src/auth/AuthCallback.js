@@ -16,7 +16,6 @@ import React from "react";
 import {message, Spin} from "antd";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
-import {getClientUrl} from "./Auth";
 
 class AuthCallback extends React.Component {
   constructor(props) {
@@ -49,7 +48,7 @@ class AuthCallback extends React.Component {
 
   authLogin() {
     let redirectUrl;
-    redirectUrl = `${getClientUrl()}/callback/${this.state.providerType}/${this.state.providerName}/${this.state.method}`;
+    redirectUrl = `${window.location.origin}/callback/${this.state.providerType}/${this.state.providerName}/${this.state.method}`;
     AuthBackend.authLogin(this.state.providerName, this.state.code, this.state.state, redirectUrl, this.state.method)
       .then((res) => {
         if (res.status === "ok") {
