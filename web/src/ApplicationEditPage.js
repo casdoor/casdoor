@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select} from 'antd';
+import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
 import {LinkOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
@@ -150,6 +150,16 @@ class ApplicationEditPage extends React.Component {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
             </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Enable Password:
+          </Col>
+          <Col span={1} >
+            {
+              <Switch checked={this.state.application.enablePassword} onChange={(checked => {this.updateApplicationField('enablePassword', checked);})} />
+            }
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

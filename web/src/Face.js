@@ -87,6 +87,7 @@ class Face extends React.Component {
           <Input
             prefix={<UserOutlined className="site-form-item-icon" />}
             placeholder="username"
+            disabled={!this.getApplicationObj().enablePassword}
           />
         </Form.Item>
         <Form.Item
@@ -97,11 +98,14 @@ class Face extends React.Component {
             prefix={<LockOutlined className="site-form-item-icon" />}
             type="password"
             placeholder="password"
+            disabled={!this.getApplicationObj().enablePassword}
           />
         </Form.Item>
         <Form.Item>
           <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox style={{float: "left"}}>Auto login</Checkbox>
+            <Checkbox style={{float: "left"}} disabled={!this.getApplicationObj().enablePassword}>
+              Auto login
+            </Checkbox>
           </Form.Item>
           <a style={{float: "right"}} href="">
             Forgot password?
@@ -113,6 +117,7 @@ class Face extends React.Component {
             type="primary"
             htmlType="submit"
             style={{width: "100%"}}
+            disabled={!this.getApplicationObj().enablePassword}
           >
             Login
           </Button>
