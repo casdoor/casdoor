@@ -15,7 +15,7 @@
 import React from "react";
 import {message, Spin} from "antd";
 import {withRouter} from "react-router-dom";
-import * as AccountBackend from "../backend/AccountBackend";
+import * as AuthBackend from "./AuthBackend";
 import {getClientUrl} from "./Auth";
 
 class AuthCallback extends React.Component {
@@ -50,7 +50,7 @@ class AuthCallback extends React.Component {
   authLogin() {
     let redirectUrl;
     redirectUrl = `${getClientUrl()}/callback/${this.state.providerType}/${this.state.providerName}/${this.state.addition}`;
-    AccountBackend.authLogin(this.state.providerName, this.state.code, this.state.state, redirectUrl, this.state.addition)
+    AuthBackend.authLogin(this.state.providerName, this.state.code, this.state.state, redirectUrl, this.state.addition)
       .then((res) => {
         if (res.status === "ok") {
           window.location.href = '/';

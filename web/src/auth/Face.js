@@ -16,9 +16,9 @@ import React from "react";
 import {Button, Checkbox, Col, Form, Input, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
-import * as AccountBackend from "../backend/AccountBackend";
-import * as Setting from "../Setting";
+import * as AuthBackend from "./AuthBackend";
 import * as Auth from "./Auth";
+import * as Util from "./Util";
 
 class Face extends React.Component {
   constructor(props) {
@@ -56,14 +56,14 @@ class Face extends React.Component {
   }
 
   onFinish(values) {
-    AccountBackend.login(values)
+    AuthBackend.login(values)
       .then((res) => {
         if (res.status === 'ok') {
           this.props.onLoggedIn();
-          Setting.showMessage("success", `Logged in successfully`);
-          Setting.goToLink("/");
+          Util.showMessage("success", `Logged in successfully`);
+          Util.goToLink("/");
         } else {
-          Setting.showMessage("error", `Log in failed：${res.msg}`);
+          Util.showMessage("error", `Log in failed：${res.msg}`);
         }
       });
   };

@@ -18,7 +18,6 @@ import * as Setting from "./Setting";
 import {DownOutlined, LogoutOutlined, SettingOutlined} from '@ant-design/icons';
 import {Avatar, BackTop, Dropdown, Layout, Menu} from 'antd';
 import {Switch, Route, withRouter, Redirect, Link} from 'react-router-dom'
-import * as AccountBackend from "./backend/AccountBackend";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
 import UserListPage from "./UserListPage";
@@ -31,7 +30,9 @@ import AccountPage from "./account/AccountPage";
 import LoginPage from "./account/LoginPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
+
 import Face from "./auth/Face";
+import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 
 const { Header, Footer } = Layout;
@@ -82,7 +83,7 @@ class App extends Component {
   }
 
   getAccount() {
-    AccountBackend.getAccount()
+    AuthBackend.getAccount()
       .then((res) => {
         const account = Setting.parseJson(res.data);
         this.setState({
@@ -97,7 +98,7 @@ class App extends Component {
       submitted: false,
     });
 
-    AccountBackend.logout()
+    AuthBackend.logout()
       .then((res) => {
         if (res.status === 'ok') {
           this.setState({
