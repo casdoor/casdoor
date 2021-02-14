@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Col, Popconfirm, Row, Table} from 'antd';
+import {Button, Col, Popconfirm, Row, Switch, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
@@ -131,13 +131,13 @@ class UserListPage extends React.Component {
         width: '150px',
         sorter: (a, b) => a.passwordType.localeCompare(b.passwordType),
       },
-      {
-        title: 'Password',
-        dataIndex: 'password',
-        key: 'password',
-        width: '150px',
-        sorter: (a, b) => a.password.localeCompare(b.password),
-      },
+      // {
+      //   title: 'Password',
+      //   dataIndex: 'password',
+      //   key: 'password',
+      //   width: '150px',
+      //   sorter: (a, b) => a.password.localeCompare(b.password),
+      // },
       {
         title: 'Display Name',
         dataIndex: 'displayName',
@@ -178,6 +178,25 @@ class UserListPage extends React.Component {
         key: 'phone',
         width: '120px',
         sorter: (a, b) => a.phone.localeCompare(b.phone),
+      },
+      {
+        title: 'Affiliation',
+        dataIndex: 'affiliation',
+        key: 'affiliation',
+        width: '120px',
+        sorter: (a, b) => a.affiliation.localeCompare(b.affiliation),
+      },
+      {
+        title: 'Is Admin',
+        dataIndex: 'isAdmin',
+        key: 'isAdmin',
+        width: '120px',
+        sorter: (a, b) => a.isAdmin.localeCompare(b.isAdmin),
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          )
+        }
       },
       {
         title: 'Action',

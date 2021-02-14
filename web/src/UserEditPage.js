@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select} from 'antd';
+import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -185,6 +185,26 @@ class UserEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.user.phone} onChange={e => {
               this.updateUserField('phone', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Affiliation:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.affiliation} onChange={e => {
+              this.updateUserField('affiliation', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Is Admin:
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.user.isAdmin} onChange={checked => {
+              this.updateUserField('isAdmin', checked);
             }} />
           </Col>
         </Row>

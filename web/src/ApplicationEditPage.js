@@ -157,9 +157,9 @@ class ApplicationEditPage extends React.Component {
             Enable Password:
           </Col>
           <Col span={1} >
-            {
-              <Switch checked={this.state.application.enablePassword} onChange={(checked => {this.updateApplicationField('enablePassword', checked);})} />
-            }
+            <Switch checked={this.state.application.enablePassword} onChange={checked => {
+              this.updateApplicationField('enablePassword', checked);
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

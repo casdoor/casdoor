@@ -31,6 +31,8 @@ type User struct {
 	Avatar       string `xorm:"varchar(100)" json:"avatar"`
 	Email        string `xorm:"varchar(100)" json:"email"`
 	Phone        string `xorm:"varchar(100)" json:"phone"`
+	Affiliation  string `xorm:"varchar(100)" json:"affiliation"`
+	IsAdmin      bool   `json:"isAdmin"`
 
 	Github string `xorm:"varchar(100)" json:"github"`
 }
