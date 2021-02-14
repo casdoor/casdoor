@@ -104,7 +104,7 @@ class UserListPage extends React.Component {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
-        width: '120px',
+        width: '100px',
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record, index) => {
           return (
@@ -124,13 +124,13 @@ class UserListPage extends React.Component {
           return Setting.getFormattedDate(text);
         }
       },
-      {
-        title: 'Password Type',
-        dataIndex: 'passwordType',
-        key: 'passwordType',
-        width: '150px',
-        sorter: (a, b) => a.passwordType.localeCompare(b.passwordType),
-      },
+      // {
+      //   title: 'Password Type',
+      //   dataIndex: 'passwordType',
+      //   key: 'passwordType',
+      //   width: '150px',
+      //   sorter: (a, b) => a.passwordType.localeCompare(b.passwordType),
+      // },
       // {
       //   title: 'Password',
       //   dataIndex: 'password',
@@ -162,7 +162,7 @@ class UserListPage extends React.Component {
         title: 'Email',
         dataIndex: 'email',
         key: 'email',
-        width: '180px',
+        width: '160px',
         sorter: (a, b) => a.email.localeCompare(b.email),
         render: (text, record, index) => {
           return (
@@ -172,19 +172,26 @@ class UserListPage extends React.Component {
           )
         }
       },
-      {
-        title: 'Phone',
-        dataIndex: 'phone',
-        key: 'phone',
-        width: '120px',
-        sorter: (a, b) => a.phone.localeCompare(b.phone),
-      },
+      // {
+      //   title: 'Phone',
+      //   dataIndex: 'phone',
+      //   key: 'phone',
+      //   width: '120px',
+      //   sorter: (a, b) => a.phone.localeCompare(b.phone),
+      // },
       {
         title: 'Affiliation',
         dataIndex: 'affiliation',
         key: 'affiliation',
         width: '120px',
         sorter: (a, b) => a.affiliation.localeCompare(b.affiliation),
+      },
+      {
+        title: 'Tag',
+        dataIndex: 'tag',
+        key: 'tag',
+        width: '100px',
+        sorter: (a, b) => a.tag.localeCompare(b.tag),
       },
       {
         title: 'Is Admin',

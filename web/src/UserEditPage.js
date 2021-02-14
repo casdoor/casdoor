@@ -200,6 +200,24 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
+            Tag:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.tag} onChange={e => {
+              this.updateUserField('tag', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            GitHub:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.github} disabled={true} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
             Is Admin:
           </Col>
           <Col span={1} >

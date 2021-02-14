@@ -28,16 +28,16 @@ func (user *User) getId() string {
 	return fmt.Sprintf("%s/%s", user.Owner, user.Name)
 }
 
-func HasMail(email string) string {
-	user := GetMail(email)
+func HasMail(application *Application, email string) string {
+	user := GetMail(application.Organization, email)
 	if user != nil {
 		return user.getId()
 	}
 	return ""
 }
 
-func HasGithub(github string) string {
-	user := GetGithub(github)
+func HasGithub(application *Application, github string) string {
+	user := GetGithub(application.Organization, github)
 	if user != nil {
 		return user.getId()
 	}

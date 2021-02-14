@@ -42,12 +42,14 @@ var githubOauthConfig = &oauth2.Config{
 }
 
 func (c *ApiController) AuthLogin() {
+	applicationName := c.Input().Get("application")
 	providerName := c.Input().Get("provider")
 	code := c.Input().Get("code")
 	state := c.Input().Get("state")
 	method := c.Input().Get("method")
 	RedirectURL := c.Input().Get("redirect_url")
 
+	application := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
 	provider := object.GetProvider(fmt.Sprintf("admin/%s", providerName))
 	githubOauthConfig.ClientID = provider.ClientId
 	githubOauthConfig.ClientSecret = provider.ClientSecret
@@ -132,7 +134,7 @@ func (c *ApiController) AuthLogin() {
 	wg.Wait()
 
 	if method == "signup" {
-		userId := object.HasGithub(tempUserAccount.Login)
+		userId := object.HasGithub(application, tempUserAccount.Login)
 		if userId != "" {
 			//if len(object.GetMemberAvatar(userId)) == 0 {
 			//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, userId)
@@ -142,7 +144,7 @@ func (c *ApiController) AuthLogin() {
 			util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 			res.IsSignedUp = true
 		} else {
-			if userId := object.HasMail(res.Email); userId != "" {
+			if userId := object.HasMail(application, res.Email); userId != "" {
 				c.SetSessionUser(userId)
 				util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 				res.IsSignedUp = true

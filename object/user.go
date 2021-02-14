@@ -32,6 +32,7 @@ type User struct {
 	Email        string `xorm:"varchar(100)" json:"email"`
 	Phone        string `xorm:"varchar(100)" json:"phone"`
 	Affiliation  string `xorm:"varchar(100)" json:"affiliation"`
+	Tag          string `xorm:"varchar(100)" json:"tag"`
 	IsAdmin      bool   `json:"isAdmin"`
 
 	Github string `xorm:"varchar(100)" json:"github"`
@@ -119,8 +120,8 @@ func DeleteUser(user *User) bool {
 	return affected != 0
 }
 
-func GetMail(email string) *User {
-	user := User{Email: email}
+func GetMail(organizationName string, email string) *User {
+	user := User{Owner: organizationName, Email: email}
 	existed, err := adapter.engine.Get(&user)
 	if err != nil {
 		panic(err)
@@ -133,8 +134,8 @@ func GetMail(email string) *User {
 	}
 }
 
-func GetGithub(github string) *User {
-	user := User{Github: github}
+func GetGithub(organizationName string, github string) *User {
+	user := User{Owner: organizationName, Github: github}
 	existed, err := adapter.engine.Get(&user)
 	if err != nil {
 		panic(err)
