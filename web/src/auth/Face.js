@@ -128,10 +128,9 @@ class Face extends React.Component {
           {
             this.getApplicationObj().providerObjs.map(provider => {
               return (
-                <img width={30} height={30} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{cursor: "pointer", margin: "3px"}} onClick={() => {
-                  window.location.href = Provider.getAuthUrl(provider, "signup");
-                }}
-                />
+                <a href={Provider.getAuthUrl(provider, "signup")}>
+                  <img width={30} height={30} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: "3px"}} />
+                </a>
               );
             })
           }
