@@ -26,7 +26,7 @@ class AuthCallback extends React.Component {
       classes: props,
       providerType: props.match.params.providerType,
       providerName: props.match.params.providerName,
-      addition: props.match.params.addition,
+      method: props.match.params.method,
       state: params.get("state"),
       code: params.get("code"),
       isAuthenticated: false,
@@ -49,8 +49,8 @@ class AuthCallback extends React.Component {
 
   authLogin() {
     let redirectUrl;
-    redirectUrl = `${getClientUrl()}/callback/${this.state.providerType}/${this.state.providerName}/${this.state.addition}`;
-    AuthBackend.authLogin(this.state.providerName, this.state.code, this.state.state, redirectUrl, this.state.addition)
+    redirectUrl = `${getClientUrl()}/callback/${this.state.providerType}/${this.state.providerName}/${this.state.method}`;
+    AuthBackend.authLogin(this.state.providerName, this.state.code, this.state.state, redirectUrl, this.state.method)
       .then((res) => {
         if (res.status === "ok") {
           window.location.href = '/';

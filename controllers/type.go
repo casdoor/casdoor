@@ -31,5 +31,5 @@ type authResponse struct {
 	IsSignedUp      bool   `json:"isSignedUp"`
 	Email           string `json:"email"`
 	Avatar          string `json:"avatar"`
-	Addition        string `json:"addition"`
+	Method          string `json:"method"`
 }

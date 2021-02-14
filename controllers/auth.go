@@ -45,7 +45,7 @@ func (c *ApiController) AuthLogin() {
 	providerName := c.Input().Get("provider")
 	code := c.Input().Get("code")
 	state := c.Input().Get("state")
-	addition := c.Input().Get("addition")
+	method := c.Input().Get("method")
 	RedirectURL := c.Input().Get("redirect_url")
 
 	provider := object.GetProvider(fmt.Sprintf("admin/%s", providerName))
@@ -131,7 +131,7 @@ func (c *ApiController) AuthLogin() {
 	}()
 	wg.Wait()
 
-	if addition == "signup" {
+	if method == "signup" {
 		userId := object.HasGithub(tempUserAccount.Login)
 		if userId != "" {
 			//if len(object.GetMemberAvatar(userId)) == 0 {
@@ -151,7 +151,7 @@ func (c *ApiController) AuthLogin() {
 				res.IsSignedUp = false
 			}
 		}
-		res.Addition = tempUserAccount.Login
+		res.Method = tempUserAccount.Login
 		res.Avatar = tempUserAccount.AvatarUrl
 		resp = Response{Status: "ok", Msg: "success", Data: res}
 	} else {

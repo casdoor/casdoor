@@ -44,8 +44,8 @@ export function logout() {
   }).then(res => res.json());
 }
 
-export function authLogin(providerName, code, state, redirectUrl, addition) {
-  return fetch(`${Setting.ServerUrl}/api/auth/login?provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUrl}&addition=${addition}`, {
+export function authLogin(providerName, code, state, redirectUrl, method) {
+  return fetch(`${Setting.ServerUrl}/api/auth/login?provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUrl}&method=${method}`, {
     method: 'GET',
     credentials: 'include',
   }).then(res => res.json());
