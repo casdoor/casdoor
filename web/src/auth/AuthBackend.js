@@ -14,15 +14,17 @@
 
 import * as Setting from "../Setting";
 
+const ServerUrl = Setting.ServerUrl;
+
 export function getAccount() {
-  return fetch(`${Setting.ServerUrl}/api/get-account`, {
+  return fetch(`${ServerUrl}/api/get-account`, {
     method: 'GET',
     credentials: 'include'
   }).then(res => res.json());
 }
 
 export function register(values) {
-  return fetch(`${Setting.ServerUrl}/api/register`, {
+  return fetch(`${ServerUrl}/api/register`, {
     method: 'POST',
     credentials: "include",
     body: JSON.stringify(values),
@@ -30,7 +32,7 @@ export function register(values) {
 }
 
 export function login(values) {
-  return fetch(`${Setting.ServerUrl}/api/login`, {
+  return fetch(`${ServerUrl}/api/login`, {
     method: 'POST',
     credentials: "include",
     body: JSON.stringify(values),
@@ -38,14 +40,14 @@ export function login(values) {
 }
 
 export function logout() {
-  return fetch(`${Setting.ServerUrl}/api/logout`, {
+  return fetch(`${ServerUrl}/api/logout`, {
     method: 'POST',
     credentials: "include",
   }).then(res => res.json());
 }
 
 export function authLogin(providerName, code, state, redirectUrl, method) {
-  return fetch(`${Setting.ServerUrl}/api/auth/login?provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUrl}&method=${method}`, {
+  return fetch(`${ServerUrl}/api/auth/login?provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUrl}&method=${method}`, {
     method: 'GET',
     credentials: 'include',
   }).then(res => res.json());

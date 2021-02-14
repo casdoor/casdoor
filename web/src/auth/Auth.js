@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export const GoogleAuthScope  = "profile+email"
-export const GoogleAuthUri = "https://accounts.google.com/signin/oauth";
-export const GoogleAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_google.png";
-export const GithubAuthScope  = "user:email+read:user"
-export const GithubAuthUri = "https://github.com/login/oauth/authorize";
-export const GithubAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_github.png";
-export const QqAuthScope  = "get_user_info"
-export const QqAuthUri = "https://graph.qq.com/oauth2.0/authorize";
-export const QqAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_qq.png";
-export const WeChatAuthScope = "snsapi_login"
-export const WeChatAuthUri = "https://open.weixin.qq.com/connect/qrconnect";
-export const WeChatAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_wechat.png";
+const AuthState = "casdoor";
 
-export const AuthState = "casdoor";
+const GoogleAuthScope  = "profile+email"
+const GoogleAuthUri = "https://accounts.google.com/signin/oauth";
+const GoogleAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_google.png";
+const GithubAuthScope  = "user:email+read:user"
+const GithubAuthUri = "https://github.com/login/oauth/authorize";
+const GithubAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_github.png";
+const QqAuthScope  = "get_user_info"
+const QqAuthUri = "https://graph.qq.com/oauth2.0/authorize";
+const QqAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_qq.png";
+const WeChatAuthScope = "snsapi_login"
+const WeChatAuthUri = "https://open.weixin.qq.com/connect/qrconnect";
+const WeChatAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_wechat.png";
 
 export function getAuthLogo(provider) {
   if (provider.type === "google") {
