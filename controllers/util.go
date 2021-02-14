@@ -17,14 +17,18 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/astaxie/beego"
 	"golang.org/x/net/proxy"
 )
 
 var httpClient *http.Client
-var UseOAuthProxy = true
 
 func InitHttpClient() {
-	if !UseOAuthProxy {
+	useProxy, err := beego.AppConfig.Bool("UseProxy")
+	if err != nil {
+		panic(err)
+	}
+	if !useProxy{
 		httpClient = &http.Client{}
 		return
 	}
