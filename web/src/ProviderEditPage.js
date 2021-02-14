@@ -13,9 +13,11 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row} from 'antd';
+import {Button, Card, Col, Input, Row, Select} from 'antd';
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
+
+const { Option } = Select;
 
 class ProviderEditPage extends React.Component {
   constructor(props) {
@@ -87,17 +89,24 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            type:
+            Type:
           </Col>
           <Col span={22} >
-            <Input value={this.state.provider.type} onChange={e => {
-              this.updateProviderField('type', e.target.value);
-            }} />
+            <Select virtual={false} style={{width: '100%'}} value={this.state.provider.type} onChange={(value => {this.updateProviderField('type', value);})}>
+              {
+                [
+                  {id: 'google', name: 'Google'},
+                  {id: 'github', name: 'GitHub'},
+                  {id: 'qq', name: 'QQ'},
+                  {id: 'wechat', name: 'WeChat'},
+                ].map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Client Id:
+            Client ID:
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.clientId} onChange={e => {
@@ -117,7 +126,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Provider Url:
+            Provider URL:
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.providerUrl} onChange={e => {

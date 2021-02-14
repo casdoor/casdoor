@@ -114,7 +114,7 @@ class OrganizationListPage extends React.Component {
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
       },
       {
-        title: 'Website Url',
+        title: 'Website URL',
         dataIndex: 'websiteUrl',
         key: 'websiteUrl',
         width: '300px',

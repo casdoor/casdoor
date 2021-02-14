@@ -87,7 +87,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Website Url:
+            Website URL:
           </Col>
           <Col span={22} >
             <Input value={this.state.organization.websiteUrl} onChange={e => {

@@ -18,6 +18,7 @@ import {Button, Col, Popconfirm, Row, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
+import * as Auth from "./common/Auth";
 
 class ProviderListPage extends React.Component {
   constructor(props) {
@@ -120,8 +121,13 @@ class ProviderListPage extends React.Component {
         title: 'Type',
         dataIndex: 'type',
         key: 'type',
-        width: '150px',
+        width: '80px',
         sorter: (a, b) => a.type.localeCompare(b.type),
+        render: (text, record, index) => {
+          return (
+            <img width={30} height={30} src={Auth.getAuthLogo(record)} alt={record.displayName} />
+          )
+        }
       },
       {
         title: 'Client Id',
