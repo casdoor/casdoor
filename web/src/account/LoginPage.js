@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from 'react';
-import Face from "../Face";
+import Face from "../auth/Face";
 
 class LoginPage extends React.Component {
   render() {

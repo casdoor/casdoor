@@ -26,15 +26,6 @@ export function initServerUrl() {
   }
 }
 
-export function initClientUrl() {
-  const hostname = window.location.hostname;
-  if (hostname === "localhost") {
-    ClientUrl = `http://${hostname}:7001`;
-  } else {
-    ClientUrl = `https://${hostname}`;
-  }
-}
-
 export function parseJson(s) {
   if (s === "") {
     return null;

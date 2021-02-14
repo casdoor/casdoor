@@ -15,10 +15,10 @@
 import React from "react";
 import {Button, Checkbox, Col, Form, Input, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
-import * as ApplicationBackend from "./backend/ApplicationBackend";
-import * as AccountBackend from "./backend/AccountBackend";
-import * as Setting from "./Setting";
-import * as Auth from "./common/Auth";
+import * as ApplicationBackend from "../backend/ApplicationBackend";
+import * as AccountBackend from "../backend/AccountBackend";
+import * as Setting from "../Setting";
+import * as Auth from "./Auth";
 
 class Face extends React.Component {
   constructor(props) {

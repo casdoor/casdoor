@@ -19,7 +19,7 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
-import Face from "./Face";
+import Face from "./auth/Face";
 
 const { Option } = Select;
 

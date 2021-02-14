@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from "../Setting";
-
 export const GoogleAuthScope  = "profile+email"
 export const GoogleAuthUri = "https://accounts.google.com/signin/oauth";
 export const GoogleAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_google.png";
@@ -41,8 +39,17 @@ export function getAuthLogo(provider) {
   }
 }
 
+export function getClientUrl() {
+  const hostname = window.location.hostname;
+  if (hostname === "localhost") {
+    return `http://${hostname}:7001`;
+  } else {
+    return `https://${hostname}`;
+  }
+}
+
 export function getAuthUrl(provider, method) {
-  const redirectUri = `${Setting.ClientUrl}/callback/${provider.type}/${provider.name}/${method}`;
+  const redirectUri = `${getClientUrl()}/callback/${provider.type}/${provider.name}/${method}`;
   if (provider.type === "google") {
     return `${GoogleAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GoogleAuthScope}&response_type=code&state=${AuthState}`;
   } else if (provider.type === "github") {

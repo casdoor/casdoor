@@ -41,7 +41,7 @@ var githubOauthConfig = &oauth2.Config{
 	Endpoint:     githubEndpoint,
 }
 
-func (c *ApiController) AuthGithub() {
+func (c *ApiController) AuthLogin() {
 	providerName := c.Input().Get("provider")
 	code := c.Input().Get("code")
 	state := c.Input().Get("state")

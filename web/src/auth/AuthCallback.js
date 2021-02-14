@@ -13,9 +13,10 @@
 // limitations under the License.
 
 import React from "react";
+import {message, Spin} from "antd";
 import {withRouter} from "react-router-dom";
-import * as Setting from "../Setting";
 import * as AccountBackend from "../backend/AccountBackend";
+import {getClientUrl} from "./Auth";
 
 class AuthCallback extends React.Component {
   constructor(props) {
@@ -34,29 +35,35 @@ class AuthCallback extends React.Component {
     };
   }
 
-  getAuthenticatedInfo() {
+  componentWillMount() {
+    this.authLogin();
+  }
+
+  showMessage(type, text) {
+    if (type === "success") {
+      message.success(text);
+    } else if (type === "error") {
+      message.error(text);
+    }
+  }
+
+  authLogin() {
     let redirectUrl;
-    redirectUrl = `${Setting.ClientUrl}/callback/${this.state.providerType}/${this.state.providerName}/${this.state.addition}`;
+    redirectUrl = `${getClientUrl()}/callback/${this.state.providerType}/${this.state.providerName}/${this.state.addition}`;
     AccountBackend.authLogin(this.state.providerName, this.state.code, this.state.state, redirectUrl, this.state.addition)
       .then((res) => {
         if (res.status === "ok") {
           window.location.href = '/';
-        }else {
-          Setting.showMessage("error", res?.msg);
+        } else {
+          this.showMessage("error", res?.msg);
         }
       });
   }
 
-  componentDidMount() {
-    this.getAuthenticatedInfo();
-  }
-
   render() {
     return (
-      <div>
-        <h3>
-          Logging in ...
-        </h3>
+      <div style={{textAlign: "center"}}>
+        <Spin size="large" tip="Signing in..." style={{paddingTop: "10%"}} />
       </div>
     )
   }

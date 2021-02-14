@@ -18,7 +18,7 @@ import {Button, Col, Popconfirm, Row, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
-import * as Auth from "./common/Auth";
+import * as Auth from "./auth/Auth";
 
 class ProviderListPage extends React.Component {
   constructor(props) {

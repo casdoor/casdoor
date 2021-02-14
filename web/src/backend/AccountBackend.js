@@ -14,13 +14,6 @@
 
 import * as Setting from "../Setting";
 
-export function getUser(username) {
-  return fetch(`${Setting.ServerUrl}/api/get-user?username=${username}`, {
-    method: 'GET',
-    credentials: 'include'
-  }).then(res => res.json());
-}
-
 export function getAccount() {
   return fetch(`${Setting.ServerUrl}/api/get-account`, {
     method: 'GET',
@@ -52,8 +45,7 @@ export function logout() {
 }
 
 export function authLogin(providerName, code, state, redirectUrl, addition) {
-  console.log(redirectUrl)
-  return fetch(`${Setting.ServerUrl}/api/auth/github?provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUrl}&addition=${addition}`, {
+  return fetch(`${Setting.ServerUrl}/api/auth/login?provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUrl}&addition=${addition}`, {
     method: 'GET',
     credentials: 'include',
   }).then(res => res.json());

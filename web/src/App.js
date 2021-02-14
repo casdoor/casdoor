@@ -27,12 +27,12 @@ import ProviderListPage from "./ProviderListPage";
 import ProviderEditPage from "./ProviderEditPage";
 import ApplicationListPage from "./ApplicationListPage";
 import ApplicationEditPage from "./ApplicationEditPage";
-import Face from "./Face";
 import AccountPage from "./account/AccountPage";
 import LoginPage from "./account/LoginPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
-import AuthCallback from "./common/AuthCallback";
+import Face from "./auth/Face";
+import AuthCallback from "./auth/AuthCallback";
 
 const { Header, Footer } = Layout;
 
@@ -46,7 +46,6 @@ class App extends Component {
     };
 
     Setting.initServerUrl();
-    Setting.initClientUrl();
   }
 
   componentWillMount() {
