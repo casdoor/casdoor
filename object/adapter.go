@@ -15,6 +15,7 @@
 package object
 
 import (
+	"fmt"
 	"runtime"
 
 	"github.com/astaxie/beego"
@@ -65,7 +66,7 @@ func (a *Adapter) createDatabase() error {
 	}
 	defer engine.Close()
 
-	_, err = engine.Exec("CREATE DATABASE IF NOT EXISTS casdoor default charset utf8 COLLATE utf8_general_ci")
+	_, err = engine.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default charset utf8 COLLATE utf8_general_ci", beego.AppConfig.String("dbName")))
 	return err
 }
 
@@ -74,7 +75,7 @@ func (a *Adapter) open() {
 		panic(err)
 	}
 
-	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName+"casdoor")
+	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName+beego.AppConfig.String("dbName"))
 	if err != nil {
 		panic(err)
 	}
