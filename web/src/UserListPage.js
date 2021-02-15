@@ -46,12 +46,15 @@ class UserListPage extends React.Component {
       owner: "admin", // this.props.account.username,
       name: `user_${this.state.users.length}`,
       createdTime: moment().format(),
-      password: "123456",
+      password: "123",
       passwordType: "plain",
       displayName: `New User - ${this.state.users.length}`,
       avatar: "https://casbin.org/img/casbin.svg",
       email: "user@example.com",
       phone: "1-12345678",
+      affiliation: "Example Inc.",
+      tag: "staff",
+      isAdmin: false,
     }
   }
 
