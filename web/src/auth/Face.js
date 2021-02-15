@@ -149,7 +149,7 @@ class Face extends React.Component {
       <Row>
         <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
           <div style={{marginTop: "80px", textAlign: "center"}}>
-            <img src={application.logo} alt={application.displayName} style={{marginBottom: '50px'}}/>
+            <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '50px'}}/>
             {
               this.renderForm(application)
             }
