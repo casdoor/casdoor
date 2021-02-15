@@ -47,7 +47,7 @@ class ApplicationListPage extends React.Component {
       name: `application_${this.state.applications.length}`,
       createdTime: moment().format(),
       displayName: `New Application - ${this.state.applications.length}`,
-      logo: "https://cdn.jsdelivr.net/gh/casbin/static/img/logo@2x.png",
+      logo: "https://cdn.casbin.com/logo/logo_384x96.png",
       EnablePassword: true,
       providers: [],
     }

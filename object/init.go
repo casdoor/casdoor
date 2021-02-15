@@ -60,7 +60,7 @@ func initBuiltInApplication() {
 		Name:           "app-built-in",
 		CreatedTime:    util.GetCurrentTime(),
 		DisplayName:    "Casdoor",
-		Logo:           "https://cdn.jsdelivr.net/gh/casbin/static/img/logo@2x.png",
+		Logo:           "https://cdn.casbin.com/logo/logo_384x96.png",
 		Organization:   "built-in",
 		EnablePassword: true,
 		Providers:      []string{},
