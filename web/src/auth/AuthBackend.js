@@ -57,3 +57,10 @@ export function getApplication(owner, name) {
     credentials: "include"
   }).then(res => res.json());
 }
+
+export function getUsers(owner) {
+  return fetch(`${authConfig.serverUrl}/api/get-users?owner=${owner}`, {
+    method: "GET",
+    credentials: "include"
+  }).then(res => res.json());
+}
