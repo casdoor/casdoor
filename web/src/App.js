@@ -194,34 +194,37 @@ class App extends Component {
         </Link>
       </Menu.Item>
     );
-    res.push(
-      <Menu.Item key="1">
-        <Link to="/organizations">
-          Organizations
-        </Link>
-      </Menu.Item>
-    );
-    res.push(
-      <Menu.Item key="2">
-        <Link to="/users">
-          Users
-        </Link>
-      </Menu.Item>
-    );
-    res.push(
-      <Menu.Item key="3">
-        <Link to="/providers">
-          Providers
-        </Link>
-      </Menu.Item>
-    );
-    res.push(
-      <Menu.Item key="4">
-        <Link to="/applications">
-          Applications
-        </Link>
-      </Menu.Item>
-    );
+
+    if (Setting.isAdminUser(this.state.account)) {
+      res.push(
+        <Menu.Item key="1">
+          <Link to="/organizations">
+            Organizations
+          </Link>
+        </Menu.Item>
+      );
+      res.push(
+        <Menu.Item key="2">
+          <Link to="/users">
+            Users
+          </Link>
+        </Menu.Item>
+      );
+      res.push(
+        <Menu.Item key="3">
+          <Link to="/providers">
+            Providers
+          </Link>
+        </Menu.Item>
+      );
+      res.push(
+        <Menu.Item key="4">
+          <Link to="/applications">
+            Applications
+          </Link>
+        </Menu.Item>
+      );
+    }
 
     return res;
   }

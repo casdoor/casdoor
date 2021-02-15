@@ -209,6 +209,18 @@ class UserListPage extends React.Component {
         }
       },
       {
+        title: 'Is Global Admin',
+        dataIndex: 'isGlobalAdmin',
+        key: 'isGlobalAdmin',
+        width: '120px',
+        sorter: (a, b) => a.isGlobalAdmin.localeCompare(b.isGlobalAdmin),
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          )
+        }
+      },
+      {
         title: 'Action',
         dataIndex: '',
         key: 'op',

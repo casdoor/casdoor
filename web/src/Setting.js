@@ -59,7 +59,7 @@ export function showMessage(type, text) {
 }
 
 export function isAdminUser(account) {
-  return account.owner === "built-in";
+  return account.owner === "built-in" || account.isGlobalAdmin === true;
 }
 
 export function deepCopy(obj) {

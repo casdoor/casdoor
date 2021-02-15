@@ -24,16 +24,17 @@ type User struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Id           string `xorm:"varchar(100)" json:"id"`
-	Password     string `xorm:"varchar(100)" json:"password"`
-	PasswordType string `xorm:"varchar(100)" json:"passwordType"`
-	DisplayName  string `xorm:"varchar(100)" json:"displayName"`
-	Avatar       string `xorm:"varchar(100)" json:"avatar"`
-	Email        string `xorm:"varchar(100)" json:"email"`
-	Phone        string `xorm:"varchar(100)" json:"phone"`
-	Affiliation  string `xorm:"varchar(100)" json:"affiliation"`
-	Tag          string `xorm:"varchar(100)" json:"tag"`
-	IsAdmin      bool   `json:"isAdmin"`
+	Id            string `xorm:"varchar(100)" json:"id"`
+	Password      string `xorm:"varchar(100)" json:"password"`
+	PasswordType  string `xorm:"varchar(100)" json:"passwordType"`
+	DisplayName   string `xorm:"varchar(100)" json:"displayName"`
+	Avatar        string `xorm:"varchar(100)" json:"avatar"`
+	Email         string `xorm:"varchar(100)" json:"email"`
+	Phone         string `xorm:"varchar(100)" json:"phone"`
+	Affiliation   string `xorm:"varchar(100)" json:"affiliation"`
+	Tag           string `xorm:"varchar(100)" json:"tag"`
+	IsAdmin       bool   `json:"isAdmin"`
+	IsGlobalAdmin bool   `json:"isGlobalAdmin"`
 
 	Github string `xorm:"varchar(100)" json:"github"`
 }

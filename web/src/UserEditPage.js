@@ -216,16 +216,32 @@ class UserEditPage extends React.Component {
             <Input value={this.state.user.github} disabled={true} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
-            Is Admin:
-          </Col>
-          <Col span={1} >
-            <Switch checked={this.state.user.isAdmin} onChange={checked => {
-              this.updateUserField('isAdmin', checked);
-            }} />
-          </Col>
-        </Row>
+        {
+          !Setting.isAdminUser(this.props.account) ? null : (
+            <React.Fragment>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  Is Admin:
+                </Col>
+                <Col span={1} >
+                  <Switch checked={this.state.user.isAdmin} onChange={checked => {
+                    this.updateUserField('isAdmin', checked);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  Is Global Admin:
+                </Col>
+                <Col span={1} >
+                  <Switch checked={this.state.user.isGlobalAdmin} onChange={checked => {
+                    this.updateUserField('isGlobalAdmin', checked);
+                  }} />
+                </Col>
+              </Row>
+            </React.Fragment>
+          )
+        }
       </Card>
     )
   }

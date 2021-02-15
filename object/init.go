@@ -31,20 +31,21 @@ func initBuiltInUser() {
 	}
 
 	user = &User{
-		Owner:        "built-in",
-		Name:         "admin",
-		CreatedTime:  util.GetCurrentTime(),
-		Id:           util.GenerateId(),
-		Password:     "123",
-		PasswordType: "plain",
-		DisplayName:  "Admin",
-		Avatar:       "https://casbin.org/img/casbin.svg",
-		Email:        "admin@example.com",
-		Phone:        "1-12345678",
-		Affiliation:  "Example Inc.",
-		Tag:          "staff",
-		IsAdmin:      true,
-		Github:       "",
+		Owner:         "built-in",
+		Name:          "admin",
+		CreatedTime:   util.GetCurrentTime(),
+		Id:            util.GenerateId(),
+		Password:      "123",
+		PasswordType:  "plain",
+		DisplayName:   "Admin",
+		Avatar:        "https://casbin.org/img/casbin.svg",
+		Email:         "admin@example.com",
+		Phone:         "1-12345678",
+		Affiliation:   "Example Inc.",
+		Tag:           "staff",
+		IsAdmin:       true,
+		IsGlobalAdmin: true,
+		Github:        "",
 	}
 	AddUser(user)
 }
