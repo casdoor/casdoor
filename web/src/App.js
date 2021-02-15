@@ -51,6 +51,7 @@ class App extends Component {
     Auth.initAuthWithConfig({
       serverUrl: Setting.ServerUrl,
       appName: "app-built-in",
+      organizationName: "built-in",
     });
   }
 
