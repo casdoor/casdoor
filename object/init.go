@@ -5,6 +5,7 @@ import "github.com/casdoor/casdoor/util"
 func InitDb() {
 	initBuiltInOrganization()
 	initBuiltInUser()
+	initBuiltInApplication()
 }
 
 func initBuiltInOrganization() {
@@ -46,4 +47,23 @@ func initBuiltInUser() {
 		Github:       "",
 	}
 	AddUser(user)
+}
+
+func initBuiltInApplication() {
+	application := getApplication("admin", "app-built-in")
+	if application != nil {
+		return
+	}
+
+	application = &Application{
+		Owner:          "admin",
+		Name:           "app-built-in",
+		CreatedTime:    util.GetCurrentTime(),
+		DisplayName:    "Casdoor",
+		Logo:           "https://cdn.jsdelivr.net/gh/casbin/static/img/logo@2x.png",
+		Organization:   "built-in",
+		EnablePassword: true,
+		Providers:      []string{},
+	}
+	AddApplication(application)
 }
