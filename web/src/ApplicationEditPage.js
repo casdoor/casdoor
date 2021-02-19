@@ -20,6 +20,7 @@ import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import Face from "./auth/Face";
+import i18next from "i18next";
 
 const { Option } = Select;
 
@@ -89,13 +90,13 @@ class ApplicationEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          Edit Application&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitApplicationEdit.bind(this)}>Save</Button>
+          {i18next.t("application:Edit Application")}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button type="primary" onClick={this.submitApplicationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
         </div>
       } style={{marginLeft: '5px'}} type="inner">
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Name:
+            {i18next.t("general:Name")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.application.name} onChange={e => {
@@ -105,7 +106,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Display Name:
+            {i18next.t("general:Display Name")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.application.displayName} onChange={e => {
@@ -130,7 +131,7 @@ class ApplicationEditPage extends React.Component {
             </Row>
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={1}>
-                Preview:
+                {i18next.t("general:Preview")}:
               </Col>
               <Col span={23} >
                 <a target="_blank" href={this.state.application.logo}>
@@ -142,7 +143,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Organization:
+            {i18next.t("general:Organization")}:
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.application.organization} onChange={(value => {this.updateApplicationField('organization', value);})}>
@@ -154,7 +155,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Enable Password:
+            {i18next.t("application:Enable Password")}:
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enablePassword} onChange={checked => {
@@ -164,7 +165,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Providers:
+            {i18next.t("general:Providers")}:
           </Col>
           <Col span={22} >
             <Select mode="tags" style={{width: '100%'}}
@@ -180,7 +181,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Face Preview:
+            {i18next.t("application:Face Preview")}:
           </Col>
           <Col span={22} >
             <a style={{marginBottom: '10px'}} target="_blank" href={`/doors/${this.state.application.name}`}>
@@ -237,7 +238,7 @@ class ApplicationEditPage extends React.Component {
           <Col span={2}>
           </Col>
           <Col span={18}>
-            <Button type="primary" size="large" onClick={this.submitApplicationEdit.bind(this)}>Save</Button>
+            <Button type="primary" size="large" onClick={this.submitApplicationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
           </Col>
         </Row>
       </div>

@@ -18,6 +18,7 @@ import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import {LinkOutlined} from "@ant-design/icons";
+import i18next from "i18next";
 
 const { Option } = Select;
 
@@ -77,13 +78,13 @@ class UserEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          Edit User&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitUserEdit.bind(this)}>Save</Button>
+          {i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button type="primary" onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
         </div>
       } style={{marginLeft: '5px'}} type="inner">
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Organization:
+            {i18next.t("general:Organization")}:
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.user.owner} onChange={(value => {this.updateUserField('owner', value);})}>
@@ -103,7 +104,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Name:
+            {i18next.t("general:Name")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.user.name} onChange={e => {
@@ -113,7 +114,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Display Name:
+            {i18next.t("general:Display Name")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.user.displayName} onChange={e => {
@@ -123,7 +124,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Avatar:
+            {i18next.t("general:Avatar")}:
           </Col>
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
@@ -138,7 +139,7 @@ class UserEditPage extends React.Component {
             </Row>
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={1}>
-                Preview:
+                {i18next.t("general:Preview")}:
               </Col>
               <Col span={23} >
                 <a target="_blank" href={this.state.user.avatar}>
@@ -150,7 +151,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Password Type:
+            {i18next.t("general:Password Type")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.user.passwordType} onChange={e => {
@@ -160,7 +161,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Password:
+            {i18next.t("general:Password")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.user.password} onChange={e => {
@@ -170,7 +171,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Email:
+            {i18next.t("general:Email")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.user.email} onChange={e => {
@@ -180,7 +181,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Phone:
+            {i18next.t("general:Phone")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.user.phone} onChange={e => {
@@ -190,7 +191,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Affiliation:
+            {i18next.t("user:Affiliation")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.user.affiliation} onChange={e => {
@@ -200,7 +201,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Tag:
+            {i18next.t("user:Tag")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.user.tag} onChange={e => {
@@ -221,7 +222,7 @@ class UserEditPage extends React.Component {
             <React.Fragment>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  Is Admin:
+                  {i18next.t("user:Is Admin")}:
                 </Col>
                 <Col span={1} >
                   <Switch checked={this.state.user.isAdmin} onChange={checked => {
@@ -231,7 +232,7 @@ class UserEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  Is Global Admin:
+                  {i18next.t("user:Is Global Admin")}:
                 </Col>
                 <Col span={1} >
                   <Switch checked={this.state.user.isGlobalAdmin} onChange={checked => {
@@ -289,7 +290,7 @@ class UserEditPage extends React.Component {
           <Col span={2}>
           </Col>
           <Col span={18}>
-            <Button type="primary" size="large" onClick={this.submitUserEdit.bind(this)}>Save</Button>
+            <Button type="primary" size="large" onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
           </Col>
         </Row>
       </div>

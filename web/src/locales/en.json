@@ -1,0 +1,64 @@
+{
+  "general":
+  {
+    "Home": "Home",
+    "Organizations": "Organizations",
+    "Providers": "Providers",
+    "Users": "Users",
+    "Applications": "Applications",
+    "Save": "Save",
+    "Add": "Add",
+    "Action": "Action",
+    "Edit": "Edit",
+    "Delete": "Delete",
+    "Organization": "Organization",
+    "Created Time": "Created Time",
+    "Name": "Name",
+    "Display Name": "Display Name",
+    "Avatar": "Avatar",
+    "Preview": "Preview",
+    "Password Type": "Password Type",
+    "Password": "Password",
+    "Email": "Email",
+    "Phone": "Phone",
+    "Logo": "Logo",
+    "User containers": "User containers",
+    "Users under all organizations": "Users under all organizations",
+    "OAuth providers": "OAuth providers",
+    "Applications that requires authentication": "Applications that requires authentication"
+  },
+  "account": 
+  {
+    "My Account": "My Account",
+    "Login": "Login",
+    "Logout": "Logout",
+    "Register": "Register"
+  },
+  "organization":
+  {
+    "Edit Organization": "Edit Organization",
+    "Website URL": "Website URL"
+  },
+  "provider":
+  {
+    "Type": "Type",
+    "Client ID": "Client ID",
+    "Client Secret": "Client Secret",
+    "Provider URL": "Provider URL",
+    "Edit Provider": "Edit Provider"
+  },
+  "user":
+  {
+    "Edit User": "Edit User",
+    "Affiliation": "Affiliation",
+    "Tag": "Tag",
+    "Is Admin": "Is Admin",
+    "Is Global Admin": "Is Global Admin"
+  },
+  "application": 
+  {
+    "Edit Application": "Edit Application",
+    "Enable Password": "Enable Password",
+    "Face Preview": "Face Preview"
+  }
+}

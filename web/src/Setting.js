@@ -15,6 +15,8 @@
 import {message} from "antd";
 import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
+import "./i18n";
+import i18next from "i18next";
 
 export let ServerUrl = "";
 
@@ -134,4 +136,18 @@ export function getAvatarColor(s) {
     random = -random;
   }
   return colorList[random % 4];
+}
+
+export function setLanguage() {
+  let language = localStorage.getItem('language');
+  if (language === undefined) {
+    language = "en"
+  }
+  i18next.changeLanguage(language)
+}
+
+export function changeLanguage(language) {
+  localStorage.setItem("language", language)
+  i18next.changeLanguage(language)
+  window.location.reload(true);
 }

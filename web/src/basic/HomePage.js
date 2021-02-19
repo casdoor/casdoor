@@ -16,6 +16,7 @@ import React from "react";
 import {Card, Col, Row} from "antd";
 import * as Setting from "../Setting";
 import SingleCard from "./SingleCard";
+import i18next from "i18next";
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -29,10 +30,10 @@ class HomePage extends React.Component {
     let items = [];
     if (Setting.isAdminUser(this.props.account)) {
       items = [
-        {link: "/organizations", name: "Organizations", organizer: "User containers"},
-        {link: "/users", name: "Users", organizer: "Users under all organizations"},
-        {link: "/providers", name: "Providers", organizer: "OAuth providers"},
-        {link: "/applications", name: "Applications", organizer: "Applications that requires authentication"},
+        {link: "/organizations", name: i18next.t("general:Organizations"), organizer: i18next.t("general:User containers")},
+        {link: "/users", name: i18next.t("general:Users"), organizer: i18next.t("general:Users under all organizations")},
+        {link: "/providers", name: i18next.t("general:Providers"), organizer: i18next.t("general:OAuth providers")},
+        {link: "/applications", name: i18next.t("general:Applications"), organizer: i18next.t("general:Applications that requires authentication")},
       ];
     }
 
