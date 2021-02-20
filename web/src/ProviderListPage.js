@@ -19,6 +19,7 @@ import moment from "moment";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Provider from "./auth/Provider";
+import i18next from "i18next";
 
 class ProviderListPage extends React.Component {
   constructor(props) {
@@ -87,7 +88,7 @@ class ProviderListPage extends React.Component {
   renderTable(providers) {
     const columns = [
       {
-        title: 'Name',
+        title: i18next.t("general:Name"),
         dataIndex: 'name',
         key: 'name',
         width: '120px',
@@ -101,7 +102,7 @@ class ProviderListPage extends React.Component {
         }
       },
       {
-        title: 'Created Time',
+        title: i18next.t("general:Created Time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
@@ -111,14 +112,14 @@ class ProviderListPage extends React.Component {
         }
       },
       {
-        title: 'Display Name',
+        title: i18next.t("general:Display Name"),
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
       },
       {
-        title: 'Type',
+        title: i18next.t("provider:Type"),
         dataIndex: 'type',
         key: 'type',
         width: '80px',
@@ -130,7 +131,7 @@ class ProviderListPage extends React.Component {
         }
       },
       {
-        title: 'Client Id',
+        title: i18next.t("provider:Client ID"),
         dataIndex: 'clientId',
         key: 'clientId',
         width: '150px',
@@ -144,7 +145,7 @@ class ProviderListPage extends React.Component {
       //   sorter: (a, b) => a.clientSecret.localeCompare(b.clientSecret),
       // },
       {
-        title: 'Provider Url',
+        title: i18next.t("provider:Provider URL"),
         dataIndex: 'providerUrl',
         key: 'providerUrl',
         width: '150px',
@@ -160,19 +161,19 @@ class ProviderListPage extends React.Component {
         }
       },
       {
-        title: 'Action',
+        title: i18next.t("general:Action"),
         dataIndex: '',
         key: 'op',
         width: '170px',
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/providers/${record.name}`)}>Edit</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/providers/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete provider: ${record.name} ?`}
                 onConfirm={() => this.deleteProvider(index)}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">Delete</Button>
+                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           )
@@ -185,8 +186,8 @@ class ProviderListPage extends React.Component {
         <Table columns={columns} dataSource={providers} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
-                   Providers&nbsp;&nbsp;&nbsp;&nbsp;
-                   <Button type="primary" size="small" onClick={this.addProvider.bind(this)}>Add</Button>
+                   {i18next.t("general:Providers")}&nbsp;&nbsp;&nbsp;&nbsp;
+                   <Button type="primary" size="small" onClick={this.addProvider.bind(this)}>{i18next.t("general:Add")}</Button>
                  </div>
                )}
                loading={providers === null}

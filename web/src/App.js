@@ -35,6 +35,8 @@ import Face from "./auth/Face";
 import LoginPage from "./auth/LoginPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
+import SelectLanguageBox from './SelectLanguageBox';
+import i18next from 'i18next';
 
 const { Header, Footer } = Layout;
 
@@ -56,6 +58,7 @@ class App extends Component {
   }
 
   componentWillMount() {
+    Setting.setLanguage();
     this.updateMenuKey();
     this.getAccount();
   }
@@ -127,11 +130,11 @@ class App extends Component {
       <Menu onClick={this.handleRightDropdownClick.bind(this)}>
         <Menu.Item key="201">
           <SettingOutlined />
-          My Account
+          {i18next.t("account:My Account")}
         </Menu.Item>
         <Menu.Item key="202">
           <LogoutOutlined />
-          Logout
+          {i18next.t("account:Logout")}
         </Menu.Item>
       </Menu>
     );
@@ -162,14 +165,14 @@ class App extends Component {
       res.push(
         <Menu.Item key="100" style={{float: 'right', marginRight: '20px'}}>
           <Link to="/register">
-            Register
+            {i18next.t("account:Register")}
           </Link>
         </Menu.Item>
       );
       res.push(
         <Menu.Item key="101" style={{float: 'right'}}>
           <Link to="/login">
-            Login
+            {i18next.t("account:Login")}
           </Link>
         </Menu.Item>
       );
@@ -190,7 +193,7 @@ class App extends Component {
     res.push(
       <Menu.Item key="0">
         <Link to="/">
-          Home
+          {i18next.t("general:Home")}
         </Link>
       </Menu.Item>
     );
@@ -199,33 +202,32 @@ class App extends Component {
       res.push(
         <Menu.Item key="1">
           <Link to="/organizations">
-            Organizations
+            {i18next.t("general:Organizations")}
           </Link>
         </Menu.Item>
       );
       res.push(
         <Menu.Item key="2">
           <Link to="/users">
-            Users
+            {i18next.t("general:Users")}
           </Link>
         </Menu.Item>
       );
       res.push(
         <Menu.Item key="3">
           <Link to="/providers">
-            Providers
+            {i18next.t("general:Providers")}
           </Link>
         </Menu.Item>
       );
       res.push(
         <Menu.Item key="4">
           <Link to="/applications">
-            Applications
+            {i18next.t("general:Applications")}
           </Link>
         </Menu.Item>
       );
     }
-
     return res;
   }
 
@@ -305,6 +307,7 @@ class App extends Component {
           textAlign: 'center',
         }
       }>
+        <SelectLanguageBox/>
         Made with <span style={{color: 'rgb(255, 255, 255)'}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casbin.org">Casbin</a>
       </Footer>
     )

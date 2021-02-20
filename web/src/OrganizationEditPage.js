@@ -16,6 +16,7 @@ import React from "react";
 import {Button, Card, Col, Input, Row} from 'antd';
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
+import i18next from "i18next";
 
 class OrganizationEditPage extends React.Component {
   constructor(props) {
@@ -61,13 +62,13 @@ class OrganizationEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          Edit Organization&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitOrganizationEdit.bind(this)}>Save</Button>
+          {i18next.t("organization:Edit Organization")}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button type="primary" onClick={this.submitOrganizationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
         </div>
       } style={{marginLeft: '5px'}} type="inner">
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Name:
+            {i18next.t("general:Name")}: 
           </Col>
           <Col span={22} >
             <Input value={this.state.organization.name} onChange={e => {
@@ -77,7 +78,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Display Name:
+            {i18next.t("general:Display Name")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.organization.displayName} onChange={e => {
@@ -87,7 +88,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Website URL:
+            {i18next.t("organization:Website URL")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.organization.websiteUrl} onChange={e => {
@@ -137,7 +138,7 @@ class OrganizationEditPage extends React.Component {
           <Col span={2}>
           </Col>
           <Col span={18}>
-            <Button type="primary" size="large" onClick={this.submitOrganizationEdit.bind(this)}>Save</Button>
+            <Button type="primary" size="large" onClick={this.submitOrganizationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
           </Col>
         </Row>
       </div>

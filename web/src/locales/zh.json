@@ -1,0 +1,66 @@
+{
+  "general":
+  {
+    "Home": "主页",
+    "Organizations": "组织",
+    "Providers": "第三方",
+    "Users": "用户",
+    "Applications": "应用",
+    "Save": "保存",
+    "Add": "添加",
+    "Action": "行为",
+    "Edit": "修改",
+    "Delete": "删除",
+    "Organization": "组织",
+    "Created Time": "创建时间",
+    "Name": "名字",
+    "Display Name": "展示的名字",
+    "Avatar": "头像",
+    "Preview": "预览",
+    "Password Type": "密码类型",
+    "Password": "密码",
+    "Email": "电子邮件",
+    "Phone": "手机",
+    "Logo": "Logo",
+    "User containers": "用户容器",
+    "Users under all organizations": "所有组织里的用户",
+    "OAuth providers": "OAuth提供方",
+    "Applications that requires authentication": "需要鉴权的应用"
+  },
+  "account": 
+  {
+    "My Account": "我的账户",
+    "Login": "登录",
+    "Logout": "登出",
+    "Register": "注册"
+  },
+  "organization":
+  {
+    "Edit Organization": "修改组织",
+    "Website URL": "网页地址"
+  },
+  "provider":
+  {
+    "Name": "名字",
+    "Display Name": "展示的名字",
+    "Type": "类型",
+    "Client ID": "Client ID",
+    "Client Secret": "Client Secret",
+    "Provider URL": "第三方URL",
+    "Edit Provider": "修改第三方"
+  },
+  "user":
+  {
+    "Edit User": "修改用户",
+    "Affiliation": "联盟",
+    "Tag": "标签",
+    "Is Admin": "是管理员",
+    "Is Global Admin": "是全局管理员"
+  },
+  "application": 
+  {
+    "Edit Application": "修改应用",
+    "Enable Password": "开启密码",
+    "Face Preview": "图标预览"
+  }
+}

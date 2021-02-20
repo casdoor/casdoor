@@ -16,6 +16,7 @@ import React from "react";
 import {Button, Card, Col, Input, Row, Select} from 'antd';
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
+import i18next from "i18next";
 
 const { Option } = Select;
 
@@ -63,13 +64,13 @@ class ProviderEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          Edit Provider&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitProviderEdit.bind(this)}>Save</Button>
+          {i18next.t("provider:Edit Provider")}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button type="primary" onClick={this.submitProviderEdit.bind(this)}>{i18next.t("general:Save")}</Button>
         </div>
       } style={{marginLeft: '5px'}} type="inner">
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Name:
+            {i18next.t("general:Name")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.name} onChange={e => {
@@ -79,7 +80,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Display Name:
+            {i18next.t("general:Display Name")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.displayName} onChange={e => {
@@ -89,7 +90,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Type:
+            {i18next.t("provider:Type")}:
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.provider.type} onChange={(value => {this.updateProviderField('type', value);})}>
@@ -106,7 +107,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Client ID:
+            {i18next.t("provider:Client ID")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.clientId} onChange={e => {
@@ -116,7 +117,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Client Secret:
+            {i18next.t("provider:Client Secret")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.clientSecret} onChange={e => {
@@ -126,7 +127,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Provider URL:
+            {i18next.t("provider:Provider URL")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.providerUrl} onChange={e => {
@@ -176,7 +177,7 @@ class ProviderEditPage extends React.Component {
           <Col span={2}>
           </Col>
           <Col span={18}>
-            <Button type="primary" size="large" onClick={this.submitProviderEdit.bind(this)}>Save</Button>
+            <Button type="primary" size="large" onClick={this.submitProviderEdit.bind(this)}>{i18next.t("general:Save")}</Button>
           </Col>
         </Row>
       </div>

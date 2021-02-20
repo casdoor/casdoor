@@ -18,6 +18,7 @@ import {Button, Col, Popconfirm, Row, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import i18next from "i18next";
 
 class OrganizationListPage extends React.Component {
   constructor(props) {
@@ -83,7 +84,7 @@ class OrganizationListPage extends React.Component {
   renderTable(organizations) {
     const columns = [
       {
-        title: 'Name',
+        title: i18next.t("general:Name"),
         dataIndex: 'name',
         key: 'name',
         width: '120px',
@@ -97,7 +98,7 @@ class OrganizationListPage extends React.Component {
         }
       },
       {
-        title: 'Created Time',
+        title: i18next.t("general:Created Time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
@@ -107,14 +108,14 @@ class OrganizationListPage extends React.Component {
         }
       },
       {
-        title: 'Display Name',
+        title: i18next.t("general:Display Name"),
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
       },
       {
-        title: 'Website URL',
+        title: i18next.t("organization:Website URL"),
         dataIndex: 'websiteUrl',
         key: 'websiteUrl',
         width: '300px',
@@ -128,19 +129,19 @@ class OrganizationListPage extends React.Component {
         }
       },
       {
-        title: 'Action',
+        title: i18next.t("general:Action"),
         dataIndex: '',
         key: 'op',
         width: '170px',
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/organizations/${record.name}`)}>Edit</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/organizations/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete organization: ${record.name} ?`}
                 onConfirm={() => this.deleteOrganization(index)}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">Delete</Button>
+                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           )
@@ -153,8 +154,8 @@ class OrganizationListPage extends React.Component {
         <Table columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
-                   Organizations&nbsp;&nbsp;&nbsp;&nbsp;
-                   <Button type="primary" size="small" onClick={this.addOrganization.bind(this)}>Add</Button>
+                  {i18next.t("general:Organizations")}&nbsp;&nbsp;&nbsp;&nbsp;
+                  <Button type="primary" size="small" onClick={this.addOrganization.bind(this)}>{i18next.t("general:Add")}</Button>
                  </div>
                )}
                loading={organizations === null}

@@ -18,6 +18,7 @@ import {Button, Col, Popconfirm, Row, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
+import i18next from "i18next";
 
 class ApplicationListPage extends React.Component {
   constructor(props) {
@@ -85,7 +86,7 @@ class ApplicationListPage extends React.Component {
   renderTable(applications) {
     const columns = [
       {
-        title: 'Name',
+        title: i18next.t("general:Name"),
         dataIndex: 'name',
         key: 'name',
         width: '150px',
@@ -99,7 +100,7 @@ class ApplicationListPage extends React.Component {
         }
       },
       {
-        title: 'Created Time',
+        title: i18next.t("general:Created Time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
@@ -109,7 +110,7 @@ class ApplicationListPage extends React.Component {
         }
       },
       {
-        title: 'Display Name',
+        title: i18next.t("general:Display Name"),
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',
@@ -129,7 +130,7 @@ class ApplicationListPage extends React.Component {
         }
       },
       {
-        title: 'Organization',
+        title: i18next.t("general:Organization"),
         dataIndex: 'organization',
         key: 'organization',
         width: '200px',
@@ -143,7 +144,7 @@ class ApplicationListPage extends React.Component {
         }
       },
       {
-        title: 'Providers',
+        title: i18next.t("general:Providers"),
         dataIndex: 'providers',
         key: 'providers',
         width: '200px',
@@ -157,19 +158,19 @@ class ApplicationListPage extends React.Component {
         }
       },
       {
-        title: 'Action',
+        title: i18next.t("general:Action"),
         dataIndex: '',
         key: 'op',
         width: '170px',
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/applications/${record.name}`)}>Edit</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/applications/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete application: ${record.name} ?`}
                 onConfirm={() => this.deleteApplication(index)}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">Delete</Button>
+                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           )
@@ -182,8 +183,8 @@ class ApplicationListPage extends React.Component {
         <Table columns={columns} dataSource={applications} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
-                   Applications&nbsp;&nbsp;&nbsp;&nbsp;
-                   <Button type="primary" size="small" onClick={this.addApplication.bind(this)}>Add</Button>
+                  {i18next.t("general:Applications")}&nbsp;&nbsp;&nbsp;&nbsp;
+                  <Button type="primary" size="small" onClick={this.addApplication.bind(this)}>{i18next.t("general:Add")}</Button>
                  </div>
                )}
                loading={applications === null}
