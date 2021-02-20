@@ -154,9 +154,12 @@ class UserEditPage extends React.Component {
             {i18next.t("general:Password Type")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.passwordType} onChange={e => {
-              this.updateUserField('passwordType', e.target.value);
-            }} />
+            <Select virtual={false} style={{width: '100%'}} value={this.state.user.passwordType} onChange={(value => {this.updateUserField('passwordType', value);})}>
+              {
+                ['plain']
+                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
