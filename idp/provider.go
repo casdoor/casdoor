@@ -12,12 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package controllers
+package idp
 
-type authResponse struct {
-	IsAuthenticated bool   `json:"isAuthenticated"`
-	IsSignedUp      bool   `json:"isSignedUp"`
-	Email           string `json:"email"`
-	Avatar          string `json:"avatar"`
-	Method          string `json:"method"`
+import (
+	"net/http"
+
+	"golang.org/x/oauth2"
+)
+
+type IdProvider interface {
+	GetConfig() *oauth2.Config
+	GetEmail(httpClient *http.Client, token *oauth2.Token) string
+	GetLoginAndAvatar(httpClient *http.Client, token *oauth2.Token) (string, string)
+}
+
+func GetIdProvider(providerType string) IdProvider {
+	if providerType == "github" {
+		return &GithubIdProvider{}
+	}
+
+	return nil
 }

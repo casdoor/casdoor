@@ -16,30 +16,15 @@ package controllers
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"sync"
 
 	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
-
-var githubEndpoint = oauth2.Endpoint{
-	AuthURL:  "https://github.com/login/oauth/authorize",
-	TokenURL: "https://github.com/login/oauth/access_token",
-}
-
-var githubOauthConfig = &oauth2.Config{
-	ClientID:     beego.AppConfig.String("GithubAuthClientID"),
-	ClientSecret: beego.AppConfig.String("GithubAuthClientSecret"),
-	RedirectURL:  "",
-	Scopes:       []string{"user:email", "read:user"},
-	Endpoint:     githubEndpoint,
-}
 
 func (c *ApiController) AuthLogin() {
 	applicationName := c.Input().Get("application")
@@ -47,12 +32,16 @@ func (c *ApiController) AuthLogin() {
 	code := c.Input().Get("code")
 	state := c.Input().Get("state")
 	method := c.Input().Get("method")
-	RedirectURL := c.Input().Get("redirect_url")
+	redirectUrl := c.Input().Get("redirect_url")
 
 	application := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
 	provider := object.GetProvider(fmt.Sprintf("admin/%s", providerName))
-	githubOauthConfig.ClientID = provider.ClientId
-	githubOauthConfig.ClientSecret = provider.ClientSecret
+
+	idProvider := idp.GetIdProvider(provider.Type)
+	oauthConfig := idProvider.GetConfig()
+	oauthConfig.ClientID = provider.ClientId
+	oauthConfig.ClientSecret = provider.ClientSecret
+	oauthConfig.RedirectURL = redirectUrl
 
 	var resp Response
 	var res authResponse
@@ -65,11 +54,9 @@ func (c *ApiController) AuthLogin() {
 		return
 	}
 
-	githubOauthConfig.RedirectURL = RedirectURL
-
 	// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
 	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, httpClient)
-	token, err := githubOauthConfig.Exchange(ctx, code)
+	token, err := oauthConfig.Exchange(ctx, code)
 	if err != nil {
 		res.IsAuthenticated = false
 		panic(err)
@@ -83,58 +70,19 @@ func (c *ApiController) AuthLogin() {
 	}
 
 	var wg sync.WaitGroup
-	var tempUserEmail []userEmailFromGithub
-	var tempUserAccount userInfoFromGithub
 	wg.Add(2)
 	go func() {
-		req, err := http.NewRequest("GET", "https://api.github.com/user/emails", nil)
-		if err != nil {
-			panic(err)
-		}
-		req.Header.Add("Authorization", "token "+token.AccessToken)
-		response, err := httpClient.Do(req)
-		if err != nil {
-			panic(err)
-		}
-		defer response.Body.Close()
-		contents, err := ioutil.ReadAll(response.Body)
-
-		err = json.Unmarshal(contents, &tempUserEmail)
-		if err != nil {
-			res.IsAuthenticated = false
-			panic(err)
-		}
-		for _, v := range tempUserEmail {
-			if v.Primary == true {
-				res.Email = v.Email
-				break
-			}
-		}
+		res.Email = idProvider.GetEmail(httpClient, token)
 		wg.Done()
 	}()
 	go func() {
-		req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
-		if err != nil {
-			panic(err)
-		}
-		req.Header.Add("Authorization", "token "+token.AccessToken)
-		response2, err := httpClient.Do(req)
-		if err != nil {
-			panic(err)
-		}
-		defer response2.Body.Close()
-		contents2, err := ioutil.ReadAll(response2.Body)
-		err = json.Unmarshal(contents2, &tempUserAccount)
-		if err != nil {
-			res.IsAuthenticated = false
-			panic(err)
-		}
+		res.Method, res.Avatar = idProvider.GetLoginAndAvatar(httpClient, token)
 		wg.Done()
 	}()
 	wg.Wait()
 
 	if method == "signup" {
-		userId := object.HasGithub(application, tempUserAccount.Login)
+		userId := object.HasGithub(application, res.Method)
 		if userId != "" {
 			//if len(object.GetMemberAvatar(userId)) == 0 {
 			//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, userId)
@@ -148,13 +96,11 @@ func (c *ApiController) AuthLogin() {
 				c.SetSessionUser(userId)
 				util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 				res.IsSignedUp = true
-				_ = object.LinkUserAccount(userId, "github", tempUserAccount.Login)
+				_ = object.LinkUserAccount(userId, "github", res.Method)
 			} else {
 				res.IsSignedUp = false
 			}
 		}
-		res.Method = tempUserAccount.Login
-		res.Avatar = tempUserAccount.AvatarUrl
 		resp = Response{Status: "ok", Msg: "success", Data: res}
 	} else {
 		memberId := c.GetSessionUser()
@@ -164,7 +110,7 @@ func (c *ApiController) AuthLogin() {
 			c.ServeJSON()
 			return
 		}
-		linkRes := object.LinkUserAccount(memberId, "github_account", tempUserAccount.Login)
+		linkRes := object.LinkUserAccount(memberId, "github_account", res.Method)
 		if linkRes {
 			resp = Response{Status: "ok", Msg: "success", Data: linkRes}
 		} else {
