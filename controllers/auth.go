@@ -17,7 +17,6 @@ package controllers
 import (
 	"context"
 	"fmt"
-	"sync"
 
 	"github.com/astaxie/beego"
 	"github.com/casdoor/casdoor/idp"
@@ -49,7 +48,7 @@ func (c *ApiController) AuthLogin() {
 
 	if state != beego.AppConfig.String("AuthState") {
 		res.IsAuthenticated = false
-		resp = Response{Status: "fail", Msg: "unauthorized", Data: res}
+		resp = Response{Status: "error", Msg: "unauthorized", Data: res}
 		c.ServeJSON()
 		return
 	}
@@ -63,62 +62,87 @@ func (c *ApiController) AuthLogin() {
 	}
 
 	if !token.Valid() {
-		resp = Response{Status: "fail", Msg: "unauthorized", Data: res}
+		resp = Response{Status: "error", Msg: "unauthorized", Data: res}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return
 	}
 
-	var wg sync.WaitGroup
-	wg.Add(2)
-	go func() {
-		res.Email = idProvider.GetEmail(httpClient, token)
-		wg.Done()
-	}()
-	go func() {
-		res.Method, res.Avatar = idProvider.GetLoginAndAvatar(httpClient, token)
-		wg.Done()
-	}()
-	wg.Wait()
+	res.Email, res.Method, res.Avatar, err = idProvider.GetUserInfo(httpClient, token)
+	if err != nil {
+		resp = Response{Status: "error", Msg: "Login failed, please try again."}
+		c.Data["json"] = resp
+		c.ServeJSON()
+		return
+	}
 
 	if method == "signup" {
-		userId := object.HasGithub(application, res.Method)
+		userId := ""
+		if provider.Type == "github" {
+			userId = object.GetUserIdByField(application, "github", res.Method)
+		} else if provider.Type == "google" {
+			userId = object.GetUserIdByField(application, "google", res.Email)
+		}
+
 		if userId != "" {
+			//if object.IsForbidden(userId) {
+			//	c.forbiddenAccountResp(userId)
+			//	return
+			//}
+
 			//if len(object.GetMemberAvatar(userId)) == 0 {
-			//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, userId)
+			//	avatar := UploadAvatarToOSS(res.Avatar, userId)
 			//	object.LinkMemberAccount(userId, "avatar", avatar)
 			//}
+
 			c.SetSessionUser(userId)
 			util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 			res.IsSignedUp = true
 		} else {
-			if userId := object.HasMail(application, res.Email); userId != "" {
+			//if object.IsForbidden(userId) {
+			//	c.forbiddenAccountResp(userId)
+			//	return
+			//}
+
+			if userId := object.GetUserIdByField(application, "email", res.Email); userId != "" {
 				c.SetSessionUser(userId)
 				util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 				res.IsSignedUp = true
-				_ = object.LinkUserAccount(userId, "github", res.Method)
+
+				if provider.Type == "github" {
+					_ = object.LinkUserAccount(userId, "github", res.Method)
+				} else if provider.Type == "google" {
+					_ = object.LinkUserAccount(userId, "google", res.Email)
+				}
 			} else {
 				res.IsSignedUp = false
 			}
 		}
+		//res.Method = res.Email
 		resp = Response{Status: "ok", Msg: "success", Data: res}
 	} else {
-		memberId := c.GetSessionUser()
-		if memberId == "" {
-			resp = Response{Status: "fail", Msg: "no account exist", Data: res}
+		userId := c.GetSessionUser()
+		if userId == "" {
+			resp = Response{Status: "error", Msg: "user doesn't exist", Data: res}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return
 		}
-		linkRes := object.LinkUserAccount(memberId, "github_account", res.Method)
+
+		var linkRes bool
+		if provider.Type == "github" {
+			_ = object.LinkUserAccount(userId, "github", res.Method)
+		} else if provider.Type == "google" {
+			_ = object.LinkUserAccount(userId, "google", res.Email)
+		}
 		if linkRes {
 			resp = Response{Status: "ok", Msg: "success", Data: linkRes}
 		} else {
-			resp = Response{Status: "fail", Msg: "link account failed", Data: linkRes}
+			resp = Response{Status: "error", Msg: "link account failed", Data: linkRes}
 		}
-		//if len(object.GetMemberAvatar(memberId)) == 0 {
-		//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, memberId)
-		//	object.LinkUserAccount(memberId, "avatar", avatar)
+		//if len(object.GetMemberAvatar(userId)) == 0 {
+		//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, userId)
+		//	object.LinkUserAccount(userId, "avatar", avatar)
 		//}
 	}
 

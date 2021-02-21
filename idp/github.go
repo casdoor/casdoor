@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"sync"
 
 	"golang.org/x/oauth2"
 )
@@ -25,20 +26,20 @@ import (
 type GithubIdProvider struct{}
 
 func (idp *GithubIdProvider) GetConfig() *oauth2.Config {
-	var githubEndpoint = oauth2.Endpoint{
+	var endpoint = oauth2.Endpoint{
 		AuthURL:  "https://github.com/login/oauth/authorize",
 		TokenURL: "https://github.com/login/oauth/access_token",
 	}
 
-	var githubOauthConfig = &oauth2.Config{
+	var config = &oauth2.Config{
 		Scopes:   []string{"user:email", "read:user"},
-		Endpoint: githubEndpoint,
+		Endpoint: endpoint,
 	}
 
-	return githubOauthConfig
+	return config
 }
 
-func (idp *GithubIdProvider) GetEmail(httpClient *http.Client, token *oauth2.Token) string {
+func (idp *GithubIdProvider) getEmail(httpClient *http.Client, token *oauth2.Token) string {
 	res := ""
 
 	type GithubEmail struct {
@@ -74,7 +75,7 @@ func (idp *GithubIdProvider) GetEmail(httpClient *http.Client, token *oauth2.Tok
 	return res
 }
 
-func (idp *GithubIdProvider) GetLoginAndAvatar(httpClient *http.Client, token *oauth2.Token) (string, string) {
+func (idp *GithubIdProvider) getLoginAndAvatar(httpClient *http.Client, token *oauth2.Token) (string, string) {
 	type GithubUser struct {
 		Login     string `json:"login"`
 		AvatarUrl string `json:"avatar_url"`
@@ -86,16 +87,34 @@ func (idp *GithubIdProvider) GetLoginAndAvatar(httpClient *http.Client, token *o
 		panic(err)
 	}
 	req.Header.Add("Authorization", "token "+token.AccessToken)
-	response2, err := httpClient.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		panic(err)
 	}
-	defer response2.Body.Close()
-	contents2, err := ioutil.ReadAll(response2.Body)
+	defer resp.Body.Close()
+	contents2, err := ioutil.ReadAll(resp.Body)
 	err = json.Unmarshal(contents2, &githubUser)
 	if err != nil {
 		panic(err)
 	}
 
 	return githubUser.Login, githubUser.AvatarUrl
+}
+
+func (idp *GithubIdProvider) GetUserInfo(httpClient *http.Client, token *oauth2.Token) (string, string, string, error) {
+	var email, username, avatarUrl string
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		email = idp.getEmail(httpClient, token)
+		wg.Done()
+	}()
+	go func() {
+		username, avatarUrl = idp.getLoginAndAvatar(httpClient, token)
+		wg.Done()
+	}()
+	wg.Wait()
+
+	return email, username, avatarUrl, nil
 }

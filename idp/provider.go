@@ -22,13 +22,14 @@ import (
 
 type IdProvider interface {
 	GetConfig() *oauth2.Config
-	GetEmail(httpClient *http.Client, token *oauth2.Token) string
-	GetLoginAndAvatar(httpClient *http.Client, token *oauth2.Token) (string, string)
+	GetUserInfo(httpClient *http.Client, token *oauth2.Token) (string, string, string, error)
 }
 
 func GetIdProvider(providerType string) IdProvider {
 	if providerType == "github" {
 		return &GithubIdProvider{}
+	} else if providerType == "google" {
+		return &GoogleIdProvider{}
 	}
 
 	return nil

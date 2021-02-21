@@ -220,6 +220,14 @@ class UserEditPage extends React.Component {
             <Input value={this.state.user.github} disabled={true} />
           </Col>
         </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Google:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.google} disabled={true} />
+          </Col>
+        </Row>
         {
           !Setting.isAdminUser(this.props.account) ? null : (
             <React.Fragment>

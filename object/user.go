@@ -15,6 +15,8 @@
 package object
 
 import (
+	"fmt"
+
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -37,6 +39,7 @@ type User struct {
 	IsGlobalAdmin bool   `json:"isGlobalAdmin"`
 
 	Github string `xorm:"varchar(100)" json:"github"`
+	Google string `xorm:"varchar(100)" json:"google"`
 }
 
 func GetGlobalUsers() []*User {
@@ -121,23 +124,9 @@ func DeleteUser(user *User) bool {
 	return affected != 0
 }
 
-func GetMail(organizationName string, email string) *User {
-	user := User{Owner: organizationName, Email: email}
-	existed, err := adapter.engine.Get(&user)
-	if err != nil {
-		panic(err)
-	}
-
-	if existed {
-		return &user
-	} else {
-		return nil
-	}
-}
-
-func GetGithub(organizationName string, github string) *User {
-	user := User{Owner: organizationName, Github: github}
-	existed, err := adapter.engine.Get(&user)
+func GetUserByField(organizationName string, field string, value string) *User {
+	user := User{Owner: organizationName}
+	existed, err := adapter.engine.Where(fmt.Sprintf("%s=?", field), value).Get(&user)
 	if err != nil {
 		panic(err)
 	}
