@@ -25,7 +25,10 @@
     "User containers": "User containers",
     "Users under all organizations": "Users under all organizations",
     "OAuth providers": "OAuth providers",
-    "Applications that requires authentication": "Applications that requires authentication"
+    "Applications that requires authentication": "Applications that requires authentication",
+    "Register OAuth": "Register OAuth",
+    "Cancel": "Cancel",
+    "OAuth Apps": "OAuth Apps"
   },
   "account": 
   {
@@ -60,5 +63,16 @@
     "Edit Application": "Edit Application",
     "Enable Password": "Enable Password",
     "Face Preview": "Face Preview"
+  },
+  "oauth":
+  {
+    "Register a new OAuth application": "Register a new OAuth application",
+    "Register Application": "Register Application",
+    "Edit OAuth App": "Edit OAuth App",
+    "Homepage URL": "Homepage URL",
+    "Callback URL": "Callback URL",
+    "Domain": "Domain",
+    "Callback": "Callback",
+    "Application Name": "Application Name"
   }
 }

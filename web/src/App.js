@@ -29,6 +29,9 @@ import ApplicationEditPage from "./ApplicationEditPage";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
+import OAuthListPage from "./OAuthListPage";
+import OAuthEditPage from "./OAuthEditPage";
+import RegisterOAuthApplication from './RegisterOAuthApplication';
 
 import * as Auth from "./auth/Auth";
 import Face from "./auth/Face";
@@ -37,6 +40,7 @@ import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from './SelectLanguageBox';
 import i18next from 'i18next';
+import IdcardOutlined from "@ant-design/icons/lib/icons/IdcardOutlined";
 
 const { Header, Footer } = Layout;
 
@@ -122,6 +126,8 @@ class App extends Component {
       this.props.history.push(`/account`);
     } else if (e.key === '202') {
       this.logout();
+    } else if (e.key === '203') {
+      this.props.history.push(`/oauth`);
     }
   }
 
@@ -129,12 +135,16 @@ class App extends Component {
     const menu = (
       <Menu onClick={this.handleRightDropdownClick.bind(this)}>
         <Menu.Item key="201">
-          <SettingOutlined />
+          <IdcardOutlined />
           {i18next.t("account:My Account")}
         </Menu.Item>
         <Menu.Item key="202">
           <LogoutOutlined />
           {i18next.t("account:Logout")}
+        </Menu.Item>
+        <Menu.Item key="203">
+          <SettingOutlined />
+          OAuth
         </Menu.Item>
       </Menu>
     );
@@ -290,6 +300,9 @@ class App extends Component {
           <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/applications/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/oauth" render={(props) => this.renderLoginIfNotLoggedIn(<OAuthListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/oauth/newoauthapp" render={(props) => this.renderLoginIfNotLoggedIn(<RegisterOAuthApplication account={this.state.account} {...props}/>)}/>
+          <Route exact path="/oauth/editapp/:oauthAppName" render={(props) => this.renderLoginIfNotLoggedIn(<OAuthEditPage account={this.state.account} {...props}/>)}/>
         </Switch>
       </div>
     )

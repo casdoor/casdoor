@@ -63,4 +63,10 @@ func initAPI() {
 	beego.Router("/api/update-application", &controllers.ApiController{}, "POST:UpdateApplication")
 	beego.Router("/api/add-application", &controllers.ApiController{}, "POST:AddApplication")
 	beego.Router("/api/delete-application", &controllers.ApiController{}, "POST:DeleteApplication")
+
+	beego.Router("/api/oauth2/register-oauth-app", &controllers.ApiController{}, "POST:RegisterOAuthApp")
+	beego.Router("/api/oauth2/get-oauth-apps", &controllers.ApiController{}, "GET:GetOAuthApps")
+	beego.Router("/api/oauth2/delete-oauth-app", &controllers.ApiController{}, "POST:DeleteOAuthApp")
+	beego.Router("/api/oauth2/get-oauth-app", &controllers.ApiController{}, "GET:GetOAuthApp")
+	beego.Router("/api/oauth2/update-oauth-app", &controllers.ApiController{}, "POST:UpdateOAuthApp")
 }

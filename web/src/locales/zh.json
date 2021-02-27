@@ -25,7 +25,9 @@
     "User containers": "用户容器",
     "Users under all organizations": "所有组织里的用户",
     "OAuth providers": "OAuth提供方",
-    "Applications that requires authentication": "需要鉴权的应用"
+    "Applications that requires authentication": "需要鉴权的应用",
+    "Register OAuth": "注册OAuth",
+    "Cancel": "取消"
   },
   "account": 
   {
@@ -62,5 +64,16 @@
     "Edit Application": "修改应用",
     "Enable Password": "开启密码",
     "Face Preview": "图标预览"
+  },
+  "oauth":
+  {
+    "Register a new OAuth application": "注册一个新的应用",
+    "Register Application": "注册应用",
+    "Edit OAuth App": "编辑OAuth应用",
+    "Homepage URL": "主页URL",
+    "Callback URL": "回调URL",
+    "Domain": "域名",
+    "Callback": "回调地址",
+    "Application Name": "应用名称"
   }
 }
