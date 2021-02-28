@@ -96,7 +96,7 @@ func UpdateUser(id string, user *User) bool {
 		return false
 	}
 
-	_, err := adapter.engine.Id(core.PK{owner, name}).AllCols().Update(user)
+	_, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
 		panic(err)
 	}
@@ -116,7 +116,7 @@ func AddUser(user *User) bool {
 }
 
 func DeleteUser(user *User) bool {
-	affected, err := adapter.engine.Id(core.PK{user.Owner, user.Name}).Delete(&User{})
+	affected, err := adapter.engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
 	if err != nil {
 		panic(err)
 	}

@@ -17,6 +17,7 @@ package main
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
+	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/controllers"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/routers"
@@ -28,6 +29,7 @@ func main() {
 	object.InitAdapter()
 	object.InitDb()
 	controllers.InitHttpClient()
+	authz.InitAuthz()
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowOrigins:     []string{"*"},
@@ -40,8 +42,8 @@ func main() {
 	//beego.DelStaticPath("/static")
 	beego.SetStaticPath("/static", "web/build/static")
 	// https://studygolang.com/articles/2303
-	beego.InsertFilter("/", beego.BeforeRouter, routers.TransparentStatic) // must has this for default page
-	beego.InsertFilter("/*", beego.BeforeRouter, routers.TransparentStatic)
+	beego.InsertFilter("*", beego.BeforeRouter, routers.StaticFilter)
+	beego.InsertFilter("*", beego.BeforeRouter, routers.AuthzFilter)
 
 	beego.BConfig.WebConfig.Session.SessionProvider="file"
 	beego.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"

@@ -79,7 +79,7 @@ func UpdateApplication(id string, application *Application) bool {
 		return false
 	}
 
-	_, err := adapter.engine.Id(core.PK{owner, name}).AllCols().Update(application)
+	_, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(application)
 	if err != nil {
 		panic(err)
 	}
@@ -98,7 +98,7 @@ func AddApplication(application *Application) bool {
 }
 
 func DeleteApplication(application *Application) bool {
-	affected, err := adapter.engine.Id(core.PK{application.Owner, application.Name}).Delete(&Application{})
+	affected, err := adapter.engine.ID(core.PK{application.Owner, application.Name}).Delete(&Application{})
 	if err != nil {
 		panic(err)
 	}

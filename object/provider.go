@@ -66,7 +66,7 @@ func UpdateProvider(id string, provider *Provider) bool {
 		return false
 	}
 
-	_, err := adapter.engine.Id(core.PK{owner, name}).AllCols().Update(provider)
+	_, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(provider)
 	if err != nil {
 		panic(err)
 	}
@@ -85,7 +85,7 @@ func AddProvider(provider *Provider) bool {
 }
 
 func DeleteProvider(provider *Provider) bool {
-	affected, err := adapter.engine.Id(core.PK{provider.Owner, provider.Name}).Delete(&Provider{})
+	affected, err := adapter.engine.ID(core.PK{provider.Owner, provider.Name}).Delete(&Provider{})
 	if err != nil {
 		panic(err)
 	}

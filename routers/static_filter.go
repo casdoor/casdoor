@@ -22,7 +22,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func TransparentStatic(ctx *context.Context) {
+func StaticFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
 	if strings.HasPrefix(urlPath, "/api/") {
 		return
