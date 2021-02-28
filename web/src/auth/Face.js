@@ -67,18 +67,28 @@ class Face extends React.Component {
       });
   };
 
-  renderForm() {
+  renderForm(application) {
     return (
       <Form
         name="normal_login"
         initialValues={{
-          organization: this.getApplicationObj().organization,
+          organization: application.organization,
           remember: true
         }}
         onFinish={this.onFinish.bind(this)}
         style={{width: "250px"}}
         size="large"
       >
+        <Form.Item style={{height: 0, visibility: "hidden"}}
+          name="organization"
+          rules={[{ required: true, message: 'Please input your organization!' }]}
+        >
+          <Input
+            prefix={<UserOutlined className="site-form-item-icon" />}
+            placeholder="organization"
+            disabled={!application.enablePassword}
+          />
+        </Form.Item>
         <Form.Item
           name="username"
           rules={[{ required: true, message: 'Please input your Username!' }]}
@@ -86,7 +96,7 @@ class Face extends React.Component {
           <Input
             prefix={<UserOutlined className="site-form-item-icon" />}
             placeholder="username"
-            disabled={!this.getApplicationObj().enablePassword}
+            disabled={!application.enablePassword}
           />
         </Form.Item>
         <Form.Item
@@ -97,12 +107,12 @@ class Face extends React.Component {
             prefix={<LockOutlined className="site-form-item-icon" />}
             type="password"
             placeholder="password"
-            disabled={!this.getApplicationObj().enablePassword}
+            disabled={!application.enablePassword}
           />
         </Form.Item>
         <Form.Item>
           <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox style={{float: "left"}} disabled={!this.getApplicationObj().enablePassword}>
+            <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
               Auto login
             </Checkbox>
           </Form.Item>
@@ -116,7 +126,7 @@ class Face extends React.Component {
             type="primary"
             htmlType="submit"
             style={{width: "100%"}}
-            disabled={!this.getApplicationObj().enablePassword}
+            disabled={!application.enablePassword}
           >
             Login
           </Button>
@@ -126,9 +136,9 @@ class Face extends React.Component {
         </Form.Item>
         <Form.Item>
           {
-            this.getApplicationObj().providerObjs.map(provider => {
+            application.providerObjs.map(provider => {
               return (
-                <a href={Provider.getAuthUrl(this.getApplicationObj(), provider, "signup")}>
+                <a href={Provider.getAuthUrl(application, provider, "signup")}>
                   <img width={30} height={30} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: "3px"}} />
                 </a>
               );
@@ -149,7 +159,7 @@ class Face extends React.Component {
       <Row>
         <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
           <div style={{marginTop: "80px", textAlign: "center"}}>
-            <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '50px'}}/>
+            <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '30px'}}/>
             {
               this.renderForm(application)
             }

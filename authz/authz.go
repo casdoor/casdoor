@@ -34,10 +34,10 @@ func InitAuthz() {
 
 	modelText := `
 [request_definition]
-r = userId, method, urlPath, objOwner, objName
+r = subOwner, subName, method, urlPath, objOwner, objName
 
 [policy_definition]
-p = userId, method, urlPath, objOwner
+p = subOwner, subName, method, urlPath, objOwner, objName
 
 [role_definition]
 g = _, _
@@ -46,7 +46,9 @@ g = _, _
 e = some(where (p.eft == allow))
 
 [matchers]
-m = r.method == "GET" || r.userId == r.objOwner
+m = (r.subOwner == p.subOwner || p.subOwner == "*") && (r.subName == p.subName || p.subName == "*") && \
+  (r.method == p.method || p.method == "*") && (r.urlPath == p.urlPath || p.urlPath == "*") && \
+  (r.objOwner == p.objOwner || p.objOwner == "*") && (r.objName == p.objName || p.objName == "*")
 `
 
 	m, err := model.NewModelFromString(modelText)
@@ -59,9 +61,17 @@ m = r.method == "GET" || r.userId == r.objOwner
 		panic(err)
 	}
 
-	if len(Enforcer.GetPolicy()) == 0 {
+	//if len(Enforcer.GetPolicy()) == 0 {
+	if true {
 		ruleText := `
-p, 1, 2, 3, 4
+p, built-in, *, *, *, *, *
+p, *, *, POST, /api/register, *, *
+p, *, *, POST, /api/login, *, *
+p, *, *, POST, /api/logout, *, *
+p, *, *, GET, /api/get-account, *, *
+p, *, *, GET, /api/auth/login, *, *
+p, *, *, GET, /api/get-application, *, *
+p, *, *, GET, /api/get-users, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)
@@ -81,8 +91,8 @@ p, 1, 2, 3, 4
 	}
 }
 
-func IsAllowed(userId string, method string, urlPath string, objOwner string, objName string) bool {
-	res, err := Enforcer.Enforce(userId, method, urlPath, objOwner, objName)
+func IsAllowed(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
+	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
 	if err != nil {
 		panic(err)
 	}

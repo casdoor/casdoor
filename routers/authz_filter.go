@@ -29,24 +29,43 @@ type Object struct {
 	Name  string `json:"name"`
 }
 
-func getUserId(ctx *context.Context) string {
-	username := ctx.Input.Session("username")
-	userId := strings.TrimLeft(username.(string), "/")
-	if userId == "" {
-		userId = "anonymous"
+func getUsername(ctx *context.Context) (username string) {
+	defer func() {
+		if r := recover(); r != nil {
+			username = ""
+		}
+	}()
+
+	// bug in Beego: this call will panic when file session store is empty
+	// so we catch the panic
+	username = ctx.Input.Session("username").(string)
+	return
+}
+
+func getSubject(ctx *context.Context) (string, string) {
+	username := getUsername(ctx)
+	if username == "" {
+		return "anonymous", "anonymous"
 	}
-	return userId
+
+	// username == "built-in/admin"
+	tokens := strings.Split(username, "/")
+	owner := tokens[0]
+	name := tokens[1]
+	return owner, name
 }
 
 func getObject(ctx *context.Context) (string, string) {
 	method := ctx.Request.Method
 	if method == http.MethodGet {
-		// query = "id=built-in/admin"
 		query := ctx.Request.URL.RawQuery
-		if query == "" {
+
+		// query == "owner=admin"
+		if query == "" || strings.Contains(query, "=") {
 			return "", ""
 		}
 
+		// query == "id=built-in/admin"
 		query = strings.TrimLeft(query, "id=")
 		tokens := strings.Split(query, "/")
 		owner := tokens[0]
@@ -78,16 +97,16 @@ func denyRequest(ctx *context.Context) {
 }
 
 func AuthzFilter(ctx *context.Context) {
-	userId := getUserId(ctx)
+	subOwner, subName := getSubject(ctx)
 	method := ctx.Request.Method
 	urlPath := ctx.Request.URL.Path
 	objOwner, objName := getObject(ctx)
 
-	isAllowed := authz.IsAllowed(userId, method, urlPath, objOwner, objName)
+	isAllowed := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName)
 
-	fmt.Printf("userId = %s, method = %s, urlPath = %s, obj.Owner = %s, obj.Name = %s, isAllowed = %v\n",
-		userId, method, urlPath, objOwner, objName, isAllowed)
-	//if !isAllowed {
-	//	denyRequest(ctx)
-	//}
+	fmt.Printf("subOwner = %s, subName = %s, method = %s, urlPath = %s, obj.Owner = %s, obj.Name = %s, isAllowed = %v\n",
+		subOwner, subName, method, urlPath, objOwner, objName, isAllowed)
+	if !isAllowed {
+		denyRequest(ctx)
+	}
 }
