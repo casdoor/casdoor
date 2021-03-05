@@ -48,7 +48,8 @@ e = some(where (p.eft == allow))
 [matchers]
 m = (r.subOwner == p.subOwner || p.subOwner == "*") && (r.subName == p.subName || p.subName == "*") && \
   (r.method == p.method || p.method == "*") && (r.urlPath == p.urlPath || p.urlPath == "*") && \
-  (r.objOwner == p.objOwner || p.objOwner == "*") && (r.objName == p.objName || p.objName == "*")
+  (r.objOwner == p.objOwner || p.objOwner == "*") && (r.objName == p.objName || p.objName == "*") || \
+  (r.urlPath == "/api/update-user" && r.subOwner == r.objOwner && r.subName == r.objName)
 `
 
 	m, err := model.NewModelFromString(modelText)
@@ -72,6 +73,7 @@ p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/auth/login, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-users, *, *
+p, *, *, GET, /api/get-user, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

@@ -107,7 +107,7 @@ class UserEditPage extends React.Component {
             {i18next.t("general:Name")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.name} onChange={e => {
+            <Input value={this.state.user.name} disabled={true} onChange={e => {
               this.updateUserField('name', e.target.value);
             }} />
           </Col>
