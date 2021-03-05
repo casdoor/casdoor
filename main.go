@@ -45,7 +45,8 @@ func main() {
 	beego.InsertFilter("*", beego.BeforeRouter, routers.StaticFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AuthzFilter)
 
-	beego.BConfig.WebConfig.Session.SessionProvider="file"
+	beego.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
+	beego.BConfig.WebConfig.Session.SessionProvider = "file"
 	beego.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
 	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 365
 	//beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
