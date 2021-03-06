@@ -144,6 +144,26 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("general:Homepage URL")}:
+          </Col>
+          <Col span={22} >
+            <Input prefix={<LinkOutlined/>} value={this.state.application.homepageUrl} onChange={e => {
+              this.updateApplicationField('homepageUrl', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("general:Description")}:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.application.description} onChange={e => {
+              this.updateApplicationField('description', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("general:Organization")}:
           </Col>
           <Col span={22} >

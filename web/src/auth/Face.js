@@ -149,6 +149,20 @@ class Face extends React.Component {
     );
   }
 
+  renderLogo(application) {
+    if (application.homepageUrl !== "") {
+      return (
+        <a target="_blank" href={application.homepageUrl}>
+          <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '30px'}}/>
+        </a>
+      )
+    } else {
+      return (
+        <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '30px'}}/>
+      );
+    }
+  }
+
   render() {
     const application = this.getApplicationObj();
     if (application === null) {
@@ -159,7 +173,9 @@ class Face extends React.Component {
       <Row>
         <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
           <div style={{marginTop: "80px", textAlign: "center"}}>
-            <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '30px'}}/>
+            {
+              this.renderLogo(application)
+            }
             {
               this.renderForm(application)
             }
