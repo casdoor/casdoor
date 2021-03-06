@@ -30,6 +30,9 @@ type Application struct {
 	EnablePassword bool        `json:"enablePassword"`
 	Providers      []string    `xorm:"varchar(100)" json:"providers"`
 	ProviderObjs   []*Provider `xorm:"-" json:"providerObjs"`
+
+	ClientId     string `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret string `xorm:"varchar(100)" json:"clientSecret"`
 }
 
 func GetApplications(owner string) []*Application {
@@ -89,6 +92,9 @@ func UpdateApplication(id string, application *Application) bool {
 }
 
 func AddApplication(application *Application) bool {
+	application.ClientId = util.GenerateClientId()
+	application.ClientSecret = util.GenerateClientSecret()
+
 	affected, err := adapter.engine.Insert(application)
 	if err != nil {
 		panic(err)

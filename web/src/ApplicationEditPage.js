@@ -155,6 +155,26 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("provider:Client ID")}:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.application.clientId} onChange={e => {
+              this.updateApplicationField('clientId', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("provider:Client Secret")}:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.application.clientSecret} onChange={e => {
+              this.updateApplicationField('clientSecret', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("application:Enable Password")}:
           </Col>
           <Col span={1} >
