@@ -31,8 +31,9 @@ type Application struct {
 	Providers      []string    `xorm:"varchar(100)" json:"providers"`
 	ProviderObjs   []*Provider `xorm:"-" json:"providerObjs"`
 
-	ClientId     string `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret string `xorm:"varchar(100)" json:"clientSecret"`
+	ClientId     string   `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret string   `xorm:"varchar(100)" json:"clientSecret"`
+	RedirectUrls []string `xorm:"varchar(1000)" json:"redirectUrls"`
 }
 
 func GetApplications(owner string) []*Application {

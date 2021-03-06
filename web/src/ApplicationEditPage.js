@@ -21,6 +21,7 @@ import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import Face from "./auth/Face";
 import i18next from "i18next";
+import UrlTable from "./UrlTable";
 
 const { Option } = Select;
 
@@ -171,6 +172,18 @@ class ApplicationEditPage extends React.Component {
             <Input value={this.state.application.clientSecret} onChange={e => {
               this.updateApplicationField('clientSecret', e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("application:Redirect URLs")}:
+          </Col>
+          <Col span={22} >
+            <UrlTable
+              title="Redirect URLs"
+              table={this.state.application.redirectUrls}
+              onUpdateTable={(value) => { this.updateApplicationField('redirectUrls', value)}}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
