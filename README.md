@@ -47,7 +47,7 @@ Backend | RESTful API backend for Casdoor | Golang + Beego + MySQL | https://git
     git clone https://github.com/casbin/casdoor
     ```
 
-## Run
+## Run (Dev Environment)
 
 - Run backend (in port 8000):
 
@@ -70,6 +70,29 @@ Backend | RESTful API backend for Casdoor | Golang + Beego + MySQL | https://git
 - Open browser:
 
   http://localhost:7001/
+
+## Run (Production Environment)
+
+- build static pages:
+
+  ```
+  cd web
+  ## npm
+  npm run build
+  ## yarn
+  yarn run build
+  ## back to casdoor directory
+  cd ..
+  ```
+
+- build and run go code:
+
+  ```
+  go build
+  ./casdoor
+  ```
+
+Now, Casdoor is running on port 8000. You can access Casdoor pages directly in your browser, or you can setup a reverse proxy to hold your domain name, SSL, etc.
 
 ## Config
 
@@ -182,4 +205,4 @@ Backend | RESTful API backend for Casdoor | Golang + Beego + MySQL | https://git
   export const ShowGithubCorner = true
 
   export const GithubRepo = "https://github.com/casbin/casdoor" //your github repository
-  ```
+    ```
