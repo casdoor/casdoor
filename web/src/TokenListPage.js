@@ -90,7 +90,7 @@ class TokenListPage extends React.Component {
         title: i18next.t("general:Name"),
         dataIndex: 'name',
         key: 'name',
-        width: '120px',
+        width: '300px',
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record, index) => {
           return (
@@ -114,7 +114,7 @@ class TokenListPage extends React.Component {
         title: i18next.t("token:Application"),
         dataIndex: 'application',
         key: 'application',
-        width: '150px',
+        width: '120px',
         sorter: (a, b) => a.application.localeCompare(b.application),
         render: (text, record, index) => {
           return (
@@ -128,28 +128,28 @@ class TokenListPage extends React.Component {
         title: i18next.t("token:Access Token"),
         dataIndex: 'accessToken',
         key: 'accessToken',
-        width: '150px',
+        // width: '150px',
         sorter: (a, b) => a.accessToken.localeCompare(b.accessToken),
       },
       {
         title: i18next.t("token:Expires In"),
         dataIndex: 'expiresIn',
         key: 'expiresIn',
-        width: '150px',
+        width: '120px',
         sorter: (a, b) => a.expiresIn - b.expiresIn,
       },
       {
         title: i18next.t("token:Scope"),
         dataIndex: 'scope',
         key: 'scope',
-        width: '150px',
+        width: '100px',
         sorter: (a, b) => a.scope.localeCompare(b.scope),
       },
       {
         title: i18next.t("token:Token Type"),
         dataIndex: 'tokenType',
         key: 'tokenType',
-        width: '150px',
+        width: '130px',
         sorter: (a, b) => a.tokenType.localeCompare(b.tokenType),
       },
       {

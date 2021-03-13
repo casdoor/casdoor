@@ -93,3 +93,29 @@ func DeleteToken(token *Token) bool {
 
 	return affected != 0
 }
+
+func GetOAuthToken(applicationId string, grantType string, clientId string, clientSecret string, scope string) *Token {
+	application := GetApplication(applicationId)
+
+	if grantType != "client_credentials" {
+		return nil
+	}
+
+	if application.ClientId != clientId || application.ClientSecret != clientSecret {
+		return nil
+	}
+
+	token := &Token{
+		Owner:       application.Owner,
+		Name:        util.GenerateId(),
+		CreatedTime: util.GetCurrentTime(),
+		Application: application.Name,
+		AccessToken: "",
+		ExpiresIn:   7200,
+		Scope:       scope,
+		TokenType:   "Bearer",
+	}
+	AddToken(token)
+
+	return token
+}
