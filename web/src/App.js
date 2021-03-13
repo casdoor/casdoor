@@ -26,6 +26,8 @@ import ProviderListPage from "./ProviderListPage";
 import ProviderEditPage from "./ProviderEditPage";
 import ApplicationListPage from "./ApplicationListPage";
 import ApplicationEditPage from "./ApplicationEditPage";
+import TokenListPage from "./TokenListPage";
+import TokenEditPage from "./TokenEditPage";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
@@ -76,6 +78,8 @@ class App extends Component {
       this.setState({ selectedMenuKey: 3 });
     } else if (uri.includes('applications')) {
       this.setState({ selectedMenuKey: 4 });
+    } else if (uri.includes('tokens')) {
+      this.setState({ selectedMenuKey: 5 });
     } else {
       this.setState({ selectedMenuKey: -1 });
     }
@@ -227,6 +231,13 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
+      res.push(
+        <Menu.Item key="5">
+          <Link to="/tokens">
+            {i18next.t("general:Tokens")}
+          </Link>
+        </Menu.Item>
+      );
     }
     return res;
   }
@@ -290,6 +301,8 @@ class App extends Component {
           <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/applications/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)}/>
         </Switch>
       </div>
     )
