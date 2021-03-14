@@ -51,6 +51,13 @@ export function authLogin(applicationName, providerName, code, state, redirectUr
   }).then(res => res.json());
 }
 
+export function getOAuthCode(clientId, responseType, redirectUri, scope, state) {
+  return fetch(`${authConfig.serverUrl}/api/oauth/code?clientId=${clientId}&responseType=${responseType}&redirectUri=${redirectUri}&scope=${scope}&state=${state}`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then(res => res.json());
+}
+
 export function getApplication(owner, name) {
   return fetch(`${authConfig.serverUrl}/api/get-application?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",

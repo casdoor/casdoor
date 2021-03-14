@@ -22,10 +22,16 @@ import * as Util from "./Util";
 class Face extends React.Component {
   constructor(props) {
     super(props);
+    const queries = new URLSearchParams(window.location.search);
     this.state = {
       classes: props,
       applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
+      clientId: queries.get("client_id"),
+      responseType: queries.get("response_type"),
+      redirectUri: queries.get("redirect_uri"),
+      scope: queries.get("scope"),
+      state: queries.get("state"),
     };
   }
 
@@ -176,6 +182,9 @@ class Face extends React.Component {
             {
               this.renderLogo(application)
             }
+            {/*{*/}
+            {/*  this.state.clientId !== null ? "Redirect" : null*/}
+            {/*}*/}
             {
               this.renderForm(application)
             }
