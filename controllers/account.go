@@ -9,12 +9,21 @@ import (
 )
 
 type RegisterForm struct {
+	Type string `json:"type"`
+
 	Organization string `json:"organization"`
 	Username     string `json:"username"`
 	Password     string `json:"password"`
 	Name         string `json:"name"`
 	Email        string `json:"email"`
 	Phone        string `json:"phone"`
+
+	Application string `json:"application"`
+	Provider    string `json:"provider"`
+	Code        string `json:"code"`
+	State       string `json:"state"`
+	RedirectUri string `json:"redirectUri"`
+	Method      string `json:"method"`
 }
 
 type Response struct {

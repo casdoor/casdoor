@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/astaxie/beego"
@@ -26,27 +27,26 @@ import (
 )
 
 func (c *ApiController) AuthLogin() {
-	applicationName := c.Input().Get("application")
-	providerName := c.Input().Get("provider")
-	code := c.Input().Get("code")
-	state := c.Input().Get("state")
-	method := c.Input().Get("method")
-	redirectUri := c.Input().Get("redirect_uri")
+	var form RegisterForm
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
+	if err != nil {
+		panic(err)
+	}
 
-	application := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
-	provider := object.GetProvider(fmt.Sprintf("admin/%s", providerName))
+	application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+	provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
 
 	idProvider := idp.GetIdProvider(provider.Type)
 	oauthConfig := idProvider.GetConfig()
 	oauthConfig.ClientID = provider.ClientId
 	oauthConfig.ClientSecret = provider.ClientSecret
-	oauthConfig.RedirectURL = redirectUri
+	oauthConfig.RedirectURL = form.RedirectUri
 
 	var resp Response
 	var res authResponse
 	res.IsAuthenticated = true
 
-	if state != beego.AppConfig.String("AuthState") {
+	if form.State != beego.AppConfig.String("AuthState") {
 		res.IsAuthenticated = false
 		resp = Response{Status: "error", Msg: "unauthorized", Data: res}
 		c.ServeJSON()
@@ -55,7 +55,7 @@ func (c *ApiController) AuthLogin() {
 
 	// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
 	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, httpClient)
-	token, err := oauthConfig.Exchange(ctx, code)
+	token, err := oauthConfig.Exchange(ctx, form.Code)
 	if err != nil {
 		res.IsAuthenticated = false
 		panic(err)
@@ -76,7 +76,7 @@ func (c *ApiController) AuthLogin() {
 		return
 	}
 
-	if method == "signup" {
+	if form.Method == "signup" {
 		userId := ""
 		if provider.Type == "github" {
 			userId = object.GetUserIdByField(application, "github", res.Method)

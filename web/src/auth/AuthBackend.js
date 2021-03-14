@@ -44,10 +44,11 @@ export function logout() {
   }).then(res => res.json());
 }
 
-export function authLogin(applicationName, providerName, code, state, redirectUri, method) {
-  return fetch(`${authConfig.serverUrl}/api/auth/login?application=${applicationName}&provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUri}&method=${method}`, {
-    method: 'GET',
-    credentials: 'include',
+export function authLogin(values) {
+  return fetch(`${authConfig.serverUrl}/api/auth/login`, {
+    method: 'POST',
+    credentials: "include",
+    body: JSON.stringify(values),
   }).then(res => res.json());
 }
 

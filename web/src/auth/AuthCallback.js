@@ -13,9 +13,10 @@
 // limitations under the License.
 
 import React from "react";
-import {message, Spin} from "antd";
+import {Spin} from "antd";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
+import * as Util from "./Util";
 
 class AuthCallback extends React.Component {
   constructor(props) {
@@ -35,26 +36,22 @@ class AuthCallback extends React.Component {
   }
 
   componentWillMount() {
-    this.authLogin();
-  }
-
-  showMessage(type, text) {
-    if (type === "success") {
-      message.success(text);
-    } else if (type === "error") {
-      message.error(text);
-    }
-  }
-
-  authLogin() {
     let redirectUri;
     redirectUri = `${window.location.origin}/callback/${this.state.applicationName}/${this.state.providerName}/${this.state.method}`;
-    AuthBackend.authLogin(this.state.applicationName, this.state.providerName, this.state.code, this.state.state, redirectUri, this.state.method)
+    const body = {
+      application: this.state.applicationName,
+      provider: this.state.providerName,
+      code: this.state.code,
+      state: this.state.state,
+      redirectUri: redirectUri,
+      method: this.state.method,
+    };
+    AuthBackend.authLogin(body)
       .then((res) => {
         if (res.status === "ok") {
           window.location.href = '/';
         } else {
-          this.showMessage("error", res?.msg);
+          Util.showMessage("error", res?.msg);
         }
       });
   }
