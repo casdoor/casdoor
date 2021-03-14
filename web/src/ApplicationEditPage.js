@@ -201,8 +201,8 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <UrlTable
               title="Redirect URLs"
-              table={this.state.application.redirectUrls}
-              onUpdateTable={(value) => { this.updateApplicationField('redirectUrls', value)}}
+              table={this.state.application.redirectUris}
+              onUpdateTable={(value) => { this.updateApplicationField('redirectUris', value)}}
             />
           </Col>
         </Row>

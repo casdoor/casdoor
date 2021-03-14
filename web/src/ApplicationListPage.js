@@ -51,7 +51,7 @@ class ApplicationListPage extends React.Component {
       logo: "https://cdn.casbin.com/logo/logo_384x96.png",
       EnablePassword: true,
       providers: [],
-      redirectUrls: [],
+      redirectUris: [],
       expireInHours: 24 * 7,
     }
   }

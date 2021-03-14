@@ -155,8 +155,8 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}
 
 	validUri := false
-	for _, url := range application.RedirectUrls {
-		if strings.Contains(redirectUri, url) {
+	for _, tmpUri := range application.RedirectUris {
+		if strings.Contains(redirectUri, tmpUri) {
 			validUri = true
 			break
 		}

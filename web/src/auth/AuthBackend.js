@@ -44,8 +44,8 @@ export function logout() {
   }).then(res => res.json());
 }
 
-export function authLogin(applicationName, providerName, code, state, redirectUrl, method) {
-  return fetch(`${authConfig.serverUrl}/api/auth/login?application=${applicationName}&provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUrl}&method=${method}`, {
+export function authLogin(applicationName, providerName, code, state, redirectUri, method) {
+  return fetch(`${authConfig.serverUrl}/api/auth/login?application=${applicationName}&provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUri}&method=${method}`, {
     method: 'GET',
     credentials: 'include',
   }).then(res => res.json());

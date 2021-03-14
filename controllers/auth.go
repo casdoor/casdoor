@@ -31,7 +31,7 @@ func (c *ApiController) AuthLogin() {
 	code := c.Input().Get("code")
 	state := c.Input().Get("state")
 	method := c.Input().Get("method")
-	redirectUrl := c.Input().Get("redirect_url")
+	redirectUri := c.Input().Get("redirect_uri")
 
 	application := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
 	provider := object.GetProvider(fmt.Sprintf("admin/%s", providerName))
@@ -40,7 +40,7 @@ func (c *ApiController) AuthLogin() {
 	oauthConfig := idProvider.GetConfig()
 	oauthConfig.ClientID = provider.ClientId
 	oauthConfig.ClientSecret = provider.ClientSecret
-	oauthConfig.RedirectURL = redirectUrl
+	oauthConfig.RedirectURL = redirectUri
 
 	var resp Response
 	var res authResponse

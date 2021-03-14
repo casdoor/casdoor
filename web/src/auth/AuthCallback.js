@@ -47,9 +47,9 @@ class AuthCallback extends React.Component {
   }
 
   authLogin() {
-    let redirectUrl;
-    redirectUrl = `${window.location.origin}/callback/${this.state.applicationName}/${this.state.providerName}/${this.state.method}`;
-    AuthBackend.authLogin(this.state.applicationName, this.state.providerName, this.state.code, this.state.state, redirectUrl, this.state.method)
+    let redirectUri;
+    redirectUri = `${window.location.origin}/callback/${this.state.applicationName}/${this.state.providerName}/${this.state.method}`;
+    AuthBackend.authLogin(this.state.applicationName, this.state.providerName, this.state.code, this.state.state, redirectUri, this.state.method)
       .then((res) => {
         if (res.status === "ok") {
           window.location.href = '/';
