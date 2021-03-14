@@ -123,7 +123,22 @@ func DeleteToken(token *Token) bool {
 	return affected != 0
 }
 
-func GetOAuthCode(clientId string, responseType string, redirectUri string, scope string, state string) *Code {
+func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string) *Code {
+	if userId == "" {
+		return &Code{
+			Message: "please sign in first",
+			Code:    "",
+		}
+	}
+
+	user := GetUser(userId)
+	if user == nil {
+		return &Code{
+			Message: "invalid user_id",
+			Code:    "",
+		}
+	}
+
 	application := getApplicationByClientId(clientId)
 	if application == nil {
 		return &Code{
@@ -153,14 +168,19 @@ func GetOAuthCode(clientId string, responseType string, redirectUri string, scop
 		}
 	}
 
+	accessToken, err := generateJwtToken(application, user)
+	if err != nil {
+		panic(err)
+	}
+
 	token := &Token{
 		Owner:       application.Owner,
 		Name:        util.GenerateId(),
 		CreatedTime: util.GetCurrentTime(),
 		Application: application.Name,
 		Code:        util.GenerateClientId(),
-		AccessToken: "",
-		ExpiresIn:   7200,
+		AccessToken: accessToken,
+		ExpiresIn:   application.ExpireInHours * 60,
 		Scope:       scope,
 		TokenType:   "Bearer",
 	}

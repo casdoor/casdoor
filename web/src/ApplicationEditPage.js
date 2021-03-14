@@ -71,9 +71,9 @@ class ApplicationEditPage extends React.Component {
   }
 
   parseApplicationField(key, value) {
-    // if ([].includes(key)) {
-    //   value = Setting.myParseInt(value);
-    // }
+    if (["expireInHours"].includes(key)) {
+      value = Setting.myParseInt(value);
+    }
     return value;
   }
 
@@ -204,6 +204,16 @@ class ApplicationEditPage extends React.Component {
               table={this.state.application.redirectUrls}
               onUpdateTable={(value) => { this.updateApplicationField('redirectUrls', value)}}
             />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("general:Expire In Hours")}:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.application.expireInHours} onChange={e => {
+              this.updateApplicationField('expireInHours', e.target.value);
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

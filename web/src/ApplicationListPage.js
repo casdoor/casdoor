@@ -52,6 +52,7 @@ class ApplicationListPage extends React.Component {
       EnablePassword: true,
       providers: [],
       redirectUrls: [],
+      expireInHours: 24 * 7,
     }
   }
 

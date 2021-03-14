@@ -70,13 +70,14 @@ func (c *ApiController) DeleteToken() {
 }
 
 func (c *ApiController) GetOAuthCode() {
+	userId := c.GetSessionUser()
 	clientId := c.Input().Get("client_id")
 	responseType := c.Input().Get("response_type")
 	redirectUri := c.Input().Get("redirect_uri")
 	scope := c.Input().Get("scope")
 	state := c.Input().Get("state")
 
-	c.Data["json"] = object.GetOAuthCode(clientId, responseType, redirectUri, scope, state)
+	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state)
 	c.ServeJSON()
 }
 
