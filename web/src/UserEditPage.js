@@ -74,6 +74,10 @@ class UserEditPage extends React.Component {
     });
   }
 
+  uploadUserAvatar() {
+    window.location.href = "/upload-avatar";
+  }
+
   renderUser() {
     return (
       <Card size="small" title={
@@ -146,6 +150,9 @@ class UserEditPage extends React.Component {
                   <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: '20px'}}/>
                 </a>
               </Col>
+            </Row>
+            <Row style={{marginTop: '20px'}}>
+              <Button type="default" size="default" onClick={this.uploadUserAvatar}>{i18next.t("general:Upload Avatar")}</Button>
             </Row>
           </Col>
         </Row>

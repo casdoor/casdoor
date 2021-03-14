@@ -11,12 +11,14 @@
     "i18next": "^19.8.9",
     "moment": "^2.29.1",
     "react": "^16.14.0",
+    "react-cropper": "^2.1.7",
     "react-device-detect": "^1.14.0",
     "react-dom": "^16.14.0",
     "react-github-corner": "^2.5.0",
     "react-i18next": "^11.8.7",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3"
+    "react-scripts": "3.4.3",
+    "typescript": "^4.2.3"
   },
   "scripts": {
     "start": "set PORT=7001 && react-scripts start",

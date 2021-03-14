@@ -30,6 +30,7 @@ import TokenListPage from "./TokenListPage";
 import TokenEditPage from "./TokenEditPage";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
+import UploadAvatarPage from "./UploadAvatarPage";
 import CustomGithubCorner from "./CustomGithubCorner";
 
 import * as Auth from "./auth/Auth";
@@ -261,6 +262,16 @@ class App extends Component {
     }
   }
 
+  renderUploadAvatarIfLoggedIn(component) {
+    if (this.state.account === null) {
+      return <Redirect to='/login' />
+    } else if (this.state.account === undefined) {
+      return null;
+    } else {
+      return component;
+    }
+  }
+
   isStartPages() {
     return window.location.pathname.startsWith('/login') ||
       window.location.pathname.startsWith('/register') ||
@@ -303,6 +314,7 @@ class App extends Component {
           <Route exact path="/applications/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/upload-avatar" render={(props) => this.renderUploadAvatarIfLoggedIn(<UploadAvatarPage account={this.state.account} {...props} />)}/>
         </Switch>
       </div>
     )
