@@ -20,12 +20,14 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-var jwtSecret = []byte("aaa")
+var jwtSecret = []byte("CasdoorSecret")
 
 type Claims struct {
-	Username string `json:"username"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
+	Organization string `json:"organization"`
+	Username     string `json:"username"`
+	Name         string `json:"name"`
+	Email        string `json:"email"`
+	IsAdmin      bool   `json:"isAdmin"`
 	jwt.StandardClaims
 }
 
@@ -34,9 +36,11 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 
 	claims := Claims{
-		Username: user.Name,
-		Name:     user.DisplayName,
-		Email:    user.Email,
+		Organization: user.Owner,
+		Username:     user.Name,
+		Name:         user.DisplayName,
+		Email:        user.Email,
+		IsAdmin:      user.IsAdmin,
 		StandardClaims: jwt.StandardClaims{
 			Audience:  application.ClientId,
 			ExpiresAt: expireTime.Unix(),

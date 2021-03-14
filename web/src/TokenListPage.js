@@ -130,6 +130,9 @@ class TokenListPage extends React.Component {
         key: 'code',
         // width: '150px',
         sorter: (a, b) => a.code.localeCompare(b.code),
+        render: (text, record, index) => {
+          return Setting.getClickable(text);
+        }
       },
       {
         title: i18next.t("token:Access Token"),
@@ -137,6 +140,10 @@ class TokenListPage extends React.Component {
         key: 'accessToken',
         // width: '150px',
         sorter: (a, b) => a.accessToken.localeCompare(b.accessToken),
+        ellipsis: true,
+        render: (text, record, index) => {
+          return Setting.getClickable(text);
+        }
       },
       {
         title: i18next.t("token:Expires In"),

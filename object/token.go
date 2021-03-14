@@ -34,7 +34,7 @@ type Token struct {
 	Application string `xorm:"varchar(100)" json:"application"`
 
 	Code        string `xorm:"varchar(100)" json:"code"`
-	AccessToken string `xorm:"varchar(100)" json:"accessToken"`
+	AccessToken string `xorm:"mediumtext" json:"accessToken"`
 	ExpiresIn   int    `json:"expiresIn"`
 	Scope       string `xorm:"varchar(100)" json:"scope"`
 	TokenType   string `xorm:"varchar(100)" json:"tokenType"`

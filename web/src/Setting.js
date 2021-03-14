@@ -17,6 +17,7 @@ import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
 import i18next from "i18next";
+import copy from "copy-to-clipboard";
 
 export let ServerUrl = "";
 
@@ -150,4 +151,15 @@ export function changeLanguage(language) {
   localStorage.setItem("language", language)
   i18next.changeLanguage(language)
   window.location.reload(true);
+}
+
+export function getClickable(text) {
+  return (
+    <a onClick={() => {
+      copy(text);
+      showMessage("success", `Copied to clipboard`);
+    }}>
+      {text}
+    </a>
+  )
 }

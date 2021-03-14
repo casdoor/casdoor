@@ -8,6 +8,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "antd": "^4.7.2",
+    "copy-to-clipboard": "^3.3.1",
     "i18next": "^19.8.9",
     "moment": "^2.29.1",
     "react": "^16.14.0",
