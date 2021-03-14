@@ -71,6 +71,7 @@ p, *, *, POST, /api/login, *, *
 p, *, *, POST, /api/logout, *, *
 p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/auth/login, *, *
+p, *, *, GET, /api/oauth/code, *, *
 p, *, *, GET, /api/oauth/token, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-users, *, *

@@ -69,13 +69,23 @@ func (c *ApiController) DeleteToken() {
 	c.ServeJSON()
 }
 
+func (c *ApiController) GetOAuthCode() {
+	clientId := c.Input().Get("client_id")
+	responseType := c.Input().Get("response_type")
+	redirectUri := c.Input().Get("redirect_uri")
+	scope := c.Input().Get("scope")
+	state := c.Input().Get("state")
+
+	c.Data["json"] = object.GetOAuthCode(clientId, responseType, redirectUri, scope, state)
+	c.ServeJSON()
+}
+
 func (c *ApiController) GetOAuthToken() {
-	applicationId := c.Input().Get("app_id")
 	grantType := c.Input().Get("grant_type")
 	clientId := c.Input().Get("client_id")
 	clientSecret := c.Input().Get("client_secret")
-	scope := c.Input().Get("scope")
+	code := c.Input().Get("code")
 
-	c.Data["json"] = object.GetOAuthToken(applicationId, grantType, clientId, clientSecret, scope)
+	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code)
 	c.ServeJSON()
 }

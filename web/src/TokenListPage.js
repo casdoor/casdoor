@@ -125,6 +125,13 @@ class TokenListPage extends React.Component {
         }
       },
       {
+        title: i18next.t("token:Authorization Code"),
+        dataIndex: 'code',
+        key: 'code',
+        // width: '150px',
+        sorter: (a, b) => a.code.localeCompare(b.code),
+      },
+      {
         title: i18next.t("token:Access Token"),
         dataIndex: 'accessToken',
         key: 'accessToken',

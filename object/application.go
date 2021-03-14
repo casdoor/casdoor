@@ -74,6 +74,20 @@ func getApplication(owner string, name string) *Application {
 	}
 }
 
+func getApplicationByClientId(clientId string) *Application {
+	application := Application{}
+	existed, err := adapter.engine.Where("client_id=?", clientId).Get(&application)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &application
+	} else {
+		return nil
+	}
+}
+
 func GetApplication(id string) *Application {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getApplication(owner, name)
