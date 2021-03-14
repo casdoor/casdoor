@@ -30,7 +30,7 @@ type User struct {
 	Password      string `xorm:"varchar(100)" json:"password"`
 	PasswordType  string `xorm:"varchar(100)" json:"passwordType"`
 	DisplayName   string `xorm:"varchar(100)" json:"displayName"`
-	Avatar        string `xorm:"varchar(100)" json:"avatar"`
+	Avatar        string `xorm:"varchar(255)" json:"avatar"`
 	Email         string `xorm:"varchar(100)" json:"email"`
 	Phone         string `xorm:"varchar(100)" json:"phone"`
 	Affiliation   string `xorm:"varchar(100)" json:"affiliation"`

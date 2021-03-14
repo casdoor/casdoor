@@ -206,3 +206,18 @@ Now, Casdoor is running on port 8000. You can access Casdoor pages directly in y
 
   export const GithubRepo = "https://github.com/casbin/casdoor" //your github repository
     ```
+
+- OSS conf
+
+  We use an OSS to store and provide user avatars. You must modify the file `conf/oss.conf` to tell the backend your OSS info. For OSS providers, we support Aliyun(`[aliyun]`), awss3(`[s3]`) now.
+
+  ```
+  [provider]
+  accessid = id
+  accesskey = key
+  bucket = bucket
+  endpoint = endpoint
+  ```
+
+  Please fill out this conf correctly, or the avatar server won't work!
+

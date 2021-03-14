@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import * as Setting from "../Setting";
+import * as AuthBackend from "../auth/AuthBackend";
 
 export function getGlobalUsers() {
   return fetch(`${Setting.ServerUrl}/api/get-global-users`, {
@@ -60,4 +61,21 @@ export function deleteUser(user) {
     credentials: 'include',
     body: JSON.stringify(newUser),
   }).then(res => res.json());
+}
+
+export function uploadAvatar(avatar) {
+  let account;
+  AuthBackend.getAccount().then((res) => {
+    account = Setting.parseJson(res.data);
+    let formData = new FormData();
+    formData.append("avatarfile", avatar);
+    formData.append("password", account.password);
+    fetch(`${Setting.ServerUrl}/api/upload-avatar`, {
+      body: formData,
+      method: 'POST',
+      credentials: 'include',
+    }).then((res) => {
+      window.location.href = "/account";
+    });
+  });
 }
