@@ -26,6 +26,11 @@ import (
 	"golang.org/x/oauth2"
 )
 
+func (c *ApiController) HandleLoggedIn(userId string) {
+	c.SetSessionUser(userId)
+	util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
+}
+
 func (c *ApiController) AuthLogin() {
 	var form RegisterForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
@@ -44,10 +49,8 @@ func (c *ApiController) AuthLogin() {
 
 	var resp Response
 	var res authResponse
-	res.IsAuthenticated = true
 
 	if form.State != beego.AppConfig.String("AuthState") {
-		res.IsAuthenticated = false
 		resp = Response{Status: "error", Msg: "unauthorized", Data: res}
 		c.ServeJSON()
 		return
@@ -57,7 +60,6 @@ func (c *ApiController) AuthLogin() {
 	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, httpClient)
 	token, err := oauthConfig.Exchange(ctx, form.Code)
 	if err != nil {
-		res.IsAuthenticated = false
 		panic(err)
 	}
 
@@ -95,9 +97,7 @@ func (c *ApiController) AuthLogin() {
 			//	object.LinkMemberAccount(userId, "avatar", avatar)
 			//}
 
-			c.SetSessionUser(userId)
-			util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-			res.IsSignedUp = true
+			c.HandleLoggedIn(userId)
 		} else {
 			//if object.IsForbidden(userId) {
 			//	c.forbiddenAccountResp(userId)
@@ -105,17 +105,13 @@ func (c *ApiController) AuthLogin() {
 			//}
 
 			if userId := object.GetUserIdByField(application, "email", res.Email); userId != "" {
-				c.SetSessionUser(userId)
-				util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-				res.IsSignedUp = true
+				c.HandleLoggedIn(userId)
 
 				if provider.Type == "github" {
 					_ = object.LinkUserAccount(userId, "github", res.Method)
 				} else if provider.Type == "google" {
 					_ = object.LinkUserAccount(userId, "google", res.Email)
 				}
-			} else {
-				res.IsSignedUp = false
 			}
 		}
 		//res.Method = res.Email

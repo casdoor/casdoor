@@ -15,8 +15,6 @@
 package controllers
 
 type authResponse struct {
-	IsAuthenticated bool   `json:"isAuthenticated"`
-	IsSignedUp      bool   `json:"isSignedUp"`
 	Email           string `json:"email"`
 	Avatar          string `json:"avatar"`
 	Method          string `json:"method"`

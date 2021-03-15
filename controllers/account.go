@@ -109,9 +109,7 @@ func (c *ApiController) Login() {
 	if msg != "" {
 		resp = Response{Status: "error", Msg: msg, Data: ""}
 	} else {
-		c.SetSessionUser(userId)
-
-		util.LogInfo(c.Ctx, "API: [%s] logged in", userId)
+		c.HandleLoggedIn(userId)
 		resp = Response{Status: "ok", Msg: "", Data: userId}
 	}
 
