@@ -1,11 +1,28 @@
+// Copyright 2021 The casbin Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package controllers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
-
+	"strconv"
+	"time"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
+	"strings"
 )
 
 type RegisterForm struct {
@@ -149,6 +166,43 @@ func (c *ApiController) GetAccount() {
 	userObj := object.GetUser(username)
 	resp = Response{Status: "ok", Msg: "", Data: util.StructToJson(userObj)}
 
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
+func (c *ApiController) UploadAvatar() {
+	var resp Response
+	username := c.GetSessionUser()
+	userObj := object.GetUser(username)
+
+	msg := object.CheckUserLogin(userObj.Owner + "/" + userObj.Name, c.Ctx.Request.Form.Get("password"))
+	if msg != "" {
+		resp = Response{Status: "error", Msg: "Password wrong"}
+		c.Data["json"] = resp
+		c.ServeJSON()
+		return
+	}
+
+	avatarBase64 := c.Ctx.Request.Form.Get("avatarfile")
+	index := strings.Index(avatarBase64, ",")
+	if index < 0 || avatarBase64[0: index] != "data:image/png;base64" {
+		resp = Response{Status: "error", Msg: "File encoding error"}
+		c.Data["json"] = resp
+		c.ServeJSON()
+		return
+	}
+
+	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index + 1:])
+	msg = object.UploadAvatar(userObj.Name, dist)
+	if msg != "" {
+		resp = Response{Status: "error", Msg: msg}
+		c.Data["json"] = resp
+		c.ServeJSON()
+		return
+	}
+	userObj.Avatar = object.GetAvatarPath() + userObj.Name + ".png?time=" + strconv.FormatInt(time.Now().UnixNano(), 10)
+	object.UpdateUser(userObj.Owner + "/" + userObj.Name, userObj)
+	resp = Response{Status: "ok", Msg: "Successfully set avatar"}
 	c.Data["json"] = resp
 	c.ServeJSON()
 }

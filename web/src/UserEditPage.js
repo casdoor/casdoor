@@ -19,6 +19,7 @@ import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import {LinkOutlined} from "@ant-design/icons";
 import i18next from "i18next";
+import CropperDiv from "./CropperDiv.js";
 
 const { Option } = Select;
 
@@ -146,6 +147,9 @@ class UserEditPage extends React.Component {
                   <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: '20px'}}/>
                 </a>
               </Col>
+            </Row>
+            <Row style={{marginTop: '20px'}}>
+              <CropperDiv buttonText={"Upload Avatar"} title={"Upload Avatar"} targetFunction={UserBackend.uploadAvatar} />
             </Row>
           </Col>
         </Row>

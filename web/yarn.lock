@@ -3474,6 +3474,11 @@ create-hmac@^1.1.0, create-hmac@^1.1.4, create-hmac@^1.1.7:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+cropperjs@^1.5.11:
+  version "1.5.11"
+  resolved "https://registry.npm.taobao.org/cropperjs/download/cropperjs-1.5.11.tgz#502ae6d8ca098b124de6813601cca70015879fc0"
+  integrity sha1-UCrm2MoJixJN5oE2AcynABWHn8A=
+
 cross-spawn@7.0.1:
   version "7.0.1"
   resolved "https://registry.npm.taobao.org/cross-spawn/download/cross-spawn-7.0.1.tgz#0ab56286e0f7c24e153d04cc2aa027e43a9a5d14"
@@ -9260,6 +9265,13 @@ react-app-polyfill@^1.0.6:
     raf "^3.4.1"
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
+
+react-cropper@^2.1.7:
+  version "2.1.7"
+  resolved "https://registry.npm.taobao.org/react-cropper/download/react-cropper-2.1.7.tgz#f9f8127b9516fecc44f918dd331107bfc32adfaf"
+  integrity sha1-+fgSe5UW/sxE+RjdMxEHv8Mq368=
+  dependencies:
+    cropperjs "^1.5.11"
 
 react-dev-utils@^10.2.1:
   version "10.2.1"
