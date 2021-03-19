@@ -17,12 +17,12 @@ package controllers
 import (
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"strconv"
+	"strings"
 	"time"
+
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-	"strings"
 )
 
 type RegisterForm struct {
@@ -91,43 +91,6 @@ func (c *ApiController) Register() {
 
 		util.LogInfo(c.Ctx, "API: [%s] is registered as new user", user)
 		resp = Response{Status: "ok", Msg: "注册成功", Data: user}
-	}
-
-	c.Data["json"] = resp
-	c.ServeJSON()
-}
-
-// @Title Login
-// @Description login as a user
-// @Param   username     formData    string  true        "The username to login"
-// @Param   password     formData    string  true        "The password"
-// @Success 200 {object} controllers.api_controller.Response The Response object
-// @router /login [post]
-func (c *ApiController) Login() {
-	var resp Response
-
-	if c.GetSessionUser() != "" {
-		resp = Response{Status: "error", Msg: "please log out first before signing in", Data: c.GetSessionUser()}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-
-	var form RegisterForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
-	if err != nil {
-		panic(err)
-	}
-
-	userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
-	password := form.Password
-	msg := object.CheckUserLogin(userId, password)
-
-	if msg != "" {
-		resp = Response{Status: "error", Msg: msg, Data: ""}
-	} else {
-		c.HandleLoggedIn(userId)
-		resp = Response{Status: "ok", Msg: "", Data: userId}
 	}
 
 	c.Data["json"] = resp

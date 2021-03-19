@@ -46,7 +46,7 @@ class AuthCallback extends React.Component {
       redirectUri: redirectUri,
       method: this.state.method,
     };
-    AuthBackend.authLogin(body)
+    AuthBackend.login(body)
       .then((res) => {
         if (res.status === "ok") {
           window.location.href = '/';

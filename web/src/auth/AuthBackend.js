@@ -44,14 +44,6 @@ export function logout() {
   }).then(res => res.json());
 }
 
-export function authLogin(values) {
-  return fetch(`${authConfig.serverUrl}/api/auth/login`, {
-    method: 'POST',
-    credentials: "include",
-    body: JSON.stringify(values),
-  }).then(res => res.json());
-}
-
 export function getOAuthCode(clientId, responseType, redirectUri, scope, state) {
   return fetch(`${authConfig.serverUrl}/api/oauth/code?clientId=${clientId}&responseType=${responseType}&redirectUri=${redirectUri}&scope=${scope}&state=${state}`, {
     method: 'GET',

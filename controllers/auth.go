@@ -31,115 +31,136 @@ func (c *ApiController) HandleLoggedIn(userId string) {
 	util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 }
 
-func (c *ApiController) AuthLogin() {
+func (c *ApiController) Login() {
+	var resp Response
 	var form RegisterForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
 		panic(err)
 	}
 
-	application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
-	provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
-
-	idProvider := idp.GetIdProvider(provider.Type)
-	oauthConfig := idProvider.GetConfig()
-	oauthConfig.ClientID = provider.ClientId
-	oauthConfig.ClientSecret = provider.ClientSecret
-	oauthConfig.RedirectURL = form.RedirectUri
-
-	var resp Response
-	var res authResponse
-
-	if form.State != beego.AppConfig.String("AuthState") {
-		resp = Response{Status: "error", Msg: "unauthorized", Data: res}
-		c.ServeJSON()
-		return
-	}
-
-	// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
-	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, httpClient)
-	token, err := oauthConfig.Exchange(ctx, form.Code)
-	if err != nil {
-		panic(err)
-	}
-
-	if !token.Valid() {
-		resp = Response{Status: "error", Msg: "unauthorized", Data: res}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-
-	res.Email, res.Method, res.Avatar, err = idProvider.GetUserInfo(httpClient, token)
-	if err != nil {
-		resp = Response{Status: "error", Msg: "Login failed, please try again."}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-
-	if form.Method == "signup" {
-		userId := ""
-		if provider.Type == "github" {
-			userId = object.GetUserIdByField(application, "github", res.Method)
-		} else if provider.Type == "google" {
-			userId = object.GetUserIdByField(application, "google", res.Email)
-		}
-
-		if userId != "" {
-			//if object.IsForbidden(userId) {
-			//	c.forbiddenAccountResp(userId)
-			//	return
-			//}
-
-			//if len(object.GetMemberAvatar(userId)) == 0 {
-			//	avatar := UploadAvatarToOSS(res.Avatar, userId)
-			//	object.LinkMemberAccount(userId, "avatar", avatar)
-			//}
-
-			c.HandleLoggedIn(userId)
-		} else {
-			//if object.IsForbidden(userId) {
-			//	c.forbiddenAccountResp(userId)
-			//	return
-			//}
-
-			if userId := object.GetUserIdByField(application, "email", res.Email); userId != "" {
-				c.HandleLoggedIn(userId)
-
-				if provider.Type == "github" {
-					_ = object.LinkUserAccount(userId, "github", res.Method)
-				} else if provider.Type == "google" {
-					_ = object.LinkUserAccount(userId, "google", res.Email)
-				}
-			}
-		}
-		//res.Method = res.Email
-		resp = Response{Status: "ok", Msg: "success", Data: res}
-	} else {
-		userId := c.GetSessionUser()
-		if userId == "" {
-			resp = Response{Status: "error", Msg: "user doesn't exist", Data: res}
+	if form.Username != "" {
+		if c.GetSessionUser() != "" {
+			resp = Response{Status: "error", Msg: "please log out first before signing in", Data: c.GetSessionUser()}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return
 		}
 
-		var linkRes bool
-		if provider.Type == "github" {
-			_ = object.LinkUserAccount(userId, "github", res.Method)
-		} else if provider.Type == "google" {
-			_ = object.LinkUserAccount(userId, "google", res.Email)
-		}
-		if linkRes {
-			resp = Response{Status: "ok", Msg: "success", Data: linkRes}
+		userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
+		password := form.Password
+		msg := object.CheckUserLogin(userId, password)
+
+		if msg != "" {
+			resp = Response{Status: "error", Msg: msg, Data: ""}
 		} else {
-			resp = Response{Status: "error", Msg: "link account failed", Data: linkRes}
+			c.HandleLoggedIn(userId)
+			resp = Response{Status: "ok", Msg: "", Data: userId}
 		}
-		//if len(object.GetMemberAvatar(userId)) == 0 {
-		//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, userId)
-		//	object.LinkUserAccount(userId, "avatar", avatar)
-		//}
+	} else if form.Provider != "" {
+		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
+
+		idProvider := idp.GetIdProvider(provider.Type)
+		oauthConfig := idProvider.GetConfig()
+		oauthConfig.ClientID = provider.ClientId
+		oauthConfig.ClientSecret = provider.ClientSecret
+		oauthConfig.RedirectURL = form.RedirectUri
+
+		var res authResponse
+
+		if form.State != beego.AppConfig.String("AuthState") {
+			resp = Response{Status: "error", Msg: "unauthorized", Data: res}
+			c.ServeJSON()
+			return
+		}
+
+		// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
+		ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, httpClient)
+		token, err := oauthConfig.Exchange(ctx, form.Code)
+		if err != nil {
+			panic(err)
+		}
+
+		if !token.Valid() {
+			resp = Response{Status: "error", Msg: "unauthorized", Data: res}
+			c.Data["json"] = resp
+			c.ServeJSON()
+			return
+		}
+
+		res.Email, res.Method, res.Avatar, err = idProvider.GetUserInfo(httpClient, token)
+		if err != nil {
+			resp = Response{Status: "error", Msg: "Login failed, please try again."}
+			c.Data["json"] = resp
+			c.ServeJSON()
+			return
+		}
+
+		if form.Method == "signup" {
+			userId := ""
+			if provider.Type == "github" {
+				userId = object.GetUserIdByField(application, "github", res.Method)
+			} else if provider.Type == "google" {
+				userId = object.GetUserIdByField(application, "google", res.Email)
+			}
+
+			if userId != "" {
+				//if object.IsForbidden(userId) {
+				//	c.forbiddenAccountResp(userId)
+				//	return
+				//}
+
+				//if len(object.GetMemberAvatar(userId)) == 0 {
+				//	avatar := UploadAvatarToOSS(res.Avatar, userId)
+				//	object.LinkMemberAccount(userId, "avatar", avatar)
+				//}
+
+				c.HandleLoggedIn(userId)
+			} else {
+				//if object.IsForbidden(userId) {
+				//	c.forbiddenAccountResp(userId)
+				//	return
+				//}
+
+				if userId := object.GetUserIdByField(application, "email", res.Email); userId != "" {
+					c.HandleLoggedIn(userId)
+
+					if provider.Type == "github" {
+						_ = object.LinkUserAccount(userId, "github", res.Method)
+					} else if provider.Type == "google" {
+						_ = object.LinkUserAccount(userId, "google", res.Email)
+					}
+				}
+			}
+			resp = Response{Status: "ok", Msg: "success", Data: res}
+		} else {
+			userId := c.GetSessionUser()
+			if userId == "" {
+				resp = Response{Status: "error", Msg: "user doesn't exist", Data: res}
+				c.Data["json"] = resp
+				c.ServeJSON()
+				return
+			}
+
+			linkRes := false
+			if provider.Type == "github" {
+				linkRes = object.LinkUserAccount(userId, "github", res.Method)
+			} else if provider.Type == "google" {
+				linkRes = object.LinkUserAccount(userId, "google", res.Email)
+			}
+			if linkRes {
+				resp = Response{Status: "ok", Msg: "success", Data: linkRes}
+			} else {
+				resp = Response{Status: "error", Msg: "link account failed", Data: linkRes}
+			}
+			//if len(object.GetMemberAvatar(userId)) == 0 {
+			//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, userId)
+			//	object.LinkUserAccount(userId, "avatar", avatar)
+			//}
+		}
+	} else {
+		panic("unknown authentication type (not password or provider)")
 	}
 
 	c.Data["json"] = resp
