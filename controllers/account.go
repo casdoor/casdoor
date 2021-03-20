@@ -25,6 +25,11 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+const (
+	ResponseTypeLogin = "login"
+	ResponseTypeCode  = "code"
+)
+
 type RequestForm struct {
 	Type string `json:"type"`
 

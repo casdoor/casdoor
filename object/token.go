@@ -123,6 +123,30 @@ func DeleteToken(token *Token) bool {
 	return affected != 0
 }
 
+func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string) (string, *Application) {
+	if responseType != "code" {
+		return "response_type should be \"code\"", nil
+	}
+
+	application := getApplicationByClientId(clientId)
+	if application == nil {
+		return "invalid client_id", nil
+	}
+
+	validUri := false
+	for _, tmpUri := range application.RedirectUris {
+		if strings.Contains(redirectUri, tmpUri) {
+			validUri = true
+			break
+		}
+	}
+	if !validUri {
+		return "redirect_uri doesn't exist in the allowed Redirect URL list", application
+	}
+
+	return "", application
+}
+
 func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string) *Code {
 	if userId == "" {
 		return &Code{

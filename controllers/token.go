@@ -69,11 +69,11 @@ func (c *ApiController) DeleteToken() {
 	c.ServeJSON()
 }
 
-func codeToResponse(code *object.Code) Response {
+func codeToResponse(code *object.Code) *Response {
 	if code.Code == "" {
-		return Response{Status: "error", Msg: code.Message, Data: code.Code}
+		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
 	} else {
-		return Response{Status: "ok", Msg: "success", Data: code.Code}
+		return &Response{Status: "ok", Msg: "success", Data: code.Code}
 	}
 }
 

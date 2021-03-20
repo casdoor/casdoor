@@ -26,9 +26,44 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func (c *ApiController) HandleLoggedIn(userId string) {
-	c.SetSessionUser(userId)
-	util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
+func (c *ApiController) HandleLoggedIn(userId string, form *RequestForm) *Response {
+	resp := &Response{}
+	if form.Type == ResponseTypeLogin {
+		c.SetSessionUser(userId)
+		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
+		resp = nil
+	} else if form.Type == ResponseTypeCode {
+		clientId := c.Input().Get("clientId")
+		responseType := c.Input().Get("responseType")
+		redirectUri := c.Input().Get("redirectUri")
+		scope := c.Input().Get("scope")
+		state := c.Input().Get("state")
+
+		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state)
+		resp = codeToResponse(code)
+	} else {
+		resp = &Response{Status: "error", Msg: fmt.Sprintf("unknown response type: %s", form.Type)}
+	}
+	return resp
+}
+
+func (c *ApiController) GetApplicationLogin() {
+	var resp Response
+
+	clientId := c.Input().Get("clientId")
+	responseType := c.Input().Get("responseType")
+	redirectUri := c.Input().Get("redirectUri")
+	scope := c.Input().Get("scope")
+	state := c.Input().Get("state")
+
+	msg, application := object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
+	if msg != "" {
+		resp = Response{Status: "error", Msg: msg, Data: application}
+	} else {
+		resp = Response{Status: "ok", Msg: "", Data: application}
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
 }
 
 func (c *ApiController) Login() {
@@ -54,7 +89,7 @@ func (c *ApiController) Login() {
 		if msg != "" {
 			resp = Response{Status: "error", Msg: msg, Data: ""}
 		} else {
-			c.HandleLoggedIn(userId)
+			c.HandleLoggedIn(userId, &form)
 			resp = Response{Status: "ok", Msg: "", Data: userId}
 		}
 	} else if form.Provider != "" {
@@ -116,7 +151,7 @@ func (c *ApiController) Login() {
 				//	object.LinkMemberAccount(userId, "avatar", avatar)
 				//}
 
-				c.HandleLoggedIn(userId)
+				c.HandleLoggedIn(userId, &form)
 			} else {
 				//if object.IsForbidden(userId) {
 				//	c.forbiddenAccountResp(userId)
@@ -124,7 +159,7 @@ func (c *ApiController) Login() {
 				//}
 
 				if userId := object.GetUserIdByField(application, "email", res.Email); userId != "" {
-					c.HandleLoggedIn(userId)
+					c.HandleLoggedIn(userId, &form)
 
 					if provider.Type == "github" {
 						_ = object.LinkUserAccount(userId, "github", res.Method)
