@@ -86,11 +86,12 @@ class Face extends React.Component {
     AuthBackend.login(values, oAuthParams)
       .then((res) => {
         if (res.status === 'ok') {
-          if (this.state.type === "login") {
+          const responseType = this.state.type;
+          if (responseType === "login") {
             this.props.onLoggedIn();
             Util.showMessage("success", `Logged in successfully`);
             Util.goToLink("/");
-          } else if (this.state.type === "code") {
+          } else if (responseType === "code") {
             const code = res.data;
             Util.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
             // Util.showMessage("success", `Authorization code: ${res.data}`);
@@ -221,7 +222,7 @@ class Face extends React.Component {
           {
             application.providerObjs.map(provider => {
               return (
-                <a href={Provider.getAuthUrl(application, provider, "signup")}>
+                <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
                   <img width={30} height={30} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: "3px"}} />
                 </a>
               );

@@ -17,6 +17,7 @@ import {Spin} from "antd";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
 import * as Util from "./Util";
+import {authConfig} from "./Auth";
 
 class AuthCallback extends React.Component {
   constructor(props) {
@@ -29,10 +30,29 @@ class AuthCallback extends React.Component {
     };
   }
 
+  getResponseType() {
+    // "http://localhost:8000"
+    const authServerUrl = authConfig.serverUrl;
+
+    // For example, for Casbin-OA, realRedirectUri = "http://localhost:9000/login"
+    // realRedirectUrl = "http://localhost:9000"
+    const params = new URLSearchParams(this.props.location.search);
+    const realRedirectUri = params.get("redirect_uri");
+    const realRedirectUrl = new URL(realRedirectUri).origin;
+
+    // For Casdoor itself, we use "login" directly
+    if (authServerUrl === realRedirectUrl) {
+      return "login";
+    } else {
+      return "code";
+    }
+  }
+
   componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
     let redirectUri = `${window.location.origin}/callback/${this.state.applicationName}/${this.state.providerName}/${this.state.method}`;
     const body = {
+      type: this.getResponseType(),
       application: this.state.applicationName,
       provider: this.state.providerName,
       code: params.get("code"),
@@ -43,10 +63,19 @@ class AuthCallback extends React.Component {
     const oAuthParams = Util.getOAuthGetParameters();
     AuthBackend.login(body, oAuthParams)
       .then((res) => {
-        if (res.status === "ok") {
-          window.location.href = '/';
+        if (res.status === 'ok') {
+          const responseType = this.getResponseType();
+          if (responseType === "login") {
+            // this.props.onLoggedIn();
+            Util.showMessage("success", `Logged in successfully`);
+            Util.goToLink("/");
+          } else if (responseType === "code") {
+            const code = res.data;
+            Util.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+            // Util.showMessage("success", `Authorization code: ${res.data}`);
+          }
         } else {
-          Util.showMessage("error", res?.msg);
+          Util.showMessage("error", `Log in failed：${res.msg}`);
         }
       });
   }

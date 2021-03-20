@@ -334,7 +334,7 @@ class App extends Component {
     if (this.isDoorPages()) {
       return (
         <Switch>
-          <Route exact path="/login/oauth/authorize" render={(props) => this.renderLoginIfNotLoggedIn(<Face type={"code"} {...props} />)}/>
+          <Route exact path="/login/oauth/authorize" render={(props) => <Face type={"code"} {...props} />}/>
         </Switch>
       )
     }
