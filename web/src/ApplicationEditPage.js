@@ -247,9 +247,9 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("application:Face Preview")}:
           </Col>
           <Col span={22} >
-            <a style={{marginBottom: '10px'}} target="_blank" href={`/login/oauth?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`}>
+            <a style={{marginBottom: '10px'}} target="_blank" href={`/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`}>
               {
-                `${window.location.host}/login/oauth?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`
+                `${window.location.host}/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`
               }
             </a>
             <br/>

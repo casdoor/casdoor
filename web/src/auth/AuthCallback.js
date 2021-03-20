@@ -21,28 +21,23 @@ import * as Util from "./Util";
 class AuthCallback extends React.Component {
   constructor(props) {
     super(props);
-    const params = new URLSearchParams(this.props.location.search);
     this.state = {
       classes: props,
       applicationName: props.match.params.applicationName,
       providerName: props.match.params.providerName,
       method: props.match.params.method,
-      state: params.get("state"),
-      code: params.get("code"),
-      isAuthenticated: false,
-      isSignedUp: false,
-      email: ""
     };
   }
 
   componentWillMount() {
+    const params = new URLSearchParams(this.props.location.search);
     let redirectUri;
     redirectUri = `${window.location.origin}/callback/${this.state.applicationName}/${this.state.providerName}/${this.state.method}`;
     const body = {
       application: this.state.applicationName,
       provider: this.state.providerName,
-      code: this.state.code,
-      state: this.state.state,
+      code: params.get("code"),
+      state: params.get("state"),
       redirectUri: redirectUri,
       method: this.state.method,
     };

@@ -26,6 +26,14 @@ import (
 	"golang.org/x/oauth2"
 )
 
+func codeToResponse(code *object.Code) *Response {
+	if code.Code == "" {
+		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
+	} else {
+		return &Response{Status: "ok", Msg: "", Data: code.Code}
+	}
+}
+
 func (c *ApiController) HandleLoggedIn(userId string, form *RequestForm) *Response {
 	resp := &Response{}
 	if form.Type == ResponseTypeLogin {

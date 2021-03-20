@@ -327,14 +327,14 @@ class App extends Component {
   }
 
   isDoorPages() {
-    return window.location.pathname.startsWith('/login/oauth');
+    return window.location.pathname.startsWith("/login/oauth/authorize");
   }
 
   render() {
     if (this.isDoorPages()) {
       return (
         <Switch>
-          <Route exact path="/login/oauth" render={(props) => this.renderLoginIfNotLoggedIn(<Face type={"code"} {...props} />)}/>
+          <Route exact path="/login/oauth/authorize" render={(props) => this.renderLoginIfNotLoggedIn(<Face type={"code"} {...props} />)}/>
         </Switch>
       )
     }

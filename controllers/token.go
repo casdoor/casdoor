@@ -69,14 +69,6 @@ func (c *ApiController) DeleteToken() {
 	c.ServeJSON()
 }
 
-func codeToResponse(code *object.Code) *Response {
-	if code.Code == "" {
-		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
-	} else {
-		return &Response{Status: "ok", Msg: "", Data: code.Code}
-	}
-}
-
 func (c *ApiController) GetOAuthToken() {
 	grantType := c.Input().Get("grant_type")
 	clientId := c.Input().Get("client_id")

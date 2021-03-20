@@ -91,7 +91,9 @@ class Face extends React.Component {
             Util.showMessage("success", `Logged in successfully`);
             Util.goToLink("/");
           } else if (this.state.type === "code") {
-            Util.showMessage("success", `Authorization code: ${res.data}`);
+            const code = res.data;
+            Util.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+            // Util.showMessage("success", `Authorization code: ${res.data}`);
           }
         } else {
           Util.showMessage("error", `Log in failed：${res.msg}`);
