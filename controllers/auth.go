@@ -33,7 +33,7 @@ func (c *ApiController) HandleLoggedIn(userId string) {
 
 func (c *ApiController) Login() {
 	var resp Response
-	var form RegisterForm
+	var form RequestForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
 		panic(err)

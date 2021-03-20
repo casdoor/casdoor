@@ -25,7 +25,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-type RegisterForm struct {
+type RequestForm struct {
 	Type string `json:"type"`
 
 	Organization string `json:"organization"`
@@ -65,7 +65,7 @@ func (c *ApiController) Register() {
 		return
 	}
 
-	var form RegisterForm
+	var form RequestForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
 		panic(err)
@@ -138,7 +138,7 @@ func (c *ApiController) UploadAvatar() {
 	username := c.GetSessionUser()
 	userObj := object.GetUser(username)
 
-	msg := object.CheckUserLogin(userObj.Owner + "/" + userObj.Name, c.Ctx.Request.Form.Get("password"))
+	msg := object.CheckUserLogin(userObj.Owner+"/"+userObj.Name, c.Ctx.Request.Form.Get("password"))
 	if msg != "" {
 		resp = Response{Status: "error", Msg: "Password wrong"}
 		c.Data["json"] = resp
@@ -148,14 +148,14 @@ func (c *ApiController) UploadAvatar() {
 
 	avatarBase64 := c.Ctx.Request.Form.Get("avatarfile")
 	index := strings.Index(avatarBase64, ",")
-	if index < 0 || avatarBase64[0: index] != "data:image/png;base64" {
+	if index < 0 || avatarBase64[0:index] != "data:image/png;base64" {
 		resp = Response{Status: "error", Msg: "File encoding error"}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return
 	}
 
-	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index + 1:])
+	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index+1:])
 	msg = object.UploadAvatar(userObj.Name, dist)
 	if msg != "" {
 		resp = Response{Status: "error", Msg: msg}
@@ -164,7 +164,7 @@ func (c *ApiController) UploadAvatar() {
 		return
 	}
 	userObj.Avatar = object.GetAvatarPath() + userObj.Name + ".png?time=" + strconv.FormatInt(time.Now().UnixNano(), 10)
-	object.UpdateUser(userObj.Owner + "/" + userObj.Name, userObj)
+	object.UpdateUser(userObj.Owner+"/"+userObj.Name, userObj)
 	resp = Response{Status: "ok", Msg: "Successfully set avatar"}
 	c.Data["json"] = resp
 	c.ServeJSON()
