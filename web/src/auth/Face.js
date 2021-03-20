@@ -42,13 +42,8 @@ class Face extends React.Component {
   }
 
   getApplicationLogin() {
-    const queries = new URLSearchParams(window.location.search);
-    const clientId = queries.get("client_id");
-    const responseType = queries.get("response_type");
-    const redirectUri = queries.get("redirect_uri");
-    const scope = queries.get("scope");
-    const state = queries.get("state");
-    AuthBackend.getApplicationLogin(clientId, responseType, redirectUri, scope, state)
+    const oAuthParams = Util.getOAuthGetParameters();
+    AuthBackend.getApplicationLogin(oAuthParams)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
@@ -86,8 +81,9 @@ class Face extends React.Component {
   }
 
   onFinish(values) {
-    values.type = this.state.type;
-    AuthBackend.login(values)
+    values["type"] = this.state.type;
+    const oAuthParams = Util.getOAuthGetParameters();
+    AuthBackend.login(values, oAuthParams)
       .then((res) => {
         if (res.status === 'ok') {
           if (this.state.type === "login") {

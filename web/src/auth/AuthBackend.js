@@ -29,15 +29,19 @@ export function register(values) {
   }).then(res => res.json());
 }
 
-export function getApplicationLogin(clientId, responseType, redirectUri, scope, state) {
-  return fetch(`${authConfig.serverUrl}/api/get-app-login?clientId=${clientId}&responseType=${responseType}&redirectUri=${redirectUri}&scope=${scope}&state=${state}`, {
+function oAuthParamsToQuery(oAuthParams) {
+  return `?clientId=${oAuthParams.clientId}&responseType=${oAuthParams.responseType}&redirectUri=${oAuthParams.redirectUri}&scope=${oAuthParams.scope}&state=${oAuthParams.state}`;
+}
+
+export function getApplicationLogin(oAuthParams) {
+  return fetch(`${authConfig.serverUrl}/api/get-app-login${oAuthParamsToQuery(oAuthParams)}`, {
     method: 'GET',
     credentials: 'include',
   }).then(res => res.json());
 }
 
-export function login(values) {
-  return fetch(`${authConfig.serverUrl}/api/login`, {
+export function login(values, oAuthParams) {
+  return fetch(`${authConfig.serverUrl}/api/login${oAuthParamsToQuery(oAuthParams)}`, {
     method: 'POST',
     credentials: "include",
     body: JSON.stringify(values),

@@ -42,3 +42,23 @@ export function trim(str, ch) {
 
   return (start > 0 || end < str.length) ? str.substring(start, end) : str;
 }
+
+export function getOAuthGetParameters() {
+  const queries = new URLSearchParams(window.location.search);
+  const clientId = queries.get("client_id");
+  const responseType = queries.get("response_type");
+  const redirectUri = queries.get("redirect_uri");
+  const scope = queries.get("scope");
+  const state = queries.get("state");
+  if (clientId === undefined) {
+    return null;
+  } else {
+    return {
+      clientId: clientId,
+      responseType: responseType,
+      redirectUri: redirectUri,
+      scope: scope,
+      state: state,
+    };
+  }
+}
