@@ -113,8 +113,9 @@ func (c *ApiController) Login() {
 
 		var res authResponse
 
-		if form.State != beego.AppConfig.String("AuthState") {
-			resp = &Response{Status: "error", Msg: "unauthorized", Data: res}
+		if form.State != beego.AppConfig.String("AuthState") && form.State != application.Name {
+			resp = &Response{Status: "error", Msg: fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("AuthState"), form.State), Data: res}
+			c.Data["json"] = resp
 			c.ServeJSON()
 			return
 		}
@@ -127,7 +128,7 @@ func (c *ApiController) Login() {
 		}
 
 		if !token.Valid() {
-			resp = &Response{Status: "error", Msg: "unauthorized", Data: res}
+			resp = &Response{Status: "error", Msg: "invalid token", Data: res}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return
@@ -135,7 +136,7 @@ func (c *ApiController) Login() {
 
 		res.Email, res.Method, res.Avatar, err = idProvider.GetUserInfo(httpClient, token)
 		if err != nil {
-			resp = &Response{Status: "error", Msg: "Login failed, please try again."}
+			resp = &Response{Status: "error", Msg: "login failed, please try again."}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return

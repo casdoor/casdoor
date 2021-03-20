@@ -31,8 +31,7 @@ class AuthCallback extends React.Component {
 
   componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
-    let redirectUri;
-    redirectUri = `${window.location.origin}/callback/${this.state.applicationName}/${this.state.providerName}/${this.state.method}`;
+    let redirectUri = `${window.location.origin}/callback/${this.state.applicationName}/${this.state.providerName}/${this.state.method}`;
     const body = {
       application: this.state.applicationName,
       provider: this.state.providerName,
