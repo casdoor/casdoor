@@ -31,7 +31,7 @@ func (c *ApiController) HandleLoggedIn(userId string, form *RequestForm) *Respon
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUser(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-		resp = nil
+		resp = &Response{Status: "ok", Msg: "", Data: userId}
 	} else if form.Type == ResponseTypeCode {
 		clientId := c.Input().Get("clientId")
 		responseType := c.Input().Get("responseType")
@@ -67,7 +67,7 @@ func (c *ApiController) GetApplicationLogin() {
 }
 
 func (c *ApiController) Login() {
-	var resp Response
+	resp := &Response{Status: "null", Msg: ""}
 	var form RequestForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
@@ -75,11 +75,13 @@ func (c *ApiController) Login() {
 	}
 
 	if form.Username != "" {
-		if c.GetSessionUser() != "" {
-			resp = Response{Status: "error", Msg: "please log out first before signing in", Data: c.GetSessionUser()}
-			c.Data["json"] = resp
-			c.ServeJSON()
-			return
+		if form.Type == ResponseTypeLogin {
+			if c.GetSessionUser() != "" {
+				resp = &Response{Status: "error", Msg: "please log out first before signing in", Data: c.GetSessionUser()}
+				c.Data["json"] = resp
+				c.ServeJSON()
+				return
+			}
 		}
 
 		userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
@@ -87,10 +89,9 @@ func (c *ApiController) Login() {
 		msg := object.CheckUserLogin(userId, password)
 
 		if msg != "" {
-			resp = Response{Status: "error", Msg: msg, Data: ""}
+			resp = &Response{Status: "error", Msg: msg, Data: ""}
 		} else {
-			c.HandleLoggedIn(userId, &form)
-			resp = Response{Status: "ok", Msg: "", Data: userId}
+			resp = c.HandleLoggedIn(userId, &form)
 		}
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
@@ -105,7 +106,7 @@ func (c *ApiController) Login() {
 		var res authResponse
 
 		if form.State != beego.AppConfig.String("AuthState") {
-			resp = Response{Status: "error", Msg: "unauthorized", Data: res}
+			resp = &Response{Status: "error", Msg: "unauthorized", Data: res}
 			c.ServeJSON()
 			return
 		}
@@ -118,7 +119,7 @@ func (c *ApiController) Login() {
 		}
 
 		if !token.Valid() {
-			resp = Response{Status: "error", Msg: "unauthorized", Data: res}
+			resp = &Response{Status: "error", Msg: "unauthorized", Data: res}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return
@@ -126,7 +127,7 @@ func (c *ApiController) Login() {
 
 		res.Email, res.Method, res.Avatar, err = idProvider.GetUserInfo(httpClient, token)
 		if err != nil {
-			resp = Response{Status: "error", Msg: "Login failed, please try again."}
+			resp = &Response{Status: "error", Msg: "Login failed, please try again."}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return
@@ -151,7 +152,7 @@ func (c *ApiController) Login() {
 				//	object.LinkMemberAccount(userId, "avatar", avatar)
 				//}
 
-				c.HandleLoggedIn(userId, &form)
+				resp = c.HandleLoggedIn(userId, &form)
 			} else {
 				//if object.IsForbidden(userId) {
 				//	c.forbiddenAccountResp(userId)
@@ -159,7 +160,7 @@ func (c *ApiController) Login() {
 				//}
 
 				if userId := object.GetUserIdByField(application, "email", res.Email); userId != "" {
-					c.HandleLoggedIn(userId, &form)
+					resp = c.HandleLoggedIn(userId, &form)
 
 					if provider.Type == "github" {
 						_ = object.LinkUserAccount(userId, "github", res.Method)
@@ -168,11 +169,11 @@ func (c *ApiController) Login() {
 					}
 				}
 			}
-			resp = Response{Status: "ok", Msg: "success", Data: res}
+			//resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else {
 			userId := c.GetSessionUser()
 			if userId == "" {
-				resp = Response{Status: "error", Msg: "user doesn't exist", Data: res}
+				resp = &Response{Status: "error", Msg: "user doesn't exist", Data: res}
 				c.Data["json"] = resp
 				c.ServeJSON()
 				return
@@ -185,9 +186,9 @@ func (c *ApiController) Login() {
 				linkRes = object.LinkUserAccount(userId, "google", res.Email)
 			}
 			if linkRes {
-				resp = Response{Status: "ok", Msg: "success", Data: linkRes}
+				resp = &Response{Status: "ok", Msg: "", Data: linkRes}
 			} else {
-				resp = Response{Status: "error", Msg: "link account failed", Data: linkRes}
+				resp = &Response{Status: "error", Msg: "link account failed", Data: linkRes}
 			}
 			//if len(object.GetMemberAvatar(userId)) == 0 {
 			//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, userId)

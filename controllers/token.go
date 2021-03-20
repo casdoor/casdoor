@@ -73,21 +73,8 @@ func codeToResponse(code *object.Code) *Response {
 	if code.Code == "" {
 		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
 	} else {
-		return &Response{Status: "ok", Msg: "success", Data: code.Code}
+		return &Response{Status: "ok", Msg: "", Data: code.Code}
 	}
-}
-
-func (c *ApiController) GetOAuthCode() {
-	userId := c.GetSessionUser()
-	clientId := c.Input().Get("clientId")
-	responseType := c.Input().Get("responseType")
-	redirectUri := c.Input().Get("redirectUri")
-	scope := c.Input().Get("scope")
-	state := c.Input().Get("state")
-
-	code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state)
-	c.Data["json"] = codeToResponse(code)
-	c.ServeJSON()
 }
 
 func (c *ApiController) GetOAuthToken() {

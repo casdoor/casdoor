@@ -86,12 +86,17 @@ class Face extends React.Component {
   }
 
   onFinish(values) {
+    values.type = this.state.type;
     AuthBackend.login(values)
       .then((res) => {
         if (res.status === 'ok') {
-          this.props.onLoggedIn();
-          Util.showMessage("success", `Logged in successfully`);
-          Util.goToLink("/");
+          if (this.state.type === "login") {
+            this.props.onLoggedIn();
+            Util.showMessage("success", `Logged in successfully`);
+            Util.goToLink("/");
+          } else if (this.state.type === "code") {
+            Util.showMessage("success", `Authorization code: ${res.data}`);
+          }
         } else {
           Util.showMessage("error", `Log in failed：${res.msg}`);
         }

@@ -148,13 +148,6 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 }
 
 func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string) *Code {
-	if userId == "" {
-		return &Code{
-			Message: "please sign in first",
-			Code:    "",
-		}
-	}
-
 	user := GetUser(userId)
 	if user == nil {
 		return &Code{
@@ -163,31 +156,10 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		}
 	}
 
-	application := getApplicationByClientId(clientId)
-	if application == nil {
+	msg, application := CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
+	if msg != "" {
 		return &Code{
-			Message: "invalid client_id",
-			Code:    "",
-		}
-	}
-
-	if responseType != "code" {
-		return &Code{
-			Message: "response_type should be \"code\"",
-			Code:    "",
-		}
-	}
-
-	validUri := false
-	for _, tmpUri := range application.RedirectUris {
-		if strings.Contains(redirectUri, tmpUri) {
-			validUri = true
-			break
-		}
-	}
-	if !validUri {
-		return &Code{
-			Message: "redirect_uri doesn't exist in the allowed Redirect URL list",
+			Message: msg,
 			Code:    "",
 		}
 	}
