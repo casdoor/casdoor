@@ -19,7 +19,7 @@ import {authConfig} from "./Auth";
 class LoginPage extends React.Component {
   render() {
     return (
-      <Face applicationName={authConfig.appName} account={this.props.account} onLoggedIn={this.props.onLoggedIn.bind(this)} {...this.props} />
+      <Face type={"login"} applicationName={authConfig.appName} account={this.props.account} onLoggedIn={this.props.onLoggedIn.bind(this)} {...this.props} />
     )
   }
 }

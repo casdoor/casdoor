@@ -49,6 +49,21 @@ func GetApplications(owner string) []*Application {
 	return applications
 }
 
+func extendApplication(application *Application) {
+	providers := GetProviders(application.Owner)
+	m := map[string]*Provider{}
+	for _, provider := range providers {
+		provider.ClientSecret = ""
+		provider.ProviderUrl = ""
+		m[provider.Name] = provider
+	}
+
+	application.ProviderObjs = []*Provider{}
+	for _, providerName := range application.Providers {
+		application.ProviderObjs = append(application.ProviderObjs, m[providerName])
+	}
+}
+
 func getApplication(owner string, name string) *Application {
 	application := Application{Owner: owner, Name: name}
 	existed, err := adapter.engine.Get(&application)
@@ -57,18 +72,7 @@ func getApplication(owner string, name string) *Application {
 	}
 
 	if existed {
-		providers := GetProviders(owner)
-		m := map[string]*Provider{}
-		for _, provider := range providers {
-			provider.ClientSecret = ""
-			provider.ProviderUrl = ""
-			m[provider.Name] = provider
-		}
-
-		application.ProviderObjs = []*Provider{}
-		for _, providerName := range application.Providers {
-			application.ProviderObjs = append(application.ProviderObjs, m[providerName])
-		}
+		extendApplication(&application)
 		return &application
 	} else {
 		return nil
@@ -83,6 +87,7 @@ func getApplicationByClientId(clientId string) *Application {
 	}
 
 	if existed {
+		extendApplication(&application)
 		return &application
 	} else {
 		return nil

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Checkbox, Col, Form, Input, Row} from "antd";
+import {Alert, Button, Checkbox, Col, Form, Input, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
 import * as Provider from "./Provider";
@@ -22,21 +22,46 @@ import * as Util from "./Util";
 class Face extends React.Component {
   constructor(props) {
     super(props);
-    const queries = new URLSearchParams(window.location.search);
     this.state = {
       classes: props,
+      type: props.type,
       applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
-      clientId: queries.get("client_id"),
-      responseType: queries.get("response_type"),
-      redirectUri: queries.get("redirect_uri"),
-      scope: queries.get("scope"),
-      state: queries.get("state"),
+      msg: null,
     };
   }
 
   componentWillMount() {
-    this.getApplication();
+    if (this.state.type === "login") {
+      this.getApplication();
+    } else if (this.state.type === "code") {
+      this.getApplicationLogin();
+    } else {
+      Util.showMessage("error", `Unknown authentication type: ${this.state.type}`);
+    }
+  }
+
+  getApplicationLogin() {
+    const queries = new URLSearchParams(window.location.search);
+    const clientId = queries.get("client_id");
+    const responseType = queries.get("response_type");
+    const redirectUri = queries.get("redirect_uri");
+    const scope = queries.get("scope");
+    const state = queries.get("state");
+    AuthBackend.getApplicationLogin(clientId, responseType, redirectUri, scope, state)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            application: res.data,
+          });
+        } else {
+          // Util.showMessage("error", res.msg);
+          this.setState({
+            application: res.data,
+            msg: res.msg,
+          });
+        }
+      });
   }
 
   getApplication() {
@@ -74,6 +99,24 @@ class Face extends React.Component {
   };
 
   renderForm(application) {
+    if (this.state.msg !== null) {
+      return (
+        <div style={{display: "inline"}}>
+          <Alert
+            message="Error"
+            showIcon
+            description={this.state.msg}
+            type="error"
+            action={
+              <Button size="small" danger>
+                Detail
+              </Button>
+            }
+          />
+        </div>
+      )
+    }
+
     return (
       <Form
         name="normal_login"
@@ -177,7 +220,7 @@ class Face extends React.Component {
 
     return (
       <Row>
-        <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
+        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
           <div style={{marginTop: "80px", textAlign: "center"}}>
             {
               this.renderLogo(application)

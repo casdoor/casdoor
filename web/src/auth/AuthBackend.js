@@ -29,6 +29,13 @@ export function register(values) {
   }).then(res => res.json());
 }
 
+export function getApplicationLogin(clientId, responseType, redirectUri, scope, state) {
+  return fetch(`${authConfig.serverUrl}/api/get-app-login?clientId=${clientId}&responseType=${responseType}&redirectUri=${redirectUri}&scope=${scope}&state=${state}`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then(res => res.json());
+}
+
 export function login(values) {
   return fetch(`${authConfig.serverUrl}/api/login`, {
     method: 'POST',
