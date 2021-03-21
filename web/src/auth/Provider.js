@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const AuthState = "casdoor";
+import * as Util from "./Util";
 
 const GoogleAuthScope  = "profile+email"
 const GoogleAuthUri = "https://accounts.google.com/signin/oauth";
@@ -43,14 +43,15 @@ export function getAuthLogo(provider) {
 }
 
 export function getAuthUrl(application, provider, method) {
-  const redirectUri = `${window.location.origin}/callback/${application.name}/${provider.name}/${method}${encodeURIComponent(window.location.search)}`;
+  const redirectUri = `${window.location.origin}/callback/${application.name}/${provider.name}/${method}`;
+  const state = Util.getQueryParamsToState();
   if (provider.type === "google") {
-    return `${GoogleAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GoogleAuthScope}&response_type=code&state=${AuthState}`;
+    return `${GoogleAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GoogleAuthScope}&response_type=code&state=${state}`;
   } else if (provider.type === "github") {
-    return `${GithubAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GithubAuthScope}&response_type=code&state=${AuthState}`;
+    return `${GithubAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GithubAuthScope}&response_type=code&state=${state}`;
   } else if (provider.type === "qq") {
-    return `${QqAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${QqAuthScope}&response_type=code&state=${AuthState}`;
+    return `${QqAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${QqAuthScope}&response_type=code&state=${state}`;
   } else if (provider.type === "wechat") {
-    return `${WeChatAuthUri}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${WeChatAuthScope}&response_type=code&state=${AuthState}#wechat_redirect`;
+    return `${WeChatAuthUri}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${WeChatAuthScope}&response_type=code&state=${state}#wechat_redirect`;
   }
 }

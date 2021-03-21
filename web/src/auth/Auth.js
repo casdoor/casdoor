@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {trim} from "./Util";
-
 export let authConfig = {
   serverUrl: "http://example.com", // your Casdoor URL, like the official one: https://door.casbin.com
   appName: "app-example", // your Casdoor application name, like: "app-built-in"
@@ -22,12 +20,4 @@ export let authConfig = {
 
 export function initAuthWithConfig(config) {
   authConfig = config;
-}
-
-export function getMyProfileUrl() {
-  return `${trim(authConfig.serverUrl)}/account`
-}
-
-export function getUserProfileUrl(userName) {
-  return `${trim(authConfig.serverUrl)}/users/${authConfig.organizationName}/${userName}`;
 }

@@ -43,8 +43,8 @@ export function trim(str, ch) {
   return (start > 0 || end < str.length) ? str.substring(start, end) : str;
 }
 
-export function getOAuthGetParameters() {
-  const queries = new URLSearchParams(window.location.search);
+export function getOAuthGetParameters(params) {
+  const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
   const clientId = queries.get("client_id");
   const responseType = queries.get("response_type");
   const redirectUri = queries.get("redirect_uri");
@@ -61,4 +61,13 @@ export function getOAuthGetParameters() {
       state: state,
     };
   }
+}
+
+export function getQueryParamsToState() {
+  const query = window.location.search;
+  return btoa(query);
+}
+
+export function stateToGetQueryParams(state) {
+  return atob(state);
 }

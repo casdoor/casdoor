@@ -30,14 +30,20 @@ class AuthCallback extends React.Component {
     };
   }
 
+  getInnerParams() {
+    // For example, for Casbin-OA, realRedirectUri = "http://localhost:9000/login"
+    // realRedirectUrl = "http://localhost:9000"
+    const params = new URLSearchParams(this.props.location.search);
+    const state = params.get("state");
+    return new URLSearchParams(Util.stateToGetQueryParams(state));
+  }
+
   getResponseType() {
     // "http://localhost:8000"
     const authServerUrl = authConfig.serverUrl;
 
-    // For example, for Casbin-OA, realRedirectUri = "http://localhost:9000/login"
-    // realRedirectUrl = "http://localhost:9000"
-    const params = new URLSearchParams(this.props.location.search);
-    const realRedirectUri = params.get("redirect_uri");
+    const innerParams = this.getInnerParams();
+    const realRedirectUri = innerParams.get("redirect_uri");
     const realRedirectUrl = new URL(realRedirectUri).origin;
 
     // For Casdoor itself, we use "login" directly
@@ -50,17 +56,18 @@ class AuthCallback extends React.Component {
 
   componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
+    const innerParams = this.getInnerParams();
     let redirectUri = `${window.location.origin}/callback/${this.state.applicationName}/${this.state.providerName}/${this.state.method}`;
     const body = {
       type: this.getResponseType(),
       application: this.state.applicationName,
       provider: this.state.providerName,
       code: params.get("code"),
-      state: params.get("state"),
+      state: innerParams.get("state"),
       redirectUri: redirectUri,
       method: this.state.method,
     };
-    const oAuthParams = Util.getOAuthGetParameters();
+    const oAuthParams = Util.getOAuthGetParameters(innerParams);
     AuthBackend.login(body, oAuthParams)
       .then((res) => {
         if (res.status === 'ok') {
