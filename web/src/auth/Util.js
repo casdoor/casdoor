@@ -63,8 +63,9 @@ export function getOAuthGetParameters(params) {
   }
 }
 
-export function getQueryParamsToState() {
-  const query = window.location.search;
+export function getQueryParamsToState(applicationName, providerName, method) {
+  let query = window.location.search;
+  query = `${query}&application=${applicationName}&provider=${providerName}&method=${method}`;
   return btoa(query);
 }
 

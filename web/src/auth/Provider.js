@@ -43,8 +43,8 @@ export function getAuthLogo(provider) {
 }
 
 export function getAuthUrl(application, provider, method) {
-  const redirectUri = `${window.location.origin}/callback/${application.name}/${provider.name}/${method}`;
-  const state = Util.getQueryParamsToState();
+  const redirectUri = `${window.location.origin}/callback`;
+  const state = Util.getQueryParamsToState(application.name, provider.name, method);
   if (provider.type === "google") {
     return `${GoogleAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GoogleAuthScope}&response_type=code&state=${state}`;
   } else if (provider.type === "github") {

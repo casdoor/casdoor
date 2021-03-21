@@ -24,9 +24,6 @@ class AuthCallback extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      applicationName: props.match.params.applicationName,
-      providerName: props.match.params.providerName,
-      method: props.match.params.method,
     };
   }
 
@@ -57,15 +54,18 @@ class AuthCallback extends React.Component {
   componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
     const innerParams = this.getInnerParams();
-    let redirectUri = `${window.location.origin}/callback/${this.state.applicationName}/${this.state.providerName}/${this.state.method}`;
+    const applicationName = innerParams.get("application");
+    const providerName = innerParams.get("provider");
+    const method = innerParams.get("method");
+    let redirectUri = `${window.location.origin}/callback`;
     const body = {
       type: this.getResponseType(),
-      application: this.state.applicationName,
-      provider: this.state.providerName,
+      application: applicationName,
+      provider: providerName,
       code: params.get("code"),
       state: innerParams.get("state"),
       redirectUri: redirectUri,
-      method: this.state.method,
+      method: method,
     };
     const oAuthParams = Util.getOAuthGetParameters(innerParams);
     AuthBackend.login(body, oAuthParams)
