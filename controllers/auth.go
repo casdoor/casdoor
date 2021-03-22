@@ -105,7 +105,7 @@ func (c *ApiController) Login() {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
 
-		idProvider := idp.GetIdProvider(provider.Type)
+		idProvider := idp.GetIdProvider(provider.Type, provider.ClientId)
 		oauthConfig := idProvider.GetConfig()
 		oauthConfig.ClientID = provider.ClientId
 		oauthConfig.ClientSecret = provider.ClientSecret
