@@ -39,14 +39,13 @@ func (idp *FacebookIdProvider) GetConfig() *oauth2.Config {
 }
 
 func (idp *FacebookIdProvider) GetUserInfo(httpClient *http.Client, token *oauth2.Token) (string, string, string, error) {
-	res := ""
 
 	type url struct {
-		url string `json:url`
+		Url string `json:"url"`
 	}
 
 	type data struct {
-		data url `json:data`
+		Data url `json:"data"`
 	}
 
 	type userInfoFromFacebook struct {
@@ -72,8 +71,5 @@ func (idp *FacebookIdProvider) GetUserInfo(httpClient *http.Client, token *oauth
 	if err != nil {
 		panic(err)
 	}
-
-	fbUser.Picture = fbUser.Picture
-
-	return fbUser.Email, fbUser.Name, fbUser.Picture.data.url, nil
+	return fbUser.Email, fbUser.Name, fbUser.Picture.Data.Url, nil
 }

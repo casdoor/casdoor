@@ -30,6 +30,8 @@ func GetIdProvider(providerType string) IdProvider {
 		return &GithubIdProvider{}
 	} else if providerType == "google" {
 		return &GoogleIdProvider{}
+	} else if providerType == "facebook" {
+		return &FacebookIdProvider{}
 	}
 
 	return nil
