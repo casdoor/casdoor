@@ -74,7 +74,7 @@ func (idp *GoogleIdProvider) GetToken(code string) (*oauth2.Token, error) {
 func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	userInfo := &UserInfo{}
 
-	type userInfoFromGoogle struct {
+	type response struct {
 		Picture string `json:"picture"`
 		Email   string `json:"email"`
 	}
@@ -82,17 +82,16 @@ func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	resp, err := idp.Client.Get("https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=" + token.AccessToken)
 	defer resp.Body.Close()
 	contents, err := ioutil.ReadAll(resp.Body)
-	var tempUser userInfoFromGoogle
-	err = json.Unmarshal(contents, &tempUser)
+	var userResponse response
+	err = json.Unmarshal(contents, &userResponse)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	userInfo.Email = tempUser.Email
-	userInfo.AvatarUrl = tempUser.Picture
-
-	if userInfo.Email == "" {
-		return userInfo, errors.New("google email is empty, please try again")
+	if userResponse.Email == "" {
+		return userInfo, errors.New("google email is empty")
 	}
 
+	userInfo.Email = userResponse.Email
+	userInfo.AvatarUrl = userResponse.Picture
 	return userInfo, nil
 }
