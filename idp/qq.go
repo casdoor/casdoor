@@ -113,7 +113,7 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		return nil, errors.New("openId is empty")
 	}
 
-	getUserInfoUrl := fmt.Sprintf("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s", token, idp.ClientId, openId)
+	getUserInfoUrl := fmt.Sprintf("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s", token.AccessToken, idp.ClientId, openId)
 	getUserInfoResponse, err := idp.Client.Get(getUserInfoUrl)
 	if err != nil {
 		return nil, err
@@ -128,7 +128,7 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	defer getUserInfoResponse.Body.Close()
 	userInfoContent, err := ioutil.ReadAll(getUserInfoResponse.Body)
 	var userResponse response
-	err = json.Unmarshal(userInfoContent, &userInfo)
+	err = json.Unmarshal(userInfoContent, &userResponse)
 	if err != nil {
 		return nil, err
 	}

@@ -32,8 +32,8 @@ type GoogleIdProvider struct {
 	RedirectUrl  string
 }
 
-func NewGoogleIdProvider(clientId string, clientSecret string, redirectUrl string) *GithubIdProvider {
-	idp := &GithubIdProvider{
+func NewGoogleIdProvider(clientId string, clientSecret string, redirectUrl string) *GoogleIdProvider {
+	idp := &GoogleIdProvider{
 		ClientId:     clientId,
 		ClientSecret: clientSecret,
 		RedirectUrl:  redirectUrl,
@@ -91,6 +91,7 @@ func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		return userInfo, errors.New("google email is empty")
 	}
 
+	userInfo.Username = userResponse.Email
 	userInfo.Email = userResponse.Email
 	userInfo.AvatarUrl = userResponse.Picture
 	return userInfo, nil

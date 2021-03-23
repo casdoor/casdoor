@@ -40,6 +40,7 @@ type User struct {
 
 	Github string `xorm:"varchar(100)" json:"github"`
 	Google string `xorm:"varchar(100)" json:"google"`
+	Qq     string `xorm:"varchar(100)" json:"qq"`
 }
 
 func GetGlobalUsers() []*User {

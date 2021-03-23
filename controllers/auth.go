@@ -135,13 +135,7 @@ func (c *ApiController) Login() {
 		}
 
 		if form.Method == "signup" {
-			userId := ""
-			if provider.Type == "github" {
-				userId = object.GetUserIdByField(application, "github", userInfo.Username)
-			} else if provider.Type == "google" {
-				userId = object.GetUserIdByField(application, "google", userInfo.Email)
-			}
-
+			userId := object.GetUserIdByField(application, provider.Type, userInfo.Username)
 			if userId != "" {
 				//if object.IsForbidden(userId) {
 				//	c.forbiddenAccountResp(userId)
@@ -163,11 +157,7 @@ func (c *ApiController) Login() {
 				if userId := object.GetUserIdByField(application, "email", userInfo.Email); userId != "" {
 					resp = c.HandleLoggedIn(userId, &form)
 
-					if provider.Type == "github" {
-						_ = object.LinkUserAccount(userId, "github", userInfo.Username)
-					} else if provider.Type == "google" {
-						_ = object.LinkUserAccount(userId, "google", userInfo.Email)
-					}
+					object.LinkUserAccount(userId, provider.Type, userInfo.Username)
 				}
 			}
 			//resp = &Response{Status: "ok", Msg: "", Data: res}
@@ -180,16 +170,11 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			linkRes := false
-			if provider.Type == "github" {
-				linkRes = object.LinkUserAccount(userId, "github", userInfo.Username)
-			} else if provider.Type == "google" {
-				linkRes = object.LinkUserAccount(userId, "google", userInfo.Email)
-			}
-			if linkRes {
-				resp = &Response{Status: "ok", Msg: "", Data: linkRes}
+			isLinked := object.LinkUserAccount(userId, provider.Type, userInfo.Username)
+			if isLinked {
+				resp = &Response{Status: "ok", Msg: "", Data: isLinked}
 			} else {
-				resp = &Response{Status: "error", Msg: "link account failed", Data: linkRes}
+				resp = &Response{Status: "error", Msg: "link account failed", Data: isLinked}
 			}
 			//if len(object.GetMemberAvatar(userId)) == 0 {
 			//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, userId)
