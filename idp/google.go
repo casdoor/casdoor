@@ -15,6 +15,7 @@
 package idp
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -23,9 +24,35 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type GoogleIdProvider struct{}
+type GoogleIdProvider struct {
+	Client       *http.Client
+	Config       *oauth2.Config
+	ClientId     string
+	ClientSecret string
+	RedirectUrl  string
+}
 
-func (idp *GoogleIdProvider) GetConfig() *oauth2.Config {
+func NewGoogleIdProvider(clientId string, clientSecret string, redirectUrl string) *GithubIdProvider {
+	idp := &GithubIdProvider{
+		ClientId:     clientId,
+		ClientSecret: clientSecret,
+		RedirectUrl:  redirectUrl,
+	}
+
+	config := idp.getConfig()
+	config.ClientID = clientId
+	config.ClientSecret = clientSecret
+	config.RedirectURL = redirectUrl
+	idp.Config = config
+
+	return idp
+}
+
+func (idp *GoogleIdProvider) SetHttpClient(client *http.Client) {
+	idp.Client = client
+}
+
+func (idp *GoogleIdProvider) getConfig() *oauth2.Config {
 	var endpoint = oauth2.Endpoint{
 		AuthURL:  "https://accounts.google.com/o/oauth2/auth",
 		TokenURL: "https://accounts.google.com/o/oauth2/token",
@@ -39,15 +66,20 @@ func (idp *GoogleIdProvider) GetConfig() *oauth2.Config {
 	return config
 }
 
-func (idp *GoogleIdProvider) GetUserInfo(httpClient *http.Client, token *oauth2.Token) (string, string, string, error) {
-	var email, username, avatarUrl string
+func (idp *GoogleIdProvider) GetToken(code string) (*oauth2.Token, error) {
+	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, idp.Client)
+	return idp.Config.Exchange(ctx, code)
+}
+
+func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+	userInfo := &UserInfo{}
 
 	type userInfoFromGoogle struct {
 		Picture string `json:"picture"`
 		Email   string `json:"email"`
 	}
 
-	resp, err := httpClient.Get("https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=" + token.AccessToken)
+	resp, err := idp.Client.Get("https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=" + token.AccessToken)
 	defer resp.Body.Close()
 	contents, err := ioutil.ReadAll(resp.Body)
 	var tempUser userInfoFromGoogle
@@ -55,12 +87,12 @@ func (idp *GoogleIdProvider) GetUserInfo(httpClient *http.Client, token *oauth2.
 	if err != nil {
 		panic(err)
 	}
-	email = tempUser.Email
-	avatarUrl = tempUser.Picture
+	userInfo.Email = tempUser.Email
+	userInfo.AvatarUrl = tempUser.Picture
 
-	if email == "" {
-		return email, username, avatarUrl, errors.New("google email is empty, please try again")
+	if userInfo.Email == "" {
+		return userInfo, errors.New("google email is empty, please try again")
 	}
 
-	return email, username, avatarUrl, nil
+	return userInfo, nil
 }

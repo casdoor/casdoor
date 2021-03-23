@@ -15,7 +15,6 @@
 package controllers
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 
@@ -23,7 +22,6 @@ import (
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-	"golang.org/x/oauth2"
 )
 
 func codeToResponse(code *object.Code) *Response {
@@ -105,36 +103,30 @@ func (c *ApiController) Login() {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
 
-		idProvider := idp.GetIdProvider(provider.Type, provider.ClientId)
-		oauthConfig := idProvider.GetConfig()
-		oauthConfig.ClientID = provider.ClientId
-		oauthConfig.ClientSecret = provider.ClientSecret
-		oauthConfig.RedirectURL = form.RedirectUri
-
-		var res authResponse
+		idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
+		idProvider.SetHttpClient(httpClient)
 
 		if form.State != beego.AppConfig.String("AuthState") && form.State != application.Name {
-			resp = &Response{Status: "error", Msg: fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("AuthState"), form.State), Data: res}
+			resp = &Response{Status: "error", Msg: fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("AuthState"), form.State)}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return
 		}
 
 		// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
-		ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, httpClient)
-		token, err := oauthConfig.Exchange(ctx, form.Code)
+		token, err := idProvider.GetToken(form.Code)
 		if err != nil {
 			panic(err)
 		}
 
 		if !token.Valid() {
-			resp = &Response{Status: "error", Msg: "invalid token", Data: res}
+			resp = &Response{Status: "error", Msg: "invalid token"}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return
 		}
 
-		res.Email, res.Method, res.Avatar, err = idProvider.GetUserInfo(httpClient, token)
+		userInfo, err := idProvider.GetUserInfo(token)
 		if err != nil {
 			resp = &Response{Status: "error", Msg: "login failed, please try again."}
 			c.Data["json"] = resp
@@ -145,9 +137,9 @@ func (c *ApiController) Login() {
 		if form.Method == "signup" {
 			userId := ""
 			if provider.Type == "github" {
-				userId = object.GetUserIdByField(application, "github", res.Method)
+				userId = object.GetUserIdByField(application, "github", userInfo.Username)
 			} else if provider.Type == "google" {
-				userId = object.GetUserIdByField(application, "google", res.Email)
+				userId = object.GetUserIdByField(application, "google", userInfo.Email)
 			}
 
 			if userId != "" {
@@ -168,13 +160,13 @@ func (c *ApiController) Login() {
 				//	return
 				//}
 
-				if userId := object.GetUserIdByField(application, "email", res.Email); userId != "" {
+				if userId := object.GetUserIdByField(application, "email", userInfo.Email); userId != "" {
 					resp = c.HandleLoggedIn(userId, &form)
 
 					if provider.Type == "github" {
-						_ = object.LinkUserAccount(userId, "github", res.Method)
+						_ = object.LinkUserAccount(userId, "github", userInfo.Username)
 					} else if provider.Type == "google" {
-						_ = object.LinkUserAccount(userId, "google", res.Email)
+						_ = object.LinkUserAccount(userId, "google", userInfo.Email)
 					}
 				}
 			}
@@ -182,7 +174,7 @@ func (c *ApiController) Login() {
 		} else {
 			userId := c.GetSessionUser()
 			if userId == "" {
-				resp = &Response{Status: "error", Msg: "user doesn't exist", Data: res}
+				resp = &Response{Status: "error", Msg: "user doesn't exist", Data: userInfo}
 				c.Data["json"] = resp
 				c.ServeJSON()
 				return
@@ -190,9 +182,9 @@ func (c *ApiController) Login() {
 
 			linkRes := false
 			if provider.Type == "github" {
-				linkRes = object.LinkUserAccount(userId, "github", res.Method)
+				linkRes = object.LinkUserAccount(userId, "github", userInfo.Username)
 			} else if provider.Type == "google" {
-				linkRes = object.LinkUserAccount(userId, "google", res.Email)
+				linkRes = object.LinkUserAccount(userId, "google", userInfo.Email)
 			}
 			if linkRes {
 				resp = &Response{Status: "ok", Msg: "", Data: linkRes}
