@@ -24,6 +24,7 @@ class AuthCallback extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      msg: null,
     };
   }
 
@@ -82,7 +83,10 @@ class AuthCallback extends React.Component {
             // Util.showMessage("success", `Authorization code: ${res.data}`);
           }
         } else {
-          Util.showMessage("error", `Log in failed：${res.msg}`);
+          // Util.showMessage("error", `Log in failed：${res.msg}`);
+          this.setState({
+            msg: res.msg,
+          });
         }
       });
   }
@@ -90,7 +94,13 @@ class AuthCallback extends React.Component {
   render() {
     return (
       <div style={{textAlign: "center"}}>
-        <Spin size="large" tip="Signing in..." style={{paddingTop: "10%"}} />
+        {
+          (this.state.msg === null) ? (
+            <Spin size="large" tip="Signing in..." style={{paddingTop: "10%"}} />
+          ) : (
+            Util.renderMessageLarge(this.state.msg)
+          )
+        }
       </div>
     )
   }

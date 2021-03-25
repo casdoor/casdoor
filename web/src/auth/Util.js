@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {message} from "antd";
+import React from "react";
+import {Alert, Button, message, Result} from "antd";
 
 export function goToLink(link) {
   window.location.href = link;
@@ -23,6 +24,51 @@ export function showMessage(type, text) {
     message.success(text);
   } else if (type === "error") {
     message.error(text);
+  }
+}
+
+export function renderMessage(msg) {
+  if (msg !== null) {
+    return (
+      <div style={{display: "inline"}}>
+        <Alert
+          message="Login Error"
+          showIcon
+          description={msg}
+          type="error"
+          action={
+            <Button size="small" danger>
+              Detail
+            </Button>
+          }
+        />
+      </div>
+    )
+  } else {
+    return null;
+  }
+}
+
+export function renderMessageLarge(msg) {
+  if (msg !== null) {
+    return (
+      <div style={{display: "inline"}}>
+        <Result
+          status="error"
+          title="Login Error"
+          subTitle={msg}
+          extra={[
+            <Button type="primary" key="details">
+              Details
+            </Button>,
+            <Button key="help">Help</Button>,
+          ]}
+        >
+        </Result>
+      </div>
+    )
+  } else {
+    return null;
   }
 }
 

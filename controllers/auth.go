@@ -116,7 +116,10 @@ func (c *ApiController) Login() {
 		// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
 		token, err := idProvider.GetToken(form.Code)
 		if err != nil {
-			panic(err)
+			resp = &Response{Status: "error", Msg: err.Error()}
+			c.Data["json"] = resp
+			c.ServeJSON()
+			return
 		}
 
 		if !token.Valid() {

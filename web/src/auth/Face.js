@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Alert, Button, Checkbox, Col, Form, Input, Result, Row} from "antd";
+import {Button, Checkbox, Col, Form, Input, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
 import * as Provider from "./Provider";
@@ -102,54 +102,9 @@ class Face extends React.Component {
       });
   };
 
-  renderMessage() {
-    if (this.state.msg !== null) {
-      return (
-        <div style={{display: "inline"}}>
-          <Alert
-            message="Login Error"
-            showIcon
-            description={this.state.msg}
-            type="error"
-            action={
-              <Button size="small" danger>
-                Detail
-              </Button>
-            }
-          />
-        </div>
-      )
-    } else {
-      return null;
-    }
-  }
-
-  renderMessageLarge() {
-    if (this.state.msg !== null) {
-      return (
-        <div style={{display: "inline"}}>
-          <Result
-            status="error"
-            title="Login Error"
-            subTitle={this.state.msg}
-            extra={[
-              <Button type="primary" key="details">
-                Details
-              </Button>,
-              <Button key="help">Help</Button>,
-            ]}
-          >
-          </Result>
-        </div>
-      )
-    } else {
-      return null;
-    }
-  }
-
   renderForm(application) {
     if (this.state.msg !== null) {
-      return this.renderMessage()
+      return Util.renderMessage(this.state.msg)
     }
 
     return (
@@ -250,7 +205,7 @@ class Face extends React.Component {
   render() {
     const application = this.getApplicationObj();
     if (application === null) {
-      return this.renderMessageLarge();
+      return Util.renderMessageLarge(this.state.msg);
     }
 
     return (
