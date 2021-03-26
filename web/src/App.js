@@ -33,6 +33,8 @@ import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
 
 import * as Auth from "./auth/Auth";
+import RegisterPage from "./auth/RegisterPage";
+import ResultPage from "./auth/ResultPage";
 import LoginPage from "./auth/LoginPage";
 import SelfLoginPage from "./auth/SelfLoginPage";
 import * as AuthBackend from "./auth/AuthBackend";
@@ -49,6 +51,7 @@ class App extends Component {
       classes: props,
       selectedMenuKey: 0,
       account: undefined,
+      uri: null,
     };
 
     Setting.initServerUrl();
@@ -65,9 +68,20 @@ class App extends Component {
     this.getAccount();
   }
 
+  componentDidUpdate() {
+    // eslint-disable-next-line no-restricted-globals
+    const uri = location.pathname;
+    if (this.state.uri !== uri) {
+      this.updateMenuKey();
+    }
+  }
+
   updateMenuKey() {
     // eslint-disable-next-line no-restricted-globals
     const uri = location.pathname;
+    this.setState({
+      uri: uri,
+    });
     if (uri === '/') {
       this.setState({ selectedMenuKey: 0 });
     } else if (uri.includes('organizations')) {
@@ -80,6 +94,12 @@ class App extends Component {
       this.setState({ selectedMenuKey: 4 });
     } else if (uri.includes('tokens')) {
       this.setState({ selectedMenuKey: 5 });
+    } else if (uri.includes('register')) {
+      this.setState({ selectedMenuKey: 100 });
+    } else if (uri.includes('login')) {
+      this.setState({ selectedMenuKey: 101 });
+    } else if (uri.includes('result')) {
+      this.setState({ selectedMenuKey: 100 });
     } else {
       this.setState({ selectedMenuKey: -1 });
     }
@@ -116,7 +136,7 @@ class App extends Component {
 
           Setting.goToLink("/");
         } else {
-          Setting.showMessage("error", `Logout failed: ${res.msg}`);
+          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
         }
       });
   }
@@ -277,7 +297,7 @@ class App extends Component {
           <Menu
             // theme="dark"
             mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
-            defaultSelectedKeys={[`${this.state.selectedMenuKey}`]}
+            selectedKeys={[`${this.state.selectedMenuKey}`]}
             style={{ lineHeight: '64px' }}
           >
             {
@@ -289,6 +309,8 @@ class App extends Component {
           </Menu>
         </Header>
         <Switch>
+          <Route exact path="/register" render={(props) => this.renderHomeIfLoggedIn(<RegisterPage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
+          <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
           <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
           <Route exact path="/callback" component={AuthCallback}/>
           <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
