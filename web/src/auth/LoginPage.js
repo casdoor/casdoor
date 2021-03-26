@@ -19,7 +19,7 @@ import * as AuthBackend from "./AuthBackend";
 import * as Provider from "./Provider";
 import * as Util from "./Util";
 
-class Face extends React.Component {
+class LoginPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -228,4 +228,4 @@ class Face extends React.Component {
   }
 }
 
-export default Face;
+export default LoginPage;

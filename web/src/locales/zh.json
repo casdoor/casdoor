@@ -27,7 +27,7 @@
     "OAuth providers": "OAuth提供方",
     "Applications that requires authentication": "需要鉴权的应用"
   },
-  "account": 
+  "account":
   {
     "My Account": "我的账户",
     "Login": "登录",
@@ -57,10 +57,10 @@
     "Is Admin": "是管理员",
     "Is Global Admin": "是全局管理员"
   },
-  "application": 
+  "application":
   {
     "Edit Application": "修改应用",
     "Enable Password": "开启密码",
-    "Face Preview": "图标预览"
+    "Login Page Preview": "登录页面预览"
   }
 }

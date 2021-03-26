@@ -27,7 +27,7 @@
     "OAuth providers": "OAuth providers",
     "Applications that requires authentication": "Applications that requires authentication"
   },
-  "account": 
+  "account":
   {
     "My Account": "My Account",
     "Login": "Login",
@@ -55,10 +55,10 @@
     "Is Admin": "Is Admin",
     "Is Global Admin": "Is Global Admin"
   },
-  "application": 
+  "application":
   {
     "Edit Application": "Edit Application",
     "Enable Password": "Enable Password",
-    "Face Preview": "Face Preview"
+    "Login Page Preview": "Login Page Preview"
   }
 }

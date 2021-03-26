@@ -13,13 +13,13 @@
 // limitations under the License.
 
 import React from 'react';
-import Face from "./Face";
+import LoginPage from "./LoginPage";
 import {authConfig} from "./Auth";
 
 class SelfLoginPage extends React.Component {
   render() {
     return (
-      <Face type={"login"} applicationName={authConfig.appName} account={this.props.account} onLoggedIn={this.props.onLoggedIn.bind(this)} {...this.props} />
+      <LoginPage type={"login"} applicationName={authConfig.appName} account={this.props.account} onLoggedIn={this.props.onLoggedIn.bind(this)} {...this.props} />
     )
   }
 }

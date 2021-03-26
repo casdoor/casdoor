@@ -33,7 +33,7 @@ import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
 
 import * as Auth from "./auth/Auth";
-import Face from "./auth/Face";
+import LoginPage from "./auth/LoginPage";
 import SelfLoginPage from "./auth/SelfLoginPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
@@ -334,7 +334,7 @@ class App extends Component {
     if (this.isDoorPages()) {
       return (
         <Switch>
-          <Route exact path="/login/oauth/authorize" render={(props) => <Face type={"code"} {...props} />}/>
+          <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage type={"code"} {...props} />}/>
         </Switch>
       )
     }
