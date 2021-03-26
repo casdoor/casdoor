@@ -16,7 +16,7 @@ import React from 'react';
 import Face from "./Face";
 import {authConfig} from "./Auth";
 
-class LoginPage extends React.Component {
+class SelfLoginPage extends React.Component {
   render() {
     return (
       <Face type={"login"} applicationName={authConfig.appName} account={this.props.account} onLoggedIn={this.props.onLoggedIn.bind(this)} {...this.props} />
@@ -24,4 +24,4 @@ class LoginPage extends React.Component {
   }
 }
 
-export default LoginPage;
+export default SelfLoginPage;

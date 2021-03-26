@@ -34,7 +34,7 @@ import CustomGithubCorner from "./CustomGithubCorner";
 
 import * as Auth from "./auth/Auth";
 import Face from "./auth/Face";
-import LoginPage from "./auth/LoginPage";
+import SelfLoginPage from "./auth/SelfLoginPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from './SelectLanguageBox';
@@ -289,7 +289,7 @@ class App extends Component {
           </Menu>
         </Header>
         <Switch>
-          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<LoginPage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
+          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
           <Route exact path="/callback" component={AuthCallback}/>
           <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
           <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
