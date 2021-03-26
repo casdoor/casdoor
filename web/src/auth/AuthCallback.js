@@ -74,7 +74,6 @@ class AuthCallback extends React.Component {
         if (res.status === 'ok') {
           const responseType = this.getResponseType();
           if (responseType === "login") {
-            // this.props.onLoggedIn();
             Util.showMessage("success", `Logged in successfully`);
             Util.goToLink("/");
           } else if (responseType === "code") {

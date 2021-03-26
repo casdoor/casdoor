@@ -309,11 +309,11 @@ class App extends Component {
           </Menu>
         </Header>
         <Switch>
-          <Route exact path="/register" render={(props) => this.renderHomeIfLoggedIn(<RegisterPage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
+          <Route exact path="/register" render={(props) => this.renderHomeIfLoggedIn(<RegisterPage {...props} />)}/>
           <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
-          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
+          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...props} />)}/>
           <Route exact path="/callback" component={AuthCallback}/>
-          <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
+          <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)}/>
           <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} {...props} />)}/>

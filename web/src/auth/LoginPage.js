@@ -88,7 +88,6 @@ class LoginPage extends React.Component {
         if (res.status === 'ok') {
           const responseType = this.state.type;
           if (responseType === "login") {
-            // this.props.onLoggedIn();
             Util.showMessage("success", `Logged in successfully`);
             Util.goToLink("/");
           } else if (responseType === "code") {
