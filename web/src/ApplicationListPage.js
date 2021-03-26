@@ -14,7 +14,8 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Col, Popconfirm, Row, Table} from 'antd';
+import {Button, Col, List, Popconfirm, Row, Table, Tooltip} from 'antd';
+import {EditOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
@@ -136,7 +137,7 @@ class ApplicationListPage extends React.Component {
         title: i18next.t("general:Organization"),
         dataIndex: 'organization',
         key: 'organization',
-        width: '200px',
+        width: '150px',
         sorter: (a, b) => a.organization.localeCompare(b.organization),
         render: (text, record, index) => {
           return (
@@ -150,15 +151,34 @@ class ApplicationListPage extends React.Component {
         title: i18next.t("general:Providers"),
         dataIndex: 'providers',
         key: 'providers',
-        width: '200px',
-        sorter: (a, b) => a.providers.localeCompare(b.providers),
+        width: '250px',
         render: (text, record, index) => {
+          const providers = text;
+          if (providers.length === 0) {
+            return "(empty)";
+          }
+
           return (
-            <Link to={`/providers/${text}`}>
-              {text}
-            </Link>
+            <List
+              size="small"
+              dataSource={providers}
+              renderItem={(row, i) => {
+                return (
+                  <List.Item>
+                    <div style={{display: "inline"}}>
+                      <Tooltip placement="topLeft" title="Edit">
+                        <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${row}`)} />
+                      </Tooltip>
+                      <Link to={`/providers/${row}`}>
+                        {row}
+                      </Link>
+                    </div>
+                  </List.Item>
+                )
+              }}
+            />
           )
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
