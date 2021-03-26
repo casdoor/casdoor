@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React, {Component} from 'react';
-import './App.css';
+import './App.less';
 import * as Setting from "./Setting";
 import {DownOutlined, LogoutOutlined, SettingOutlined} from '@ant-design/icons';
 import {Avatar, BackTop, Dropdown, Layout, Menu} from 'antd';
