@@ -25,15 +25,15 @@ type IdProvider interface {
 	GetUserInfo(httpClient *http.Client, token *oauth2.Token) (string, string, string, error)
 }
 
-func GetIdProvider(providerType string, clientId string) IdProvider {
+func GetIdProvider(providerType string) IdProvider {
 	if providerType == "github" {
 		return &GithubIdProvider{}
 	} else if providerType == "google" {
 		return &GoogleIdProvider{}
 	} else if providerType == "facebook" {
 		return &FacebookIdProvider{}
-	} else if providerType == "qq" {
-		return &QqIdProvider{ClientId: clientId}
+	} else {
+		return nil
 	}
 
 	return nil
