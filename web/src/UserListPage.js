@@ -98,9 +98,9 @@ class UserListPage extends React.Component {
         sorter: (a, b) => a.owner.localeCompare(b.owner),
         render: (text, record, index) => {
           return (
-            <a href={`/organizations/${text}`}>
+            <Link to={`/organizations/${text}`}>
               {text}
-            </a>
+            </Link>
           )
         }
       },

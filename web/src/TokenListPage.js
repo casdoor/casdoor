@@ -118,9 +118,9 @@ class TokenListPage extends React.Component {
         sorter: (a, b) => a.application.localeCompare(b.application),
         render: (text, record, index) => {
           return (
-            <a href={`/applications/${text}`}>
+            <Link to={`/applications/${text}`}>
               {text}
-            </a>
+            </Link>
           )
         }
       },

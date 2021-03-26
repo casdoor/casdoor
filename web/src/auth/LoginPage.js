@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import {Link} from "react-router-dom";
 import {Button, Checkbox, Col, Form, Input, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
@@ -169,7 +170,10 @@ class LoginPage extends React.Component {
             Login
           </Button>
           <div style={{float: "right"}}>
-            No account yet, <a href="/register">sign up now</a>
+            No account yet,&nbsp;
+            <Link to={"/register"}>
+              sign up now
+            </Link>
           </div>
         </Form.Item>
         <Form.Item>

@@ -13,11 +13,10 @@
 // limitations under the License.
 
 import React from 'react';
+import {Link} from "react-router-dom";
 import {Form, Input, Select, Checkbox, Button, Row, Col} from 'antd';
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
-import i18next from "i18next";
-import {Link} from "react-router-dom";
 
 const { Option } = Select;
 
@@ -214,16 +213,19 @@ class RegisterPage extends React.Component {
         </Form.Item>
         <Form.Item name="agreement" valuePropName="checked" {...tailFormItemLayout}>
           <Checkbox>
-            Accept <a href="/agreement">Terms of Use</a>
+            Accept&nbsp;
+            <Link to={"/agreement"}>
+              Terms of Use
+            </Link>
           </Checkbox>
         </Form.Item>
         <Form.Item {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">
             Register
           </Button>
-          &nbsp;&nbsp;&nbsp;Have account?
-          <Link to="/login">
-            <a href="/login">sign in now</a>
+          &nbsp;&nbsp;&nbsp;Have account?&nbsp;
+          <Link to={"/login"}>
+            sign in now
           </Link>
         </Form.Item>
       </Form>

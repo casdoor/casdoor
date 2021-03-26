@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import { Result, Button } from 'antd';
+import {Link} from "react-router-dom";
+import {Result, Button} from 'antd';
 
 class ResultPage extends React.Component {
   constructor(props) {
@@ -31,11 +32,11 @@ class ResultPage extends React.Component {
           title="Your account is registered"
           subTitle="Please click the below button to login"
           extra={[
-            <a href="/login">
-              <Button type="primary" key="console">
+            <Link to="/login">
+              <Button type="primary" key="login">
                 Login
               </Button>
-            </a>
+            </Link>
           ]}
         />
       </div>

@@ -140,9 +140,9 @@ class ApplicationListPage extends React.Component {
         sorter: (a, b) => a.organization.localeCompare(b.organization),
         render: (text, record, index) => {
           return (
-            <a href={`/organizations/${text}`}>
+            <Link to={`/organizations/${text}`}>
               {text}
-            </a>
+            </Link>
           )
         }
       },
@@ -154,9 +154,9 @@ class ApplicationListPage extends React.Component {
         sorter: (a, b) => a.providers.localeCompare(b.providers),
         render: (text, record, index) => {
           return (
-            <a href={`/providers/${text}`}>
+            <Link to={`/providers/${text}`}>
               {text}
-            </a>
+            </Link>
           )
         }
       },
