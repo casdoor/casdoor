@@ -152,15 +152,22 @@ func (c *ApiController) Login() {
 
 				resp = c.HandleLoggedIn(userId, &form)
 			} else {
-				//if object.IsForbidden(userId) {
-				//	c.forbiddenAccountResp(userId)
-				//	return
+				//if userId := object.GetUserIdByField(application, "email", userInfo.Email); userId != "" {
+				//	resp = c.HandleLoggedIn(userId, &form)
+				//
+				//	object.LinkUserAccount(userId, provider.Type, userInfo.Username)
 				//}
 
-				if userId := object.GetUserIdByField(application, "email", userInfo.Email); userId != "" {
-					resp = c.HandleLoggedIn(userId, &form)
-
-					object.LinkUserAccount(userId, provider.Type, userInfo.Username)
+				if !application.EnableSignUp {
+					resp = &Response{Status: "error", Msg: fmt.Sprintf("the account for provider: %s and username: %s does not exist and is not allowed to register as new account, please contact your IT support", provider.Type, userInfo.Username)}
+					c.Data["json"] = resp
+					c.ServeJSON()
+					return
+				} else {
+					resp = &Response{Status: "error", Msg: "need sign up"}
+					c.Data["json"] = resp
+					c.ServeJSON()
+					return
 				}
 			}
 			//resp = &Response{Status: "ok", Msg: "", Data: res}

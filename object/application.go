@@ -30,6 +30,7 @@ type Application struct {
 	Description    string      `xorm:"varchar(100)" json:"description"`
 	Organization   string      `xorm:"varchar(100)" json:"organization"`
 	EnablePassword bool        `json:"enablePassword"`
+	EnableSignUp   bool        `json:"enableSignUp"`
 	Providers      []string    `xorm:"varchar(100)" json:"providers"`
 	ProviderObjs   []*Provider `xorm:"-" json:"providerObjs"`
 

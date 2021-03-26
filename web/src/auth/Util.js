@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Alert, Button, message, Result} from "antd";
+import * as Setting from "../Setting";
 
 export function goToLink(link) {
   window.location.href = link;
@@ -58,10 +59,12 @@ export function renderMessageLarge(msg) {
           title="Login Error"
           subTitle={msg}
           extra={[
-            <Button type="primary" key="details">
-              Details
+            <Button key="home" onClick={() => Setting.goToLink("/")}>
+              Home
             </Button>,
-            <Button key="help">Help</Button>,
+            <Button type="primary" key="help" onClick={() => Setting.goToLink("/help")}>
+              Help
+            </Button>,
           ]}
         >
         </Result>

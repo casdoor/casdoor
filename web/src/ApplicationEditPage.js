@@ -228,6 +228,16 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("application:Enable Sign Up")}:
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.enableSignUp} onChange={checked => {
+              this.updateApplicationField('enableSignUp', checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("general:Providers")}:
           </Col>
           <Col span={22} >
