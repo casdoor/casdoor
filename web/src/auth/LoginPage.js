@@ -108,88 +108,115 @@ class LoginPage extends React.Component {
       return Util.renderMessage(this.state.msg)
     }
 
-    return (
-      <Form
-        name="normal_login"
-        initialValues={{
-          organization: application.organization,
-          remember: true
-        }}
-        onFinish={this.onFinish.bind(this)}
-        style={{width: "250px"}}
-        size="large"
-      >
-        <Form.Item style={{height: 0, visibility: "hidden"}}
-          name="organization"
-          rules={[{ required: true, message: 'Please input your organization!' }]}
+    if (application.enablePassword) {
+      return (
+        <Form
+          name="normal_login"
+          initialValues={{
+            organization: application.organization,
+            remember: true
+          }}
+          onFinish={this.onFinish.bind(this)}
+          style={{width: "250px"}}
+          size="large"
         >
-          <Input
-            prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder="organization"
-            disabled={!application.enablePassword}
-          />
-        </Form.Item>
-        <Form.Item
-          name="username"
-          rules={[{ required: true, message: 'Please input your Username!' }]}
-        >
-          <Input
-            prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder="username"
-            disabled={!application.enablePassword}
-          />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[{ required: true, message: 'Please input your Password!' }]}
-        >
-          <Input
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            type="password"
-            placeholder="password"
-            disabled={!application.enablePassword}
-          />
-        </Form.Item>
-        <Form.Item>
-          <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
-              Auto login
-            </Checkbox>
-          </Form.Item>
-          <a style={{float: "right"}} href="">
-            Forgot password?
-          </a>
-        </Form.Item>
-
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            style={{width: "100%"}}
-            disabled={!application.enablePassword}
+          <Form.Item style={{height: 0, visibility: "hidden"}}
+                     name="organization"
+                     rules={[{ required: true, message: 'Please input your organization!' }]}
           >
-            Login
-          </Button>
-          <div style={{float: "right"}}>
-            No account yet,&nbsp;
-            <Link to={"/register"}>
-              sign up now
+            <Input
+              prefix={<UserOutlined className="site-form-item-icon" />}
+              placeholder="organization"
+              disabled={!application.enablePassword}
+            />
+          </Form.Item>
+          <Form.Item
+            name="username"
+            rules={[{ required: true, message: 'Please input your Username!' }]}
+          >
+            <Input
+              prefix={<UserOutlined className="site-form-item-icon" />}
+              placeholder="username"
+              disabled={!application.enablePassword}
+            />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: 'Please input your Password!' }]}
+          >
+            <Input
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              type="password"
+              placeholder="password"
+              disabled={!application.enablePassword}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Form.Item name="remember" valuePropName="checked" noStyle>
+              <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
+                Auto login
+              </Checkbox>
+            </Form.Item>
+            <Link style={{float: "right"}} to="/forgot">
+              Forgot password?
             </Link>
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{width: "100%"}}
+              disabled={!application.enablePassword}
+            >
+              Login
+            </Button>
+            {
+              !application.enableSignUp ? null : (
+                <div style={{float: "right"}}>
+                  No account yet,&nbsp;
+                  <Link to={"/register"}>
+                    sign up now
+                  </Link>
+                </div>
+              )
+            }
+          </Form.Item>
+          <Form.Item>
+            {
+              application.providerObjs.map(provider => {
+                return (
+                  <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
+                    <img width={30} height={30} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: "3px"}} />
+                  </a>
+                );
+              })
+            }
+          </Form.Item>
+        </Form>
+      );
+    } else {
+      return (
+        <div style={{marginTop: "20px"}}>
+          <div style={{fontSize: 20, textAlign: "left"}}>
+            Please click to login&nbsp;
+            <a target="_blank" href={application.homepageUrl}>
+              {application.displayName}
+            </a>
+            :
           </div>
-        </Form.Item>
-        <Form.Item>
+          <br/>
           {
             application.providerObjs.map(provider => {
               return (
                 <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-                  <img width={30} height={30} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: "3px"}} />
+                  <img width={60} height={60} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: "10px"}} />
                 </a>
               );
             })
           }
-        </Form.Item>
-      </Form>
-    );
+        </div>
+      )
+    }
   }
 
   renderLogo(application) {
