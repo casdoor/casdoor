@@ -19,6 +19,7 @@ import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
 import * as Provider from "./Provider";
 import * as Util from "./Util";
+import * as Setting from "../Setting";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -90,10 +91,10 @@ class LoginPage extends React.Component {
           const responseType = this.state.type;
           if (responseType === "login") {
             Util.showMessage("success", `Logged in successfully`);
-            Util.goToLink("/");
+            Setting.goToLink("/");
           } else if (responseType === "code") {
             const code = res.data;
-            Util.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+            Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
             // Util.showMessage("success", `Authorization code: ${res.data}`);
           }
         } else {
@@ -208,7 +209,7 @@ class LoginPage extends React.Component {
   render() {
     const application = this.getApplicationObj();
     if (application === null) {
-      return Util.renderMessageLarge(this.state.msg);
+      return Util.renderMessageLarge(this, this.state.msg);
     }
 
     return (

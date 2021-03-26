@@ -134,7 +134,7 @@ class App extends Component {
 
           Setting.showMessage("success", `Successfully logged out, redirected to homepage`);
 
-          Setting.goToLink("/");
+          Setting.goToLinkSoft(this, "/");
         } else {
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);
         }
@@ -292,7 +292,11 @@ class App extends Component {
       <div>
         <Header style={{ padding: '0', marginBottom: '3px'}}>
           {
-            Setting.isMobile() ? null : <a className="logo" href={"/"} />
+            Setting.isMobile() ? null : (
+              <Link to={"/"}>
+                <div className="logo" />
+              </Link>
+            )
           }
           <Menu
             // theme="dark"

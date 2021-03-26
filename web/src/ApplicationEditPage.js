@@ -241,7 +241,7 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("general:Providers")}:
           </Col>
           <Col span={22} >
-            <Select mode="tags" style={{width: '100%'}}
+            <Select virtual={false} mode="tags" style={{width: '100%'}}
                     value={this.state.application.providers}
                     onChange={value => {
                       this.updateApplicationField('providers', value);

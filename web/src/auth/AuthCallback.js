@@ -18,6 +18,7 @@ import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
 import * as Util from "./Util";
 import {authConfig} from "./Auth";
+import * as Setting from "../Setting";
 
 class AuthCallback extends React.Component {
   constructor(props) {
@@ -75,21 +76,17 @@ class AuthCallback extends React.Component {
           const responseType = this.getResponseType();
           if (responseType === "login") {
             Util.showMessage("success", `Logged in successfully`);
-            Util.goToLink("/");
+            Setting.goToLinkSoft(this, "/");
           } else if (responseType === "code") {
             const code = res.data;
-            Util.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+            Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
             // Util.showMessage("success", `Authorization code: ${res.data}`);
           }
         } else {
-          if (res.msg === "need sign up") {
-            Util.goToLink("/register");
-          } else {
-            // Util.showMessage("error", `Log in failed：${res.msg}`);
-            this.setState({
-              msg: res.msg,
-            });
-          }
+          // Util.showMessage("error", `Log in failed：${res.msg}`);
+          this.setState({
+            msg: res.msg,
+          });
         }
       });
   }
@@ -101,7 +98,7 @@ class AuthCallback extends React.Component {
           (this.state.msg === null) ? (
             <Spin size="large" tip="Signing in..." style={{paddingTop: "10%"}} />
           ) : (
-            Util.renderMessageLarge(this.state.msg)
+            Util.renderMessageLarge(this, this.state.msg)
           )
         }
       </div>

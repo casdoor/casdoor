@@ -16,10 +16,6 @@ import React from "react";
 import {Alert, Button, message, Result} from "antd";
 import * as Setting from "../Setting";
 
-export function goToLink(link) {
-  window.location.href = link;
-}
-
 export function showMessage(type, text) {
   if (type === "success") {
     message.success(text);
@@ -50,7 +46,7 @@ export function renderMessage(msg) {
   }
 }
 
-export function renderMessageLarge(msg) {
+export function renderMessageLarge(ths, msg) {
   if (msg !== null) {
     return (
       <div style={{display: "inline"}}>
@@ -59,11 +55,11 @@ export function renderMessageLarge(msg) {
           title="Login Error"
           subTitle={msg}
           extra={[
-            <Button key="home" onClick={() => Setting.goToLink("/")}>
+            <Button key="home" onClick={() => Setting.goToLinkSoft(ths, "/")}>
               Home
             </Button>,
-            <Button type="primary" key="help" onClick={() => Setting.goToLink("/help")}>
-              Help
+            <Button type="primary" key="register" onClick={() => Setting.goToLinkSoft(ths, "/register")}>
+              Register
             </Button>,
           ]}
         >

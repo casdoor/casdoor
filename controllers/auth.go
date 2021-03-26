@@ -164,7 +164,7 @@ func (c *ApiController) Login() {
 					c.ServeJSON()
 					return
 				} else {
-					resp = &Response{Status: "error", Msg: "need sign up"}
+					resp = &Response{Status: "error", Msg: fmt.Sprintf("the account for provider: %s and username: %s does not exist, please register an account first", provider.Type, userInfo.Username)}
 					c.Data["json"] = resp
 					c.ServeJSON()
 					return
