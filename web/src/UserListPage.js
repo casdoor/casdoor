@@ -29,7 +29,7 @@ class UserListPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getUsers();
   }
 
@@ -156,7 +156,7 @@ class UserListPage extends React.Component {
         width: '100px',
         render: (text, record, index) => {
           return (
-            <a target="_blank" href={text}>
+            <a target="_blank" rel="noreferrer" href={text}>
               <img src={text} alt={text} width={50} />
             </a>
           )
@@ -225,7 +225,7 @@ class UserListPage extends React.Component {
         title: i18next.t("general:Action"),
         dataIndex: '',
         key: 'op',
-        width: '170px',
+        width: '190px',
         render: (text, record, index) => {
           return (
             <div>

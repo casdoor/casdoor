@@ -37,7 +37,7 @@ class ApplicationEditPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getApplication();
     this.getOrganizations();
     this.getProviders();
@@ -135,7 +135,7 @@ class ApplicationEditPage extends React.Component {
                 {i18next.t("general:Preview")}:
               </Col>
               <Col span={23} >
-                <a target="_blank" href={this.state.application.logo}>
+                <a target="_blank" rel="noreferrer" href={this.state.application.logo}>
                   <img src={this.state.application.logo} alt={this.state.application.logo} height={90} style={{marginBottom: '20px'}}/>
                 </a>
               </Col>
@@ -257,7 +257,7 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("application:Login Page Preview")}:
           </Col>
           <Col span={22} >
-            <a style={{marginBottom: '10px'}} target="_blank" href={`/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`}>
+            <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={`/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`}>
               {
                 `${window.location.host}/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`
               }

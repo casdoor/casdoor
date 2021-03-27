@@ -33,7 +33,7 @@ class LoginPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (this.state.type === "login") {
       this.getApplication();
     } else if (this.state.type === "code") {
@@ -199,7 +199,7 @@ class LoginPage extends React.Component {
         <div style={{marginTop: "20px"}}>
           <div style={{fontSize: 20, textAlign: "left"}}>
             Please click to login&nbsp;
-            <a target="_blank" href={application.homepageUrl}>
+            <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
               {application.displayName}
             </a>
             :
@@ -222,7 +222,7 @@ class LoginPage extends React.Component {
   renderLogo(application) {
     if (application.homepageUrl !== "") {
       return (
-        <a target="_blank" href={application.homepageUrl}>
+        <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
           <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '30px'}}/>
         </a>
       )

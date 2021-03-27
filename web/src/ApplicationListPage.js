@@ -30,7 +30,7 @@ class ApplicationListPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getApplications();
   }
 
@@ -127,7 +127,7 @@ class ApplicationListPage extends React.Component {
         width: '250px',
         render: (text, record, index) => {
           return (
-            <a target="_blank" href={text}>
+            <a target="_blank" rel="noreferrer" href={text}>
               <img src={text} alt={text} width={150} />
             </a>
           )

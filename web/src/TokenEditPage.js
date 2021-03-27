@@ -13,12 +13,10 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select} from 'antd';
+import {Button, Card, Col, Input, Row} from 'antd';
 import * as TokenBackend from "./backend/TokenBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-
-const { Option } = Select;
 
 class TokenEditPage extends React.Component {
   constructor(props) {
@@ -30,7 +28,7 @@ class TokenEditPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getToken();
   }
 

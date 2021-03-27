@@ -162,6 +162,7 @@ export function changeLanguage(language) {
 
 export function getClickable(text) {
   return (
+    // eslint-disable-next-line jsx-a11y/anchor-is-valid
     <a onClick={() => {
       copy(text);
       showMessage("success", `Copied to clipboard`);

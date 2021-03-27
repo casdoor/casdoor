@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Card, Col, Row} from "antd";
+import {Card, Col} from "antd";
 import * as Setting from "../Setting";
 import {withRouter} from "react-router-dom";
 

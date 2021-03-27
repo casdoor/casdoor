@@ -35,7 +35,7 @@ class UserEditPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getUser();
     this.getOrganizations();
   }
@@ -143,7 +143,7 @@ class UserEditPage extends React.Component {
                 {i18next.t("general:Preview")}:
               </Col>
               <Col span={23} >
-                <a target="_blank" href={this.state.user.avatar}>
+                <a target="_blank" rel="noreferrer" href={this.state.user.avatar}>
                   <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: '20px'}}/>
                 </a>
               </Col>

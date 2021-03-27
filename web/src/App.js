@@ -62,7 +62,7 @@ class App extends Component {
     });
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     Setting.setLanguage();
     this.updateMenuKey();
     this.getAccount();
@@ -165,7 +165,7 @@ class App extends Component {
 
     return (
       <Dropdown key="200" overlay={menu} >
-        <a className="ant-dropdown-link" href="#" style={{float: 'right'}}>
+        <div className="ant-dropdown-link" style={{float: 'right', cursor: 'pointer'}}>
           <Avatar style={{ backgroundColor: Setting.getAvatarColor(this.state.account.name), verticalAlign: 'middle' }} size="large">
             {Setting.getShortName(this.state.account.name)}
           </Avatar>
@@ -175,7 +175,7 @@ class App extends Component {
           &nbsp;
           &nbsp;
           &nbsp;
-        </a>
+        </div>
       </Dropdown>
     )
   }
@@ -347,7 +347,7 @@ class App extends Component {
         }
       }>
         <SelectLanguageBox/>
-        Made with <span style={{color: 'rgb(255, 255, 255)'}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casbin.org">Casbin</a>
+        Made with <span style={{color: 'rgb(255, 255, 255)'}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casbin.org" rel="noreferrer">Casbin</a>
       </Footer>
     )
   }

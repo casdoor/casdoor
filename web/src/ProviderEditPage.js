@@ -30,7 +30,7 @@ class ProviderEditPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getProvider();
   }
 

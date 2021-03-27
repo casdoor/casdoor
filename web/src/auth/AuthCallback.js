@@ -53,7 +53,7 @@ class AuthCallback extends React.Component {
     }
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
     const innerParams = this.getInnerParams();
     const applicationName = innerParams.get("application");

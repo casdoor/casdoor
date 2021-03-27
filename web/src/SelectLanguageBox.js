@@ -27,10 +27,12 @@ class SelectLanguageBox extends React.Component {
     return (
       <div align="center">
         <div className="box" style={{width: "600px"}}>
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a onClick={() => Setting.changeLanguage("en")} className="lang-selector">
             English
           </a>
           /
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
           <a onClick={() => Setting.changeLanguage("zh")} className="lang-selector">
             简体中文
           </a>

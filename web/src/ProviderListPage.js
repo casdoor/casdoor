@@ -30,7 +30,7 @@ class ProviderListPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getProviders();
   }
 
@@ -152,7 +152,7 @@ class ProviderListPage extends React.Component {
         sorter: (a, b) => a.providerUrl.localeCompare(b.providerUrl),
         render: (text, record, index) => {
           return (
-            <a target="_blank" href={text}>
+            <a target="_blank" rel="noreferrer" href={text}>
               {
                 Setting.getShortText(text)
               }
