@@ -106,13 +106,12 @@ func UpdateApplication(id string, application *Application) bool {
 		return false
 	}
 
-	_, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(application)
+	affected, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(application)
 	if err != nil {
 		panic(err)
 	}
 
-	//return affected != 0
-	return true
+	return affected != 0
 }
 
 func AddApplication(application *Application) bool {

@@ -104,19 +104,19 @@ class OrganizationEditPage extends React.Component {
     let organization = Setting.deepCopy(this.state.organization);
     OrganizationBackend.updateOrganization(this.state.organization.owner, this.state.organizationName, organization)
       .then((res) => {
-        if (res) {
+        if (res.msg === "") {
           Setting.showMessage("success", `Successfully saved`);
           this.setState({
             organizationName: this.state.organization.name,
           });
           this.props.history.push(`/organizations/${this.state.organization.name}`);
         } else {
-          Setting.showMessage("error", `failed to save: server side failure`);
+          Setting.showMessage("error", res.msg);
           this.updateOrganizationField('name', this.state.organizationName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `failed to save: ${error}`);
+        Setting.showMessage("error", `failed to connect to server: ${error}`);
       });
   }
 

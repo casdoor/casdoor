@@ -63,13 +63,12 @@ func UpdateOrganization(id string, organization *Organization) bool {
 		return false
 	}
 
-	_, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(organization)
+	affected, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(organization)
 	if err != nil {
 		panic(err)
 	}
 
-	//return affected != 0
-	return true
+	return affected != 0
 }
 
 func AddOrganization(organization *Organization) bool {

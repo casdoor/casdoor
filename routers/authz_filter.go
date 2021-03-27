@@ -22,6 +22,8 @@ import (
 
 	"github.com/astaxie/beego/context"
 	"github.com/casdoor/casdoor/authz"
+	"github.com/casdoor/casdoor/controllers"
+	"github.com/casdoor/casdoor/util"
 )
 
 type Object struct {
@@ -91,7 +93,8 @@ func getObject(ctx *context.Context) (string, string) {
 func denyRequest(ctx *context.Context) {
 	w := ctx.ResponseWriter
 	w.WriteHeader(403)
-	_, err := w.Write([]byte("403 Forbidden\n"))
+	resp := &controllers.Response{Status: "error", Msg: "unauthorized operation"}
+	_, err := w.Write([]byte(util.StructToJson(resp)))
 	if err != nil {
 		panic(err)
 	}

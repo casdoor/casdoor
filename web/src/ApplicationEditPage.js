@@ -56,7 +56,7 @@ class ApplicationEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: res,
+          organizations: (res.msg === undefined) ? res : [],
         });
       });
   }
@@ -277,19 +277,19 @@ class ApplicationEditPage extends React.Component {
     let application = Setting.deepCopy(this.state.application);
     ApplicationBackend.updateApplication(this.state.application.owner, this.state.applicationName, application)
       .then((res) => {
-        if (res) {
+        if (res.msg === "") {
           Setting.showMessage("success", `Successfully saved`);
           this.setState({
             applicationName: this.state.application.name,
           });
           this.props.history.push(`/applications/${this.state.application.name}`);
         } else {
-          Setting.showMessage("error", `failed to save: server side failure`);
+          Setting.showMessage("error", res.msg);
           this.updateApplicationField('name', this.state.applicationName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `failed to save: ${error}`);
+        Setting.showMessage("error", `failed to connect to server: ${error}`);
       });
   }
 

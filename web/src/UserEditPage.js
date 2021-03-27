@@ -53,7 +53,7 @@ class UserEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: res,
+          organizations: (res.msg === undefined) ? res : [],
         });
       });
   }
@@ -266,7 +266,7 @@ class UserEditPage extends React.Component {
     let user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.organizationName, this.state.userName, user)
       .then((res) => {
-        if (res) {
+        if (res.msg === "") {
           Setting.showMessage("success", `Successfully saved`);
           this.setState({
             organizationName: this.state.user.owner,
@@ -277,13 +277,13 @@ class UserEditPage extends React.Component {
             this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
           }
         } else {
-          Setting.showMessage("error", `failed to save: server side failure`);
+          Setting.showMessage("error", res.msg);
           this.updateUserField('owner', this.state.organizationName);
           this.updateUserField('name', this.state.userName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `failed to save: ${error}`);
+        Setting.showMessage("error", `failed to connect to server: ${error}`);
       });
   }
 

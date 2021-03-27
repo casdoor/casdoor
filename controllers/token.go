@@ -43,7 +43,7 @@ func (c *ApiController) UpdateToken() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.UpdateToken(id, &token)
+	c.Data["json"] = wrapActionResponse(object.UpdateToken(id, &token))
 	c.ServeJSON()
 }
 
@@ -54,7 +54,7 @@ func (c *ApiController) AddToken() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.AddToken(&token)
+	c.Data["json"] = wrapActionResponse(object.AddToken(&token))
 	c.ServeJSON()
 }
 
@@ -65,7 +65,7 @@ func (c *ApiController) DeleteToken() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.DeleteToken(&token)
+	c.Data["json"] = wrapActionResponse(object.DeleteToken(&token))
 	c.ServeJSON()
 }
 

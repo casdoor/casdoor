@@ -66,13 +66,12 @@ func UpdateProvider(id string, provider *Provider) bool {
 		return false
 	}
 
-	_, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(provider)
+	affected, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(provider)
 	if err != nil {
 		panic(err)
 	}
 
-	//return affected != 0
-	return true
+	return affected != 0
 }
 
 func AddProvider(provider *Provider) bool {

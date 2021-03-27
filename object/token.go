@@ -96,13 +96,12 @@ func UpdateToken(id string, token *Token) bool {
 		return false
 	}
 
-	_, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(token)
+	affected, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(token)
 	if err != nil {
 		panic(err)
 	}
 
-	//return affected != 0
-	return true
+	return affected != 0
 }
 
 func AddToken(token *Token) bool {

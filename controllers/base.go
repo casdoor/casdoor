@@ -32,3 +32,11 @@ func (c *ApiController) GetSessionUser() string {
 func (c *ApiController) SetSessionUser(user string) {
 	c.SetSession("username", user)
 }
+
+func wrapActionResponse(affected bool) *Response {
+	if affected {
+		return &Response{Status: "ok", Msg: "", Data: "affected"}
+	} else {
+		return &Response{Status: "ok", Msg: "", Data: "unaffected"}
+	}
+}

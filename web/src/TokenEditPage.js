@@ -144,19 +144,19 @@ class TokenEditPage extends React.Component {
     let token = Setting.deepCopy(this.state.token);
     TokenBackend.updateToken(this.state.token.owner, this.state.tokenName, token)
       .then((res) => {
-        if (res) {
+        if (res.msg === "") {
           Setting.showMessage("success", `Successfully saved`);
           this.setState({
             tokenName: this.state.token.name,
           });
           this.props.history.push(`/tokens/${this.state.token.name}`);
         } else {
-          Setting.showMessage("error", `failed to save: server side failure`);
+          Setting.showMessage("error", res.msg);
           this.updateTokenField('name', this.state.tokenName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `failed to save: ${error}`);
+        Setting.showMessage("error", `failed to connect to server: ${error}`);
       });
   }
 

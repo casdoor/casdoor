@@ -43,7 +43,7 @@ func (c *ApiController) UpdateApplication() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.UpdateApplication(id, &application)
+	c.Data["json"] = wrapActionResponse(object.UpdateApplication(id, &application))
 	c.ServeJSON()
 }
 
@@ -54,7 +54,7 @@ func (c *ApiController) AddApplication() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.AddApplication(&application)
+	c.Data["json"] = wrapActionResponse(object.AddApplication(&application))
 	c.ServeJSON()
 }
 
@@ -65,6 +65,6 @@ func (c *ApiController) DeleteApplication() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.DeleteApplication(&application)
+	c.Data["json"] = wrapActionResponse(object.DeleteApplication(&application))
 	c.ServeJSON()
 }

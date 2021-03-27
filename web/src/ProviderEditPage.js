@@ -143,19 +143,19 @@ class ProviderEditPage extends React.Component {
     let provider = Setting.deepCopy(this.state.provider);
     ProviderBackend.updateProvider(this.state.provider.owner, this.state.providerName, provider)
       .then((res) => {
-        if (res) {
+        if (res.msg === "") {
           Setting.showMessage("success", `Successfully saved`);
           this.setState({
             providerName: this.state.provider.name,
           });
           this.props.history.push(`/providers/${this.state.provider.name}`);
         } else {
-          Setting.showMessage("error", `failed to save: server side failure`);
+          Setting.showMessage("error", res.msg);
           this.updateProviderField('name', this.state.providerName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `failed to save: ${error}`);
+        Setting.showMessage("error", `failed to connect to server: ${error}`);
       });
   }
 
