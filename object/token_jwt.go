@@ -27,6 +27,7 @@ type Claims struct {
 	Username     string `json:"username"`
 	Name         string `json:"name"`
 	Email        string `json:"email"`
+	Avatar       string `json:"avatar"`
 	IsAdmin      bool   `json:"isAdmin"`
 	jwt.StandardClaims
 }
@@ -40,6 +41,7 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 		Username:     user.Name,
 		Name:         user.DisplayName,
 		Email:        user.Email,
+		Avatar:       user.Avatar,
 		IsAdmin:      user.IsAdmin,
 		StandardClaims: jwt.StandardClaims{
 			Audience:  application.ClientId,
