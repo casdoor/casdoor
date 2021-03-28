@@ -25,6 +25,15 @@ import (
 
 var adapter *Adapter
 
+func InitConfig() {
+	err := beego.LoadAppConfig("ini", "../conf/app.conf")
+	if err != nil {
+		panic(err)
+	}
+
+	InitAdapter()
+}
+
 func InitAdapter() {
 	adapter = NewAdapter("mysql", beego.AppConfig.String("dataSourceName"))
 }
