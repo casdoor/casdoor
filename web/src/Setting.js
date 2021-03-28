@@ -66,7 +66,7 @@ export function showMessage(type, text) {
 }
 
 export function isAdminUser(account) {
-  if (account === null) {
+  if (account === undefined || account === null) {
     return false;
   }
   return account.owner === "built-in" || account.isGlobalAdmin === true;

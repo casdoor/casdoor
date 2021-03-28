@@ -65,7 +65,7 @@ export function deleteUser(user) {
 
 export function uploadAvatar(avatar) {
   let account;
-  AuthBackend.getAccount().then((res) => {
+  AuthBackend.getAccount(null).then((res) => {
     account = Setting.parseJson(res.data);
     let formData = new FormData();
     formData.append("avatarfile", avatar);

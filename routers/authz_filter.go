@@ -61,18 +61,12 @@ func getObject(ctx *context.Context) (string, string) {
 	method := ctx.Request.Method
 	if method == http.MethodGet {
 		query := ctx.Request.URL.RawQuery
-
-		// query == "owner=admin"
-		if query == "" || strings.Contains(query, "=") {
+		// query == "?id=built-in/admin"
+		idParamValue := parseQuery(query, "id")
+		if idParamValue == "" {
 			return "", ""
 		}
-
-		// query == "id=built-in/admin"
-		query = strings.TrimLeft(query, "id=")
-		tokens := strings.Split(query, "/")
-		owner := tokens[0]
-		name := tokens[1]
-		return owner, name
+		return parseSlash(idParamValue)
 	} else {
 		body := ctx.Input.RequestBody
 

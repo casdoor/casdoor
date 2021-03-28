@@ -17,7 +17,7 @@ import './App.less';
 import * as Setting from "./Setting";
 import {DownOutlined, LogoutOutlined, SettingOutlined} from '@ant-design/icons';
 import {Avatar, BackTop, Dropdown, Layout, Menu} from 'antd';
-import {Switch, Route, withRouter, Redirect, Link} from 'react-router-dom'
+import {Link, Redirect, Route, Switch, withRouter} from 'react-router-dom'
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
 import UserListPage from "./UserListPage";
@@ -105,11 +105,26 @@ class App extends Component {
     }
   }
 
+  getAccessTokenParam() {
+    // "/page?access_token=123"
+    const params = new URLSearchParams(this.props.location.search);
+    return params.get("access_token");
+  }
+
+  getUrlWithoutQuery() {
+    // eslint-disable-next-line no-restricted-globals
+    return location.toString().replace(location.search, "");
+  }
+
   getAccount() {
-    AuthBackend.getAccount()
+    const accessToken = this.getAccessTokenParam();
+    if (accessToken !== null) {
+      window.history.replaceState({}, document.title, this.getUrlWithoutQuery());
+    }
+    AuthBackend.getAccount(accessToken)
       .then((res) => {
         this.setState({
-          account: res.data,
+          account: res.status === "ok" ? res.data : null,
         });
       });
   }

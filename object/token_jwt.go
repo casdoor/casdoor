@@ -58,7 +58,7 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 	return token, err
 }
 
-func parseJwtToken(token string) (*Claims, error) {
+func ParseJwtToken(token string) (*Claims, error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtSecret, nil
 	})

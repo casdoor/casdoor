@@ -14,8 +14,9 @@
 
 import {authConfig} from "./Auth";
 
-export function getAccount() {
-  return fetch(`${authConfig.serverUrl}/api/get-account`, {
+export function getAccount(accessToken) {
+  let param = (accessToken === null) ? "" : `?accessToken=${accessToken}`;
+  return fetch(`${authConfig.serverUrl}/api/get-account${param}`, {
     method: 'GET',
     credentials: 'include'
   }).then(res => res.json());
