@@ -49,7 +49,7 @@ class ProviderListPage extends React.Component {
       name: `provider_${this.state.providers.length}`,
       createdTime: moment().format(),
       displayName: `New Provider - ${this.state.providers.length}`,
-      type: "github",
+      type: "GitHub",
       clientId: "",
       clientSecret: "",
       providerUrl: "https://github.com/organizations/xxx/settings/applications/1234567",

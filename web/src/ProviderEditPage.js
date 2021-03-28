@@ -96,10 +96,10 @@ class ProviderEditPage extends React.Component {
             <Select virtual={false} style={{width: '100%'}} value={this.state.provider.type} onChange={(value => {this.updateProviderField('type', value);})}>
               {
                 [
-                  {id: 'google', name: 'Google'},
-                  {id: 'github', name: 'GitHub'},
-                  {id: 'qq', name: 'QQ'},
-                  {id: 'wechat', name: 'WeChat'},
+                  {id: 'Google', name: 'Google'},
+                  {id: 'GitHub', name: 'GitHub'},
+                  {id: 'QQ', name: 'QQ'},
+                  {id: 'WeChat', name: 'WeChat'},
                 ].map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
               }
             </Select>

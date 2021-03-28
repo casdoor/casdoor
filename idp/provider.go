@@ -33,11 +33,11 @@ type IdProvider interface {
 }
 
 func GetIdProvider(providerType string, clientId string, clientSecret string, redirectUrl string) IdProvider {
-	if providerType == "github" {
+	if providerType == "GitHub" {
 		return NewGithubIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "google" {
+	} else if providerType == "Google" {
 		return NewGoogleIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "qq" {
+	} else if providerType == "QQ" {
 		return NewQqIdProvider(clientId, clientSecret, redirectUrl)
 	}
 

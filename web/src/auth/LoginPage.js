@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Checkbox, Col, Form, Input, Row} from "antd";
+import {Button, Card, Checkbox, Col, Form, Input, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
 import * as Provider from "./Provider";
@@ -103,6 +103,40 @@ class LoginPage extends React.Component {
       });
   };
 
+  renderProviderLogo(provider, application, width, margin, size) {
+    if (size === "small") {
+      return (
+        <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
+          <img width={width} height={width} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
+        </a>
+      )
+    } else {
+      return (
+        <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
+          <Card
+            hoverable
+            bodyStyle={{padding: 0}}
+            style={{height: 60, marginBottom: 10, paddingTop: 10}}
+          >
+            <Row>
+              <Col span={3}>
+              </Col>
+              <Col span={3}>
+                <img width={width} height={width} src={Provider.getAuthLogo(provider)} alt={provider.displayName} />
+              </Col>
+              <Col span={18}>
+                <div style={{marginTop: 8, fontWeight: 500, color: "#757575"}}>
+                  Login by {provider.type}
+                </div>
+              </Col>
+            </Row>
+
+          </Card>
+        </a>
+      )
+    }
+  }
+
   renderForm(application) {
     if (this.state.msg !== null) {
       return Util.renderMessage(this.state.msg)
@@ -184,11 +218,7 @@ class LoginPage extends React.Component {
           <Form.Item>
             {
               application.providerObjs.map(provider => {
-                return (
-                  <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-                    <img width={30} height={30} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: "3px"}} />
-                  </a>
-                );
+                return this.renderProviderLogo(provider, application, 30, 5, "small");
               })
             }
           </Form.Item>
@@ -207,11 +237,7 @@ class LoginPage extends React.Component {
           <br/>
           {
             application.providerObjs.map(provider => {
-              return (
-                <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-                  <img width={40} height={40} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: "10px"}} />
-                </a>
-              );
+              return this.renderProviderLogo(provider, application, 40, 10, "big");
             })
           }
           {
