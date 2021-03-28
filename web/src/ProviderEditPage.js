@@ -155,7 +155,7 @@ class ProviderEditPage extends React.Component {
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `failed to connect to server: ${error}`);
+        Setting.showMessage("error", `Failed to connect to server: ${error}`);
       });
   }
 

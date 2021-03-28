@@ -168,12 +168,12 @@ class LoginPage extends React.Component {
               style={{width: "100%"}}
               disabled={!application.enablePassword}
             >
-              Login
+              Sign In
             </Button>
             {
               !application.enableSignUp ? null : (
                 <div style={{float: "right"}}>
-                  No account yet,&nbsp;
+                  No account yet?&nbsp;
                   <Link to={"/register"}>
                     sign up now
                   </Link>

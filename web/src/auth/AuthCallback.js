@@ -83,7 +83,6 @@ class AuthCallback extends React.Component {
             // Util.showMessage("success", `Authorization code: ${res.data}`);
           }
         } else {
-          // Util.showMessage("error", `Log in failed：${res.msg}`);
           this.setState({
             msg: res.msg,
           });

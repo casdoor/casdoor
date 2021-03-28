@@ -221,7 +221,7 @@ class RegisterPage extends React.Component {
         </Form.Item>
         <Form.Item {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">
-            Register
+            Sign Up
           </Button>
           &nbsp;&nbsp;&nbsp;Have account?&nbsp;
           <Link to={"/login"}>

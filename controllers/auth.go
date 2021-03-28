@@ -48,7 +48,7 @@ func (c *ApiController) HandleLoggedIn(userId string, form *RequestForm) *Respon
 		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state)
 		resp = codeToResponse(code)
 	} else {
-		resp = &Response{Status: "error", Msg: fmt.Sprintf("unknown response type: %s", form.Type)}
+		resp = &Response{Status: "error", Msg: fmt.Sprintf("Unknown response type: %s", form.Type)}
 	}
 	return resp
 }
@@ -83,7 +83,7 @@ func (c *ApiController) Login() {
 	if form.Username != "" {
 		if form.Type == ResponseTypeLogin {
 			if c.GetSessionUser() != "" {
-				resp = &Response{Status: "error", Msg: "please log out first before signing in", Data: c.GetSessionUser()}
+				resp = &Response{Status: "error", Msg: "Please log out first before signing in", Data: c.GetSessionUser()}
 				c.Data["json"] = resp
 				c.ServeJSON()
 				return
@@ -123,7 +123,7 @@ func (c *ApiController) Login() {
 		}
 
 		if !token.Valid() {
-			resp = &Response{Status: "error", Msg: "invalid token"}
+			resp = &Response{Status: "error", Msg: "Invalid token"}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return
@@ -131,7 +131,7 @@ func (c *ApiController) Login() {
 
 		userInfo, err := idProvider.GetUserInfo(token)
 		if err != nil {
-			resp = &Response{Status: "error", Msg: "login failed, please try again."}
+			resp = &Response{Status: "error", Msg: fmt.Sprintf("Failed to login in: %s", err.Error())}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return
@@ -159,12 +159,12 @@ func (c *ApiController) Login() {
 				//}
 
 				if !application.EnableSignUp {
-					resp = &Response{Status: "error", Msg: fmt.Sprintf("the account for provider: %s and username: %s does not exist and is not allowed to register as new account, please contact your IT support", provider.Type, userInfo.Username)}
+					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist and is not allowed to register as new account, please contact your IT support", provider.Type, userInfo.Username)}
 					c.Data["json"] = resp
 					c.ServeJSON()
 					return
 				} else {
-					resp = &Response{Status: "error", Msg: fmt.Sprintf("the account for provider: %s and username: %s does not exist, please register an account first", provider.Type, userInfo.Username)}
+					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist, please register an account first", provider.Type, userInfo.Username)}
 					c.Data["json"] = resp
 					c.ServeJSON()
 					return
@@ -174,7 +174,7 @@ func (c *ApiController) Login() {
 		} else {
 			userId := c.GetSessionUser()
 			if userId == "" {
-				resp = &Response{Status: "error", Msg: "user doesn't exist", Data: userInfo}
+				resp = &Response{Status: "error", Msg: "The account does not exist", Data: userInfo}
 				c.Data["json"] = resp
 				c.ServeJSON()
 				return
@@ -184,7 +184,7 @@ func (c *ApiController) Login() {
 			if isLinked {
 				resp = &Response{Status: "ok", Msg: "", Data: isLinked}
 			} else {
-				resp = &Response{Status: "error", Msg: "link account failed", Data: isLinked}
+				resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
 			}
 			//if len(object.GetMemberAvatar(userId)) == 0 {
 			//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, userId)

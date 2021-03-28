@@ -64,7 +64,7 @@ func (c *ApiController) Register() {
 	var resp Response
 
 	if c.GetSessionUser() != "" {
-		resp = Response{Status: "error", Msg: "please log out first before signing up", Data: c.GetSessionUser()}
+		resp = Response{Status: "error", Msg: "Please log out first before signing up", Data: c.GetSessionUser()}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return
@@ -95,7 +95,7 @@ func (c *ApiController) Register() {
 		//c.SetSessionUser(user)
 
 		util.LogInfo(c.Ctx, "API: [%s] is registered as new user", user)
-		resp = Response{Status: "ok", Msg: "注册成功", Data: user}
+		resp = Response{Status: "ok", Msg: "", Data: user}
 	}
 
 	c.Data["json"] = resp
@@ -124,7 +124,7 @@ func (c *ApiController) GetAccount() {
 	var resp Response
 
 	if c.GetSessionUser() == "" {
-		resp = Response{Status: "error", Msg: "please sign in first", Data: c.GetSessionUser()}
+		resp = Response{Status: "error", Msg: "Please sign in first", Data: c.GetSessionUser()}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return
@@ -145,7 +145,7 @@ func (c *ApiController) UploadAvatar() {
 
 	msg := object.CheckUserLogin(userObj.Owner+"/"+userObj.Name, c.Ctx.Request.Form.Get("password"))
 	if msg != "" {
-		resp = Response{Status: "error", Msg: "Password wrong"}
+		resp = Response{Status: "error", Msg: "Wrong password"}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return

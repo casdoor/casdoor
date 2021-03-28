@@ -35,8 +35,8 @@ func (c *ApiController) SetSessionUser(user string) {
 
 func wrapActionResponse(affected bool) *Response {
 	if affected {
-		return &Response{Status: "ok", Msg: "", Data: "affected"}
+		return &Response{Status: "ok", Msg: "", Data: "Affected"}
 	} else {
-		return &Response{Status: "ok", Msg: "", Data: "unaffected"}
+		return &Response{Status: "ok", Msg: "", Data: "Unaffected"}
 	}
 }

@@ -129,7 +129,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 
 	application := getApplicationByClientId(clientId)
 	if application == nil {
-		return "invalid client_id", nil
+		return "Invalid client_id", nil
 	}
 
 	validUri := false
@@ -150,7 +150,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	user := GetUser(userId)
 	if user == nil {
 		return &Code{
-			Message: "invalid user_id",
+			Message: "Invalid user_id",
 			Code:    "",
 		}
 	}
@@ -191,7 +191,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	application := getApplicationByClientId(clientId)
 	if application == nil {
 		return &TokenWrapper{
-			AccessToken: "invalid client_id",
+			AccessToken: "Invalid client_id",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
@@ -210,7 +210,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	token := getTokenByCode(code)
 	if token == nil {
 		return &TokenWrapper{
-			AccessToken: "invalid code",
+			AccessToken: "Invalid code",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
@@ -219,7 +219,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	if application.Name != token.Application {
 		return &TokenWrapper{
-			AccessToken: "token is for wrong application (client_id)",
+			AccessToken: "The token is for wrong application (client_id)",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
@@ -228,7 +228,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	if application.ClientSecret != clientSecret {
 		return &TokenWrapper{
-			AccessToken: "invalid client_secret",
+			AccessToken: "Invalid client_secret",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",

@@ -93,7 +93,7 @@ func getObject(ctx *context.Context) (string, string) {
 func denyRequest(ctx *context.Context) {
 	w := ctx.ResponseWriter
 	w.WriteHeader(403)
-	resp := &controllers.Response{Status: "error", Msg: "unauthorized operation"}
+	resp := &controllers.Response{Status: "error", Msg: "Unauthorized operation"}
 	_, err := w.Write([]byte(util.StructToJson(resp)))
 	if err != nil {
 		panic(err)
