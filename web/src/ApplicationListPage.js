@@ -53,7 +53,7 @@ class ApplicationListPage extends React.Component {
       enablePassword: true,
       enableSignUp: true,
       providers: [],
-      redirectUris: [],
+      redirectUris: ["http://localhost:9000/callback"],
       expireInHours: 24 * 7,
     }
   }

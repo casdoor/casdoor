@@ -197,7 +197,7 @@ class LoginPage extends React.Component {
     } else {
       return (
         <div style={{marginTop: "20px"}}>
-          <div style={{fontSize: 20, textAlign: "left"}}>
+          <div style={{fontSize: 16, textAlign: "left"}}>
             Please click to login&nbsp;
             <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
               {application.displayName}
@@ -209,10 +209,23 @@ class LoginPage extends React.Component {
             application.providerObjs.map(provider => {
               return (
                 <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-                  <img width={60} height={60} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: "10px"}} />
+                  <img width={40} height={40} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: "10px"}} />
                 </a>
               );
             })
+          }
+          {
+            !application.enableSignUp ? null : (
+              <div>
+                <br/>
+                <div style={{float: "right"}}>
+                  No account yet?&nbsp;
+                  <Link to={"/register"}>
+                    sign up now
+                  </Link>
+                </div>
+              </div>
+            )
           }
         </div>
       )
