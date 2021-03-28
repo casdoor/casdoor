@@ -35,10 +35,18 @@ class HomePage extends React.Component {
         {link: "/providers", name: i18next.t("general:Providers"), organizer: i18next.t("general:OAuth providers")},
         {link: "/applications", name: i18next.t("general:Applications"), organizer: i18next.t("general:Applications that requires authentication")},
       ];
+    } else {
+      items = [
+        {link: "/account", name: i18next.t("general:My Account"), organizer: i18next.t("general:Settings for your account")},
+      ];
     }
 
     for (let i = 0; i < items.length; i ++) {
-      items[i].logo = `https://cdn.casbin.com/static/img${items[i].link}.png`;
+      let filename = items[i].link;
+      if (filename === "/account") {
+        filename = "/users";
+      }
+      items[i].logo = `https://cdn.casbin.com/static/img${filename}.png`;
       items[i].createdTime = "";
     }
 
