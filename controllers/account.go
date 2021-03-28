@@ -132,7 +132,7 @@ func (c *ApiController) GetAccount() {
 
 	username := c.GetSessionUser()
 	userObj := object.GetUser(username)
-	resp = Response{Status: "ok", Msg: "", Data: util.StructToJson(userObj)}
+	resp = Response{Status: "ok", Msg: "", Data: userObj}
 
 	c.Data["json"] = resp
 	c.ServeJSON()

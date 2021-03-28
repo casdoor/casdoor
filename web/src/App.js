@@ -105,16 +105,11 @@ class App extends Component {
     }
   }
 
-  onLoggedIn() {
-    this.getAccount();
-  }
-
   getAccount() {
     AuthBackend.getAccount()
       .then((res) => {
-        const account = Setting.parseJson(res.data);
         this.setState({
-          account: account,
+          account: res.data,
         });
       });
   }
