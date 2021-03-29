@@ -25,7 +25,8 @@
     "User containers": "User containers",
     "Users under all organizations": "Users under all organizations",
     "OAuth providers": "OAuth providers",
-    "Applications that requires authentication": "Applications that requires authentication"
+    "Applications that requires authentication": "Applications that requires authentication",
+    "Swagger": "Swagger"
   },
   "account":
   {

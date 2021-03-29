@@ -285,6 +285,11 @@ class App extends Component {
         </Menu.Item>
       );
     }
+    res.push(
+      <Menu.Item key="6" onClick={() => window.location.href = "/swagger"}>
+        {i18next.t("general:Swagger")}
+      </Menu.Item>
+    );
     return res;
   }
 
