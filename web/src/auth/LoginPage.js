@@ -20,6 +20,8 @@ import * as AuthBackend from "./AuthBackend";
 import * as Provider from "./Provider";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
+import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
+import QqLoginButton from "./QqLoginButton";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -103,6 +105,18 @@ class LoginPage extends React.Component {
       });
   };
 
+  getLoginButton(type) {
+    if (type === "GitHub") {
+      return <GithubLoginButton />
+    } else if (type === "Google") {
+      return <GoogleLoginButton />
+    } else if (type === "QQ") {
+      return <QqLoginButton />
+    } else {
+      return `Log in with ${type}`;
+    }
+  }
+
   renderProviderLogo(provider, application, width, margin, size) {
     if (size === "small") {
       return (
@@ -112,27 +126,13 @@ class LoginPage extends React.Component {
       )
     } else {
       return (
-        <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-          <Card
-            hoverable
-            bodyStyle={{padding: 0}}
-            style={{height: 60, marginBottom: 10, paddingTop: 10}}
-          >
-            <Row>
-              <Col span={3}>
-              </Col>
-              <Col span={3}>
-                <img width={width} height={width} src={Provider.getAuthLogo(provider)} alt={provider.displayName} />
-              </Col>
-              <Col span={18}>
-                <div style={{marginTop: 8, fontWeight: 500, color: "#757575"}}>
-                  Login by {provider.type}
-                </div>
-              </Col>
-            </Row>
-
-          </Card>
-        </a>
+        <div key={provider.displayName} style={{marginBottom: "10px"}}>
+          <a href={Provider.getAuthUrl(application, provider, "signup")}>
+            {
+              this.getLoginButton(provider.type)
+            }
+          </a>
+        </div>
       )
     }
   }
@@ -228,11 +228,13 @@ class LoginPage extends React.Component {
       return (
         <div style={{marginTop: "20px"}}>
           <div style={{fontSize: 16, textAlign: "left"}}>
-            Please click to login&nbsp;
+            Sign in&nbsp;
             <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
-              {application.displayName}
+              <span style={{fontWeight: "bold"}}>
+                {application.displayName}
+              </span>
             </a>
-            :
+            &nbsp;with:
           </div>
           <br/>
           {
