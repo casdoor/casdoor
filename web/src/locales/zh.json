@@ -25,7 +25,8 @@
     "User containers": "用户容器",
     "Users under all organizations": "所有组织里的用户",
     "OAuth providers": "OAuth提供方",
-    "Applications that requires authentication": "需要鉴权的应用"
+    "Applications that requires authentication": "需要鉴权的应用",
+    "Swagger": "API总览"
   },
   "account":
   {

@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// @APIVersion 1.0.0
+// @Title Casdoor API
+// @Description Documentation of Casdoor API
+// @Contact admin@casbin.org
 package routers
 
 import (
@@ -27,8 +31,10 @@ func init() {
 func initAPI() {
 	ns :=
 		beego.NewNamespace("/api",
-			beego.NSInclude(
-				&controllers.ApiController{},
+			beego.NSNamespace("/api",
+				beego.NSInclude(
+					&controllers.ApiController{},
+				),
 			),
 		)
 	beego.AddNamespace(ns)

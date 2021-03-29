@@ -58,7 +58,7 @@ type Response struct {
 // @Description register a new user
 // @Param   username     formData    string  true        "The username to register"
 // @Param   password     formData    string  true        "The password"
-// @Success 200 {object} controllers.api_controller.Response The Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /register [post]
 func (c *ApiController) Register() {
 	var resp Response
@@ -104,7 +104,7 @@ func (c *ApiController) Register() {
 
 // @Title Logout
 // @Description logout the current user
-// @Success 200 {object} controllers.api_controller.Response The Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /logout [post]
 func (c *ApiController) Logout() {
 	var resp Response
@@ -120,6 +120,10 @@ func (c *ApiController) Logout() {
 	c.ServeJSON()
 }
 
+// @Title GetAccount
+// @Description get the details of the current account
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-account [get]
 func (c *ApiController) GetAccount() {
 	var resp Response
 
@@ -138,6 +142,12 @@ func (c *ApiController) GetAccount() {
 	c.ServeJSON()
 }
 
+// @Title UploadAvatar
+// @Description register a new user
+// @Param   avatarfile   formData    string  true        "The base64 encode of avatarfile"
+// @Param   password     formData    string  true        "The password"
+// @Success 200 {object} controllers.Response The Response object
+// @router /upload-avatar [post]
 func (c *ApiController) UploadAvatar() {
 	var resp Response
 	username := c.GetSessionUser()

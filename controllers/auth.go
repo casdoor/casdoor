@@ -53,6 +53,15 @@ func (c *ApiController) HandleLoggedIn(userId string, form *RequestForm) *Respon
 	return resp
 }
 
+// @Title GetApplicationLogin
+// @Description get application login
+// @Param   clientId    query    string  true        "client id"
+// @Param   responseType    query    string  true        "response type"
+// @Param   redirectUri    query    string  true        "redirect uri"
+// @Param   scope    query    string  true        "scope"
+// @Param   state    query    string  true        "state"
+// @Success 200 {object} controllers.api_controller.Response The Response object
+// @router /update-application [get]
 func (c *ApiController) GetApplicationLogin() {
 	var resp Response
 
@@ -72,6 +81,12 @@ func (c *ApiController) GetApplicationLogin() {
 	c.ServeJSON()
 }
 
+// @Title Login
+// @Description login
+// @Param   oAuthParams     query    string  true        "oAuth parameters"
+// @Param   body    body   RequestForm  true        "Login information"
+// @Success 200 {object} controllers.api_controller.Response The Response object
+// @router /login [post]
 func (c *ApiController) Login() {
 	resp := &Response{Status: "null", Msg: ""}
 	var form RequestForm

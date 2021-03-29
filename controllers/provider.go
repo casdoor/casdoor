@@ -20,6 +20,11 @@ import (
 	"github.com/casdoor/casdoor/object"
 )
 
+// @Title GetProviders
+// @Description get providers
+// @Param   owner     query    string  true        "The owner of providers"
+// @Success 200 {array} object.Provider The Response object
+// @router /get-providers [get]
 func (c *ApiController) GetProviders() {
 	owner := c.Input().Get("owner")
 
@@ -27,6 +32,11 @@ func (c *ApiController) GetProviders() {
 	c.ServeJSON()
 }
 
+// @Title GetProvider
+// @Description get provider
+// @Param   id    query    string  true        "The id of the provider"
+// @Success 200 {object} object.Provider The Response object
+// @router /get-provider [get]
 func (c *ApiController) GetProvider() {
 	id := c.Input().Get("id")
 
@@ -34,6 +44,12 @@ func (c *ApiController) GetProvider() {
 	c.ServeJSON()
 }
 
+// @Title UpdateProvider
+// @Description update provider
+// @Param   id    query    string  true        "The id of the provider"
+// @Param   body    body   object.Provider  true        "The details of the provider"
+// @Success 200 {object} controllers.Response The Response object
+// @router /update-provider [post]
 func (c *ApiController) UpdateProvider() {
 	id := c.Input().Get("id")
 
@@ -47,6 +63,11 @@ func (c *ApiController) UpdateProvider() {
 	c.ServeJSON()
 }
 
+// @Title AddProvider
+// @Description add provider
+// @Param   body    body   object.Provider  true        "The details of the provider"
+// @Success 200 {object} controllers.Response The Response object
+// @router /add-provider [post]
 func (c *ApiController) AddProvider() {
 	var provider object.Provider
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &provider)
@@ -58,6 +79,11 @@ func (c *ApiController) AddProvider() {
 	c.ServeJSON()
 }
 
+// @Title DeleteProvider
+// @Description delete provider
+// @Param   body    body   object.Provider  true        "The details of the provider"
+// @Success 200 {object} controllers.Response The Response object
+// @router /delete-provider [post]
 func (c *ApiController) DeleteProvider() {
 	var provider object.Provider
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &provider)

@@ -20,11 +20,20 @@ import (
 	"github.com/casdoor/casdoor/object"
 )
 
+// @Title GetGlobalUsers
+// @Description get global users
+// @Success 200 {array} object.User The Response object
+// @router /get-global-users [get]
 func (c *ApiController) GetGlobalUsers() {
 	c.Data["json"] = object.GetGlobalUsers()
 	c.ServeJSON()
 }
 
+// @Title GetUsers
+// @Description
+// @Param   owner     query    string  true        "The owner of users"
+// @Success 200 {array} object.User The Response object
+// @router /get-users [get]
 func (c *ApiController) GetUsers() {
 	owner := c.Input().Get("owner")
 
@@ -32,6 +41,11 @@ func (c *ApiController) GetUsers() {
 	c.ServeJSON()
 }
 
+// @Title GetUser
+// @Description get user
+// @Param   id     query    string  true        "The id of the user"
+// @Success 200 {object} object.User The Response object
+// @router /get-user [get]
 func (c *ApiController) GetUser() {
 	id := c.Input().Get("id")
 
@@ -39,6 +53,12 @@ func (c *ApiController) GetUser() {
 	c.ServeJSON()
 }
 
+// @Title UpdateUser
+// @Description update user
+// @Param   id     query    string  true        "The id of the user"
+// @Param   body    body   object.User  true        "The details of the user"
+// @Success 200 {object} controllers.Response The Response object
+// @router /update-user [post]
 func (c *ApiController) UpdateUser() {
 	id := c.Input().Get("id")
 
@@ -52,6 +72,11 @@ func (c *ApiController) UpdateUser() {
 	c.ServeJSON()
 }
 
+// @Title AddUser
+// @Description add user
+// @Param   body    body   object.User  true        "The details of the user"
+// @Success 200 {object} controllers.Response The Response object
+// @router /add-user [post]
 func (c *ApiController) AddUser() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
@@ -63,6 +88,11 @@ func (c *ApiController) AddUser() {
 	c.ServeJSON()
 }
 
+// @Title DeleteUser
+// @Description delete user
+// @Param   body    body   object.User  true        "The details of the user"
+// @Success 200 {object} controllers.Response The Response object
+// @router /delete-user [post]
 func (c *ApiController) DeleteUser() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
