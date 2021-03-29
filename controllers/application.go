@@ -20,6 +20,11 @@ import (
 	"github.com/casdoor/casdoor/object"
 )
 
+// @Title GetApplications
+// @Description get all applications
+// @Param   owner     query    string  true        "The owner of applications."
+// @Success 200 {array} object.Application The Response object
+// @router /get-applications [get]
 func (c *ApiController) GetApplications() {
 	owner := c.Input().Get("owner")
 
@@ -27,6 +32,11 @@ func (c *ApiController) GetApplications() {
 	c.ServeJSON()
 }
 
+// @Title GetApplication
+// @Description get the detail of an application
+// @Param   id     query    string  true        "The id of the application."
+// @Success 200 {object} object.Application The Response object
+// @router /get-application [get]
 func (c *ApiController) GetApplication() {
 	id := c.Input().Get("id")
 
@@ -34,6 +44,12 @@ func (c *ApiController) GetApplication() {
 	c.ServeJSON()
 }
 
+// @Title UpdateApplication
+// @Description update an application
+// @Param   id     query    string  true        "The id of the application"
+// @Param   body    body   object.Application  true        "The details of the application"
+// @Success 200 {object} controllers.Response The Response object
+// @router /update-application [post]
 func (c *ApiController) UpdateApplication() {
 	id := c.Input().Get("id")
 
@@ -47,6 +63,11 @@ func (c *ApiController) UpdateApplication() {
 	c.ServeJSON()
 }
 
+// @Title AddApplication
+// @Description add an application
+// @Param   body    body   object.Application  true        "The details of the application"
+// @Success 200 {object} controllers.Response The Response object
+// @router /add-application [post]
 func (c *ApiController) AddApplication() {
 	var application object.Application
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
@@ -58,6 +79,11 @@ func (c *ApiController) AddApplication() {
 	c.ServeJSON()
 }
 
+// @Title DeleteApplication
+// @Description delete an application
+// @Param   body    body   object.Application  true        "The details of the application"
+// @Success 200 {object} controllers.Response The Response object
+// @router /delete-application [post]
 func (c *ApiController) DeleteApplication() {
 	var application object.Application
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)

@@ -20,6 +20,11 @@ import (
 	"github.com/casdoor/casdoor/object"
 )
 
+// @Title GetOrganizations
+// @Description get organizations
+// @Param   owner     query    string  true        "owner"
+// @Success 200 {array} object.Organization The Response object
+// @router /get-organizations [get]
 func (c *ApiController) GetOrganizations() {
 	owner := c.Input().Get("owner")
 
@@ -27,6 +32,11 @@ func (c *ApiController) GetOrganizations() {
 	c.ServeJSON()
 }
 
+// @Title GetOrganization
+// @Description get organization
+// @Param   id     query    string  true        "organization id"
+// @Success 200 {object} object.Organization The Response object
+// @router /get-organization [get]
 func (c *ApiController) GetOrganization() {
 	id := c.Input().Get("id")
 
@@ -34,6 +44,12 @@ func (c *ApiController) GetOrganization() {
 	c.ServeJSON()
 }
 
+// @Title UpdateOrganization
+// @Description update organization
+// @Param   id     query    string  true        "The id of the organization"
+// @Param   body    body   object.Organization  true        "The details of the organization"
+// @Success 200 {object} controllers.Response The Response object
+// @router /update-organization [post]
 func (c *ApiController) UpdateOrganization() {
 	id := c.Input().Get("id")
 
@@ -47,6 +63,11 @@ func (c *ApiController) UpdateOrganization() {
 	c.ServeJSON()
 }
 
+// @Title AddOrganization
+// @Description add organization
+// @Param   body    body   object.Organization  true        "The details of the organization"
+// @Success 200 {object} controllers.Response The Response object
+// @router /add-organization [post]
 func (c *ApiController) AddOrganization() {
 	var organization object.Organization
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &organization)
@@ -58,6 +79,11 @@ func (c *ApiController) AddOrganization() {
 	c.ServeJSON()
 }
 
+// @Title DeleteOrganization
+// @Description delete organization
+// @Param   body    body   object.Organization  true        "The details of the organization"
+// @Success 200 {object} controllers.Response The Response object
+// @router /delete-organization [post]
 func (c *ApiController) DeleteOrganization() {
 	var organization object.Organization
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &organization)
