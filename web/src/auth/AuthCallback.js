@@ -13,48 +13,79 @@
 // limitations under the License.
 
 import React from "react";
-import {message, Spin} from "antd";
+import {Spin} from "antd";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
+import * as Util from "./Util";
+import {authConfig} from "./Auth";
+import * as Setting from "../Setting";
 
 class AuthCallback extends React.Component {
   constructor(props) {
     super(props);
-    const params = new URLSearchParams(this.props.location.search);
     this.state = {
       classes: props,
-      applicationName: props.match.params.applicationName,
-      providerName: props.match.params.providerName,
-      method: props.match.params.method,
-      state: params.get("state"),
-      code: params.get("code"),
-      isAuthenticated: false,
-      isSignedUp: false,
-      email: ""
+      msg: null,
     };
   }
 
-  componentWillMount() {
-    this.authLogin();
+  getInnerParams() {
+    // For example, for Casbin-OA, realRedirectUri = "http://localhost:9000/login"
+    // realRedirectUrl = "http://localhost:9000"
+    const params = new URLSearchParams(this.props.location.search);
+    const state = params.get("state");
+    return new URLSearchParams(Util.stateToGetQueryParams(state));
   }
 
-  showMessage(type, text) {
-    if (type === "success") {
-      message.success(text);
-    } else if (type === "error") {
-      message.error(text);
+  getResponseType() {
+    // "http://localhost:8000"
+    const authServerUrl = authConfig.serverUrl;
+
+    const innerParams = this.getInnerParams();
+    const realRedirectUri = innerParams.get("redirect_uri");
+    const realRedirectUrl = new URL(realRedirectUri).origin;
+
+    // For Casdoor itself, we use "login" directly
+    if (authServerUrl === realRedirectUrl) {
+      return "login";
+    } else {
+      return "code";
     }
   }
 
-  authLogin() {
-    let redirectUrl;
-    redirectUrl = `${window.location.origin}/callback/${this.state.applicationName}/${this.state.providerName}/${this.state.method}`;
-    AuthBackend.authLogin(this.state.applicationName, this.state.providerName, this.state.code, this.state.state, redirectUrl, this.state.method)
+  UNSAFE_componentWillMount() {
+    const params = new URLSearchParams(this.props.location.search);
+    const innerParams = this.getInnerParams();
+    const applicationName = innerParams.get("application");
+    const providerName = innerParams.get("provider");
+    const method = innerParams.get("method");
+    let redirectUri = `${window.location.origin}/callback`;
+    const body = {
+      type: this.getResponseType(),
+      application: applicationName,
+      provider: providerName,
+      code: params.get("code"),
+      state: innerParams.get("state"),
+      redirectUri: redirectUri,
+      method: method,
+    };
+    const oAuthParams = Util.getOAuthGetParameters(innerParams);
+    AuthBackend.login(body, oAuthParams)
       .then((res) => {
-        if (res.status === "ok") {
-          window.location.href = '/';
+        if (res.status === 'ok') {
+          const responseType = this.getResponseType();
+          if (responseType === "login") {
+            Util.showMessage("success", `Logged in successfully`);
+            Setting.goToLinkSoft(this, "/");
+          } else if (responseType === "code") {
+            const code = res.data;
+            Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+            // Util.showMessage("success", `Authorization code: ${res.data}`);
+          }
         } else {
-          this.showMessage("error", res?.msg);
+          this.setState({
+            msg: res.msg,
+          });
         }
       });
   }
@@ -62,7 +93,13 @@ class AuthCallback extends React.Component {
   render() {
     return (
       <div style={{textAlign: "center"}}>
-        <Spin size="large" tip="Signing in..." style={{paddingTop: "10%"}} />
+        {
+          (this.state.msg === null) ? (
+            <Spin size="large" tip="Signing in..." style={{paddingTop: "10%"}} />
+          ) : (
+            Util.renderMessageLarge(this, this.state.msg)
+          )
+        }
       </div>
     )
   }

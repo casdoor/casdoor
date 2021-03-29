@@ -12,17 +12,62 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {message} from "antd";
-
-export function goToLink(link) {
-  window.location.href = link;
-}
+import React from "react";
+import {Alert, Button, message, Result} from "antd";
+import * as Setting from "../Setting";
 
 export function showMessage(type, text) {
   if (type === "success") {
     message.success(text);
   } else if (type === "error") {
     message.error(text);
+  }
+}
+
+export function renderMessage(msg) {
+  if (msg !== null) {
+    return (
+      <div style={{display: "inline"}}>
+        <Alert
+          message="Login Error"
+          showIcon
+          description={msg}
+          type="error"
+          action={
+            <Button size="small" danger>
+              Detail
+            </Button>
+          }
+        />
+      </div>
+    )
+  } else {
+    return null;
+  }
+}
+
+export function renderMessageLarge(ths, msg) {
+  if (msg !== null) {
+    return (
+      <div style={{display: "inline"}}>
+        <Result
+          status="error"
+          title="Login Error"
+          subTitle={msg}
+          extra={[
+            <Button key="home" onClick={() => Setting.goToLinkSoft(ths, "/")}>
+              Home
+            </Button>,
+            <Button type="primary" key="register" onClick={() => Setting.goToLinkSoft(ths, "/register")}>
+              Register
+            </Button>,
+          ]}
+        >
+        </Result>
+      </div>
+    )
+  } else {
+    return null;
   }
 }
 
@@ -41,4 +86,34 @@ export function trim(str, ch) {
     --end;
 
   return (start > 0 || end < str.length) ? str.substring(start, end) : str;
+}
+
+export function getOAuthGetParameters(params) {
+  const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
+  const clientId = queries.get("client_id");
+  const responseType = queries.get("response_type");
+  const redirectUri = queries.get("redirect_uri");
+  const scope = queries.get("scope");
+  const state = queries.get("state");
+  if (clientId === undefined) {
+    return null;
+  } else {
+    return {
+      clientId: clientId,
+      responseType: responseType,
+      redirectUri: redirectUri,
+      scope: scope,
+      state: state,
+    };
+  }
+}
+
+export function getQueryParamsToState(applicationName, providerName, method) {
+  let query = window.location.search;
+  query = `${query}&application=${applicationName}&provider=${providerName}&method=${method}`;
+  return btoa(query);
+}
+
+export function stateToGetQueryParams(state) {
+  return atob(state);
 }

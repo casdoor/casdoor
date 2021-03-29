@@ -43,7 +43,7 @@ func (c *ApiController) UpdateProvider() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.UpdateProvider(id, &provider)
+	c.Data["json"] = wrapActionResponse(object.UpdateProvider(id, &provider))
 	c.ServeJSON()
 }
 
@@ -54,7 +54,7 @@ func (c *ApiController) AddProvider() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.AddProvider(&provider)
+	c.Data["json"] = wrapActionResponse(object.AddProvider(&provider))
 	c.ServeJSON()
 }
 
@@ -65,6 +65,6 @@ func (c *ApiController) DeleteProvider() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.DeleteProvider(&provider)
+	c.Data["json"] = wrapActionResponse(object.DeleteProvider(&provider))
 	c.ServeJSON()
 }

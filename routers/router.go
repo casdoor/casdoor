@@ -35,9 +35,9 @@ func initAPI() {
 
 	beego.Router("/api/register", &controllers.ApiController{}, "POST:Register")
 	beego.Router("/api/login", &controllers.ApiController{}, "POST:Login")
+	beego.Router("/api/get-app-login", &controllers.ApiController{}, "GET:GetApplicationLogin")
 	beego.Router("/api/logout", &controllers.ApiController{}, "POST:Logout")
 	beego.Router("/api/get-account", &controllers.ApiController{}, "GET:GetAccount")
-	beego.Router("/api/auth/login", &controllers.ApiController{}, "GET:AuthLogin")
 
 	beego.Router("/api/get-organizations", &controllers.ApiController{}, "GET:GetOrganizations")
 	beego.Router("/api/get-organization", &controllers.ApiController{}, "GET:GetOrganization")
@@ -70,5 +70,5 @@ func initAPI() {
 	beego.Router("/api/update-token", &controllers.ApiController{}, "POST:UpdateToken")
 	beego.Router("/api/add-token", &controllers.ApiController{}, "POST:AddToken")
 	beego.Router("/api/delete-token", &controllers.ApiController{}, "POST:DeleteToken")
-	beego.Router("/api/oauth/token", &controllers.ApiController{}, "GET:GetOAuthToken")
+	beego.Router("/api/login/oauth/access_token", &controllers.ApiController{}, "POST:GetOAuthToken")
 }

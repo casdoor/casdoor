@@ -19,7 +19,7 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
-import Face from "./auth/Face";
+import LoginPage from "./auth/LoginPage";
 import i18next from "i18next";
 import UrlTable from "./UrlTable";
 
@@ -37,7 +37,7 @@ class ApplicationEditPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getApplication();
     this.getOrganizations();
     this.getProviders();
@@ -56,7 +56,7 @@ class ApplicationEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: res,
+          organizations: (res.msg === undefined) ? res : [],
         });
       });
   }
@@ -71,9 +71,9 @@ class ApplicationEditPage extends React.Component {
   }
 
   parseApplicationField(key, value) {
-    // if ([].includes(key)) {
-    //   value = Setting.myParseInt(value);
-    // }
+    if (["expireInHours"].includes(key)) {
+      value = Setting.myParseInt(value);
+    }
     return value;
   }
 
@@ -135,7 +135,7 @@ class ApplicationEditPage extends React.Component {
                 {i18next.t("general:Preview")}:
               </Col>
               <Col span={23} >
-                <a target="_blank" href={this.state.application.logo}>
+                <a target="_blank" rel="noreferrer" href={this.state.application.logo}>
                   <img src={this.state.application.logo} alt={this.state.application.logo} height={90} style={{marginBottom: '20px'}}/>
                 </a>
               </Col>
@@ -201,9 +201,19 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <UrlTable
               title="Redirect URLs"
-              table={this.state.application.redirectUrls}
-              onUpdateTable={(value) => { this.updateApplicationField('redirectUrls', value)}}
+              table={this.state.application.redirectUris}
+              onUpdateTable={(value) => { this.updateApplicationField('redirectUris', value)}}
             />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("general:Expire In Hours")}:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.application.expireInHours} onChange={e => {
+              this.updateApplicationField('expireInHours', e.target.value);
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
@@ -218,10 +228,20 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("application:Enable Sign Up")}:
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.enableSignUp} onChange={checked => {
+              this.updateApplicationField('enableSignUp', checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("general:Providers")}:
           </Col>
           <Col span={22} >
-            <Select mode="tags" style={{width: '100%'}}
+            <Select virtual={false} mode="tags" style={{width: '100%'}}
                     value={this.state.application.providers}
                     onChange={value => {
                       this.updateApplicationField('providers', value);
@@ -234,18 +254,18 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("application:Face Preview")}:
+            {i18next.t("application:Login Page Preview")}:
           </Col>
           <Col span={22} >
-            <a style={{marginBottom: '10px'}} target="_blank" href={`/doors/${this.state.application.name}`}>
+            <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={`/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`}>
               {
-                `${window.location.host}/doors/${this.state.application.name}`
+                `${window.location.host}/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`
               }
             </a>
             <br/>
             <br/>
             <div style={{width: "500px", height: "600px", border: "1px solid rgb(217,217,217)"}}>
-              <Face application={this.state.application} />
+              <LoginPage type={"login"} application={this.state.application} />
             </div>
           </Col>
         </Row>
@@ -257,19 +277,19 @@ class ApplicationEditPage extends React.Component {
     let application = Setting.deepCopy(this.state.application);
     ApplicationBackend.updateApplication(this.state.application.owner, this.state.applicationName, application)
       .then((res) => {
-        if (res) {
+        if (res.msg === "") {
           Setting.showMessage("success", `Successfully saved`);
           this.setState({
             applicationName: this.state.application.name,
           });
           this.props.history.push(`/applications/${this.state.application.name}`);
         } else {
-          Setting.showMessage("error", `failed to save: server side failure`);
+          Setting.showMessage("error", res.msg);
           this.updateApplicationField('name', this.state.applicationName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `failed to save: ${error}`);
+        Setting.showMessage("error", `Failed to connect to server: ${error}`);
       });
   }
 

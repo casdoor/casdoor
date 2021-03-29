@@ -20,16 +20,25 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type IdProvider interface {
-	GetConfig() *oauth2.Config
-	GetUserInfo(httpClient *http.Client, token *oauth2.Token) (string, string, string, error)
+type UserInfo struct {
+	Username  string
+	Email     string
+	AvatarUrl string
 }
 
-func GetIdProvider(providerType string) IdProvider {
-	if providerType == "github" {
-		return &GithubIdProvider{}
-	} else if providerType == "google" {
-		return &GoogleIdProvider{}
+type IdProvider interface {
+	SetHttpClient(client *http.Client)
+	GetToken(code string) (*oauth2.Token, error)
+	GetUserInfo(token *oauth2.Token) (*UserInfo, error)
+}
+
+func GetIdProvider(providerType string, clientId string, clientSecret string, redirectUrl string) IdProvider {
+	if providerType == "GitHub" {
+		return NewGithubIdProvider(clientId, clientSecret, redirectUrl)
+	} else if providerType == "Google" {
+		return NewGoogleIdProvider(clientId, clientSecret, redirectUrl)
+	} else if providerType == "QQ" {
+		return NewQqIdProvider(clientId, clientSecret, redirectUrl)
 	}
 
 	return nil

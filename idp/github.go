@@ -15,6 +15,7 @@
 package idp
 
 import (
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -23,9 +24,35 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type GithubIdProvider struct{}
+type GithubIdProvider struct {
+	Client       *http.Client
+	Config       *oauth2.Config
+	ClientId     string
+	ClientSecret string
+	RedirectUrl  string
+}
 
-func (idp *GithubIdProvider) GetConfig() *oauth2.Config {
+func NewGithubIdProvider(clientId string, clientSecret string, redirectUrl string) *GithubIdProvider {
+	idp := &GithubIdProvider{
+		ClientId:     clientId,
+		ClientSecret: clientSecret,
+		RedirectUrl:  redirectUrl,
+	}
+
+	config := idp.getConfig()
+	config.ClientID = clientId
+	config.ClientSecret = clientSecret
+	config.RedirectURL = redirectUrl
+	idp.Config = config
+
+	return idp
+}
+
+func (idp *GithubIdProvider) SetHttpClient(client *http.Client) {
+	idp.Client = client
+}
+
+func (idp *GithubIdProvider) getConfig() *oauth2.Config {
 	var endpoint = oauth2.Endpoint{
 		AuthURL:  "https://github.com/login/oauth/authorize",
 		TokenURL: "https://github.com/login/oauth/access_token",
@@ -39,7 +66,12 @@ func (idp *GithubIdProvider) GetConfig() *oauth2.Config {
 	return config
 }
 
-func (idp *GithubIdProvider) getEmail(httpClient *http.Client, token *oauth2.Token) string {
+func (idp *GithubIdProvider) GetToken(code string) (*oauth2.Token, error) {
+	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, idp.Client)
+	return idp.Config.Exchange(ctx, code)
+}
+
+func (idp *GithubIdProvider) getEmail(token *oauth2.Token) string {
 	res := ""
 
 	type GithubEmail struct {
@@ -55,7 +87,7 @@ func (idp *GithubIdProvider) getEmail(httpClient *http.Client, token *oauth2.Tok
 		panic(err)
 	}
 	req.Header.Add("Authorization", "token "+token.AccessToken)
-	response, err := httpClient.Do(req)
+	response, err := idp.Client.Do(req)
 	if err != nil {
 		panic(err)
 	}
@@ -75,7 +107,7 @@ func (idp *GithubIdProvider) getEmail(httpClient *http.Client, token *oauth2.Tok
 	return res
 }
 
-func (idp *GithubIdProvider) getLoginAndAvatar(httpClient *http.Client, token *oauth2.Token) (string, string) {
+func (idp *GithubIdProvider) getLoginAndAvatar(token *oauth2.Token) (string, string) {
 	type GithubUser struct {
 		Login     string `json:"login"`
 		AvatarUrl string `json:"avatar_url"`
@@ -87,7 +119,7 @@ func (idp *GithubIdProvider) getLoginAndAvatar(httpClient *http.Client, token *o
 		panic(err)
 	}
 	req.Header.Add("Authorization", "token "+token.AccessToken)
-	resp, err := httpClient.Do(req)
+	resp, err := idp.Client.Do(req)
 	if err != nil {
 		panic(err)
 	}
@@ -101,20 +133,20 @@ func (idp *GithubIdProvider) getLoginAndAvatar(httpClient *http.Client, token *o
 	return githubUser.Login, githubUser.AvatarUrl
 }
 
-func (idp *GithubIdProvider) GetUserInfo(httpClient *http.Client, token *oauth2.Token) (string, string, string, error) {
-	var email, username, avatarUrl string
+func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+	userInfo := &UserInfo{}
 
 	var wg sync.WaitGroup
 	wg.Add(2)
 	go func() {
-		email = idp.getEmail(httpClient, token)
+		userInfo.Email = idp.getEmail(token)
 		wg.Done()
 	}()
 	go func() {
-		username, avatarUrl = idp.getLoginAndAvatar(httpClient, token)
+		userInfo.Username, userInfo.AvatarUrl = idp.getLoginAndAvatar(token)
 		wg.Done()
 	}()
 	wg.Wait()
 
-	return email, username, avatarUrl, nil
+	return userInfo, nil
 }

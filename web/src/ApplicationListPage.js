@@ -14,7 +14,8 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Col, Popconfirm, Row, Table} from 'antd';
+import {Button, Col, List, Popconfirm, Row, Table, Tooltip} from 'antd';
+import {EditOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
@@ -29,7 +30,7 @@ class ApplicationListPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getApplications();
   }
 
@@ -48,10 +49,12 @@ class ApplicationListPage extends React.Component {
       name: `application_${this.state.applications.length}`,
       createdTime: moment().format(),
       displayName: `New Application - ${this.state.applications.length}`,
-      logo: "https://cdn.casbin.com/logo/logo_384x96.png",
-      EnablePassword: true,
+      logo: "https://cdn.casbin.com/logo/logo_1024x256.png",
+      enablePassword: true,
+      enableSignUp: true,
       providers: [],
-      redirectUrls: [],
+      redirectUris: ["http://localhost:9000/callback"],
+      expireInHours: 24 * 7,
     }
   }
 
@@ -124,7 +127,7 @@ class ApplicationListPage extends React.Component {
         width: '250px',
         render: (text, record, index) => {
           return (
-            <a target="_blank" href={text}>
+            <a target="_blank" rel="noreferrer" href={text}>
               <img src={text} alt={text} width={150} />
             </a>
           )
@@ -134,13 +137,13 @@ class ApplicationListPage extends React.Component {
         title: i18next.t("general:Organization"),
         dataIndex: 'organization',
         key: 'organization',
-        width: '200px',
+        width: '150px',
         sorter: (a, b) => a.organization.localeCompare(b.organization),
         render: (text, record, index) => {
           return (
-            <a href={`/organizations/${text}`}>
+            <Link to={`/organizations/${text}`}>
               {text}
-            </a>
+            </Link>
           )
         }
       },
@@ -148,15 +151,34 @@ class ApplicationListPage extends React.Component {
         title: i18next.t("general:Providers"),
         dataIndex: 'providers',
         key: 'providers',
-        width: '200px',
-        sorter: (a, b) => a.providers.localeCompare(b.providers),
+        width: '250px',
         render: (text, record, index) => {
+          const providers = text;
+          if (providers.length === 0) {
+            return "(empty)";
+          }
+
           return (
-            <a href={`/providers/${text}`}>
-              {text}
-            </a>
+            <List
+              size="small"
+              dataSource={providers}
+              renderItem={(row, i) => {
+                return (
+                  <List.Item>
+                    <div style={{display: "inline"}}>
+                      <Tooltip placement="topLeft" title="Edit">
+                        <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${row}`)} />
+                      </Tooltip>
+                      <Link to={`/providers/${row}`}>
+                        {row}
+                      </Link>
+                    </div>
+                  </List.Item>
+                )
+              }}
+            />
           )
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),

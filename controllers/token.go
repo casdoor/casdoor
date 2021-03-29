@@ -43,7 +43,7 @@ func (c *ApiController) UpdateToken() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.UpdateToken(id, &token)
+	c.Data["json"] = wrapActionResponse(object.UpdateToken(id, &token))
 	c.ServeJSON()
 }
 
@@ -54,7 +54,7 @@ func (c *ApiController) AddToken() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.AddToken(&token)
+	c.Data["json"] = wrapActionResponse(object.AddToken(&token))
 	c.ServeJSON()
 }
 
@@ -65,17 +65,16 @@ func (c *ApiController) DeleteToken() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.DeleteToken(&token)
+	c.Data["json"] = wrapActionResponse(object.DeleteToken(&token))
 	c.ServeJSON()
 }
 
 func (c *ApiController) GetOAuthToken() {
-	applicationId := c.Input().Get("app_id")
 	grantType := c.Input().Get("grant_type")
 	clientId := c.Input().Get("client_id")
 	clientSecret := c.Input().Get("client_secret")
-	scope := c.Input().Get("scope")
+	code := c.Input().Get("code")
 
-	c.Data["json"] = object.GetOAuthToken(applicationId, grantType, clientId, clientSecret, scope)
+	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code)
 	c.ServeJSON()
 }

@@ -40,6 +40,7 @@ type User struct {
 
 	Github string `xorm:"varchar(100)" json:"github"`
 	Google string `xorm:"varchar(100)" json:"google"`
+	Qq     string `xorm:"varchar(100)" json:"qq"`
 }
 
 func GetGlobalUsers() []*User {
@@ -96,13 +97,12 @@ func UpdateUser(id string, user *User) bool {
 		return false
 	}
 
-	_, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(user)
+	affected, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
 		panic(err)
 	}
 
-	//return affected != 0
-	return true
+	return affected != 0
 }
 
 func AddUser(user *User) bool {

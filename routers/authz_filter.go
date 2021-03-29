@@ -22,6 +22,8 @@ import (
 
 	"github.com/astaxie/beego/context"
 	"github.com/casdoor/casdoor/authz"
+	"github.com/casdoor/casdoor/controllers"
+	"github.com/casdoor/casdoor/util"
 )
 
 type Object struct {
@@ -59,18 +61,12 @@ func getObject(ctx *context.Context) (string, string) {
 	method := ctx.Request.Method
 	if method == http.MethodGet {
 		query := ctx.Request.URL.RawQuery
-
-		// query == "owner=admin"
-		if query == "" || strings.Contains(query, "=") {
+		// query == "?id=built-in/admin"
+		idParamValue := parseQuery(query, "id")
+		if idParamValue == "" {
 			return "", ""
 		}
-
-		// query == "id=built-in/admin"
-		query = strings.TrimLeft(query, "id=")
-		tokens := strings.Split(query, "/")
-		owner := tokens[0]
-		name := tokens[1]
-		return owner, name
+		return parseSlash(idParamValue)
 	} else {
 		body := ctx.Input.RequestBody
 
@@ -81,7 +77,8 @@ func getObject(ctx *context.Context) (string, string) {
 		var obj Object
 		err := json.Unmarshal(body, &obj)
 		if err != nil {
-			panic(err)
+			//panic(err)
+			return "", ""
 		}
 		return obj.Owner, obj.Name
 	}
@@ -90,7 +87,8 @@ func getObject(ctx *context.Context) (string, string) {
 func denyRequest(ctx *context.Context) {
 	w := ctx.ResponseWriter
 	w.WriteHeader(403)
-	_, err := w.Write([]byte("403 Forbidden\n"))
+	resp := &controllers.Response{Status: "error", Msg: "Unauthorized operation"}
+	_, err := w.Write([]byte(util.StructToJson(resp)))
 	if err != nil {
 		panic(err)
 	}

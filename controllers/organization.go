@@ -43,7 +43,7 @@ func (c *ApiController) UpdateOrganization() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.UpdateOrganization(id, &organization)
+	c.Data["json"] = wrapActionResponse(object.UpdateOrganization(id, &organization))
 	c.ServeJSON()
 }
 
@@ -54,7 +54,7 @@ func (c *ApiController) AddOrganization() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.AddOrganization(&organization)
+	c.Data["json"] = wrapActionResponse(object.AddOrganization(&organization))
 	c.ServeJSON()
 }
 
@@ -65,6 +65,6 @@ func (c *ApiController) DeleteOrganization() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.DeleteOrganization(&organization)
+	c.Data["json"] = wrapActionResponse(object.DeleteOrganization(&organization))
 	c.ServeJSON()
 }

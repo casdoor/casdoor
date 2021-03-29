@@ -48,7 +48,7 @@ func (c *ApiController) UpdateUser() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.UpdateUser(id, &user)
+	c.Data["json"] = wrapActionResponse(object.UpdateUser(id, &user))
 	c.ServeJSON()
 }
 
@@ -59,7 +59,7 @@ func (c *ApiController) AddUser() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.AddUser(&user)
+	c.Data["json"] = wrapActionResponse(object.AddUser(&user))
 	c.ServeJSON()
 }
 
@@ -70,6 +70,6 @@ func (c *ApiController) DeleteUser() {
 		panic(err)
 	}
 
-	c.Data["json"] = object.DeleteUser(&user)
+	c.Data["json"] = wrapActionResponse(object.DeleteUser(&user))
 	c.ServeJSON()
 }

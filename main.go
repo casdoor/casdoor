@@ -43,6 +43,7 @@ func main() {
 	beego.SetStaticPath("/static", "web/build/static")
 	// https://studygolang.com/articles/2303
 	beego.InsertFilter("*", beego.BeforeRouter, routers.StaticFilter)
+	beego.InsertFilter("*", beego.BeforeRouter, routers.AutoLoginFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AuthzFilter)
 
 	beego.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"

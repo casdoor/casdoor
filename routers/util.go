@@ -12,12 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package controllers
+package routers
 
-type authResponse struct {
-	IsAuthenticated bool   `json:"isAuthenticated"`
-	IsSignedUp      bool   `json:"isSignedUp"`
-	Email           string `json:"email"`
-	Avatar          string `json:"avatar"`
-	Method          string `json:"method"`
+import (
+	"net/url"
+	"strings"
+)
+
+func parseQuery(query string, key string) string {
+	valueMap, err := url.ParseQuery(query)
+	if err != nil {
+		panic(err)
+	}
+
+	return valueMap.Get(key)
+}
+
+func parseSlash(s string) (string, string) {
+	tokens := strings.Split(s, "/")
+	return tokens[0], tokens[1]
 }

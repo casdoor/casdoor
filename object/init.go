@@ -45,7 +45,6 @@ func initBuiltInUser() {
 		Tag:           "staff",
 		IsAdmin:       true,
 		IsGlobalAdmin: true,
-		Github:        "",
 	}
 	AddUser(user)
 }
@@ -61,7 +60,7 @@ func initBuiltInApplication() {
 		Name:           "app-built-in",
 		CreatedTime:    util.GetCurrentTime(),
 		DisplayName:    "Casdoor",
-		Logo:           "https://cdn.casbin.com/logo/logo_384x96.png",
+		Logo:           "https://cdn.casbin.com/logo/logo_1024x256.png",
 		Organization:   "built-in",
 		EnablePassword: true,
 		Providers:      []string{},

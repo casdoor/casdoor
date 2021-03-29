@@ -30,7 +30,7 @@ class ProviderListPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getProviders();
   }
 
@@ -49,7 +49,7 @@ class ProviderListPage extends React.Component {
       name: `provider_${this.state.providers.length}`,
       createdTime: moment().format(),
       displayName: `New Provider - ${this.state.providers.length}`,
-      type: "github",
+      type: "GitHub",
       clientId: "",
       clientSecret: "",
       providerUrl: "https://github.com/organizations/xxx/settings/applications/1234567",
@@ -152,7 +152,7 @@ class ProviderListPage extends React.Component {
         sorter: (a, b) => a.providerUrl.localeCompare(b.providerUrl),
         render: (text, record, index) => {
           return (
-            <a target="_blank" href={text}>
+            <a target="_blank" rel="noreferrer" href={text}>
               {
                 Setting.getShortText(text)
               }

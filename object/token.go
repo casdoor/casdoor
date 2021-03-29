@@ -15,9 +15,16 @@
 package object
 
 import (
+	"strings"
+
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
+
+type Code struct {
+	Message string `xorm:"varchar(100)" json:"message"`
+	Code    string `xorm:"varchar(100)" json:"code"`
+}
 
 type Token struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -26,10 +33,18 @@ type Token struct {
 
 	Application string `xorm:"varchar(100)" json:"application"`
 
-	AccessToken string `xorm:"varchar(100)" json:"accessToken"`
+	Code        string `xorm:"varchar(100)" json:"code"`
+	AccessToken string `xorm:"mediumtext" json:"accessToken"`
 	ExpiresIn   int    `json:"expiresIn"`
 	Scope       string `xorm:"varchar(100)" json:"scope"`
 	TokenType   string `xorm:"varchar(100)" json:"tokenType"`
+}
+
+type TokenWrapper struct {
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+	ExpiresIn   int    `json:"expires_in"`
+	Scope       string `json:"scope"`
 }
 
 func GetTokens(owner string) []*Token {
@@ -56,6 +71,20 @@ func getToken(owner string, name string) *Token {
 	}
 }
 
+func getTokenByCode(code string) *Token {
+	token := Token{}
+	existed, err := adapter.engine.Where("code=?", code).Get(&token)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &token
+	} else {
+		return nil
+	}
+}
+
 func GetToken(id string) *Token {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getToken(owner, name)
@@ -67,13 +96,12 @@ func UpdateToken(id string, token *Token) bool {
 		return false
 	}
 
-	_, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(token)
+	affected, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(token)
 	if err != nil {
 		panic(err)
 	}
 
-	//return affected != 0
-	return true
+	return affected != 0
 }
 
 func AddToken(token *Token) bool {
@@ -94,15 +122,50 @@ func DeleteToken(token *Token) bool {
 	return affected != 0
 }
 
-func GetOAuthToken(applicationId string, grantType string, clientId string, clientSecret string, scope string) *Token {
-	application := GetApplication(applicationId)
-
-	if grantType != "client_credentials" {
-		return nil
+func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string) (string, *Application) {
+	if responseType != "code" {
+		return "response_type should be \"code\"", nil
 	}
 
-	if application.ClientId != clientId || application.ClientSecret != clientSecret {
-		return nil
+	application := getApplicationByClientId(clientId)
+	if application == nil {
+		return "Invalid client_id", nil
+	}
+
+	validUri := false
+	for _, tmpUri := range application.RedirectUris {
+		if strings.Contains(redirectUri, tmpUri) {
+			validUri = true
+			break
+		}
+	}
+	if !validUri {
+		return "redirect_uri doesn't exist in the allowed Redirect URL list", application
+	}
+
+	return "", application
+}
+
+func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string) *Code {
+	user := GetUser(userId)
+	if user == nil {
+		return &Code{
+			Message: "Invalid user_id",
+			Code:    "",
+		}
+	}
+
+	msg, application := CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
+	if msg != "" {
+		return &Code{
+			Message: msg,
+			Code:    "",
+		}
+	}
+
+	accessToken, err := generateJwtToken(application, user)
+	if err != nil {
+		panic(err)
 	}
 
 	token := &Token{
@@ -110,12 +173,74 @@ func GetOAuthToken(applicationId string, grantType string, clientId string, clie
 		Name:        util.GenerateId(),
 		CreatedTime: util.GetCurrentTime(),
 		Application: application.Name,
-		AccessToken: "",
-		ExpiresIn:   7200,
+		Code:        util.GenerateClientId(),
+		AccessToken: accessToken,
+		ExpiresIn:   application.ExpireInHours * 60,
 		Scope:       scope,
 		TokenType:   "Bearer",
 	}
 	AddToken(token)
 
-	return token
+	return &Code{
+		Message: "",
+		Code:    token.Code,
+	}
+}
+
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string) *TokenWrapper {
+	application := getApplicationByClientId(clientId)
+	if application == nil {
+		return &TokenWrapper{
+			AccessToken: "Invalid client_id",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
+		}
+	}
+
+	if grantType != "authorization_code" {
+		return &TokenWrapper{
+			AccessToken: "grant_type should be \"authorization_code\"",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
+		}
+	}
+
+	token := getTokenByCode(code)
+	if token == nil {
+		return &TokenWrapper{
+			AccessToken: "Invalid code",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
+		}
+	}
+
+	if application.Name != token.Application {
+		return &TokenWrapper{
+			AccessToken: "The token is for wrong application (client_id)",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
+		}
+	}
+
+	if application.ClientSecret != clientSecret {
+		return &TokenWrapper{
+			AccessToken: "Invalid client_secret",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
+		}
+	}
+
+	tokenWrapper := &TokenWrapper{
+		AccessToken: token.AccessToken,
+		TokenType:   token.TokenType,
+		ExpiresIn:   token.ExpiresIn,
+		Scope:       token.Scope,
+	}
+
+	return tokenWrapper
 }

@@ -13,8 +13,9 @@
 // limitations under the License.
 
 import React from "react";
-import {Card, Col, Row} from "antd";
+import {Card, Col} from "antd";
 import * as Setting from "../Setting";
+import {withRouter} from "react-router-dom";
 
 const { Meta } = Card;
 
@@ -34,7 +35,7 @@ class SingleCard extends React.Component {
     };
 
     return (
-      <Card.Grid style={gridStyle} onClick={() => Setting.goToLink(link)}>
+      <Card.Grid style={gridStyle} onClick={() => Setting.goToLinkSoft(this, link)}>
         <img src={logo} alt="logo" height={60} style={{marginBottom: '20px'}}/>
         <Meta
           title={title}
@@ -52,7 +53,7 @@ class SingleCard extends React.Component {
           cover={
             <img alt="logo" src={logo} width={"100%"} height={"100%"} />
           }
-          onClick={() => Setting.goToLink(link)}
+          onClick={() => Setting.goToLinkSoft(this, link)}
           style={isSingle ? {width: "320px"} : null}
         >
           <Meta title={title} description={desc} />
@@ -73,4 +74,4 @@ class SingleCard extends React.Component {
   }
 }
 
-export default SingleCard;
+export default withRouter(SingleCard);

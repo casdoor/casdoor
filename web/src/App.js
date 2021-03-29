@@ -13,11 +13,11 @@
 // limitations under the License.
 
 import React, {Component} from 'react';
-import './App.css';
+import './App.less';
 import * as Setting from "./Setting";
 import {DownOutlined, LogoutOutlined, SettingOutlined} from '@ant-design/icons';
 import {Avatar, BackTop, Dropdown, Layout, Menu} from 'antd';
-import {Switch, Route, withRouter, Redirect, Link} from 'react-router-dom'
+import {Link, Redirect, Route, Switch, withRouter} from 'react-router-dom'
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
 import UserListPage from "./UserListPage";
@@ -33,8 +33,10 @@ import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
 
 import * as Auth from "./auth/Auth";
-import Face from "./auth/Face";
+import RegisterPage from "./auth/RegisterPage";
+import ResultPage from "./auth/ResultPage";
 import LoginPage from "./auth/LoginPage";
+import SelfLoginPage from "./auth/SelfLoginPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from './SelectLanguageBox';
@@ -49,6 +51,7 @@ class App extends Component {
       classes: props,
       selectedMenuKey: 0,
       account: undefined,
+      uri: null,
     };
 
     Setting.initServerUrl();
@@ -59,15 +62,26 @@ class App extends Component {
     });
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     Setting.setLanguage();
     this.updateMenuKey();
     this.getAccount();
   }
 
+  componentDidUpdate() {
+    // eslint-disable-next-line no-restricted-globals
+    const uri = location.pathname;
+    if (this.state.uri !== uri) {
+      this.updateMenuKey();
+    }
+  }
+
   updateMenuKey() {
     // eslint-disable-next-line no-restricted-globals
     const uri = location.pathname;
+    this.setState({
+      uri: uri,
+    });
     if (uri === '/') {
       this.setState({ selectedMenuKey: 0 });
     } else if (uri.includes('organizations')) {
@@ -80,21 +94,37 @@ class App extends Component {
       this.setState({ selectedMenuKey: 4 });
     } else if (uri.includes('tokens')) {
       this.setState({ selectedMenuKey: 5 });
+    } else if (uri.includes('register')) {
+      this.setState({ selectedMenuKey: 100 });
+    } else if (uri.includes('login')) {
+      this.setState({ selectedMenuKey: 101 });
+    } else if (uri.includes('result')) {
+      this.setState({ selectedMenuKey: 100 });
     } else {
       this.setState({ selectedMenuKey: -1 });
     }
   }
 
-  onLoggedIn() {
-    this.getAccount();
+  getAccessTokenParam() {
+    // "/page?access_token=123"
+    const params = new URLSearchParams(this.props.location.search);
+    return params.get("access_token");
+  }
+
+  getUrlWithoutQuery() {
+    // eslint-disable-next-line no-restricted-globals
+    return location.toString().replace(location.search, "");
   }
 
   getAccount() {
-    AuthBackend.getAccount()
+    const accessToken = this.getAccessTokenParam();
+    if (accessToken !== null) {
+      window.history.replaceState({}, document.title, this.getUrlWithoutQuery());
+    }
+    AuthBackend.getAccount(accessToken)
       .then((res) => {
-        const account = Setting.parseJson(res.data);
         this.setState({
-          account: account,
+          account: res.status === "ok" ? res.data : null,
         });
       });
   }
@@ -112,11 +142,11 @@ class App extends Component {
             account: null
           });
 
-          Setting.showMessage("success", `Successfully logged out, redirected to homepage`);
+          Setting.showMessage("success", `Logged out successfully`);
 
-          Setting.goToLink("/");
+          Setting.goToLinkSoft(this, "/");
         } else {
-          Setting.showMessage("error", `Logout failed: ${res.msg}`);
+          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
         }
       });
   }
@@ -126,6 +156,22 @@ class App extends Component {
       this.props.history.push(`/account`);
     } else if (e.key === '202') {
       this.logout();
+    }
+  }
+
+  renderAvatar() {
+    if (this.state.account.avatar === "") {
+      return (
+        <Avatar style={{ backgroundColor: Setting.getAvatarColor(this.state.account.name), verticalAlign: 'middle' }} size="large">
+          {Setting.getShortName(this.state.account.name)}
+        </Avatar>
+      )
+    } else {
+      return (
+        <Avatar src={this.state.account.avatar} style={{verticalAlign: 'middle' }} size="large">
+          {Setting.getShortName(this.state.account.name)}
+        </Avatar>
+      )
     }
   }
 
@@ -145,17 +191,17 @@ class App extends Component {
 
     return (
       <Dropdown key="200" overlay={menu} >
-        <a className="ant-dropdown-link" href="#" style={{float: 'right'}}>
-          <Avatar style={{ backgroundColor: Setting.getAvatarColor(this.state.account.name), verticalAlign: 'middle' }} size="large">
-            {Setting.getShortName(this.state.account.name)}
-          </Avatar>
+        <div className="ant-dropdown-link" style={{float: 'right', cursor: 'pointer'}}>
+          {
+            this.renderAvatar()
+          }
           &nbsp;
           &nbsp;
           {Setting.isMobile() ? null : Setting.getShortName(this.state.account.name)} &nbsp; <DownOutlined />
           &nbsp;
           &nbsp;
           &nbsp;
-        </a>
+        </div>
       </Dropdown>
     )
   }
@@ -272,12 +318,16 @@ class App extends Component {
       <div>
         <Header style={{ padding: '0', marginBottom: '3px'}}>
           {
-            Setting.isMobile() ? null : <a className="logo" href={"/"} />
+            Setting.isMobile() ? null : (
+              <Link to={"/"}>
+                <div className="logo" />
+              </Link>
+            )
           }
           <Menu
             // theme="dark"
             mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
-            defaultSelectedKeys={[`${this.state.selectedMenuKey}`]}
+            selectedKeys={[`${this.state.selectedMenuKey}`]}
             style={{ lineHeight: '64px' }}
           >
             {
@@ -289,14 +339,16 @@ class App extends Component {
           </Menu>
         </Header>
         <Switch>
-          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<LoginPage onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
-          <Route exact path="/callback/:applicationName/:providerName/:method" component={AuthCallback}/>
-          <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
+          <Route exact path="/register" render={(props) => this.renderHomeIfLoggedIn(<RegisterPage {...props} />)}/>
+          <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
+          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...props} />)}/>
+          <Route exact path="/callback" component={AuthCallback}/>
+          <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)}/>
           <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/users/:organizationName/:userName" render={(props) => this.renderLoginIfNotLoggedIn(<UserEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />}/>
           <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)}/>
@@ -321,20 +373,20 @@ class App extends Component {
         }
       }>
         <SelectLanguageBox/>
-        Made with <span style={{color: 'rgb(255, 255, 255)'}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casbin.org">Casbin</a>
+        Made with <span style={{color: 'rgb(255, 255, 255)'}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casbin.org" rel="noreferrer">Casbin</a>
       </Footer>
     )
   }
 
   isDoorPages() {
-    return window.location.pathname.startsWith('/doors/');
+    return window.location.pathname.startsWith("/login/oauth/authorize");
   }
 
   render() {
     if (this.isDoorPages()) {
       return (
         <Switch>
-          <Route exact path="/doors/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<Face account={this.state.account} onLoggedIn={this.onLoggedIn.bind(this)} {...props} />)}/>
+          <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage type={"code"} {...props} />}/>
         </Switch>
       )
     }

@@ -68,10 +68,10 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && (r.subName == p.subName |
 p, built-in, *, *, *, *, *
 p, *, *, POST, /api/register, *, *
 p, *, *, POST, /api/login, *, *
+p, *, *, GET, /api/get-app-login, *, *
 p, *, *, POST, /api/logout, *, *
 p, *, *, GET, /api/get-account, *, *
-p, *, *, GET, /api/auth/login, *, *
-p, *, *, GET, /api/oauth/token, *, *
+p, *, *, POST, /api/login/oauth/access_token, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-users, *, *
 p, *, *, GET, /api/get-user, *, *

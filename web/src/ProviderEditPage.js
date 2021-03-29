@@ -30,7 +30,7 @@ class ProviderEditPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getProvider();
   }
 
@@ -96,10 +96,10 @@ class ProviderEditPage extends React.Component {
             <Select virtual={false} style={{width: '100%'}} value={this.state.provider.type} onChange={(value => {this.updateProviderField('type', value);})}>
               {
                 [
-                  {id: 'google', name: 'Google'},
-                  {id: 'github', name: 'GitHub'},
-                  {id: 'qq', name: 'QQ'},
-                  {id: 'wechat', name: 'WeChat'},
+                  {id: 'Google', name: 'Google'},
+                  {id: 'GitHub', name: 'GitHub'},
+                  {id: 'QQ', name: 'QQ'},
+                  {id: 'WeChat', name: 'WeChat'},
                 ].map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
               }
             </Select>
@@ -143,19 +143,19 @@ class ProviderEditPage extends React.Component {
     let provider = Setting.deepCopy(this.state.provider);
     ProviderBackend.updateProvider(this.state.provider.owner, this.state.providerName, provider)
       .then((res) => {
-        if (res) {
+        if (res.msg === "") {
           Setting.showMessage("success", `Successfully saved`);
           this.setState({
             providerName: this.state.provider.name,
           });
           this.props.history.push(`/providers/${this.state.provider.name}`);
         } else {
-          Setting.showMessage("error", `failed to save: server side failure`);
+          Setting.showMessage("error", res.msg);
           this.updateProviderField('name', this.state.providerName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `failed to save: ${error}`);
+        Setting.showMessage("error", `Failed to connect to server: ${error}`);
       });
   }
 

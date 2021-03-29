@@ -29,7 +29,7 @@ class OrganizationListPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getOrganizations();
   }
 
@@ -122,7 +122,7 @@ class OrganizationListPage extends React.Component {
         sorter: (a, b) => a.websiteUrl.localeCompare(b.websiteUrl),
         render: (text, record, index) => {
           return (
-            <a target="_blank" href={text}>
+            <a target="_blank" rel="noreferrer" href={text}>
               {text}
             </a>
           )

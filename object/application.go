@@ -30,12 +30,14 @@ type Application struct {
 	Description    string      `xorm:"varchar(100)" json:"description"`
 	Organization   string      `xorm:"varchar(100)" json:"organization"`
 	EnablePassword bool        `json:"enablePassword"`
+	EnableSignUp   bool        `json:"enableSignUp"`
 	Providers      []string    `xorm:"varchar(100)" json:"providers"`
 	ProviderObjs   []*Provider `xorm:"-" json:"providerObjs"`
 
-	ClientId     string   `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret string   `xorm:"varchar(100)" json:"clientSecret"`
-	RedirectUrls []string `xorm:"varchar(1000)" json:"redirectUrls"`
+	ClientId      string   `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret  string   `xorm:"varchar(100)" json:"clientSecret"`
+	RedirectUris  []string `xorm:"varchar(1000)" json:"redirectUris"`
+	ExpireInHours int      `json:"expireInHours"`
 }
 
 func GetApplications(owner string) []*Application {
@@ -48,6 +50,21 @@ func GetApplications(owner string) []*Application {
 	return applications
 }
 
+func extendApplication(application *Application) {
+	providers := GetProviders(application.Owner)
+	m := map[string]*Provider{}
+	for _, provider := range providers {
+		provider.ClientSecret = ""
+		provider.ProviderUrl = ""
+		m[provider.Name] = provider
+	}
+
+	application.ProviderObjs = []*Provider{}
+	for _, providerName := range application.Providers {
+		application.ProviderObjs = append(application.ProviderObjs, m[providerName])
+	}
+}
+
 func getApplication(owner string, name string) *Application {
 	application := Application{Owner: owner, Name: name}
 	existed, err := adapter.engine.Get(&application)
@@ -56,18 +73,22 @@ func getApplication(owner string, name string) *Application {
 	}
 
 	if existed {
-		providers := GetProviders(owner)
-		m := map[string]*Provider{}
-		for _, provider := range providers {
-			provider.ClientSecret = ""
-			provider.ProviderUrl = ""
-			m[provider.Name] = provider
-		}
+		extendApplication(&application)
+		return &application
+	} else {
+		return nil
+	}
+}
 
-		application.ProviderObjs = []*Provider{}
-		for _, providerName := range application.Providers {
-			application.ProviderObjs = append(application.ProviderObjs, m[providerName])
-		}
+func getApplicationByClientId(clientId string) *Application {
+	application := Application{}
+	existed, err := adapter.engine.Where("client_id=?", clientId).Get(&application)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		extendApplication(&application)
 		return &application
 	} else {
 		return nil
@@ -85,13 +106,12 @@ func UpdateApplication(id string, application *Application) bool {
 		return false
 	}
 
-	_, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(application)
+	affected, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(application)
 	if err != nil {
 		panic(err)
 	}
 
-	//return affected != 0
-	return true
+	return affected != 0
 }
 
 func AddApplication(application *Application) bool {

@@ -17,21 +17,35 @@ package controllers
 import (
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"strconv"
+	"strings"
 	"time"
+
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-	"strings"
 )
 
-type RegisterForm struct {
+const (
+	ResponseTypeLogin = "login"
+	ResponseTypeCode  = "code"
+)
+
+type RequestForm struct {
+	Type string `json:"type"`
+
 	Organization string `json:"organization"`
 	Username     string `json:"username"`
 	Password     string `json:"password"`
 	Name         string `json:"name"`
 	Email        string `json:"email"`
 	Phone        string `json:"phone"`
+
+	Application string `json:"application"`
+	Provider    string `json:"provider"`
+	Code        string `json:"code"`
+	State       string `json:"state"`
+	RedirectUri string `json:"redirectUri"`
+	Method      string `json:"method"`
 }
 
 type Response struct {
@@ -50,13 +64,13 @@ func (c *ApiController) Register() {
 	var resp Response
 
 	if c.GetSessionUser() != "" {
-		resp = Response{Status: "error", Msg: "please log out first before signing up", Data: c.GetSessionUser()}
+		resp = Response{Status: "error", Msg: "Please log out first before signing up", Data: c.GetSessionUser()}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return
 	}
 
-	var form RegisterForm
+	var form RequestForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
 		panic(err)
@@ -81,46 +95,7 @@ func (c *ApiController) Register() {
 		//c.SetSessionUser(user)
 
 		util.LogInfo(c.Ctx, "API: [%s] is registered as new user", user)
-		resp = Response{Status: "ok", Msg: "注册成功", Data: user}
-	}
-
-	c.Data["json"] = resp
-	c.ServeJSON()
-}
-
-// @Title Login
-// @Description login as a user
-// @Param   username     formData    string  true        "The username to login"
-// @Param   password     formData    string  true        "The password"
-// @Success 200 {object} controllers.api_controller.Response The Response object
-// @router /login [post]
-func (c *ApiController) Login() {
-	var resp Response
-
-	if c.GetSessionUser() != "" {
-		resp = Response{Status: "error", Msg: "please log out first before signing in", Data: c.GetSessionUser()}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-
-	var form RegisterForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
-	if err != nil {
-		panic(err)
-	}
-
-	userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
-	password := form.Password
-	msg := object.CheckUserLogin(userId, password)
-
-	if msg != "" {
-		resp = Response{Status: "error", Msg: msg, Data: ""}
-	} else {
-		c.SetSessionUser(userId)
-
-		util.LogInfo(c.Ctx, "API: [%s] logged in", userId)
-		resp = Response{Status: "ok", Msg: "", Data: userId}
+		resp = Response{Status: "ok", Msg: "", Data: user}
 	}
 
 	c.Data["json"] = resp
@@ -149,7 +124,7 @@ func (c *ApiController) GetAccount() {
 	var resp Response
 
 	if c.GetSessionUser() == "" {
-		resp = Response{Status: "error", Msg: "please sign in first", Data: c.GetSessionUser()}
+		resp = Response{Status: "error", Msg: "Please sign in first", Data: c.GetSessionUser()}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return
@@ -157,7 +132,7 @@ func (c *ApiController) GetAccount() {
 
 	username := c.GetSessionUser()
 	userObj := object.GetUser(username)
-	resp = Response{Status: "ok", Msg: "", Data: util.StructToJson(userObj)}
+	resp = Response{Status: "ok", Msg: "", Data: userObj}
 
 	c.Data["json"] = resp
 	c.ServeJSON()
@@ -168,9 +143,9 @@ func (c *ApiController) UploadAvatar() {
 	username := c.GetSessionUser()
 	userObj := object.GetUser(username)
 
-	msg := object.CheckUserLogin(userObj.Owner + "/" + userObj.Name, c.Ctx.Request.Form.Get("password"))
+	msg := object.CheckUserLogin(userObj.Owner+"/"+userObj.Name, c.Ctx.Request.Form.Get("password"))
 	if msg != "" {
-		resp = Response{Status: "error", Msg: "Password wrong"}
+		resp = Response{Status: "error", Msg: "Wrong password"}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return
@@ -178,14 +153,14 @@ func (c *ApiController) UploadAvatar() {
 
 	avatarBase64 := c.Ctx.Request.Form.Get("avatarfile")
 	index := strings.Index(avatarBase64, ",")
-	if index < 0 || avatarBase64[0: index] != "data:image/png;base64" {
+	if index < 0 || avatarBase64[0:index] != "data:image/png;base64" {
 		resp = Response{Status: "error", Msg: "File encoding error"}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return
 	}
 
-	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index + 1:])
+	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index+1:])
 	msg = object.UploadAvatar(userObj.Name, dist)
 	if msg != "" {
 		resp = Response{Status: "error", Msg: msg}
@@ -194,7 +169,7 @@ func (c *ApiController) UploadAvatar() {
 		return
 	}
 	userObj.Avatar = object.GetAvatarPath() + userObj.Name + ".png?time=" + strconv.FormatInt(time.Now().UnixNano(), 10)
-	object.UpdateUser(userObj.Owner + "/" + userObj.Name, userObj)
+	object.UpdateUser(userObj.Owner+"/"+userObj.Name, userObj)
 	resp = Response{Status: "ok", Msg: "Successfully set avatar"}
 	c.Data["json"] = resp
 	c.ServeJSON()

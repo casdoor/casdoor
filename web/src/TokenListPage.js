@@ -29,7 +29,7 @@ class TokenListPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getTokens();
   }
 
@@ -118,10 +118,20 @@ class TokenListPage extends React.Component {
         sorter: (a, b) => a.application.localeCompare(b.application),
         render: (text, record, index) => {
           return (
-            <a href={`/applications/${text}`}>
+            <Link to={`/applications/${text}`}>
               {text}
-            </a>
+            </Link>
           )
+        }
+      },
+      {
+        title: i18next.t("token:Authorization Code"),
+        dataIndex: 'code',
+        key: 'code',
+        // width: '150px',
+        sorter: (a, b) => a.code.localeCompare(b.code),
+        render: (text, record, index) => {
+          return Setting.getClickable(text);
         }
       },
       {
@@ -130,6 +140,10 @@ class TokenListPage extends React.Component {
         key: 'accessToken',
         // width: '150px',
         sorter: (a, b) => a.accessToken.localeCompare(b.accessToken),
+        ellipsis: true,
+        render: (text, record, index) => {
+          return Setting.getClickable(text);
+        }
       },
       {
         title: i18next.t("token:Expires In"),

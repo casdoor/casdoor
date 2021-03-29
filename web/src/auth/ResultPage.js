@@ -13,9 +13,10 @@
 // limitations under the License.
 
 import React from "react";
-import * as Setting from "./Setting";
+import {Link} from "react-router-dom";
+import {Result, Button} from 'antd';
 
-class SelectLanguageBox extends React.Component {
+class ResultPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,21 +26,22 @@ class SelectLanguageBox extends React.Component {
 
   render() {
     return (
-      <div align="center">
-        <div className="box" style={{width: "600px"}}>
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a onClick={() => Setting.changeLanguage("en")} className="lang-selector">
-            English
-          </a>
-          /
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a onClick={() => Setting.changeLanguage("zh")} className="lang-selector">
-            简体中文
-          </a>
-        </div>
+      <div>
+        <Result
+          status="success"
+          title="Your account is registered"
+          subTitle="Please click the below button to login"
+          extra={[
+            <Link to="/login">
+              <Button type="primary" key="login">
+                Login
+              </Button>
+            </Link>
+          ]}
+        />
       </div>
-    )
+    );
   }
 }
 
-export default SelectLanguageBox;
+export default ResultPage;

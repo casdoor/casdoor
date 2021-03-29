@@ -12,12 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export let authConfig = {
-  serverUrl: "http://example.com", // your Casdoor URL, like the official one: https://door.casbin.com
-  appName: "app-example", // your Casdoor application name, like: "app-built-in"
-  organizationName: "org-example", // your Casdoor organization name, like: "built-in"
+import React from 'react';
+import LoginPage from "./LoginPage";
+import {authConfig} from "./Auth";
+
+class SelfLoginPage extends React.Component {
+  render() {
+    return (
+      <LoginPage type={"login"} applicationName={authConfig.appName} account={this.props.account} {...this.props} />
+    )
+  }
 }
 
-export function initAuthWithConfig(config) {
-  authConfig = config;
-}
+export default SelfLoginPage;

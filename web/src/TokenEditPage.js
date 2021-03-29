@@ -13,12 +13,10 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select} from 'antd';
+import {Button, Card, Col, Input, Row} from 'antd';
 import * as TokenBackend from "./backend/TokenBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-
-const { Option } = Select;
 
 class TokenEditPage extends React.Component {
   constructor(props) {
@@ -30,7 +28,7 @@ class TokenEditPage extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getToken();
   }
 
@@ -90,6 +88,16 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("general:Authorization Code")}:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.token.code} onChange={e => {
+              this.updateTokenField('code', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("general:Access Token")}:
           </Col>
           <Col span={22} >
@@ -136,19 +144,19 @@ class TokenEditPage extends React.Component {
     let token = Setting.deepCopy(this.state.token);
     TokenBackend.updateToken(this.state.token.owner, this.state.tokenName, token)
       .then((res) => {
-        if (res) {
+        if (res.msg === "") {
           Setting.showMessage("success", `Successfully saved`);
           this.setState({
             tokenName: this.state.token.name,
           });
           this.props.history.push(`/tokens/${this.state.token.name}`);
         } else {
-          Setting.showMessage("error", `failed to save: server side failure`);
+          Setting.showMessage("error", res.msg);
           this.updateTokenField('name', this.state.tokenName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `failed to save: ${error}`);
+        Setting.showMessage("error", `failed to connect to server: ${error}`);
       });
   }
 

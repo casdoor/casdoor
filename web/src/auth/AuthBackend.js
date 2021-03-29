@@ -14,8 +14,9 @@
 
 import {authConfig} from "./Auth";
 
-export function getAccount() {
-  return fetch(`${authConfig.serverUrl}/api/get-account`, {
+export function getAccount(accessToken) {
+  let param = (accessToken === null) ? "" : `?accessToken=${accessToken}`;
+  return fetch(`${authConfig.serverUrl}/api/get-account${param}`, {
     method: 'GET',
     credentials: 'include'
   }).then(res => res.json());
@@ -29,8 +30,19 @@ export function register(values) {
   }).then(res => res.json());
 }
 
-export function login(values) {
-  return fetch(`${authConfig.serverUrl}/api/login`, {
+function oAuthParamsToQuery(oAuthParams) {
+  return `?clientId=${oAuthParams.clientId}&responseType=${oAuthParams.responseType}&redirectUri=${oAuthParams.redirectUri}&scope=${oAuthParams.scope}&state=${oAuthParams.state}`;
+}
+
+export function getApplicationLogin(oAuthParams) {
+  return fetch(`${authConfig.serverUrl}/api/get-app-login${oAuthParamsToQuery(oAuthParams)}`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then(res => res.json());
+}
+
+export function login(values, oAuthParams) {
+  return fetch(`${authConfig.serverUrl}/api/login${oAuthParamsToQuery(oAuthParams)}`, {
     method: 'POST',
     credentials: "include",
     body: JSON.stringify(values),
@@ -41,13 +53,6 @@ export function logout() {
   return fetch(`${authConfig.serverUrl}/api/logout`, {
     method: 'POST',
     credentials: "include",
-  }).then(res => res.json());
-}
-
-export function authLogin(applicationName, providerName, code, state, redirectUrl, method) {
-  return fetch(`${authConfig.serverUrl}/api/auth/login?application=${applicationName}&provider=${providerName}&code=${code}&state=${state}&redirect_url=${redirectUrl}&method=${method}`, {
-    method: 'GET',
-    credentials: 'include',
   }).then(res => res.json());
 }
 

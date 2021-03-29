@@ -15,135 +15,184 @@
 package controllers
 
 import (
-	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/astaxie/beego"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-	"golang.org/x/oauth2"
 )
 
-func (c *ApiController) AuthLogin() {
-	applicationName := c.Input().Get("application")
-	providerName := c.Input().Get("provider")
-	code := c.Input().Get("code")
-	state := c.Input().Get("state")
-	method := c.Input().Get("method")
-	redirectUrl := c.Input().Get("redirect_url")
-
-	application := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
-	provider := object.GetProvider(fmt.Sprintf("admin/%s", providerName))
-
-	idProvider := idp.GetIdProvider(provider.Type)
-	oauthConfig := idProvider.GetConfig()
-	oauthConfig.ClientID = provider.ClientId
-	oauthConfig.ClientSecret = provider.ClientSecret
-	oauthConfig.RedirectURL = redirectUrl
-
-	var resp Response
-	var res authResponse
-	res.IsAuthenticated = true
-
-	if state != beego.AppConfig.String("AuthState") {
-		res.IsAuthenticated = false
-		resp = Response{Status: "error", Msg: "unauthorized", Data: res}
-		c.ServeJSON()
-		return
+func codeToResponse(code *object.Code) *Response {
+	if code.Code == "" {
+		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
+	} else {
+		return &Response{Status: "ok", Msg: "", Data: code.Code}
 	}
+}
 
-	// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
-	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, httpClient)
-	token, err := oauthConfig.Exchange(ctx, code)
+func (c *ApiController) HandleLoggedIn(userId string, form *RequestForm) *Response {
+	resp := &Response{}
+	if form.Type == ResponseTypeLogin {
+		c.SetSessionUser(userId)
+		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
+		resp = &Response{Status: "ok", Msg: "", Data: userId}
+	} else if form.Type == ResponseTypeCode {
+		clientId := c.Input().Get("clientId")
+		responseType := c.Input().Get("responseType")
+		redirectUri := c.Input().Get("redirectUri")
+		scope := c.Input().Get("scope")
+		state := c.Input().Get("state")
+
+		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state)
+		resp = codeToResponse(code)
+	} else {
+		resp = &Response{Status: "error", Msg: fmt.Sprintf("Unknown response type: %s", form.Type)}
+	}
+	return resp
+}
+
+func (c *ApiController) GetApplicationLogin() {
+	var resp Response
+
+	clientId := c.Input().Get("clientId")
+	responseType := c.Input().Get("responseType")
+	redirectUri := c.Input().Get("redirectUri")
+	scope := c.Input().Get("scope")
+	state := c.Input().Get("state")
+
+	msg, application := object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
+	if msg != "" {
+		resp = Response{Status: "error", Msg: msg, Data: application}
+	} else {
+		resp = Response{Status: "ok", Msg: "", Data: application}
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
+func (c *ApiController) Login() {
+	resp := &Response{Status: "null", Msg: ""}
+	var form RequestForm
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
-		res.IsAuthenticated = false
 		panic(err)
 	}
 
-	if !token.Valid() {
-		resp = Response{Status: "error", Msg: "unauthorized", Data: res}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-
-	res.Email, res.Method, res.Avatar, err = idProvider.GetUserInfo(httpClient, token)
-	if err != nil {
-		resp = Response{Status: "error", Msg: "Login failed, please try again."}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-
-	if method == "signup" {
-		userId := ""
-		if provider.Type == "github" {
-			userId = object.GetUserIdByField(application, "github", res.Method)
-		} else if provider.Type == "google" {
-			userId = object.GetUserIdByField(application, "google", res.Email)
-		}
-
-		if userId != "" {
-			//if object.IsForbidden(userId) {
-			//	c.forbiddenAccountResp(userId)
-			//	return
-			//}
-
-			//if len(object.GetMemberAvatar(userId)) == 0 {
-			//	avatar := UploadAvatarToOSS(res.Avatar, userId)
-			//	object.LinkMemberAccount(userId, "avatar", avatar)
-			//}
-
-			c.SetSessionUser(userId)
-			util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-			res.IsSignedUp = true
-		} else {
-			//if object.IsForbidden(userId) {
-			//	c.forbiddenAccountResp(userId)
-			//	return
-			//}
-
-			if userId := object.GetUserIdByField(application, "email", res.Email); userId != "" {
-				c.SetSessionUser(userId)
-				util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-				res.IsSignedUp = true
-
-				if provider.Type == "github" {
-					_ = object.LinkUserAccount(userId, "github", res.Method)
-				} else if provider.Type == "google" {
-					_ = object.LinkUserAccount(userId, "google", res.Email)
-				}
-			} else {
-				res.IsSignedUp = false
+	if form.Username != "" {
+		if form.Type == ResponseTypeLogin {
+			if c.GetSessionUser() != "" {
+				resp = &Response{Status: "error", Msg: "Please log out first before signing in", Data: c.GetSessionUser()}
+				c.Data["json"] = resp
+				c.ServeJSON()
+				return
 			}
 		}
-		//res.Method = res.Email
-		resp = Response{Status: "ok", Msg: "success", Data: res}
-	} else {
-		userId := c.GetSessionUser()
-		if userId == "" {
-			resp = Response{Status: "error", Msg: "user doesn't exist", Data: res}
+
+		userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
+		password := form.Password
+		msg := object.CheckUserLogin(userId, password)
+
+		if msg != "" {
+			resp = &Response{Status: "error", Msg: msg, Data: ""}
+		} else {
+			resp = c.HandleLoggedIn(userId, &form)
+		}
+	} else if form.Provider != "" {
+		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
+
+		idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
+		idProvider.SetHttpClient(httpClient)
+
+		if form.State != beego.AppConfig.String("AuthState") && form.State != application.Name {
+			resp = &Response{Status: "error", Msg: fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("AuthState"), form.State)}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return
 		}
 
-		var linkRes bool
-		if provider.Type == "github" {
-			_ = object.LinkUserAccount(userId, "github", res.Method)
-		} else if provider.Type == "google" {
-			_ = object.LinkUserAccount(userId, "google", res.Email)
+		// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
+		token, err := idProvider.GetToken(form.Code)
+		if err != nil {
+			resp = &Response{Status: "error", Msg: err.Error()}
+			c.Data["json"] = resp
+			c.ServeJSON()
+			return
 		}
-		if linkRes {
-			resp = Response{Status: "ok", Msg: "success", Data: linkRes}
+
+		if !token.Valid() {
+			resp = &Response{Status: "error", Msg: "Invalid token"}
+			c.Data["json"] = resp
+			c.ServeJSON()
+			return
+		}
+
+		userInfo, err := idProvider.GetUserInfo(token)
+		if err != nil {
+			resp = &Response{Status: "error", Msg: fmt.Sprintf("Failed to login in: %s", err.Error())}
+			c.Data["json"] = resp
+			c.ServeJSON()
+			return
+		}
+
+		if form.Method == "signup" {
+			userId := object.GetUserIdByField(application, provider.Type, userInfo.Username)
+			if userId != "" {
+				//if object.IsForbidden(userId) {
+				//	c.forbiddenAccountResp(userId)
+				//	return
+				//}
+
+				//if len(object.GetMemberAvatar(userId)) == 0 {
+				//	avatar := UploadAvatarToOSS(res.Avatar, userId)
+				//	object.LinkMemberAccount(userId, "avatar", avatar)
+				//}
+
+				resp = c.HandleLoggedIn(userId, &form)
+			} else {
+				//if userId := object.GetUserIdByField(application, "email", userInfo.Email); userId != "" {
+				//	resp = c.HandleLoggedIn(userId, &form)
+				//
+				//	object.LinkUserAccount(userId, provider.Type, userInfo.Username)
+				//}
+
+				if !application.EnableSignUp {
+					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist and is not allowed to register as new account, please contact your IT support", provider.Type, userInfo.Username)}
+					c.Data["json"] = resp
+					c.ServeJSON()
+					return
+				} else {
+					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist, please register an account first", provider.Type, userInfo.Username)}
+					c.Data["json"] = resp
+					c.ServeJSON()
+					return
+				}
+			}
+			//resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else {
-			resp = Response{Status: "error", Msg: "link account failed", Data: linkRes}
+			userId := c.GetSessionUser()
+			if userId == "" {
+				resp = &Response{Status: "error", Msg: "The account does not exist", Data: userInfo}
+				c.Data["json"] = resp
+				c.ServeJSON()
+				return
+			}
+
+			isLinked := object.LinkUserAccount(userId, provider.Type, userInfo.Username)
+			if isLinked {
+				resp = &Response{Status: "ok", Msg: "", Data: isLinked}
+			} else {
+				resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
+			}
+			//if len(object.GetMemberAvatar(userId)) == 0 {
+			//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, userId)
+			//	object.LinkUserAccount(userId, "avatar", avatar)
+			//}
 		}
-		//if len(object.GetMemberAvatar(userId)) == 0 {
-		//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, userId)
-		//	object.LinkUserAccount(userId, "avatar", avatar)
-		//}
+	} else {
+		panic("unknown authentication type (not password or provider)")
 	}
 
 	c.Data["json"] = resp

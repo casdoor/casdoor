@@ -17,6 +17,7 @@ import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
 import i18next from "i18next";
+import copy from "copy-to-clipboard";
 
 export let ServerUrl = "";
 
@@ -50,6 +51,10 @@ export function goToLink(link) {
   window.location.href = link;
 }
 
+export function goToLinkSoft(ths, link) {
+  ths.props.history.push(link);
+}
+
 export function showMessage(type, text) {
   if (type === "") {
     return;
@@ -61,6 +66,9 @@ export function showMessage(type, text) {
 }
 
 export function isAdminUser(account) {
+  if (account === undefined || account === null) {
+    return false;
+  }
   return account.owner === "built-in" || account.isGlobalAdmin === true;
 }
 
@@ -150,4 +158,16 @@ export function changeLanguage(language) {
   localStorage.setItem("language", language)
   i18next.changeLanguage(language)
   window.location.reload(true);
+}
+
+export function getClickable(text) {
+  return (
+    // eslint-disable-next-line jsx-a11y/anchor-is-valid
+    <a onClick={() => {
+      copy(text);
+      showMessage("success", `Copied to clipboard`);
+    }}>
+      {text}
+    </a>
+  )
 }
