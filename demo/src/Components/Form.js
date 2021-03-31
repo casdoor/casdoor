@@ -27,7 +27,7 @@ const FormComponent = () => {
         rules={[{ required: true, message: "Please input your Username!" }]}
       >
         <Input
-          prefix={<UserOutlined className="site-form-item-icon" />}
+          prefix={<UserOutlined />}
           placeholder="username"
         />
       </Form.Item>
@@ -36,7 +36,7 @@ const FormComponent = () => {
         rules={[{ required: true, message: "Please input your Password!" }]}
       >
         <Input
-          prefix={<LockOutlined className="site-form-item-icon" />}
+          prefix={<LockOutlined />}
           type="password"
           placeholder="password"
         />
@@ -66,7 +66,7 @@ const FormComponent = () => {
           No account yet, <a href="/register">sign up now</a>
         </div>
       </Form.Item>
-      <ProviderLogin/>
+      <div style={{textAlign:"center"}}><ProviderLogin/></div>
     </Form>
   );
 }

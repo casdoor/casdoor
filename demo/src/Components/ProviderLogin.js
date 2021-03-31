@@ -35,7 +35,7 @@ function ProviderLogin() {
               height={40}
               src={provider.img}
               alt={provider.displayName}
-              style={{ margin: "3px" }}
+              style={{ margin: "5px" }}
             />
           </a>
         );
