@@ -32,6 +32,8 @@ class UserEditPage extends React.Component {
       userName: props.userName !== undefined ? props.userName : props.match.params.userName,
       user: null,
       organizations: [],
+      editstate : "edit",
+      links : ["Google", "Github", "QQ"]
     };
   }
 
@@ -73,6 +75,10 @@ class UserEditPage extends React.Component {
     this.setState({
       user: user,
     });
+  }
+
+  handleLinkEdit(e) {
+    this.state.editstate === "edit" ? this.setState({editstate : "done"}) : this.setState({editstate : "edit"})
   }
 
   renderUser() {
@@ -216,21 +222,36 @@ class UserEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
-            GitHub:
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.github} disabled={true} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
-            Google:
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.google} disabled={true} />
-          </Col>
+        <Row>
+        <Card size="small" title="Social Links" 
+          extra={
+            <div style={{display:"flex"}}>
+            <Button type={this.state.editstate==="edit" ? "primary" : "ghost"} span={2}
+              style={{marginLeft : "0.5rem", paddingLeft:"2rem", paddingRight:"2rem"}} onClick={this.handleLinkEdit.bind(this)}>
+              {this.state.editstate}
+            </Button>
+            </div>
+        } style={{ width: "100%", marginTop:"1.5em"}}>
+          {this.state.links.map( (l, idx) => {
+            return (<Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {l}:
+                </Col>
+                <Col span={20} >
+                  <Input value={this.state.user[l.toLowerCase()]} 
+                    disabled={this.state.editstate==="edit" ? true : false}
+                    key={idx}
+                    onChange={e => {
+                      this.updateUserField(l.toLowerCase(), e.target.value);
+                    }}/>
+                </Col>
+                <Col span={2}>
+                  <Button type={"default"} danger style={{marginLeft : "1em"}} 
+                    onClick={()=> this.updateUserField(l.toLowerCase(), "")}
+                    disabled={this.state.editstate === "edit" ? true : false}>Clear</Button>
+                </Col>
+              </Row>)})}
+        </Card>
         </Row>
         {
           !Setting.isAdminUser(this.props.account) ? null : (
@@ -264,27 +285,31 @@ class UserEditPage extends React.Component {
 
   submitUserEdit() {
     let user = Setting.deepCopy(this.state.user);
-    UserBackend.updateUser(this.state.organizationName, this.state.userName, user)
-      .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", `Successfully saved`);
-          this.setState({
-            organizationName: this.state.user.owner,
-            userName: this.state.user.name,
-          });
+    if (this.state.editstate === "edit"){
+      UserBackend.updateUser(this.state.organizationName, this.state.userName, user)
+        .then((res) => {
+          if (res.msg === "") {
+            Setting.showMessage("success", `Successfully saved`);
+            this.setState({
+              organizationName: this.state.user.owner,
+              userName: this.state.user.name,
+            });
 
-          if (this.props.history !== undefined) {
-            this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
+            if (this.props.history !== undefined) {
+              this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
+            }
+          } else {
+            Setting.showMessage("error", res.msg);
+            this.updateUserField('owner', this.state.organizationName);
+            this.updateUserField('name', this.state.userName);
           }
-        } else {
-          Setting.showMessage("error", res.msg);
-          this.updateUserField('owner', this.state.organizationName);
-          this.updateUserField('name', this.state.userName);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
-      });
+        })
+        .catch(error => {
+          Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        });
+    }else{
+      Setting.showMessage("error", `Please Save The Links First`);
+    }
   }
 
   render() {
