@@ -19,6 +19,7 @@ import (
 	"runtime"
 
 	"github.com/astaxie/beego"
+	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/go-sql-driver/mysql"
 	"xorm.io/xorm"
 )
@@ -35,7 +36,7 @@ func InitConfig() {
 }
 
 func InitAdapter() {
-	adapter = NewAdapter("mysql", beego.AppConfig.String("dataSourceName"))
+	adapter = NewAdapter(beego.AppConfig.String("dbAdapter"), beego.AppConfig.String("dataSourceName"))
 }
 
 // Adapter represents the MySQL adapter for policy storage.
@@ -75,8 +76,11 @@ func (a *Adapter) createDatabase() error {
 	}
 	defer engine.Close()
 
-	_, err = engine.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default charset utf8 COLLATE utf8_general_ci", beego.AppConfig.String("dbName")))
-	return err
+	if a.driverName == "mysql" {
+		_, err := engine.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default charset utf8 COLLATE utf8_general_ci", beego.AppConfig.String("dbName")))
+		return err
+	}
+	return nil
 }
 
 func (a *Adapter) open() {
@@ -84,7 +88,7 @@ func (a *Adapter) open() {
 		panic(err)
 	}
 
-	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName+beego.AppConfig.String("dbName"))
+	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName)
 	if err != nil {
 		panic(err)
 	}

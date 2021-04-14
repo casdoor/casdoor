@@ -106,6 +106,18 @@ Now, Casdoor is running on port 8000. You can access Casdoor pages directly in y
 
   Casdoor uses XORM to connect to DB, so all DBs supported by XORM can also be used.
 
+  ### MSSQL Support
+  To use MsSQL instead of MySQL, change in app.conf 'dbAdapter' to 'mssql' and set your dataSourceName as:
+  ``` INI
+    dataSourceName = sqlserver://user:pass@ip.ad.dre.ss/instance?database=dbName
+  ```
+  
+  Then, create a database named as dbName in app.conf (where 'casdoor' is the default database name)
+  ``` SQL
+   IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'casdoor') BEGIN CREATE DATABASE casdoor END; 
+  ```
+
+
 - Setup your Casdoor to enable some third-party login platform:
 
   Casdoor provide a way to sign up using Google account, Github account, WeChat account and so on,  so you may have to get your own  ClientID and ClientSecret first.

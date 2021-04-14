@@ -27,7 +27,7 @@ var Enforcer *casbin.Enforcer
 func InitAuthz() {
 	var err error
 
-	a, err := xormadapter.NewAdapter("mysql", beego.AppConfig.String("dataSourceName")+beego.AppConfig.String("dbName"), true)
+	a, err := xormadapter.NewAdapter(beego.AppConfig.String("dbAdapter"), beego.AppConfig.String("dataSourceName"), true)
 	if err != nil {
 		panic(err)
 	}
