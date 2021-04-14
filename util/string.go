@@ -23,11 +23,13 @@ import (
 
 func GetOwnerAndNameFromId(id string) (string, string) {
 	tokens := strings.Split(id, "/")
-	if len(tokens) != 2 {
-		panic(errors.New("GetOwnerAndNameFromId() error, wrong token count for ID: " + id))
+	if len(tokens) == 2 {
+		return tokens[0], tokens[1]
+	}else if len(tokens) == 1 {
+		return tokens[0], ""
 	}
-
-	return tokens[0], tokens[1]
+	panic(errors.New("GetOwnerAndNameFromId() error, wrong token count for ID: " + id))
+	
 }
 
 func GenerateId() string {
