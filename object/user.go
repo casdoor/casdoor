@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -40,7 +41,8 @@ type User struct {
 
 	Github string `xorm:"varchar(100)" json:"github"`
 	Google string `xorm:"varchar(100)" json:"google"`
-	Qq     string `xorm:"varchar(100)" json:"qq"`
+	QQ     string `xorm:"qq varchar(100)" json:"qq"`
+	WeChat string `xorm:"wechat varchar(100)" json:"wechat"`
 }
 
 func GetGlobalUsers() []*User {
@@ -138,11 +140,18 @@ func GetUserByField(organizationName string, field string, value string) *User {
 	}
 }
 
-func LinkUserAccount(user, field, value string) bool {
-	affected, err := adapter.engine.Table(new(User)).ID(user).Update(map[string]interface{}{field: value})
+func LinkUserAccount(user *User, field string, value string) bool {
+	affected, err := adapter.engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(map[string]interface{}{field: value})
 	if err != nil {
 		panic(err)
 	}
 
 	return affected != 0
+}
+
+func GetUserField(user *User, field string) string {
+	// https://socketloop.com/tutorials/golang-how-to-get-struct-field-and-value-by-name
+	u := reflect.ValueOf(user)
+	f := reflect.Indirect(u).FieldByName(field)
+	return f.String()
 }

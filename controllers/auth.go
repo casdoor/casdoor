@@ -195,7 +195,8 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			isLinked := object.LinkUserAccount(userId, provider.Type, userInfo.Username)
+			user := object.GetUser(userId)
+			isLinked := object.LinkUserAccount(user, provider.Type, userInfo.Username)
 			if isLinked {
 				resp = &Response{Status: "ok", Msg: "", Data: isLinked}
 			} else {

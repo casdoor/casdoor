@@ -171,3 +171,10 @@ export function getClickable(text) {
     </a>
   )
 }
+
+export function getIdpLogo(idp) {
+  const url = `https://cdn.jsdelivr.net/gh/casbin/static/img/social_${idp}.png`;
+  return (
+    <img width={30} height={30} src={url} alt={idp} />
+  )
+}

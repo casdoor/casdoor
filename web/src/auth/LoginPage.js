@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Card, Checkbox, Col, Form, Input, Row} from "antd";
+import {Button, Checkbox, Col, Form, Input, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
 import * as Provider from "./Provider";

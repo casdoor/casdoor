@@ -20,6 +20,7 @@ import * as Setting from "./Setting";
 import {LinkOutlined} from "@ant-design/icons";
 import i18next from "i18next";
 import CropperDiv from "./CropperDiv.js";
+import * as AuthBackend from "./auth/AuthBackend";
 
 const { Option } = Select;
 
@@ -73,6 +74,74 @@ class UserEditPage extends React.Component {
     this.setState({
       user: user,
     });
+  }
+
+  linkUser(providerType) {
+  }
+
+  unlinkUser(providerType) {
+    const body = {
+      providerType: providerType,
+    };
+    AuthBackend.unlink(body)
+      .then((res) => {
+        if (res.status === 'ok') {
+          Setting.showMessage("success", `Linked successfully`);
+
+          this.getUser();
+        } else {
+          Setting.showMessage("error", `Failed to unlink: ${res.msg}`);
+        }
+      });
+  }
+
+  getIdpLink(idp, username) {
+    if (idp === "github") {
+      return `https://github.com/${username}`;
+    } else if (idp === "google") {
+      return "https://mail.google.com";
+    } else {
+      return "";
+    }
+  }
+
+  renderIdp(idp) {
+    return (
+      <Row style={{marginTop: '20px'}} >
+        <Col style={{marginTop: '5px'}} span={2}>
+          {
+            Setting.getIdpLogo(idp.toLowerCase())
+          }
+          <span style={{marginLeft: '5px'}}>
+            {
+              `${idp}:`
+            }
+          </span>
+        </Col>
+        <Col span={22} >
+          <span style={{width: '200px', display: "inline-block"}}>
+            {
+              this.state.user[idp.toLowerCase()] === "" ? (
+                "(empty)"
+              ) : (
+                <a target="_blank" rel="noreferrer" href={this.getIdpLink(idp.toLowerCase(), this.state.user[idp.toLowerCase()])}>
+                  {
+                    this.state.user[idp.toLowerCase()]
+                  }
+                </a>
+              )
+            }
+          </span>
+          {
+            this.state.user[idp.toLowerCase()] === "" ? (
+              <Button style={{marginLeft: '20px', width: '80px'}} type="primary" onClick={() => this.linkUser(idp)}>Link</Button>
+            ) : (
+              <Button style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(idp)}>Unlink</Button>
+            )
+          }
+        </Col>
+      </Row>
+    )
   }
 
   renderUser() {
@@ -216,22 +285,18 @@ class UserEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
-            GitHub:
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.github} disabled={true} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
-            Google:
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.google} disabled={true} />
-          </Col>
-        </Row>
+        {
+          this.renderIdp("GitHub")
+        }
+        {
+          this.renderIdp("Google")
+        }
+        {
+          this.renderIdp("QQ")
+        }
+        {
+          this.renderIdp("WeChat")
+        }
         {
           !Setting.isAdminUser(this.props.account) ? null : (
             <React.Fragment>

@@ -56,15 +56,16 @@ export function logout() {
   }).then(res => res.json());
 }
 
-export function getApplication(owner, name) {
-  return fetch(`${authConfig.serverUrl}/api/get-application?id=${owner}/${encodeURIComponent(name)}`, {
-    method: "GET",
-    credentials: "include"
+export function unlink(values) {
+  return fetch(`${authConfig.serverUrl}/api/unlink`, {
+    method: 'POST',
+    credentials: "include",
+    body: JSON.stringify(values),
   }).then(res => res.json());
 }
 
-export function getUsers(owner) {
-  return fetch(`${authConfig.serverUrl}/api/get-users?owner=${owner}`, {
+export function getApplication(owner, name) {
+  return fetch(`${authConfig.serverUrl}/api/get-application?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include"
   }).then(res => res.json());
