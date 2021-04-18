@@ -28,6 +28,13 @@ export function getApplication(owner, name) {
   }).then(res => res.json());
 }
 
+export function getDefaultApplication(owner) {
+  return fetch(`${Setting.ServerUrl}/api/get-default-application?owner=${owner}`, {
+    method: "GET",
+    credentials: "include"
+  }).then(res => res.json());
+}
+
 export function updateApplication(owner, name, application) {
   let newApplication = Setting.deepCopy(application);
   return fetch(`${Setting.ServerUrl}/api/update-application?id=${owner}/${encodeURIComponent(name)}`, {

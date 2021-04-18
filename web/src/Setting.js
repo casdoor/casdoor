@@ -172,7 +172,8 @@ export function getClickable(text) {
   )
 }
 
-export function getIdpLogo(idp) {
+export function getProviderLogo(provider) {
+  const idp = provider.type.toLowerCase();
   const url = `https://cdn.jsdelivr.net/gh/casbin/static/img/social_${idp}.png`;
   return (
     <img width={30} height={30} src={url} alt={idp} />

@@ -21,6 +21,13 @@ export function getProviders(owner) {
   }).then(res => res.json());
 }
 
+export function getDefaultProviders(owner) {
+  return fetch(`${Setting.ServerUrl}/api/get-default-providers?owner=${owner}`, {
+    method: "GET",
+    credentials: "include"
+  }).then(res => res.json());
+}
+
 export function getProvider(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-provider?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",

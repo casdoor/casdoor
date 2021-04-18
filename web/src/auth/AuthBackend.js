@@ -63,10 +63,3 @@ export function unlink(values) {
     body: JSON.stringify(values),
   }).then(res => res.json());
 }
-
-export function getApplication(owner, name) {
-  return fetch(`${authConfig.serverUrl}/api/get-application?id=${owner}/${encodeURIComponent(name)}`, {
-    method: "GET",
-    credentials: "include"
-  }).then(res => res.json());
-}

@@ -15,6 +15,8 @@
 package object
 
 import (
+	"strings"
+
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -39,6 +41,17 @@ func GetProviders(owner string) []*Provider {
 	}
 
 	return providers
+}
+
+func GetDefaultProviders(owner string) []*Provider {
+	providers := GetProviders(owner)
+	res := []*Provider{}
+	for _, provider := range providers {
+		if strings.Contains(provider.Name, "casdoor") {
+			res = append(res, provider)
+		}
+	}
+	return res
 }
 
 func getProvider(owner string, name string) *Provider {

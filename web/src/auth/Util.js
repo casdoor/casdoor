@@ -111,6 +111,9 @@ export function getOAuthGetParameters(params) {
 export function getQueryParamsToState(applicationName, providerName, method) {
   let query = window.location.search;
   query = `${query}&application=${applicationName}&provider=${providerName}&method=${method}`;
+  if (method === "link") {
+    query = `${query}&from=${window.location.pathname}`;
+  }
   return btoa(query);
 }
 

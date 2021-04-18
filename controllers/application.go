@@ -44,6 +44,18 @@ func (c *ApiController) GetApplication() {
 	c.ServeJSON()
 }
 
+// @Title GetDefaultApplication
+// @Description get the detail of the default application
+// @Param   owner     query    string  true        "The owner of the application."
+// @Success 200 {object} object.Application The Response object
+// @router /get-default-application [get]
+func (c *ApiController) GetDefaultApplication() {
+	owner := c.Input().Get("owner")
+
+	c.Data["json"] = object.GetDefaultApplication(owner)
+	c.ServeJSON()
+}
+
 // @Title UpdateApplication
 // @Description update an application
 // @Param   id     query    string  true        "The id of the application"

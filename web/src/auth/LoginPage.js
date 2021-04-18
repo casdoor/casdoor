@@ -17,6 +17,7 @@ import {Link} from "react-router-dom";
 import {Button, Checkbox, Col, Form, Input, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
+import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Provider from "./Provider";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
@@ -68,7 +69,7 @@ class LoginPage extends React.Component {
       return;
     }
 
-    AuthBackend.getApplication("admin", this.state.applicationName)
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
         this.setState({
           application: application,

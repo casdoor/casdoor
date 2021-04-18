@@ -43,6 +43,10 @@ export function getAuthLogo(provider) {
 }
 
 export function getAuthUrl(application, provider, method) {
+  if (application === null || provider === null) {
+    return "";
+  }
+
   const redirectUri = `${window.location.origin}/callback`;
   const state = Util.getQueryParamsToState(application.name, provider.name, method);
   if (provider.type === "Google") {

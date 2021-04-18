@@ -32,6 +32,18 @@ func (c *ApiController) GetProviders() {
 	c.ServeJSON()
 }
 
+// @Title GetDefaultProviders
+// @Description get default providers
+// @Param   owner     query    string  true        "The owner of providers"
+// @Success 200 {array} object.Provider The Response object
+// @router /get-default-providers [get]
+func (c *ApiController) GetDefaultProviders() {
+	owner := c.Input().Get("owner")
+
+	c.Data["json"] = object.GetDefaultProviders(owner)
+	c.ServeJSON()
+}
+
 // @Title GetProvider
 // @Description get provider
 // @Param   id    query    string  true        "The id of the provider"

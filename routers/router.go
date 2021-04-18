@@ -61,6 +61,7 @@ func initAPI() {
 	beego.Router("/api/upload-avatar", &controllers.ApiController{}, "POST:UploadAvatar")
 
 	beego.Router("/api/get-providers", &controllers.ApiController{}, "GET:GetProviders")
+	beego.Router("/api/get-default-providers", &controllers.ApiController{}, "GET:GetDefaultProviders")
 	beego.Router("/api/get-provider", &controllers.ApiController{}, "GET:GetProvider")
 	beego.Router("/api/update-provider", &controllers.ApiController{}, "POST:UpdateProvider")
 	beego.Router("/api/add-provider", &controllers.ApiController{}, "POST:AddProvider")
@@ -68,6 +69,7 @@ func initAPI() {
 
 	beego.Router("/api/get-applications", &controllers.ApiController{}, "GET:GetApplications")
 	beego.Router("/api/get-application", &controllers.ApiController{}, "GET:GetApplication")
+	beego.Router("/api/get-default-application", &controllers.ApiController{}, "GET:GetDefaultApplication")
 	beego.Router("/api/update-application", &controllers.ApiController{}, "POST:UpdateApplication")
 	beego.Router("/api/add-application", &controllers.ApiController{}, "POST:AddApplication")
 	beego.Router("/api/delete-application", &controllers.ApiController{}, "POST:DeleteApplication")

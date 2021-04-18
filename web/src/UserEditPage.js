@@ -21,6 +21,9 @@ import {LinkOutlined} from "@ant-design/icons";
 import i18next from "i18next";
 import CropperDiv from "./CropperDiv.js";
 import * as AuthBackend from "./auth/AuthBackend";
+import * as ApplicationBackend from "./backend/ApplicationBackend";
+import * as ProviderBackend from "./backend/ProviderBackend";
+import * as Provider from "./auth/Provider";
 
 const { Option } = Select;
 
@@ -32,13 +35,17 @@ class UserEditPage extends React.Component {
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       userName: props.userName !== undefined ? props.userName : props.match.params.userName,
       user: null,
+      application: null,
       organizations: [],
+      providers: [],
     };
   }
 
   UNSAFE_componentWillMount() {
     this.getUser();
     this.getOrganizations();
+    this.getDefaultApplication();
+    this.getDefaultProviders();
   }
 
   getUser() {
@@ -55,6 +62,24 @@ class UserEditPage extends React.Component {
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
+        });
+      });
+  }
+
+  getDefaultApplication() {
+    ApplicationBackend.getDefaultApplication("admin")
+      .then((application) => {
+        this.setState({
+          application: application,
+        });
+      });
+  }
+
+  getDefaultProviders() {
+    ProviderBackend.getDefaultProviders("admin")
+      .then((res) => {
+        this.setState({
+          providers: res,
         });
       });
   }
@@ -76,9 +101,6 @@ class UserEditPage extends React.Component {
     });
   }
 
-  linkUser(providerType) {
-  }
-
   unlinkUser(providerType) {
     const body = {
       providerType: providerType,
@@ -95,48 +117,52 @@ class UserEditPage extends React.Component {
       });
   }
 
-  getIdpLink(idp, username) {
-    if (idp === "github") {
-      return `https://github.com/${username}`;
-    } else if (idp === "google") {
+  getProviderLink(provider, linkedValue) {
+    if (provider.type === "GitHub") {
+      return `https://github.com/${linkedValue}`;
+    } else if (provider.type === "Google") {
       return "https://mail.google.com";
     } else {
       return "";
     }
   }
 
-  renderIdp(idp) {
+  renderIdp(provider) {
+    const linkedValue = this.state.user[provider.type.toLowerCase()];
+
     return (
       <Row style={{marginTop: '20px'}} >
         <Col style={{marginTop: '5px'}} span={2}>
           {
-            Setting.getIdpLogo(idp.toLowerCase())
+            Setting.getProviderLogo(provider)
           }
           <span style={{marginLeft: '5px'}}>
             {
-              `${idp}:`
+              `${provider.type}:`
             }
           </span>
         </Col>
         <Col span={22} >
           <span style={{width: '200px', display: "inline-block"}}>
             {
-              this.state.user[idp.toLowerCase()] === "" ? (
+              linkedValue === "" ? (
                 "(empty)"
               ) : (
-                <a target="_blank" rel="noreferrer" href={this.getIdpLink(idp.toLowerCase(), this.state.user[idp.toLowerCase()])}>
+                <a target="_blank" rel="noreferrer" href={this.getProviderLink(provider, linkedValue)}>
                   {
-                    this.state.user[idp.toLowerCase()]
+                    linkedValue
                   }
                 </a>
               )
             }
           </span>
           {
-            this.state.user[idp.toLowerCase()] === "" ? (
-              <Button style={{marginLeft: '20px', width: '80px'}} type="primary" onClick={() => this.linkUser(idp)}>Link</Button>
+            linkedValue === "" ? (
+              <a key={provider.displayName} href={Provider.getAuthUrl(this.state.application, provider, "link")}>
+                <Button style={{marginLeft: '20px', width: '80px'}} type="primary">Link</Button>
+              </a>
             ) : (
-              <Button style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(idp)}>Unlink</Button>
+              <Button style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(provider.type)}>Unlink</Button>
             )
           }
         </Col>
@@ -286,16 +312,7 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
         {
-          this.renderIdp("GitHub")
-        }
-        {
-          this.renderIdp("Google")
-        }
-        {
-          this.renderIdp("QQ")
-        }
-        {
-          this.renderIdp("WeChat")
+          this.state.providers.map((provider, index) => this.renderIdp(provider))
         }
         {
           !Setting.isAdminUser(this.props.account) ? null : (

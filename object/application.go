@@ -80,6 +80,22 @@ func getApplication(owner string, name string) *Application {
 	}
 }
 
+func GetDefaultApplication(owner string) *Application {
+	name := "app-built-in"
+	application := Application{Owner: owner, Name: name}
+	existed, err := adapter.engine.Get(&application)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		extendApplication(&application)
+		return &application
+	} else {
+		return nil
+	}
+}
+
 func getApplicationByClientId(clientId string) *Application {
 	application := Application{}
 	existed, err := adapter.engine.Where("client_id=?", clientId).Get(&application)

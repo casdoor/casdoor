@@ -34,7 +34,8 @@ class AuthCallback extends React.Component {
     // realRedirectUrl = "http://localhost:9000"
     const params = new URLSearchParams(this.props.location.search);
     const state = params.get("state");
-    return new URLSearchParams(Util.stateToGetQueryParams(state));
+    const queryString = Util.stateToGetQueryParams(state);
+    return new URLSearchParams(queryString);
   }
 
   getResponseType() {
@@ -42,14 +43,21 @@ class AuthCallback extends React.Component {
     const authServerUrl = authConfig.serverUrl;
 
     const innerParams = this.getInnerParams();
-    const realRedirectUri = innerParams.get("redirect_uri");
-    const realRedirectUrl = new URL(realRedirectUri).origin;
+    const method = innerParams.get("method");
+    if (method === "signup") {
+      const realRedirectUri = innerParams.get("redirect_uri");
+      const realRedirectUrl = new URL(realRedirectUri).origin;
 
-    // For Casdoor itself, we use "login" directly
-    if (authServerUrl === realRedirectUrl) {
-      return "login";
+      // For Casdoor itself, we use "login" directly
+      if (authServerUrl === realRedirectUrl) {
+        return "login";
+      } else {
+        return "code";
+      }
+    } else if (method === "link") {
+      return "link";
     } else {
-      return "code";
+      return "unknown";
     }
   }
 
@@ -65,7 +73,8 @@ class AuthCallback extends React.Component {
       application: applicationName,
       provider: providerName,
       code: params.get("code"),
-      state: innerParams.get("state"),
+      // state: innerParams.get("state"),
+      state: innerParams.get("application"),
       redirectUri: redirectUri,
       method: method,
     };
@@ -81,6 +90,9 @@ class AuthCallback extends React.Component {
             const code = res.data;
             Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
             // Util.showMessage("success", `Authorization code: ${res.data}`);
+          } else if (responseType === "link") {
+            const from = innerParams.get("from");
+            Setting.goToLinkSoft(this, from);
           }
         } else {
           this.setState({
