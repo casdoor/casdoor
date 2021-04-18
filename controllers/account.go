@@ -135,8 +135,8 @@ func (c *ApiController) GetAccount() {
 	}
 
 	username := c.GetSessionUser()
-	userObj := object.GetUser(username)
-	resp = Response{Status: "ok", Msg: "", Data: userObj}
+	user := object.GetUser(username)
+	resp = Response{Status: "ok", Msg: "", Data: user}
 
 	c.Data["json"] = resp
 	c.ServeJSON()
@@ -151,9 +151,9 @@ func (c *ApiController) GetAccount() {
 func (c *ApiController) UploadAvatar() {
 	var resp Response
 	username := c.GetSessionUser()
-	userObj := object.GetUser(username)
+	user := object.GetUser(username)
 
-	msg := object.CheckUserLogin(userObj.Owner+"/"+userObj.Name, c.Ctx.Request.Form.Get("password"))
+	msg := object.CheckUserLogin(user.Owner+"/"+user.Name, c.Ctx.Request.Form.Get("password"))
 	if msg != "" {
 		resp = Response{Status: "error", Msg: "Wrong password"}
 		c.Data["json"] = resp
@@ -171,15 +171,15 @@ func (c *ApiController) UploadAvatar() {
 	}
 
 	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index+1:])
-	msg = object.UploadAvatar(userObj.Name, dist)
+	msg = object.UploadAvatar(user.Name, dist)
 	if msg != "" {
 		resp = Response{Status: "error", Msg: msg}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return
 	}
-	userObj.Avatar = object.GetAvatarPath() + userObj.Name + ".png?time=" + strconv.FormatInt(time.Now().UnixNano(), 10)
-	object.UpdateUser(userObj.Owner+"/"+userObj.Name, userObj)
+	user.Avatar = object.GetAvatarPath() + user.Name + ".png?time=" + strconv.FormatInt(time.Now().UnixNano(), 10)
+	object.UpdateUser(user.Owner+"/"+user.Name, user)
 	resp = Response{Status: "ok", Msg: "Successfully set avatar"}
 	c.Data["json"] = resp
 	c.ServeJSON()
