@@ -25,9 +25,13 @@ var jwtSecret = []byte("CasdoorSecret")
 type Claims struct {
 	Organization string `json:"organization"`
 	Username     string `json:"username"`
+	Type         string `json:"type"`
 	Name         string `json:"name"`
-	Email        string `json:"email"`
 	Avatar       string `json:"avatar"`
+	Email        string `json:"email"`
+	Phone        string `json:"phone"`
+	Affiliation  string `json:"affiliation"`
+	Tag          string `json:"tag"`
 	IsAdmin      bool   `json:"isAdmin"`
 	jwt.StandardClaims
 }
@@ -39,9 +43,13 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 	claims := Claims{
 		Organization: user.Owner,
 		Username:     user.Name,
+		Type:         user.Type,
 		Name:         user.DisplayName,
-		Email:        user.Email,
 		Avatar:       user.Avatar,
+		Email:        user.Email,
+		Phone:        user.Phone,
+		Affiliation:  user.Affiliation,
+		Tag:          user.Tag,
 		IsAdmin:      user.IsAdmin,
 		StandardClaims: jwt.StandardClaims{
 			Audience:  application.ClientId,
