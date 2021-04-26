@@ -47,6 +47,7 @@ class UserListPage extends React.Component {
       owner: "admin", // this.props.account.username,
       name: `user_${this.state.users.length}`,
       createdTime: moment().format(),
+      type: "normal-user",
       password: "123",
       passwordType: "plain",
       displayName: `New User - ${this.state.users.length}`,
