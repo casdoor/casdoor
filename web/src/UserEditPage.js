@@ -224,27 +224,27 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={1}>
+              <Col style={{marginTop: '5px'}} span={2}>
                 URL:
               </Col>
-              <Col span={23} >
+              <Col span={22} >
                 <Input prefix={<LinkOutlined/>} value={this.state.user.avatar} onChange={e => {
                   this.updateUserField('avatar', e.target.value);
                 }} />
               </Col>
             </Row>
             <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={1}>
+              <Col style={{marginTop: '5px'}} span={2}>
                 {i18next.t("general:Preview")}:
               </Col>
-              <Col span={23} >
+              <Col span={22} >
                 <a target="_blank" rel="noreferrer" href={this.state.user.avatar}>
                   <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: '20px'}}/>
                 </a>
               </Col>
             </Row>
             <Row style={{marginTop: '20px'}}>
-              <CropperDiv buttonText={"Upload Avatar"} title={"Upload Avatar"} targetFunction={UserBackend.uploadAvatar} />
+              <CropperDiv buttonText={"Upload a phone..."} title={"Crop your new profile picture"} targetFunction={UserBackend.uploadAvatar} />
             </Row>
           </Col>
         </Row>

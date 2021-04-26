@@ -87,20 +87,20 @@ export const CropperDiv = (props) => {
                 okText={"Crop and Upload Avatar"}
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
-                width={1000}
+                width={600}
                 footer={
-                    [<Button block type="primary" onClick={handleOk}>Crop and Submit</Button>]
+                    [<Button block type="primary" onClick={handleOk}>Set new profile picture</Button>]
                 }
             >
                 <Col>
                     <Row>
-                        <Col style={{margin: "20px auto 100px auto", width: 1000}}>
+                        <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
                             <Row style={{width: "100%", marginBottom: "20px"}}>
                                 <input style={{display: "none"}} name="fileupload" type="file" onChange={onChange}/>
-                                <Button block onClick={selectFile}>Select File</Button>
+                                <Button block onClick={selectFile}>Select a phone...</Button>
                             </Row>
                             <Cropper
-                                style={{height: 400}}
+                                style={{height: "100%"}}
                                 initialAspectRatio={1}
                                 preview=".img-preview"
                                 src={image}
