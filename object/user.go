@@ -33,6 +33,7 @@ type User struct {
 	DisplayName   string `xorm:"varchar(100)" json:"displayName"`
 	Avatar        string `xorm:"varchar(255)" json:"avatar"`
 	Email         string `xorm:"varchar(100)" json:"email"`
+	PhonePrefix   string `xorm:"varchar(10)" json:"phonePrefix"`
 	Phone         string `xorm:"varchar(100)" json:"phone"`
 	Affiliation   string `xorm:"varchar(100)" json:"affiliation"`
 	Tag           string `xorm:"varchar(100)" json:"tag"`

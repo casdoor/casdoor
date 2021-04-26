@@ -286,7 +286,12 @@ class UserEditPage extends React.Component {
             {i18next.t("general:Phone")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.phone} onChange={e => {
+            <Input addonBefore={
+              <Select virtual={false} style={{width: 70}}  value={this.state.user.phonePrefix} onChange={(value => {this.updateUserField('phonePrefix', value);})}>
+                <Option value="1">+1</Option>
+                <Option value="86">+86</Option>
+              </Select>
+            } value={this.state.user.phone} onChange={e => {
               this.updateUserField('phone', e.target.value);
             }} />
           </Col>
