@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
-func updateUserAvatar(user *User) bool {
-	affected, err := adapter.engine.ID(core.PK{user.Owner, user.Name}).Cols("avatar").Update(user)
+func updateUserColumn(column string, user *User) bool {
+	affected, err := adapter.engine.ID(core.PK{user.Owner, user.Name}).Cols(column).Update(user)
 	if err != nil {
 		panic(err)
 	}
@@ -26,6 +27,20 @@ func TestSyncAvatarsFromGitHub(t *testing.T) {
 		}
 
 		user.Avatar = fmt.Sprintf("https://avatars.githubusercontent.com/%s", user.Github)
-		updateUserAvatar(user)
+		updateUserColumn("avatar", user)
+	}
+}
+
+func TestSyncIds(t *testing.T) {
+	InitConfig()
+
+	users := GetGlobalUsers()
+	for _, user := range users {
+		if user.Id != "" {
+			continue
+		}
+
+		user.Id = util.GenerateId()
+		updateUserColumn("id", user)
 	}
 }
