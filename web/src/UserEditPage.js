@@ -316,9 +316,18 @@ class UserEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        {
-          this.state.providers.map((provider, index) => this.renderIdp(provider))
-        }
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("user:Third-party Logins")}:
+          </Col>
+          <Col span={22} >
+            <div style={{marginBottom: 20}}>
+              {
+                this.state.providers.map((provider, index) => this.renderIdp(provider))
+              }
+            </div>
+          </Col>
+        </Row>
         {
           !Setting.isAdminUser(this.props.account) ? null : (
             <React.Fragment>
