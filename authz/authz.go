@@ -75,6 +75,9 @@ p, *, *, POST, /api/login/oauth/access_token, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-users, *, *
 p, *, *, GET, /api/get-user, *, *
+p, *, *, GET, /api/get-organizations, *, *
+p, *, *, GET, /api/get-default-application, *, *
+p, *, *, GET, /api/get-default-providers, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)
