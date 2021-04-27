@@ -174,12 +174,12 @@ func (c *ApiController) Login() {
 				//}
 
 				if !application.EnableSignUp {
-					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist and is not allowed to register as new account, please contact your IT support", provider.Type, userInfo.Username)}
+					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username)}
 					c.Data["json"] = resp
 					c.ServeJSON()
 					return
 				} else {
-					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist, please register an account first", provider.Type, userInfo.Username)}
+					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist, please create an account first", provider.Type, userInfo.Username)}
 					c.Data["json"] = resp
 					c.ServeJSON()
 					return

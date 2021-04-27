@@ -58,8 +58,8 @@ export function renderMessageLarge(ths, msg) {
             <Button key="home" onClick={() => Setting.goToLinkSoft(ths, "/")}>
               Home
             </Button>,
-            <Button type="primary" key="register" onClick={() => Setting.goToLinkSoft(ths, "/register")}>
-              Register
+            <Button type="primary" key="signup" onClick={() => Setting.goToLinkSoft(ths, "/signup")}>
+              Sign Up
             </Button>,
           ]}
         >

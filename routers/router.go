@@ -39,7 +39,7 @@ func initAPI() {
 		)
 	beego.AddNamespace(ns)
 
-	beego.Router("/api/register", &controllers.ApiController{}, "POST:Register")
+	beego.Router("/api/signup", &controllers.ApiController{}, "POST:Signup")
 	beego.Router("/api/login", &controllers.ApiController{}, "POST:Login")
 	beego.Router("/api/get-app-login", &controllers.ApiController{}, "GET:GetApplicationLogin")
 	beego.Router("/api/logout", &controllers.ApiController{}, "POST:Logout")

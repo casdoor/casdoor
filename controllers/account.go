@@ -54,13 +54,13 @@ type Response struct {
 	Data   interface{} `json:"data"`
 }
 
-// @Title Register
-// @Description register a new user
-// @Param   username     formData    string  true        "The username to register"
+// @Title Signup
+// @Description sign up a new user
+// @Param   username     formData    string  true        "The username to sign up"
 // @Param   password     formData    string  true        "The password"
 // @Success 200 {object} controllers.Response The Response object
-// @router /register [post]
-func (c *ApiController) Register() {
+// @router /signup [post]
+func (c *ApiController) Signup() {
 	var resp Response
 
 	if c.GetSessionUser() != "" {
@@ -76,7 +76,7 @@ func (c *ApiController) Register() {
 		panic(err)
 	}
 
-	msg := object.CheckUserRegister(form.Username, form.Password)
+	msg := object.CheckUserSignup(form.Username, form.Password)
 	if msg != "" {
 		resp = Response{Status: "error", Msg: msg, Data: ""}
 	} else {
@@ -94,7 +94,7 @@ func (c *ApiController) Register() {
 
 		//c.SetSessionUser(user)
 
-		util.LogInfo(c.Ctx, "API: [%s] is registered as new user", user)
+		util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", user)
 		resp = Response{Status: "ok", Msg: "", Data: user}
 	}
 
@@ -143,7 +143,7 @@ func (c *ApiController) GetAccount() {
 }
 
 // @Title UploadAvatar
-// @Description register a new user
+// @Description upload avatar
 // @Param   avatarfile   formData    string  true        "The base64 encode of avatarfile"
 // @Param   password     formData    string  true        "The password"
 // @Success 200 {object} controllers.Response The Response object

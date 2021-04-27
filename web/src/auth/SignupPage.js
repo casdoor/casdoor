@@ -52,7 +52,7 @@ const tailFormItemLayout = {
   },
 };
 
-class RegisterPage extends React.Component {
+class SignupPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -63,12 +63,12 @@ class RegisterPage extends React.Component {
   }
 
   onFinish(values) {
-    AuthBackend.register(values)
+    AuthBackend.signup(values)
       .then((res) => {
         if (res.status === 'ok') {
           this.props.history.push('/result');
         } else {
-          Setting.showMessage("error", `Failed to register: ${res.msg}`);
+          Setting.showMessage("error", `Failed to sign up: ${res.msg}`);
         }
       });
   }
@@ -95,7 +95,7 @@ class RegisterPage extends React.Component {
       <Form
         {...formItemLayout}
         ref={this.form}
-        name="register"
+        name="signup"
         onFinish={(values) => this.onFinish(values)}
         onFinishFailed={(errorInfo) => this.onFinishFailed(errorInfo.values, errorInfo.errorFields, errorInfo.outOfDate)}
         initialValues={{
@@ -249,4 +249,4 @@ class RegisterPage extends React.Component {
   }
 }
 
-export default RegisterPage;
+export default SignupPage;

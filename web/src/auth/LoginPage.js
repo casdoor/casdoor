@@ -210,7 +210,7 @@ class LoginPage extends React.Component {
               !application.enableSignUp ? null : (
                 <div style={{float: "right"}}>
                   {i18next.t("login:No account yet?")}&nbsp;
-                  <Link to={"/register"}>
+                  <Link to={"/signup"}>
                     {i18next.t("login:sign up now")}
                   </Link>
                 </div>
@@ -250,7 +250,7 @@ class LoginPage extends React.Component {
                 <br/>
                 <div style={{float: "right"}}>
                   No account yet?&nbsp;
-                  <Link to={"/register"}>
+                  <Link to={"/signup"}>
                     sign up now
                   </Link>
                 </div>

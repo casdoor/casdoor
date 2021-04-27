@@ -22,8 +22,8 @@ export function getAccount(accessToken) {
   }).then(res => res.json());
 }
 
-export function register(values) {
-  return fetch(`${authConfig.serverUrl}/api/register`, {
+export function signup(values) {
+  return fetch(`${authConfig.serverUrl}/api/signup`, {
     method: 'POST',
     credentials: "include",
     body: JSON.stringify(values),

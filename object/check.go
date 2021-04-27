@@ -16,7 +16,7 @@ package object
 
 import "fmt"
 
-func CheckUserRegister(userId string, password string) string {
+func CheckUserSignup(userId string, password string) string {
 	if len(userId) == 0 || len(password) == 0 {
 		return "username and password cannot be blank"
 	} else if HasUser(userId) {

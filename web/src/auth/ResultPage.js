@@ -29,7 +29,7 @@ class ResultPage extends React.Component {
       <div>
         <Result
           status="success"
-          title="Your account is registered"
+          title="Your account is created"
           subTitle="Please click the below button to login"
           extra={[
             <Link to="/login">

@@ -33,7 +33,7 @@ import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
 
 import * as Auth from "./auth/Auth";
-import RegisterPage from "./auth/RegisterPage";
+import SignupPage from "./auth/SignupPage";
 import ResultPage from "./auth/ResultPage";
 import LoginPage from "./auth/LoginPage";
 import SelfLoginPage from "./auth/SelfLoginPage";
@@ -94,7 +94,7 @@ class App extends Component {
       this.setState({ selectedMenuKey: 4 });
     } else if (uri.includes('tokens')) {
       this.setState({ selectedMenuKey: 5 });
-    } else if (uri.includes('register')) {
+    } else if (uri.includes('signup')) {
       this.setState({ selectedMenuKey: 100 });
     } else if (uri.includes('login')) {
       this.setState({ selectedMenuKey: 101 });
@@ -214,8 +214,8 @@ class App extends Component {
     } else if (this.state.account === null) {
       res.push(
         <Menu.Item key="100" style={{float: 'right', marginRight: '20px'}}>
-          <Link to="/register">
-            {i18next.t("account:Register")}
+          <Link to="/signup">
+            {i18next.t("account:Sign Up")}
           </Link>
         </Menu.Item>
       );
@@ -314,7 +314,7 @@ class App extends Component {
 
   isStartPages() {
     return window.location.pathname.startsWith('/login') ||
-      window.location.pathname.startsWith('/register') ||
+      window.location.pathname.startsWith('/signup') ||
       window.location.pathname === '/';
   }
 
@@ -344,7 +344,7 @@ class App extends Component {
           </Menu>
         </Header>
         <Switch>
-          <Route exact path="/register" render={(props) => this.renderHomeIfLoggedIn(<RegisterPage {...props} />)}/>
+          <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...props} />)}/>
           <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
           <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...props} />)}/>
           <Route exact path="/callback" component={AuthCallback}/>
