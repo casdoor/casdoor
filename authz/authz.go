@@ -46,10 +46,13 @@ g = _, _
 e = some(where (p.eft == allow))
 
 [matchers]
-m = (r.subOwner == p.subOwner || p.subOwner == "*") && (r.subName == p.subName || p.subName == "*") && \
-  (r.method == p.method || p.method == "*") && (r.urlPath == p.urlPath || p.urlPath == "*") && \
-  (r.objOwner == p.objOwner || p.objOwner == "*") && (r.objName == p.objName || p.objName == "*") || \
-  (r.urlPath == "/api/update-user" && r.subOwner == r.objOwner && r.subName == r.objName)
+m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
+    (r.subName == p.subName || p.subName == "*" || r.subName != "anonymous" && p.subName == "!anonymous") && \
+    (r.method == p.method || p.method == "*") && \
+    (r.urlPath == p.urlPath || p.urlPath == "*") && \
+    (r.objOwner == p.objOwner || p.objOwner == "*") && \
+    (r.objName == p.objName || p.objName == "*") || \
+    (r.urlPath == "/api/update-user" && r.subOwner == r.objOwner && r.subName == r.objName)
 `
 
 	m, err := model.NewModelFromString(modelText)
@@ -78,6 +81,7 @@ p, *, *, GET, /api/get-user, *, *
 p, *, *, GET, /api/get-organizations, *, *
 p, *, *, GET, /api/get-default-application, *, *
 p, *, *, GET, /api/get-default-providers, *, *
+p, *, !anonymous, POST, /api/upload-avatar, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

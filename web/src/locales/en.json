@@ -52,6 +52,10 @@
   "user":
   {
     "Edit User": "Edit User",
+    "Upload a photo...": "Upload a photo...",
+    "Upload a photo": "Upload a photo",
+    "Select a photo...": "Select a photo...",
+    "Set new profile picture": "Set new profile picture",
     "Affiliation": "Affiliation",
     "Tag": "Tag",
     "Third-party Logins": "Third-party Logins",

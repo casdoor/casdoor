@@ -17,6 +17,7 @@ import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import * as Setting from "./Setting";
 import {Button, Row, Col, Modal} from 'antd';
+import i18next from "i18next";
 
 export const CropperDiv = (props) => {
     const [image, setImage] = useState("");
@@ -84,12 +85,12 @@ export const CropperDiv = (props) => {
             <Modal
                 title={title}
                 visible={visible}
-                okText={"Crop and Upload Avatar"}
+                okText={i18next.t("user:Upload a photo")}
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
                 width={600}
                 footer={
-                    [<Button block type="primary" onClick={handleOk}>Set new profile picture</Button>]
+                    [<Button block type="primary" onClick={handleOk}>{i18next.t("user:Set new profile picture")}</Button>]
                 }
             >
                 <Col>
@@ -97,7 +98,7 @@ export const CropperDiv = (props) => {
                         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
                             <Row style={{width: "100%", marginBottom: "20px"}}>
                                 <input style={{display: "none"}} name="fileupload" type="file" onChange={onChange}/>
-                                <Button block onClick={selectFile}>Select a phone...</Button>
+                                <Button block onClick={selectFile}>{i18next.t("user:Select a photo...")}</Button>
                             </Row>
                             <Cropper
                                 style={{height: "100%"}}

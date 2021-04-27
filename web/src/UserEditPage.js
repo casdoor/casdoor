@@ -244,7 +244,7 @@ class UserEditPage extends React.Component {
               </Col>
             </Row>
             <Row style={{marginTop: '20px'}}>
-              <CropperDiv buttonText={"Upload a phone..."} title={"Crop your new profile picture"} targetFunction={UserBackend.uploadAvatar} />
+              <CropperDiv buttonText={i18next.t("user:Upload a photo...")} title={i18next.t("user:Upload a photo")} targetFunction={UserBackend.uploadAvatar} />
             </Row>
           </Col>
         </Row>
