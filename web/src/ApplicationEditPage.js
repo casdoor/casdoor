@@ -107,7 +107,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Display Name")}:
+            {i18next.t("general:Display name")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.application.displayName} onChange={e => {
@@ -186,7 +186,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("provider:Client Secret")}:
+            {i18next.t("provider:Client secret")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.application.clientSecret} onChange={e => {
@@ -208,7 +208,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Expire In Hours")}:
+            {i18next.t("general:Expire in hours")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.application.expireInHours} onChange={e => {
@@ -218,7 +218,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("application:Enable Password")}:
+            {i18next.t("application:Enable password")}:
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enablePassword} onChange={checked => {
@@ -228,7 +228,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("application:Enable Sign Up")}:
+            {i18next.t("application:Enable signup")}:
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enableSignUp} onChange={checked => {
@@ -254,7 +254,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("application:Login Page Preview")}:
+            {i18next.t("application:Login page preview")}:
           </Col>
           <Col span={22} >
             <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={`/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`}>

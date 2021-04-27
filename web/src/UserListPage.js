@@ -121,7 +121,7 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Created Time"),
+        title: i18next.t("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
@@ -131,7 +131,7 @@ class UserListPage extends React.Component {
         }
       },
       // {
-      //   title: 'Password Type',
+      //   title: 'Password type',
       //   dataIndex: 'passwordType',
       //   key: 'passwordType',
       //   width: '150px',
@@ -145,7 +145,7 @@ class UserListPage extends React.Component {
       //   sorter: (a, b) => a.password.localeCompare(b.password),
       // },
       {
-        title: i18next.t("general:Display Name"),
+        title: i18next.t("general:Display name"),
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',
@@ -200,7 +200,7 @@ class UserListPage extends React.Component {
         sorter: (a, b) => a.tag.localeCompare(b.tag),
       },
       {
-        title: i18next.t("user:Is Admin"),
+        title: i18next.t("user:Is admin"),
         dataIndex: 'isAdmin',
         key: 'isAdmin',
         width: '120px',
@@ -212,7 +212,7 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("user:Is Global Admin"),
+        title: i18next.t("user:Is global admin"),
         dataIndex: 'isGlobalAdmin',
         key: 'isGlobalAdmin',
         width: '120px',

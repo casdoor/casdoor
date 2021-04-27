@@ -102,7 +102,7 @@ class ProviderListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Created Time"),
+        title: i18next.t("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
@@ -112,7 +112,7 @@ class ProviderListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Display Name"),
+        title: i18next.t("general:Display name"),
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',
@@ -138,7 +138,7 @@ class ProviderListPage extends React.Component {
         sorter: (a, b) => a.clientId.localeCompare(b.clientId),
       },
       // {
-      //   title: 'Client Secret',
+      //   title: 'Client secret',
       //   dataIndex: 'clientSecret',
       //   key: 'clientSecret',
       //   width: '150px',

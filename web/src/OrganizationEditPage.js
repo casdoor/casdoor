@@ -78,7 +78,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Display Name")}:
+            {i18next.t("general:Display name")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.organization.displayName} onChange={e => {

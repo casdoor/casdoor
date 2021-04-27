@@ -101,7 +101,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Created Time"),
+        title: i18next.t("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
@@ -125,7 +125,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("token:Authorization Code"),
+        title: i18next.t("token:Authorization code"),
         dataIndex: 'code',
         key: 'code',
         // width: '150px',
@@ -135,7 +135,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("token:Access Token"),
+        title: i18next.t("token:Access token"),
         dataIndex: 'accessToken',
         key: 'accessToken',
         // width: '150px',
@@ -146,7 +146,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("token:Expires In"),
+        title: i18next.t("token:Expires in"),
         dataIndex: 'expiresIn',
         key: 'expiresIn',
         width: '120px',
@@ -160,7 +160,7 @@ class TokenListPage extends React.Component {
         sorter: (a, b) => a.scope.localeCompare(b.scope),
       },
       {
-        title: i18next.t("token:Token Type"),
+        title: i18next.t("token:Token type"),
         dataIndex: 'tokenType',
         key: 'tokenType',
         width: '130px',

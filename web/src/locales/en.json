@@ -12,14 +12,14 @@
     "Edit": "Edit",
     "Delete": "Delete",
     "Organization": "Organization",
-    "Created Time": "Created Time",
+    "Created time": "Created time",
     "Name": "Name",
-    "Display Name": "Display Name",
+    "Display name": "Display name",
     "Avatar": "Avatar",
     "URL": "URL",
     "Preview": "Preview",
-    "User Type": "User Type",
-    "Password Type": "Password Type",
+    "User type": "User type",
+    "Password type": "Password type",
     "Password": "Password",
     "Email": "Email",
     "Phone": "Phone",
@@ -59,7 +59,7 @@
   {
     "Type": "Type",
     "Client ID": "Client ID",
-    "Client Secret": "Client Secret",
+    "Client secret": "Client secret",
     "Provider URL": "Provider URL",
     "Edit Provider": "Edit Provider"
   },
@@ -72,16 +72,16 @@
     "Set new profile picture": "Set new profile picture",
     "Affiliation": "Affiliation",
     "Tag": "Tag",
-    "Third-party Logins": "Third-party Logins",
+    "Third-party logins": "Third-party logins",
     "Link": "Link",
     "Unlink": "Unlink",
-    "Is Admin": "Is Admin",
-    "Is Global Admin": "Is Global Admin"
+    "Is admin": "Is admin",
+    "Is global admin": "Is global admin"
   },
   "application":
   {
     "Edit Application": "Edit Application",
-    "Enable Password": "Enable Password",
-    "Login Page Preview": "Login Page Preview"
+    "Enable password": "Enable password",
+    "Login page preview": "Login page preview"
   }
 }

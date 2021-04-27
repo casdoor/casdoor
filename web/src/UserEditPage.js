@@ -210,7 +210,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Display Name")}:
+            {i18next.t("general:Display name")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.user.displayName} onChange={e => {
@@ -250,7 +250,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:User Type")}:
+            {i18next.t("general:User type")}:
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.user.type} onChange={(value => {this.updateUserField('type', value);})}>
@@ -263,7 +263,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Password Type")}:
+            {i18next.t("general:Password type")}:
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.user.passwordType} onChange={(value => {this.updateUserField('passwordType', value);})}>
@@ -331,7 +331,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("user:Third-party Logins")}:
+            {i18next.t("user:Third-party logins")}:
           </Col>
           <Col span={22} >
             <div style={{marginBottom: 20}}>
@@ -346,7 +346,7 @@ class UserEditPage extends React.Component {
             <React.Fragment>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {i18next.t("user:Is Admin")}:
+                  {i18next.t("user:Is admin")}:
                 </Col>
                 <Col span={1} >
                   <Switch checked={this.state.user.isAdmin} onChange={checked => {
@@ -356,7 +356,7 @@ class UserEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {i18next.t("user:Is Global Admin")}:
+                  {i18next.t("user:Is global admin")}:
                 </Col>
                 <Col span={1} >
                   <Switch checked={this.state.user.isGlobalAdmin} onChange={checked => {

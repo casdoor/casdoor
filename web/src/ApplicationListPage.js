@@ -104,7 +104,7 @@ class ApplicationListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Created Time"),
+        title: i18next.t("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
@@ -114,7 +114,7 @@ class ApplicationListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Display Name"),
+        title: i18next.t("general:Display name"),
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',

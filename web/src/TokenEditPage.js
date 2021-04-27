@@ -88,7 +88,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Authorization Code")}:
+            {i18next.t("general:Authorization code")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.code} onChange={e => {
@@ -98,7 +98,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Access Token")}:
+            {i18next.t("general:Access token")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.accessToken} onChange={e => {
@@ -108,7 +108,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Expires In")}:
+            {i18next.t("general:Expires in")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.expiresIn} onChange={e => {
@@ -128,7 +128,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Token Type")}:
+            {i18next.t("general:Token type")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.tokenType} onChange={e => {
