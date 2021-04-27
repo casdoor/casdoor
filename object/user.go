@@ -142,13 +142,17 @@ func GetUserByField(organizationName string, field string, value string) *User {
 	}
 }
 
-func LinkUserAccount(user *User, field string, value string) bool {
+func SetUserField(user *User, field string, value string) bool {
 	affected, err := adapter.engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(map[string]interface{}{field: value})
 	if err != nil {
 		panic(err)
 	}
 
 	return affected != 0
+}
+
+func LinkUserAccount(user *User, field string, value string) bool {
+	return SetUserField(user, field, value)
 }
 
 func GetUserField(user *User, field string) string {

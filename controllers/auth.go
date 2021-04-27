@@ -196,6 +196,18 @@ func (c *ApiController) Login() {
 			}
 
 			user := object.GetUser(userId)
+
+			// sync info from 3rd-party if possible
+			if user.DisplayName == "" && userInfo.Username != "" {
+				object.SetUserField(user, "displayName", userInfo.Username)
+			}
+			if user.Avatar == "" && userInfo.AvatarUrl != "" {
+				object.SetUserField(user, "avatar", userInfo.AvatarUrl)
+			}
+			if user.Email == "" && userInfo.Email != "" {
+				object.SetUserField(user, "email", userInfo.Email)
+			}
+
 			isLinked := object.LinkUserAccount(user, provider.Type, userInfo.Username)
 			if isLinked {
 				resp = &Response{Status: "ok", Msg: "", Data: isLinked}
