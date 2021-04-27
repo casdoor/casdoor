@@ -16,9 +16,10 @@ package object
 
 import (
 	"bytes"
+
+	awss3 "github.com/aws/aws-sdk-go/service/s3"
 	"github.com/qor/oss"
 	"github.com/qor/oss/aliyun"
-	awss3 "github.com/aws/aws-sdk-go/service/s3"
 	//"github.com/qor/oss/qiniu"
 	"github.com/qor/oss/s3"
 	"gopkg.in/ini.v1"
@@ -27,33 +28,33 @@ import (
 var storage oss.StorageInterface
 
 func AliyunInit(section *ini.Section) string {
-	accessID := section.Key("accessid").String()
-	accessKey := section.Key("accesskey").String()
+	accessId := section.Key("accessId").String()
+	accessKey := section.Key("accessKey").String()
 	bucket := section.Key("bucket").String()
 	endpoint := section.Key("endpoint").String()
-	if accessID == "" || accessKey == "" || bucket == "" || endpoint == "" {
+	if accessId == "" || accessKey == "" || bucket == "" || endpoint == "" {
 		return "Config oss.conf wrong"
 	}
 	storage = aliyun.New(&aliyun.Config{
-		AccessID: accessID,
+		AccessID:  accessId,
 		AccessKey: accessKey,
-		Bucket: bucket,
-		Endpoint: endpoint,
+		Bucket:    bucket,
+		Endpoint:  endpoint,
 	})
 	return ""
 }
 
 //func QiniuInit(section *ini.Section) string {
-//	accessID := section.Key("accessid").String()
-//	accessKey := section.Key("accesskey").String()
+//	accessId := section.Key("accessId").String()
+//	accessKey := section.Key("accessKey").String()
 //	bucket := section.Key("bucket").String()
 //	region := section.Key("region").String()
 //	endpoint := section.Key("endpoint").String()
-//	if accessID == "" || accessKey == "" || bucket == "" || endpoint == "" || region == "" {
+//	if accessId == "" || accessKey == "" || bucket == "" || endpoint == "" || region == "" {
 //		return "Config oss.conf wrong"
 //	}
 //	storage = qiniu.New(&qiniu.Config{
-//		AccessID: accessID,
+//		AccessID: accessId,
 //		AccessKey: accessKey,
 //		Bucket: bucket,
 //		Region: region,
@@ -63,21 +64,21 @@ func AliyunInit(section *ini.Section) string {
 //}
 
 func Awss3Init(section *ini.Section) string {
-	accessID := section.Key("accessid").String()
-	accessKey := section.Key("accesskey").String()
+	accessId := section.Key("accessId").String()
+	accessKey := section.Key("accessKey").String()
 	bucket := section.Key("bucket").String()
 	region := section.Key("region").String()
 	endpoint := section.Key("endpoint").String()
-	if accessID == "" || accessKey == "" || bucket == "" || endpoint == "" || region == "" {
+	if accessId == "" || accessKey == "" || bucket == "" || endpoint == "" || region == "" {
 		return "Config oss.conf wrong"
 	}
 	storage = s3.New(&s3.Config{
-		AccessID: accessID,
+		AccessID:  accessId,
 		AccessKey: accessKey,
-		Region: region,
-		Bucket: bucket,
-		Endpoint: endpoint,
-		ACL: awss3.BucketCannedACLPublicRead,
+		Region:    region,
+		Bucket:    bucket,
+		Endpoint:  endpoint,
+		ACL:       awss3.BucketCannedACLPublicRead,
 	})
 	return ""
 }

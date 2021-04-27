@@ -213,8 +213,8 @@ Now, Casdoor is running on port 8000. You can access Casdoor pages directly in y
 
   ```
   [provider]
-  accessid = id
-  accesskey = key
+  accessId = id
+  accessKey = key
   bucket = bucket
   endpoint = endpoint
   ```
