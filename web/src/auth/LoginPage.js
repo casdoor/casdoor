@@ -23,6 +23,7 @@ import * as Util from "./Util";
 import * as Setting from "../Setting";
 import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
 import QqLoginButton from "./QqLoginButton";
+import i18next from "i18next";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -167,33 +168,33 @@ class LoginPage extends React.Component {
           </Form.Item>
           <Form.Item
             name="username"
-            rules={[{ required: true, message: 'Please input your Username!' }]}
+            rules={[{ required: true, message: i18next.t("login:Please input your Username!") }]}
           >
             <Input
               prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder="username"
+              placeholder={i18next.t("login:username")}
               disabled={!application.enablePassword}
             />
           </Form.Item>
           <Form.Item
             name="password"
-            rules={[{ required: true, message: 'Please input your Password!' }]}
+            rules={[{ required: true, message: i18next.t("login:Please input your Password!") }]}
           >
             <Input
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
-              placeholder="password"
+              placeholder={i18next.t("login:password")}
               disabled={!application.enablePassword}
             />
           </Form.Item>
           <Form.Item>
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
-                Auto login
+                {i18next.t("login:Auto login")}
               </Checkbox>
             </Form.Item>
             <Link style={{float: "right"}} to="/forgot">
-              Forgot password?
+              {i18next.t("login:Forgot password?")}
             </Link>
           </Form.Item>
           <Form.Item>
@@ -203,14 +204,14 @@ class LoginPage extends React.Component {
               style={{width: "100%"}}
               disabled={!application.enablePassword}
             >
-              Sign In
+              {i18next.t("login:Sign In")}
             </Button>
             {
               !application.enableSignUp ? null : (
                 <div style={{float: "right"}}>
-                  No account yet?&nbsp;
+                  {i18next.t("login:No account yet?")}&nbsp;
                   <Link to={"/register"}>
-                    sign up now
+                    {i18next.t("login:sign up now")}
                   </Link>
                 </div>
               )

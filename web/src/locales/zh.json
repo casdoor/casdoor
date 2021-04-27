@@ -30,6 +30,18 @@
     "Applications that requires authentication": "需要鉴权的应用",
     "Swagger": "API总览"
   },
+  "login":
+  {
+    "Please input your Username!": "请输入用户名！",
+    "username": "用户名",
+    "Please input your Password!": "请输入密码！",
+    "password": "密码",
+    "Auto login": "下次自动登录",
+    "Forgot password?": "忘记密码？",
+    "Sign In": "登录",
+    "No account yet?": "没有账号？",
+    "sign up now": "立即注册"
+  },
   "account":
   {
     "My Account": "我的账户",

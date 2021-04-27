@@ -30,6 +30,18 @@
     "Applications that requires authentication": "Applications that requires authentication",
     "Swagger": "Swagger"
   },
+  "login":
+  {
+    "Please input your Username!": "Please input your Username!",
+    "username": "username",
+    "Please input your Password!": "Please input your Password!",
+    "password": "password",
+    "Auto login": "Auto login",
+    "Forgot password?": "Forgot password?",
+    "Sign In": "Sign In",
+    "No account yet?": "No account yet?",
+    "sign up now": "sign up now"
+  },
   "account":
   {
     "My Account": "My Account",
