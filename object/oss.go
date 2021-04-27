@@ -16,6 +16,7 @@ package object
 
 import (
 	"bytes"
+	"fmt"
 
 	awss3 "github.com/aws/aws-sdk-go/service/s3"
 	"github.com/qor/oss"
@@ -26,12 +27,14 @@ import (
 )
 
 var storage oss.StorageInterface
+var domain string
 
 func AliyunInit(section *ini.Section) string {
+	endpoint := section.Key("endpoint").String()
 	accessId := section.Key("accessId").String()
 	accessKey := section.Key("accessKey").String()
+	domain = section.Key("domain").String()
 	bucket := section.Key("bucket").String()
-	endpoint := section.Key("endpoint").String()
 	if accessId == "" || accessKey == "" || bucket == "" || endpoint == "" {
 		return "Config oss.conf wrong"
 	}
@@ -45,11 +48,12 @@ func AliyunInit(section *ini.Section) string {
 }
 
 //func QiniuInit(section *ini.Section) string {
+//	endpoint := section.Key("endpoint").String()
 //	accessId := section.Key("accessId").String()
 //	accessKey := section.Key("accessKey").String()
+//  domain = section.Key("domain").String()
 //	bucket := section.Key("bucket").String()
 //	region := section.Key("region").String()
-//	endpoint := section.Key("endpoint").String()
 //	if accessId == "" || accessKey == "" || bucket == "" || endpoint == "" || region == "" {
 //		return "Config oss.conf wrong"
 //	}
@@ -64,11 +68,12 @@ func AliyunInit(section *ini.Section) string {
 //}
 
 func Awss3Init(section *ini.Section) string {
+	endpoint := section.Key("endpoint").String()
 	accessId := section.Key("accessId").String()
 	accessKey := section.Key("accessKey").String()
+	domain = section.Key("domain").String()
 	bucket := section.Key("bucket").String()
 	region := section.Key("region").String()
-	endpoint := section.Key("endpoint").String()
 	if accessId == "" || accessKey == "" || bucket == "" || endpoint == "" || region == "" {
 		return "Config oss.conf wrong"
 	}
@@ -120,5 +125,5 @@ func UploadAvatar(username string, avatar []byte) string {
 }
 
 func GetAvatarPath() string {
-	return "https://" + storage.GetEndpoint() + "/casdoor/avatar/"
+	return fmt.Sprintf("https://%s/casdoor/avatar/", domain)
 }
