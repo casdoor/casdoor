@@ -168,7 +168,7 @@ class LoginPage extends React.Component {
           </Form.Item>
           <Form.Item
             name="username"
-            rules={[{ required: true, message: i18next.t("login:Please input your Username!") }]}
+            rules={[{ required: true, message: i18next.t("login:Please input your username!") }]}
           >
             <Input
               prefix={<UserOutlined className="site-form-item-icon" />}
@@ -178,7 +178,7 @@ class LoginPage extends React.Component {
           </Form.Item>
           <Form.Item
             name="password"
-            rules={[{ required: true, message: i18next.t("login:Please input your Password!") }]}
+            rules={[{ required: true, message: i18next.t("login:Please input your password!") }]}
           >
             <Input
               prefix={<LockOutlined className="site-form-item-icon" />}

@@ -30,11 +30,27 @@
     "Applications that requires authentication": "Applications that requires authentication",
     "Swagger": "Swagger"
   },
+  "signup":
+  {
+    "Username": "Username",
+    "Please input your display name!": "Please input your display name!",
+    "Please input your affiliation!": "Please input your affiliation!",
+    "The input is not valid Email!": "The input is not valid Email!",
+    "Please input your Email!": "Please input your Email!",
+    "Confirm password": "Confirm password",
+    "Please confirm your password!": "Please confirm your password!",
+    "Your confirmed password is inconsistent with the password!": "Your confirmed password is inconsistent with the password!",
+    "Please input your phone number!": "Please input your phone number!",
+    "Accept": "Accept",
+    "Terms of Use": "Terms of Use",
+    "Have account?": "Have account?",
+    "sign in now": "sign in now"
+  },
   "login":
   {
-    "Please input your Username!": "Please input your Username!",
+    "Please input your username!": "Please input your username!",
     "username": "username",
-    "Please input your Password!": "Please input your Password!",
+    "Please input your password!": "Please input your password!",
     "password": "password",
     "Auto login": "Auto login",
     "Forgot password?": "Forgot password?",

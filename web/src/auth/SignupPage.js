@@ -17,6 +17,7 @@ import {Link} from "react-router-dom";
 import {Form, Input, Select, Checkbox, Button, Row, Col} from 'antd';
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
+import i18next from "i18next";
 
 const { Option } = Select;
 
@@ -105,12 +106,12 @@ class SignupPage extends React.Component {
         size="large"
       >
         <Form.Item
-          name="name"
-          label="Username"
+          name="username"
+          label={i18next.t("signup:Username")}
           rules={[
             {
               required: true,
-              message: 'Please input your username',
+              message: i18next.t("login:Please input your username!"),
               whitespace: true,
             },
           ]}
@@ -119,11 +120,11 @@ class SignupPage extends React.Component {
         </Form.Item>
         <Form.Item
           name="displayName"
-          label="Display name"
+          label={i18next.t("general:Display name")}
           rules={[
             {
               required: true,
-              message: 'Please input your display name',
+              message: i18next.t("signup:Please input your display name!"),
               whitespace: true,
             },
           ]}
@@ -132,11 +133,11 @@ class SignupPage extends React.Component {
         </Form.Item>
         <Form.Item
           name="affiliation"
-          label="Affiliation"
+          label={i18next.t("user:Affiliation")}
           rules={[
             {
               required: true,
-              message: 'Please input your affiliation',
+              message: i18next.t("signup:Please input your affiliation!"),
               whitespace: true,
             },
           ]}
@@ -145,15 +146,15 @@ class SignupPage extends React.Component {
         </Form.Item>
         <Form.Item
           name="email"
-          label="Email"
+          label={i18next.t("general:Email")}
           rules={[
             {
               type: 'email',
-              message: 'The input is not valid Email!',
+              message: i18next.t("signup:The input is not valid Email!"),
             },
             {
               required: true,
-              message: 'Please input your Email',
+              message: i18next.t("signup:Please input your Email!"),
             },
           ]}
         >
@@ -161,11 +162,11 @@ class SignupPage extends React.Component {
         </Form.Item>
         <Form.Item
           name="password"
-          label="Password"
+          label={i18next.t("general:Password")}
           rules={[
             {
               required: true,
-              message: 'Please input your password',
+              message: i18next.t("login:Please input your password!"),
             },
           ]}
           hasFeedback
@@ -174,13 +175,13 @@ class SignupPage extends React.Component {
         </Form.Item>
         <Form.Item
           name="confirm"
-          label="Confirm"
+          label={i18next.t("signup:Confirm password")}
           dependencies={['password']}
           hasFeedback
           rules={[
             {
               required: true,
-              message: 'Please confirm your password',
+              message: i18next.t("signup:Please confirm your password!"),
             },
             ({ getFieldValue }) => ({
               validator(rule, value) {
@@ -188,7 +189,7 @@ class SignupPage extends React.Component {
                   return Promise.resolve();
                 }
 
-                return Promise.reject('Your confirmed password is inconsistent with the password');
+                return Promise.reject(i18next.t("signup:Your confirmed password is inconsistent with the password!"));
               },
             }),
           ]}
@@ -197,11 +198,11 @@ class SignupPage extends React.Component {
         </Form.Item>
         <Form.Item
           name="phone"
-          label="Phone number"
+          label={i18next.t("general:Phone")}
           rules={[
             {
               required: true,
-              message: 'Please confirm your phone number',
+              message: i18next.t("signup:Please input your phone number!"),
             },
           ]}
         >
@@ -214,19 +215,19 @@ class SignupPage extends React.Component {
         </Form.Item>
         <Form.Item name="agreement" valuePropName="checked" {...tailFormItemLayout}>
           <Checkbox>
-            Accept&nbsp;
+            {i18next.t("signup:Accept")}&nbsp;
             <Link to={"/agreement"}>
-              Terms of Use
+              {i18next.t("signup:Terms of Use")}
             </Link>
           </Checkbox>
         </Form.Item>
         <Form.Item {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">
-            Sign Up
+            {i18next.t("account:Sign Up")}
           </Button>
-          &nbsp;&nbsp;&nbsp;Have account?&nbsp;
+          &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
           <Link to={"/login"}>
-            sign in now
+            {i18next.t("signup:sign in now")}
           </Link>
         </Form.Item>
       </Form>

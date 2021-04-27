@@ -30,11 +30,27 @@
     "Applications that requires authentication": "需要鉴权的应用",
     "Swagger": "API总览"
   },
+  "signup":
+  {
+    "Username": "用户名",
+    "Please input your display name!": "请输入您的姓名！",
+    "Please input your affiliation!": "请输入您所在的工作单位！",
+    "The input is not valid Email!": "您输入的电子邮箱格式错误！",
+    "Please input your Email!": "请输入您的电子邮箱！",
+    "Confirm password": "确认密码",
+    "Please confirm your password!": "请再次确认您的密码！",
+    "Your confirmed password is inconsistent with the password!": "您两次输入的密码不一致！",
+    "Please input your phone number!": "请输入您的手机号码！",
+    "Accept": "阅读并接受",
+    "Terms of Use": "《用户协议》",
+    "Have account?": "已有账号？",
+    "sign in now": "立即登录"
+  },
   "login":
   {
-    "Please input your Username!": "请输入用户名！",
+    "Please input your username!": "请输入您的用户名！",
     "username": "用户名",
-    "Please input your Password!": "请输入密码！",
+    "Please input your password!": "请输入您的密码！",
     "password": "密码",
     "Auto login": "下次自动登录",
     "Forgot password?": "忘记密码？",
@@ -72,7 +88,7 @@
     "Upload a photo": "上传头像",
     "Select a photo...": "选择图片...",
     "Set new profile picture": "设置新头像",
-    "Affiliation": "单位",
+    "Affiliation": "工作单位",
     "Tag": "标签",
     "Third-party logins": "第三方登录",
     "Link": "绑定",
