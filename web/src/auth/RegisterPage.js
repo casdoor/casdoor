@@ -85,7 +85,8 @@ class RegisterPage extends React.Component {
             width: 80,
           }}
         >
-          <Option value="001">+001</Option>
+          <Option value="1">+1</Option>
+          <Option value="86">+86</Option>
         </Select>
       </Form.Item>
     );
@@ -98,13 +99,13 @@ class RegisterPage extends React.Component {
         onFinish={(values) => this.onFinish(values)}
         onFinishFailed={(errorInfo) => this.onFinishFailed(errorInfo.values, errorInfo.errorFields, errorInfo.outOfDate)}
         initialValues={{
-          prefix: '001',
+          prefix: '86',
         }}
         style={{width: !Setting.isMobile() ? "400px" : "250px"}}
         size="large"
       >
         <Form.Item
-          name="username"
+          name="name"
           label="Username"
           rules={[
             {
@@ -117,12 +118,12 @@ class RegisterPage extends React.Component {
           <Input />
         </Form.Item>
         <Form.Item
-          name="name"
-          label="Real Name"
+          name="displayName"
+          label="Display name"
           rules={[
             {
               required: true,
-              message: 'Please input your real name',
+              message: 'Please input your display name',
               whitespace: true,
             },
           ]}
@@ -130,8 +131,8 @@ class RegisterPage extends React.Component {
           <Input />
         </Form.Item>
         <Form.Item
-          name="Affiliation"
-          label="affiliation"
+          name="affiliation"
+          label="Affiliation"
           rules={[
             {
               required: true,
@@ -195,12 +196,12 @@ class RegisterPage extends React.Component {
           <Input.Password />
         </Form.Item>
         <Form.Item
-          name="cellphone"
-          label="Cellphone"
+          name="phone"
+          label="Phone number"
           rules={[
             {
               required: true,
-              message: 'Please confirm your cellphone',
+              message: 'Please confirm your phone number',
             },
           ]}
         >
