@@ -81,7 +81,8 @@ p, *, *, GET, /api/get-user, *, *
 p, *, *, GET, /api/get-organizations, *, *
 p, *, *, GET, /api/get-default-application, *, *
 p, *, *, GET, /api/get-default-providers, *, *
-p, *, !anonymous, POST, /api/upload-avatar, *, *
+p, *, *, POST, /api/upload-avatar, *, *
+p, *, *, POST, /api/unlink, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)
