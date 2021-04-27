@@ -16,6 +16,7 @@
     "Name": "用户名",
     "Display Name": "姓名",
     "Avatar": "头像",
+    "URL": "链接",
     "Preview": "预览",
     "User Type": "用户类型",
     "Password Type": "密码类型",
@@ -32,6 +33,7 @@
   "account":
   {
     "My Account": "我的账户",
+    "Settings for your account": "账户设置选项",
     "Login": "登录",
     "Logout": "登出",
     "Register": "注册"
@@ -61,6 +63,8 @@
     "Affiliation": "单位",
     "Tag": "标签",
     "Third-party Logins": "第三方登录",
+    "Link": "绑定",
+    "Unlink": "解绑",
     "Is Admin": "是管理员",
     "Is Global Admin": "是全局管理员"
   },

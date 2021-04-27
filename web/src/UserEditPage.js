@@ -159,10 +159,10 @@ class UserEditPage extends React.Component {
           {
             linkedValue === "" ? (
               <a key={provider.displayName} href={Provider.getAuthUrl(this.state.application, provider, "link")}>
-                <Button style={{marginLeft: '20px', width: '80px'}} type="primary">Link</Button>
+                <Button style={{marginLeft: '20px', width: '80px'}} type="primary">{i18next.t("user:Link")}</Button>
               </a>
             ) : (
-              <Button style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(provider.type)}>Unlink</Button>
+              <Button style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(provider.type)}>{i18next.t("user:Unlink")}</Button>
             )
           }
         </Col>
@@ -225,7 +225,7 @@ class UserEditPage extends React.Component {
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={2}>
-                URL:
+                {i18next.t("general:URL")}:
               </Col>
               <Col span={22} >
                 <Input prefix={<LinkOutlined/>} value={this.state.user.avatar} onChange={e => {

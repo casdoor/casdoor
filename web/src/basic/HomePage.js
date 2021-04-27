@@ -37,7 +37,7 @@ class HomePage extends React.Component {
       ];
     } else {
       items = [
-        {link: "/account", name: i18next.t("general:My Account"), organizer: i18next.t("general:Settings for your account")},
+        {link: "/account", name: i18next.t("account:My Account"), organizer: i18next.t("account:Settings for your account")},
       ];
     }
 

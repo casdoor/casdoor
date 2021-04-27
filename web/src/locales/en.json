@@ -16,6 +16,7 @@
     "Name": "Name",
     "Display Name": "Display Name",
     "Avatar": "Avatar",
+    "URL": "URL",
     "Preview": "Preview",
     "User Type": "User Type",
     "Password Type": "Password Type",
@@ -32,6 +33,7 @@
   "account":
   {
     "My Account": "My Account",
+    "Settings for your account": "Settings for your account",
     "Login": "Login",
     "Logout": "Logout",
     "Register": "Register"
@@ -59,6 +61,8 @@
     "Affiliation": "Affiliation",
     "Tag": "Tag",
     "Third-party Logins": "Third-party Logins",
+    "Link": "Link",
+    "Unlink": "Unlink",
     "Is Admin": "Is Admin",
     "Is Global Admin": "Is Global Admin"
   },
