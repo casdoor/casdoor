@@ -17,9 +17,8 @@ package controllers
 import (
 	"encoding/base64"
 	"encoding/json"
-	"strconv"
+	"fmt"
 	"strings"
-	"time"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -150,16 +149,16 @@ func (c *ApiController) GetAccount() {
 // @router /upload-avatar [post]
 func (c *ApiController) UploadAvatar() {
 	var resp Response
-	username := c.GetSessionUser()
-	user := object.GetUser(username)
 
-	msg := object.CheckUserLogin(user.Owner+"/"+user.Name, c.Ctx.Request.Form.Get("password"))
-	if msg != "" {
-		resp = Response{Status: "error", Msg: "Wrong password"}
+	username := c.GetSessionUser()
+	if c.GetSessionUser() == "" {
+		resp = Response{Status: "error", Msg: "Please sign in first", Data: c.GetSessionUser()}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return
 	}
+
+	user := object.GetUser(username)
 
 	avatarBase64 := c.Ctx.Request.Form.Get("avatarfile")
 	index := strings.Index(avatarBase64, ",")
@@ -171,16 +170,16 @@ func (c *ApiController) UploadAvatar() {
 	}
 
 	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index+1:])
-	msg = object.UploadAvatar(user.Name, dist)
+	msg := object.UploadAvatar(user.Name, dist)
 	if msg != "" {
 		resp = Response{Status: "error", Msg: msg}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return
 	}
-	user.Avatar = object.GetAvatarPath() + user.Name + ".png?time=" + strconv.FormatInt(time.Now().UnixNano(), 10)
+	user.Avatar = fmt.Sprintf("%s%s.png?time=%s", object.GetAvatarPath(), user.Name, util.GetCurrentUnixTime())
 	object.UpdateUser(user.Owner+"/"+user.Name, user)
-	resp = Response{Status: "ok", Msg: "Successfully set avatar"}
+	resp = Response{Status: "ok", Msg: ""}
 	c.Data["json"] = resp
 	c.ServeJSON()
 }
