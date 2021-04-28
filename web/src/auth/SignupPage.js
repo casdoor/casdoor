@@ -18,6 +18,9 @@ import {Form, Input, Select, Checkbox, Button, Row, Col} from 'antd';
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import i18next from "i18next";
+import * as Util from "./Util";
+import {authConfig} from "./Auth";
+import * as ApplicationBackend from "../backend/ApplicationBackend";
 
 const { Option } = Select;
 
@@ -27,7 +30,7 @@ const formItemLayout = {
       span: 24,
     },
     sm: {
-      span: 8,
+      span: 6,
     },
   },
   wrapperCol: {
@@ -35,7 +38,7 @@ const formItemLayout = {
       span: 24,
     },
     sm: {
-      span: 16,
+      span: 18,
     },
   },
 };
@@ -58,9 +61,32 @@ class SignupPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      applicationName: props.match.params.applicationName !== undefined ? props.match.params.applicationName : authConfig.appName,
+      application: null,
     };
 
     this.form = React.createRef();
+  }
+
+  UNSAFE_componentWillMount() {
+    if (this.state.applicationName !== undefined) {
+      this.getApplication();
+    } else {
+      Util.showMessage("error", `Unknown application name: ${this.state.applicationName}`);
+    }
+  }
+
+  getApplication() {
+    if (this.state.applicationName === undefined) {
+      return;
+    }
+
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
+      .then((application) => {
+        this.setState({
+          application: application,
+        });
+      });
   }
 
   onFinish(values) {
@@ -78,7 +104,7 @@ class SignupPage extends React.Component {
     this.form.current.scrollToField(errorFields[0].name);
   }
 
-  renderForm() {
+  renderForm(application) {
     const prefixSelector = (
       <Form.Item name="prefix" noStyle>
         <Select
@@ -100,6 +126,7 @@ class SignupPage extends React.Component {
         onFinish={(values) => this.onFinish(values)}
         onFinishFailed={(errorInfo) => this.onFinishFailed(errorInfo.values, errorInfo.errorFields, errorInfo.outOfDate)}
         initialValues={{
+          application: application.name,
           prefix: '86',
         }}
         style={{width: !Setting.isMobile() ? "400px" : "250px"}}
@@ -235,14 +262,24 @@ class SignupPage extends React.Component {
   }
 
   render() {
+    const application = this.state.application;
+    if (application === null) {
+      return null;
+    }
+
     return (
       <div>
         &nbsp;
         <Row>
           <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
-            {
-              this.renderForm()
-            }
+            <div style={{marginTop: "10px", textAlign: "center"}}>
+              {
+                Setting.renderLogo(application)
+              }
+              {
+                this.renderForm(application)
+              }
+            </div>
           </Col>
         </Row>
       </div>

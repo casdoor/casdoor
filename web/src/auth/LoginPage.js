@@ -262,20 +262,6 @@ class LoginPage extends React.Component {
     }
   }
 
-  renderLogo(application) {
-    if (application.homepageUrl !== "") {
-      return (
-        <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
-          <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '30px'}}/>
-        </a>
-      )
-    } else {
-      return (
-        <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '30px'}}/>
-      );
-    }
-  }
-
   render() {
     const application = this.getApplicationObj();
     if (application === null) {
@@ -287,7 +273,7 @@ class LoginPage extends React.Component {
         <Col span={24} style={{display: "flex", justifyContent: "center"}}>
           <div style={{marginTop: "80px", textAlign: "center"}}>
             {
-              this.renderLogo(application)
+              Setting.renderLogo(application)
             }
             {/*{*/}
             {/*  this.state.clientId !== null ? "Redirect" : null*/}

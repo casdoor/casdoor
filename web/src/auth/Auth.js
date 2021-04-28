@@ -14,8 +14,8 @@
 
 export let authConfig = {
   serverUrl: "http://example.com", // your Casdoor URL, like the official one: https://door.casbin.com
-  appName: "app-example", // your Casdoor application name, like: "app-built-in"
-  organizationName: "org-example", // your Casdoor organization name, like: "built-in"
+  appName: "app-built-in", // your Casdoor application name, like: "app-built-in"
+  organizationName: "built-in", // your Casdoor organization name, like: "built-in"
 }
 
 export function initAuthWithConfig(config) {
