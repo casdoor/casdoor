@@ -13,19 +13,47 @@
 // limitations under the License.
 
 import React from "react";
-import {Link} from "react-router-dom";
 import {Result, Button} from 'antd';
 import i18next from "i18next";
+import {authConfig} from "./Auth";
+import * as Util from "./Util";
+import * as ApplicationBackend from "../backend/ApplicationBackend";
+import * as Setting from "../Setting";
 
 class ResultPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
+      applicationName: props.match.params.applicationName !== undefined ? props.match.params.applicationName : authConfig.appName,
+      application: null,
     };
   }
 
+  UNSAFE_componentWillMount() {
+    if (this.state.applicationName !== undefined) {
+      this.getApplication();
+    } else {
+      Util.showMessage("error", `Unknown application name: ${this.state.applicationName}`);
+    }
+  }
+
+  getApplication() {
+    if (this.state.applicationName === undefined) {
+      return;
+    }
+
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
+      .then((application) => {
+        this.setState({
+          application: application,
+        });
+      });
+  }
+
   render() {
+    const application = this.state.application;
+
     return (
       <div>
         <Result
@@ -33,11 +61,11 @@ class ResultPage extends React.Component {
           title={i18next.t("signup:Your account has been created!")}
           subTitle={i18next.t("signup:Please click the below button to sign in")}
           extra={[
-            <Link to="/login">
-              <Button type="primary" key="login">
-                {i18next.t("login:Sign In")}
-              </Button>
-            </Link>
+            <Button type="primary" key="login" onClick={() => {
+              Setting.goToLogin(this, application);
+            }}>
+              {i18next.t("login:Sign In")}
+            </Button>
           ]}
         />
       </div>

@@ -18,6 +18,7 @@ import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
 import i18next from "i18next";
 import copy from "copy-to-clipboard";
+import {authConfig} from "./auth/Auth";
 
 export let ServerUrl = "";
 
@@ -195,5 +196,17 @@ export function renderLogo(application) {
     return (
       <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '30px'}}/>
     );
+  }
+}
+
+export function goToLogin(ths, application) {
+  if (application === null) {
+    return;
+  }
+
+  if (authConfig.appName === application.name) {
+    goToLinkSoft(ths, "/login");
+  } else {
+    goToLink(`${application.homepageUrl}/login`);
   }
 }

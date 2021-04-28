@@ -89,11 +89,19 @@ class SignupPage extends React.Component {
       });
   }
 
+  getResultPath(application) {
+    if (authConfig.appName === application.name) {
+      return "/result";
+    } else {
+      return `/result/${application.name}`;
+    }
+  }
+
   onFinish(values) {
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === 'ok') {
-          this.props.history.push('/result');
+          Setting.goToLinkSoft(this, this.getResultPath(this.state.application));
         } else {
           Setting.showMessage("error", `Failed to sign up: ${res.msg}`);
         }
@@ -264,7 +272,9 @@ class SignupPage extends React.Component {
             {i18next.t("account:Sign Up")}
           </Button>
           &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
-          <Link to={"/login"}>
+          <Link onClick={() => {
+            Setting.goToLogin(this, application);
+          }}>
             {i18next.t("signup:sign in now")}
           </Link>
         </Form.Item>
