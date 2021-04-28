@@ -106,7 +106,7 @@ class SignupPage extends React.Component {
 
   renderForm(application) {
     const prefixSelector = (
-      <Form.Item name="prefix" noStyle>
+      <Form.Item name="phonePrefix" noStyle>
         <Select
           style={{
             width: 80,
@@ -126,12 +126,23 @@ class SignupPage extends React.Component {
         onFinish={(values) => this.onFinish(values)}
         onFinishFailed={(errorInfo) => this.onFinishFailed(errorInfo.values, errorInfo.errorFields, errorInfo.outOfDate)}
         initialValues={{
-          application: application.name,
-          prefix: '86',
+          organization: application.organization,
+          phonePrefix: '86',
         }}
         style={{width: !Setting.isMobile() ? "400px" : "250px"}}
         size="large"
       >
+        <Form.Item
+          style={{height: 0, visibility: "hidden"}}
+          name="organization"
+          rules={[
+            {
+              required: true,
+              message: 'Please input your organization!',
+            },
+          ]}
+        >
+        </Form.Item>
         <Form.Item
           name="username"
           label={i18next.t("signup:Username")}
@@ -146,7 +157,7 @@ class SignupPage extends React.Component {
           <Input />
         </Form.Item>
         <Form.Item
-          name="displayName"
+          name="name"
           label={i18next.t("general:Display name")}
           rules={[
             {

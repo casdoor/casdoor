@@ -44,7 +44,9 @@
     "Accept": "阅读并接受",
     "Terms of Use": "《用户协议》",
     "Have account?": "已有账号？",
-    "sign in now": "立即登录"
+    "sign in now": "立即登录",
+    "Your account has been created!": "您的账号已创建！",
+    "Please click the below button to sign in": "请点击下方按钮登录"
   },
   "login":
   {

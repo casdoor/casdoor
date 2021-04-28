@@ -37,7 +37,9 @@ type RequestForm struct {
 	Password     string `json:"password"`
 	Name         string `json:"name"`
 	Email        string `json:"email"`
+	PhonePrefix  string `json:"phonePrefix"`
 	Phone        string `json:"phone"`
+	Affiliation  string `json:"affiliation"`
 
 	Application string `json:"application"`
 	Provider    string `json:"provider"`
@@ -75,26 +77,34 @@ func (c *ApiController) Signup() {
 		panic(err)
 	}
 
-	msg := object.CheckUserSignup(form.Username, form.Password)
+	userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
+	msg := object.CheckUserSignup(userId, form.Password)
 	if msg != "" {
 		resp = Response{Status: "error", Msg: msg, Data: ""}
 	} else {
 		user := &object.User{
-			Owner:        form.Organization,
-			Name:         form.Username,
-			CreatedTime:  util.GetCurrentTime(),
-			Password:     form.Password,
-			PasswordType: "plain",
-			DisplayName:  form.Name,
-			Email:        form.Email,
-			Phone:        form.Phone,
+			Owner:         form.Organization,
+			Name:          form.Username,
+			CreatedTime:   util.GetCurrentTime(),
+			Id:            util.GenerateId(),
+			Type:          "normal-user",
+			Password:      form.Password,
+			PasswordType:  "plain",
+			DisplayName:   form.Name,
+			Avatar:        "https://casbin.org/img/casbin.svg",
+			Email:         form.Email,
+			PhonePrefix:   form.PhonePrefix,
+			Phone:         form.Phone,
+			Affiliation:   form.Affiliation,
+			IsAdmin:       false,
+			IsGlobalAdmin: false,
 		}
 		object.AddUser(user)
 
 		//c.SetSessionUser(user)
 
-		util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", user)
-		resp = Response{Status: "ok", Msg: "", Data: user}
+		util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
+		resp = Response{Status: "ok", Msg: "", Data: userId}
 	}
 
 	c.Data["json"] = resp

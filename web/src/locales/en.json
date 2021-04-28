@@ -44,7 +44,9 @@
     "Accept": "Accept",
     "Terms of Use": "Terms of Use",
     "Have account?": "Have account?",
-    "sign in now": "sign in now"
+    "sign in now": "sign in now",
+    "Your account has been created!": "Your account has been created!",
+    "Please click the below button to sign in": "Please click the below button to sign in"
   },
   "login":
   {

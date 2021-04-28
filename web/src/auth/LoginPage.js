@@ -24,6 +24,7 @@ import * as Setting from "../Setting";
 import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
 import QqLoginButton from "./QqLoginButton";
 import i18next from "i18next";
+import {authConfig} from "./Auth";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -139,6 +140,14 @@ class LoginPage extends React.Component {
     }
   }
 
+  getSignupPath(application) {
+    if (authConfig.appName === application.name) {
+      return "/signup";
+    } else {
+      return `/signup/${application.name}`;
+    }
+  }
+
   renderForm(application) {
     if (this.state.msg !== null) {
       return Util.renderMessage(this.state.msg)
@@ -156,15 +165,16 @@ class LoginPage extends React.Component {
           style={{width: "250px"}}
           size="large"
         >
-          <Form.Item style={{height: 0, visibility: "hidden"}}
-                     name="organization"
-                     rules={[{ required: true, message: 'Please input your organization!' }]}
+          <Form.Item
+            style={{height: 0, visibility: "hidden"}}
+            name="organization"
+            rules={[
+              {
+                required: true,
+                message: 'Please input your organization!',
+              },
+            ]}
           >
-            <Input
-              prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder="organization"
-              disabled={!application.enablePassword}
-            />
           </Form.Item>
           <Form.Item
             name="username"
@@ -210,7 +220,7 @@ class LoginPage extends React.Component {
               !application.enableSignUp ? null : (
                 <div style={{float: "right"}}>
                   {i18next.t("login:No account yet?")}&nbsp;
-                  <Link to={"/signup"}>
+                  <Link to={this.getSignupPath(application)}>
                     {i18next.t("login:sign up now")}
                   </Link>
                 </div>
@@ -250,7 +260,7 @@ class LoginPage extends React.Component {
                 <br/>
                 <div style={{float: "right"}}>
                   No account yet?&nbsp;
-                  <Link to={"/signup"}>
+                  <Link to={this.getSignupPath(application)}>
                     sign up now
                   </Link>
                 </div>

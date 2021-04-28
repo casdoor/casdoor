@@ -15,6 +15,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {Result, Button} from 'antd';
+import i18next from "i18next";
 
 class ResultPage extends React.Component {
   constructor(props) {
@@ -29,12 +30,12 @@ class ResultPage extends React.Component {
       <div>
         <Result
           status="success"
-          title="Your account is created"
-          subTitle="Please click the below button to login"
+          title={i18next.t("signup:Your account has been created!")}
+          subTitle={i18next.t("signup:Please click the below button to sign in")}
           extra={[
             <Link to="/login">
               <Button type="primary" key="login">
-                Login
+                {i18next.t("login:Sign In")}
               </Button>
             </Link>
           ]}
