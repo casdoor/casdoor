@@ -56,6 +56,9 @@ class ResultPage extends React.Component {
 
     return (
       <div>
+        {
+          Setting.renderHelmet(application)
+        }
         <Result
           status="success"
           title={i18next.t("signup:Your account has been created!")}

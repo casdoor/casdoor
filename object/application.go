@@ -24,15 +24,16 @@ type Application struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName    string      `xorm:"varchar(100)" json:"displayName"`
-	Logo           string      `xorm:"varchar(100)" json:"logo"`
-	HomepageUrl    string      `xorm:"varchar(100)" json:"homepageUrl"`
-	Description    string      `xorm:"varchar(100)" json:"description"`
-	Organization   string      `xorm:"varchar(100)" json:"organization"`
-	EnablePassword bool        `json:"enablePassword"`
-	EnableSignUp   bool        `json:"enableSignUp"`
-	Providers      []string    `xorm:"varchar(100)" json:"providers"`
-	ProviderObjs   []*Provider `xorm:"-" json:"providerObjs"`
+	DisplayName     string        `xorm:"varchar(100)" json:"displayName"`
+	Logo            string        `xorm:"varchar(100)" json:"logo"`
+	HomepageUrl     string        `xorm:"varchar(100)" json:"homepageUrl"`
+	Description     string        `xorm:"varchar(100)" json:"description"`
+	Organization    string        `xorm:"varchar(100)" json:"organization"`
+	EnablePassword  bool          `json:"enablePassword"`
+	EnableSignUp    bool          `json:"enableSignUp"`
+	Providers       []string      `xorm:"varchar(100)" json:"providers"`
+	ProviderObjs    []*Provider   `xorm:"-" json:"providerObjs"`
+	OrganizationObj *Organization `xorm:"-" json:"organizationObj"`
 
 	ClientId      string   `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret  string   `xorm:"varchar(100)" json:"clientSecret"`
@@ -50,7 +51,7 @@ func GetApplications(owner string) []*Application {
 	return applications
 }
 
-func extendApplication(application *Application) {
+func extendApplicationWithProviders(application *Application) {
 	providers := GetProviders(application.Owner)
 	m := map[string]*Provider{}
 	for _, provider := range providers {
@@ -65,6 +66,11 @@ func extendApplication(application *Application) {
 	}
 }
 
+func extendApplicationWithOrg(application *Application) {
+	organization := getOrganization(application.Owner, application.Organization)
+	application.OrganizationObj = organization
+}
+
 func getApplication(owner string, name string) *Application {
 	application := Application{Owner: owner, Name: name}
 	existed, err := adapter.engine.Get(&application)
@@ -73,7 +79,8 @@ func getApplication(owner string, name string) *Application {
 	}
 
 	if existed {
-		extendApplication(&application)
+		extendApplicationWithProviders(&application)
+		extendApplicationWithOrg(&application)
 		return &application
 	} else {
 		return nil
@@ -89,7 +96,8 @@ func GetDefaultApplication(owner string) *Application {
 	}
 
 	if existed {
-		extendApplication(&application)
+		extendApplicationWithProviders(&application)
+		extendApplicationWithOrg(&application)
 		return &application
 	} else {
 		return nil
@@ -104,7 +112,8 @@ func getApplicationByClientId(clientId string) *Application {
 	}
 
 	if existed {
-		extendApplication(&application)
+		extendApplicationWithProviders(&application)
+		extendApplicationWithOrg(&application)
 		return &application
 	} else {
 		return nil

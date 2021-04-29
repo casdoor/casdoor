@@ -295,6 +295,9 @@ class SignupPage extends React.Component {
           <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
             <div style={{marginTop: "10px", textAlign: "center"}}>
               {
+                Setting.renderHelmet(application)
+              }
+              {
                 Setting.renderLogo(application)
               }
               {

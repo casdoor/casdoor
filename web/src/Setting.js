@@ -19,6 +19,7 @@ import "./i18n";
 import i18next from "i18next";
 import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
+import {Helmet} from "react-helmet";
 
 export let ServerUrl = "";
 
@@ -209,4 +210,17 @@ export function goToLogin(ths, application) {
   } else {
     goToLink(`${application.homepageUrl}/login`);
   }
+}
+
+export function renderHelmet(application) {
+  if (application === undefined || application === null || application.organizationObj === undefined || application.organizationObj === null ||application.organizationObj === "") {
+    return null;
+  }
+
+  return (
+    <Helmet>
+      <title>{application.organizationObj.displayName}</title>
+      <link rel="icon" href={application.organizationObj.favicon} />
+    </Helmet>
+  )
 }

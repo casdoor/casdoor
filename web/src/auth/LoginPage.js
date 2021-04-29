@@ -25,6 +25,7 @@ import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
 import QqLoginButton from "./QqLoginButton";
 import i18next from "i18next";
 import {authConfig} from "./Auth";
+import {Helmet} from "react-helmet";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -282,6 +283,9 @@ class LoginPage extends React.Component {
       <Row>
         <Col span={24} style={{display: "flex", justifyContent: "center"}}>
           <div style={{marginTop: "80px", textAlign: "center"}}>
+            {
+              Setting.renderHelmet(application)
+            }
             {
               Setting.renderLogo(application)
             }
