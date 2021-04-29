@@ -53,6 +53,7 @@ type Response struct {
 	Status string      `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"`
+	Data2  interface{} `json:"data2"`
 }
 
 // @Title Signup
@@ -145,7 +146,8 @@ func (c *ApiController) GetAccount() {
 
 	username := c.GetSessionUser()
 	user := object.GetUser(username)
-	resp = Response{Status: "ok", Msg: "", Data: user}
+	organization := object.GetOrganization(util.GetId(user.Owner))
+	resp = Response{Status: "ok", Msg: "", Data: user, Data2: organization}
 
 	c.Data["json"] = resp
 	c.ServeJSON()

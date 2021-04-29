@@ -14,6 +14,7 @@
 
 import React, {Component} from 'react';
 import './App.less';
+import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
 import {DownOutlined, LogoutOutlined, SettingOutlined} from '@ant-design/icons';
 import {Avatar, BackTop, Dropdown, Layout, Menu} from 'antd';
@@ -123,8 +124,14 @@ class App extends Component {
     }
     AuthBackend.getAccount(accessToken)
       .then((res) => {
+        let account = null;
+        if (res.status === "ok") {
+          account = res.data;
+          account.organization = res.data2;
+        }
+
         this.setState({
-          account: res.status === "ok" ? res.data : null,
+          account: account,
         });
       });
   }
@@ -389,7 +396,7 @@ class App extends Component {
     return window.location.pathname.startsWith("/login/oauth/authorize");
   }
 
-  render() {
+  renderPage() {
     if (this.isDoorPages()) {
       return (
         <Switch>
@@ -412,6 +419,34 @@ class App extends Component {
         }
       </div>
     );
+  }
+
+  render() {
+    if (this.state.account === undefined || this.state.account === null) {
+      return (
+        <React.Fragment>
+          <Helmet>
+            <link rel="icon" href={"https://cdn.casbin.com/static/favicon.ico"} />
+          </Helmet>
+          {
+            this.renderPage()
+          }
+        </React.Fragment>
+      )
+    }
+
+    const organization = this.state.account.organization;
+    return (
+      <React.Fragment>
+        <Helmet>
+          <title>{organization.displayName}</title>
+          <link rel="icon" href={organization.websiteUrl} />
+        </Helmet>
+        {
+          this.renderPage()
+        }
+      </React.Fragment>
+    )
   }
 }
 

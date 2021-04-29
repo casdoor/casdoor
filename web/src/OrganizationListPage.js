@@ -48,7 +48,7 @@ class OrganizationListPage extends React.Component {
       name: `organization_${this.state.organizations.length}`,
       createdTime: moment().format(),
       displayName: `New Organization - ${this.state.organizations.length}`,
-      websiteUrl: "https://example.com",
+      websiteUrl: "https://cdn.casbin.com/static/favicon.ico",
     }
   }
 

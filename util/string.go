@@ -16,6 +16,7 @@ package util
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/google/uuid"
@@ -32,4 +33,8 @@ func GetOwnerAndNameFromId(id string) (string, string) {
 
 func GenerateId() string {
 	return uuid.NewString()
+}
+
+func GetId(name string) string {
+	return fmt.Sprintf("admin/%s", name)
 }
