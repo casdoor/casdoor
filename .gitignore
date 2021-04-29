@@ -18,9 +18,6 @@
 .idea/
 *.iml
 
-# npm
-package-lock.json
-
 tmp/
 tmpFiles/
 *.tmp
