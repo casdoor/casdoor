@@ -220,7 +220,7 @@ func (c *ApiController) Login() {
 			//}
 		}
 	} else {
-		panic("unknown authentication type (not password or provider)")
+		panic("unknown authentication type (not password or provider), form = " + util.StructToJson(form))
 	}
 
 	c.Data["json"] = resp

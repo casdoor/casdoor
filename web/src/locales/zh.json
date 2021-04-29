@@ -3,7 +3,7 @@
   {
     "Home": "主页",
     "Organizations": "组织",
-    "Providers": "第三方",
+    "Providers": "提供商",
     "Users": "用户",
     "Applications": "应用",
     "Save": "保存",
@@ -13,8 +13,8 @@
     "Delete": "删除",
     "Organization": "组织",
     "Created time": "创建时间",
-    "Name": "用户名",
-    "Display name": "姓名",
+    "Name": "名称",
+    "Display name": "显示名称",
     "Avatar": "头像",
     "URL": "链接",
     "Preview": "预览",
@@ -75,13 +75,13 @@
   },
   "provider":
   {
-    "Name": "用户名",
-    "Display name": "姓名",
+    "Name": "名称",
+    "Display name": "显示名称",
     "Type": "类型",
     "Client ID": "Client ID",
     "Client secret": "Client secret",
-    "Provider URL": "第三方URL",
-    "Edit Provider": "修改第三方"
+    "Provider URL": "提供商URL",
+    "Edit Provider": "修改提供商"
   },
   "user":
   {
