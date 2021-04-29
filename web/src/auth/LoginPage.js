@@ -25,7 +25,6 @@ import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
 import QqLoginButton from "./QqLoginButton";
 import i18next from "i18next";
 import {authConfig} from "./Auth";
-import {Helmet} from "react-helmet";
 
 class LoginPage extends React.Component {
   constructor(props) {

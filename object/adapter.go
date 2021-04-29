@@ -20,7 +20,7 @@ import (
 
 	"github.com/astaxie/beego"
 	_ "github.com/go-sql-driver/mysql" // db = mysql
-	//_ "github.com/lib/pq"           // db = postgres
+	//_ "github.com/lib/pq"              // db = postgres
 	"xorm.io/xorm"
 )
 
