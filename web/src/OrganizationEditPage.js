@@ -17,6 +17,7 @@ import {Button, Card, Col, Input, Row} from 'antd';
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
+import {LinkOutlined} from "@ant-design/icons";
 
 class OrganizationEditPage extends React.Component {
   constructor(props) {
@@ -84,6 +85,33 @@ class OrganizationEditPage extends React.Component {
             <Input value={this.state.organization.displayName} onChange={e => {
               this.updateOrganizationField('displayName', e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            Favicon:
+          </Col>
+          <Col span={22} >
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={1}>
+                URL:
+              </Col>
+              <Col span={23} >
+                <Input prefix={<LinkOutlined/>} value={this.state.organization.favicon} onChange={e => {
+                  this.updateOrganizationField('favicon', e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={1}>
+                {i18next.t("general:Preview")}:
+              </Col>
+              <Col span={23} >
+                <a target="_blank" rel="noreferrer" href={this.state.organization.favicon}>
+                  <img src={this.state.organization.favicon} alt={this.state.organization.favicon} height={90} style={{marginBottom: '20px'}}/>
+                </a>
+              </Col>
+            </Row>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

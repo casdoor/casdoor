@@ -48,7 +48,8 @@ class OrganizationListPage extends React.Component {
       name: `organization_${this.state.organizations.length}`,
       createdTime: moment().format(),
       displayName: `New Organization - ${this.state.organizations.length}`,
-      websiteUrl: "https://cdn.casbin.com/static/favicon.ico",
+      websiteUrl: "https://door.casbin.com",
+      favicon: "https://cdn.casbin.com/static/favicon.ico",
     }
   }
 
@@ -113,6 +114,19 @@ class OrganizationListPage extends React.Component {
         key: 'displayName',
         // width: '100px',
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
+      },
+      {
+        title: 'Favicon',
+        dataIndex: 'favicon',
+        key: 'favicon',
+        width: '50px',
+        render: (text, record, index) => {
+          return (
+            <a target="_blank" rel="noreferrer" href={text}>
+              <img src={text} alt={text} width={40} />
+            </a>
+          )
+        }
       },
       {
         title: i18next.t("organization:Website URL"),

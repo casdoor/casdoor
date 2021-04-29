@@ -440,7 +440,7 @@ class App extends Component {
       <React.Fragment>
         <Helmet>
           <title>{organization.displayName}</title>
-          <link rel="icon" href={organization.websiteUrl} />
+          <link rel="icon" href={organization.favicon} />
         </Helmet>
         {
           this.renderPage()

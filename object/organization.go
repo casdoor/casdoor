@@ -26,6 +26,7 @@ type Organization struct {
 
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 	WebsiteUrl  string `xorm:"varchar(100)" json:"websiteUrl"`
+	Favicon     string `xorm:"varchar(100)" json:"favicon"`
 }
 
 func GetOrganizations(owner string) []*Organization {
