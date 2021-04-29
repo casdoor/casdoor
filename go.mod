@@ -14,7 +14,6 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/jinzhu/configor v1.2.1 // indirect
 	github.com/qiangmzsx/string-adapter/v2 v2.1.0
-	github.com/qiniu/api.v7 v7.2.5+incompatible // indirect
 	github.com/qor/oss v0.0.0-20191031055114-aef9ba66bf76
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect

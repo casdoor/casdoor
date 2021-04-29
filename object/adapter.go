@@ -19,7 +19,8 @@ import (
 	"runtime"
 
 	"github.com/astaxie/beego"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql" // db = mysql
+	//_ "github.com/lib/pq"           // db = postgres
 	"xorm.io/xorm"
 )
 
@@ -35,7 +36,7 @@ func InitConfig() {
 }
 
 func InitAdapter() {
-	adapter = NewAdapter("mysql", beego.AppConfig.String("dataSourceName"))
+	adapter = NewAdapter(beego.AppConfig.String("db"), beego.AppConfig.String("dataSourceName"))
 }
 
 // Adapter represents the MySQL adapter for policy storage.
@@ -80,8 +81,10 @@ func (a *Adapter) createDatabase() error {
 }
 
 func (a *Adapter) open() {
-	if err := a.createDatabase(); err != nil {
-		panic(err)
+	if beego.AppConfig.String("db") != "postgres" {
+		if err := a.createDatabase(); err != nil {
+			panic(err)
+		}
 	}
 
 	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName+beego.AppConfig.String("dbName"))
