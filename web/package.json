@@ -24,7 +24,7 @@
     "react-social-login-buttons": "^3.4.0"
   },
   "scripts": {
-    "start": "set PORT=7001 && craco start",
+    "start": "cross-env PORT=7001 craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "craco eject"
@@ -43,5 +43,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }
