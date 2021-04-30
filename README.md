@@ -96,13 +96,27 @@ Now, Casdoor is running on port 8000. You can access Casdoor pages directly in y
 
 ## Config
 
-- Setup database:
+- Setup database (MySQL):
 
   Casdoor will store its users, nodes and topics informations in a MySQL database named: `casdoor`, will create it if not existed. The DB connection string can be specified at: https://github.com/casbin/casdoor/blob/master/conf/app.conf
 
     ```ini
-    dataSourceName = root:123@tcp(localhost:3306)/
+  db = mysql
+  dataSourceName = root:123@tcp(localhost:3306)/
+  dbName = casdoor
     ```
+
+- Setup database (Postgres):
+
+  Since we must choose a database when opening Postgres with xorm, you should prepare a database manually before running Casdoor. Let's assume that you have already prepared a database called `casdoor`, then you should specify `app.conf` like this:
+
+  ``` ini
+  db = postgres
+  dataSourceName = "user=postgres password=xxx sslmode=disable dbname="
+  dbName = casdoor
+  ```
+
+  **Please notice:** You can add Postgres parameters in `dataSourceName`, but please make sure that `dataSourceName` ends with `dbname=`. Or database adapter may crash when you launch Casdoor.
 
   Casdoor uses XORM to connect to DB, so all DBs supported by XORM can also be used.
 
