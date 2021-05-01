@@ -46,6 +46,11 @@ class AuthCallback extends React.Component {
     const method = innerParams.get("method");
     if (method === "signup") {
       const realRedirectUri = innerParams.get("redirect_uri");
+      // Casdoor's own login page, so "code" is not necessary
+      if (realRedirectUri === null) {
+        return "login";
+      }
+
       const realRedirectUrl = new URL(realRedirectUri).origin;
 
       // For Casdoor itself, we use "login" directly
@@ -85,7 +90,8 @@ class AuthCallback extends React.Component {
           const responseType = this.getResponseType();
           if (responseType === "login") {
             Util.showMessage("success", `Logged in successfully`);
-            Setting.goToLinkSoft(this, "/");
+            // Setting.goToLinkSoft(this, "/");
+            Setting.goToLink("/");
           } else if (responseType === "code") {
             const code = res.data;
             Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);

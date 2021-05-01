@@ -31,7 +31,7 @@ type Application struct {
 	Organization    string        `xorm:"varchar(100)" json:"organization"`
 	EnablePassword  bool          `json:"enablePassword"`
 	EnableSignUp    bool          `json:"enableSignUp"`
-	Providers       []string      `xorm:"varchar(100)" json:"providers"`
+	Providers       []string      `xorm:"varchar(1000)" json:"providers"`
 	ProviderObjs    []*Provider   `xorm:"-" json:"providerObjs"`
 	OrganizationObj *Organization `xorm:"-" json:"organizationObj"`
 
