@@ -36,13 +36,14 @@ func InitConfig() {
 }
 
 func InitAdapter() {
-	adapter = NewAdapter(beego.AppConfig.String("db"), beego.AppConfig.String("dataSourceName"))
+	adapter = NewAdapter(beego.AppConfig.String("driverName"), beego.AppConfig.String("dataSourceName"), beego.AppConfig.String("dbName"))
 }
 
 // Adapter represents the MySQL adapter for policy storage.
 type Adapter struct {
 	driverName     string
 	dataSourceName string
+	dbName         string
 	engine         *xorm.Engine
 }
 
@@ -55,10 +56,11 @@ func finalizer(a *Adapter) {
 }
 
 // NewAdapter is the constructor for Adapter.
-func NewAdapter(driverName string, dataSourceName string) *Adapter {
+func NewAdapter(driverName string, dataSourceName string, dbName string) *Adapter {
 	a := &Adapter{}
 	a.driverName = driverName
 	a.dataSourceName = dataSourceName
+	a.dbName = dbName
 
 	// Open the DB, create it if not existed.
 	a.open()
@@ -76,18 +78,18 @@ func (a *Adapter) createDatabase() error {
 	}
 	defer engine.Close()
 
-	_, err = engine.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default charset utf8 COLLATE utf8_general_ci", beego.AppConfig.String("dbName")))
+	_, err = engine.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default charset utf8 COLLATE utf8_general_ci", a.dbName))
 	return err
 }
 
 func (a *Adapter) open() {
-	if beego.AppConfig.String("db") != "postgres" {
+	if a.driverName != "postgres" {
 		if err := a.createDatabase(); err != nil {
 			panic(err)
 		}
 	}
 
-	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName+beego.AppConfig.String("dbName"))
+	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName+a.dbName)
 	if err != nil {
 		panic(err)
 	}
