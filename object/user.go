@@ -146,6 +146,28 @@ func HasUserByField(organizationName string, field string, value string) bool {
 	return GetUserByField(organizationName, field, value) != nil
 }
 
+func GetUserByFields(organization string, field string) *User {
+	// check username
+	user := GetUserByField(organization, "name", field)
+	if user != nil {
+		return user
+	}
+
+	// check email
+	user = GetUserByField(organization, "email", field)
+	if user != nil {
+		return user
+	}
+
+	// check phone
+	user = GetUserByField(organization, "phone", field)
+	if user != nil {
+		return user
+	}
+
+	return nil
+}
+
 func SetUserField(user *User, field string, value string) bool {
 	affected, err := adapter.engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(map[string]interface{}{field: value})
 	if err != nil {

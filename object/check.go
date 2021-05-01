@@ -56,9 +56,9 @@ func CheckUserSignup(organization string, username string, password string, disp
 }
 
 func CheckUserLogin(organization string, username string, password string) (*User, string) {
-	user := GetUserByField(organization, "name", username)
+	user := GetUserByFields(organization, username)
 	if user == nil {
-		return nil, "username does not exist, please sign up first"
+		return nil, "the user does not exist, please sign up first"
 	}
 
 	if user.Password != password {

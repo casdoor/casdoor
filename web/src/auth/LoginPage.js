@@ -178,11 +178,11 @@ class LoginPage extends React.Component {
           </Form.Item>
           <Form.Item
             name="username"
-            rules={[{ required: true, message: i18next.t("login:Please input your username!") }]}
+            rules={[{ required: true, message: i18next.t("login:Please input your username, Email or phone number!") }]}
           >
             <Input
               prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder={i18next.t("login:username")}
+              placeholder={i18next.t("login:username, Email or phone number")}
               disabled={!application.enablePassword}
             />
           </Form.Item>
