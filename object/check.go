@@ -17,6 +17,8 @@ package object
 import (
 	"fmt"
 	"regexp"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 var reWhiteSpace *regexp.Regexp
@@ -25,13 +27,21 @@ func init() {
 	reWhiteSpace, _ = regexp.Compile("\\s")
 }
 
-func CheckUserSignup(userId string, password string) string {
+func CheckUserSignup(userId string, password string, displayName string, email string, phonePrefix string, phone string, affiliation string) string {
 	if len(userId) == 0 || len(password) == 0 {
 		return "username and password cannot be blank"
 	} else if reWhiteSpace.MatchString(userId) {
 		return "username cannot contain white spaces"
 	} else if HasUser(userId) {
 		return "username already exists"
+	} else if displayName == "" {
+		return "displayName cannot be blank"
+	} else if affiliation == "" {
+		return "affiliation cannot be blank"
+	} else if !util.IsEmailValid(email) {
+		return "email is invalid"
+	} else if phonePrefix == "86" && !util.IsPhoneCnValid(phone) {
+		return "phone number is invalid"
 	} else {
 		return ""
 	}
