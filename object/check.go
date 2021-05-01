@@ -14,11 +14,22 @@
 
 package object
 
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+)
+
+var reWhiteSpace *regexp.Regexp
+
+func init() {
+	reWhiteSpace, _ = regexp.Compile("\\s")
+}
 
 func CheckUserSignup(userId string, password string) string {
 	if len(userId) == 0 || len(password) == 0 {
 		return "username and password cannot be blank"
+	} else if reWhiteSpace.MatchString(userId) {
+		return "username cannot contain white spaces"
 	} else if HasUser(userId) {
 		return "username already exists"
 	} else {

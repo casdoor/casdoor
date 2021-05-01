@@ -178,6 +178,13 @@ class UserListPage extends React.Component {
           )
         }
       },
+      {
+        title: i18next.t("general:Phone"),
+        dataIndex: 'phone',
+        key: 'phone',
+        width: '120px',
+        sorter: (a, b) => a.phone.localeCompare(b.phone),
+      },
       // {
       //   title: 'Phone',
       //   dataIndex: 'phone',
