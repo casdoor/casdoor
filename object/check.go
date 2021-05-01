@@ -55,26 +55,19 @@ func CheckUserSignup(organization string, username string, password string, disp
 	}
 }
 
-func CheckUserLogin(userId string, password string) string {
-	if !HasUser(userId) {
-		return "username does not exist, please sign up first"
+func CheckUserLogin(organization string, username string, password string) (*User, string) {
+	user := GetUserByField(organization, "name", username)
+	if user == nil {
+		return nil, "username does not exist, please sign up first"
 	}
 
-	if !IsPasswordCorrect(userId, password) {
-		return "password incorrect"
+	if user.Password != password {
+		return nil, "password incorrect"
 	}
 
-	return ""
+	return user, ""
 }
 
-func (user *User) getId() string {
+func (user *User) GetId() string {
 	return fmt.Sprintf("%s/%s", user.Owner, user.Name)
-}
-
-func GetUserIdByField(application *Application, field string, value string) string {
-	user := GetUserByField(application.Organization, field, value)
-	if user != nil {
-		return user.getId()
-	}
-	return ""
 }

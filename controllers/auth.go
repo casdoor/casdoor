@@ -32,7 +32,8 @@ func codeToResponse(code *object.Code) *Response {
 	}
 }
 
-func (c *ApiController) HandleLoggedIn(userId string, form *RequestForm) *Response {
+func (c *ApiController) HandleLoggedIn(user *object.User, form *RequestForm) *Response {
+	userId := user.GetId()
 	resp := &Response{}
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUser(userId)
@@ -105,14 +106,13 @@ func (c *ApiController) Login() {
 			}
 		}
 
-		userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
 		password := form.Password
-		msg := object.CheckUserLogin(userId, password)
+		user, msg := object.CheckUserLogin(form.Organization, form.Username, password)
 
 		if msg != "" {
 			resp = &Response{Status: "error", Msg: msg, Data: ""}
 		} else {
-			resp = c.HandleLoggedIn(userId, &form)
+			resp = c.HandleLoggedIn(user, &form)
 		}
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
@@ -153,8 +153,8 @@ func (c *ApiController) Login() {
 		}
 
 		if form.Method == "signup" {
-			userId := object.GetUserIdByField(application, provider.Type, userInfo.Username)
-			if userId != "" {
+			user := object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
+			if user != nil {
 				//if object.IsForbidden(userId) {
 				//	c.forbiddenAccountResp(userId)
 				//	return
@@ -165,7 +165,7 @@ func (c *ApiController) Login() {
 				//	object.LinkMemberAccount(userId, "avatar", avatar)
 				//}
 
-				resp = c.HandleLoggedIn(userId, &form)
+				resp = c.HandleLoggedIn(user, &form)
 			} else {
 				//if userId := object.GetUserIdByField(application, "email", userInfo.Email); userId != "" {
 				//	resp = c.HandleLoggedIn(userId, &form)
