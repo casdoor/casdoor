@@ -35,7 +35,7 @@ type Provider struct {
 
 func GetProviders(owner string) []*Provider {
 	providers := []*Provider{}
-	err := adapter.engine.Desc("created_time").Find(&providers, &Provider{Owner: owner})
+	err := adapter.Engine.Desc("created_time").Find(&providers, &Provider{Owner: owner})
 	if err != nil {
 		panic(err)
 	}
@@ -56,7 +56,7 @@ func GetDefaultProviders(owner string) []*Provider {
 
 func getProvider(owner string, name string) *Provider {
 	provider := Provider{Owner: owner, Name: name}
-	existed, err := adapter.engine.Get(&provider)
+	existed, err := adapter.Engine.Get(&provider)
 	if err != nil {
 		panic(err)
 	}
@@ -79,7 +79,7 @@ func UpdateProvider(id string, provider *Provider) bool {
 		return false
 	}
 
-	affected, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(provider)
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(provider)
 	if err != nil {
 		panic(err)
 	}
@@ -88,7 +88,7 @@ func UpdateProvider(id string, provider *Provider) bool {
 }
 
 func AddProvider(provider *Provider) bool {
-	affected, err := adapter.engine.Insert(provider)
+	affected, err := adapter.Engine.Insert(provider)
 	if err != nil {
 		panic(err)
 	}
@@ -97,7 +97,7 @@ func AddProvider(provider *Provider) bool {
 }
 
 func DeleteProvider(provider *Provider) bool {
-	affected, err := adapter.engine.ID(core.PK{provider.Owner, provider.Name}).Delete(&Provider{})
+	affected, err := adapter.Engine.ID(core.PK{provider.Owner, provider.Name}).Delete(&Provider{})
 	if err != nil {
 		panic(err)
 	}

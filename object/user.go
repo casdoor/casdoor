@@ -49,7 +49,7 @@ type User struct {
 
 func GetGlobalUsers() []*User {
 	users := []*User{}
-	err := adapter.engine.Desc("created_time").Find(&users)
+	err := adapter.Engine.Desc("created_time").Find(&users)
 	if err != nil {
 		panic(err)
 	}
@@ -59,7 +59,7 @@ func GetGlobalUsers() []*User {
 
 func GetUsers(owner string) []*User {
 	users := []*User{}
-	err := adapter.engine.Desc("created_time").Find(&users, &User{Owner: owner})
+	err := adapter.Engine.Desc("created_time").Find(&users, &User{Owner: owner})
 	if err != nil {
 		panic(err)
 	}
@@ -69,7 +69,7 @@ func GetUsers(owner string) []*User {
 
 func getUser(owner string, name string) *User {
 	user := User{Owner: owner, Name: name}
-	existed, err := adapter.engine.Get(&user)
+	existed, err := adapter.Engine.Get(&user)
 	if err != nil {
 		panic(err)
 	}
@@ -101,7 +101,7 @@ func UpdateUser(id string, user *User) bool {
 		return false
 	}
 
-	affected, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(user)
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
 		panic(err)
 	}
@@ -111,7 +111,7 @@ func UpdateUser(id string, user *User) bool {
 
 func AddUser(user *User) bool {
 	user.Id = util.GenerateId()
-	affected, err := adapter.engine.Insert(user)
+	affected, err := adapter.Engine.Insert(user)
 	if err != nil {
 		panic(err)
 	}
@@ -120,7 +120,7 @@ func AddUser(user *User) bool {
 }
 
 func DeleteUser(user *User) bool {
-	affected, err := adapter.engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
+	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
 	if err != nil {
 		panic(err)
 	}
@@ -130,7 +130,7 @@ func DeleteUser(user *User) bool {
 
 func GetUserByField(organizationName string, field string, value string) *User {
 	user := User{Owner: organizationName}
-	existed, err := adapter.engine.Where(fmt.Sprintf("%s=?", field), value).Get(&user)
+	existed, err := adapter.Engine.Where(fmt.Sprintf("%s=?", field), value).Get(&user)
 	if err != nil {
 		panic(err)
 	}
@@ -169,7 +169,7 @@ func GetUserByFields(organization string, field string) *User {
 }
 
 func SetUserField(user *User, field string, value string) bool {
-	affected, err := adapter.engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(map[string]interface{}{field: value})
+	affected, err := adapter.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(map[string]interface{}{field: value})
 	if err != nil {
 		panic(err)
 	}

@@ -43,7 +43,7 @@ type Application struct {
 
 func GetApplications(owner string) []*Application {
 	applications := []*Application{}
-	err := adapter.engine.Desc("created_time").Find(&applications, &Application{Owner: owner})
+	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner})
 	if err != nil {
 		panic(err)
 	}
@@ -73,7 +73,7 @@ func extendApplicationWithOrg(application *Application) {
 
 func getApplication(owner string, name string) *Application {
 	application := Application{Owner: owner, Name: name}
-	existed, err := adapter.engine.Get(&application)
+	existed, err := adapter.Engine.Get(&application)
 	if err != nil {
 		panic(err)
 	}
@@ -90,7 +90,7 @@ func getApplication(owner string, name string) *Application {
 func GetDefaultApplication(owner string) *Application {
 	name := "app-built-in"
 	application := Application{Owner: owner, Name: name}
-	existed, err := adapter.engine.Get(&application)
+	existed, err := adapter.Engine.Get(&application)
 	if err != nil {
 		panic(err)
 	}
@@ -106,7 +106,7 @@ func GetDefaultApplication(owner string) *Application {
 
 func getApplicationByClientId(clientId string) *Application {
 	application := Application{}
-	existed, err := adapter.engine.Where("client_id=?", clientId).Get(&application)
+	existed, err := adapter.Engine.Where("client_id=?", clientId).Get(&application)
 	if err != nil {
 		panic(err)
 	}
@@ -131,7 +131,7 @@ func UpdateApplication(id string, application *Application) bool {
 		return false
 	}
 
-	affected, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(application)
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(application)
 	if err != nil {
 		panic(err)
 	}
@@ -143,7 +143,7 @@ func AddApplication(application *Application) bool {
 	application.ClientId = util.GenerateClientId()
 	application.ClientSecret = util.GenerateClientSecret()
 
-	affected, err := adapter.engine.Insert(application)
+	affected, err := adapter.Engine.Insert(application)
 	if err != nil {
 		panic(err)
 	}
@@ -152,7 +152,7 @@ func AddApplication(application *Application) bool {
 }
 
 func DeleteApplication(application *Application) bool {
-	affected, err := adapter.engine.ID(core.PK{application.Owner, application.Name}).Delete(&Application{})
+	affected, err := adapter.Engine.ID(core.PK{application.Owner, application.Name}).Delete(&Application{})
 	if err != nil {
 		panic(err)
 	}

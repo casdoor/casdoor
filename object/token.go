@@ -49,7 +49,7 @@ type TokenWrapper struct {
 
 func GetTokens(owner string) []*Token {
 	tokens := []*Token{}
-	err := adapter.engine.Desc("created_time").Find(&tokens, &Token{Owner: owner})
+	err := adapter.Engine.Desc("created_time").Find(&tokens, &Token{Owner: owner})
 	if err != nil {
 		panic(err)
 	}
@@ -59,7 +59,7 @@ func GetTokens(owner string) []*Token {
 
 func getToken(owner string, name string) *Token {
 	token := Token{Owner: owner, Name: name}
-	existed, err := adapter.engine.Get(&token)
+	existed, err := adapter.Engine.Get(&token)
 	if err != nil {
 		panic(err)
 	}
@@ -73,7 +73,7 @@ func getToken(owner string, name string) *Token {
 
 func getTokenByCode(code string) *Token {
 	token := Token{}
-	existed, err := adapter.engine.Where("code=?", code).Get(&token)
+	existed, err := adapter.Engine.Where("code=?", code).Get(&token)
 	if err != nil {
 		panic(err)
 	}
@@ -96,7 +96,7 @@ func UpdateToken(id string, token *Token) bool {
 		return false
 	}
 
-	affected, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(token)
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(token)
 	if err != nil {
 		panic(err)
 	}
@@ -105,7 +105,7 @@ func UpdateToken(id string, token *Token) bool {
 }
 
 func AddToken(token *Token) bool {
-	affected, err := adapter.engine.Insert(token)
+	affected, err := adapter.Engine.Insert(token)
 	if err != nil {
 		panic(err)
 	}
@@ -114,7 +114,7 @@ func AddToken(token *Token) bool {
 }
 
 func DeleteToken(token *Token) bool {
-	affected, err := adapter.engine.ID(core.PK{token.Owner, token.Name}).Delete(&Token{})
+	affected, err := adapter.Engine.ID(core.PK{token.Owner, token.Name}).Delete(&Token{})
 	if err != nil {
 		panic(err)
 	}

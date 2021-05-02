@@ -9,7 +9,7 @@ import (
 )
 
 func updateUserColumn(column string, user *User) bool {
-	affected, err := adapter.engine.ID(core.PK{user.Owner, user.Name}).Cols(column).Update(user)
+	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols(column).Update(user)
 	if err != nil {
 		panic(err)
 	}

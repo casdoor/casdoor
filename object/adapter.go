@@ -37,6 +37,7 @@ func InitConfig() {
 
 func InitAdapter() {
 	adapter = NewAdapter(beego.AppConfig.String("driverName"), beego.AppConfig.String("dataSourceName"), beego.AppConfig.String("dbName"))
+	adapter.createTable()
 }
 
 // Adapter represents the MySQL adapter for policy storage.
@@ -44,12 +45,12 @@ type Adapter struct {
 	driverName     string
 	dataSourceName string
 	dbName         string
-	engine         *xorm.Engine
+	Engine         *xorm.Engine
 }
 
 // finalizer is the destructor for Adapter.
 func finalizer(a *Adapter) {
-	err := a.engine.Close()
+	err := a.Engine.Close()
 	if err != nil {
 		panic(err)
 	}
@@ -94,37 +95,36 @@ func (a *Adapter) open() {
 		panic(err)
 	}
 
-	a.engine = engine
-	a.createTable()
+	a.Engine = engine
 }
 
 func (a *Adapter) close() {
-	a.engine.Close()
-	a.engine = nil
+	a.Engine.Close()
+	a.Engine = nil
 }
 
 func (a *Adapter) createTable() {
-	err := a.engine.Sync2(new(Organization))
+	err := a.Engine.Sync2(new(Organization))
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.engine.Sync2(new(User))
+	err = a.Engine.Sync2(new(User))
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.engine.Sync2(new(Provider))
+	err = a.Engine.Sync2(new(Provider))
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.engine.Sync2(new(Application))
+	err = a.Engine.Sync2(new(Application))
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.engine.Sync2(new(Token))
+	err = a.Engine.Sync2(new(Token))
 	if err != nil {
 		panic(err)
 	}

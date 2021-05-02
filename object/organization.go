@@ -31,7 +31,7 @@ type Organization struct {
 
 func GetOrganizations(owner string) []*Organization {
 	organizations := []*Organization{}
-	err := adapter.engine.Desc("created_time").Find(&organizations, &Organization{Owner: owner})
+	err := adapter.Engine.Desc("created_time").Find(&organizations, &Organization{Owner: owner})
 	if err != nil {
 		panic(err)
 	}
@@ -41,7 +41,7 @@ func GetOrganizations(owner string) []*Organization {
 
 func getOrganization(owner string, name string) *Organization {
 	organization := Organization{Owner: owner, Name: name}
-	existed, err := adapter.engine.Get(&organization)
+	existed, err := adapter.Engine.Get(&organization)
 	if err != nil {
 		panic(err)
 	}
@@ -64,7 +64,7 @@ func UpdateOrganization(id string, organization *Organization) bool {
 		return false
 	}
 
-	affected, err := adapter.engine.ID(core.PK{owner, name}).AllCols().Update(organization)
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(organization)
 	if err != nil {
 		panic(err)
 	}
@@ -73,7 +73,7 @@ func UpdateOrganization(id string, organization *Organization) bool {
 }
 
 func AddOrganization(organization *Organization) bool {
-	affected, err := adapter.engine.Insert(organization)
+	affected, err := adapter.Engine.Insert(organization)
 	if err != nil {
 		panic(err)
 	}
@@ -82,7 +82,7 @@ func AddOrganization(organization *Organization) bool {
 }
 
 func DeleteOrganization(organization *Organization) bool {
-	affected, err := adapter.engine.ID(core.PK{organization.Owner, organization.Name}).Delete(&Organization{})
+	affected, err := adapter.Engine.ID(core.PK{organization.Owner, organization.Name}).Delete(&Organization{})
 	if err != nil {
 		panic(err)
 	}
