@@ -14,8 +14,14 @@
 
 package original
 
-var dbName = "dbName"
-var tableName = "tableName"
-var avatarBaseUrl = "https://cdn.example.com/"
+import "github.com/casdoor/casdoor/object"
 
-var orgName = "orgName"
+func getUserMap() map[string]*object.User {
+	users := object.GetUsers(orgName)
+
+	m := map[string]*object.User{}
+	for _, user := range users {
+		m[user.Name] = user
+	}
+	return m
+}

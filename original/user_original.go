@@ -27,7 +27,7 @@ func (User) TableName() string {
 	return tableName
 }
 
-func getUsers() []*User {
+func getUsersOriginal() []*User {
 	users := []*User{}
 	err := adapter.Engine.Asc("id").Find(&users)
 	if err != nil {
@@ -36,3 +36,13 @@ func getUsers() []*User {
 
 	return users
 }
+
+//func getUserMapOriginal() map[string]*User {
+//	users := getUsersOriginal()
+//
+//	m := map[string]*User{}
+//	for _, user := range users {
+//		m[strconv.Itoa(user.Id)] = user
+//	}
+//	return m
+//}

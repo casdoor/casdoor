@@ -17,14 +17,24 @@ package original
 import (
 	"fmt"
 	"testing"
+
+	"github.com/casdoor/casdoor/object"
 )
 
 func TestGetUsers(t *testing.T) {
 	initConfig()
 	initAdapter()
 
-	users := getUsers()
+	users := getUsersOriginal()
 	for _, user := range users {
 		fmt.Printf("%v\n", user)
 	}
+}
+
+func TestSyncUsers(t *testing.T) {
+	initConfig()
+	initAdapter()
+	object.InitAdapter()
+
+	syncUsers()
 }
