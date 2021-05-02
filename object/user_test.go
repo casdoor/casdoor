@@ -44,3 +44,8 @@ func TestSyncIds(t *testing.T) {
 		updateUserColumn("id", user)
 	}
 }
+
+func TestGetSaltedPassword(t *testing.T) {
+	password := "123456"
+	fmt.Printf("%s -> %s\n", password, getSaltedPassword(password))
+}
