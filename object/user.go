@@ -40,6 +40,7 @@ type User struct {
 	Tag           string `xorm:"varchar(100)" json:"tag"`
 	IsAdmin       bool   `json:"isAdmin"`
 	IsGlobalAdmin bool   `json:"isGlobalAdmin"`
+	IsForbidden   bool   `json:"isForbidden"`
 
 	Github string `xorm:"varchar(100)" json:"github"`
 	Google string `xorm:"varchar(100)" json:"google"`

@@ -45,6 +45,7 @@ func initBuiltInUser() {
 		Tag:           "staff",
 		IsAdmin:       true,
 		IsGlobalAdmin: true,
+		IsForbidden:   false,
 	}
 	AddUser(user)
 }

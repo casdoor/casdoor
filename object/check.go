@@ -65,6 +65,10 @@ func CheckUserLogin(organization string, username string, password string) (*Use
 		return nil, "password incorrect"
 	}
 
+	if user.IsForbidden {
+		return nil, "the user is forbidden to sign in, please contact the administrator"
+	}
+
 	return user, ""
 }
 

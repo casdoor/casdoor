@@ -96,7 +96,8 @@
     "Link": "绑定",
     "Unlink": "解绑",
     "Is admin": "是管理员",
-    "Is global admin": "是全局管理员"
+    "Is global admin": "是全局管理员",
+    "Is forbidden": "被禁用"
   },
   "application":
   {

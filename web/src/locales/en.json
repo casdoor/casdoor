@@ -94,7 +94,8 @@
     "Link": "Link",
     "Unlink": "Unlink",
     "Is admin": "Is admin",
-    "Is global admin": "Is global admin"
+    "Is global admin": "Is global admin",
+    "Is forbidden": "Is forbidden"
   },
   "application":
   {

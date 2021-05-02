@@ -99,6 +99,7 @@ func (c *ApiController) Signup() {
 			Affiliation:   form.Affiliation,
 			IsAdmin:       false,
 			IsGlobalAdmin: false,
+			IsForbidden:   false,
 		}
 		object.AddUser(user)
 

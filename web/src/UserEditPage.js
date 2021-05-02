@@ -364,6 +364,16 @@ class UserEditPage extends React.Component {
                   }} />
                 </Col>
               </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {i18next.t("user:Is forbidden")}:
+                </Col>
+                <Col span={1} >
+                  <Switch checked={this.state.user.isForbidden} onChange={checked => {
+                    this.updateUserField('isForbidden', checked);
+                  }} />
+                </Col>
+              </Row>
             </React.Fragment>
           )
         }

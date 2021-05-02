@@ -211,7 +211,7 @@ class UserListPage extends React.Component {
         dataIndex: 'isAdmin',
         key: 'isAdmin',
         width: '120px',
-        sorter: (a, b) => a.isAdmin.localeCompare(b.isAdmin),
+        sorter: (a, b) => a.isAdmin - b.isAdmin,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
@@ -223,7 +223,19 @@ class UserListPage extends React.Component {
         dataIndex: 'isGlobalAdmin',
         key: 'isGlobalAdmin',
         width: '120px',
-        sorter: (a, b) => a.isGlobalAdmin.localeCompare(b.isGlobalAdmin),
+        sorter: (a, b) => a.isGlobalAdmin - b.isGlobalAdmin,
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          )
+        }
+      },
+      {
+        title: i18next.t("user:Is forbidden"),
+        dataIndex: 'isForbidden',
+        key: 'isForbidden',
+        width: '120px',
+        sorter: (a, b) => a.isForbidden - b.isForbidden,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
