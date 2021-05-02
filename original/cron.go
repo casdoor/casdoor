@@ -14,36 +14,10 @@
 
 package original
 
-import (
-	"fmt"
-	"testing"
-	"time"
+import "github.com/mileusna/crontab"
 
-	"github.com/casdoor/casdoor/object"
-)
+var ctab *crontab.Crontab
 
-func TestGetUsers(t *testing.T) {
-	initConfig()
-	initAdapter()
-
-	users := getUsersOriginal()
-	for _, user := range users {
-		fmt.Printf("%v\n", user)
-	}
-}
-
-func TestSyncUsers(t *testing.T) {
-	initConfig()
-	initAdapter()
-	object.InitAdapter()
-
-	syncUsers()
-
-	// run at every minute
-	schedule := "* * * * *"
-	err := ctab.AddJob(schedule, syncUsers)
-	if err != nil {
-		panic(err)
-	}
-	time.Sleep(time.Duration(1<<63 - 1))
+func init() {
+	ctab = crontab.New()
 }

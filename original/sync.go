@@ -45,6 +45,8 @@ func createUserFromOriginalUser(originalUser *User) *object.User {
 }
 
 func syncUsers() {
+	fmt.Printf("Running syncUsers()..\n")
+
 	userMap := getUserMap()
 	oUsers := getUsersOriginal()
 

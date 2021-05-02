@@ -13,6 +13,7 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/google/uuid v1.2.0
 	github.com/jinzhu/configor v1.2.1 // indirect
+	github.com/mileusna/crontab v1.0.1
 	github.com/qiangmzsx/string-adapter/v2 v2.1.0
 	github.com/qor/oss v0.0.0-20191031055114-aef9ba66bf76
 	github.com/satori/go.uuid v1.2.0 // indirect
