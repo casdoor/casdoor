@@ -140,14 +140,6 @@ class LoginPage extends React.Component {
     }
   }
 
-  getSignupPath(application) {
-    if (authConfig.appName === application.name) {
-      return "/signup";
-    } else {
-      return `/signup/${application.name}`;
-    }
-  }
-
   renderForm(application) {
     if (this.state.msg !== null) {
       return Util.renderMessage(this.state.msg)
@@ -203,7 +195,9 @@ class LoginPage extends React.Component {
                 {i18next.t("login:Auto login")}
               </Checkbox>
             </Form.Item>
-            <Link style={{float: "right"}} to="/forgot">
+            <Link style={{float: "right"}} onClick={() => {
+              Setting.goToForget(this, application);
+            }}>
               {i18next.t("login:Forgot password?")}
             </Link>
           </Form.Item>
@@ -220,7 +214,9 @@ class LoginPage extends React.Component {
               !application.enableSignUp ? null : (
                 <div style={{float: "right"}}>
                   {i18next.t("login:No account yet?")}&nbsp;
-                  <Link to={this.getSignupPath(application)}>
+                  <Link onClick={() => {
+                    Setting.goToSignup(this, application);
+                  }}>
                     {i18next.t("login:sign up now")}
                   </Link>
                 </div>
@@ -259,9 +255,11 @@ class LoginPage extends React.Component {
               <div>
                 <br/>
                 <div style={{float: "right"}}>
-                  No account yet?&nbsp;
-                  <Link to={this.getSignupPath(application)}>
-                    sign up now
+                  {i18next.t("login:No account yet?")}&nbsp;
+                  <Link onClick={() => {
+                    Setting.goToSignup(this, application);
+                  }}>
+                    {i18next.t("login:sign up now")}
                   </Link>
                 </div>
               </div>

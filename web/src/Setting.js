@@ -212,6 +212,38 @@ export function goToLogin(ths, application) {
   }
 }
 
+export function goToSignup(ths, application) {
+  if (application === null) {
+    return;
+  }
+
+  if (authConfig.appName === application.name) {
+    goToLinkSoft(ths, "/signup");
+  } else {
+    if (application.signupUrl === "") {
+      goToLinkSoft(ths, `/signup/${application.name}`);
+    } else {
+      goToLink(application.signupUrl);
+    }
+  }
+}
+
+export function goToForget(ths, application) {
+  if (application === null) {
+    return;
+  }
+
+  if (authConfig.appName === application.name) {
+    goToLinkSoft(ths, "/forget");
+  } else {
+    if (application.signupUrl === "") {
+      goToLinkSoft(ths, `/forget/${application.name}`);
+    } else {
+      goToLink(application.forgetUrl);
+    }
+  }
+}
+
 export function renderHelmet(application) {
   if (application === undefined || application === null || application.organizationObj === undefined || application.organizationObj === null ||application.organizationObj === "") {
     return null;

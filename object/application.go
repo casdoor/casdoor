@@ -39,6 +39,8 @@ type Application struct {
 	ClientSecret  string   `xorm:"varchar(100)" json:"clientSecret"`
 	RedirectUris  []string `xorm:"varchar(1000)" json:"redirectUris"`
 	ExpireInHours int      `json:"expireInHours"`
+	SignupUrl     string   `xorm:"varchar(100)" json:"signupUrl"`
+	ForgetUrl     string   `xorm:"varchar(100)" json:"forgetUrl"`
 }
 
 func GetApplications(owner string) []*Application {
