@@ -55,14 +55,33 @@ func CheckUserSignup(organization string, username string, password string, disp
 	}
 }
 
+func checkPassword(user *User, password string) string {
+	if user.PasswordType == "plain" {
+		if password == user.Password {
+			return ""
+		} else {
+			return "password incorrect"
+		}
+	} else if user.PasswordType == "salt" {
+		if getSaltedPassword(password) == user.Password {
+			return ""
+		} else {
+			return "password incorrect"
+		}
+	} else {
+		return fmt.Sprintf("unsupported password type: %s", user.PasswordType)
+	}
+}
+
 func CheckUserLogin(organization string, username string, password string) (*User, string) {
 	user := GetUserByFields(organization, username)
 	if user == nil {
 		return nil, "the user does not exist, please sign up first"
 	}
 
-	if user.Password != password {
-		return nil, "password incorrect"
+	msg := checkPassword(user, password)
+	if msg != "" {
+		return nil, msg
 	}
 
 	if user.IsForbidden {
