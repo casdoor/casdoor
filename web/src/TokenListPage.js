@@ -125,6 +125,34 @@ class TokenListPage extends React.Component {
         }
       },
       {
+        title: i18next.t("token:Organization"),
+        dataIndex: 'organization',
+        key: 'organization',
+        width: '120px',
+        sorter: (a, b) => a.organization.localeCompare(b.organization),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
+              {text}
+            </Link>
+          )
+        }
+      },
+      {
+        title: i18next.t("token:User"),
+        dataIndex: 'user',
+        key: 'user',
+        width: '120px',
+        sorter: (a, b) => a.user.localeCompare(b.user),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/users/${record.organization}/${text}`}>
+              {text}
+            </Link>
+          )
+        }
+      },
+      {
         title: i18next.t("token:Authorization code"),
         dataIndex: 'code',
         key: 'code',
@@ -159,13 +187,13 @@ class TokenListPage extends React.Component {
         width: '100px',
         sorter: (a, b) => a.scope.localeCompare(b.scope),
       },
-      {
-        title: i18next.t("token:Token type"),
-        dataIndex: 'tokenType',
-        key: 'tokenType',
-        width: '130px',
-        sorter: (a, b) => a.tokenType.localeCompare(b.tokenType),
-      },
+      // {
+      //   title: i18next.t("token:Token type"),
+      //   dataIndex: 'tokenType',
+      //   key: 'tokenType',
+      //   width: '130px',
+      //   sorter: (a, b) => a.tokenType.localeCompare(b.tokenType),
+      // },
       {
         title: i18next.t("general:Action"),
         dataIndex: '',

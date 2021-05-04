@@ -31,7 +31,9 @@ type Token struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Application string `xorm:"varchar(100)" json:"application"`
+	Application  string `xorm:"varchar(100)" json:"application"`
+	Organization string `xorm:"varchar(100)" json:"organization"`
+	User         string `xorm:"varchar(100)" json:"user"`
 
 	Code        string `xorm:"varchar(100)" json:"code"`
 	AccessToken string `xorm:"mediumtext" json:"accessToken"`
@@ -169,15 +171,17 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}
 
 	token := &Token{
-		Owner:       application.Owner,
-		Name:        util.GenerateId(),
-		CreatedTime: util.GetCurrentTime(),
-		Application: application.Name,
-		Code:        util.GenerateClientId(),
-		AccessToken: accessToken,
-		ExpiresIn:   application.ExpireInHours * 60,
-		Scope:       scope,
-		TokenType:   "Bearer",
+		Owner:        application.Owner,
+		Name:         util.GenerateId(),
+		CreatedTime:  util.GetCurrentTime(),
+		Application:  application.Name,
+		Organization: user.Owner,
+		User:         user.Name,
+		Code:         util.GenerateClientId(),
+		AccessToken:  accessToken,
+		ExpiresIn:    application.ExpireInHours * 60,
+		Scope:        scope,
+		TokenType:    "Bearer",
 	}
 	AddToken(token)
 
