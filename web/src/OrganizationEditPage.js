@@ -139,6 +139,16 @@ class OrganizationEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("general:Password salt")}:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.organization.passwordSalt} onChange={e => {
+              this.updateOrganizationField('passwordSalt', e.target.value);
+            }} />
+          </Col>
+        </Row>
       </Card>
     )
   }

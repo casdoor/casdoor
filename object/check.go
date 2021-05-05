@@ -65,7 +65,7 @@ func checkPassword(user *User, password string) string {
 			return "password incorrect"
 		}
 	} else if organization.PasswordType == "salt" {
-		if getSaltedPassword(password) == user.Password {
+		if getSaltedPassword(password, organization.PasswordSalt) == user.Password {
 			return ""
 		} else {
 			return "password incorrect"

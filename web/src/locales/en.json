@@ -20,6 +20,7 @@
     "Preview": "Preview",
     "User type": "User type",
     "Password type": "Password type",
+    "Password salt": "Password salt",
     "Password": "Password",
     "Email": "Email",
     "Phone": "Phone",

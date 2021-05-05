@@ -50,6 +50,8 @@ class OrganizationListPage extends React.Component {
       displayName: `New Organization - ${this.state.organizations.length}`,
       websiteUrl: "https://door.casbin.com",
       favicon: "https://cdn.casbin.com/static/favicon.ico",
+      passwordType: "plain",
+      PasswordSalt: "",
     }
   }
 
@@ -148,6 +150,13 @@ class OrganizationListPage extends React.Component {
         key: 'passwordType',
         width: '150px',
         sorter: (a, b) => a.passwordType.localeCompare(b.passwordType),
+      },
+      {
+        title: i18next.t("general:Password salt"),
+        dataIndex: 'passwordSalt',
+        key: 'passwordSalt',
+        width: '150px',
+        sorter: (a, b) => a.passwordSalt.localeCompare(b.passwordSalt),
       },
       {
         title: i18next.t("general:Action"),

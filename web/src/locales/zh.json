@@ -20,6 +20,7 @@
     "Preview": "预览",
     "User type": "用户类型",
     "Password type": "密码类型",
+    "Password salt": "密码Salt值",
     "Password": "密码",
     "Email": "电子邮箱",
     "Phone": "手机号",

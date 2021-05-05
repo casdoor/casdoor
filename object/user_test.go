@@ -47,5 +47,6 @@ func TestSyncIds(t *testing.T) {
 
 func TestGetSaltedPassword(t *testing.T) {
 	password := "123456"
-	fmt.Printf("%s -> %s\n", password, getSaltedPassword(password))
+	salt := "123"
+	fmt.Printf("%s -> %s\n", password, getSaltedPassword(password, salt))
 }

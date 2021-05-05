@@ -49,7 +49,6 @@ class UserListPage extends React.Component {
       createdTime: moment().format(),
       type: "normal-user",
       password: "123",
-      passwordType: "plain",
       displayName: `New User - ${this.state.users.length}`,
       avatar: "https://casbin.org/img/casbin.svg",
       email: "user@example.com",
@@ -58,6 +57,8 @@ class UserListPage extends React.Component {
       affiliation: "Example Inc.",
       tag: "staff",
       isAdmin: false,
+      isGlobalAdmin: false,
+      IsForbidden: false,
     }
   }
 

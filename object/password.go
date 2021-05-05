@@ -30,7 +30,7 @@ func getSha256HexDigest(s string) string {
 	return res
 }
 
-func getSaltedPassword(password string) string {
+func getSaltedPassword(password string, salt string) string {
 	hash1 := getSha256HexDigest(password)
 	res := getSha256HexDigest(hash1 + salt)
 	return res
