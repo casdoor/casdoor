@@ -30,7 +30,6 @@ func createUserFromOriginalUser(originalUser *User) *object.User {
 		Id:            strconv.Itoa(originalUser.Id),
 		Type:          "normal-user",
 		Password:      originalUser.Password,
-		PasswordType:  "salt",
 		DisplayName:   originalUser.Name,
 		Avatar:        fmt.Sprintf("%s%s", avatarBaseUrl, originalUser.Avatar),
 		Email:         "",

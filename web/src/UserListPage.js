@@ -130,20 +130,6 @@ class UserListPage extends React.Component {
           return Setting.getFormattedDate(text);
         }
       },
-      // {
-      //   title: 'Password type',
-      //   dataIndex: 'passwordType',
-      //   key: 'passwordType',
-      //   width: '150px',
-      //   sorter: (a, b) => a.passwordType.localeCompare(b.passwordType),
-      // },
-      // {
-      //   title: 'Password',
-      //   dataIndex: 'password',
-      //   key: 'password',
-      //   width: '150px',
-      //   sorter: (a, b) => a.password.localeCompare(b.password),
-      // },
       {
         title: i18next.t("general:Display name"),
         dataIndex: 'displayName',

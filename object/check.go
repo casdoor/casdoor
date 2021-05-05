@@ -56,20 +56,22 @@ func CheckUserSignup(organization string, username string, password string, disp
 }
 
 func checkPassword(user *User, password string) string {
-	if user.PasswordType == "plain" {
+	organization := getOrganization("admin", user.Owner)
+
+	if organization.PasswordType == "plain" {
 		if password == user.Password {
 			return ""
 		} else {
 			return "password incorrect"
 		}
-	} else if user.PasswordType == "salt" {
+	} else if organization.PasswordType == "salt" {
 		if getSaltedPassword(password) == user.Password {
 			return ""
 		} else {
 			return "password incorrect"
 		}
 	} else {
-		return fmt.Sprintf("unsupported password type: %s", user.PasswordType)
+		return fmt.Sprintf("unsupported password type: %s", organization.PasswordType)
 	}
 }
 
@@ -79,13 +81,13 @@ func CheckUserLogin(organization string, username string, password string) (*Use
 		return nil, "the user does not exist, please sign up first"
 	}
 
+	if user.IsForbidden {
+		return nil, "the user is forbidden to sign in, please contact the administrator"
+	}
+
 	msg := checkPassword(user, password)
 	if msg != "" {
 		return nil, msg
-	}
-
-	if user.IsForbidden {
-		return nil, "the user is forbidden to sign in, please contact the administrator"
 	}
 
 	return user, ""

@@ -13,11 +13,13 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row} from 'antd';
+import {Button, Card, Col, Input, Row, Select} from 'antd';
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
+
+const { Option } = Select;
 
 class OrganizationEditPage extends React.Component {
   constructor(props) {
@@ -122,6 +124,19 @@ class OrganizationEditPage extends React.Component {
             <Input value={this.state.organization.websiteUrl} onChange={e => {
               this.updateOrganizationField('websiteUrl', e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("general:Password type")}:
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: '100%'}} value={this.state.organization.passwordType} onChange={(value => {this.updateOrganizationField('passwordType', value);})}>
+              {
+                ['plain', 'salt']
+                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
       </Card>

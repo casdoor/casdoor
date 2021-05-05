@@ -90,7 +90,6 @@ func (c *ApiController) Signup() {
 			Id:            util.GenerateId(),
 			Type:          "normal-user",
 			Password:      form.Password,
-			PasswordType:  "plain",
 			DisplayName:   form.Name,
 			Avatar:        "https://casbin.org/img/casbin.svg",
 			Email:         form.Email,

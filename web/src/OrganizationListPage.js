@@ -143,6 +143,13 @@ class OrganizationListPage extends React.Component {
         }
       },
       {
+        title: i18next.t("general:Password type"),
+        dataIndex: 'passwordType',
+        key: 'passwordType',
+        width: '150px',
+        sorter: (a, b) => a.passwordType.localeCompare(b.passwordType),
+      },
+      {
         title: i18next.t("general:Action"),
         dataIndex: '',
         key: 'op',
