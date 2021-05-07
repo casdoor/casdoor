@@ -221,3 +221,19 @@ func GetUserField(user *User, field string) string {
 	f := reflect.Indirect(u).FieldByName(field)
 	return f.String()
 }
+
+func GetMaskedUser(user *User) *User {
+	user.Password = "***"
+	user.Github = "***"
+	user.Google = "***"
+	user.QQ = "***"
+	user.WeChat = "***"
+	return user
+}
+
+func GetMaskedUsers(users []*User) []*User {
+	for _, user := range users {
+		user = GetMaskedUser(user)
+	}
+	return users
+}

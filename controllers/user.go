@@ -25,7 +25,7 @@ import (
 // @Success 200 {array} object.User The Response object
 // @router /get-global-users [get]
 func (c *ApiController) GetGlobalUsers() {
-	c.Data["json"] = object.GetGlobalUsers()
+	c.Data["json"] = object.GetMaskedUsers(object.GetGlobalUsers())
 	c.ServeJSON()
 }
 
@@ -37,7 +37,7 @@ func (c *ApiController) GetGlobalUsers() {
 func (c *ApiController) GetUsers() {
 	owner := c.Input().Get("owner")
 
-	c.Data["json"] = object.GetUsers(owner)
+	c.Data["json"] = object.GetMaskedUsers(object.GetUsers(owner))
 	c.ServeJSON()
 }
 
@@ -49,7 +49,7 @@ func (c *ApiController) GetUsers() {
 func (c *ApiController) GetUser() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetUser(id)
+	c.Data["json"] = object.GetMaskedUser(object.GetUser(id))
 	c.ServeJSON()
 }
 
