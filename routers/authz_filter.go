@@ -94,6 +94,13 @@ func denyRequest(ctx *context.Context) {
 	}
 }
 
+func willLog(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
+	if subOwner == "anonymous" && subName == "anonymous" && method == "GET" && (urlPath == "/api/get-account" || urlPath == "/api/get-app-login") && objOwner == "" && objName == "" {
+		return false
+	}
+	return true
+}
+
 func AuthzFilter(ctx *context.Context) {
 	subOwner, subName := getSubject(ctx)
 	method := ctx.Request.Method
@@ -106,10 +113,14 @@ func AuthzFilter(ctx *context.Context) {
 	if isAllowed {
 		result = "allow"
 	}
-	logLine := fmt.Sprintf("subOwner = %s, subName = %s, method = %s, urlPath = %s, obj.Owner = %s, obj.Name = %s, result = %s",
-		subOwner, subName, method, urlPath, objOwner, objName, result)
-	fmt.Println(logLine)
-	util.LogInfo(ctx, logLine)
+
+	if willLog(subOwner, subName, method, urlPath, objOwner, objName) {
+		logLine := fmt.Sprintf("subOwner = %s, subName = %s, method = %s, urlPath = %s, obj.Owner = %s, obj.Name = %s, result = %s",
+			subOwner, subName, method, urlPath, objOwner, objName, result)
+		fmt.Println(logLine)
+		util.LogInfo(ctx, logLine)
+	}
+
 	if !isAllowed {
 		denyRequest(ctx)
 	}

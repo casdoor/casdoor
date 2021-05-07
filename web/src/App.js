@@ -219,20 +219,20 @@ class App extends Component {
     if (this.state.account === undefined) {
       return null;
     } else if (this.state.account === null) {
-      res.push(
-        <Menu.Item key="100" style={{float: 'right', marginRight: '20px'}}>
-          <Link to="/signup">
-            {i18next.t("account:Sign Up")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
-        <Menu.Item key="101" style={{float: 'right'}}>
-          <Link to="/login">
-            {i18next.t("account:Login")}
-          </Link>
-        </Menu.Item>
-      );
+      // res.push(
+      //   <Menu.Item key="100" style={{float: 'right', marginRight: '20px'}}>
+      //     <Link to="/signup">
+      //       {i18next.t("account:Sign Up")}
+      //     </Link>
+      //   </Menu.Item>
+      // );
+      // res.push(
+      //   <Menu.Item key="101" style={{float: 'right'}}>
+      //     <Link to="/login">
+      //       {i18next.t("account:Login")}
+      //     </Link>
+      //   </Menu.Item>
+      // );
     } else {
       res.push(this.renderRightDropdown());
     }

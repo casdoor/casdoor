@@ -14,7 +14,7 @@
 
 import React from 'react';
 import {Link} from "react-router-dom";
-import {Form, Input, Select, Checkbox, Button, Row, Col} from 'antd';
+import {Form, Input, Select, Checkbox, Button, Row, Col, Result} from 'antd';
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import i18next from "i18next";
@@ -113,6 +113,26 @@ class SignupPage extends React.Component {
   }
 
   renderForm(application) {
+    if (!application.enableSignUp) {
+      return (
+        <Result
+          status="error"
+          title="Sign Up Error"
+          subTitle={"The application does not allow to sign up new account"}
+          extra={[
+            <Link onClick={() => {
+              Setting.goToLogin(this, application);
+            }}>
+              <Button type="primary" key="signin">
+                Sign In
+              </Button>
+            </Link>
+          ]}
+        >
+        </Result>
+      )
+    }
+
     const prefixSelector = (
       <Form.Item name="phonePrefix" noStyle>
         <Select
@@ -134,12 +154,24 @@ class SignupPage extends React.Component {
         onFinish={(values) => this.onFinish(values)}
         onFinishFailed={(errorInfo) => this.onFinishFailed(errorInfo.values, errorInfo.errorFields, errorInfo.outOfDate)}
         initialValues={{
+          application: application.name,
           organization: application.organization,
           phonePrefix: '86',
         }}
         style={{width: !Setting.isMobile() ? "400px" : "250px"}}
         size="large"
       >
+        <Form.Item
+          style={{height: 0, visibility: "hidden"}}
+          name="application"
+          rules={[
+            {
+              required: true,
+              message: 'Please input your application!',
+            },
+          ]}
+        >
+        </Form.Item>
         <Form.Item
           style={{height: 0, visibility: "hidden"}}
           name="organization"
@@ -221,7 +253,7 @@ class SignupPage extends React.Component {
         </Form.Item>
         <Form.Item
           name="confirm"
-          label={i18next.t("signup:Confirm password")}
+          label={i18next.t("signup:Confirm")}
           dependencies={['password']}
           hasFeedback
           rules={[

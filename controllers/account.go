@@ -78,6 +78,14 @@ func (c *ApiController) Signup() {
 		panic(err)
 	}
 
+	application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+	if !application.EnableSignUp {
+		resp = Response{Status: "error", Msg: "The application does not allow to sign up new account", Data: c.GetSessionUser()}
+		c.Data["json"] = resp
+		c.ServeJSON()
+		return
+	}
+
 	userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
 	msg := object.CheckUserSignup(form.Organization, form.Username, form.Password, form.Name, form.Email, form.PhonePrefix, form.Phone, form.Affiliation)
 	if msg != "" {
