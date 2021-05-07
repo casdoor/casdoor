@@ -16,6 +16,7 @@ package main
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/plugins/cors"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/controllers"
@@ -53,6 +54,13 @@ func main() {
 	beego.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
 	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 365
 	//beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
+
+	err := logs.SetLogger("file", `{"filename":"logs/casdoor.log","maxdays":99999}`)
+	if err != nil {
+		panic(err)
+	}
+	logs.SetLevel(logs.LevelInformational)
+	logs.SetLogFuncCall(false)
 
 	beego.Run()
 }

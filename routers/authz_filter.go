@@ -102,8 +102,14 @@ func AuthzFilter(ctx *context.Context) {
 
 	isAllowed := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName)
 
-	fmt.Printf("subOwner = %s, subName = %s, method = %s, urlPath = %s, obj.Owner = %s, obj.Name = %s, isAllowed = %v\n",
-		subOwner, subName, method, urlPath, objOwner, objName, isAllowed)
+	result := "deny"
+	if isAllowed {
+		result = "allow"
+	}
+	logLine := fmt.Sprintf("subOwner = %s, subName = %s, method = %s, urlPath = %s, obj.Owner = %s, obj.Name = %s, result = %s",
+		subOwner, subName, method, urlPath, objOwner, objName, result)
+	fmt.Println(logLine)
+	util.LogInfo(ctx, logLine)
 	if !isAllowed {
 		denyRequest(ctx)
 	}
