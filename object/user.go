@@ -15,8 +15,6 @@
 package object
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"fmt"
 	"reflect"
 	"strings"
@@ -237,17 +235,16 @@ func GetMaskedUsers(users []*User) []*User {
 	return users
 }
 
-func getMd5Hash(text string) string {
-	hash := md5.Sum([]byte(text))
-	return hex.EncodeToString(hash[:])
-}
-
 func calculateHash(user *User) string {
 	s := strings.Join([]string{user.Id, user.Password, user.DisplayName, user.Avatar, user.Phone}, "|")
-	return getMd5Hash(s)
+	return util.GetMd5Hash(s)
 }
 
 func (user *User) UpdateUserHash() {
 	hash := calculateHash(user)
 	user.Hash = hash
+}
+
+func (user *User) GetId() string {
+	return fmt.Sprintf("%s/%s", user.Owner, user.Name)
 }

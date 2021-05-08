@@ -16,12 +16,17 @@ package original
 
 import "github.com/casdoor/casdoor/object"
 
-func getUserMap() map[string]*object.User {
+func getUsers() []*object.User {
 	users := object.GetUsers(orgName)
+	return users
+}
+
+func getUserMap() ([]*object.User, map[string]*object.User) {
+	users := getUsers()
 
 	m := map[string]*object.User{}
 	for _, user := range users {
 		m[user.Name] = user
 	}
-	return m
+	return users, m
 }

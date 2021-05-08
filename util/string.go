@@ -15,6 +15,8 @@
 package util
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"strings"
@@ -37,4 +39,9 @@ func GenerateId() string {
 
 func GetId(name string) string {
 	return fmt.Sprintf("admin/%s", name)
+}
+
+func GetMd5Hash(text string) string {
+	hash := md5.Sum([]byte(text))
+	return hex.EncodeToString(hash[:])
 }

@@ -14,6 +14,13 @@
 
 package original
 
+import (
+	"strconv"
+	"strings"
+
+	"github.com/casdoor/casdoor/util"
+)
+
 type User struct {
 	Id        int    `xorm:"int notnull pk autoincr" json:"id"`
 	Name      string `xorm:"varchar(128)" json:"name"`
@@ -37,12 +44,17 @@ func getUsersOriginal() []*User {
 	return users
 }
 
-//func getUserMapOriginal() map[string]*User {
-//	users := getUsersOriginal()
-//
-//	m := map[string]*User{}
-//	for _, user := range users {
-//		m[strconv.Itoa(user.Id)] = user
-//	}
-//	return m
-//}
+func getUserMapOriginal() ([]*User, map[string]*User) {
+	users := getUsersOriginal()
+
+	m := map[string]*User{}
+	for _, user := range users {
+		m[strconv.Itoa(user.Id)] = user
+	}
+	return users, m
+}
+
+func calculateHash(user *User) string {
+	s := strings.Join([]string{strconv.Itoa(user.Id), user.Password, user.Name, getFullAvatarUrl(user.Avatar), user.Cellphone}, "|")
+	return util.GetMd5Hash(s)
+}

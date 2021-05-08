@@ -198,7 +198,7 @@ func (c *ApiController) UploadAvatar() {
 		return
 	}
 	user.Avatar = fmt.Sprintf("%s%s.png?time=%s", object.GetAvatarPath(), user.Name, util.GetCurrentUnixTime())
-	object.UpdateUser(user.Owner+"/"+user.Name, user)
+	object.UpdateUser(user.GetId(), user)
 	resp = Response{Status: "ok", Msg: ""}
 	c.Data["json"] = resp
 	c.ServeJSON()
