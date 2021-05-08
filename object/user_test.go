@@ -45,6 +45,20 @@ func TestSyncIds(t *testing.T) {
 	}
 }
 
+func TestSyncHashes(t *testing.T) {
+	InitConfig()
+
+	users := GetGlobalUsers()
+	for _, user := range users {
+		if user.Hash != "" {
+			continue
+		}
+
+		user.UpdateUserHash()
+		updateUserColumn("hash", user)
+	}
+}
+
 func TestGetSaltedPassword(t *testing.T) {
 	password := "123456"
 	salt := "123"

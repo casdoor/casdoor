@@ -15,8 +15,11 @@
 package object
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -40,6 +43,7 @@ type User struct {
 	IsAdmin       bool   `json:"isAdmin"`
 	IsGlobalAdmin bool   `json:"isGlobalAdmin"`
 	IsForbidden   bool   `json:"isForbidden"`
+	Hash          string `xorm:"varchar(100)" json:"hash"`
 
 	Github string `xorm:"varchar(100)" json:"github"`
 	Google string `xorm:"varchar(100)" json:"google"`
@@ -92,6 +96,8 @@ func UpdateUser(id string, user *User) bool {
 		return false
 	}
 
+	user.UpdateUserHash()
+
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
 		panic(err)
@@ -102,6 +108,8 @@ func UpdateUser(id string, user *User) bool {
 
 func AddUser(user *User) bool {
 	user.Id = util.GenerateId()
+	user.UpdateUserHash()
+
 	affected, err := adapter.Engine.Insert(user)
 	if err != nil {
 		panic(err)
@@ -111,6 +119,10 @@ func AddUser(user *User) bool {
 }
 
 func AddUsers(users []*User) bool {
+	for _, user := range users {
+		user.UpdateUserHash()
+	}
+
 	affected, err := adapter.Engine.Insert(users)
 	if err != nil {
 		panic(err)
@@ -223,4 +235,19 @@ func GetMaskedUsers(users []*User) []*User {
 		user = GetMaskedUser(user)
 	}
 	return users
+}
+
+func getMd5Hash(text string) string {
+	hash := md5.Sum([]byte(text))
+	return hex.EncodeToString(hash[:])
+}
+
+func calculateHash(user *User) string {
+	s := strings.Join([]string{user.Id, user.Password, user.DisplayName, user.Avatar, user.Phone}, "|")
+	return getMd5Hash(s)
+}
+
+func (user *User) UpdateUserHash() {
+	hash := calculateHash(user)
+	user.Hash = hash
 }
