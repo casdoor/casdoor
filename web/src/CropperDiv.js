@@ -93,32 +93,28 @@ export const CropperDiv = (props) => {
                     [<Button block type="primary" onClick={handleOk}>{i18next.t("user:Set new profile picture")}</Button>]
                 }
             >
-                <Col>
-                    <Row>
-                        <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
-                            <Row style={{width: "100%", marginBottom: "20px"}}>
-                                <input style={{display: "none"}} name="fileupload" type="file" onChange={onChange}/>
-                                <Button block onClick={selectFile}>{i18next.t("user:Select a photo...")}</Button>
-                            </Row>
-                            <Cropper
-                                style={{height: "100%"}}
-                                initialAspectRatio={1}
-                                preview=".img-preview"
-                                src={image}
-                                viewMode={1}
-                                guides={true}
-                                minCropBoxHeight={10}
-                                minCropBoxWidth={10}
-                                background={false}
-                                responsive={true}
-                                autoCropArea={1}
-                                checkOrientation={false}
-                                onInitialized={(instance) => {
-                                    setCropper(instance);
-                                }}
-                            />
-                        </Col>
+                <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
+                    <Row style={{width: "100%", marginBottom: "20px"}}>
+                        <input style={{display: "none"}} name="fileupload" type="file" onChange={onChange}/>
+                        <Button block onClick={selectFile}>{i18next.t("user:Select a photo...")}</Button>
                     </Row>
+                    <Cropper
+                      style={{height: "100%"}}
+                      initialAspectRatio={1}
+                      preview=".img-preview"
+                      src={image}
+                      viewMode={1}
+                      guides={true}
+                      minCropBoxHeight={10}
+                      minCropBoxWidth={10}
+                      background={false}
+                      responsive={true}
+                      autoCropArea={1}
+                      checkOrientation={false}
+                      onInitialized={(instance) => {
+                          setCropper(instance);
+                      }}
+                    />
                 </Col>
             </Modal>
         </div>

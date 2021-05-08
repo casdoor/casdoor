@@ -92,7 +92,3 @@ func CheckUserLogin(organization string, username string, password string) (*Use
 
 	return user, ""
 }
-
-func (user *User) GetId() string {
-	return fmt.Sprintf("%s/%s", user.Owner, user.Name)
-}
