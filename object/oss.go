@@ -116,10 +116,11 @@ func UploadAvatar(username string, avatar []byte) string {
 			return "oss error"
 		}
 	}
-	_, err := storage.Put("/casdoor/avatar/" + username + ".png", bytes.NewReader(avatar))
+
+	path := fmt.Sprintf("/casdoor/avatar/%s.png", username)
+	_, err := storage.Put(path, bytes.NewReader(avatar))
 	if err != nil {
 		panic(err)
-		return "oss error"
 	}
 	return ""
 }
