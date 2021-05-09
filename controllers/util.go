@@ -24,7 +24,7 @@ import (
 var httpClient *http.Client
 
 func InitHttpClient() {
-	useProxy, err := beego.AppConfig.Bool("UseProxy")
+	useProxy, err := beego.AppConfig.Bool("useProxy")
 	if err != nil {
 		panic(err)
 	}

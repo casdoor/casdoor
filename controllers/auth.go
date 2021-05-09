@@ -121,8 +121,8 @@ func (c *ApiController) Login() {
 		idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
 		idProvider.SetHttpClient(httpClient)
 
-		if form.State != beego.AppConfig.String("AuthState") && form.State != application.Name {
-			resp = &Response{Status: "error", Msg: fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("AuthState"), form.State)}
+		if form.State != beego.AppConfig.String("authState") && form.State != application.Name {
+			resp = &Response{Status: "error", Msg: fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("authState"), form.State)}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return
