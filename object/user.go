@@ -105,6 +105,15 @@ func UpdateUser(id string, user *User) bool {
 	return affected != 0
 }
 
+func UpdateUserForOriginal(user *User) bool {
+	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("displayName", "password", "phone", "avatar", "isForbidden").Update(user)
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
+}
+
 func AddUser(user *User) bool {
 	user.Id = util.GenerateId()
 	user.UpdateUserHash()

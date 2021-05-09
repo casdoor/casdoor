@@ -54,6 +54,15 @@ func getUserMapOriginal() ([]*User, map[string]*User) {
 	return users, m
 }
 
+func updateUser(user *User) bool {
+	affected, err := adapter.Engine.ID(user.Id).Cols("name", "password", "cellphone", "avatar", "deleted").Update(user)
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
+}
+
 func calculateHash(user *User) string {
 	s := strings.Join([]string{strconv.Itoa(user.Id), user.Password, user.Name, getFullAvatarUrl(user.Avatar), user.Cellphone}, "|")
 	return util.GetMd5Hash(s)

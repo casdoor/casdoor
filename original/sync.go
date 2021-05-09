@@ -47,29 +47,80 @@ func createUserFromOriginalUser(originalUser *User) *object.User {
 	return user
 }
 
+func createOriginalUserFromUser(user *object.User) *User {
+	deleted := 0
+	if user.IsForbidden {
+		deleted = 1
+	}
+
+	originalUser := &User{
+		Id:        util.ParseInt(user.Id),
+		Name:      user.DisplayName,
+		Password:  user.Password,
+		Cellphone: user.Phone,
+		Avatar:    user.Avatar,
+		Deleted:   deleted,
+	}
+	return originalUser
+}
+
 func syncUsers() {
 	fmt.Printf("Running syncUsers()..\n")
 
 	users, userMap := getUserMap()
-	oUsers, _ := getUserMapOriginal()
+	oUsers, oUserMap := getUserMapOriginal()
 	fmt.Printf("Users: %d, oUsers: %d\n", len(users), len(oUsers))
 
 	newUsers := []*object.User{}
 	for _, oUser := range oUsers {
 		id := strconv.Itoa(oUser.Id)
 		if _, ok := userMap[id]; !ok {
-			user := createUserFromOriginalUser(oUser)
-			fmt.Printf("New user: %v\n", user)
-			newUsers = append(newUsers, user)
+			newUser := createUserFromOriginalUser(oUser)
+			fmt.Printf("New user: %v\n", newUser)
+			newUsers = append(newUsers, newUser)
 		} else {
 			user := userMap[id]
-			hash := calculateHash(oUser)
-			if user.Hash != hash {
-				user := createUserFromOriginalUser(oUser)
-				object.UpdateUser(user.GetId(), user)
-				fmt.Printf("Update user: %v\n", user)
+			oHash := calculateHash(oUser)
+
+			if user.Hash == user.PreHash {
+				if user.Hash != oHash {
+					updatedUser := createUserFromOriginalUser(oUser)
+					updatedUser.Hash = oHash
+					updatedUser.PreHash = oHash
+					object.UpdateUserForOriginal(updatedUser)
+					fmt.Printf("Update from oUser to user: %v\n", updatedUser)
+				}
+			} else {
+				if user.PreHash == oHash {
+					updatedOUser := createOriginalUserFromUser(user)
+					updateUser(updatedOUser)
+					fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
+
+					// update preHash
+					user.PreHash = user.Hash
+					object.SetUserField(user, "preHash", user.PreHash)
+				} else {
+					if user.Hash == oHash {
+						// update preHash
+						user.PreHash = user.Hash
+						object.SetUserField(user, "preHash", user.PreHash)
+					} else {
+						updatedUser := createUserFromOriginalUser(oUser)
+						updatedUser.Hash = oHash
+						updatedUser.PreHash = oHash
+						object.UpdateUserForOriginal(updatedUser)
+						fmt.Printf("Update from oUser to user (2nd condition): %v\n", updatedUser)
+					}
+				}
 			}
 		}
 	}
 	object.AddUsersSafe(newUsers)
+
+	for _, user := range users {
+		id := user.Id
+		if _, ok := oUserMap[id]; !ok {
+			panic(fmt.Sprintf("New original user: cannot create now, user = %v", user))
+		}
+	}
 }
