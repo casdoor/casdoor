@@ -42,6 +42,7 @@ type User struct {
 	IsGlobalAdmin bool   `json:"isGlobalAdmin"`
 	IsForbidden   bool   `json:"isForbidden"`
 	Hash          string `xorm:"varchar(100)" json:"hash"`
+	PreHash       string `xorm:"varchar(100)" json:"preHash"`
 
 	Github string `xorm:"varchar(100)" json:"github"`
 	Google string `xorm:"varchar(100)" json:"google"`
@@ -107,6 +108,7 @@ func UpdateUser(id string, user *User) bool {
 func AddUser(user *User) bool {
 	user.Id = util.GenerateId()
 	user.UpdateUserHash()
+	user.PreHash = user.Hash
 
 	affected, err := adapter.Engine.Insert(user)
 	if err != nil {
@@ -119,6 +121,7 @@ func AddUser(user *User) bool {
 func AddUsers(users []*User) bool {
 	for _, user := range users {
 		user.UpdateUserHash()
+		user.PreHash = user.Hash
 	}
 
 	affected, err := adapter.Engine.Insert(users)
