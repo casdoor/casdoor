@@ -17,6 +17,7 @@ package original
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -24,6 +25,13 @@ import (
 
 func getFullAvatarUrl(avatar string) string {
 	return fmt.Sprintf("%s%s", avatarBaseUrl, avatar)
+}
+
+func getPartialAvatarUrl(avatar string) string {
+	if strings.HasPrefix(avatar, avatarBaseUrl) {
+		return avatar[len(avatarBaseUrl):]
+	}
+	return avatar
 }
 
 func createUserFromOriginalUser(originalUser *User) *object.User {
@@ -58,7 +66,7 @@ func createOriginalUserFromUser(user *object.User) *User {
 		Name:      user.DisplayName,
 		Password:  user.Password,
 		Cellphone: user.Phone,
-		Avatar:    user.Avatar,
+		Avatar:    getPartialAvatarUrl(user.Avatar),
 		Deleted:   deleted,
 	}
 	return originalUser
@@ -98,12 +106,12 @@ func syncUsers() {
 
 					// update preHash
 					user.PreHash = user.Hash
-					object.SetUserField(user, "preHash", user.PreHash)
+					object.SetUserField(user, "pre_hash", user.PreHash)
 				} else {
 					if user.Hash == oHash {
 						// update preHash
 						user.PreHash = user.Hash
-						object.SetUserField(user, "preHash", user.PreHash)
+						object.SetUserField(user, "pre_hash", user.PreHash)
 					} else {
 						updatedUser := createUserFromOriginalUser(oUser)
 						updatedUser.Hash = oHash

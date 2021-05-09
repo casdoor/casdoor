@@ -199,7 +199,7 @@ func (c *ApiController) Login() {
 
 			// sync info from 3rd-party if possible
 			if user.DisplayName == "" && userInfo.Username != "" {
-				object.SetUserField(user, "displayName", userInfo.Username)
+				object.SetUserField(user, "display_name", userInfo.Username)
 			}
 			if user.Avatar == "" && userInfo.AvatarUrl != "" {
 				object.SetUserField(user, "avatar", userInfo.AvatarUrl)
