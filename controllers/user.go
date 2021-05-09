@@ -16,6 +16,8 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/object"
 )
@@ -101,5 +103,73 @@ func (c *ApiController) DeleteUser() {
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteUser(&user))
+	c.ServeJSON()
+}
+
+// @Title SetPassword
+// @Description set password
+// @Param   userOwner   formData    string  true        "The owner of the user"
+// @Param   userName   formData    string  true        "The name of the user"
+// @Param   oldPassword   formData    string  true        "The old password of the user"
+// @Param   newPassword   formData    string  true        "The new password of the user"
+// @Success 200 {object} controllers.Response The Response object
+// @router /set-password [post]
+func (c *ApiController) SetPassword() {
+	userOwner := c.Ctx.Request.Form.Get("userOwner")
+	userName := c.Ctx.Request.Form.Get("userName")
+	oldPassword := c.Ctx.Request.Form.Get("oldPassword")
+	newPassword := c.Ctx.Request.Form.Get("newPassword")
+
+	requestUserId := c.GetSessionUser()
+	if requestUserId == "" {
+		c.ResponseError("Please login first.")
+		return
+	}
+	requestUser := object.GetUser(requestUserId)
+	if requestUser == nil {
+		c.ResponseError("Session outdated. Please login again.")
+		return
+	}
+
+	userId := fmt.Sprintf("%s/%s", userOwner, userName)
+	targetUser := object.GetUser(userId)
+	if targetUser == nil {
+		c.ResponseError("Invalid user id.")
+		return
+	}
+
+	hasPermission := false
+
+	if requestUser.IsGlobalAdmin {
+		hasPermission = true
+	} else if requestUserId == userId {
+		hasPermission = true
+	} else if targetUser.Owner == requestUser.Owner && requestUser.IsAdmin {
+		hasPermission = true
+	}
+
+	if !hasPermission {
+		c.ResponseError("You don't have the permission to do this.")
+		return
+	}
+
+	if oldPassword != targetUser.Password {
+		c.ResponseError("Old password wrong.")
+		return
+	}
+
+	if strings.Index(newPassword, " ") >= 0 {
+		c.ResponseError("New password contains blank space.")
+		return
+	}
+
+	if newPassword == "" {
+		c.ResponseError("Invalid new password")
+		return
+	}
+
+	targetUser.Password = newPassword
+	object.SetUserField(targetUser, "password", targetUser.Password)
+	c.Data["json"] = Response{Status: "ok"}
 	c.ServeJSON()
 }

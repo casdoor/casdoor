@@ -100,7 +100,24 @@
     "Unlink": "解绑",
     "Is admin": "是管理员",
     "Is global admin": "是全局管理员",
-    "Is forbidden": "被禁用"
+    "Is forbidden": "被禁用",
+    "Empty input!": "输入为空！",
+    "Two passwords you typed do not match.": "两次输入的密码不匹配。",
+    "Password Set": "密码已设置",
+    "Set Password": "设置密码",
+    "Old Password": "旧密码",
+    "New Password": "新密码",
+    "Re-enter New": "重复新密码",
+    "Please login first.": "请先登录。",
+    "Session outdated. Please login again.": "会话已过期，请重新登陆。",
+    "Invalid user id.": "用户 ID 错误",
+    "You don't have the permission to do this.": "你没有权限这么做。",
+    "Old password wrong.": "旧密码错误！",
+    "New password contains blank space.": "新密码包含空格。",
+    "Invalid new password": "非法的新密码。",
+    "Password": "密码",
+    "Cancel": "取消",
+    "input password": "输入密码"
   },
   "application":
   {

@@ -24,6 +24,7 @@ import * as AuthBackend from "./auth/AuthBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Provider from "./auth/Provider";
+import PasswordModal from "./PasswordModal";
 
 const { Option } = Select;
 
@@ -266,11 +267,7 @@ class UserEditPage extends React.Component {
             {i18next.t("general:Password")}:
           </Col>
           <Col span={22} >
-            <Row>
-              <Button type="default">
-                {this.state.user.password === "" ? i18next.t("user:Set password...") : i18next.t("user:Modify password...")}
-              </Button>
-            </Row>
+            <PasswordModal user={this.state.user} />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

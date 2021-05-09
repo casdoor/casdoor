@@ -52,3 +52,8 @@ func InitHttpClient() {
 	//defer resp.Body.Close()
 	//println("Response status: %s", resp.Status)
 }
+
+func (c *ApiController) ResponseError(error string) {
+	c.Data["json"] = Response{Status: "error", Msg: error}
+	c.ServeJSON()
+}

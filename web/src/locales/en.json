@@ -98,7 +98,24 @@
     "Unlink": "Unlink",
     "Is admin": "Is admin",
     "Is global admin": "Is global admin",
-    "Is forbidden": "Is forbidden"
+    "Is forbidden": "Is forbidden",
+    "Empty input!": "Empty input!",
+    "Two passwords you typed do not match.": "Two passwords you typed do not match.",
+    "Password Set": "Password Set",
+    "Set Password": "Set Password",
+    "Old Password": "Old Password",
+    "New Password": "New Password",
+    "Re-enter New": "Re-enter New",
+    "Please login first.": "Please login first.",
+    "Session outdated. Please login again.": "Session outdated. Please login again.",
+    "Invalid user id.": "Invalid user id.",
+    "You don't have the permission to do this.": "You don't have the permission to do this.",
+    "Old password wrong.": "Old password wrong.",
+    "New password contains blank space.": "New password contains blank space.",
+    "Invalid new password": "Invalid new password",
+    "Password": "Password",
+    "Cancel": "Cancel",
+    "input password": "input password"
   },
   "application":
   {
