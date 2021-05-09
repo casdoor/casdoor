@@ -190,7 +190,7 @@ func (c *ApiController) UploadAvatar() {
 	}
 
 	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index+1:])
-	msg := object.UploadAvatar(user.Name, dist)
+	msg := object.UploadAvatar(user.Owner + "/" + user.Name, dist)
 	if msg != "" {
 		resp = Response{Status: "error", Msg: msg}
 		c.Data["json"] = resp
