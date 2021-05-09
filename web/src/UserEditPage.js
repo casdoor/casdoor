@@ -266,9 +266,11 @@ class UserEditPage extends React.Component {
             {i18next.t("general:Password")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.password} onChange={e => {
-              this.updateUserField('password', e.target.value);
-            }} />
+            <Row>
+              <Button type="default">
+                {this.state.user.password === "" ? i18next.t("user:Set password...") : i18next.t("user:Modify password...")}
+              </Button>
+            </Row>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

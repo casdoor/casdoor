@@ -96,7 +96,7 @@ func UpdateUser(id string, user *User) bool {
 
 	user.UpdateUserHash()
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("displayName", "avatar", "affiliation", "tag", "isAdmin", "isGlobalAdmin", "isForbidden").Update(user)
 	if err != nil {
 		panic(err)
 	}
@@ -224,7 +224,9 @@ func GetUserField(user *User, field string) string {
 }
 
 func GetMaskedUser(user *User) *User {
-	user.Password = "***"
+	if user.Password != "" {
+		user.Password = "***"
+	}
 	return user
 }
 
