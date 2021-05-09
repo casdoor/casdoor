@@ -79,3 +79,16 @@ export function uploadAvatar(avatar) {
     });
   });
 }
+
+export function setPassword(userOwner, userName, oldPassword, newPassword) {
+  let formData = new FormData();
+  formData.append("userOwner", userOwner);
+  formData.append("userName", userName);
+  formData.append("oldPassword", oldPassword);
+  formData.append("newPassword", newPassword);
+  return fetch(`${Setting.ServerUrl}/api/set-password`, {
+    method: "POST",
+    credentials: "include",
+    body: formData
+  }).then(res => res.json());
+}
