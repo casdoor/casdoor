@@ -1,8 +1,23 @@
+// Copyright 2021 The casbin Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package object
 
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -15,6 +30,9 @@ type VerificationRecord struct {
 }
 
 func SendVerificationCodeToEmail(remoteAddr, dest string) string {
+	if strings.Index(dest, "@") < 0 {
+		return "Invalid Email address"
+	}
 	title := "Casdoor Code"
 	sender := "Casdoor Admin"
 	code := getRandomCode(5)
@@ -28,6 +46,16 @@ func SendVerificationCodeToEmail(remoteAddr, dest string) string {
 		panic(err)
 	}
 
+	return ""
+}
+
+func SendVerificationCodeToPhone(remoteAddr, dest string) string {
+	code := getRandomCode(5)
+	if result := AddToVerificationRecord(remoteAddr, dest, code); len(result) != 0 {
+		return result
+	}
+
+	SendCodeToPhone(dest, code)
 	return ""
 }
 

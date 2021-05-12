@@ -47,10 +47,10 @@ export const ResetModal = (props) => {
     setConfirmLoading(true);
     UserBackend.resetEmailOrPhone(dest, destType, code).then(res => {
       if (res.status === "ok") {
-        Setting.showMessage("success", i18next.t(destType + " reset"));
+        Setting.showMessage("success", i18next.t("user:" + destType + " reset"));
         window.location.reload();
       } else {
-        Setting.showMessage("error", i18next.t(res.msg));
+        Setting.showMessage("error", i18next.t("user:" + res.msg));
         setConfirmLoading(false);
       }
     })
@@ -84,6 +84,10 @@ export const ResetModal = (props) => {
     })
   }
 
+  let placeHolder = "";
+  if (destType === "email") placeHolder = i18next.t("user:Input your email");
+  else if (destType === "phone") placeHolder = i18next.t("user:Phone prefix is needed");
+
   return (
     <Row>
       <Button style={{marginTop: '22px'}} type="default" onClick={showModal}>
@@ -101,7 +105,7 @@ export const ResetModal = (props) => {
       >
         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input addonBefore={i18next.t("user:New " + destType)} id="dest"
+            <Input addonBefore={i18next.t("user:New " + destType)} id="dest" placeholder={placeHolder}
                             addonAfter={<button style={{width: "90px", border: "none", backgroundColor: "#fff"}} onClick={sendCode}>{" " + sendButtonText + " "}</button>}
             />
 

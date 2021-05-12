@@ -285,14 +285,8 @@ class UserEditPage extends React.Component {
             {i18next.t("general:Phone")}:
           </Col>
           <Col span={22} >
-            <Input addonBefore={
-              <Select virtual={false} style={{width: 70}}  value={this.state.user.phonePrefix} onChange={(value => {this.updateUserField('phonePrefix', value);})}>
-                <Option value="1">+1</Option>
-                <Option value="86">+86</Option>
-              </Select>
-            } value={this.state.user.phone} onChange={e => {
-              this.updateUserField('phone', e.target.value);
-            }} />
+            <Input value={"+" + this.state.user.phonePrefix + this.state.user.phone} disabled/>
+            { this.state.user.id === this.props.account.id ? (<ResetModal buttonText={i18next.t("user:Reset Phone")} destType={"phone"} coolDownTime={60}/>) : null}
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
