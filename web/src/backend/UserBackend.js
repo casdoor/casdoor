@@ -92,3 +92,26 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
     body: formData
   }).then(res => res.json());
 }
+
+export function sendCode(dest, type) {
+  let formData = new FormData();
+  formData.append("dest", dest);
+  formData.append("type", type);
+  return fetch(`${Setting.ServerUrl}/api/send-verification-code`, {
+    method: "POST",
+    credentials: "include",
+    body: formData
+  }).then(res => res.json());
+}
+
+export function resetEmailOrPhone(dest, type, code) {
+  let formData = new FormData();
+  formData.append("dest", dest);
+  formData.append("type", type);
+  formData.append("code", code);
+  return fetch(`${Setting.ServerUrl}/api/reset-email-or-phone`, {
+    method: "POST",
+    credentials: "include",
+    body: formData
+  }).then(res => res.json());
+}
