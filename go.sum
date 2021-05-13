@@ -34,11 +34,11 @@ github.com/bradfitz/gomemcache v0.0.0-20180710155616-bc664df96737/go.mod h1:PmM6
 github.com/casbin/casbin v1.7.0 h1:PuzlE8w0JBg/DhIqnkF1Dewf3z+qmUZMVN07PonvVUQ=
 github.com/casbin/casbin v1.7.0/go.mod h1:c67qKN6Oum3UF5Q1+BByfFxkwKvhwW57ITjqwtzR1KE=
 github.com/casbin/casbin/v2 v2.1.0/go.mod h1:YcPU1XXisHhLzuxH9coDNf2FbKpjGlbCg3n9yuLkIJQ=
-github.com/casbin/casbin/v2 v2.11.2/go.mod h1:XXtYGrs/0zlOsJMeRteEdVi/FsB0ph7KgNfjoCoJUD8=
-github.com/casbin/casbin/v2 v2.23.4 h1:izvAG3KA49C3/m1zpYfkLcZlkYQO5VeHj7dhwurwZR4=
-github.com/casbin/casbin/v2 v2.23.4/go.mod h1:wUgota0cQbTXE6Vd+KWpg41726jFRi7upxio0sR+Xd0=
-github.com/casbin/xorm-adapter/v2 v2.2.0 h1:wAuYpCDRPUSFxdRqcRrGS0664UC7RKE21x7wrIl3rLQ=
-github.com/casbin/xorm-adapter/v2 v2.2.0/go.mod h1:9bPGOgjA/qbtjXHt3FC1rRyyRMkt9c+m8vlfLWjdSXU=
+github.com/casbin/casbin/v2 v2.25.5/go.mod h1:wUgota0cQbTXE6Vd+KWpg41726jFRi7upxio0sR+Xd0=
+github.com/casbin/casbin/v2 v2.30.1 h1:P5HWadDL7olwUXNdcuKUBk+x75Y2eitFxYTcLNKeKF0=
+github.com/casbin/casbin/v2 v2.30.1/go.mod h1:vByNa/Fchek0KZUgG5wEsl7iFsiviAYKRtgrQfcJqHg=
+github.com/casbin/xorm-adapter/v2 v2.3.1 h1:RVGsM6KYFP9s4OQJXrP/gv56Wmt5P40mzvcyXgv5xeg=
+github.com/casbin/xorm-adapter/v2 v2.3.1/go.mod h1:GZ+nlIdasVFunQ71SlvkL/HcQQBvFncphDf+2Yl167c=
 github.com/casdoor/go-sms-sender v0.0.1 h1:n/r6fGgXsV+6uMxXvb0XLZnUCjmbUB1uSB817Ej0/gI=
 github.com/casdoor/go-sms-sender v0.0.1/go.mod h1:rr4na8Zc+0vgPVY5JPB0LZkRVuj5AhNVhE1G7W8lDk8=
 github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+qY=

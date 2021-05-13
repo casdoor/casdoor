@@ -65,6 +65,8 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 		panic(err)
 	}
 
+	Enforcer.ClearPolicy()
+
 	//if len(Enforcer.GetPolicy()) == 0 {
 	if true {
 		ruleText := `
