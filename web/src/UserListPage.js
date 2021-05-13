@@ -52,7 +52,6 @@ class UserListPage extends React.Component {
       displayName: `New User - ${this.state.users.length}`,
       avatar: "https://casbin.org/img/casbin.svg",
       email: "user@example.com",
-      phonePrefix: "86",
       phone: "12345678",
       affiliation: "Example Inc.",
       tag: "staff",

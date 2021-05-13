@@ -101,7 +101,6 @@ func (c *ApiController) Signup() {
 			DisplayName:   form.Name,
 			Avatar:        "https://casbin.org/img/casbin.svg",
 			Email:         form.Email,
-			PhonePrefix:   form.PhonePrefix,
 			Phone:         form.Phone,
 			Affiliation:   form.Affiliation,
 			IsAdmin:       false,

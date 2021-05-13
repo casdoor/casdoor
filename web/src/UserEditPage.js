@@ -25,6 +25,7 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Provider from "./auth/Provider";
 import PasswordModal from "./PasswordModal";
+import ResetModal from "./ResetModal";
 
 const { Option } = Select;
 
@@ -275,9 +276,8 @@ class UserEditPage extends React.Component {
             {i18next.t("general:Email")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.email} onChange={e => {
-              this.updateUserField('email', e.target.value);
-            }} />
+            <Input value={this.state.user.email} disabled />
+            { this.state.user.id === this.props.account.id ? (<ResetModal buttonText={i18next.t("user:Reset Email")} destType={"email"} coolDownTime={60}/>) : null}
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
@@ -285,14 +285,8 @@ class UserEditPage extends React.Component {
             {i18next.t("general:Phone")}:
           </Col>
           <Col span={22} >
-            <Input addonBefore={
-              <Select virtual={false} style={{width: 70}}  value={this.state.user.phonePrefix} onChange={(value => {this.updateUserField('phonePrefix', value);})}>
-                <Option value="1">+1</Option>
-                <Option value="86">+86</Option>
-              </Select>
-            } value={this.state.user.phone} onChange={e => {
-              this.updateUserField('phone', e.target.value);
-            }} />
+            <Input value={this.state.user.phone} disabled/>
+            { this.state.user.id === this.props.account.id ? (<ResetModal buttonText={i18next.t("user:Reset Phone")} destType={"phone"} coolDownTime={60}/>) : null}
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

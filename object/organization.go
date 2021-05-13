@@ -29,6 +29,7 @@ type Organization struct {
 	Favicon      string `xorm:"varchar(100)" json:"favicon"`
 	PasswordType string `xorm:"varchar(100)" json:"passwordType"`
 	PasswordSalt string `xorm:"varchar(100)" json:"passwordSalt"`
+	PhonePrefix  string `xorm:"varchar(10)"  json:"phonePrefix"`
 }
 
 func GetOrganizations(owner string) []*Organization {
@@ -90,4 +91,17 @@ func DeleteOrganization(organization *Organization) bool {
 	}
 
 	return affected != 0
+}
+
+func GetOrganizationByName(name string) *Organization {
+	var ret Organization
+	ret.Name = name
+	has, err := adapter.Engine.Get(&ret)
+	if err != nil {
+		panic(err)
+	}
+	if !has {
+		return nil
+	}
+	return &ret
 }

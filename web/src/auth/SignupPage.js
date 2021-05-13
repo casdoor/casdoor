@@ -133,19 +133,6 @@ class SignupPage extends React.Component {
       )
     }
 
-    const prefixSelector = (
-      <Form.Item name="phonePrefix" noStyle>
-        <Select
-          style={{
-            width: 80,
-          }}
-        >
-          <Option value="1">+1</Option>
-          <Option value="86">+86</Option>
-        </Select>
-      </Form.Item>
-    );
-
     return (
       <Form
         {...formItemLayout}
@@ -156,7 +143,6 @@ class SignupPage extends React.Component {
         initialValues={{
           application: application.name,
           organization: application.organization,
-          phonePrefix: '86',
         }}
         style={{width: !Setting.isMobile() ? "400px" : "250px"}}
         size="large"
@@ -285,7 +271,6 @@ class SignupPage extends React.Component {
           ]}
         >
           <Input
-            addonBefore={prefixSelector}
             style={{
               width: '100%',
             }}
