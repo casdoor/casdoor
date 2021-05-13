@@ -133,7 +133,7 @@ class UserEditPage extends React.Component {
     const linkedValue = this.state.user[provider.type.toLowerCase()];
 
     return (
-      <Row style={{marginTop: '20px'}} >
+      <Row key={provider.name} style={{marginTop: '20px'}} >
         <Col style={{marginTop: '5px'}} span={2}>
           {
             Setting.getProviderLogo(provider)

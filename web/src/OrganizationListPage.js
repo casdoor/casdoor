@@ -52,6 +52,7 @@ class OrganizationListPage extends React.Component {
       favicon: "https://cdn.casbin.com/static/favicon.ico",
       passwordType: "plain",
       PasswordSalt: "",
+      phonePrefix: "86",
     }
   }
 

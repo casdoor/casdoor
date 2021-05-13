@@ -14,15 +14,13 @@
 
 import React from 'react';
 import {Link} from "react-router-dom";
-import {Form, Input, Select, Checkbox, Button, Row, Col, Result} from 'antd';
+import {Form, Input, Checkbox, Button, Row, Col, Result} from 'antd';
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import i18next from "i18next";
 import * as Util from "./Util";
 import {authConfig} from "./Auth";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
-
-const { Option } = Select;
 
 const formItemLayout = {
   labelCol: {
