@@ -19,6 +19,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 func (c *ApiController) SendVerificationCode() {
@@ -47,8 +48,16 @@ func (c *ApiController) SendVerificationCode() {
 	ret := "Invalid dest type."
 	switch destType {
 	case "email":
+		if !util.IsEmailValid(dest) {
+			c.ResponseError("Invalid Email address")
+			return
+		}
 		ret = object.SendVerificationCodeToEmail(remoteAddr, dest)
 	case "phone":
+		if !util.IsPhoneCnValid(dest) {
+			c.ResponseError("Invalid phone number")
+			return
+		}
 		org := object.GetOrganizationByName(user.Owner)
 		phonePrefix := "86"
 		if org != nil && org.PhonePrefix != "" {

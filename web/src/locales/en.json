@@ -135,7 +135,9 @@
     "You can only send one code in 60s.": "You can only send one code in 60s.",
     "Code has not been sent yet!": "Code has not been sent yet!",
     "You should verify your code in 5 min!": "You should verify your code in 5 min!",
-    "Wrong code!": "Wrong code!"
+    "Wrong code!": "Wrong code!",
+    "Invalid phone number": "Invalid phone number",
+    "Invalid Email address": "Invalid Email address"
   },
   "application":
   {

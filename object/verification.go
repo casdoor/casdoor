@@ -17,7 +17,6 @@ package object
 import (
 	"fmt"
 	"math/rand"
-	"strings"
 	"time"
 )
 
@@ -30,9 +29,6 @@ type VerificationRecord struct {
 }
 
 func SendVerificationCodeToEmail(remoteAddr, dest string) string {
-	if strings.Index(dest, "@") < 0 {
-		return "Invalid Email address"
-	}
 	title := "Casdoor Code"
 	sender := "Casdoor Admin"
 	code := getRandomCode(5)

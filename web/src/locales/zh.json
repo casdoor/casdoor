@@ -137,7 +137,9 @@
     "You can only send one code in 60s.": "每分钟你只能发送一次验证码",
     "Code has not been sent yet!": "你还没有发送验证码",
     "You should verify your code in 5 min!": "验证码已超时。你应该在 5 分钟内完成验证。",
-    "Wrong code!": "验证码错误！"
+    "Wrong code!": "验证码错误！",
+    "Invalid phone number": "手机号格式错误",
+    "Invalid Email address": "邮箱格式错误"
   },
   "application":
   {
