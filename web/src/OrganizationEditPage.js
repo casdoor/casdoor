@@ -149,6 +149,16 @@ class OrganizationEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("general:Phone Prefix")}:
+          </Col>
+          <Col span={22} >
+            <Input addonBefore={"+"} value={this.state.organization.phonePrefix} onChange={e => {
+              this.updateOrganizationField('phonePrefix', e.target.value);
+            }} />
+          </Col>
+        </Row>
       </Card>
     )
   }

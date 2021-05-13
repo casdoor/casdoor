@@ -29,7 +29,8 @@
     "Users under all organizations": "Users under all organizations",
     "OAuth providers": "OAuth providers",
     "Applications that requires authentication": "Applications that requires authentication",
-    "Swagger": "Swagger"
+    "Swagger": "Swagger",
+    "Phone Prefix": "Phone Prefix"
   },
   "signup":
   {
@@ -126,7 +127,7 @@
     "email reset": "Email Reset",
     "Code Sent": "Code Sent",
     "Input your email": "Input your email",
-    "Phone prefix is needed": "Phone prefix is needed",
+    "Input your phone number": "Input your phone number",
     "New phone": "New Phone",
     "New email": "New Email",
     "Code You Received": "Code You Received",

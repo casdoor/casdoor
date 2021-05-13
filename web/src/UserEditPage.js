@@ -285,7 +285,7 @@ class UserEditPage extends React.Component {
             {i18next.t("general:Phone")}:
           </Col>
           <Col span={22} >
-            <Input value={"+" + this.state.user.phonePrefix + this.state.user.phone} disabled/>
+            <Input value={this.state.user.phone} disabled/>
             { this.state.user.id === this.props.account.id ? (<ResetModal buttonText={i18next.t("user:Reset Phone")} destType={"phone"} coolDownTime={60}/>) : null}
           </Col>
         </Row>

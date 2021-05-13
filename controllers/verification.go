@@ -15,12 +15,24 @@
 package controllers
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
 )
 
 func (c *ApiController) SendVerificationCode() {
+	userId := c.GetSessionUser()
+	if len(userId) == 0 {
+		c.ResponseError("Please sign in first")
+		return
+	}
+	user := object.GetUser(userId)
+	if user == nil {
+		c.ResponseError("No such user.")
+		return
+	}
+
 	destType := c.Ctx.Request.Form.Get("type")
 	dest := c.Ctx.Request.Form.Get("dest")
 	remoteAddr := c.Ctx.Request.RemoteAddr
@@ -37,6 +49,12 @@ func (c *ApiController) SendVerificationCode() {
 	case "email":
 		ret = object.SendVerificationCodeToEmail(remoteAddr, dest)
 	case "phone":
+		org := object.GetOrganizationByName(user.Owner)
+		phonePrefix := "86"
+		if org != nil && org.PhonePrefix != "" {
+			phonePrefix = org.PhonePrefix
+		}
+		dest = fmt.Sprintf("+%s%s", phonePrefix, dest)
 		ret = object.SendVerificationCodeToPhone(remoteAddr, dest)
 	}
 
@@ -71,7 +89,16 @@ func (c *ApiController) ResetEmailOrPhone() {
 		return
 	}
 
-	if ret := object.CheckVerificationCode(dest, code); len(ret) != 0 {
+	checkDest := dest
+	if destType == "phone" {
+		org := object.GetOrganizationByName(user.Owner)
+		phonePrefix := "86"
+		if org != nil && org.PhonePrefix != "" {
+			phonePrefix = org.PhonePrefix
+		}
+		checkDest = fmt.Sprintf("+%s%s", phonePrefix, dest)
+	}
+	if ret := object.CheckVerificationCode(checkDest, code); len(ret) != 0 {
 		c.ResponseError(ret)
 		return
 	}
@@ -81,15 +108,8 @@ func (c *ApiController) ResetEmailOrPhone() {
 		user.Email = dest
 		object.SetUserField(user, "email", user.Email)
 	case "phone":
-		if strings.Index(dest, "+86") == 0 {
-			user.PhonePrefix = "86"
-			user.Phone = dest[3:]
-		} else if strings.Index(dest, "+1") == 0 {
-			user.PhonePrefix = "1"
-			user.Phone = dest[2:]
-		}
+		user.Phone = dest
 		object.SetUserField(user, "phone", user.Phone)
-		object.SetUserField(user, "phone_prefix", user.PhonePrefix)
 	default:
 		c.ResponseError("Unknown type.")
 		return

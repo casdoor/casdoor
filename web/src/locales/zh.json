@@ -29,7 +29,8 @@
     "Users under all organizations": "所有组织里的用户",
     "OAuth providers": "OAuth提供方",
     "Applications that requires authentication": "需要鉴权的应用",
-    "Swagger": "API总览"
+    "Swagger": "API总览",
+    "Phone Prefix": "电话前缀"
   },
   "signup":
   {
@@ -128,7 +129,7 @@
     "email reset": "邮箱已设置",
     "Code Sent": "验证码已发送",
     "Input your email": "请输入邮箱",
-    "Phone prefix is needed": "记得输入地区前缀（+86）",
+    "Input your phone number": "输入电话号码",
     "New phone": "新的电话号",
     "New email": "新的邮箱",
     "Code You Received": "你收到的验证码",

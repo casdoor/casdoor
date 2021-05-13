@@ -37,7 +37,7 @@ export const ResetModal = (props) => {
     let dest = document.getElementById("dest").value;
     let code = document.getElementById("code").value;
     if (dest === "") {
-      Setting.showMessage("error", i18next.t("user:Empty ") + destType);
+      Setting.showMessage("error", i18next.t("user:Empty " + destType));
       return;
     }
     if (code === "") {
@@ -70,7 +70,7 @@ export const ResetModal = (props) => {
     if (sendCodeCoolDown) return;
     let dest = document.getElementById("dest").value;
     if (dest === "") {
-      Setting.showMessage("error", i18next.t("user:Empty ") + destType);
+      Setting.showMessage("error", i18next.t("user:Empty " + destType));
       return;
     }
     UserBackend.sendCode(dest, destType).then(res => {
@@ -86,7 +86,7 @@ export const ResetModal = (props) => {
 
   let placeHolder = "";
   if (destType === "email") placeHolder = i18next.t("user:Input your email");
-  else if (destType === "phone") placeHolder = i18next.t("user:Phone prefix is needed");
+  else if (destType === "phone") placeHolder = i18next.t("user:Input your phone number");
 
   return (
     <Row>
