@@ -51,8 +51,7 @@ func SendVerificationCodeToPhone(remoteAddr, dest string) string {
 		return result
 	}
 
-	SendCodeToPhone(dest, code)
-	return ""
+	return SendCodeToPhone(dest, code)
 }
 
 func AddToVerificationRecord(remoteAddr, dest, code string) string {

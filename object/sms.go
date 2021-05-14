@@ -15,8 +15,6 @@
 package object
 
 import (
-	"fmt"
-
 	"github.com/astaxie/beego"
 	"github.com/casdoor/go-sms-sender"
 )
@@ -35,14 +33,14 @@ func InitSmsClient() {
 	client = go_sms_sender.NewSmsClient(provider, accessId, accessKey, sign, region, templateId, appId)
 }
 
-func SendCodeToPhone(phone, code string) {
+func SendCodeToPhone(phone, code string) string {
 	if client == nil {
 		InitSmsClient()
 		if client == nil {
-			fmt.Println("Sms Config Error")
-			return
+			return "SMS config error"
 		}
 	}
+
 	param := make(map[string]string)
 	if provider == "tencent" {
 		param["0"] = code
@@ -50,4 +48,5 @@ func SendCodeToPhone(phone, code string) {
 		param["code"] = code
 	}
 	client.SendMessage(param, phone)
+	return ""
 }

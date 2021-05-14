@@ -45,14 +45,14 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
-	ret := "Invalid dest type."
+	msg := "Invalid dest type."
 	switch destType {
 	case "email":
 		if !util.IsEmailValid(dest) {
 			c.ResponseError("Invalid Email address")
 			return
 		}
-		ret = object.SendVerificationCodeToEmail(remoteAddr, dest)
+		msg = object.SendVerificationCodeToEmail(remoteAddr, dest)
 	case "phone":
 		if !util.IsPhoneCnValid(dest) {
 			c.ResponseError("Invalid phone number")
@@ -64,17 +64,15 @@ func (c *ApiController) SendVerificationCode() {
 			phonePrefix = org.PhonePrefix
 		}
 		dest = fmt.Sprintf("+%s%s", phonePrefix, dest)
-		ret = object.SendVerificationCodeToPhone(remoteAddr, dest)
+		msg = object.SendVerificationCodeToPhone(remoteAddr, dest)
 	}
 
-	var status string
-	if len(ret) == 0 {
-		status = "ok"
-	} else {
+	status := "ok"
+	if msg != "" {
 		status = "error"
 	}
 
-	c.Data["json"] = Response{Status: status, Msg: ret}
+	c.Data["json"] = Response{Status: status, Msg: msg}
 	c.ServeJSON()
 }
 
