@@ -30,6 +30,23 @@ export function initServerUrl() {
   }
 }
 
+function isLocalhost() {
+  const hostname = window.location.hostname;
+  return hostname === "localhost";
+}
+
+export function isProviderVisible(provider) {
+  if (provider.type !== "GitHub") {
+    return true;
+  }
+
+  if (isLocalhost()) {
+    return provider.name.includes("localhost");
+  } else {
+    return !provider.name.includes("localhost");
+  }
+}
+
 export function parseJson(s) {
   if (s === "") {
     return null;

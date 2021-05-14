@@ -224,7 +224,7 @@ class LoginPage extends React.Component {
           </Form.Item>
           <Form.Item>
             {
-              application.providerObjs.map(provider => {
+              application.providerObjs.filter(provider => Setting.isProviderVisible(provider)).map(provider => {
                 return this.renderProviderLogo(provider, application, 30, 5, "small");
               })
             }
@@ -245,7 +245,7 @@ class LoginPage extends React.Component {
           </div>
           <br/>
           {
-            application.providerObjs.map(provider => {
+            application.providerObjs.filter(provider => Setting.isProviderVisible(provider)).map(provider => {
               return this.renderProviderLogo(provider, application, 40, 10, "big");
             })
           }

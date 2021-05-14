@@ -316,7 +316,7 @@ class UserEditPage extends React.Component {
           <Col span={22} >
             <div style={{marginBottom: 20}}>
               {
-                this.state.providers.map((provider, index) => this.renderIdp(provider))
+                this.state.providers.filter(provider => Setting.isProviderVisible(provider)).map((provider, index) => this.renderIdp(provider))
               }
             </div>
           </Col>

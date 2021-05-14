@@ -124,7 +124,7 @@ class ApplicationListPage extends React.Component {
         title: 'Logo',
         dataIndex: 'logo',
         key: 'logo',
-        width: '250px',
+        width: '200px',
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
@@ -151,7 +151,7 @@ class ApplicationListPage extends React.Component {
         title: i18next.t("general:Providers"),
         dataIndex: 'providers',
         key: 'providers',
-        width: '250px',
+        width: '300px',
         render: (text, record, index) => {
           const providers = text;
           if (providers.length === 0) {
