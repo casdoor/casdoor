@@ -121,7 +121,7 @@ class OrganizationEditPage extends React.Component {
             {i18next.t("organization:Website URL")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.organization.websiteUrl} onChange={e => {
+            <Input prefix={<LinkOutlined/>} value={this.state.organization.websiteUrl} onChange={e => {
               this.updateOrganizationField('websiteUrl', e.target.value);
             }} />
           </Col>

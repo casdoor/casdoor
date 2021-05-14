@@ -49,9 +49,12 @@ class ProviderListPage extends React.Component {
       name: `provider_${this.state.providers.length}`,
       createdTime: moment().format(),
       displayName: `New Provider - ${this.state.providers.length}`,
+      category: "OAuth",
       type: "GitHub",
       clientId: "",
       clientSecret: "",
+      host: "",
+      port: 0,
       providerUrl: "https://github.com/organizations/xxx/settings/applications/1234567",
     }
   }
@@ -119,15 +122,26 @@ class ProviderListPage extends React.Component {
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
       },
       {
+        title: i18next.t("provider:Category"),
+        dataIndex: 'category',
+        key: 'category',
+        width: '100px',
+        sorter: (a, b) => a.category.localeCompare(b.category),
+      },
+      {
         title: i18next.t("provider:Type"),
         dataIndex: 'type',
         key: 'type',
         width: '80px',
         sorter: (a, b) => a.type.localeCompare(b.type),
         render: (text, record, index) => {
-          return (
-            <img width={30} height={30} src={Provider.getAuthLogo(record)} alt={record.displayName} />
-          )
+          if (record.category !== "OAuth") {
+            return text;
+          } else {
+            return (
+              <img width={30} height={30} src={Provider.getAuthLogo(record)} alt={record.displayName} />
+            )
+          }
         }
       },
       {

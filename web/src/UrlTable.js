@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {DownOutlined, DeleteOutlined, UpOutlined} from '@ant-design/icons';
+import {DownOutlined, DeleteOutlined, UpOutlined, LinkOutlined} from '@ant-design/icons';
 import {Button, Col, Input, Row, Table, Tooltip} from 'antd';
 import * as Setting from "./Setting";
 
@@ -66,7 +66,7 @@ class UrlTable extends React.Component {
         key: 'id',
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
+            <Input prefix={<LinkOutlined/>} value={text} onChange={e => {
               this.updateField(table, index, e.target.value);
             }} />
           )

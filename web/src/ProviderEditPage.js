@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select} from 'antd';
+import {Button, Card, Col, Input, InputNumber, Row, Select} from 'antd';
+import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
@@ -44,9 +45,9 @@ class ProviderEditPage extends React.Component {
   }
 
   parseProviderField(key, value) {
-    // if ([].includes(key)) {
-    //   value = Setting.myParseInt(value);
-    // }
+    if (["port"].includes(key)) {
+      value = Setting.myParseInt(value);
+    }
     return value;
   }
 
@@ -58,6 +59,29 @@ class ProviderEditPage extends React.Component {
     this.setState({
       provider: provider,
     });
+  }
+
+  getProviderTypeOptions(provider) {
+    if (provider.category === "OAuth") {
+      return (
+        [
+          {id: 'Google', name: 'Google'},
+          {id: 'GitHub', name: 'GitHub'},
+          {id: 'QQ', name: 'QQ'},
+          {id: 'WeChat', name: 'WeChat'},
+        ]
+      );
+    } else if (provider.category === "Email") {
+      return (
+        [
+          {id: 'Default', name: 'Default'},
+        ]
+      );
+    } else {
+      return (
+        []
+      );
+    }
   }
 
   renderProvider() {
@@ -90,24 +114,35 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("provider:Type")}:
+            {i18next.t("provider:Category")}:
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.provider.type} onChange={(value => {this.updateProviderField('type', value);})}>
+            <Select virtual={false} style={{width: '100%'}} value={this.state.provider.category} onChange={(value => {this.updateProviderField('category', value);})}>
               {
                 [
-                  {id: 'Google', name: 'Google'},
-                  {id: 'GitHub', name: 'GitHub'},
-                  {id: 'QQ', name: 'QQ'},
-                  {id: 'WeChat', name: 'WeChat'},
-                ].map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
+                  {id: 'OAuth', name: 'OAuth'},
+                  {id: 'Email', name: 'Email'},
+                  {id: 'Phone', name: 'Phone'},
+                ].map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
               }
             </Select>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("provider:Client ID")}:
+            {i18next.t("provider:Type")}:
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: '100%'}} value={this.state.provider.type} onChange={(value => {this.updateProviderField('type', value);})}>
+              {
+                this.getProviderTypeOptions(this.state.provider).map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {this.state.provider.category === "Email" ? i18next.t("signup:Username") : i18next.t("provider:Client ID")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.clientId} onChange={e => {
@@ -117,7 +152,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("provider:Client secret")}:
+            {this.state.provider.category === "Email" ? i18next.t("login:Password") : i18next.t("provider:Client secret")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.clientSecret} onChange={e => {
@@ -127,10 +162,30 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("provider:Host")}:
+          </Col>
+          <Col span={22} >
+            <Input prefix={<LinkOutlined/>} value={this.state.provider.host} onChange={e => {
+              this.updateProviderField('host', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("provider:Port")}:
+          </Col>
+          <Col span={22} >
+            <InputNumber value={this.state.provider.port} onChange={value => {
+              this.updateProviderField('port', value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("provider:Provider URL")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.provider.providerUrl} onChange={e => {
+            <Input prefix={<LinkOutlined/>} value={this.state.provider.providerUrl} onChange={e => {
               this.updateProviderField('providerUrl', e.target.value);
             }} />
           </Col>

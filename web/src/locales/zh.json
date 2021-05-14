@@ -30,7 +30,7 @@
     "OAuth providers": "OAuth提供方",
     "Applications that requires authentication": "需要鉴权的应用",
     "Swagger": "API总览",
-    "Phone Prefix": "电话前缀"
+    "Phone Prefix": "手机号前缀"
   },
   "signup":
   {
@@ -55,7 +55,7 @@
     "Please input your username, Email or phone number!": "请输入您的用户名、Email或手机号！",
     "username, Email or phone number": "用户名、Email或手机号",
     "Please input your password!": "请输入您的密码！",
-    "password": "密码",
+    "Password": "密码",
     "Auto login": "下次自动登录",
     "Forgot password?": "忘记密码？",
     "Sign In": "登录",
@@ -79,6 +79,7 @@
   {
     "Name": "名称",
     "Display name": "显示名称",
+    "Category": "分类",
     "Type": "类型",
     "Client ID": "Client ID",
     "Client secret": "Client secret",
@@ -123,7 +124,7 @@
     "Reset Phone": "重置手机号",
     "Send Code": "发送验证码",
     "Empty email": "邮箱为空",
-    "Empty phone": "电话为空",
+    "Empty phone": "手机号为空",
     "Empty Code": "验证码为空",
     "phone reset": "手机号已设置",
     "email reset": "邮箱已设置",

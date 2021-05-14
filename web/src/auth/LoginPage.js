@@ -184,7 +184,7 @@ class LoginPage extends React.Component {
             <Input
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
-              placeholder={i18next.t("login:password")}
+              placeholder={i18next.t("login:Password")}
               disabled={!application.enablePassword}
             />
           </Form.Item>

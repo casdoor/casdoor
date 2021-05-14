@@ -55,7 +55,7 @@
     "Please input your username, Email or phone number!": "Please input your username, Email or phone number!",
     "username, Email or phone number": "username, Email or phone number",
     "Please input your password!": "Please input your password!",
-    "password": "password",
+    "Password": "Password",
     "Auto login": "Auto login",
     "Forgot password?": "Forgot password?",
     "Sign In": "Sign In",
@@ -77,6 +77,9 @@
   },
   "provider":
   {
+    "Name": "Name",
+    "Display name": "Display name",
+    "Category": "Category",
     "Type": "Type",
     "Client ID": "Client ID",
     "Client secret": "Client secret",
