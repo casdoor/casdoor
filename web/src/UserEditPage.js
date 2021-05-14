@@ -22,7 +22,6 @@ import i18next from "i18next";
 import CropperDiv from "./CropperDiv.js";
 import * as AuthBackend from "./auth/AuthBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
-import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Provider from "./auth/Provider";
 import PasswordModal from "./PasswordModal";
 import ResetModal from "./ResetModal";
@@ -39,7 +38,6 @@ class UserEditPage extends React.Component {
       user: null,
       application: null,
       organizations: [],
-      providers: [],
     };
   }
 
@@ -47,7 +45,6 @@ class UserEditPage extends React.Component {
     this.getUser();
     this.getOrganizations();
     this.getDefaultApplication();
-    this.getDefaultProviders();
   }
 
   getUser() {
@@ -73,15 +70,6 @@ class UserEditPage extends React.Component {
       .then((application) => {
         this.setState({
           application: application,
-        });
-      });
-  }
-
-  getDefaultProviders() {
-    ProviderBackend.getDefaultProviders("admin")
-      .then((res) => {
-        this.setState({
-          providers: res,
         });
       });
   }
@@ -316,7 +304,7 @@ class UserEditPage extends React.Component {
           <Col span={22} >
             <div style={{marginBottom: 20}}>
               {
-                this.state.providers.filter(provider => Setting.isProviderVisible(provider)).map((provider, index) => this.renderIdp(provider))
+                this.state.application?.providerObjs.filter(provider => Setting.isProviderVisible(provider)).map((provider, index) => this.renderIdp(provider))
               }
             </div>
           </Col>
