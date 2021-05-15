@@ -25,19 +25,12 @@ import (
 )
 
 type GoogleIdProvider struct {
-	Client       *http.Client
-	Config       *oauth2.Config
-	ClientId     string
-	ClientSecret string
-	RedirectUrl  string
+	Client *http.Client
+	Config *oauth2.Config
 }
 
 func NewGoogleIdProvider(clientId string, clientSecret string, redirectUrl string) *GoogleIdProvider {
-	idp := &GoogleIdProvider{
-		ClientId:     clientId,
-		ClientSecret: clientSecret,
-		RedirectUrl:  redirectUrl,
-	}
+	idp := &GoogleIdProvider{}
 
 	config := idp.getConfig()
 	config.ClientID = clientId

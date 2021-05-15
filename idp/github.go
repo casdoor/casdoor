@@ -25,19 +25,12 @@ import (
 )
 
 type GithubIdProvider struct {
-	Client       *http.Client
-	Config       *oauth2.Config
-	ClientId     string
-	ClientSecret string
-	RedirectUrl  string
+	Client *http.Client
+	Config *oauth2.Config
 }
 
 func NewGithubIdProvider(clientId string, clientSecret string, redirectUrl string) *GithubIdProvider {
-	idp := &GithubIdProvider{
-		ClientId:     clientId,
-		ClientSecret: clientSecret,
-		RedirectUrl:  redirectUrl,
-	}
+	idp := &GithubIdProvider{}
 
 	config := idp.getConfig()
 	config.ClientID = clientId
