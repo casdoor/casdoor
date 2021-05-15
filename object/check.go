@@ -27,20 +27,22 @@ func init() {
 	reWhiteSpace, _ = regexp.Compile("\\s")
 }
 
-func CheckUserSignup(organization string, username string, password string, displayName string, email string, phonePrefix string, phone string, affiliation string) string {
+func CheckUserSignup(organizationName string, username string, password string, displayName string, email string, phone string, affiliation string) string {
+	organization := getOrganization("admin", organizationName)
+
 	if len(username) == 0 {
 		return "username cannot be blank"
 	} else if len(password) == 0 {
 		return "password cannot be blank"
-	} else if getOrganization("admin", organization) == nil {
+	} else if organization == nil {
 		return "organization does not exist"
 	} else if reWhiteSpace.MatchString(username) {
 		return "username cannot contain white spaces"
-	} else if HasUserByField(organization, "name", username) {
+	} else if HasUserByField(organizationName, "name", username) {
 		return "username already exists"
-	} else if HasUserByField(organization, "email", email) {
+	} else if HasUserByField(organizationName, "email", email) {
 		return "email already exists"
-	} else if HasUserByField(organization, "phone", phone) {
+	} else if HasUserByField(organizationName, "phone", phone) {
 		return "phone already exists"
 	} else if displayName == "" {
 		return "displayName cannot be blank"
@@ -48,7 +50,7 @@ func CheckUserSignup(organization string, username string, password string, disp
 		return "affiliation cannot be blank"
 	} else if !util.IsEmailValid(email) {
 		return "email is invalid"
-	} else if phonePrefix == "86" && !util.IsPhoneCnValid(phone) {
+	} else if organization.PhonePrefix == "86" && !util.IsPhoneCnValid(phone) {
 		return "phone number is invalid"
 	} else {
 		return ""

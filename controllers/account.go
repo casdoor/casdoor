@@ -37,7 +37,6 @@ type RequestForm struct {
 	Password     string `json:"password"`
 	Name         string `json:"name"`
 	Email        string `json:"email"`
-	PhonePrefix  string `json:"phonePrefix"`
 	Phone        string `json:"phone"`
 	Affiliation  string `json:"affiliation"`
 
@@ -87,7 +86,7 @@ func (c *ApiController) Signup() {
 	}
 
 	userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
-	msg := object.CheckUserSignup(form.Organization, form.Username, form.Password, form.Name, form.Email, form.PhonePrefix, form.Phone, form.Affiliation)
+	msg := object.CheckUserSignup(form.Organization, form.Username, form.Password, form.Name, form.Email, form.Phone, form.Affiliation)
 	if msg != "" {
 		resp = Response{Status: "error", Msg: msg, Data: ""}
 	} else {

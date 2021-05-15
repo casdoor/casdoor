@@ -45,7 +45,6 @@ func createUserFromOriginalUser(originalUser *User) *object.User {
 		DisplayName:   originalUser.Name,
 		Avatar:        getFullAvatarUrl(originalUser.Avatar),
 		Email:         "",
-		PhonePrefix:   "86",
 		Phone:         originalUser.Cellphone,
 		Affiliation:   "",
 		IsAdmin:       false,
