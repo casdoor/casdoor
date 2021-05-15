@@ -105,7 +105,7 @@ export const ResetModal = (props) => {
         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
           <Row style={{width: "100%", marginBottom: "20px"}}>
             <Input addonBefore={i18next.t("user:New " + destType)} placeholder={placeHolder} onChange={(e) => setDest(e.target.value)}
-                   addonAfter={<button style={{width: "90px", border: "none", backgroundColor: "#fff"}} onClick={sendCode}>{" " + sendButtonText + " "}</button>}
+                   addonAfter={<button style={{width: "90px", border: "none", backgroundColor: "#fafafa"}} onClick={sendCode}>{" " + sendButtonText + " "}</button>}
             />
 
           </Row>
