@@ -21,6 +21,9 @@ import * as Setting from "./Setting";
 export const PasswordModal = (props) => {
   const [visible, setVisible] = React.useState(false);
   const [confirmLoading, setConfirmLoading] = React.useState(false);
+  const [oldPassword, setOldPassword] = React.useState("");
+  const [newPassword, setNewPassword] = React.useState("");
+  const [rePassword, setRePassword] = React.useState("");
   const {user} = props;
 
   const showModal = () => {
@@ -32,10 +35,6 @@ export const PasswordModal = (props) => {
   };
 
   const handleOk = () => {
-    let oldPassword = document.getElementById("old-password")?.value;
-    let newPassword = document.getElementById("new-password").value;
-    let rePassword = document.getElementById("re-new-password").value;
-    if (oldPassword === null || oldPassword === undefined) oldPassword = "";
     if (newPassword === "" || rePassword === "") {
       Setting.showMessage("error", i18next.t("user:Empty input!"));
       return;
@@ -75,14 +74,14 @@ export const PasswordModal = (props) => {
         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
           { hasOldPassword ? (
             <Row style={{width: "100%", marginBottom: "20px"}}>
-              <Input.Password addonBefore={i18next.t("user:Old Password")} placeholder={i18next.t("user:input password")} id="old-password"/>
+              <Input.Password addonBefore={i18next.t("user:Old Password")} placeholder={i18next.t("user:input password")} onChange={(e) => setOldPassword(e.target.value)}/>
             </Row>
           ) : null}
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input.Password addonBefore={i18next.t("user:New Password")} placeholder={i18next.t("user:input password")} id="new-password"/>
+            <Input.Password addonBefore={i18next.t("user:New Password")} placeholder={i18next.t("user:input password")} onChange={(e) => setNewPassword(e.target.value)}/>
           </Row>
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input.Password addonBefore={i18next.t("user:Re-enter New")} placeholder={i18next.t("user:input password")} id="re-new-password"/>
+            <Input.Password addonBefore={i18next.t("user:Re-enter New")} placeholder={i18next.t("user:input password")} onChange={(e) => setRePassword(e.target.value)}/>
           </Row>
         </Col>
       </Modal>

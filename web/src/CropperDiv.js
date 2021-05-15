@@ -27,6 +27,7 @@ export const CropperDiv = (props) => {
     const {title} = props;
     const {targetFunction} = props;
     const {buttonText} = props;
+    let uploadButton;
 
     const onChange = (e) => {
         e.preventDefault();
@@ -74,7 +75,7 @@ export const CropperDiv = (props) => {
     };
 
     const selectFile = () => {
-        document.getElementsByName('fileupload').item(0).click()
+        uploadButton.click();
     }
 
     return (
@@ -95,7 +96,7 @@ export const CropperDiv = (props) => {
             >
                 <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
                     <Row style={{width: "100%", marginBottom: "20px"}}>
-                        <input style={{display: "none"}} name="fileupload" type="file" onChange={onChange}/>
+                        <input style={{display: "none"}} ref={input => uploadButton = input} type="file" onChange={onChange}/>
                         <Button block onClick={selectFile}>{i18next.t("user:Select a photo...")}</Button>
                     </Row>
                     <Cropper
