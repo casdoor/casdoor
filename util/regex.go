@@ -14,18 +14,20 @@
 
 package util
 
-import "regexp"
+import (
+	"net/mail"
+	"regexp"
+)
 
-var reEmail *regexp.Regexp
 var rePhoneCn *regexp.Regexp
 
 func init() {
-	reEmail, _ = regexp.Compile(`^[0-9a-z][_.0-9a-z-]{0,31}@([0-9a-z][0-9a-z-]{0,30}[0-9a-z]\.){1,4}[a-z]{2,4}$`)
 	rePhoneCn, _ = regexp.Compile("^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|191|198|199|(147))\\d{8}$")
 }
 
 func IsEmailValid(email string) bool {
-	return reEmail.MatchString(email)
+	_, err := mail.ParseAddress(email)
+	return err == nil
 }
 
 func IsPhoneCnValid(phone string) bool {

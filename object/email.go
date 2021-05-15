@@ -16,35 +16,20 @@
 
 package object
 
-import (
-	"strconv"
+import "github.com/go-gomail/gomail"
 
-	"github.com/astaxie/beego"
-	"github.com/go-gomail/gomail"
-)
+func SendEmail(title, content, dest, sender string) (string, error) {
+	provider := getDefaultEmailProvider()
+	if provider == nil {
+		return "Please set an Email provider first", nil
+	}
+	dialer := gomail.NewDialer(provider.Host, provider.Port, provider.ClientId, provider.ClientSecret)
 
-var dialer *gomail.Dialer
-
-var mailConn = map[string]string{
-	"user": beego.AppConfig.String("mailUser"),
-	"pass": beego.AppConfig.String("mailPass"),
-	"host": beego.AppConfig.String("mailHost"),
-	"port": beego.AppConfig.String("mailPort"),
-}
-
-func InitDialer() {
-	port, _ := strconv.Atoi(mailConn["port"])
-	dialer = gomail.NewDialer(mailConn["host"], port, mailConn["user"], mailConn["pass"])
-}
-
-func SendEmail(title, content, dest, sender string) error {
 	message := gomail.NewMessage()
-	message.SetAddressHeader("From", beego.AppConfig.String("mailUser"), sender)
+	message.SetAddressHeader("From", provider.ClientId, sender)
 	message.SetHeader("To", dest)
 	message.SetHeader("Subject", title)
 	message.SetBody("text/html", content)
-	if dialer == nil {
-		InitDialer()
-	}
-	return dialer.DialAndSend(message)
+
+	return "", dialer.DialAndSend(message)
 }

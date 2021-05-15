@@ -29,8 +29,8 @@ type VerificationRecord struct {
 }
 
 func SendVerificationCodeToEmail(remoteAddr, dest string) string {
-	title := "Casdoor Code"
-	sender := "Casdoor Admin"
+	title := "Casdoor Verification Code"
+	sender := "Casdoor"
 	code := getRandomCode(5)
 	content := fmt.Sprintf("You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.", code)
 
@@ -38,7 +38,11 @@ func SendVerificationCodeToEmail(remoteAddr, dest string) string {
 		return result
 	}
 
-	if err := SendEmail(title, content, dest, sender); err != nil {
+	msg, err := SendEmail(title, content, dest, sender)
+	if msg != "" {
+		return msg
+	}
+	if err != nil {
 		panic(err)
 	}
 
