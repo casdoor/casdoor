@@ -128,6 +128,10 @@ class App extends Component {
         if (res.status === "ok") {
           account = res.data;
           account.organization = res.data2;
+        } else {
+          if (res.msg === "Invalid JWT token") {
+            Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
+          }
         }
 
         this.setState({

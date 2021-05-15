@@ -18,7 +18,9 @@ import (
 	"fmt"
 
 	"github.com/astaxie/beego/context"
+	"github.com/casdoor/casdoor/controllers"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 func getSessionUser(ctx *context.Context) string {
@@ -40,6 +42,16 @@ func setSessionUser(ctx *context.Context, user string) {
 	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
 }
 
+func returnRequest(ctx *context.Context, msg string) {
+	w := ctx.ResponseWriter
+	w.WriteHeader(200)
+	resp := &controllers.Response{Status: "error", Msg: msg}
+	_, err := w.Write([]byte(util.StructToJson(resp)))
+	if err != nil {
+		panic(err)
+	}
+}
+
 func AutoLoginFilter(ctx *context.Context) {
 	query := ctx.Request.URL.RawQuery
 	// query == "?access_token=123"
@@ -54,7 +66,8 @@ func AutoLoginFilter(ctx *context.Context) {
 
 	claims, err := object.ParseJwtToken(accessToken)
 	if err != nil {
-		panic(err)
+		returnRequest(ctx, "Invalid JWT token")
+		return
 	}
 
 	userId := fmt.Sprintf("%s/%s", claims.Organization, claims.Username)
