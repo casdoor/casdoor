@@ -43,3 +43,11 @@ func GetIdProvider(providerType string, clientId string, clientSecret string, re
 
 	return nil
 }
+
+// TencentIdProvider
+// 相较于
+type TencentIdProvider interface {
+	SetHttpClient(client *http.Client)
+	GetAccessToken(code string) (*oauth2.Token, error)
+	GetUserInfo(token *oauth2.Token) (*UserInfo, error)
+}
