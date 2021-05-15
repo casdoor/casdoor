@@ -263,8 +263,10 @@ class UserEditPage extends React.Component {
           <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("general:Email")}:
           </Col>
-          <Col span={22} >
+          <Col style={{paddingRight: '20px'}} span={11} >
             <Input value={this.state.user.email} disabled />
+          </Col>
+          <Col span={11} >
             { this.state.user.id === this.props.account.id ? (<ResetModal buttonText={i18next.t("user:Reset Email")} destType={"email"} coolDownTime={60}/>) : null}
           </Col>
         </Row>
@@ -272,8 +274,10 @@ class UserEditPage extends React.Component {
           <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("general:Phone")}:
           </Col>
-          <Col span={22} >
+          <Col style={{paddingRight: '20px'}} span={11} >
             <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`} disabled />
+          </Col>
+          <Col span={11} >
             { this.state.user.id === this.props.account.id ? (<ResetModal buttonText={i18next.t("user:Reset Phone")} destType={"phone"} coolDownTime={60}/>) : null}
           </Col>
         </Row>
