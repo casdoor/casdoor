@@ -83,6 +83,11 @@
     "Type": "类型",
     "Client ID": "Client ID",
     "Client secret": "Client secret",
+    "Host": "主机",
+    "Port": "端口号",
+    "Region ID": "地域ID",
+    "Sign Name": "签名名称",
+    "Template Code": "模板CODE",
     "Provider URL": "提供商URL",
     "Edit Provider": "修改提供商"
   },

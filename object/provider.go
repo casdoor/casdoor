@@ -29,9 +29,15 @@ type Provider struct {
 	Type         string `xorm:"varchar(100)" json:"type"`
 	ClientId     string `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret string `xorm:"varchar(100)" json:"clientSecret"`
-	Host         string `xorm:"varchar(100)" json:"host"`
-	Port         int    `json:"port"`
-	ProviderUrl  string `xorm:"varchar(200)" json:"providerUrl"`
+
+	Host string `xorm:"varchar(100)" json:"host"`
+	Port int    `json:"port"`
+
+	RegionId     string `xorm:"varchar(100)" json:"regionId"`
+	SignName     string `xorm:"varchar(100)" json:"signName"`
+	TemplateCode string `xorm:"varchar(100)" json:"templateCode"`
+
+	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
 }
 
 func GetProviders(owner string) []*Provider {
@@ -65,6 +71,19 @@ func GetProvider(id string) *Provider {
 
 func getDefaultEmailProvider() *Provider {
 	provider := Provider{Owner: "admin", Category: "Email"}
+	existed, err := adapter.Engine.Get(&provider)
+	if err != nil {
+		panic(err)
+	}
+
+	if !existed {
+		return nil
+	}
+	return &provider
+}
+
+func getDefaultPhoneProvider() *Provider {
+	provider := Provider{Owner: "admin", Category: "Phone"}
 	existed, err := adapter.Engine.Get(&provider)
 	if err != nil {
 		panic(err)

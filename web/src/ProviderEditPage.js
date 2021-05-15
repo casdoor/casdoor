@@ -79,7 +79,10 @@ class ProviderEditPage extends React.Component {
       );
     } else {
       return (
-        []
+        [
+          {id: 'aliyun', name: 'Aliyun'},
+          {id: 'tencent', name: 'Tencent Cloud'},
+        ]
       );
     }
   }
@@ -160,26 +163,65 @@ class ProviderEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("provider:Host")}:
-          </Col>
-          <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.provider.host} onChange={e => {
-              this.updateProviderField('host', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("provider:Port")}:
-          </Col>
-          <Col span={22} >
-            <InputNumber value={this.state.provider.port} onChange={value => {
-              this.updateProviderField('port', value);
-            }} />
-          </Col>
-        </Row>
+        {
+          this.state.provider.category === "Email" ? (
+            <React.Fragment>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {i18next.t("provider:Host")}:
+                </Col>
+                <Col span={22} >
+                  <Input prefix={<LinkOutlined/>} value={this.state.provider.host} onChange={e => {
+                    this.updateProviderField('host', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {i18next.t("provider:Port")}:
+                </Col>
+                <Col span={22} >
+                  <InputNumber value={this.state.provider.port} onChange={value => {
+                    this.updateProviderField('port', value);
+                  }} />
+                </Col>
+              </Row>
+            </React.Fragment>
+          ) : this.state.provider.category === "Phone" ? (
+            <React.Fragment>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {i18next.t("provider:Region ID")}:
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.regionId} onChange={e => {
+                    this.updateProviderField('regionId', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {i18next.t("provider:Sign Name")}:
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.signName} onChange={e => {
+                    this.updateProviderField('signName', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {i18next.t("provider:Template Code")}:
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.templateCode} onChange={e => {
+                    this.updateProviderField('templateCode', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            </React.Fragment>
+          ) : null
+        }
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("provider:Provider URL")}:

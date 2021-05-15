@@ -83,6 +83,11 @@
     "Type": "Type",
     "Client ID": "Client ID",
     "Client secret": "Client secret",
+    "Host": "Host",
+    "Port": "Port",
+    "Region ID": "Region ID",
+    "Sign Name": "Sign Name",
+    "Template Code": "Template Code",
     "Provider URL": "Provider URL",
     "Edit Provider": "Edit Provider"
   },

@@ -15,34 +15,23 @@
 package object
 
 import (
-	"github.com/astaxie/beego"
+	"fmt"
+
 	"github.com/casdoor/go-sms-sender"
 )
 
-var client go_sms_sender.SmsClient
-var provider string
-
-func InitSmsClient() {
-	provider = beego.AppConfig.String("smsProvider")
-	accessId := beego.AppConfig.String("smsAccessId")
-	accessKey := beego.AppConfig.String("smsAccessKey")
-	appId := beego.AppConfig.String("smsAppId")
-	sign := beego.AppConfig.String("smsSign")
-	region := beego.AppConfig.String("smsRegion")
-	templateId := beego.AppConfig.String("smsTemplateId")
-	client = go_sms_sender.NewSmsClient(provider, accessId, accessKey, sign, region, templateId, appId)
-}
-
 func SendCodeToPhone(phone, code string) string {
+	provider := getDefaultPhoneProvider()
+	if provider == nil {
+		return "Please set an phone provider first"
+	}
+	client := go_sms_sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.RegionId, provider.TemplateCode)
 	if client == nil {
-		InitSmsClient()
-		if client == nil {
-			return "SMS config error"
-		}
+		return fmt.Sprintf("Unsupported provide type: %s", provider.Type)
 	}
 
 	param := make(map[string]string)
-	if provider == "tencent" {
+	if provider.Type == "tencent" {
 		param["0"] = code
 	} else {
 		param["code"] = code
