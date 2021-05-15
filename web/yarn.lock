@@ -2421,10 +2421,10 @@ ansi-styles@^4.0.0, ansi-styles@^4.1.0:
   dependencies:
     color-convert "^2.0.1"
 
-antd@^4.14.1:
-  version "4.14.1"
-  resolved "https://registry.npmjs.org/antd/-/antd-4.14.1.tgz#f04b7323793045fd159aaf18037adc8ce4f5aaeb"
-  integrity sha512-984zBd4EtsBfCC4dUmDAZfaCphjcm7+ldKBWJHPyheUZL5S3X7ZSz+Ld75XGNFj4pLjcGMi2SwGOr/4hmByNsg==
+antd@^4.15.5:
+  version "4.15.5"
+  resolved "https://registry.npmjs.org/antd/-/antd-4.15.5.tgz#c54bf3a8a7e537c57395165b47c6caa4f9ea4860"
+  integrity sha512-zpdwZmdxZfSCVq6t329jXzq4oHZDDrMsD3L/bNilBJz9Y8yJZ0b4wGrWK7TSRipP2KcUB5Udm+bmfv2RBuzzNA==
   dependencies:
     "@ant-design/colors" "^6.0.0"
     "@ant-design/icons" "^4.6.2"
@@ -2433,7 +2433,7 @@ antd@^4.14.1:
     array-tree-filter "^2.1.0"
     classnames "^2.2.6"
     copy-to-clipboard "^3.2.0"
-    lodash "^4.17.20"
+    lodash "^4.17.21"
     moment "^2.25.3"
     rc-cascader "~1.4.0"
     rc-checkbox "~2.3.0"
@@ -2443,7 +2443,7 @@ antd@^4.14.1:
     rc-dropdown "~3.2.0"
     rc-field-form "~1.20.0"
     rc-image "~5.2.4"
-    rc-input-number "~7.0.1"
+    rc-input-number "~7.1.0"
     rc-mentions "~1.5.0"
     rc-menu "~8.10.0"
     rc-motion "^2.4.0"
@@ -2460,7 +2460,7 @@ antd@^4.14.1:
     rc-table "~7.13.0"
     rc-tabs "~11.7.0"
     rc-textarea "~0.3.0"
-    rc-tooltip "~5.1.0"
+    rc-tooltip "~5.1.1"
     rc-tree "~4.1.0"
     rc-tree-select "~4.3.0"
     rc-trigger "^5.2.1"
@@ -9465,14 +9465,14 @@ rc-image@~5.2.4:
     rc-dialog "~8.5.0"
     rc-util "^5.0.6"
 
-rc-input-number@~7.0.1:
-  version "7.0.2"
-  resolved "https://registry.npmjs.org/rc-input-number/-/rc-input-number-7.0.2.tgz#913f4f1e734dc0fdf9ad31d077b9b75f5dd3389c"
-  integrity sha512-9AcD3/D18Oa41xZnBFvJ0fdp6AJkf/en8uKi8E69Ct+sh64qIYbWUXeh1PXhJgrCHIoNNT8OWaTebypT4/d3ZA==
+rc-input-number@~7.1.0:
+  version "7.1.1"
+  resolved "https://registry.npmjs.org/rc-input-number/-/rc-input-number-7.1.1.tgz#f8cd48b351ad9aa578b227b68bef8ce65f5f55ba"
+  integrity sha512-xKeg+cQuhFZK4PkV+m7bvnVJgJPV02bSCAnuKx7HhGA/O8a+7chbW2AFiP0UZcuAMmZe+nE0oS1Gxe0RkRqdHQ==
   dependencies:
     "@babel/runtime" "^7.10.1"
     classnames "^2.2.5"
-    rc-util "^5.0.1"
+    rc-util "^5.9.8"
 
 rc-mentions@~1.5.0:
   version "1.5.3"
@@ -9652,10 +9652,18 @@ rc-textarea@^0.3.0, rc-textarea@~0.3.0:
     rc-resize-observer "^1.0.0"
     rc-util "^5.7.0"
 
-rc-tooltip@^5.0.1, rc-tooltip@~5.1.0:
+rc-tooltip@^5.0.1:
   version "5.1.0"
   resolved "https://registry.npmjs.org/rc-tooltip/-/rc-tooltip-5.1.0.tgz#abb453c463c31a705aa01d268279f4ae6ae3b15f"
   integrity sha512-pFqD1JZwNIpbdcefB7k5xREoHAWM/k3yQwYF0iminbmDXERgq4rvBfUwIvlCqqZSM7HDr9hYeYr6ZsVNaKtvCQ==
+  dependencies:
+    "@babel/runtime" "^7.11.2"
+    rc-trigger "^5.0.0"
+
+rc-tooltip@~5.1.1:
+  version "5.1.1"
+  resolved "https://registry.npmjs.org/rc-tooltip/-/rc-tooltip-5.1.1.tgz#94178ed162d0252bc4993b725f5dc2ac0fccf154"
+  integrity sha512-alt8eGMJulio6+4/uDm7nvV+rJq9bsfxFDCI0ljPdbuoygUscbsMYb6EQgwib/uqsXQUvzk+S7A59uYHmEgmDA==
   dependencies:
     "@babel/runtime" "^7.11.2"
     rc-trigger "^5.0.0"
@@ -9706,6 +9714,15 @@ rc-util@^5.0.0, rc-util@^5.0.1, rc-util@^5.0.5, rc-util@^5.0.6, rc-util@^5.0.7, 
   version "5.9.8"
   resolved "https://registry.npmjs.org/rc-util/-/rc-util-5.9.8.tgz#dfcacc1f7b7c45fa18ab786e2b530dd0509073f1"
   integrity sha512-typLSHYGf5irvGLYQshs0Ra3aze086h0FhzsAkyirMunYZ7b3Te8gKa5PVaanoHaZa9sS6qx98BxgysoRP+6Tw==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    react-is "^16.12.0"
+    shallowequal "^1.1.0"
+
+rc-util@^5.9.8:
+  version "5.12.2"
+  resolved "https://registry.npmjs.org/rc-util/-/rc-util-5.12.2.tgz#41572687a2cd174fdaec028da756d288e398e9f8"
+  integrity sha512-kzqG2lHY4oZsoj5Svov12K+9wi0xQHvGzfbLlsF1PDEH1aTbgdNTwlE7mejc3MGEr+7bNHa4+T5ZemCS8vQ1Gw==
   dependencies:
     "@babel/runtime" "^7.12.5"
     react-is "^16.12.0"
