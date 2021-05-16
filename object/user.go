@@ -239,12 +239,10 @@ func SetUserField(user *User, field string, value string) bool {
 
 	user = getUser(user.Owner, user.Name)
 	user.UpdateUserHash()
-	affected, err = adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("hash").Update(user)
+	_, err = adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("hash").Update(user)
 	if err != nil {
 		panic(err)
 	}
-
-	return affected != 0
 
 	return affected != 0
 }
