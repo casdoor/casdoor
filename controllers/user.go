@@ -153,8 +153,9 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	if oldPassword != targetUser.Password {
-		c.ResponseError("Old password wrong.")
+	msg := object.CheckPassword(targetUser, oldPassword)
+	if msg != "" {
+		c.ResponseError(msg)
 		return
 	}
 

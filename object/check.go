@@ -57,7 +57,7 @@ func CheckUserSignup(organizationName string, username string, password string, 
 	}
 }
 
-func checkPassword(user *User, password string) string {
+func CheckPassword(user *User, password string) string {
 	organization := getOrganization("admin", user.Owner)
 
 	if organization.PasswordType == "plain" {
@@ -87,7 +87,7 @@ func CheckUserLogin(organization string, username string, password string) (*Use
 		return nil, "the user is forbidden to sign in, please contact the administrator"
 	}
 
-	msg := checkPassword(user, password)
+	msg := CheckPassword(user, password)
 	if msg != "" {
 		return nil, msg
 	}

@@ -105,3 +105,7 @@ func GetOrganizationByName(name string) *Organization {
 	}
 	return &ret
 }
+
+func getOrganizationByUser(user *User) *Organization {
+	return getOrganization("admin", user.Owner)
+}

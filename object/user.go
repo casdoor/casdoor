@@ -117,6 +117,8 @@ func AddUser(user *User) bool {
 	user.Id = util.GenerateId()
 	user.UpdateUserHash()
 	user.PreHash = user.Hash
+	organization := getOrganizationByUser(user)
+	user.UpdateUserPassword(organization)
 
 	affected, err := adapter.Engine.Insert(user)
 	if err != nil {
@@ -127,9 +129,15 @@ func AddUser(user *User) bool {
 }
 
 func AddUsers(users []*User) bool {
+	if len(users) == 0 {
+		return false
+	}
+
+	organization := getOrganizationByUser(users[0])
 	for _, user := range users {
 		user.UpdateUserHash()
 		user.PreHash = user.Hash
+		user.UpdateUserPassword(organization)
 	}
 
 	affected, err := adapter.Engine.Insert(users)
@@ -215,6 +223,12 @@ func GetUserByFields(organization string, field string) *User {
 }
 
 func SetUserField(user *User, field string, value string) bool {
+	if field == "password" {
+		organization := getOrganizationByUser(user)
+		user.UpdateUserPassword(organization)
+		value = user.Password
+	}
+
 	affected, err := adapter.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(map[string]interface{}{field: value})
 	if err != nil {
 		panic(err)
@@ -256,6 +270,12 @@ func calculateHash(user *User) string {
 func (user *User) UpdateUserHash() {
 	hash := calculateHash(user)
 	user.Hash = hash
+}
+
+func (user *User) UpdateUserPassword(organization *Organization) {
+	if organization.PasswordType == "salt" {
+		user.Password = getSaltedPassword(user.Password, organization.PasswordSalt)
+	}
 }
 
 func (user *User) GetId() string {
