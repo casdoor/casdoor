@@ -27,10 +27,6 @@ import (
 
 type WeChatIdProvider struct {
 	Client *http.Client
-	// Config:
-	// - ClientID: Application unique identifier, used to request CODE, get/refresh access_token through CODE, this information can be obtained by the front end
-	// - ClientSecret: Application key, this information is stored in the back-end, and the front-end is not available [such as stored in environment variables]
-	// - RedirectURL: After the user allows authorization, it will be redirected to the URL of redirect_uri with the code and state parameters
 	Config *oauth2.Config
 }
 
