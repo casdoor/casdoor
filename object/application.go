@@ -89,10 +89,9 @@ func getApplication(owner string, name string) *Application {
 	}
 }
 
-func GetDefaultApplication(owner string) *Application {
-	name := "app-built-in"
-	application := Application{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&application)
+func getApplicationByOrganization(organization string) *Application {
+	application := Application{}
+	existed, err := adapter.Engine.Where("organization=?", organization).Get(&application)
 	if err != nil {
 		panic(err)
 	}
@@ -104,6 +103,10 @@ func GetDefaultApplication(owner string) *Application {
 	} else {
 		return nil
 	}
+}
+
+func GetApplicationByUser(user *User) *Application {
+	return getApplicationByOrganization(user.Owner)
 }
 
 func getApplicationByClientId(clientId string) *Application {

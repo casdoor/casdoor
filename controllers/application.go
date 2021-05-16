@@ -50,9 +50,18 @@ func (c *ApiController) GetApplication() {
 // @Success 200 {object} object.Application The Response object
 // @router /get-default-application [get]
 func (c *ApiController) GetDefaultApplication() {
-	owner := c.Input().Get("owner")
+	//owner := c.Input().Get("owner")
 
-	c.Data["json"] = object.GetDefaultApplication(owner)
+	if c.GetSessionUser() == "" {
+		c.Data["json"] = nil
+		c.ServeJSON()
+		return
+	}
+
+	username := c.GetSessionUser()
+	user := object.GetUser(username)
+
+	c.Data["json"] = object.GetApplicationByUser(user)
 	c.ServeJSON()
 }
 
