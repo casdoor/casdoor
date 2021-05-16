@@ -70,6 +70,11 @@ func (c *ApiController) UpdateUser() {
 		panic(err)
 	}
 
+	if user.DisplayName == "" {
+		c.ResponseError("Display name cannot be empty")
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdateUser(id, &user))
 	c.ServeJSON()
 }
@@ -160,12 +165,12 @@ func (c *ApiController) SetPassword() {
 	}
 
 	if strings.Index(newPassword, " ") >= 0 {
-		c.ResponseError("New password contains blank space.")
+		c.ResponseError("New password cannot contain blank space.")
 		return
 	}
 
-	if newPassword == "" {
-		c.ResponseError("Invalid new password")
+	if len(newPassword) <= 5 {
+		c.ResponseError("New password must have at least 6 characters")
 		return
 	}
 

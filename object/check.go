@@ -30,10 +30,10 @@ func init() {
 func CheckUserSignup(organizationName string, username string, password string, displayName string, email string, phone string, affiliation string) string {
 	organization := getOrganization("admin", organizationName)
 
-	if len(username) == 0 {
-		return "username cannot be blank"
-	} else if len(password) == 0 {
-		return "password cannot be blank"
+	if len(username) <= 2 {
+		return "username must have at least 3 characters"
+	} else if len(password) <= 5 {
+		return "password must have at least 6 characters"
 	} else if organization == nil {
 		return "organization does not exist"
 	} else if reWhiteSpace.MatchString(username) {
