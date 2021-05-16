@@ -27,19 +27,12 @@ import (
 )
 
 type QqIdProvider struct {
-	Client       *http.Client
-	Config       *oauth2.Config
-	ClientId     string
-	ClientSecret string
-	RedirectUrl  string
+	Client *http.Client
+	Config *oauth2.Config
 }
 
 func NewQqIdProvider(clientId string, clientSecret string, redirectUrl string) *QqIdProvider {
-	idp := &QqIdProvider{
-		ClientId:     clientId,
-		ClientSecret: clientSecret,
-		RedirectUrl:  redirectUrl,
-	}
+	idp := &QqIdProvider{}
 
 	config := idp.getConfig()
 	config.ClientID = clientId
@@ -60,7 +53,7 @@ func (idp *QqIdProvider) getConfig() *oauth2.Config {
 	}
 
 	var config = &oauth2.Config{
-		Scopes:   []string{"profile", "email"},
+		Scopes:   []string{"get_user_info"},
 		Endpoint: endpoint,
 	}
 
@@ -70,10 +63,10 @@ func (idp *QqIdProvider) getConfig() *oauth2.Config {
 func (idp *QqIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	params := url.Values{}
 	params.Add("grant_type", "authorization_code")
-	params.Add("client_id", idp.ClientId)
-	params.Add("client_secret", idp.ClientSecret)
+	params.Add("client_id", idp.Config.ClientID)
+	params.Add("client_secret", idp.Config.ClientSecret)
 	params.Add("code", code)
-	params.Add("redirect_uri", idp.RedirectUrl)
+	params.Add("redirect_uri", idp.Config.RedirectURL)
 
 	getAccessTokenUrl := fmt.Sprintf("https://graph.qq.com/oauth2.0/token?%s", params.Encode())
 	tokenResponse, err := idp.Client.Get(getAccessTokenUrl)
@@ -113,7 +106,7 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		return nil, errors.New("openId is empty")
 	}
 
-	getUserInfoUrl := fmt.Sprintf("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s", token.AccessToken, idp.ClientId, openId)
+	getUserInfoUrl := fmt.Sprintf("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s", token.AccessToken, idp.Config.ClientID, openId)
 	getUserInfoResponse, err := idp.Client.Get(getUserInfoUrl)
 	if err != nil {
 		return nil, err
