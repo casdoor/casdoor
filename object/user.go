@@ -115,10 +115,12 @@ func UpdateUserForOriginal(user *User) bool {
 
 func AddUser(user *User) bool {
 	user.Id = util.GenerateId()
-	user.UpdateUserHash()
-	user.PreHash = user.Hash
+
 	organization := getOrganizationByUser(user)
 	user.UpdateUserPassword(organization)
+
+	user.UpdateUserHash()
+	user.PreHash = user.Hash
 
 	affected, err := adapter.Engine.Insert(user)
 	if err != nil {
@@ -135,9 +137,10 @@ func AddUsers(users []*User) bool {
 
 	organization := getOrganizationByUser(users[0])
 	for _, user := range users {
+		user.UpdateUserPassword(organization)
+
 		user.UpdateUserHash()
 		user.PreHash = user.Hash
-		user.UpdateUserPassword(organization)
 	}
 
 	affected, err := adapter.Engine.Insert(users)
@@ -233,6 +236,15 @@ func SetUserField(user *User, field string, value string) bool {
 	if err != nil {
 		panic(err)
 	}
+
+	user = getUser(user.Owner, user.Name)
+	user.UpdateUserHash()
+	affected, err = adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("hash").Update(user)
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
 
 	return affected != 0
 }
