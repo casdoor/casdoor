@@ -22,15 +22,37 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 type WeChatIdProvider struct {
 	Client *http.Client
 	// Config:
-	// - ClientID: 应用唯一标识, 用于请求CODE、通过CODE获取/刷新access_token，此信息前端可获取
-	// - ClientSecret: 应用密钥，此信息保存在后端，前端不可获取【如保存在环境变量中】
-	// - RedirectURL: 用户允许授权后，将会重定向到redirect_uri的网址上，并且带上code和state参数
+	// - ClientID: Application unique identifier, used to request CODE, get/refresh access_token through CODE, this information can be obtained by the front end
+	// - ClientSecret: Application key, this information is stored in the back-end, and the front-end is not available [such as stored in environment variables]
+	// - RedirectURL: After the user allows authorization, it will be redirected to the URL of redirect_uri with the code and state parameters
 	Config *oauth2.Config
+}
+
+type TencentAccessToken struct {
+	AccessToken  string `json:"access_token"`  //Interface call credentials
+	ExpiresIn    int64  `json:"expires_in"`    //access_token interface call credential timeout time, unit (seconds)
+	RefreshToken string `json:"refresh_token"` //User refresh access_token
+	Openid       string `json:"openid"`        //Unique ID of authorized user
+	Scope        string `json:"scope"`         //The scope of user authorization, separated by commas. (,)
+	Unionid      string `json:"unionid"`       //This field will appear if and only if the website application has been authorized by the user's UserInfo.
+}
+
+type TencentUserInfo struct {
+	Openid     string   `json:"openid"`     //The ID of an ordinary user, which is unique to the current developer account
+	Nickname   string   `json:"nickname"`   //Ordinary user nickname
+	Sex        int      `json:"sex"`        //Ordinary user gender, 1 is male, 2 is female
+	Province   string   `json:"province"`   //Province filled in by ordinary user's personal information
+	City       string   `json:"city"`       //City filled in by general user's personal data
+	Country    string   `json:"country"`    //Country, such as China is CN
+	Headimgurl string   `json:"headimgurl"` //User avatar, the last value represents the size of the square avatar (there are optional values of 0, 46, 64, 96, 132, 0 represents a 640*640 square avatar), this item is empty when the user does not have a avatar
+	Privilege  []string `json:"privilege"`  //User Privilege information, json array, such as Wechat Woka user (chinaunicom)
+	Unionid    string   `json:"unionid"`    //Unified user identification. For an application under a WeChat open platform account, the unionid of the same user is unique.
 }
 
 func NewWeChatIdProvider(clientId string, clientSecret string, redirectUrl string) *WeChatIdProvider {
@@ -46,7 +68,7 @@ func (idp *WeChatIdProvider) SetHttpClient(client *http.Client) {
 	idp.Client = client
 }
 
-// getConfig 返回一个Config的指针，其描述了一个典型的OAuth2.0流
+// getConfig return a point of Config, which describes a typical 3-legged OAuth2 flow
 func (idp *WeChatIdProvider) getConfig(clientId string, clientSecret string, redirectUrl string) *oauth2.Config {
 	var endpoint = oauth2.Endpoint{
 		TokenURL: "https://graph.qq.com/oauth2.0/token",
@@ -63,9 +85,9 @@ func (idp *WeChatIdProvider) getConfig(clientId string, clientSecret string, red
 	return config
 }
 
-// GetAccessToken 通过code获取access_token (*获取code的操作在前端完成)
-//具体参数等内容详见：https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Wechat_Login.html
-func (idp *WeChatIdProvider) GetAccessToken(code string) (*TencentAccessToken, error) {
+// GetToken use code get access_token (*operation of getting code ought to be done in front)
+// get more detail via: https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Wechat_Login.html
+func (idp *WeChatIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	params := url.Values{}
 	params.Add("grant_type", "authorization_code")
 	params.Add("appid", idp.Config.ClientID)
@@ -96,15 +118,28 @@ func (idp *WeChatIdProvider) GetAccessToken(code string) (*TencentAccessToken, e
 		return nil, err
 	}
 
-	return &tencentAccessToken, nil
+	token := oauth2.Token{
+		AccessToken:  tencentAccessToken.AccessToken,
+		TokenType:    "WeChatAccessToken",
+		RefreshToken: tencentAccessToken.RefreshToken,
+		Expiry:       time.Time{},
+	}
+
+	raw := make(map[string]string)
+	raw["Openid"] = tencentAccessToken.Openid
+	token.WithExtra(raw)
+
+	return &token, nil
 }
 
-// GetUserInfo 根据之前获得的TencentAccessToken返回TencentUserInfo
-// 具体参数等内容详见：https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Authorized_Interface_Calling_UnionID.html
-func (idp *WeChatIdProvider) GetUserInfo(tencentAccessToken *TencentAccessToken) (*TencentUserInfo, error) {
+// GetUserInfo use TencentAccessToken gotten before return TencentUserInfo
+// get more detail via: https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Authorized_Interface_Calling_UnionID.html
+func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	var tencentUserInfo TencentUserInfo
+	accessToken := token.AccessToken
+	openid := token.Extra("Openid")
 
-	getUserInfoUrl := fmt.Sprintf("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s", tencentAccessToken.AccessToken, tencentAccessToken.Openid)
+	getUserInfoUrl := fmt.Sprintf("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s", accessToken, openid)
 	getUserInfoResponse, err := idp.Client.Get(getUserInfoUrl)
 	if err != nil {
 		return nil, err
@@ -122,10 +157,15 @@ func (idp *WeChatIdProvider) GetUserInfo(tencentAccessToken *TencentAccessToken)
 	if err != nil {
 		return nil, err
 	}
-
 	if err = json.Unmarshal([]byte(buf.String()), &tencentUserInfo); err != nil {
 		return nil, err
 	}
 
-	return &tencentUserInfo, nil
+	userInfo := UserInfo{
+		Username:  tencentUserInfo.Nickname,
+		Email:     "",
+		AvatarUrl: tencentUserInfo.Headimgurl,
+	}
+
+	return &userInfo, nil
 }

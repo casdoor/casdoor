@@ -26,38 +26,10 @@ type UserInfo struct {
 	AvatarUrl string
 }
 
-type TencentAccessToken struct {
-	AccessToken  string `json:"access_token"`  //接口调用凭证
-	ExpiresIn    int64  `json:"expires_in"`    //access_token接口调用凭证超时时间，单位（秒）
-	RefreshToken string `json:"refresh_token"` //用户刷新access_token
-	Openid       string `json:"openid"`        //授权用户唯一标识
-	Scope        string `json:"scope"`         //用户授权的作用域，使用英文逗号分隔
-	Unionid      string `json:"unionid"`       //当且仅当该网站应用已获得该用户的userinfo授权时，才会出现该字段。
-}
-
-type TencentUserInfo struct {
-	openid     string   //普通用户的标识，对当前开发者帐号唯一
-	nickname   string   //普通用户昵称
-	sex        int      //普通用户性别，1为男性，2为女性
-	province   string   //普通用户个人资料填写的省份
-	city       string   //普通用户个人资料填写的城市
-	country    string   //国家，如中国为CN
-	headimgurl string   //用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像），用户没有头像时该项为空
-	privilege  []string //用户特权信息，json数组，如微信沃卡用户为（chinaunicom）
-	unionid    string   //用户统一标识。针对一个微信开放平台帐号下的应用，同一用户的unionid是唯一的。
-}
-
 type IdProvider interface {
 	SetHttpClient(client *http.Client)
 	GetToken(code string) (*oauth2.Token, error)
 	GetUserInfo(token *oauth2.Token) (*UserInfo, error)
-}
-
-// TencentIdProvider qq以及微信的IdProvider接口
-type TencentIdProvider interface {
-	SetHttpClient(client *http.Client)
-	GetAccessToken(code string) (*TencentAccessToken, error)
-	GetUserInfo(tencentAccessToken *TencentAccessToken) (*TencentUserInfo, error)
 }
 
 func GetIdProvider(providerType string, clientId string, clientSecret string, redirectUrl string) IdProvider {
@@ -67,14 +39,7 @@ func GetIdProvider(providerType string, clientId string, clientSecret string, re
 		return NewGoogleIdProvider(clientId, clientSecret, redirectUrl)
 	} else if providerType == "QQ" {
 		return NewQqIdProvider(clientId, clientSecret, redirectUrl)
-	}
-
-	return nil
-}
-
-// GetTencentIdProvider 获取qq或微信的IdProvider
-func GetTencentIdProvider(providerType string, clientId string, clientSecret string, redirectUrl string) TencentIdProvider {
-	if providerType == "WeChat" {
+	} else if providerType == "WeChat" {
 		return NewWeChatIdProvider(clientId, clientSecret, redirectUrl)
 	}
 
