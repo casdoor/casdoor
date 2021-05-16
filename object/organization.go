@@ -93,19 +93,6 @@ func DeleteOrganization(organization *Organization) bool {
 	return affected != 0
 }
 
-func GetOrganizationByName(name string) *Organization {
-	var ret Organization
-	ret.Name = name
-	has, err := adapter.Engine.Get(&ret)
-	if err != nil {
-		panic(err)
-	}
-	if !has {
-		return nil
-	}
-	return &ret
-}
-
-func getOrganizationByUser(user *User) *Organization {
+func GetOrganizationByUser(user *User) *Organization {
 	return getOrganization("admin", user.Owner)
 }

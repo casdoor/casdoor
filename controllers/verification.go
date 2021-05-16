@@ -58,7 +58,7 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError("Invalid phone number")
 			return
 		}
-		org := object.GetOrganizationByName(user.Owner)
+		org := object.GetOrganizationByUser(user)
 		phonePrefix := "86"
 		if org != nil && org.PhonePrefix != "" {
 			phonePrefix = org.PhonePrefix
@@ -98,7 +98,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 
 	checkDest := dest
 	if destType == "phone" {
-		org := object.GetOrganizationByName(user.Owner)
+		org := object.GetOrganizationByUser(user)
 		phonePrefix := "86"
 		if org != nil && org.PhonePrefix != "" {
 			phonePrefix = org.PhonePrefix

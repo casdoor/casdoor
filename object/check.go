@@ -58,7 +58,7 @@ func CheckUserSignup(organizationName string, username string, password string, 
 }
 
 func CheckPassword(user *User, password string) string {
-	organization := getOrganizationByUser(user)
+	organization := GetOrganizationByUser(user)
 
 	if organization.PasswordType == "plain" {
 		if password == user.Password {

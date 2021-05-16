@@ -152,7 +152,7 @@ func (c *ApiController) GetAccount() {
 
 	username := c.GetSessionUser()
 	user := object.GetUser(username)
-	organization := object.GetOrganization(util.GetId(user.Owner))
+	organization := object.GetOrganizationByUser(user)
 	resp = Response{Status: "ok", Msg: "", Data: user, Data2: organization}
 
 	c.Data["json"] = resp

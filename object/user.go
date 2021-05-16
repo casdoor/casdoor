@@ -116,7 +116,7 @@ func UpdateUserForOriginal(user *User) bool {
 func AddUser(user *User) bool {
 	user.Id = util.GenerateId()
 
-	organization := getOrganizationByUser(user)
+	organization := GetOrganizationByUser(user)
 	user.UpdateUserPassword(organization)
 
 	user.UpdateUserHash()
@@ -135,7 +135,7 @@ func AddUsers(users []*User) bool {
 		return false
 	}
 
-	organization := getOrganizationByUser(users[0])
+	organization := GetOrganizationByUser(users[0])
 	for _, user := range users {
 		user.UpdateUserPassword(organization)
 
@@ -227,7 +227,7 @@ func GetUserByFields(organization string, field string) *User {
 
 func SetUserField(user *User, field string, value string) bool {
 	if field == "password" {
-		organization := getOrganizationByUser(user)
+		organization := GetOrganizationByUser(user)
 		user.UpdateUserPassword(organization)
 		value = user.Password
 	}
