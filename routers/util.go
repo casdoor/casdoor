@@ -20,12 +20,12 @@ import (
 )
 
 func parseQuery(query string, key string) string {
-	valueMap, err := url.ParseQuery(query)
+	queryMap, err := url.ParseQuery(query)
 	if err != nil {
 		panic(err)
 	}
 
-	return valueMap.Get(key)
+	return queryMap.Get(key)
 }
 
 func parseSlash(s string) (string, string) {

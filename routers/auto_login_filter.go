@@ -16,6 +16,7 @@ package routers
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/astaxie/beego/context"
 	"github.com/casdoor/casdoor/controllers"
@@ -53,23 +54,42 @@ func returnRequest(ctx *context.Context, msg string) {
 }
 
 func AutoLoginFilter(ctx *context.Context) {
-	query := ctx.Request.URL.RawQuery
-	// query == "?access_token=123"
-	accessToken := parseQuery(query, "accessToken")
-	if accessToken == "" {
-		return
-	}
-
 	if getSessionUser(ctx) != "" {
 		return
 	}
 
-	claims, err := object.ParseJwtToken(accessToken)
+	query := ctx.Request.URL.RawQuery
+	queryMap, err := url.ParseQuery(query)
 	if err != nil {
-		returnRequest(ctx, "Invalid JWT token")
+		panic(err)
+	}
+
+	// "/page?access_token=123"
+	accessToken := queryMap.Get("accessToken")
+	if accessToken != "" {
+		claims, err := object.ParseJwtToken(accessToken)
+		if err != nil {
+			returnRequest(ctx, "Invalid JWT token")
+			return
+		}
+
+		userId := fmt.Sprintf("%s/%s", claims.Organization, claims.Username)
+		setSessionUser(ctx, userId)
 		return
 	}
 
-	userId := fmt.Sprintf("%s/%s", claims.Organization, claims.Username)
-	setSessionUser(ctx, userId)
+	// "/page?username=abc&password=123"
+	userId := queryMap.Get("username")
+	password := queryMap.Get("password")
+	if userId != "" && password != "" {
+		owner, name := util.GetOwnerAndNameFromId(userId)
+		_, msg := object.CheckUserLogin(owner, name, password)
+		if msg != "" {
+			returnRequest(ctx, msg)
+			return
+		}
+
+		setSessionUser(ctx, userId)
+		return
+	}
 }

@@ -109,7 +109,17 @@ class App extends Component {
   getAccessTokenParam() {
     // "/page?access_token=123"
     const params = new URLSearchParams(this.props.location.search);
-    return params.get("access_token");
+    const accessToken = params.get("access_token");
+    return accessToken === null ? "" : `?accessToken=${accessToken}`;
+  }
+
+  getCredentialParams() {
+    // "/page?username=abc&password=123"
+    const params = new URLSearchParams(this.props.location.search);
+    if (params.get("username") === null || params.get("password") === null) {
+      return "";
+    }
+    return `?username=${params.get("username")}&password=${params.get("password")}`;
   }
 
   getUrlWithoutQuery() {
@@ -118,18 +128,21 @@ class App extends Component {
   }
 
   getAccount() {
-    const accessToken = this.getAccessTokenParam();
-    if (accessToken !== null) {
+    let query = this.getAccessTokenParam();
+    if (query === "") {
+      query = this.getCredentialParams();
+    }
+    if (query !== "") {
       window.history.replaceState({}, document.title, this.getUrlWithoutQuery());
     }
-    AuthBackend.getAccount(accessToken)
+    AuthBackend.getAccount(query)
       .then((res) => {
         let account = null;
         if (res.status === "ok") {
           account = res.data;
           account.organization = res.data2;
         } else {
-          if (res.msg === "Invalid JWT token") {
+          if (res.msg !== "Please sign in first") {
             Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
           }
         }
