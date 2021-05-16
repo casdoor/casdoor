@@ -24,7 +24,10 @@ import (
 )
 
 func getFullAvatarUrl(avatar string) string {
-	return fmt.Sprintf("%s%s", avatarBaseUrl, avatar)
+	if !strings.HasPrefix(avatar, "https://") {
+		return fmt.Sprintf("%s%s", avatarBaseUrl, avatar)
+	}
+	return avatar
 }
 
 func getPartialAvatarUrl(avatar string) string {
