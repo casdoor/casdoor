@@ -28,7 +28,7 @@ func InitHttpClient() {
 	if err != nil {
 		panic(err)
 	}
-	if !useProxy{
+	if !useProxy {
 		httpClient = &http.Client{}
 		return
 	}
@@ -56,4 +56,15 @@ func InitHttpClient() {
 func (c *ApiController) ResponseError(error string) {
 	c.Data["json"] = Response{Status: "error", Msg: error}
 	c.ServeJSON()
+}
+
+func (c *ApiController) RequireSignedIn() (string, bool) {
+	userId := c.GetSessionUser()
+	if userId == "" {
+		resp := Response{Status: "error", Msg: "Please sign in first"}
+		c.Data["json"] = resp
+		c.ServeJSON()
+		return "", false
+	}
+	return userId, true
 }

@@ -141,17 +141,14 @@ func (c *ApiController) Logout() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-account [get]
 func (c *ApiController) GetAccount() {
-	var resp Response
-
-	if c.GetSessionUser() == "" {
-		resp = Response{Status: "error", Msg: "Please sign in first", Data: c.GetSessionUser()}
-		c.Data["json"] = resp
-		c.ServeJSON()
+	userId, ok := c.RequireSignedIn()
+	if !ok {
 		return
 	}
 
-	username := c.GetSessionUser()
-	user := object.GetUser(username)
+	var resp Response
+
+	user := object.GetUser(userId)
 	organization := object.GetOrganizationByUser(user)
 	resp = Response{Status: "ok", Msg: "", Data: user, Data2: organization}
 
@@ -166,17 +163,14 @@ func (c *ApiController) GetAccount() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /upload-avatar [post]
 func (c *ApiController) UploadAvatar() {
-	var resp Response
-
-	username := c.GetSessionUser()
-	if c.GetSessionUser() == "" {
-		resp = Response{Status: "error", Msg: "Please sign in first", Data: c.GetSessionUser()}
-		c.Data["json"] = resp
-		c.ServeJSON()
+	userId, ok := c.RequireSignedIn()
+	if !ok {
 		return
 	}
 
-	user := object.GetUser(username)
+	var resp Response
+
+	user := object.GetUser(userId)
 
 	avatarBase64 := c.Ctx.Request.Form.Get("avatarfile")
 	index := strings.Index(avatarBase64, ",")

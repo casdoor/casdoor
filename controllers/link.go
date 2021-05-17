@@ -25,14 +25,12 @@ type LinkForm struct {
 }
 
 func (c *ApiController) Unlink() {
-	var resp Response
-
-	if c.GetSessionUser() == "" {
-		resp = Response{Status: "error", Msg: "Please sign in first", Data: c.GetSessionUser()}
-		c.Data["json"] = resp
-		c.ServeJSON()
+	userId, ok := c.RequireSignedIn()
+	if !ok {
 		return
 	}
+
+	var resp Response
 
 	var form LinkForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
@@ -41,7 +39,6 @@ func (c *ApiController) Unlink() {
 	}
 	providerType := form.ProviderType
 
-	userId := c.GetSessionUser()
 	user := object.GetUser(userId)
 	value := object.GetUserField(user, providerType)
 

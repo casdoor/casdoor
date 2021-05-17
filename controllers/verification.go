@@ -23,11 +23,11 @@ import (
 )
 
 func (c *ApiController) SendVerificationCode() {
-	userId := c.GetSessionUser()
-	if len(userId) == 0 {
-		c.ResponseError("Please sign in first")
+	userId, ok := c.RequireSignedIn()
+	if !ok {
 		return
 	}
+
 	user := object.GetUser(userId)
 	if user == nil {
 		c.ResponseError("No such user.")
@@ -77,11 +77,11 @@ func (c *ApiController) SendVerificationCode() {
 }
 
 func (c *ApiController) ResetEmailOrPhone() {
-	userId := c.GetSessionUser()
-	if len(userId) == 0 {
-		c.ResponseError("Please sign in first")
+	userId, ok := c.RequireSignedIn()
+	if !ok {
 		return
 	}
+
 	user := object.GetUser(userId)
 	if user == nil {
 		c.ResponseError("No such user.")
