@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {authConfig} from "./Auth";
+import { authConfig } from "./Auth";
+import * as Setting from "../Setting";
 
 export function getAccount(query) {
   return fetch(`${authConfig.serverUrl}/api/get-account${query}`, {
@@ -61,4 +62,11 @@ export function unlink(values) {
     credentials: "include",
     body: JSON.stringify(values),
   }).then(res => res.json());
+}
+
+export function getCaptcha() {
+  return fetch(`${Setting.ServerUrl}/api/get-captcha`, {
+    method: "GET",
+    credentials: "include",
+  }).then((res) => res.json());
 }

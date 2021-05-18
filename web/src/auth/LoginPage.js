@@ -34,7 +34,33 @@ class LoginPage extends React.Component {
       applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
       msg: null,
+      captcha: "",
+      captchaId: "",
     };
+  }
+
+  componentDidMount() {
+    this.getCaptcha();
+  }
+
+  
+  updateFormField(key, value) {
+    let form = this.state.form;
+    form[key] = value;
+    this.setState({
+      form: form,
+    });
+  }
+
+  getCaptcha() {
+    AuthBackend.getCaptcha().then((res) => {
+      this.setState(
+        {
+          captcha: res?.data,
+          captchaId: res?.data2,
+        }
+      );
+    });
   }
 
   UNSAFE_componentWillMount() {
@@ -199,6 +225,31 @@ class LoginPage extends React.Component {
             }}>
               {i18next.t("login:Forgot password?")}
             </Link>
+          </Form.Item>
+          <Form.Item>
+            <div
+              style={{
+                backgroundImage: `url('data:image/png;base64,${this.state.captcha}')`,
+                backgroundRepeat: "no-repeat",
+                height: "80px",
+                borderRadius: "3px",
+                border: "1px solid #ccc",
+              }}
+            />
+            <Input
+              type="text"
+              className="sl"
+              name="captcha"
+              onChange={(event) => {
+                this.updateFormField("captcha", event.target.value);
+              }}
+              autoCorrect="off"
+              spellCheck="false"
+              autoCapitalize="off"
+              placeholder={i18next.t(
+                "login:Please enter the verification code in the picture above"
+              )}
+            />
           </Form.Item>
           <Form.Item>
             <Button
