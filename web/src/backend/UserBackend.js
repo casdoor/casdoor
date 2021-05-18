@@ -93,10 +93,11 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
   }).then(res => res.json());
 }
 
-export function sendCode(dest, type) {
+export function sendCode(dest, type, orgId) {
   let formData = new FormData();
   formData.append("dest", dest);
   formData.append("type", type);
+  formData.append("organizationId", orgId);
   return fetch(`${Setting.ServerUrl}/api/send-verification-code`, {
     method: "POST",
     credentials: "include",

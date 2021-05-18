@@ -48,7 +48,18 @@
     "Have account?": "Have account?",
     "sign in now": "sign in now",
     "Your account has been created!": "Your account has been created!",
-    "Please click the below button to sign in": "Please click the below button to sign in"
+    "Please click the below button to sign in": "Please click the below button to sign in",
+    "code sent": "code sent",
+    "send code": "send code",
+    "email code": "email code",
+    "phone code": "phone code",
+    "PhoneCode has not been sent yet!": "Phone code has not been sent yet!",
+    "EmailCode has not been sent yet!": "Email code has not been sent yet!",
+    "PhoneYou should verify your code in 10 min!": "You should verify your phone verification code in 10 min!",
+    "EmailYou should verify your code in 10 min!": "You should verify your email verification code in 10 min!",
+    "PhoneWrong code!": "Wrong phone verification code!",
+    "EmailWrong code!": "Wrong email verification code!",
+    "Missing parameter.": "Missing parameter."
   },
   "login":
   {

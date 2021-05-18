@@ -19,6 +19,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/astaxie/beego"
 	"xorm.io/core"
 )
 
@@ -94,34 +95,54 @@ func AddToVerificationRecord(remoteAddr, recordType, dest, code string) string {
 	return ""
 }
 
-func CheckVerificationCode(dest, code string) string {
+func getVerificationRecord(dest string) *VerificationRecord {
 	var record VerificationRecord
 	record.Receiver = dest
 	has, err := adapter.Engine.Desc("time").Where("is_used = 0").Get(&record)
 	if err != nil {
 		panic(err)
 	}
-
 	if !has {
+		return nil
+	}
+	return &record
+}
+
+func CheckVerificationCode(dest, code string) string {
+	record := getVerificationRecord(dest)
+
+	if record == nil {
 		return "Code has not been sent yet!"
 	}
 
+	timeout, err := beego.AppConfig.Int64("verificationCodeTimeout")
+	if err != nil {
+		panic(err)
+	}
+
 	now := time.Now().Unix()
-	if now-record.Time > 5*60 {
-		return "You should verify your code in 5 min!"
+	if now-record.Time > timeout*60 {
+		return fmt.Sprintf("You should verify your code in %d min!", timeout)
 	}
 
 	if record.Code != code {
 		return "Wrong code!"
 	}
 
+	return ""
+}
+
+func DisableVerificationCode(dest string) {
+	record := getVerificationRecord(dest)
+	if record == nil {
+		return
+	}
+
 	record.IsUsed = true
-	_, err = adapter.Engine.ID(core.PK{record.RemoteAddr, record.Type}).AllCols().Update(record)
+	_, err := adapter.Engine.ID(core.PK{record.RemoteAddr, record.Type}).AllCols().Update(record)
 	if err != nil {
 		panic(err)
 	}
-
-	return ""
 }
 
 // from Casnode/object/validateCode.go line 116
