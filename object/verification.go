@@ -18,10 +18,13 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+
+	"xorm.io/core"
 )
 
 type VerificationRecord struct {
 	RemoteAddr string `xorm:"varchar(100) notnull pk"`
+	Type       string `xorm:"varchar(10) notnull pk"`
 	Receiver   string `xorm:"varchar(100) notnull"`
 	Code       string `xorm:"varchar(10) notnull"`
 	Time       int64  `xorm:"notnull"`
@@ -34,7 +37,7 @@ func SendVerificationCodeToEmail(remoteAddr, dest string) string {
 	code := getRandomCode(5)
 	content := fmt.Sprintf("You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.", code)
 
-	if result := AddToVerificationRecord(remoteAddr, dest, code); len(result) != 0 {
+	if result := AddToVerificationRecord(remoteAddr, "email", dest, code); len(result) != 0 {
 		return result
 	}
 
@@ -51,16 +54,17 @@ func SendVerificationCodeToEmail(remoteAddr, dest string) string {
 
 func SendVerificationCodeToPhone(remoteAddr, dest string) string {
 	code := getRandomCode(5)
-	if result := AddToVerificationRecord(remoteAddr, dest, code); len(result) != 0 {
+	if result := AddToVerificationRecord(remoteAddr, "phone", dest, code); len(result) != 0 {
 		return result
 	}
 
 	return SendCodeToPhone(dest, code)
 }
 
-func AddToVerificationRecord(remoteAddr, dest, code string) string {
+func AddToVerificationRecord(remoteAddr, recordType, dest, code string) string {
 	var record VerificationRecord
 	record.RemoteAddr = remoteAddr
+	record.Type = recordType
 	has, err := adapter.Engine.Get(&record)
 	if err != nil {
 		panic(err)
@@ -78,7 +82,7 @@ func AddToVerificationRecord(remoteAddr, dest, code string) string {
 	record.IsUsed = false
 
 	if has {
-		_, err = adapter.Engine.ID(record.RemoteAddr).AllCols().Update(record)
+		_, err = adapter.Engine.ID(core.PK{remoteAddr, recordType}).AllCols().Update(record)
 	} else {
 		_, err = adapter.Engine.Insert(record)
 	}
@@ -112,7 +116,7 @@ func CheckVerificationCode(dest, code string) string {
 	}
 
 	record.IsUsed = true
-	_, err = adapter.Engine.ID(record.RemoteAddr).AllCols().Update(record)
+	_, err = adapter.Engine.ID(core.PK{record.RemoteAddr, record.Type}).AllCols().Update(record)
 	if err != nil {
 		panic(err)
 	}
