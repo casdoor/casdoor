@@ -48,7 +48,18 @@
     "Have account?": "已有账号？",
     "sign in now": "立即登录",
     "Your account has been created!": "您的账号已创建！",
-    "Please click the below button to sign in": "请点击下方按钮登录"
+    "Please click the below button to sign in": "请点击下方按钮登录",
+    "code sent": "验证码已发送",
+    "send code": "发送验证码",
+    "email code": "邮箱验证码",
+    "phone code": "手机验证码",
+    "PhoneCode has not been sent yet!": "尚未发送验证码至手机",
+    "EmailCode has not been sent yet!": "尚未发送验证码至邮箱",
+    "PhoneYou should verify your code in 10 min!": "你应该在 10 分钟之内验证手机号",
+    "EmailYou should verify your code in 10 min!": "你应该在 10 分钟之内验证邮箱",
+    "PhoneWrong code!": "手机验证码错误",
+    "EmailWrong code!": "邮箱验证码错误",
+    "Missing parameter.": "缺少参数"
   },
   "login":
   {

@@ -23,25 +23,14 @@ import (
 )
 
 func (c *ApiController) SendVerificationCode() {
-	userId, ok := c.RequireSignedIn()
-	if !ok {
-		return
-	}
-
-	user := object.GetUser(userId)
-	if user == nil {
-		c.ResponseError("No such user.")
-		return
-	}
-
 	destType := c.Ctx.Request.Form.Get("type")
 	dest := c.Ctx.Request.Form.Get("dest")
+	orgId := c.Ctx.Request.Form.Get("organizationId")
 	remoteAddr := c.Ctx.Request.RemoteAddr
 	remoteAddr = remoteAddr[:strings.LastIndex(remoteAddr, ":")]
 
-	if len(destType) == 0 || len(dest) == 0 {
-		c.Data["json"] = Response{Status: "error", Msg: "Missing parameter."}
-		c.ServeJSON()
+	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || strings.Index(orgId, "/") < 0 {
+		c.ResponseError("Missing parameter.")
 		return
 	}
 
@@ -58,12 +47,12 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError("Invalid phone number")
 			return
 		}
-		org := object.GetOrganizationByUser(user)
-		phonePrefix := "86"
-		if org != nil && org.PhonePrefix != "" {
-			phonePrefix = org.PhonePrefix
+		org := object.GetOrganization(orgId)
+		if org == nil {
+			c.ResponseError("Missing parameter.")
+			return
 		}
-		dest = fmt.Sprintf("+%s%s", phonePrefix, dest)
+		dest = fmt.Sprintf("+%s%s", org.PhonePrefix, dest)
 		msg = object.SendVerificationCodeToPhone(remoteAddr, dest)
 	}
 
@@ -122,6 +111,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 		return
 	}
 
+	object.DisableVerificationCode(checkDest)
 	c.Data["json"] = Response{Status: "ok"}
 	c.ServeJSON()
 }

@@ -25,7 +25,7 @@ export const ResetModal = (props) => {
   const [sendCodeCoolDown, setCoolDown] = React.useState(false);
   const [dest, setDest] = React.useState("");
   const [code, setCode] = React.useState("");
-  const {buttonText, destType, coolDownTime} = props;
+  const {buttonText, destType, coolDownTime, org} = props;
 
   const showModal = () => {
     setVisible(true);
@@ -72,7 +72,8 @@ export const ResetModal = (props) => {
       Setting.showMessage("error", i18next.t("user:Empty " + destType));
       return;
     }
-    UserBackend.sendCode(dest, destType).then(res => {
+    let orgId = org.owner + "/" + org.name;
+    UserBackend.sendCode(dest, destType, orgId).then(res => {
       if (res.status === "ok") {
         Setting.showMessage("success", i18next.t("user:Code Sent"));
         setCoolDown(true);

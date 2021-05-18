@@ -36,6 +36,7 @@ type Provider struct {
 	RegionId     string `xorm:"varchar(100)" json:"regionId"`
 	SignName     string `xorm:"varchar(100)" json:"signName"`
 	TemplateCode string `xorm:"varchar(100)" json:"templateCode"`
+	AppId        string `xorm:"varchar(100)" json:"appId"`
 
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
 }
