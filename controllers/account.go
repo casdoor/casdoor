@@ -46,6 +46,10 @@ type RequestForm struct {
 	State       string `json:"state"`
 	RedirectUri string `json:"redirectUri"`
 	Method      string `json:"method"`
+
+	EmailCode   string `json:"emailCode"`
+	PhoneCode   string `json:"phoneCode"`
+	PhonePrefix string `json:"phonePrefix"`
 }
 
 type Response struct {
@@ -75,6 +79,21 @@ func (c *ApiController) Signup() {
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
 		panic(err)
+	}
+
+	checkResult := object.CheckVerificationCode(form.Email, form.EmailCode)
+	if len(checkResult) != 0 {
+		responseText := fmt.Sprintf("Email%s", checkResult)
+		c.ResponseError(responseText)
+		return
+	}
+
+	checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Phone)
+	checkResult = object.CheckVerificationCode(checkPhone, form.PhoneCode)
+	if len(checkResult) != 0 {
+		responseText := fmt.Sprintf("Phone%s", checkResult)
+		c.ResponseError(responseText)
+		return
 	}
 
 	application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
@@ -110,6 +129,8 @@ func (c *ApiController) Signup() {
 
 		//c.SetSessionUser(user)
 
+		object.DisableVerificationCode(form.Email)
+		object.DisableVerificationCode(checkPhone)
 		util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
 		resp = Response{Status: "ok", Msg: "", Data: userId}
 	}
@@ -141,17 +162,14 @@ func (c *ApiController) Logout() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-account [get]
 func (c *ApiController) GetAccount() {
-	var resp Response
-
-	if c.GetSessionUser() == "" {
-		resp = Response{Status: "error", Msg: "Please sign in first", Data: c.GetSessionUser()}
-		c.Data["json"] = resp
-		c.ServeJSON()
+	userId, ok := c.RequireSignedIn()
+	if !ok {
 		return
 	}
 
-	username := c.GetSessionUser()
-	user := object.GetUser(username)
+	var resp Response
+
+	user := object.GetUser(userId)
 	organization := object.GetOrganizationByUser(user)
 	resp = Response{Status: "ok", Msg: "", Data: user, Data2: organization}
 
@@ -166,17 +184,14 @@ func (c *ApiController) GetAccount() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /upload-avatar [post]
 func (c *ApiController) UploadAvatar() {
-	var resp Response
-
-	username := c.GetSessionUser()
-	if c.GetSessionUser() == "" {
-		resp = Response{Status: "error", Msg: "Please sign in first", Data: c.GetSessionUser()}
-		c.Data["json"] = resp
-		c.ServeJSON()
+	userId, ok := c.RequireSignedIn()
+	if !ok {
 		return
 	}
 
-	user := object.GetUser(username)
+	var resp Response
+
+	user := object.GetUser(userId)
 
 	avatarBase64 := c.Ctx.Request.Form.Get("avatarfile")
 	index := strings.Index(avatarBase64, ",")

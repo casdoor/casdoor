@@ -21,6 +21,7 @@ import i18next from "i18next";
 import * as Util from "./Util";
 import {authConfig} from "./Auth";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
+import * as UserBackend from "../backend/UserBackend";
 
 const formItemLayout = {
   labelCol: {
@@ -61,6 +62,8 @@ class SignupPage extends React.Component {
       classes: props,
       applicationName: props.match.params.applicationName !== undefined ? props.match.params.applicationName : authConfig.appName,
       application: null,
+      email: "",
+      phone: ""
     };
 
     this.form = React.createRef();
@@ -96,18 +99,35 @@ class SignupPage extends React.Component {
   }
 
   onFinish(values) {
+    values.phonePrefix = this.state.application?.organizationObj.phonePrefix;
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === 'ok') {
           Setting.goToLinkSoft(this, this.getResultPath(this.state.application));
         } else {
-          Setting.showMessage("error", `Failed to sign up: ${res.msg}`);
+          Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
         }
       });
   }
 
   onFinishFailed(values, errorFields, outOfDate) {
     this.form.current.scrollToField(errorFields[0].name);
+  }
+
+  sendCode(type) {
+    let dest, orgId;
+    if (type === "email") {
+      dest = this.state.email;
+    } else if (type === "phone") {
+      dest = this.state.phone;
+    } else return;
+
+    orgId = this.state.application?.organizationObj.owner + "/" + this.state.application?.organizationObj.name
+
+    UserBackend.sendCode(dest, type, orgId).then(res => {
+      if (res.status === "ok") Setting.showMessage("success", i18next.t("signup:code sent"));
+      else Setting.showMessage("error", i18next.t("signup:" + res.msg));
+    })
   }
 
   renderForm(application) {
@@ -220,7 +240,17 @@ class SignupPage extends React.Component {
             },
           ]}
         >
-          <Input />
+          <Input onChange={e => this.setState({email: e.target.value})} />
+        </Form.Item>
+        <Form.Item
+          name="emailCode"
+          label={i18next.t("signup:email code")}
+          rules={[{
+            required: true,
+            message: i18next.t("signup:Please input your verification code!"),
+          }]}
+        >
+          <Input autoComplete="off" value={this.state.emailCode} addonAfter={<button onClick={() => this.sendCode("email")} style={{backgroundColor: "#fafafa", border: "none"}}>{i18next.t("signup:send code")}</button>} />
         </Form.Item>
         <Form.Item
           name="password"
@@ -273,7 +303,20 @@ class SignupPage extends React.Component {
               width: '100%',
             }}
             addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+            onChange={e => this.setState({phone: e.target.value})}
           />
+        </Form.Item>
+        <Form.Item
+          name="phoneCode"
+          label={i18next.t("signup:phone code")}
+          rules={[
+            {
+              required: true,
+              message: i18next.t("signup:Please input your phone verification code!"),
+            },
+          ]}
+        >
+          <Input autoComplete="off" value={this.state.phoneCode} addonAfter={<button onClick={() => this.sendCode("phone")} style={{border: "none", backgroundColor: "#fafafa"}}>{i18next.t("signup:send code")}</button>}/>
         </Form.Item>
         <Form.Item name="agreement" valuePropName="checked" {...tailFormItemLayout}>
           <Checkbox>

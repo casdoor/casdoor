@@ -222,6 +222,18 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           ) : null
         }
+        {this.state.provider.category === "Phone" && this.state.provider.type === "tencent" ? (
+          <Row style={{marginTop: '20px'}} >
+            <Col style={{marginTop: '5px'}} span={2}>
+              {i18next.t("provider:App ID")}:
+            </Col>
+            <Col span={22} >
+              <Input value={this.state.provider.appId} onChange={e => {
+                this.updateProviderField('appId', e.target.value);
+              }} />
+            </Col>
+          </Row>
+        ) : null}
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("provider:Provider URL")}:

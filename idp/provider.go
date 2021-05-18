@@ -39,6 +39,8 @@ func GetIdProvider(providerType string, clientId string, clientSecret string, re
 		return NewGoogleIdProvider(clientId, clientSecret, redirectUrl)
 	} else if providerType == "QQ" {
 		return NewQqIdProvider(clientId, clientSecret, redirectUrl)
+	} else if providerType == "WeChat" {
+		return NewWeChatIdProvider(clientId, clientSecret, redirectUrl)
 	}
 
 	return nil
