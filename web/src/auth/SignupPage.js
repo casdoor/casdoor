@@ -22,6 +22,7 @@ import * as Util from "./Util";
 import {authConfig} from "./Auth";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
+import {CountDownInput} from "../reusable/CountDownInput";
 
 const formItemLayout = {
   labelCol: {
@@ -63,7 +64,9 @@ class SignupPage extends React.Component {
       applicationName: props.match.params.applicationName !== undefined ? props.match.params.applicationName : authConfig.appName,
       application: null,
       email: "",
-      phone: ""
+      phone: "",
+      emailCode: "",
+      phoneCode: ""
     };
 
     this.form = React.createRef();
@@ -250,7 +253,11 @@ class SignupPage extends React.Component {
             message: i18next.t("signup:Please input your verification code!"),
           }]}
         >
-          <Input autoComplete="off" value={this.state.emailCode} addonAfter={<button onClick={() => this.sendCode("email")} style={{backgroundColor: "#fafafa", border: "none"}}>{i18next.t("signup:send code")}</button>} />
+          <CountDownInput
+            defaultButtonText={i18next.t("signup:send code")}
+            onButtonClick={() => this.sendCode("email")}
+            coolDownTime={60}
+          />
         </Form.Item>
         <Form.Item
           name="password"
@@ -316,7 +323,11 @@ class SignupPage extends React.Component {
             },
           ]}
         >
-          <Input autoComplete="off" value={this.state.phoneCode} addonAfter={<button onClick={() => this.sendCode("phone")} style={{border: "none", backgroundColor: "#fafafa"}}>{i18next.t("signup:send code")}</button>}/>
+          <CountDownInput
+            defaultButtonText={i18next.t("signup:send code")}
+            onButtonClick={() => this.sendCode("phone")}
+            coolDownTime={60}
+          />
         </Form.Item>
         <Form.Item name="agreement" valuePropName="checked" {...tailFormItemLayout}>
           <Checkbox>

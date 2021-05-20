@@ -17,12 +17,11 @@ import i18next from "i18next";
 import React from "react";
 import * as Setting from "./Setting"
 import * as UserBackend from "./backend/UserBackend"
+import {CountDownInput} from "./reusable/CountDownInput";
 
 export const ResetModal = (props) => {
   const [visible, setVisible] = React.useState(false);
   const [confirmLoading, setConfirmLoading] = React.useState(false);
-  const [sendButtonText, setSendButtonText] = React.useState(i18next.t("user:Send Code"));
-  const [sendCodeCoolDown, setCoolDown] = React.useState(false);
   const [dest, setDest] = React.useState("");
   const [code, setCode] = React.useState("");
   const {buttonText, destType, coolDownTime, org} = props;
@@ -56,18 +55,7 @@ export const ResetModal = (props) => {
     })
   }
 
-  const countDown = (second) => {
-    if (second <= 0) {
-      setSendButtonText(i18next.t("user:Send Code"));
-      setCoolDown(false);
-      return;
-    }
-    setSendButtonText(second);
-    setTimeout(() => countDown(second - 1), 1000);
-  }
-
   const sendCode = () => {
-    if (sendCodeCoolDown) return;
     if (dest === "") {
       Setting.showMessage("error", i18next.t("user:Empty " + destType));
       return;
@@ -76,8 +64,6 @@ export const ResetModal = (props) => {
     UserBackend.sendCode(dest, destType, orgId).then(res => {
       if (res.status === "ok") {
         Setting.showMessage("success", i18next.t("user:Code Sent"));
-        setCoolDown(true);
-        countDown(coolDownTime);
       } else {
         Setting.showMessage("error", i18next.t("user:" + res.msg));
       }
@@ -105,13 +91,21 @@ export const ResetModal = (props) => {
       >
         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input addonBefore={i18next.t("user:New " + destType)} placeholder={placeHolder} onChange={(e) => setDest(e.target.value)}
-                   addonAfter={<button style={{width: "90px", border: "none", backgroundColor: "#fafafa"}} onClick={sendCode}>{" " + sendButtonText + " "}</button>}
+            <Input
+              addonBefore={i18next.t("user:New " + destType)}
+              placeholder={placeHolder}
+              onChange={e => setDest(e.target.value)}
             />
-
           </Row>
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input addonBefore={i18next.t("user:Code You Received")} placeholder={i18next.t("user:Enter your code")} onChange={(e) => setCode(e.target.value)}/>
+            <CountDownInput
+              defaultButtonText={i18next.t("user:Send Code")}
+              textBefore={i18next.t("user:Code You Received")}
+              placeHolder={i18next.t("user:Enter your code")}
+              onChange={setCode}
+              onButtonClick={sendCode}
+              coolDownTime={coolDownTime}
+            />
           </Row>
         </Col>
       </Modal>
