@@ -30,7 +30,8 @@
     "OAuth providers": "OAuth提供方",
     "Applications that requires authentication": "需要鉴权的应用",
     "Swagger": "API总览",
-    "Phone Prefix": "手机号前缀"
+    "Phone Prefix": "手机号前缀",
+    "Enter the code": "输入验证码"
   },
   "signup":
   {
@@ -156,7 +157,9 @@
     "You should verify your code in 5 min!": "验证码已超时。你应该在 5 分钟内完成验证。",
     "Wrong code!": "验证码错误！",
     "Invalid phone number": "手机号格式错误",
-    "Invalid Email address": "邮箱格式错误"
+    "Invalid Email address": "邮箱格式错误",
+    "Turing test failed.": "图灵验证失败，无法确认你是人类！",
+    "Missing parameter.": "缺少参数！请确认所有信息都已填写！"
   },
   "application":
   {

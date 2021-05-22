@@ -30,7 +30,8 @@
     "OAuth providers": "OAuth providers",
     "Applications that requires authentication": "Applications that requires authentication",
     "Swagger": "Swagger",
-    "Phone Prefix": "Phone Prefix"
+    "Phone Prefix": "Phone Prefix",
+    "Enter the code": "Enter the code"
   },
   "signup":
   {
@@ -156,7 +157,9 @@
     "You should verify your code in 5 min!": "You should verify your code in 5 min!",
     "Wrong code!": "Wrong code!",
     "Invalid phone number": "Invalid phone number",
-    "Invalid Email address": "Invalid Email address"
+    "Invalid Email address": "Invalid Email address",
+    "Turing test failed.": "Turing test failed.",
+    "Missing parameter.": "Missing parameter. Please check your form!"
   },
   "application":
   {

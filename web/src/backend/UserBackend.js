@@ -14,6 +14,7 @@
 
 import * as Setting from "../Setting";
 import * as AuthBackend from "../auth/AuthBackend";
+import i18next from "i18next";
 
 export function getGlobalUsers() {
   return fetch(`${Setting.ServerUrl}/api/get-global-users`, {
@@ -93,8 +94,11 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
   }).then(res => res.json());
 }
 
-export function sendCode(dest, type, orgId) {
+export function sendCode(checkType, checkId, checkKey, dest, type, orgId) {
   let formData = new FormData();
+  formData.append("checkType", checkType);
+  formData.append("checkId", checkId);
+  formData.append("checkKey", checkKey);
   formData.append("dest", dest);
   formData.append("type", type);
   formData.append("organizationId", orgId);
@@ -102,7 +106,15 @@ export function sendCode(dest, type, orgId) {
     method: "POST",
     credentials: "include",
     body: formData
-  }).then(res => res.json());
+  }).then(res => res.json()).then(res => {
+    if (res.status === "ok") {
+      Setting.showMessage("success", i18next.t("user:Code Sent"));
+      return true;
+    } else {
+      Setting.showMessage("error", i18next.t("user:" + res.msg));
+      return false;
+    }
+  });
 }
 
 export function resetEmailOrPhone(dest, type, code) {
@@ -114,5 +126,11 @@ export function resetEmailOrPhone(dest, type, code) {
     method: "POST",
     credentials: "include",
     body: formData
+  }).then(res => res.json());
+}
+
+export function getHumanCheck() {
+  return fetch(`${Setting.ServerUrl}/api/get-human-check`, {
+    method: "GET"
   }).then(res => res.json());
 }
