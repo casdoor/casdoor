@@ -22,6 +22,17 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+func (c *ApiController) getCurrentUser() *object.User {
+	var user *object.User
+	userId := c.GetSessionUser()
+	if userId == "" {
+		user = nil
+	} else {
+		user = object.GetUser(userId)
+	}
+	return user
+}
+
 func (c *ApiController) SendVerificationCode() {
 	destType := c.Ctx.Request.Form.Get("type")
 	dest := c.Ctx.Request.Form.Get("dest")
@@ -48,6 +59,7 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
+	user := c.getCurrentUser()
 	organization := object.GetOrganization(orgId)
 	application := object.GetApplicationByOrganizationName(organization.Name)
 
@@ -60,7 +72,7 @@ func (c *ApiController) SendVerificationCode() {
 		}
 
 		provider := application.GetEmailProvider()
-		msg = object.SendVerificationCodeToEmail(provider, remoteAddr, dest)
+		msg = object.SendVerificationCodeToEmail(user, provider, remoteAddr, dest)
 	case "phone":
 		if !util.IsPhoneCnValid(dest) {
 			c.ResponseError("Invalid phone number")
@@ -74,7 +86,7 @@ func (c *ApiController) SendVerificationCode() {
 
 		dest = fmt.Sprintf("+%s%s", org.PhonePrefix, dest)
 		provider := application.GetSmsProvider()
-		msg = object.SendVerificationCodeToPhone(provider, remoteAddr, dest)
+		msg = object.SendVerificationCodeToPhone(user, provider, remoteAddr, dest)
 	}
 
 	status := "ok"

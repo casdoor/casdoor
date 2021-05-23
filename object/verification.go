@@ -26,6 +26,7 @@ import (
 type VerificationRecord struct {
 	RemoteAddr string `xorm:"varchar(100) notnull pk"`
 	Type       string `xorm:"varchar(10) notnull pk"`
+	User       string `xorm:"varchar(100) notnull"`
 	Provider   string `xorm:"varchar(100) notnull"`
 	Receiver   string `xorm:"varchar(100) notnull"`
 	Code       string `xorm:"varchar(10) notnull"`
@@ -33,7 +34,7 @@ type VerificationRecord struct {
 	IsUsed     bool
 }
 
-func SendVerificationCodeToEmail(provider *Provider, remoteAddr string, dest string) string {
+func SendVerificationCodeToEmail(user *User, provider *Provider, remoteAddr string, dest string) string {
 	if provider == nil {
 		return "Please set an Email provider first"
 	}
@@ -43,7 +44,7 @@ func SendVerificationCodeToEmail(provider *Provider, remoteAddr string, dest str
 	code := getRandomCode(5)
 	content := fmt.Sprintf("You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.", code)
 
-	if result := AddToVerificationRecord(provider.Name, remoteAddr, "Email", dest, code); len(result) != 0 {
+	if result := AddToVerificationRecord(user, provider, remoteAddr, "Email", dest, code); len(result) != 0 {
 		return result
 	}
 
@@ -58,24 +59,27 @@ func SendVerificationCodeToEmail(provider *Provider, remoteAddr string, dest str
 	return ""
 }
 
-func SendVerificationCodeToPhone(provider *Provider, remoteAddr string, dest string) string {
+func SendVerificationCodeToPhone(user *User, provider *Provider, remoteAddr string, dest string) string {
 	if provider == nil {
 		return "Please set a SMS provider first"
 	}
 
 	code := getRandomCode(5)
-	if result := AddToVerificationRecord(provider.Name, remoteAddr, "SMS", dest, code); len(result) != 0 {
+	if result := AddToVerificationRecord(user, provider, remoteAddr, "SMS", dest, code); len(result) != 0 {
 		return result
 	}
 
 	return SendCodeToPhone(provider, dest, code)
 }
 
-func AddToVerificationRecord(providerName, remoteAddr, recordType, dest, code string) string {
+func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordType, dest, code string) string {
 	var record VerificationRecord
 	record.RemoteAddr = remoteAddr
 	record.Type = recordType
-	record.Provider = providerName
+	if user != nil {
+		record.User = user.GetId()
+	}
+	record.Provider = provider.Name
 	has, err := adapter.Engine.Get(&record)
 	if err != nil {
 		panic(err)
