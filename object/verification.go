@@ -20,12 +20,17 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
 type VerificationRecord struct {
-	RemoteAddr string `xorm:"varchar(100) notnull pk"`
-	Type       string `xorm:"varchar(10) notnull pk"`
+	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
+	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+
+	RemoteAddr string `xorm:"varchar(100)"`
+	Type       string `xorm:"varchar(10)"`
 	User       string `xorm:"varchar(100) notnull"`
 	Provider   string `xorm:"varchar(100) notnull"`
 	Receiver   string `xorm:"varchar(100) notnull"`
@@ -79,7 +84,6 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 	if user != nil {
 		record.User = user.GetId()
 	}
-	record.Provider = provider.Name
 	has, err := adapter.Engine.Get(&record)
 	if err != nil {
 		panic(err)
@@ -90,6 +94,14 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 	if has && now-record.Time < 60 {
 		return "You can only send one code in 60s."
 	}
+
+	record.Owner = provider.Owner
+	record.Name = util.GenerateId()
+	record.CreatedTime = util.GetCurrentTime()
+	if user != nil {
+		record.User = user.GetId()
+	}
+	record.Provider = provider.Name
 
 	record.Receiver = dest
 	record.Code = code
@@ -153,7 +165,7 @@ func DisableVerificationCode(dest string) {
 	}
 
 	record.IsUsed = true
-	_, err := adapter.Engine.ID(core.PK{record.RemoteAddr, record.Type}).AllCols().Update(record)
+	_, err := adapter.Engine.ID(core.PK{record.Owner, record.Name}).AllCols().Update(record)
 	if err != nil {
 		panic(err)
 	}

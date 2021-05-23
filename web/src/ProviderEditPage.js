@@ -120,12 +120,21 @@ class ProviderEditPage extends React.Component {
             {i18next.t("provider:Category")}:
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.provider.category} onChange={(value => {this.updateProviderField('category', value);})}>
+            <Select virtual={false} style={{width: '100%'}} value={this.state.provider.category} onChange={(value => {
+              this.updateProviderField('category', value);
+              if (value === "OAuth") {
+                this.updateProviderField('type', 'GitHub');
+              } else if (value === "Email") {
+                this.updateProviderField('type', 'Default');
+              } else if (value === "SMS") {
+                this.updateProviderField('type', 'aliyun');
+              }
+            })}>
               {
                 [
                   {id: 'OAuth', name: 'OAuth'},
                   {id: 'Email', name: 'Email'},
-                  {id: 'Phone', name: 'Phone'},
+                  {id: 'SMS', name: 'SMS'},
                 ].map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
               }
             </Select>
