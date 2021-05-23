@@ -84,7 +84,7 @@ func getDefaultEmailProvider() *Provider {
 }
 
 func getDefaultPhoneProvider() *Provider {
-	provider := Provider{Owner: "admin", Category: "Phone"}
+	provider := Provider{Owner: "admin", Category: "SMS"}
 	existed, err := adapter.Engine.Get(&provider)
 	if err != nil {
 		panic(err)

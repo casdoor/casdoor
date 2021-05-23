@@ -187,7 +187,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             </React.Fragment>
-          ) : this.state.provider.category === "Phone" ? (
+          ) : this.state.provider.category === "SMS" ? (
             <React.Fragment>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
@@ -222,7 +222,7 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           ) : null
         }
-        {this.state.provider.category === "Phone" && this.state.provider.type === "tencent" ? (
+        {this.state.provider.category === "SMS" && this.state.provider.type === "tencent" ? (
           <Row style={{marginTop: '20px'}} >
             <Col style={{marginTop: '5px'}} span={2}>
               {i18next.t("provider:App ID")}:

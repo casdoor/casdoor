@@ -148,8 +148,11 @@ class ProviderListPage extends React.Component {
         title: i18next.t("provider:Client ID"),
         dataIndex: 'clientId',
         key: 'clientId',
-        width: '150px',
+        width: '100px',
         sorter: (a, b) => a.clientId.localeCompare(b.clientId),
+        render: (text, record, index) => {
+          return Setting.getShortText(text);
+        }
       },
       // {
       //   title: 'Client secret',

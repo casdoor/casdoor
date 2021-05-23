@@ -57,6 +57,10 @@ func extendApplicationWithProviders(application *Application) {
 	providers := GetProviders(application.Owner)
 	m := map[string]*Provider{}
 	for _, provider := range providers {
+		if provider.Category != "OAuth" {
+			continue
+		}
+
 		provider.ClientSecret = ""
 		provider.ProviderUrl = ""
 		m[provider.Name] = provider
