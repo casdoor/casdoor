@@ -64,8 +64,8 @@
   },
   "login":
   {
-    "Please input your username, Email or phone number!": "Please input your username, Email or phone number!",
-    "username, Email or phone number": "username, Email or phone number",
+    "Please input your username, Email or phone!": "Please input your username, Email or phone!",
+    "username, Email or phone": "username, Email or phone",
     "Please input your password!": "Please input your password!",
     "Password": "Password",
     "Auto login": "Auto login",

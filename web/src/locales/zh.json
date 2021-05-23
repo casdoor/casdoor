@@ -64,8 +64,8 @@
   },
   "login":
   {
-    "Please input your username, Email or phone number!": "请输入您的用户名、Email或手机号！",
-    "username, Email or phone number": "用户名、Email或手机号",
+    "Please input your username, Email or phone!": "请输入您的用户名、Email或手机号！",
+    "username, Email or phone": "用户名、Email或手机号",
     "Please input your password!": "请输入您的密码！",
     "Password": "密码",
     "Auto login": "下次自动登录",
