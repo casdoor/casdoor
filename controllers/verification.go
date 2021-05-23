@@ -38,8 +38,8 @@ func (c *ApiController) SendVerificationCode() {
 	}
 
 	isHuman := false
-	provider := object.GetDefaultHumanCheckProvider()
-	if provider == nil {
+	captchaProvider := object.GetDefaultHumanCheckProvider()
+	if captchaProvider == nil {
 		isHuman = object.VerifyCaptcha(checkId, checkKey)
 	}
 
@@ -48,6 +48,9 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
+	organization := object.GetOrganization(orgId)
+	application := object.GetApplicationByOrganizationName(organization.Name)
+
 	msg := "Invalid dest type."
 	switch destType {
 	case "email":
@@ -55,7 +58,9 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError("Invalid Email address")
 			return
 		}
-		msg = object.SendVerificationCodeToEmail(remoteAddr, dest)
+
+		provider := application.GetEmailProvider()
+		msg = object.SendVerificationCodeToEmail(provider, remoteAddr, dest)
 	case "phone":
 		if !util.IsPhoneCnValid(dest) {
 			c.ResponseError("Invalid phone number")
@@ -66,8 +71,10 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError("Missing parameter.")
 			return
 		}
+
 		dest = fmt.Sprintf("+%s%s", org.PhonePrefix, dest)
-		msg = object.SendVerificationCodeToPhone(remoteAddr, dest)
+		provider := application.GetSmsProvider()
+		msg = object.SendVerificationCodeToPhone(provider, remoteAddr, dest)
 	}
 
 	status := "ok"

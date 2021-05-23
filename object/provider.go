@@ -70,32 +70,6 @@ func GetProvider(id string) *Provider {
 	return getProvider(owner, name)
 }
 
-func getDefaultEmailProvider() *Provider {
-	provider := Provider{Owner: "admin", Category: "Email"}
-	existed, err := adapter.Engine.Get(&provider)
-	if err != nil {
-		panic(err)
-	}
-
-	if !existed {
-		return nil
-	}
-	return &provider
-}
-
-func getDefaultPhoneProvider() *Provider {
-	provider := Provider{Owner: "admin", Category: "SMS"}
-	existed, err := adapter.Engine.Get(&provider)
-	if err != nil {
-		panic(err)
-	}
-
-	if !existed {
-		return nil
-	}
-	return &provider
-}
-
 func GetDefaultHumanCheckProvider() *Provider {
 	provider := Provider{Owner: "admin", Category: "HumanCheck"}
 	existed, err := adapter.Engine.Get(&provider)

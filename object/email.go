@@ -18,11 +18,7 @@ package object
 
 import "github.com/go-gomail/gomail"
 
-func SendEmail(title, content, dest, sender string) (string, error) {
-	provider := getDefaultEmailProvider()
-	if provider == nil {
-		return "Please set an Email provider first", nil
-	}
+func SendEmail(provider *Provider, title, content, dest, sender string) (string, error) {
 	dialer := gomail.NewDialer(provider.Host, provider.Port, provider.ClientId, provider.ClientSecret)
 
 	message := gomail.NewMessage()

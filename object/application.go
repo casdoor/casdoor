@@ -68,7 +68,9 @@ func extendApplicationWithProviders(application *Application) {
 
 	application.ProviderObjs = []*Provider{}
 	for _, providerName := range application.Providers {
-		application.ProviderObjs = append(application.ProviderObjs, m[providerName])
+		if provider, ok := m[providerName]; ok {
+			application.ProviderObjs = append(application.ProviderObjs, provider)
+		}
 	}
 }
 
@@ -93,7 +95,7 @@ func getApplication(owner string, name string) *Application {
 	}
 }
 
-func getApplicationByOrganization(organization string) *Application {
+func GetApplicationByOrganizationName(organization string) *Application {
 	application := Application{}
 	existed, err := adapter.Engine.Where("organization=?", organization).Get(&application)
 	if err != nil {
@@ -110,7 +112,7 @@ func getApplicationByOrganization(organization string) *Application {
 }
 
 func GetApplicationByUser(user *User) *Application {
-	return getApplicationByOrganization(user.Owner)
+	return GetApplicationByOrganizationName(user.Owner)
 }
 
 func getApplicationByClientId(clientId string) *Application {
@@ -167,4 +169,32 @@ func DeleteApplication(application *Application) bool {
 	}
 
 	return affected != 0
+}
+
+func (application *Application) getProviderByCategory(category string) *Provider {
+	providers := GetProviders(application.Owner)
+	m := map[string]*Provider{}
+	for _, provider := range providers {
+		if provider.Category != category {
+			continue
+		}
+
+		m[provider.Name] = provider
+	}
+
+	for _, providerName := range application.Providers {
+		if provider, ok := m[providerName]; ok {
+			return provider
+		}
+	}
+
+	return nil
+}
+
+func (application *Application) GetEmailProvider() *Provider {
+	return application.getProviderByCategory("Email")
+}
+
+func (application *Application) GetSmsProvider() *Provider {
+	return application.getProviderByCategory("SMS")
 }

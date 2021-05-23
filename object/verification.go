@@ -26,23 +26,28 @@ import (
 type VerificationRecord struct {
 	RemoteAddr string `xorm:"varchar(100) notnull pk"`
 	Type       string `xorm:"varchar(10) notnull pk"`
+	Provider   string `xorm:"varchar(100) notnull"`
 	Receiver   string `xorm:"varchar(100) notnull"`
 	Code       string `xorm:"varchar(10) notnull"`
 	Time       int64  `xorm:"notnull"`
 	IsUsed     bool
 }
 
-func SendVerificationCodeToEmail(remoteAddr, dest string) string {
+func SendVerificationCodeToEmail(provider *Provider, remoteAddr string, dest string) string {
+	if provider == nil {
+		return "Please set an Email provider first"
+	}
+
 	title := "Casdoor Verification Code"
 	sender := "Casdoor"
 	code := getRandomCode(5)
 	content := fmt.Sprintf("You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.", code)
 
-	if result := AddToVerificationRecord(remoteAddr, "email", dest, code); len(result) != 0 {
+	if result := AddToVerificationRecord(provider.Name, remoteAddr, "Email", dest, code); len(result) != 0 {
 		return result
 	}
 
-	msg, err := SendEmail(title, content, dest, sender)
+	msg, err := SendEmail(provider, title, content, dest, sender)
 	if msg != "" {
 		return msg
 	}
@@ -53,19 +58,24 @@ func SendVerificationCodeToEmail(remoteAddr, dest string) string {
 	return ""
 }
 
-func SendVerificationCodeToPhone(remoteAddr, dest string) string {
+func SendVerificationCodeToPhone(provider *Provider, remoteAddr string, dest string) string {
+	if provider == nil {
+		return "Please set a SMS provider first"
+	}
+
 	code := getRandomCode(5)
-	if result := AddToVerificationRecord(remoteAddr, "phone", dest, code); len(result) != 0 {
+	if result := AddToVerificationRecord(provider.Name, remoteAddr, "SMS", dest, code); len(result) != 0 {
 		return result
 	}
 
-	return SendCodeToPhone(dest, code)
+	return SendCodeToPhone(provider, dest, code)
 }
 
-func AddToVerificationRecord(remoteAddr, recordType, dest, code string) string {
+func AddToVerificationRecord(providerName, remoteAddr, recordType, dest, code string) string {
 	var record VerificationRecord
 	record.RemoteAddr = remoteAddr
 	record.Type = recordType
+	record.Provider = providerName
 	has, err := adapter.Engine.Get(&record)
 	if err != nil {
 		panic(err)
@@ -73,7 +83,7 @@ func AddToVerificationRecord(remoteAddr, recordType, dest, code string) string {
 
 	now := time.Now().Unix()
 
-	if has && now - record.Time < 60 {
+	if has && now-record.Time < 60 {
 		return "You can only send one code in 60s."
 	}
 
