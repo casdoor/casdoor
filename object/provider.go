@@ -96,6 +96,20 @@ func getDefaultPhoneProvider() *Provider {
 	return &provider
 }
 
+func GetDefaultHumanCheckProvider() *Provider {
+	provider := Provider{Owner: "admin", Category: "HumanCheck"}
+	existed, err := adapter.Engine.Get(&provider)
+	if err != nil {
+		panic(err)
+	}
+
+	if !existed {
+		return nil
+	}
+
+	return &provider
+}
+
 func UpdateProvider(id string, provider *Provider) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if getProvider(owner, name) == nil {

@@ -17,7 +17,7 @@ import i18next from "i18next";
 import React from "react";
 import * as Setting from "./Setting"
 import * as UserBackend from "./backend/UserBackend"
-import {CountDownInput} from "./reusable/CountDownInput";
+import {CountDownInput} from "./component/CountDownInput";
 
 export const ResetModal = (props) => {
   const [visible, setVisible] = React.useState(false);
@@ -55,21 +55,6 @@ export const ResetModal = (props) => {
     })
   }
 
-  const sendCode = () => {
-    if (dest === "") {
-      Setting.showMessage("error", i18next.t("user:Empty " + destType));
-      return;
-    }
-    let orgId = org.owner + "/" + org.name;
-    UserBackend.sendCode(dest, destType, orgId).then(res => {
-      if (res.status === "ok") {
-        Setting.showMessage("success", i18next.t("user:Code Sent"));
-      } else {
-        Setting.showMessage("error", i18next.t("user:" + res.msg));
-      }
-    })
-  }
-
   let placeHolder = "";
   if (destType === "email") placeHolder = i18next.t("user:Input your email");
   else if (destType === "phone") placeHolder = i18next.t("user:Input your phone number");
@@ -103,7 +88,8 @@ export const ResetModal = (props) => {
               textBefore={i18next.t("user:Code You Received")}
               placeHolder={i18next.t("user:Enter your code")}
               onChange={setCode}
-              onButtonClick={sendCode}
+              onButtonClick={UserBackend.sendCode}
+              onButtonClickArgs={[dest, destType, org?.owner + "/" + org?.name]}
               coolDownTime={coolDownTime}
             />
           </Row>

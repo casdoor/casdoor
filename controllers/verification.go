@@ -26,11 +26,25 @@ func (c *ApiController) SendVerificationCode() {
 	destType := c.Ctx.Request.Form.Get("type")
 	dest := c.Ctx.Request.Form.Get("dest")
 	orgId := c.Ctx.Request.Form.Get("organizationId")
+	checkType := c.Ctx.Request.Form.Get("checkType")
+	checkId := c.Ctx.Request.Form.Get("checkId")
+	checkKey := c.Ctx.Request.Form.Get("checkKey")
 	remoteAddr := c.Ctx.Request.RemoteAddr
 	remoteAddr = remoteAddr[:strings.LastIndex(remoteAddr, ":")]
 
-	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || strings.Index(orgId, "/") < 0 {
+	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || strings.Index(orgId, "/") < 0 || len(checkType) == 0 || len(checkId) == 0 || len(checkKey) == 0 {
 		c.ResponseError("Missing parameter.")
+		return
+	}
+
+	isHuman := false
+	provider := object.GetDefaultHumanCheckProvider()
+	if provider == nil {
+		isHuman = object.VerifyCaptcha(checkId, checkKey)
+	}
+
+	if !isHuman {
+		c.ResponseError("Turing test failed.")
 		return
 	}
 

@@ -59,6 +59,14 @@ type Response struct {
 	Data2  interface{} `json:"data2"`
 }
 
+type HumanCheck struct {
+	Type         string      `json:"type"`
+	AppKey       string      `json:"appKey"`
+	Scene        string      `json:"scene"`
+	CaptchaId    string      `json:"captchaId"`
+	CaptchaImage interface{} `json:"captchaImage"`
+}
+
 // @Title Signup
 // @Description sign up a new user
 // @Param   username     formData    string  true        "The username to sign up"
@@ -214,5 +222,19 @@ func (c *ApiController) UploadAvatar() {
 	object.UpdateUser(user.GetId(), user)
 	resp = Response{Status: "ok", Msg: ""}
 	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
+func (c *ApiController) GetHumanCheck() {
+	c.Data["json"] = HumanCheck{Type: "none"}
+
+	provider := object.GetDefaultHumanCheckProvider()
+	if provider == nil {
+		id, img := object.GetCaptcha()
+		c.Data["json"] = HumanCheck{Type: "captcha", CaptchaId: id, CaptchaImage: img}
+		c.ServeJSON()
+		return
+	}
+
 	c.ServeJSON()
 }

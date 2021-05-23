@@ -22,7 +22,7 @@ import * as Util from "./Util";
 import {authConfig} from "./Auth";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
-import {CountDownInput} from "../reusable/CountDownInput";
+import {CountDownInput} from "../component/CountDownInput";
 
 const formItemLayout = {
   labelCol: {
@@ -115,22 +115,6 @@ class SignupPage extends React.Component {
 
   onFinishFailed(values, errorFields, outOfDate) {
     this.form.current.scrollToField(errorFields[0].name);
-  }
-
-  sendCode(type) {
-    let dest, orgId;
-    if (type === "email") {
-      dest = this.state.email;
-    } else if (type === "phone") {
-      dest = this.state.phone;
-    } else return;
-
-    orgId = this.state.application?.organizationObj.owner + "/" + this.state.application?.organizationObj.name
-
-    UserBackend.sendCode(dest, type, orgId).then(res => {
-      if (res.status === "ok") Setting.showMessage("success", i18next.t("signup:code sent"));
-      else Setting.showMessage("error", i18next.t("signup:" + res.msg));
-    })
   }
 
   renderForm(application) {
@@ -255,7 +239,8 @@ class SignupPage extends React.Component {
         >
           <CountDownInput
             defaultButtonText={i18next.t("signup:send code")}
-            onButtonClick={() => this.sendCode("email")}
+            onButtonClick={UserBackend.sendCode}
+            onButtonClickArgs={[this.state.email, "email", this.state.application?.organizationObj.owner + "/" + this.state.application?.organizationObj.name]}
             coolDownTime={60}
           />
         </Form.Item>
@@ -325,7 +310,8 @@ class SignupPage extends React.Component {
         >
           <CountDownInput
             defaultButtonText={i18next.t("signup:send code")}
-            onButtonClick={() => this.sendCode("phone")}
+            onButtonClick={UserBackend.sendCode}
+            onButtonClickArgs={[this.state.phone, "phone", this.state.application?.organizationObj.owner + "/" + this.state.application?.organizationObj.name]}
             coolDownTime={60}
           />
         </Form.Item>
