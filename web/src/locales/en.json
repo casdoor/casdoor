@@ -97,6 +97,8 @@
     "Client secret": "Client secret",
     "Host": "Host",
     "Port": "Port",
+    "Email Title": "Email Title",
+    "Email Content": "Email Content",
     "Region ID": "Region ID",
     "Sign Name": "Sign Name",
     "Template Code": "Template Code",

@@ -97,6 +97,8 @@
     "Client secret": "Client secret",
     "Host": "主机",
     "Port": "端口号",
+    "Email Title": "邮件标题",
+    "Email Content": "邮件内容",
     "Region ID": "地域ID",
     "Sign Name": "签名名称",
     "Template Code": "模板CODE",

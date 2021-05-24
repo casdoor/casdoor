@@ -30,8 +30,10 @@ type Provider struct {
 	ClientId     string `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret string `xorm:"varchar(100)" json:"clientSecret"`
 
-	Host string `xorm:"varchar(100)" json:"host"`
-	Port int    `json:"port"`
+	Host    string `xorm:"varchar(100)" json:"host"`
+	Port    int    `json:"port"`
+	Title   string `xorm:"varchar(100)" json:"title"`
+	Content string `xorm:"varchar(1000)" json:"content"`
 
 	RegionId     string `xorm:"varchar(100)" json:"regionId"`
 	SignName     string `xorm:"varchar(100)" json:"signName"`

@@ -20,6 +20,7 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 class ProviderEditPage extends React.Component {
   constructor(props) {
@@ -126,6 +127,8 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField('type', 'GitHub');
               } else if (value === "Email") {
                 this.updateProviderField('type', 'Default');
+                this.updateProviderField('title', 'Casdoor Verification Code');
+                this.updateProviderField('content', 'You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.');
               } else if (value === "SMS") {
                 this.updateProviderField('type', 'aliyun');
               }
@@ -192,6 +195,26 @@ class ProviderEditPage extends React.Component {
                 <Col span={22} >
                   <InputNumber value={this.state.provider.port} onChange={value => {
                     this.updateProviderField('port', value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {i18next.t("provider:Email Title")}:
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.title} onChange={e => {
+                    this.updateProviderField('title', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {i18next.t("provider:Email Content")}:
+                </Col>
+                <Col span={22} >
+                  <TextArea autoSize={{minRows: 1, maxRows: 100}} value={this.state.provider.content} onChange={e => {
+                    this.updateProviderField('content', e.target.value);
                   }} />
                 </Col>
               </Row>

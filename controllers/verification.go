@@ -72,7 +72,7 @@ func (c *ApiController) SendVerificationCode() {
 		}
 
 		provider := application.GetEmailProvider()
-		msg = object.SendVerificationCodeToEmail(user, provider, remoteAddr, dest)
+		msg = object.SendVerificationCodeToEmail(organization, user, provider, remoteAddr, dest)
 	case "phone":
 		if !util.IsPhoneCnValid(dest) {
 			c.ResponseError("Invalid phone number")
@@ -86,7 +86,7 @@ func (c *ApiController) SendVerificationCode() {
 
 		dest = fmt.Sprintf("+%s%s", org.PhonePrefix, dest)
 		provider := application.GetSmsProvider()
-		msg = object.SendVerificationCodeToPhone(user, provider, remoteAddr, dest)
+		msg = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, dest)
 	}
 
 	status := "ok"
