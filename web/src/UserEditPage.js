@@ -286,9 +286,17 @@ class UserEditPage extends React.Component {
             {i18next.t("user:Affiliation")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.affiliation} onChange={e => {
-              this.updateUserField('affiliation', e.target.value);
-            }} />
+            {
+              this.state.application?.affiliationUrl === "" ? (
+                <Input value={this.state.user.affiliation} onChange={e => {
+                  this.updateUserField('affiliation', e.target.value);
+                }} />
+              ) : (
+                <Button key="home" onClick={() => Setting.goToLink(this.state.application.affiliationUrl)}>
+                  {`${i18next.t("user:Modify affiliation")}...`}
+                </Button>
+              )
+            }
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

@@ -258,6 +258,16 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("general:Affiliation URL")}:
+          </Col>
+          <Col span={22} >
+            <Input prefix={<LinkOutlined/>} value={this.state.application.affiliationUrl} onChange={e => {
+              this.updateApplicationField('affiliationUrl', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("general:Providers")}:
           </Col>
           <Col span={22} >

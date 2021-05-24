@@ -35,12 +35,13 @@ type Application struct {
 	ProviderObjs    []*Provider   `xorm:"-" json:"providerObjs"`
 	OrganizationObj *Organization `xorm:"-" json:"organizationObj"`
 
-	ClientId      string   `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret  string   `xorm:"varchar(100)" json:"clientSecret"`
-	RedirectUris  []string `xorm:"varchar(1000)" json:"redirectUris"`
-	ExpireInHours int      `json:"expireInHours"`
-	SignupUrl     string   `xorm:"varchar(100)" json:"signupUrl"`
-	ForgetUrl     string   `xorm:"varchar(100)" json:"forgetUrl"`
+	ClientId       string   `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret   string   `xorm:"varchar(100)" json:"clientSecret"`
+	RedirectUris   []string `xorm:"varchar(1000)" json:"redirectUris"`
+	ExpireInHours  int      `json:"expireInHours"`
+	SignupUrl      string   `xorm:"varchar(100)" json:"signupUrl"`
+	ForgetUrl      string   `xorm:"varchar(100)" json:"forgetUrl"`
+	AffiliationUrl string   `xorm:"varchar(100)" json:"affiliationUrl"`
 }
 
 func GetApplications(owner string) []*Application {
