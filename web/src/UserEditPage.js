@@ -234,7 +234,7 @@ class UserEditPage extends React.Component {
               </Col>
             </Row>
             <Row style={{marginTop: '20px'}}>
-              <CropperDiv buttonText={i18next.t("user:Upload a photo...")} title={i18next.t("user:Upload a photo")} targetFunction={UserBackend.uploadAvatar} />
+              <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} targetFunction={UserBackend.uploadAvatar} />
             </Row>
           </Col>
         </Row>
@@ -267,7 +267,7 @@ class UserEditPage extends React.Component {
             <Input value={this.state.user.email} disabled />
           </Col>
           <Col span={11} >
-            { this.state.user.id === this.props.account.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Email")} destType={"email"} coolDownTime={60}/>) : null}
+            { this.state.user.id === this.props.account.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Email...")} destType={"email"} coolDownTime={60}/>) : null}
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
@@ -278,7 +278,7 @@ class UserEditPage extends React.Component {
             <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`} disabled />
           </Col>
           <Col span={11} >
-            { this.state.user.id === this.props.account.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone")} destType={"phone"} coolDownTime={60}/>) : null}
+            { this.state.user.id === this.props.account.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} coolDownTime={60}/>) : null}
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

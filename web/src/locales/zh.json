@@ -108,7 +108,6 @@
   "user":
   {
     "Edit User": "修改用户",
-    "Upload a photo...": "上传头像...",
     "Upload a photo": "上传头像",
     "Select a photo...": "选择图片...",
     "Set new profile picture": "设置新头像",
@@ -139,8 +138,8 @@
     "Password": "密码",
     "Cancel": "取消",
     "input password": "输入密码",
-    "Reset Email": "重置邮箱",
-    "Reset Phone": "重置手机号",
+    "Reset Email...": "重置邮箱...",
+    "Reset Phone...": "重置手机号...",
     "Send Code": "发送验证码",
     "Empty email": "邮箱为空",
     "Empty phone": "手机号为空",
