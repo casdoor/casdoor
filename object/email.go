@@ -18,7 +18,7 @@ package object
 
 import "github.com/go-gomail/gomail"
 
-func SendEmail(provider *Provider, title, content, dest, sender string) (string, error) {
+func SendEmail(provider *Provider, title, content, dest, sender string) string {
 	dialer := gomail.NewDialer(provider.Host, provider.Port, provider.ClientId, provider.ClientSecret)
 
 	message := gomail.NewMessage()
@@ -27,5 +27,10 @@ func SendEmail(provider *Provider, title, content, dest, sender string) (string,
 	message.SetHeader("Subject", title)
 	message.SetBody("text/html", content)
 
-	return "", dialer.DialAndSend(message)
+	err := dialer.DialAndSend(message)
+	if err == nil {
+		return ""
+	} else {
+		return err.Error()
+	}
 }
