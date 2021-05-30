@@ -107,6 +107,22 @@ func SetUserProperty(user *User, field string, value string) bool {
 	return affected != 0
 }
 
+func ClearUserProperties(user *User, providerType string) bool {
+	for k := range user.Properties {
+		prefix := fmt.Sprintf("oauth_%s_", providerType)
+		if strings.HasPrefix(k, prefix) {
+			delete(user.Properties, k)
+		}
+	}
+
+	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("properties").Update(user)
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
+}
+
 func calculateHash(user *User) string {
 	s := strings.Join([]string{user.Id, user.Password, user.DisplayName, user.Avatar, user.Phone}, "|")
 	return util.GetMd5Hash(s)

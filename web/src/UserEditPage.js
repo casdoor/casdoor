@@ -26,6 +26,11 @@ import * as Provider from "./auth/Provider";
 import PasswordModal from "./PasswordModal";
 import ResetModal from "./ResetModal";
 
+import {Controlled as CodeMirror} from 'react-codemirror2'
+import "codemirror/lib/codemirror.css"
+require('codemirror/theme/material-darker.css');
+require("codemirror/mode/javascript/javascript");
+
 const { Option } = Select;
 
 class UserEditPage extends React.Component {
@@ -321,6 +326,21 @@ class UserEditPage extends React.Component {
             </div>
           </Col>
         </Row>
+        {
+          !Setting.isAdminUser(this.props.account) ? null : (
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={2}>
+                {i18next.t("user:Properties")}:
+              </Col>
+              <Col span={22} >
+                <CodeMirror
+                  value={JSON.stringify(this.state.user.properties, null, 4)}
+                  options={{mode: 'javascript', theme: "material-darker"}}
+                />
+              </Col>
+            </Row>
+          )
+        }
         {
           !Setting.isAdminUser(this.props.account) ? null : (
             <React.Fragment>
