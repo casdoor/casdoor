@@ -153,7 +153,7 @@ func (c *ApiController) Login() {
 		}
 
 		if form.Method == "signup" {
-			user := object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
+			user := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
 			if user != nil {
 				//if object.IsForbidden(userId) {
 				//	c.forbiddenAccountResp(userId)
@@ -170,7 +170,7 @@ func (c *ApiController) Login() {
 				//if userId := object.GetUserIdByField(application, "email", userInfo.Email); userId != "" {
 				//	resp = c.HandleLoggedIn(userId, &form)
 				//
-				//	object.LinkUserAccount(userId, provider.Type, userInfo.Username)
+				//	object.LinkUserAccount(userId, provider.Type, userInfo.Id)
 				//}
 
 				if !application.EnableSignUp {
@@ -201,15 +201,12 @@ func (c *ApiController) Login() {
 			if userInfo.Username != "" {
 				propertyName := fmt.Sprintf("oauth_%s_username", provider.Type)
 				object.SetUserProperty(user, propertyName, userInfo.Username)
-				if user.DisplayName == "" {
-					object.SetUserField(user, "display_name", userInfo.Username)
-				}
 			}
-			if userInfo.AvatarUrl != "" {
-				propertyName := fmt.Sprintf("oauth_%s_avatarUrl", provider.Type)
-				object.SetUserProperty(user, propertyName, userInfo.AvatarUrl)
-				if user.Avatar == "" {
-					object.SetUserField(user, "avatar", userInfo.AvatarUrl)
+			if userInfo.DisplayName != "" {
+				propertyName := fmt.Sprintf("oauth_%s_displayname", provider.Type)
+				object.SetUserProperty(user, propertyName, userInfo.DisplayName)
+				if user.DisplayName == "" {
+					object.SetUserField(user, "display_name", userInfo.DisplayName)
 				}
 			}
 			if userInfo.Email != "" {
@@ -219,8 +216,15 @@ func (c *ApiController) Login() {
 					object.SetUserField(user, "email", userInfo.Email)
 				}
 			}
+			if userInfo.AvatarUrl != "" {
+				propertyName := fmt.Sprintf("oauth_%s_avatarUrl", provider.Type)
+				object.SetUserProperty(user, propertyName, userInfo.AvatarUrl)
+				if user.Avatar == "" {
+					object.SetUserField(user, "avatar", userInfo.AvatarUrl)
+				}
+			}
 
-			isLinked := object.LinkUserAccount(user, provider.Type, userInfo.Username)
+			isLinked := object.LinkUserAccount(user, provider.Type, userInfo.Id)
 			if isLinked {
 				resp = &Response{Status: "ok", Msg: "", Data: isLinked}
 			} else {

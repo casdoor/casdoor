@@ -19,7 +19,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"sync"
+	"strconv"
 	"time"
 
 	"golang.org/x/oauth2"
@@ -63,42 +63,6 @@ func (idp *GithubIdProvider) getConfig() *oauth2.Config {
 func (idp *GithubIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, idp.Client)
 	return idp.Config.Exchange(ctx, code)
-}
-
-func (idp *GithubIdProvider) getEmail(token *oauth2.Token) string {
-	res := ""
-
-	type GithubEmail struct {
-		Email      string `json:"email"`
-		Primary    bool   `json:"primary"`
-		Verified   bool   `json:"verified"`
-		Visibility string `json:"visibility"`
-	}
-	var githubEmails []GithubEmail
-
-	req, err := http.NewRequest("GET", "https://api.github.com/user/emails", nil)
-	if err != nil {
-		panic(err)
-	}
-	req.Header.Add("Authorization", "token "+token.AccessToken)
-	response, err := idp.Client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer response.Body.Close()
-	contents, err := ioutil.ReadAll(response.Body)
-
-	err = json.Unmarshal(contents, &githubEmails)
-	if err != nil {
-		panic(err)
-	}
-	for _, v := range githubEmails {
-		if v.Primary == true {
-			res = v.Email
-			break
-		}
-	}
-	return res
 }
 
 //{
@@ -195,9 +159,7 @@ type GitHubUserInfo struct {
 	} `json:"plan"`
 }
 
-func (idp *GithubIdProvider) getLoginAndAvatar(token *oauth2.Token) (string, string) {
-	var githubUserInfo GitHubUserInfo
-
+func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
 	if err != nil {
 		panic(err)
@@ -205,38 +167,28 @@ func (idp *GithubIdProvider) getLoginAndAvatar(token *oauth2.Token) (string, str
 	req.Header.Add("Authorization", "token "+token.AccessToken)
 	resp, err := idp.Client.Do(req)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
+	var githubUserInfo GitHubUserInfo
 	err = json.Unmarshal(body, &githubUserInfo)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return githubUserInfo.Login, githubUserInfo.AvatarUrl
-}
-
-func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	userInfo := &UserInfo{}
-
-	var wg sync.WaitGroup
-	wg.Add(2)
-	go func() {
-		userInfo.Email = idp.getEmail(token)
-		wg.Done()
-	}()
-	go func() {
-		userInfo.Username, userInfo.AvatarUrl = idp.getLoginAndAvatar(token)
-		wg.Done()
-	}()
-	wg.Wait()
-
-	return userInfo, nil
+	userInfo := UserInfo{
+		Id:          strconv.Itoa(githubUserInfo.Id),
+		Username:    githubUserInfo.Login,
+		DisplayName: githubUserInfo.Name,
+		Email:       githubUserInfo.Email,
+		AvatarUrl:   githubUserInfo.AvatarUrl,
+	}
+	return &userInfo, nil
 }

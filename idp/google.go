@@ -111,7 +111,8 @@ func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	}
 
 	userInfo := UserInfo{
-		Username:    googleUserInfo.Id,
+		Id:          googleUserInfo.Id,
+		Username:    googleUserInfo.Email,
 		DisplayName: googleUserInfo.Name,
 		Email:       googleUserInfo.Email,
 		AvatarUrl:   googleUserInfo.Picture,

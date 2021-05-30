@@ -68,8 +68,8 @@ func (idp *QqIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	params.Add("code", code)
 	params.Add("redirect_uri", idp.Config.RedirectURL)
 
-	getAccessTokenUrl := fmt.Sprintf("https://graph.qq.com/oauth2.0/token?%s", params.Encode())
-	resp, err := idp.Client.Get(getAccessTokenUrl)
+	accessTokenUrl := fmt.Sprintf("https://graph.qq.com/oauth2.0/token?%s", params.Encode())
+	resp, err := idp.Client.Get(accessTokenUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -87,9 +87,59 @@ func (idp *QqIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	return token, nil
 }
 
+//{
+//	"ret": 0,
+//	"msg": "",
+//	"is_lost": 0,
+//	"nickname": "飞翔的企鹅",
+//	"gender": "男",
+//	"gender_type": 1,
+//	"province": "",
+//	"city": "安道尔城",
+//	"year": "1968",
+//	"constellation": "",
+//	"figureurl": "http:\/\/qzapp.qlogo.cn\/qzapp\/101896710\/C0D022F92B604AA4B1CDF92CC79463A4\/30",
+//	"figureurl_1": "http:\/\/qzapp.qlogo.cn\/qzapp\/101896710\/C0D022F92B604AA4B1CDF92CC79463A4\/50",
+//	"figureurl_2": "http:\/\/qzapp.qlogo.cn\/qzapp\/101896710\/C0D022F92B604AA4B1CDF92CC79463A4\/100",
+//	"figureurl_qq_1": "http://thirdqq.qlogo.cn/g?b=oidb&k=QtAu5OiaSfqGD0kfclwvxJA&s=40&t=1557635654",
+//	"figureurl_qq_2": "http://thirdqq.qlogo.cn/g?b=oidb&k=QtAu5OiaSfqGD0kfclwvxJA&s=100&t=1557635654",
+//	"figureurl_qq": "http://thirdqq.qlogo.cn/g?b=oidb&k=QtAu5OiaSfqGD0kfclwvxJA&s=640&t=1557635654",
+//	"figureurl_type": "1",
+//	"is_yellow_vip": "0",
+//	"vip": "0",
+//	"yellow_vip_level": "0",
+//	"level": "0",
+//	"is_yellow_year_vip": "0"
+//}
+
+type QqUserInfo struct {
+	Ret             int    `json:"ret"`
+	Msg             string `json:"msg"`
+	IsLost          int    `json:"is_lost"`
+	Nickname        string `json:"nickname"`
+	Gender          string `json:"gender"`
+	GenderType      int    `json:"gender_type"`
+	Province        string `json:"province"`
+	City            string `json:"city"`
+	Year            string `json:"year"`
+	Constellation   string `json:"constellation"`
+	Figureurl       string `json:"figureurl"`
+	Figureurl1      string `json:"figureurl_1"`
+	Figureurl2      string `json:"figureurl_2"`
+	FigureurlQq1    string `json:"figureurl_qq_1"`
+	FigureurlQq2    string `json:"figureurl_qq_2"`
+	FigureurlQq     string `json:"figureurl_qq"`
+	FigureurlType   string `json:"figureurl_type"`
+	IsYellowVip     string `json:"is_yellow_vip"`
+	Vip             string `json:"vip"`
+	YellowVipLevel  string `json:"yellow_vip_level"`
+	Level           string `json:"level"`
+	IsYellowYearVip string `json:"is_yellow_year_vip"`
+}
+
 func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	getOpenIdUrl := fmt.Sprintf("https://graph.qq.com/oauth2.0/me?access_token=%s", token.AccessToken)
-	resp, err := idp.Client.Get(getOpenIdUrl)
+	openIdUrl := fmt.Sprintf("https://graph.qq.com/oauth2.0/me?access_token=%s", token.AccessToken)
+	resp, err := idp.Client.Get(openIdUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -104,33 +154,32 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		return nil, errors.New("openId is empty")
 	}
 
-	getUserInfoUrl := fmt.Sprintf("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s", token.AccessToken, idp.Config.ClientID, openId)
-	resp, err = idp.Client.Get(getUserInfoUrl)
+	userInfoUrl := fmt.Sprintf("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s", token.AccessToken, idp.Config.ClientID, openId)
+	resp, err = idp.Client.Get(userInfoUrl)
 	if err != nil {
 		return nil, err
-	}
-
-	type response struct {
-		Ret       int    `json:"ret"`
-		Nickname  string `json:"nickname"`
-		AvatarUrl string `json:"figureurl_qq_1"`
 	}
 
 	defer resp.Body.Close()
-	userInfoContent, err := ioutil.ReadAll(resp.Body)
-	var userResponse response
-	err = json.Unmarshal(userInfoContent, &userResponse)
+	userInfoBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	if userResponse.Ret != 0 {
-		return nil, errors.New(fmt.Sprintf("ret expected 0, got %d", userResponse.Ret))
+
+	var qqUserInfo QqUserInfo
+	err = json.Unmarshal(userInfoBody, &qqUserInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	if qqUserInfo.Ret != 0 {
+		return nil, errors.New(fmt.Sprintf("ret expected 0, got %d", qqUserInfo.Ret))
 	}
 
 	userInfo := UserInfo{
-		Username:    openId,
-		DisplayName: userResponse.Nickname,
-		AvatarUrl:   userResponse.AvatarUrl,
+		Id:          openId,
+		DisplayName: qqUserInfo.Nickname,
+		AvatarUrl:   qqUserInfo.FigureurlQq1,
 	}
 	return &userInfo, nil
 }
