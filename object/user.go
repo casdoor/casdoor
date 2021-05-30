@@ -35,6 +35,7 @@ type User struct {
 	Phone         string `xorm:"varchar(100)" json:"phone"`
 	Affiliation   string `xorm:"varchar(100)" json:"affiliation"`
 	Tag           string `xorm:"varchar(100)" json:"tag"`
+	Ranking       int    `json:"ranking"`
 	IsAdmin       bool   `json:"isAdmin"`
 	IsGlobalAdmin bool   `json:"isGlobalAdmin"`
 	IsForbidden   bool   `json:"isForbidden"`
@@ -45,6 +46,8 @@ type User struct {
 	Google string `xorm:"varchar(100)" json:"google"`
 	QQ     string `xorm:"qq varchar(100)" json:"qq"`
 	WeChat string `xorm:"wechat varchar(100)" json:"wechat"`
+
+	Properties map[string]string `json:"properties"`
 }
 
 func GetGlobalUsers() []*User {

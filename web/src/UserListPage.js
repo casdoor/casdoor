@@ -44,7 +44,7 @@ class UserListPage extends React.Component {
 
   newUser() {
     return {
-      owner: "admin", // this.props.account.username,
+      owner: "built-in", // this.props.account.username,
       name: `user_${this.state.users.length}`,
       createdTime: moment().format(),
       type: "normal-user",
@@ -58,6 +58,7 @@ class UserListPage extends React.Component {
       isAdmin: false,
       isGlobalAdmin: false,
       IsForbidden: false,
+      properties: {},
     }
   }
 

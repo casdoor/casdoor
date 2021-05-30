@@ -92,6 +92,21 @@ func GetUserField(user *User, field string) string {
 	return f.String()
 }
 
+func SetUserProperty(user *User, field string, value string) bool {
+	if value == "" {
+		delete(user.Properties, field)
+	} else {
+		user.Properties[field] = value
+	}
+
+	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("properties").Update(user)
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
+}
+
 func calculateHash(user *User) string {
 	s := strings.Join([]string{user.Id, user.Password, user.DisplayName, user.Avatar, user.Phone}, "|")
 	return util.GetMd5Hash(s)

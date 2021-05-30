@@ -198,14 +198,26 @@ func (c *ApiController) Login() {
 			user := object.GetUser(userId)
 
 			// sync info from 3rd-party if possible
-			if user.DisplayName == "" && userInfo.Username != "" {
-				object.SetUserField(user, "display_name", userInfo.Username)
+			if userInfo.Username != "" {
+				propertyName := fmt.Sprintf("oauth_%s_username", provider.Type)
+				object.SetUserProperty(user, propertyName, userInfo.Username)
+				if user.DisplayName == "" {
+					object.SetUserField(user, "display_name", userInfo.Username)
+				}
 			}
-			if user.Avatar == "" && userInfo.AvatarUrl != "" {
-				object.SetUserField(user, "avatar", userInfo.AvatarUrl)
+			if userInfo.AvatarUrl != "" {
+				propertyName := fmt.Sprintf("oauth_%s_avatarUrl", provider.Type)
+				object.SetUserProperty(user, propertyName, userInfo.AvatarUrl)
+				if user.Avatar == "" {
+					object.SetUserField(user, "avatar", userInfo.AvatarUrl)
+				}
 			}
-			if user.Email == "" && userInfo.Email != "" {
-				object.SetUserField(user, "email", userInfo.Email)
+			if userInfo.Email != "" {
+				propertyName := fmt.Sprintf("oauth_%s_email", provider.Type)
+				object.SetUserProperty(user, propertyName, userInfo.Email)
+				if user.Email == "" {
+					object.SetUserField(user, "email", userInfo.Email)
+				}
 			}
 
 			isLinked := object.LinkUserAccount(user, provider.Type, userInfo.Username)
