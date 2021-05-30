@@ -18,11 +18,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"golang.org/x/oauth2"
 	"io"
 	"net/http"
 	"net/url"
 	"time"
+
+	"golang.org/x/oauth2"
 )
 
 type WeChatIdProvider struct {
@@ -30,7 +31,7 @@ type WeChatIdProvider struct {
 	Config *oauth2.Config
 }
 
-type TencentAccessToken struct {
+type WechatAccessToken struct {
 	AccessToken  string `json:"access_token"`  //Interface call credentials
 	ExpiresIn    int64  `json:"expires_in"`    //access_token interface call credential timeout time, unit (seconds)
 	RefreshToken string `json:"refresh_token"` //User refresh access_token
@@ -39,7 +40,7 @@ type TencentAccessToken struct {
 	Unionid      string `json:"unionid"`       //This field will appear if and only if the website application has been authorized by the user's UserInfo.
 }
 
-type TencentUserInfo struct {
+type WechatUserInfo struct {
 	Openid     string   `json:"openid"`     //The ID of an ordinary user, which is unique to the current developer account
 	Nickname   string   `json:"nickname"`   //Ordinary user nickname
 	Sex        int      `json:"sex"`        //Ordinary user gender, 1 is male, 2 is female
@@ -109,34 +110,34 @@ func (idp *WeChatIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		return nil, err
 	}
 
-	var tencentAccessToken TencentAccessToken
-	if err = json.Unmarshal([]byte(buf.String()), &tencentAccessToken); err != nil {
+	var wechatAccessToken WechatAccessToken
+	if err = json.Unmarshal([]byte(buf.String()), &wechatAccessToken); err != nil {
 		return nil, err
 	}
 
 	token := oauth2.Token{
-		AccessToken:  tencentAccessToken.AccessToken,
+		AccessToken:  wechatAccessToken.AccessToken,
 		TokenType:    "WeChatAccessToken",
-		RefreshToken: tencentAccessToken.RefreshToken,
+		RefreshToken: wechatAccessToken.RefreshToken,
 		Expiry:       time.Time{},
 	}
 
 	raw := make(map[string]string)
-	raw["Openid"] = tencentAccessToken.Openid
+	raw["Openid"] = wechatAccessToken.Openid
 	token.WithExtra(raw)
 
 	return &token, nil
 }
 
-// GetUserInfo use TencentAccessToken gotten before return TencentUserInfo
+// GetUserInfo use WechatAccessToken gotten before return WechatUserInfo
 // get more detail via: https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Authorized_Interface_Calling_UnionID.html
 func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	var tencentUserInfo TencentUserInfo
+	var wechatUserInfo WechatUserInfo
 	accessToken := token.AccessToken
 	openid := token.Extra("Openid")
 
 	getUserInfoUrl := fmt.Sprintf("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s", accessToken, openid)
-	getUserInfoResponse, err := idp.Client.Get(getUserInfoUrl)
+	resp, err := idp.Client.Get(getUserInfoUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -146,22 +147,26 @@ func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		if err != nil {
 			return
 		}
-	}(getUserInfoResponse.Body)
+	}(resp.Body)
 
 	buf := new(bytes.Buffer)
-	_, err = buf.ReadFrom(getUserInfoResponse.Body)
+	_, err = buf.ReadFrom(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal([]byte(buf.String()), &tencentUserInfo); err != nil {
+	if err = json.Unmarshal([]byte(buf.String()), &wechatUserInfo); err != nil {
 		return nil, err
 	}
 
-	userInfo := UserInfo{
-		Username:  tencentUserInfo.Nickname,
-		Email:     "",
-		AvatarUrl: tencentUserInfo.Headimgurl,
+	username := wechatUserInfo.Unionid
+	if username == "" {
+		username = wechatUserInfo.Openid
 	}
 
+	userInfo := UserInfo{
+		Username:    username,
+		DisplayName: wechatUserInfo.Nickname,
+		AvatarUrl:   wechatUserInfo.Headimgurl,
+	}
 	return &userInfo, nil
 }

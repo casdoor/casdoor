@@ -69,45 +69,43 @@ func (idp *QqIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	params.Add("redirect_uri", idp.Config.RedirectURL)
 
 	getAccessTokenUrl := fmt.Sprintf("https://graph.qq.com/oauth2.0/token?%s", params.Encode())
-	tokenResponse, err := idp.Client.Get(getAccessTokenUrl)
+	resp, err := idp.Client.Get(getAccessTokenUrl)
 	if err != nil {
 		return nil, err
 	}
 
-	defer tokenResponse.Body.Close()
-	tokenContent, err := ioutil.ReadAll(tokenResponse.Body)
+	defer resp.Body.Close()
+	tokenContent, err := ioutil.ReadAll(resp.Body)
 
-	tokenReg := regexp.MustCompile("token=(.*?)&")
-	tokenRegRes := tokenReg.FindAllStringSubmatch(string(tokenContent), -1)
-	tokenStr := tokenRegRes[0][1]
+	re := regexp.MustCompile("token=(.*?)&")
+	matched := re.FindAllStringSubmatch(string(tokenContent), -1)
+	accessToken := matched[0][1]
 	token := &oauth2.Token{
-		AccessToken: tokenStr,
+		AccessToken: accessToken,
 		TokenType:   "Bearer",
 	}
 	return token, nil
 }
 
 func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	userInfo := &UserInfo{}
-
 	getOpenIdUrl := fmt.Sprintf("https://graph.qq.com/oauth2.0/me?access_token=%s", token.AccessToken)
-	openIdResponse, err := idp.Client.Get(getOpenIdUrl)
+	resp, err := idp.Client.Get(getOpenIdUrl)
 	if err != nil {
 		return nil, err
 	}
 
-	defer openIdResponse.Body.Close()
-	openIdContent, err := ioutil.ReadAll(openIdResponse.Body)
+	defer resp.Body.Close()
+	openIdBody, err := ioutil.ReadAll(resp.Body)
 
-	openIdReg := regexp.MustCompile("\"openid\":\"(.*?)\"}")
-	openIdRegRes := openIdReg.FindAllStringSubmatch(string(openIdContent), -1)
-	openId := openIdRegRes[0][1]
+	re := regexp.MustCompile("\"openid\":\"(.*?)\"}")
+	matched := re.FindAllStringSubmatch(string(openIdBody), -1)
+	openId := matched[0][1]
 	if openId == "" {
 		return nil, errors.New("openId is empty")
 	}
 
 	getUserInfoUrl := fmt.Sprintf("https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s", token.AccessToken, idp.Config.ClientID, openId)
-	getUserInfoResponse, err := idp.Client.Get(getUserInfoUrl)
+	resp, err = idp.Client.Get(getUserInfoUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -118,8 +116,8 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		AvatarUrl string `json:"figureurl_qq_1"`
 	}
 
-	defer getUserInfoResponse.Body.Close()
-	userInfoContent, err := ioutil.ReadAll(getUserInfoResponse.Body)
+	defer resp.Body.Close()
+	userInfoContent, err := ioutil.ReadAll(resp.Body)
 	var userResponse response
 	err = json.Unmarshal(userInfoContent, &userResponse)
 	if err != nil {
@@ -129,7 +127,10 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		return nil, errors.New(fmt.Sprintf("ret expected 0, got %d", userResponse.Ret))
 	}
 
-	userInfo.Username = userResponse.Nickname
-	userInfo.AvatarUrl = userResponse.AvatarUrl
-	return userInfo, nil
+	userInfo := UserInfo{
+		Username:    openId,
+		DisplayName: userResponse.Nickname,
+		AvatarUrl:   userResponse.AvatarUrl,
+	}
+	return &userInfo, nil
 }
