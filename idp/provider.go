@@ -21,9 +21,11 @@ import (
 )
 
 type UserInfo struct {
-	Username  string
-	Email     string
-	AvatarUrl string
+	Id          string
+	Username    string
+	DisplayName string
+	Email       string
+	AvatarUrl   string
 }
 
 type IdProvider interface {

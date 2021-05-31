@@ -18,6 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -64,28 +65,57 @@ func (idp *GoogleIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	return idp.Config.Exchange(ctx, code)
 }
 
+//{
+//	"id": "110613473084924141234",
+//	"email": "jimgreen@gmail.com",
+//	"verified_email": true,
+//	"name": "Jim Green",
+//	"given_name": "Jim",
+//	"family_name": "Green",
+//	"picture": "https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg",
+//	"locale": "en"
+//}
+
+type GoogleUserInfo struct {
+	Id            string `json:"id"`
+	Email         string `json:"email"`
+	VerifiedEmail bool   `json:"verified_email"`
+	Name          string `json:"name"`
+	GivenName     string `json:"given_name"`
+	FamilyName    string `json:"family_name"`
+	Picture       string `json:"picture"`
+	Locale        string `json:"locale"`
+}
+
 func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	userInfo := &UserInfo{}
-
-	type response struct {
-		Picture string `json:"picture"`
-		Email   string `json:"email"`
-	}
-
-	resp, err := idp.Client.Get("https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=" + token.AccessToken)
-	defer resp.Body.Close()
-	contents, err := ioutil.ReadAll(resp.Body)
-	var userResponse response
-	err = json.Unmarshal(contents, &userResponse)
+	url := fmt.Sprintf("https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=%s", token.AccessToken)
+	resp, err := idp.Client.Get(url)
 	if err != nil {
 		return nil, err
 	}
-	if userResponse.Email == "" {
-		return userInfo, errors.New("google email is empty")
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
 	}
 
-	userInfo.Username = userResponse.Email
-	userInfo.Email = userResponse.Email
-	userInfo.AvatarUrl = userResponse.Picture
-	return userInfo, nil
+	var googleUserInfo GoogleUserInfo
+	err = json.Unmarshal(body, &googleUserInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	if googleUserInfo.Email == "" {
+		return nil, errors.New("google email is empty")
+	}
+
+	userInfo := UserInfo{
+		Id:          googleUserInfo.Id,
+		Username:    googleUserInfo.Email,
+		DisplayName: googleUserInfo.Name,
+		Email:       googleUserInfo.Email,
+		AvatarUrl:   googleUserInfo.Picture,
+	}
+	return &userInfo, nil
 }

@@ -68,18 +68,22 @@ class AuthCallback extends React.Component {
 
   UNSAFE_componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
+    const code = params.get("code");
+
     const innerParams = this.getInnerParams();
     const applicationName = innerParams.get("application");
     const providerName = innerParams.get("provider");
     const method = innerParams.get("method");
+
     let redirectUri = `${window.location.origin}/callback`;
+
     const body = {
       type: this.getResponseType(),
       application: applicationName,
       provider: providerName,
-      code: params.get("code"),
+      code: code,
       // state: innerParams.get("state"),
-      state: innerParams.get("application"),
+      state: applicationName,
       redirectUri: redirectUri,
       method: method,
     };

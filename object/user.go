@@ -16,8 +16,6 @@ package object
 
 import (
 	"fmt"
-	"reflect"
-	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -37,6 +35,7 @@ type User struct {
 	Phone         string `xorm:"varchar(100)" json:"phone"`
 	Affiliation   string `xorm:"varchar(100)" json:"affiliation"`
 	Tag           string `xorm:"varchar(100)" json:"tag"`
+	Ranking       int    `json:"ranking"`
 	IsAdmin       bool   `json:"isAdmin"`
 	IsGlobalAdmin bool   `json:"isGlobalAdmin"`
 	IsForbidden   bool   `json:"isForbidden"`
@@ -47,6 +46,8 @@ type User struct {
 	Google string `xorm:"varchar(100)" json:"google"`
 	QQ     string `xorm:"qq varchar(100)" json:"qq"`
 	WeChat string `xorm:"wechat varchar(100)" json:"wechat"`
+
+	Properties map[string]string `json:"properties"`
 }
 
 func GetGlobalUsers() []*User {
@@ -86,6 +87,20 @@ func getUser(owner string, name string) *User {
 func GetUser(id string) *User {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getUser(owner, name)
+}
+
+func GetMaskedUser(user *User) *User {
+	if user.Password != "" {
+		user.Password = "***"
+	}
+	return user
+}
+
+func GetMaskedUsers(users []*User) []*User {
+	for _, user := range users {
+		user = GetMaskedUser(user)
+	}
+	return users
 }
 
 func UpdateUser(id string, user *User) bool {
@@ -185,107 +200,8 @@ func DeleteUser(user *User) bool {
 	return affected != 0
 }
 
-func GetUserByField(organizationName string, field string, value string) *User {
-	user := User{Owner: organizationName}
-	existed, err := adapter.Engine.Where(fmt.Sprintf("%s=?", field), value).Get(&user)
-	if err != nil {
-		panic(err)
-	}
-
-	if existed {
-		return &user
-	} else {
-		return nil
-	}
-}
-
-func HasUserByField(organizationName string, field string, value string) bool {
-	return GetUserByField(organizationName, field, value) != nil
-}
-
-func GetUserByFields(organization string, field string) *User {
-	// check username
-	user := GetUserByField(organization, "name", field)
-	if user != nil {
-		return user
-	}
-
-	// check email
-	user = GetUserByField(organization, "email", field)
-	if user != nil {
-		return user
-	}
-
-	// check phone
-	user = GetUserByField(organization, "phone", field)
-	if user != nil {
-		return user
-	}
-
-	return nil
-}
-
-func SetUserField(user *User, field string, value string) bool {
-	if field == "password" {
-		organization := GetOrganizationByUser(user)
-		user.UpdateUserPassword(organization)
-		value = user.Password
-	}
-
-	affected, err := adapter.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(map[string]interface{}{field: value})
-	if err != nil {
-		panic(err)
-	}
-
-	user = getUser(user.Owner, user.Name)
-	user.UpdateUserHash()
-	_, err = adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("hash").Update(user)
-	if err != nil {
-		panic(err)
-	}
-
-	return affected != 0
-}
-
 func LinkUserAccount(user *User, field string, value string) bool {
 	return SetUserField(user, field, value)
-}
-
-func GetUserField(user *User, field string) string {
-	// https://socketloop.com/tutorials/golang-how-to-get-struct-field-and-value-by-name
-	u := reflect.ValueOf(user)
-	f := reflect.Indirect(u).FieldByName(field)
-	return f.String()
-}
-
-func GetMaskedUser(user *User) *User {
-	if user.Password != "" {
-		user.Password = "***"
-	}
-	return user
-}
-
-func GetMaskedUsers(users []*User) []*User {
-	for _, user := range users {
-		user = GetMaskedUser(user)
-	}
-	return users
-}
-
-func calculateHash(user *User) string {
-	s := strings.Join([]string{user.Id, user.Password, user.DisplayName, user.Avatar, user.Phone}, "|")
-	return util.GetMd5Hash(s)
-}
-
-func (user *User) UpdateUserHash() {
-	hash := calculateHash(user)
-	user.Hash = hash
-}
-
-func (user *User) UpdateUserPassword(organization *Organization) {
-	if organization.PasswordType == "salt" {
-		user.Password = getSaltedPassword(user.Password, organization.PasswordSalt)
-	}
 }
 
 func (user *User) GetId() string {

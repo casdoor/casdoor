@@ -19,7 +19,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"sync"
+	"strconv"
+	"time"
 
 	"golang.org/x/oauth2"
 )
@@ -64,49 +65,101 @@ func (idp *GithubIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	return idp.Config.Exchange(ctx, code)
 }
 
-func (idp *GithubIdProvider) getEmail(token *oauth2.Token) string {
-	res := ""
+//{
+//	"login": "jimgreen",
+//	"id": 3781234,
+//	"node_id": "MDQ6VXNlcjM3O123456=",
+//	"avatar_url": "https://avatars.githubusercontent.com/u/3781234?v=4",
+//	"gravatar_id": "",
+//	"url": "https://api.github.com/users/jimgreen",
+//	"html_url": "https://github.com/jimgreen",
+//	"followers_url": "https://api.github.com/users/jimgreen/followers",
+//	"following_url": "https://api.github.com/users/jimgreen/following{/other_user}",
+//	"gists_url": "https://api.github.com/users/jimgreen/gists{/gist_id}",
+//	"starred_url": "https://api.github.com/users/jimgreen/starred{/owner}{/repo}",
+//	"subscriptions_url": "https://api.github.com/users/jimgreen/subscriptions",
+//	"organizations_url": "https://api.github.com/users/jimgreen/orgs",
+//	"repos_url": "https://api.github.com/users/jimgreen/repos",
+//	"events_url": "https://api.github.com/users/jimgreen/events{/privacy}",
+//	"received_events_url": "https://api.github.com/users/jimgreen/received_events",
+//	"type": "User",
+//	"site_admin": false,
+//	"name": "Jim Green",
+//	"company": "Casbin",
+//	"blog": "https://casbin.org",
+//	"location": "Bay Area",
+//	"email": "jimgreen@gmail.com",
+//	"hireable": true,
+//	"bio": "My bio",
+//	"twitter_username": null,
+//	"public_repos": 45,
+//	"public_gists": 3,
+//	"followers": 123,
+//	"following": 31,
+//	"created_at": "2016-03-06T13:16:13Z",
+//	"updated_at": "2020-05-30T12:15:29Z",
+//	"private_gists": 0,
+//	"total_private_repos": 12,
+//	"owned_private_repos": 12,
+//	"disk_usage": 46331,
+//	"collaborators": 5,
+//	"two_factor_authentication": true,
+//	"plan": {
+//		"name": "free",
+//		"space": 976562499,
+//		"collaborators": 0,
+//		"private_repos": 10000
+//	}
+//}
 
-	type GithubEmail struct {
-		Email      string `json:"email"`
-		Primary    bool   `json:"primary"`
-		Verified   bool   `json:"verified"`
-		Visibility string `json:"visibility"`
-	}
-	var githubEmails []GithubEmail
-
-	req, err := http.NewRequest("GET", "https://api.github.com/user/emails", nil)
-	if err != nil {
-		panic(err)
-	}
-	req.Header.Add("Authorization", "token "+token.AccessToken)
-	response, err := idp.Client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer response.Body.Close()
-	contents, err := ioutil.ReadAll(response.Body)
-
-	err = json.Unmarshal(contents, &githubEmails)
-	if err != nil {
-		panic(err)
-	}
-	for _, v := range githubEmails {
-		if v.Primary == true {
-			res = v.Email
-			break
-		}
-	}
-	return res
+type GitHubUserInfo struct {
+	Login                   string      `json:"login"`
+	Id                      int         `json:"id"`
+	NodeId                  string      `json:"node_id"`
+	AvatarUrl               string      `json:"avatar_url"`
+	GravatarId              string      `json:"gravatar_id"`
+	Url                     string      `json:"url"`
+	HtmlUrl                 string      `json:"html_url"`
+	FollowersUrl            string      `json:"followers_url"`
+	FollowingUrl            string      `json:"following_url"`
+	GistsUrl                string      `json:"gists_url"`
+	StarredUrl              string      `json:"starred_url"`
+	SubscriptionsUrl        string      `json:"subscriptions_url"`
+	OrganizationsUrl        string      `json:"organizations_url"`
+	ReposUrl                string      `json:"repos_url"`
+	EventsUrl               string      `json:"events_url"`
+	ReceivedEventsUrl       string      `json:"received_events_url"`
+	Type                    string      `json:"type"`
+	SiteAdmin               bool        `json:"site_admin"`
+	Name                    string      `json:"name"`
+	Company                 string      `json:"company"`
+	Blog                    string      `json:"blog"`
+	Location                string      `json:"location"`
+	Email                   string      `json:"email"`
+	Hireable                bool        `json:"hireable"`
+	Bio                     string      `json:"bio"`
+	TwitterUsername         interface{} `json:"twitter_username"`
+	PublicRepos             int         `json:"public_repos"`
+	PublicGists             int         `json:"public_gists"`
+	Followers               int         `json:"followers"`
+	Following               int         `json:"following"`
+	CreatedAt               time.Time   `json:"created_at"`
+	UpdatedAt               time.Time   `json:"updated_at"`
+	PrivateGists            int         `json:"private_gists"`
+	TotalPrivateRepos       int         `json:"total_private_repos"`
+	OwnedPrivateRepos       int         `json:"owned_private_repos"`
+	DiskUsage               int         `json:"disk_usage"`
+	Collaborators           int         `json:"collaborators"`
+	TwoFactorAuthentication bool        `json:"two_factor_authentication"`
+	Plan                    struct {
+		Name          string `json:"name"`
+		Space         int    `json:"space"`
+		Collaborators int    `json:"collaborators"`
+		PrivateRepos  int    `json:"private_repos"`
+	} `json:"plan"`
 }
 
-func (idp *GithubIdProvider) getLoginAndAvatar(token *oauth2.Token) (string, string) {
-	type GithubUser struct {
-		Login     string `json:"login"`
-		AvatarUrl string `json:"avatar_url"`
-	}
-	var githubUser GithubUser
-
+func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
 	if err != nil {
 		panic(err)
@@ -114,32 +167,28 @@ func (idp *GithubIdProvider) getLoginAndAvatar(token *oauth2.Token) (string, str
 	req.Header.Add("Authorization", "token "+token.AccessToken)
 	resp, err := idp.Client.Do(req)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
+
 	defer resp.Body.Close()
-	contents2, err := ioutil.ReadAll(resp.Body)
-	err = json.Unmarshal(contents2, &githubUser)
+
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return githubUser.Login, githubUser.AvatarUrl
-}
+	var githubUserInfo GitHubUserInfo
+	err = json.Unmarshal(body, &githubUserInfo)
+	if err != nil {
+		return nil, err
+	}
 
-func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	userInfo := &UserInfo{}
-
-	var wg sync.WaitGroup
-	wg.Add(2)
-	go func() {
-		userInfo.Email = idp.getEmail(token)
-		wg.Done()
-	}()
-	go func() {
-		userInfo.Username, userInfo.AvatarUrl = idp.getLoginAndAvatar(token)
-		wg.Done()
-	}()
-	wg.Wait()
-
-	return userInfo, nil
+	userInfo := UserInfo{
+		Id:          strconv.Itoa(githubUserInfo.Id),
+		Username:    githubUserInfo.Login,
+		DisplayName: githubUserInfo.Name,
+		Email:       githubUserInfo.Email,
+		AvatarUrl:   githubUserInfo.AvatarUrl,
+	}
+	return &userInfo, nil
 }

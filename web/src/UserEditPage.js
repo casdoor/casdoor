@@ -26,6 +26,11 @@ import * as Provider from "./auth/Provider";
 import PasswordModal from "./PasswordModal";
 import ResetModal from "./ResetModal";
 
+import {Controlled as CodeMirror} from 'react-codemirror2'
+import "codemirror/lib/codemirror.css"
+require('codemirror/theme/material-darker.css');
+require("codemirror/mode/javascript/javascript");
+
 const { Option } = Select;
 
 class UserEditPage extends React.Component {
@@ -107,9 +112,9 @@ class UserEditPage extends React.Component {
       });
   }
 
-  getProviderLink(provider, linkedValue) {
+  getProviderLink(provider) {
     if (provider.type === "GitHub") {
-      return `https://github.com/${linkedValue}`;
+      return `https://github.com/${this.getUserProperty(provider.type, "username")}`;
     } else if (provider.type === "Google") {
       return "https://mail.google.com";
     } else {
@@ -117,8 +122,19 @@ class UserEditPage extends React.Component {
     }
   }
 
+  getUserProperty(providerType, propertyName) {
+    const key = `oauth_${providerType}_${propertyName}`;
+    return this.state.user.properties[key]
+  }
+
   renderIdp(provider) {
     const linkedValue = this.state.user[provider.type.toLowerCase()];
+    const profileUrl = this.getProviderLink(provider);
+    const username = this.getUserProperty(provider.type, "username");
+    const displayName = this.getUserProperty(provider.type, "displayname");
+    // const email = this.getUserProperty(provider.type, "email");
+    const avatarUrl = this.getUserProperty(provider.type, "avatarUrl");
+    const name = (username === undefined) ? displayName : `${displayName} (${username})`;
 
     return (
       <Row key={provider.name} style={{marginTop: '20px'}} >
@@ -133,16 +149,19 @@ class UserEditPage extends React.Component {
           </span>
         </Col>
         <Col span={22} >
-          <span style={{width: '200px', display: "inline-block"}}>
+          <img style={{marginRight: '10px'}} width={30} height={30} src={avatarUrl} alt={name} />
+          <span style={{width: '300px', display: "inline-block"}}>
             {
               linkedValue === "" ? (
                 "(empty)"
               ) : (
-                <a target="_blank" rel="noreferrer" href={this.getProviderLink(provider, linkedValue)}>
-                  {
-                    linkedValue
-                  }
-                </a>
+                profileUrl === "" ? name : (
+                  <a target="_blank" rel="noreferrer" href={profileUrl}>
+                    {
+                      name
+                    }
+                  </a>
+                  )
               )
             }
           </span>
@@ -158,6 +177,10 @@ class UserEditPage extends React.Component {
         </Col>
       </Row>
     )
+  }
+
+  isSelfOrAdmin() {
+    return (this.state.user.id === this.props.account?.id) || Setting.isAdminUser(this.props.account);
   }
 
   renderUser() {
@@ -267,7 +290,7 @@ class UserEditPage extends React.Component {
             <Input value={this.state.user.email} disabled />
           </Col>
           <Col span={11} >
-            { this.state.user.id === this.props.account.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Email...")} destType={"email"} coolDownTime={60}/>) : null}
+            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Email...")} destType={"email"} coolDownTime={60}/>) : null}
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
@@ -278,7 +301,7 @@ class UserEditPage extends React.Component {
             <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`} disabled />
           </Col>
           <Col span={11} >
-            { this.state.user.id === this.props.account.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} coolDownTime={60}/>) : null}
+            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} coolDownTime={60}/>) : null}
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
@@ -309,21 +332,36 @@ class UserEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("user:Third-party logins")}:
-          </Col>
-          <Col span={22} >
-            <div style={{marginBottom: 20}}>
-              {
-                this.state.application?.providerObjs.filter(provider => Setting.isProviderVisible(provider)).map((provider, index) => this.renderIdp(provider))
-              }
-            </div>
-          </Col>
-        </Row>
+        {
+          !this.isSelfOrAdmin() ? null : (
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={2}>
+                {i18next.t("user:Third-party logins")}:
+              </Col>
+              <Col span={22} >
+                <div style={{marginBottom: 20}}>
+                  {
+                    this.state.application?.providerObjs.filter(provider => Setting.isProviderVisible(provider)).map((provider, index) => this.renderIdp(provider))
+                  }
+                </div>
+              </Col>
+            </Row>
+          )
+        }
         {
           !Setting.isAdminUser(this.props.account) ? null : (
             <React.Fragment>
+              {/*<Row style={{marginTop: '20px'}} >*/}
+              {/*  <Col style={{marginTop: '5px'}} span={2}>*/}
+              {/*    {i18next.t("user:Properties")}:*/}
+              {/*  </Col>*/}
+              {/*  <Col span={22} >*/}
+              {/*    <CodeMirror*/}
+              {/*      value={JSON.stringify(this.state.user.properties, null, 4)}*/}
+              {/*      options={{mode: 'javascript', theme: "material-darker"}}*/}
+              {/*    />*/}
+              {/*  </Col>*/}
+              {/*</Row>*/}
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
                   {i18next.t("user:Is admin")}:
