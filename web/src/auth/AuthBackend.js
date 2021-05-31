@@ -12,21 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {authConfig} from "./Auth";
+import { authConfig } from "./Auth";
 
 export function getAccount(query) {
   return fetch(`${authConfig.serverUrl}/api/get-account${query}`, {
-    method: 'GET',
-    credentials: 'include'
-  }).then(res => res.json());
+    method: "GET",
+    credentials: "include",
+  }).then((res) => res.json());
 }
 
 export function signup(values) {
   return fetch(`${authConfig.serverUrl}/api/signup`, {
-    method: 'POST',
+    method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
-  }).then(res => res.json());
+  }).then((res) => res.json());
+}
+
+export function forgetPassword(values) {
+  return fetch(`${authConfig.serverUrl}/api/forget-password`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(values),
+  }).then((res) => res.json());
 }
 
 function oAuthParamsToQuery(oAuthParams) {
@@ -34,31 +42,39 @@ function oAuthParamsToQuery(oAuthParams) {
 }
 
 export function getApplicationLogin(oAuthParams) {
-  return fetch(`${authConfig.serverUrl}/api/get-app-login${oAuthParamsToQuery(oAuthParams)}`, {
-    method: 'GET',
-    credentials: 'include',
-  }).then(res => res.json());
+  return fetch(
+      `${authConfig.serverUrl}/api/get-app-login${oAuthParamsToQuery(
+          oAuthParams
+      )}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+  ).then((res) => res.json());
 }
 
 export function login(values, oAuthParams) {
-  return fetch(`${authConfig.serverUrl}/api/login${oAuthParamsToQuery(oAuthParams)}`, {
-    method: 'POST',
-    credentials: "include",
-    body: JSON.stringify(values),
-  }).then(res => res.json());
+  return fetch(
+      `${authConfig.serverUrl}/api/login${oAuthParamsToQuery(oAuthParams)}`,
+      {
+        method: "POST",
+        credentials: "include",
+        body: JSON.stringify(values),
+      }
+  ).then((res) => res.json());
 }
 
 export function logout() {
   return fetch(`${authConfig.serverUrl}/api/logout`, {
-    method: 'POST',
+    method: "POST",
     credentials: "include",
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }
 
 export function unlink(values) {
   return fetch(`${authConfig.serverUrl}/api/unlink`, {
-    method: 'POST',
+    method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }

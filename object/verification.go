@@ -54,15 +54,7 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 		return result
 	}
 
-	msg, err := SendEmail(provider, title, content, dest, sender)
-	if msg != "" {
-		return msg
-	}
-	if err != nil {
-		panic(err)
-	}
-
-	return ""
+	return SendEmail(provider, title, content, dest, sender)
 }
 
 func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) string {

@@ -12,115 +12,136 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Col, Input, Modal, Row} from "antd";
+import { Col, Input, Modal, Row } from "antd";
 import React from "react";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
+import { AuditOutlined, VerifiedOutlined } from "@ant-design/icons";
 
 export const CountDownInput = (props) => {
-  const {defaultButtonText, textBefore, placeHolder, onChange, coolDownTime, onButtonClick, onButtonClickArgs} = props;
-  const [buttonText, setButtonText] = React.useState(defaultButtonText);
-  const [visible, setVisible] = React.useState(false);
-  const [key, setKey] = React.useState("");
-  const [captchaImg, setCaptchaImg] = React.useState("");
-  const [checkType, setCheckType] = React.useState("");
-  const [coolDown, setCoolDown] = React.useState(false);
-  const [checkId, setCheckId] = React.useState("");
+    const {
+        defaultButtonText,
+        textBefore,
+        prefix,
+        placeHolder,
+        onChange,
+        coolDownTime,
+        onButtonClick,
+        onButtonClickArgs,
+    } = props;
+    const [buttonText, setButtonText] = React.useState(defaultButtonText);
+    const [visible, setVisible] = React.useState(false);
+    const [key, setKey] = React.useState("");
+    const [captchaImg, setCaptchaImg] = React.useState("");
+    const [checkType, setCheckType] = React.useState("");
+    const [coolDown, setCoolDown] = React.useState(false);
+    const [checkId, setCheckId] = React.useState("");
 
-  const countDown = (leftTime) => {
-    if (leftTime === 0) {
-      setCoolDown(false);
-      setButtonText(defaultButtonText);
-      return;
-    }
-    setButtonText(`${leftTime} s`);
-    setTimeout(() => countDown(leftTime - 1), 1000);
-  }
+    const countDown = (leftTime) => {
+        if (leftTime === 0) {
+            setCoolDown(false);
+            setButtonText(defaultButtonText);
+            return;
+        }
+        setButtonText(`${leftTime} s`);
+        setTimeout(() => countDown(leftTime - 1), 1000);
+    };
 
-  const clickButton = () => {
-    if (coolDown) {
-      Setting.showMessage("error", i18next.t("general:Cooling down"));
-      return;
-    }
-    loadHumanCheck();
-  }
+    const clickButton = () => {
+        if (coolDown) {
+            Setting.showMessage("error", i18next.t("general:Cooling down"));
+            return;
+        }
+        loadHumanCheck();
+    };
 
-  const handleOk = () => {
-    setVisible(false);
-    onButtonClick(checkType, checkId, key, ...onButtonClickArgs).then(res => {
-      if (res) {
-        setCoolDown(true);
-        countDown(coolDownTime);
-      }
-    })
-  }
+    const handleOk = () => {
+        setVisible(false);
+        onButtonClick(checkType, checkId, key, ...onButtonClickArgs).then((res) => {
+            if (res) {
+                setCoolDown(true);
+                countDown(coolDownTime);
+            }
+        });
+    };
 
-  const handleCancel = () => {
-    setVisible(false);
-  }
+    const handleCancel = () => {
+        setVisible(false);
+    };
 
-  const loadHumanCheck = () => {
-    UserBackend.getHumanCheck().then(res => {
-      if (res.type === "none") {
-        onButtonClick("none", "", "", ...onButtonClickArgs);
-      } else if (res.type === "captcha") {
-        setCheckId(res.captchaId);
-        setCaptchaImg(res.captchaImage);
-        setCheckType("captcha");
-        setVisible(true);
-      } else {
-        Setting.showMessage("error", i18next.t("signup:Unknown Check Type"));
-      }
-    })
-  }
+    const loadHumanCheck = () => {
+        UserBackend.getHumanCheck().then((res) => {
+            if (res.type === "none") {
+                onButtonClick("none", "", "", ...onButtonClickArgs);
+            } else if (res.type === "captcha") {
+                setCheckId(res.captchaId);
+                setCaptchaImg(res.captchaImage);
+                setCheckType("captcha");
+                setVisible(true);
+            } else {
+                Setting.showMessage("error", i18next.t("signup:Unknown Check Type"));
+            }
+        });
+    };
 
-  const renderCaptcha = () => {
+    const renderCaptcha = () => {
+        return (
+            <Col>
+                <Row
+                    style={{
+                        backgroundImage: `url('data:image/png;base64,${captchaImg}')`,
+                        backgroundRepeat: "no-repeat",
+                        height: "80px",
+                        width: "200px",
+                        borderRadius: "3px",
+                        border: "1px solid #ccc",
+                        marginBottom: 10,
+                    }}
+                />
+                <Row>
+                    <Input
+                        placeholder={i18next.t("general:Enter the code")}
+                        onChange={(e) => setKey(e.target.value)}
+                    />
+                </Row>
+            </Col>
+        );
+    };
+
+    const renderCheck = () => {
+        if (checkType === "captcha") return renderCaptcha();
+        return null;
+    };
+
+    const getIcon = (prefix) => {
+        switch (prefix) {
+            case "VerifiedOutlined":
+                return <VerifiedOutlined />;
+            case "AuditOutlined":
+                return <AuditOutlined />;
+        }
+    };
+
     return (
-      <Col>
-        <Row
-          style={{
-            backgroundImage: `url('data:image/png;base64,${captchaImg}')`,
-            backgroundRepeat: "no-repeat",
-            height: "80px",
-            width: "200px",
-            borderRadius: "3px",
-            border: "1px solid #ccc",
-            marginBottom: 10
-          }}
+        <Input
+            addonBefore={textBefore}
+            placeholder={placeHolder}
+            prefix={prefix !== null ? getIcon(prefix) : null}
+            onChange={(e) => onChange(e.target.value)}
+            addonAfter={
+                <div>
+                    <button
+                        onClick={clickButton}
+                        style={{ backgroundColor: "#fafafa", border: "none" }}
+                    >
+                        {buttonText}
+                    </button>
+                    <Modal visible={visible} onCancel={handleCancel} onOk={handleOk}>
+                        {renderCheck()}
+                    </Modal>
+                </div>
+            }
         />
-        <Row>
-          <Input placeholder={i18next.t("general:Enter the code")} onChange={e => setKey(e.target.value)} />
-        </Row>
-      </Col>
-    )
-  }
-
-  const renderCheck = () => {
-    if (checkType === "captcha") return renderCaptcha();
-    return null;
-  }
-
-  return (
-    <Input
-      addonBefore={textBefore}
-      placeholder={placeHolder}
-      onChange={e => onChange(e.target.value)}
-      addonAfter={
-        <div>
-          <button
-            onClick={clickButton}
-            style={{backgroundColor: "#fafafa", border: "none"}}>
-            {buttonText}
-          </button>
-          <Modal
-            visible={visible}
-            onCancel={handleCancel}
-            onOk={handleOk}
-          >
-            {renderCheck()}
-          </Modal>
-        </div>
-      }/>
-  );
-}
+    );
+};

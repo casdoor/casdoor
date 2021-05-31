@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/casdoor/casdoor/util"
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
@@ -108,6 +109,86 @@ func (c *ApiController) DeleteUser() {
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteUser(&user))
+	c.ServeJSON()
+}
+
+// @Title ForgetPassword
+// @Description verify email or phoneId and change password
+// @Param   username    formData   string  true        "The username of the user"
+// @Param   password    formData   string  true        "The password of the user"
+// @Param   organization    formData   string  true        "The organization of the user"
+// @Param   email    formData   string  true        "The email of the user"
+// @Param   emailCode    formData   string  true        "The emailCode of the user"
+// @Success 200 {object} controllers.Response The Response object
+// @router /forget-password [post]
+func (c *ApiController) ForgetPassword() {
+	var resp Response
+
+	var form RequestForm
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
+	if err != nil {
+		panic(err)
+	}
+
+	var verificationCodeType string
+
+	// check result through Email or Phone
+	if strings.Contains(form.Email, "@") {
+		verificationCodeType = "email"
+		checkResult := object.CheckVerificationCode(form.Email, form.EmailCode)
+		if len(checkResult) != 0 {
+			responseText := fmt.Sprintf("Email%s", checkResult)
+			c.ResponseError(responseText)
+			return
+		}
+	} else {
+		verificationCodeType = "phone"
+		checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Email)
+		checkResult := object.CheckVerificationCode(checkPhone, form.EmailCode)
+		if len(checkResult) != 0 {
+			responseText := fmt.Sprintf("Phone%s", checkResult)
+			c.ResponseError(responseText)
+			return
+		}
+	}
+
+	// get user
+	var userId string
+	if form.Username == "" {
+		userId, _ = c.RequireSignedIn()
+	} else {
+		userId = fmt.Sprintf("%s/%s", form.Organization, form.Username)
+	}
+
+	user := object.GetUser(userId)
+	if user == nil {
+		c.ResponseError("No such user.")
+		return
+	}
+
+	// reset Password
+	user.Password = form.Password
+	object.SetUserField(user, "password", user.Password)
+
+	msg := object.CheckPassword(user, user.Password)
+	if msg != "" {
+		resp = Response{Status: "error", Msg: msg, Data: ""}
+	} else {
+		util.LogInfo(c.Ctx, "API: [%s] has changed password", userId)
+		resp = Response{Status: "ok", Msg: "", Data: userId}
+
+		// disable the verification code
+		switch verificationCodeType {
+		case "email":
+			object.DisableVerificationCode(form.Email)
+			break
+		case "phone":
+			object.DisableVerificationCode(form.Phone)
+			break
+		}
+	}
+
+	c.Data["json"] = resp
 	c.ServeJSON()
 }
 

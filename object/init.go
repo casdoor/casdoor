@@ -62,9 +62,12 @@ func initBuiltInApplication() {
 		CreatedTime:    util.GetCurrentTime(),
 		DisplayName:    "Casdoor",
 		Logo:           "https://cdn.casbin.com/logo/logo_1024x256.png",
+		HomepageUrl:    "https://casdoor.org",
 		Organization:   "built-in",
 		EnablePassword: true,
+		EnableSignUp:   true,
 		Providers:      []string{},
+		ExpireInHours:  168,
 	}
 	AddApplication(application)
 }

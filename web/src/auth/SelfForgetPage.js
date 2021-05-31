@@ -12,25 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// modified from https://github.com/casbin/casnode/blob/master/service/mail.go
+import React from "react";
+import { authConfig } from "./Auth";
+import ForgetPage from "./ForgetPage";
 
-package object
-
-import "github.com/go-gomail/gomail"
-
-func SendEmail(provider *Provider, title, content, dest, sender string) string {
-	dialer := gomail.NewDialer(provider.Host, provider.Port, provider.ClientId, provider.ClientSecret)
-
-	message := gomail.NewMessage()
-	message.SetAddressHeader("From", provider.ClientId, sender)
-	message.SetHeader("To", dest)
-	message.SetHeader("Subject", title)
-	message.SetBody("text/html", content)
-
-	err := dialer.DialAndSend(message)
-	if err == nil {
-		return ""
-	} else {
-		return err.Error()
-	}
+class SelfForgetPage extends React.Component {
+  render() {
+    return (
+      <ForgetPage
+        type={"forgotPassword"}
+        applicationName={authConfig.appName}
+        account={this.props.account}
+        {...this.props}
+      />
+    );
+  }
 }
+
+export default SelfForgetPage;
