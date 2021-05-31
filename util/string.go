@@ -19,8 +19,10 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -54,4 +56,23 @@ func GetId(name string) string {
 func GetMd5Hash(text string) string {
 	hash := md5.Sum([]byte(text))
 	return hex.EncodeToString(hash[:])
+}
+
+func GetRandomString() string {
+	crutime := time.Now().Unix()
+	h := md5.New()
+	_, err := io.WriteString(h, strconv.FormatInt(crutime, 10))
+	if err != nil {
+		return ""
+	}
+	token := fmt.Sprintf("%x", h.Sum(nil))
+	return token
+}
+
+func UintArrayToString(uintArray []uint8) string {
+	bytes := []byte{}
+	for _, b := range uintArray {
+		bytes = append(bytes, byte(b))
+	}
+	return string(bytes)
 }

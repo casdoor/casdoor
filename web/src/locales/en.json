@@ -117,7 +117,6 @@
     "Modify affiliation": "Modify affiliation",
     "Tag": "Tag",
     "Third-party logins": "Third-party logins",
-    "Properties": "Properties",
     "Link": "Link",
     "Unlink": "Unlink",
     "Is admin": "Is admin",
@@ -169,5 +168,30 @@
     "Edit Application": "Edit Application",
     "Enable password": "Enable password",
     "Login page preview": "Login page preview"
+  },
+  "forgetPassword":
+  {
+    "Please input your application!": "Please input your application!",
+    "Please input your organization!": "Please input your organization!",
+    "Unknown forgot type:": "Unknown forgot type:",
+    "Please input your username!": "Please input your username!",
+    "Please input your password!": "Please input your password!",
+    "Please confirm your password!": "Please confirm your password!",
+    "Please input your Email/Phone string!": "Please input your Email/Phone string!",
+    "Please input your verification code!": "Please input your verification code!",
+    "Your confirmed password is inconsistent with the password!": "Your confirmed password is inconsistent with the password!",
+    "send code": "send code",
+    "Account": "Account",
+    "Verify": "Verify",
+    "Retrieve password": "Retrieve password",
+    "Reset": "Reset",
+    "Password": "Password",
+    "Next Step": "Next Step",
+    "Confirm": "Confirm",
+    "Verify code": "Verify code",
+    "Email/Phone's format wrong!": "Email/Phone's format wrong!",
+    "Email/Phone": "Email/Phone",
+    "Change Password": "Change Password",
+    "Choose email verification or mobile verification": "Choose email verification or mobile verification"
   }
 }

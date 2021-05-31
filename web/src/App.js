@@ -38,6 +38,8 @@ import SignupPage from "./auth/SignupPage";
 import ResultPage from "./auth/ResultPage";
 import LoginPage from "./auth/LoginPage";
 import SelfLoginPage from "./auth/SelfLoginPage";
+import SelfForgetPage from "./auth/SelfForgetPage";
+import ForgetPage from "./auth/ForgetPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from './SelectLanguageBox';
@@ -83,23 +85,23 @@ class App extends Component {
     this.setState({
       uri: uri,
     });
-    if (uri === '/') {
+    if (uri === "/") {
       this.setState({ selectedMenuKey: 0 });
-    } else if (uri.includes('organizations')) {
+    } else if (uri.includes("organizations")) {
       this.setState({ selectedMenuKey: 1 });
-    } else if (uri.includes('users')) {
+    } else if (uri.includes("users")) {
       this.setState({ selectedMenuKey: 2 });
-    } else if (uri.includes('providers')) {
+    } else if (uri.includes("providers")) {
       this.setState({ selectedMenuKey: 3 });
-    } else if (uri.includes('applications')) {
+    } else if (uri.includes("applications")) {
       this.setState({ selectedMenuKey: 4 });
-    } else if (uri.includes('tokens')) {
+    } else if (uri.includes("tokens")) {
       this.setState({ selectedMenuKey: 5 });
-    } else if (uri.includes('signup')) {
+    } else if (uri.includes("signup")) {
       this.setState({ selectedMenuKey: 100 });
-    } else if (uri.includes('login')) {
+    } else if (uri.includes("login")) {
       this.setState({ selectedMenuKey: 101 });
-    } else if (uri.includes('result')) {
+    } else if (uri.includes("result")) {
       this.setState({ selectedMenuKey: 100 });
     } else {
       this.setState({ selectedMenuKey: -1 });
@@ -374,6 +376,8 @@ class App extends Component {
           <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
           <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...props} />)}/>
           <Route exact path="/callback" component={AuthCallback}/>
+          <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)}/>
+          <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)}/>
           <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)}/>
           <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>

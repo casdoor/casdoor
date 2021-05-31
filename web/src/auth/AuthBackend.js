@@ -29,6 +29,29 @@ export function signup(values) {
   }).then(res => res.json());
 }
 
+export function forgetPassword(values) {
+  return fetch(`${authConfig.serverUrl}/api/forget-password`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(values),
+  }).then((res) => res.json());
+}
+
+export function getEmailAndPhoneByUsername(values) {
+  return fetch(`${authConfig.serverUrl}/api/get-emailAndPhone`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(values),
+  }).then((res) => res.json());
+}
+export function getVerifyEmailOrPhoneToken(values) {
+  return fetch(`${authConfig.serverUrl}/api/get-verifyEmailOrPhoneToken`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(values),
+  }).then((res) => res.json());
+}
+
 function oAuthParamsToQuery(oAuthParams) {
   return `?clientId=${oAuthParams.clientId}&responseType=${oAuthParams.responseType}&redirectUri=${oAuthParams.redirectUri}&scope=${oAuthParams.scope}&state=${oAuthParams.state}`;
 }

@@ -117,7 +117,6 @@
     "Modify affiliation": "修改工作单位",
     "Tag": "标签",
     "Third-party logins": "第三方登录",
-    "Properties": "属性",
     "Link": "绑定",
     "Unlink": "解绑",
     "Is admin": "是管理员",
@@ -169,5 +168,30 @@
     "Edit Application": "修改应用",
     "Enable password": "开启密码",
     "Login page preview": "登录页面预览"
+  },
+  "forgetPassword":
+  {
+    "Please input your application!": "请输入您的应用名称！",
+    "Please input your organization!": "请输入您的组织名称！",
+    "Unknown forgot type:": "未知的忘记类型：",
+    "Please input your username!": "请输入您的用户名！",
+    "Please input your password!": "请输入您的密码！",
+    "Please confirm your password!": "请确认您的密码！",
+    "Please input your Email/Phone string!": "请输入您的邮箱/手机号！",
+    "Please input your verification code!": "请输入您的验证码",
+    "Your confirmed password is inconsistent with the password!": "您确认的密码与密码不一致！",
+    "send code": "发送验证码",
+    "Verify code": "验证码",
+    "Password": "密码",
+    "Next Step": "下一步",
+    "Choose email verification or mobile verification": "选择邮箱验证或手机验证",
+    "Retrieve password": "找回密码",
+    "Confirm": "验证密码",
+    "Email/Phone's format wrong!": "邮箱/手机号格式错误！",
+    "Change Password": "修改密码",
+    "Account": "账号",
+    "Email/Phone": "邮箱/手机号",
+    "Verify": "验证",
+    "Reset": "重置"
   }
 }
