@@ -130,11 +130,26 @@ class UserEditPage extends React.Component {
   renderIdp(provider) {
     const linkedValue = this.state.user[provider.type.toLowerCase()];
     const profileUrl = this.getProviderLink(provider);
+    const id = this.getUserProperty(provider.type, "id");
     const username = this.getUserProperty(provider.type, "username");
-    const displayName = this.getUserProperty(provider.type, "displayname");
-    // const email = this.getUserProperty(provider.type, "email");
-    const avatarUrl = this.getUserProperty(provider.type, "avatarUrl");
-    const name = (username === undefined) ? displayName : `${displayName} (${username})`;
+    const displayName = this.getUserProperty(provider.type, "displayName");
+    const email = this.getUserProperty(provider.type, "email");
+    let avatarUrl = this.getUserProperty(provider.type, "avatarUrl");
+
+    if (avatarUrl === "" || avatarUrl === undefined) {
+      avatarUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAQAAACROWYpAAAAHElEQVR42mNkoAAwjmoe1TyqeVTzqOZRzcNZMwB18wAfEFQkPQAAAABJRU5ErkJggg==";
+    }
+
+    let name = (username === undefined) ? displayName : `${displayName} (${username})`;
+    if (name === undefined) {
+      if (id !== undefined) {
+        name = id;
+      } else if (email !== undefined) {
+        name = email;
+      } else {
+        name = linkedValue;
+      }
+    }
 
     return (
       <Row key={provider.name} style={{marginTop: '20px'}} >

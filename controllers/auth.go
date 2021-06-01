@@ -154,6 +154,10 @@ func (c *ApiController) Login() {
 
 		if form.Method == "signup" {
 			user := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+			if user == nil {
+				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
+			}
+
 			if user != nil {
 				//if object.IsForbidden(userId) {
 				//	c.forbiddenAccountResp(userId)
