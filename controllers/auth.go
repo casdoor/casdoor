@@ -198,12 +198,16 @@ func (c *ApiController) Login() {
 			user := object.GetUser(userId)
 
 			// sync info from 3rd-party if possible
+			if userInfo.Id != "" {
+				propertyName := fmt.Sprintf("oauth_%s_id", provider.Type)
+				object.SetUserProperty(user, propertyName, userInfo.Id)
+			}
 			if userInfo.Username != "" {
 				propertyName := fmt.Sprintf("oauth_%s_username", provider.Type)
 				object.SetUserProperty(user, propertyName, userInfo.Username)
 			}
 			if userInfo.DisplayName != "" {
-				propertyName := fmt.Sprintf("oauth_%s_displayname", provider.Type)
+				propertyName := fmt.Sprintf("oauth_%s_displayName", provider.Type)
 				object.SetUserProperty(user, propertyName, userInfo.DisplayName)
 				if user.DisplayName == "" {
 					object.SetUserField(user, "display_name", userInfo.DisplayName)

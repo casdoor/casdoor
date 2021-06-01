@@ -25,6 +25,7 @@ type User struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
 	Id            string `xorm:"varchar(100)" json:"id"`
 	Type          string `xorm:"varchar(100)" json:"type"`
@@ -35,7 +36,8 @@ type User struct {
 	Phone         string `xorm:"varchar(100)" json:"phone"`
 	Affiliation   string `xorm:"varchar(100)" json:"affiliation"`
 	Tag           string `xorm:"varchar(100)" json:"tag"`
-	Ranking       int    `json:"ranking"`
+	Language      string `xorm:"varchar(100)" json:"language"`
+	Score         int    `json:"score"`
 	IsAdmin       bool   `json:"isAdmin"`
 	IsGlobalAdmin bool   `json:"isGlobalAdmin"`
 	IsForbidden   bool   `json:"isForbidden"`
