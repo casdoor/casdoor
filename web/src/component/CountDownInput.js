@@ -17,9 +17,10 @@ import React from "react";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
+import { AuditOutlined, VerifiedOutlined } from "@ant-design/icons";
 
 export const CountDownInput = (props) => {
-  const {defaultButtonText, textBefore, placeHolder, onChange, coolDownTime, onButtonClick, onButtonClickArgs} = props;
+  const {defaultButtonText, disabled, prefix, textBefore, placeHolder, onChange, coolDownTime, onButtonClick, onButtonClickArgs} = props;
   const [buttonText, setButtonText] = React.useState(defaultButtonText);
   const [visible, setVisible] = React.useState(false);
   const [key, setKey] = React.useState("");
@@ -101,14 +102,26 @@ export const CountDownInput = (props) => {
     return null;
   }
 
+  const getIcon = (prefix) => {
+    switch (prefix) {
+      case "VerifiedOutlined":
+        return <VerifiedOutlined />;
+      case "AuditOutlined":
+        return <AuditOutlined />;
+    }
+  };
+
   return (
     <Input
       addonBefore={textBefore}
+      disabled={disabled}
+      prefix={prefix !== null ? getIcon(prefix) : null}
       placeholder={placeHolder}
       onChange={e => onChange(e.target.value)}
       addonAfter={
         <div>
           <button
+            disabled={disabled}
             onClick={clickButton}
             style={{backgroundColor: "#fafafa", border: "none"}}>
             {buttonText}
