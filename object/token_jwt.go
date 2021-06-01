@@ -32,6 +32,8 @@ type Claims struct {
 	Phone        string `json:"phone"`
 	Affiliation  string `json:"affiliation"`
 	Tag          string `json:"tag"`
+	Language     string `json:"language"`
+	Score        int    `json:"score"`
 	IsAdmin      bool   `json:"isAdmin"`
 	jwt.StandardClaims
 }
@@ -50,6 +52,8 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 		Phone:        user.Phone,
 		Affiliation:  user.Affiliation,
 		Tag:          user.Tag,
+		Language:     user.Language,
+		Score:        user.Score,
 		IsAdmin:      user.IsAdmin,
 		StandardClaims: jwt.StandardClaims{
 			Audience:  application.ClientId,

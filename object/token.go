@@ -195,7 +195,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	application := getApplicationByClientId(clientId)
 	if application == nil {
 		return &TokenWrapper{
-			AccessToken: "Invalid client_id",
+			AccessToken: "error: invalid client_id",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
@@ -204,7 +204,16 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	if grantType != "authorization_code" {
 		return &TokenWrapper{
-			AccessToken: "grant_type should be \"authorization_code\"",
+			AccessToken: "error: grant_type should be \"authorization_code\"",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
+		}
+	}
+
+	if code == "" {
+		return &TokenWrapper{
+			AccessToken: "error: code should not be empty",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
@@ -214,7 +223,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	token := getTokenByCode(code)
 	if token == nil {
 		return &TokenWrapper{
-			AccessToken: "Invalid code",
+			AccessToken: "error: invalid code",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
@@ -223,7 +232,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	if application.Name != token.Application {
 		return &TokenWrapper{
-			AccessToken: "The token is for wrong application (client_id)",
+			AccessToken: "error: the token is for wrong application (client_id)",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
@@ -232,7 +241,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	if application.ClientSecret != clientSecret {
 		return &TokenWrapper{
-			AccessToken: "Invalid client_secret",
+			AccessToken: "error: invalid client_secret",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
