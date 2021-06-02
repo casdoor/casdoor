@@ -170,7 +170,7 @@
     "Enable password": "开启密码",
     "Login page preview": "登录页面预览"
   },
-  "forgetPassword":
+  "forget":
   {
     "Please input your application!": "请输入您的应用名称！",
     "Please input your organization!": "请输入您的组织名称！",

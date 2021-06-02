@@ -116,8 +116,8 @@ func (c *ApiController) DeleteUser() {
 // @Param   username    formData   string  true        "The username of the user"
 // @Param   organization    formData   string  true        "The organization of the user"
 // @Success 200 {object} controllers.Response The Response object
-// @router /get-emailAndPhone [post]
-func (c *ApiController) GetEmailAndPhoneByUsername() {
+// @router /get-email-and-phone [post]
+func (c *ApiController) GetEmailAndPhone() {
 	var resp Response
 
 	var form RequestForm
@@ -141,10 +141,6 @@ func (c *ApiController) GetEmailAndPhoneByUsername() {
 
 	phone := user.Phone
 	email := user.Email
-
-	//phone = phone[:3] + "****" + phone[7:]
-	//emailStrings := strings.Split(email, "@")
-	//email = emailStrings[0][:2] + "****@" + emailStrings[1]
 
 	resp = Response{Status: "ok", Msg: "", Data: phone, Data2: email}
 

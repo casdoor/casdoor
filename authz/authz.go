@@ -72,7 +72,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 		ruleText := `
 p, built-in, *, *, *, *, *
 p, *, *, POST, /api/signup, *, *
-p, *, *, POST, /api/get-emailAndPhone, *, *
+p, *, *, POST, /api/get-email-and-phone, *, *
 p, *, *, POST, /api/login, *, *
 p, *, *, GET, /api/get-app-login, *, *
 p, *, *, POST, /api/logout, *, *

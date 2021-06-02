@@ -29,8 +29,8 @@ export function signup(values) {
   }).then(res => res.json());
 }
 
-export function getEmailAndPhoneByUsername(values) {
-  return fetch(`${authConfig.serverUrl}/api/get-emailAndPhone`, {
+export function getEmailAndPhone(values) {
+  return fetch(`${authConfig.serverUrl}/api/get-email-and-phone`, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(values),

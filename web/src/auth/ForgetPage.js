@@ -53,7 +53,7 @@ class ForgetPage extends React.Component {
       phone: "",
       emailCode: "",
       phoneCode: "",
-      verifyType: "phone", // "email" or "phone"
+      verifyType: "", // "email" or "phone"
       current: 0,
     };
   }
@@ -64,7 +64,7 @@ class ForgetPage extends React.Component {
     } else {
       Util.showMessage(
           "error",
-          i18next.t(`forgetPassword:Unknown forgot type: `) + this.state.type
+          i18next.t(`forget:Unknown forgot type: `) + this.state.type
       );
     }
   }
@@ -92,7 +92,7 @@ class ForgetPage extends React.Component {
   }
 
   onFinishStep1(values) {
-    AuthBackend.getEmailAndPhoneByUsername(values).then((res) => {
+    AuthBackend.getEmailAndPhone(values).then((res) => {
       if (res.status === "ok") {
         this.setState({
           username: values.username,
@@ -145,7 +145,7 @@ class ForgetPage extends React.Component {
           <Form
               hidden={this.state.current !== 0}
               ref={this.form}
-              name="get-emailAndPhone"
+              name="get-email-and-Phone"
               onFinish={(values) => this.onFinishStep1(values)}
               onFinishFailed={(errorInfo) => console.log(errorInfo)}
               initialValues={{
@@ -162,7 +162,7 @@ class ForgetPage extends React.Component {
                   {
                     required: true,
                     message: i18next.t(
-                        `forgetPassword:Please input your application!`
+                        `forget:Please input your application!`
                     ),
                   },
                 ]}
@@ -174,7 +174,7 @@ class ForgetPage extends React.Component {
                   {
                     required: true,
                     message: i18next.t(
-                        `forgetPassword:Please input your organization!`
+                        `forget:Please input your organization!`
                     ),
                   },
                 ]}
@@ -185,7 +185,7 @@ class ForgetPage extends React.Component {
                   {
                     required: true,
                     message: i18next.t(
-                        "forgetPassword:Please input your username!"
+                        "forget:Please input your username!"
                     ),
                     whitespace: true,
                   },
@@ -204,7 +204,7 @@ class ForgetPage extends React.Component {
             <br />
             <Form.Item>
               <Button block type="primary" htmlType="submit">
-                {i18next.t("forgetPassword:Next Step")}
+                {i18next.t("forget:Next Step")}
               </Button>
             </Form.Item>
           </Form>
@@ -236,7 +236,7 @@ class ForgetPage extends React.Component {
                   {
                     required: true,
                     message: i18next.t(
-                        `forgetPassword:Please input your application!`
+                        `forget:Please input your application!`
                     ),
                   },
                 ]}
@@ -248,7 +248,7 @@ class ForgetPage extends React.Component {
                   {
                     required: true,
                     message: i18next.t(
-                        `forgetPassword:Please input your organization!`
+                        `forget:Please input your organization!`
                     ),
                   },
                 ]}
@@ -261,7 +261,7 @@ class ForgetPage extends React.Component {
               <Select
                   disabled={this.state.username === ""}
                   placeholder={i18next.t(
-                      "forgetPassword:Choose email verification or mobile verification"
+                      "forget:Choose email verification or mobile verification"
                   )}
                   onChange={(value) => {
                     if (value === this.state.phone) {
@@ -275,10 +275,12 @@ class ForgetPage extends React.Component {
                   style={{ textAlign: "left" }}
               >
                 <Option key={1} value={this.state.phone}>
-                  {this.state.phone}
+                  {this.state.phone.replace(/(\d{3})\d*(\d{4})/,'$1****$2')}
                 </Option>
                 <Option key={2} value={this.state.email}>
-                  {this.state.email}
+                  {this.state.email.split("@")[0].length>2?
+                      this.state.email.replace(/(?<=.)[^@]+(?=.@)/, "*****"):
+                      this.state.email.replace(/(\w?@)/, "*@")}
                 </Option>
               </Select>
             </Form.Item>
@@ -288,16 +290,16 @@ class ForgetPage extends React.Component {
                   {
                     required: true,
                     message: i18next.t(
-                        "forgetPassword:Please input your verification code!"
+                        "forget:Please input your verification code!"
                     ),
                   },
                 ]}
             >
               {this.state.verifyType === "email" ? (
                   <CountDownInput
-                      disabled={this.state.username === ""}
-                      placeHolder={i18next.t("forgetPassword:Verify code")}
-                      defaultButtonText={i18next.t("forgetPassword:send code")}
+                      disabled={this.state.username === "" || this.state.verifyType === ""}
+                      placeHolder={i18next.t("forget:Verify code")}
+                      defaultButtonText={i18next.t("forget:send code")}
                       onButtonClick={UserBackend.sendCode}
                       onButtonClickArgs={[
                         this.state.email,
@@ -310,9 +312,9 @@ class ForgetPage extends React.Component {
                   />
               ) : (
                   <CountDownInput
-                      disabled={this.state.username === ""}
-                      placeHolder={i18next.t("forgetPassword:Verify code")}
-                      defaultButtonText={i18next.t("forgetPassword:send code")}
+                      disabled={this.state.username === "" || this.state.verifyType === ""}
+                      placeHolder={i18next.t("forget:Verify code")}
+                      defaultButtonText={i18next.t("forget:send code")}
                       onButtonClick={UserBackend.sendCode}
                       onButtonClickArgs={[
                         this.state.phone,
@@ -330,10 +332,10 @@ class ForgetPage extends React.Component {
               <Button
                   block
                   type="primary"
-                  disabled={this.state.phone === "" || this.state.email === ""}
+                  disabled={this.state.phone === "" || this.state.verifyType === ""}
                   htmlType="submit"
               >
-                {i18next.t("forgetPassword:Next Step")}
+                {i18next.t("forget:Next Step")}
               </Button>
             </Form.Item>
           </Form>
@@ -365,7 +367,7 @@ class ForgetPage extends React.Component {
                   {
                     required: true,
                     message: i18next.t(
-                        `forgetPassword:Please input your application!`
+                        `forget:Please input your application!`
                     ),
                   },
                 ]}
@@ -377,7 +379,7 @@ class ForgetPage extends React.Component {
                   {
                     required: true,
                     message: i18next.t(
-                        `forgetPassword:Please input your organization!`
+                        `forget:Please input your organization!`
                     ),
                   },
                 ]}
@@ -389,7 +391,7 @@ class ForgetPage extends React.Component {
                   {
                     required: true,
                     message: i18next.t(
-                        "forgetPassword:Please input your password!"
+                        "forget:Please input your password!"
                     ),
                   },
                 ]}
@@ -398,7 +400,7 @@ class ForgetPage extends React.Component {
               <Input.Password
                   disabled={this.state.userId === ""}
                   prefix={<LockOutlined />}
-                  placeholder={i18next.t("forgetPassword:Password")}
+                  placeholder={i18next.t("forget:Password")}
               />
             </Form.Item>
             <Form.Item
@@ -409,7 +411,7 @@ class ForgetPage extends React.Component {
                   {
                     required: true,
                     message: i18next.t(
-                        "forgetPassword:Please confirm your password!"
+                        "forget:Please confirm your password!"
                     ),
                   },
                   ({ getFieldValue }) => ({
@@ -419,7 +421,7 @@ class ForgetPage extends React.Component {
                       }
                       return Promise.reject(
                           i18next.t(
-                              "forgetPassword:Your confirmed password is inconsistent with the password!"
+                              "forget:Your confirmed password is inconsistent with the password!"
                           )
                       );
                     },
@@ -429,13 +431,13 @@ class ForgetPage extends React.Component {
               <Input.Password
                   disabled={this.state.userId === ""}
                   prefix={<CheckCircleOutlined />}
-                  placeholder={i18next.t("forgetPassword:Confirm")}
+                  placeholder={i18next.t("forget:Confirm")}
               />
             </Form.Item>
             <br />
             <Form.Item hidden={this.state.current !== 2}>
               <Button block type="primary"  htmlType="submit" disabled={this.state.userId === ""}>
-                {i18next.t("forgetPassword:Change Password")}
+                {i18next.t("forget:Change Password")}
               </Button>
             </Form.Item>
           </Form>
@@ -452,7 +454,7 @@ class ForgetPage extends React.Component {
     return (
         <>
           <Divider style={{ fontSize: "28px" }}>
-            {i18next.t("forgetPassword:Retrieve password")}
+            {i18next.t("forget:Retrieve password")}
           </Divider>
           <Row>
             <Col span={24} style={{ display: "flex", justifyContent: "center" }}>
@@ -467,15 +469,15 @@ class ForgetPage extends React.Component {
                   }}
               >
                 <Step
-                    title={i18next.t("forgetPassword:Account")}
+                    title={i18next.t("forget:Account")}
                     icon={<UserOutlined />}
                 />
                 <Step
-                    title={i18next.t("forgetPassword:Verify")}
+                    title={i18next.t("forget:Verify")}
                     icon={<SolutionOutlined />}
                 />
                 <Step
-                    title={i18next.t("forgetPassword:Reset")}
+                    title={i18next.t("forget:Reset")}
                     icon={<KeyOutlined />}
                 />
               </Steps>
