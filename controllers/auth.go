@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/astaxie/beego"
 	"github.com/casdoor/casdoor/idp"
@@ -106,8 +107,65 @@ func (c *ApiController) Login() {
 			}
 		}
 
-		password := form.Password
-		user, msg := object.CheckUserLogin(form.Organization, form.Username, password)
+		var user *object.User
+		var msg string
+
+		if form.Password == "" {
+			var verificationCodeType string
+
+			// check result through Email or Phone
+			if strings.Contains(form.Email, "@") {
+				verificationCodeType = "email"
+				checkResult := object.CheckVerificationCode(form.Email, form.EmailCode)
+				if len(checkResult) != 0 {
+					responseText := fmt.Sprintf("Email%s", checkResult)
+					c.ResponseError(responseText)
+					return
+				}
+			} else {
+				verificationCodeType = "phone"
+				checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Email)
+				checkResult := object.CheckVerificationCode(checkPhone, form.EmailCode)
+				if len(checkResult) != 0 {
+					responseText := fmt.Sprintf("Phone%s", checkResult)
+					c.ResponseError(responseText)
+					return
+				}
+			}
+
+			// get user
+			var userId string
+			if form.Username == "" {
+				userId, _ = c.RequireSignedIn()
+			} else {
+				userId = fmt.Sprintf("%s/%s", form.Organization, form.Username)
+			}
+
+			user = object.GetUser(userId)
+			if user == nil {
+				c.ResponseError("No such user.")
+				return
+			}
+
+			// disable the verification code
+			switch verificationCodeType {
+			case "email":
+				if user.Email != form.Email {
+					c.ResponseError("wrong email!")
+				}
+				object.DisableVerificationCode(form.Email)
+				break
+			case "phone":
+				if user.Phone != form.Email {
+					c.ResponseError("wrong phone!")
+				}
+				object.DisableVerificationCode(form.Email)
+				break
+			}
+		} else {
+			password := form.Password
+			user, msg = object.CheckUserLogin(form.Organization, form.Username, password)
+		}
 
 		if msg != "" {
 			resp = &Response{Status: "error", Msg: msg, Data: ""}

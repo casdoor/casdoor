@@ -60,6 +60,7 @@ func initAPI() {
 	beego.Router("/api/delete-user", &controllers.ApiController{}, "POST:DeleteUser")
 	beego.Router("/api/upload-avatar", &controllers.ApiController{}, "POST:UploadAvatar")
 	beego.Router("/api/set-password", &controllers.ApiController{}, "POST:SetPassword")
+	beego.Router("/api/get-email-and-phone", &controllers.ApiController{}, "POST:GetEmailAndPhone")
 	beego.Router("/api/send-verification-code", &controllers.ApiController{}, "POST:SendVerificationCode")
 	beego.Router("/api/reset-email-or-phone", &controllers.ApiController{}, "POST:ResetEmailOrPhone")
 	beego.Router("/api/get-human-check", &controllers.ApiController{}, "GET:GetHumanCheck")

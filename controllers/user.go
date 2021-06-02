@@ -111,6 +111,43 @@ func (c *ApiController) DeleteUser() {
 	c.ServeJSON()
 }
 
+// @Title GetEmailAndPhone
+// @Description get email and phone by username
+// @Param   username    formData   string  true        "The username of the user"
+// @Param   organization    formData   string  true        "The organization of the user"
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-email-and-phone [post]
+func (c *ApiController) GetEmailAndPhone() {
+	var resp Response
+
+	var form RequestForm
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
+	if err != nil {
+		panic(err)
+	}
+
+	// get user
+	var userId string
+	if form.Username == "" {
+		userId, _ = c.RequireSignedIn()
+	} else {
+		userId = fmt.Sprintf("%s/%s", form.Organization, form.Username)
+	}
+	user := object.GetUser(userId)
+	if user == nil {
+		c.ResponseError("No such user.")
+		return
+	}
+
+	phone := user.Phone
+	email := user.Email
+
+	resp = Response{Status: "ok", Msg: "", Data: phone, Data2: email}
+
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
 // @Title SetPassword
 // @Description set password
 // @Param   userOwner   formData    string  true        "The owner of the user"
@@ -158,10 +195,14 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	msg := object.CheckPassword(targetUser, oldPassword)
-	if msg != "" {
-		c.ResponseError(msg)
-		return
+	if oldPassword != "" {
+		msg := object.CheckPassword(targetUser, oldPassword)
+		if msg != "" {
+			c.ResponseError(msg)
+			return
+		}
+	} else {
+
 	}
 
 	if strings.Index(newPassword, " ") >= 0 {
@@ -173,6 +214,8 @@ func (c *ApiController) SetPassword() {
 		c.ResponseError("New password must have at least 6 characters")
 		return
 	}
+
+	c.SetSessionUser("")
 
 	targetUser.Password = newPassword
 	object.SetUserField(targetUser, "password", targetUser.Password)
