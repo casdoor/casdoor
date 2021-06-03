@@ -270,7 +270,7 @@ export function goToForget(ths, application) {
   if (authConfig.appName === application.name) {
     goToLinkSoft(ths, "/forget");
   } else {
-    if (application.signupUrl === "") {
+    if (application.forgetUrl === "") {
       goToLinkSoft(ths, `/forget/${application.name}`);
     } else {
       goToLink(application.forgetUrl);

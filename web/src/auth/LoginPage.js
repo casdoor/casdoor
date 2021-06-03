@@ -194,11 +194,13 @@ class LoginPage extends React.Component {
                 {i18next.t("login:Auto login")}
               </Checkbox>
             </Form.Item>
-            <Link style={{float: "right"}} onClick={() => {
+            <div style={{float: "right"}} onClick={() => {
               Setting.goToForget(this, application);
             }}>
-              {i18next.t("login:Forgot password?")}
-            </Link>
+              <a>
+                {i18next.t("login:Forgot password?")}
+              </a>
+            </div>
           </Form.Item>
           <Form.Item>
             <Button
