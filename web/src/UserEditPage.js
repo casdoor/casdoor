@@ -25,6 +25,7 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Provider from "./auth/Provider";
 import PasswordModal from "./PasswordModal";
 import ResetModal from "./ResetModal";
+import AffiliationSelect from "./common/AffiliationSelect";
 
 import {Controlled as CodeMirror} from 'react-codemirror2'
 import "codemirror/lib/codemirror.css"
@@ -319,24 +320,11 @@ class UserEditPage extends React.Component {
             { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} coolDownTime={60}/>) : null}
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("user:Affiliation")}:
-          </Col>
-          <Col span={22} >
-            {
-              this.state.application?.affiliationUrl === "" ? (
-                <Input value={this.state.user.affiliation} onChange={e => {
-                  this.updateUserField('affiliation', e.target.value);
-                }} />
-              ) : (
-                <Button key="home" onClick={() => Setting.goToLink(this.state.application.affiliationUrl)}>
-                  {`${i18next.t("user:Modify affiliation")}...`}
-                </Button>
-              )
-            }
-          </Col>
-        </Row>
+        {
+          (this.state.application === null || this.state.user === null) ? null : (
+            <AffiliationSelect application={this.state.application} user={this.state.user} onUpdateUserField={(key, value) => { return this.updateUserField(key, value)}} />
+          )
+        }
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("user:Tag")}:

@@ -53,6 +53,7 @@ class UserListPage extends React.Component {
       avatar: "https://casbin.org/img/casbin.svg",
       email: "user@example.com",
       phone: "12345678",
+      address: [],
       affiliation: "Example Inc.",
       tag: "staff",
       isAdmin: false,

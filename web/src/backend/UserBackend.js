@@ -64,6 +64,18 @@ export function deleteUser(user) {
   }).then(res => res.json());
 }
 
+export function getAddressOptions(url) {
+  return fetch(url, {
+    method: "GET",
+  }).then(res => res.json());
+}
+
+export function getAffiliationOptions(url, code) {
+  return fetch(`${url}/${code}`, {
+    method: "GET",
+  }).then(res => res.json());
+}
+
 export function uploadAvatar(avatar) {
   let account;
   AuthBackend.getAccount("").then((res) => {

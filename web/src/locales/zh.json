@@ -37,6 +37,7 @@
   {
     "Username": "用户名",
     "Please input your display name!": "请输入您的姓名！",
+    "Please input your address!": "请输入您的地址！",
     "Please input your affiliation!": "请输入您所在的工作单位！",
     "The input is not valid Email!": "您输入的电子邮箱格式错误！",
     "Please input your Email!": "请输入您的电子邮箱！",
@@ -113,6 +114,7 @@
     "Set new profile picture": "设置新头像",
     "Set password...": "设置密码...",
     "Modify password...": "修改密码...",
+    "Address": "地址",
     "Affiliation": "工作单位",
     "Modify affiliation": "修改工作单位",
     "Tag": "标签",
