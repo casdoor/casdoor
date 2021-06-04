@@ -194,13 +194,11 @@ class LoginPage extends React.Component {
                 {i18next.t("login:Auto login")}
               </Checkbox>
             </Form.Item>
-            <div style={{float: "right"}} onClick={() => {
+            <a style={{float: "right"}} onClick={() => {
               Setting.goToForget(this, application);
             }}>
-              <a>
-                {i18next.t("login:Forgot password?")}
-              </a>
-            </div>
+              {i18next.t("login:Forgot password?")}
+            </a>
           </Form.Item>
           <Form.Item>
             <Button
@@ -215,11 +213,11 @@ class LoginPage extends React.Component {
               !application.enableSignUp ? null : (
                 <div style={{float: "right"}}>
                   {i18next.t("login:No account yet?")}&nbsp;
-                  <Link onClick={() => {
+                  <a onClick={() => {
                     Setting.goToSignup(this, application);
                   }}>
                     {i18next.t("login:sign up now")}
-                  </Link>
+                  </a>
                 </div>
               )
             }
@@ -257,11 +255,11 @@ class LoginPage extends React.Component {
                 <br/>
                 <div style={{float: "right"}}>
                   {i18next.t("login:No account yet?")}&nbsp;
-                  <Link onClick={() => {
+                  <a onClick={() => {
                     Setting.goToSignup(this, application);
                   }}>
                     {i18next.t("login:sign up now")}
-                  </Link>
+                  </a>
                 </div>
               </div>
             )

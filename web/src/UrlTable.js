@@ -95,7 +95,7 @@ class UrlTable extends React.Component {
     ];
 
     return (
-      <Table rowKey="id" columns={columns} dataSource={table.map(row => ({id: row}))} size="middle" bordered pagination={{pageSize: 100}}
+      <Table rowKey="index" columns={columns} dataSource={table.map((row, i) => ({id: row, index: i}))} size="middle" bordered pagination={{pageSize: 100}}
              title={() => (
                <div>
                  {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
