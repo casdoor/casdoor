@@ -14,9 +14,31 @@
 
 package original
 
-var dbName = "dbName"
-var userTableName = "userTableName"
-var affiliationTableName = "affiliationTableName"
-var avatarBaseUrl = "https://cdn.example.com/"
+type Affiliation struct {
+	Id   int    `xorm:"int notnull pk autoincr" json:"id"`
+	Name string `xorm:"varchar(128)" json:"name"`
+}
 
-var orgName = "orgName"
+func (Affiliation) TableName() string {
+	return affiliationTableName
+}
+
+func getAffiliations() []*Affiliation {
+	affiliations := []*Affiliation{}
+	err := adapter.Engine.Asc("id").Find(&affiliations)
+	if err != nil {
+		panic(err)
+	}
+
+	return affiliations
+}
+
+func getAffiliationMap() ([]*Affiliation, map[int]string) {
+	affiliations := getAffiliations()
+
+	m := map[int]string{}
+	for _, affiliation := range affiliations {
+		m[affiliation.Id] = affiliation.Name
+	}
+	return affiliations, m
+}

@@ -55,8 +55,6 @@ class AffiliationSelect extends React.Component {
   }
 
   render() {
-    let options = this.state.addressOptions;
-
     return (
       <React.Fragment>
         {
@@ -66,9 +64,10 @@ class AffiliationSelect extends React.Component {
                 {i18next.t("user:Address")}:
               </Col>
               <Col span={22} >
-                <Cascader style={{width: '400px'}} value={this.props.user.address} options={options} onChange={value => {
+                <Cascader style={{width: '400px'}} value={this.props.user.address} options={this.state.addressOptions} onChange={value => {
                   this.updateUserField('address', value);
                   this.updateUserField('affiliation', '');
+                  this.updateUserField('score', 0);
                   this.getAffiliationOptions(this.props.application, this.props.user);
                 }} placeholder={i18next.t("signup:Please input your address!")} />
               </Col>
@@ -86,12 +85,17 @@ class AffiliationSelect extends React.Component {
                   this.updateUserField('affiliation', e.target.value);
                 }} />
               ) : (
-                <Select virtual={false} style={{width: '400px'}} value={Setting.myParseInt(this.props.user.affiliation)} onChange={(value => {this.updateUserField('affiliation', value.toString());})}>
+                <Select virtual={false} style={{width: '400px'}} value={this.props.user.affiliation} onChange={(value => {
+                  const name = value;
+                  const id = this.state.affiliationOptions.filter(affiliationOption => affiliationOption.name === name)[0].id;
+                  this.updateUserField('affiliation', name);
+                  this.updateUserField('score', id);
+                })}>
                   {
-                    <Option key={0} value={0}>（空）</Option>
+                    <Option key={0} value={""}>(empty)</Option>
                   }
                   {
-                    this.state.affiliationOptions.map((affiliationOption, index) => <Option key={affiliationOption.id} value={affiliationOption.id}>{affiliationOption.name}</Option>)
+                    this.state.affiliationOptions.map((affiliationOption, index) => <Option key={affiliationOption.id} value={affiliationOption.name}>{affiliationOption.name}</Option>)
                   }
                 </Select>
               )

@@ -114,7 +114,7 @@ func UpdateUser(id string, user *User) bool {
 
 	user.UpdateUserHash()
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("display_name", "avatar", "address", "affiliation", "tag", "is_admin", "is_global_admin", "is_forbidden", "hash").Update(user)
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("display_name", "avatar", "address", "affiliation", "score", "tag", "is_admin", "is_global_admin", "is_forbidden", "hash").Update(user)
 	if err != nil {
 		panic(err)
 	}
@@ -123,7 +123,7 @@ func UpdateUser(id string, user *User) bool {
 }
 
 func UpdateUserForOriginal(user *User) bool {
-	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("display_name", "password", "phone", "avatar", "is_forbidden", "hash", "pre_hash").Update(user)
+	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("display_name", "password", "phone", "avatar", "affiliation", "score", "is_forbidden", "hash", "pre_hash").Update(user)
 	if err != nil {
 		panic(err)
 	}

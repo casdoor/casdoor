@@ -26,12 +26,13 @@ type User struct {
 	Name      string `xorm:"varchar(128)" json:"name"`
 	Password  string `xorm:"varchar(128)" json:"password"`
 	Cellphone string `xorm:"varchar(128)" json:"cellphone"`
+	SchoolId  int    `json:"schoolId"`
 	Avatar    string `xorm:"varchar(128)" json:"avatar"`
 	Deleted   int    `xorm:"tinyint(1)" json:"deleted"`
 }
 
 func (User) TableName() string {
-	return tableName
+	return userTableName
 }
 
 func getUsersOriginal() []*User {
@@ -55,7 +56,7 @@ func getUserMapOriginal() ([]*User, map[string]*User) {
 }
 
 func updateUser(user *User) bool {
-	affected, err := adapter.Engine.ID(user.Id).Cols("name", "password", "cellphone", "avatar", "deleted").Update(user)
+	affected, err := adapter.Engine.ID(user.Id).Cols("name", "password", "cellphone", "school_id", "avatar", "deleted").Update(user)
 	if err != nil {
 		panic(err)
 	}
@@ -64,6 +65,6 @@ func updateUser(user *User) bool {
 }
 
 func calculateHash(user *User) string {
-	s := strings.Join([]string{strconv.Itoa(user.Id), user.Password, user.Name, getFullAvatarUrl(user.Avatar), user.Cellphone}, "|")
+	s := strings.Join([]string{strconv.Itoa(user.Id), user.Password, user.Name, getFullAvatarUrl(user.Avatar), user.Cellphone, strconv.Itoa(user.SchoolId)}, "|")
 	return util.GetMd5Hash(s)
 }

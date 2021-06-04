@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/casdoor/casdoor/util"
@@ -124,7 +125,7 @@ func ClearUserProperties(user *User, providerType string) bool {
 }
 
 func calculateHash(user *User) string {
-	s := strings.Join([]string{user.Id, user.Password, user.DisplayName, user.Avatar, user.Phone}, "|")
+	s := strings.Join([]string{user.Id, user.Password, user.DisplayName, user.Avatar, user.Phone, strconv.Itoa(user.Score)}, "|")
 	return util.GetMd5Hash(s)
 }
 

@@ -37,7 +37,16 @@ func getPartialAvatarUrl(avatar string) string {
 	return avatar
 }
 
-func createUserFromOriginalUser(originalUser *User) *object.User {
+func createUserFromOriginalUser(originalUser *User, affiliationMap map[int]string) *object.User {
+	affiliation := ""
+	if originalUser.SchoolId != 0 {
+		var ok bool
+		affiliation, ok = affiliationMap[originalUser.SchoolId]
+		if !ok {
+			panic(fmt.Sprintf("SchoolId not found: %d", originalUser.SchoolId))
+		}
+	}
+
 	user := &object.User{
 		Owner:         orgName,
 		Name:          strconv.Itoa(originalUser.Id),
@@ -49,7 +58,8 @@ func createUserFromOriginalUser(originalUser *User) *object.User {
 		Avatar:        getFullAvatarUrl(originalUser.Avatar),
 		Email:         "",
 		Phone:         originalUser.Cellphone,
-		Affiliation:   "",
+		Affiliation:   affiliation,
+		Score:         originalUser.SchoolId,
 		IsAdmin:       false,
 		IsGlobalAdmin: false,
 		IsForbidden:   originalUser.Deleted != 0,
@@ -68,6 +78,7 @@ func createOriginalUserFromUser(user *object.User) *User {
 		Name:      user.DisplayName,
 		Password:  user.Password,
 		Cellphone: user.Phone,
+		SchoolId:  user.Score,
 		Avatar:    getPartialAvatarUrl(user.Avatar),
 		Deleted:   deleted,
 	}
@@ -81,11 +92,13 @@ func syncUsers() {
 	oUsers, oUserMap := getUserMapOriginal()
 	fmt.Printf("Users: %d, oUsers: %d\n", len(users), len(oUsers))
 
+	_, affiliationMap := getAffiliationMap()
+
 	newUsers := []*object.User{}
 	for _, oUser := range oUsers {
 		id := strconv.Itoa(oUser.Id)
 		if _, ok := userMap[id]; !ok {
-			newUser := createUserFromOriginalUser(oUser)
+			newUser := createUserFromOriginalUser(oUser, affiliationMap)
 			fmt.Printf("New user: %v\n", newUser)
 			newUsers = append(newUsers, newUser)
 		} else {
@@ -94,7 +107,7 @@ func syncUsers() {
 
 			if user.Hash == user.PreHash {
 				if user.Hash != oHash {
-					updatedUser := createUserFromOriginalUser(oUser)
+					updatedUser := createUserFromOriginalUser(oUser, affiliationMap)
 					updatedUser.Hash = oHash
 					updatedUser.PreHash = oHash
 					object.UpdateUserForOriginal(updatedUser)
@@ -115,7 +128,7 @@ func syncUsers() {
 						user.PreHash = user.Hash
 						object.SetUserField(user, "pre_hash", user.PreHash)
 					} else {
-						updatedUser := createUserFromOriginalUser(oUser)
+						updatedUser := createUserFromOriginalUser(oUser, affiliationMap)
 						updatedUser.Hash = oHash
 						updatedUser.PreHash = oHash
 						object.UpdateUserForOriginal(updatedUser)
