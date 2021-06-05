@@ -70,6 +70,7 @@ class ProviderEditPage extends React.Component {
           {id: 'GitHub', name: 'GitHub'},
           {id: 'QQ', name: 'QQ'},
           {id: 'WeChat', name: 'WeChat'},
+          {id: 'Facebook', name: 'Facebook'},
         ]
       );
     } else if (provider.category === "Email") {
