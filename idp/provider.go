@@ -15,37 +15,37 @@
 package idp
 
 import (
-    "net/http"
+	"net/http"
 
-    "golang.org/x/oauth2"
+	"golang.org/x/oauth2"
 )
 
 type UserInfo struct {
-    Id          string
-    Username    string
-    DisplayName string
-    Email       string
-    AvatarUrl   string
+	Id          string
+	Username    string
+	DisplayName string
+	Email       string
+	AvatarUrl   string
 }
 
 type IdProvider interface {
-    SetHttpClient(client *http.Client)
-    GetToken(code string) (*oauth2.Token, error)
-    GetUserInfo(token *oauth2.Token) (*UserInfo, error)
+	SetHttpClient(client *http.Client)
+	GetToken(code string) (*oauth2.Token, error)
+	GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 }
 
 func GetIdProvider(providerType string, clientId string, clientSecret string, redirectUrl string) IdProvider {
-    if providerType == "GitHub" {
-        return NewGithubIdProvider(clientId, clientSecret, redirectUrl)
-    } else if providerType == "Google" {
-        return NewGoogleIdProvider(clientId, clientSecret, redirectUrl)
-    } else if providerType == "QQ" {
-        return NewQqIdProvider(clientId, clientSecret, redirectUrl)
-    } else if providerType == "WeChat" {
-        return NewWeChatIdProvider(clientId, clientSecret, redirectUrl)
-    } else if providerType == "Facebook" {
-        return NewFacebookIdProvider(clientId, clientSecret, redirectUrl)
-    }
+	if providerType == "GitHub" {
+		return NewGithubIdProvider(clientId, clientSecret, redirectUrl)
+	} else if providerType == "Google" {
+		return NewGoogleIdProvider(clientId, clientSecret, redirectUrl)
+	} else if providerType == "QQ" {
+		return NewQqIdProvider(clientId, clientSecret, redirectUrl)
+	} else if providerType == "WeChat" {
+		return NewWeChatIdProvider(clientId, clientSecret, redirectUrl)
+	} else if providerType == "Facebook" {
+		return NewFacebookIdProvider(clientId, clientSecret, redirectUrl)
+	}
 
-    return nil
+	return nil
 }
