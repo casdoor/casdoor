@@ -177,6 +177,13 @@ func (c *ApiController) Login() {
 		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
 
 		idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
+		if idProvider == nil {
+			resp = &Response{Status: "error", Msg: fmt.Sprintf("provider: %s does not exist", provider.Type)}
+			c.Data["json"] = resp
+			c.ServeJSON()
+			return
+		}
+
 		idProvider.SetHttpClient(httpClient)
 
 		if form.State != beego.AppConfig.String("authState") && form.State != application.Name {

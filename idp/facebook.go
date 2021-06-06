@@ -164,7 +164,6 @@ func (idp *FacebookIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 
 	userInfo := UserInfo{
 		Id:          facebookUserInfo.Id,
-		Username:    facebookUserInfo.Id,
 		DisplayName: facebookUserInfo.Name,
 		Email:       facebookUserInfo.Email,
 		AvatarUrl:   facebookUserInfo.Picture.Data.Url,
