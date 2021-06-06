@@ -32,10 +32,25 @@ type Object struct {
 	Name  string `json:"name"`
 }
 
+func getUsernameByClientIdSecret(ctx *context.Context) string {
+	requestUri := ctx.Request.RequestURI
+	clientId := parseQuery(requestUri, "clientId")
+	clientSecret := parseQuery(requestUri, "clientSecret")
+	if len(clientId) == 0 || len(clientSecret) == 0 {
+		return ""
+	}
+
+	app := object.GetApplicationByClientId(clientId)
+	if app == nil || app.ClientSecret != clientSecret {
+		return ""
+	}
+	return "built-in/service"
+}
+
 func getUsername(ctx *context.Context) (username string) {
 	defer func() {
 		if r := recover(); r != nil {
-			username = ""
+			username = getUsernameByClientIdSecret(ctx)
 		}
 	}()
 
@@ -44,18 +59,7 @@ func getUsername(ctx *context.Context) (username string) {
 	username = ctx.Input.Session("username").(string)
 
 	if len(username) == 0 {
-		query := ctx.Request.URL.RawQuery
-		clientId := parseQuery(query, "clientId")
-		clientSecret := parseQuery(query, "clientSecret")
-		if len(clientId) == 0 || len(clientSecret) == 0 {
-			return
-		}
-
-		app := object.GetApplicationByClientId(clientId)
-		if app == nil || app.ClientSecret != clientSecret {
-			return
-		}
-		return "built-in/service"
+		username = getUsernameByClientIdSecret(ctx)
 	}
 
 	return
