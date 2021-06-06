@@ -67,6 +67,7 @@ func initBuiltInApplication() {
 		EnablePassword: true,
 		EnableSignUp:   true,
 		Providers:      []string{},
+		RedirectUris:   []string{},
 		ExpireInHours:  168,
 	}
 	AddApplication(application)
