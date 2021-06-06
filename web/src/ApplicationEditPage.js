@@ -88,6 +88,11 @@ class ApplicationEditPage extends React.Component {
   }
 
   renderApplication() {
+    if (this.state.application.redirectUris === null) {
+      // eslint-disable-next-line react/no-direct-mutation-state
+      this.state.application.redirectUris = ["http://localhost:9000/callback"]
+    }
+
     return (
       <Card size="small" title={
         <div>
