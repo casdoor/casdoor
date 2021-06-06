@@ -116,7 +116,7 @@ func GetApplicationByUser(user *User) *Application {
 	return GetApplicationByOrganizationName(user.Owner)
 }
 
-func getApplicationByClientId(clientId string) *Application {
+func GetApplicationByClientId(clientId string) *Application {
 	application := Application{}
 	existed, err := adapter.Engine.Where("client_id=?", clientId).Get(&application)
 	if err != nil {

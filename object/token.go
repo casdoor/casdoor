@@ -129,7 +129,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		return "response_type should be \"code\"", nil
 	}
 
-	application := getApplicationByClientId(clientId)
+	application := GetApplicationByClientId(clientId)
 	if application == nil {
 		return "Invalid client_id", nil
 	}
@@ -192,7 +192,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 }
 
 func GetOAuthToken(grantType string, clientId string, clientSecret string, code string) *TokenWrapper {
-	application := getApplicationByClientId(clientId)
+	application := GetApplicationByClientId(clientId)
 	if application == nil {
 		return &TokenWrapper{
 			AccessToken: "error: invalid client_id",

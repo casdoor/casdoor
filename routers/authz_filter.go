@@ -23,6 +23,7 @@ import (
 	"github.com/astaxie/beego/context"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/controllers"
+	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -41,6 +42,22 @@ func getUsername(ctx *context.Context) (username string) {
 	// bug in Beego: this call will panic when file session store is empty
 	// so we catch the panic
 	username = ctx.Input.Session("username").(string)
+
+	if len(username) == 0 {
+		query := ctx.Request.URL.RawQuery
+		clientId := parseQuery(query, "clientId")
+		clientSecret := parseQuery(query, "clientSecret")
+		if len(clientId) == 0 || len(clientSecret) == 0 {
+			return
+		}
+
+		app := object.GetApplicationByClientId(clientId)
+		if app == nil || app.ClientSecret != clientSecret {
+			return
+		}
+		return "built-in/service"
+	}
+
 	return
 }
 
