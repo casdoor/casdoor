@@ -45,10 +45,11 @@ type User struct {
 	Hash          string   `xorm:"varchar(100)" json:"hash"`
 	PreHash       string   `xorm:"varchar(100)" json:"preHash"`
 
-	Github string `xorm:"varchar(100)" json:"github"`
-	Google string `xorm:"varchar(100)" json:"google"`
-	QQ     string `xorm:"qq varchar(100)" json:"qq"`
-	WeChat string `xorm:"wechat varchar(100)" json:"wechat"`
+	Github   string `xorm:"varchar(100)" json:"github"`
+	Google   string `xorm:"varchar(100)" json:"google"`
+	QQ       string `xorm:"qq varchar(100)" json:"qq"`
+	WeChat   string `xorm:"wechat varchar(100)" json:"wechat"`
+	Facebook string `xorm:"facebook varchar(100)" json:"facebook"`
 
 	Properties map[string]string `json:"properties"`
 }

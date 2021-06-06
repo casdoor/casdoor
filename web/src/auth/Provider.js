@@ -30,6 +30,10 @@ const WeChatAuthScope = "snsapi_login"
 const WeChatAuthUri = "https://open.weixin.qq.com/connect/qrconnect";
 const WeChatAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_wechat.png";
 
+const FacebookAuthScope = "email,public_profile"
+const FacebookAuthUri = "https://www.facebook.com/dialog/oauth"
+const FacebookAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_facebook.png"
+
 export function getAuthLogo(provider) {
   if (provider.type === "Google") {
     return GoogleAuthLogo;
@@ -39,6 +43,8 @@ export function getAuthLogo(provider) {
     return QqAuthLogo;
   } else if (provider.type === "WeChat") {
     return WeChatAuthLogo;
+  } else if (provider.type === "Facebook") {
+    return FacebookAuthLogo;
   }
 }
 
@@ -57,5 +63,7 @@ export function getAuthUrl(application, provider, method) {
     return `${QqAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${QqAuthScope}&response_type=code&state=${state}`;
   } else if (provider.type === "WeChat") {
     return `${WeChatAuthUri}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${WeChatAuthScope}&response_type=code&state=${state}#wechat_redirect`;
+  } else if (provider.type === "Facebook") {
+    return `${FacebookAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${FacebookAuthScope}&response_type=code&state=${state}`;
   }
 }
