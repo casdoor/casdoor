@@ -49,6 +49,8 @@ class ForgetPage extends React.Component {
       userId: "",
       username: "",
       email: "",
+      isFixed: false,
+      fixedContent: "",
       token: "",
       phone: "",
       emailCode: "",
@@ -91,33 +93,53 @@ class ForgetPage extends React.Component {
     }
   }
 
-  onFinishStep1(values) {
-    AuthBackend.getEmailAndPhone(values).then((res) => {
-      if (res.status === "ok") {
-        this.setState({
-          username: values.username,
-          phone: res.data.toString(),
-          email: res.data2.toString(),
-          current: 1,
-        });
-      } else {
-        Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+  onFormFinish(name, info, forms) {
+      switch (name) {
+          case "step1":
+              const username = forms.step1.getFieldValue("username")
+              AuthBackend.getEmailAndPhone({
+                  application: forms.step1.getFieldValue("application"),
+                  organization: forms.step1.getFieldValue("organization"),
+                  username: username
+              }).then((res) => {
+                  if (res.status === "ok") {
+                      this.setState({phone: res.data.phone, email: res.data.email, username: res.data.name});
+                      switch (res.data2) {
+                          case "email":
+                              this.setState({isFixed: true, fixedContent: res.data.email, verifyType: "email"});
+                              break
+                          case "phone":
+                              this.setState({isFixed: true, fixedContent: res.data.phone, verifyType: "phone"});
+                              break
+                      }
+                      if (this.state.isFixed) {
+                          forms.step2.setFieldsValue({email: this.state.fixedContent})
+                      }
+                      this.setState({current: 1})
+                  } else {
+                      Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+                  }
+              });
+              break;
+          case "step2":
+              const oAuthParams = Util.getOAuthGetParameters();
+              AuthBackend.login({
+                  application: forms.step2.getFieldValue("application"),
+                  organization: forms.step2.getFieldValue("organization"),
+                  email: forms.step2.getFieldValue("email"),
+                  emailCode: forms.step2.getFieldValue("emailCode"),
+                  phonePrefix: this.state.application?.organizationObj.phonePrefix,
+                  username: this.state.username,
+                  type: "login"
+              }, oAuthParams).then(res => {
+                  if (res.status === "ok") {
+                      this.setState({current: 2, userId: res.data, username: res.data.split("/")[1]})
+                  } else {
+                      Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+                  }
+              })
+              break
       }
-    });
-  }
-
-  onFinishStep2(values) {
-    values.phonePrefix = this.state.application?.organizationObj.phonePrefix;
-    values.username = this.state.username;
-    values.type = "login"
-    const oAuthParams = Util.getOAuthGetParameters();
-    AuthBackend.login(values, oAuthParams).then(res => {
-        if (res.status === "ok") {
-            this.setState({current: 2, userId: res.data})
-        } else {
-            Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
-        }
-    })
   }
 
   onFinish(values) {
@@ -134,19 +156,16 @@ class ForgetPage extends React.Component {
 
   onFinishFailed(values, errorFields) {}
 
-  onChange = (current) => {
-    this.setState({ current: current });
-  };
-
   renderForm(application) {
     return (
-        <>
+        <Form.Provider onFormFinish={(name, {info, forms}) => {
+            this.onFormFinish(name, info, forms);
+        }}>
           {/* STEP 1: input username -> get email & phone */}
           <Form
               hidden={this.state.current !== 0}
               ref={this.form}
-              name="get-email-and-Phone"
-              onFinish={(values) => this.onFinishStep1(values)}
+              name="step1"
               onFinishFailed={(errorInfo) => console.log(errorInfo)}
               initialValues={{
                 application: application.name,
@@ -198,7 +217,7 @@ class ForgetPage extends React.Component {
                     });
                   }}
                   prefix={<UserOutlined />}
-                  placeholder={i18next.t("signup:Username")}
+                  placeholder={i18next.t("signup:username, Email or phone")}
               />
             </Form.Item>
             <br />
@@ -213,8 +232,7 @@ class ForgetPage extends React.Component {
           <Form
               hidden={this.state.current !== 1}
               ref={this.form}
-              name="forgetPassword"
-              onFinish={(values) => this.onFinishStep2(values)}
+              name="step2"
               onFinishFailed={(errorInfo) =>
                   this.onFinishFailed(
                       errorInfo.values,
@@ -258,31 +276,34 @@ class ForgetPage extends React.Component {
                 validateFirst
                 hasFeedback
             >
-              <Select
-                  disabled={this.state.username === ""}
-                  placeholder={i18next.t(
-                      "forget:Choose email verification or mobile verification"
-                  )}
-                  onChange={(value) => {
-                    if (value === this.state.phone) {
-                      this.setState({ verifyType: "phone" });
-                    }
-                    if (value === this.state.email) {
-                      this.setState({ verifyType: "email" });
-                    }
-                  }}
-                  allowClear
-                  style={{ textAlign: "left" }}
-              >
-                <Option key={1} value={this.state.phone}>
-                  {this.state.phone.replace(/(\d{3})\d*(\d{4})/,'$1****$2')}
-                </Option>
-                <Option key={2} value={this.state.email}>
-                  {this.state.email.split("@")[0].length>2?
-                      this.state.email.replace(/(?<=.)[^@]+(?=.@)/, "*****"):
-                      this.state.email.replace(/(\w?@)/, "*@")}
-                </Option>
-              </Select>
+               {
+                  this.state.isFixed ? <Input disabled/> :
+                     <Select
+                         disabled={this.state.username === ""}
+                         placeholder={i18next.t(
+                             "forget:Choose email verification or mobile verification"
+                         )}
+                         onChange={(value) => {
+                           if (value === this.state.phone) {
+                             this.setState({ verifyType: "phone" });
+                           }
+                           if (value === this.state.email) {
+                             this.setState({ verifyType: "email" });
+                           }
+                         }}
+                         allowClear
+                         style={{ textAlign: "left" }}
+                     >
+                       <Option key={1} value={this.state.phone}>
+                         {this.state.phone.replace(/(\d{3})\d*(\d{4})/,'$1****$2')}
+                       </Option>
+                       <Option key={2} value={this.state.email}>
+                         {this.state.email.split("@")[0].length>2?
+                             this.state.email.replace(/(?<=.)[^@]+(?=.@)/, "*****"):
+                             this.state.email.replace(/(\w?@)/, "*@")}
+                       </Option>
+                     </Select>
+               }
             </Form.Item>
             <Form.Item
                 name="emailCode" //use emailCode instead of email/phoneCode to adapt to RequestForm in account.go
@@ -332,7 +353,6 @@ class ForgetPage extends React.Component {
               <Button
                   block
                   type="primary"
-                  disabled={this.state.phone === "" || this.state.verifyType === ""}
                   htmlType="submit"
               >
                 {i18next.t("forget:Next Step")}
@@ -344,7 +364,7 @@ class ForgetPage extends React.Component {
           <Form
               hidden={this.state.current !== 2}
               ref={this.form}
-              name="forgetPassword"
+              name="step3"
               onFinish={(values) => this.onFinish(values)}
               onFinishFailed={(errorInfo) =>
                   this.onFinishFailed(
@@ -441,9 +461,9 @@ class ForgetPage extends React.Component {
               </Button>
             </Form.Item>
           </Form>
-        </>
+        </Form.Provider>
     );
-  }
+}
 
   render() {
     const application = this.getApplicationObj();
@@ -460,7 +480,6 @@ class ForgetPage extends React.Component {
             <Col span={24} style={{ display: "flex", justifyContent: "center" }}>
               <Steps
                   current={this.state.current}
-                  onChange={this.onChange}
                   style={{
                     width: "90%",
                     maxWidth: "500px",
