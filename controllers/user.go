@@ -126,23 +126,24 @@ func (c *ApiController) GetEmailAndPhone() {
 		panic(err)
 	}
 
-	// get user
-	var userId string
-	if form.Username == "" {
-		userId, _ = c.RequireSignedIn()
-	} else {
-		userId = fmt.Sprintf("%s/%s", form.Organization, form.Username)
-	}
-	user := object.GetUser(userId)
+	user := object.GetUserByFields(form.Organization, form.Username)
 	if user == nil {
 		c.ResponseError("No such user.")
 		return
 	}
 
-	phone := user.Phone
-	email := user.Email
+	respUser := object.User{Email: user.Email, Phone: user.Phone, Name: user.Name}
+	var contentType string
+	switch form.Username {
+	case user.Email:
+		contentType = "email"
+	case user.Phone:
+		contentType = "phone"
+	case user.Name:
+		contentType = "username"
+	}
 
-	resp = Response{Status: "ok", Msg: "", Data: phone, Data2: email}
+	resp = Response{Status: "ok", Msg: "", Data: respUser, Data2: contentType}
 
 	c.Data["json"] = resp
 	c.ServeJSON()
