@@ -50,6 +50,12 @@ type RequestForm struct {
 	EmailCode   string `json:"emailCode"`
 	PhoneCode   string `json:"phoneCode"`
 	PhonePrefix string `json:"phonePrefix"`
+
+	Github   string `json:"github"`
+	Google   string `json:"google"`
+	Qq       string `json:"qq"`
+	Wechat   string `json:"wechat"`
+	Facebook string `json:"facebook"`
 }
 
 type Response struct {
@@ -132,6 +138,11 @@ func (c *ApiController) Signup() {
 			IsAdmin:       false,
 			IsGlobalAdmin: false,
 			IsForbidden:   false,
+			Github:        form.Github,
+			Google:        form.Google,
+			QQ:            form.Qq,
+			WeChat:        form.Wechat,
+			Facebook:      form.Facebook,
 		}
 		object.AddUser(user)
 

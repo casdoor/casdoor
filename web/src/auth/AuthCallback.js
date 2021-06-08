@@ -26,6 +26,8 @@ class AuthCallback extends React.Component {
     this.state = {
       classes: props,
       msg: null,
+      providerType: null,
+      providerId: null
     };
   }
 
@@ -74,6 +76,7 @@ class AuthCallback extends React.Component {
     const applicationName = innerParams.get("application");
     const providerName = innerParams.get("provider");
     const method = innerParams.get("method");
+    const organization = innerParams.get("organization");
 
     let redirectUri = `${window.location.origin}/callback`;
 
@@ -107,6 +110,9 @@ class AuthCallback extends React.Component {
         } else {
           this.setState({
             msg: res.msg,
+            providerType: res.data,
+            providerId: res.data2,
+            organization: organization
           });
         }
       });
@@ -119,7 +125,7 @@ class AuthCallback extends React.Component {
           (this.state.msg === null) ? (
             <Spin size="large" tip="Signing in..." style={{paddingTop: "10%"}} />
           ) : (
-            Util.renderMessageLarge(this, this.state.msg)
+            Util.renderMessageLarge(this, this.state.msg, {type: this.state.providerType, id: this.state.providerId, org: this.state.organization})
           )
         }
       </div>

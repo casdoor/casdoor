@@ -218,8 +218,12 @@ func (c *ApiController) Login() {
 		}
 
 		if form.Method == "signup" {
-			user := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
-			if user == nil {
+			var user *object.User
+			if len(userInfo.Id) > 0 {
+				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+			}
+
+			if user == nil && len(userInfo.Username) > 0 {
 				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
 			}
 
@@ -241,14 +245,20 @@ func (c *ApiController) Login() {
 				//
 				//	object.LinkUserAccount(userId, provider.Type, userInfo.Id)
 				//}
+				var userProviderId string
+				if len(userInfo.Id) > 0 {
+					userProviderId = userInfo.Id
+				} else {
+					userProviderId = userInfo.Username
+				}
 
 				if !application.EnableSignUp {
-					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username)}
+					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userProviderId)}
 					c.Data["json"] = resp
 					c.ServeJSON()
 					return
 				} else {
-					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist, please create an account first", provider.Type, userInfo.Username)}
+					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist, please create an account first", provider.Type, userProviderId), Data: provider.Type, Data2: userProviderId}
 					c.Data["json"] = resp
 					c.ServeJSON()
 					return

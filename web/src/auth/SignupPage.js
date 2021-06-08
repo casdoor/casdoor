@@ -103,6 +103,8 @@ class SignupPage extends React.Component {
 
   onFinish(values) {
     values.phonePrefix = this.state.application?.organizationObj.phonePrefix;
+    values[this.props.location.state.type] = this.props.location.state.id;
+    values.organization = this.props.location.state.org;
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === 'ok') {

@@ -70,8 +70,8 @@ export function goToLink(link) {
   window.location.href = link;
 }
 
-export function goToLinkSoft(ths, link) {
-  ths.props.history.push(link);
+export function goToLinkSoft(ths, link, state = {}) {
+  ths.props.history.push({pathname: link, state: state});
 }
 
 export function showMessage(type, text) {

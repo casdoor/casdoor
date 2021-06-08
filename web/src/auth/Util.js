@@ -46,7 +46,7 @@ export function renderMessage(msg) {
   }
 }
 
-export function renderMessageLarge(ths, msg) {
+export function renderMessageLarge(ths, msg, param = {}) {
   if (msg !== null) {
     return (
       <div style={{display: "inline"}}>
@@ -58,7 +58,7 @@ export function renderMessageLarge(ths, msg) {
             <Button key="home" onClick={() => Setting.goToLinkSoft(ths, "/")}>
               Home
             </Button>,
-            <Button type="primary" key="signup" onClick={() => Setting.goToLinkSoft(ths, "/signup")}>
+            <Button type="primary" key="signup" onClick={() => Setting.goToLinkSoft(ths, "/signup", param)}>
               Sign Up
             </Button>,
           ]}
@@ -91,9 +91,9 @@ export function getOAuthGetParameters(params) {
   }
 }
 
-export function getQueryParamsToState(applicationName, providerName, method) {
+export function getQueryParamsToState(applicationName, providerName, method, organization) {
   let query = window.location.search;
-  query = `${query}&application=${applicationName}&provider=${providerName}&method=${method}`;
+  query = `${query}&application=${applicationName}&provider=${providerName}&method=${method}&organization=${organization}`;
   if (method === "link") {
     query = `${query}&from=${window.location.pathname}`;
   }
