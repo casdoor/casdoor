@@ -122,9 +122,9 @@ func (idp *FacebookIdProvider) GetToken(code string) (*oauth2.Token, error) {
 //}
 
 type FacebookUserInfo struct {
-	Id         string `json:"id"`          // The app user's App-Scoped User ID. This ID is unique to the app and cannot be used by other apps.
-	Name       string `json:"name"`        // The person's full name.
-	NameFormat string `json:"name_format"` // The person's name formatted to correctly handle Chinese, Japanese, or Korean ordering.
+	Id         string   `json:"id"`          // The app user's App-Scoped User ID. This ID is unique to the app and cannot be used by other apps.
+	Name       string   `json:"name"`        // The person's full name.
+	NameFormat string   `json:"name_format"` // The person's name formatted to correctly handle Chinese, Japanese, or Korean ordering.
 	Picture    struct { // The person's profile picture.
 		Data struct { // This struct is different as https://developers.facebook.com/docs/graph-api/reference/user/picture/
 			Height       int    `json:"height"`
