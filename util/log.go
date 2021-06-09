@@ -20,7 +20,7 @@ func GetIPInfo(clientIP string) string {
 		ip := strings.TrimSpace(ips[i])
 		//desc := GetDescFromIP(ip)
 		ipstr := fmt.Sprintf("%s: %s", ip, "")
-		if i != len(ips) - 1 {
+		if i != len(ips)-1 {
 			res += ipstr + " -> "
 		} else {
 			res += ipstr
@@ -49,10 +49,10 @@ func getIPFromRequest(req *http.Request) string {
 
 func LogInfo(ctx *context.Context, f string, v ...interface{}) {
 	ipString := fmt.Sprintf("(%s) ", getIPFromRequest(ctx.Request))
-	logs.Info(ipString + f, v...)
+	logs.Info(ipString+f, v...)
 }
 
 func LogWarning(ctx *context.Context, f string, v ...interface{}) {
 	ipString := fmt.Sprintf("(%s) ", getIPFromRequest(ctx.Request))
-	logs.Warning(ipString + f, v...)
+	logs.Warning(ipString+f, v...)
 }

@@ -45,6 +45,8 @@ func GetIdProvider(providerType string, clientId string, clientSecret string, re
 		return NewWeChatIdProvider(clientId, clientSecret, redirectUrl)
 	} else if providerType == "Facebook" {
 		return NewFacebookIdProvider(clientId, clientSecret, redirectUrl)
+	} else if providerType == "DingTalk" {
+		return NewDingTalkIdProvider(clientId, clientSecret, redirectUrl)
 	}
 
 	return nil
