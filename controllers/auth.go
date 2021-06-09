@@ -94,7 +94,10 @@ func (c *ApiController) Login() {
 	var form RequestForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
-		panic(err)
+		resp = &Response{Status: "error", Msg: err.Error()}
+		c.Data["json"] = resp
+		c.ServeJSON()
+		return
 	}
 
 	if form.Username != "" {

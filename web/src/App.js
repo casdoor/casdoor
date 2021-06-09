@@ -370,14 +370,8 @@ class App extends Component {
           </Menu>
         </Header>
         <Switch>
-          <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...props} />)}/>
-          <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...props} />)}/>
           <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
           <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
-          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...props} />)}/>
-          <Route exact path="/callback" component={AuthCallback}/>
-          <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)}/>
-          <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)}/>
           <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)}/>
           <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>
@@ -414,14 +408,23 @@ class App extends Component {
   }
 
   isDoorPages() {
-    return window.location.pathname.startsWith("/login/oauth/authorize");
+    return window.location.pathname.startsWith("/signup") ||
+      window.location.pathname.startsWith("/login") ||
+      window.location.pathname.startsWith("/callback") ||
+      window.location.pathname.startsWith("/forget");
   }
 
   renderPage() {
     if (this.isDoorPages()) {
       return (
         <Switch>
+          <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...props} />)}/>
+          <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...props} />)}/>
+          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...props} />)}/>
           <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage type={"code"} {...props} />}/>
+          <Route exact path="/callback" component={AuthCallback}/>
+          <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)}/>
+          <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)}/>
         </Switch>
       )
     }

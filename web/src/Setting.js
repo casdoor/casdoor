@@ -47,6 +47,14 @@ export function isProviderVisible(provider) {
   }
 }
 
+export function isProviderVisibleForSignUp(provider) {
+  if (provider.enableSignUp === false) {
+    return false;
+  }
+
+  return isProviderVisible(provider);
+}
+
 export function parseJson(s) {
   if (s === "") {
     return null;

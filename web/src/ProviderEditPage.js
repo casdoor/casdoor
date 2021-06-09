@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select} from 'antd';
+import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from 'antd';
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
@@ -174,6 +174,16 @@ class ProviderEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.provider.clientSecret} onChange={e => {
               this.updateProviderField('clientSecret', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("application:Enable signup")}:
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.provider.enableSignUp} onChange={checked => {
+              this.updateProviderField('enableSignUp', checked);
             }} />
           </Col>
         </Row>
