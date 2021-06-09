@@ -69,7 +69,10 @@ func (idp *DingTalkIdProvider) getConfig(clientId string, clientSecret string, r
 	}
 
 	var config = &oauth2.Config{
-		Scopes:       []string{"email,public_profile"},
+		// DingTalk not allow to set scopes,here it is just a placeholder,
+		// convenient to use later
+		Scopes:       []string{"",""},
+
 		Endpoint:     endpoint,
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
@@ -82,8 +85,8 @@ func (idp *DingTalkIdProvider) getConfig(clientId string, clientSecret string, r
 type DingTalkAccessToken struct {
 	ErrCode     int    `json:"errcode"`
 	ErrMsg      string `json:"errmsg"`
-	AccessToken string `json:"access_token"` //Interface call credentials
-	ExpiresIn   int64  `json:"expires_in"`   //access_token interface call credential timeout time, unit (seconds)
+	AccessToken string `json:"access_token"` // Interface call credentials
+	ExpiresIn   int64  `json:"expires_in"`   // access_token interface call credential timeout time, unit (seconds)
 }
 
 type DingTalkIds struct {
@@ -103,9 +106,9 @@ type InfoResp struct {
 }
 
 // GetToken use code get access_token (*operation of getting code ought to be done in front)
-// get more detail via: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#confirm
+// get more detail via: https://developers.dingtalk.com/document/app/dingtalk-retrieve-user-information?spm=ding_open_doc.document.0.0.51b91a31wWV3tY#doc-api-dingtalk-GetUser
 func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
-	timestamp := strconv.FormatInt(time.Now().UnixNano()/1e6, 10) // 毫秒时间戳
+	timestamp := strconv.FormatInt(time.Now().UnixNano()/1e6, 10)
 	signature := EncodeSHA256(timestamp, idp.Config.ClientSecret)
 	u := fmt.Sprintf(
 		"%s?accessKey=%s&timestamp=%s&signature=%s", idp.Config.Endpoint.AuthURL,
@@ -133,7 +136,7 @@ func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	_ = json.Unmarshal(body, &info)
 	errCode := info.Errcode
 	if errCode != 0 {
-		return nil, errors.New(fmt.Sprintf("登录错误：%d, %s", errCode, info.Errmsg))
+		return nil, errors.New(fmt.Sprintf("%d: %s", errCode, info.Errmsg))
 	}
 
 	u2 := fmt.Sprintf("%s?appkey=%s&appsecret=%s", idp.Config.Endpoint.TokenURL, idp.Config.ClientID, idp.Config.ClientSecret)
@@ -148,14 +151,14 @@ func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	tokenResp := DingTalkAccessToken{}
 	_ = json.Unmarshal(body, &tokenResp)
 	if tokenResp.ErrCode != 0 {
-		return nil, errors.New("accessToken 获取错误：" + tokenResp.ErrMsg)
+		return nil, errors.New(fmt.Sprintf("%d: %s", tokenResp.ErrCode, tokenResp.ErrMsg))
 	}
 
 	// use unionid to get userid
 	unionid := info.UserInfo.Unionid
 	userid, err := idp.GetUseridByUnionid(tokenResp.AccessToken, unionid)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("登录错误，获取userid失败：%s", err))
+		return nil, err
 	}
 
 	// Since DingTalk does not require scopes, put userid and unionid into
@@ -192,7 +195,7 @@ func (idp *DingTalkIdProvider) GetUseridByUnionid(accesstoken, unionid string) (
 	_ = json.Unmarshal([]byte(useridInfo), &uresp)
 	errcode := uresp.Errcode
 	if errcode != 0 {
-		return "", errors.New(fmt.Sprintf("userid获取错误: %d, %s", errcode, uresp.Errmsg))
+		return "", errors.New(fmt.Sprintf("%d: %s", errcode, uresp.Errmsg))
 	}
 	return uresp.Result.Userid, nil
 }
@@ -351,7 +354,7 @@ func (idp *DingTalkIdProvider) GetUrlResp(url string) (string, error) {
 func EncodeSHA256(message, secret string) string {
 	h := hmac.New(sha256.New, []byte(secret))
 	h.Write([]byte(message))
-	sum := h.Sum(nil) // 二进制流
+	sum := h.Sum(nil)
 	msg1 := base64.StdEncoding.EncodeToString(sum)
 
 	uv := url.Values{}
