@@ -124,6 +124,22 @@ func UpdateUser(id string, user *User) bool {
 	return affected != 0
 }
 
+func UpdateUserInternal(id string, user *User) bool {
+	owner, name := util.GetOwnerAndNameFromId(id)
+	if getUser(owner, name) == nil {
+		return false
+	}
+
+	user.UpdateUserHash()
+
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
+}
+
 func UpdateUserForOriginal(user *User) bool {
 	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("display_name", "password", "phone", "avatar", "affiliation", "score", "is_forbidden", "hash", "pre_hash").Update(user)
 	if err != nil {
