@@ -17,10 +17,9 @@ package object
 import (
 	"fmt"
 	"reflect"
-	"strconv"
 	"strings"
 
-	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/casdoor/idp"
 	"xorm.io/core"
 )
 
@@ -93,11 +92,43 @@ func GetUserField(user *User, field string) string {
 	return f.String()
 }
 
-func SetUserProperty(user *User, field string, value string) bool {
+func setUserProperty(user *User, field string, value string) {
 	if value == "" {
 		delete(user.Properties, field)
 	} else {
 		user.Properties[field] = value
+	}
+}
+
+func SetUserOAuthProperties(user *User, providerType string, userInfo *idp.UserInfo) bool {
+	if userInfo.Id != "" {
+		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
+		setUserProperty(user, propertyName, userInfo.Id)
+	}
+	if userInfo.Username != "" {
+		propertyName := fmt.Sprintf("oauth_%s_username", providerType)
+		setUserProperty(user, propertyName, userInfo.Username)
+	}
+	if userInfo.DisplayName != "" {
+		propertyName := fmt.Sprintf("oauth_%s_displayName", providerType)
+		setUserProperty(user, propertyName, userInfo.DisplayName)
+		if user.DisplayName == "" {
+			SetUserField(user, "display_name", userInfo.DisplayName)
+		}
+	}
+	if userInfo.Email != "" {
+		propertyName := fmt.Sprintf("oauth_%s_email", providerType)
+		setUserProperty(user, propertyName, userInfo.Email)
+		if user.Email == "" {
+			SetUserField(user, "email", userInfo.Email)
+		}
+	}
+	if userInfo.AvatarUrl != "" {
+		propertyName := fmt.Sprintf("oauth_%s_avatarUrl", providerType)
+		setUserProperty(user, propertyName, userInfo.AvatarUrl)
+		if user.Avatar == "" {
+			SetUserField(user, "avatar", userInfo.AvatarUrl)
+		}
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("properties").Update(user)
@@ -108,7 +139,7 @@ func SetUserProperty(user *User, field string, value string) bool {
 	return affected != 0
 }
 
-func ClearUserProperties(user *User, providerType string) bool {
+func ClearUserOAuthProperties(user *User, providerType string) bool {
 	for k := range user.Properties {
 		prefix := fmt.Sprintf("oauth_%s_", providerType)
 		if strings.HasPrefix(k, prefix) {
@@ -122,20 +153,4 @@ func ClearUserProperties(user *User, providerType string) bool {
 	}
 
 	return affected != 0
-}
-
-func calculateHash(user *User) string {
-	s := strings.Join([]string{user.Id, user.Password, user.DisplayName, user.Avatar, user.Phone, strconv.Itoa(user.Score)}, "|")
-	return util.GetMd5Hash(s)
-}
-
-func (user *User) UpdateUserHash() {
-	hash := calculateHash(user)
-	user.Hash = hash
-}
-
-func (user *User) UpdateUserPassword(organization *Organization) {
-	if organization.PasswordType == "salt" {
-		user.Password = getSaltedPassword(user.Password, organization.PasswordSalt)
-	}
 }

@@ -245,7 +245,26 @@ func (c *ApiController) Login() {
 				//	object.LinkUserAccount(userId, provider.Type, userInfo.Id)
 				//}
 
-				if !application.EnableSignUp {
+				// sign up via OAuth
+				if provider.EnableSignUp {
+					user := &object.User{
+						Owner:         application.Organization,
+						Name:          userInfo.Username,
+						CreatedTime:   util.GetCurrentTime(),
+						Id:            util.GenerateId(),
+						Type:          "normal-user",
+						DisplayName:   userInfo.DisplayName,
+						Avatar:        userInfo.AvatarUrl,
+						Email:         userInfo.Email,
+						IsAdmin:       false,
+						IsGlobalAdmin: false,
+						IsForbidden:   false,
+						Properties:    map[string]string{},
+					}
+					object.AddUser(user)
+
+					resp = c.HandleLoggedIn(user, &form)
+				} else if !application.EnableSignUp {
 					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username)}
 					c.Data["json"] = resp
 					c.ServeJSON()
@@ -258,7 +277,7 @@ func (c *ApiController) Login() {
 				}
 			}
 			//resp = &Response{Status: "ok", Msg: "", Data: res}
-		} else {
+		} else { // form.Method != "signup"
 			userId := c.GetSessionUser()
 			if userId == "" {
 				resp = &Response{Status: "error", Msg: "The account does not exist", Data: userInfo}
@@ -270,35 +289,7 @@ func (c *ApiController) Login() {
 			user := object.GetUser(userId)
 
 			// sync info from 3rd-party if possible
-			if userInfo.Id != "" {
-				propertyName := fmt.Sprintf("oauth_%s_id", provider.Type)
-				object.SetUserProperty(user, propertyName, userInfo.Id)
-			}
-			if userInfo.Username != "" {
-				propertyName := fmt.Sprintf("oauth_%s_username", provider.Type)
-				object.SetUserProperty(user, propertyName, userInfo.Username)
-			}
-			if userInfo.DisplayName != "" {
-				propertyName := fmt.Sprintf("oauth_%s_displayName", provider.Type)
-				object.SetUserProperty(user, propertyName, userInfo.DisplayName)
-				if user.DisplayName == "" {
-					object.SetUserField(user, "display_name", userInfo.DisplayName)
-				}
-			}
-			if userInfo.Email != "" {
-				propertyName := fmt.Sprintf("oauth_%s_email", provider.Type)
-				object.SetUserProperty(user, propertyName, userInfo.Email)
-				if user.Email == "" {
-					object.SetUserField(user, "email", userInfo.Email)
-				}
-			}
-			if userInfo.AvatarUrl != "" {
-				propertyName := fmt.Sprintf("oauth_%s_avatarUrl", provider.Type)
-				object.SetUserProperty(user, propertyName, userInfo.AvatarUrl)
-				if user.Avatar == "" {
-					object.SetUserField(user, "avatar", userInfo.AvatarUrl)
-				}
-			}
+			object.SetUserOAuthProperties(user, provider.Type, userInfo)
 
 			isLinked := object.LinkUserAccount(user, provider.Type, userInfo.Id)
 			if isLinked {

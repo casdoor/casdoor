@@ -49,7 +49,7 @@ func (c *ApiController) Unlink() {
 		return
 	}
 
-	object.ClearUserProperties(user, providerType)
+	object.ClearUserOAuthProperties(user, providerType)
 
 	object.LinkUserAccount(user, providerType, "")
 	resp = Response{Status: "ok", Msg: ""}

@@ -132,6 +132,7 @@ func (c *ApiController) Signup() {
 			IsAdmin:       false,
 			IsGlobalAdmin: false,
 			IsForbidden:   false,
+			Properties:    map[string]string{},
 		}
 		object.AddUser(user)
 
