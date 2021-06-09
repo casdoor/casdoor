@@ -263,6 +263,11 @@ func (c *ApiController) Login() {
 					}
 					object.AddUser(user)
 
+					// sync info from 3rd-party if possible
+					object.SetUserOAuthProperties(user, provider.Type, userInfo)
+
+					object.LinkUserAccount(user, provider.Type, userInfo.Id)
+
 					resp = c.HandleLoggedIn(user, &form)
 				} else if !application.EnableSignUp {
 					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username)}

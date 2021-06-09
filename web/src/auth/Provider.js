@@ -38,6 +38,9 @@ const FacebookAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_f
 const DingTalkAuthUri = "https://oapi.dingtalk.com/connect/oauth2/sns_authorize"
 const DingTalkAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_dingtalk.png"
 
+const WeiboAuthScope = "email"
+const WeiboAuthUri = "https://api.weibo.com/oauth2/authorize"
+const WeiboAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_weibo.png"
 
 export function getAuthLogo(provider) {
   if (provider.type === "Google") {
@@ -52,6 +55,8 @@ export function getAuthLogo(provider) {
     return FacebookAuthLogo;
   } else if (provider.type === "DingTalk") {
     return DingTalkAuthLogo;
+  } else if (provider.type === "Weibo") {
+    return WeiboAuthLogo;
   }
 }
 
@@ -74,5 +79,7 @@ export function getAuthUrl(application, provider, method) {
     return `${FacebookAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${FacebookAuthScope}&response_type=code&state=${state}`;
   } else if (provider.type === "DingTalk") {
     return `${DingTalkAuthUri}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=snsapi_login&response_type=code&state=${state}`;
+  } else if (provider.type === "Weibo") {
+    return `${WeiboAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${WeiboAuthScope}&state=${state}`;
   }
 }

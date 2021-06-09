@@ -51,6 +51,7 @@ type User struct {
 	WeChat   string `xorm:"wechat varchar(100)" json:"wechat"`
 	Facebook string `xorm:"facebook varchar(100)" json:"facebook"`
 	DingTalk string `xorm:"dingtalk varchar(100)" json:"dingtalk"`
+	Weibo    string `xorm:"weibo varchar(100)" json:"weibo"`
 
 	Properties map[string]string `json:"properties"`
 }
@@ -117,6 +118,22 @@ func UpdateUser(id string, user *User) bool {
 	user.UpdateUserHash()
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("display_name", "avatar", "address", "affiliation", "score", "tag", "is_admin", "is_global_admin", "is_forbidden", "hash").Update(user)
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
+}
+
+func UpdateUserInternal(id string, user *User) bool {
+	owner, name := util.GetOwnerAndNameFromId(id)
+	if getUser(owner, name) == nil {
+		return false
+	}
+
+	user.UpdateUserHash()
+
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
 		panic(err)
 	}

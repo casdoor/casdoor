@@ -113,30 +113,26 @@ func SetUserOAuthProperties(user *User, providerType string, userInfo *idp.UserI
 		propertyName := fmt.Sprintf("oauth_%s_displayName", providerType)
 		setUserProperty(user, propertyName, userInfo.DisplayName)
 		if user.DisplayName == "" {
-			SetUserField(user, "display_name", userInfo.DisplayName)
+			user.DisplayName = userInfo.DisplayName
 		}
 	}
 	if userInfo.Email != "" {
 		propertyName := fmt.Sprintf("oauth_%s_email", providerType)
 		setUserProperty(user, propertyName, userInfo.Email)
 		if user.Email == "" {
-			SetUserField(user, "email", userInfo.Email)
+			user.Email = userInfo.Email
 		}
 	}
 	if userInfo.AvatarUrl != "" {
 		propertyName := fmt.Sprintf("oauth_%s_avatarUrl", providerType)
 		setUserProperty(user, propertyName, userInfo.AvatarUrl)
 		if user.Avatar == "" {
-			SetUserField(user, "avatar", userInfo.AvatarUrl)
+			user.Avatar = userInfo.AvatarUrl
 		}
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("properties").Update(user)
-	if err != nil {
-		panic(err)
-	}
-
-	return affected != 0
+	affected := UpdateUserInternal(user.GetId(), user)
+	return affected
 }
 
 func ClearUserOAuthProperties(user *User, providerType string) bool {
