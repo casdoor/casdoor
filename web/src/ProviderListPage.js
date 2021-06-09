@@ -53,6 +53,7 @@ class ProviderListPage extends React.Component {
       type: "GitHub",
       clientId: "",
       clientSecret: "",
+      enableSignUp: true,
       host: "",
       port: 0,
       providerUrl: "https://github.com/organizations/xxx/settings/applications/1234567",
