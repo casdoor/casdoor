@@ -178,8 +178,12 @@ func (c *ApiController) GetAccount() {
 	var resp Response
 
 	user := object.GetUser(userId)
-	organization := object.GetOrganizationByUser(user)
-	resp = Response{Status: "ok", Msg: "", Data: user, Data2: organization}
+	if user != nil {
+		organization := object.GetOrganizationByUser(user)
+		resp = Response{Status: "ok", Msg: "", Data: user, Data2: organization}
+	} else {
+		resp = Response{Status: "error", Msg: "Please sign in first"}
+	}
 
 	c.Data["json"] = resp
 	c.ServeJSON()
