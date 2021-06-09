@@ -94,5 +94,8 @@ func DeleteOrganization(organization *Organization) bool {
 }
 
 func GetOrganizationByUser(user *User) *Organization {
-	return getOrganization("admin", user.Owner)
+	if user != nil {
+		return getOrganization("admin", user.Owner)
+	}
+	return nil
 }
