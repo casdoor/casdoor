@@ -71,7 +71,7 @@ func (idp *DingTalkIdProvider) getConfig(clientId string, clientSecret string, r
 	var config = &oauth2.Config{
 		// DingTalk not allow to set scopes,here it is just a placeholder,
 		// convenient to use later
-		Scopes: []string{"", ""},
+		Scopes:       []string{"",""},
 
 		Endpoint:     endpoint,
 		ClientID:     clientId,
