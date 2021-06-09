@@ -71,6 +71,7 @@ class ProviderEditPage extends React.Component {
           {id: 'QQ', name: 'QQ'},
           {id: 'WeChat', name: 'WeChat'},
           {id: 'Facebook', name: 'Facebook'},
+          {id: 'DingTalk', name: 'DingTalk'},
         ]
       );
     } else if (provider.category === "Email") {
