@@ -84,6 +84,7 @@ export const CropperDiv = (props) => {
                 {buttonText}
             </Button>
             <Modal
+                maskClosable={false}
                 title={title}
                 visible={visible}
                 okText={i18next.t("user:Upload a photo")}

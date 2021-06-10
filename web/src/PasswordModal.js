@@ -62,6 +62,7 @@ export const PasswordModal = (props) => {
         { hasOldPassword ? i18next.t("user:Modify password...") : i18next.t("user:Set password...")}
       </Button>
       <Modal
+        maskClosable={false}
         title={i18next.t("user:Password")}
         visible={visible}
         okText={i18next.t("user:Set Password")}
