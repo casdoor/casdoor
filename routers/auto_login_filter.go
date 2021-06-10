@@ -54,9 +54,9 @@ func returnRequest(ctx *context.Context, msg string) {
 }
 
 func AutoLoginFilter(ctx *context.Context) {
-	if getSessionUser(ctx) != "" {
-		return
-	}
+	//if getSessionUser(ctx) != "" {
+	//	return
+	//}
 
 	query := ctx.Request.URL.RawQuery
 	queryMap, err := url.ParseQuery(query)

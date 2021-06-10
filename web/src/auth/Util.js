@@ -52,7 +52,7 @@ export function renderMessageLarge(ths, msg) {
       <div style={{display: "inline"}}>
         <Result
           status="error"
-          title="Login Error"
+          title="There was a problem signing you in.."
           subTitle={msg}
           extra={[
             <Button key="home" onClick={() => Setting.goToLinkSoft(ths, "/")}>

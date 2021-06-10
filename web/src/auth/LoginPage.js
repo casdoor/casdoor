@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import React from "react";
-import {Link} from "react-router-dom";
 import {Button, Checkbox, Col, Form, Input, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
@@ -224,7 +223,7 @@ class LoginPage extends React.Component {
           </Form.Item>
           <Form.Item>
             {
-              application.providerObjs.filter(provider => Setting.isProviderVisible(provider)).map(provider => {
+              application.providerObjs.filter(provider => Setting.isProviderVisibleForSignUp(provider)).map(provider => {
                 return this.renderProviderLogo(provider, application, 30, 5, "small");
               })
             }
@@ -245,7 +244,7 @@ class LoginPage extends React.Component {
           </div>
           <br/>
           {
-            application.providerObjs.filter(provider => Setting.isProviderVisible(provider)).map(provider => {
+            application.providerObjs.filter(provider => Setting.isProviderVisibleForSignUp(provider)).map(provider => {
               return this.renderProviderLogo(provider, application, 40, 10, "big");
             })
           }

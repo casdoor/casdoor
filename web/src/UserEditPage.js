@@ -154,7 +154,7 @@ class UserEditPage extends React.Component {
 
     return (
       <Row key={provider.name} style={{marginTop: '20px'}} >
-        <Col style={{marginTop: '5px'}} span={2}>
+        <Col style={{marginTop: '5px'}} span={3}>
           {
             Setting.getProviderLogo(provider)
           }
@@ -164,7 +164,7 @@ class UserEditPage extends React.Component {
             }
           </span>
         </Col>
-        <Col span={22} >
+        <Col span={21} >
           <img style={{marginRight: '10px'}} width={30} height={30} src={avatarUrl} alt={name} />
           <span style={{width: '300px', display: "inline-block"}}>
             {
