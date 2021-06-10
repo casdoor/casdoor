@@ -65,6 +65,7 @@ export const ResetModal = (props) => {
         {buttonText}
       </Button>
       <Modal
+        maskClosable={false}
         title={buttonText}
         visible={visible}
         okText={buttonText}

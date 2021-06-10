@@ -127,6 +127,7 @@ export const CountDownInput = (props) => {
             {buttonText}
           </button>
           <Modal
+            maskClosable={false}
             visible={visible}
             onCancel={handleCancel}
             onOk={handleOk}
