@@ -19,7 +19,7 @@ function Icon({ width = 24, height = 24, color }) {
 }
 
 const config = {
-  text: "Log in with QQ",
+  text: "Sign in with QQ",
   icon: Icon,
   iconFormat: name => `fa fa-${name}`,
   style: {background: "rgb(94,188,249)"},

@@ -106,15 +106,16 @@ class LoginPage extends React.Component {
       });
   };
 
-  getLoginButton(type) {
+  getSigninButton(type) {
+    const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
     if (type === "GitHub") {
-      return <GithubLoginButton />
+      return <GithubLoginButton text={text} align={"center"} />
     } else if (type === "Google") {
-      return <GoogleLoginButton />
+      return <GoogleLoginButton text={text} align={"center"} />
     } else if (type === "QQ") {
-      return <QqLoginButton />
+      return <QqLoginButton text={text} align={"center"} />
     } else {
-      return `Log in with ${type}`;
+      return text;
     }
   }
 
@@ -130,7 +131,7 @@ class LoginPage extends React.Component {
         <div key={provider.displayName} style={{marginBottom: "10px"}}>
           <a href={Provider.getAuthUrl(application, provider, "signup")}>
             {
-              this.getLoginButton(provider.type)
+              this.getSigninButton(provider.type)
             }
           </a>
         </div>
@@ -234,13 +235,13 @@ class LoginPage extends React.Component {
       return (
         <div style={{marginTop: "20px"}}>
           <div style={{fontSize: 16, textAlign: "left"}}>
-            Sign in&nbsp;
+            {i18next.t("login:To access")}&nbsp;
             <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
               <span style={{fontWeight: "bold"}}>
                 {application.displayName}
               </span>
             </a>
-            &nbsp;with:
+            :
           </div>
           <br/>
           {

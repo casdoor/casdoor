@@ -73,7 +73,9 @@
     "Forgot password?": "Forgot password?",
     "Sign In": "Sign In",
     "No account yet?": "No account yet?",
-    "sign up now": "sign up now"
+    "sign up now": "sign up now",
+    "To access": "To access",
+    "Sign in with {type}": "Sign in with {type}"
   },
   "account":
   {

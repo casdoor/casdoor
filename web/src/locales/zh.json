@@ -73,7 +73,9 @@
     "Forgot password?": "忘记密码？",
     "Sign In": "登录",
     "No account yet?": "没有账号？",
-    "sign up now": "立即注册"
+    "sign up now": "立即注册",
+    "To access": "访问",
+    "Sign in with {type}": "{type}登录"
   },
   "account":
   {
