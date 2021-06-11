@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/astaxie/beego"
@@ -246,6 +247,8 @@ func (c *ApiController) Login() {
 				//}
 
 				// sign up via OAuth
+				properties := map[string]string{}
+				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
 				if provider.EnableSignUp {
 					user := &object.User{
 						Owner:         application.Organization,
@@ -256,10 +259,11 @@ func (c *ApiController) Login() {
 						DisplayName:   userInfo.DisplayName,
 						Avatar:        userInfo.AvatarUrl,
 						Email:         userInfo.Email,
+						Score:         200,
 						IsAdmin:       false,
 						IsGlobalAdmin: false,
 						IsForbidden:   false,
-						Properties:    map[string]string{},
+						Properties:    properties,
 					}
 					object.AddUser(user)
 
