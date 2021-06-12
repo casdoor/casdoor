@@ -226,6 +226,9 @@ func (c *ApiController) Login() {
 			if user == nil {
 				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
 			}
+			if user == nil {
+				user = object.GetUserByField(application.Organization, "name", userInfo.Username)
+			}
 
 			if user != nil {
 				//if object.IsForbidden(userId) {
