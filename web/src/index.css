@@ -13,7 +13,7 @@ code {
 }
 
 .logo {
-  background: url("logo.png");
+  background: url("https://cdn.casbin.org/img/logo_384x96.png");
   background-size: 108px, 33px;
   width: 108px;
   height: 27px;

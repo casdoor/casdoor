@@ -96,6 +96,10 @@ func GetUser(id string) *User {
 }
 
 func GetMaskedUser(user *User) *User {
+	if user == nil {
+		return nil
+	}
+
 	if user.Password != "" {
 		user.Password = "***"
 	}
