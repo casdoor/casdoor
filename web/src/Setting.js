@@ -23,7 +23,8 @@ import {Helmet} from "react-helmet";
 
 export let ServerUrl = "";
 
-export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
+// export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
+export const StaticBaseUrl = "https://cdn.casbin.org";
 
 export function initServerUrl() {
   const hostname = window.location.hostname;
