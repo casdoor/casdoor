@@ -23,6 +23,8 @@ import {Helmet} from "react-helmet";
 
 export let ServerUrl = "";
 
+export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
+
 export function initServerUrl() {
   const hostname = window.location.hostname;
   if (hostname === "localhost") {
@@ -218,7 +220,7 @@ export function getClickable(text) {
 
 export function getProviderLogo(provider) {
   const idp = provider.type.toLowerCase();
-  const url = `https://cdn.jsdelivr.net/gh/casbin/static/img/social_${idp}.png`;
+  const url = `${StaticBaseUrl}/img/social_${idp}.png`;
   return (
     <img width={30} height={30} src={url} alt={idp} />
   )

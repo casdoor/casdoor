@@ -13,34 +13,35 @@
 // limitations under the License.
 
 import * as Util from "./Util";
+import {StaticBaseUrl} from "../Setting";
 
 const GoogleAuthScope  = "profile+email"
 const GoogleAuthUri = "https://accounts.google.com/signin/oauth";
-const GoogleAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_google.png";
+const GoogleAuthLogo = `${StaticBaseUrl}/img/social_google.png`;
 
 const GithubAuthScope  = "user:email+read:user"
 const GithubAuthUri = "https://github.com/login/oauth/authorize";
-const GithubAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_github.png";
+const GithubAuthLogo = `${StaticBaseUrl}/img/social_github.png`;
 
 const QqAuthScope  = "get_user_info"
 const QqAuthUri = "https://graph.qq.com/oauth2.0/authorize";
-const QqAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_qq.png";
+const QqAuthLogo = `${StaticBaseUrl}/img/social_qq.png`;
 
 const WeChatAuthScope = "snsapi_login"
 const WeChatAuthUri = "https://open.weixin.qq.com/connect/qrconnect";
-const WeChatAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_wechat.png";
+const WeChatAuthLogo = `${StaticBaseUrl}/img/social_wechat.png`;
 
-const FacebookAuthScope = "email,public_profile"
-const FacebookAuthUri = "https://www.facebook.com/dialog/oauth"
-const FacebookAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_facebook.png"
+const FacebookAuthScope = "email,public_profile";
+const FacebookAuthUri = "https://www.facebook.com/dialog/oauth";
+const FacebookAuthLogo = `${StaticBaseUrl}/img/social_facebook.png`;
 
-// const DingTalkAuthScope = "email,public_profile"
-const DingTalkAuthUri = "https://oapi.dingtalk.com/connect/oauth2/sns_authorize"
-const DingTalkAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_dingtalk.png"
+// const DingTalkAuthScope = "email,public_profile";
+const DingTalkAuthUri = "https://oapi.dingtalk.com/connect/oauth2/sns_authorize";
+const DingTalkAuthLogo = `${StaticBaseUrl}/img/social_dingtalk.png`;
 
-const WeiboAuthScope = "email"
-const WeiboAuthUri = "https://api.weibo.com/oauth2/authorize"
-const WeiboAuthLogo = "https://cdn.jsdelivr.net/gh/casbin/static/img/social_weibo.png"
+const WeiboAuthScope = "email";
+const WeiboAuthUri = "https://api.weibo.com/oauth2/authorize";
+const WeiboAuthLogo = `${StaticBaseUrl}/img/social_weibo.png`;
 
 export function getAuthLogo(provider) {
   if (provider.type === "Google") {
