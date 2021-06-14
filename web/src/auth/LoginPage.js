@@ -20,8 +20,12 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Provider from "./Provider";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
-import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
+import {GithubLoginButton, GoogleLoginButton, FacebookLoginButton} from "react-social-login-buttons";
 import QqLoginButton from "./QqLoginButton";
+import DingTalkLoginButton from "./DingTalkLoginButton";
+import GiteeLoginButton from "./GiteeLoginButton";
+import WechatLoginButton from "./WechatLoginButton";
+import WeiboLoginButton from "./WeiboLoginButton";
 import i18next from "i18next";
 
 class LoginPage extends React.Component {
@@ -109,11 +113,21 @@ class LoginPage extends React.Component {
   getSigninButton(type) {
     const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
     if (type === "GitHub") {
-      return <GithubLoginButton text={text} align={"center"} />
+      return <GithubLoginButton text={text} align={"left"} />
     } else if (type === "Google") {
-      return <GoogleLoginButton text={text} align={"center"} />
+      return <GoogleLoginButton text={text} align={"left"} />
     } else if (type === "QQ") {
-      return <QqLoginButton text={text} align={"center"} />
+      return <QqLoginButton text={text} align={"left"} />
+    } else if (type === "Facebook") {
+      return <FacebookLoginButton text={text} align={"left"} />
+    } else if (type === "Weibo") {
+      return <WeiboLoginButton text={text} align={"left"} />
+    } else if (type === "Gitee") {
+      return <GiteeLoginButton text={text} align={"left"} />
+    } else if (type === "WeChat") {
+      return <WechatLoginButton text={text} align={"left"} />
+    } else if (type === "DingTalk") {
+      return <DingTalkLoginButton text={text} align={"left"} />
     } else {
       return text;
     }
