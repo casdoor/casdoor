@@ -128,7 +128,7 @@ class UserEditPage extends React.Component {
     return this.state.user.properties[key]
   }
 
-  renderIdp(provider) {
+  renderIdp(providerItem, provider) {
     const linkedValue = this.state.user[provider.type.toLowerCase()];
     const profileUrl = this.getProviderLink(provider);
     const id = this.getUserProperty(provider.type, "id");
@@ -187,7 +187,7 @@ class UserEditPage extends React.Component {
                 <Button style={{marginLeft: '20px', width: '80px'}} type="primary">{i18next.t("user:Link")}</Button>
               </a>
             ) : (
-              <Button style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(provider.type)}>{i18next.t("user:Unlink")}</Button>
+              <Button disabled={!providerItem.canUnbind} style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(provider.type)}>{i18next.t("user:Unlink")}</Button>
             )
           }
         </Col>
@@ -344,7 +344,7 @@ class UserEditPage extends React.Component {
               <Col span={22} >
                 <div style={{marginBottom: 20}}>
                   {
-                    this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) => this.renderIdp(providerItem.provider))
+                    this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) => this.renderIdp(providerItem, providerItem.provider))
                   }
                 </div>
               </Col>
