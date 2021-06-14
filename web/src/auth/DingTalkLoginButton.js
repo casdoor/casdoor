@@ -12,16 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
-import LoginPage from "./LoginPage";
-import {authConfig} from "./Auth";
+import {createButton} from "react-social-login-buttons";
+import {StaticBaseUrl} from "../Setting";
 
-class SelfLoginPage extends React.Component {
-  render() {
-    return (
-      <LoginPage type={"login"} mode={"signin"} applicationName={authConfig.appName} account={this.props.account} {...this.props} />
-    )
-  }
+function Icon({ width = 24, height = 24, color }) {
+    return <img src={`${StaticBaseUrl}/buttons/dingtalk.svg`} />;
 }
 
-export default SelfLoginPage;
+const config = {
+    text: "Sign in with DingTalk",
+    icon: Icon,
+    iconFormat: name => `fa fa-${name}`,
+    style: {background: "#0191e0"},
+    activeStyle: {background: "rgb(76,143,208)"},
+};
+
+const DingTalkLoginButton = createButton(config);
+
+export default DingTalkLoginButton;

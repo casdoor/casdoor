@@ -162,15 +162,15 @@ class ApplicationListPage extends React.Component {
             <List
               size="small"
               dataSource={providers}
-              renderItem={(row, i) => {
+              renderItem={(providerItem, i) => {
                 return (
                   <List.Item>
                     <div style={{display: "inline"}}>
                       <Tooltip placement="topLeft" title="Edit">
-                        <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${row}`)} />
+                        <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${providerItem.name}`)} />
                       </Tooltip>
-                      <Link to={`/providers/${row}`}>
-                        {row}
+                      <Link to={`/providers/${providerItem.name}`}>
+                        {providerItem.name}
                       </Link>
                     </div>
                   </List.Item>

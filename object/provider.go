@@ -20,10 +20,12 @@ import (
 )
 
 type ProviderItem struct {
-	Name      string `json:"name"`
-	CanSignUp bool   `json:"canSignUp"`
-	CanSignIn bool   `json:"canSignIn"`
-	CanUnbind bool   `json:"canUnbind"`
+	Name      string    `json:"name"`
+	CanSignUp bool      `json:"canSignUp"`
+	CanSignIn bool      `json:"canSignIn"`
+	CanUnbind bool      `json:"canUnbind"`
+	AlertType string    `json:"alertType"`
+	Provider  *Provider `json:"provider"`
 }
 
 type Provider struct {
@@ -36,7 +38,6 @@ type Provider struct {
 	Type         string `xorm:"varchar(100)" json:"type"`
 	ClientId     string `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret string `xorm:"varchar(100)" json:"clientSecret"`
-	EnableSignUp bool   `json:"enableSignUp"`
 
 	Host    string `xorm:"varchar(100)" json:"host"`
 	Port    int    `json:"port"`

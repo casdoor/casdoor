@@ -12,16 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
-import LoginPage from "./LoginPage";
-import {authConfig} from "./Auth";
+import {createButton} from "react-social-login-buttons";
+import {StaticBaseUrl} from "../Setting";
 
-class SelfLoginPage extends React.Component {
-  render() {
-    return (
-      <LoginPage type={"login"} mode={"signin"} applicationName={authConfig.appName} account={this.props.account} {...this.props} />
-    )
-  }
+function Icon({ width = 24, height = 24, color }) {
+    return <img src={`${StaticBaseUrl}/buttons/weibo.svg`} />;
 }
 
-export default SelfLoginPage;
+const config = {
+    text: "Sign in with Weibo",
+    icon: Icon,
+    iconFormat: name => `fa fa-${name}`,
+    style: {background: "#e62329"},
+    activeStyle: {background: "#e54329"},
+};
+
+const WeiboLoginButton = createButton(config);
+
+export default WeiboLoginButton;

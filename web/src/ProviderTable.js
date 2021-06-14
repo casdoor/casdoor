@@ -38,7 +38,7 @@ class ProviderTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: "", canSignUp: false, canSignIn: true, canUnbind: true};
+    let row = {name: "Please select a provider", canSignUp: false, canSignIn: true, canUnbind: true, alertType: "None"};
     if (table === undefined) {
       table = [];
     }
@@ -73,9 +73,11 @@ class ProviderTable extends React.Component {
                     value={text}
                     onChange={value => {
                       this.updateField(table, index, 'name', value);
+                      const provider = this.props.providers.filter(provider => provider.name === value)[0];
+                      this.updateField(table, index, 'provider', provider);
                     }} >
               {
-                this.props.providers.map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
+                this.props.providers.filter(provider => table.filter(providerItem => providerItem.name === provider.name).length === 0).map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
               }
             </Select>
           )
@@ -122,6 +124,27 @@ class ProviderTable extends React.Component {
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'canUnbind', checked);
             }} />
+          )
+        }
+      },
+      {
+        title: i18next.t("provider:alertType"),
+        dataIndex: 'alertType',
+        key: 'alertType',
+        width: '120px',
+        render: (text, record, index) => {
+          return (
+            <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {
+              this.updateField(table, index, 'alertType', value);
+            })}>
+              {
+                [
+                  {id: 'None', name: 'None'},
+                  {id: 'Once', name: 'Once'},
+                  {id: 'Always', name: 'Always'},
+                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+              }
+            </Select>
           )
         }
       },

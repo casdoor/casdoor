@@ -179,6 +179,7 @@ func (c *ApiController) Login() {
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
+		providerItem := application.GetProviderItem(provider.Name)
 
 		idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
 		if idProvider == nil {
@@ -231,6 +232,8 @@ func (c *ApiController) Login() {
 			}
 
 			if user != nil {
+				// Sign in via OAuth
+
 				//if object.IsForbidden(userId) {
 				//	c.forbiddenAccountResp(userId)
 				//	return
@@ -243,50 +246,53 @@ func (c *ApiController) Login() {
 
 				resp = c.HandleLoggedIn(user, &form)
 			} else {
+				// Sign up via OAuth
+
 				//if userId := object.GetUserIdByField(application, "email", userInfo.Email); userId != "" {
 				//	resp = c.HandleLoggedIn(userId, &form)
 				//
 				//	object.LinkUserAccount(userId, provider.Type, userInfo.Id)
 				//}
 
-				// sign up via OAuth
-				properties := map[string]string{}
-				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
-				if provider.EnableSignUp {
-					user := &object.User{
-						Owner:         application.Organization,
-						Name:          userInfo.Username,
-						CreatedTime:   util.GetCurrentTime(),
-						Id:            util.GenerateId(),
-						Type:          "normal-user",
-						DisplayName:   userInfo.DisplayName,
-						Avatar:        userInfo.AvatarUrl,
-						Email:         userInfo.Email,
-						Score:         200,
-						IsAdmin:       false,
-						IsGlobalAdmin: false,
-						IsForbidden:   false,
-						Properties:    properties,
-					}
-					object.AddUser(user)
-
-					// sync info from 3rd-party if possible
-					object.SetUserOAuthProperties(user, provider.Type, userInfo)
-
-					object.LinkUserAccount(user, provider.Type, userInfo.Id)
-
-					resp = c.HandleLoggedIn(user, &form)
-				} else if !application.EnableSignUp {
-					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username)}
-					c.Data["json"] = resp
-					c.ServeJSON()
-					return
-				} else {
-					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s does not exist, please create an account first", provider.Type, userInfo.Username)}
+				if !application.EnableSignUp {
+					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username, userInfo.DisplayName)}
 					c.Data["json"] = resp
 					c.ServeJSON()
 					return
 				}
+
+				if !providerItem.CanSignUp {
+					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up", provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type)}
+					c.Data["json"] = resp
+					c.ServeJSON()
+					return
+				}
+
+				properties := map[string]string{}
+				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
+				user := &object.User{
+					Owner:         application.Organization,
+					Name:          userInfo.Username,
+					CreatedTime:   util.GetCurrentTime(),
+					Id:            util.GenerateId(),
+					Type:          "normal-user",
+					DisplayName:   userInfo.DisplayName,
+					Avatar:        userInfo.AvatarUrl,
+					Email:         userInfo.Email,
+					Score:         200,
+					IsAdmin:       false,
+					IsGlobalAdmin: false,
+					IsForbidden:   false,
+					Properties:    properties,
+				}
+				object.AddUser(user)
+
+				// sync info from 3rd-party if possible
+				object.SetUserOAuthProperties(user, provider.Type, userInfo)
+
+				object.LinkUserAccount(user, provider.Type, userInfo.Id)
+
+				resp = c.HandleLoggedIn(user, &form)
 			}
 			//resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"

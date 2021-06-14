@@ -38,24 +38,36 @@ function isLocalhost() {
   return hostname === "localhost";
 }
 
-export function isProviderVisible(provider) {
-  if (provider.type !== "GitHub") {
+export function isProviderVisible(providerItem) {
+  if (providerItem.provider === undefined || providerItem.provider === null) {
+    return false;
+  }
+
+  if (providerItem.provider.type !== "GitHub") {
     return true;
   }
 
   if (isLocalhost()) {
-    return provider.name.includes("localhost");
+    return providerItem.provider.name.includes("localhost");
   } else {
-    return !provider.name.includes("localhost");
+    return !providerItem.provider.name.includes("localhost");
   }
 }
 
-export function isProviderVisibleForSignUp(provider) {
-  if (provider.enableSignUp === false) {
+export function isProviderVisibleForSignUp(providerItem) {
+  if (providerItem.canSignUp === false) {
     return false;
   }
 
-  return isProviderVisible(provider);
+  return isProviderVisible(providerItem);
+}
+
+export function isProviderVisibleForSignIn(providerItem) {
+  if (providerItem.canSignIn === false) {
+    return false;
+  }
+
+  return isProviderVisible(providerItem);
 }
 
 export function parseJson(s) {
@@ -250,15 +262,31 @@ export function goToLogin(ths, application) {
     return;
   }
 
+  if (!application.enablePassword && window.location.pathname.includes("/signup/oauth/authorize")) {
+    const link = window.location.href.replace("/signup/oauth/authorize", "/login/oauth/authorize");
+    goToLink(link);
+    return;
+  }
+
   if (authConfig.appName === application.name) {
     goToLinkSoft(ths, "/login");
   } else {
-    goToLink(`${application.homepageUrl}/login`);
+    if (application.signinUrl === "") {
+      goToLink(`${application.homepageUrl}/login`);
+    } else {
+      goToLink(application.signinUrl);
+    }
   }
 }
 
 export function goToSignup(ths, application) {
   if (application === null) {
+    return;
+  }
+
+  if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
+    const link = window.location.href.replace("/login/oauth/authorize", "/signup/oauth/authorize");
+    goToLink(link);
     return;
   }
 
