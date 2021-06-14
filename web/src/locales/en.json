@@ -11,6 +11,8 @@
     "Action": "Action",
     "Edit": "Edit",
     "Delete": "Delete",
+    "Up": "Up",
+    "Down": "Down",
     "Organization": "Organization",
     "Created time": "Created time",
     "Name": "Name",
@@ -174,7 +176,9 @@
     "Enable password": "Enable password",
     "Login page preview": "Login page preview",
     "Test signup page..": "Test signup page..",
-    "Test signin page..": "Test signin page.."
+    "Test signin page..": "Test signin page..",
+    "Redirect URL": "Redirect URL",
+    "Redirect URLs": "Redirect URLs"
   },
   "forget":
   {
