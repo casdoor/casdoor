@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Checkbox, Col, Form, Input, Row} from "antd";
+import {Link} from "react-router-dom";
+import {Button, Checkbox, Col, Form, Input, Result, Row} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
@@ -32,6 +33,7 @@ class LoginPage extends React.Component {
       type: props.type,
       applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
+      mode: props.mode !== undefined ? props.mode : (props.match === undefined ? null : props.match.params.mode), // "signup" or "signin"
       msg: null,
     };
   }
@@ -139,9 +141,37 @@ class LoginPage extends React.Component {
     }
   }
 
+  isProviderVisible(providerItem) {
+    if (this.state.mode === "signup") {
+      return Setting.isProviderVisibleForSignUp(providerItem);
+    } else {
+      return Setting.isProviderVisibleForSignIn(providerItem);
+    }
+  }
+
   renderForm(application) {
     if (this.state.msg !== null) {
       return Util.renderMessage(this.state.msg)
+    }
+
+    if (this.state.mode === "signup" && !application.enableSignUp) {
+      return (
+        <Result
+          status="error"
+          title="Sign Up Error"
+          subTitle={"The application does not allow to sign up new account"}
+          extra={[
+            <Link onClick={() => {
+              Setting.goToLogin(this, application);
+            }}>
+              <Button type="primary" key="signin">
+                Sign In
+              </Button>
+            </Link>
+          ]}
+        >
+        </Result>
+      )
     }
 
     if (application.enablePassword) {
@@ -210,21 +240,12 @@ class LoginPage extends React.Component {
               {i18next.t("login:Sign In")}
             </Button>
             {
-              !application.enableSignUp ? null : (
-                <div style={{float: "right"}}>
-                  {i18next.t("login:No account yet?")}&nbsp;
-                  <a onClick={() => {
-                    Setting.goToSignup(this, application);
-                  }}>
-                    {i18next.t("login:sign up now")}
-                  </a>
-                </div>
-              )
+              !application.enableSignUp ? null : this.renderFooter(application)
             }
           </Form.Item>
           <Form.Item>
             {
-              application.providers.filter(providerItem => Setting.isProviderVisibleForSignIn(providerItem)).map(providerItem => {
+              application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
                 return this.renderProviderLogo(providerItem.provider, application, 30, 5, "small");
               })
             }
@@ -245,7 +266,7 @@ class LoginPage extends React.Component {
           </div>
           <br/>
           {
-            application.providers.filter(providerItem => Setting.isProviderVisibleForSignIn(providerItem)).map(providerItem => {
+            application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
               return this.renderProviderLogo(providerItem.provider, application, 40, 10, "big");
             })
           }
@@ -253,17 +274,38 @@ class LoginPage extends React.Component {
             !application.enableSignUp ? null : (
               <div>
                 <br/>
-                <div style={{float: "right"}}>
-                  {i18next.t("login:No account yet?")}&nbsp;
-                  <a onClick={() => {
-                    Setting.goToSignup(this, application);
-                  }}>
-                    {i18next.t("login:sign up now")}
-                  </a>
-                </div>
+                {
+                  this.renderFooter(application)
+                }
               </div>
             )
           }
+        </div>
+      )
+    }
+  }
+
+  renderFooter(application) {
+    if (this.state.mode === "signup") {
+      return (
+        <div style={{float: "right"}}>
+          {i18next.t("signup:Have account?")}&nbsp;
+          <Link onClick={() => {
+            Setting.goToLogin(this, application);
+          }}>
+            {i18next.t("signup:sign in now")}
+          </Link>
+        </div>
+      )
+    } else {
+      return (
+        <div style={{float: "right"}}>
+          {i18next.t("login:No account yet?")}&nbsp;
+          <a onClick={() => {
+            Setting.goToSignup(this, application);
+          }}>
+            {i18next.t("login:sign up now")}
+          </a>
         </div>
       )
     }

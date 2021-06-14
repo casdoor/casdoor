@@ -285,28 +285,50 @@ class ApplicationEditPage extends React.Component {
           <Col style={{marginTop: '5px'}} span={2}>
             {i18next.t("general:Preview")}:
           </Col>
-          <Col span={11} >
-            <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={`/signup/${this.state.application.name}`}>
-              <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
-            </a>
-            <br/>
-            <br/>
-            <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888"}}>
-              <SignupPage application={this.state.application} />
-            </div>
-          </Col>
-          <Col span={11} >
-            <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={`/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`}>
-              <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
-            </a>
-            <br/>
-            <br/>
-            <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888"}}>
-              <LoginPage type={"login"} application={this.state.application} />
-            </div>
-          </Col>
+          {
+            this.renderPreview()
+          }
         </Row>
       </Card>
+    )
+  }
+
+  renderPreview() {
+    let signUpUrl = `/signup/${this.state.application.name}`;
+    let signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
+    if (!this.state.application.enablePassword) {
+      signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");
+    }
+
+    return (
+      <React.Fragment>
+        <Col span={11} >
+          <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={signUpUrl}>
+            <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
+          </a>
+          <br/>
+          <br/>
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888"}}>
+            {
+              this.state.application.enablePassword ? (
+                <SignupPage application={this.state.application} />
+              ) : (
+                <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
+              )
+            }
+          </div>
+        </Col>
+        <Col span={11} >
+          <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={signInUrl}>
+            <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
+          </a>
+          <br/>
+          <br/>
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888"}}>
+            <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
+          </div>
+        </Col>
+      </React.Fragment>
     )
   }
 
