@@ -19,6 +19,7 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import SignupPage from "./auth/SignupPage";
 import LoginPage from "./auth/LoginPage";
 import i18next from "i18next";
 import UrlTable from "./UrlTable";
@@ -284,17 +285,25 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("application:Login page preview")}:
+            {i18next.t("general:Preview")}:
           </Col>
-          <Col span={22} >
-            <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={`/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`}>
-              {
-                `${window.location.host}/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`
-              }
+          <Col span={11} >
+            <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={`/signup/${this.state.application.name}`}>
+              <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
             </a>
             <br/>
             <br/>
-            <div style={{width: "500px", height: "600px", border: "1px solid rgb(217,217,217)"}}>
+            <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888"}}>
+              <SignupPage application={this.state.application} />
+            </div>
+          </Col>
+          <Col span={11} >
+            <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={`/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`}>
+              <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
+            </a>
+            <br/>
+            <br/>
+            <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888"}}>
               <LoginPage type={"login"} application={this.state.application} />
             </div>
           </Col>
