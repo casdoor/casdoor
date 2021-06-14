@@ -16,17 +16,17 @@ import {createButton} from "react-social-login-buttons";
 import {StaticBaseUrl} from "../Setting";
 
 function Icon({ width = 24, height = 24, color }) {
-    return <img src={`${StaticBaseUrl}/buttons/wechat.svg`} />;
+    return <img src={`${StaticBaseUrl}/buttons/google.svg`} />;
 }
 
 const config = {
-    text: "Sign in with Wechat",
+    text: "Sign in with Google",
     icon: Icon,
     iconFormat: name => `fa fa-${name}`,
-    style: {background: "#06d30a"},
-    activeStyle: {background: "#05c109"},
+    style: {background: "#ffffff", color: "#000000"},
+    activeStyle: {background: "#eff0ee"},
 };
 
-const WechatLoginButton = createButton(config);
+const GoogleLoginButton = createButton(config);
 
-export default WechatLoginButton;
+export default GoogleLoginButton;
