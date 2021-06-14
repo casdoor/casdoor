@@ -1,6 +1,5 @@
 import React from "react";
 import {Cascader, Col, Input, Row, Select} from 'antd';
-import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 

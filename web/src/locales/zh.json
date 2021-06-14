@@ -8,9 +8,11 @@
     "Applications": "应用",
     "Save": "保存",
     "Add": "添加",
-    "Action": "行为",
+    "Action": "操作",
     "Edit": "修改",
     "Delete": "删除",
+    "Up": "上移",
+    "Down": "下移",
     "Organization": "组织",
     "Created time": "创建时间",
     "Name": "名称",
@@ -174,7 +176,9 @@
     "Enable password": "开启密码",
     "Login page preview": "登录页面预览",
     "Test signup page..": "测试注册页面..",
-    "Test signin page..": "测试登录页面.."
+    "Test signin page..": "测试登录页面..",
+    "Redirect URL": "回调URL",
+    "Redirect URLs": "回调URLs"
   },
   "forget":
   {

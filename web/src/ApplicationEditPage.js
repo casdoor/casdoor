@@ -201,7 +201,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <UrlTable
-              title="Redirect URLs"
+              title={i18next.t("application:Redirect URLs")}
               table={this.state.application.redirectUris}
               onUpdateTable={(value) => { this.updateApplicationField('redirectUris', value)}}
             />
