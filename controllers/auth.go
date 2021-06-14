@@ -232,8 +232,6 @@ func (c *ApiController) Login() {
 			}
 
 			if user != nil {
-				// Sign in via OAuth
-
 				//if object.IsForbidden(userId) {
 				//	c.forbiddenAccountResp(userId)
 				//	return
@@ -246,8 +244,6 @@ func (c *ApiController) Login() {
 
 				resp = c.HandleLoggedIn(user, &form)
 			} else {
-				// Sign up via OAuth
-
 				//if userId := object.GetUserIdByField(application, "email", userInfo.Email); userId != "" {
 				//	resp = c.HandleLoggedIn(userId, &form)
 				//
@@ -263,16 +259,15 @@ func (c *ApiController) Login() {
 
 				if !providerItem.CanSignUp {
 					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up", provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type)}
-					c.Data["json"] = resp
-					c.ServeJSON()
-					return
 				}
 
+				// sign up via OAuth
 				properties := map[string]string{}
 				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
+				
 				user := &object.User{
 					Owner:         application.Organization,
-					Name:          userInfo.Username,
+					Name:          strings.Replace(strings.ToLower(userInfo.DisplayName), " ", "_", -1),
 					CreatedTime:   util.GetCurrentTime(),
 					Id:            util.GenerateId(),
 					Type:          "normal-user",
@@ -293,6 +288,12 @@ func (c *ApiController) Login() {
 				object.LinkUserAccount(user, provider.Type, userInfo.Id)
 
 				resp = c.HandleLoggedIn(user, &form)
+				//Result part of data for protect user info
+				providerSignupUserinfo := &object.User{
+					Owner: user.Owner,
+					Name:  user.Name,
+				}
+				resp.Data2 = providerSignupUserinfo
 			}
 			//resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"

@@ -50,6 +50,9 @@ type RequestForm struct {
 	EmailCode   string `json:"emailCode"`
 	PhoneCode   string `json:"phoneCode"`
 	PhonePrefix string `json:"phonePrefix"`
+
+	WithProvider bool   `json:"withProvider"`
+	Avatar       string `json:"avatar"`
 }
 
 type Response struct {
@@ -115,7 +118,29 @@ func (c *ApiController) Signup() {
 	userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
 	msg := object.CheckUserSignup(form.Organization, form.Username, form.Password, form.Name, form.Email, form.Phone, form.Affiliation)
 	if msg != "" {
-		resp = Response{Status: "error", Msg: msg, Data: ""}
+		if form.WithProvider {
+			user := &object.User{
+				Owner:       form.Organization,
+				Name:        form.Username,
+				DisplayName: form.Name,
+				Avatar:      form.Avatar,
+				Password:    form.Password,
+				Email:       form.Email,
+				Phone:       form.Phone,
+				Affiliation: form.Affiliation,
+			}
+			user.UpdateUserHash()
+			user.PreHash = user.Hash
+
+			object.UpdateUserForOriginal(user)
+
+			object.DisableVerificationCode(form.Email)
+			object.DisableVerificationCode(checkPhone)
+			util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
+			resp = Response{Status: "ok", Msg: "", Data: userId}
+		} else {
+			resp = Response{Status: "error", Msg: msg, Data: ""}
+		}
 	} else {
 		user := &object.User{
 			Owner:         form.Organization,

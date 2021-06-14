@@ -19,6 +19,7 @@ import * as AuthBackend from "./AuthBackend";
 import * as Util from "./Util";
 import {authConfig} from "./Auth";
 import * as Setting from "../Setting";
+import * as Provider from "./Provider";
 
 class AuthCallback extends React.Component {
   constructor(props) {
@@ -98,7 +99,14 @@ class AuthCallback extends React.Component {
             Setting.goToLink("/");
           } else if (responseType === "code") {
             const code = res.data;
-            Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+            const userInfo = res.data2;
+            //If result userId, redirect to signuo with provider to complete user info
+            if (userInfo) {
+              Setting.goToLink(`/signup/${applicationName}?redirect_url=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}&owner=${userInfo.owner}&user=${userInfo.name}`);
+            } else {
+              Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+            }
+
             // Util.showMessage("success", `Authorization code: ${res.data}`);
           } else if (responseType === "link") {
             const from = innerParams.get("from");
