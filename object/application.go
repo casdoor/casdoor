@@ -24,16 +24,15 @@ type Application struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName     string         `xorm:"varchar(100)" json:"displayName"`
-	Logo            string         `xorm:"varchar(100)" json:"logo"`
-	HomepageUrl     string         `xorm:"varchar(100)" json:"homepageUrl"`
-	Description     string         `xorm:"varchar(100)" json:"description"`
-	Organization    string         `xorm:"varchar(100)" json:"organization"`
-	EnablePassword  bool           `json:"enablePassword"`
-	EnableSignUp    bool           `json:"enableSignUp"`
-	Providers       []ProviderItem `xorm:"varchar(1000)" json:"providers"`
-	ProviderObjs    []*Provider    `xorm:"-" json:"providerObjs"`
-	OrganizationObj *Organization  `xorm:"-" json:"organizationObj"`
+	DisplayName     string          `xorm:"varchar(100)" json:"displayName"`
+	Logo            string          `xorm:"varchar(100)" json:"logo"`
+	HomepageUrl     string          `xorm:"varchar(100)" json:"homepageUrl"`
+	Description     string          `xorm:"varchar(100)" json:"description"`
+	Organization    string          `xorm:"varchar(100)" json:"organization"`
+	EnablePassword  bool            `json:"enablePassword"`
+	EnableSignUp    bool            `json:"enableSignUp"`
+	Providers       []*ProviderItem `xorm:"varchar(1000)" json:"providers"`
+	OrganizationObj *Organization   `xorm:"-" json:"organizationObj"`
 
 	ClientId       string   `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret   string   `xorm:"varchar(100)" json:"clientSecret"`
@@ -54,8 +53,17 @@ func GetApplications(owner string) []*Application {
 	return applications
 }
 
-func extendApplicationWithProviders(application *Application) {
-	providers := GetProviders(application.Owner)
+func (application *Application) GetProviderItem(providerName string) *ProviderItem {
+	for _, providerItem := range application.Providers {
+		if providerItem.Name == providerName {
+			return providerItem
+		}
+	}
+	return nil
+}
+
+func getProviderMap(owner string) map[string]*Provider {
+	providers := GetProviders(owner)
 	m := map[string]*Provider{}
 	for _, provider := range providers {
 		if provider.Category != "OAuth" {
@@ -66,11 +74,14 @@ func extendApplicationWithProviders(application *Application) {
 		provider.ProviderUrl = ""
 		m[provider.Name] = provider
 	}
+	return m
+}
 
-	application.ProviderObjs = []*Provider{}
+func extendApplicationWithProviders(application *Application) {
+	m := getProviderMap(application.Owner)
 	for _, providerItem := range application.Providers {
 		if provider, ok := m[providerItem.Name]; ok {
-			application.ProviderObjs = append(application.ProviderObjs, provider)
+			providerItem.Provider = provider
 		}
 	}
 }
@@ -143,6 +154,10 @@ func UpdateApplication(id string, application *Application) bool {
 		return false
 	}
 
+	for _, providerItem := range application.Providers {
+		providerItem.Provider = nil
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(application)
 	if err != nil {
 		panic(err)
@@ -154,6 +169,9 @@ func UpdateApplication(id string, application *Application) bool {
 func AddApplication(application *Application) bool {
 	application.ClientId = util.GenerateClientId()
 	application.ClientSecret = util.GenerateClientSecret()
+	for _, providerItem := range application.Providers {
+		providerItem.Provider = nil
+	}
 
 	affected, err := adapter.Engine.Insert(application)
 	if err != nil {

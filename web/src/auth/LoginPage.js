@@ -224,8 +224,8 @@ class LoginPage extends React.Component {
           </Form.Item>
           <Form.Item>
             {
-              application.providerObjs.filter(provider => Setting.isProviderVisibleForSignUp(provider)).map(provider => {
-                return this.renderProviderLogo(provider, application, 30, 5, "small");
+              application.providers.filter(providerItem => Setting.isProviderVisibleForSignIn(providerItem)).map(providerItem => {
+                return this.renderProviderLogo(providerItem.provider, application, 30, 5, "small");
               })
             }
           </Form.Item>
@@ -245,8 +245,8 @@ class LoginPage extends React.Component {
           </div>
           <br/>
           {
-            application.providerObjs.filter(provider => Setting.isProviderVisibleForSignUp(provider)).map(provider => {
-              return this.renderProviderLogo(provider, application, 40, 10, "big");
+            application.providers.filter(providerItem => Setting.isProviderVisibleForSignIn(providerItem)).map(providerItem => {
+              return this.renderProviderLogo(providerItem.provider, application, 40, 10, "big");
             })
           }
           {

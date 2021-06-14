@@ -38,24 +38,36 @@ function isLocalhost() {
   return hostname === "localhost";
 }
 
-export function isProviderVisible(provider) {
-  if (provider.type !== "GitHub") {
+export function isProviderVisible(providerItem) {
+  if (providerItem.provider === undefined || providerItem.provider === null) {
+    return false;
+  }
+
+  if (providerItem.provider.type !== "GitHub") {
     return true;
   }
 
   if (isLocalhost()) {
-    return provider.name.includes("localhost");
+    return providerItem.provider.name.includes("localhost");
   } else {
-    return !provider.name.includes("localhost");
+    return !providerItem.provider.name.includes("localhost");
   }
 }
 
-export function isProviderVisibleForSignUp(provider) {
-  if (provider.enableSignUp === false) {
+export function isProviderVisibleForSignUp(providerItem) {
+  if (providerItem.canSignUp === false) {
     return false;
   }
 
-  return isProviderVisible(provider);
+  return isProviderVisible(providerItem);
+}
+
+export function isProviderVisibleForSignIn(providerItem) {
+  if (providerItem.canSignIn === false) {
+    return false;
+  }
+
+  return isProviderVisible(providerItem);
 }
 
 export function parseJson(s) {

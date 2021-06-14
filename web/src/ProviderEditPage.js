@@ -179,16 +179,6 @@ class ProviderEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("application:Enable signup")}:
-          </Col>
-          <Col span={1} >
-            <Switch checked={this.state.provider.enableSignUp} onChange={checked => {
-              this.updateProviderField('enableSignUp', checked);
-            }} />
-          </Col>
-        </Row>
         {
           this.state.provider.category === "Email" ? (
             <React.Fragment>
