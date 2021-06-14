@@ -113,6 +113,39 @@ func (idp *GiteeIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	return token, nil
 }
 
+/*
+{
+    "id": 999999,
+    "login": "xxx",
+    "name": "xxx",
+    "avatar_url": "https://gitee.com/assets/no_portrait.png",
+    "url": "https://gitee.com/api/v5/users/xxx",
+    "html_url": "https://gitee.com/xxx",
+    "followers_url": "https://gitee.com/api/v5/users/xxx/followers",
+    "following_url": "https://gitee.com/api/v5/users/xxx/following_url{/other_user}",
+    "gists_url": "https://gitee.com/api/v5/users/xxx/gists{/gist_id}",
+    "starred_url": "https://gitee.com/api/v5/users/xxx/starred{/owner}{/repo}",
+    "subscriptions_url": "https://gitee.com/api/v5/users/xxx/subscriptions",
+    "organizations_url": "https://gitee.com/api/v5/users/xxx/orgs",
+    "repos_url": "https://gitee.com/api/v5/users/xxx/repos",
+    "events_url": "https://gitee.com/api/v5/users/xxx/events{/privacy}",
+    "received_events_url": "https://gitee.com/api/v5/users/xxx/received_events",
+    "type": "User",
+    "blog": null,
+    "weibo": null,
+    "bio": "个人博客：https://gitee.com/xxx/xxx/pages",
+    "public_repos": 2,
+    "public_gists": 0,
+    "followers": 0,
+    "following": 0,
+    "stared": 0,
+    "watched": 2,
+    "created_at": "2019-08-03T23:21:16+08:00",
+    "updated_at": "2021-06-14T12:47:09+08:00",
+    "email": null
+}
+*/
+
 type GiteeUserResponse struct {
 	AvatarUrl         string `json:"avatar_url"`
 	Bio               string `json:"bio"`
