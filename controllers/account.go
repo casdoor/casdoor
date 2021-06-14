@@ -121,8 +121,8 @@ func (c *ApiController) Signup() {
 		if form.WithProvider {
 			user := &object.User{
 				Owner:       form.Organization,
-				Name:        form.Username,
-				DisplayName: form.Name,
+				Name:        strings.ReplaceAll(strings.ToLower(form.Username), " ", "_"),
+				DisplayName: form.Username,
 				Avatar:      form.Avatar,
 				Password:    form.Password,
 				Email:       form.Email,
@@ -137,7 +137,7 @@ func (c *ApiController) Signup() {
 			object.DisableVerificationCode(form.Email)
 			object.DisableVerificationCode(checkPhone)
 			util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
-			resp = Response{Status: "ok", Msg: "", Data: userId}
+			resp = Response{Status: "ok", Msg: "", Data: userId, Data2: object.User{Name: user.DisplayName, Owner: user.Owner}}
 		} else {
 			resp = Response{Status: "error", Msg: msg, Data: ""}
 		}

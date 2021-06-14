@@ -100,7 +100,7 @@ class AuthCallback extends React.Component {
           } else if (responseType === "code") {
             const code = res.data;
             const userInfo = res.data2;
-            //If result userId, redirect to signuo with provider to complete user info
+            //If result userId, redirect to signup with provider to complete user info
             if (userInfo) {
               Setting.goToLink(`/signup/${applicationName}?redirect_url=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}&owner=${userInfo.owner}&user=${userInfo.name}`);
             } else {
