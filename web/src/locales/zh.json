@@ -33,7 +33,8 @@
     "Applications that requires authentication": "需要鉴权的应用",
     "Swagger": "API总览",
     "Phone Prefix": "手机号前缀",
-    "Enter the code": "输入验证码"
+    "Enter the code": "输入验证码",
+    "Click to copy to clipboard": "点击以复制到剪切板"
   },
   "signup":
   {

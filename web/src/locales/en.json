@@ -33,7 +33,8 @@
     "Applications that requires authentication": "Applications that requires authentication",
     "Swagger": "Swagger",
     "Phone Prefix": "Phone Prefix",
-    "Enter the code": "Enter the code"
+    "Enter the code": "Enter the code",
+    "Click to copy to clipboard": "Click to copy to clipboard"
   },
   "signup":
   {

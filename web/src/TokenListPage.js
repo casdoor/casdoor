@@ -36,6 +36,9 @@ class TokenListPage extends React.Component {
   getTokens() {
     TokenBackend.getTokens("admin")
       .then((res) => {
+        res.forEach((token) => {
+          token.tokenAbs = token.accessToken.substr(0,20)
+        })
         this.setState({
           tokens: res,
         });
@@ -158,19 +161,20 @@ class TokenListPage extends React.Component {
         key: 'code',
         // width: '150px',
         sorter: (a, b) => a.code.localeCompare(b.code),
+        ellipsis: true,
         render: (text, record, index) => {
           return Setting.getClickable(text);
         }
       },
       {
         title: i18next.t("token:Access token"),
-        dataIndex: 'accessToken',
-        key: 'accessToken',
+        dataIndex: 'tokenAbs',
+        key: 'tokenAbs',
         // width: '150px',
         sorter: (a, b) => a.accessToken.localeCompare(b.accessToken),
         ellipsis: true,
         render: (text, record, index) => {
-          return Setting.getClickable(text);
+          return Setting.getClickable(record.accessToken, text);
         }
       },
       {

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {message} from "antd";
+import {message, Tooltip} from "antd";
 import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -207,15 +207,20 @@ export function changeLanguage(language) {
   window.location.reload(true);
 }
 
-export function getClickable(text) {
+export function getClickable(text, display) {
+  if (!display) {
+    display = text;
+  }
   return (
     // eslint-disable-next-line jsx-a11y/anchor-is-valid
-    <a onClick={() => {
-      copy(text);
-      showMessage("success", `Copied to clipboard`);
-    }}>
-      {text}
-    </a>
+    <Tooltip placement="top" title={i18next.t("general:Click to copy to clipboard")}>
+      <a onClick={() => {
+        copy(text);
+        showMessage("success", `Copied to clipboard`);
+      }}>
+        {display}
+      </a>
+    </Tooltip>
   )
 }
 
