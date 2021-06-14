@@ -21,9 +21,8 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Provider from "./Provider";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
+import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
 import FacebookLoginButton from "./FacebookLoginButton";
-import GitHubLoginButton from "./GitHubLoginButton";
-import GoogleLoginButton from "./GoogleLoginButton";
 import QqLoginButton from "./QqLoginButton";
 import DingTalkLoginButton from "./DingTalkLoginButton";
 import GiteeLoginButton from "./GiteeLoginButton";
@@ -117,21 +116,21 @@ class LoginPage extends React.Component {
   getSigninButton(type) {
     const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
     if (type === "GitHub") {
-      return <GitHubLoginButton text={text} align={"left"} />
+      return <GithubLoginButton text={text} align={"center"} />
     } else if (type === "Google") {
-      return <GoogleLoginButton text={text} align={"left"} />
+      return <GoogleLoginButton text={text} align={"center"} />
     } else if (type === "QQ") {
-      return <QqLoginButton text={text} align={"left"} />
+      return <QqLoginButton text={text} align={"center"} />
     } else if (type === "Facebook") {
-      return <FacebookLoginButton text={text} align={"left"} />
+      return <FacebookLoginButton text={text} align={"center"} />
     } else if (type === "Weibo") {
-      return <WeiboLoginButton text={text} align={"left"} />
+      return <WeiboLoginButton text={text} align={"center"} />
     } else if (type === "Gitee") {
-      return <GiteeLoginButton text={text} align={"left"} />
+      return <GiteeLoginButton text={text} align={"center"} />
     } else if (type === "WeChat") {
-      return <WechatLoginButton text={text} align={"left"} />
+      return <WechatLoginButton text={text} align={"center"} />
     } else if (type === "DingTalk") {
-      return <DingTalkLoginButton text={text} align={"left"} />
+      return <DingTalkLoginButton text={text} align={"center"} />
     } else {
       return text;
     }

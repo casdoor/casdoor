@@ -23,8 +23,8 @@ const config = {
     text: "Sign in with Gitee",
     icon: Icon,
     iconFormat: name => `fa fa-${name}`,
-    style: {background: "#c71d23"},
-    activeStyle: {background: "#f01130"},
+    style: {background: "rgb(199,29,35)"},
+    activeStyle: {background: "rgb(147,22,26)"},
 };
 
 const GiteeLoginButton = createButton(config);

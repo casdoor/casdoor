@@ -23,8 +23,8 @@ const config = {
     text: "Sign in with Wechat",
     icon: Icon,
     iconFormat: name => `fa fa-${name}`,
-    style: {background: "#06d30a"},
-    activeStyle: {background: "#05c109"},
+    style: {background: "rgb(0,194,80)"},
+    activeStyle: {background: "rgb(0,158,64)"},
 };
 
 const WechatLoginButton = createButton(config);
