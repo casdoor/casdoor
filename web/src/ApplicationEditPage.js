@@ -209,10 +209,10 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Expire in hours")}:
+            {i18next.t("general:Token expire")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.application.expireInHours} onChange={e => {
+            <Input style={{width: "150px"}} value={this.state.application.expireInHours} suffix="Hours" onChange={e => {
               this.updateApplicationField('expireInHours', e.target.value);
             }} />
           </Col>
