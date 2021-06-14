@@ -31,7 +31,7 @@ type Application struct {
 	Organization    string          `xorm:"varchar(100)" json:"organization"`
 	EnablePassword  bool            `json:"enablePassword"`
 	EnableSignUp    bool            `json:"enableSignUp"`
-	Providers       []*ProviderItem `xorm:"varchar(1000)" json:"providers"`
+	Providers       []*ProviderItem `xorm:"varchar(10000)" json:"providers"`
 	OrganizationObj *Organization   `xorm:"-" json:"organizationObj"`
 
 	ClientId       string   `xorm:"varchar(100)" json:"clientId"`
@@ -39,6 +39,7 @@ type Application struct {
 	RedirectUris   []string `xorm:"varchar(1000)" json:"redirectUris"`
 	ExpireInHours  int      `json:"expireInHours"`
 	SignupUrl      string   `xorm:"varchar(100)" json:"signupUrl"`
+	SigninUrl      string   `xorm:"varchar(100)" json:"signinUrl"`
 	ForgetUrl      string   `xorm:"varchar(100)" json:"forgetUrl"`
 	AffiliationUrl string   `xorm:"varchar(100)" json:"affiliationUrl"`
 }

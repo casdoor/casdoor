@@ -265,7 +265,11 @@ export function goToLogin(ths, application) {
   if (authConfig.appName === application.name) {
     goToLinkSoft(ths, "/login");
   } else {
-    goToLink(`${application.homepageUrl}/login`);
+    if (application.signinUrl === "") {
+      goToLink(`${application.homepageUrl}/login`);
+    } else {
+      goToLink(application.signinUrl);
+    }
   }
 }
 
