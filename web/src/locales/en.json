@@ -172,7 +172,9 @@
   {
     "Edit Application": "Edit Application",
     "Enable password": "Enable password",
-    "Login page preview": "Login page preview"
+    "Login page preview": "Login page preview",
+    "Test signup page..": "Test signup page..",
+    "Test signin page..": "Test signin page.."
   },
   "forget":
   {

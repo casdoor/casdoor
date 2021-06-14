@@ -61,7 +61,7 @@ class SignupPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      applicationName: props.match.params.applicationName !== undefined ? props.match.params.applicationName : authConfig.appName,
+      applicationName: props.match?.params.applicationName !== undefined ? props.match.params.applicationName : authConfig.appName,
       application: null,
       email: "",
       phone: "",
@@ -101,12 +101,21 @@ class SignupPage extends React.Component {
     }
   }
 
+  getApplicationObj() {
+    if (this.props.application !== undefined) {
+      return this.props.application;
+    } else {
+      return this.state.application;
+    }
+  }
+
   onFinish(values) {
-    values.phonePrefix = this.state.application?.organizationObj.phonePrefix;
+    const application = this.getApplicationObj();
+    values.phonePrefix = application.organizationObj.phonePrefix;
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === 'ok') {
-          Setting.goToLinkSoft(this, this.getResultPath(this.state.application));
+          Setting.goToLinkSoft(this, this.getResultPath(application));
         } else {
           Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
         }
@@ -240,7 +249,7 @@ class SignupPage extends React.Component {
           <CountDownInput
             defaultButtonText={i18next.t("signup:send code")}
             onButtonClick={UserBackend.sendCode}
-            onButtonClickArgs={[this.state.email, "email", this.state.application?.organizationObj.owner + "/" + this.state.application?.organizationObj.name]}
+            onButtonClickArgs={[this.state.email, "email", application?.organizationObj.owner + "/" + application?.organizationObj.name]}
             coolDownTime={60}
           />
         </Form.Item>
@@ -311,7 +320,7 @@ class SignupPage extends React.Component {
           <CountDownInput
             defaultButtonText={i18next.t("signup:send code")}
             onButtonClick={UserBackend.sendCode}
-            onButtonClickArgs={[this.state.phone, "phone", this.state.application?.organizationObj.owner + "/" + this.state.application?.organizationObj.name]}
+            onButtonClickArgs={[this.state.phone, "phone", application.organizationObj.owner + "/" + application.organizationObj.name]}
             coolDownTime={60}
           />
         </Form.Item>
@@ -339,7 +348,7 @@ class SignupPage extends React.Component {
   }
 
   render() {
-    const application = this.state.application;
+    const application = this.getApplicationObj();
     if (application === null) {
       return null;
     }

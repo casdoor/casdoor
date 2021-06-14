@@ -172,7 +172,9 @@
   {
     "Edit Application": "修改应用",
     "Enable password": "开启密码",
-    "Login page preview": "登录页面预览"
+    "Login page preview": "登录页面预览",
+    "Test signup page..": "测试注册页面..",
+    "Test signin page..": "测试登录页面.."
   },
   "forget":
   {
