@@ -14,7 +14,6 @@
 
 import React from "react";
 import {Alert, Button, message, Result} from "antd";
-import * as Setting from "../Setting";
 
 export function showMessage(type, text) {
   if (type === "success") {
@@ -55,12 +54,17 @@ export function renderMessageLarge(ths, msg) {
           title="There was a problem signing you in.."
           subTitle={msg}
           extra={[
-            <Button key="home" onClick={() => Setting.goToLinkSoft(ths, "/")}>
-              Home
+            <Button type="primary" key="back" onClick={() => {
+              window.history.go(-2);
+            }}>
+              Back
             </Button>,
-            <Button type="primary" key="signup" onClick={() => Setting.goToLinkSoft(ths, "/signup")}>
-              Sign Up
-            </Button>,
+            // <Button key="home" onClick={() => Setting.goToLinkSoft(ths, "/")}>
+            //   Home
+            // </Button>,
+            // <Button type="primary" key="signup" onClick={() => Setting.goToLinkSoft(ths, "/signup")}>
+            //   Sign Up
+            // </Button>,
           ]}
         >
         </Result>

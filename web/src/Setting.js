@@ -262,6 +262,12 @@ export function goToLogin(ths, application) {
     return;
   }
 
+  if (!application.enablePassword && window.location.pathname.includes("/signup/oauth/authorize")) {
+    const link = window.location.href.replace("/signup/oauth/authorize", "/login/oauth/authorize");
+    goToLink(link);
+    return;
+  }
+
   if (authConfig.appName === application.name) {
     goToLinkSoft(ths, "/login");
   } else {
@@ -275,6 +281,12 @@ export function goToLogin(ths, application) {
 
 export function goToSignup(ths, application) {
   if (application === null) {
+    return;
+  }
+
+  if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
+    const link = window.location.href.replace("/login/oauth/authorize", "/signup/oauth/authorize");
+    goToLink(link);
     return;
   }
 
