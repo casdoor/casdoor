@@ -52,6 +52,7 @@ type User struct {
 	Facebook string `xorm:"facebook varchar(100)" json:"facebook"`
 	DingTalk string `xorm:"dingtalk varchar(100)" json:"dingtalk"`
 	Weibo    string `xorm:"weibo varchar(100)" json:"weibo"`
+	Gitee    string `xorm:"gitee varchar(100)" json:"gitee"`
 
 	Properties map[string]string `json:"properties"`
 }

@@ -49,6 +49,8 @@ func GetIdProvider(providerType string, clientId string, clientSecret string, re
 		return NewDingTalkIdProvider(clientId, clientSecret, redirectUrl)
 	} else if providerType == "Weibo" {
 		return NewWeiBoIdProvider(clientId, clientSecret, redirectUrl)
+	} else if providerType == "Gitee" {
+		return NewGiteeIdProvider(clientId, clientSecret, redirectUrl)
 	}
 
 	return nil

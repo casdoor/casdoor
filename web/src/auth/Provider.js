@@ -43,6 +43,10 @@ const WeiboAuthScope = "email";
 const WeiboAuthUri = "https://api.weibo.com/oauth2/authorize";
 const WeiboAuthLogo = `${StaticBaseUrl}/img/social_weibo.png`;
 
+const GiteeAuthScope = "user_info emails";
+const GiteeAuthUri = "https://gitee.com/oauth/authorize";
+const GiteeAuthLogo = `${StaticBaseUrl}/img/social_gitee.png`;
+
 export function getAuthLogo(provider) {
   if (provider.type === "Google") {
     return GoogleAuthLogo;
@@ -58,6 +62,8 @@ export function getAuthLogo(provider) {
     return DingTalkAuthLogo;
   } else if (provider.type === "Weibo") {
     return WeiboAuthLogo;
+  } else if (provider.type === "Gitee") {
+    return GiteeAuthLogo;
   }
 }
 
@@ -82,5 +88,7 @@ export function getAuthUrl(application, provider, method) {
     return `${DingTalkAuthUri}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=snsapi_login&response_type=code&state=${state}`;
   } else if (provider.type === "Weibo") {
     return `${WeiboAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${WeiboAuthScope}&response_type=code&state=${state}`;
+  } else if (provider.type === "Gitee") {
+    return `${GiteeAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GiteeAuthScope}&response_type=code&state=${state}`;
   }
 }
