@@ -24,16 +24,16 @@ type Application struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName     string        `xorm:"varchar(100)" json:"displayName"`
-	Logo            string        `xorm:"varchar(100)" json:"logo"`
-	HomepageUrl     string        `xorm:"varchar(100)" json:"homepageUrl"`
-	Description     string        `xorm:"varchar(100)" json:"description"`
-	Organization    string        `xorm:"varchar(100)" json:"organization"`
-	EnablePassword  bool          `json:"enablePassword"`
-	EnableSignUp    bool          `json:"enableSignUp"`
-	Providers       []string      `xorm:"varchar(1000)" json:"providers"`
-	ProviderObjs    []*Provider   `xorm:"-" json:"providerObjs"`
-	OrganizationObj *Organization `xorm:"-" json:"organizationObj"`
+	DisplayName     string         `xorm:"varchar(100)" json:"displayName"`
+	Logo            string         `xorm:"varchar(100)" json:"logo"`
+	HomepageUrl     string         `xorm:"varchar(100)" json:"homepageUrl"`
+	Description     string         `xorm:"varchar(100)" json:"description"`
+	Organization    string         `xorm:"varchar(100)" json:"organization"`
+	EnablePassword  bool           `json:"enablePassword"`
+	EnableSignUp    bool           `json:"enableSignUp"`
+	Providers       []ProviderItem `xorm:"varchar(1000)" json:"providers"`
+	ProviderObjs    []*Provider    `xorm:"-" json:"providerObjs"`
+	OrganizationObj *Organization  `xorm:"-" json:"organizationObj"`
 
 	ClientId       string   `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret   string   `xorm:"varchar(100)" json:"clientSecret"`
@@ -68,8 +68,8 @@ func extendApplicationWithProviders(application *Application) {
 	}
 
 	application.ProviderObjs = []*Provider{}
-	for _, providerName := range application.Providers {
-		if provider, ok := m[providerName]; ok {
+	for _, providerItem := range application.Providers {
+		if provider, ok := m[providerItem.Name]; ok {
 			application.ProviderObjs = append(application.ProviderObjs, provider)
 		}
 	}
@@ -183,8 +183,8 @@ func (application *Application) getProviderByCategory(category string) *Provider
 		m[provider.Name] = provider
 	}
 
-	for _, providerName := range application.Providers {
-		if provider, ok := m[providerName]; ok {
+	for _, providerItem := range application.Providers {
+		if provider, ok := m[providerItem.Name]; ok {
 			return provider
 		}
 	}

@@ -19,6 +19,13 @@ import (
 	"xorm.io/core"
 )
 
+type ProviderItem struct {
+	Name      string `json:"name"`
+	CanSignUp bool   `json:"canSignUp"`
+	CanSignIn bool   `json:"canSignIn"`
+	CanUnbind bool   `json:"canUnbind"`
+}
+
 type Provider struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`

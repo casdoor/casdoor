@@ -23,6 +23,7 @@ import SignupPage from "./auth/SignupPage";
 import LoginPage from "./auth/LoginPage";
 import i18next from "i18next";
 import UrlTable from "./UrlTable";
+import ProviderTable from "./ProviderTable";
 
 const { Option } = Select;
 
@@ -272,15 +273,12 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("general:Providers")}:
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: '100%'}}
-                    value={this.state.application.providers}
-                    onChange={value => {
-                      this.updateApplicationField('providers', value);
-                    }} >
-              {
-                this.state.providers.map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
-              }
-            </Select>
+            <ProviderTable
+              title={i18next.t("general:Providers")}
+              table={this.state.application.providers}
+              providers={this.state.providers}
+              onUpdateTable={(value) => { this.updateApplicationField('providers', value)}}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
