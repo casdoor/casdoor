@@ -85,7 +85,7 @@ export const ResetModal = (props) => {
           </Row>
           <Row style={{width: "100%", marginBottom: "20px"}}>
             <CountDownInput
-              defaultButtonText={i18next.t("user:Send Code")}
+              defaultButtonText={i18next.t("user:Send code")}
               textBefore={i18next.t("user:Code You Received")}
               placeHolder={i18next.t("user:Enter your code")}
               onChange={setCode}

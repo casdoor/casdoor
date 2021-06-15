@@ -43,7 +43,7 @@ const WeiboAuthScope = "email";
 const WeiboAuthUri = "https://api.weibo.com/oauth2/authorize";
 const WeiboAuthLogo = `${StaticBaseUrl}/img/social_weibo.png`;
 
-const GiteeAuthScope = "user_info emails";
+const GiteeAuthScope = "user_info,emails";
 const GiteeAuthUri = "https://gitee.com/oauth/authorize";
 const GiteeAuthLogo = `${StaticBaseUrl}/img/social_gitee.png`;
 

@@ -240,14 +240,14 @@ class SignupPage extends React.Component {
         </Form.Item>
         <Form.Item
           name="emailCode"
-          label={i18next.t("signup:email code")}
+          label={i18next.t("signup:Email code")}
           rules={[{
             required: true,
             message: i18next.t("signup:Please input your verification code!"),
           }]}
         >
           <CountDownInput
-            defaultButtonText={i18next.t("signup:send code")}
+            defaultButtonText={i18next.t("user:Send code")}
             onButtonClick={UserBackend.sendCode}
             onButtonClickArgs={[this.state.email, "email", application?.organizationObj.owner + "/" + application?.organizationObj.name]}
             coolDownTime={60}
@@ -309,7 +309,7 @@ class SignupPage extends React.Component {
         </Form.Item>
         <Form.Item
           name="phoneCode"
-          label={i18next.t("signup:phone code")}
+          label={i18next.t("signup:Phone code")}
           rules={[
             {
               required: true,
@@ -318,7 +318,7 @@ class SignupPage extends React.Component {
           ]}
         >
           <CountDownInput
-            defaultButtonText={i18next.t("signup:send code")}
+            defaultButtonText={i18next.t("user:Send code")}
             onButtonClick={UserBackend.sendCode}
             onButtonClickArgs={[this.state.phone, "phone", application.organizationObj.owner + "/" + application.organizationObj.name]}
             coolDownTime={60}
