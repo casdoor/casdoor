@@ -259,6 +259,9 @@ func (c *ApiController) Login() {
 
 				if !providerItem.CanSignUp {
 					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up", provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type)}
+					c.Data["json"] = resp
+					c.ServeJSON()
+					return
 				}
 
 				// sign up via OAuth
