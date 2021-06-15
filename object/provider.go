@@ -19,15 +19,6 @@ import (
 	"xorm.io/core"
 )
 
-type ProviderItem struct {
-	Name      string    `json:"name"`
-	CanSignUp bool      `json:"canSignUp"`
-	CanSignIn bool      `json:"canSignIn"`
-	CanUnbind bool      `json:"canUnbind"`
-	AlertType string    `json:"alertType"`
-	Provider  *Provider `json:"provider"`
-}
-
 type Provider struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -50,6 +41,19 @@ type Provider struct {
 	AppId        string `xorm:"varchar(100)" json:"appId"`
 
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
+}
+
+func getMaskedProvider(provider *Provider) *Provider {
+	p := &Provider{
+		Owner:       provider.Owner,
+		Name:        provider.Name,
+		CreatedTime: provider.CreatedTime,
+		DisplayName: provider.DisplayName,
+		Category:    provider.Category,
+		Type:        provider.Type,
+		ClientId:    provider.ClientId,
+	}
+	return p
 }
 
 func GetProviders(owner string) []*Provider {
