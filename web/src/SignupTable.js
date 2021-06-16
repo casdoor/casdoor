@@ -82,7 +82,7 @@ class SignupTable extends React.Component {
                   {id: 'Affiliation', name: 'Affiliation'},
                   {id: 'Email', name: 'Email'},
                   {id: 'Password', name: 'Password'},
-                  {id: 'Confirm', name: 'Confirm'},
+                  {id: 'Confirm password', name: 'Confirm password'},
                   {id: 'Phone', name: 'Phone'},
                   {id: 'Agreement', name: 'Agreement'},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
@@ -139,6 +139,7 @@ class SignupTable extends React.Component {
                   {id: 'None', name: 'None'},
                   {id: 'Random', name: 'Random'},
                   {id: 'Incremental', name: 'Incremental'},
+                  {id: 'Personal', name: 'Personal'},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>

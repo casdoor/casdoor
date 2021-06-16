@@ -17,6 +17,7 @@
     "Created time": "创建时间",
     "Name": "名称",
     "Display name": "显示名称",
+    "Personal name": "姓名",
     "Avatar": "头像",
     "URL": "链接",
     "Preview": "预览",
@@ -38,7 +39,8 @@
   "signup":
   {
     "Username": "用户名",
-    "Please input your display name!": "请输入您的姓名！",
+    "Please input your display name!": "请输入您的显示名称！",
+    "Please input your personal name!": "请输入您的姓名！",
     "Please input your address!": "请输入您的地址！",
     "Please input your affiliation!": "请输入您所在的工作单位！",
     "The input is not valid Email!": "您输入的电子邮箱格式错误！",

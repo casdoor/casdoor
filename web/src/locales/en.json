@@ -17,6 +17,7 @@
     "Created time": "Created time",
     "Name": "Name",
     "Display name": "Display name",
+    "Personal name": "Personal name",
     "Avatar": "Avatar",
     "URL": "URL",
     "Preview": "Preview",
@@ -39,6 +40,7 @@
   {
     "Username": "Username",
     "Please input your display name!": "Please input your display name!",
+    "Please input your personal name!": "Please input your personal name!",
     "Please input your address!": "Please input your address!",
     "Please input your affiliation!": "Please input your affiliation!",
     "The input is not valid Email!": "The input is not valid Email!",
