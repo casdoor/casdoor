@@ -126,6 +126,203 @@ class SignupPage extends React.Component {
     this.form.current.scrollToField(errorFields[0].name);
   }
 
+  renderFormItem(application, signupItem) {
+    if (!signupItem.visible) {
+      return null;
+    }
+
+    const required = signupItem.required;
+
+    if (signupItem.name === "Username") {
+      return (
+        <Form.Item
+          name="username"
+          label={i18next.t("signup:Username")}
+          rules={[
+            {
+              required: required,
+              message: i18next.t("login:Please input your username!"),
+              whitespace: true,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+      )
+    } else if (signupItem.name === "Display name") {
+      return (
+        <Form.Item
+          name="name"
+          label={signupItem.rule === "Personal" ? i18next.t("general:Personal name") : i18next.t("general:Display name")}
+          rules={[
+            {
+              required: required,
+              message: signupItem.rule === "Personal" ? i18next.t("signup:Please input your personal name!") : i18next.t("signup:Please input your display name!"),
+              whitespace: true,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+      )
+    } else if (signupItem.name === "Affiliation") {
+      return (
+        <Form.Item
+          name="affiliation"
+          label={i18next.t("user:Affiliation")}
+          rules={[
+            {
+              required: required,
+              message: i18next.t("signup:Please input your affiliation!"),
+              whitespace: true,
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+      )
+    } else if (signupItem.name === "Email") {
+      return (
+        <React.Fragment>
+          <Form.Item
+            name="email"
+            label={i18next.t("general:Email")}
+            rules={[
+              {
+                type: 'email',
+                message: i18next.t("signup:The input is not valid Email!"),
+              },
+              {
+                required: required,
+                message: i18next.t("signup:Please input your Email!"),
+              },
+            ]}
+          >
+            <Input onChange={e => this.setState({email: e.target.value})} />
+          </Form.Item>
+          <Form.Item
+            name="emailCode"
+            label={i18next.t("signup:Email code")}
+            rules={[{
+              required: required,
+              message: i18next.t("signup:Please input your verification code!"),
+            }]}
+          >
+            <CountDownInput
+              defaultButtonText={i18next.t("user:Send code")}
+              onButtonClick={UserBackend.sendCode}
+              onButtonClickArgs={[this.state.email, "email", application?.organizationObj.owner + "/" + application?.organizationObj.name]}
+              coolDownTime={60}
+            />
+          </Form.Item>
+        </React.Fragment>
+      )
+    } else if (signupItem.name === "Password") {
+      return (
+        <Form.Item
+          name="password"
+          label={i18next.t("general:Password")}
+          rules={[
+            {
+              required: required,
+              message: i18next.t("login:Please input your password!"),
+            },
+          ]}
+          hasFeedback
+        >
+          <Input.Password />
+        </Form.Item>
+      )
+    } else if (signupItem.name === "Confirm password") {
+      return (
+        <Form.Item
+          name="confirm"
+          label={i18next.t("signup:Confirm")}
+          dependencies={['password']}
+          hasFeedback
+          rules={[
+            {
+              required: required,
+              message: i18next.t("signup:Please confirm your password!"),
+            },
+            ({ getFieldValue }) => ({
+              validator(rule, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+
+                return Promise.reject(i18next.t("signup:Your confirmed password is inconsistent with the password!"));
+              },
+            }),
+          ]}
+        >
+          <Input.Password />
+        </Form.Item>
+      )
+    } else if (signupItem.name === "Phone") {
+      return (
+        <React.Fragment>
+          <Form.Item
+            name="phone"
+            label={i18next.t("general:Phone")}
+            rules={[
+              {
+                required: required,
+                message: i18next.t("signup:Please input your phone number!"),
+              },
+            ]}
+          >
+            <Input
+              style={{
+                width: '100%',
+              }}
+              addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+              onChange={e => this.setState({phone: e.target.value})}
+            />
+          </Form.Item>
+          <Form.Item
+            name="phoneCode"
+            label={i18next.t("signup:Phone code")}
+            rules={[
+              {
+                required: required,
+                message: i18next.t("signup:Please input your phone verification code!"),
+              },
+            ]}
+          >
+            <CountDownInput
+              defaultButtonText={i18next.t("user:Send code")}
+              onButtonClick={UserBackend.sendCode}
+              onButtonClickArgs={[this.state.phone, "phone", application.organizationObj.owner + "/" + application.organizationObj.name]}
+              coolDownTime={60}
+            />
+          </Form.Item>
+        </React.Fragment>
+      )
+    } else if (signupItem.name === "Agreement") {
+      return (
+        <Form.Item
+          name="agreement"
+          valuePropName="checked"
+          rules={[
+            {
+              required: required,
+              message: i18next.t("signup:Please accept the agreement!"),
+            },
+          ]}
+          {...tailFormItemLayout}
+        >
+          <Checkbox>
+            {i18next.t("signup:Accept")}&nbsp;
+            <Link to={"/agreement"}>
+              {i18next.t("signup:Terms of Use")}
+            </Link>
+          </Checkbox>
+        </Form.Item>
+      )
+    }
+  }
+
   renderForm(application) {
     if (!application.enableSignUp) {
       return (
@@ -146,7 +343,6 @@ class SignupPage extends React.Component {
         </Result>
       )
     }
-
     return (
       <Form
         {...formItemLayout}
@@ -183,155 +379,9 @@ class SignupPage extends React.Component {
           ]}
         >
         </Form.Item>
-        <Form.Item
-          name="username"
-          label={i18next.t("signup:Username")}
-          rules={[
-            {
-              required: true,
-              message: i18next.t("login:Please input your username!"),
-              whitespace: true,
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="name"
-          label={i18next.t("general:Display name")}
-          rules={[
-            {
-              required: true,
-              message: i18next.t("signup:Please input your display name!"),
-              whitespace: true,
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="affiliation"
-          label={i18next.t("user:Affiliation")}
-          rules={[
-            {
-              required: true,
-              message: i18next.t("signup:Please input your affiliation!"),
-              whitespace: true,
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="email"
-          label={i18next.t("general:Email")}
-          rules={[
-            {
-              type: 'email',
-              message: i18next.t("signup:The input is not valid Email!"),
-            },
-            {
-              required: true,
-              message: i18next.t("signup:Please input your Email!"),
-            },
-          ]}
-        >
-          <Input onChange={e => this.setState({email: e.target.value})} />
-        </Form.Item>
-        <Form.Item
-          name="emailCode"
-          label={i18next.t("signup:Email code")}
-          rules={[{
-            required: true,
-            message: i18next.t("signup:Please input your verification code!"),
-          }]}
-        >
-          <CountDownInput
-            defaultButtonText={i18next.t("user:Send code")}
-            onButtonClick={UserBackend.sendCode}
-            onButtonClickArgs={[this.state.email, "email", application?.organizationObj.owner + "/" + application?.organizationObj.name]}
-            coolDownTime={60}
-          />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          label={i18next.t("general:Password")}
-          rules={[
-            {
-              required: true,
-              message: i18next.t("login:Please input your password!"),
-            },
-          ]}
-          hasFeedback
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item
-          name="confirm"
-          label={i18next.t("signup:Confirm")}
-          dependencies={['password']}
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: i18next.t("signup:Please confirm your password!"),
-            },
-            ({ getFieldValue }) => ({
-              validator(rule, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-
-                return Promise.reject(i18next.t("signup:Your confirmed password is inconsistent with the password!"));
-              },
-            }),
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item
-          name="phone"
-          label={i18next.t("general:Phone")}
-          rules={[
-            {
-              required: true,
-              message: i18next.t("signup:Please input your phone number!"),
-            },
-          ]}
-        >
-          <Input
-            style={{
-              width: '100%',
-            }}
-            addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
-            onChange={e => this.setState({phone: e.target.value})}
-          />
-        </Form.Item>
-        <Form.Item
-          name="phoneCode"
-          label={i18next.t("signup:Phone code")}
-          rules={[
-            {
-              required: true,
-              message: i18next.t("signup:Please input your phone verification code!"),
-            },
-          ]}
-        >
-          <CountDownInput
-            defaultButtonText={i18next.t("user:Send code")}
-            onButtonClick={UserBackend.sendCode}
-            onButtonClickArgs={[this.state.phone, "phone", application.organizationObj.owner + "/" + application.organizationObj.name]}
-            coolDownTime={60}
-          />
-        </Form.Item>
-        <Form.Item name="agreement" valuePropName="checked" {...tailFormItemLayout}>
-          <Checkbox>
-            {i18next.t("signup:Accept")}&nbsp;
-            <Link to={"/agreement"}>
-              {i18next.t("signup:Terms of Use")}
-            </Link>
-          </Checkbox>
-        </Form.Item>
+        {
+          application.signupItems.map(signupItem => this.renderFormItem(application, signupItem))
+        }
         <Form.Item {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">
             {i18next.t("account:Sign Up")}
