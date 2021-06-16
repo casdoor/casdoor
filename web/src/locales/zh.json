@@ -177,7 +177,8 @@
     "Test signup page..": "测试注册页面..",
     "Test signin page..": "测试登录页面..",
     "Redirect URL": "回调URL",
-    "Redirect URLs": "回调URLs"
+    "Redirect URLs": "回调URLs",
+    "Signup items": "注册项"
   },
   "forget":
   {

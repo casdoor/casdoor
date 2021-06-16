@@ -24,6 +24,7 @@ import LoginPage from "./auth/LoginPage";
 import i18next from "i18next";
 import UrlTable from "./UrlTable";
 import ProviderTable from "./ProviderTable";
+import SignupTable from "./SignupTable";
 
 const { Option } = Select;
 
@@ -298,6 +299,18 @@ class ApplicationEditPage extends React.Component {
           {
             this.renderPreview()
           }
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("application:Signup items")}:
+          </Col>
+          <Col span={22} >
+            <SignupTable
+              title={i18next.t("application:Signup items")}
+              table={this.state.application.signupItems}
+              onUpdateTable={(value) => { this.updateApplicationField('signupItems', value)}}
+            />
+          </Col>
         </Row>
       </Card>
     )
