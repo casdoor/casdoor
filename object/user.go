@@ -170,7 +170,9 @@ func UpdateUserForOriginal(user *User) bool {
 }
 
 func AddUser(user *User) bool {
-	user.Id = util.GenerateId()
+	if user.Id == "" {
+		user.Id = util.GenerateId()
+	}
 
 	organization := GetOrganizationByUser(user)
 	user.UpdateUserPassword(organization)

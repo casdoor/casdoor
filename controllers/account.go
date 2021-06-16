@@ -141,7 +141,7 @@ func (c *ApiController) Signup() {
 		Type:          "normal-user",
 		Password:      form.Password,
 		DisplayName:   form.Name,
-		Avatar:        "https://casbin.org/img/casbin.svg",
+		Avatar:        organization.DefaultAvatar,
 		Email:         form.Email,
 		Phone:         form.Phone,
 		Affiliation:   form.Affiliation,
