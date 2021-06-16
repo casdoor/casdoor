@@ -179,6 +179,13 @@ func (c *ApiController) GetAccount() {
 	var resp Response
 
 	user := object.GetUser(userId)
+	if user == nil {
+		resp := Response{Status: "error", Msg: fmt.Sprintf("The user: %s doesn't exist", userId)}
+		c.Data["json"] = resp
+		c.ServeJSON()
+		return
+	}
+
 	organization := object.GetOrganizationByUser(user)
 	resp = Response{Status: "ok", Msg: "", Data: user, Data2: organization}
 

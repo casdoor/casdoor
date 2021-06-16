@@ -54,26 +54,15 @@ func GetApplications(owner string) []*Application {
 	return applications
 }
 
-func (application *Application) GetProviderItem(providerName string) *ProviderItem {
-	for _, providerItem := range application.Providers {
-		if providerItem.Name == providerName {
-			return providerItem
-		}
-	}
-	return nil
-}
-
 func getProviderMap(owner string) map[string]*Provider {
 	providers := GetProviders(owner)
 	m := map[string]*Provider{}
 	for _, provider := range providers {
-		if provider.Category != "OAuth" {
-			continue
-		}
+		//if provider.Category != "OAuth" {
+		//	continue
+		//}
 
-		provider.ClientSecret = ""
-		provider.ProviderUrl = ""
-		m[provider.Name] = provider
+		m[provider.Name] = getMaskedProvider(provider)
 	}
 	return m
 }
