@@ -121,7 +121,6 @@ export const CountDownInput = (props) => {
       addonAfter={
         <div>
           <button
-            block
             disabled={clickDisabled}
             onClick={clickButton}
             style={{backgroundColor: "#fafafa", border: "none",cursor: clickDisabled? "not-allowed" : "pointer"}}>

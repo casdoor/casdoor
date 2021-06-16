@@ -20,7 +20,7 @@ import i18next from "i18next";
 
 const { Option } = Select;
 
-class ProviderTable extends React.Component {
+class SignupTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,7 +38,7 @@ class ProviderTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: "Please select a provider", canSignUp: false, canSignIn: true, canUnbind: true, alertType: "None"};
+    let row = {name: "Please select a signup item", visible: true, required: true, rule: "None"};
     if (table === undefined) {
       table = [];
     }
@@ -73,70 +73,73 @@ class ProviderTable extends React.Component {
                     value={text}
                     onChange={value => {
                       this.updateField(table, index, 'name', value);
-                      const provider = this.props.providers.filter(provider => provider.name === value)[0];
-                      this.updateField(table, index, 'provider', provider);
                     }} >
               {
-                this.props.providers.filter(provider => table.filter(providerItem => providerItem.name === provider.name).length === 0).map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
+                [
+                  {id: 'Username', name: 'Username'},
+                  {id: 'ID', name: 'ID'},
+                  {id: 'Display name', name: 'Display name'},
+                  {id: 'Affiliation', name: 'Affiliation'},
+                  {id: 'Email', name: 'Email'},
+                  {id: 'Password', name: 'Password'},
+                  {id: 'Confirm password', name: 'Confirm password'},
+                  {id: 'Phone', name: 'Phone'},
+                  {id: 'Agreement', name: 'Agreement'},
+                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
           )
         }
       },
       {
-        title: i18next.t("provider:canSignUp"),
-        dataIndex: 'canSignUp',
-        key: 'canSignUp',
+        title: i18next.t("provider:visible"),
+        dataIndex: 'visible',
+        key: 'visible',
         width: '120px',
         render: (text, record, index) => {
           return (
             <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, 'canSignUp', checked);
+              this.updateField(table, index, 'visible', checked);
+              if (!checked) {
+                this.updateField(table, index, 'required', false);
+              }
             }} />
           )
         }
       },
       {
-        title: i18next.t("provider:canSignIn"),
-        dataIndex: 'canSignIn',
-        key: 'canSignIn',
+        title: i18next.t("provider:required"),
+        dataIndex: 'required',
+        key: 'required',
         width: '120px',
         render: (text, record, index) => {
+          if (!record.visible) {
+            return null;
+          }
+
           return (
             <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, 'canSignIn', checked);
+              this.updateField(table, index, 'required', checked);
             }} />
           )
         }
       },
       {
-        title: i18next.t("provider:canUnbind"),
-        dataIndex: 'canUnbind',
-        key: 'canUnbind',
-        width: '120px',
-        render: (text, record, index) => {
-          return (
-            <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, 'canUnbind', checked);
-            }} />
-          )
-        }
-      },
-      {
-        title: i18next.t("provider:alertType"),
-        dataIndex: 'alertType',
-        key: 'alertType',
+        title: i18next.t("provider:rule"),
+        dataIndex: 'rule',
+        key: 'rule',
         width: '120px',
         render: (text, record, index) => {
           return (
             <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {
-              this.updateField(table, index, 'alertType', value);
+              this.updateField(table, index, 'rule', value);
             })}>
               {
                 [
                   {id: 'None', name: 'None'},
-                  {id: 'Once', name: 'Once'},
-                  {id: 'Always', name: 'Always'},
+                  {id: 'Random', name: 'Random'},
+                  {id: 'Incremental', name: 'Incremental'},
+                  {id: 'Personal', name: 'Personal'},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
@@ -192,4 +195,4 @@ class ProviderTable extends React.Component {
   }
 }
 
-export default ProviderTable;
+export default SignupTable;

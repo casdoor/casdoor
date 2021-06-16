@@ -53,6 +53,16 @@ class ApplicationListPage extends React.Component {
       enablePassword: true,
       enableSignUp: true,
       providers: [],
+      signupItems: [
+        {name: "ID", visible: false, required: true, rule: "Random"},
+        {name: "Username", visible: true, required: true, rule: "None"},
+        {name: "Display name", visible: true, required: true, rule: "None"},
+        {name: "Password", visible: true, required: true, rule: "None"},
+        {name: "Confirm password", visible: true, required: true, rule: "None"},
+        {name: "Email", visible: true, required: true, rule: "None"},
+        {name: "Phone", visible: true, required: true, rule: "None"},
+        {name: "Agreement", visible: true, required: true, rule: "None"},
+      ],
       redirectUris: ["http://localhost:9000/callback"],
       expireInHours: 24 * 7,
     }
