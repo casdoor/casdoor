@@ -126,6 +126,15 @@ class SignupPage extends React.Component {
     this.form.current.scrollToField(errorFields[0].name);
   }
 
+  isValidPhone(){
+    let phoneCodeVerification = /^1[3|4|5|7|8][0-9]\d{8}$/;
+    return phoneCodeVerification.test(this.state.phone);
+  }
+  isValidEmail(){
+    let emailCodeVerification =  /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+    return emailCodeVerification.test(this.state.email);
+  }
+
   renderForm(application) {
     if (!application.enableSignUp) {
       return (
@@ -247,6 +256,7 @@ class SignupPage extends React.Component {
           }]}
         >
           <CountDownInput
+            clickDisabled={!this.isValidEmail()}
             defaultButtonText={i18next.t("user:Send code")}
             onButtonClick={UserBackend.sendCode}
             onButtonClickArgs={[this.state.email, "email", application?.organizationObj.owner + "/" + application?.organizationObj.name]}
@@ -294,6 +304,11 @@ class SignupPage extends React.Component {
           label={i18next.t("general:Phone")}
           rules={[
             {
+              pattern:/^1[3|4|5|7|8][0-9]\d{8}$/,
+              message: i18next.t("signup:The input is not valid Phone!"),
+            },
+            {
+
               required: true,
               message: i18next.t("signup:Please input your phone number!"),
             },
@@ -318,6 +333,7 @@ class SignupPage extends React.Component {
           ]}
         >
           <CountDownInput
+            clickDisabled={!this.isValidPhone()}
             defaultButtonText={i18next.t("user:Send code")}
             onButtonClick={UserBackend.sendCode}
             onButtonClickArgs={[this.state.phone, "phone", application.organizationObj.owner + "/" + application.organizationObj.name]}
