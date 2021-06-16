@@ -208,3 +208,34 @@ func (application *Application) GetEmailProvider() *Provider {
 func (application *Application) GetSmsProvider() *Provider {
 	return application.getProviderByCategory("SMS")
 }
+
+func (application *Application) getSignupItem(itemName string) *SignupItem {
+	for _, signupItem := range application.SignupItems {
+		if signupItem.Name == itemName {
+			return signupItem
+		}
+	}
+	return nil
+}
+
+func (application *Application) IsSignupItemEnabled(itemName string) bool {
+	return application.getSignupItem(itemName) != nil
+}
+
+func (application *Application) IsSignupItemVisible(itemName string) bool {
+	signupItem := application.getSignupItem(itemName)
+	if signupItem == nil {
+		return false
+	}
+
+	return signupItem.Visible
+}
+
+func (application *Application) GetSignupItemRule(itemName string) string {
+	signupItem := application.getSignupItem(itemName)
+	if signupItem == nil {
+		return ""
+	}
+
+	return signupItem.Rule
+}

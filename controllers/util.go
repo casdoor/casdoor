@@ -58,6 +58,11 @@ func (c *ApiController) ResponseError(error string) {
 	c.ServeJSON()
 }
 
+func (c *ApiController) ResponseErrorWithData(error string, data interface{}) {
+	c.Data["json"] = Response{Status: "error", Msg: error, Data: data}
+	c.ServeJSON()
+}
+
 func (c *ApiController) RequireSignedIn() (string, bool) {
 	userId := c.GetSessionUser()
 	if userId == "" {
