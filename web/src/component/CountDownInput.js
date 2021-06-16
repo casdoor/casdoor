@@ -20,7 +20,7 @@ import * as UserBackend from "../backend/UserBackend";
 import { AuditOutlined, VerifiedOutlined } from "@ant-design/icons";
 
 export const CountDownInput = (props) => {
-  const {defaultButtonText, disabled, prefix, textBefore, placeHolder, onChange, coolDownTime, onButtonClick, onButtonClickArgs} = props;
+  const {defaultButtonText, disabled, prefix, textBefore, placeHolder, onChange, coolDownTime, onButtonClick, onButtonClickArgs,clickDisabled} = props;
   const [buttonText, setButtonText] = React.useState(defaultButtonText);
   const [visible, setVisible] = React.useState(false);
   const [key, setKey] = React.useState("");
@@ -121,9 +121,9 @@ export const CountDownInput = (props) => {
       addonAfter={
         <div>
           <button
-            disabled={disabled}
+            disabled={clickDisabled}
             onClick={clickButton}
-            style={{backgroundColor: "#fafafa", border: "none"}}>
+            style={{backgroundColor: "#fafafa", border: "none",cursor: clickDisabled? "not-allowed" : "pointer"}}>
             {buttonText}
           </button>
           <Modal
