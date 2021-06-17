@@ -18,7 +18,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/beego/beego/v2/adapter/context"
+	"strconv"
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
@@ -78,9 +78,7 @@ func (c *ApiController) Signup() {
 	var resp Response
 
 	if c.GetSessionUser() != "" {
-		resp = Response{Status: "error", Msg: "Please log out first before signing up", Data: c.GetSessionUser()}
-		c.Data["json"] = resp
-		c.ServeJSON()
+		c.ResponseErrorWithData("Please sign out first before signing up", c.GetSessionUser())
 		return
 	}
 
@@ -90,61 +88,79 @@ func (c *ApiController) Signup() {
 		panic(err)
 	}
 
-	checkResult := object.CheckVerificationCode(form.Email, form.EmailCode)
-	if len(checkResult) != 0 {
-		responseText := fmt.Sprintf("Email%s", checkResult)
-		c.ResponseError(responseText)
-		return
-	}
-
-	checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Phone)
-	checkResult = object.CheckVerificationCode(checkPhone, form.PhoneCode)
-	if len(checkResult) != 0 {
-		responseText := fmt.Sprintf("Phone%s", checkResult)
-		c.ResponseError(responseText)
-		return
-	}
-
 	application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 	if !application.EnableSignUp {
-		resp = Response{Status: "error", Msg: "The application does not allow to sign up new account", Data: c.GetSessionUser()}
-		c.Data["json"] = resp
-		c.ServeJSON()
+		c.ResponseError("The application does not allow to sign up new account")
 		return
+	}
+
+	if application.IsSignupItemEnabled("Email") {
+		checkResult := object.CheckVerificationCode(form.Email, form.EmailCode)
+		if len(checkResult) != 0 {
+			c.ResponseError(fmt.Sprintf("Email%s", checkResult))
+			return
+		}
+	}
+
+	var checkPhone string
+	if application.IsSignupItemEnabled("Phone") {
+		checkPhone = fmt.Sprintf("+%s%s", form.PhonePrefix, form.Phone)
+		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode)
+		if len(checkResult) != 0 {
+			c.ResponseError(fmt.Sprintf("Phone%s", checkResult))
+			return
+		}
 	}
 
 	userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
-	msg := object.CheckUserSignup(form.Organization, form.Username, form.Password, form.Name, form.Email, form.Phone, form.Affiliation)
+
+	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", form.Organization))
+	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.Email, form.Phone, form.Affiliation)
 	if msg != "" {
-		resp = Response{Status: "error", Msg: msg, Data: ""}
-	} else {
-		user := &object.User{
-			Owner:         form.Organization,
-			Name:          form.Username,
-			CreatedTime:   util.GetCurrentTime(),
-			Id:            util.GenerateId(),
-			Type:          "normal-user",
-			Password:      form.Password,
-			DisplayName:   form.Name,
-			Avatar:        "https://casbin.org/img/casbin.svg",
-			Email:         form.Email,
-			Phone:         form.Phone,
-			Affiliation:   form.Affiliation,
-			IsAdmin:       false,
-			IsGlobalAdmin: false,
-			IsForbidden:   false,
-			Properties:    map[string]string{},
-		}
-		object.AddUser(user)
-
-		//c.SetSessionUser(user)
-
-		object.DisableVerificationCode(form.Email)
-		object.DisableVerificationCode(checkPhone)
-		util.LogInfo((*context.Context)(c.Ctx), "API: [%s] is signed up as new user", userId)
-		resp = Response{Status: "ok", Msg: "", Data: userId}
+		c.ResponseError(msg)
+		return
 	}
 
+	id := util.GenerateId()
+	if application.GetSignupItemRule("ID") == "Incremental" {
+		lastUser := object.GetLastUser(form.Organization)
+		lastIdInt := util.ParseInt(lastUser.Id)
+		id = strconv.Itoa(lastIdInt + 1)
+	}
+
+	username := form.Username
+	if !application.IsSignupItemVisible("Username") {
+		username = id
+	}
+
+	user := &object.User{
+		Owner:         form.Organization,
+		Name:          username,
+		CreatedTime:   util.GetCurrentTime(),
+		Id:            id,
+		Type:          "normal-user",
+		Password:      form.Password,
+		DisplayName:   form.Name,
+		Avatar:        organization.DefaultAvatar,
+		Email:         form.Email,
+		Phone:         form.Phone,
+		Address:       []string{},
+		Affiliation:   form.Affiliation,
+		IsAdmin:       false,
+		IsGlobalAdmin: false,
+		IsForbidden:   false,
+		Properties:    map[string]string{},
+	}
+	object.AddUser(user)
+
+	//c.SetSessionUser(user)
+
+	object.DisableVerificationCode(form.Email)
+	object.DisableVerificationCode(checkPhone)
+
+	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
+
+	resp = Response{Status: "ok", Msg: "", Data: userId}
 	c.Data["json"] = resp
 	c.ServeJSON()
 }
@@ -157,7 +173,7 @@ func (c *ApiController) Logout() {
 	var resp Response
 
 	user := c.GetSessionUser()
-	util.LogInfo((*context.Context)(c.Ctx), "API: [%s] logged out", user)
+	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 	c.SetSessionUser("")
 

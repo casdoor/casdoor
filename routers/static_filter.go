@@ -18,7 +18,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/beego/beego/v2/adapter/context"
+	"github.com/astaxie/beego/context"
 	"github.com/casdoor/casdoor/util"
 )
 

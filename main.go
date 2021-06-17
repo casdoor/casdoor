@@ -15,9 +15,9 @@
 package main
 
 import (
-	beego "github.com/beego/beego/v2/adapter"
-	"github.com/beego/beego/v2/adapter/logs"
-	"github.com/beego/beego/v2/adapter/plugins/cors"
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
+	"github.com/astaxie/beego/plugins/cors"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/controllers"
 	"github.com/casdoor/casdoor/object"

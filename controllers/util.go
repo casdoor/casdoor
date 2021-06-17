@@ -17,7 +17,7 @@ package controllers
 import (
 	"net/http"
 
-	beego "github.com/beego/beego/v2/adapter"
+	"github.com/astaxie/beego"
 	"golang.org/x/net/proxy"
 )
 
@@ -55,6 +55,11 @@ func InitHttpClient() {
 
 func (c *ApiController) ResponseError(error string) {
 	c.Data["json"] = Response{Status: "error", Msg: error}
+	c.ServeJSON()
+}
+
+func (c *ApiController) ResponseErrorWithData(error string, data interface{}) {
+	c.Data["json"] = Response{Status: "error", Msg: error, Data: data}
 	c.ServeJSON()
 }
 

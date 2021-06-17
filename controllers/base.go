@@ -14,7 +14,7 @@
 
 package controllers
 
-import beego "github.com/beego/beego/v2/adapter"
+import "github.com/astaxie/beego"
 
 type ApiController struct {
 	beego.Controller

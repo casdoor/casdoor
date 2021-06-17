@@ -114,6 +114,20 @@ func GetMaskedUsers(users []*User) []*User {
 	return users
 }
 
+func GetLastUser(owner string) *User {
+	user := User{Owner: owner}
+	existed, err := adapter.Engine.Desc("created_time", "id").Get(&user)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &user
+	} else {
+		return nil
+	}
+}
+
 func UpdateUser(id string, user *User) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if getUser(owner, name) == nil {
@@ -156,7 +170,9 @@ func UpdateUserForOriginal(user *User) bool {
 }
 
 func AddUser(user *User) bool {
-	user.Id = util.GenerateId()
+	if user.Id == "" {
+		user.Id = util.GenerateId()
+	}
 
 	organization := GetOrganizationByUser(user)
 	user.UpdateUserPassword(organization)

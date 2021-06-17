@@ -18,15 +18,14 @@ import (
 	"fmt"
 	"net/url"
 
-	context2 "context"
-	"github.com/beego/beego/v2/adapter/context"
+	"github.com/astaxie/beego/context"
 	"github.com/casdoor/casdoor/controllers"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
 
 func getSessionUser(ctx *context.Context) string {
-	user := ctx.Input.CruSession.Get(context2.Background(),"username")
+	user := ctx.Input.CruSession.Get("username")
 	if user == nil {
 		return ""
 	}
@@ -35,13 +34,13 @@ func getSessionUser(ctx *context.Context) string {
 }
 
 func setSessionUser(ctx *context.Context, user string) {
-	err := ctx.Input.CruSession.Set(context2.Background(), "username", user)
+	err := ctx.Input.CruSession.Set("username", user)
 	if err != nil {
 		panic(err)
 	}
 
 	// https://github.com/beego/beego/issues/3445#issuecomment-455411915
-	ctx.Input.CruSession.SessionRelease(context2.Background(), ctx.ResponseWriter)
+	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
 }
 
 func returnRequest(ctx *context.Context, msg string) {
