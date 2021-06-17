@@ -43,14 +43,18 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (providerItem.provider.type !== "GitHub") {
-    return true;
+  if (providerItem.provider.category !== "OAuth") {
+    return false;
   }
 
-  if (isLocalhost()) {
-    return providerItem.provider.name.includes("localhost");
+  if (providerItem.provider.type === "GitHub") {
+    if (isLocalhost()) {
+      return providerItem.provider.name.includes("localhost");
+    } else {
+      return !providerItem.provider.name.includes("localhost");
+    }
   } else {
-    return !providerItem.provider.name.includes("localhost");
+    return true;
   }
 }
 

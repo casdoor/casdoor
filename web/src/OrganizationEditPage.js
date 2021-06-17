@@ -159,6 +159,33 @@ class OrganizationEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("general:Default avatar")}:
+          </Col>
+          <Col span={22} >
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={1}>
+                URL:
+              </Col>
+              <Col span={23} >
+                <Input prefix={<LinkOutlined/>} value={this.state.organization.defaultAvatar} onChange={e => {
+                  this.updateOrganizationField('defaultAvatar', e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={1}>
+                {i18next.t("general:Preview")}:
+              </Col>
+              <Col span={23} >
+                <a target="_blank" rel="noreferrer" href={this.state.organization.defaultAvatar}>
+                  <img src={this.state.organization.defaultAvatar} alt={this.state.organization.defaultAvatar} height={90} style={{marginBottom: '20px'}}/>
+                </a>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
       </Card>
     )
   }

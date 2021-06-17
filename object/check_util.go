@@ -14,20 +14,18 @@
 
 package object
 
-type ProviderItem struct {
-	Name      string    `json:"name"`
-	CanSignUp bool      `json:"canSignUp"`
-	CanSignIn bool      `json:"canSignIn"`
-	CanUnlink bool      `json:"canUnlink"`
-	AlertType string    `json:"alertType"`
-	Provider  *Provider `json:"provider"`
+import "regexp"
+
+var rePersonalName *regexp.Regexp
+
+func init() {
+	var err error
+	rePersonalName, err = regexp.Compile("^[\u4E00-\u9FA5]{2,3}(?:·[\u4E00-\u9FA5]{2,3})*$")
+	if err != nil {
+		panic(err)
+	}
 }
 
-func (application *Application) GetProviderItem(providerName string) *ProviderItem {
-	for _, providerItem := range application.Providers {
-		if providerItem.Name == providerName {
-			return providerItem
-		}
-	}
-	return nil
+func isValidPersonalName(s string) bool {
+	return rePersonalName.MatchString(s)
 }

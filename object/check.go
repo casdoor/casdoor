@@ -27,34 +27,58 @@ func init() {
 	reWhiteSpace, _ = regexp.Compile("\\s")
 }
 
-func CheckUserSignup(organizationName string, username string, password string, displayName string, email string, phone string, affiliation string) string {
-	organization := getOrganization("admin", organizationName)
-
-	if len(username) <= 2 {
-		return "username must have at least 3 characters"
-	} else if len(password) <= 5 {
-		return "password must have at least 6 characters"
-	} else if organization == nil {
+func CheckUserSignup(application *Application, organization *Organization, username string, password string, displayName string, email string, phone string, affiliation string) string {
+	if organization == nil {
 		return "organization does not exist"
-	} else if reWhiteSpace.MatchString(username) {
-		return "username cannot contain white spaces"
-	} else if HasUserByField(organizationName, "name", username) {
-		return "username already exists"
-	} else if HasUserByField(organizationName, "email", email) {
-		return "email already exists"
-	} else if HasUserByField(organizationName, "phone", phone) {
-		return "phone already exists"
-	} else if displayName == "" {
-		return "displayName cannot be blank"
-	} else if affiliation == "" {
-		return "affiliation cannot be blank"
-	} else if !util.IsEmailValid(email) {
-		return "email is invalid"
-	} else if organization.PhonePrefix == "86" && !util.IsPhoneCnValid(phone) {
-		return "phone number is invalid"
-	} else {
-		return ""
 	}
+
+	if application.IsSignupItemVisible("Username") {
+		if len(username) <= 1 {
+			return "username must have at least 2 characters"
+		} else if reWhiteSpace.MatchString(username) {
+			return "username cannot contain white spaces"
+		} else if HasUserByField(organization.Name, "name", username) {
+			return "username already exists"
+		}
+	}
+
+	if len(password) <= 5 {
+		return "password must have at least 6 characters"
+	}
+
+	if application.IsSignupItemVisible("Email") {
+		if HasUserByField(organization.Name, "email", email) {
+			return "email already exists"
+		} else if !util.IsEmailValid(email) {
+			return "email is invalid"
+		}
+	}
+
+	if application.IsSignupItemVisible("Phone") {
+		if HasUserByField(organization.Name, "phone", phone) {
+			return "phone already exists"
+		} else if organization.PhonePrefix == "86" && !util.IsPhoneCnValid(phone) {
+			return "phone number is invalid"
+		}
+	}
+
+	if application.IsSignupItemVisible("Display name") {
+		if displayName == "" {
+			return "displayName cannot be blank"
+		} else if application.GetSignupItemRule("Display name") == "Personal" {
+			if !isValidPersonalName(displayName) {
+				return "displayName is not valid personal name"
+			}
+		}
+	}
+
+	if application.IsSignupItemVisible("Affiliation") {
+		if affiliation == "" {
+			return "affiliation cannot be blank"
+		}
+	}
+
+	return ""
 }
 
 func CheckPassword(user *User, password string) string {

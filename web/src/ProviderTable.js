@@ -38,7 +38,7 @@ class ProviderTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: "Please select a provider", canSignUp: false, canSignIn: true, canUnbind: true, alertType: "None"};
+    let row = {name: "Please select a provider", canSignUp: false, canSignIn: true, canUnlink: true, alertType: "None"};
     if (table === undefined) {
       table = [];
     }
@@ -110,14 +110,14 @@ class ProviderTable extends React.Component {
         }
       },
       {
-        title: i18next.t("provider:canUnbind"),
-        dataIndex: 'canUnbind',
-        key: 'canUnbind',
+        title: i18next.t("provider:canUnlink"),
+        dataIndex: 'canUnlink',
+        key: 'canUnlink',
         width: '120px',
         render: (text, record, index) => {
           return (
             <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, 'canUnbind', checked);
+              this.updateField(table, index, 'canUnlink', checked);
             }} />
           )
         }
