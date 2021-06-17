@@ -15,7 +15,7 @@
 package original
 
 import (
-	"github.com/astaxie/beego"
+	beego "github.com/beego/beego/v2/adapter"
 	"github.com/casdoor/casdoor/object"
 	_ "github.com/go-sql-driver/mysql" // db = mysql
 	//_ "github.com/lib/pq"              // db = postgres

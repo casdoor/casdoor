@@ -18,7 +18,7 @@ type ProviderItem struct {
 	Name      string    `json:"name"`
 	CanSignUp bool      `json:"canSignUp"`
 	CanSignIn bool      `json:"canSignIn"`
-	CanUnlink bool      `json:"canUnlink"`
+	CanUnbind bool      `json:"canUnbind"`
 	AlertType string    `json:"alertType"`
 	Provider  *Provider `json:"provider"`
 }

@@ -19,7 +19,7 @@
 package routers
 
 import (
-	"github.com/astaxie/beego"
+	beego "github.com/beego/beego/v2/adapter"
 
 	"github.com/casdoor/casdoor/controllers"
 )
