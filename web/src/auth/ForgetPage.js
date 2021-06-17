@@ -217,7 +217,7 @@ class ForgetPage extends React.Component {
                     });
                   }}
                   prefix={<UserOutlined />}
-                  placeholder={i18next.t("signup:username, Email or phone")}
+                  placeholder={i18next.t("login:username, Email or phone")}
               />
             </Form.Item>
             <br />
@@ -311,7 +311,7 @@ class ForgetPage extends React.Component {
                   {
                     required: true,
                     message: i18next.t(
-                        "forget:Please input your verification code!"
+                        "code:Please input your verification code!"
                     ),
                   },
                 ]}
@@ -319,8 +319,8 @@ class ForgetPage extends React.Component {
               {this.state.verifyType === "email" ? (
                   <CountDownInput
                       disabled={this.state.username === "" || this.state.verifyType === ""}
-                      placeHolder={i18next.t("forget:Verify code")}
-                      defaultButtonText={i18next.t("user:Send code")}
+                      placeHolder={i18next.t("code:Verify code")}
+                      defaultButtonText={i18next.t("code:Send code")}
                       onButtonClick={UserBackend.sendCode}
                       onButtonClickArgs={[
                         this.state.email,
@@ -334,8 +334,8 @@ class ForgetPage extends React.Component {
               ) : (
                   <CountDownInput
                       disabled={this.state.username === "" || this.state.verifyType === ""}
-                      placeHolder={i18next.t("forget:Verify code")}
-                      defaultButtonText={i18next.t("User:Send code")}
+                      placeHolder={i18next.t("code:Verify code")}
+                      defaultButtonText={i18next.t("code:Send code")}
                       onButtonClick={UserBackend.sendCode}
                       onButtonClickArgs={[
                         this.state.phone,

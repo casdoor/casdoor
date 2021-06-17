@@ -40,7 +40,7 @@ export const ResetModal = (props) => {
       return;
     }
     if (code === "") {
-      Setting.showMessage("error", i18next.t("user:Empty Code"));
+      Setting.showMessage("error", i18next.t("code:Empty Code"));
       return;
     }
     setConfirmLoading(true);
@@ -85,9 +85,9 @@ export const ResetModal = (props) => {
           </Row>
           <Row style={{width: "100%", marginBottom: "20px"}}>
             <CountDownInput
-              defaultButtonText={i18next.t("user:Send code")}
-              textBefore={i18next.t("user:Code You Received")}
-              placeHolder={i18next.t("user:Enter your code")}
+              defaultButtonText={i18next.t("code:Send code")}
+              textBefore={i18next.t("code:Code You Received")}
+              placeHolder={i18next.t("code:Enter your code")}
               onChange={setCode}
               onButtonClick={UserBackend.sendCode}
               onButtonClickArgs={[dest, destType, org?.owner + "/" + org?.name]}

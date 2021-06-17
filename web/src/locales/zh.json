@@ -5,7 +5,9 @@
     "Organizations": "组织",
     "Providers": "提供商",
     "Users": "用户",
+    "User": "用户",
     "Applications": "应用",
+    "Application": "应用",
     "Save": "保存",
     "Add": "添加",
     "Action": "操作",
@@ -35,7 +37,11 @@
     "Applications that requires authentication": "需要鉴权的应用",
     "Swagger": "API总览",
     "Phone Prefix": "手机号前缀",
-    "Enter the code": "输入验证码"
+    "Enter the code": "输入验证码",
+    "Authorization code": "授权码",
+    "Access token": "访问令牌",
+    "Expires in": "有效期",
+    "Scope": "范围"
   },
   "signup":
   {
@@ -56,6 +62,20 @@
     "sign in now": "立即登录",
     "Your account has been created!": "您的账号已创建！",
     "Please click the below button to sign in": "请点击下方按钮登录",
+    "Missing parameter.": "缺少参数"
+  },
+  "code":
+  {
+    "Please input your verification code!": "请输入您的验证码",
+    "Verify code": "验证码",
+    "Enter your code": "输入你的验证码",
+    "You can only send one code in 60s.": "每分钟你只能发送一次验证码",
+    "Code has not been sent yet!": "你还没有发送验证码",
+    "You should verify your code in 5 min!": "验证码已超时。你应该在 5 分钟内完成验证。",
+    "Wrong code!": "验证码错误！",
+    "Code You Received": "验证码",
+    "Empty Code": "验证码为空",
+    "Send code": "发送验证码",
     "code sent": "验证码已发送",
     "Email code": "邮箱验证码",
     "Phone code": "手机验证码",
@@ -64,8 +84,7 @@
     "PhoneYou should verify your code in 10 min!": "你应该在 10 分钟之内验证手机号",
     "EmailYou should verify your code in 10 min!": "你应该在 10 分钟之内验证邮箱",
     "PhoneWrong code!": "手机验证码错误",
-    "EmailWrong code!": "邮箱验证码错误",
-    "Missing parameter.": "缺少参数"
+    "EmailWrong code!": "邮箱验证码错误"
   },
   "login":
   {
@@ -150,23 +169,14 @@
     "input password": "输入密码",
     "Reset Email...": "重置邮箱...",
     "Reset Phone...": "重置手机号...",
-    "Send code": "发送验证码",
     "Empty email": "邮箱为空",
     "Empty phone": "手机号为空",
-    "Empty Code": "验证码为空",
     "phone reset": "手机号已设置",
     "email reset": "邮箱已设置",
-    "Code Sent": "验证码已发送",
     "Input your email": "请输入邮箱",
     "Input your phone number": "输入手机号",
     "New phone": "新手机号",
     "New email": "新邮箱",
-    "Code You Received": "验证码",
-    "Enter your code": "输入你的验证码",
-    "You can only send one code in 60s.": "每分钟你只能发送一次验证码",
-    "Code has not been sent yet!": "你还没有发送验证码",
-    "You should verify your code in 5 min!": "验证码已超时。你应该在 5 分钟内完成验证。",
-    "Wrong code!": "验证码错误！",
     "Invalid phone number": "手机号格式错误",
     "Invalid Email address": "邮箱格式错误",
     "Turing test failed.": "图灵验证失败，无法确认你是人类！",
@@ -192,9 +202,7 @@
     "Please input your password!": "请输入您的密码！",
     "Please confirm your password!": "请确认您的密码！",
     "Please input your Email/Phone string!": "请输入您的邮箱/手机号！",
-    "Please input your verification code!": "请输入您的验证码",
     "Your confirmed password is inconsistent with the password!": "您确认的密码与密码不一致！",
-    "Verify code": "验证码",
     "Password": "密码",
     "Next Step": "下一步",
     "Choose email verification or mobile verification": "选择邮箱验证或手机验证",
