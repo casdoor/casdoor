@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/astaxie/beego/context"
+	"github.com/beego/beego/v2/adapter/context"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/controllers"
 	"github.com/casdoor/casdoor/object"

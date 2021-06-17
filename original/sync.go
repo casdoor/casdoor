@@ -58,13 +58,11 @@ func createUserFromOriginalUser(originalUser *User, affiliationMap map[int]strin
 		Avatar:        getFullAvatarUrl(originalUser.Avatar),
 		Email:         "",
 		Phone:         originalUser.Cellphone,
-		Address:       []string{},
 		Affiliation:   affiliation,
 		Score:         originalUser.SchoolId,
 		IsAdmin:       false,
 		IsGlobalAdmin: false,
 		IsForbidden:   originalUser.Deleted != 0,
-		Properties:    map[string]string{},
 	}
 	return user
 }

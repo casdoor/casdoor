@@ -17,10 +17,11 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/beego/beego/v2/adapter/context"
 	"strconv"
 	"strings"
 
-	"github.com/astaxie/beego"
+	beego "github.com/beego/beego/v2/adapter"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -39,7 +40,7 @@ func (c *ApiController) HandleLoggedIn(user *object.User, form *RequestForm) *Re
 	resp := &Response{}
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUser(userId)
-		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
+		util.LogInfo((*context.Context)(c.Ctx), "API: [%s] signed in", userId)
 		resp = &Response{Status: "ok", Msg: "", Data: userId}
 	} else if form.Type == ResponseTypeCode {
 		clientId := c.Input().Get("clientId")
