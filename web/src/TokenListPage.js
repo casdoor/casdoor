@@ -111,7 +111,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("token:Application"),
+        title: i18next.t("general:Application"),
         dataIndex: 'application',
         key: 'application',
         width: '120px',
@@ -125,7 +125,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("token:Organization"),
+        title: i18next.t("general:Organization"),
         dataIndex: 'organization',
         key: 'organization',
         width: '120px',
@@ -139,7 +139,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("token:User"),
+        title: i18next.t("general:User"),
         dataIndex: 'user',
         key: 'user',
         width: '120px',
@@ -153,7 +153,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("token:Authorization code"),
+        title: i18next.t("general:Authorization code"),
         dataIndex: 'code',
         key: 'code',
         // width: '150px',
@@ -163,7 +163,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("token:Access token"),
+        title: i18next.t("general:Access token"),
         dataIndex: 'accessToken',
         key: 'accessToken',
         // width: '150px',
@@ -174,14 +174,14 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("token:Expires in"),
+        title: i18next.t("general:Expires in"),
         dataIndex: 'expiresIn',
         key: 'expiresIn',
         width: '120px',
         sorter: (a, b) => a.expiresIn - b.expiresIn,
       },
       {
-        title: i18next.t("token:Scope"),
+        title: i18next.t("general:Scope"),
         dataIndex: 'scope',
         key: 'scope',
         width: '100px',
