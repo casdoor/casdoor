@@ -322,7 +322,7 @@ class UserEditPage extends React.Component {
         </Row>
         {
           (this.state.application === null || this.state.user === null) ? null : (
-            <AffiliationSelect application={this.state.application} user={this.state.user} onUpdateUserField={(key, value) => { return this.updateUserField(key, value)}} />
+            <AffiliationSelect labelSpan={2} application={this.state.application} user={this.state.user} onUpdateUserField={(key, value) => { return this.updateUserField(key, value)}} />
           )
         }
         <Row style={{marginTop: '20px'}} >

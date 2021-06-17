@@ -59,11 +59,11 @@ class AffiliationSelect extends React.Component {
         {
           this.props.application?.affiliationUrl === "" ? null : (
             <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={2}>
+              <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
                 {i18next.t("user:Address")}:
               </Col>
-              <Col span={22} >
-                <Cascader style={{width: '400px'}} value={this.props.user.address} options={this.state.addressOptions} onChange={value => {
+              <Col span={24 - this.props.labelSpan} >
+                <Cascader style={{width: '100%', maxWidth: '400px'}} value={this.props.user.address} options={this.state.addressOptions} onChange={value => {
                   this.updateUserField('address', value);
                   this.updateUserField('affiliation', '');
                   this.updateUserField('score', 0);
@@ -74,17 +74,17 @@ class AffiliationSelect extends React.Component {
           )
         }
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
             {i18next.t("user:Affiliation")}:
           </Col>
-          <Col span={22} >
+          <Col span={24 - this.props.labelSpan} >
             {
               this.props.application?.affiliationUrl === "" ? (
                 <Input value={this.props.user.affiliation} onChange={e => {
                   this.updateUserField('affiliation', e.target.value);
                 }} />
               ) : (
-                <Select virtual={false} style={{width: '400px'}} value={this.props.user.affiliation} onChange={(value => {
+                <Select virtual={false} style={{width: '100%'}} value={this.props.user.affiliation} onChange={(value => {
                   const name = value;
                   const id = this.state.affiliationOptions.filter(affiliationOption => affiliationOption.name === name)[0].id;
                   this.updateUserField('affiliation', name);

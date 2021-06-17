@@ -25,6 +25,7 @@ import i18next from "i18next";
 import UrlTable from "./UrlTable";
 import ProviderTable from "./ProviderTable";
 import SignupTable from "./SignupTable";
+import PromptPage from "./auth/PromptPage";
 
 const { Option } = Select;
 
@@ -312,6 +313,14 @@ class ApplicationEditPage extends React.Component {
             />
           </Col>
         </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {i18next.t("general:Preview")}:
+          </Col>
+          {
+            this.renderPreview2()
+          }
+        </Row>
       </Card>
     )
   }
@@ -349,6 +358,25 @@ class ApplicationEditPage extends React.Component {
           <br/>
           <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
+          </div>
+        </Col>
+      </React.Fragment>
+    )
+  }
+
+  renderPreview2() {
+    let promptUrl = `/prompt/${this.state.application.name}`;
+
+    return (
+      <React.Fragment>
+        <Col span={11} >
+          <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={promptUrl}>
+            <Button type="primary">{i18next.t("application:Test prompt page..")}</Button>
+          </a>
+          <br/>
+          <br/>
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888"}}>
+            <PromptPage application={this.state.application} account={this.props.account} />
           </div>
         </Col>
       </React.Fragment>

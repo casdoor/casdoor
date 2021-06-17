@@ -65,7 +65,8 @@
     "EmailYou should verify your code in 10 min!": "You should verify your email verification code in 10 min!",
     "PhoneWrong code!": "Wrong phone verification code!",
     "EmailWrong code!": "Wrong email verification code!",
-    "Missing parameter.": "Missing parameter."
+    "Missing parameter.": "Missing parameter.",
+    "Submit and complete": "Submit and complete"
   },
   "login":
   {
@@ -179,6 +180,7 @@
     "Login page preview": "Login page preview",
     "Test signup page..": "Test signup page..",
     "Test signin page..": "Test signin page..",
+    "Test prompt page..": "Test prompt page..",
     "Redirect URL": "Redirect URL",
     "Redirect URLs": "Redirect URLs",
     "Signup items": "Signup items"

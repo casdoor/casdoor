@@ -44,6 +44,7 @@ import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from './SelectLanguageBox';
 import i18next from 'i18next';
+import PromptPage from "./auth/PromptPage";
 
 const { Header, Footer } = Layout;
 
@@ -411,6 +412,7 @@ class App extends Component {
     return window.location.pathname.startsWith("/signup") ||
       window.location.pathname.startsWith("/login") ||
       window.location.pathname.startsWith("/callback") ||
+      window.location.pathname.startsWith("/prompt") ||
       window.location.pathname.startsWith("/forget");
   }
 
@@ -426,6 +428,8 @@ class App extends Component {
           <Route exact path="/callback" component={AuthCallback}/>
           <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)}/>
           <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)}/>
+          <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)}/>
         </Switch>
       )
     }

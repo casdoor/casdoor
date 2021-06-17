@@ -65,7 +65,8 @@
     "EmailYou should verify your code in 10 min!": "你应该在 10 分钟之内验证邮箱",
     "PhoneWrong code!": "手机验证码错误",
     "EmailWrong code!": "邮箱验证码错误",
-    "Missing parameter.": "缺少参数"
+    "Missing parameter.": "缺少参数",
+    "Submit and complete": "完成提交"
   },
   "login":
   {
@@ -179,6 +180,7 @@
     "Login page preview": "登录页面预览",
     "Test signup page..": "测试注册页面..",
     "Test signin page..": "测试登录页面..",
+    "Test prompt page..": "测试提醒页面..",
     "Redirect URL": "回调URL",
     "Redirect URLs": "回调URLs",
     "Signup items": "注册项"
