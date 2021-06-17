@@ -123,6 +123,19 @@ class ProviderTable extends React.Component {
         }
       },
       {
+        title: i18next.t("provider:prompted"),
+        dataIndex: 'prompted',
+        key: 'prompted',
+        width: '120px',
+        render: (text, record, index) => {
+          return (
+            <Switch checked={text} onChange={checked => {
+              this.updateField(table, index, 'prompted', checked);
+            }} />
+          )
+        }
+      },
+      {
         title: i18next.t("provider:alertType"),
         dataIndex: 'alertType',
         key: 'alertType',

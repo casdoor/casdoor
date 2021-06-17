@@ -102,6 +102,8 @@ class SignupTable extends React.Component {
               this.updateField(table, index, 'visible', checked);
               if (!checked) {
                 this.updateField(table, index, 'required', false);
+              } else {
+                this.updateField(table, index, 'required', true);
               }
             }} />
           )
@@ -120,6 +122,23 @@ class SignupTable extends React.Component {
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'required', checked);
+            }} />
+          )
+        }
+      },
+      {
+        title: i18next.t("provider:prompted"),
+        dataIndex: 'prompted',
+        key: 'prompted',
+        width: '120px',
+        render: (text, record, index) => {
+          if (record.visible) {
+            return null;
+          }
+
+          return (
+            <Switch checked={text} onChange={checked => {
+              this.updateField(table, index, 'prompted', checked);
             }} />
           )
         }
