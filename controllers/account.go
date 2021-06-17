@@ -144,6 +144,7 @@ func (c *ApiController) Signup() {
 		Avatar:        organization.DefaultAvatar,
 		Email:         form.Email,
 		Phone:         form.Phone,
+		Address:       []string{},
 		Affiliation:   form.Affiliation,
 		IsAdmin:       false,
 		IsGlobalAdmin: false,
