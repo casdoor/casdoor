@@ -24,6 +24,10 @@ import (
 )
 
 func GetUserByField(organizationName string, field string, value string) *User {
+	if field == "" || value == "" {
+		return nil
+	}
+
 	user := User{Owner: organizationName}
 	existed, err := adapter.Engine.Where(fmt.Sprintf("%s=?", field), value).Get(&user)
 	if err != nil {

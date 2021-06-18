@@ -304,6 +304,17 @@ func (c *ApiController) Login() {
 				return
 			}
 
+			oldUser := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+			if oldUser == nil {
+				oldUser = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
+			}
+			if oldUser != nil {
+				resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s (%s) is already linked to another account", provider.Type, userInfo.Username, userInfo.DisplayName)}
+				c.Data["json"] = resp
+				c.ServeJSON()
+				return
+			}
+
 			user := object.GetUser(userId)
 
 			// sync info from 3rd-party if possible
