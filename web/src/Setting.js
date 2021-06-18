@@ -74,6 +74,10 @@ export function isProviderVisibleForSignIn(providerItem) {
   return isProviderVisible(providerItem);
 }
 
+export function isProviderPrompted(providerItem) {
+  return isProviderVisible(providerItem) && providerItem.prompted;
+}
+
 export function parseJson(s) {
   if (s === "") {
     return null;

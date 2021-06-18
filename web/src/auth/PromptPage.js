@@ -74,13 +74,26 @@ class PromptPage extends React.Component {
     });
   }
 
+  renderAffiliation(application) {
+    const signupItems = application.signupItems.filter(signupItem => signupItem.name === "Affiliation");
+    if (signupItems.length === 0) {
+      return null;
+    }
+
+    if (!signupItems[0].prompted) {
+      return null;
+    }
+
+    return (
+      <AffiliationSelect labelSpan={6} application={application} user={this.state.user} onUpdateUserField={(key, value) => { return this.updateUserField(key, value)}} />
+    )
+  }
+
   renderContent(application) {
     return (
       <div style={{width: '400px'}}>
         {
-          (application === null || this.state.user === null) ? null : (
-            <AffiliationSelect labelSpan={6} application={application} user={this.state.user} onUpdateUserField={(key, value) => { return this.updateUserField(key, value)}} />
-          )
+          this.renderAffiliation(application)
         }
       </div>
     )
