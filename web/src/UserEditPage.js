@@ -20,12 +20,11 @@ import * as Setting from "./Setting";
 import {LinkOutlined} from "@ant-design/icons";
 import i18next from "i18next";
 import CropperDiv from "./CropperDiv.js";
-import * as AuthBackend from "./auth/AuthBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
-import * as Provider from "./auth/Provider";
 import PasswordModal from "./PasswordModal";
 import ResetModal from "./ResetModal";
 import AffiliationSelect from "./common/AffiliationSelect";
+import OAuthWidget from "./common/OAuthWidget";
 
 import {Controlled as CodeMirror} from 'react-codemirror2'
 import "codemirror/lib/codemirror.css"
@@ -97,102 +96,8 @@ class UserEditPage extends React.Component {
     });
   }
 
-  unlinkUser(providerType) {
-    const body = {
-      providerType: providerType,
-    };
-    AuthBackend.unlink(body)
-      .then((res) => {
-        if (res.status === 'ok') {
-          Setting.showMessage("success", `Linked successfully`);
-
-          this.getUser();
-        } else {
-          Setting.showMessage("error", `Failed to unlink: ${res.msg}`);
-        }
-      });
-  }
-
-  getProviderLink(provider) {
-    if (provider.type === "GitHub") {
-      return `https://github.com/${this.getUserProperty(provider.type, "username")}`;
-    } else if (provider.type === "Google") {
-      return "https://mail.google.com";
-    } else {
-      return "";
-    }
-  }
-
-  getUserProperty(providerType, propertyName) {
-    const key = `oauth_${providerType}_${propertyName}`;
-    return this.state.user.properties[key]
-  }
-
-  renderIdp(providerItem, provider) {
-    const linkedValue = this.state.user[provider.type.toLowerCase()];
-    const profileUrl = this.getProviderLink(provider);
-    const id = this.getUserProperty(provider.type, "id");
-    const username = this.getUserProperty(provider.type, "username");
-    const displayName = this.getUserProperty(provider.type, "displayName");
-    const email = this.getUserProperty(provider.type, "email");
-    let avatarUrl = this.getUserProperty(provider.type, "avatarUrl");
-
-    if (avatarUrl === "" || avatarUrl === undefined) {
-      avatarUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAQAAACROWYpAAAAHElEQVR42mNkoAAwjmoe1TyqeVTzqOZRzcNZMwB18wAfEFQkPQAAAABJRU5ErkJggg==";
-    }
-
-    let name = (username === undefined) ? displayName : `${displayName} (${username})`;
-    if (name === undefined) {
-      if (id !== undefined) {
-        name = id;
-      } else if (email !== undefined) {
-        name = email;
-      } else {
-        name = linkedValue;
-      }
-    }
-
-    return (
-      <Row key={provider.name} style={{marginTop: '20px'}} >
-        <Col style={{marginTop: '5px'}} span={3}>
-          {
-            Setting.getProviderLogo(provider)
-          }
-          <span style={{marginLeft: '5px'}}>
-            {
-              `${provider.type}:`
-            }
-          </span>
-        </Col>
-        <Col span={21} >
-          <img style={{marginRight: '10px'}} width={30} height={30} src={avatarUrl} alt={name} />
-          <span style={{width: '300px', display: "inline-block"}}>
-            {
-              linkedValue === "" ? (
-                "(empty)"
-              ) : (
-                profileUrl === "" ? name : (
-                  <a target="_blank" rel="noreferrer" href={profileUrl}>
-                    {
-                      name
-                    }
-                  </a>
-                  )
-              )
-            }
-          </span>
-          {
-            linkedValue === "" ? (
-              <a key={provider.displayName} href={Provider.getAuthUrl(this.state.application, provider, "link")}>
-                <Button style={{marginLeft: '20px', width: '80px'}} type="primary">{i18next.t("user:Link")}</Button>
-              </a>
-            ) : (
-              <Button disabled={!providerItem.canUnlink} style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(provider.type)}>{i18next.t("user:Unlink")}</Button>
-            )
-          }
-        </Col>
-      </Row>
-    )
+  unlinked() {
+    this.getUser();
   }
 
   isSelfOrAdmin() {
@@ -344,7 +249,7 @@ class UserEditPage extends React.Component {
               <Col span={22} >
                 <div style={{marginBottom: 20}}>
                   {
-                    this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) => this.renderIdp(providerItem, providerItem.provider))
+                    this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) => <OAuthWidget user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />)
                   }
                 </div>
               </Col>
