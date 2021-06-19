@@ -164,12 +164,12 @@ class OrganizationListPage extends React.Component {
         title: i18next.t("general:Action"),
         dataIndex: '',
         key: 'op',
-        width: '170px',
+        width: '240px',
         render: (text, record, index) => {
           return (
             <div>
               <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/organizations/${record.name}/users`)}>{i18next.t("general:Users")}</Button>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/organizations/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} onClick={() => this.props.history.push(`/organizations/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete organization: ${record.name} ?`}
                 onConfirm={() => this.deleteOrganization(index)}
