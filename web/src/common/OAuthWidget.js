@@ -130,7 +130,7 @@ class OAuthWidget extends React.Component {
 
     return (
       <Row key={provider.name} style={{marginTop: '20px'}} >
-        <Col style={{marginTop: '5px'}} span={3}>
+        <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
           {
             Setting.getProviderLogo(provider)
           }
@@ -140,9 +140,9 @@ class OAuthWidget extends React.Component {
             }
           </span>
         </Col>
-        <Col span={21} >
+        <Col span={24 - this.props.labelSpan} >
           <img style={{marginRight: '10px'}} width={30} height={30} src={avatarUrl} alt={name} />
-          <span style={{width: '300px', display: "inline-block"}}>
+          <span style={{width: this.props.labelSpan === 3 ? '300px' : '130px', display: "inline-block"}}>
             {
               linkedValue === "" ? (
                 "(empty)"

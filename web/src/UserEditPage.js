@@ -249,7 +249,9 @@ class UserEditPage extends React.Component {
               <Col span={22} >
                 <div style={{marginBottom: 20}}>
                   {
-                    this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) => <OAuthWidget user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />)
+                    (this.state.application === null || this.state.user === null) ? null : (
+                      this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) => <OAuthWidget key={providerItem.name} labelSpan={3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />)
+                    )
                   }
                 </div>
               </Col>

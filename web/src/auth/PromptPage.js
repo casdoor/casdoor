@@ -19,6 +19,7 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 import AffiliationSelect from "../common/AffiliationSelect";
 import * as UserBackend from "../backend/UserBackend";
+import OAuthWidget from "../common/OAuthWidget";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -28,12 +29,24 @@ class PromptPage extends React.Component {
       type: props.type,
       applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
-      user: Setting.deepCopy(this.props.account),
+      user: null,
     };
   }
 
   UNSAFE_componentWillMount() {
+    this.getUser();
     this.getApplication();
+  }
+
+  getUser() {
+    const organizationName = this.props.account.owner;
+    const userName = this.props.account.name;
+    UserBackend.getUser(organizationName, userName)
+      .then((user) => {
+        this.setState({
+          user: user,
+        });
+      });
   }
 
   getApplication() {
@@ -72,15 +85,29 @@ class PromptPage extends React.Component {
     this.setState({
       user: user,
     });
+
+    this.submitUserEdit(false);
+  }
+
+  getAllPromptedProviderItems(application) {
+    return application.providers.filter(providerItem => Setting.isProviderPrompted(providerItem));
+  }
+
+  isAffiliationPrompted(application) {
+    const signupItems = application.signupItems.filter(signupItem => signupItem.name === "Affiliation");
+    if (signupItems.length === 0) {
+      return false;
+    }
+
+    return signupItems[0].prompted;
   }
 
   renderAffiliation(application) {
-    const signupItems = application.signupItems.filter(signupItem => signupItem.name === "Affiliation");
-    if (signupItems.length === 0) {
+    if (!this.isAffiliationPrompted(application)) {
       return null;
     }
 
-    if (!signupItems[0].prompted) {
+    if (application === null || this.state.user === null) {
       return null;
     }
 
@@ -89,38 +116,82 @@ class PromptPage extends React.Component {
     )
   }
 
+  unlinked() {
+    this.getUser();
+  }
+
   renderContent(application) {
     return (
       <div style={{width: '400px'}}>
         {
           this.renderAffiliation(application)
         }
+        <div>
+          {
+            (application === null || this.state.user === null) ? null : (
+              application?.providers.filter(providerItem => Setting.isProviderPrompted(providerItem)).map((providerItem, index) => <OAuthWidget key={providerItem.name} labelSpan={6} user={this.state.user} application={application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />)
+            )
+          }
+        </div>
       </div>
     )
   }
 
-  isAnswered() {
+  isProviderItemAnswered(application, providerItem) {
     if (this.state.user === null) {
       return false;
     }
 
+    const provider = providerItem.provider;
+    const linkedValue = this.state.user[provider.type.toLowerCase()];
+    return linkedValue !== undefined && linkedValue !== "";
+  }
+
+  isAffiliationAnswered(application) {
+    if (!this.isAffiliationPrompted(application)) {
+      return true;
+    }
+
+    if (this.state.user === null) {
+      return false;
+    }
     return this.state.user.affiliation !== "";
   }
 
-  submitUserEdit() {
+  isAnswered(application) {
+    if (!this.isAffiliationAnswered(application)) {
+      return false;
+    }
+
+    const providerItems = this.getAllPromptedProviderItems(application);
+    for (let i = 0; i < providerItems.length; i ++) {
+      if (!this.isProviderItemAnswered(application, providerItems[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  submitUserEdit(isFinal) {
     let user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.user.owner, this.state.user.name, user)
       .then((res) => {
         if (res.msg === "") {
-          Setting.showMessage("success", `Successfully saved`);
+          if (isFinal) {
+            Setting.showMessage("success", `Successfully saved`);
 
-          Setting.goToLogin(this, this.getApplicationObj());
+            Setting.goToLogin(this, this.getApplicationObj());
+          }
         } else {
-          Setting.showMessage("error", res.msg);
+          if (isFinal) {
+            Setting.showMessage("error", res.msg);
+          }
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        if (isFinal) {
+          Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        }
       });
   }
 
@@ -148,7 +219,7 @@ class PromptPage extends React.Component {
               </Col>
             </Row>
             <div style={{marginTop: "50px"}}>
-              <Button disabled={!this.isAnswered()} type="primary" size="large" onClick={this.submitUserEdit.bind(this)}>{i18next.t("signup:Submit and complete")}</Button>
+              <Button disabled={!this.isAnswered(application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true)}}>{i18next.t("signup:Submit and complete")}</Button>
             </div>
           </div>
         </Col>
