@@ -45,6 +45,7 @@ import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from './SelectLanguageBox';
 import i18next from 'i18next';
 import PromptPage from "./auth/PromptPage";
+import OrganizationUserListPage from "./OrganizationUserListPage";
 
 const { Header, Footer } = Layout;
 
@@ -377,6 +378,7 @@ class App extends Component {
           <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationUserListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />}/>
           <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)}/>
