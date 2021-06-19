@@ -26,6 +26,7 @@ class UserListPage extends React.Component {
     this.state = {
       classes: props,
       users: null,
+      organizationName: props.match.params.organizationName,
     };
   }
 
@@ -34,12 +35,21 @@ class UserListPage extends React.Component {
   }
 
   getUsers() {
-    UserBackend.getGlobalUsers()
-      .then((res) => {
-        this.setState({
-          users: res,
-        });
-      });
+    if (this.state.organizationName === undefined) {
+      UserBackend.getGlobalUsers()
+          .then((res) => {
+            this.setState({
+              users: res,
+            });
+          });
+    } else {
+      UserBackend.getUsers(this.state.organizationName)
+          .then((res) => {
+            this.setState({
+              users: res,
+            });
+          });
+    }
   }
 
   newUser() {
