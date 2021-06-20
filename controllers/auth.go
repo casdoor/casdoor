@@ -183,8 +183,8 @@ func (c *ApiController) Login() {
 			resp = c.HandleLoggedIn(application, user, &form)
 		}
 	} else if form.Provider != "" {
-		organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", form.Organization))
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+		organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", application.Organization))
 		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
 		providerItem := application.GetProviderItem(provider.Name)
 

@@ -44,6 +44,10 @@ func GetOrganizations(owner string) []*Organization {
 }
 
 func getOrganization(owner string, name string) *Organization {
+	if owner == "" || name == "" {
+		return nil
+	}
+
 	organization := Organization{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&organization)
 	if err != nil {

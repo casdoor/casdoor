@@ -78,6 +78,10 @@ func GetUsers(owner string) []*User {
 }
 
 func getUser(owner string, name string) *User {
+	if owner == "" || name == "" {
+		return nil
+	}
+
 	user := User{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&user)
 	if err != nil {

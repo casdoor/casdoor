@@ -67,6 +67,10 @@ func GetProviders(owner string) []*Provider {
 }
 
 func getProvider(owner string, name string) *Provider {
+	if owner == "" || name == "" {
+		return nil
+	}
+
 	provider := Provider{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&provider)
 	if err != nil {

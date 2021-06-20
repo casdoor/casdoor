@@ -60,6 +60,10 @@ func GetTokens(owner string) []*Token {
 }
 
 func getToken(owner string, name string) *Token {
+	if owner == "" || name == "" {
+		return nil
+	}
+
 	token := Token{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&token)
 	if err != nil {

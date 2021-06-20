@@ -83,6 +83,10 @@ func extendApplicationWithOrg(application *Application) {
 }
 
 func getApplication(owner string, name string) *Application {
+	if owner == "" || name == "" {
+		return nil
+	}
+
 	application := Application{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&application)
 	if err != nil {

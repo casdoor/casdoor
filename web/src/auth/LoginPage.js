@@ -236,6 +236,17 @@ class LoginPage extends React.Component {
         >
           <Form.Item
             style={{height: 0, visibility: "hidden"}}
+            name="application"
+            rules={[
+              {
+                required: true,
+                message: 'Please input your application!',
+              },
+            ]}
+          >
+          </Form.Item>
+          <Form.Item
+            style={{height: 0, visibility: "hidden"}}
             name="organization"
             rules={[
               {
