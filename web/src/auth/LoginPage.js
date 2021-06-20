@@ -92,9 +92,16 @@ class LoginPage extends React.Component {
     }
   }
 
+  onUpdateAccount(account) {
+    this.props.onUpdateAccount(account);
+  }
+
   onFinish(values) {
+    const application = this.getApplicationObj();
+    const ths = this;
     values["type"] = this.state.type;
     const oAuthParams = Util.getOAuthGetParameters();
+
     AuthBackend.login(values, oAuthParams)
       .then((res) => {
         if (res.status === 'ok') {
@@ -104,7 +111,32 @@ class LoginPage extends React.Component {
             Setting.goToLink("/");
           } else if (responseType === "code") {
             const code = res.data;
-            Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+
+            if (Setting.hasPromptPage(application)) {
+              AuthBackend.getAccount("")
+                .then((res) => {
+                  let account = null;
+                  if (res.status === "ok") {
+                    account = res.data;
+                    account.organization = res.data2;
+
+                    this.onUpdateAccount(account);
+
+                    if (Setting.isPromptAnswered(account, application)) {
+                      Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+                    } else {
+                      Setting.goToLinkSoft(ths, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
+                    }
+                  } else {
+                    if (res.msg !== "Please sign in first") {
+                      Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
+                    }
+                  }
+                });
+            } else {
+              Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+            }
+
             // Util.showMessage("success", `Authorization code: ${res.data}`);
           }
         } else {
@@ -195,9 +227,10 @@ class LoginPage extends React.Component {
           name="normal_login"
           initialValues={{
             organization: application.organization,
+            application: application.name,
             remember: true
           }}
-          onFinish={this.onFinish.bind(this)}
+          onFinish={(values) => {this.onFinish(values)}}
           style={{width: "250px"}}
           size="large"
         >

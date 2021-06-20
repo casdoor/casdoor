@@ -34,7 +34,7 @@ func codeToResponse(code *object.Code) *Response {
 	}
 }
 
-func (c *ApiController) HandleLoggedIn(user *object.User, form *RequestForm) *Response {
+func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) *Response {
 	userId := user.GetId()
 	resp := &Response{}
 	if form.Type == ResponseTypeLogin {
@@ -50,6 +50,11 @@ func (c *ApiController) HandleLoggedIn(user *object.User, form *RequestForm) *Re
 
 		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state)
 		resp = codeToResponse(code)
+
+		if application.HasPromptPage() {
+			// The prompt page needs the user to be signed in
+			c.SetSessionUser(userId)
+		}
 	} else {
 		resp = &Response{Status: "error", Msg: fmt.Sprintf("Unknown response type: %s", form.Type)}
 	}
@@ -174,7 +179,8 @@ func (c *ApiController) Login() {
 		if msg != "" {
 			resp = &Response{Status: "error", Msg: msg, Data: ""}
 		} else {
-			resp = c.HandleLoggedIn(user, &form)
+			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+			resp = c.HandleLoggedIn(application, user, &form)
 		}
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
@@ -244,16 +250,9 @@ func (c *ApiController) Login() {
 				//	object.LinkMemberAccount(userId, "avatar", avatar)
 				//}
 
-				resp = c.HandleLoggedIn(user, &form)
+				resp = c.HandleLoggedIn(application, user, &form)
 			} else {
 				// Sign up via OAuth
-
-				//if userId := object.GetUserIdByField(application, "email", userInfo.Email); userId != "" {
-				//	resp = c.HandleLoggedIn(userId, &form)
-				//
-				//	object.LinkUserAccount(userId, provider.Type, userInfo.Id)
-				//}
-
 				if !application.EnableSignUp {
 					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username, userInfo.DisplayName)}
 					c.Data["json"] = resp
@@ -292,7 +291,7 @@ func (c *ApiController) Login() {
 
 				object.LinkUserAccount(user, provider.Type, userInfo.Id)
 
-				resp = c.HandleLoggedIn(user, &form)
+				resp = c.HandleLoggedIn(application, user, &form)
 			}
 			//resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"

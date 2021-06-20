@@ -108,6 +108,41 @@ export function hasPromptPage(application) {
   return isAffiliationPrompted(application);
 }
 
+function isAffiliationAnswered(user, application) {
+  if (!isAffiliationPrompted(application)) {
+    return true;
+  }
+
+  if (user === null) {
+    return false;
+  }
+  return user.affiliation !== "";
+}
+
+function isProviderItemAnswered(user, application, providerItem) {
+  if (user === null) {
+    return false;
+  }
+
+  const provider = providerItem.provider;
+  const linkedValue = user[provider.type.toLowerCase()];
+  return linkedValue !== undefined && linkedValue !== "";
+}
+
+export function isPromptAnswered(user, application) {
+  if (!isAffiliationAnswered(user, application)) {
+    return false;
+  }
+
+  const providerItems = getAllPromptedProviderItems(application);
+  for (let i = 0; i < providerItems.length; i ++) {
+    if (!isProviderItemAnswered(user, application, providerItems[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function parseJson(s) {
   if (s === "") {
     return null;

@@ -126,43 +126,20 @@ class PromptPage extends React.Component {
     )
   }
 
-  isProviderItemAnswered(application, providerItem) {
-    if (this.state.user === null) {
-      return false;
-    }
-
-    const provider = providerItem.provider;
-    const linkedValue = this.state.user[provider.type.toLowerCase()];
-    return linkedValue !== undefined && linkedValue !== "";
-  }
-
-  isAffiliationAnswered(application) {
-    if (!Setting.isAffiliationPrompted(application)) {
-      return true;
-    }
-
-    if (this.state.user === null) {
-      return false;
-    }
-    return this.state.user.affiliation !== "";
-  }
-
-  isAnswered(application) {
-    if (!this.isAffiliationAnswered(application)) {
-      return false;
-    }
-
-    const providerItems = Setting.getAllPromptedProviderItems(application);
-    for (let i = 0; i < providerItems.length; i ++) {
-      if (!this.isProviderItemAnswered(application, providerItems[i])) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   onUpdateAccount(account) {
     this.props.onUpdateAccount(account);
+  }
+
+  getRedirectUrl() {
+    // "/prompt/app-example?redirectUri=http://localhost:2000/callback&code=8eb113b072296818f090&state=app-example"
+    const params = new URLSearchParams(this.props.location.search);
+    const redirectUri = params.get("redirectUri");
+    const code = params.get("code");
+    const state = params.get("state");
+    if (redirectUri === null || code === null || state === null) {
+      return "";
+    }
+    return `${redirectUri}?code=${code}&state=${state}`;
   }
 
   logout() {
@@ -171,7 +148,12 @@ class PromptPage extends React.Component {
         if (res.status === 'ok') {
           this.onUpdateAccount(null);
 
-          Setting.goToLogin(this, this.getApplicationObj());
+          const redirectUrl = this.getRedirectUrl();
+          if (redirectUrl !== "") {
+            Setting.goToLink(redirectUrl);
+          } else {
+            Setting.goToLogin(this, this.getApplicationObj());
+          }
         } else {
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);
         }
@@ -245,7 +227,7 @@ class PromptPage extends React.Component {
               </Col>
             </Row>
             <div style={{marginTop: "50px"}}>
-              <Button disabled={!this.isAnswered(application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true)}}>{i18next.t("signup:Submit and complete")}</Button>
+              <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true)}}>{i18next.t("signup:Submit and complete")}</Button>
             </div>
           </div>
         </Col>
