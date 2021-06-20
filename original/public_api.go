@@ -31,6 +31,10 @@ func isEnabled() bool {
 }
 
 func AddUserToOriginalDatabase(user *object.User) {
+	if user.Owner != orgName {
+		return
+	}
+
 	if !isEnabled() {
 		return
 	}
@@ -41,6 +45,10 @@ func AddUserToOriginalDatabase(user *object.User) {
 }
 
 func UpdateUserToOriginalDatabase(user *object.User) {
+	if user.Owner != orgName {
+		return
+	}
+
 	if !isEnabled() {
 		return
 	}
