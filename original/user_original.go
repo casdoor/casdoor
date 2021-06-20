@@ -55,6 +55,15 @@ func getUserMapOriginal() ([]*User, map[string]*User) {
 	return users, m
 }
 
+func addUser(user *User) bool {
+	affected, err := adapter.Engine.Insert(user)
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
+}
+
 func updateUser(user *User) bool {
 	affected, err := adapter.Engine.ID(user.Id).Cols("name", "password", "cellphone", "school_id", "avatar", "deleted").Update(user)
 	if err != nil {

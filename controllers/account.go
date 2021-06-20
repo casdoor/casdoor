@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/original"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -151,7 +152,11 @@ func (c *ApiController) Signup() {
 		IsForbidden:   false,
 		Properties:    map[string]string{},
 	}
-	object.AddUser(user)
+
+	affected := object.AddUser(user)
+	if affected {
+		original.AddUserToOriginalDatabase(user)
+	}
 
 	if application.HasPromptPage() {
 		// The prompt page needs the user to be signed in

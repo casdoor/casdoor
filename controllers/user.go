@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/original"
 )
 
 // @Title GetGlobalUsers
@@ -75,7 +76,13 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateUser(id, &user))
+	affected := object.UpdateUser(id, &user)
+	if affected {
+		newUser := object.GetUser(user.GetId())
+		original.UpdateUserToOriginalDatabase(newUser)
+	}
+
+	c.Data["json"] = wrapActionResponse(affected)
 	c.ServeJSON()
 }
 

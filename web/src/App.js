@@ -178,6 +178,12 @@ class App extends Component {
       });
   }
 
+  onUpdateAccount(account) {
+    this.setState({
+      account: account
+    });
+  }
+
   handleRightDropdownClick(e) {
     if (e.key === '201') {
       this.props.history.push(`/account`);
@@ -422,7 +428,7 @@ class App extends Component {
       return (
         <Switch>
           <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...props} />)}/>
-          <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...props} />)}/>
+          <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />)}/>
           <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...props} />)}/>
           <Route exact path="/signup/oauth/authorize" render={(props) => <LoginPage type={"code"} mode={"signup"} {...props} />}/>
           <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage type={"code"} mode={"signin"} {...props} />}/>
@@ -430,7 +436,7 @@ class App extends Component {
           <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)}/>
           <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)}/>
           <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} {...props} />)}/>
         </Switch>
       )
     }

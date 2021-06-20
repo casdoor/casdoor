@@ -15,36 +15,37 @@
 package original
 
 import (
-	"github.com/astaxie/beego"
+	"fmt"
+
 	"github.com/casdoor/casdoor/object"
-	_ "github.com/go-sql-driver/mysql" // db = mysql
-	//_ "github.com/lib/pq"              // db = postgres
 )
 
-var adapter *object.Adapter
-
-func initConfig() {
-	err := beego.LoadAppConfig("ini", "../conf/app.conf")
-	if err != nil {
-		panic(err)
+func isEnabled() bool {
+	if adapter == nil {
+		initAdapter()
+		if adapter == nil {
+			return false
+		}
 	}
-
-	initAdapter()
+	return true
 }
 
-func initAdapter() {
-	if dbName == "dbName" {
-		adapter = nil
+func AddUserToOriginalDatabase(user *object.User) {
+	if !isEnabled() {
 		return
 	}
 
-	adapter = object.NewAdapter(beego.AppConfig.String("driverName"), beego.AppConfig.String("dataSourceName"), dbName)
-	createTable(adapter)
+	updatedOUser := createOriginalUserFromUser(user)
+	addUser(updatedOUser)
+	fmt.Printf("Add from user to oUser: %v\n", updatedOUser)
 }
 
-func createTable(a *object.Adapter) {
-	err := a.Engine.Sync2(new(User))
-	if err != nil {
-		panic(err)
+func UpdateUserToOriginalDatabase(user *object.User) {
+	if !isEnabled() {
+		return
 	}
+
+	updatedOUser := createOriginalUserFromUser(user)
+	updateUser(updatedOUser)
+	fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
 }

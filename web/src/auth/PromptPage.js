@@ -16,10 +16,11 @@ import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Col, Result, Row} from "antd";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
+import * as UserBackend from "../backend/UserBackend";
+import * as AuthBackend from "./AuthBackend";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import AffiliationSelect from "../common/AffiliationSelect";
-import * as UserBackend from "../backend/UserBackend";
 import OAuthWidget from "../common/OAuthWidget";
 
 class PromptPage extends React.Component {
@@ -160,6 +161,23 @@ class PromptPage extends React.Component {
     return true;
   }
 
+  onUpdateAccount(account) {
+    this.props.onUpdateAccount(account);
+  }
+
+  logout() {
+    AuthBackend.logout()
+      .then((res) => {
+        if (res.status === 'ok') {
+          this.onUpdateAccount(null);
+
+          Setting.goToLogin(this, this.getApplicationObj());
+        } else {
+          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
+        }
+      });
+  }
+
   submitUserEdit(isFinal) {
     let user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.user.owner, this.state.user.name, user)
@@ -168,7 +186,7 @@ class PromptPage extends React.Component {
           if (isFinal) {
             Setting.showMessage("success", `Successfully saved`);
 
-            Setting.goToLogin(this, this.getApplicationObj());
+            this.logout();
           }
         } else {
           if (isFinal) {
