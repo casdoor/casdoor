@@ -153,7 +153,10 @@ func (c *ApiController) Signup() {
 	}
 	object.AddUser(user)
 
-	//c.SetSessionUser(user)
+	if application.HasPromptPage() {
+		// The prompt page needs the user to be signed in
+		c.SetSessionUser(user.GetId())
+	}
 
 	object.DisableVerificationCode(form.Email)
 	object.DisableVerificationCode(checkPhone)

@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Row} from "antd";
+import {Link} from "react-router-dom";
+import {Button, Col, Result, Row} from "antd";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Setting from "../Setting";
 import i18next from "i18next";
@@ -89,21 +90,8 @@ class PromptPage extends React.Component {
     this.submitUserEdit(false);
   }
 
-  getAllPromptedProviderItems(application) {
-    return application.providers.filter(providerItem => Setting.isProviderPrompted(providerItem));
-  }
-
-  isAffiliationPrompted(application) {
-    const signupItems = application.signupItems.filter(signupItem => signupItem.name === "Affiliation");
-    if (signupItems.length === 0) {
-      return false;
-    }
-
-    return signupItems[0].prompted;
-  }
-
   renderAffiliation(application) {
-    if (!this.isAffiliationPrompted(application)) {
+    if (!Setting.isAffiliationPrompted(application)) {
       return null;
     }
 
@@ -148,7 +136,7 @@ class PromptPage extends React.Component {
   }
 
   isAffiliationAnswered(application) {
-    if (!this.isAffiliationPrompted(application)) {
+    if (!Setting.isAffiliationPrompted(application)) {
       return true;
     }
 
@@ -163,7 +151,7 @@ class PromptPage extends React.Component {
       return false;
     }
 
-    const providerItems = this.getAllPromptedProviderItems(application);
+    const providerItems = Setting.getAllPromptedProviderItems(application);
     for (let i = 0; i < providerItems.length; i ++) {
       if (!this.isProviderItemAnswered(application, providerItems[i])) {
         return false;
@@ -199,6 +187,26 @@ class PromptPage extends React.Component {
     const application = this.getApplicationObj();
     if (application === null) {
       return null;
+    }
+
+    if (!Setting.hasPromptPage(application)) {
+      return (
+        <Result
+          status="error"
+          title="Sign Up Error"
+          subTitle={"You are unexpected to see this prompt page"}
+          extra={[
+            <Link onClick={() => {
+              Setting.goToLogin(this, application);
+            }}>
+              <Button type="primary" key="signin">
+                Sign In
+              </Button>
+            </Link>
+          ]}
+        >
+        </Result>
+      )
     }
 
     return (

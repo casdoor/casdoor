@@ -78,6 +78,36 @@ export function isProviderPrompted(providerItem) {
   return isProviderVisible(providerItem) && providerItem.prompted;
 }
 
+export function getAllPromptedProviderItems(application) {
+  return application.providers.filter(providerItem => isProviderPrompted(providerItem));
+}
+
+export function getSignupItem(application, itemName) {
+  const signupItems = application.signupItems.filter(signupItem => signupItem.name === itemName);
+  if (signupItems.length === 0) {
+    return null;
+  }
+  return signupItems[0];
+}
+
+export function isAffiliationPrompted(application) {
+  const signupItem = getSignupItem(application, "Affiliation");
+  if (signupItem === null) {
+    return false;
+  }
+
+  return signupItem.prompted;
+}
+
+export function hasPromptPage(application) {
+  const providerItems = getAllPromptedProviderItems(application);
+  if (providerItems.length !== 0) {
+    return true;
+  }
+
+  return isAffiliationPrompted(application);
+}
+
 export function parseJson(s) {
   if (s === "") {
     return null;

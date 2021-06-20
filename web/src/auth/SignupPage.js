@@ -97,7 +97,11 @@ class SignupPage extends React.Component {
     if (authConfig.appName === application.name) {
       return "/result";
     } else {
-      return `/result/${application.name}`;
+      if (Setting.hasPromptPage(application)) {
+        return `/prompt/${application.name}`;
+      } else {
+        return `/result/${application.name}`;
+      }
     }
   }
 
