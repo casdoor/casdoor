@@ -183,6 +183,7 @@ func (c *ApiController) Login() {
 			resp = c.HandleLoggedIn(application, user, &form)
 		}
 	} else if form.Provider != "" {
+		organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", form.Organization))
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
 		providerItem := application.GetProviderItem(provider.Name)
@@ -287,7 +288,7 @@ func (c *ApiController) Login() {
 				object.AddUser(user)
 
 				// sync info from 3rd-party if possible
-				object.SetUserOAuthProperties(user, provider.Type, userInfo)
+				object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
 
 				object.LinkUserAccount(user, provider.Type, userInfo.Id)
 
@@ -317,7 +318,7 @@ func (c *ApiController) Login() {
 			user := object.GetUser(userId)
 
 			// sync info from 3rd-party if possible
-			object.SetUserOAuthProperties(user, provider.Type, userInfo)
+			object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
 
 			isLinked := object.LinkUserAccount(user, provider.Type, userInfo.Id)
 			if isLinked {

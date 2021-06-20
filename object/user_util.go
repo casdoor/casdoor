@@ -104,7 +104,7 @@ func setUserProperty(user *User, field string, value string) {
 	}
 }
 
-func SetUserOAuthProperties(user *User, providerType string, userInfo *idp.UserInfo) bool {
+func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo) bool {
 	if userInfo.Id != "" {
 		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
 		setUserProperty(user, propertyName, userInfo.Id)
@@ -130,7 +130,7 @@ func SetUserOAuthProperties(user *User, providerType string, userInfo *idp.UserI
 	if userInfo.AvatarUrl != "" {
 		propertyName := fmt.Sprintf("oauth_%s_avatarUrl", providerType)
 		setUserProperty(user, propertyName, userInfo.AvatarUrl)
-		if user.Avatar == "" {
+		if user.Avatar == "" || user.Avatar == organization.DefaultAvatar {
 			user.Avatar = userInfo.AvatarUrl
 		}
 	}
