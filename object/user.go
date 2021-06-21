@@ -27,23 +27,24 @@ type User struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
-	Id            string   `xorm:"varchar(100)" json:"id"`
-	Type          string   `xorm:"varchar(100)" json:"type"`
-	Password      string   `xorm:"varchar(100)" json:"password"`
-	DisplayName   string   `xorm:"varchar(100)" json:"displayName"`
-	Avatar        string   `xorm:"varchar(255)" json:"avatar"`
-	Email         string   `xorm:"varchar(100)" json:"email"`
-	Phone         string   `xorm:"varchar(100)" json:"phone"`
-	Address       []string `json:"address"`
-	Affiliation   string   `xorm:"varchar(100)" json:"affiliation"`
-	Tag           string   `xorm:"varchar(100)" json:"tag"`
-	Language      string   `xorm:"varchar(100)" json:"language"`
-	Score         int      `json:"score"`
-	IsAdmin       bool     `json:"isAdmin"`
-	IsGlobalAdmin bool     `json:"isGlobalAdmin"`
-	IsForbidden   bool     `json:"isForbidden"`
-	Hash          string   `xorm:"varchar(100)" json:"hash"`
-	PreHash       string   `xorm:"varchar(100)" json:"preHash"`
+	Id                string   `xorm:"varchar(100)" json:"id"`
+	Type              string   `xorm:"varchar(100)" json:"type"`
+	Password          string   `xorm:"varchar(100)" json:"password"`
+	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
+	Avatar            string   `xorm:"varchar(255)" json:"avatar"`
+	Email             string   `xorm:"varchar(100)" json:"email"`
+	Phone             string   `xorm:"varchar(100)" json:"phone"`
+	Address           []string `json:"address"`
+	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
+	Tag               string   `xorm:"varchar(100)" json:"tag"`
+	Language          string   `xorm:"varchar(100)" json:"language"`
+	Score             int      `json:"score"`
+	IsAdmin           bool     `json:"isAdmin"`
+	IsGlobalAdmin     bool     `json:"isGlobalAdmin"`
+	IsForbidden       bool     `json:"isForbidden"`
+	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
+	Hash              string   `xorm:"varchar(100)" json:"hash"`
+	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
 
 	Github   string `xorm:"varchar(100)" json:"github"`
 	Google   string `xorm:"varchar(100)" json:"google"`

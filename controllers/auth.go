@@ -271,19 +271,20 @@ func (c *ApiController) Login() {
 				properties := map[string]string{}
 				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
 				user := &object.User{
-					Owner:         application.Organization,
-					Name:          userInfo.Username,
-					CreatedTime:   util.GetCurrentTime(),
-					Id:            util.GenerateId(),
-					Type:          "normal-user",
-					DisplayName:   userInfo.DisplayName,
-					Avatar:        userInfo.AvatarUrl,
-					Email:         userInfo.Email,
-					Score:         200,
-					IsAdmin:       false,
-					IsGlobalAdmin: false,
-					IsForbidden:   false,
-					Properties:    properties,
+					Owner:             application.Organization,
+					Name:              userInfo.Username,
+					CreatedTime:       util.GetCurrentTime(),
+					Id:                util.GenerateId(),
+					Type:              "normal-user",
+					DisplayName:       userInfo.DisplayName,
+					Avatar:            userInfo.AvatarUrl,
+					Email:             userInfo.Email,
+					Score:             200,
+					IsAdmin:           false,
+					IsGlobalAdmin:     false,
+					IsForbidden:       false,
+					SignupApplication: application.Name,
+					Properties:        properties,
 				}
 				object.AddUser(user)
 
