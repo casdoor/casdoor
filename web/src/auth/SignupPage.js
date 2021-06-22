@@ -163,7 +163,7 @@ class SignupPage extends React.Component {
           rules={[
             {
               required: required,
-              message: i18next.t("login:Please input your username!"),
+              message: i18next.t("forget:Please input your username!"),
               whitespace: true,
             },
           ]}
@@ -224,14 +224,14 @@ class SignupPage extends React.Component {
           </Form.Item>
           <Form.Item
             name="emailCode"
-            label={i18next.t("signup:Email code")}
+            label={i18next.t("code:Email code")}
             rules={[{
               required: required,
-              message: i18next.t("signup:Please input your verification code!"),
+              message: i18next.t("code:Please input your verification code!"),
             }]}
           >
             <CountDownInput
-              defaultButtonText={i18next.t("user:Send code")}
+              defaultButtonText={i18next.t("code:Send code")}
               onButtonClick={UserBackend.sendCode}
               onButtonClickArgs={[this.state.email, "email", application?.organizationObj.owner + "/" + application?.organizationObj.name]}
               coolDownTime={60}
@@ -304,16 +304,16 @@ class SignupPage extends React.Component {
           </Form.Item>
           <Form.Item
             name="phoneCode"
-            label={i18next.t("signup:Phone code")}
+            label={i18next.t("code:Phone code")}
             rules={[
               {
                 required: required,
-                message: i18next.t("signup:Please input your phone verification code!"),
+                message: i18next.t("code:Please input your phone verification code!"),
               },
             ]}
           >
             <CountDownInput
-              defaultButtonText={i18next.t("user:Send code")}
+              defaultButtonText={i18next.t("code:Send code")}
               onButtonClick={UserBackend.sendCode}
               onButtonClickArgs={[this.state.phone, "phone", application.organizationObj.owner + "/" + application.organizationObj.name]}
               coolDownTime={60}
