@@ -46,6 +46,7 @@ export function updateApplication(owner, name, application) {
 
 export function addApplication(application) {
   let newApplication = Setting.deepCopy(application);
+  newApplication.organization = "built-in"
   return fetch(`${Setting.ServerUrl}/api/add-application`, {
     method: 'POST',
     credentials: 'include',
