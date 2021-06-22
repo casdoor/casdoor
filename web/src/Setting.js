@@ -83,7 +83,10 @@ export function getAllPromptedProviderItems(application) {
 }
 
 export function getSignupItem(application, itemName) {
-  const signupItems = application.signupItems?.filter(signupItem => signupItem.name === itemName);
+  if (!application.signupItems) {
+    return null;
+  }
+  const signupItems = application.signupItems?.filter(signupItem => signupItem?.name === itemName);
   if (signupItems.length === 0) {
     return null;
   }

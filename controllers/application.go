@@ -40,7 +40,11 @@ func (c *ApiController) GetApplications() {
 func (c *ApiController) GetApplication() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetApplication(id)
+	resp := object.GetApplication(id)
+	if (resp.SignupItems == nil) {
+		resp.SignupItems = []*object.SignupItem{}
+	}
+	c.Data["json"] = resp
 	c.ServeJSON()
 }
 
