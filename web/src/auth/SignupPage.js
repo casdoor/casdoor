@@ -402,7 +402,7 @@ class SignupPage extends React.Component {
         >
         </Form.Item>
         {
-          application.signupItems.map(signupItem => this.renderFormItem(application, signupItem))
+          application.signupItems?.map(signupItem => this.renderFormItem(application, signupItem))
         }
         <Form.Item {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">
