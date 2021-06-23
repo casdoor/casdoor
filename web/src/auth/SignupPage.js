@@ -66,7 +66,9 @@ class SignupPage extends React.Component {
       email: "",
       phone: "",
       emailCode: "",
-      phoneCode: ""
+      phoneCode: "",
+      validEmail: false,
+      validPhone: false,
     };
 
     this.form = React.createRef();
@@ -211,13 +213,20 @@ class SignupPage extends React.Component {
             label={i18next.t("general:Email")}
             rules={[
               {
-                type: 'email',
-                message: i18next.t("signup:The input is not valid Email!"),
-              },
-              {
                 required: required,
                 message: i18next.t("signup:Please input your Email!"),
               },
+              {
+                validator: (_, value) =>{
+                  if( Setting.EmailRegEx.test(this.state.email) ) {
+                    this.setState({validEmail: true})
+                    return Promise.resolve()
+                  } else {
+                    this.setState({validEmail: false})
+                    return Promise.reject(i18next.t("signup:The input is not valid Email!"))
+                  }
+                }
+              }
             ]}
           >
             <Input onChange={e => this.setState({email: e.target.value})} />
@@ -231,6 +240,7 @@ class SignupPage extends React.Component {
             }]}
           >
             <CountDownInput
+              disabled={!this.state.validEmail}
               defaultButtonText={i18next.t("code:Send code")}
               onButtonClick={UserBackend.sendCode}
               onButtonClickArgs={[this.state.email, "email", application?.organizationObj.owner + "/" + application?.organizationObj.name]}
@@ -292,6 +302,17 @@ class SignupPage extends React.Component {
                 required: required,
                 message: i18next.t("signup:Please input your phone number!"),
               },
+              {
+                validator: (_, value) =>{
+                  if ( Setting.PhoneRegEx.test(this.state.phone)) {
+                    this.setState({validPhone: true})
+                    return Promise.resolve()
+                  } else {
+                    this.setState({validPhone: false})
+                    return Promise.reject(i18next.t("signup:The input is not valid Phone!"))
+                  }
+                }
+              }
             ]}
           >
             <Input
@@ -313,6 +334,7 @@ class SignupPage extends React.Component {
             ]}
           >
             <CountDownInput
+              disabled={!this.state.validPhone}
               defaultButtonText={i18next.t("code:Send code")}
               onButtonClick={UserBackend.sendCode}
               onButtonClickArgs={[this.state.phone, "phone", application.organizationObj.owner + "/" + application.organizationObj.name]}
