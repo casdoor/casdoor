@@ -123,6 +123,7 @@ class SignupPage extends React.Component {
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === 'ok') {
+            Setting.showMessage("success", `Signup successfully: ${res.data.split("/")[1]}`);
           AuthBackend.getAccount("")
             .then((res) => {
               let account = null;
@@ -136,6 +137,7 @@ class SignupPage extends React.Component {
                 if (res.msg !== "Please sign in first") {
                   Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
                 }
+                Setting.goToLogin(this, application);
               }
             });
         } else {
