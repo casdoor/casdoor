@@ -101,7 +101,7 @@ class ApplicationEditPage extends React.Component {
       } style={{marginLeft: '5px'}} type="inner">
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Name")}:
+            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.application.name} onChange={e => {

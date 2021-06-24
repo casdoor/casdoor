@@ -18,6 +18,7 @@
     "Organization": "Organization",
     "Created time": "Created time",
     "Name": "Name",
+    "Name - Tooltip": "Unique string-style identifier",
     "Display name": "Display name",
     "Personal name": "Personal name",
     "Avatar": "Avatar",

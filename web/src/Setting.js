@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {message} from "antd";
+import {message, Tooltip} from "antd";
+import {QuestionCircleTwoTone} from "@ant-design/icons";
 import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -407,4 +408,15 @@ export function renderHelmet(application) {
       <link rel="icon" href={application.organizationObj.favicon} />
     </Helmet>
   )
+}
+
+export function getLabel(text, tooltip) {
+  return (
+    <React.Fragment>
+      <span style={{ marginRight: 4 }}>{text}</span>
+      <Tooltip placement="top" title={tooltip}>
+        <QuestionCircleTwoTone twoToneColor="rgb(45,120,213)" />
+      </Tooltip>
+    </React.Fragment>
+  );
 }
