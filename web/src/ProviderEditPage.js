@@ -18,6 +18,7 @@ import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
+import {getLabel} from "./Setting";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -102,7 +103,7 @@ class ProviderEditPage extends React.Component {
       } style={{marginLeft: '5px'}} type="inner">
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Name")}:
+            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.name} onChange={e => {
@@ -112,7 +113,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Display name")}:
+            {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.displayName} onChange={e => {
@@ -122,7 +123,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("provider:Category")}:
+            {Setting.getLabel(i18next.t("provider:Category"), i18next.t("provider:Category - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.provider.category} onChange={(value => {
@@ -149,7 +150,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("provider:Type")}:
+            {Setting.getLabel(i18next.t("provider:Type"), i18next.t("provider:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.provider.type} onChange={(value => {this.updateProviderField('type', value);})}>
@@ -161,7 +162,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {this.state.provider.category === "Email" ? i18next.t("signup:Username") : i18next.t("provider:Client ID")}:
+            {this.state.provider.category === "Email" ? Setting.getLabel(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip")) : Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.clientId} onChange={e => {
@@ -171,7 +172,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {this.state.provider.category === "Email" ? i18next.t("login:Password") : i18next.t("provider:Client secret")}:
+            {this.state.provider.category === "Email" ? Setting.getLabel(i18next.t("login:Password"), i18next.t("login:Password - Tooltip")) : Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.clientSecret} onChange={e => {
@@ -184,7 +185,7 @@ class ProviderEditPage extends React.Component {
             <React.Fragment>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {i18next.t("provider:Host")}:
+                  {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Input prefix={<LinkOutlined/>} value={this.state.provider.host} onChange={e => {
@@ -194,7 +195,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {i18next.t("provider:Port")}:
+                  {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <InputNumber value={this.state.provider.port} onChange={value => {
@@ -204,7 +205,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {i18next.t("provider:Email Title")}:
+                  {Setting.getLabel(i18next.t("provider:Email Title"), i18next.t("provider:Email Title - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.title} onChange={e => {
@@ -214,7 +215,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {i18next.t("provider:Email Content")}:
+                  {Setting.getLabel(i18next.t("provider:Email Content"), i18next.t("provider:Email Content - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <TextArea autoSize={{minRows: 1, maxRows: 100}} value={this.state.provider.content} onChange={e => {
@@ -227,7 +228,7 @@ class ProviderEditPage extends React.Component {
             <React.Fragment>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {i18next.t("provider:Region ID")}:
+                  {Setting.getLabel(i18next.t("provider:Region ID"), i18next.t("provider:Region ID - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.regionId} onChange={e => {
@@ -237,7 +238,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {i18next.t("provider:Sign Name")}:
+                  {Setting.getLabel(i18next.t("provider:Sign Name"), i18next.t("provider:Sign Name - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.signName} onChange={e => {
@@ -247,7 +248,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {i18next.t("provider:Template Code")}:
+                  {Setting.getLabel(i18next.t("provider:Template Code"), i18next.t("provider:Template Code - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.templateCode} onChange={e => {
@@ -261,7 +262,7 @@ class ProviderEditPage extends React.Component {
         {this.state.provider.category === "SMS" && this.state.provider.type === "tencent" ? (
           <Row style={{marginTop: '20px'}} >
             <Col style={{marginTop: '5px'}} span={2}>
-              {i18next.t("provider:App ID")}:
+              {Setting.getLabel(i18next.t("provider:App ID"), i18next.t("provider:App ID - Tooltip"))} :
             </Col>
             <Col span={22} >
               <Input value={this.state.provider.appId} onChange={e => {
@@ -272,7 +273,7 @@ class ProviderEditPage extends React.Component {
         ) : null}
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("provider:Provider URL")}:
+            {Setting.getLabel(i18next.t("provider:Provider URL"), i18next.t("provider:Provider URL - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined/>} value={this.state.provider.providerUrl} onChange={e => {

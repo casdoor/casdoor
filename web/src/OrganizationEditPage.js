@@ -71,7 +71,7 @@ class OrganizationEditPage extends React.Component {
       } style={{marginLeft: '5px'}} type="inner">
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Name")}:
+            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.organization.name} onChange={e => {
@@ -81,7 +81,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Display name")}:
+            {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.organization.displayName} onChange={e => {
@@ -91,7 +91,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            Favicon:
+            {Setting.getLabel("Favicon", i18next.t("general:Favicon - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
@@ -118,7 +118,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("organization:Website URL")}:
+            {Setting.getLabel(i18next.t("organization:Website URL"), i18next.t("organization:Website URL - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined/>} value={this.state.organization.websiteUrl} onChange={e => {
@@ -128,7 +128,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Password type")}:
+            {Setting.getLabel(i18next.t("general:Password type"), i18next.t("general:Password type - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.organization.passwordType} onChange={(value => {this.updateOrganizationField('passwordType', value);})}>
@@ -141,7 +141,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Password salt")}:
+            {Setting.getLabel(i18next.t("general:Password salt"), i18next.t("general:Password salt - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.organization.passwordSalt} onChange={e => {
@@ -151,7 +151,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Phone Prefix")}:
+            {Setting.getLabel(i18next.t("general:Phone Prefix"), i18next.t("general:Phone Prefix - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input addonBefore={"+"} value={this.state.organization.phonePrefix} onChange={e => {
@@ -161,7 +161,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Default avatar")}:
+            {Setting.getLabel(i18next.t("general:Default avatar"), i18next.t("general:Default avatar - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
