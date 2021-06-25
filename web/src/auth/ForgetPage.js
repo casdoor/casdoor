@@ -298,9 +298,11 @@ class ForgetPage extends React.Component {
                          {this.state.phone.replace(/(\d{3})\d*(\d{4})/,'$1****$2')}
                        </Option>
                        <Option key={2} value={this.state.email}>
-                         {this.state.email.split("@")[0].length>2?
-                             this.state.email.replace(/(?<=.)[^@]+(?=.@)/, "*****"):
-                             this.state.email.replace(/(\w?@)/, "*@")}
+                         {
+                           this.state.email.split("@")[0].length > 2 ?
+                             this.setState({email: this.state.email[0] + "*****" + this.state.email.split("@")[0][this.state.email.split("@")[0].length - 1] + "@" + this.state.email.split("@")[1]}):
+                             this.state.email.replace(/(\w?@)/, "*@")
+                         }
                        </Option>
                      </Select>
                }

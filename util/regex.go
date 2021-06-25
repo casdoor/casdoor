@@ -22,7 +22,8 @@ import (
 var rePhoneCn *regexp.Regexp
 
 func init() {
-	rePhoneCn, _ = regexp.Compile("^((13[0-9])|(14[5,7])|(15[0-3,5-9])|(17[0,3,5-8])|(18[0-9])|166|191|198|199|(147))\\d{8}$")
+	// reference link: https://learnku.com/articles/31543
+	rePhoneCn, _ = regexp.Compile("^1(3\\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\\d|9[0-35-9])\\d{8}$")
 }
 
 func IsEmailValid(email string) bool {
