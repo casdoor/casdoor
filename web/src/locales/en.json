@@ -66,10 +66,10 @@
     "Missing parameter.": "Missing parameter."
   },
   "code":
-  { 
+  {
     "Verify code": "Verify code",
     "Please input your verification code!": "Please input your verification code!",
-    "Send code": "Send code",
+    "Send Code": "Send Code",
     "Empty Code": "Empty Code",
     "Code Sent": "Code Sent",
     "Code You Received": "Code You Received",

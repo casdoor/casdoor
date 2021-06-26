@@ -318,7 +318,7 @@ class ForgetPage extends React.Component {
                   <CountDownInput
                       disabled={this.state.username === "" || this.state.verifyType === ""}
                       placeHolder={i18next.t("code:Verify code")}
-                      defaultButtonText={i18next.t("code:Send code")}
+                      defaultButtonText={i18next.t("code:Send Code")}
                       onButtonClick={UserBackend.sendCode}
                       onButtonClickArgs={[
                         this.state.email,
@@ -333,7 +333,7 @@ class ForgetPage extends React.Component {
                   <CountDownInput
                       disabled={this.state.username === "" || this.state.verifyType === ""}
                       placeHolder={i18next.t("code:Verify code")}
-                      defaultButtonText={i18next.t("code:Send code")}
+                      defaultButtonText={i18next.t("code:Send Code")}
                       onButtonClick={UserBackend.sendCode}
                       onButtonClickArgs={[
                         this.state.phone,

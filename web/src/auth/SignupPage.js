@@ -241,7 +241,7 @@ class SignupPage extends React.Component {
           >
             <CountDownInput
               disabled={!this.state.validEmail}
-              defaultButtonText={i18next.t("code:Send code")}
+              defaultButtonText={i18next.t("code:Send Code")}
               onButtonClick={UserBackend.sendCode}
               onButtonClickArgs={[this.state.email, "email", application?.organizationObj.owner + "/" + application?.organizationObj.name]}
               coolDownTime={60}
@@ -335,7 +335,7 @@ class SignupPage extends React.Component {
           >
             <CountDownInput
               disabled={!this.state.validPhone}
-              defaultButtonText={i18next.t("code:Send code")}
+              defaultButtonText={i18next.t("code:Send Code")}
               onButtonClick={UserBackend.sendCode}
               onButtonClickArgs={[this.state.phone, "phone", application.organizationObj.owner + "/" + application.organizationObj.name]}
               coolDownTime={60}

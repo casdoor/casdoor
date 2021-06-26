@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Col, Input, Modal, Row} from "antd";
+import {Button, Col, Input, Modal, Row} from "antd";
 import React from "react";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import { AuditOutlined, VerifiedOutlined } from "@ant-design/icons";
+
+const { Search } = Input;
 
 export const CountDownInput = (props) => {
   const {defaultButtonText, disabled, prefix, textBefore, placeHolder, onChange, coolDownTime, onButtonClick, onButtonClickArgs} = props;
@@ -112,28 +114,29 @@ export const CountDownInput = (props) => {
   };
 
   return (
-    <Input
-      addonBefore={textBefore}
-      disabled={disabled}
-      prefix={prefix !== null ? getIcon(prefix) : null}
-      placeholder={placeHolder}
-      onChange={e => onChange(e.target.value)}
-      addonAfter={
-        <div>
-          <button
-            disabled={disabled}
-            onClick={clickButton}
-            style={{backgroundColor: "#fafafa", border: "none"}}>
-            {buttonText}
-          </button>
-          <Modal
-            visible={visible}
-            onCancel={handleCancel}
-            onOk={handleOk}
-          >
-            {renderCheck()}
-          </Modal>
-        </div>
-      }/>
+    <div>
+      <Search
+        addonBefore={textBefore}
+        disabled={disabled}
+        prefix={prefix !== null ? getIcon(prefix) : null}
+        placeholder={placeHolder}
+        onChange={e => onChange(e.target.value)}
+        enterButton={
+          <Button type={"primary"} disabled={disabled}>
+            <div style={{fontSize: 14}}>
+              {buttonText}
+            </div>
+          </Button>
+        }
+        onSearch={clickButton}
+      />
+      <Modal
+        visible={visible}
+        onCancel={handleCancel}
+        onOk={handleOk}
+      >
+        {renderCheck()}
+      </Modal>
+    </div>
   );
 }
