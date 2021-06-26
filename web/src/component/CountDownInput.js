@@ -95,7 +95,7 @@ export const CountDownInput = (props) => {
           }}
         />
         <Row>
-          <Input value={key} placeholder={i18next.t("general:Captcha")} onPressEnter={handleOk} onChange={e => setKey(e.target.value)} />
+          <Input autoFocus value={key} placeholder={i18next.t("general:Captcha")} onPressEnter={handleOk} onChange={e => setKey(e.target.value)} />
         </Row>
       </Col>
     )
@@ -135,13 +135,14 @@ export const CountDownInput = (props) => {
       <Modal
         closable={false}
         maskClosable={false}
+        destroyOnClose={true}
         title={i18next.t("general:Captcha")}
         visible={visible}
         okText={i18next.t("user:OK")}
         cancelText={i18next.t("user:Cancel")}
         onCancel={handleCancel}
         onOk={handleOk}
-        width={300}
+        width={248}
       >
         {renderCheck()}
       </Modal>
