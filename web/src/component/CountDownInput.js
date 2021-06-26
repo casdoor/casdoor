@@ -52,6 +52,7 @@ export const CountDownInput = (props) => {
   const handleOk = () => {
     setVisible(false);
     onButtonClick(checkType, checkId, key, ...onButtonClickArgs).then(res => {
+      setKey("");
       if (res) {
         setCoolDown(true);
         countDown(coolDownTime);
@@ -61,6 +62,7 @@ export const CountDownInput = (props) => {
 
   const handleCancel = () => {
     setVisible(false);
+    setKey("");
   }
 
   const loadHumanCheck = () => {
@@ -93,7 +95,7 @@ export const CountDownInput = (props) => {
           }}
         />
         <Row>
-          <Input placeholder={i18next.t("general:Enter the code")} onChange={e => setKey(e.target.value)} />
+          <Input value={key} placeholder={i18next.t("general:Captcha")} onPressEnter={handleOk} onChange={e => setKey(e.target.value)} />
         </Row>
       </Col>
     )
@@ -131,9 +133,15 @@ export const CountDownInput = (props) => {
         onSearch={clickButton}
       />
       <Modal
+        closable={false}
+        maskClosable={false}
+        title={i18next.t("general:Captcha")}
         visible={visible}
+        okText={i18next.t("user:OK")}
+        cancelText={i18next.t("user:Cancel")}
         onCancel={handleCancel}
         onOk={handleOk}
+        width={300}
       >
         {renderCheck()}
       </Modal>
