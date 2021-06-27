@@ -179,7 +179,7 @@ class SignupTable extends React.Component {
                 <Button style={{marginRight: "5px"}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
               </Tooltip>
               <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
-                <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
+                <Button icon={<DeleteOutlined />} disabled={record.name === "Password"} size="small" onClick={() => this.deleteRow(table, index)} />
               </Tooltip>
             </div>
           );

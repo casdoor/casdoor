@@ -91,6 +91,27 @@ class ApplicationEditPage extends React.Component {
     });
   }
 
+  checkIfHasPasswd(app) {
+    if (app.enablePassword) {
+      for (let signupItem of app.signupItems) {
+        if (signupItem.name === "Password") return;
+      }
+      let row = {name: "Password", visible: true, required: true, rule: "None"};
+      if (app.signupItems === undefined) {
+        app.signupItems = [];
+      }
+      let table = Setting.addRow(app.signupItems, row);
+      this.updateApplicationField('signupItems', table)
+    } else {
+      for (let i = 0; i < app.signupItems.length; i++) {
+        if (app.signupItems[i].name === "Password") {
+          let table = Setting.deleteRow(app.signupItems, i);
+          this.updateApplicationField('signupItems', table);
+        }
+      }
+    }
+  }
+
   renderApplication() {
     return (
       <Card size="small" title={
@@ -226,7 +247,11 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enablePassword} onChange={checked => {
-              this.updateApplicationField('enablePassword', checked);
+              let application = this.state.application;
+              application['enablePassword'] = checked;
+              this.setState({
+                application: application,
+              }, () => this.checkIfHasPasswd(this.state.application));
             }} />
           </Col>
         </Row>
