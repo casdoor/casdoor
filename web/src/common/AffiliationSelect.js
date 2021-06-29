@@ -2,6 +2,7 @@ import React from "react";
 import {Cascader, Col, Input, Row, Select} from 'antd';
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
+import * as Setting from "../Setting";
 
 const { Option } = Select;
 
@@ -60,7 +61,7 @@ class AffiliationSelect extends React.Component {
           this.props.application?.affiliationUrl === "" ? null : (
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
-                {i18next.t("user:Address")}:
+                {Setting.getLabel(i18next.t("user:Address"), i18next.t("user:Address - Tooltip"))} :
               </Col>
               <Col span={24 - this.props.labelSpan} >
                 <Cascader style={{width: '100%', maxWidth: '400px'}} value={this.props.user.address} options={this.state.addressOptions} onChange={value => {
@@ -75,7 +76,7 @@ class AffiliationSelect extends React.Component {
         }
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
-            {i18next.t("user:Affiliation")}:
+            {Setting.getLabel(i18next.t("user:Affiliation"), i18next.t("user:Affiliation - Tooltip"))} :
           </Col>
           <Col span={24 - this.props.labelSpan} >
             {
