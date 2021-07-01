@@ -437,6 +437,7 @@ function maskString(s) {
 }
 
 export function maskEmail(email) {
+  if (email === "") return;
   const tokens = email.split("@");
   let username = tokens[0];
   username = maskString(username);
