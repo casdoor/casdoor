@@ -106,6 +106,16 @@ func (c *ApiController) Login() {
 		return
 	}
 
+	if strings.HasSuffix(form.Username, "@example.com") {
+		c.ResponseError("Cannot login via example Email Address")
+		return
+	}
+
+	if form.Username == "12345678" {
+		c.ResponseError("Cannot login via default Phone Number")
+		return
+	}
+
 	if form.Username != "" {
 		if form.Type == ResponseTypeLogin {
 			if c.GetSessionUser() != "" {
