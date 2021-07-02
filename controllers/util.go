@@ -24,18 +24,14 @@ import (
 var httpClient *http.Client
 
 func InitHttpClient() {
-	useProxy, err := beego.AppConfig.Bool("useProxy")
-	if err != nil {
-		panic(err)
-	}
-	if !useProxy {
+	httpProxy := beego.AppConfig.String("httpProxy")
+	if httpProxy == "" {
 		httpClient = &http.Client{}
 		return
 	}
 
 	// https://stackoverflow.com/questions/33585587/creating-a-go-socks5-client
-	proxyAddress := "127.0.0.1:10808"
-	dialer, err := proxy.SOCKS5("tcp", proxyAddress, nil, proxy.Direct)
+	dialer, err := proxy.SOCKS5("tcp", httpProxy, nil, proxy.Direct)
 	if err != nil {
 		panic(err)
 	}
