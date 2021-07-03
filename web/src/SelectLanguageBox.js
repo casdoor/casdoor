@@ -36,6 +36,31 @@ class SelectLanguageBox extends React.Component {
           <a onClick={() => Setting.changeLanguage("zh")} className="lang-selector">
             简体中文
           </a>
+          /
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+          <a onClick={() => Setting.changeLanguage("fr")} className="lang-selector">
+            Français
+          </a>
+          /
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+          <a onClick={() => Setting.changeLanguage("de")} className="lang-selector">
+            Deutsch
+          </a>
+          /
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+          <a onClick={() => Setting.changeLanguage("ja")} className="lang-selector">
+            日本語
+          </a>
+          /
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+          <a onClick={() => Setting.changeLanguage("ko")} className="lang-selector">
+            한국어
+          </a>
+          /
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+          <a onClick={() => Setting.changeLanguage("ru")} className="lang-selector">
+            Русский
+          </a>
         </div>
       </div>
     )

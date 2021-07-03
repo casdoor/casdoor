@@ -13,12 +13,22 @@
 // limitations under the License.
 
 import i18n from 'i18next'
-import zh from './locales/zh.json'
-import en from './locales/en.json'
+import zh from './locales/zh/data.json'
+import en from './locales/en/data.json'
+import fr from './locales/fr/data.json'
+import de from './locales/de/data.json'
+import ko from './locales/ko/data.json'
+import ru from './locales/ru/data.json'
+import ja from './locales/ja/data.json'
 
 const resources = {
   en: en,
-  zh: zh
+  zh: zh,
+  fr: fr,
+  ja: ja,
+  de: de,
+  ko: ko,
+  ru: ru,
 };
 
 i18n

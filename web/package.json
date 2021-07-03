@@ -5,6 +5,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
     "@craco/craco": "^6.1.1",
+    "@crowdin/cli": "^3.6.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -30,7 +31,8 @@
     "start": "cross-env PORT=7001 craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "craco eject"
+    "eject": "craco eject",
+    "crowdin:sync": "crowdin upload && crowdin download"
   },
   "eslintConfig": {
     "extends": "react-app"
