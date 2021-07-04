@@ -46,6 +46,7 @@ func initBuiltInUser() {
 		IsAdmin:       true,
 		IsGlobalAdmin: true,
 		IsForbidden:   false,
+		Properties:    make(map[string]string),
 	}
 	AddUser(user)
 }
