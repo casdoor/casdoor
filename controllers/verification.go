@@ -65,7 +65,7 @@ func (c *ApiController) SendVerificationCode() {
 
 	msg := "Invalid dest type."
 	switch destType {
-	case "email":
+	case "email", "Email":
 		if !util.IsEmailValid(dest) {
 			c.ResponseError("Invalid Email address")
 			return
@@ -73,7 +73,7 @@ func (c *ApiController) SendVerificationCode() {
 
 		provider := application.GetEmailProvider()
 		msg = object.SendVerificationCodeToEmail(organization, user, provider, remoteAddr, dest)
-	case "phone":
+	case "phone", "SMS":
 		if !util.IsPhoneCnValid(dest) {
 			c.ResponseError("Invalid phone number")
 			return
@@ -148,3 +148,4 @@ func (c *ApiController) ResetEmailOrPhone() {
 	c.Data["json"] = Response{Status: "ok"}
 	c.ServeJSON()
 }
+

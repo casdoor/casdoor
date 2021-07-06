@@ -105,6 +105,7 @@
   },
   "code":
   {
+    "{method} Verification": "{method} Verification",
     "Verify code": "Verify code",
     "Please input your verification code!": "Please input your verification code!",
     "Send Code": "Send Code",
@@ -139,7 +140,8 @@
     "No account yet?": "No account yet?",
     "sign up now": "sign up now",
     "To access": "To access",
-    "Sign in with {type}": "Sign in with {type}"
+    "Sign in with {type}": "Sign in with {type}",
+    "Signed in successfully": "Signed in successfully"
   },
   "account":
   {
@@ -180,8 +182,8 @@
     "Region ID": "Region ID",
     "Sign Name": "Sign Name",
     "Sign Name - Tooltip": "Unique string-style identifier",
-    "Template Code": "Template Code",
-    "Template Code - Tooltip": "Unique string-style identifier",
+    "Template ID": "Template ID",
+    "Template ID - Tooltip": "Template ID",
     "Provider URL": "Provider URL",
     "Provider URL - Tooltip": "Unique string-style identifier",
     "Edit Provider": "Edit Provider"
@@ -252,6 +254,8 @@
     "Password ON - Tooltip": "Whether to allow password login",
     "Enable signup": "Enable signup",
     "Enable signup - Tooltip": "Whether to allow users to sign up",
+    "Enable MFA": "Enable MFA",
+    "Enable MFA - Tooltip": "Enable MFA",
     "Login page preview": "Login page preview",
     "Test signup page..": "Test signup page..",
     "Test signin page..": "Test signin page..",

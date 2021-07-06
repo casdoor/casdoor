@@ -295,10 +295,10 @@ class ForgetPage extends React.Component {
                          style={{ textAlign: "left" }}
                      >
                        <Option key={1} value={this.state.phone}>
-                         {this.state.phone.replace(/(\d{3})\d*(\d{4})/,'$1****$2')}
+                         {Setting.maskShow(this.state.phone, "SMS")}
                        </Option>
                        <Option key={2} value={this.state.email}>
-                         {Setting.maskEmail(this.state.email)}
+                         {Setting.maskShow(this.state.email, "Email")}
                        </Option>
                      </Select>
                }

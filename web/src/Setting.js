@@ -436,7 +436,14 @@ function maskString(s) {
   }
 }
 
-export function maskEmail(email) {
+// remove prefix(optional) and mask
+function maskPhone(p) {
+  if (p === "") return;
+  if (p.indexOf("/") !== -1) p = p.split("/")[1];
+  return `${p.substring(0, 3)}${repeat("*", 7)}${p[p.length - 1]}`;
+}
+
+function maskEmail(email) {
   if (email === "") return;
   const tokens = email.split("@");
   let username = tokens[0];
@@ -449,6 +456,15 @@ export function maskEmail(email) {
   return `${username}@${domainTokens.join(".")}`;
 }
 
+export function maskShow(text, type) {
+  if (type === "Email") {
+    return maskEmail(text);
+  } else if (type === "SMS") {
+    return maskPhone(text);
+  }
+  return text;
+}
+
 export function getArrayItem(array, key, value) {
   const res = array.filter(item => item[key] === value)[0];
   return res;
@@ -456,5 +472,10 @@ export function getArrayItem(array, key, value) {
 
 export function getDeduplicatedArray(array, filterArray, key) {
   const res = array.filter(item => filterArray.filter(filterItem => filterItem[key] === item[key]).length === 0);
+  return res;
+}
+
+export function getDuplicatedArray(array, filterArray, key) {
+  const res = array?.filter(item => filterArray?.filter(filterItem => filterItem[key] === item[key]).length !== 0);
   return res;
 }

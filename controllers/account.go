@@ -41,6 +41,7 @@ type RequestForm struct {
 	Email        string `json:"email"`
 	Phone        string `json:"phone"`
 	Affiliation  string `json:"affiliation"`
+	MfaMethod    string `json:"mfa_method"`
 
 	Application string `json:"application"`
 	Provider    string `json:"provider"`

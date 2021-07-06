@@ -38,6 +38,7 @@ class ApplicationEditPage extends React.Component {
       application: null,
       organizations: [],
       providers: [],
+      mfaProviders: [],
     };
   }
 
@@ -52,7 +53,7 @@ class ApplicationEditPage extends React.Component {
       .then((application) => {
         this.setState({
           application: application,
-        });
+        }, () => {this.updateMFAProviders(application?.providers?.map(item => item.provider))});
       });
   }
 
@@ -70,7 +71,7 @@ class ApplicationEditPage extends React.Component {
       .then((res) => {
         this.setState({
           providers: res,
-        });
+        })
       });
   }
 
@@ -89,6 +90,12 @@ class ApplicationEditPage extends React.Component {
     this.setState({
       application: application,
     });
+  }
+
+  updateMFAProviders(providers) {
+    this.setState({
+      mfaProviders: Setting.getDuplicatedArray(providers, [{category: "Email"}, {category: "SMS"}], "category")
+    })
   }
 
   renderApplication() {
@@ -240,6 +247,26 @@ class ApplicationEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        <Row style={{marginTop: '20px'}} align="middle">
+          <Col style={{marginTop: '5px'}} span={2}>
+            {Setting.getLabel(i18next.t("application:Enable MFA"), i18next.t("application:Enable MFA - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.enableMfa && this.state.mfaProviders?.length > 0} onChange={checked => {
+              this.updateApplicationField('enableMfa', checked);
+            }}/>
+          </Col>
+          <Col span={2} >
+            {
+              !this.state.application.enableMfa || this.state.mfaProviders?.length === 0 ? <div style={{height: '32px'}}> </div> :
+                <Select virtual={false} style={{width: '100%'}} value={this.state.application.mfa_method?this.state.application.mfa_method:this.state.mfaProviders[0]?.category} onChange={(value => {this.updateApplicationField('mfa_method', value);})}>
+                  {
+                    this.state.mfaProviders?.map((provider, index) => <Option key={index} value={provider.category}>{provider.category}</Option>)
+                  }
+                </Select>
+            }
+          </Col>
+        </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
             {Setting.getLabel(i18next.t("general:Signup URL"), i18next.t("general:Signup URL - Tooltip"))} :
@@ -290,7 +317,7 @@ class ApplicationEditPage extends React.Component {
               table={this.state.application.providers}
               providers={this.state.providers}
               application={this.state.application}
-              onUpdateTable={(value) => { this.updateApplicationField('providers', value)}}
+              onUpdateTable={(value) => { this.updateApplicationField('providers', value);this.updateMFAProviders(value.map(item => item.provider))}}
             />
           </Col>
         </Row>

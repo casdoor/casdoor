@@ -249,7 +249,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {Setting.getLabel(i18next.t("provider:Template Code"), i18next.t("provider:Template Code - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("provider:Template ID"), i18next.t("provider:Template ID - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.templateCode} onChange={e => {

@@ -29,6 +29,14 @@ type SessionData struct {
 	ExpireTime int64
 }
 
+var mfaMethods map[string]string
+
+func init() {
+	mfaMethods = make(map[string]string, 2)
+	mfaMethods["SMS"] = "Phone"
+	mfaMethods["Email"] = "Email"
+}
+
 func (c *ApiController) GetSessionUsername() string {
 	// check if user session expired
 	sessionData := c.GetSessionData()

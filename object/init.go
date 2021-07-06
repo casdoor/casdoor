@@ -87,6 +87,8 @@ func initBuiltInApplication() {
 		Organization:   "built-in",
 		EnablePassword: true,
 		EnableSignUp:   true,
+		EnableMfa:      false,
+		MfaMethod:      "Email",
 		Providers:      []*ProviderItem{},
 		SignupItems:    []*SignupItem{},
 		RedirectUris:   []string{},

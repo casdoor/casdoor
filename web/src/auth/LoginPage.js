@@ -29,6 +29,7 @@ import GiteeLoginButton from "./GiteeLoginButton";
 import WechatLoginButton from "./WechatLoginButton";
 import WeiboLoginButton from "./WeiboLoginButton";
 import i18next from "i18next";
+import VerifyModal from "../VerifyModal";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -40,6 +41,10 @@ class LoginPage extends React.Component {
       application: null,
       mode: props.mode !== undefined ? props.mode : (props.match === undefined ? null : props.match.params.mode), // "signup" or "signin"
       msg: null,
+      visible: false,
+      username: "",
+      dest: "",
+      prefix: "",
     };
   }
 
@@ -138,6 +143,11 @@ class LoginPage extends React.Component {
             }
 
             // Util.showMessage("success", `Authorization code: ${res.data}`);
+          }
+        } else if (res.msg === "need to verify email/phone" && application.enableMfa !== "") {
+          this.setState({visible: true, username: res.data, dest: res.data2});
+          if (res.data2.search('/') !== -1) {
+            this.setState({dest: res.data2.split("/")[1], prefix: res.data2.split("/")[0]})
           }
         } else {
           Util.showMessage("error", `Failed to log in: ${res.msg}`);
@@ -309,6 +319,16 @@ class LoginPage extends React.Component {
               })
             }
           </Form.Item>
+          <VerifyModal visible={this.state.visible}
+                       prefix={this.state.prefix}
+                       dest={this.state.dest}
+                       username={this.state.username}
+                       org={this.state.application?.organizationObj}
+                       buttonText={i18next.t("code:{method} Verification").replace("{method}", this.state.application?.mfa_method)}
+                       destType={this.state.application?.mfa_method}
+                       coolDownTime={60}
+                       changeVisible={e=>{this.setState({visible: e.visible})}}
+          />
         </Form>
       );
     } else {
