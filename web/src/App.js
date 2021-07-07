@@ -46,6 +46,8 @@ import SelectLanguageBox from './SelectLanguageBox';
 import i18next from 'i18next';
 import PromptPage from "./auth/PromptPage";
 
+import BasicLayout from "./layout/index"
+
 const { Header, Footer } = Layout;
 
 class App extends Component {
@@ -354,7 +356,7 @@ class App extends Component {
   renderContent() {
     return (
       <div>
-        <Header style={{ padding: '0', marginBottom: '3px'}}>
+        {/* <Header style={{ padding: '0', marginBottom: '3px'}}>
           {
             Setting.isMobile() ? null : (
               <Link to={"/"}>
@@ -375,7 +377,7 @@ class App extends Component {
               this.renderAccount()
             }
           </Menu>
-        </Header>
+        </Header> */}
         <Switch>
           <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
           <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
@@ -442,18 +444,17 @@ class App extends Component {
     }
 
     return (
+      <BasicLayout>
       <div id="parent-area">
         <BackTop />
-        <CustomGithubCorner />
+        {/* <CustomGithubCorner /> */}
         <div id="content-wrap">
           {
             this.renderContent()
           }
         </div>
-        {
-          this.renderFooter()
-        }
       </div>
+      </BasicLayout>
     );
   }
 
