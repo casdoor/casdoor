@@ -12,6 +12,8 @@
     "User": "用户",
     "Applications": "应用",
     "Application": "应用",
+    "loginPageCustom": "登录页面",
+    "loginPageCustom - Tooltip": "\"请设置输入框、提交按钮、忘记密码链接（可选）和注册链接（可选）的ID：\"#username\", \"#password\", \"#login\", \"#forget\", \"#signup\"",
     "Save": "保存",
     "Add": "添加",
     "Action": "Action",

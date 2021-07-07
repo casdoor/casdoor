@@ -29,6 +29,7 @@ import GiteeLoginButton from "./GiteeLoginButton";
 import WechatLoginButton from "./WechatLoginButton";
 import WeiboLoginButton from "./WeiboLoginButton";
 import i18next from "i18next";
+import LoginPageCustom from "./LoginPageCustom";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -376,26 +377,32 @@ class LoginPage extends React.Component {
       return Util.renderMessageLarge(this, this.state.msg);
     }
 
-    return (
-      <Row>
-        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-          <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center"}}>
-            {
-              Setting.renderHelmet(application)
-            }
-            {
-              Setting.renderLogo(application)
-            }
-            {/*{*/}
-            {/*  this.state.clientId !== null ? "Redirect" : null*/}
-            {/*}*/}
-            {
-              this.renderForm(application)
-            }
-          </div>
-        </Col>
-      </Row>
-    )
+      if ((this.state.application && this.state.application.loginPageCustom)) {
+          return <LoginPageCustom Parent={this} Application={this.state.application} Html={this.state.application.loginPageCustom}/>
+      } else if (this.state.classes.application && this.state.classes.application.loginPageCustom) {
+          return <LoginPageCustom Parent={this} Application={this.state.classes.application } Html={this.state.classes.application.loginPageCustom}/>
+      } else {
+          return (
+              <Row>
+                  <Col span={24} style={{display: "flex", justifyContent: "center"}}>
+                      <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center"}}>
+                          {
+                              Setting.renderHelmet(application)
+                          }
+                          {
+                              Setting.renderLogo(application)
+                          }
+                          {/*{*/}
+                          {/*  this.state.clientId !== null ? "Redirect" : null*/}
+                          {/*}*/}
+                          {
+                              this.renderForm(application)
+                          }
+                      </div>
+                  </Col>
+              </Row>
+          )
+      }
   }
 }
 

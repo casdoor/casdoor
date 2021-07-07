@@ -26,6 +26,12 @@ import UrlTable from "./UrlTable";
 import ProviderTable from "./ProviderTable";
 import SignupTable from "./SignupTable";
 import PromptPage from "./auth/PromptPage";
+import {UnControlled as CodeMirror} from 'react-codemirror2'
+import 'codemirror/mode/htmlmixed/htmlmixed'
+import 'codemirror/addon/hint/show-hint.css';
+import 'codemirror/addon/hint/show-hint.js';
+import 'codemirror/addon/hint/html-hint';
+
 
 const { Option } = Select;
 
@@ -164,6 +170,24 @@ class ApplicationEditPage extends React.Component {
             <Input value={this.state.application.description} onChange={e => {
               this.updateApplicationField('description', e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {Setting.getLabel(i18next.t("general:loginPageCustom"), i18next.t("general:loginPageCustom - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <CodeMirror
+                value={this.state.application.loginPageCustom}
+                options={{
+                  mode: 'xml',
+                  theme: 'material',
+                  lineNumbers: true
+                }}
+                onChange={(editor, data, value) => {
+                  this.updateApplicationField('loginPageCustom', value)
+                }}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

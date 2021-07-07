@@ -13,6 +13,8 @@
     "User": "User",
     "Applications": "Applications",
     "Application": "Application",
+    "loginPageCustom": "Login page",
+    "loginPageCustom - Tooltip": "Please set ID for input box, submit button, forget password link(optional) and sign up(optional) link: \"#username\", \"#password\", \"#login\", \"#forget\", \"#signup\"",
     "Save": "Save",
     "Add": "Add",
     "Action": "Action",

@@ -34,6 +34,7 @@ type Application struct {
 	Providers       []*ProviderItem `xorm:"varchar(10000)" json:"providers"`
 	SignupItems     []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
 	OrganizationObj *Organization   `xorm:"-" json:"organizationObj"`
+	LoginPageCustom string          `xorm:"TEXT" json:"loginPageCustom"`
 
 	ClientId       string   `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret   string   `xorm:"varchar(100)" json:"clientSecret"`
