@@ -12,13 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {Component} from 'react';
-import './App.less';
-import {Helmet} from "react-helmet";
+import React, { Component } from "react";
+import "./App.less";
+import { Helmet } from "react-helmet";
 import * as Setting from "./Setting";
-import {DownOutlined, LogoutOutlined, SettingOutlined} from '@ant-design/icons';
-import {Avatar, BackTop, Dropdown, Layout, Menu} from 'antd';
-import {Link, Redirect, Route, Switch, withRouter} from 'react-router-dom'
+import Icon, {
+  DownOutlined,
+  LogoutOutlined,
+  SettingOutlined,
+  HomeOutlined,
+  UserOutlined,
+  ContainerOutlined,
+  BankOutlined,
+  AppstoreOutlined,
+  ControlOutlined,
+  ApiOutlined,
+  ClockCircleOutlined,
+} from "@ant-design/icons";
+import { Avatar, BackTop, Dropdown, Layout, Menu } from "antd";
+import { Link, Redirect, Route, Switch, withRouter } from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
 import UserListPage from "./UserListPage";
@@ -43,10 +55,17 @@ import SelfForgetPage from "./auth/SelfForgetPage";
 import ForgetPage from "./auth/ForgetPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
-import SelectLanguageBox from './SelectLanguageBox';
-import i18next from 'i18next';
+import SelectLanguageBox from "./component/SelectLanguageBox";
+import i18next from "i18next";
 import PromptPage from "./auth/PromptPage";
 
+// import BasicLayout from "./layout/index"
+import { BasicSider, BasicContent, BasicHeader } from "./layout/index";
+import { createFromIconfontCN } from '@ant-design/icons';
+
+const IconFont = createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/font_2674712_ycpoalauyu.js',
+});
 const { Header, Footer } = Layout;
 
 class App extends Component {
@@ -87,23 +106,23 @@ class App extends Component {
     this.setState({
       uri: uri,
     });
-    if (uri === '/') {
+    if (uri === "/") {
       this.setState({ selectedMenuKey: 0 });
-    } else if (uri.includes('organizations')) {
+    } else if (uri.includes("organizations")) {
       this.setState({ selectedMenuKey: 1 });
-    } else if (uri.includes('users')) {
+    } else if (uri.includes("users")) {
       this.setState({ selectedMenuKey: 2 });
-    } else if (uri.includes('providers')) {
+    } else if (uri.includes("providers")) {
       this.setState({ selectedMenuKey: 3 });
-    } else if (uri.includes('applications')) {
+    } else if (uri.includes("applications")) {
       this.setState({ selectedMenuKey: 4 });
-    } else if (uri.includes('tokens')) {
+    } else if (uri.includes("tokens")) {
       this.setState({ selectedMenuKey: 5 });
-    } else if (uri.includes('signup')) {
+    } else if (uri.includes("signup")) {
       this.setState({ selectedMenuKey: 100 });
-    } else if (uri.includes('login')) {
+    } else if (uri.includes("login")) {
       this.setState({ selectedMenuKey: 101 });
-    } else if (uri.includes('result')) {
+    } else if (uri.includes("result")) {
       this.setState({ selectedMenuKey: 100 });
     } else {
       this.setState({ selectedMenuKey: -1 });
@@ -123,7 +142,9 @@ class App extends Component {
     if (params.get("username") === null || params.get("password") === null) {
       return "";
     }
-    return `?username=${params.get("username")}&password=${params.get("password")}`;
+    return `?username=${params.get("username")}&password=${params.get(
+      "password"
+    )}`;
   }
 
   getUrlWithoutQuery() {
@@ -137,24 +158,27 @@ class App extends Component {
       query = this.getCredentialParams();
     }
     if (query !== "") {
-      window.history.replaceState({}, document.title, this.getUrlWithoutQuery());
+      window.history.replaceState(
+        {},
+        document.title,
+        this.getUrlWithoutQuery()
+      );
     }
-    AuthBackend.getAccount(query)
-      .then((res) => {
-        let account = null;
-        if (res.status === "ok") {
-          account = res.data;
-          account.organization = res.data2;
-        } else {
-          if (res.msg !== "Please sign in first") {
-            Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
-          }
+    AuthBackend.getAccount(query).then((res) => {
+      let account = null;
+      if (res.status === "ok") {
+        account = res.data;
+        account.organization = res.data2;
+      } else {
+        if (res.msg !== "Please sign in first") {
+          Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
         }
+      }
 
-        this.setState({
-          account: account,
-        });
+      this.setState({
+        account: account,
       });
+    });
   }
 
   logout() {
@@ -163,32 +187,31 @@ class App extends Component {
       submitted: false,
     });
 
-    AuthBackend.logout()
-      .then((res) => {
-        if (res.status === 'ok') {
-          this.setState({
-            account: null
-          });
+    AuthBackend.logout().then((res) => {
+      if (res.status === "ok") {
+        this.setState({
+          account: null,
+        });
 
-          Setting.showMessage("success", `Logged out successfully`);
+        Setting.showMessage("success", `Logged out successfully`);
 
-          Setting.goToLinkSoft(this, "/");
-        } else {
-          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
-        }
-      });
+        Setting.goToLinkSoft(this, "/");
+      } else {
+        Setting.showMessage("error", `Failed to log out: ${res.msg}`);
+      }
+    });
   }
 
   onUpdateAccount(account) {
     this.setState({
-      account: account
+      account: account,
     });
   }
 
   handleRightDropdownClick(e) {
-    if (e.key === '201') {
+    if (e.key === "201") {
       this.props.history.push(`/account`);
-    } else if (e.key === '202') {
+    } else if (e.key === "202") {
       this.logout();
     }
   }
@@ -196,16 +219,26 @@ class App extends Component {
   renderAvatar() {
     if (this.state.account.avatar === "") {
       return (
-        <Avatar style={{ backgroundColor: Setting.getAvatarColor(this.state.account.name), verticalAlign: 'middle' }} size="large">
+        <Avatar
+          style={{
+            backgroundColor: Setting.getAvatarColor(this.state.account.name),
+            verticalAlign: "middle",
+          }}
+          size="middle"
+        >
           {Setting.getShortName(this.state.account.name)}
         </Avatar>
-      )
+      );
     } else {
       return (
-        <Avatar src={this.state.account.avatar} style={{verticalAlign: 'middle' }} size="large">
+        <Avatar
+          src={this.state.account.avatar}
+          style={{ verticalAlign: "middle" }}
+          size="middle"
+        >
           {Setting.getShortName(this.state.account.name)}
         </Avatar>
-      )
+      );
     }
   }
 
@@ -224,20 +257,21 @@ class App extends Component {
     );
 
     return (
-      <Dropdown key="200" overlay={menu} >
-        <div className="ant-dropdown-link" style={{float: 'right', cursor: 'pointer'}}>
-          {
-            this.renderAvatar()
-          }
-          &nbsp;
-          &nbsp;
-          {Setting.isMobile() ? null : Setting.getShortName(this.state.account.displayName)} &nbsp; <DownOutlined />
-          &nbsp;
-          &nbsp;
-          &nbsp;
+      <Dropdown key="200" overlay={menu}>
+        <div
+          className="ant-dropdown-link"
+          style={{ float: "right", cursor: "pointer" }}
+        >
+          {this.renderAvatar()}
+          &nbsp; &nbsp;
+          {Setting.isMobile()
+            ? null
+            : Setting.getShortName(this.state.account.displayName)}{" "}
+          &nbsp; <DownOutlined />
+          &nbsp; &nbsp; &nbsp;
         </div>
       </Dropdown>
-    )
+    );
   }
 
   renderAccount() {
@@ -275,51 +309,39 @@ class App extends Component {
     }
 
     res.push(
-      <Menu.Item key="0">
-        <Link to="/">
-          {i18next.t("general:Home")}
-        </Link>
+      <Menu.Item key="/" icon={<HomeOutlined />}>
+        <Link to="/">{i18next.t("general:Home")}</Link>
       </Menu.Item>
     );
 
     if (Setting.isAdminUser(this.state.account)) {
       res.push(
-        <Menu.Item key="1">
-          <Link to="/organizations">
-            {i18next.t("general:Organizations")}
-          </Link>
+        <Menu.Item key="/organizations" icon={<IconFont type="icon-organization" />}>
+          <Link to="/organizations">{i18next.t("general:Organizations")}</Link>
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="2">
-          <Link to="/users">
-            {i18next.t("general:Users")}
-          </Link>
+        <Menu.Item key="/users" icon={<UserOutlined />}>
+          <Link to="/users">{i18next.t("general:Users")}</Link>
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="3">
-          <Link to="/providers">
-            {i18next.t("general:Providers")}
-          </Link>
+        <Menu.Item key="/providers" icon={<IconFont type="icon-provider" />}>
+          <Link to="/providers">{i18next.t("general:Providers")}</Link>
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="4">
-          <Link to="/applications">
-            {i18next.t("general:Applications")}
-          </Link>
+        <Menu.Item key="/applications" icon={<AppstoreOutlined />}>
+          <Link to="/applications">{i18next.t("general:Applications")}</Link>
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="5">
-          <Link to="/tokens">
-            {i18next.t("general:Tokens")}
-          </Link>
+        <Menu.Item key="/tokens" icon={<IconFont type="icon-token" />}>
+          <Link to="/tokens">{i18next.t("general:Tokens")}</Link>
         </Menu.Item>
       );
       res.push(
-          <Menu.Item key="7">
+          <Menu.Item key="/records" icon={<IconFont type="icon-record"/>}>
             <Link to="/records">
               {i18next.t("general:Records")}
             </Link>
@@ -327,7 +349,11 @@ class App extends Component {
       );
     }
     res.push(
-      <Menu.Item key="6" onClick={() => window.location.href = "/swagger"}>
+      <Menu.Item
+        key="/swagger"
+        onClick={() => (window.location.href = "/swagger")}
+        icon={<IconFont type="icon-swagger" />}
+      >
         {i18next.t("general:Swagger")}
       </Menu.Item>
     );
@@ -336,7 +362,7 @@ class App extends Component {
 
   renderHomeIfLoggedIn(component) {
     if (this.state.account !== null && this.state.account !== undefined) {
-      return <Redirect to='/' />
+      return <Redirect to="/" />;
     } else {
       return component;
     }
@@ -344,25 +370,26 @@ class App extends Component {
 
   renderLoginIfNotLoggedIn(component) {
     if (this.state.account === null) {
-      return <Redirect to='/login' />
+      return <Redirect to="/login" />;
     } else if (this.state.account === undefined) {
       return null;
-    }
-    else {
+    } else {
       return component;
     }
   }
 
   isStartPages() {
-    return window.location.pathname.startsWith('/login') ||
-      window.location.pathname.startsWith('/signup') ||
-      window.location.pathname === '/';
+    return (
+      window.location.pathname.startsWith("/login") ||
+      window.location.pathname.startsWith("/signup") ||
+      window.location.pathname === "/"
+    );
   }
 
   renderContent() {
     return (
       <div>
-        <Header style={{ padding: '0', marginBottom: '3px'}}>
+        {/* <Header style={{ padding: '0', marginBottom: '3px'}}>
           {
             Setting.isMobile() ? null : (
               <Link to={"/"}>
@@ -383,8 +410,9 @@ class App extends Component {
               this.renderAccount()
             }
           </Menu>
-        </Header>
+        </Header> */}
         <Switch>
+
           <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
           <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
           <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)}/>
@@ -403,7 +431,7 @@ class App extends Component {
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
         </Switch>
       </div>
-    )
+    );
   }
 
   renderFooter() {
@@ -411,58 +439,175 @@ class App extends Component {
     // https://www.freecodecamp.org/neyarnws/how-to-keep-your-footer-where-it-belongs-59c6aa05c59c/
 
     return (
-      <Footer id="footer" style={
-        {
-          borderTop: '1px solid #e8e8e8',
-          backgroundColor: 'white',
-          textAlign: 'center',
-        }
-      }>
-        <SelectLanguageBox/>
-        Made with <span style={{color: 'rgb(255, 255, 255)'}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casbin.org" rel="noreferrer">Casbin</a>
+      <Footer
+        id="footer"
+        style={{
+          borderTop: "1px solid #e8e8e8",
+          backgroundColor: "white",
+          textAlign: "center",
+        }}
+      >
+        <SelectLanguageBox />
+        Made with <span style={{ color: "rgb(255, 255, 255)" }}>
+          ❤️
+        </span> by{" "}
+        <a
+          style={{ fontWeight: "bold", color: "black" }}
+          target="_blank"
+          href="https://casbin.org"
+          rel="noreferrer"
+        >
+          Casbin
+        </a>
       </Footer>
-    )
+    );
   }
 
   isDoorPages() {
-    return window.location.pathname.startsWith("/signup") ||
+    return (
+      window.location.pathname.startsWith("/signup") ||
       window.location.pathname.startsWith("/login") ||
       window.location.pathname.startsWith("/callback") ||
       window.location.pathname.startsWith("/prompt") ||
-      window.location.pathname.startsWith("/forget");
+      window.location.pathname.startsWith("/forget")
+    );
   }
 
   renderPage() {
     if (this.isDoorPages()) {
       return (
         <Switch>
-          <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...props} />)}/>
-          <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />)}/>
-          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...props} />)}/>
-          <Route exact path="/signup/oauth/authorize" render={(props) => <LoginPage type={"code"} mode={"signup"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
-          <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage type={"code"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
-          <Route exact path="/callback" component={AuthCallback}/>
-          <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)}/>
-          <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)}/>
-          <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} {...props} />)}/>
+          <Route
+            exact
+            path="/signup"
+            render={(props) =>
+              this.renderHomeIfLoggedIn(<SignupPage {...props} />)
+            }
+          />
+          <Route
+            exact
+            path="/signup/:applicationName"
+            render={(props) =>
+              this.renderHomeIfLoggedIn(
+                <SignupPage
+                  {...props}
+                  onUpdateAccount={(account) => {
+                    this.onUpdateAccount(account);
+                  }}
+                />
+              )
+            }
+          />
+          <Route
+            exact
+            path="/login"
+            render={(props) =>
+              this.renderHomeIfLoggedIn(<SelfLoginPage {...props} />)
+            }
+          />
+          <Route
+            exact
+            path="/signup/oauth/authorize"
+            render={(props) => (
+              <LoginPage
+                type={"code"}
+                mode={"signup"}
+                {...props}
+                onUpdateAccount={(account) => {
+                  this.onUpdateAccount(account);
+                }}
+              />
+            )}
+          />
+          <Route
+            exact
+            path="/login/oauth/authorize"
+            render={(props) => (
+              <LoginPage
+                type={"code"}
+                mode={"signin"}
+                {...props}
+                onUpdateAccount={(account) => {
+                  this.onUpdateAccount(account);
+                }}
+              />
+            )}
+          />
+          <Route exact path="/callback" component={AuthCallback} />
+          <Route
+            exact
+            path="/forget"
+            render={(props) =>
+              this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)
+            }
+          />
+          <Route
+            exact
+            path="/forget/:applicationName"
+            render={(props) =>
+              this.renderHomeIfLoggedIn(<ForgetPage {...props} />)
+            }
+          />
+          <Route
+            exact
+            path="/prompt"
+            render={(props) =>
+              this.renderLoginIfNotLoggedIn(
+                <PromptPage account={this.state.account} {...props} />
+              )
+            }
+          />
+          <Route
+            exact
+            path="/prompt/:applicationName"
+            render={(props) =>
+              this.renderLoginIfNotLoggedIn(
+                <PromptPage
+                  account={this.state.account}
+                  onUpdateAccount={(account) => {
+                    this.onUpdateAccount(account);
+                  }}
+                  {...props}
+                />
+              )
+            }
+          />
         </Switch>
-      )
+      );
     }
 
     return (
-      <div id="parent-area">
-        <BackTop />
-        <CustomGithubCorner />
-        <div id="content-wrap">
-          {
-            this.renderContent()
-          }
-        </div>
-        {
-          this.renderFooter()
-        }
-      </div>
+      <Layout style={{ minHeight: "100vh" }}>
+        <BasicSider path={window.location.pathname}>
+          {this.renderMenu()}
+        </BasicSider>
+        <Layout>
+          <BasicHeader>
+            <div>
+              {this.renderAccount()}
+              <SelectLanguageBox />
+            </div>
+          </BasicHeader>
+          <BasicContent>
+            <div id="parent-area">
+              <BackTop />
+              <div id="content-wrap">{this.renderContent()}</div>
+            </div>
+          </BasicContent>
+          <Footer style={{ textAlign: "center" }}>
+            Made with <span style={{ color: "rgb(255, 255, 255)" }}>❤️</span>
+            by{" "}
+            <a
+              style={{ fontWeight: "bold", color: "black" }}
+              target="_blank"
+              href="https://casbin.org"
+              rel="noreferrer"
+            >
+              Casbin
+            </a>
+          </Footer>
+        </Layout>
+      </Layout>
     );
   }
 
@@ -471,13 +616,14 @@ class App extends Component {
       return (
         <React.Fragment>
           <Helmet>
-            <link rel="icon" href={"https://cdn.casbin.com/static/favicon.ico"} />
+            <link
+              rel="icon"
+              href={"https://cdn.casbin.com/static/favicon.ico"}
+            />
           </Helmet>
-          {
-            this.renderPage()
-          }
+          {this.renderPage()}
         </React.Fragment>
-      )
+      );
     }
 
     const organization = this.state.account.organization;
@@ -487,11 +633,9 @@ class App extends Component {
           <title>{organization.displayName}</title>
           <link rel="icon" href={organization.favicon} />
         </Helmet>
-        {
-          this.renderPage()
-        }
+        {this.renderPage()}
       </React.Fragment>
-    )
+    );
   }
 }
 
