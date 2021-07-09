@@ -62,7 +62,7 @@ class ProviderTable extends React.Component {
   }
 
   renderTable(table) {
-    const columns = [
+    let columns = [
       {
         title: i18next.t("provider:Name"),
         dataIndex: 'name',
@@ -89,6 +89,10 @@ class ProviderTable extends React.Component {
         key: 'canSignUp',
         width: '120px',
         render: (text, record, index) => {
+          if (record.provider.category !== "OAuth") {
+            return null;
+          }
+
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'canSignUp', checked);
@@ -102,6 +106,10 @@ class ProviderTable extends React.Component {
         key: 'canSignIn',
         width: '120px',
         render: (text, record, index) => {
+          if (record.provider.category !== "OAuth") {
+            return null;
+          }
+
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'canSignIn', checked);
@@ -115,6 +123,10 @@ class ProviderTable extends React.Component {
         key: 'canUnlink',
         width: '120px',
         render: (text, record, index) => {
+          if (record.provider.category !== "OAuth") {
+            return null;
+          }
+
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'canUnlink', checked);
@@ -128,6 +140,10 @@ class ProviderTable extends React.Component {
         key: 'prompted',
         width: '120px',
         render: (text, record, index) => {
+          if (record.provider.category !== "OAuth") {
+            return null;
+          }
+
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'prompted', checked);
@@ -135,27 +151,27 @@ class ProviderTable extends React.Component {
           )
         }
       },
-      {
-        title: i18next.t("provider:alertType"),
-        dataIndex: 'alertType',
-        key: 'alertType',
-        width: '120px',
-        render: (text, record, index) => {
-          return (
-            <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {
-              this.updateField(table, index, 'alertType', value);
-            })}>
-              {
-                [
-                  {id: 'None', name: 'None'},
-                  {id: 'Once', name: 'Once'},
-                  {id: 'Always', name: 'Always'},
-                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
-              }
-            </Select>
-          )
-        }
-      },
+      // {
+      //   title: i18next.t("provider:alertType"),
+      //   dataIndex: 'alertType',
+      //   key: 'alertType',
+      //   width: '120px',
+      //   render: (text, record, index) => {
+      //     return (
+      //       <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {
+      //         this.updateField(table, index, 'alertType', value);
+      //       })}>
+      //         {
+      //           [
+      //             {id: 'None', name: 'None'},
+      //             {id: 'Once', name: 'Once'},
+      //             {id: 'Always', name: 'Always'},
+      //           ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+      //         }
+      //       </Select>
+      //     )
+      //   }
+      // },
       {
         title: i18next.t("general:Action"),
         key: 'action',
@@ -177,6 +193,10 @@ class ProviderTable extends React.Component {
         }
       },
     ];
+
+    if (!this.props.application.enableSignUp || this.props.application.enablePassword) {
+      columns = columns.filter(column => column.key !== "canSignUp");
+    }
 
     return (
       <Table rowKey="index" columns={columns} dataSource={table} size="middle" bordered pagination={false}

@@ -99,6 +99,10 @@ class SignupTable extends React.Component {
         key: 'visible',
         width: '120px',
         render: (text, record, index) => {
+          if (record.name === "ID") {
+            return null;
+          }
+
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'visible', checked);
@@ -134,6 +138,10 @@ class SignupTable extends React.Component {
         key: 'prompted',
         width: '120px',
         render: (text, record, index) => {
+          if (record.name === "ID") {
+            return null;
+          }
+
           if (record.visible) {
             return null;
           }
