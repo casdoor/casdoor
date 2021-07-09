@@ -453,3 +453,8 @@ export function getArrayItem(array, key, value) {
   const res = array.filter(item => item[key] === value)[0];
   return res;
 }
+
+export function getDeduplicatedArray(array, filterArray, key) {
+  const res = array.filter(item => filterArray.filter(filterItem => filterItem[key] === item[key]).length === 0);
+  return res;
+}

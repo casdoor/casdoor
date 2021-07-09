@@ -77,7 +77,7 @@ class ProviderTable extends React.Component {
                       this.updateField(table, index, 'provider', provider);
                     }} >
               {
-                this.props.providers.filter(provider => table.filter(providerItem => providerItem.name === provider.name).length === 0).map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
+                Setting.getDeduplicatedArray(this.props.providers, table, "name").map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
               }
             </Select>
           )
