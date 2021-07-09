@@ -73,7 +73,7 @@ class ProviderTable extends React.Component {
                     value={text}
                     onChange={value => {
                       this.updateField(table, index, 'name', value);
-                      const provider = this.props.providers.filter(provider => provider.name === value)[0];
+                      const provider = Setting.getArrayItem(this.props.providers, "name", value);
                       this.updateField(table, index, 'provider', provider);
                     }} >
               {
