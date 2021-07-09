@@ -68,6 +68,18 @@ class SignupTable extends React.Component {
         dataIndex: 'name',
         key: 'name',
         render: (text, record, index) => {
+          const items = [
+            {id: 'Username', name: 'Username'},
+            {id: 'ID', name: 'ID'},
+            {id: 'Display name', name: 'Display name'},
+            {id: 'Affiliation', name: 'Affiliation'},
+            {id: 'Email', name: 'Email'},
+            {id: 'Password', name: 'Password'},
+            {id: 'Confirm password', name: 'Confirm password'},
+            {id: 'Phone', name: 'Phone'},
+            {id: 'Agreement', name: 'Agreement'},
+          ];
+
           return (
             <Select virtual={false} style={{width: '100%'}}
                     value={text}
@@ -75,17 +87,7 @@ class SignupTable extends React.Component {
                       this.updateField(table, index, 'name', value);
                     }} >
               {
-                [
-                  {id: 'Username', name: 'Username'},
-                  {id: 'ID', name: 'ID'},
-                  {id: 'Display name', name: 'Display name'},
-                  {id: 'Affiliation', name: 'Affiliation'},
-                  {id: 'Email', name: 'Email'},
-                  {id: 'Password', name: 'Password'},
-                  {id: 'Confirm password', name: 'Confirm password'},
-                  {id: 'Phone', name: 'Phone'},
-                  {id: 'Agreement', name: 'Agreement'},
-                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                Setting.getDeduplicatedArray(items, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
               }
             </Select>
           )
