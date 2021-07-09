@@ -151,17 +151,29 @@ class SignupTable extends React.Component {
         key: 'rule',
         width: '120px',
         render: (text, record, index) => {
+          let options = [];
+          if (record.name === "ID") {
+            options = [
+              {id: 'Random', name: 'Random'},
+              {id: 'Incremental', name: 'Incremental'},
+            ];
+          } if (record.name === "Display name") {
+            options = [
+              {id: 'None', name: 'None'},
+              {id: 'Personal', name: 'Personal'},
+            ];
+          }
+
+          if (options.length === 0) {
+            return null;
+          }
+
           return (
             <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {
               this.updateField(table, index, 'rule', value);
             })}>
               {
-                [
-                  {id: 'None', name: 'None'},
-                  {id: 'Random', name: 'Random'},
-                  {id: 'Incremental', name: 'Incremental'},
-                  {id: 'Personal', name: 'Personal'},
-                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                options.map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
           )
