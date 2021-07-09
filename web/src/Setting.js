@@ -448,3 +448,8 @@ export function maskEmail(email) {
 
   return `${username}@${domainTokens.join(".")}`;
 }
+
+export function getArrayItem(array, key, value) {
+  const res = array.filter(item => item[key] === value)[0];
+  return res;
+}

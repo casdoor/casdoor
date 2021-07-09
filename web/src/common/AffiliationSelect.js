@@ -87,7 +87,8 @@ class AffiliationSelect extends React.Component {
               ) : (
                 <Select virtual={false} style={{width: '100%'}} value={this.props.user.affiliation} onChange={(value => {
                   const name = value;
-                  const id = this.state.affiliationOptions.filter(affiliationOption => affiliationOption.name === name)[0].id;
+                  const affiliationOption = Setting.getArrayItem(this.state.affiliationOptions, "name", name);
+                  const id = affiliationOption.id;
                   this.updateUserField('affiliation', name);
                   this.updateUserField('score', id);
                 })}>
