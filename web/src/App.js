@@ -29,6 +29,7 @@ import ApplicationListPage from "./ApplicationListPage";
 import ApplicationEditPage from "./ApplicationEditPage";
 import TokenListPage from "./TokenListPage";
 import TokenEditPage from "./TokenEditPage";
+import RecordListPage from "./RecordListPage";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
@@ -317,6 +318,13 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
+      res.push(
+          <Menu.Item key="7">
+            <Link to="/records">
+              {i18next.t("general:Records")}
+            </Link>
+          </Menu.Item>
+      );
     }
     res.push(
       <Menu.Item key="6" onClick={() => window.location.href = "/swagger"}>
@@ -392,6 +400,7 @@ class App extends Component {
           <Route exact path="/applications/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
         </Switch>
       </div>
     )

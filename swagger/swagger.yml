@@ -234,6 +234,45 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Application'
+  /api/get-default-application:
+    get:
+      tags:
+      - api
+      description: get the detail of the default application
+      operationId: ApiController.GetDefaultApplication
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of the application.
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Application'
+  /api/get-email-and-phone:
+    post:
+      tags:
+      - api
+      description: get email and phone by username
+      operationId: ApiController.GetEmailAndPhone
+      parameters:
+      - in: formData
+        name: username
+        description: The username of the user
+        required: true
+        type: string
+      - in: formData
+        name: organization
+        description: The organization of the user
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/get-global-users:
     get:
       tags:
@@ -319,6 +358,39 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Provider'
+  /api/get-records:
+    get:
+      tags:
+      - api
+      description: get all records
+      operationId: ApiController.GetRecords
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Records'
+  /api/get-records-filter:
+    post:
+      tags:
+      - api
+      description: get records by filter
+      operationId: ApiController.GetRecordsByFilter
+      parameters:
+      - in: body
+        name: body
+        description: filter Record message
+        required: true
+        schema:
+          $ref: '#/definitions/object.Records'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Records'
   /api/get-token:
     get:
       tags:
@@ -456,16 +528,48 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
-  /api/register:
+  /api/set-password:
     post:
       tags:
       - api
-      description: register a new user
-      operationId: ApiController.Register
+      description: set password
+      operationId: ApiController.SetPassword
+      parameters:
+      - in: formData
+        name: userOwner
+        description: The owner of the user
+        required: true
+        type: string
+      - in: formData
+        name: userName
+        description: The name of the user
+        required: true
+        type: string
+      - in: formData
+        name: oldPassword
+        description: The old password of the user
+        required: true
+        type: string
+      - in: formData
+        name: newPassword
+        description: The new password of the user
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/signup:
+    post:
+      tags:
+      - api
+      description: sign up a new user
+      operationId: ApiController.Signup
       parameters:
       - in: formData
         name: username
-        description: The username to register
+        description: The username to sign up
         required: true
         type: string
       - in: formData
@@ -633,7 +737,7 @@ paths:
     post:
       tags:
       - api
-      description: register a new user
+      description: upload avatar
       operationId: ApiController.UploadAvatar
       parameters:
       - in: formData
@@ -652,7 +756,10 @@ paths:
           schema:
             $ref: '#/definitions/controllers.Response'
 definitions:
-  1471.0xc0003bd890.false:
+  1671.0xc00044ab10.false:
+    title: "false"
+    type: object
+  1705.0xc00044ab40.false:
     title: "false"
     type: object
   RequestForm:
@@ -663,7 +770,9 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/1471.0xc0003bd890.false'
+        $ref: '#/definitions/1671.0xc00044ab10.false'
+      data2:
+        $ref: '#/definitions/1705.0xc00044ab40.false'
       msg:
         type: string
       status:
@@ -673,7 +782,9 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/1471.0xc0003bd890.false'
+        $ref: '#/definitions/1671.0xc00044ab10.false'
+      data2:
+        $ref: '#/definitions/1705.0xc00044ab40.false'
       msg:
         type: string
       status:
@@ -682,6 +793,8 @@ definitions:
     title: Application
     type: object
     properties:
+      affiliationUrl:
+        type: string
       clientId:
         type: string
       clientSecret:
@@ -699,6 +812,8 @@ definitions:
       expireInHours:
         type: integer
         format: int64
+      forgetUrl:
+        type: string
       homepageUrl:
         type: string
       logo:
@@ -707,31 +822,47 @@ definitions:
         type: string
       organization:
         type: string
+      organizationObj:
+        $ref: '#/definitions/object.Organization'
       owner:
         type: string
-      providerObjs:
-        type: array
-        items:
-          $ref: '#/definitions/object.Provider'
       providers:
         type: array
         items:
-          type: string
+          $ref: '#/definitions/object.ProviderItem'
       redirectUris:
         type: array
         items:
           type: string
+      signinUrl:
+        type: string
+      signupItems:
+        type: array
+        items:
+          $ref: '#/definitions/object.SignupItem'
+      signupUrl:
+        type: string
   object.Organization:
     title: Organization
     type: object
     properties:
       createdTime:
         type: string
+      defaultAvatar:
+        type: string
       displayName:
+        type: string
+      favicon:
         type: string
       name:
         type: string
       owner:
+        type: string
+      passwordSalt:
+        type: string
+      passwordType:
+        type: string
+      phonePrefix:
         type: string
       websiteUrl:
         type: string
@@ -739,22 +870,82 @@ definitions:
     title: Provider
     type: object
     properties:
+      appId:
+        type: string
+      category:
+        type: string
       clientId:
         type: string
       clientSecret:
+        type: string
+      content:
         type: string
       createdTime:
         type: string
       displayName:
         type: string
+      host:
+        type: string
       name:
         type: string
       owner:
         type: string
+      port:
+        type: integer
+        format: int64
       providerUrl:
+        type: string
+      regionId:
+        type: string
+      signName:
+        type: string
+      templateCode:
+        type: string
+      title:
         type: string
       type:
         type: string
+  object.ProviderItem:
+    title: ProviderItem
+    type: object
+    properties:
+      alertType:
+        type: string
+      canSignIn:
+        type: boolean
+      canSignUp:
+        type: boolean
+      canUnlink:
+        type: boolean
+      name:
+        type: string
+      prompted:
+        type: boolean
+      provider:
+        $ref: '#/definitions/object.Provider'
+  object.Records:
+    title: Records
+    type: object
+    properties:
+      Record:
+        $ref: '#/definitions/util.Record'
+      id:
+        type: integer
+        format: int64
+  object.SignupItem:
+    title: SignupItem
+    type: object
+    properties:
+      name:
+        type: string
+      prompted:
+        type: boolean
+      required:
+        type: boolean
+      rule:
+        type: string
+      visible:
+        type: boolean
   object.Token:
     title: Token
     type: object
@@ -772,11 +963,15 @@ definitions:
         format: int64
       name:
         type: string
+      organization:
+        type: string
       owner:
         type: string
       scope:
         type: string
       tokenType:
+        type: string
+      user:
         type: string
   object.TokenWrapper:
     title: TokenWrapper
@@ -795,37 +990,85 @@ definitions:
     title: User
     type: object
     properties:
+      address:
+        type: array
+        items:
+          type: string
       affiliation:
         type: string
       avatar:
         type: string
       createdTime:
         type: string
+      dingtalk:
+        type: string
       displayName:
         type: string
       email:
+        type: string
+      facebook:
+        type: string
+      gitee:
         type: string
       github:
         type: string
       google:
         type: string
+      hash:
+        type: string
       id:
         type: string
       isAdmin:
         type: boolean
+      isForbidden:
+        type: boolean
       isGlobalAdmin:
         type: boolean
+      language:
+        type: string
       name:
         type: string
       owner:
         type: string
       password:
         type: string
-      passwordType:
-        type: string
       phone:
         type: string
+      preHash:
+        type: string
+      properties:
+        additionalProperties:
+          type: string
       qq:
         type: string
+      score:
+        type: integer
+        format: int64
+      signupApplication:
+        type: string
       tag:
+        type: string
+      type:
+        type: string
+      updatedTime:
+        type: string
+      wechat:
+        type: string
+      weibo:
+        type: string
+  util.Record:
+    title: Record
+    type: object
+    properties:
+      ip:
+        type: string
+      organization:
+        type: string
+      requestTime:
+        type: string
+      requestUri:
+        type: string
+      urlpath:
+        type: string
+      username:
         type: string
