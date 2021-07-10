@@ -313,6 +313,7 @@ class ApplicationEditPage extends React.Component {
               title={i18next.t("general:Providers")}
               table={this.state.application.providers}
               providers={this.state.providers}
+              application={this.state.application}
               onUpdateTable={(value) => { this.updateApplicationField('providers', value)}}
             />
           </Col>
@@ -325,18 +326,22 @@ class ApplicationEditPage extends React.Component {
             this.renderPreview()
           }
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("application:Signup items"), i18next.t("application:Signup items - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <SignupTable
-              title={i18next.t("application:Signup items")}
-              table={this.state.application.signupItems}
-              onUpdateTable={(value) => { this.updateApplicationField('signupItems', value)}}
-            />
-          </Col>
-        </Row>
+        {
+          !this.state.application.enableSignUp ? null : (
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={2}>
+                {Setting.getLabel(i18next.t("application:Signup items"), i18next.t("application:Signup items - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <SignupTable
+                  title={i18next.t("application:Signup items")}
+                  table={this.state.application.signupItems}
+                  onUpdateTable={(value) => { this.updateApplicationField('signupItems', value)}}
+                />
+              </Col>
+            </Row>
+          )
+        }
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :

@@ -68,6 +68,18 @@ class SignupTable extends React.Component {
         dataIndex: 'name',
         key: 'name',
         render: (text, record, index) => {
+          const items = [
+            {id: 'Username', name: 'Username'},
+            {id: 'ID', name: 'ID'},
+            {id: 'Display name', name: 'Display name'},
+            {id: 'Affiliation', name: 'Affiliation'},
+            {id: 'Email', name: 'Email'},
+            {id: 'Password', name: 'Password'},
+            {id: 'Confirm password', name: 'Confirm password'},
+            {id: 'Phone', name: 'Phone'},
+            {id: 'Agreement', name: 'Agreement'},
+          ];
+
           return (
             <Select virtual={false} style={{width: '100%'}}
                     value={text}
@@ -75,17 +87,7 @@ class SignupTable extends React.Component {
                       this.updateField(table, index, 'name', value);
                     }} >
               {
-                [
-                  {id: 'Username', name: 'Username'},
-                  {id: 'ID', name: 'ID'},
-                  {id: 'Display name', name: 'Display name'},
-                  {id: 'Affiliation', name: 'Affiliation'},
-                  {id: 'Email', name: 'Email'},
-                  {id: 'Password', name: 'Password'},
-                  {id: 'Confirm password', name: 'Confirm password'},
-                  {id: 'Phone', name: 'Phone'},
-                  {id: 'Agreement', name: 'Agreement'},
-                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                Setting.getDeduplicatedArray(items, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
               }
             </Select>
           )
@@ -97,6 +99,10 @@ class SignupTable extends React.Component {
         key: 'visible',
         width: '120px',
         render: (text, record, index) => {
+          if (record.name === "ID") {
+            return null;
+          }
+
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'visible', checked);
@@ -132,6 +138,10 @@ class SignupTable extends React.Component {
         key: 'prompted',
         width: '120px',
         render: (text, record, index) => {
+          if (record.name === "ID") {
+            return null;
+          }
+
           if (record.visible) {
             return null;
           }
@@ -149,17 +159,29 @@ class SignupTable extends React.Component {
         key: 'rule',
         width: '120px',
         render: (text, record, index) => {
+          let options = [];
+          if (record.name === "ID") {
+            options = [
+              {id: 'Random', name: 'Random'},
+              {id: 'Incremental', name: 'Incremental'},
+            ];
+          } if (record.name === "Display name") {
+            options = [
+              {id: 'None', name: 'None'},
+              {id: 'Personal', name: 'Personal'},
+            ];
+          }
+
+          if (options.length === 0) {
+            return null;
+          }
+
           return (
             <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {
               this.updateField(table, index, 'rule', value);
             })}>
               {
-                [
-                  {id: 'None', name: 'None'},
-                  {id: 'Random', name: 'Random'},
-                  {id: 'Incremental', name: 'Incremental'},
-                  {id: 'Personal', name: 'Personal'},
-                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                options.map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
           )
