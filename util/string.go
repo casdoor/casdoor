@@ -55,3 +55,39 @@ func GetMd5Hash(text string) string {
 	hash := md5.Sum([]byte(text))
 	return hex.EncodeToString(hash[:])
 }
+
+func IsStrsEmpty(strs ...string) bool {
+	r := false
+	for _, str := range strs {
+		if len(str) == 0 {
+			r = true
+		}
+	}
+	return r
+}
+
+func GetMaxLenStr(strs ...string) string {
+	m := 0
+	i := 0
+	for j, str := range strs {
+		l := len(str)
+		if l > m {
+			m = l
+			i = j
+		}
+	}
+	return strs[i]
+}
+
+func GetMinLenStr(strs ...string) string {
+	m := int(^uint(0) >> 1)
+	i := 0
+	for j, str := range strs {
+		l := len(str)
+		if l > m {
+			m = l
+			i = j
+		}
+	}
+	return strs[i]
+}

@@ -1,3 +1,17 @@
+// Copyright 2021 The casbin Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package object
 
 import "github.com/casdoor/casdoor/util"
@@ -6,6 +20,7 @@ func InitDb() {
 	initBuiltInOrganization()
 	initBuiltInUser()
 	initBuiltInApplication()
+	initBuiltInLdap()
 }
 
 func initBuiltInOrganization() {
@@ -73,4 +88,25 @@ func initBuiltInApplication() {
 		ExpireInHours:  168,
 	}
 	AddApplication(application)
+}
+
+func initBuiltInLdap() {
+	ldap := GetLdap("ldap-built-in")
+	if ldap != nil {
+		return
+	}
+
+	ldap = &Ldap{
+		Id:         "ldap-built-in",
+		Owner:      "built-in",
+		ServerName: "BuildIn LDAP Server",
+		Host:       "example.com",
+		Port:       389,
+		Admin:      "cn=buildin,dc=example,dc=com",
+		Passwd:     "123",
+		BaseDn:     "ou=BuildIn,dc=example,dc=com",
+		AutoSync:   0,
+		LastSync:   "",
+	}
+	AddLdap(ldap)
 }
