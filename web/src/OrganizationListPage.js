@@ -120,7 +120,7 @@ class OrganizationListPage extends React.Component {
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
       },
       {
-        title: 'Favicon',
+        title: i18next.t("organization:Favicon"),
         dataIndex: 'favicon',
         key: 'favicon',
         width: '50px',
@@ -159,6 +159,19 @@ class OrganizationListPage extends React.Component {
         key: 'passwordSalt',
         width: '150px',
         sorter: (a, b) => a.passwordSalt.localeCompare(b.passwordSalt),
+      },
+      {
+        title: i18next.t("organization:Default avatar"),
+        dataIndex: 'defaultAvatar',
+        key: 'defaultAvatar',
+        width: '50px',
+        render: (text, record, index) => {
+          return (
+              <a target="_blank" rel="noreferrer" href={text}>
+                <img src={text} alt={text} width={40} />
+              </a>
+          )
+        }
       },
       {
         title: i18next.t("general:Action"),
