@@ -82,7 +82,7 @@ p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-users, *, *
 p, *, *, GET, /api/get-user, *, *
 p, *, *, GET, /api/get-organizations, *, *
-p, *, *, GET, /api/get-default-application, *, *
+p, *, *, GET, /api/get-user-application, *, *
 p, *, *, GET, /api/get-default-providers, *, *
 p, *, *, POST, /api/upload-avatar, *, *
 p, *, *, POST, /api/unlink, *, *
