@@ -49,7 +49,7 @@ class UserEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getUser();
     this.getOrganizations();
-    this.getDefaultApplication();
+    this.getUserApplication();
   }
 
   getUser() {
@@ -70,8 +70,8 @@ class UserEditPage extends React.Component {
       });
   }
 
-  getDefaultApplication() {
-    ApplicationBackend.getDefaultApplication("admin")
+  getUserApplication() {
+    ApplicationBackend.getUserApplication(this.state.organizationName, this.state.userName)
       .then((application) => {
         this.setState({
           application: application,

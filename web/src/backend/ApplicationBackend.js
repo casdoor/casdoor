@@ -28,8 +28,8 @@ export function getApplication(owner, name) {
   }).then(res => res.json());
 }
 
-export function getDefaultApplication(owner) {
-  return fetch(`${Setting.ServerUrl}/api/get-default-application?owner=${owner}`, {
+export function getUserApplication(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/get-user-application?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include"
   }).then(res => res.json());
