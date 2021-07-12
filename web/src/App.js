@@ -356,7 +356,7 @@ class App extends Component {
   renderContent() {
     return (
       <div>
-        {/* <Header style={{ padding: '0', marginBottom: '3px'}}>
+        <Header style={{ padding: '0', marginBottom: '3px'}}>
           {
             Setting.isMobile() ? null : (
               <Link to={"/"}>
@@ -370,14 +370,14 @@ class App extends Component {
             selectedKeys={[`${this.state.selectedMenuKey}`]}
             style={{ lineHeight: '64px' }}
           >
-            {
+            {/* {
               this.renderMenu()
-            }
-            {
+            } */}
+            {/* {
               this.renderAccount()
-            }
+            } */}
           </Menu>
-        </Header> */}
+        </Header>
         <Switch>
           <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
           <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
@@ -444,7 +444,7 @@ class App extends Component {
     }
 
     return (
-      <BasicLayout>
+      <BasicLayout account = {this.state.account}  >
       <div id="parent-area">
         <BackTop />
         {/* <CustomGithubCorner /> */}

@@ -4,7 +4,8 @@ import { Component } from 'react';
 import { Layout, Menu, Breadcrumb, Avatar } from 'antd';
 import * as Setting from "../Setting.js";
 import CustomGithubCorner from "../CustomGithubCorner";
-
+import {Link, Redirect, Route, Switch, withRouter} from 'react-router-dom'
+import i18next from 'i18next';
 const { Header, Footer, Sider, Content } = Layout;
 
 // 引入子菜单组件
@@ -14,35 +15,45 @@ export default class BasicLayout extends Component {
   state = {
     collapsed: false,
   };
+  
   onCollapse = collapsed => {
     console.log(collapsed);
     this.setState({ collapsed });
   };
 
+
+  
   render() {
     const { collapsed } = this.state;
+    console.log(this.props.children);
     return (
       <Layout style={{ minHeight: '100vh' }}>
         <Sider  collapsible collapsed={collapsed} onCollapse={this.onCollapse} theme ='light'>
-          <div className='logo' key="logo"></div>
+          <Link to={"/"}><div className='logo' key="logo" /></Link>
+          <div>
           <Menu theme="light" mode="inline" defaultSelectedKeys={['1']}>
             <Menu.Item key="1">
-              <span>Home</span>
+              <span>{i18next.t("general:Home")}</span>
+              <Link to={"/"}></Link>
             </Menu.Item>
             <SubMenu
               key="sub1"
               title={<span><span>Forms</span></span>}
             >
-               <Menu.Item key="2">Organizations</Menu.Item>
-               <Menu.Item key="3">Users</Menu.Item>
-               <Menu.Item key="4">Providers</Menu.Item>
-               <Menu.Item key="5">Applications</Menu.Item>
-               <Menu.Item key="6">Tokens</Menu.Item>
+               <Menu.Item key="2">{i18next.t("general:Organizations")}<Link to="/organizations"></Link></Menu.Item>
+               <Menu.Item key="3">{i18next.t("general:Users")}<Link to="/Users"></Link></Menu.Item>
+               <Menu.Item key="4">{i18next.t("general:Providers")}<Link to="/Providers"></Link></Menu.Item>
+               <Menu.Item key="5">{i18next.t("general:Applications")}<Link to="/Applications"></Link></Menu.Item>
+               <Menu.Item key="6">{i18next.t("general:Tokens")}<Link to="/Tokens"></Link></Menu.Item>
             </SubMenu>
+            <Menu.Item key="7" onClick={() => window.location.href = "/swagger"}>
+              <span>Swagger</span>
+            </Menu.Item>
           </Menu>
+          </div>
         </Sider>
         <Layout>
-          <Header style={{ background: '#fff', textAlign: 'center', padding: 0 }}>
+          <Header style={{ background: '#fff', textAlign: 'right', padding: 0 }}>
           <CustomGithubCorner/>
           </Header>
           <Content style={{ margin: '24px 16px 0' }}>
