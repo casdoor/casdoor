@@ -47,6 +47,18 @@ Backend | RESTful API backend for Casdoor | Golang + Beego + MySQL | https://git
     git clone https://github.com/casbin/casdoor
     ```
 
+## Run through Docker
+- Install Docker and Docker-compose,you see [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/)
+- vi casdoor/conf/app.conf
+- Modify dataSourceName = root:123@tcp(localhost:3306)/ to dataSourceName = root:123@tcp(db:3306)/
+- Execute the following command
+  ```shell
+  docker-compose up
+  ```
+- Open browser:
+
+  http://localhost:8000/
+
 ## Run (Dev Environment)
 
 - Run backend (in port 8000):
