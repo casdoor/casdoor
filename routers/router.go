@@ -64,6 +64,7 @@ func initAPI() {
 	beego.Router("/api/send-verification-code", &controllers.ApiController{}, "POST:SendVerificationCode")
 	beego.Router("/api/reset-email-or-phone", &controllers.ApiController{}, "POST:ResetEmailOrPhone")
 	beego.Router("/api/get-human-check", &controllers.ApiController{}, "GET:GetHumanCheck")
+	beego.Router("/api/get-totp-link", &controllers.ApiController{}, "GET:GetTOTPLink")
 
 	beego.Router("/api/get-providers", &controllers.ApiController{}, "GET:GetProviders")
 	beego.Router("/api/get-provider", &controllers.ApiController{}, "GET:GetProvider")

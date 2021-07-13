@@ -146,3 +146,10 @@ export function getHumanCheck() {
     method: "GET"
   }).then(res => res.json());
 }
+
+export function getTOTPLink() {
+  return fetch(`${Setting.ServerUrl}/api/get-totp-link`, {
+    method: "GET",
+    credentials: "include",
+  }).then(res => res.json());
+}

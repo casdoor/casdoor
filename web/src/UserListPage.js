@@ -59,6 +59,7 @@ class UserListPage extends React.Component {
       createdTime: moment().format(),
       type: "normal-user",
       password: "123",
+      mfaSecret: false,
       displayName: `New User - ${this.state.users.length}`,
       avatar: "https://casbin.org/img/casbin.svg",
       email: "user@example.com",

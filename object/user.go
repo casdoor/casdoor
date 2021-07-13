@@ -45,6 +45,7 @@ type User struct {
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
+	TOTPSecret        string   `xorm:"varchar(100)" json:"totp_secret"`
 
 	Github   string `xorm:"varchar(100)" json:"github"`
 	Google   string `xorm:"varchar(100)" json:"google"`

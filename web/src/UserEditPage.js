@@ -43,6 +43,7 @@ class UserEditPage extends React.Component {
       user: null,
       application: null,
       organizations: [],
+      enableMfa: false,
     };
   }
 
@@ -57,7 +58,7 @@ class UserEditPage extends React.Component {
       .then((user) => {
         this.setState({
           user: user,
-        });
+        }, ()=>{this.state.enableMfa=user.mfa_method!==""});
       });
   }
 
@@ -203,6 +204,20 @@ class UserEditPage extends React.Component {
             <PasswordModal user={this.state.user} />
           </Col>
         </Row>
+
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={2}>
+            {Setting.getLabel(i18next.t("application:Enable MFA"), i18next.t("application:Enable MFA - Tooltip"))} :
+          </Col>
+          <Col span={3} >
+            Here should be 'verifyModal'. Like 'PasswordModal'
+            {/*<Switch checked={this.state.enableMfa} onChange={checked => {*/}
+            {/*  */}
+            {/*  this.setState({enableMfa: checked})*/}
+            {/*}} />*/}
+          </Col>
+        </Row>
+
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
             {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :

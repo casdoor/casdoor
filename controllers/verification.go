@@ -148,3 +148,28 @@ func (c *ApiController) ResetEmailOrPhone() {
 	c.Data["json"] = Response{Status: "ok"}
 	c.ServeJSON()
 }
+
+func (c *ApiController) GetTOTPLink()  {
+	userId, ok := c.RequireSignedIn()
+	if !ok {
+		return
+	}
+
+	owner, name := util.GetOwnerAndNameFromId(userId)
+	passwd := c.Ctx.Request.Form.Get("password")
+	user := object.GetUserByField(owner, "password", passwd)
+	if user == nil || user.Name != name {
+		c.ResponseError("Failed Verification")
+		return
+	}
+
+	img, secret, err := util.GetTOTPLink(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	object.SetUserField(user, "totp_secret", user.TOTPSecret)
+
+	c.Data["json"] = Response{Status: "ok", Data: img, Data2: secret}
+	c.ServeJSON()
+}
