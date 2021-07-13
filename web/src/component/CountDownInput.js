@@ -30,9 +30,11 @@ export const CountDownInput = (props) => {
   const [checkType, setCheckType] = React.useState("");
   const [coolDown, setCoolDown] = React.useState(false);
   const [checkId, setCheckId] = React.useState("");
+  const [buttonDisabled, setButtonDisabled] = React.useState(false);
 
   const countDown = (leftTime) => {
     if (leftTime === 0) {
+      setButtonDisabled(false);
       setCoolDown(false);
       setButtonText(defaultButtonText);
       return;
@@ -41,20 +43,13 @@ export const CountDownInput = (props) => {
     setTimeout(() => countDown(leftTime - 1), 1000);
   }
 
-  const clickButton = () => {
-    if (coolDown) {
-      Setting.showMessage("error", i18next.t("general:Cooling down"));
-      return;
-    }
-    loadHumanCheck();
-  }
-
   const handleOk = () => {
     setVisible(false);
     onButtonClick(checkType, checkId, key, ...onButtonClickArgs).then(res => {
       setKey("");
       if (res) {
         setCoolDown(true);
+        setButtonDisabled(true)
         countDown(coolDownTime);
       }
     })
@@ -124,13 +119,13 @@ export const CountDownInput = (props) => {
         placeholder={placeHolder}
         onChange={e => onChange(e.target.value)}
         enterButton={
-          <Button type={"primary"} disabled={disabled}>
+          <Button type={"primary"} disabled={disabled || buttonDisabled}>
             <div style={{fontSize: 14}}>
               {buttonText}
             </div>
           </Button>
         }
-        onSearch={clickButton}
+        onSearch={loadHumanCheck}
       />
       <Modal
         closable={false}
