@@ -27,6 +27,7 @@ import {
   AppstoreOutlined,
   ControlOutlined,
   ApiOutlined,
+  ClockCircleOutlined,
 } from "@ant-design/icons";
 import { Avatar, BackTop, Dropdown, Layout, Menu } from "antd";
 import { Link, Redirect, Route, Switch, withRouter } from "react-router-dom";
@@ -335,7 +336,7 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
-          <Menu.Item key="7">
+          <Menu.Item key="/records" icon={<ClockCircleOutlined/>}>
             <Link to="/records">
               {i18next.t("general:Records")}
             </Link>

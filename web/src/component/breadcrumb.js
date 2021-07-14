@@ -19,7 +19,7 @@ const breadcrumbNameMap = {
   "/providers": "Providers",
   "/applications": "Applications",
   "/tokens": "Tokens",
-  ":organizationName": ":organizationName",
+  "/records": "records"
 };
 
 export const Nav = withRouter((props) => {
