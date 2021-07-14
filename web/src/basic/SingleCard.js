@@ -35,12 +35,8 @@ class SingleCard extends React.Component {
     };
 
     return (
-      // <Card.Grid style={gridStyle} onClick={() => Setting.goToLinkSoft(this, link)}>
-      <Card.Grid
-        style={gridStyle}
-        onClick={() => Setting.goToLinkSoft(this, link)}
-      >
-        {/* <img src={logo} alt="logo" height={60} style={{marginBottom: '20px'}}/> */}
+      <Card.Grid style={gridStyle} onClick={() => Setting.goToLinkSoft(this, link)}>
+        <img src={logo} alt="logo" height={60} style={{marginBottom: '20px'}}/>
         <Meta title={title} description={desc} />
       </Card.Grid>
     );
@@ -61,7 +57,7 @@ class SingleCard extends React.Component {
           hoverable
           cover={<img alt="logo" src={logo} width={"100%"} height={"100%"} />}
           onClick={() => Setting.goToLinkSoft(this, link)}
-          style={isSingle ? { width: "320px" } : null}
+          style={isSingle ? { width: "320px"} : null, {minHeight: "300px"}}
         >
           <Meta title={title} description={desc} />
           <br />

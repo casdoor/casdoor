@@ -47,7 +47,7 @@ export class BasicSider extends Component {
             selectedKeys={this.props.path}
             defaultSelectedKeys={["0"]}
           >
-            {this.props.children}s
+            {this.props.children}
           </Menu>
         </div>
       </Sider>

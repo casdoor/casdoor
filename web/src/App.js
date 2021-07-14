@@ -16,7 +16,7 @@ import React, { Component } from "react";
 import "./App.less";
 import { Helmet } from "react-helmet";
 import * as Setting from "./Setting";
-import {
+import Icon, {
   DownOutlined,
   LogoutOutlined,
   SettingOutlined,
@@ -61,6 +61,11 @@ import PromptPage from "./auth/PromptPage";
 
 // import BasicLayout from "./layout/index"
 import { BasicSider, BasicContent, BasicHeader } from "./layout/index";
+import { createFromIconfontCN } from '@ant-design/icons';
+
+const IconFont = createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/font_2674712_ycpoalauyu.js',
+});
 const { Header, Footer } = Layout;
 
 class App extends Component {
@@ -311,7 +316,7 @@ class App extends Component {
 
     if (Setting.isAdminUser(this.state.account)) {
       res.push(
-        <Menu.Item key="/organizations" icon={<ContainerOutlined />}>
+        <Menu.Item key="/organizations" icon={<IconFont type="icon-organization" />}>
           <Link to="/organizations">{i18next.t("general:Organizations")}</Link>
         </Menu.Item>
       );
@@ -321,7 +326,7 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="/providers" icon={<BankOutlined />}>
+        <Menu.Item key="/providers" icon={<IconFont type="icon-provider" />}>
           <Link to="/providers">{i18next.t("general:Providers")}</Link>
         </Menu.Item>
       );
@@ -331,12 +336,12 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="/tokens" icon={<ControlOutlined />}>
+        <Menu.Item key="/tokens" icon={<IconFont type="icon-token" />}>
           <Link to="/tokens">{i18next.t("general:Tokens")}</Link>
         </Menu.Item>
       );
       res.push(
-          <Menu.Item key="/records" icon={<ClockCircleOutlined/>}>
+          <Menu.Item key="/records" icon={<IconFont type="icon-record"/>}>
             <Link to="/records">
               {i18next.t("general:Records")}
             </Link>
@@ -347,7 +352,7 @@ class App extends Component {
       <Menu.Item
         key="/swagger"
         onClick={() => (window.location.href = "/swagger")}
-        icon={<ApiOutlined />}
+        icon={<IconFont type="icon-swagger" />}
       >
         {i18next.t("general:Swagger")}
       </Menu.Item>
