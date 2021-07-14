@@ -1,76 +1,80 @@
-
-import React from 'react';
-import { Component } from 'react';
-import { Layout, Menu, Breadcrumb, Avatar } from 'antd';
+import React from "react";
+import { Component } from "react";
+import { Layout, Menu, Breadcrumb, Avatar } from "antd";
 import * as Setting from "../Setting.js";
 import CustomGithubCorner from "../CustomGithubCorner";
-import {Link, Redirect, Route, Switch, withRouter} from 'react-router-dom'
-import i18next from 'i18next';
+import { Link, withRouter } from "react-router-dom";
+import i18next from "i18next";
+import { Nav } from "../component/breadcrumb";
+import SizeContext from "antd/lib/config-provider/SizeContext";
+import * as conf from "../common/Conf.js";
 const { Header, Footer, Sider, Content } = Layout;
 
 // 引入子菜单组件
-const SubMenu = Menu.SubMenu; 
+const SubMenu = Menu.SubMenu;
 
-export default class BasicLayout extends Component {
+export class BasicSider extends Component {
   state = {
     collapsed: false,
   };
-  
-  onCollapse = collapsed => {
+
+  onCollapse = (collapsed) => {
     console.log(collapsed);
     this.setState({ collapsed });
   };
 
-
-  
   render() {
     const { collapsed } = this.state;
-    console.log(this.props.children);
+    console.log(this.props.path);
     return (
-      <Layout style={{ minHeight: '100vh' }}>
-        <Sider  collapsible collapsed={collapsed} onCollapse={this.onCollapse} theme ='light'>
-          <Link to={"/"}><div className='logo' key="logo" /></Link>
-          <div>
-          <Menu theme="light" mode="inline" defaultSelectedKeys={['1']}>
-            <Menu.Item key="1">
-              <span>{i18next.t("general:Home")}</span>
-              <Link to={"/"}></Link>
-            </Menu.Item>
-            <SubMenu
-              key="sub1"
-              title={<span><span>Forms</span></span>}
-            >
-               <Menu.Item key="2">{i18next.t("general:Organizations")}<Link to="/organizations"></Link></Menu.Item>
-               <Menu.Item key="3">{i18next.t("general:Users")}<Link to="/Users"></Link></Menu.Item>
-               <Menu.Item key="4">{i18next.t("general:Providers")}<Link to="/Providers"></Link></Menu.Item>
-               <Menu.Item key="5">{i18next.t("general:Applications")}<Link to="/Applications"></Link></Menu.Item>
-               <Menu.Item key="6">{i18next.t("general:Tokens")}<Link to="/Tokens"></Link></Menu.Item>
-            </SubMenu>
-            <Menu.Item key="7" onClick={() => window.location.href = "/swagger"}>
-              <span>Swagger</span>
-            </Menu.Item>
-          </Menu>
+      <Sider
+        breakpoint="sm"
+        collapsible
+        collapsed={collapsed}
+        onCollapse={this.onCollapse}
+        theme="light"
+      >
+        <div className="brand">
+          <div className="siderLogo">
+            <img alt="logo" src={conf.logoPath} height="40px" />
+            {!collapsed && <span>{conf.siteName}</span>}
           </div>
-        </Sider>
-        <Layout>
-          <Header style={{ background: '#fff', textAlign: 'right', padding: 0 }}>
-          <CustomGithubCorner/>
-          </Header>
-          <Content style={{ margin: '24px 16px 0' }}>
-            <Breadcrumb style={{ margin: '16px 0' }}>
-            </Breadcrumb>
-            <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
-              {this.props.children}
-            </div>
-          </Content>
-          <Footer style={{ textAlign: 'center' }}>
-            Made with <span
-             style={{color: 'rgb(255, 255, 255)'}}>❤️</span>
-              by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casbin.org" rel="noreferrer">
-              Casbin</a>
-          </Footer>
-        </Layout>
-      </Layout>
-    )
+        </div>
+        <div>
+          <Menu
+            theme="light"
+            mode="inline"
+            selectedKeys={this.props.path}
+            defaultSelectedKeys={["0"]}
+          >
+            {this.props.children}s
+          </Menu>
+        </div>
+      </Sider>
+    );
+  }
+}
+
+export class BasicHeader extends Component {
+  render() {
+    return (
+      <Header style={{ background: "#fff", textAlign: "right", padding: 0 }}>
+        <div>{this.props.children}</div>
+        <CustomGithubCorner />
+      </Header>
+    );
+  }
+}
+
+export class BasicContent extends Component {
+  render() {
+    return (
+      <Content style={{ margin: "0px 15px" }}>
+        <Nav />
+        <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
+          {this.props.children}
+        </div>
+      </Content>
+    );
   }
 }

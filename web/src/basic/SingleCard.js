@@ -13,9 +13,9 @@
 // limitations under the License.
 
 import React from "react";
-import {Card, Col} from "antd";
+import { Card, Col } from "antd";
 import * as Setting from "../Setting";
-import {withRouter} from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 const { Meta } = Card;
 
@@ -29,47 +29,68 @@ class SingleCard extends React.Component {
 
   renderCardMobile(logo, link, title, desc, time, isSingle) {
     const gridStyle = {
-      width: '100vw',
-      textAlign: 'center',
-      cursor: 'pointer',
+      width: "100vw",
+      textAlign: "center",
+      cursor: "pointer",
     };
 
     return (
-      <Card.Grid style={gridStyle} onClick={() => Setting.goToLinkSoft(this, link)}>
-        <img src={logo} alt="logo" height={60} style={{marginBottom: '20px'}}/>
-        <Meta
-          title={title}
-          description={desc}
-        />
+      // <Card.Grid style={gridStyle} onClick={() => Setting.goToLinkSoft(this, link)}>
+      <Card.Grid
+        style={gridStyle}
+        onClick={() => Setting.goToLinkSoft(this, link)}
+      >
+        {/* <img src={logo} alt="logo" height={60} style={{marginBottom: '20px'}}/> */}
+        <Meta title={title} description={desc} />
       </Card.Grid>
-    )
+    );
   }
 
   renderCard(logo, link, title, desc, time, isSingle) {
     return (
-      <Col style={{paddingLeft: "20px", paddingRight: "20px", paddingBottom: "20px", marginBottom: "20px"}} span={6}>
+      <Col
+        style={{
+          paddingLeft: "20px",
+          paddingRight: "20px",
+          paddingBottom: "20px",
+          marginBottom: "20px",
+        }}
+        span={6}
+      >
         <Card
           hoverable
-          cover={
-            <img alt="logo" src={logo} width={"100%"} height={"100%"} />
-          }
+          cover={<img alt="logo" src={logo} width={"100%"} height={"100%"} />}
           onClick={() => Setting.goToLinkSoft(this, link)}
-          style={isSingle ? {width: "320px"} : null}
+          style={isSingle ? { width: "320px" } : null}
         >
           <Meta title={title} description={desc} />
-          <br/>
-          <br/>
+          <br />
+          <br />
           <Meta title={""} description={Setting.getFormattedDateShort(time)} />
         </Card>
       </Col>
-    )
+    );
   }
 
   render() {
     if (Setting.isMobile()) {
-      return this.renderCardMobile(this.props.logo, this.props.link, this.props.title, this.props.desc, this.props.time, this.props.isSingle);
+      return this.renderCardMobile(
+        this.props.logo,
+        this.props.link,
+        this.props.title,
+        this.props.desc,
+        this.props.time,
+        this.props.isSingle
+      );
     } else {
-      return this.renderCard(this.props.logo, this.props.link, this.props.title, this.props.desc, this.props.time, this.props.isSingle);
+      return this.renderCard(
+        this.props.logo,
+        this.props.link,
+        this.props.title,
+        this.props.desc,
+        this.props.time,
+        this.props.isSingle
+      );
     }
   }
 }

@@ -13,10 +13,11 @@
 // limitations under the License.
 
 import React from "react";
-import {Card, Col, Row} from "antd";
+import { Card, Col, Row } from "antd";
 import * as Setting from "../Setting";
 import SingleCard from "./SingleCard";
 import i18next from "i18next";
+import "./basic.css";
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -30,18 +31,43 @@ class HomePage extends React.Component {
     let items = [];
     if (Setting.isAdminUser(this.props.account)) {
       items = [
-        {link: "/organizations", name: i18next.t("general:Organizations"), organizer: i18next.t("general:User containers")},
-        {link: "/users", name: i18next.t("general:Users"), organizer: i18next.t("general:Users under all organizations")},
-        {link: "/providers", name: i18next.t("general:Providers"), organizer: i18next.t("general:OAuth providers")},
-        {link: "/applications", name: i18next.t("general:Applications"), organizer: i18next.t("general:Applications that requires authentication")},
+        {
+          link: "/organizations",
+          name: i18next.t("general:Organizations"),
+          organizer: i18next.t("general:User containers"),
+        },
+        {
+          link: "/users",
+          name: i18next.t("general:Users"),
+          organizer: i18next.t("general:Users under all organizations"),
+        },
+        {
+          link: "/providers",
+          name: i18next.t("general:Providers"),
+          organizer: i18next.t("general:OAuth providers"),
+        },
+        {
+          link: "/applications",
+          name: i18next.t("general:Applications"),
+          organizer: i18next.t(
+            "general:Applications that requires authentication"
+          ),
+        },
       ];
     } else {
       items = [
-        {link: "/account", name: i18next.t("account:My Account"), organizer: i18next.t("account:Settings for your account")},
+        {
+          link: "/account",
+          name: i18next.t("account:My Account"),
+          organizer: i18next.t("account:Settings for your account"),
+        },
       ];
     }
-
-    for (let i = 0; i < items.length; i ++) {
+    // items =[
+    // {link: "https://casdoor.org/zh/docs/basic/basic-concept-introduction", name: i18next.t("general:Basic concepts "), organizer: i18next.t("general:Welcome to casdoor! Here are some Basic concepts to help you getting start.")},
+    // {link: "https://casdoor.org/zh/docs/basic/basic-concept-introduction", name: i18next.t("general:Add an provider "), organizer: i18next.t("general:Casdoor uses providers to provide third-party services for the platform. let's learn how to add your first provider.")},
+    // ];
+    for (let i = 0; i < items.length; i++) {
       let filename = items[i].link;
       if (filename === "/account") {
         filename = "/users";
@@ -50,7 +76,7 @@ class HomePage extends React.Component {
       items[i].createdTime = "";
     }
 
-    return items
+    return items;
   }
 
   renderCards() {
@@ -58,54 +84,69 @@ class HomePage extends React.Component {
 
     if (Setting.isMobile()) {
       return (
-        <Card bodyStyle={{padding: 0}}>
-          {
-            items.map(item => {
-              return (
-                <SingleCard logo={item.logo} link={item.link} title={item.name} desc={item.organizer} isSingle={items.length === 1} />
-              )
-            })
-          }
+        <Card bodyStyle={{ padding: 0 }}>
+          {items.map((item) => {
+            return (
+              <SingleCard
+                logo={item.logo}
+                link={item.link}
+                title={item.name}
+                desc={item.organizer}
+                isSingle={items.length === 1}
+              />
+            );
+          })}
         </Card>
-      )
+      );
     } else {
       return (
         <div>
           <Row>
-            <Col span={1}>
-            </Col>
+            <Col span={1}></Col>
             <Col span={22}>
-              <Row style={{marginLeft: "-20px", marginRight: "-20px", marginTop: "20px"}} gutter={24}>
-                {
-                  items.map(item => {
-                    return (
-                      <SingleCard logo={item.logo} link={item.link} title={item.name} desc={item.organizer} time={item.createdTime} isSingle={items.length === 1} />
-                    )
-                  })
-                }
+              <Row
+                style={{
+                  marginLeft: "-20px",
+                  marginRight: "-20px",
+                  marginTop: "20px",
+                }}
+                gutter={24}
+              >
+                {items.map((item) => {
+                  return (
+                    <SingleCard
+                      link={item.link}
+                      logo={item.logo}
+                      title={item.name}
+                      desc={item.organizer}
+                      time={item.createdTime}
+                      isSingle={items.length === 1}
+                    />
+                  );
+                })}
               </Row>
             </Col>
-            <Col span={1}>
-            </Col>
+            <Col span={1}></Col>
           </Row>
         </div>
-      )
+      );
     }
   }
 
   render() {
     return (
       <div>
+        {/* <span className= "contentTitle">
+        {i18next.t("Get started")}
+        </span> */}
         &nbsp;
-        <Row style={{width: "100%"}}>
-          <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
-            {
-              this.renderCards()
-            }
+        <Row style={{ width: "100%" }}>
+          <Col span={24} style={{ display: "flex", justifyContent: "center" }}>
+            {this.renderCards()}
           </Col>
         </Row>
       </div>
-    )
+    );
   }
 }
 

@@ -15,3 +15,7 @@
 export const ShowGithubCorner = true
 
 export const GithubRepo = "https://github.com/casbin/casdoor"
+
+export const siteName = 'Casbin'
+
+export const logoPath = 'https://github.com/casbin/static/blob/master/site/casdoor/favicon.png?raw=true'
