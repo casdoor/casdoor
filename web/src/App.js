@@ -44,7 +44,6 @@ import ForgetPage from "./auth/ForgetPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from './SelectLanguageBox';
-import i18next from 'i18next';
 import PromptPage from "./auth/PromptPage";
 
 const { Header, Footer } = Layout;
@@ -214,11 +213,11 @@ class App extends Component {
       <Menu onClick={this.handleRightDropdownClick.bind(this)}>
         <Menu.Item key="201">
           <SettingOutlined />
-          {i18next.t("account:My Account")}
+          {Setting.I18n("account:My Account")}
         </Menu.Item>
         <Menu.Item key="202">
           <LogoutOutlined />
-          {i18next.t("account:Logout")}
+          {Setting.I18n("account:Logout")}
         </Menu.Item>
       </Menu>
     );
@@ -249,14 +248,14 @@ class App extends Component {
       // res.push(
       //   <Menu.Item key="100" style={{float: 'right', marginRight: '20px'}}>
       //     <Link to="/signup">
-      //       {i18next.t("account:Sign Up")}
+      //       {Setting.I18n("account:Sign Up")}
       //     </Link>
       //   </Menu.Item>
       // );
       // res.push(
       //   <Menu.Item key="101" style={{float: 'right'}}>
       //     <Link to="/login">
-      //       {i18next.t("account:Login")}
+      //       {Setting.I18n("account:Login")}
       //     </Link>
       //   </Menu.Item>
       // );
@@ -277,7 +276,7 @@ class App extends Component {
     res.push(
       <Menu.Item key="0">
         <Link to="/">
-          {i18next.t("general:Home")}
+          {Setting.I18n("general:Home")}
         </Link>
       </Menu.Item>
     );
@@ -286,49 +285,49 @@ class App extends Component {
       res.push(
         <Menu.Item key="1">
           <Link to="/organizations">
-            {i18next.t("general:Organizations")}
+            {Setting.I18n("general:Organizations")}
           </Link>
         </Menu.Item>
       );
       res.push(
         <Menu.Item key="2">
           <Link to="/users">
-            {i18next.t("general:Users")}
+            {Setting.I18n("general:Users")}
           </Link>
         </Menu.Item>
       );
       res.push(
         <Menu.Item key="3">
           <Link to="/providers">
-            {i18next.t("general:Providers")}
+            {Setting.I18n("general:Providers")}
           </Link>
         </Menu.Item>
       );
       res.push(
         <Menu.Item key="4">
           <Link to="/applications">
-            {i18next.t("general:Applications")}
+            {Setting.I18n("general:Applications")}
           </Link>
         </Menu.Item>
       );
       res.push(
         <Menu.Item key="5">
           <Link to="/tokens">
-            {i18next.t("general:Tokens")}
+            {Setting.I18n("general:Tokens")}
           </Link>
         </Menu.Item>
       );
       res.push(
           <Menu.Item key="7">
             <Link to="/records">
-              {i18next.t("general:Records")}
+              {Setting.I18n("general:Records")}
             </Link>
           </Menu.Item>
       );
     }
     res.push(
       <Menu.Item key="6" onClick={() => window.location.href = "/swagger"}>
-        {i18next.t("general:Swagger")}
+        {Setting.I18n("general:Swagger")}
       </Menu.Item>
     );
     return res;

@@ -18,7 +18,6 @@ import {Button, Col, Popconfirm, Row, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as TokenBackend from "./backend/TokenBackend";
-import i18next from "i18next";
 
 class TokenListPage extends React.Component {
   constructor(props) {
@@ -87,7 +86,7 @@ class TokenListPage extends React.Component {
   renderTable(tokens) {
     const columns = [
       {
-        title: i18next.t("general:Name"),
+        title: Setting.I18n("general:Name"),
         dataIndex: 'name',
         key: 'name',
         width: '300px',
@@ -101,7 +100,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Created time"),
+        title: Setting.I18n("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
@@ -111,7 +110,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Application"),
+        title: Setting.I18n("general:Application"),
         dataIndex: 'application',
         key: 'application',
         width: '120px',
@@ -125,7 +124,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Organization"),
+        title: Setting.I18n("general:Organization"),
         dataIndex: 'organization',
         key: 'organization',
         width: '120px',
@@ -139,7 +138,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:User"),
+        title: Setting.I18n("general:User"),
         dataIndex: 'user',
         key: 'user',
         width: '120px',
@@ -153,7 +152,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Authorization code"),
+        title: Setting.I18n("general:Authorization code"),
         dataIndex: 'code',
         key: 'code',
         // width: '150px',
@@ -163,7 +162,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Access token"),
+        title: Setting.I18n("general:Access token"),
         dataIndex: 'accessToken',
         key: 'accessToken',
         // width: '150px',
@@ -174,40 +173,40 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Expires in"),
+        title: Setting.I18n("general:Expires in"),
         dataIndex: 'expiresIn',
         key: 'expiresIn',
         width: '120px',
         sorter: (a, b) => a.expiresIn - b.expiresIn,
       },
       {
-        title: i18next.t("general:Scope"),
+        title: Setting.I18n("general:Scope"),
         dataIndex: 'scope',
         key: 'scope',
         width: '100px',
         sorter: (a, b) => a.scope.localeCompare(b.scope),
       },
       // {
-      //   title: i18next.t("token:Token type"),
+      //   title: Setting.I18n("token:Token type"),
       //   dataIndex: 'tokenType',
       //   key: 'tokenType',
       //   width: '130px',
       //   sorter: (a, b) => a.tokenType.localeCompare(b.tokenType),
       // },
       {
-        title: i18next.t("general:Action"),
+        title: Setting.I18n("general:Action"),
         dataIndex: '',
         key: 'op',
         width: '170px',
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/tokens/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/tokens/${record.name}`)}>{Setting.I18n("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete token: ${record.name} ?`}
                 onConfirm={() => this.deleteToken(index)}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: '10px'}} type="danger">{Setting.I18n("general:Delete")}</Button>
               </Popconfirm>
             </div>
           )
@@ -220,8 +219,8 @@ class TokenListPage extends React.Component {
         <Table columns={columns} dataSource={tokens} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
-                   {i18next.t("general:Tokens")}&nbsp;&nbsp;&nbsp;&nbsp;
-                   <Button type="primary" size="small" onClick={this.addToken.bind(this)}>{i18next.t("general:Add")}</Button>
+                   {Setting.I18n("general:Tokens")}&nbsp;&nbsp;&nbsp;&nbsp;
+                   <Button type="primary" size="small" onClick={this.addToken.bind(this)}>{Setting.I18n("general:Add")}</Button>
                  </div>
                )}
                loading={tokens === null}

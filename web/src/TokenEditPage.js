@@ -16,7 +16,6 @@ import React from "react";
 import {Button, Card, Col, Input, Row} from 'antd';
 import * as TokenBackend from "./backend/TokenBackend";
 import * as Setting from "./Setting";
-import i18next from "i18next";
 
 class TokenEditPage extends React.Component {
   constructor(props) {
@@ -62,13 +61,13 @@ class TokenEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("token:Edit Token")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitTokenEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          {Setting.I18n("token:Edit Token")}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button type="primary" onClick={this.submitTokenEdit.bind(this)}>{Setting.I18n("general:Save")}</Button>
         </div>
       } style={{marginLeft: '5px'}} type="inner">
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Name")}:
+            {Setting.I18n("general:Name")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.name} onChange={e => {
@@ -78,7 +77,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Application")}:
+            {Setting.I18n("general:Application")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.application} onChange={e => {
@@ -88,7 +87,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Authorization code")}:
+            {Setting.I18n("general:Authorization code")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.code} onChange={e => {
@@ -98,7 +97,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Access token")}:
+            {Setting.I18n("general:Access token")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.accessToken} onChange={e => {
@@ -108,7 +107,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Expires in")}:
+            {Setting.I18n("general:Expires in")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.expiresIn} onChange={e => {
@@ -118,7 +117,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Scope")}:
+            {Setting.I18n("general:Scope")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.scope} onChange={e => {
@@ -128,7 +127,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {i18next.t("general:Token type")}:
+            {Setting.I18n("general:Token type")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.tokenType} onChange={e => {
@@ -178,7 +177,7 @@ class TokenEditPage extends React.Component {
           <Col span={2}>
           </Col>
           <Col span={18}>
-            <Button type="primary" size="large" onClick={this.submitTokenEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+            <Button type="primary" size="large" onClick={this.submitTokenEdit.bind(this)}>{Setting.I18n("general:Save")}</Button>
           </Col>
         </Row>
       </div>

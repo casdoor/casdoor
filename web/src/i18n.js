@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next';
 import zh from './locales/zh/data.json'
 import en from './locales/en/data.json'
 import fr from './locales/fr/data.json'
@@ -31,7 +32,7 @@ const resources = {
   ru: ru,
 };
 
-i18n
+i18n.use(initReactI18next)
   .init({
     lng: "en",
 

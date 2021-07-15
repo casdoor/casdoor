@@ -19,7 +19,6 @@ import moment from "moment";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Provider from "./auth/Provider";
-import i18next from "i18next";
 
 class ProviderListPage extends React.Component {
   constructor(props) {
@@ -92,7 +91,7 @@ class ProviderListPage extends React.Component {
   renderTable(providers) {
     const columns = [
       {
-        title: i18next.t("general:Name"),
+        title: Setting.I18n("general:Name"),
         dataIndex: 'name',
         key: 'name',
         width: '120px',
@@ -106,7 +105,7 @@ class ProviderListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Created time"),
+        title: Setting.I18n("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
@@ -116,21 +115,21 @@ class ProviderListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Display name"),
+        title: Setting.I18n("general:Display name"),
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
       },
       {
-        title: i18next.t("provider:Category"),
+        title: Setting.I18n("provider:Category"),
         dataIndex: 'category',
         key: 'category',
         width: '100px',
         sorter: (a, b) => a.category.localeCompare(b.category),
       },
       {
-        title: i18next.t("provider:Type"),
+        title: Setting.I18n("provider:Type"),
         dataIndex: 'type',
         key: 'type',
         width: '80px',
@@ -146,7 +145,7 @@ class ProviderListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("provider:Client ID"),
+        title: Setting.I18n("provider:Client ID"),
         dataIndex: 'clientId',
         key: 'clientId',
         width: '100px',
@@ -163,7 +162,7 @@ class ProviderListPage extends React.Component {
       //   sorter: (a, b) => a.clientSecret.localeCompare(b.clientSecret),
       // },
       {
-        title: i18next.t("provider:Provider URL"),
+        title: Setting.I18n("provider:Provider URL"),
         dataIndex: 'providerUrl',
         key: 'providerUrl',
         width: '150px',
@@ -179,19 +178,19 @@ class ProviderListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Action"),
+        title: Setting.I18n("general:Action"),
         dataIndex: '',
         key: 'op',
         width: '170px',
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/providers/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/providers/${record.name}`)}>{Setting.I18n("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete provider: ${record.name} ?`}
                 onConfirm={() => this.deleteProvider(index)}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: '10px'}} type="danger">{Setting.I18n("general:Delete")}</Button>
               </Popconfirm>
             </div>
           )
@@ -204,8 +203,8 @@ class ProviderListPage extends React.Component {
         <Table columns={columns} dataSource={providers} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
-                   {i18next.t("general:Providers")}&nbsp;&nbsp;&nbsp;&nbsp;
-                   <Button type="primary" size="small" onClick={this.addProvider.bind(this)}>{i18next.t("general:Add")}</Button>
+                   {Setting.I18n("general:Providers")}&nbsp;&nbsp;&nbsp;&nbsp;
+                   <Button type="primary" size="small" onClick={this.addProvider.bind(this)}>{Setting.I18n("general:Add")}</Button>
                  </div>
                )}
                loading={providers === null}

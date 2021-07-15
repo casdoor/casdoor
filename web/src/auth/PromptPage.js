@@ -19,7 +19,6 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
 import * as AuthBackend from "./AuthBackend";
 import * as Setting from "../Setting";
-import i18next from "i18next";
 import AffiliationSelect from "../common/AffiliationSelect";
 import OAuthWidget from "../common/OAuthWidget";
 
@@ -227,7 +226,7 @@ class PromptPage extends React.Component {
               </Col>
             </Row>
             <div style={{marginTop: "50px"}}>
-              <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true)}}>{i18next.t("code:Submit and complete")}</Button>
+              <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true)}}>{Setting.I18n("code:Submit and complete")}</Button>
             </div>
           </div>
         </Col>

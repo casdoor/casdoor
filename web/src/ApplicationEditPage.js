@@ -21,7 +21,6 @@ import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import SignupPage from "./auth/SignupPage";
 import LoginPage from "./auth/LoginPage";
-import i18next from "i18next";
 import UrlTable from "./UrlTable";
 import ProviderTable from "./ProviderTable";
 import SignupTable from "./SignupTable";
@@ -95,13 +94,13 @@ class ApplicationEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("application:Edit Application")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitApplicationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          {Setting.I18n("application:Edit Application")}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button type="primary" onClick={this.submitApplicationEdit.bind(this)}>{Setting.I18n("general:Save")}</Button>
         </div>
       } style={{marginLeft: '5px'}} type="inner">
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Name"), Setting.I18n("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.application.name} onChange={e => {
@@ -111,7 +110,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Display name"), Setting.I18n("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.application.displayName} onChange={e => {
@@ -121,7 +120,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel("Logo", i18next.t("general:Logo - Tooltip"))} :
+            {Setting.getLabel("Logo", Setting.I18n("general:Logo - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
@@ -136,7 +135,7 @@ class ApplicationEditPage extends React.Component {
             </Row>
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={1}>
-                {i18next.t("general:Preview")}:
+                {Setting.I18n("general:Preview")}:
               </Col>
               <Col span={23} >
                 <a target="_blank" rel="noreferrer" href={this.state.application.logo}>
@@ -148,7 +147,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Home"), i18next.t("general:Home - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Home"), Setting.I18n("general:Home - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined/>} value={this.state.application.homepageUrl} onChange={e => {
@@ -158,7 +157,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Description"), i18next.t("general:Description - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Description"), Setting.I18n("general:Description - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.application.description} onChange={e => {
@@ -168,7 +167,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Organization"), Setting.I18n("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.application.organization} onChange={(value => {this.updateApplicationField('organization', value);})}>
@@ -180,7 +179,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("provider:Client ID"), Setting.I18n("provider:Client ID - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.application.clientId} onChange={e => {
@@ -190,7 +189,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("provider:Client secret"), Setting.I18n("provider:Client secret - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.application.clientSecret} onChange={e => {
@@ -200,11 +199,11 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("application:Redirect URLs"), i18next.t("application:Redirect URLs - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("application:Redirect URLs"), Setting.I18n("application:Redirect URLs - Tooltip"))} :
           </Col>
           <Col span={22} >
             <UrlTable
-              title={i18next.t("application:Redirect URLs")}
+              title={Setting.I18n("application:Redirect URLs")}
               table={this.state.application.redirectUris}
               onUpdateTable={(value) => { this.updateApplicationField('redirectUris', value)}}
             />
@@ -212,7 +211,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Token expire"), i18next.t("general:Token expire - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Token expire"), Setting.I18n("general:Token expire - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input style={{width: "150px"}} value={this.state.application.expireInHours} suffix="Hours" onChange={e => {
@@ -222,7 +221,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("application:Password ON"), i18next.t("application:Password ON - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("application:Password ON"), Setting.I18n("application:Password ON - Tooltip"))} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enablePassword} onChange={checked => {
@@ -232,7 +231,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("application:Enable signup"), i18next.t("application:Enable signup - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("application:Enable signup"), Setting.I18n("application:Enable signup - Tooltip"))} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enableSignUp} onChange={checked => {
@@ -242,7 +241,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Signup URL"), i18next.t("general:Signup URL - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Signup URL"), Setting.I18n("general:Signup URL - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined/>} value={this.state.application.signupUrl} onChange={e => {
@@ -252,7 +251,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Signin URL"), i18next.t("general:Signin URL - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Signin URL"), Setting.I18n("general:Signin URL - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined/>} value={this.state.application.signinUrl} onChange={e => {
@@ -262,7 +261,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Forget URL"), i18next.t("general:Forget URL - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Forget URL"), Setting.I18n("general:Forget URL - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined/>} value={this.state.application.forgetUrl} onChange={e => {
@@ -272,7 +271,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Affiliation URL"), i18next.t("general:Affiliation URL - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Affiliation URL"), Setting.I18n("general:Affiliation URL - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined/>} value={this.state.application.affiliationUrl} onChange={e => {
@@ -282,11 +281,11 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Providers"), i18next.t("general:Providers - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Providers"), Setting.I18n("general:Providers - Tooltip"))} :
           </Col>
           <Col span={22} >
             <ProviderTable
-              title={i18next.t("general:Providers")}
+              title={Setting.I18n("general:Providers")}
               table={this.state.application.providers}
               providers={this.state.providers}
               application={this.state.application}
@@ -296,7 +295,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Preview"), Setting.I18n("general:Preview - Tooltip"))} :
           </Col>
           {
             this.renderPreview()
@@ -306,11 +305,11 @@ class ApplicationEditPage extends React.Component {
           !this.state.application.enableSignUp ? null : (
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={2}>
-                {Setting.getLabel(i18next.t("application:Signup items"), i18next.t("application:Signup items - Tooltip"))} :
+                {Setting.getLabel(Setting.I18n("application:Signup items"), Setting.I18n("application:Signup items - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <SignupTable
-                  title={i18next.t("application:Signup items")}
+                  title={Setting.I18n("application:Signup items")}
                   table={this.state.application.signupItems}
                   onUpdateTable={(value) => { this.updateApplicationField('signupItems', value)}}
                 />
@@ -320,7 +319,7 @@ class ApplicationEditPage extends React.Component {
         }
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Preview"), Setting.I18n("general:Preview - Tooltip"))} :
           </Col>
           {
             this.renderPreview2()
@@ -341,7 +340,7 @@ class ApplicationEditPage extends React.Component {
       <React.Fragment>
         <Col span={11} >
           <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={signUpUrl}>
-            <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
+            <Button type="primary">{Setting.I18n("application:Test signup page..")}</Button>
           </a>
           <br/>
           <br/>
@@ -357,7 +356,7 @@ class ApplicationEditPage extends React.Component {
         </Col>
         <Col span={11} >
           <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={signInUrl}>
-            <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
+            <Button type="primary">{Setting.I18n("application:Test signin page..")}</Button>
           </a>
           <br/>
           <br/>
@@ -376,7 +375,7 @@ class ApplicationEditPage extends React.Component {
       <React.Fragment>
         <Col span={11} >
           <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={promptUrl}>
-            <Button type="primary">{i18next.t("application:Test prompt page..")}</Button>
+            <Button type="primary">{Setting.I18n("application:Test prompt page..")}</Button>
           </a>
           <br/>
           <br/>
@@ -426,7 +425,7 @@ class ApplicationEditPage extends React.Component {
           <Col span={2}>
           </Col>
           <Col span={18}>
-            <Button type="primary" size="large" onClick={this.submitApplicationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+            <Button type="primary" size="large" onClick={this.submitApplicationEdit.bind(this)}>{Setting.I18n("general:Save")}</Button>
           </Col>
         </Row>
       </div>

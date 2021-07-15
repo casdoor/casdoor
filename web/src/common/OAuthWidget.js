@@ -14,7 +14,6 @@
 
 import React from "react";
 import {Button, Col, Row} from 'antd';
-import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import * as Setting from "../Setting";
 import * as Provider from "../auth/Provider";
@@ -160,10 +159,10 @@ class OAuthWidget extends React.Component {
           {
             linkedValue === "" ? (
               <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "link")}>
-                <Button style={{marginLeft: '20px', width: '80px'}} type="primary">{i18next.t("user:Link")}</Button>
+                <Button style={{marginLeft: '20px', width: '80px'}} type="primary">{Setting.I18n("user:Link")}</Button>
               </a>
             ) : (
-              <Button disabled={!providerItem.canUnlink} style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(provider.type)}>{i18next.t("user:Unlink")}</Button>
+              <Button disabled={!providerItem.canUnlink} style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(provider.type)}>{Setting.I18n("user:Unlink")}</Button>
             )
           }
         </Col>

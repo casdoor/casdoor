@@ -14,7 +14,6 @@
 
 import * as Setting from "../Setting";
 import * as AuthBackend from "../auth/AuthBackend";
-import i18next from "i18next";
 
 export function getGlobalUsers() {
   return fetch(`${Setting.ServerUrl}/api/get-global-users`, {
@@ -120,10 +119,10 @@ export function sendCode(checkType, checkId, checkKey, dest, type, orgId) {
     body: formData
   }).then(res => res.json()).then(res => {
     if (res.status === "ok") {
-      Setting.showMessage("success", i18next.t("user:Code Sent"));
+      Setting.showMessage("success", Setting.I18n("user:Code Sent"));
       return true;
     } else {
-      Setting.showMessage("error", i18next.t("user:" + res.msg));
+      Setting.showMessage("error", Setting.I18n("user:" + res.msg));
       return false;
     }
   });

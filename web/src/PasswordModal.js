@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import {Button, Col, Modal, Row, Input,} from "antd";
-import i18next from "i18next";
 import React from "react";
 import * as UserBackend from "./backend/UserBackend";
 import * as Setting from "./Setting";
@@ -36,21 +35,21 @@ export const PasswordModal = (props) => {
 
   const handleOk = () => {
     if (newPassword === "" || rePassword === "") {
-      Setting.showMessage("error", i18next.t("user:Empty input!"));
+      Setting.showMessage("error", Setting.I18n("user:Empty input!"));
       return;
     }
     if (newPassword !== rePassword) {
-      Setting.showMessage("error", i18next.t("user:Two passwords you typed do not match."));
+      Setting.showMessage("error", Setting.I18n("user:Two passwords you typed do not match."));
       return;
     }
     setConfirmLoading(true);
     UserBackend.setPassword(user.owner, user.name, oldPassword, newPassword).then((res) => {
       setConfirmLoading(false);
       if (res.status === "ok") {
-        Setting.showMessage("success", i18next.t("user:Password Set"));
+        Setting.showMessage("success", Setting.I18n("user:Password Set"));
         setVisible(false);
       }
-      else Setting.showMessage("error", i18next.t(`user:${res.msg}`));
+      else Setting.showMessage("error", Setting.I18n(`user:${res.msg}`));
     })
   }
 
@@ -59,14 +58,14 @@ export const PasswordModal = (props) => {
   return (
     <Row>
       <Button type="default" onClick={showModal}>
-        { hasOldPassword ? i18next.t("user:Modify password...") : i18next.t("user:Set password...")}
+        { hasOldPassword ? Setting.I18n("user:Modify password...") : Setting.I18n("user:Set password...")}
       </Button>
       <Modal
         maskClosable={false}
-        title={i18next.t("user:Password")}
+        title={Setting.I18n("user:Password")}
         visible={visible}
-        okText={i18next.t("user:Set Password")}
-        cancelText={i18next.t("user:Cancel")}
+        okText={Setting.I18n("user:Set Password")}
+        cancelText={Setting.I18n("user:Cancel")}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
         onOk={handleOk}
@@ -75,14 +74,14 @@ export const PasswordModal = (props) => {
         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
           { hasOldPassword ? (
             <Row style={{width: "100%", marginBottom: "20px"}}>
-              <Input.Password addonBefore={i18next.t("user:Old Password")} placeholder={i18next.t("user:input password")} onChange={(e) => setOldPassword(e.target.value)}/>
+              <Input.Password addonBefore={Setting.I18n("user:Old Password")} placeholder={Setting.I18n("user:input password")} onChange={(e) => setOldPassword(e.target.value)}/>
             </Row>
           ) : null}
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input.Password addonBefore={i18next.t("user:New Password")} placeholder={i18next.t("user:input password")} onChange={(e) => setNewPassword(e.target.value)}/>
+            <Input.Password addonBefore={Setting.I18n("user:New Password")} placeholder={Setting.I18n("user:input password")} onChange={(e) => setNewPassword(e.target.value)}/>
           </Row>
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input.Password addonBefore={i18next.t("user:Re-enter New")} placeholder={i18next.t("user:input password")} onChange={(e) => setRePassword(e.target.value)}/>
+            <Input.Password addonBefore={Setting.I18n("user:Re-enter New")} placeholder={Setting.I18n("user:input password")} onChange={(e) => setRePassword(e.target.value)}/>
           </Row>
         </Col>
       </Modal>

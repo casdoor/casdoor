@@ -16,11 +16,11 @@ import {message, Tooltip} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
-import "./i18n";
-import i18next from "i18next";
+import i18n from "./i18n";
 import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
+import { Translation } from 'react-i18next';
 
 export let ServerUrl = "";
 
@@ -285,18 +285,25 @@ export function getAvatarColor(s) {
   return colorList[random % 4];
 }
 
+export const I18n = (text) => {
+  return (
+    <Translation>
+      {t => {return t(text)}}
+    </Translation>
+  )
+}
+
 export function setLanguage() {
   let language = localStorage.getItem('language');
   if (language === undefined) {
     language = "en"
   }
-  i18next.changeLanguage(language)
+  i18n.changeLanguage(language)
 }
 
 export function changeLanguage(language) {
   localStorage.setItem("language", language)
-  i18next.changeLanguage(language)
-  window.location.reload(true);
+  i18n.changeLanguage(language)
 }
 
 export function getClickable(text) {

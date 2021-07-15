@@ -1,6 +1,5 @@
 import React from "react";
 import {Cascader, Col, Input, Row, Select} from 'antd';
-import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import * as Setting from "../Setting";
 
@@ -61,7 +60,7 @@ class AffiliationSelect extends React.Component {
           this.props.application?.affiliationUrl === "" ? null : (
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
-                {Setting.getLabel(i18next.t("user:Address"), i18next.t("user:Address - Tooltip"))} :
+                {Setting.getLabel(Setting.I18n("user:Address"), Setting.I18n("user:Address - Tooltip"))} :
               </Col>
               <Col span={24 - this.props.labelSpan} >
                 <Cascader style={{width: '100%', maxWidth: '400px'}} value={this.props.user.address} options={this.state.addressOptions} onChange={value => {
@@ -69,14 +68,14 @@ class AffiliationSelect extends React.Component {
                   this.updateUserField('affiliation', '');
                   this.updateUserField('score', 0);
                   this.getAffiliationOptions(this.props.application, this.props.user);
-                }} placeholder={i18next.t("signup:Please input your address!")} />
+                }} placeholder={Setting.I18n("signup:Please input your address!")} />
               </Col>
             </Row>
           )
         }
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
-            {Setting.getLabel(i18next.t("user:Affiliation"), i18next.t("user:Affiliation - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("user:Affiliation"), Setting.I18n("user:Affiliation - Tooltip"))} :
           </Col>
           <Col span={24 - this.props.labelSpan} >
             {

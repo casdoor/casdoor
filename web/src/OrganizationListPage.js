@@ -18,7 +18,6 @@ import {Button, Col, Popconfirm, Row, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
-import i18next from "i18next";
 
 class OrganizationListPage extends React.Component {
   constructor(props) {
@@ -89,7 +88,7 @@ class OrganizationListPage extends React.Component {
   renderTable(organizations) {
     const columns = [
       {
-        title: i18next.t("general:Name"),
+        title: Setting.I18n("general:Name"),
         dataIndex: 'name',
         key: 'name',
         width: '120px',
@@ -103,7 +102,7 @@ class OrganizationListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Created time"),
+        title: Setting.I18n("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
@@ -113,14 +112,14 @@ class OrganizationListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Display name"),
+        title: Setting.I18n("general:Display name"),
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
       },
       {
-        title: i18next.t("organization:Favicon"),
+        title: Setting.I18n("organization:Favicon"),
         dataIndex: 'favicon',
         key: 'favicon',
         width: '50px',
@@ -133,7 +132,7 @@ class OrganizationListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("organization:Website URL"),
+        title: Setting.I18n("organization:Website URL"),
         dataIndex: 'websiteUrl',
         key: 'websiteUrl',
         width: '300px',
@@ -147,21 +146,21 @@ class OrganizationListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Password type"),
+        title: Setting.I18n("general:Password type"),
         dataIndex: 'passwordType',
         key: 'passwordType',
         width: '150px',
         sorter: (a, b) => a.passwordType.localeCompare(b.passwordType),
       },
       {
-        title: i18next.t("general:Password salt"),
+        title: Setting.I18n("general:Password salt"),
         dataIndex: 'passwordSalt',
         key: 'passwordSalt',
         width: '150px',
         sorter: (a, b) => a.passwordSalt.localeCompare(b.passwordSalt),
       },
       {
-        title: i18next.t("organization:Default avatar"),
+        title: Setting.I18n("organization:Default avatar"),
         dataIndex: 'defaultAvatar',
         key: 'defaultAvatar',
         width: '50px',
@@ -174,20 +173,20 @@ class OrganizationListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Action"),
+        title: Setting.I18n("general:Action"),
         dataIndex: '',
         key: 'op',
         width: '240px',
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/organizations/${record.name}/users`)}>{i18next.t("general:Users")}</Button>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} onClick={() => this.props.history.push(`/organizations/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/organizations/${record.name}/users`)}>{Setting.I18n("general:Users")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} onClick={() => this.props.history.push(`/organizations/${record.name}`)}>{Setting.I18n("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete organization: ${record.name} ?`}
                 onConfirm={() => this.deleteOrganization(index)}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: '10px'}} type="danger">{Setting.I18n("general:Delete")}</Button>
               </Popconfirm>
             </div>
           )
@@ -200,8 +199,8 @@ class OrganizationListPage extends React.Component {
         <Table columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
-                  {i18next.t("general:Organizations")}&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Button type="primary" size="small" onClick={this.addOrganization.bind(this)}>{i18next.t("general:Add")}</Button>
+                  {Setting.I18n("general:Organizations")}&nbsp;&nbsp;&nbsp;&nbsp;
+                  <Button type="primary" size="small" onClick={this.addOrganization.bind(this)}>{Setting.I18n("general:Add")}</Button>
                  </div>
                )}
                loading={organizations === null}

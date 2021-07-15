@@ -18,7 +18,6 @@ import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
-import i18next from "i18next";
 import { CountDownInput } from "../component/CountDownInput";
 import * as UserBackend from "../backend/UserBackend";
 import {
@@ -66,7 +65,7 @@ class ForgetPage extends React.Component {
     } else {
       Util.showMessage(
           "error",
-          i18next.t(`forget:Unknown forgot type: `) + this.state.type
+          Setting.I18n(`forget:Unknown forgot type: `) + this.state.type
       );
     }
   }
@@ -117,7 +116,7 @@ class ForgetPage extends React.Component {
                       }
                       this.setState({current: 1})
                   } else {
-                      Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+                      Setting.showMessage("error", Setting.I18n(`signup:${res.msg}`));
                   }
               });
               break;
@@ -135,7 +134,7 @@ class ForgetPage extends React.Component {
                   if (res.status === "ok") {
                       this.setState({current: 2, userId: res.data, username: res.data.split("/")[1]})
                   } else {
-                      Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+                      Setting.showMessage("error", Setting.I18n(`signup:${res.msg}`));
                   }
               })
               break
@@ -149,7 +148,7 @@ class ForgetPage extends React.Component {
         if (res.status === "ok") {
             Setting.goToLogin(this, this.state.application);
         } else {
-            Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+            Setting.showMessage("error", Setting.I18n(`signup:${res.msg}`));
         }
     })
   }
@@ -180,7 +179,7 @@ class ForgetPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t(
+                    message: Setting.I18n(
                         `forget:Please input your application!`
                     ),
                   },
@@ -192,7 +191,7 @@ class ForgetPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t(
+                    message: Setting.I18n(
                         `forget:Please input your organization!`
                     ),
                   },
@@ -203,7 +202,7 @@ class ForgetPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t(
+                    message: Setting.I18n(
                         "forget:Please input your username!"
                     ),
                     whitespace: true,
@@ -217,13 +216,13 @@ class ForgetPage extends React.Component {
                     });
                   }}
                   prefix={<UserOutlined />}
-                  placeholder={i18next.t("login:username, Email or phone")}
+                  placeholder={Setting.I18n("login:username, Email or phone")}
               />
             </Form.Item>
             <br />
             <Form.Item>
               <Button block type="primary" htmlType="submit">
-                {i18next.t("forget:Next Step")}
+                {Setting.I18n("forget:Next Step")}
               </Button>
             </Form.Item>
           </Form>
@@ -253,7 +252,7 @@ class ForgetPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t(
+                    message: Setting.I18n(
                         `forget:Please input your application!`
                     ),
                   },
@@ -265,7 +264,7 @@ class ForgetPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t(
+                    message: Setting.I18n(
                         `forget:Please input your organization!`
                     ),
                   },
@@ -280,7 +279,7 @@ class ForgetPage extends React.Component {
                   this.state.isFixed ? <Input disabled/> :
                      <Select
                          disabled={this.state.username === ""}
-                         placeholder={i18next.t(
+                         placeholder={Setting.I18n(
                              "forget:Choose email verification or mobile verification"
                          )}
                          onChange={(value) => {
@@ -308,7 +307,7 @@ class ForgetPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t(
+                    message: Setting.I18n(
                         "code:Please input your verification code!"
                     ),
                   },
@@ -317,8 +316,8 @@ class ForgetPage extends React.Component {
               {this.state.verifyType === "email" ? (
                   <CountDownInput
                       disabled={this.state.username === "" || this.state.verifyType === ""}
-                      placeHolder={i18next.t("code:Verify code")}
-                      defaultButtonText={i18next.t("code:Send Code")}
+                      placeHolder={Setting.I18n("code:Verify code")}
+                      defaultButtonText={Setting.I18n("code:Send Code")}
                       onButtonClick={UserBackend.sendCode}
                       onButtonClickArgs={[
                         this.state.email,
@@ -332,8 +331,8 @@ class ForgetPage extends React.Component {
               ) : (
                   <CountDownInput
                       disabled={this.state.username === "" || this.state.verifyType === ""}
-                      placeHolder={i18next.t("code:Verify code")}
-                      defaultButtonText={i18next.t("code:Send Code")}
+                      placeHolder={Setting.I18n("code:Verify code")}
+                      defaultButtonText={Setting.I18n("code:Send Code")}
                       onButtonClick={UserBackend.sendCode}
                       onButtonClickArgs={[
                         this.state.phone,
@@ -353,7 +352,7 @@ class ForgetPage extends React.Component {
                   type="primary"
                   htmlType="submit"
               >
-                {i18next.t("forget:Next Step")}
+                {Setting.I18n("forget:Next Step")}
               </Button>
             </Form.Item>
           </Form>
@@ -384,7 +383,7 @@ class ForgetPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t(
+                    message: Setting.I18n(
                         `forget:Please input your application!`
                     ),
                   },
@@ -396,7 +395,7 @@ class ForgetPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t(
+                    message: Setting.I18n(
                         `forget:Please input your organization!`
                     ),
                   },
@@ -408,7 +407,7 @@ class ForgetPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t(
+                    message: Setting.I18n(
                         "forget:Please input your password!"
                     ),
                   },
@@ -418,7 +417,7 @@ class ForgetPage extends React.Component {
               <Input.Password
                   disabled={this.state.userId === ""}
                   prefix={<LockOutlined />}
-                  placeholder={i18next.t("forget:Password")}
+                  placeholder={Setting.I18n("forget:Password")}
               />
             </Form.Item>
             <Form.Item
@@ -428,7 +427,7 @@ class ForgetPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t(
+                    message: Setting.I18n(
                         "forget:Please confirm your password!"
                     ),
                   },
@@ -438,7 +437,7 @@ class ForgetPage extends React.Component {
                         return Promise.resolve();
                       }
                       return Promise.reject(
-                          i18next.t(
+                          Setting.I18n(
                               "forget:Your confirmed password is inconsistent with the password!"
                           )
                       );
@@ -449,13 +448,13 @@ class ForgetPage extends React.Component {
               <Input.Password
                   disabled={this.state.userId === ""}
                   prefix={<CheckCircleOutlined />}
-                  placeholder={i18next.t("forget:Confirm")}
+                  placeholder={Setting.I18n("forget:Confirm")}
               />
             </Form.Item>
             <br />
             <Form.Item hidden={this.state.current !== 2}>
               <Button block type="primary"  htmlType="submit" disabled={this.state.userId === ""}>
-                {i18next.t("forget:Change Password")}
+                {Setting.I18n("forget:Change Password")}
               </Button>
             </Form.Item>
           </Form>
@@ -472,7 +471,7 @@ class ForgetPage extends React.Component {
     return (
         <>
           <Divider style={{ fontSize: "28px" }}>
-            {i18next.t("forget:Retrieve password")}
+            {Setting.I18n("forget:Retrieve password")}
           </Divider>
           <Row>
             <Col span={24} style={{ display: "flex", justifyContent: "center" }}>
@@ -486,15 +485,15 @@ class ForgetPage extends React.Component {
                   }}
               >
                 <Step
-                    title={i18next.t("forget:Account")}
+                    title={Setting.I18n("forget:Account")}
                     icon={<UserOutlined />}
                 />
                 <Step
-                    title={i18next.t("forget:Verify")}
+                    title={Setting.I18n("forget:Verify")}
                     icon={<SolutionOutlined />}
                 />
                 <Step
-                    title={i18next.t("forget:Reset")}
+                    title={Setting.I18n("forget:Reset")}
                     icon={<KeyOutlined />}
                 />
               </Steps>

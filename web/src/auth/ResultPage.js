@@ -14,7 +14,6 @@
 
 import React from "react";
 import {Result, Button} from 'antd';
-import i18next from "i18next";
 import {authConfig} from "./Auth";
 import * as Util from "./Util";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
@@ -61,13 +60,13 @@ class ResultPage extends React.Component {
         }
         <Result
           status="success"
-          title={i18next.t("signup:Your account has been created!")}
-          subTitle={i18next.t("signup:Please click the below button to sign in")}
+          title={Setting.I18n("signup:Your account has been created!")}
+          subTitle={Setting.I18n("signup:Please click the below button to sign in")}
           extra={[
             <Button type="primary" key="login" onClick={() => {
               Setting.goToLogin(this, application);
             }}>
-              {i18next.t("login:Sign In")}
+              {Setting.I18n("login:Sign In")}
             </Button>
           ]}
         />

@@ -15,7 +15,6 @@
 import {Button, Col, Input, Modal, Row} from "antd";
 import React from "react";
 import * as Setting from "../Setting";
-import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import { AuditOutlined, VerifiedOutlined } from "@ant-design/icons";
 
@@ -70,7 +69,7 @@ export const CountDownInput = (props) => {
         setCheckType("captcha");
         setVisible(true);
       } else {
-        Setting.showMessage("error", i18next.t("signup:Unknown Check Type"));
+        Setting.showMessage("error", Setting.I18n("signup:Unknown Check Type"));
       }
     })
   }
@@ -90,7 +89,7 @@ export const CountDownInput = (props) => {
           }}
         />
         <Row>
-          <Input autoFocus value={key} placeholder={i18next.t("general:Captcha")} onPressEnter={handleOk} onChange={e => setKey(e.target.value)} />
+          <Input autoFocus value={key} placeholder={Setting.I18n("general:Captcha")} onPressEnter={handleOk} onChange={e => setKey(e.target.value)} />
         </Row>
       </Col>
     )
@@ -131,10 +130,10 @@ export const CountDownInput = (props) => {
         closable={false}
         maskClosable={false}
         destroyOnClose={true}
-        title={i18next.t("general:Captcha")}
+        title={Setting.I18n("general:Captcha")}
         visible={visible}
-        okText={i18next.t("user:OK")}
-        cancelText={i18next.t("user:Cancel")}
+        okText={Setting.I18n("user:OK")}
+        cancelText={Setting.I18n("user:Cancel")}
         onCancel={handleCancel}
         onOk={handleOk}
         width={248}

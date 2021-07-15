@@ -16,7 +16,6 @@ import React from "react";
 import {DownOutlined, DeleteOutlined, UpOutlined, LinkOutlined} from '@ant-design/icons';
 import {Button, Col, Input, Row, Table, Tooltip} from 'antd';
 import * as Setting from "./Setting";
-import i18next from "i18next";
 
 class UrlTable extends React.Component {
   constructor(props) {
@@ -62,7 +61,7 @@ class UrlTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t("application:Redirect URL"),
+        title: Setting.I18n("application:Redirect URL"),
         dataIndex: 'id',
         key: 'id',
         render: (text, record, index) => {
@@ -74,19 +73,19 @@ class UrlTable extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Action"),
+        title: Setting.I18n("general:Action"),
         key: 'action',
         width: '100px',
         render: (text, record, index) => {
           return (
             <div>
-              <Tooltip placement="bottomLeft" title={i18next.t("general:Up")}>
+              <Tooltip placement="bottomLeft" title={Setting.I18n("general:Up")}>
                 <Button style={{marginRight: "5px"}} disabled={index === 0} icon={<UpOutlined />} size="small" onClick={() => this.upRow(table, index)} />
               </Tooltip>
-              <Tooltip placement="topLeft" title={i18next.t("general:Down")}>
+              <Tooltip placement="topLeft" title={Setting.I18n("general:Down")}>
                 <Button style={{marginRight: "5px"}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
               </Tooltip>
-              <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
+              <Tooltip placement="topLeft" title={Setting.I18n("general:Delete")}>
                 <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
               </Tooltip>
             </div>
@@ -100,7 +99,7 @@ class UrlTable extends React.Component {
              title={() => (
                <div>
                  {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-                 <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+                 <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{Setting.I18n("general:Add")}</Button>
                </div>
              )}
       />

@@ -17,7 +17,6 @@ import {Link} from "react-router-dom";
 import {Col, Row, Table} from 'antd';
 import * as Setting from "./Setting";
 import * as RecordBackend from "./backend/RecordBackend";
-import i18next from "i18next";
 
 class RecordListPage extends React.Component {
   constructor(props) {
@@ -58,7 +57,7 @@ class RecordListPage extends React.Component {
   renderTable(records) {
     const columns = [
       {
-        title: i18next.t("general:Client ip"),
+        title: Setting.I18n("general:Client ip"),
         dataIndex: 'Record',
         key: 'Record',
         width: '120px',
@@ -68,7 +67,7 @@ class RecordListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Timestamp"),
+        title: Setting.I18n("general:Timestamp"),
         dataIndex: 'Record',
         key: 'Record',
         width: '160px',
@@ -78,7 +77,7 @@ class RecordListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Organization"),
+        title: Setting.I18n("general:Organization"),
         dataIndex: 'Record',
         key: 'Record',
         width: '120px',
@@ -92,7 +91,7 @@ class RecordListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Username"),
+        title: Setting.I18n("general:Username"),
         dataIndex: 'Record',
         key: 'Record',
         width: '160px',
@@ -102,7 +101,7 @@ class RecordListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Request uri"),
+        title: Setting.I18n("general:Request uri"),
         dataIndex: 'Record',
         key: 'Record',
         width: '160px',
@@ -112,7 +111,7 @@ class RecordListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Action"),
+        title: Setting.I18n("general:Action"),
         dataIndex: 'Record',
         key: 'Record',
         width: '160px',
@@ -128,7 +127,7 @@ class RecordListPage extends React.Component {
         <Table columns={columns} dataSource={records} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
-                   {i18next.t("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;
+                   {Setting.I18n("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;
                  </div>
                )}
                loading={records === null}

@@ -18,7 +18,6 @@ import {Button, Col, Popconfirm, Row, Switch, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
-import i18next from "i18next";
 
 class UserListPage extends React.Component {
   constructor(props) {
@@ -105,7 +104,7 @@ class UserListPage extends React.Component {
   renderTable(users) {
     const columns = [
       {
-        title: i18next.t("general:Organization"),
+        title: Setting.I18n("general:Organization"),
         dataIndex: 'owner',
         key: 'owner',
         width: '120px',
@@ -119,7 +118,7 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Name"),
+        title: Setting.I18n("general:Name"),
         dataIndex: 'name',
         key: 'name',
         width: '100px',
@@ -133,7 +132,7 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Created time"),
+        title: Setting.I18n("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
@@ -143,14 +142,14 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Display name"),
+        title: Setting.I18n("general:Display name"),
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
       },
       {
-        title: i18next.t("general:Avatar"),
+        title: Setting.I18n("general:Avatar"),
         dataIndex: 'avatar',
         key: 'avatar',
         width: '100px',
@@ -163,7 +162,7 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Email"),
+        title: Setting.I18n("general:Email"),
         dataIndex: 'email',
         key: 'email',
         width: '160px',
@@ -177,7 +176,7 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Phone"),
+        title: Setting.I18n("general:Phone"),
         dataIndex: 'phone',
         key: 'phone',
         width: '120px',
@@ -191,21 +190,21 @@ class UserListPage extends React.Component {
       //   sorter: (a, b) => a.phone.localeCompare(b.phone),
       // },
       {
-        title: i18next.t("user:Affiliation"),
+        title: Setting.I18n("user:Affiliation"),
         dataIndex: 'affiliation',
         key: 'affiliation',
         width: '120px',
         sorter: (a, b) => a.affiliation.localeCompare(b.affiliation),
       },
       {
-        title: i18next.t("user:Tag"),
+        title: Setting.I18n("user:Tag"),
         dataIndex: 'tag',
         key: 'tag',
         width: '100px',
         sorter: (a, b) => a.tag.localeCompare(b.tag),
       },
       {
-        title: i18next.t("user:Is admin"),
+        title: Setting.I18n("user:Is admin"),
         dataIndex: 'isAdmin',
         key: 'isAdmin',
         width: '120px',
@@ -217,7 +216,7 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("user:Is global admin"),
+        title: Setting.I18n("user:Is global admin"),
         dataIndex: 'isGlobalAdmin',
         key: 'isGlobalAdmin',
         width: '120px',
@@ -229,7 +228,7 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("user:Is forbidden"),
+        title: Setting.I18n("user:Is forbidden"),
         dataIndex: 'isForbidden',
         key: 'isForbidden',
         width: '120px',
@@ -241,19 +240,19 @@ class UserListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Action"),
+        title: Setting.I18n("general:Action"),
         dataIndex: '',
         key: 'op',
         width: '190px',
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/users/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/users/${record.owner}/${record.name}`)}>{Setting.I18n("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete user: ${record.name} ?`}
                 onConfirm={() => this.deleteUser(index)}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: '10px'}} type="danger">{Setting.I18n("general:Delete")}</Button>
               </Popconfirm>
             </div>
           )
@@ -266,8 +265,8 @@ class UserListPage extends React.Component {
         <Table columns={columns} dataSource={users} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
-                  {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Button type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")}</Button>
+                  {Setting.I18n("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
+                  <Button type="primary" size="small" onClick={this.addUser.bind(this)}>{Setting.I18n("general:Add")}</Button>
                  </div>
                )}
                loading={users === null}

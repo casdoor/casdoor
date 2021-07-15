@@ -16,7 +16,6 @@ import React from "react";
 import {Card, Col, Row} from "antd";
 import * as Setting from "../Setting";
 import SingleCard from "./SingleCard";
-import i18next from "i18next";
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -30,14 +29,14 @@ class HomePage extends React.Component {
     let items = [];
     if (Setting.isAdminUser(this.props.account)) {
       items = [
-        {link: "/organizations", name: i18next.t("general:Organizations"), organizer: i18next.t("general:User containers")},
-        {link: "/users", name: i18next.t("general:Users"), organizer: i18next.t("general:Users under all organizations")},
-        {link: "/providers", name: i18next.t("general:Providers"), organizer: i18next.t("general:OAuth providers")},
-        {link: "/applications", name: i18next.t("general:Applications"), organizer: i18next.t("general:Applications that requires authentication")},
+        {link: "/organizations", name: Setting.I18n("general:Organizations"), organizer: Setting.I18n("general:User containers")},
+        {link: "/users", name: Setting.I18n("general:Users"), organizer: Setting.I18n("general:Users under all organizations")},
+        {link: "/providers", name: Setting.I18n("general:Providers"), organizer: Setting.I18n("general:OAuth providers")},
+        {link: "/applications", name: Setting.I18n("general:Applications"), organizer: Setting.I18n("general:Applications that requires authentication")},
       ];
     } else {
       items = [
-        {link: "/account", name: i18next.t("account:My Account"), organizer: i18next.t("account:Settings for your account")},
+        {link: "/account", name: Setting.I18n("account:My Account"), organizer: Setting.I18n("account:Settings for your account")},
       ];
     }
 

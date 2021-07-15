@@ -28,7 +28,6 @@ import DingTalkLoginButton from "./DingTalkLoginButton";
 import GiteeLoginButton from "./GiteeLoginButton";
 import WechatLoginButton from "./WechatLoginButton";
 import WeiboLoginButton from "./WeiboLoginButton";
-import i18next from "i18next";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -146,7 +145,7 @@ class LoginPage extends React.Component {
   };
 
   getSigninButton(type) {
-    const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
+    const text = Setting.I18n("login:Sign in with {type}").replace("{type}", type);
     if (type === "GitHub") {
       return <GithubLoginButton text={text} align={"center"} />
     } else if (type === "Google") {
@@ -258,35 +257,35 @@ class LoginPage extends React.Component {
           </Form.Item>
           <Form.Item
             name="username"
-            rules={[{ required: true, message: i18next.t("login:Please input your username, Email or phone!") }]}
+            rules={[{ required: true, message: Setting.I18n("login:Please input your username, Email or phone!") }]}
           >
             <Input
               prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder={i18next.t("login:username, Email or phone")}
+              placeholder={Setting.I18n("login:username, Email or phone")}
               disabled={!application.enablePassword}
             />
           </Form.Item>
           <Form.Item
             name="password"
-            rules={[{ required: true, message: i18next.t("login:Please input your password!") }]}
+            rules={[{ required: true, message: Setting.I18n("login:Please input your password!") }]}
           >
             <Input
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
-              placeholder={i18next.t("login:Password")}
+              placeholder={Setting.I18n("login:Password")}
               disabled={!application.enablePassword}
             />
           </Form.Item>
           <Form.Item>
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
-                {i18next.t("login:Auto login")}
+                {Setting.I18n("login:Auto login")}
               </Checkbox>
             </Form.Item>
             <a style={{float: "right"}} onClick={() => {
               Setting.goToForget(this, application);
             }}>
-              {i18next.t("login:Forgot password?")}
+              {Setting.I18n("login:Forgot password?")}
             </a>
           </Form.Item>
           <Form.Item>
@@ -296,7 +295,7 @@ class LoginPage extends React.Component {
               style={{width: "100%"}}
               disabled={!application.enablePassword}
             >
-              {i18next.t("login:Sign In")}
+              {Setting.I18n("login:Sign In")}
             </Button>
             {
               !application.enableSignUp ? null : this.renderFooter(application)
@@ -315,7 +314,7 @@ class LoginPage extends React.Component {
       return (
         <div style={{marginTop: "20px"}}>
           <div style={{fontSize: 16, textAlign: "left"}}>
-            {i18next.t("login:To access")}&nbsp;
+            {Setting.I18n("login:To access")}&nbsp;
             <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
               <span style={{fontWeight: "bold"}}>
                 {application.displayName}
@@ -348,22 +347,22 @@ class LoginPage extends React.Component {
     if (this.state.mode === "signup") {
       return (
         <div style={{float: "right"}}>
-          {i18next.t("signup:Have account?")}&nbsp;
+          {Setting.I18n("signup:Have account?")}&nbsp;
           <Link onClick={() => {
             Setting.goToLogin(this, application);
           }}>
-            {i18next.t("signup:sign in now")}
+            {Setting.I18n("signup:sign in now")}
           </Link>
         </div>
       )
     } else {
       return (
         <div style={{float: "right"}}>
-          {i18next.t("login:No account yet?")}&nbsp;
+          {Setting.I18n("login:No account yet?")}&nbsp;
           <a onClick={() => {
             Setting.goToSignup(this, application);
           }}>
-            {i18next.t("login:sign up now")}
+            {Setting.I18n("login:sign up now")}
           </a>
         </div>
       )

@@ -18,7 +18,6 @@ import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import {LinkOutlined} from "@ant-design/icons";
-import i18next from "i18next";
 import CropperDiv from "./CropperDiv.js";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import PasswordModal from "./PasswordModal";
@@ -26,7 +25,6 @@ import ResetModal from "./ResetModal";
 import AffiliationSelect from "./common/AffiliationSelect";
 import OAuthWidget from "./common/OAuthWidget";
 
-import {Controlled as CodeMirror} from 'react-codemirror2'
 import "codemirror/lib/codemirror.css"
 require('codemirror/theme/material-darker.css');
 require("codemirror/mode/javascript/javascript");
@@ -108,13 +106,13 @@ class UserEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          {Setting.I18n("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button type="primary" onClick={this.submitUserEdit.bind(this)}>{Setting.I18n("general:Save")}</Button>
         </div>
       } style={{marginLeft: '5px'}} type="inner">
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Organization"), Setting.I18n("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.user.owner} onChange={(value => {this.updateUserField('owner', value);})}>
@@ -126,7 +124,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel("ID", i18next.t("general:ID - Tooltip"))} :
+            {Setting.getLabel("ID", Setting.I18n("general:ID - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.id} disabled={true} />
@@ -134,7 +132,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Name"), Setting.I18n("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.name} disabled={true} onChange={e => {
@@ -144,7 +142,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Display name"), Setting.I18n("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.displayName} onChange={e => {
@@ -154,12 +152,12 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Avatar"), i18next.t("general:Avatar - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Avatar"), Setting.I18n("general:Avatar - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={2}>
-                {i18next.t("general:URL")}:
+                {Setting.I18n("general:URL")}:
               </Col>
               <Col span={22} >
                 <Input prefix={<LinkOutlined/>} value={this.state.user.avatar} onChange={e => {
@@ -169,7 +167,7 @@ class UserEditPage extends React.Component {
             </Row>
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={2}>
-                {i18next.t("general:Preview")}:
+                {Setting.I18n("general:Preview")}:
               </Col>
               <Col span={22} >
                 <a target="_blank" rel="noreferrer" href={this.state.user.avatar}>
@@ -178,13 +176,13 @@ class UserEditPage extends React.Component {
               </Col>
             </Row>
             <Row style={{marginTop: '20px'}}>
-              <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} targetFunction={UserBackend.uploadAvatar} />
+              <CropperDiv buttonText={`${Setting.I18n("user:Upload a photo")}...`} title={Setting.I18n("user:Upload a photo")} targetFunction={UserBackend.uploadAvatar} />
             </Row>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:User type"), i18next.t("general:User type - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:User type"), Setting.I18n("general:User type - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.user.type} onChange={(value => {this.updateUserField('type', value);})}>
@@ -197,7 +195,7 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Password"), Setting.I18n("general:Password - Tooltip"))} :
           </Col>
           <Col span={22} >
             <PasswordModal user={this.state.user} />
@@ -205,24 +203,24 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Email"), Setting.I18n("general:Email - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: '20px'}} span={11} >
             <Input value={this.state.user.email} disabled />
           </Col>
           <Col span={11} >
-            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Email...")} destType={"email"} coolDownTime={60}/>) : null}
+            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={Setting.I18n("user:Reset Email...")} destType={"email"} coolDownTime={60}/>) : null}
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("general:Phone"), Setting.I18n("general:Phone - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: '20px'}} span={11} >
             <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`} disabled />
           </Col>
           <Col span={11} >
-            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} coolDownTime={60}/>) : null}
+            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={Setting.I18n("user:Reset Phone...")} destType={"phone"} coolDownTime={60}/>) : null}
           </Col>
         </Row>
         {
@@ -232,7 +230,7 @@ class UserEditPage extends React.Component {
         }
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
-            {Setting.getLabel(i18next.t("user:Tag"), i18next.t("user:Tag - Tooltip"))} :
+            {Setting.getLabel(Setting.I18n("user:Tag"), Setting.I18n("user:Tag - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.tag} onChange={e => {
@@ -244,7 +242,7 @@ class UserEditPage extends React.Component {
           !this.isSelfOrAdmin() ? null : (
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={2}>
-                {Setting.getLabel(i18next.t("user:Third-party logins"), i18next.t("user:Third-party logins - Tooltip"))} :
+                {Setting.getLabel(Setting.I18n("user:Third-party logins"), Setting.I18n("user:Third-party logins - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <div style={{marginBottom: 20}}>
@@ -263,7 +261,7 @@ class UserEditPage extends React.Component {
             <React.Fragment>
               {/*<Row style={{marginTop: '20px'}} >*/}
               {/*  <Col style={{marginTop: '5px'}} span={2}>*/}
-              {/*    {i18next.t("user:Properties")}:*/}
+              {/*    {Setting.I18n("user:Properties")}:*/}
               {/*  </Col>*/}
               {/*  <Col span={22} >*/}
               {/*    <CodeMirror*/}
@@ -274,7 +272,7 @@ class UserEditPage extends React.Component {
               {/*</Row>*/}
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {Setting.getLabel(i18next.t("user:Is admin"), i18next.t("user:Is admin - Tooltip"))} :
+                  {Setting.getLabel(Setting.I18n("user:Is admin"), Setting.I18n("user:Is admin - Tooltip"))} :
                 </Col>
                 <Col span={1} >
                   <Switch checked={this.state.user.isAdmin} onChange={checked => {
@@ -284,7 +282,7 @@ class UserEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {Setting.getLabel(i18next.t("user:Is global admin"), i18next.t("user:Is global admin - Tooltip"))} :
+                  {Setting.getLabel(Setting.I18n("user:Is global admin"), Setting.I18n("user:Is global admin - Tooltip"))} :
                 </Col>
                 <Col span={1} >
                   <Switch checked={this.state.user.isGlobalAdmin} onChange={checked => {
@@ -294,7 +292,7 @@ class UserEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
-                  {Setting.getLabel(i18next.t("user:Is forbidden"), i18next.t("user:Is forbidden - Tooltip"))} :
+                  {Setting.getLabel(Setting.I18n("user:Is forbidden"), Setting.I18n("user:Is forbidden - Tooltip"))} :
                 </Col>
                 <Col span={1} >
                   <Switch checked={this.state.user.isForbidden} onChange={checked => {
@@ -352,7 +350,7 @@ class UserEditPage extends React.Component {
           <Col span={2}>
           </Col>
           <Col span={18}>
-            <Button type="primary" size="large" onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+            <Button type="primary" size="large" onClick={this.submitUserEdit.bind(this)}>{Setting.I18n("general:Save")}</Button>
           </Col>
         </Row>
       </div>
