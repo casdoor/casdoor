@@ -48,6 +48,7 @@ func main() {
 	beego.InsertFilter("*", beego.BeforeRouter, routers.StaticFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AutoLoginFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AuthzFilter)
+	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
 
 	beego.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
 	beego.BConfig.WebConfig.Session.SessionProvider = "file"

@@ -181,6 +181,12 @@ func (c *ApiController) Login() {
 		} else {
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 			resp = c.HandleLoggedIn(application, user, &form)
+
+			record := util.Records(c.Ctx)
+			record.Organization = application.Organization
+			record.Username = user.Name
+
+			object.AddRecord(record)
 		}
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
@@ -252,6 +258,12 @@ func (c *ApiController) Login() {
 				//}
 
 				resp = c.HandleLoggedIn(application, user, &form)
+
+				record := util.Records(c.Ctx)
+				record.Organization = application.Organization
+				record.Username = user.Name
+
+				 object.AddRecord(record)
 			} else {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
@@ -294,6 +306,12 @@ func (c *ApiController) Login() {
 				object.LinkUserAccount(user, provider.Type, userInfo.Id)
 
 				resp = c.HandleLoggedIn(application, user, &form)
+
+				record := util.Records(c.Ctx)
+				record.Organization = application.Organization
+				record.Username = user.Name
+
+				object.AddRecord(record)
 			}
 			//resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"

@@ -40,6 +40,7 @@ import ApplicationListPage from "./ApplicationListPage";
 import ApplicationEditPage from "./ApplicationEditPage";
 import TokenListPage from "./TokenListPage";
 import TokenEditPage from "./TokenEditPage";
+import RecordListPage from "./RecordListPage";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
@@ -333,6 +334,13 @@ class App extends Component {
           <Link to="/tokens">{i18next.t("general:Tokens")}</Link>
         </Menu.Item>
       );
+      res.push(
+          <Menu.Item key="7">
+            <Link to="/records">
+              {i18next.t("general:Records")}
+            </Link>
+          </Menu.Item>
+      );
     }
     res.push(
       <Menu.Item
@@ -398,6 +406,7 @@ class App extends Component {
           </Menu>
         </Header> */}
         <Switch>
+<<<<<<< HEAD
           <Route
             exact
             path="/result"
@@ -527,6 +536,24 @@ class App extends Component {
               )
             }
           />
+=======
+          <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
+          <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
+          <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)}/>
+          <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />}/>
+          <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/applications/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
+>>>>>>> a95b168 (feat: add UI to view logs)
         </Switch>
       </div>
     );
