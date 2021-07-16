@@ -14,6 +14,13 @@
 
 import React from "react";
 import * as Setting from "./Setting";
+import { Menu, Dropdown, message } from "antd";
+import { createFromIconfontCN } from '@ant-design/icons';
+import './App.less';
+
+const IconFont = createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/font_2680620_ffij16fkwdg.js',
+});
 
 class SelectLanguageBox extends React.Component {
   constructor(props) {
@@ -23,47 +30,28 @@ class SelectLanguageBox extends React.Component {
     };
   }
 
+  onClick(e) {
+    Setting.changeLanguage(e.key);
+  };
+
   render() {
+    const menu = (
+      <Menu onClick={this.onClick.bind(this)}>
+        <Menu.Item key="en" icon={<IconFont type="icon-en" />}>English</Menu.Item>
+        <Menu.Item key="zh" icon={<IconFont type="icon-zh" />}>简体中文</Menu.Item>
+        <Menu.Item key="fr" icon={<IconFont type="icon-fr" />}>Français</Menu.Item>
+        <Menu.Item key="de" icon={<IconFont type="icon-de" />}>Deutsch</Menu.Item>
+        <Menu.Item key="ja" icon={<IconFont type="icon-ja" />}>日本語</Menu.Item>
+        <Menu.Item key="ko" icon={<IconFont type="icon-ko" />}>한국어</Menu.Item>
+        <Menu.Item key="ru" icon={<IconFont type="icon-ru" />}>Русский</Menu.Item>
+      </Menu>
+    );
+
     return (
-      <div align="center">
-        <div className="box" style={{width: "600px"}}>
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a onClick={() => Setting.changeLanguage("en")} className="lang-selector">
-            English
-          </a>
-          /
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a onClick={() => Setting.changeLanguage("zh")} className="lang-selector">
-            简体中文
-          </a>
-          /
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a onClick={() => Setting.changeLanguage("fr")} className="lang-selector">
-            Français
-          </a>
-          /
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a onClick={() => Setting.changeLanguage("de")} className="lang-selector">
-            Deutsch
-          </a>
-          /
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a onClick={() => Setting.changeLanguage("ja")} className="lang-selector">
-            日本語
-          </a>
-          /
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a onClick={() => Setting.changeLanguage("ko")} className="lang-selector">
-            한국어
-          </a>
-          /
-          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-          <a onClick={() => Setting.changeLanguage("ru")} className="lang-selector">
-            Русский
-          </a>
-        </div>
-      </div>
-    )
+      <Dropdown overlay={menu} style={{cursor: "pointer"}}>
+        <span className="language_box" />
+      </Dropdown>
+    );
   }
 }
 
