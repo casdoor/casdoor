@@ -224,7 +224,7 @@ class App extends Component {
     );
 
     return (
-      <Dropdown key="200" overlay={menu} >
+      <Dropdown key="200" overlay={menu} className="rightDropDown">
         <div className="ant-dropdown-link" style={{float: 'right', cursor: 'pointer'}}>
           {
             this.renderAvatar()
@@ -382,6 +382,7 @@ class App extends Component {
             {
               this.renderAccount()
             }
+          <SelectLanguageBox/>
           </Menu>
         </Header>
         <Switch>
@@ -418,7 +419,6 @@ class App extends Component {
           textAlign: 'center',
         }
       }>
-        <SelectLanguageBox/>
         Made with <span style={{color: 'rgb(255, 255, 255)'}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casbin.org" rel="noreferrer">Casbin</a>
       </Footer>
     )

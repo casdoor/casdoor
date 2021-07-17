@@ -59,73 +59,73 @@ class RecordListPage extends React.Component {
     const columns = [
       {
         title: i18next.t("general:Client ip"),
-        dataIndex: 'Record',
-        key: 'Record',
+        dataIndex: ['Record', 'clientIp'],
+        key: 'id',
         width: '120px',
         sorter: (a, b) => a.Record.clientIp.localeCompare(b.Record.clientIp),
         render: (text, record, index) => {
-          return text.clientIp;
+          return text;
         }
       },
       {
         title: i18next.t("general:Timestamp"),
-        dataIndex: 'Record',
-        key: 'Record',
+        dataIndex: ['Record', 'timestamp'],
+        key: 'id',
         width: '160px',
         sorter: (a, b) => a.Record.timestamp.localeCompare(b.Record.timestamp),
         render: (text, record, index) => {
-          return Setting.getFormattedDate(text.timestamp);
+          return Setting.getFormattedDate(text);
         }
       },
       {
         title: i18next.t("general:Organization"),
-        dataIndex: 'Record',
-        key: 'Record',
+        dataIndex: ['Record', 'organization'],
+        key: 'id',
         width: '120px',
         sorter: (a, b) => a.Record.organization.localeCompare(b.Record.organization),
         render: (text, record, index) => {
           return (
-            <Link to={`/organizations/${text.organization}`}>
-              {text.organization}
+            <Link to={`/organizations/${text}`}>
+              {text}
             </Link>
           )
         }
       },
       {
         title: i18next.t("general:Username"),
-        dataIndex: 'Record',
-        key: 'Record',
+        dataIndex: ['Record', 'username'],
+        key: 'id',
         width: '160px',
         sorter: (a, b) => a.Record.username.localeCompare(b.Record.username),
         render: (text, record, index) => {
-          return text.username;
+          return text;
         }
       },
       {
         title: i18next.t("general:Request uri"),
-        dataIndex: 'Record',
-        key: 'Record',
+        dataIndex: ['Record', 'requestUri'],
+        key: 'id',
         width: '160px',
         sorter: (a, b) => a.Record.requestUri.localeCompare(b.Record.requestUri),
         render: (text, record, index) => {
-          return text.requestUri;
+          return text;
         }
       },
       {
         title: i18next.t("general:Action"),
-        dataIndex: 'Record',
-        key: 'Record',
+        dataIndex: ['Record', 'action'],
+        key: 'id',
         width: '160px',
         sorter: (a, b) => a.Record.action.localeCompare(b.Record.action),
         render: (text, record, index) => {
-          return text.action;
+          return text;
         }
       },
     ];
 
     return (
       <div>
-        <Table columns={columns} dataSource={records} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
+        <Table columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
                    {i18next.t("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;
