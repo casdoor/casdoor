@@ -137,4 +137,9 @@ func (a *Adapter) createTable() {
 	if err != nil {
 		panic(err)
 	}
+
+	err = a.Engine.Sync2(new(Ldap))
+	if err != nil {
+		panic(err)
+	}
 }

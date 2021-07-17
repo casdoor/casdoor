@@ -15,9 +15,11 @@
 import React from "react";
 import {Button, Card, Col, Input, Row, Select} from 'antd';
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as LdapBackend from "./backend/LdapBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
+import LdapTable from "./LdapTable";
 
 const { Option } = Select;
 
@@ -28,11 +30,13 @@ class OrganizationEditPage extends React.Component {
       classes: props,
       organizationName: props.match.params.organizationName,
       organization: null,
+      ldaps: null,
     };
   }
 
   UNSAFE_componentWillMount() {
     this.getOrganization();
+    this.getLdaps();
   }
 
   getOrganization() {
@@ -42,6 +46,21 @@ class OrganizationEditPage extends React.Component {
           organization: organization,
         });
       });
+  }
+
+  getLdaps() {
+    LdapBackend.getLdaps(this.state.organizationName)
+      .then(res => {
+        let resdata = []
+        if (res.status === "ok") {
+          if (res.data !== null) {
+            resdata = res.data;
+          }
+        }
+        this.setState({
+          ldaps: resdata
+        })
+      })
   }
 
   parseOrganizationField(key, value) {
@@ -186,6 +205,20 @@ class OrganizationEditPage extends React.Component {
             </Row>
           </Col>
         </Row>
+        <Row style={{marginTop: '20px'}}>
+          <Col style={{marginTop: '5px'}} span={2}>
+            {Setting.getLabel(i18next.t("general:LDAPs"), i18next.t("general:LDAPs - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <LdapTable
+              title={i18next.t("general:LDAPs")}
+              table={this.state.ldaps}
+              organizationName={this.state.organizationName}
+              onUpdateTable={(value) => {
+                this.setState({ldaps: value}) }}
+            />
+          </Col>
+        </Row>
       </Card>
     )
   }
@@ -228,7 +261,8 @@ class OrganizationEditPage extends React.Component {
           <Col span={2}>
           </Col>
           <Col span={18}>
-            <Button type="primary" size="large" onClick={this.submitOrganizationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+            <Button type="primary" size="large"
+                    onClick={this.submitOrganizationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
           </Col>
         </Row>
       </div>

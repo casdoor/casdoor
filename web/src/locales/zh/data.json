@@ -17,6 +17,7 @@
     "Timestamp": "Timestamp",
     "Username": "Username",
     "Request uri": "Request uri",
+    "LDAPs": "LDAPs",
     "Save": "保存",
     "Add": "添加",
     "Action": "操作",
@@ -272,5 +273,28 @@
     "Email/Phone": "邮箱/手机号",
     "Change Password": "修改密码",
     "Choose email verification or mobile verification": "选择邮箱验证或手机验证"
+  },
+  "ldap": {
+    "Server Name": "LDAP 服务器",
+    "Host": "域名",
+    "Server": "服务器",
+    "Base DN": "基本 DN",
+    "Admin": "管理员",
+    "Admin Password": "密码",
+    "Auto Sync": "自动同步",
+    "Last Sync": "最近同步",
+    "Sync": "同步",
+    "ID": "ID",
+    "Server Host": "域名",
+    "Server Port": "端口",
+    "Edit LDAP": "编辑 LDAP",
+    "Sync users": "同步用户",
+    "Server Name - Tooltip": "LDAP 服务器配置显示名称",
+    "Server Host - Tooltip": "LDAP 服务器地址",
+    "Server Port - Tooltip": "LDAP 服务器端口号",
+    "Base DN - Tooltip": "LDAP 搜索时的基本 DN",
+    "Admin - Tooltip": "LDAP 服务器管理员的 CN 或 ID",
+    "Admin Password - Tooltip": "LDAP 服务器管理员密码",
+    "Auto Sync - Tooltip": "自动同步配置，为 0 时禁用"
   }
 }
