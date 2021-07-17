@@ -44,22 +44,18 @@ func (c *ApiController) GetApplication() {
 	c.ServeJSON()
 }
 
-// @Title GetDefaultApplication
-// @Description get the detail of the default application
-// @Param   owner     query    string  true        "The owner of the application."
+// @Title GetUserApplication
+// @Description get the detail of the user's application
+// @Param   id     query    string  true        "The id of the user"
 // @Success 200 {object} object.Application The Response object
-// @router /get-default-application [get]
-func (c *ApiController) GetDefaultApplication() {
-	//owner := c.Input().Get("owner")
-
-	if c.GetSessionUser() == "" {
-		c.Data["json"] = nil
-		c.ServeJSON()
+// @router /get-user-application [get]
+func (c *ApiController) GetUserApplication() {
+	id := c.Input().Get("id")
+	user := object.GetUser(id)
+	if user == nil {
+		c.ResponseError("No such user.")
 		return
 	}
-
-	username := c.GetSessionUser()
-	user := object.GetUser(username)
 
 	c.Data["json"] = object.GetApplicationByUser(user)
 	c.ServeJSON()

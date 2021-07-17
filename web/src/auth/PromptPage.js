@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import React from "react";
-import {Link} from "react-router-dom";
 import {Button, Col, Result, Row} from "antd";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
@@ -196,13 +195,11 @@ class PromptPage extends React.Component {
           title="Sign Up Error"
           subTitle={"You are unexpected to see this prompt page"}
           extra={[
-            <Link onClick={() => {
+            <Button type="primary" key="signin" onClick={() => {
               Setting.goToLogin(this, application);
             }}>
-              <Button type="primary" key="signin">
-                Sign In
-              </Button>
-            </Link>
+              Sign In
+            </Button>
           ]}
         >
         </Result>

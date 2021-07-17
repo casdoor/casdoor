@@ -1,0 +1,19 @@
+version: '3.1'
+services:
+  casdoor:
+    build:
+      context: ./
+      dockerfile: go-dockerfile
+    ports:
+     - 8000:8000
+    depends_on:
+     - db
+  db:
+    restart: always
+    image: mysql:8.0.25
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+    volumes:
+      - /usr/local/docker/mysql:/var/lib/mysql

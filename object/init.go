@@ -30,12 +30,15 @@ func initBuiltInOrganization() {
 	}
 
 	organization = &Organization{
-		Owner:        "admin",
-		Name:         "built-in",
-		CreatedTime:  util.GetCurrentTime(),
-		DisplayName:  "Built-in Organization",
-		WebsiteUrl:   "https://example.com",
-		PasswordType: "plain",
+		Owner:         "admin",
+		Name:          "built-in",
+		CreatedTime:   util.GetCurrentTime(),
+		DisplayName:   "Built-in Organization",
+		WebsiteUrl:    "https://example.com",
+		Favicon:       "https://cdn.casbin.com/static/favicon.ico",
+		PhonePrefix:   "86",
+		DefaultAvatar: "https://casbin.org/img/casbin.svg",
+		PasswordType:  "plain",
 	}
 	AddOrganization(organization)
 }
@@ -51,11 +54,13 @@ func initBuiltInUser() {
 		Name:          "admin",
 		CreatedTime:   util.GetCurrentTime(),
 		Id:            util.GenerateId(),
+		Type:          "normal-user",
 		Password:      "123",
 		DisplayName:   "Admin",
 		Avatar:        "https://casbin.org/img/casbin.svg",
 		Email:         "admin@example.com",
-		Phone:         "1-12345678",
+		Phone:         "12345678910",
+		Address:       []string{},
 		Affiliation:   "Example Inc.",
 		Tag:           "staff",
 		IsAdmin:       true,
