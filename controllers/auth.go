@@ -38,7 +38,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	userId := user.GetId()
 	resp := &Response{}
 	if form.Type == ResponseTypeLogin {
-		c.SetSessionUser(userId)
+		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 		resp = &Response{Status: "ok", Msg: "", Data: userId}
 	} else if form.Type == ResponseTypeCode {
@@ -53,7 +53,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 		if application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
-			c.SetSessionUser(userId)
+			c.SetSessionUsername(userId)
 		}
 	} else {
 		resp = &Response{Status: "error", Msg: fmt.Sprintf("Unknown response type: %s", form.Type)}
@@ -108,8 +108,8 @@ func (c *ApiController) Login() {
 
 	if form.Username != "" {
 		if form.Type == ResponseTypeLogin {
-			if c.GetSessionUser() != "" {
-				resp = &Response{Status: "error", Msg: "Please log out first before signing in", Data: c.GetSessionUser()}
+			if c.GetSessionUsername() != "" {
+				resp = &Response{Status: "error", Msg: "Please log out first before signing in", Data: c.GetSessionUsername()}
 				c.Data["json"] = resp
 				c.ServeJSON()
 				return
@@ -315,7 +315,7 @@ func (c *ApiController) Login() {
 			}
 			//resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"
-			userId := c.GetSessionUser()
+			userId := c.GetSessionUsername()
 			if userId == "" {
 				resp = &Response{Status: "error", Msg: "The account does not exist", Data: userInfo}
 				c.Data["json"] = resp

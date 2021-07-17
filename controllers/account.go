@@ -78,8 +78,8 @@ type HumanCheck struct {
 func (c *ApiController) Signup() {
 	var resp Response
 
-	if c.GetSessionUser() != "" {
-		c.ResponseErrorWithData("Please sign out first before signing up", c.GetSessionUser())
+	if c.GetSessionUsername() != "" {
+		c.ResponseErrorWithData("Please sign out first before signing up", c.GetSessionUsername())
 		return
 	}
 
@@ -161,7 +161,7 @@ func (c *ApiController) Signup() {
 
 	if application.HasPromptPage() {
 		// The prompt page needs the user to be signed in
-		c.SetSessionUser(user.GetId())
+		c.SetSessionUsername(user.GetId())
 	}
 
 	object.DisableVerificationCode(form.Email)
@@ -181,10 +181,10 @@ func (c *ApiController) Signup() {
 func (c *ApiController) Logout() {
 	var resp Response
 
-	user := c.GetSessionUser()
+	user := c.GetSessionUsername()
 	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
-	c.SetSessionUser("")
+	c.SetSessionUsername("")
 
 	resp = Response{Status: "ok", Msg: "", Data: user}
 

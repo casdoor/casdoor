@@ -24,7 +24,7 @@ import (
 
 func (c *ApiController) getCurrentUser() *object.User {
 	var user *object.User
-	userId := c.GetSessionUser()
+	userId := c.GetSessionUsername()
 	if userId == "" {
 		user = nil
 	} else {

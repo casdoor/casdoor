@@ -170,7 +170,7 @@ func (c *ApiController) SetPassword() {
 	oldPassword := c.Ctx.Request.Form.Get("oldPassword")
 	newPassword := c.Ctx.Request.Form.Get("newPassword")
 
-	requestUserId := c.GetSessionUser()
+	requestUserId := c.GetSessionUsername()
 	if requestUserId == "" {
 		c.ResponseError("Please login first.")
 		return
@@ -223,7 +223,7 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	c.SetSessionUser("")
+	c.SetSessionUsername("")
 
 	targetUser.Password = newPassword
 	object.SetUserField(targetUser, "password", targetUser.Password)

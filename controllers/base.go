@@ -20,7 +20,7 @@ type ApiController struct {
 	beego.Controller
 }
 
-func (c *ApiController) GetSessionUser() string {
+func (c *ApiController) GetSessionUsername() string {
 	user := c.GetSession("username")
 	if user == nil {
 		return ""
@@ -29,7 +29,7 @@ func (c *ApiController) GetSessionUser() string {
 	return user.(string)
 }
 
-func (c *ApiController) SetSessionUser(user string) {
+func (c *ApiController) SetSessionUsername(user string) {
 	c.SetSession("username", user)
 }
 
