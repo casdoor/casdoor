@@ -56,6 +56,7 @@ type User struct {
 	Gitee    string `xorm:"gitee varchar(100)" json:"gitee"`
 	LinkedIn string `xorm:"linkedin varchar(100)" json:"linkedin"`
 
+	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
 }
 
@@ -142,7 +143,9 @@ func UpdateUser(id string, user *User) bool {
 
 	user.UpdateUserHash()
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("owner", "display_name", "avatar", "address","language", "affiliation", "score", "tag", "is_admin", "is_global_admin", "is_forbidden", "hash", "properties").Update(user)
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("owner", "display_name", "avatar",
+		"address", "language", "affiliation", "score", "tag", "is_admin", "is_global_admin", "is_forbidden",
+		"hash", "properties").Update(user)
 	if err != nil {
 		panic(err)
 	}
