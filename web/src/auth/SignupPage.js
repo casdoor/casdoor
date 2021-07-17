@@ -161,6 +161,7 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="username"
+          key="username"
           label={i18next.t("signup:Username")}
           rules={[
             {
@@ -177,6 +178,7 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="name"
+          key="name"
           label={signupItem.rule === "Personal" ? i18next.t("general:Personal name") : i18next.t("general:Display name")}
           rules={[
             {
@@ -193,6 +195,7 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="affiliation"
+          key="affiliation"
           label={i18next.t("user:Affiliation")}
           rules={[
             {
@@ -210,6 +213,7 @@ class SignupPage extends React.Component {
         <React.Fragment>
           <Form.Item
             name="email"
+            key="email"
             label={i18next.t("general:Email")}
             rules={[
               {
@@ -233,6 +237,7 @@ class SignupPage extends React.Component {
           </Form.Item>
           <Form.Item
             name="emailCode"
+            key="emailCode"
             label={i18next.t("code:Email code")}
             rules={[{
               required: required,
@@ -253,6 +258,7 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="password"
+          key="password"
           label={i18next.t("general:Password")}
           rules={[
             {
@@ -269,6 +275,7 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="confirm"
+          key="confirm"
           label={i18next.t("signup:Confirm")}
           dependencies={['password']}
           hasFeedback
@@ -296,6 +303,7 @@ class SignupPage extends React.Component {
         <React.Fragment>
           <Form.Item
             name="phone"
+            key="phone"
             label={i18next.t("general:Phone")}
             rules={[
               {
@@ -325,6 +333,7 @@ class SignupPage extends React.Component {
           </Form.Item>
           <Form.Item
             name="phoneCode"
+            key="phoneCode"
             label={i18next.t("code:Phone code")}
             rules={[
               {
@@ -347,6 +356,7 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="agreement"
+          key="agreement"
           valuePropName="checked"
           rules={[
             {
@@ -375,13 +385,11 @@ class SignupPage extends React.Component {
           title="Sign Up Error"
           subTitle={"The application does not allow to sign up new account"}
           extra={[
-            <Link onClick={() => {
+            <Button type="primary" key="signin" onClick={() => {
               Setting.goToLogin(this, application);
             }}>
-              <Button type="primary" key="signin">
-                Sign In
-              </Button>
-            </Link>
+              Sign In
+            </Button>
           ]}
         >
         </Result>
@@ -431,11 +439,11 @@ class SignupPage extends React.Component {
             {i18next.t("account:Sign Up")}
           </Button>
           &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
-          <Link onClick={() => {
+          <a onClick={() => {
             Setting.goToLogin(this, application);
           }}>
             {i18next.t("signup:sign in now")}
-          </Link>
+          </a>
         </Form.Item>
       </Form>
     )
