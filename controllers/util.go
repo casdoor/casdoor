@@ -60,7 +60,7 @@ func (c *ApiController) ResponseErrorWithData(error string, data interface{}) {
 }
 
 func (c *ApiController) RequireSignedIn() (string, bool) {
-	userId := c.GetSessionUser()
+	userId := c.GetSessionUsername()
 	if userId == "" {
 		resp := Response{Status: "error", Msg: "Please sign in first"}
 		c.Data["json"] = resp
