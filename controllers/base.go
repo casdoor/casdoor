@@ -14,13 +14,32 @@
 
 package controllers
 
-import "github.com/astaxie/beego"
+import (
+	"time"
+
+	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/util"
+)
 
 type ApiController struct {
 	beego.Controller
 }
 
+type SessionData struct {
+	ExpireTime int64
+}
+
 func (c *ApiController) GetSessionUsername() string {
+	// check if user session expired
+	sessionData := c.GetSessionData()
+	if sessionData != nil &&
+		sessionData.ExpireTime != 0 &&
+		sessionData.ExpireTime < time.Now().Unix() {
+		c.SetSessionUsername("")
+		c.SetSessionData(nil)
+		return ""
+	}
+
 	user := c.GetSession("username")
 	if user == nil {
 		return ""
@@ -31,6 +50,30 @@ func (c *ApiController) GetSessionUsername() string {
 
 func (c *ApiController) SetSessionUsername(user string) {
 	c.SetSession("username", user)
+}
+
+func (c *ApiController) GetSessionData() *SessionData {
+	session := c.GetSession("SessionData")
+	if session == nil {
+		return nil
+	}
+
+	sessionData := &SessionData{}
+	err := util.JsonToStruct(session.(string), sessionData)
+	if err != nil {
+		panic(err)
+	}
+
+	return sessionData
+}
+
+func (c *ApiController) SetSessionData(s *SessionData) {
+	if s == nil {
+		c.DelSession("SessionData")
+		return
+	}
+
+	c.SetSession("SessionData", util.StructToJson(s))
 }
 
 func wrapActionResponse(affected bool) *Response {

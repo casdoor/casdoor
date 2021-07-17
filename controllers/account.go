@@ -52,6 +52,8 @@ type RequestForm struct {
 	EmailCode   string `json:"emailCode"`
 	PhoneCode   string `json:"phoneCode"`
 	PhonePrefix string `json:"phonePrefix"`
+
+	AutoSignin bool `json:"autoSignin"`
 }
 
 type Response struct {
@@ -185,6 +187,7 @@ func (c *ApiController) Logout() {
 	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 	c.SetSessionUsername("")
+	c.SetSessionData(nil)
 
 	resp = Response{Status: "ok", Msg: "", Data: user}
 
