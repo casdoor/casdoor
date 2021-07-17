@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/astaxie/beego"
 	"github.com/casdoor/casdoor/idp"
@@ -58,6 +59,16 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	} else {
 		resp = &Response{Status: "error", Msg: fmt.Sprintf("Unknown response type: %s", form.Type)}
 	}
+
+	// if user did not check auto signin
+	if resp.Status == "ok" && !form.AutoSignin {
+		timestamp := time.Now().Unix()
+		timestamp += 3600 * 24
+		c.SetSessionData(&SessionData{
+			ExpireTime: timestamp,
+		})
+	}
+
 	return resp
 }
 
