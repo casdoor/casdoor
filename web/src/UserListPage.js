@@ -146,7 +146,7 @@ class UserListPage extends React.Component {
         title: i18next.t("general:Display name"),
         dataIndex: 'displayName',
         key: 'displayName',
-        // width: '100px',
+        width: '100px',
         sorter: (a, b) => a.displayName.localeCompare(b.displayName),
       },
       {
@@ -245,6 +245,7 @@ class UserListPage extends React.Component {
         dataIndex: '',
         key: 'op',
         width: '190px',
+        fixed: 'right',
         render: (text, record, index) => {
           return (
             <div>
@@ -263,7 +264,7 @@ class UserListPage extends React.Component {
 
     return (
       <div>
-        <Table columns={columns} dataSource={users} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
+        <Table columns={columns} scroll={{x: 1300}} dataSource={users} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
                   {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
