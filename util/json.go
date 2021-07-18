@@ -25,3 +25,7 @@ func StructToJson(v interface{}) string {
 
 	return string(data)
 }
+
+func JsonToStruct(data string, v interface{}) error {
+	return json.Unmarshal([]byte(data), v)
+}
