@@ -41,6 +41,8 @@ type Provider struct {
 	AppId        string `xorm:"varchar(100)" json:"appId"`
 
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
+
+	Properties map[string]string `json:"properties"`
 }
 
 func getMaskedProvider(provider *Provider) *Provider {

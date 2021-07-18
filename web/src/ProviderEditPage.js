@@ -18,7 +18,7 @@ import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import {getLabel} from "./Setting";
+import ProviderPropertiesTable from "./ProviderPropertiesTable";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -282,6 +282,10 @@ class ProviderEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        <ProviderPropertiesTable
+          properties={this.state.provider.properties}
+          onPropertyChange={properties => this.updateProviderField("properties", properties)}
+        />
       </Card>
     )
   }
