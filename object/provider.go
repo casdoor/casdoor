@@ -15,7 +15,10 @@
 package object
 
 import (
+	"encoding/json"
 	"github.com/casdoor/casdoor/util"
+	"regexp"
+	"strings"
 	"xorm.io/core"
 )
 
@@ -24,11 +27,13 @@ type Provider struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName  string `xorm:"varchar(100)" json:"displayName"`
-	Category     string `xorm:"varchar(100)" json:"category"`
-	Type         string `xorm:"varchar(100)" json:"type"`
-	ClientId     string `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret string `xorm:"varchar(100)" json:"clientSecret"`
+	DisplayName      string `xorm:"varchar(100)" json:"displayName"`
+	Category         string `xorm:"varchar(100)" json:"category"`
+	Type             string `xorm:"varchar(100)" json:"type"`
+	ClientId         string `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret     string `xorm:"varchar(100)" json:"clientSecret"`
+	Scope            string `xorm:"varchar(100)" json:"scope"`
+	OAuthUrlTemplate string `xorm:"varchar(200)" json:"OAuthUrlTemplate"`
 
 	Host    string `xorm:"varchar(100)" json:"host"`
 	Port    int    `json:"port"`
@@ -47,13 +52,15 @@ type Provider struct {
 
 func getMaskedProvider(provider *Provider) *Provider {
 	p := &Provider{
-		Owner:       provider.Owner,
-		Name:        provider.Name,
-		CreatedTime: provider.CreatedTime,
-		DisplayName: provider.DisplayName,
-		Category:    provider.Category,
-		Type:        provider.Type,
-		ClientId:    provider.ClientId,
+		Owner:            provider.Owner,
+		Name:             provider.Name,
+		CreatedTime:      provider.CreatedTime,
+		DisplayName:      provider.DisplayName,
+		Category:         provider.Category,
+		Type:             provider.Type,
+		ClientId:         provider.ClientId,
+		OAuthUrlTemplate: provider.OAuthUrlTemplate,
+		Properties:       provider.Properties,
 	}
 	return p
 }
@@ -135,4 +142,52 @@ func DeleteProvider(provider *Provider) bool {
 	}
 
 	return affected != 0
+}
+
+func GetProperty(provider *Provider, propertyName string) string {
+	if provider == nil {
+		return ""
+	}
+
+	var providerJson interface{}
+	err := json.Unmarshal([]byte(util.StructToJson(provider)), &providerJson)
+	if err != nil {
+		return ""
+	}
+
+	providerMap := providerJson.(map[string]interface{})
+
+	ret, _ := providerMap[propertyName].(string)
+	if len(ret) != 0 {
+		return ret
+	}
+
+	properties, ok := providerMap["properties"].(map[string]interface{})
+	if !ok {
+		return ""
+	}
+	ret, _ = properties[propertyName].(string)
+	return ret
+}
+
+var matchParam *regexp.Regexp
+
+func GenerateOAuthLink(provider *Provider) string {
+	if provider == nil || provider.Category != "OAuth" {
+		return ""
+	}
+
+	if matchParam == nil {
+		matchParam = regexp.MustCompile("\\${[A-Za-z0-9_]*}")
+	}
+
+	ret := provider.OAuthUrlTemplate
+
+	for _, matched := range matchParam.FindAllString(provider.OAuthUrlTemplate, -1) {
+		key := matched[2 : len(matched)-1]
+		value := GetProperty(provider, key)
+		ret = strings.ReplaceAll(ret, matched, value)
+	}
+
+	return ret
 }

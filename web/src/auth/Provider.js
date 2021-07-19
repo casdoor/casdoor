@@ -15,41 +15,41 @@
 import * as Util from "./Util";
 import {StaticBaseUrl} from "../Setting";
 
-const GoogleAuthScope  = "profile+email"
-const GoogleAuthUri = "https://accounts.google.com/signin/oauth";
-const GoogleAuthLogo = `${StaticBaseUrl}/img/social_google.png`;
+export const GoogleAuthScope  = "profile+email"
+export const GoogleAuthUri = "https://accounts.google.com/signin/oauth";
+export const GoogleAuthLogo = `${StaticBaseUrl}/img/social_google.png`;
 
-const GithubAuthScope  = "user:email+read:user"
-const GithubAuthUri = "https://github.com/login/oauth/authorize";
-const GithubAuthLogo = `${StaticBaseUrl}/img/social_github.png`;
+export const GithubAuthScope  = "user:email+read:user"
+export const GithubAuthUri = "https://github.com/login/oauth/authorize";
+export const GithubAuthLogo = `${StaticBaseUrl}/img/social_github.png`;
 
-const QqAuthScope  = "get_user_info"
-const QqAuthUri = "https://graph.qq.com/oauth2.0/authorize";
-const QqAuthLogo = `${StaticBaseUrl}/img/social_qq.png`;
+export const QqAuthScope  = "get_user_info"
+export const QqAuthUri = "https://graph.qq.com/oauth2.0/authorize";
+export const QqAuthLogo = `${StaticBaseUrl}/img/social_qq.png`;
 
-const WeChatAuthScope = "snsapi_login"
-const WeChatAuthUri = "https://open.weixin.qq.com/connect/qrconnect";
-const WeChatAuthLogo = `${StaticBaseUrl}/img/social_wechat.png`;
+export const WeChatAuthScope = "snsapi_login"
+export const WeChatAuthUri = "https://open.weixin.qq.com/connect/qrconnect";
+export const WeChatAuthLogo = `${StaticBaseUrl}/img/social_wechat.png`;
 
-const FacebookAuthScope = "email,public_profile";
-const FacebookAuthUri = "https://www.facebook.com/dialog/oauth";
-const FacebookAuthLogo = `${StaticBaseUrl}/img/social_facebook.png`;
+export const FacebookAuthScope = "email,public_profile";
+export const FacebookAuthUri = "https://www.facebook.com/dialog/oauth";
+export const FacebookAuthLogo = `${StaticBaseUrl}/img/social_facebook.png`;
 
-// const DingTalkAuthScope = "email,public_profile";
-const DingTalkAuthUri = "https://oapi.dingtalk.com/connect/oauth2/sns_authorize";
-const DingTalkAuthLogo = `${StaticBaseUrl}/img/social_dingtalk.png`;
+// export const DingTalkAuthScope = "email,public_profile";
+export const DingTalkAuthUri = "https://oapi.dingtalk.com/connect/oauth2/sns_authorize";
+export const DingTalkAuthLogo = `${StaticBaseUrl}/img/social_dingtalk.png`;
 
-const WeiboAuthScope = "email";
-const WeiboAuthUri = "https://api.weibo.com/oauth2/authorize";
-const WeiboAuthLogo = `${StaticBaseUrl}/img/social_weibo.png`;
+export const WeiboAuthScope = "email";
+export const WeiboAuthUri = "https://api.weibo.com/oauth2/authorize";
+export const WeiboAuthLogo = `${StaticBaseUrl}/img/social_weibo.png`;
 
-const GiteeAuthScope = "user_info,emails";
-const GiteeAuthUri = "https://gitee.com/oauth/authorize";
-const GiteeAuthLogo = `${StaticBaseUrl}/img/social_gitee.png`;
+export const GiteeAuthScope = "user_info,emails";
+export const GiteeAuthUri = "https://gitee.com/oauth/authorize";
+export const GiteeAuthLogo = `${StaticBaseUrl}/img/social_gitee.png`;
 
-const LinkedInAuthScope = "r_liteprofile%20r_emailaddress";
-const LinkedInAuthUri = "https://www.linkedin.com/oauth/v2/authorization";
-const LinkedInAuthLogo = `${StaticBaseUrl}/img/social_linkedin.png`;
+export const LinkedInAuthScope = "r_liteprofile%20r_emailaddress";
+export const LinkedInAuthUri = "https://www.linkedin.com/oauth/v2/authorization";
+export const LinkedInAuthLogo = `${StaticBaseUrl}/img/social_linkedin.png`;
 
 export function getAuthLogo(provider) {
   if (provider.type === "Google") {

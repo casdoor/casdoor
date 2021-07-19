@@ -19,6 +19,8 @@ import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import ProviderPropertiesTable from "./ProviderPropertiesTable";
+import * as Provider from "./auth/Provider";
+import {DangerousAreaStart, DangerousAreaEnd} from "./component/DangerousArea";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -67,6 +69,7 @@ class ProviderEditPage extends React.Component {
     if (provider.category === "OAuth") {
       return (
         [
+          {id: 'Other', name: 'Other'},
           {id: 'Google', name: 'Google'},
           {id: 'GitHub', name: 'GitHub'},
           {id: 'QQ', name: 'QQ'},
@@ -92,6 +95,53 @@ class ProviderEditPage extends React.Component {
         ]
       );
     }
+  }
+
+  getOAuthUrlTemplate(type) {
+    if (type === "Google") {
+      return `${Provider.GoogleAuthUri}?client_id=` + "${clientId}" + `&scope=${Provider.GoogleAuthScope}&response_type=code`;
+    } else if (type === "GitHub") {
+      return `${Provider.GithubAuthUri}?client_id=` + "${clientId}" + `&scope=${Provider.GithubAuthScope}&response_type=code`;
+    } else if (type === "QQ") {
+      return `${Provider.QqAuthUri}?client_id=` + "${clientId}" + `&scope=${Provider.QqAuthScope}&response_type=code`;
+    } else if (type === "WeChat") {
+      return `${Provider.WeChatAuthUri}?appid=` + "${clientId}" + `&scope=${Provider.WeChatAuthScope}&response_type=code#wechat_redirect`;
+    } else if (type === "Facebook") {
+      return `${Provider.FacebookAuthUri}?client_id=` + "${clientId}" + `&scope=${Provider.FacebookAuthScope}&response_type=code`;
+    } else if (type === "DingTalk") {
+      return `${Provider.DingTalkAuthUri}?appid=` + "${clientId}" + `&scope=snsapi_login&response_type=code`;
+    } else if (type === "Weibo") {
+      return `${Provider.WeiboAuthUri}?client_id=` + "${clientId}" + `&scope=${Provider.WeiboAuthScope}&response_type=code`;
+    } else if (type === "Gitee") {
+      return `${Provider.GiteeAuthUri}?client_id=` + "${clientId}" + `&scope=${Provider.GiteeAuthScope}&response_type=code`;
+    } else if (type === "LinkedIn") {
+      return `${Provider.LinkedInAuthUri}?client_id=` + "${clientId}" + `&scope=${Provider.LinkedInAuthScope}&response_type=code`
+    }
+    return "https://example.com/$client_id=${clientId}";
+  }
+
+  getOAuthScope(type) {
+    if (type === "Google") {
+      return Provider.GoogleAuthScope;
+    } else if (type === "GitHub") {
+      return Provider.GithubAuthScope;
+    } else if (type === "QQ") {
+      return Provider.QqAuthScope;
+    } else if (type === "WeChat") {
+      return Provider.WeChatAuthScope;
+    } else if (type === "Facebook") {
+      return Provider.FacebookAuthScope;
+    } else if (type === "DingTalk") {
+      return `snsapi_login`;
+    } else if (type === "Weibo") {
+      return Provider.WeiboAuthScope;
+    } else if (type === "Gitee") {
+      return Provider.GiteeAuthScope;
+    } else if (type === "LinkedIn") {
+      return Provider.LinkedInAuthScope;
+    }
+
+    return "scope"
   }
 
   renderProvider() {
@@ -154,7 +204,18 @@ class ProviderEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:Type"), i18next.t("provider:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.provider.type} onChange={(value => {this.updateProviderField('type', value);})}>
+            <Select
+                virtual={false}
+                style={{width: '100%'}}
+                value={this.state.provider.type}
+                onChange={value => {
+                  if (this.state.provider.category === "OAuth") {
+                    this.updateProviderField('OAuthUrlTemplate', this.getOAuthUrlTemplate(value));
+                    this.updateProviderField('scope', this.getOAuthScope(value));
+                  }
+                  this.updateProviderField('type', value);
+                }}
+            >
               {
                 this.getProviderTypeOptions(this.state.provider).map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
               }
@@ -282,10 +343,36 @@ class ProviderEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        {this.state.provider.category === "OAuth" && this.state.provider.type !== "Other" ?
+            <DangerousAreaStart /> : null}
+        {this.state.provider.category === "OAuth" ? (<div>
+          <Row style={{marginTop: '20px'}} >
+            <Col style={{marginTop: '5px'}} span={2}>
+              {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))} :
+            </Col>
+            <Col span={22} >
+              <Input prefix={<LinkOutlined/>} value={this.state.provider.scope} onChange={e => {
+                this.updateProviderField('scope', e.target.value);
+              }} />
+            </Col>
+          </Row>
+          <Row style={{marginTop: '20px'}} >
+            <Col style={{marginTop: '5px'}} span={2}>
+              {Setting.getLabel(i18next.t("provider:OAuth Url Template"), i18next.t("provider:OAuthUrlTemplate - Tooltip"))} :
+            </Col>
+            <Col span={22} >
+              <Input prefix={<LinkOutlined/>} value={this.state.provider.OAuthUrlTemplate} onChange={e => {
+                this.updateProviderField('OAuthUrlTemplate', e.target.value);
+              }} />
+            </Col>
+          </Row>
+            </div>) : null}
         <ProviderPropertiesTable
             properties={this.state.provider.properties}
             onPropertyChange={properties => this.updateProviderField("properties", properties)}
         />
+        {this.state.provider.category === "OAuth" && this.state.provider.type !== "Other" ?
+            <DangerousAreaEnd /> : null}
       </Card>
     )
   }

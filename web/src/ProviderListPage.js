@@ -50,7 +50,7 @@ class ProviderListPage extends React.Component {
       createdTime: moment().format(),
       displayName: `New Provider - ${this.state.providers.length}`,
       category: "OAuth",
-      type: "GitHub",
+      type: "Other",
       clientId: "",
       clientSecret: "",
       enableSignUp: true,

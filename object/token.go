@@ -149,6 +149,10 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		return "redirect_uri doesn't exist in the allowed Redirect URL list", application
 	}
 
+	for _, provider := range application.Providers {
+		provider.OAuthUrl = GenerateOAuthLink(provider.Provider)
+	}
+
 	return "", application
 }
 
