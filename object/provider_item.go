@@ -21,6 +21,7 @@ type ProviderItem struct {
 	CanUnlink bool      `json:"canUnlink"`
 	Prompted  bool      `json:"prompted"`
 	AlertType string    `json:"alertType"`
+	OAuthUrl  string    `json:"OAuthUrl"`
 	Provider  *Provider `json:"provider"`
 }
 

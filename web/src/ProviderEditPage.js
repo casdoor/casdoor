@@ -282,6 +282,18 @@ class ProviderEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        {this.state.provider.category === "OAuth" ? (
+          <Row style={{marginTop: '20px'}} >
+            <Col style={{marginTop: '5px'}} span={2}>
+              {Setting.getLabel(i18next.t("provider:OAuth Url Template"), i18next.t("provider:OAuthUrlTemplate - Tooltip"))} :
+            </Col>
+            <Col span={22} >
+              <Input prefix={<LinkOutlined/>} value={this.state.provider.OAuthUrlTemplate} onChange={e => {
+                this.updateProviderField('OAuthUrlTemplate', e.target.value);
+              }} />
+            </Col>
+          </Row>
+        ) : null}
         <ProviderPropertiesTable
           properties={this.state.provider.properties}
           onPropertyChange={properties => this.updateProviderField("properties", properties)}
