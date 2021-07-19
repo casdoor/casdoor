@@ -20,11 +20,11 @@ jobs:
 
         download_translations: true
         push_translations: true
-        commit_message: 'New Crowdin translation by Github Action'
+        commit_message: 'feat: New Crowdin translations by Github Action'
 
         localization_branch_name: l10n_crowdin_action
         create_pull_request: true
-        pull_request_title: 'New Crowdin translations'
+        pull_request_title: 'feat: New Crowdin translations'
 
         crowdin_branch_name: l10n_branch
         config: './web/crowdin.yml'
