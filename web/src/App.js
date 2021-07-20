@@ -101,6 +101,8 @@ class App extends Component {
       this.setState({ selectedMenuKey: 4 });
     } else if (uri.includes('tokens')) {
       this.setState({ selectedMenuKey: 5 });
+    } else if (uri.includes('records')) {
+      this.setState({ selectedMenuKey: 6 });
     } else if (uri.includes('signup')) {
       this.setState({ selectedMenuKey: 100 });
     } else if (uri.includes('login')) {
@@ -321,7 +323,7 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
-          <Menu.Item key="7">
+          <Menu.Item key="6">
             <Link to="/records">
               {i18next.t("general:Records")}
             </Link>
