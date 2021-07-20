@@ -171,7 +171,7 @@ class LdapTable extends React.Component {
     ];
 
     return (
-      <Table rowKey="id" columns={columns} dataSource={table} size="middle" bordered pagination={false}
+      <Table scroll={{x: 'max-content'}} rowKey="id" columns={columns} dataSource={table} size="middle" bordered pagination={false}
              title={() => (
                <div>
                  {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;

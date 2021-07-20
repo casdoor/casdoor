@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Col, Popconfirm, Row, Table} from 'antd';
+import {Button, Popconfirm, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -93,6 +93,7 @@ class OrganizationListPage extends React.Component {
         dataIndex: 'name',
         key: 'name',
         width: '120px',
+        fixed: 'left',
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record, index) => {
           return (
@@ -150,7 +151,7 @@ class OrganizationListPage extends React.Component {
         title: i18next.t("general:Password type"),
         dataIndex: 'passwordType',
         key: 'passwordType',
-        width: '150px',
+        width: '100px',
         sorter: (a, b) => a.passwordType.localeCompare(b.passwordType),
       },
       {
@@ -178,6 +179,7 @@ class OrganizationListPage extends React.Component {
         dataIndex: '',
         key: 'op',
         width: '240px',
+        fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
@@ -197,7 +199,7 @@ class OrganizationListPage extends React.Component {
 
     return (
       <div>
-        <Table columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
                   {i18next.t("general:Organizations")}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -213,17 +215,9 @@ class OrganizationListPage extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{width: "100%"}}>
-          <Col span={1}>
-          </Col>
-          <Col span={22}>
-            {
-              this.renderTable(this.state.organizations)
-            }
-          </Col>
-          <Col span={1}>
-          </Col>
-        </Row>
+        {
+          this.renderTable(this.state.organizations)
+        }
       </div>
     );
   }

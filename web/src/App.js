@@ -17,7 +17,7 @@ import './App.less';
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
 import {DownOutlined, LogoutOutlined, SettingOutlined} from '@ant-design/icons';
-import {Avatar, BackTop, Dropdown, Layout, Menu} from 'antd';
+import {Avatar, BackTop, Dropdown, Layout, Menu, Card} from 'antd';
 import {Link, Redirect, Route, Switch, withRouter} from 'react-router-dom'
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -49,7 +49,7 @@ import SelectLanguageBox from './SelectLanguageBox';
 import i18next from 'i18next';
 import PromptPage from "./auth/PromptPage";
 
-const { Header, Footer } = Layout;
+const { Header, Footer, Content } = Layout;
 
 class App extends Component {
   constructor(props) {
@@ -101,6 +101,8 @@ class App extends Component {
       this.setState({ selectedMenuKey: 4 });
     } else if (uri.includes('tokens')) {
       this.setState({ selectedMenuKey: 5 });
+    } else if (uri.includes('records')) {
+      this.setState({ selectedMenuKey: 6 });
     } else if (uri.includes('signup')) {
       this.setState({ selectedMenuKey: 100 });
     } else if (uri.includes('login')) {
@@ -228,6 +230,8 @@ class App extends Component {
     return (
       <Dropdown key="200" overlay={menu} className="rightDropDown">
         <div className="ant-dropdown-link" style={{float: 'right', cursor: 'pointer'}}>
+          &nbsp;
+          &nbsp;
           {
             this.renderAvatar()
           }
@@ -321,7 +325,7 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
-          <Menu.Item key="7">
+          <Menu.Item key="6">
             <Link to="/records">
               {i18next.t("general:Records")}
             </Link>
@@ -361,9 +365,38 @@ class App extends Component {
       window.location.pathname === '/';
   }
 
-  renderContent() {
-    return (
+  renderRouter(){
+    return(
       <div>
+      <Switch>
+      <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
+      <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
+      <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)}/>
+      <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />}/>
+      <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/applications/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/ldap/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapEditPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/ldap/sync/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapSyncPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)}/>
+      <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
+    </Switch>
+    </div>
+    )
+  }
+
+  renderContent() {
+    if (!Setting.isMobile()) {
+    return (
+      <div style={{display: 'flex', flex: 'auto',width:"100%",flexDirection: 'column'}}>
+        <Layout style={{display: 'flex', alignItems: 'stretch'}}>
         <Header style={{ padding: '0', marginBottom: '3px'}}>
           {
             Setting.isMobile() ? null : (
@@ -376,40 +409,65 @@ class App extends Component {
             // theme="dark"
             mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
             selectedKeys={[`${this.state.selectedMenuKey}`]}
-            style={{ lineHeight: '64px' }}
+            style={{ lineHeight: '64px'}}
           >
             {
               this.renderMenu()
             }
-            {
-              this.renderAccount()
-            }
-          <SelectLanguageBox/>
+          <div style = {{float: 'right'}}>
+          {
+            this.renderAccount()
+          }
+        <SelectLanguageBox/>
+        </div>
           </Menu>
         </Header>
-        <Switch>
-          <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
-          <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
-          <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)}/>
-          <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />}/>
-          <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/applications/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/ldap/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/ldap/sync/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapSyncPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
-        </Switch>
+        <Layout style={{backgroundColor: "#f5f5f5", alignItems: 'stretch'}}>
+          <Card className="content-warp-card">
+            {
+            this.renderRouter()
+            }
+          </Card>
+        </Layout>
+        </Layout>
       </div>
     )
+  } else {
+    return(
+      <div>
+      <Header style={{ padding: '0', marginBottom: '3px'}}>
+        {
+          Setting.isMobile() ? null : (
+            <Link to={"/"}>
+              <div className="logo" />
+            </Link>
+          )
+        }
+        <Menu
+          // theme="dark"
+          mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
+          selectedKeys={[`${this.state.selectedMenuKey}`]}
+          style={{ lineHeight: '64px' }}
+        >
+          {
+            this.renderMenu()
+          }
+          <div style = {{float: 'right'}}>
+          {
+            this.renderAccount()
+          }
+          <SelectLanguageBox/>
+        </div>
+        </Menu>
+      </Header>
+      {
+        this.renderRouter()
+      }
+    </div>
+    )
   }
+}
+
 
   renderFooter() {
     // How to keep your footer where it belongs ?
@@ -458,7 +516,7 @@ class App extends Component {
       <div id="parent-area">
         <BackTop />
         <CustomGithubCorner />
-        <div id="content-wrap">
+        <div id="content-wrap" style={{flexDirection: "column"}}>
           {
             this.renderContent()
           }

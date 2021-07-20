@@ -62,6 +62,7 @@ class RecordListPage extends React.Component {
         dataIndex: ['Record', 'clientIp'],
         key: 'id',
         width: '120px',
+        fixed: 'left',
         sorter: (a, b) => a.Record.clientIp.localeCompare(b.Record.clientIp),
         render: (text, record, index) => {
           return text;
@@ -125,7 +126,7 @@ class RecordListPage extends React.Component {
 
     return (
       <div>
-        <Table columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
                    {i18next.t("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -140,17 +141,9 @@ class RecordListPage extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{width: "100%"}}>
-          <Col span={1}>
-          </Col>
-          <Col span={22}>
-            {
-              this.renderTable(this.state.records)
-            }
-          </Col>
-          <Col span={1}>
-          </Col>
-        </Row>
+        {
+          this.renderTable(this.state.records)
+        }
       </div>
     );
   }

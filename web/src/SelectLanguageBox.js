@@ -14,7 +14,7 @@
 
 import React from "react";
 import * as Setting from "./Setting";
-import { Menu, Dropdown, message } from "antd";
+import { Menu, Dropdown} from "antd";
 import { createFromIconfontCN } from '@ant-design/icons';
 import './App.less';
 
@@ -48,8 +48,8 @@ class SelectLanguageBox extends React.Component {
     );
 
     return (
-      <Dropdown overlay={menu} style={{cursor: "pointer"}}>
-        <span className="language_box" />
+      <Dropdown overlay={menu} >
+        <div className="language_box" />
       </Dropdown>
     );
   }

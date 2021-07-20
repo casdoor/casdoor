@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Col, List, Popconfirm, Row, Table, Tooltip} from 'antd';
+import {Button, List, Popconfirm, Table, Tooltip} from 'antd';
 import {EditOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as Setting from "./Setting";
@@ -104,6 +104,7 @@ class ApplicationListPage extends React.Component {
         dataIndex: 'name',
         key: 'name',
         width: '150px',
+        fixed: 'left',
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record, index) => {
           return (
@@ -195,6 +196,7 @@ class ApplicationListPage extends React.Component {
         dataIndex: '',
         key: 'op',
         width: '170px',
+        fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
@@ -213,7 +215,7 @@ class ApplicationListPage extends React.Component {
 
     return (
       <div>
-        <Table columns={columns} dataSource={applications} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={applications} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
                   {i18next.t("general:Applications")}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -229,17 +231,9 @@ class ApplicationListPage extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{width: "100%"}}>
-          <Col span={1}>
-          </Col>
-          <Col span={22}>
-            {
-              this.renderTable(this.state.applications)
-            }
-          </Col>
-          <Col span={1}>
-          </Col>
-        </Row>
+        {
+          this.renderTable(this.state.applications)
+        }
       </div>
     );
   }

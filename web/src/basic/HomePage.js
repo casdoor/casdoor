@@ -70,11 +70,7 @@ class HomePage extends React.Component {
       )
     } else {
       return (
-        <div>
-          <Row>
-            <Col span={1}>
-            </Col>
-            <Col span={22}>
+        <div style={{marginRight:'15px',marginLeft:'15px'}}>
               <Row style={{marginLeft: "-20px", marginRight: "-20px", marginTop: "20px"}} gutter={24}>
                 {
                   items.map(item => {
@@ -84,10 +80,6 @@ class HomePage extends React.Component {
                   })
                 }
               </Row>
-            </Col>
-            <Col span={1}>
-            </Col>
-          </Row>
         </div>
       )
     }
@@ -96,7 +88,6 @@ class HomePage extends React.Component {
   render() {
     return (
       <div>
-        &nbsp;
         <Row style={{width: "100%"}}>
           <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
             {

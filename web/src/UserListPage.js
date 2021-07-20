@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Col, Popconfirm, Row, Switch, Table} from 'antd';
+import {Button, Popconfirm, Switch, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
@@ -108,7 +108,8 @@ class UserListPage extends React.Component {
         title: i18next.t("general:Organization"),
         dataIndex: 'owner',
         key: 'owner',
-        width: '120px',
+        width: (Setting.isMobile()) ? "100px" : "120px",
+        fixed: 'left',
         sorter: (a, b) => a.owner.localeCompare(b.owner),
         render: (text, record, index) => {
           return (
@@ -122,7 +123,8 @@ class UserListPage extends React.Component {
         title: i18next.t("general:Name"),
         dataIndex: 'name',
         key: 'name',
-        width: '100px',
+        width: (Setting.isMobile()) ? "80px" : "100px",
+        fixed: 'left',
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record, index) => {
           return (
@@ -136,7 +138,7 @@ class UserListPage extends React.Component {
         title: i18next.t("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
-        width: '160px',
+        width: '180px',
         sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -153,7 +155,7 @@ class UserListPage extends React.Component {
         title: i18next.t("general:Avatar"),
         dataIndex: 'avatar',
         key: 'avatar',
-        width: '100px',
+        width: '80px',
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
@@ -208,7 +210,7 @@ class UserListPage extends React.Component {
         title: i18next.t("user:Is admin"),
         dataIndex: 'isAdmin',
         key: 'isAdmin',
-        width: '120px',
+        width: '100px',
         sorter: (a, b) => a.isAdmin - b.isAdmin,
         render: (text, record, index) => {
           return (
@@ -220,7 +222,7 @@ class UserListPage extends React.Component {
         title: i18next.t("user:Is global admin"),
         dataIndex: 'isGlobalAdmin',
         key: 'isGlobalAdmin',
-        width: '120px',
+        width: '100px',
         sorter: (a, b) => a.isGlobalAdmin - b.isGlobalAdmin,
         render: (text, record, index) => {
           return (
@@ -232,7 +234,7 @@ class UserListPage extends React.Component {
         title: i18next.t("user:Is forbidden"),
         dataIndex: 'isForbidden',
         key: 'isForbidden',
-        width: '120px',
+        width: '100px',
         sorter: (a, b) => a.isForbidden - b.isForbidden,
         render: (text, record, index) => {
           return (
@@ -245,7 +247,7 @@ class UserListPage extends React.Component {
         dataIndex: '',
         key: 'op',
         width: '190px',
-        fixed: 'right',
+        fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
@@ -264,7 +266,7 @@ class UserListPage extends React.Component {
 
     return (
       <div>
-        <Table columns={columns} scroll={{x: 1300}} dataSource={users} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} scroll={{x: 1300}} dataSource={users} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
                   {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -280,17 +282,9 @@ class UserListPage extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{width: "100%"}}>
-          <Col span={1}>
-          </Col>
-          <Col span={22}>
-            {
-              this.renderTable(this.state.users)
-            }
-          </Col>
-          <Col span={1}>
-          </Col>
-        </Row>
+        {
+          this.renderTable(this.state.users)
+        }
       </div>
     );
   }
