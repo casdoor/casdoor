@@ -1,38 +1,35 @@
-# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
-name: Node.js CI
+name: Crowdin Action
 
 on:
   push:
     branches: [ master ]
 
 jobs:
-  build:
-
+  synchronize-with-crowdin:
     runs-on: ubuntu-latest
-    
-    env: 
-      CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
-
-    strategy:
-      matrix:
-        node-version: [12.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: |
-        cd web
-        npm install
-        npm run crowdin:sync
 
-    - uses: stefanzweifel/git-auto-commit-action@v4
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: crowdin action
+      uses: crowdin/github-action@1.2.0
       with:
-        commit_message: Sync from crowdin
-        file_pattern: web/src/locales/*
-        commit_author: ${{ secrets.CROWDIN_BOT }}
+        upload_translations: true
+
+        download_translations: true
+        push_translations: true
+        commit_message: 'refactor: New Crowdin translations by Github Action'
+
+        localization_branch_name: l10n_crowdin_action
+        create_pull_request: true
+        pull_request_title: 'refactor: New Crowdin translations'
+
+        crowdin_branch_name: l10n_branch
+        config: './web/crowdin.yml'
+
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        CROWDIN_PROJECT_ID: '463556'
+        CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

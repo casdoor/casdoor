@@ -120,7 +120,11 @@ func GetApplicationByOrganizationName(organization string) *Application {
 }
 
 func GetApplicationByUser(user *User) *Application {
-	return GetApplicationByOrganizationName(user.Owner)
+	if user.SignupApplication != "" {
+		return getApplication("admin", user.SignupApplication)
+	} else {
+		return GetApplicationByOrganizationName(user.Owner)
+	}
 }
 
 func GetApplicationByClientId(clientId string) *Application {

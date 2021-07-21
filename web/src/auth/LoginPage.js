@@ -279,7 +279,7 @@ class LoginPage extends React.Component {
             />
           </Form.Item>
           <Form.Item>
-            <Form.Item name="remember" valuePropName="checked" noStyle>
+            <Form.Item name="autoSignin" valuePropName="checked" noStyle>
               <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
                 {i18next.t("login:Auto login")}
               </Checkbox>

@@ -20,6 +20,7 @@
     "Timestamp": "Timestamp",
     "Username": "Username",
     "Request uri": "Request uri",
+    "LDAPs": "LDAPs",
     "Save": "Save",
     "Add": "Add",
     "Action": "Action",
@@ -284,5 +285,29 @@
     "Email/Phone": "Email/Phone",
     "Change Password": "Change Password",
     "Choose email verification or mobile verification": "Choose email verification or mobile verification"
+  },
+  "ldap":
+  {
+    "Server Name": "Server Name",
+    "Host": "Host",
+    "Server": "Server",
+    "Base DN": "Base DN",
+    "Admin": "Admin",
+    "Admin Password": "Admin Password",
+    "Auto Sync": "Auto Sync",
+    "Last Sync": "Last Sync",
+    "Sync": "Sync",
+    "ID": "ID",
+    "Server Host": "Server Host",
+    "Server Port": "Server Port",
+    "Edit LDAP": "Edit LDAP",
+    "Sync users": "Sync users",
+    "Server Name - Tooltip": "LDAP server config display name",
+    "Server Host - Tooltip": "LDAP server host",
+    "Server Port - Tooltip": "LDAP server port",
+    "Base DN - Tooltip": "LDAP search base DN",
+    "Admin - Tooltip": "LDAP server admin CN or ID",
+    "Admin Password - Tooltip": "LDAP server admin password",
+    "Auto Sync - Tooltip": "Auto sync config, disable if is 0"
   }
 }
