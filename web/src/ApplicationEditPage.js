@@ -411,25 +411,13 @@ class ApplicationEditPage extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{width: "100%"}}>
-          <Col span={1}>
-          </Col>
-          <Col span={22}>
-            {
-              this.state.application !== null ? this.renderApplication() : null
-            }
-          </Col>
-          <Col span={1}>
-          </Col>
-        </Row>
-        <Row style={{margin: 10}}>
-          <Col span={2}>
-          </Col>
-          <Col span={18}>
-            <Button type="primary" size="large" onClick={this.submitApplicationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
-          </Col>
-        </Row>
+      {
+        this.state.application !== null ? this.renderApplication() : null
+      }
+      <div style={{marginTop: '20px', marginLeft: '40px'}}>
+        <Button type="primary" size="large" onClick={this.submitApplicationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
       </div>
+    </div>
     );
   }
 }

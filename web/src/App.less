@@ -27,10 +27,15 @@
 #parent-area {
   position: relative;
   min-height: 100vh;
+  background-color: #f5f5f5;
+  display: flex;
 }
 
 #content-wrap {
   padding-bottom: 70px;    /* Footer height */
+  display: flex;
+  align-items: stretch;
+  width: 100%;
 }
 
 #footer {
@@ -43,9 +48,10 @@
 .language_box {
   background: url("https://cdn.casbin.org/img/muti_language.svg");
   background-size: 25px, 25px;
-  width: 25px;
-  height: 25px;
-  margin: 22px 20px 16px 20px;
+  background-position: center;
+  background-repeat:no-repeat;
+  width: 45px;
+  height: 65px;
   float: right;
   cursor: pointer;
   &:hover {
@@ -57,4 +63,11 @@
   &:hover {
     background-color: #f5f5f5;
   }
+}
+
+.content-warp-card{
+  box-shadow: 0 1px 5px 0 rgba(51, 51, 51, 0.14);
+  margin: 5px 5px 5px 5px;
+  flex:1;
+  align-items: stretch;
 }
