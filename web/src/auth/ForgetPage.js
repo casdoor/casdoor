@@ -111,6 +111,8 @@ class ForgetPage extends React.Component {
                           case "phone":
                               this.setState({isFixed: true, fixedContent: res.data.phone, verifyType: "phone"});
                               break
+                          default:
+                              break
                       }
                       if (this.state.isFixed) {
                           forms.step2.setFieldsValue({email: this.state.fixedContent})
@@ -138,6 +140,8 @@ class ForgetPage extends React.Component {
                       Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
                   }
               })
+              break
+          default:
               break
       }
   }
