@@ -70,3 +70,10 @@ export function unlink(values) {
     body: JSON.stringify(values),
   }).then(res => res.json());
 }
+
+export function getRequestToken(callback, clientId) {
+  return fetch(`${authConfig.serverUrl}/api/get-request-token?oauth_callback=${callback}&client_id=${clientId}`, {
+    method: 'GET',
+    credentials: "include",
+  }).then(res => res.json());
+}

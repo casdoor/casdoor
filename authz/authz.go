@@ -86,6 +86,7 @@ p, *, *, GET, /api/get-user-application, *, *
 p, *, *, GET, /api/get-default-providers, *, *
 p, *, *, POST, /api/upload-avatar, *, *
 p, *, *, POST, /api/unlink, *, *
+p, *, *, GET, /api/get-request-token, *, *
 p, *, *, POST, /api/set-password, *, *
 p, *, *, POST, /api/send-verification-code, *, *
 p, *, *, GET, /api/get-human-check, *, *

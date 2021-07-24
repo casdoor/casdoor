@@ -14,6 +14,7 @@
 
 import * as Util from "./Util";
 import {StaticBaseUrl} from "../Setting";
+import {getRequestToken} from "./AuthBackend";
 
 const GoogleAuthScope  = "profile+email"
 const GoogleAuthUri = "https://accounts.google.com/signin/oauth";
@@ -51,6 +52,10 @@ const LinkedInAuthScope = "r_liteprofile%20r_emailaddress";
 const LinkedInAuthUri = "https://www.linkedin.com/oauth/v2/authorization";
 const LinkedInAuthLogo = `${StaticBaseUrl}/img/social_linkedin.png`;
 
+const TwitterAuthScope = "";
+const TwitterAuthUri = "https://api.twitter.com/oauth/authorize";
+const TwitterAuthLogo = `${StaticBaseUrl}/img/social_twitter.png`;
+
 export function getAuthLogo(provider) {
   if (provider.type === "Google") {
     return GoogleAuthLogo;
@@ -70,6 +75,8 @@ export function getAuthLogo(provider) {
     return GiteeAuthLogo;
   } else if (provider.type === "LinkedIn") {
     return LinkedInAuthLogo;
+  } else if (provider.type === "Twitter") {
+    return TwitterAuthLogo;
   }
 }
 
@@ -98,5 +105,9 @@ export function getAuthUrl(application, provider, method) {
     return `${GiteeAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GiteeAuthScope}&response_type=code&state=${state}`;
   } else if (provider.type === "LinkedIn") {
     return `${LinkedInAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${LinkedInAuthScope}&response_type=code&state=${state}`
+  } else if (provider.type === "Twitter") {
+    getRequestToken(`${redirectUri}`, `${provider.clientId}`).then(res => {
+      return `${TwitterAuthUri}?oauth_token=${res.oauth_token}`;
+    })
   }
 }

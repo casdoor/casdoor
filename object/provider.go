@@ -66,6 +66,20 @@ func GetProviders(owner string) []*Provider {
 	return providers
 }
 
+func GetProviderByClientId(clientId string) *Provider {
+	provider := Provider{ClientId: clientId}
+	existed, err := adapter.Engine.Get(&provider)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &provider
+	} else {
+		return nil
+	}
+}
+
 func getProvider(owner string, name string) *Provider {
 	if owner == "" || name == "" {
 		return nil
