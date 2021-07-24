@@ -98,9 +98,9 @@ class ApplicationEditPage extends React.Component {
           {i18next.t("application:Edit Application")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button type="primary" onClick={this.submitApplicationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
         </div>
-      } style={{marginLeft: '5px'}} type="inner">
+      } style={{margin: '5px'}} type="inner">
         <Row style={{marginTop: '10px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -110,7 +110,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -120,12 +120,12 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel("Logo", i18next.t("general:Logo - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col span={22} style={(Setting.isMobile()) ? {maxWidth:'100%'} :{}}>
             <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={1}>
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 1}>
                 URL:
               </Col>
               <Col span={23} >
@@ -135,7 +135,7 @@ class ApplicationEditPage extends React.Component {
               </Col>
             </Row>
             <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={1}>
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 1}>
                 {i18next.t("general:Preview")}:
               </Col>
               <Col span={23} >
@@ -147,7 +147,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Home"), i18next.t("general:Home - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -157,7 +157,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Description"), i18next.t("general:Description - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -167,7 +167,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -179,7 +179,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -189,7 +189,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -199,7 +199,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:Redirect URLs"), i18next.t("application:Redirect URLs - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -211,7 +211,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Token expire"), i18next.t("general:Token expire - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -221,7 +221,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("application:Password ON"), i18next.t("application:Password ON - Tooltip"))} :
           </Col>
           <Col span={1} >
@@ -231,7 +231,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("application:Enable signup"), i18next.t("application:Enable signup - Tooltip"))} :
           </Col>
           <Col span={1} >
@@ -241,7 +241,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Signup URL"), i18next.t("general:Signup URL - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -251,7 +251,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Signin URL"), i18next.t("general:Signin URL - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -261,7 +261,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Forget URL"), i18next.t("general:Forget URL - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -271,7 +271,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Affiliation URL"), i18next.t("general:Affiliation URL - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -281,7 +281,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Providers"), i18next.t("general:Providers - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -295,7 +295,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
           </Col>
           {
@@ -305,7 +305,7 @@ class ApplicationEditPage extends React.Component {
         {
           !this.state.application.enableSignUp ? null : (
             <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={2}>
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("application:Signup items"), i18next.t("application:Signup items - Tooltip"))} :
               </Col>
               <Col span={22} >
@@ -319,7 +319,7 @@ class ApplicationEditPage extends React.Component {
           )
         }
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
           </Col>
           {
@@ -336,16 +336,16 @@ class ApplicationEditPage extends React.Component {
     if (!this.state.application.enablePassword) {
       signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");
     }
-
+    if (!Setting.isMobile()) {
     return (
       <React.Fragment>
-        <Col span={11} >
-          <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={signUpUrl}>
+        <Col span={11} style={{display:'flex',flexDirection:'column'}}>
+          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signUpUrl}>
             <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
           </a>
           <br/>
           <br/>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888"}}>
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888" ,alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto'}}>
             {
               this.state.application.enablePassword ? (
                 <SignupPage application={this.state.application} />
@@ -355,32 +355,58 @@ class ApplicationEditPage extends React.Component {
             }
           </div>
         </Col>
-        <Col span={11} >
-          <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={signInUrl}>
+        <Col span={11} style={{display:'flex',flexDirection:'column'}}>
+          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signInUrl}>
             <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
           </a>
           <br/>
           <br/>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888"}}>
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto' }}>
+            <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
+          </div>
+        </Col>
+      </React.Fragment>
+    )
+  } else{
+    return(
+      <React.Fragment>
+        <Col span={24} style={{display:'flex',flexDirection:'column'}}>
+          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signUpUrl}>
+            <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
+          </a>
+          <div style={{marginBottom:'10px', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888" ,alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto'}}>
+            {
+              this.state.application.enablePassword ? (
+                <SignupPage application={this.state.application} />
+              ) : (
+                <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
+              )
+            }
+          </div>
+          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signInUrl}>
+            <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
+          </a>
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto' }}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
           </div>
         </Col>
       </React.Fragment>
     )
   }
+}
 
   renderPreview2() {
     let promptUrl = `/prompt/${this.state.application.name}`;
 
     return (
       <React.Fragment>
-        <Col span={11} >
+        <Col span={(Setting.isMobile()) ? 24 : 11} style={{display:'flex',flexDirection:'column',flex:'auto'}} >
           <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={promptUrl}>
             <Button type="primary">{i18next.t("application:Test prompt page..")}</Button>
           </a>
-          <br/>
-          <br/>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888"}}>
+          <br style={(Setting.isMobile()) ? {display:'none'} : {}} />
+          <br style={(Setting.isMobile()) ? {display:'none'} : {}} />
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",flexDirection:'column',flex:'auto'}}>
             <PromptPage application={this.state.application} account={this.props.account} />
           </div>
         </Col>

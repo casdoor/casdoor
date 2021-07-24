@@ -199,7 +199,7 @@ class ProviderTable extends React.Component {
     }
 
     return (
-      <Table rowKey="name" columns={columns} dataSource={table} size="middle" bordered pagination={false}
+      <Table scroll={{x: 'max-content'}} rowKey="name" columns={columns} dataSource={table} size="middle" bordered pagination={false}
              title={() => (
                <div>
                  {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
