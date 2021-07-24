@@ -101,7 +101,7 @@ class ProviderEditPage extends React.Component {
           {i18next.t("provider:Edit Provider")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button type="primary" onClick={this.submitProviderEdit.bind(this)}>{i18next.t("general:Save")}</Button>
         </div>
-      } style={{marginLeft: '5px'}} type="inner">
+      } type="inner">
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={2}>
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :

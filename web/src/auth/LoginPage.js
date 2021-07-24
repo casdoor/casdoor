@@ -293,7 +293,7 @@ class LoginPage extends React.Component {
             <Button
               type="primary"
               htmlType="submit"
-              style={{width: "100%"}}
+              style={{width: "100%", marginBottom: '5px'}}
               disabled={!application.enablePassword}
             >
               {i18next.t("login:Sign In")}
