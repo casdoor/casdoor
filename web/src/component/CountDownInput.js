@@ -28,14 +28,14 @@ export const CountDownInput = (props) => {
   const [key, setKey] = React.useState("");
   const [captchaImg, setCaptchaImg] = React.useState("");
   const [checkType, setCheckType] = React.useState("");
-  const [coolDown, setCoolDown] = React.useState(false);
+  // const [coolDown, setCoolDown] = React.useState(false);
   const [checkId, setCheckId] = React.useState("");
   const [buttonDisabled, setButtonDisabled] = React.useState(false);
 
   const countDown = (leftTime) => {
     if (leftTime === 0) {
       setButtonDisabled(false);
-      setCoolDown(false);
+      // setCoolDown(false);
       setButtonText(defaultButtonText);
       return;
     }
@@ -48,7 +48,7 @@ export const CountDownInput = (props) => {
     onButtonClick(checkType, checkId, key, ...onButtonClickArgs).then(res => {
       setKey("");
       if (res) {
-        setCoolDown(true);
+        // setCoolDown(true);
         setButtonDisabled(true)
         countDown(coolDownTime);
       }
@@ -107,6 +107,8 @@ export const CountDownInput = (props) => {
         return <VerifiedOutlined />;
       case "AuditOutlined":
         return <AuditOutlined />;
+      default:
+        return null;
     }
   };
 

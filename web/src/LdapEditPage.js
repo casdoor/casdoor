@@ -19,7 +19,6 @@ import * as LddpBackend from "./backend/LdapBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import i18n from "i18next";
 
 const {Option} = Select;
 

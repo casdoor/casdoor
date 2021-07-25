@@ -26,7 +26,6 @@ import ResetModal from "./ResetModal";
 import AffiliationSelect from "./common/AffiliationSelect";
 import OAuthWidget from "./common/OAuthWidget";
 
-import {Controlled as CodeMirror} from 'react-codemirror2'
 import "codemirror/lib/codemirror.css"
 require('codemirror/theme/material-darker.css');
 require("codemirror/mode/javascript/javascript");

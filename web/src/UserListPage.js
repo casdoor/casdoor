@@ -266,7 +266,7 @@ class UserListPage extends React.Component {
 
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} scroll={{x: 1300}} dataSource={users} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={users} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
                   {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;

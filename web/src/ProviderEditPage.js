@@ -13,12 +13,11 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from 'antd';
+import {Button, Card, Col, Input, InputNumber, Row, Select} from 'antd';
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import {getLabel} from "./Setting";
 
 const { Option } = Select;
 const { TextArea } = Input;

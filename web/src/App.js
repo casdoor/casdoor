@@ -49,7 +49,7 @@ import SelectLanguageBox from './SelectLanguageBox';
 import i18next from 'i18next';
 import PromptPage from "./auth/PromptPage";
 
-const { Header, Footer, Content } = Layout;
+const { Header, Footer } = Layout;
 
 class App extends Component {
   constructor(props) {
