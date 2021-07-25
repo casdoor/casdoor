@@ -177,7 +177,15 @@
     "Template Code - Tooltip": "Unique string-style identifier",
     "Provider URL": "Provider URL",
     "Provider URL - Tooltip": "Unique string-style identifier",
-    "Edit Provider": "Edit Provider"
+    "Edit Provider": "Edit Provider",
+    "Endpoint": "Endpoint",
+    "Endpoint - Tooltip": "Storage bucket endpoint",
+    "Bucket": "Bucket",
+    "Bucket - Tooltip": "Storage bucket name",
+    "Domain": "Domain",
+    "Domain - Tooltip": "Storage endpoint custom domain",
+    "Region": "Region",
+    "Region - Tooltip": "Storage region"
   },
   "user": {
     "Edit User": "Edit User",
