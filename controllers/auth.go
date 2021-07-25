@@ -264,7 +264,7 @@ func (c *ApiController) Login() {
 				//}
 
 				//if len(object.GetMemberAvatar(userId)) == 0 {
-				//	avatar := UploadAvatarToOSS(res.Avatar, userId)
+				//	avatar := UploadAvatarToStorage(res.Avatar, userId)
 				//	object.LinkMemberAccount(userId, "avatar", avatar)
 				//}
 
@@ -357,7 +357,7 @@ func (c *ApiController) Login() {
 				resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
 			}
 			//if len(object.GetMemberAvatar(userId)) == 0 {
-			//	avatar := UploadAvatarToOSS(tempUserAccount.AvatarUrl, userId)
+			//	avatar := UploadAvatarToStorage(tempUserAccount.AvatarUrl, userId)
 			//	object.LinkUserAccount(userId, "avatar", avatar)
 			//}
 		}

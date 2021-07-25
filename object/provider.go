@@ -15,6 +15,8 @@
 package object
 
 import (
+	"fmt"
+
 	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
 )
@@ -39,6 +41,10 @@ type Provider struct {
 	SignName     string `xorm:"varchar(100)" json:"signName"`
 	TemplateCode string `xorm:"varchar(100)" json:"templateCode"`
 	AppId        string `xorm:"varchar(100)" json:"appId"`
+
+	Endpoint string `xorm:"varchar(100)" json:"endpoint"`
+	Domain string `xorm:"varchar(100)" json:"domain"`
+	Bucket string `xorm:"varchar(100)" json:"bucket"`
 
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
 }
@@ -133,4 +139,8 @@ func DeleteProvider(provider *Provider) bool {
 	}
 
 	return affected != 0
+}
+
+func (p *Provider) GetId() string {
+	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
 }

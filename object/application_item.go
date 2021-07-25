@@ -42,6 +42,10 @@ func (application *Application) GetSmsProvider() *Provider {
 	return application.getProviderByCategory("SMS")
 }
 
+func (application *Application) GetStorageProvider() *Provider {
+	return application.getProviderByCategory("Storage")
+}
+
 func (application *Application) getSignupItem(itemName string) *SignupItem {
 	for _, signupItem := range application.SignupItems {
 		if signupItem.Name == itemName {
