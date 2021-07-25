@@ -142,7 +142,7 @@ class OAuthWidget extends React.Component {
         </Col>
         <Col span={24 - this.props.labelSpan} >
           <img style={{marginRight: '10px'}} width={30} height={30} src={avatarUrl} alt={name} />
-          <span style={{width: this.props.labelSpan === 3 ? '300px' : '130px', display: "inline-block"}}>
+          <span style={{width: this.props.labelSpan === 3 ? '300px' : '130px', display: (Setting.isMobile()) ? 'inline' : "inline-block"}}>
             {
               linkedValue === "" ? (
                 "(empty)"

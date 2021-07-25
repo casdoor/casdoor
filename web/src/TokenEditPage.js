@@ -65,9 +65,9 @@ class TokenEditPage extends React.Component {
           {i18next.t("token:Edit Token")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button type="primary" onClick={this.submitTokenEdit.bind(this)}>{i18next.t("general:Save")}</Button>
         </div>
-      } type="inner">
+      } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {i18next.t("general:Name")}:
           </Col>
           <Col span={22} >
@@ -77,7 +77,7 @@ class TokenEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {i18next.t("general:Application")}:
           </Col>
           <Col span={22} >
@@ -87,7 +87,7 @@ class TokenEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {i18next.t("general:Authorization code")}:
           </Col>
           <Col span={22} >
@@ -97,7 +97,7 @@ class TokenEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {i18next.t("general:Access token")}:
           </Col>
           <Col span={22} >
@@ -107,7 +107,7 @@ class TokenEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {i18next.t("general:Expires in")}:
           </Col>
           <Col span={22} >
@@ -117,7 +117,7 @@ class TokenEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {i18next.t("general:Scope")}:
           </Col>
           <Col span={22} >
@@ -127,7 +127,7 @@ class TokenEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {i18next.t("general:Token type")}:
           </Col>
           <Col span={22} >

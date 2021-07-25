@@ -87,9 +87,9 @@ class OrganizationEditPage extends React.Component {
           {i18next.t("organization:Edit Organization")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button type="primary" onClick={this.submitOrganizationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
         </div>
-      } type="inner">
+      } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -99,7 +99,7 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -109,12 +109,12 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel("Favicon", i18next.t("general:Favicon - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={1}>
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                 URL:
               </Col>
               <Col span={23} >
@@ -124,7 +124,7 @@ class OrganizationEditPage extends React.Component {
               </Col>
             </Row>
             <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={1}>
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                 {i18next.t("general:Preview")}:
               </Col>
               <Col span={23} >
@@ -136,7 +136,7 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("organization:Website URL"), i18next.t("organization:Website URL - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -146,7 +146,7 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Password type"), i18next.t("general:Password type - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -159,7 +159,7 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Password salt"), i18next.t("general:Password salt - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -169,7 +169,7 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Phone Prefix"), i18next.t("general:Phone Prefix - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -179,12 +179,12 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Default avatar"), i18next.t("general:Default avatar - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={1}>
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                 URL:
               </Col>
               <Col span={23} >
@@ -194,7 +194,7 @@ class OrganizationEditPage extends React.Component {
               </Col>
             </Row>
             <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={1}>
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                 {i18next.t("general:Preview")}:
               </Col>
               <Col span={23} >
@@ -206,7 +206,7 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}}>
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:LDAPs"), i18next.t("general:LDAPs - Tooltip"))} :
           </Col>
           <Col span={22}>

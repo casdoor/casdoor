@@ -92,7 +92,7 @@ class AffiliationSelect extends React.Component {
           <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
             {Setting.getLabel(i18next.t("user:Affiliation"), i18next.t("user:Affiliation - Tooltip"))} :
           </Col>
-          <Col span={24 - this.props.labelSpan} >
+          <Col span={22} >
             {
               this.props.application?.affiliationUrl === "" ? (
                 <Input value={this.props.user.affiliation} onChange={e => {
