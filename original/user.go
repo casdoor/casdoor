@@ -14,7 +14,7 @@
 
 package original
 
-import "github.com/casdoor/casdoor/object"
+import "github.com/casbin/casdoor/object"
 
 func getUsers() []*object.User {
 	users := object.GetUsers(orgName)

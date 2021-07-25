@@ -14,7 +14,7 @@
 
 package object
 
-import "github.com/casdoor/casdoor/util"
+import "github.com/casbin/casdoor/util"
 
 func InitDb() {
 	initBuiltInOrganization()

@@ -15,7 +15,7 @@
 package object
 
 import (
-	"github.com/casdoor/casdoor/util"
+	"github.com/casbin/casdoor/util"
 )
 
 type Records struct {

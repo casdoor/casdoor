@@ -19,8 +19,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/original"
+	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/original"
 )
 
 // @Title GetGlobalUsers

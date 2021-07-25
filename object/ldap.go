@@ -17,7 +17,7 @@ package object
 import (
 	"errors"
 	"fmt"
-	"github.com/casdoor/casdoor/util"
+	"github.com/casbin/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 	"github.com/thanhpk/randstr"
 	"strings"

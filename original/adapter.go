@@ -16,7 +16,7 @@ package original
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/casdoor/casdoor/object"
+	"github.com/casbin/casdoor/object"
 	_ "github.com/go-sql-driver/mysql" // db = mysql
 	//_ "github.com/lib/pq"              // db = postgres
 )

@@ -20,7 +20,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
-	"github.com/casdoor/casdoor/util"
+	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
 )
 

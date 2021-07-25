@@ -17,7 +17,7 @@ package original
 import (
 	"fmt"
 
-	"github.com/casdoor/casdoor/object"
+	"github.com/casbin/casdoor/object"
 )
 
 func isEnabled() bool {

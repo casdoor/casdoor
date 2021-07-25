@@ -17,7 +17,7 @@ package object
 import (
 	"strings"
 
-	"github.com/casdoor/casdoor/util"
+	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
 )
 

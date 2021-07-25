@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/casdoor/casdoor/util"
+	"github.com/casbin/casdoor/util"
 )
 
 var reWhiteSpace *regexp.Regexp
