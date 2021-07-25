@@ -18,7 +18,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/casdoor/casdoor/util"
+	"github.com/casbin/casdoor/util"
 )
 
 type User struct {

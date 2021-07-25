@@ -16,8 +16,8 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/util"
+	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/util"
 )
 
 type LdapServer struct {

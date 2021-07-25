@@ -21,10 +21,10 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego/context"
-	"github.com/casdoor/casdoor/authz"
-	"github.com/casdoor/casdoor/controllers"
-	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/util"
+	"github.com/casbin/casdoor/authz"
+	"github.com/casbin/casdoor/controllers"
+	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/util"
 )
 
 type Object struct {

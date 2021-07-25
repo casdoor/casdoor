@@ -19,7 +19,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/casdoor/casdoor/object"
+	"github.com/casbin/casdoor/object"
 )
 
 func TestGetUsers(t *testing.T) {

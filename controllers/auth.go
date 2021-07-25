@@ -22,9 +22,9 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
-	"github.com/casdoor/casdoor/idp"
-	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/util"
+	"github.com/casbin/casdoor/idp"
+	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/util"
 )
 
 func codeToResponse(code *object.Code) *Response {

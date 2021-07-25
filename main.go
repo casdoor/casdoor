@@ -18,12 +18,12 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/plugins/cors"
-	"github.com/casdoor/casdoor/authz"
-	"github.com/casdoor/casdoor/controllers"
-	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/routers"
+	"github.com/casbin/casdoor/authz"
+	"github.com/casbin/casdoor/controllers"
+	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/routers"
 
-	_ "github.com/casdoor/casdoor/routers"
+	_ "github.com/casbin/casdoor/routers"
 )
 
 func main() {
