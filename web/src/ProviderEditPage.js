@@ -100,9 +100,9 @@ class ProviderEditPage extends React.Component {
           {i18next.t("provider:Edit Provider")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button type="primary" onClick={this.submitProviderEdit.bind(this)}>{i18next.t("general:Save")}</Button>
         </div>
-      } type="inner">
+      } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -112,7 +112,7 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -122,7 +122,7 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:Category"), i18next.t("provider:Category - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -149,7 +149,7 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:Type"), i18next.t("provider:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -161,7 +161,7 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {this.state.provider.category === "Email" ? Setting.getLabel(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip")) : Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -171,7 +171,7 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {this.state.provider.category === "Email" ? Setting.getLabel(i18next.t("login:Password"), i18next.t("login:Password - Tooltip")) : Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -184,7 +184,7 @@ class ProviderEditPage extends React.Component {
           this.state.provider.category === "Email" ? (
             <React.Fragment>
               <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={2}>
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
                 </Col>
                 <Col span={22} >
@@ -194,7 +194,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
               <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={2}>
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
                 </Col>
                 <Col span={22} >
@@ -204,7 +204,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
               <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={2}>
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Email Title"), i18next.t("provider:Email Title - Tooltip"))} :
                 </Col>
                 <Col span={22} >
@@ -214,7 +214,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
               <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={2}>
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Email Content"), i18next.t("provider:Email Content - Tooltip"))} :
                 </Col>
                 <Col span={22} >
@@ -227,7 +227,7 @@ class ProviderEditPage extends React.Component {
           ) : this.state.provider.category === "SMS" ? (
             <React.Fragment>
               <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={2}>
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Region ID"), i18next.t("provider:Region ID - Tooltip"))} :
                 </Col>
                 <Col span={22} >
@@ -237,7 +237,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
               <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={2}>
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Sign Name"), i18next.t("provider:Sign Name - Tooltip"))} :
                 </Col>
                 <Col span={22} >
@@ -247,7 +247,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
               <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={2}>
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Template Code"), i18next.t("provider:Template Code - Tooltip"))} :
                 </Col>
                 <Col span={22} >
@@ -261,7 +261,7 @@ class ProviderEditPage extends React.Component {
         }
         {this.state.provider.category === "SMS" && this.state.provider.type === "tencent" ? (
           <Row style={{marginTop: '20px'}} >
-            <Col style={{marginTop: '5px'}} span={2}>
+            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
               {Setting.getLabel(i18next.t("provider:App ID"), i18next.t("provider:App ID - Tooltip"))} :
             </Col>
             <Col span={22} >
@@ -272,7 +272,7 @@ class ProviderEditPage extends React.Component {
           </Row>
         ) : null}
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={2}>
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:Provider URL"), i18next.t("provider:Provider URL - Tooltip"))} :
           </Col>
           <Col span={22} >
