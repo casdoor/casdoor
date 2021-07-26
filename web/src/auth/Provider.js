@@ -51,6 +51,10 @@ const LinkedInAuthScope = "r_liteprofile%20r_emailaddress";
 const LinkedInAuthUri = "https://www.linkedin.com/oauth/v2/authorization";
 const LinkedInAuthLogo = `${StaticBaseUrl}/img/social_linkedin.png`;
 
+// const WeComAuthScope = "";
+const WeComAuthUri = "https://open.work.weixin.qq.com/wwopen/sso/3rd_qrConnect";
+const WeComAuthLogo = `${StaticBaseUrl}/img/social_wecom.png`;
+
 export function getAuthLogo(provider) {
   if (provider.type === "Google") {
     return GoogleAuthLogo;
@@ -70,6 +74,8 @@ export function getAuthLogo(provider) {
     return GiteeAuthLogo;
   } else if (provider.type === "LinkedIn") {
     return LinkedInAuthLogo;
+  }  else if (provider.type === "WeCom") {
+    return WeComAuthLogo;
   }
 }
 
@@ -98,5 +104,7 @@ export function getAuthUrl(application, provider, method) {
     return `${GiteeAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GiteeAuthScope}&response_type=code&state=${state}`;
   } else if (provider.type === "LinkedIn") {
     return `${LinkedInAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${LinkedInAuthScope}&response_type=code&state=${state}`
+  }  else if (provider.type === "WeCom") {
+    return `${WeComAuthUri}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&usertype=member`
   }
 }

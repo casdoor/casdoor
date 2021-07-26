@@ -75,6 +75,7 @@ class ProviderEditPage extends React.Component {
           {id: 'Weibo', name: 'Weibo'},
           {id: 'Gitee', name: 'Gitee'},
           {id: 'LinkedIn', name: 'LinkedIn'},
+          {id: 'WeCom', name: 'WeCom'},
         ]
       );
     } else if (provider.category === "Email") {
