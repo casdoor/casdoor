@@ -237,6 +237,8 @@ func (c *ApiController) UploadAvatar() {
 	var resp Response
 
 	user := object.GetUser(userId)
+	application := object.GetApplicationByUser(user)
+	provider := application.GetStorageProvider()
 
 	avatarBase64 := c.Ctx.Request.Form.Get("avatarfile")
 	index := strings.Index(avatarBase64, ",")
@@ -248,14 +250,14 @@ func (c *ApiController) UploadAvatar() {
 	}
 
 	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index+1:])
-	msg := object.UploadAvatar(user.GetId(), dist)
+	msg := object.UploadAvatar(provider, user.GetId(), dist)
 	if msg != "" {
 		resp = Response{Status: "error", Msg: msg}
 		c.Data["json"] = resp
 		c.ServeJSON()
 		return
 	}
-	user.Avatar = fmt.Sprintf("%s%s.png?time=%s", object.GetAvatarPath(), user.GetId(), util.GetCurrentUnixTime())
+	user.Avatar = fmt.Sprintf("%s%s.png?time=%s", object.GetAvatarPath(provider), user.GetId(), util.GetCurrentUnixTime())
 	object.UpdateUser(user.GetId(), user)
 	resp = Response{Status: "ok", Msg: ""}
 	c.Data["json"] = resp

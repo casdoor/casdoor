@@ -57,13 +57,12 @@ func GetMd5Hash(text string) string {
 }
 
 func IsStrsEmpty(strs ...string) bool {
-	r := false
 	for _, str := range strs {
 		if len(str) == 0 {
-			r = true
+			return true
 		}
 	}
-	return r
+	return false
 }
 
 func GetMaxLenStr(strs ...string) string {

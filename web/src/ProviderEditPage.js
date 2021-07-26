@@ -83,6 +83,14 @@ class ProviderEditPage extends React.Component {
           {id: 'Default', name: 'Default'},
         ]
       );
+    } else if (provider.category === "Storage") {
+      return (
+        [
+          {id: 'Default', name: 'Default'},
+          {id: 'Aliyun', name: 'Aliyun'},
+          {id: 'AWSS3', name: 'AWS s3'},
+        ]
+      );
     } else {
       return (
         [
@@ -143,6 +151,7 @@ class ProviderEditPage extends React.Component {
                   {id: 'OAuth', name: 'OAuth'},
                   {id: 'Email', name: 'Email'},
                   {id: 'SMS', name: 'SMS'},
+                  {id: 'Storage', name: 'Storage'},
                 ].map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
               }
             </Select>
@@ -180,6 +189,52 @@ class ProviderEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        {this.state.provider.category === "Storage" ? (
+          <div>
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={2}>
+                {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Endpoint - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.provider.endpoint} onChange={e => {
+                  this.updateProviderField('endpoint', e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={2}>
+                {Setting.getLabel(i18next.t("provider:Bucket"), i18next.t("provider:Bucket - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.provider.bucket} onChange={e => {
+                  this.updateProviderField('bucket', e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={2}>
+                {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.provider.domain} onChange={e => {
+                  this.updateProviderField('domain', e.target.value);
+                }} />
+              </Col>
+            </Row>
+            {this.state.provider.type === "AWSS3" ? (
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:Region"), i18next.t("provider:Region - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.regionId} onChange={e => {
+                    this.updateProviderField('regionId', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            ) : null}
+          </div>
+        ) : null}
         {
           this.state.provider.category === "Email" ? (
             <React.Fragment>
