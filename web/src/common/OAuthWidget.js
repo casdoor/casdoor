@@ -84,7 +84,8 @@ class OAuthWidget extends React.Component {
 
   getUserProperty(user, providerType, propertyName) {
     const key = `oauth_${providerType}_${propertyName}`;
-    return user.properties[key]
+    if (user.properties === null) return "";
+    return user.properties[key];
   }
 
   unlinkUser(providerType) {
