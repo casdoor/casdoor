@@ -90,25 +90,25 @@ class App extends Component {
       uri: uri,
     });
     if (uri === '/') {
-      this.setState({ selectedMenuKey: 0 });
-    } else if (uri.includes('organizations')) {
-      this.setState({ selectedMenuKey: 1 });
-    } else if (uri.includes('users')) {
-      this.setState({ selectedMenuKey: 2 });
-    } else if (uri.includes('providers')) {
-      this.setState({ selectedMenuKey: 3 });
-    } else if (uri.includes('applications')) {
-      this.setState({ selectedMenuKey: 4 });
-    } else if (uri.includes('tokens')) {
-      this.setState({ selectedMenuKey: 5 });
-    } else if (uri.includes('records')) {
-      this.setState({ selectedMenuKey: 6 });
-    } else if (uri.includes('signup')) {
-      this.setState({ selectedMenuKey: 100 });
-    } else if (uri.includes('login')) {
-      this.setState({ selectedMenuKey: 101 });
-    } else if (uri.includes('result')) {
-      this.setState({ selectedMenuKey: 100 });
+      this.setState({ selectedMenuKey: '/' });
+    } else if (uri.includes('/organizations')) {
+      this.setState({ selectedMenuKey: '/organizations' });
+    } else if (uri.includes('/users')) {
+      this.setState({ selectedMenuKey: '/users' });
+    } else if (uri.includes('/providers')) {
+      this.setState({ selectedMenuKey: '/providers' });
+    } else if (uri.includes('/applications')) {
+      this.setState({ selectedMenuKey: '/applications' });
+    } else if (uri.includes('/tokens')) {
+      this.setState({ selectedMenuKey: '/tokens' });
+    } else if (uri.includes('/records')) {
+      this.setState({ selectedMenuKey: '/records' });
+    } else if (uri.includes('/signup')) {
+      this.setState({ selectedMenuKey: '/signup' });
+    } else if (uri.includes('/login')) {
+      this.setState({ selectedMenuKey: '/login' });
+    } else if (uri.includes('/result')) {
+      this.setState({ selectedMenuKey: '/result' });
     } else {
       this.setState({ selectedMenuKey: -1 });
     }
@@ -253,14 +253,14 @@ class App extends Component {
       return null;
     } else if (this.state.account === null) {
       // res.push(
-      //   <Menu.Item key="100" style={{float: 'right', marginRight: '20px'}}>
+      //   <Menu.Item key="/signup" style={{float: 'right', marginRight: '20px'}}>
       //     <Link to="/signup">
       //       {i18next.t("account:Sign Up")}
       //     </Link>
       //   </Menu.Item>
       // );
       // res.push(
-      //   <Menu.Item key="101" style={{float: 'right'}}>
+      //   <Menu.Item key="/login" style={{float: 'right'}}>
       //     <Link to="/login">
       //       {i18next.t("account:Login")}
       //     </Link>
@@ -281,7 +281,7 @@ class App extends Component {
     }
 
     res.push(
-      <Menu.Item key="0">
+      <Menu.Item key="/">
         <Link to="/">
           {i18next.t("general:Home")}
         </Link>
@@ -290,42 +290,42 @@ class App extends Component {
 
     if (Setting.isAdminUser(this.state.account)) {
       res.push(
-        <Menu.Item key="1">
+        <Menu.Item key="/organizations">
           <Link to="/organizations">
             {i18next.t("general:Organizations")}
           </Link>
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="2">
+        <Menu.Item key="/users">
           <Link to="/users">
             {i18next.t("general:Users")}
           </Link>
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="3">
+        <Menu.Item key="/providers">
           <Link to="/providers">
             {i18next.t("general:Providers")}
           </Link>
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="4">
+        <Menu.Item key="/applications">
           <Link to="/applications">
             {i18next.t("general:Applications")}
           </Link>
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="5">
+        <Menu.Item key="/tokens">
           <Link to="/tokens">
             {i18next.t("general:Tokens")}
           </Link>
         </Menu.Item>
       );
       res.push(
-          <Menu.Item key="6">
+          <Menu.Item key="/records">
             <Link to="/records">
               {i18next.t("general:Records")}
             </Link>
@@ -333,8 +333,10 @@ class App extends Component {
       );
     }
     res.push(
-      <Menu.Item key="7" onClick={() => window.location.href = "/swagger"}>
-        {i18next.t("general:Swagger")}
+      <Menu.Item key="/swagger">
+        <a target="_blank" rel="noreferrer" href={"/swagger"}>
+          {i18next.t("general:Swagger")}
+        </a>
       </Menu.Item>
     );
     return res;
