@@ -28,7 +28,7 @@ require (
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
-	gopkg.in/ini.v1 v1.62.0
+	gopkg.in/ini.v1 v1.62.0 // indirect
 	xorm.io/core v0.7.2
 	xorm.io/xorm v1.0.3
 )

@@ -53,6 +53,8 @@ func GetIdProvider(providerType string, clientId string, clientSecret string, re
 		return NewGiteeIdProvider(clientId, clientSecret, redirectUrl)
 	} else if providerType == "LinkedIn" {
 		return NewLinkedInIdProvider(clientId, clientSecret, redirectUrl)
+	} else if providerType == "WeCom" {
+		return NewWeComIdProvider(clientId, clientSecret, redirectUrl)
 	}
 
 	return nil
