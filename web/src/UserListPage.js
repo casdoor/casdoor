@@ -66,6 +66,7 @@ class UserListPage extends React.Component {
       address: [],
       affiliation: "Example Inc.",
       tag: "staff",
+      region: "",
       isAdmin: false,
       isGlobalAdmin: false,
       IsForbidden: false,
@@ -198,6 +199,13 @@ class UserListPage extends React.Component {
         key: 'affiliation',
         width: '120px',
         sorter: (a, b) => a.affiliation.localeCompare(b.affiliation),
+      },
+      {
+        title: i18next.t("user:Country/Region"),
+        dataIndex: 'region',
+        key: 'region',
+        width: '120px',
+        sorter: (a, b) => a.region.localeCompare(b.region),
       },
       {
         title: i18next.t("user:Tag"),
