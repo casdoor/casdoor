@@ -33,9 +33,8 @@ type Object struct {
 }
 
 func getUsernameByClientIdSecret(ctx *context.Context) string {
-	requestUri := ctx.Request.RequestURI
-	clientId := parseQuery(requestUri, "clientId")
-	clientSecret := parseQuery(requestUri, "clientSecret")
+	clientId := ctx.Input.Query("clientId")
+	clientSecret := ctx.Input.Query("clientSecret")
 	if len(clientId) == 0 || len(clientSecret) == 0 {
 		return ""
 	}
