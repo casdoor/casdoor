@@ -142,6 +142,19 @@ func GetApplicationByClientId(clientId string) *Application {
 	}
 }
 
+func GetApplicationByClientIdAndSecret(clientId, clientSecret string) *Application {
+	if util.IsStrsEmpty(clientId, clientSecret) {
+		return nil
+	}
+
+	app := GetApplicationByClientId(clientId)
+	if app == nil || app.ClientSecret != clientSecret {
+		return nil
+	}
+
+	return app
+}
+
 func GetApplication(id string) *Application {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getApplication(owner, name)

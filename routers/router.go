@@ -95,5 +95,8 @@ func initAPI() {
 
 	beego.Router("/api/get-records", &controllers.ApiController{}, "GET:GetRecords")
 	beego.Router("/api/get-records-filter", &controllers.ApiController{}, "POST:GetRecordsByFilter")
+
+	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")
+	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
 }
 
