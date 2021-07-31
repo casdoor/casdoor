@@ -128,9 +128,7 @@ class LoginPage extends React.Component {
                       Setting.goToLinkSoft(ths, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
                     }
                   } else {
-                    if (res.msg !== "Please sign in first") {
-                      Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
-                    }
+                    Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
                   }
                 });
             } else {

@@ -127,21 +127,23 @@ class SignupPage extends React.Component {
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === 'ok') {
-          AuthBackend.getAccount("")
-            .then((res) => {
-              let account = null;
-              if (res.status === "ok") {
-                account = res.data;
-                account.organization = res.data2;
+          if (Setting.hasPromptPage(application)) {
+            AuthBackend.getAccount("")
+              .then((res) => {
+                let account = null;
+                if (res.status === "ok") {
+                  account = res.data;
+                  account.organization = res.data2;
 
-                this.onUpdateAccount(account);
-                Setting.goToLinkSoft(this, this.getResultPath(application));
-              } else {
-                if (res.msg !== "Please sign in first") {
+                  this.onUpdateAccount(account);
+                  Setting.goToLinkSoft(this, this.getResultPath(application));
+                } else {
                   Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
                 }
-              }
-            });
+              });
+          } else {
+            Setting.goToLinkSoft(this, this.getResultPath(application));
+          }
         } else {
           Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
         }
