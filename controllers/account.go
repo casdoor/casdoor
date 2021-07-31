@@ -41,6 +41,7 @@ type RequestForm struct {
 	Email        string `json:"email"`
 	Phone        string `json:"phone"`
 	Affiliation  string `json:"affiliation"`
+	Region       string `json:"region"`
 
 	Application string `json:"application"`
 	Provider    string `json:"provider"`
@@ -149,6 +150,7 @@ func (c *ApiController) Signup() {
 		Phone:             form.Phone,
 		Address:           []string{},
 		Affiliation:       form.Affiliation,
+		Region:            form.Region,
 		IsAdmin:           false,
 		IsGlobalAdmin:     false,
 		IsForbidden:       false,

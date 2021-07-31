@@ -25,6 +25,7 @@ import PasswordModal from "./PasswordModal";
 import ResetModal from "./ResetModal";
 import AffiliationSelect from "./common/AffiliationSelect";
 import OAuthWidget from "./common/OAuthWidget";
+import SelectRegionBox from "./SelectRegionBox";
 
 import "codemirror/lib/codemirror.css"
 require('codemirror/theme/material-darker.css');
@@ -222,6 +223,16 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={11} >
             { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} coolDownTime={60}/>) : null}
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Country/Region"), i18next.t("user:Country/Region - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <SelectRegionBox defaultValue={this.state.user.region} onChange={(value) => {
+              this.updateUserField("region", value);
+            }} />
           </Col>
         </Row>
         {

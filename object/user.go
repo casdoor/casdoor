@@ -37,6 +37,7 @@ type User struct {
 	Address           []string `json:"address"`
 	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
 	Tag               string   `xorm:"varchar(100)" json:"tag"`
+	Region            string   `xorm:"varchar(100)" json:"region"`
 	Language          string   `xorm:"varchar(100)" json:"language"`
 	Score             int      `json:"score"`
 	IsAdmin           bool     `json:"isAdmin"`
@@ -145,7 +146,7 @@ func UpdateUser(id string, user *User) bool {
 	user.UpdateUserHash()
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("owner", "display_name", "avatar",
-		"address", "language", "affiliation", "score", "tag", "is_admin", "is_global_admin", "is_forbidden",
+		"address", "region", "language", "affiliation", "score", "tag", "is_admin", "is_global_admin", "is_forbidden",
 		"hash", "properties").Update(user)
 	if err != nil {
 		panic(err)

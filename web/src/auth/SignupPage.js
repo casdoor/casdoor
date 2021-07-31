@@ -23,6 +23,7 @@ import {authConfig} from "./Auth";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
 import {CountDownInput} from "../component/CountDownInput";
+import SelectRegionBox from "../SelectRegionBox";
 
 const formItemLayout = {
   labelCol: {
@@ -30,7 +31,7 @@ const formItemLayout = {
       span: 24,
     },
     sm: {
-      span: 6,
+      span: 8,
     },
   },
   wrapperCol: {
@@ -69,6 +70,7 @@ class SignupPage extends React.Component {
       phoneCode: "",
       validEmail: false,
       validPhone: false,
+      region: "",
     };
 
     this.form = React.createRef();
@@ -206,6 +208,22 @@ class SignupPage extends React.Component {
           ]}
         >
           <Input />
+        </Form.Item>
+      )
+    } else if (signupItem.name === "Country/Region") {
+      return (
+        <Form.Item
+            name="country_region"
+            key="region"
+            label={i18next.t("user:Country/Region")}
+            rules={[
+                {
+                    required: required,
+                    message: i18next.t("signup:Please select your country/region!"),
+                },
+            ]}
+        >
+          <SelectRegionBox onChange={(value) => {this.setState({region: value})}} />
         </Form.Item>
       )
     } else if (signupItem.name === "Email") {
