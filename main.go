@@ -18,6 +18,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/plugins/cors"
+	_ "github.com/astaxie/beego/session/redis"
 	"github.com/casbin/casdoor/authz"
 	"github.com/casbin/casdoor/controllers"
 	"github.com/casbin/casdoor/object"
@@ -51,9 +52,14 @@ func main() {
 	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
 
 	beego.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
-	beego.BConfig.WebConfig.Session.SessionProvider = "file"
-	beego.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
-	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 365
+	if beego.AppConfig.String("redisEndpoint") == "" {
+		beego.BConfig.WebConfig.Session.SessionProvider = "file"
+		beego.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
+	} else {
+		beego.BConfig.WebConfig.Session.SessionProvider = "redis"
+		beego.BConfig.WebConfig.Session.SessionProviderConfig = beego.AppConfig.String("redisEndpoint")
+	}
+	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 30
 	//beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
 	err := logs.SetLogger("file", `{"filename":"logs/casdoor.log","maxdays":99999}`)
