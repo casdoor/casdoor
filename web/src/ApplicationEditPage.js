@@ -226,6 +226,14 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enablePassword} onChange={checked => {
+              let items = this.state.application.signupItems;
+              const hasPassword = Setting.getDuplicatedArray(this.state.application.signupItems, [{name: "Password"}], "name").length > 0;
+              if (checked && !hasPassword) {
+                items = Setting.addRow(this.state.application.signupItems, {name: "Password", visible: true, required: true, rule: "None"});
+              } else if (!checked && hasPassword) {
+                items = Setting.deleteRow(this.state.application.signupItems, this.state.application.signupItems?.findIndex( item => item.name === 'Password' ))
+              }
+              this.updateApplicationField('signupItems', items);
               this.updateApplicationField('enablePassword', checked);
             }} />
           </Col>

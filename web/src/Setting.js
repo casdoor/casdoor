@@ -455,6 +455,11 @@ export function getArrayItem(array, key, value) {
 }
 
 export function getDeduplicatedArray(array, filterArray, key) {
-  const res = array.filter(item => filterArray.filter(filterItem => filterItem[key] === item[key]).length === 0);
+  const res = array?.filter(item => filterArray?.filter(filterItem => filterItem[key] === item[key]).length === 0);
+  return res;
+}
+
+export function getDuplicatedArray(array, filterArray, key) {
+  const res = array?.filter(item => filterArray?.filter(filterItem => filterItem[key] === item[key]).length !== 0);
   return res;
 }
