@@ -135,7 +135,7 @@ class SignupPage extends React.Component {
                 this.onUpdateAccount(account);
                 Setting.goToLinkSoft(this, this.getResultPath(application));
               } else {
-                if (res.msg !== "Please sign in first") {
+                if (res.msg === "Please sign in first") {
                   Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
                 }
               }
