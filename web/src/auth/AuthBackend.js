@@ -38,6 +38,12 @@ export function getEmailAndPhone(values) {
 }
 
 function oAuthParamsToQuery(oAuthParams) {
+  // login
+  if (oAuthParams === null) {
+    return "";
+  }
+
+  // code
   return `?clientId=${oAuthParams.clientId}&responseType=${oAuthParams.responseType}&redirectUri=${oAuthParams.redirectUri}&scope=${oAuthParams.scope}&state=${oAuthParams.state}`;
 }
 

@@ -68,7 +68,11 @@ class AuthCallback extends React.Component {
 
   UNSAFE_componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
-    const code = params.get("code");
+    let code = params.get("code");
+    // WeCom returns "auth_code=xxx" instead of "code=xxx"
+    if (code === null) {
+      code = params.get("auth_code");
+    }
 
     const innerParams = this.getInnerParams();
     const applicationName = innerParams.get("application");

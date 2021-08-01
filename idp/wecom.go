@@ -76,9 +76,14 @@ func (idp *WeComIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		ProviderSecret string `json:"provider_secret"`
 	}{idp.Config.ClientID, idp.Config.ClientSecret}
 	data, err := idp.postWithBody(pTokenParams, "https://qyapi.weixin.qq.com/cgi-bin/service/get_provider_token")
+
 	pToken := &WeComProviderToken{}
-	if err = json.Unmarshal(data, pToken); err != nil || pToken.Errcode != 0 || pToken.Errmsg != "ok" {
+	err = json.Unmarshal(data, pToken)
+	if err != nil {
 		return nil, err
+	}
+	if pToken.Errcode != 0 {
+		return nil, fmt.Errorf("pToken.Errcode = %d, pToken.Errmsg = %s", pToken.Errcode, pToken.Errmsg)
 	}
 
 	token := &oauth2.Token{
@@ -86,7 +91,7 @@ func (idp *WeComIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		Expiry:      time.Unix(time.Now().Unix()+int64(pToken.ExpiresIn), 0),
 	}
 
-	raw := make(map[string]string)
+	raw := make(map[string]interface{})
 	raw["code"] = code
 	token = token.WithExtra(raw)
 
@@ -158,9 +163,17 @@ func (idp *WeComIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) 
 		AuthCode string `json:"auth_code"`
 	}{code}
 	data, err := idp.postWithBody(requestBody, fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/service/get_login_info?access_token=%s", accessToken))
-	wecomUserInfo := WeComUserInfo{}
-	if err = json.Unmarshal(data, &wecomUserInfo); err != nil || wecomUserInfo.Errcode != 0 {
+	if err != nil {
 		return nil, err
+	}
+
+	wecomUserInfo := WeComUserInfo{}
+	err = json.Unmarshal(data, &wecomUserInfo)
+	if err != nil {
+		return nil, err
+	}
+	if wecomUserInfo.Errcode != 0 {
+		return nil, fmt.Errorf("wecomUserInfo.Errcode = %d, wecomUserInfo.Errmsg = %s", wecomUserInfo.Errcode, wecomUserInfo.Errmsg)
 	}
 
 	userInfo := UserInfo{

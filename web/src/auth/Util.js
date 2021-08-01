@@ -82,9 +82,12 @@ export function getOAuthGetParameters(params) {
   const redirectUri = queries.get("redirect_uri");
   const scope = queries.get("scope");
   const state = queries.get("state");
-  if (clientId === undefined) {
+
+  if (clientId === undefined || clientId === null) {
+    // login
     return null;
   } else {
+    // code
     return {
       clientId: clientId,
       responseType: responseType,
