@@ -100,6 +100,14 @@ func (c *ApiController) GetApplicationLogin() {
 	c.ServeJSON()
 }
 
+func setHttpClient(idProvider idp.IdProvider, providerType string) {
+	if providerType == "GitHub" || providerType == "Google" || providerType == "Facebook" || providerType == "LinkedIn" {
+		idProvider.SetHttpClient(proxyHttpClient)
+	} else {
+		idProvider.SetHttpClient(defaultHttpClient)
+	}
+}
+
 // @Title Login
 // @Description login
 // @Param   oAuthParams     query    string  true        "oAuth parameters"
@@ -213,7 +221,7 @@ func (c *ApiController) Login() {
 			return
 		}
 
-		idProvider.SetHttpClient(httpClient)
+		setHttpClient(idProvider, provider.Type)
 
 		if form.State != beego.AppConfig.String("authState") && form.State != application.Name {
 			resp = &Response{Status: "error", Msg: fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("authState"), form.State)}

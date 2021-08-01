@@ -21,12 +21,17 @@ import (
 	"golang.org/x/net/proxy"
 )
 
-var httpClient *http.Client
+var defaultHttpClient *http.Client
+var proxyHttpClient *http.Client
 
 func InitHttpClient() {
+	// not use proxy
+	defaultHttpClient = http.DefaultClient
+
+	// use proxy
 	httpProxy := beego.AppConfig.String("httpProxy")
 	if httpProxy == "" {
-		httpClient = &http.Client{}
+		proxyHttpClient = &http.Client{}
 		return
 	}
 
@@ -37,11 +42,11 @@ func InitHttpClient() {
 	}
 
 	tr := &http.Transport{Dial: dialer.Dial}
-	httpClient = &http.Client{
+	proxyHttpClient = &http.Client{
 		Transport: tr,
 	}
 
-	//resp, err2 := httpClient.Get("https://google.com")
+	//resp, err2 := proxyHttpClient.Get("https://google.com")
 	//if err2 != nil {
 	//	panic(err2)
 	//}
