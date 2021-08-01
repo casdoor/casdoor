@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/util"
 )
@@ -55,15 +56,13 @@ func (c *ApiController) GetLdapUser() {
 
 	conn, err := object.GetLdapConn(ldapServer.Host, ldapServer.Port, ldapServer.Admin, ldapServer.Passwd)
 	if err != nil {
-		c.Data["json"] = Response{Status: "error", Msg: err.Error()}
-		c.ServeJSON()
+		c.ResponseError(err.Error())
 		return
 	}
 
 	//groupsMap, err := conn.GetLdapGroups(ldapServer.BaseDn)
 	//if err != nil {
-	//	c.Data["json"] = Response{Status: "error", Msg: err.Error()}
-	//	c.ServeJSON()
+	//	c.ResponseError(err.Error())
 	//	return
 	//}
 
@@ -76,8 +75,7 @@ func (c *ApiController) GetLdapUser() {
 
 	users, err := conn.GetLdapUsers(ldapServer.BaseDn)
 	if err != nil {
-		c.Data["json"] = Response{Status: "error", Msg: err.Error()}
-		c.ServeJSON()
+		c.ResponseError(err.Error())
 		return
 	}
 
