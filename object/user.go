@@ -56,7 +56,7 @@ type User struct {
 	Weibo    string `xorm:"weibo varchar(100)" json:"weibo"`
 	Gitee    string `xorm:"gitee varchar(100)" json:"gitee"`
 	LinkedIn string `xorm:"linkedin varchar(100)" json:"linkedin"`
-	WeCom    string `xorm:"wecom varchar(100)" json:"we_com"`
+	Wecom    string `xorm:"wecom varchar(100)" json:"wecom"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`

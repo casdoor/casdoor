@@ -27,7 +27,8 @@ import AffiliationSelect from "./common/AffiliationSelect";
 import OAuthWidget from "./common/OAuthWidget";
 import SelectRegionBox from "./SelectRegionBox";
 
-import "codemirror/lib/codemirror.css"
+import {Controlled as CodeMirror} from 'react-codemirror2';
+import "codemirror/lib/codemirror.css";
 require('codemirror/theme/material-darker.css');
 require("codemirror/mode/javascript/javascript");
 
