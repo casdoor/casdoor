@@ -29,6 +29,8 @@ import GiteeLoginButton from "./GiteeLoginButton";
 import WechatLoginButton from "./WechatLoginButton";
 import WeiboLoginButton from "./WeiboLoginButton";
 import i18next from "i18next";
+import LinkedInLoginButton from "./LinkedInLoginButton";
+import WeComLoginButton from "./WeComLoginButton";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -161,9 +163,13 @@ class LoginPage extends React.Component {
       return <WechatLoginButton text={text} align={"center"} />
     } else if (type === "DingTalk") {
       return <DingTalkLoginButton text={text} align={"center"} />
-    } else {
-      return text;
+    } else if (type === "LinkedIn"){
+      return <LinkedInLoginButton text={text} align={"center"} />
+    } else if (type === "WeCom") {
+      return <WeComLoginButton text={text} align={"center"} />
     }
+
+    return text;
   }
 
   renderProviderLogo(provider, application, width, margin, size) {
