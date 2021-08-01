@@ -39,6 +39,7 @@ func initBuiltInOrganization() {
 		PhonePrefix:   "86",
 		DefaultAvatar: "https://casbin.org/img/casbin.svg",
 		PasswordType:  "plain",
+		AccountItems:  []*AccountItem{},
 	}
 	AddOrganization(organization)
 }

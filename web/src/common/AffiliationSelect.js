@@ -68,6 +68,12 @@ class AffiliationSelect extends React.Component {
     this.props.onUpdateUserField(key, value);
   }
 
+  renderRequired() {
+    return (
+      <span style={{marginRight: "4px", color: "#ff4d4f"}}>*</span>
+    )
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -75,6 +81,7 @@ class AffiliationSelect extends React.Component {
           this.props.application?.affiliationUrl === "" ? null : (
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
+                {this.props.required ? this.renderRequired() : null}
                 {Setting.getLabel(i18next.t("user:Address"), i18next.t("user:Address - Tooltip"))} :
               </Col>
               <Col span={24 - this.props.labelSpan} >
@@ -90,6 +97,7 @@ class AffiliationSelect extends React.Component {
         }
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
+            {this.props.required ? this.renderRequired() : null}
             {Setting.getLabel(i18next.t("user:Affiliation"), i18next.t("user:Affiliation - Tooltip"))} :
           </Col>
           <Col span={22} >

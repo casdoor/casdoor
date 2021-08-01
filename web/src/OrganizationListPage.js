@@ -54,6 +54,21 @@ class OrganizationListPage extends React.Component {
       PasswordSalt: "",
       phonePrefix: "86",
       defaultAvatar: "https://casbin.org/img/casbin.svg",
+      accountItems: [
+        {name: "Organization", visible: true, required: true, editable: false, public: true},
+        {name: "ID", visible: false, required: true, editable: false, public: false},
+        {name: "Name", visible: false, required: true, editable: false, public: true},
+        {name: "Display name", visible: true, required: true, editable: true, public: true},
+        {name: "Avatar", visible: true, required: true, editable: true, public: true},
+        {name: "User type", visible: true, required: true, editable: true, public: true},
+        {name: "Password", visible: true, required: true, editable: true, public: true},
+        {name: "Email", visible: true, required: true, editable: true, public: true},
+        {name: "Phone", visible: true, required: true, editable: true, public: true},
+        {name: "Country/Region", visible: true, required: false, editable: true, public: true},
+        {name: "Affiliation", visible: true, required: false, editable: true, public: true},
+        {name: "Tag", visible: true, required: true, editable: true, public: true},
+        {name: "Third-party logins", visible: true, required: false, editable: true, public: true},
+      ],
     }
   }
 
@@ -128,7 +143,7 @@ class OrganizationListPage extends React.Component {
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
-              <img src={text} alt={text} width={40} />
+              <img src={text} alt={text} width={40}/>
             </a>
           )
         }
@@ -168,9 +183,9 @@ class OrganizationListPage extends React.Component {
         width: '50px',
         render: (text, record, index) => {
           return (
-              <a target="_blank" rel="noreferrer" href={text}>
-                <img src={text} alt={text} width={40} />
-              </a>
+            <a target="_blank" rel="noreferrer" href={text}>
+              <img src={text} alt={text} width={40}/>
+            </a>
           )
         }
       },
@@ -183,8 +198,10 @@ class OrganizationListPage extends React.Component {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/organizations/${record.name}/users`)}>{i18next.t("general:Users")}</Button>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} onClick={() => this.props.history.push(`/organizations/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary"
+                      onClick={() => this.props.history.push(`/organizations/${record.name}/users`)}>{i18next.t("general:Users")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}}
+                      onClick={() => this.props.history.push(`/organizations/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete organization: ${record.name} ?`}
                 onConfirm={() => this.deleteOrganization(index)}
@@ -199,11 +216,13 @@ class OrganizationListPage extends React.Component {
 
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={organizations} rowKey="name" size="middle"
+               bordered pagination={{pageSize: 100}}
                title={() => (
                  <div>
-                  {i18next.t("general:Organizations")}&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Button type="primary" size="small" onClick={this.addOrganization.bind(this)}>{i18next.t("general:Add")}</Button>
+                   {i18next.t("general:Organizations")}&nbsp;&nbsp;&nbsp;&nbsp;
+                   <Button type="primary" size="small"
+                           onClick={this.addOrganization.bind(this)}>{i18next.t("general:Add")}</Button>
                  </div>
                )}
                loading={organizations === null}

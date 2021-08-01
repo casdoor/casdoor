@@ -116,6 +116,65 @@ func GetMaskedUser(user *User) *User {
 	return user
 }
 
+func GetPrivateUser(user *User) *User {
+	org := GetOrganizationByUser(user)
+	for _, accountItem := range org.AccountItems {
+		if accountItem.Public {
+			continue
+		}
+		switch accountItem.Name {
+		case "Organization":
+			user.Owner = ""
+			break
+		case "ID":
+			user.Id = ""
+			break
+		case "Name":
+			user.Name = ""
+			break
+		case "Display name":
+			user.DisplayName = ""
+			break
+		case "Avatar":
+			user.Avatar = ""
+			break
+		case "User type":
+			user.Type = ""
+			break
+		case "Password":
+			user.Password = ""
+			break
+		case "Email":
+			user.Email = ""
+			break
+		case "Phone":
+			user.Phone = ""
+			break
+		case "Country/Region":
+			user.Region = ""
+			break
+		case "Affiliation":
+			user.Affiliation = ""
+			break
+		case "Tag":
+			user.Tag = ""
+			break
+		case "Third-party logins":
+			user.Github = ""
+			user.Google = ""
+			user.QQ = ""
+			user.WeChat = ""
+			user.Facebook = ""
+			user.DingTalk = ""
+			user.Weibo = ""
+			user.Gitee = ""
+			user.LinkedIn = ""
+			break
+		}
+	}
+	return user
+}
+
 func GetMaskedUsers(users []*User) []*User {
 	for _, user := range users {
 		user = GetMaskedUser(user)
