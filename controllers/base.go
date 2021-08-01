@@ -34,7 +34,7 @@ func (c *ApiController) GetSessionUsername() string {
 	sessionData := c.GetSessionData()
 	if sessionData != nil &&
 		sessionData.ExpireTime != 0 &&
-		sessionData.ExpireTime < time.Now().Unix() {
+		sessionData.ExpireTime > time.Now().Unix() {
 		c.SetSessionUsername("")
 		c.SetSessionData(nil)
 		return ""
