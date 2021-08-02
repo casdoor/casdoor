@@ -517,7 +517,7 @@ class App extends Component {
     return (
       <div id="parent-area">
         <BackTop />
-        <CustomGithubCorner />
+        {/*<CustomGithubCorner />*/}
         <div id="content-wrap" style={{flexDirection: "column"}}>
           {
             this.renderContent()
