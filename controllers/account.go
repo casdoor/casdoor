@@ -82,7 +82,7 @@ func (c *ApiController) Signup() {
 	var resp Response
 
 	if c.GetSessionUsername() != "" {
-		c.ResponseErrorWithData("Please sign out first before signing up", c.GetSessionUsername())
+		c.ResponseError("Please sign out first before signing up", c.GetSessionUsername())
 		return
 	}
 
@@ -211,9 +211,7 @@ func (c *ApiController) GetAccount() {
 
 	user := object.GetUser(userId)
 	if user == nil {
-		resp := Response{Status: "error", Msg: fmt.Sprintf("The user: %s doesn't exist", userId)}
-		c.Data["json"] = resp
-		c.ServeJSON()
+		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
 		return
 	}
 
@@ -245,18 +243,14 @@ func (c *ApiController) UploadAvatar() {
 	avatarBase64 := c.Ctx.Request.Form.Get("avatarfile")
 	index := strings.Index(avatarBase64, ",")
 	if index < 0 || avatarBase64[0:index] != "data:image/png;base64" {
-		resp = Response{Status: "error", Msg: "File encoding error"}
-		c.Data["json"] = resp
-		c.ServeJSON()
+		c.ResponseError("File encoding error")
 		return
 	}
 
 	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index+1:])
 	msg := object.UploadAvatar(provider, user.GetId(), dist)
 	if msg != "" {
-		resp = Response{Status: "error", Msg: msg}
-		c.Data["json"] = resp
-		c.ServeJSON()
+		c.ResponseError(msg)
 		return
 	}
 	user.Avatar = fmt.Sprintf("%s%s.png?time=%s", object.GetAvatarPath(provider), user.GetId(), util.GetCurrentUnixTime())

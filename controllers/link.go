@@ -43,9 +43,7 @@ func (c *ApiController) Unlink() {
 	value := object.GetUserField(user, providerType)
 
 	if value == "" {
-		resp = Response{Status: "error", Msg: "Please link first", Data: value}
-		c.Data["json"] = resp
-		c.ServeJSON()
+		c.ResponseError("Please link first", value)
 		return
 	}
 

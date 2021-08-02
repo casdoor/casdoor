@@ -27,21 +27,13 @@ import (
 	"github.com/casbin/casdoor/util"
 )
 
-func codeToResponse(code *object.Code) *Response {
-	if code.Code == "" {
-		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
-	} else {
-		return &Response{Status: "ok", Msg: "", Data: code.Code}
-	}
-}
-
-func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) *Response {
+func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) {
 	userId := user.GetId()
-	resp := &Response{}
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-		resp = &Response{Status: "ok", Msg: "", Data: userId}
+		c.Data["json"] = Response{Status: "ok", Msg: "", Data: userId}
+		c.ServeJSON()
 	} else if form.Type == ResponseTypeCode {
 		clientId := c.Input().Get("clientId")
 		responseType := c.Input().Get("responseType")
@@ -50,26 +42,30 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		state := c.Input().Get("state")
 
 		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state)
-		resp = codeToResponse(code)
+		if code.Code == "" {
+			c.ResponseError(code.Message, code.Code)
+		} else {
+			c.Data["json"] = Response{Status: "ok", Msg: "", Data: code.Code}
+			c.ServeJSON()
+		}
 
 		if application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
 		}
 	} else {
-		resp = &Response{Status: "error", Msg: fmt.Sprintf("Unknown response type: %s", form.Type)}
+		c.ResponseError(fmt.Sprintf("Unknown response type: %s", form.Type))
+		return
 	}
 
 	// if user did not check auto signin
-	if resp.Status == "ok" && !form.AutoSignin {
+	if !form.AutoSignin {
 		timestamp := time.Now().Unix()
 		timestamp += 3600 * 24
 		c.SetSessionData(&SessionData{
 			ExpireTime: timestamp,
 		})
 	}
-
-	return resp
 }
 
 // @Title GetApplicationLogin
@@ -82,8 +78,6 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 // @Success 200 {object} controllers.api_controller.Response The Response object
 // @router /update-application [get]
 func (c *ApiController) GetApplicationLogin() {
-	var resp Response
-
 	clientId := c.Input().Get("clientId")
 	responseType := c.Input().Get("responseType")
 	redirectUri := c.Input().Get("redirectUri")
@@ -92,11 +86,11 @@ func (c *ApiController) GetApplicationLogin() {
 
 	msg, application := object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
 	if msg != "" {
-		resp = Response{Status: "error", Msg: msg, Data: application}
-	} else {
-		resp = Response{Status: "ok", Msg: "", Data: application}
+		c.ResponseError(msg, application)
+		return
 	}
-	c.Data["json"] = resp
+
+	c.Data["json"] = Response{Status: "ok", Msg: "", Data: application}
 	c.ServeJSON()
 }
 
@@ -115,22 +109,17 @@ func setHttpClient(idProvider idp.IdProvider, providerType string) {
 // @Success 200 {object} controllers.api_controller.Response The Response object
 // @router /login [post]
 func (c *ApiController) Login() {
-	resp := &Response{Status: "null", Msg: ""}
 	var form RequestForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
-		resp = &Response{Status: "error", Msg: err.Error()}
-		c.Data["json"] = resp
-		c.ServeJSON()
+		c.ResponseError(err.Error())
 		return
 	}
 
 	if form.Username != "" {
 		if form.Type == ResponseTypeLogin {
 			if c.GetSessionUsername() != "" {
-				resp = &Response{Status: "error", Msg: "Please log out first before signing in", Data: c.GetSessionUsername()}
-				c.Data["json"] = resp
-				c.ServeJSON()
+				c.ResponseError("Please log out first before signing in", c.GetSessionUsername())
 				return
 			}
 		}
@@ -180,12 +169,14 @@ func (c *ApiController) Login() {
 			case "email":
 				if user.Email != form.Email {
 					c.ResponseError("wrong email!")
+					return
 				}
 				object.DisableVerificationCode(form.Email)
 				break
 			case "phone":
 				if user.Phone != form.Email {
 					c.ResponseError("wrong phone!")
+					return
 				}
 				object.DisableVerificationCode(form.Email)
 				break
@@ -196,10 +187,11 @@ func (c *ApiController) Login() {
 		}
 
 		if msg != "" {
-			resp = &Response{Status: "error", Msg: msg, Data: ""}
+			c.ResponseError(msg)
+			return
 		} else {
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
-			resp = c.HandleLoggedIn(application, user, &form)
+			c.HandleLoggedIn(application, user, &form)
 
 			record := util.Records(c.Ctx)
 			record.Organization = application.Organization
@@ -215,42 +207,32 @@ func (c *ApiController) Login() {
 
 		idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
 		if idProvider == nil {
-			resp = &Response{Status: "error", Msg: fmt.Sprintf("provider: %s does not exist", provider.Type)}
-			c.Data["json"] = resp
-			c.ServeJSON()
+			c.ResponseError(fmt.Sprintf("provider: %s does not exist", provider.Type))
 			return
 		}
 
 		setHttpClient(idProvider, provider.Type)
 
 		if form.State != beego.AppConfig.String("authState") && form.State != application.Name {
-			resp = &Response{Status: "error", Msg: fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("authState"), form.State)}
-			c.Data["json"] = resp
-			c.ServeJSON()
+			c.ResponseError(fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("authState"), form.State))
 			return
 		}
 
 		// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
 		token, err := idProvider.GetToken(form.Code)
 		if err != nil {
-			resp = &Response{Status: "error", Msg: err.Error()}
-			c.Data["json"] = resp
-			c.ServeJSON()
+			c.ResponseError(err.Error())
 			return
 		}
 
 		if !token.Valid() {
-			resp = &Response{Status: "error", Msg: "Invalid token"}
-			c.Data["json"] = resp
-			c.ServeJSON()
+			c.ResponseError("Invalid token")
 			return
 		}
 
 		userInfo, err := idProvider.GetUserInfo(token)
 		if err != nil {
-			resp = &Response{Status: "error", Msg: fmt.Sprintf("Failed to login in: %s", err.Error())}
-			c.Data["json"] = resp
-			c.ServeJSON()
+			c.ResponseError(fmt.Sprintf("Failed to login in: %s", err.Error()))
 			return
 		}
 
@@ -276,7 +258,7 @@ func (c *ApiController) Login() {
 				//	object.LinkMemberAccount(userId, "avatar", avatar)
 				//}
 
-				resp = c.HandleLoggedIn(application, user, &form)
+				c.HandleLoggedIn(application, user, &form)
 
 				record := util.Records(c.Ctx)
 				record.Organization = application.Organization
@@ -286,16 +268,12 @@ func (c *ApiController) Login() {
 			} else {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
-					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username, userInfo.DisplayName)}
-					c.Data["json"] = resp
-					c.ServeJSON()
+					c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username, userInfo.DisplayName))
 					return
 				}
 
 				if !providerItem.CanSignUp {
-					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up", provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type)}
-					c.Data["json"] = resp
-					c.ServeJSON()
+					c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up", provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
 					return
 				}
 
@@ -324,7 +302,7 @@ func (c *ApiController) Login() {
 
 				object.LinkUserAccount(user, provider.Type, userInfo.Id)
 
-				resp = c.HandleLoggedIn(application, user, &form)
+				c.HandleLoggedIn(application, user, &form)
 
 				record := util.Records(c.Ctx)
 				record.Organization = application.Organization
@@ -336,9 +314,7 @@ func (c *ApiController) Login() {
 		} else { // form.Method != "signup"
 			userId := c.GetSessionUsername()
 			if userId == "" {
-				resp = &Response{Status: "error", Msg: "The account does not exist", Data: userInfo}
-				c.Data["json"] = resp
-				c.ServeJSON()
+				c.ResponseError("The account does not exist", userInfo)
 				return
 			}
 
@@ -347,9 +323,7 @@ func (c *ApiController) Login() {
 				oldUser = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
 			}
 			if oldUser != nil {
-				resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)", provider.Type, userInfo.Username, userInfo.DisplayName, oldUser.Name, oldUser.DisplayName)}
-				c.Data["json"] = resp
-				c.ServeJSON()
+				c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)", provider.Type, userInfo.Username, userInfo.DisplayName, oldUser.Name, oldUser.DisplayName))
 				return
 			}
 
@@ -360,9 +334,12 @@ func (c *ApiController) Login() {
 
 			isLinked := object.LinkUserAccount(user, provider.Type, userInfo.Id)
 			if isLinked {
-				resp = &Response{Status: "ok", Msg: "", Data: isLinked}
+				c.Data["json"] = Response{Status: "ok", Msg: "", Data: isLinked}
+				c.ServeJSON()
+				return
 			} else {
-				resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
+				c.ResponseError("Failed to link user account", isLinked)
+				return
 			}
 			//if len(object.GetMemberAvatar(userId)) == 0 {
 			//	avatar := UploadAvatarToStorage(tempUserAccount.AvatarUrl, userId)
@@ -373,6 +350,6 @@ func (c *ApiController) Login() {
 		panic("unknown authentication type (not password or provider), form = " + util.StructToJson(form))
 	}
 
-	c.Data["json"] = resp
+	c.Data["json"] = Response{Status: "null"}
 	c.ServeJSON()
 }
