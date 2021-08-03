@@ -27,6 +27,7 @@ import ProviderTable from "./ProviderTable";
 import SignupTable from "./SignupTable";
 import PromptPage from "./auth/PromptPage";
 
+const { TextArea } = Input;
 const { Option } = Select;
 
 class ApplicationEditPage extends React.Component {
@@ -277,6 +278,16 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <Input prefix={<LinkOutlined/>} value={this.state.application.affiliationUrl} onChange={e => {
               this.updateApplicationField('affiliationUrl', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Terms of Use"), i18next.t("provider:Terms of Use - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <TextArea autoSize={{minRows: 1, maxRows: 6}} value={this.state.application.termsOfUse} onChange={e => {
+              this.updateApplicationField('termsOfUse', e.target.value);
             }} />
           </Col>
         </Row>

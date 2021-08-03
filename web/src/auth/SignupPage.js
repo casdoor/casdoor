@@ -14,7 +14,7 @@
 
 import React from 'react';
 import {Link} from "react-router-dom";
-import {Form, Input, Checkbox, Button, Row, Col, Result} from 'antd';
+import {Form, Input, Checkbox, Button, Row, Col, Result, Modal} from 'antd';
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import i18next from "i18next";
@@ -71,6 +71,7 @@ class SignupPage extends React.Component {
       validEmail: false,
       validPhone: false,
       region: "",
+      isTermsOfUseVisible: false,
     };
 
     this.form = React.createRef();
@@ -388,13 +389,43 @@ class SignupPage extends React.Component {
         >
           <Checkbox>
             {i18next.t("signup:Accept")}&nbsp;
-            <Link to={"/agreement"}>
+            <Link onClick={() => {
+              this.setState({
+                isTermsOfUseVisible: true,
+              });
+            }}>
               {i18next.t("signup:Terms of Use")}
             </Link>
           </Checkbox>
         </Form.Item>
       )
     }
+  }
+
+  renderModal() {
+    return (
+      <Modal
+        title={i18next.t("signup:Terms of Use")}
+        visible={this.state.isTermsOfUseVisible}
+        closable={false}
+        footer={[
+          <Button key="agree" type="primary" onClick={() => {
+            this.setState({
+              isTermsOfUseVisible: false,
+            });
+          }}>
+            {i18next.t("user:OK")}
+          </Button>,
+          // <Button key="decline" onClick={() => {
+          //   this.props.history.goBack();
+          // }}>
+          //   {i18next.t("signup:Decline")}
+          // </Button>,
+        ]}
+      >
+        <div dangerouslySetInnerHTML={{__html: this.state.application.termsOfUse}} />
+      </Modal>
+    )
   }
 
   renderForm(application) {
@@ -493,6 +524,9 @@ class SignupPage extends React.Component {
             </div>
           </Col>
         </Row>
+        {
+          this.renderModal()
+        }
       </div>
     )
   }
