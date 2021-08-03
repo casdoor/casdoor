@@ -49,15 +49,23 @@ export const CropperDiv = (props) => {
     };
 
     const uploadAvatar = () => {
-        let canvas = cropper.getCroppedCanvas();
-        if (canvas === null) {
-            Setting.showMessage("error", "You must select a picture first!");
-            return false;
-        }
-        // Setting.showMessage("success", "uploading...");
-        const userId = `${user.owner}/${user.name}`;
-        UserBackend.uploadFile("avatar", userId, canvas.toDataURL());
-        return true;
+        cropper.getCroppedCanvas().toBlob(blob => {
+            if (blob === null) {
+                Setting.showMessage("error", "You must select a picture first!");
+                return false;
+            }
+            // Setting.showMessage("success", "uploading...");
+            const userId = `${user.owner}/${user.name}`;
+            UserBackend.uploadFile("avatar", userId, blob)
+              .then((res) => {
+                  if (res.status === "ok") {
+                      window.location.href = "/account";
+                  } else {
+                      Setting.showMessage("error", res.msg);
+                  }
+              });
+            return true;
+        });
     }
 
     const showModal = () => {

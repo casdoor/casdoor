@@ -13,12 +13,13 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
-import {LinkOutlined} from "@ant-design/icons";
+import {Button, Card, Col, Input, Row, Select, Switch, Upload} from 'antd';
+import {LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as UserBackend from "./backend/UserBackend";
 import SignupPage from "./auth/SignupPage";
 import LoginPage from "./auth/LoginPage";
 import i18next from "i18next";
@@ -26,8 +27,6 @@ import UrlTable from "./UrlTable";
 import ProviderTable from "./ProviderTable";
 import SignupTable from "./SignupTable";
 import PromptPage from "./auth/PromptPage";
-
-const { TextArea } = Input;
 const { Option } = Select;
 
 class ApplicationEditPage extends React.Component {
@@ -39,6 +38,7 @@ class ApplicationEditPage extends React.Component {
       application: null,
       organizations: [],
       providers: [],
+      uploading: false,
     };
   }
 
@@ -90,6 +90,25 @@ class ApplicationEditPage extends React.Component {
     this.setState({
       application: application,
     });
+  }
+
+  handleUpload(info) {
+    if (info.file.type !== "text/html") {
+      Setting.showMessage("error", i18next.t("provider:Please select a HTML file"))
+      return
+    }
+    this.setState({uploading: true})
+    UserBackend.uploadFile("termsofuse", `${this.state.applicationName}/termsofuse`, info.file)
+      .then(res => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Upload success"))
+          this.updateApplicationField("termsOfUse", res.data)
+        } else {
+          Setting.showMessage("error", res.msg)
+        }
+      }).finally(() => {
+        this.setState({uploading: false})
+    })
   }
 
   renderApplication() {
@@ -286,9 +305,13 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:Terms of Use"), i18next.t("provider:Terms of Use - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <TextArea autoSize={{minRows: 1, maxRows: 6}} value={this.state.application.termsOfUse} onChange={e => {
-              this.updateApplicationField('termsOfUse', e.target.value);
-            }} />
+            <Input value={this.state.application.termsOfUse} style={{marginBottom: "10px"}} onChange={e => {
+              this.updateApplicationField("termsOfUse", e.target.value)
+            }}/>
+            <Upload maxCount={1} accept=".html" showUploadList={false}
+                    beforeUpload={file => {return false}} onChange={info => {this.handleUpload(info)}}>
+              <Button icon={<UploadOutlined />} loading={this.state.uploading}>Click to Upload</Button>
+            </Upload>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
