@@ -30,7 +30,7 @@ type Record struct {
 }
 
 func Records(ctx *context.Context) *Record {
-	ip := strings.Replace(getIPFromRequest(ctx.Request), ": ", "", -1)
+	ip := strings.Replace(GetIPFromRequest(ctx.Request), ": ", "", -1)
 	currenttime := GetCurrentTime()
 	requesturi := ctx.Request.RequestURI
 	action := strings.Replace(ctx.Request.URL.Path, "/api/", "", -1)

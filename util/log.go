@@ -44,7 +44,7 @@ func GetIPInfo(clientIP string) string {
 	return res
 }
 
-func getIPFromRequest(req *http.Request) string {
+func GetIPFromRequest(req *http.Request) string {
 	clientIP := req.Header.Get("x-forwarded-for")
 	if clientIP == "" {
 		ipPort := strings.Split(req.RemoteAddr, ":")
@@ -62,11 +62,11 @@ func getIPFromRequest(req *http.Request) string {
 }
 
 func LogInfo(ctx *context.Context, f string, v ...interface{}) {
-	ipString := fmt.Sprintf("(%s) ", getIPFromRequest(ctx.Request))
+	ipString := fmt.Sprintf("(%s) ", GetIPFromRequest(ctx.Request))
 	logs.Info(ipString+f, v...)
 }
 
 func LogWarning(ctx *context.Context, f string, v ...interface{}) {
-	ipString := fmt.Sprintf("(%s) ", getIPFromRequest(ctx.Request))
+	ipString := fmt.Sprintf("(%s) ", GetIPFromRequest(ctx.Request))
 	logs.Warning(ipString+f, v...)
 }

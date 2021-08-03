@@ -40,8 +40,7 @@ func (c *ApiController) SendVerificationCode() {
 	checkType := c.Ctx.Request.Form.Get("checkType")
 	checkId := c.Ctx.Request.Form.Get("checkId")
 	checkKey := c.Ctx.Request.Form.Get("checkKey")
-	remoteAddr := c.Ctx.Request.RemoteAddr
-	remoteAddr = remoteAddr[:strings.LastIndex(remoteAddr, ":")]
+	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
 
 	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || strings.Index(orgId, "/") < 0 || len(checkType) == 0 || len(checkId) == 0 || len(checkKey) == 0 {
 		c.ResponseError("Missing parameter.")

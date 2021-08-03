@@ -423,7 +423,7 @@ class SignupPage extends React.Component {
           // </Button>,
         ]}
       >
-        <div dangerouslySetInnerHTML={{__html: this.state.application.termsOfUse}} />
+        <div dangerouslySetInnerHTML={{__html: this.state.application?.termsOfUse}} />
       </Modal>
     )
   }
