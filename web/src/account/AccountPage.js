@@ -18,7 +18,10 @@ import UserEditPage from "../UserEditPage";
 class AccountPage extends React.Component {
   render() {
     return (
-      <UserEditPage organizationName={this.props.account.owner} userName={this.props.account.name} account={this.props.account} />
+      <UserEditPage organizationName={this.props.account.owner}
+                    accountItems={this.props.account.organization.accountItems}
+                    userName={this.props.account.name}
+                    account={this.props.account}/>
     )
   }
 }

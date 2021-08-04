@@ -159,13 +159,15 @@ class OAuthWidget extends React.Component {
             }
           </span>
           {
-            linkedValue === "" ? (
-              <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "link")}>
-                <Button style={{marginLeft: '20px', width: '80px'}} type="primary">{i18next.t("user:Link")}</Button>
-              </a>
-            ) : (
-              <Button disabled={!providerItem.canUnlink} style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(provider.type)}>{i18next.t("user:Unlink")}</Button>
-            )
+            this.props.disabled ? null :
+              linkedValue === "" ? (
+                <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "link")}>
+                  <Button style={{marginLeft: '20px', width: '80px'}} type="primary">{i18next.t("user:Link")}</Button>
+                </a>
+              ) : (
+                <Button disabled={!providerItem.canUnlink} style={{marginLeft: '20px', width: '80px'}}
+                        onClick={() => this.unlinkUser(provider.type)}>{i18next.t("user:Unlink")}</Button>
+              )
           }
         </Col>
       </Row>

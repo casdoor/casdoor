@@ -14,6 +14,14 @@
 
 package object
 
+type SignupItem struct {
+	Name     string `json:"name"`
+	Visible  bool   `json:"visible"`
+	Required bool   `json:"required"`
+	Prompted bool   `json:"prompted"`
+	Rule     string `json:"rule"`
+}
+
 func (application *Application) getProviderByCategory(category string) *Provider {
 	providers := GetProviders(application.Owner)
 	m := map[string]*Provider{}

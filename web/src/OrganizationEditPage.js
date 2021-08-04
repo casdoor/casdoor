@@ -20,6 +20,8 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./LdapTable";
+import AccountTable from "./AccountTable";
+import UserEditPage from "./UserEditPage";
 
 const { Option } = Select;
 
@@ -31,6 +33,7 @@ class OrganizationEditPage extends React.Component {
       organizationName: props.match.params.organizationName,
       organization: null,
       ldaps: null,
+      previewRole: "normal-user"
     };
   }
 
@@ -78,6 +81,39 @@ class OrganizationEditPage extends React.Component {
     this.setState({
       organization: organization,
     });
+  }
+
+  renderPreview() {
+    return (
+      <React.Fragment>
+        <Col offset={2} span={20} style={{marginTop: "10px"}}>
+          <Button type="primary" style={{width: "160px"}}>
+            <a target="_blank" rel="noreferrer" href={"/account"}>{i18next.t("organization:Test user edit page..")}</a>
+          </Button>
+          <Select value={this.state.previewRole || undefined}
+                  onChange={value => this.setState({previewRole: value})}
+                  style={{width: "140px", marginLeft: "10px"}}>
+            <Option value="admin">Admin</Option>
+            <Option value="normal-user">Normal User</Option>
+          </Select>
+        </Col>
+        <Col offset={2} span={20} style={{display: "flex", flexDirection: "column", marginTop: "10px"}}>
+          <div style={{
+            marginTop: "10px",
+            border: "1px solid rgb(217,217,217)",
+            boxShadow: "10px 10px 5px #888888",
+            alignItems: "center",
+            overflow: "auto",
+            flexDirection: "column",
+            flex: "auto"
+          }}>
+            <UserEditPage organizationName={this.props.account.owner}
+                          accountItems={this.state.organization.accountItems} userName={this.props.account.name}
+                          account={this.state.previewRole === "admin" ? this.props.account : ""} isPreview={true}/>
+          </div>
+        </Col>
+      </React.Fragment>
+    )
   }
 
   renderOrganization() {
@@ -203,6 +239,21 @@ class OrganizationEditPage extends React.Component {
                 </a>
               </Col>
             </Row>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:Account items"), i18next.t("organization:Account items - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <AccountTable
+                title={i18next.t("application:Account items")}
+                table={this.state.organization.accountItems}
+                onUpdateTable={(value) => { this.updateOrganizationField('accountItems', value)}}
+            />
+            {
+              this.renderPreview()
+            }
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}}>

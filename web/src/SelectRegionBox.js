@@ -44,6 +44,7 @@ class SelectRegionBox extends React.Component {
                   filterOption={(input, option) =>
                       option.label.indexOf(input) >= 0
                   }
+                  disabled={this.props.disabled}
           >
             {
                 Setting.CountryRegionData.map((item, index) => (

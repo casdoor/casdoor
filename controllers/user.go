@@ -51,8 +51,17 @@ func (c *ApiController) GetUsers() {
 // @router /get-user [get]
 func (c *ApiController) GetUser() {
 	id := c.Input().Get("id")
+	user := object.GetUser(id)
 
-	c.Data["json"] = object.GetMaskedUser(object.GetUser(id))
+	sessionData := c.GetSessionData()
+	if sessionData != nil {
+		sessionUser := object.GetUser(c.GetSessionUsername())
+		if !sessionUser.IsGlobalAdmin && !sessionUser.IsAdmin && user.Id != sessionUser.Id {
+			object.GetPrivateUser(user)
+		}
+	}
+
+	c.Data["json"] = object.GetMaskedUser(user)
 	c.ServeJSON()
 }
 
