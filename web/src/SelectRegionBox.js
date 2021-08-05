@@ -42,7 +42,7 @@ class SelectRegionBox extends React.Component {
                   placeholder="Please select country/region"
                   onChange={(value => {this.onChange(value);})}
                   filterOption={(input, option) =>
-                      option.label.indexOf(input) >= 0
+                      option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
                   }
                   disabled={this.props.disabled}
           >

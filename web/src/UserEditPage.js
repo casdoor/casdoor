@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
+import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -72,7 +72,6 @@ class UserEditPage extends React.Component {
     if (Setting.isAdminUser(this.props.account)) {
       for (let accountItem in accountMap) {
         accountItems.push({"name": accountItem})
-        console.log(accountItems)
       }
     } else {
       accountItems = this.props.accountItems;
@@ -150,19 +149,18 @@ class UserEditPage extends React.Component {
     switch (accountItem.name) {
       case "Organization":
         return (
-          <Row style={{marginTop: '10px'}}>
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Row style={{marginTop: "10px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
               {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
             </Col>
             <Col span={22}>
-              <Select virtual={false} style={{width: '100%'}} disabled={!Setting.isAdminUser(this.props.account)}
+              <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)}
                       value={this.state.user.owner} onChange={(value => {
-                this.updateUserField('owner', value);
+                this.updateUserField("owner", value);
               })}>
                 {
-                  this.state.organizations.map((organization, index) => <Option key={index}
-                                                                                value={organization.name}>{organization.name}</Option>)
+                  this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
                 }
               </Select>
             </Col>
@@ -170,8 +168,8 @@ class UserEditPage extends React.Component {
         )
       case "ID":
         return (
-          <Row style={{marginTop: '20px'}}>
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Row key={accountItem.name} style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
               {Setting.getLabel("ID", i18next.t("general:ID - Tooltip"))} :
             </Col>
@@ -182,65 +180,62 @@ class UserEditPage extends React.Component {
         )
       case "Name":
         return (
-          <Row style={{marginTop: '20px'}}>
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Row key={accountItem.name} style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
               {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
             </Col>
             <Col span={22}>
               <Input value={this.state.user.name} disabled={true} onChange={e => {
-                this.updateUserField('name', e.target.value);
+                this.updateUserField("name", e.target.value);
               }}/>
             </Col>
           </Row>
         )
       case "Display name":
         return (
-          <Row style={{marginTop: '20px'}}>
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Row key={accountItem.name} style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
               {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
             </Col>
             <Col span={22}>
               <Input value={this.state.user.displayName} disabled={!accountItem.editable} onChange={e => {
-                this.updateUserField('displayName', e.target.value);
+                this.updateUserField("displayName", e.target.value);
               }}/>
             </Col>
           </Row>
         )
       case "Avatar":
         return (
-          <Row style={{marginTop: '20px'}}>
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Row key={accountItem.name} style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
               {Setting.getLabel(i18next.t("general:Avatar"), i18next.t("general:Avatar - Tooltip"))} :
             </Col>
             <Col span={22}>
-              <Row style={{marginTop: '20px'}}>
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+              <Row style={{marginTop: "20px"}}>
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {i18next.t("general:URL")}:
                 </Col>
                 <Col span={22}>
                   <Input prefix={<LinkOutlined/>} value={this.state.user.avatar} disabled={!accountItem.editable}
-                         onChange={e => {
-                           this.updateUserField('avatar', e.target.value);
-                         }}/>
+                         onChange={e => this.updateUserField("avatar", e.target.value)}/>
                 </Col>
               </Row>
-              <Row style={{marginTop: '20px'}}>
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+              <Row style={{marginTop: "20px"}}>
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {i18next.t("general:Preview")}:
                 </Col>
                 <Col span={22}>
                   <a target="_blank" rel="noreferrer" href={this.state.user.avatar}>
-                    <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90}
-                         style={{marginBottom: '20px'}}/>
+                    <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: "20px"}}/>
                   </a>
                 </Col>
               </Row>
               {
                 accountItem.editable ? (
-                  <Row style={{marginTop: '20px'}}>
+                  <Row style={{marginTop: "20px"}}>
                     <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`}
                                 title={i18next.t("user:Upload a photo")} targetFunction={UserBackend.uploadAvatar}/>
                   </Row>) : null
@@ -250,19 +245,16 @@ class UserEditPage extends React.Component {
         )
       case "User type":
         return (
-          <Row style={{marginTop: '20px'}}>
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Row key={accountItem.name} style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
               {Setting.getLabel(i18next.t("general:User type"), i18next.t("general:User type - Tooltip"))} :
             </Col>
             <Col span={22}>
-              <Select virtual={false} style={{width: '100%'}} value={this.state.user.type}
-                      disabled={!accountItem.editable} onChange={(value => {
-                this.updateUserField('type', value);
-              })}>
+              <Select virtual={false} style={{width: "100%"}} value={this.state.user.type}
+                      disabled={!accountItem.editable} onChange={(value => {this.updateUserField("type", value);})}>
                 {
-                  ['normal-user']
-                    .map((item, index) => <Option key={index} value={item}>{item}</Option>)
+                  ["normal-user"].map((item, index) => <Option key={index} value={item}>{item}</Option>)
                 }
               </Select>
             </Col>
@@ -270,8 +262,8 @@ class UserEditPage extends React.Component {
         )
       case "Password":
         return accountItem.editable ? (
-          <Row style={{marginTop: '20px'}}>
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Row key={accountItem.name} style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
               {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
             </Col>
@@ -282,12 +274,12 @@ class UserEditPage extends React.Component {
         ) : null
       case "Email":
         return (
-          <Row style={{marginTop: '20px'}}>
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Row key={accountItem.name} style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
               {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
             </Col>
-            <Col style={{paddingRight: '20px'}} span={11}>
+            <Col style={{paddingRight: "20px"}} span={11}>
               <Input value={this.state.user.email} disabled/>
             </Col>
             {
@@ -303,12 +295,12 @@ class UserEditPage extends React.Component {
         )
       case "Phone":
         return (
-          <Row style={{marginTop: '20px'}}>
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Row key={accountItem.name} style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
               {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
             </Col>
-            <Col style={{paddingRight: '20px'}} span={11}>
+            <Col style={{paddingRight: "20px"}} span={11}>
               <Input value={this.state.user.phone}
                      addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`} disabled/>
             </Col>
@@ -326,8 +318,8 @@ class UserEditPage extends React.Component {
         )
       case "Country/Region":
         return (
-          <Row style={{marginTop: '20px'}}>
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Row key={accountItem.name} style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
               {Setting.getLabel(i18next.t("user:Country/Region"), i18next.t("user:Country/Region - Tooltip"))} :
             </Col>
@@ -342,8 +334,8 @@ class UserEditPage extends React.Component {
         //TODO: Add prop "disabled" for AffiliationSelect
         if (!accountItem.editable) {
           return (
-            <Row style={{marginTop: '20px'}}>
-              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            <Row key={accountItem.name} style={{marginTop: "20px"}}>
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {accountItem.required ? this.renderRequired() : null}
                 {Setting.getLabel(i18next.t("user:Affiliation"), i18next.t("user:Affiliation - Tooltip"))} :
               </Col>
@@ -354,6 +346,7 @@ class UserEditPage extends React.Component {
           )
         } else {
           return (this.state.application === null || this.state.user === null) ? null : (
+            //FIXME: Should move <Row> and <Col> to here instead of built into components
             <React.Fragment>
               <AffiliationSelect labelSpan={(Setting.isMobile()) ? 22 : 2}
                                  application={this.state.application}
@@ -361,29 +354,27 @@ class UserEditPage extends React.Component {
                                  onUpdateUserField={(key, value) => {
                                    return this.updateUserField(key, value)
                                  }}
-                                 required={accountItem.required}
+                                 key={accountItem.name}
               />
             </React.Fragment>
           )
         }
       case "Tag":
         return (
-          <Row style={{marginTop: '20px'}}>
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Row key={accountItem.name} style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
               {Setting.getLabel(i18next.t("user:Tag"), i18next.t("user:Tag - Tooltip"))} :
             </Col>
             <Col span={22}>
-              <Input value={this.state.user.tag} disabled={!accountItem.editable} onChange={e => {
-                this.updateUserField('tag', e.target.value);
-              }}/>
+              <Input value={this.state.user.tag} disabled={!accountItem.editable} onChange={e => this.updateUserField("tag", e.target.value)}/>
             </Col>
           </Row>
         )
       case "Third-party logins":
         return !this.isSelfOrAdmin() ? null : (
-          <Row style={{marginTop: '20px'}}>
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Row key={accountItem.name} style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
               {Setting.getLabel(i18next.t("user:Third-party logins"), i18next.t("user:Third-party logins - Tooltip"))} :
             </Col>
@@ -408,62 +399,57 @@ class UserEditPage extends React.Component {
     }
   }
 
+  renderCardTitle() {
+    return (
+      <div>
+        {i18next.t("user:Edit User")}
+        {
+          this.props.isPreview ? null : (
+            <Button type="primary" style={{marginLeft: "10px"}}
+                    onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          )
+        }
+      </div>
+    )
+  }
+
   renderUser() {
     return (
-      <Card size="small" title={
-        <div>
-          {i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
-          {
-            this.props.isPreview ? null : (
-              <Button type="primary" onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
-            )
-          }
-        </div>
-      } style={(Setting.isMobile()) ? {margin: '5px'} : {}} type="inner">
+      <Card size="small" title={this.renderCardTitle()} style={(Setting.isMobile()) ? {margin: "5px"} : {}}
+            type="inner">
         {
-          this.state.accountItems?.map(accountItem => this.renderFormItem(accountItem))
+          this.state.accountItems === null ? null : this.state.accountItems?.map(accountItem => this.renderFormItem(accountItem))
         }
         {
           !Setting.isAdminUser(this.props.account) ? null : (
             <React.Fragment>
-              {/*<Row style={{marginTop: '20px'}} >*/}
-              {/*  <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>*/}
-              {/*    {i18next.t("user:Properties")}:*/}
-              {/*  </Col>*/}
-              {/*  <Col span={22} >*/}
-              {/*    <CodeMirror*/}
-              {/*      value={JSON.stringify(this.state.user.properties, null, 4)}*/}
-              {/*      options={{mode: 'javascript', theme: "material-darker"}}*/}
-              {/*    />*/}
-              {/*  </Col>*/}
-              {/*</Row>*/}
-              <Row style={{marginTop: '20px'}}>
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+              <Row style={{marginTop: "20px"}}>
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("user:Is admin"), i18next.t("user:Is admin - Tooltip"))} :
                 </Col>
                 <Col span={(Setting.isMobile()) ? 22 : 2}>
                   <Switch checked={this.state.user.isAdmin} onChange={checked => {
-                    this.updateUserField('isAdmin', checked);
+                    this.updateUserField("isAdmin", checked);
                   }}/>
                 </Col>
               </Row>
-              <Row style={{marginTop: '20px'}}>
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+              <Row style={{marginTop: "20px"}}>
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("user:Is global admin"), i18next.t("user:Is global admin - Tooltip"))} :
                 </Col>
                 <Col span={(Setting.isMobile()) ? 22 : 2}>
                   <Switch checked={this.state.user.isGlobalAdmin} onChange={checked => {
-                    this.updateUserField('isGlobalAdmin', checked);
+                    this.updateUserField("isGlobalAdmin", checked);
                   }}/>
                 </Col>
               </Row>
-              <Row style={{marginTop: '20px'}}>
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+              <Row style={{marginTop: "20px"}}>
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("user:Is forbidden"), i18next.t("user:Is forbidden - Tooltip"))} :
                 </Col>
                 <Col span={(Setting.isMobile()) ? 22 : 2}>
                   <Switch checked={this.state.user.isForbidden} onChange={checked => {
-                    this.updateUserField('isForbidden', checked);
+                    this.updateUserField("isForbidden", checked);
                   }}/>
                 </Col>
               </Row>
@@ -508,8 +494,8 @@ class UserEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", res.msg);
-          this.updateUserField('owner', this.state.organizationName);
-          this.updateUserField('name', this.state.userName);
+          this.updateUserField("owner", this.state.organizationName);
+          this.updateUserField("name", this.state.userName);
         }
       })
       .catch(error => {
@@ -525,7 +511,7 @@ class UserEditPage extends React.Component {
         }
         {
           this.props.isPreview ? null : (
-            <div style={{marginTop: '20px', marginLeft: '40px'}}>
+            <div style={{marginTop: "20px", marginLeft: "40px"}}>
               <Button type="primary" size="large"
                       onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
             </div>

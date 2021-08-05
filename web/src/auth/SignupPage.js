@@ -231,7 +231,7 @@ class SignupPage extends React.Component {
       )
     } else if (signupItem.name === "Email") {
       return (
-        <React.Fragment>
+        <React.Fragment key="emailBox">
           <Form.Item
             name="email"
             key="email"
@@ -321,7 +321,7 @@ class SignupPage extends React.Component {
       )
     } else if (signupItem.name === "Phone") {
       return (
-        <React.Fragment>
+        <React.Fragment key="phoneBox">
           <Form.Item
             name="phone"
             key="phone"
