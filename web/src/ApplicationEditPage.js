@@ -301,7 +301,7 @@ class ApplicationEditPage extends React.Component {
               table={this.state.application.providers}
               providers={this.state.providers}
               application={this.state.application}
-              onUpdateTable={(value) => { this.updateApplicationField('providers', value)}}
+              onUpdateTable={(value) => {this.updateApplicationField('providers', value)}}
             />
           </Col>
         </Row>

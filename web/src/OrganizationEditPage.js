@@ -109,7 +109,7 @@ class OrganizationEditPage extends React.Component {
           }}>
             <UserEditPage organizationName={this.props.account.owner}
                           accountItems={this.state.organization.accountItems} userName={this.props.account.name}
-                          account={this.state.previewRole === "admin" ? this.props.account : ""} isPreview={true}/>
+                          account={this.state.previewRole === "admin" ? this.props.account : ""}  isPreview={true}/>
           </div>
         </Col>
       </React.Fragment>

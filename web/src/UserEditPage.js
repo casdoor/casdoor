@@ -72,7 +72,6 @@ class UserEditPage extends React.Component {
     if (Setting.isAdminUser(this.props.account)) {
       for (let accountItem in accountMap) {
         accountItems.push({"name": accountItem})
-        console.log(accountItems)
       }
     } else {
       accountItems = this.props.accountItems;

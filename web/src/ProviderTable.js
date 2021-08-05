@@ -38,7 +38,7 @@ class ProviderTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: "Please select a provider", canSignUp: false, canSignIn: true, canUnlink: true, alertType: "None"};
+    let row = {name: "Please select a provider", canSignUp: false, canSignIn: true, isDefault: false, canUnlink: true, alertType: "None"};
     if (table === undefined) {
       table = [];
     }
@@ -113,7 +113,36 @@ class ProviderTable extends React.Component {
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'canSignIn', checked);
+              record.isDefault = false;
             }} />
+          )
+        }
+      },
+      {
+        title: i18next.t("provider:isDefault"),
+        dataIndex: 'isDefault',
+        key: 'isDefault',
+        width: '120px',
+        render: (text, record, index) => {
+          if (record.provider?.category !== "OAuth") {
+            return null;
+          }
+
+          let disabled = false;
+
+          if (table.some(item => item.isDefault && item.name !== record.name)) {
+            disabled = true;
+          }
+
+          if (!this.props.application.enablePassword || !record.canSignIn || !record.prompted) {
+            record.isDefault = false;
+            disabled = true;
+          }
+
+          return (
+            <Switch checked={text} disabled={disabled}
+                    onChange={checked => {this.updateField(table, index, "isDefault", checked)}}
+            />
           )
         }
       },
@@ -147,6 +176,7 @@ class ProviderTable extends React.Component {
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'prompted', checked);
+              record.isDefault = false;
             }} />
           )
         }

@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Checkbox, Col, Form, Input, Result, Row} from "antd";
+import {Button, Checkbox, Col, Form, Input, Result, Row, Spin} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
@@ -380,26 +380,48 @@ class LoginPage extends React.Component {
       return Util.renderMessageLarge(this, this.state.msg);
     }
 
-    return (
-      <Row>
-        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-          <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center"}}>
-            {
-              Setting.renderHelmet(application)
-            }
-            {
-              Setting.renderLogo(application)
-            }
-            {/*{*/}
-            {/*  this.state.clientId !== null ? "Redirect" : null*/}
-            {/*}*/}
-            {
-              this.renderForm(application)
-            }
-          </div>
-        </Col>
-      </Row>
-    )
+    let defaultProvider = null;
+    application.providers?.forEach(provider => {
+      if (provider.isDefault) {
+        defaultProvider = provider;
+      }
+    })
+
+    console.log(this.props.application)
+
+    if (this.props.application === undefined && defaultProvider !== null) {
+      return (
+        <React.Fragment load={window.location.href = Provider.getAuthUrl(application, defaultProvider.provider, "signup")}>
+          {/*TODO: Friendly transition page?*/}
+          {/*<Result*/}
+          {/*  style={{marginTop: "20vh"}}*/}
+          {/*  icon={<Spin />}*/}
+          {/*  title={`Login Casdoor with ${defaultProvider.provider.type}`}*/}
+          {/*/>*/}
+        </React.Fragment>
+      )
+    } else {
+      return (
+        <Row>
+          <Col span={24} style={{display: "flex", justifyContent: "center"}}>
+            <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center"}}>
+              {
+                Setting.renderHelmet(application)
+              }
+              {
+                Setting.renderLogo(application)
+              }
+              {/*{*/}
+              {/*  this.state.clientId !== null ? "Redirect" : null*/}
+              {/*}*/}
+              {
+                this.renderForm(application)
+              }
+            </div>
+          </Col>
+        </Row>
+      )
+    }
   }
 }
 
