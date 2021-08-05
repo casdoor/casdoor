@@ -25,6 +25,7 @@ class SignupTable extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      addBtnDisable: false,
     };
   }
 
@@ -37,8 +38,13 @@ class SignupTable extends React.Component {
     this.updateTable(table);
   }
 
-  addRow(table) {
-    let row = {name: "Please select a signup item", visible: true, required: true, rule: "None"};
+  addRow(table, items) {
+    let deduplicatedArray = Setting.getDeduplicatedArray(items, table, "name")
+    if (deduplicatedArray.length === 0) {
+      this.setState({addBtnDisable: true})
+      return
+    }
+    let row = {name: deduplicatedArray[0].name, visible: true, required: true, rule: "None"};
     if (table === undefined) {
       table = [];
     }
@@ -49,6 +55,7 @@ class SignupTable extends React.Component {
   deleteRow(table, i) {
     table = Setting.deleteRow(table, i);
     this.updateTable(table);
+    this.setState({addBtnDisable: false})
   }
 
   upRow(table, i) {
@@ -62,25 +69,25 @@ class SignupTable extends React.Component {
   }
 
   renderTable(table) {
+    const items = [
+      {id: 'Username', name: 'Username'},
+      {id: 'ID', name: 'ID'},
+      {id: 'Display name', name: 'Display name'},
+      {id: 'Affiliation', name: 'Affiliation'},
+      {id: 'Country/Region', name: 'Country/Region'},
+      {id: 'Email', name: 'Email'},
+      {id: 'Password', name: 'Password'},
+      {id: 'Confirm password', name: 'Confirm password'},
+      {id: 'Phone', name: 'Phone'},
+      {id: 'Agreement', name: 'Agreement'},
+    ];
+
     const columns = [
       {
         title: i18next.t("provider:Name"),
         dataIndex: 'name',
         key: 'name',
         render: (text, record, index) => {
-          const items = [
-            {id: 'Username', name: 'Username'},
-            {id: 'ID', name: 'ID'},
-            {id: 'Display name', name: 'Display name'},
-            {id: 'Affiliation', name: 'Affiliation'},
-            {id: 'Country/Region', name: 'Country/Region'},
-            {id: 'Email', name: 'Email'},
-            {id: 'Password', name: 'Password'},
-            {id: 'Confirm password', name: 'Confirm password'},
-            {id: 'Phone', name: 'Phone'},
-            {id: 'Agreement', name: 'Agreement'},
-          ];
-
           return (
             <Select virtual={false} style={{width: '100%'}}
                     value={text}
@@ -215,7 +222,10 @@ class SignupTable extends React.Component {
              title={() => (
                <div>
                  {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-                 <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+                 <Button style={{marginRight: "5px"}} type="primary" size="small" disabled={this.state.addBtnDisable}
+                         onClick={() => this.addRow(table, items)}>
+                   {i18next.t("general:Add")}
+                 </Button>
                </div>
              )}
       />

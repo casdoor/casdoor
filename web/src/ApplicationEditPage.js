@@ -348,63 +348,63 @@ class ApplicationEditPage extends React.Component {
       signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");
     }
     if (!Setting.isMobile()) {
-    return (
-      <React.Fragment>
-        <Col span={11} style={{display:'flex',flexDirection:'column'}}>
-          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signUpUrl}>
-            <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
-          </a>
-          <br/>
-          <br/>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888" ,alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto'}}>
-            {
-              this.state.application.enablePassword ? (
-                <SignupPage application={this.state.application} />
-              ) : (
-                <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
-              )
-            }
-          </div>
-        </Col>
-        <Col span={11} style={{display:'flex',flexDirection:'column'}}>
-          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signInUrl}>
-            <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
-          </a>
-          <br/>
-          <br/>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto' }}>
-            <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
-          </div>
-        </Col>
-      </React.Fragment>
-    )
-  } else{
-    return(
-      <React.Fragment>
-        <Col span={24} style={{display:'flex',flexDirection:'column'}}>
-          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signUpUrl}>
-            <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
-          </a>
-          <div style={{marginBottom:'10px', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888" ,alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto'}}>
-            {
-              this.state.application.enablePassword ? (
-                <SignupPage application={this.state.application} />
-              ) : (
-                <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
-              )
-            }
-          </div>
-          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signInUrl}>
-            <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
-          </a>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto' }}>
-            <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
-          </div>
-        </Col>
-      </React.Fragment>
-    )
+      return (
+        <React.Fragment>
+          <Col span={11} style={{display:'flex',flexDirection:'column'}}>
+            <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signUpUrl}>
+              <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
+            </a>
+            <br/>
+            <br/>
+            <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888" ,alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto'}}>
+              {
+                this.state.application.enablePassword ? (
+                  <SignupPage application={this.state.application} />
+                ) : (
+                  <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
+                )
+              }
+            </div>
+          </Col>
+          <Col span={11} style={{display:'flex',flexDirection:'column'}}>
+            <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signInUrl}>
+              <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
+            </a>
+            <br/>
+            <br/>
+            <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto' }}>
+              <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
+            </div>
+          </Col>
+        </React.Fragment>
+      )
+    } else{
+      return(
+        <React.Fragment>
+          <Col span={24} style={{display:'flex',flexDirection:'column'}}>
+            <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signUpUrl}>
+              <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
+            </a>
+            <div style={{marginBottom:'10px', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888" ,alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto'}}>
+              {
+                this.state.application.enablePassword ? (
+                  <SignupPage application={this.state.application} />
+                ) : (
+                  <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
+                )
+              }
+            </div>
+            <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signInUrl}>
+              <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
+            </a>
+            <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto' }}>
+              <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
+            </div>
+          </Col>
+        </React.Fragment>
+      )
+    }
   }
-}
 
   renderPreview2() {
     let promptUrl = `/prompt/${this.state.application.name}`;
@@ -448,13 +448,13 @@ class ApplicationEditPage extends React.Component {
   render() {
     return (
       <div>
-      {
-        this.state.application !== null ? this.renderApplication() : null
-      }
-      <div style={{marginTop: '20px', marginLeft: '40px'}}>
-        <Button type="primary" size="large" onClick={this.submitApplicationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+        {
+          this.state.application !== null ? this.renderApplication() : null
+        }
+        <div style={{marginTop: '20px', marginLeft: '40px'}}>
+          <Button type="primary" size="large" onClick={this.submitApplicationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+        </div>
       </div>
-    </div>
     );
   }
 }

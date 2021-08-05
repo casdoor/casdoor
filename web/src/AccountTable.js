@@ -40,6 +40,7 @@ class AccountTable extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      addBtnDisable: false,
     };
   }
 
@@ -52,8 +53,13 @@ class AccountTable extends React.Component {
     this.updateTable(table);
   }
 
-  addRow(table) {
-    let row = {name: "Please select a account item", visible: true, required: true, editable: true, public: true};
+  addRow(table, items) {
+    let deduplicatedArray = Setting.getDeduplicatedArray(items, table, "name")
+    if (deduplicatedArray.length === 0) {
+      this.setState({addBtnDisable: true})
+      return
+    }
+    let row = {name: deduplicatedArray[0].name, visible: true, required: true, editable: true, public: true};
     if (table === undefined) {
       table = [];
     }
@@ -64,6 +70,7 @@ class AccountTable extends React.Component {
   deleteRow(table, i) {
     table = Setting.deleteRow(table, i);
     this.updateTable(table);
+    this.setState({addBtnDisable: false})
   }
 
   upRow(table, i) {
@@ -206,8 +213,8 @@ class AccountTable extends React.Component {
              title={() => (
                <div>
                  {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-                 <Button style={{marginRight: "5px"}} type="primary" size="small"
-                         onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+                 <Button style={{marginRight: "5px"}} type="primary" size="small" disabled={this.state.addBtnDisable}
+                         onClick={() => this.addRow(table, DefaultAccountItem)}>{i18next.t("general:Add")}</Button>
                </div>
              )}
       />
