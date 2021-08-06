@@ -79,7 +79,9 @@
     "Signin URL": "登录URL",
     "Signin URL - Tooltip": "用户的登录地址",
     "ID - Tooltip": "唯一的随机字符串",
-    "Favicon - Tooltip": "网站的图标"
+    "Favicon - Tooltip": "网站的图标",
+    "Back Home": "Back Home",
+    "Sorry, the page you visited does not exist": "Sorry, the page you visited does not exist"
   },
   "signup": {
     "Username": "用户名",

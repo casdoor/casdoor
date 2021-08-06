@@ -79,7 +79,9 @@
     "Signin URL": "Signin URL",
     "Signin URL - Tooltip": "sign in url",
     "ID - Tooltip": "random string",
-    "Favicon - Tooltip": "Application icon"
+    "Favicon - Tooltip": "Application icon",
+    "Back Home": "Back Home",
+    "Sorry, the page you visited does not exist": "Sorry, the page you visited does not exist"
   },
   "signup": {
     "Username": "Username",
