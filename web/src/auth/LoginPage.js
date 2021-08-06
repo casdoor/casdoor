@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Checkbox, Col, Form, Input, Result, Row} from "antd";
+import {Button, Checkbox, Col, Form, Input, Result, Row, Spin} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
@@ -232,7 +232,6 @@ class LoginPage extends React.Component {
           initialValues={{
             organization: application.organization,
             application: application.name,
-            remember: true,
             autoSignin: true,
           }}
           onFinish={(values) => {this.onFinish(values)}}
@@ -379,6 +378,16 @@ class LoginPage extends React.Component {
     const application = this.getApplicationObj();
     if (application === null) {
       return Util.renderMessageLarge(this, this.state.msg);
+    }
+
+    const visibleOAuthProviderItems = application.providers.filter(providerItem => this.isProviderVisible(providerItem));
+    if (this.props.application === undefined && visibleOAuthProviderItems.length === 1) {
+      Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signup"));
+      return (
+        <div style={{textAlign: "center"}}>
+          <Spin size="large" tip={i18next.t("login:Signing in...")} style={{paddingTop: "10%"}} />
+        </div>
+      )
     }
 
     return (
