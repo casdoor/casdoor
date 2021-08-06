@@ -19,6 +19,7 @@ import * as AuthBackend from "./AuthBackend";
 import * as Util from "./Util";
 import {authConfig} from "./Auth";
 import * as Setting from "../Setting";
+import i18next from "i18next";
 
 class AuthCallback extends React.Component {
   constructor(props) {
@@ -121,7 +122,7 @@ class AuthCallback extends React.Component {
       <div style={{textAlign: "center"}}>
         {
           (this.state.msg === null) ? (
-            <Spin size="large" tip="Signing in..." style={{paddingTop: "10%"}} />
+            <Spin size="large" tip={i18next.t("login:Signing in...")} style={{paddingTop: "10%"}} />
           ) : (
             Util.renderMessageLarge(this, this.state.msg)
           )
