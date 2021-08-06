@@ -5,7 +5,7 @@ type AccountItem struct {
 	Visible  bool   `json:"visible"`
 	Required bool   `json:"required"`
 	Editable bool   `json:"editable"`
-	Public   bool `json:"public"`
+	Public   bool   `json:"public"`
 }
 
 func (org *Organization) getAccountItem(itemName string) *AccountItem {

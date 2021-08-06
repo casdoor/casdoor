@@ -24,6 +24,7 @@ import (
 var defaultHttpClient *http.Client
 var proxyHttpClient *http.Client
 
+// InitHttpClient ...
 func InitHttpClient() {
 	// not use proxy
 	defaultHttpClient = http.DefaultClient
@@ -54,6 +55,7 @@ func InitHttpClient() {
 	//println("Response status: %s", resp.Status)
 }
 
+// ResponseError ...
 func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	resp := Response{Status: "error", Msg: error}
 	switch len(data) {
@@ -67,11 +69,13 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	c.ServeJSON()
 }
 
+// ResponseErrorWithData ...
 func (c *ApiController) ResponseErrorWithData(error string, data interface{}) {
 	c.Data["json"] = Response{Status: "error", Msg: error, Data: data}
 	c.ServeJSON()
 }
 
+// RequireSignedIn ...
 func (c *ApiController) RequireSignedIn() (string, bool) {
 	userId := c.GetSessionUsername()
 	if userId == "" {

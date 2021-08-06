@@ -89,18 +89,18 @@ func (idp *LinkedInIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	tokenResp := LinkedInAccessToken{}
 	if err = json.Unmarshal(rbs, &tokenResp); err != nil {
 		return nil, err
 	}
-	
+
 	token := &oauth2.Token{
-		AccessToken:  tokenResp.AccessToken,
+		AccessToken: tokenResp.AccessToken,
 		TokenType:   "Bearer",
-		Expiry:       time.Unix(time.Now().Unix()+tokenResp.ExpiresIn, 0),
+		Expiry:      time.Unix(time.Now().Unix()+tokenResp.ExpiresIn, 0),
 	}
-	
+
 	return token, nil
 }
 
@@ -186,14 +186,14 @@ func (idp *LinkedInIdProvider) GetToken(code string) (*oauth2.Token, error) {
 
 type LinkedInUserInfo struct {
 	FirstName struct {
-		Localized map[string]string `json:"localized"`
+		Localized       map[string]string `json:"localized"`
 		PreferredLocale struct {
 			Country  string `json:"country"`
 			Language string `json:"language"`
 		} `json:"preferredLocale"`
 	} `json:"firstName"`
 	LastName struct {
-		Localized map[string]string `json:"localized"`
+		Localized       map[string]string `json:"localized"`
 		PreferredLocale struct {
 			Country  string `json:"country"`
 			Language string `json:"language"`
@@ -301,7 +301,7 @@ func (idp *LinkedInIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	userInfo := UserInfo{
 		Id:          linkedInUserInfo.Id,
 		DisplayName: username,
-		Username: 	 username,
+		Username:    username,
 		Email:       linkedInUserEmail.Elements[0].Handle.EmailAddress,
 		AvatarUrl:   linkedInUserInfo.ProfilePicture.DisplayImage1.Elements[0].Identifiers[0].Identifier,
 	}

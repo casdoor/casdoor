@@ -97,7 +97,6 @@ func (c *ApiController) GetLdapUser() {
 
 	c.Data["json"] = Response{Status: "ok", Data: resp}
 	c.ServeJSON()
-	return
 }
 
 func (c *ApiController) GetLdaps() {

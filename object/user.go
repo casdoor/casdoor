@@ -125,40 +125,28 @@ func GetPrivateUser(user *User) *User {
 		switch accountItem.Name {
 		case "Organization":
 			user.Owner = ""
-			break
 		case "ID":
 			user.Id = ""
-			break
 		case "Name":
 			user.Name = ""
-			break
 		case "Display name":
 			user.DisplayName = ""
-			break
 		case "Avatar":
 			user.Avatar = ""
-			break
 		case "User type":
 			user.Type = ""
-			break
 		case "Password":
 			user.Password = ""
-			break
 		case "Email":
 			user.Email = ""
-			break
 		case "Phone":
 			user.Phone = ""
-			break
 		case "Country/Region":
 			user.Region = ""
-			break
 		case "Affiliation":
 			user.Affiliation = ""
-			break
 		case "Tag":
 			user.Tag = ""
-			break
 		case "Third-party logins":
 			user.Github = ""
 			user.Google = ""
@@ -169,7 +157,6 @@ func GetPrivateUser(user *User) *User {
 			user.Weibo = ""
 			user.Gitee = ""
 			user.LinkedIn = ""
-			break
 		}
 	}
 	return user
@@ -191,9 +178,9 @@ func GetLastUser(owner string) *User {
 
 	if existed {
 		return &user
-	} else {
-		return nil
 	}
+
+	return nil
 }
 
 func UpdateUser(id string, user *User) bool {

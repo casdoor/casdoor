@@ -21,12 +21,12 @@ import (
 )
 
 type Record struct {
-	ClientIp		string	`xorm:"varchar(100)" json:"clientIp"`
-	Timestamp		string	`xorm:"varchar(100)" json:"timestamp"`
-	Organization		string	`xorm:"varchar(100)" json:"organization"`
-	Username		string	`xorm:"varchar(100)" json:"username"`
-	RequestUri		string	`xorm:"varchar(1000)" json:"requestUri"`
-	Action			string	`xorm:"varchar(1000)" json:"action"`
+	ClientIp     string `xorm:"varchar(100)" json:"clientIp"`
+	Timestamp    string `xorm:"varchar(100)" json:"timestamp"`
+	Organization string `xorm:"varchar(100)" json:"organization"`
+	Username     string `xorm:"varchar(100)" json:"username"`
+	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
+	Action       string `xorm:"varchar(1000)" json:"action"`
 }
 
 func Records(ctx *context.Context) *Record {

@@ -72,6 +72,7 @@ type HumanCheck struct {
 	CaptchaImage interface{} `json:"captchaImage"`
 }
 
+// Signup
 // @Title Signup
 // @Description sign up a new user
 // @Param   username     formData    string  true        "The username to sign up"
@@ -178,6 +179,7 @@ func (c *ApiController) Signup() {
 	c.ServeJSON()
 }
 
+// Logout
 // @Title Logout
 // @Description logout the current user
 // @Success 200 {object} controllers.Response The Response object
@@ -197,6 +199,7 @@ func (c *ApiController) Logout() {
 	c.ServeJSON()
 }
 
+// GetAccount
 // @Title GetAccount
 // @Description get the details of the current account
 // @Success 200 {object} controllers.Response The Response object
@@ -224,6 +227,7 @@ func (c *ApiController) GetAccount() {
 	c.ServeJSON()
 }
 
+// UploadAvatar
 // @Title UploadAvatar
 // @Description upload avatar
 // @Param   avatarfile   formData    string  true        "The base64 encode of avatarfile"
@@ -272,6 +276,7 @@ func (c *ApiController) UploadAvatar() {
 	c.ServeJSON()
 }
 
+// GetHumanCheck ...
 func (c *ApiController) GetHumanCheck() {
 	c.Data["json"] = HumanCheck{Type: "none"}
 

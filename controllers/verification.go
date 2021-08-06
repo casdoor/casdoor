@@ -33,6 +33,7 @@ func (c *ApiController) getCurrentUser() *object.User {
 	return user
 }
 
+// SendVerificationCode ...
 func (c *ApiController) SendVerificationCode() {
 	destType := c.Ctx.Request.Form.Get("type")
 	dest := c.Ctx.Request.Form.Get("dest")
@@ -42,7 +43,7 @@ func (c *ApiController) SendVerificationCode() {
 	checkKey := c.Ctx.Request.Form.Get("checkKey")
 	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
 
-	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || strings.Index(orgId, "/") < 0 || len(checkType) == 0 || len(checkId) == 0 || len(checkKey) == 0 {
+	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || !strings.Contains(orgId, "/") || len(checkType) == 0 || len(checkId) == 0 || len(checkKey) == 0 {
 		c.ResponseError("Missing parameter.")
 		return
 	}
@@ -97,6 +98,7 @@ func (c *ApiController) SendVerificationCode() {
 	c.ServeJSON()
 }
 
+// ResetEmailOrPhone ...
 func (c *ApiController) ResetEmailOrPhone() {
 	userId, ok := c.RequireSignedIn()
 	if !ok {

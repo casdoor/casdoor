@@ -29,6 +29,7 @@ type SessionData struct {
 	ExpireTime int64
 }
 
+// GetSessionUsername ...
 func (c *ApiController) GetSessionUsername() string {
 	// check if user session expired
 	sessionData := c.GetSessionData()
@@ -48,10 +49,12 @@ func (c *ApiController) GetSessionUsername() string {
 	return user.(string)
 }
 
+// SetSessionUsername ...
 func (c *ApiController) SetSessionUsername(user string) {
 	c.SetSession("username", user)
 }
 
+// GetSessionData ...
 func (c *ApiController) GetSessionData() *SessionData {
 	session := c.GetSession("SessionData")
 	if session == nil {
@@ -67,6 +70,7 @@ func (c *ApiController) GetSessionData() *SessionData {
 	return sessionData
 }
 
+// SetSessionData ...
 func (c *ApiController) SetSessionData(s *SessionData) {
 	if s == nil {
 		c.DelSession("SessionData")
