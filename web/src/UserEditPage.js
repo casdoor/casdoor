@@ -255,7 +255,7 @@ class UserEditPage extends React.Component {
           !this.isSelfOrAdmin() ? null : (
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("user:Third-party logins"), i18next.t("user:Third-party logins - Tooltip"))} :
+                {Setting.getLabel(i18next.t("user:3rd-party logins"), i18next.t("user:3rd-party logins - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <div style={{marginBottom: 20}}>
