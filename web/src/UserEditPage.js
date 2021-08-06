@@ -47,7 +47,7 @@ const accountMap = {
   "Country/Region": ["region"],
   "Affiliation": ["affiliation"],
   "Tag": ["tag"],
-  "Third-party logins": ["github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom"],
+  "3rd-party logins": ["github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom"],
 }
 
 class UserEditPage extends React.Component {
@@ -380,12 +380,12 @@ class UserEditPage extends React.Component {
             </Col>
           </Row>
         )
-      case "Third-party logins":
+      case "3rd-party logins":
         return !this.isSelfOrAdmin() ? null : (
           <Row style={{marginTop: '20px'}}>
             <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}
-              {Setting.getLabel(i18next.t("user:Third-party logins"), i18next.t("user:Third-party logins - Tooltip"))} :
+              {Setting.getLabel(i18next.t("user:3rd-party logins"), i18next.t("user:3rd-party logins - Tooltip"))} :
             </Col>
             <Col span={22}>
               <div style={{marginBottom: 20}}>

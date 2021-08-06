@@ -80,7 +80,7 @@ class AccountTable extends React.Component {
             {id: "Phone", name: "Phone"},
             {id: "Affiliation", name: "Affiliation"},
             {id: "Tag", name: "Tag"},
-            {id: "Third-party logins", name: "Third-party logins"},
+            {id: "3rd-party logins", name: "3rd-party logins"},
           ];
 
           return (

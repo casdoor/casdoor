@@ -67,7 +67,7 @@ class OrganizationListPage extends React.Component {
         {name: "Country/Region", visible: true, required: false, editable: true, public: true},
         {name: "Affiliation", visible: true, required: false, editable: true, public: true},
         {name: "Tag", visible: true, required: true, editable: true, public: true},
-        {name: "Third-party logins", visible: true, required: false, editable: true, public: true},
+        {name: "3rd-party logins", visible: true, required: false, editable: true, public: true},
       ],
     }
   }
