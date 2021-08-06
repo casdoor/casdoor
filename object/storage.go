@@ -52,23 +52,23 @@ func getAliyunClient(provider *Provider) oss.StorageInterface {
 func getQiniuClient(provider *Provider) oss.StorageInterface {
 	fmt.Println("Casdoor does not support Qiniu now.")
 	return nil
-//	endpoint := section.Key("endpoint").String()
-//	accessId := section.Key("accessId").String()
-//	accessKey := section.Key("accessKey").String()
-//  domain = section.Key("domain").String()
-//	bucket := section.Key("bucket").String()
-//	region := section.Key("region").String()
-//	if accessId == "" || accessKey == "" || bucket == "" || endpoint == "" || region == "" {
-//		return "Config oss.conf wrong"
-//	}
-//	storage = qiniu.New(&qiniu.Config{
-//		AccessID: accessId,
-//		AccessKey: accessKey,
-//		Bucket: bucket,
-//		Region: region,
-//		Endpoint: endpoint,
-//	})
-//	return ""
+	//	endpoint := section.Key("endpoint").String()
+	//	accessId := section.Key("accessId").String()
+	//	accessKey := section.Key("accessKey").String()
+	//  domain = section.Key("domain").String()
+	//	bucket := section.Key("bucket").String()
+	//	region := section.Key("region").String()
+	//	if accessId == "" || accessKey == "" || bucket == "" || endpoint == "" || region == "" {
+	//		return "Config oss.conf wrong"
+	//	}
+	//	storage = qiniu.New(&qiniu.Config{
+	//		AccessID: accessId,
+	//		AccessKey: accessKey,
+	//		Bucket: bucket,
+	//		Region: region,
+	//		Endpoint: endpoint,
+	//	})
+	//	return ""
 }
 
 func getAwss3Client(provider *Provider) oss.StorageInterface {
@@ -103,11 +103,11 @@ func getStorageClient(provider *Provider) oss.StorageInterface {
 	}
 
 	switch provider.Type {
-	case "Aliyun":
+	case "Aliyun OSS":
 		return getAliyunClient(provider)
 	case "Qiniu":
 		return getQiniuClient(provider)
-	case "AWSS3":
+	case "AWS S3":
 		return getAwss3Client(provider)
 	}
 
@@ -115,22 +115,15 @@ func getStorageClient(provider *Provider) oss.StorageInterface {
 }
 
 func UploadAvatar(provider *Provider, username string, avatar []byte) string {
-	if provider == nil {
-		return "invalid Storage provider"
-	}
 	storage := getStorageClient(provider)
 	if storage == nil {
-		return "oss provider not exists"
+		return fmt.Sprintf("Provider type: %s is not supported", provider.Type)
 	}
 
-	path := fmt.Sprintf("/casdoor/avatar/%s.png", username)
+	path := fmt.Sprintf("%s/%s.png", util.UrlJoin(util.GetUrlPath(provider.Domain), "/avatar"), username)
 	_, err := storage.Put(path, bytes.NewReader(avatar))
 	if err != nil {
-		panic(err)
+		return err.Error()
 	}
 	return ""
-}
-
-func GetAvatarPath(provider *Provider) string {
-	return fmt.Sprintf("https://%s/casdoor/avatar/", provider.Domain)
 }

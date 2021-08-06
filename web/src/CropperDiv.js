@@ -53,7 +53,7 @@ export const CropperDiv = (props) => {
             Setting.showMessage("error", "You must select a picture first!");
             return false;
         }
-        Setting.showMessage("success", "uploading...");
+        // Setting.showMessage("success", "uploading...");
         targetFunction(canvas.toDataURL());
         return true;
     }

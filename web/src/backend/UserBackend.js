@@ -77,19 +77,19 @@ export function getAffiliationOptions(url, code) {
 }
 
 export function uploadAvatar(avatar) {
-  let account;
-  AuthBackend.getAccount("").then((res) => {
-    account = res.data;
-    let formData = new FormData();
-    formData.append("avatarfile", avatar);
-    formData.append("password", account.password);
-    fetch(`${Setting.ServerUrl}/api/upload-avatar`, {
-      body: formData,
-      method: 'POST',
-      credentials: 'include',
-    }).then((res) => {
+  let formData = new FormData();
+  formData.append("avatarfile", avatar);
+  fetch(`${Setting.ServerUrl}/api/upload-avatar`, {
+    body: formData,
+    method: 'POST',
+    credentials: 'include',
+  }).then(res => res.json())
+    .then((res) => {
+    if (res.status === "ok") {
       window.location.href = "/account";
-    });
+    } else {
+      Setting.showMessage("error", res.msg);
+    }
   });
 }
 

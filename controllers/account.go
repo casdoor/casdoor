@@ -241,6 +241,10 @@ func (c *ApiController) UploadAvatar() {
 	user := object.GetUser(userId)
 	application := object.GetApplicationByUser(user)
 	provider := application.GetStorageProvider()
+	if provider == nil {
+		c.ResponseError("No storage provider is found")
+		return
+	}
 
 	avatarBase64 := c.Ctx.Request.Form.Get("avatarfile")
 	index := strings.Index(avatarBase64, ",")
@@ -259,8 +263,10 @@ func (c *ApiController) UploadAvatar() {
 		c.ServeJSON()
 		return
 	}
-	user.Avatar = fmt.Sprintf("%s%s.png?time=%s", object.GetAvatarPath(provider), user.GetId(), util.GetCurrentUnixTime())
+
+	user.Avatar = fmt.Sprintf("%s/%s.png?time=%s", util.UrlJoin(provider.Domain, "/avatar"), user.GetId(), util.GetCurrentUnixTime())
 	object.UpdateUser(user.GetId(), user)
+
 	resp = Response{Status: "ok", Msg: ""}
 	c.Data["json"] = resp
 	c.ServeJSON()

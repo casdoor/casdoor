@@ -14,11 +14,30 @@
 
 package util
 
-import "os"
+import (
+	"fmt"
+	"net/url"
+	"os"
+	"strings"
+)
 
 func FileExist(path string) bool {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return false
 	}
 	return true
+}
+
+func UrlJoin(base string, path string) string {
+	if !strings.HasPrefix(base, "http://") && !strings.HasPrefix(base, "https://") {
+		base = fmt.Sprintf("https://%s", base)
+	}
+
+	res := fmt.Sprintf("%s/%s", strings.TrimRight(base, "/"), strings.TrimLeft(path, "/"))
+	return res
+}
+
+func GetUrlPath(urlString string) string {
+	u, _ := url.Parse(urlString)
+	return u.Path
 }
