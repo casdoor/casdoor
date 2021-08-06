@@ -84,21 +84,23 @@ class ProviderEditPage extends React.Component {
           {id: 'Default', name: 'Default'},
         ]
       );
+    } else if (provider.category === "SMS") {
+      return (
+        [
+          {id: 'Aliyun SMS', name: 'Aliyun SMS'},
+          {id: 'Tencent Cloud SMS', name: 'Tencent Cloud SMS'},
+        ]
+      );
     } else if (provider.category === "Storage") {
       return (
         [
-          {id: 'Default', name: 'Default'},
-          {id: 'Aliyun', name: 'Aliyun'},
-          {id: 'AWSS3', name: 'AWS s3'},
+          {id: 'Local File System', name: 'Local File System'},
+          {id: 'AWS S3', name: 'AWS S3'},
+          {id: 'Aliyun OSS', name: 'Aliyun OSS'},
         ]
       );
     } else {
-      return (
-        [
-          {id: 'aliyun', name: 'Aliyun'},
-          {id: 'tencent', name: 'Tencent Cloud'},
-        ]
-      );
+      return [];
     }
   }
 
@@ -144,7 +146,9 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField('title', 'Casdoor Verification Code');
                 this.updateProviderField('content', 'You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.');
               } else if (value === "SMS") {
-                this.updateProviderField('type', 'aliyun');
+                this.updateProviderField('type', 'Aliyun SMS');
+              } else if (value === "Storage") {
+                this.updateProviderField('type', 'Aliyun OSS');
               }
             })}>
               {
