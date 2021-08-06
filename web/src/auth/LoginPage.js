@@ -232,7 +232,8 @@ class LoginPage extends React.Component {
           initialValues={{
             organization: application.organization,
             application: application.name,
-            remember: true
+            remember: true,
+            autoSignin: true,
           }}
           onFinish={(values) => {this.onFinish(values)}}
           style={{width: "250px"}}
@@ -284,7 +285,7 @@ class LoginPage extends React.Component {
           <Form.Item>
             <Form.Item name="autoSignin" valuePropName="checked" noStyle>
               <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
-                {i18next.t("login:Auto login")}
+                {i18next.t("login:Auto sign in")}
               </Checkbox>
             </Form.Item>
             <a style={{float: "right"}} onClick={() => {
