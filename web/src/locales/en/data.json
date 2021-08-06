@@ -80,7 +80,9 @@
     "Signin URL": "Signin URL",
     "Signin URL - Tooltip": "sign in url",
     "ID - Tooltip": "random string",
-    "Favicon - Tooltip": "Application icon"
+    "Favicon - Tooltip": "Application icon",
+    "Back Home": "Back Home",
+    "Sorry, the page you visited does not exist": "Sorry, the page you visited does not exist"
   },
   "signup":
   {
@@ -134,7 +136,7 @@
     "username, Email or phone": "username, Email or phone",
     "Please input your password!": "Please input your password!",
     "Password": "Password",
-    "Auto login": "Auto login",
+    "Auto sign in": "Auto sign in",
     "Forgot password?": "Forgot password?",
     "Sign In": "Sign In",
     "No account yet?": "No account yet?",
