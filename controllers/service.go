@@ -43,7 +43,7 @@ func (c *ApiController) SendEmail() {
 
 	provider := app.GetEmailProvider()
 	if provider == nil {
-		c.ResponseError("No Email provider for this application.")
+		c.ResponseError("No Email provider is found")
 		return
 	}
 
@@ -112,7 +112,7 @@ func (c *ApiController) SendSms() {
 
 	provider := app.GetSmsProvider()
 	if provider == nil {
-		c.ResponseError("No SMS provider for this application.")
+		c.ResponseError("No SMS provider is found")
 		return
 	}
 
