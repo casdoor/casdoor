@@ -53,7 +53,7 @@ func returnRequest(ctx *context.Context, msg string) {
 	}
 }
 
-func AutoLoginFilter(ctx *context.Context) {
+func AutoSigninFilter(ctx *context.Context) {
 	//if getSessionUser(ctx) != "" {
 	//	return
 	//}
