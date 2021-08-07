@@ -121,6 +121,21 @@ class UserListPage extends React.Component {
         }
       },
       {
+        title: i18next.t("general:Application"),
+        dataIndex: 'signupApplication',
+        key: 'signupApplication',
+        width: (Setting.isMobile()) ? "100px" : "120px",
+        fixed: 'left',
+        sorter: (a, b) => a.owner.localeCompare(b.owner),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/applications/${text}`}>
+              {text}
+            </Link>
+          )
+        }
+      },
+      {
         title: i18next.t("general:Name"),
         dataIndex: 'name',
         key: 'name',

@@ -34,7 +34,7 @@ import TokenEditPage from "./TokenEditPage";
 import RecordListPage from "./RecordListPage";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
-// import CustomGithubCorner from "./CustomGithubCorner";
+import CustomGithubCorner from "./CustomGithubCorner";
 
 import * as Auth from "./auth/Auth";
 import SignupPage from "./auth/SignupPage";
@@ -521,7 +521,7 @@ class App extends Component {
     return (
       <div id="parent-area">
         <BackTop />
-        {/*<CustomGithubCorner />*/}
+        <CustomGithubCorner />
         <div id="content-wrap" style={{flexDirection: "column"}}>
           {
             this.renderContent()
