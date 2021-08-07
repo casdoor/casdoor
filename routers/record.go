@@ -50,15 +50,15 @@ func getUserByClientIdSecret(ctx *context.Context) string {
 	if app == nil || app.ClientSecret != clientSecret {
 		return ""
 	}
-	return app.Organization+"/"+app.Name
+	return app.Organization + "/" + app.Name
 }
 
 func RecordMessage(ctx *context.Context) {
 	if ctx.Request.URL.Path != "/api/login" {
 		user := getUser(ctx)
-		userinfo := strings.Split(user,"/")
+		userinfo := strings.Split(user, "/")
 		if user == "" {
-			userinfo = append(userinfo,"")
+			userinfo = append(userinfo, "")
 		}
 		record := util.Records(ctx)
 		record.Organization = userinfo[0]
@@ -67,4 +67,3 @@ func RecordMessage(ctx *context.Context) {
 		object.AddRecord(record)
 	}
 }
-

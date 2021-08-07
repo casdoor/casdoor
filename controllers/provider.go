@@ -20,6 +20,7 @@ import (
 	"github.com/casbin/casdoor/object"
 )
 
+// GetProviders
 // @Title GetProviders
 // @Description get providers
 // @Param   owner     query    string  true        "The owner of providers"

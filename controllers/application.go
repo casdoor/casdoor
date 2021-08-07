@@ -20,6 +20,7 @@ import (
 	"github.com/casbin/casdoor/object"
 )
 
+// GetApplications
 // @Title GetApplications
 // @Description get all applications
 // @Param   owner     query    string  true        "The owner of applications."
@@ -32,6 +33,7 @@ func (c *ApiController) GetApplications() {
 	c.ServeJSON()
 }
 
+// GetApplication
 // @Title GetApplication
 // @Description get the detail of an application
 // @Param   id     query    string  true        "The id of the application."
@@ -44,6 +46,7 @@ func (c *ApiController) GetApplication() {
 	c.ServeJSON()
 }
 
+// GetUserApplication
 // @Title GetUserApplication
 // @Description get the detail of the user's application
 // @Param   id     query    string  true        "The id of the user"
@@ -61,6 +64,7 @@ func (c *ApiController) GetUserApplication() {
 	c.ServeJSON()
 }
 
+// UpdateApplication
 // @Title UpdateApplication
 // @Description update an application
 // @Param   id     query    string  true        "The id of the application"
@@ -80,6 +84,7 @@ func (c *ApiController) UpdateApplication() {
 	c.ServeJSON()
 }
 
+// AddApplication
 // @Title AddApplication
 // @Description add an application
 // @Param   body    body   object.Application  true        "The details of the application"
@@ -96,6 +101,7 @@ func (c *ApiController) AddApplication() {
 	c.ServeJSON()
 }
 
+// DeleteApplication
 // @Title DeleteApplication
 // @Description delete an application
 // @Param   body    body   object.Application  true        "The details of the application"

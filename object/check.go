@@ -24,7 +24,7 @@ import (
 var reWhiteSpace *regexp.Regexp
 
 func init() {
-	reWhiteSpace, _ = regexp.Compile("\\s")
+	reWhiteSpace, _ = regexp.Compile(`\s`)
 }
 
 func CheckUserSignup(application *Application, organization *Organization, username string, password string, displayName string, email string, phone string, affiliation string) string {

@@ -20,7 +20,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -48,6 +47,7 @@ type DingTalkIdProvider struct {
 	Config *oauth2.Config
 }
 
+// NewDingTalkIdProvider ...
 func NewDingTalkIdProvider(clientId string, clientSecret string, redirectUrl string) *DingTalkIdProvider {
 	idp := &DingTalkIdProvider{}
 
@@ -57,6 +57,7 @@ func NewDingTalkIdProvider(clientId string, clientSecret string, redirectUrl str
 	return idp
 }
 
+// SetHttpClient ...
 func (idp *DingTalkIdProvider) SetHttpClient(client *http.Client) {
 	idp.Client = client
 }
@@ -136,7 +137,7 @@ func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	_ = json.Unmarshal(body, &info)
 	errCode := info.Errcode
 	if errCode != 0 {
-		return nil, errors.New(fmt.Sprintf("%d: %s", errCode, info.Errmsg))
+		return nil, fmt.Errorf("%d: %s", errCode, info.Errmsg)
 	}
 
 	u2 := fmt.Sprintf("%s?appkey=%s&appsecret=%s", idp.Config.Endpoint.TokenURL, idp.Config.ClientID, idp.Config.ClientSecret)
@@ -151,7 +152,7 @@ func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	tokenResp := DingTalkAccessToken{}
 	_ = json.Unmarshal(body, &tokenResp)
 	if tokenResp.ErrCode != 0 {
-		return nil, errors.New(fmt.Sprintf("%d: %s", tokenResp.ErrCode, tokenResp.ErrMsg))
+		return nil, fmt.Errorf("%d: %s", tokenResp.ErrCode, tokenResp.ErrMsg)
 	}
 
 	// use unionid to get userid
@@ -183,6 +184,7 @@ type UnionIdResponse struct {
 	RequestId string `json:"request_id"`
 }
 
+// GetUseridByUnionid ...
 func (idp *DingTalkIdProvider) GetUseridByUnionid(accesstoken, unionid string) (userid string, err error) {
 	u := fmt.Sprintf("https://oapi.dingtalk.com/topapi/user/getbyunionid?access_token=%s&unionid=%s",
 		accesstoken, unionid)
@@ -195,7 +197,7 @@ func (idp *DingTalkIdProvider) GetUseridByUnionid(accesstoken, unionid string) (
 	_ = json.Unmarshal([]byte(useridInfo), &uresp)
 	errcode := uresp.Errcode
 	if errcode != 0 {
-		return "", errors.New(fmt.Sprintf("%d: %s", errcode, uresp.Errmsg))
+		return "", fmt.Errorf("%d: %s", errcode, uresp.Errmsg)
 	}
 	return uresp.Result.Userid, nil
 }

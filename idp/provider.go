@@ -34,6 +34,7 @@ type IdProvider interface {
 	GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 }
 
+// GetIdProvider ...
 func GetIdProvider(providerType string, clientId string, clientSecret string, redirectUrl string) IdProvider {
 	if providerType == "GitHub" {
 		return NewGithubIdProvider(clientId, clientSecret, redirectUrl)

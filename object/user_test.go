@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/casbin/casdoor/util"
@@ -77,4 +78,28 @@ func TestGetSaltedPassword(t *testing.T) {
 	password := "123456"
 	salt := "123"
 	fmt.Printf("%s -> %s\n", password, getSaltedPassword(password, salt))
+}
+
+func TestGetMaskedUsers(t *testing.T) {
+	type args struct {
+		users []*User
+	}
+	tests := []struct {
+		name string
+		args args
+		want []*User
+	}{
+		{
+			name: "1",
+			args: args{users: []*User{{Password: "casdoor"},{Password: "casbin"}}},
+			want: []*User{{Password: "***"},{Password: "***"}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := GetMaskedUsers(tt.args.users); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetMaskedUsers() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

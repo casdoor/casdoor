@@ -99,7 +99,7 @@ func (a *Adapter) open() {
 }
 
 func (a *Adapter) close() {
-	a.Engine.Close()
+	_ = a.Engine.Close()
 	a.Engine = nil
 }
 

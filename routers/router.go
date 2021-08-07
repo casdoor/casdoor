@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package routers
 // @APIVersion 1.0.0
 // @Title Casdoor API
 // @Description Documentation of Casdoor API
@@ -99,4 +100,3 @@ func initAPI() {
 	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
 }
-

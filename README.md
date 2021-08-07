@@ -1,146 +1,131 @@
 Casdoor
 ====
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/casbin/casdoor)](https://goreportcard.com/report/github.com/casbin/casdoor) <img src="https://img.shields.io/github/license/casbin/casdoor?style=flat-square" alt="license"> [![GitHub issues](https://img.shields.io/github/issues/casbin/casdoor?style=flat-square)](https://github.com/casbin/casdoor/issues) [![GitHub stars](https://img.shields.io/github/stars/casbin/casdoor?style=flat-square)](https://github.com/casbin/casdoor/stargazers) [![GitHub forks](https://img.shields.io/github/forks/casbin/casdoor?style=flat-square)](https://github.com/casbin/casdoor/network) 
+
 Casdoor is a UI-first centralized authentication / Single-Sign-On (SSO) platform based on OAuth 2.0 / OIDC.
 
 ## Online demo
 
-### Casdoor
+Deployed site: https://door.casbin.com/
 
-Casdoor is the authentication server. It serves both the web UI and the login requests from the application users.
+## Quick Start
 
-- Deployed site: https://door.casbin.com/
-- Source code: https://github.com/casbin/casdoor (this repo)
+Run your own casdoor program in a few minutes:smiley:
 
-Global admin login:
+### Download
 
-- Username: `admin`
-- Password: `123`
+There are two methods, get code via go subcommand `get`:
 
-### Web application
+```shell
+go get github.com/casbin/casdoor
+```
 
-Casbin-OA is one of our applications that use Casdoor as authentication.
+  or `git`:
 
-- Deployed site: https://oa.casbin.com/
-- Source code: https://github.com/casbin/casbin-oa
+```bash
+git clone https://github.com/casbin/casdoor
+```
 
-## Architecture
+Finally, change directory:
 
-Casdoor contains 2 parts:
+```bash
+cd casdoor/
+```
 
-Name | Description | Language | Source code
-----|------|----|----
-Frontend | Web frontend UI for Casdoor | Javascript + React | https://github.com/casbin/casdoor/tree/master/web
-Backend | RESTful API backend for Casdoor | Golang + Beego + MySQL | https://github.com/casbin/casdoor
+We provide two start up methods for all kinds of users.
 
-## Installation
+### Manual
 
-- Get code via `go get`:
+#### Simple configuration
 
-    ```shell
-    go get github.com/casbin/casdoor
-    ```
+Edit `conf/app.conf`, modify `dataSourceName` to correct database info, which follows this format:
 
-  or `git clone`:
+```bash
+username:password@tcp(database_ip:database_port)/
+```
 
-    ```shell
-    git clone https://github.com/casbin/casdoor
-    ```
+#### Run
 
-## Run through Docker
-- Install Docker and Docker-compose,you see [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/)
-- vi casdoor/conf/app.conf
-- Modify dataSourceName = root:123@tcp(localhost:3306)/ to dataSourceName = root:123@tcp(db:3306)/
-- Execute the following command
-  ```shell
-  docker-compose up
-  ```
-- Open browser:
+Casdoor provides two run modes, the difference is binary size and user prompt.
 
-  http://localhost:8000/
+##### Dev Mode
 
-## Run (Dev Environment)
+Edit `conf/app.conf`, set `runmode=dev`. Firstly build front-end files:
 
-- Run backend (in port 8000):
+```bash
+cd web/ && npm install && npm run start
+```
 
-    ```shell
-    go run main.go
-    ```
+Then build back-end binary file, change directory to root(Relative to casdoor):
 
-- Run frontend (in the same machine's port 7001):
+```bash
+go run main.go
+```
 
-    ```shell
-    cd web
-    ## npm
-    npm install
-    npm run start
-    ## yarn
-    yarn install
-    yarn run start
-    ```
+That's it! Try to visit http://127.0.0.1:7001/. :small_airplane:
 
-- Open browser:
+##### Prod Mode
 
-  http://localhost:7001/
+Edit `conf/app.conf`, set `runmode=prod`. Firstly build front-end files:
 
-## Run (Production Environment)
+```bash
+cd web/ && npm install && npm run build
+```
 
-- build static pages:
+Then build back-end binary file, change directory to root(Relative to casdoor):
 
-  ```
-  cd web
-  ## npm
-  npm run build
-  ## yarn
-  yarn run build
-  ## back to casdoor directory
-  cd ..
-  ```
+```bash
+go build main.go && sudo ./main
+```
 
-- build and run go code:
+> Notice, you should visit back-end port, default 8000. Now try to visit http://127.0.0.1:8000/
 
-  ```
-  go build
-  ./casdoor
-  ```
+### Docker
 
-Now, Casdoor is running on port 8000. You can access Casdoor pages directly in your browser, or you can setup a reverse proxy to hold your domain name, SSL, etc.
+This method requires [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) to be installed first.
 
-## Config
+#### Simple configuration
 
-- Setup database (MySQL):
+Edit `conf/app.conf`, modify `dataSourceName` to the fixed content:
 
-  Casdoor will store its users, nodes and topics informations in a MySQL database named: `casdoor`, will create it if not existed. The DB connection string can be specified at: https://github.com/casbin/casdoor/blob/master/conf/app.conf
+```bash
+dataSourceName = root:123@tcp(db:3306)/
+```
 
-    ```ini
-  db = mysql
-  dataSourceName = root:123@tcp(localhost:3306)/
-  dbName = casdoor
-    ```
+> If you need to modify `conf/app.conf`, you need to re-run `docker-compose up`.
 
-- Setup database (Postgres):
+#### Run
 
-  Since we must choose a database when opening Postgres with xorm, you should prepare a database manually before running Casdoor. Let's assume that you have already prepared a database called `casdoor`, then you should specify `app.conf` like this:
+Just execute:
 
-  ``` ini
-  db = postgres
-  dataSourceName = "user=postgres password=xxx sslmode=disable dbname="
-  dbName = casdoor
-  ```
+```bash
+docker-compose up
+```
 
-  **Please notice:** You can add Postgres parameters in `dataSourceName`, but please make sure that `dataSourceName` ends with `dbname=`. Or database adapter may crash when you launch Casdoor.
+That's
 
-  Casdoor uses XORM to connect to DB, so all DBs supported by XORM can also be used.
+## Detailed documentation
 
-- Github corner
+We also provide a complete [document](https://casdoor.org/) as a reference.
 
-  We added a Github icon in the upper right corner, linking to your Github repository address.
-  You could set `ShowGithubCorner` to hidden it.
+## Other examples
 
-  Configuration (`web/src/commo/Conf.js`):
+These all use casdoor as a centralized authentication platform.
 
-    ```javascript
-  export const ShowGithubCorner = true
+- [Casnode](https://github.com/casbin/casnode): Next-generation forum software based on React + Golang.
+- [Casbin-OA](https://github.com/casbin/casbin-oa): A full-featured OA(Office Assistant) system.
+- ......
 
-  export const GithubRepo = "https://github.com/casbin/casdoor" //your github repository
-    ```
+## Contribute
+
+For casdoor, if you have any questions, you can give Issues, and you can also directly Pull Requests(but we recommend give issues first to communicate with the community).
+
+In addition to contributing codes to casdoor, uou can also contribute to the [internationalization of casdoor](https://crowdin.com/project/casdoor-web) by translating for casdoor in the language you are good at.
+
+Both are welcome! :kissing_smiling_eyes:
+
+## License
+
+ [Apache-2.0](https://github.com/casbin/casdoor/blob/master/LICENSE)
+

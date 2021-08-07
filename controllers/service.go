@@ -25,6 +25,7 @@ import (
 	sender "github.com/casdoor/go-sms-sender"
 )
 
+// SendEmail
 // @Title SendEmail
 // @Description This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
 // @Param   clientId    query    string  true        "The clientId of the application"
@@ -84,8 +85,7 @@ func (c *ApiController) SendEmail() {
 			emailForm.Title,
 			emailForm.Content,
 			receiver,
-			emailForm.Sender);
-			len(msg) == 0 {
+			emailForm.Sender); len(msg) == 0 {
 			ok++
 		}
 	}
@@ -94,6 +94,7 @@ func (c *ApiController) SendEmail() {
 	c.ServeJSON()
 }
 
+// SendSms
 // @Title SendSms
 // @Description This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
 // @Param   clientId    query    string  true        "The clientId of the application"
@@ -148,7 +149,7 @@ func (c *ApiController) SendSms() {
 		}
 	}
 
-	if len(invalidReceivers) != 0{
+	if len(invalidReceivers) != 0 {
 		c.ResponseError("Invalid phone numbers", invalidReceivers)
 		return
 	}
