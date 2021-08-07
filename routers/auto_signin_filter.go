@@ -73,7 +73,7 @@ func AutoSigninFilter(ctx *context.Context) {
 			return
 		}
 
-		userId := fmt.Sprintf("%s/%s", claims.Organization, claims.Username)
+		userId := fmt.Sprintf("%s/%s", claims.User.Owner, claims.User.Name)
 		setSessionUser(ctx, userId)
 		return
 	}

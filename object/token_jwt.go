@@ -23,18 +23,7 @@ import (
 var jwtSecret = []byte("CasdoorSecret")
 
 type Claims struct {
-	Organization string `json:"organization"`
-	Username     string `json:"username"`
-	Type         string `json:"type"`
-	Name         string `json:"name"`
-	Avatar       string `json:"avatar"`
-	Email        string `json:"email"`
-	Phone        string `json:"phone"`
-	Affiliation  string `json:"affiliation"`
-	Tag          string `json:"tag"`
-	Language     string `json:"language"`
-	Score        int    `json:"score"`
-	IsAdmin      bool   `json:"isAdmin"`
+	User
 	jwt.StandardClaims
 }
 
@@ -43,18 +32,7 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 
 	claims := Claims{
-		Organization: user.Owner,
-		Username:     user.Name,
-		Type:         user.Type,
-		Name:         user.DisplayName,
-		Avatar:       user.Avatar,
-		Email:        user.Email,
-		Phone:        user.Phone,
-		Affiliation:  user.Affiliation,
-		Tag:          user.Tag,
-		Language:     user.Language,
-		Score:        user.Score,
-		IsAdmin:      user.IsAdmin,
+		User: *user,
 		StandardClaims: jwt.StandardClaims{
 			Audience:  application.ClientId,
 			ExpiresAt: expireTime.Unix(),
