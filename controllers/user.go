@@ -23,6 +23,7 @@ import (
 	"github.com/casbin/casdoor/original"
 )
 
+// GetGlobalUsers
 // @Title GetGlobalUsers
 // @Description get global users
 // @Success 200 {array} object.User The Response object
@@ -32,6 +33,7 @@ func (c *ApiController) GetGlobalUsers() {
 	c.ServeJSON()
 }
 
+// GetUsers
 // @Title GetUsers
 // @Description
 // @Param   owner     query    string  true        "The owner of users"
@@ -44,6 +46,7 @@ func (c *ApiController) GetUsers() {
 	c.ServeJSON()
 }
 
+// GetUser
 // @Title GetUser
 // @Description get user
 // @Param   id     query    string  true        "The id of the user"
@@ -56,6 +59,7 @@ func (c *ApiController) GetUser() {
 	c.ServeJSON()
 }
 
+// UpdateUser
 // @Title UpdateUser
 // @Description update user
 // @Param   id     query    string  true        "The id of the user"
@@ -86,6 +90,7 @@ func (c *ApiController) UpdateUser() {
 	c.ServeJSON()
 }
 
+// AddUser
 // @Title AddUser
 // @Description add user
 // @Param   body    body   object.User  true        "The details of the user"
@@ -102,6 +107,7 @@ func (c *ApiController) AddUser() {
 	c.ServeJSON()
 }
 
+// DeleteUser
 // @Title DeleteUser
 // @Description delete user
 // @Param   body    body   object.User  true        "The details of the user"
@@ -118,6 +124,7 @@ func (c *ApiController) DeleteUser() {
 	c.ServeJSON()
 }
 
+// GetEmailAndPhone
 // @Title GetEmailAndPhone
 // @Description get email and phone by username
 // @Param   username    formData   string  true        "The username of the user"
@@ -156,6 +163,7 @@ func (c *ApiController) GetEmailAndPhone() {
 	c.ServeJSON()
 }
 
+// SetPassword
 // @Title SetPassword
 // @Description set password
 // @Param   userOwner   formData    string  true        "The owner of the user"
@@ -209,11 +217,9 @@ func (c *ApiController) SetPassword() {
 			c.ResponseError(msg)
 			return
 		}
-	} else {
-
 	}
 
-	if strings.Index(newPassword, " ") >= 0 {
+	if strings.Contains(newPassword, " ") {
 		c.ResponseError("New password cannot contain blank space.")
 		return
 	}

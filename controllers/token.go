@@ -20,6 +20,7 @@ import (
 	"github.com/casbin/casdoor/object"
 )
 
+// GetTokens
 // @Title GetTokens
 // @Description get tokens
 // @Param   owner     query    string  true        "The owner of tokens"
@@ -32,6 +33,7 @@ func (c *ApiController) GetTokens() {
 	c.ServeJSON()
 }
 
+// GetToken
 // @Title GetToken
 // @Description get token
 // @Param   id     query    string  true        "The id of token"
@@ -44,6 +46,7 @@ func (c *ApiController) GetToken() {
 	c.ServeJSON()
 }
 
+// UpdateToken
 // @Title UpdateToken
 // @Description update token
 // @Param   id     query    string  true        "The id of token"
@@ -63,6 +66,7 @@ func (c *ApiController) UpdateToken() {
 	c.ServeJSON()
 }
 
+// AddToken
 // @Title AddToken
 // @Description add token
 // @Param   body    body   object.Token  true        "Details of the token"
@@ -79,6 +83,7 @@ func (c *ApiController) AddToken() {
 	c.ServeJSON()
 }
 
+// DeleteToken
 // @Title DeleteToken
 // @Description delete token
 // @Param   body    body   object.Token  true        "Details of the token"
@@ -95,6 +100,7 @@ func (c *ApiController) DeleteToken() {
 	c.ServeJSON()
 }
 
+// GetOAuthToken
 // @Title GetOAuthToken
 // @Description get oAuth token
 // @Param   grant_type     query    string  true        "oAuth grant type"

@@ -99,7 +99,7 @@ func (idp *WeChatIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	}
 
 	var wechatAccessToken WechatAccessToken
-	if err = json.Unmarshal([]byte(buf.String()), &wechatAccessToken); err != nil {
+	if err = json.Unmarshal(buf.Bytes(), &wechatAccessToken); err != nil {
 		return nil, err
 	}
 
@@ -168,7 +168,7 @@ func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal([]byte(buf.String()), &wechatUserInfo); err != nil {
+	if err = json.Unmarshal(buf.Bytes(), &wechatUserInfo); err != nil {
 		return nil, err
 	}
 

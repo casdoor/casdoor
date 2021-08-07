@@ -173,7 +173,7 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	}
 
 	if qqUserInfo.Ret != 0 {
-		return nil, errors.New(fmt.Sprintf("ret expected 0, got %d", qqUserInfo.Ret))
+		return nil, fmt.Errorf("ret expected 0, got %d", qqUserInfo.Ret)
 	}
 
 	userInfo := UserInfo{

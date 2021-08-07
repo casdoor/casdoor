@@ -20,6 +20,7 @@ import (
 	"github.com/casbin/casdoor/object"
 )
 
+// GetOrganizations ...
 // @Title GetOrganizations
 // @Description get organizations
 // @Param   owner     query    string  true        "owner"
@@ -32,6 +33,7 @@ func (c *ApiController) GetOrganizations() {
 	c.ServeJSON()
 }
 
+// GetOrganization ...
 // @Title GetOrganization
 // @Description get organization
 // @Param   id     query    string  true        "organization id"
@@ -44,6 +46,7 @@ func (c *ApiController) GetOrganization() {
 	c.ServeJSON()
 }
 
+// UpdateOrganization ...
 // @Title UpdateOrganization
 // @Description update organization
 // @Param   id     query    string  true        "The id of the organization"
@@ -63,6 +66,7 @@ func (c *ApiController) UpdateOrganization() {
 	c.ServeJSON()
 }
 
+// AddOrganization ...
 // @Title AddOrganization
 // @Description add organization
 // @Param   body    body   object.Organization  true        "The details of the organization"
@@ -79,6 +83,7 @@ func (c *ApiController) AddOrganization() {
 	c.ServeJSON()
 }
 
+// DeleteOrganization ...
 // @Title DeleteOrganization
 // @Description delete organization
 // @Param   body    body   object.Organization  true        "The details of the organization"

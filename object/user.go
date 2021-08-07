@@ -132,9 +132,9 @@ func GetLastUser(owner string) *User {
 
 	if existed {
 		return &user
-	} else {
-		return nil
 	}
+
+	return nil
 }
 
 func UpdateUser(id string, user *User) bool {

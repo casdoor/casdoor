@@ -19,8 +19,8 @@ import (
 )
 
 type Records struct {
-	Id     	int		`xorm:"int notnull pk autoincr" json:"id"`
-	Record 	util.Record	`xorm:"extends"`
+	Id     int         `xorm:"int notnull pk autoincr" json:"id"`
+	Record util.Record `xorm:"extends"`
 }
 
 func AddRecord(record *util.Record) bool {

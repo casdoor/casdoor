@@ -152,43 +152,30 @@ func (l *ldapConn) GetLdapUsers(baseDn string) ([]ldapUser, error) {
 			switch attribute.Name {
 			case "uidNumber":
 				ldapUserItem.UidNumber = attribute.Values[0]
-				break
 			case "uid":
 				ldapUserItem.Uid = attribute.Values[0]
-				break
 			case "cn":
 				ldapUserItem.Cn = attribute.Values[0]
-				break
 			case "gidNumber":
 				ldapUserItem.GidNumber = attribute.Values[0]
-				break
 			case "entryUUID":
 				ldapUserItem.Uuid = attribute.Values[0]
-				break
 			case "mail":
 				ldapUserItem.Mail = attribute.Values[0]
-				break
 			case "email":
 				ldapUserItem.Email = attribute.Values[0]
-				break
 			case "emailAddress":
 				ldapUserItem.EmailAddress = attribute.Values[0]
-				break
 			case "telephoneNumber":
 				ldapUserItem.TelephoneNumber = attribute.Values[0]
-				break
 			case "mobile":
 				ldapUserItem.Mobile = attribute.Values[0]
-				break
 			case "mobileTelephoneNumber":
 				ldapUserItem.MobileTelephoneNumber = attribute.Values[0]
-				break
 			case "registeredAddress":
 				ldapUserItem.RegisteredAddress = attribute.Values[0]
-				break
 			case "postalAddress":
 				ldapUserItem.PostalAddress = attribute.Values[0]
-				break
 			}
 		}
 		ldapUsers = append(ldapUsers, ldapUserItem)
@@ -348,7 +335,7 @@ func CheckLdapUuidExist(owner string, uuids []string) []string {
 	//	}
 	//}
 
-	err := adapter.Engine.Where(fmt.Sprintf("ldap IN (%s) AND owner = ?", "'" + strings.Join(uuids, "','") + "'"), owner).Find(&results)
+	err := adapter.Engine.Where(fmt.Sprintf("ldap IN (%s) AND owner = ?", "'"+strings.Join(uuids, "','")+"'"), owner).Find(&results)
 	if err != nil {
 		panic(err)
 	}

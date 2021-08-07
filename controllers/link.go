@@ -24,6 +24,7 @@ type LinkForm struct {
 	ProviderType string `json:"providerType"`
 }
 
+// Unlink ...
 func (c *ApiController) Unlink() {
 	userId, ok := c.RequireSignedIn()
 	if !ok {

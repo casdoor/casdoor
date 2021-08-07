@@ -61,7 +61,7 @@ func (idp *GoogleIdProvider) getConfig() *oauth2.Config {
 }
 
 func (idp *GoogleIdProvider) GetToken(code string) (*oauth2.Token, error) {
-	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, idp.Client)
+	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, idp.Client)
 	return idp.Config.Exchange(ctx, code)
 }
 

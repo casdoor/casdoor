@@ -20,6 +20,7 @@ import (
 	"github.com/casbin/casdoor/object"
 )
 
+// GetRecords
 // @Title GetRecords
 // @Description get all records
 // @Success 200 {array} object.Records The Response object
@@ -29,6 +30,7 @@ func (c *ApiController) GetRecords() {
 	c.ServeJSON()
 }
 
+// GetRecordsByFilter
 // @Title GetRecordsByFilter
 // @Description get records by filter
 // @Param   body    body   object.Records  true  "filter Record message"

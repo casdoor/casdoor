@@ -30,14 +30,14 @@ import (
 func codeToResponse(code *object.Code) *Response {
 	if code.Code == "" {
 		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
-	} else {
-		return &Response{Status: "ok", Msg: "", Data: code.Code}
 	}
+
+	return &Response{Status: "ok", Msg: "", Data: code.Code}
 }
 
-func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) *Response {
+// HandleLoggedIn ...
+func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) (resp *Response) {
 	userId := user.GetId()
-	resp := &Response{}
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
@@ -72,6 +72,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	return resp
 }
 
+// GetApplicationLogin ...
 // @Title GetApplicationLogin
 // @Description get application login
 // @Param   clientId    query    string  true        "client id"
@@ -108,6 +109,7 @@ func setHttpClient(idProvider idp.IdProvider, providerType string) {
 	}
 }
 
+// Login ...
 // @Title Login
 // @Description login
 // @Param   oAuthParams     query    string  true        "oAuth parameters"
@@ -182,13 +184,11 @@ func (c *ApiController) Login() {
 					c.ResponseError("wrong email!")
 				}
 				object.DisableVerificationCode(form.Email)
-				break
 			case "phone":
 				if user.Phone != form.Email {
 					c.ResponseError("wrong phone!")
 				}
 				object.DisableVerificationCode(form.Email)
-				break
 			}
 		} else {
 			password := form.Password
@@ -282,7 +282,7 @@ func (c *ApiController) Login() {
 				record.Organization = application.Organization
 				record.Username = user.Name
 
-				 object.AddRecord(record)
+				object.AddRecord(record)
 			} else {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
