@@ -18,6 +18,7 @@ import {Button, Popconfirm, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import {DefaultAccountItem} from "./AccountTable";
 import i18next from "i18next";
 
 class OrganizationListPage extends React.Component {
@@ -54,21 +55,7 @@ class OrganizationListPage extends React.Component {
       PasswordSalt: "",
       phonePrefix: "86",
       defaultAvatar: "https://casbin.org/img/casbin.svg",
-      accountItems: [
-        {name: "Organization", visible: true, required: true, editable: false, public: true},
-        {name: "ID", visible: false, required: true, editable: false, public: false},
-        {name: "Name", visible: false, required: true, editable: false, public: true},
-        {name: "Display name", visible: true, required: true, editable: true, public: true},
-        {name: "Avatar", visible: true, required: true, editable: true, public: true},
-        {name: "User type", visible: true, required: true, editable: true, public: true},
-        {name: "Password", visible: true, required: true, editable: true, public: true},
-        {name: "Email", visible: true, required: true, editable: true, public: true},
-        {name: "Phone", visible: true, required: true, editable: true, public: true},
-        {name: "Country/Region", visible: true, required: false, editable: true, public: true},
-        {name: "Affiliation", visible: true, required: false, editable: true, public: true},
-        {name: "Tag", visible: true, required: true, editable: true, public: true},
-        {name: "3rd-party logins", visible: true, required: false, editable: true, public: true},
-      ],
+      accountItems: DefaultAccountItem
     }
   }
 

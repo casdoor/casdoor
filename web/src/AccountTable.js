@@ -19,6 +19,21 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 
 const {Option} = Select;
+export const DefaultAccountItem = [
+  {name: "Organization", visible: true, required: true, editable: false, public: true},
+  {name: "ID", visible: false, required: true, editable: false, public: false},
+  {name: "Name", visible: false, required: true, editable: false, public: true},
+  {name: "Display name", visible: true, required: true, editable: true, public: true},
+  {name: "Avatar", visible: true, required: true, editable: true, public: true},
+  {name: "User type", visible: true, required: true, editable: true, public: true},
+  {name: "Password", visible: true, required: true, editable: true, public: true},
+  {name: "Email", visible: true, required: true, editable: true, public: true},
+  {name: "Phone", visible: true, required: true, editable: true, public: true},
+  {name: "Country/Region", visible: true, required: false, editable: true, public: true},
+  {name: "Affiliation", visible: true, required: false, editable: true, public: true},
+  {name: "Tag", visible: true, required: true, editable: true, public: true},
+  {name: "3rd-party logins", visible: true, required: false, editable: true, public: true},
+];
 
 class AccountTable extends React.Component {
   constructor(props) {
@@ -38,7 +53,7 @@ class AccountTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: "Please select a account item", visible: true, required: true, public: true};
+    let row = {name: "Please select a account item", visible: true, required: true, editable: true, public: true};
     if (table === undefined) {
       table = [];
     }
@@ -68,21 +83,6 @@ class AccountTable extends React.Component {
         dataIndex: "name",
         key: "name",
         render: (text, record, index) => {
-          const items = [
-            {id: "Organization", name: "Organization"},
-            {id: "ID", name: "ID"},
-            {id: "Name", name: "Name"},
-            {id: "Display name", name: "Display name"},
-            {id: "Avatar", name: "Avatar"},
-            {id: "User type", name: "User type"},
-            {id: "Password", name: "Password"},
-            {id: "Email", name: "Email"},
-            {id: "Phone", name: "Phone"},
-            {id: "Affiliation", name: "Affiliation"},
-            {id: "Tag", name: "Tag"},
-            {id: "3rd-party logins", name: "3rd-party logins"},
-          ];
-
           return (
             <Select virtual={false} style={{width: "100%"}}
                     value={text}
@@ -90,7 +90,7 @@ class AccountTable extends React.Component {
                       this.updateField(table, index, "name", value);
                     }}>
               {
-                Setting.getDeduplicatedArray(items, table, "name").map((item, index) => <Option
+                Setting.getDeduplicatedArray(DefaultAccountItem, table, "name").map((item, index) => <Option
                   key={index} value={item.name}>{item.name}</Option>)
               }
             </Select>
