@@ -18,6 +18,7 @@ import "cropperjs/dist/cropper.css";
 import * as Setting from "./Setting";
 import {Button, Row, Col, Modal} from 'antd';
 import i18next from "i18next";
+import * as UserBackend from "./backend/UserBackend";
 
 export const CropperDiv = (props) => {
     const [image, setImage] = useState("");
@@ -25,7 +26,7 @@ export const CropperDiv = (props) => {
     const [visible, setVisible] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const {title} = props;
-    const {targetFunction} = props;
+    const {user} = props;
     const {buttonText} = props;
     let uploadButton;
 
@@ -54,7 +55,8 @@ export const CropperDiv = (props) => {
             return false;
         }
         // Setting.showMessage("success", "uploading...");
-        targetFunction(canvas.toDataURL());
+        const userId = `${user.owner}/${user.name}`;
+        UserBackend.uploadFile("avatar", userId, canvas.toDataURL());
         return true;
     }
 

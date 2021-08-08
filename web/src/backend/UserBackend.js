@@ -76,10 +76,10 @@ export function getAffiliationOptions(url, code) {
   }).then(res => res.json());
 }
 
-export function uploadAvatar(avatar) {
+export function uploadFile(folder, subFolder, file) {
   let formData = new FormData();
-  formData.append("avatarfile", avatar);
-  fetch(`${Setting.ServerUrl}/api/upload-avatar`, {
+  formData.append("file", file);
+  fetch(`${Setting.ServerUrl}/api/upload-file?folder=${encodeURIComponent(folder)}&subFolder=${encodeURIComponent(subFolder)}`, {
     body: formData,
     method: 'POST',
     credentials: 'include',
