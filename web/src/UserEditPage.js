@@ -246,8 +246,7 @@ class UserEditPage extends React.Component {
               {
                 accountItem.editable ? (
                   <Row style={{marginTop: '20px'}}>
-                    <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`}
-                                title={i18next.t("user:Upload a photo")} targetFunction={UserBackend.uploadAvatar}/>
+                    <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} user={this.state.user} />
                   </Row>) : null
               }
             </Col>

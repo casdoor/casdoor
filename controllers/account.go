@@ -212,18 +212,22 @@ func (c *ApiController) GetAccount() {
 	c.ResponseOk(user, organization)
 }
 
-// UploadAvatar
-// @Title UploadAvatar
-// @Description upload avatar
-// @Param   avatarfile   formData    string  true        "The base64 encode of avatarfile"
-// @Param   password     formData    string  true        "The password"
+// UploadFile
+// @Title UploadFile
+// @Description upload file
+// @Param   folder      query       string  true    "The folder"
+// @Param   subFolder   query       string  true    "The sub folder"
+// @Param   file        formData    string  true    "The file"
 // @Success 200 {object} controllers.Response The Response object
-// @router /upload-avatar [post]
-func (c *ApiController) UploadAvatar() {
+// @router /upload-file [post]
+func (c *ApiController) UploadFile() {
 	userId, ok := c.RequireSignedIn()
 	if !ok {
 		return
 	}
+
+	folder := c.Input().Get("folder")
+	subFolder := c.Input().Get("subFolder")
 
 	user := object.GetUser(userId)
 	application := object.GetApplicationByUser(user)
@@ -233,24 +237,28 @@ func (c *ApiController) UploadAvatar() {
 		return
 	}
 
-	avatarBase64 := c.Ctx.Request.Form.Get("avatarfile")
-	index := strings.Index(avatarBase64, ",")
-	if index < 0 || avatarBase64[0:index] != "data:image/png;base64" {
-		c.ResponseError("File encoding error")
-		return
+	fileString := c.Ctx.Request.Form.Get("file")
+
+	var fileBytes []byte
+	pngHeader := "data:image/png;base64,"
+	if strings.HasPrefix(fileString, pngHeader) {
+		fileBytes, _ = base64.StdEncoding.DecodeString(fileString[len(pngHeader):])
+	} else {
+		fileBytes = []byte(fileString)
 	}
 
-	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index+1:])
-	fileUrl, err := object.UploadFile(provider, "avatar", user.GetId(), dist)
+	fileUrl, err := object.UploadFile(provider, folder, subFolder, fileBytes)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	user.Avatar = fileUrl
-	object.UpdateUser(user.GetId(), user)
+	if folder == "avatar" {
+		user.Avatar = fileUrl
+		object.UpdateUser(user.GetId(), user)
+	}
 
-	c.ResponseOk()
+	c.ResponseOk(fileUrl)
 }
 
 // GetHumanCheck ...
