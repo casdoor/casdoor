@@ -24,5 +24,5 @@ func GetStorageProvider(providerType string, clientId string, clientSecret strin
 		return NewAliyunStorageProvider(clientId, clientSecret, region, bucket, endpoint)
 	}
 
-	return nil
+	return NewLocalStorageProvider()
 }

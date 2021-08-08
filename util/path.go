@@ -29,9 +29,9 @@ func FileExist(path string) bool {
 }
 
 func UrlJoin(base string, path string) string {
-	if !strings.HasPrefix(base, "http://") && !strings.HasPrefix(base, "https://") {
-		base = fmt.Sprintf("https://%s", base)
-	}
+	//if !strings.HasPrefix(base, "http://") && !strings.HasPrefix(base, "https://") {
+	//	base = fmt.Sprintf("https://%s", base)
+	//}
 
 	res := fmt.Sprintf("%s/%s", strings.TrimRight(base, "/"), strings.TrimLeft(path, "/"))
 	return res
