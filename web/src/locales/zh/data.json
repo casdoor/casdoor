@@ -56,7 +56,7 @@
     "User containers": "用户容器",
     "Users under all organizations": "所有组织里的用户",
     "OAuth providers": "OAuth提供方",
-    "Applications that requires authentication": "需要鉴权的应用",
+    "Applications that require authentication": "需要鉴权的应用",
     "Swagger": "API文档",
     "Phone Prefix": "手机号前缀",
     "Phone Prefix - Tooltip": "移动电话号码前缀，用于区分国家或地区",
