@@ -174,9 +174,7 @@ func (c *ApiController) Signup() {
 
 	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
 
-	resp = Response{Status: "ok", Msg: "", Data: userId}
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk(userId)
 }
 
 // Logout
@@ -193,10 +191,7 @@ func (c *ApiController) Logout() {
 	c.SetSessionUsername("")
 	c.SetSessionData(nil)
 
-	resp = Response{Status: "ok", Msg: "", Data: user}
-
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk(user)
 }
 
 // GetAccount
@@ -219,10 +214,8 @@ func (c *ApiController) GetAccount() {
 	}
 
 	organization := object.GetOrganizationByUser(user)
-	resp = Response{Status: "ok", Msg: "", Data: user, Data2: organization}
 
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk(user, organization)
 }
 
 // UploadAvatar
@@ -265,9 +258,7 @@ func (c *ApiController) UploadAvatar() {
 	user.Avatar = fileUrl
 	object.UpdateUser(user.GetId(), user)
 
-	resp = Response{Status: "ok", Msg: ""}
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk()
 }
 
 // GetHumanCheck ...

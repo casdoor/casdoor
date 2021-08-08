@@ -83,8 +83,6 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 // @Success 200 {object} controllers.api_controller.Response The Response object
 // @router /update-application [get]
 func (c *ApiController) GetApplicationLogin() {
-	var resp Response
-
 	clientId := c.Input().Get("clientId")
 	responseType := c.Input().Get("responseType")
 	redirectUri := c.Input().Get("redirectUri")
@@ -93,12 +91,10 @@ func (c *ApiController) GetApplicationLogin() {
 
 	msg, application := object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
 	if msg != "" {
-		resp = Response{Status: "error", Msg: msg, Data: application}
+		c.ResponseError(msg, application)
 	} else {
-		resp = Response{Status: "ok", Msg: "", Data: application}
+		c.ResponseOk(application)
 	}
-	c.Data["json"] = resp
-	c.ServeJSON()
 }
 
 func setHttpClient(idProvider idp.IdProvider, providerType string) {
@@ -117,7 +113,8 @@ func setHttpClient(idProvider idp.IdProvider, providerType string) {
 // @Success 200 {object} controllers.api_controller.Response The Response object
 // @router /login [post]
 func (c *ApiController) Login() {
-	resp := &Response{Status: "null", Msg: ""}
+	resp := &Response{}
+
 	var form RequestForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {

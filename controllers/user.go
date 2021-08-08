@@ -166,10 +166,7 @@ func (c *ApiController) GetEmailAndPhone() {
 		contentType = "username"
 	}
 
-	resp = Response{Status: "ok", Msg: "", Data: respUser, Data2: contentType}
-
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk(respUser, contentType)
 }
 
 // SetPassword

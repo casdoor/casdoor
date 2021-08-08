@@ -55,6 +55,20 @@ func InitHttpClient() {
 	//println("Response status: %s", resp.Status)
 }
 
+// ResponseOk ...
+func (c *ApiController) ResponseOk(data ...interface{}) {
+	resp := Response{Status: "ok"}
+	switch len(data) {
+	case 2:
+		resp.Data2 = data[1]
+		fallthrough
+	case 1:
+		resp.Data = data[0]
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
 // ResponseError ...
 func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	resp := Response{Status: "error", Msg: error}
