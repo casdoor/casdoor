@@ -33,7 +33,7 @@ class HomePage extends React.Component {
         {link: "/organizations", name: i18next.t("general:Organizations"), organizer: i18next.t("general:User containers")},
         {link: "/users", name: i18next.t("general:Users"), organizer: i18next.t("general:Users under all organizations")},
         {link: "/providers", name: i18next.t("general:Providers"), organizer: i18next.t("general:OAuth providers")},
-        {link: "/applications", name: i18next.t("general:Applications"), organizer: i18next.t("general:Applications that requires authentication")},
+        {link: "/applications", name: i18next.t("general:Applications"), organizer: i18next.t("general:Applications that require authentication")},
       ];
     } else {
       items = [
