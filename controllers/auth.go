@@ -121,18 +121,14 @@ func (c *ApiController) Login() {
 	var form RequestForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
-		resp = &Response{Status: "error", Msg: err.Error()}
-		c.Data["json"] = resp
-		c.ServeJSON()
+		c.ResponseError(err.Error())
 		return
 	}
 
 	if form.Username != "" {
 		if form.Type == ResponseTypeLogin {
 			if c.GetSessionUsername() != "" {
-				resp = &Response{Status: "error", Msg: "Please log out first before signing in", Data: c.GetSessionUsername()}
-				c.Data["json"] = resp
-				c.ServeJSON()
+				c.ResponseError("Please sign out first before signing in", c.GetSessionUsername())
 				return
 			}
 		}
@@ -196,7 +192,7 @@ func (c *ApiController) Login() {
 		}
 
 		if msg != "" {
-			resp = &Response{Status: "error", Msg: msg, Data: ""}
+			resp = &Response{Status: "error", Msg: msg}
 		} else {
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 			resp = c.HandleLoggedIn(application, user, &form)
@@ -213,50 +209,38 @@ func (c *ApiController) Login() {
 		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
 		providerItem := application.GetProviderItem(provider.Name)
 		if !providerItem.IsProviderVisible() {
-			resp = &Response{Status: "error", Msg: fmt.Sprintf("The provider: %s is not enabled for the application", provider.Name)}
-			c.Data["json"] = resp
-			c.ServeJSON()
+			c.ResponseError(fmt.Sprintf("The provider: %s is not enabled for the application", provider.Name))
 			return
 		}
 
 		idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
 		if idProvider == nil {
-			resp = &Response{Status: "error", Msg: fmt.Sprintf("The provider type: %s is not supported", provider.Type)}
-			c.Data["json"] = resp
-			c.ServeJSON()
+			c.ResponseError(fmt.Sprintf("The provider type: %s is not supported", provider.Type))
 			return
 		}
 
 		setHttpClient(idProvider, provider.Type)
 
 		if form.State != beego.AppConfig.String("authState") && form.State != application.Name {
-			resp = &Response{Status: "error", Msg: fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("authState"), form.State)}
-			c.Data["json"] = resp
-			c.ServeJSON()
+			c.ResponseError(fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("authState"), form.State))
 			return
 		}
 
 		// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
 		token, err := idProvider.GetToken(form.Code)
 		if err != nil {
-			resp = &Response{Status: "error", Msg: err.Error()}
-			c.Data["json"] = resp
-			c.ServeJSON()
+			c.ResponseError(err.Error())
 			return
 		}
 
 		if !token.Valid() {
-			resp = &Response{Status: "error", Msg: "Invalid token"}
-			c.Data["json"] = resp
-			c.ServeJSON()
+			c.ResponseError("Invalid token")
 			return
 		}
 
 		userInfo, err := idProvider.GetUserInfo(token)
 		if err != nil {
-			resp = &Response{Status: "error", Msg: fmt.Sprintf("Failed to login in: %s", err.Error())}
-			c.Data["json"] = resp
-			c.ServeJSON()
+			c.ResponseError(fmt.Sprintf("Failed to login in: %s", err.Error()))
 			return
 		}
 
@@ -292,16 +276,12 @@ func (c *ApiController) Login() {
 			} else {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
-					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username, userInfo.DisplayName)}
-					c.Data["json"] = resp
-					c.ServeJSON()
+					c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username, userInfo.DisplayName))
 					return
 				}
 
 				if !providerItem.CanSignUp {
-					resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up", provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type)}
-					c.Data["json"] = resp
-					c.ServeJSON()
+					c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up", provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
 					return
 				}
 
@@ -348,9 +328,7 @@ func (c *ApiController) Login() {
 		} else { // form.Method != "signup"
 			userId := c.GetSessionUsername()
 			if userId == "" {
-				resp = &Response{Status: "error", Msg: "The account does not exist", Data: userInfo}
-				c.Data["json"] = resp
-				c.ServeJSON()
+				c.ResponseError("The account does not exist", userInfo)
 				return
 			}
 
@@ -359,9 +337,7 @@ func (c *ApiController) Login() {
 				oldUser = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
 			}
 			if oldUser != nil {
-				resp = &Response{Status: "error", Msg: fmt.Sprintf("The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)", provider.Type, userInfo.Username, userInfo.DisplayName, oldUser.Name, oldUser.DisplayName)}
-				c.Data["json"] = resp
-				c.ServeJSON()
+				c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)", provider.Type, userInfo.Username, userInfo.DisplayName, oldUser.Name, oldUser.DisplayName))
 				return
 			}
 
@@ -382,7 +358,8 @@ func (c *ApiController) Login() {
 			//}
 		}
 	} else {
-		panic("unknown authentication type (not password or provider), form = " + util.StructToJson(form))
+		c.ResponseError(fmt.Sprintf("unknown authentication type (not password or provider), form = %s", util.StructToJson(form)))
+		return
 	}
 
 	c.Data["json"] = resp
