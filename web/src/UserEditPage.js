@@ -60,7 +60,7 @@ class UserEditPage extends React.Component {
       user: null,
       application: null,
       organizations: [],
-      accountItems: [],
+      accountItems: props.isPreview ? props.accountItems : [],
     };
   }
 
@@ -69,15 +69,20 @@ class UserEditPage extends React.Component {
     this.getOrganizations();
     this.getUserApplication();
     let accountItems = [];
-    if (Setting.isAdminUser(this.props.account)) {
+    if (Setting.isAdminUser(this.props.account) && !this.props.isPreview) {
       for (let accountItem in accountMap) {
-        accountItems.push({"name": accountItem})
-        console.log(accountItems)
+        accountItems.push({"name": accountItem});
       }
     } else {
       accountItems = this.props.accountItems;
     }
     this.setState({accountItems: accountItems});
+  }
+
+  componentWillReceiveProps(nextProps, nextContent) {
+    if (this.props.isPreview) {
+      this.setState({accountItems: nextProps.accountItems});
+    }
   }
 
   getUser() {
@@ -381,7 +386,7 @@ class UserEditPage extends React.Component {
           </Row>
         )
       case "3rd-party logins":
-        return !this.isSelfOrAdmin() ? null : (
+        return !this.isSelfOrAdmin() && !this.props.isPreview ? null : (
           <Row style={{marginTop: '20px'}}>
             <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
               {accountItem.required ? this.renderRequired() : null}

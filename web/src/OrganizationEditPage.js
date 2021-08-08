@@ -97,7 +97,7 @@ class OrganizationEditPage extends React.Component {
             <Option value="normal-user">Normal User</Option>
           </Select>
         </Col>
-        <Col offset={2} span={20} style={{display: "flex", flexDirection: "column", marginTop: "10px"}}>
+        <Col offset={1} span={22} style={{display: "flex", flexDirection: "column", marginTop: "10px"}}>
           <div style={{
             marginTop: "10px",
             border: "1px solid rgb(217,217,217)",
