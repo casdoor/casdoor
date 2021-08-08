@@ -251,17 +251,11 @@ func (c *ApiController) Login() {
 			}
 
 			if user != nil {
-				// Sign in via OAuth
+				// Sign in via OAuth (want to sign up but already have account)
 
-				//if object.IsForbidden(userId) {
-				//	c.forbiddenAccountResp(userId)
-				//	return
-				//}
-
-				//if len(object.GetMemberAvatar(userId)) == 0 {
-				//	avatar := UploadAvatarToStorage(res.Avatar, userId)
-				//	object.LinkMemberAccount(userId, "avatar", avatar)
-				//}
+				if user.IsForbidden {
+					c.ResponseError("the user is forbidden to sign in, please contact the administrator")
+				}
 
 				resp = c.HandleLoggedIn(application, user, &form)
 
@@ -349,10 +343,6 @@ func (c *ApiController) Login() {
 			} else {
 				resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
 			}
-			//if len(object.GetMemberAvatar(userId)) == 0 {
-			//	avatar := UploadAvatarToStorage(tempUserAccount.AvatarUrl, userId)
-			//	object.LinkUserAccount(userId, "avatar", avatar)
-			//}
 		}
 	} else {
 		c.ResponseError(fmt.Sprintf("unknown authentication type (not password or provider), form = %s", util.StructToJson(form)))
