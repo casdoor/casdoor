@@ -31,8 +31,6 @@ func (c *ApiController) Unlink() {
 		return
 	}
 
-	var resp Response
-
 	var form LinkForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {

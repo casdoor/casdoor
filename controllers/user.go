@@ -132,8 +132,6 @@ func (c *ApiController) DeleteUser() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-email-and-phone [post]
 func (c *ApiController) GetEmailAndPhone() {
-	var resp Response
-
 	var form RequestForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
