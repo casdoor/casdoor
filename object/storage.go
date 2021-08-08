@@ -23,7 +23,7 @@ import (
 	"github.com/casbin/casdoor/util"
 )
 
-func UploadAvatar(provider *Provider, username string, avatar []byte) (string, error) {
+func UploadFile(provider *Provider, folder string, subFolder string, fileBytes []byte) (string, error) {
 	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, provider.Endpoint)
 	if storageProvider == nil {
 		return "", fmt.Errorf("the provider type: %s is not supported", provider.Type)
@@ -34,8 +34,8 @@ func UploadAvatar(provider *Provider, username string, avatar []byte) (string, e
 		UpdateProvider(provider.GetId(), provider)
 	}
 
-	path := fmt.Sprintf("%s/%s.png", util.UrlJoin(util.GetUrlPath(provider.Domain), "/avatar"), username)
-	_, err := storageProvider.Put(path, bytes.NewReader(avatar))
+	path := fmt.Sprintf("%s/%s.png", util.UrlJoin(util.GetUrlPath(provider.Domain), folder), subFolder)
+	_, err := storageProvider.Put(path, bytes.NewReader(fileBytes))
 	if err != nil {
 		return "", err
 	}
