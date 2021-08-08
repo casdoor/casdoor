@@ -33,10 +33,10 @@ func (application *Application) GetProviderItem(providerName string) *ProviderIt
 	return nil
 }
 
-func (pi *ProviderItem) isProviderVisible() bool {
+func (pi *ProviderItem) IsProviderVisible() bool {
 	return pi.Provider.Category == "OAuth"
 }
 
 func (pi *ProviderItem) isProviderPrompted() bool {
-	return pi.isProviderVisible() && pi.Prompted
+	return pi.IsProviderVisible() && pi.Prompted
 }
