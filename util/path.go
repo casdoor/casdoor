@@ -29,10 +29,6 @@ func FileExist(path string) bool {
 }
 
 func UrlJoin(base string, path string) string {
-	if !strings.HasPrefix(base, "http://") && !strings.HasPrefix(base, "https://") {
-		base = fmt.Sprintf("https://%s", base)
-	}
-
 	res := fmt.Sprintf("%s/%s", strings.TrimRight(base, "/"), strings.TrimLeft(path, "/"))
 	return res
 }
@@ -40,4 +36,9 @@ func UrlJoin(base string, path string) string {
 func GetUrlPath(urlString string) string {
 	u, _ := url.Parse(urlString)
 	return u.Path
+}
+
+func GetUrlHost(urlString string) string {
+	u, _ := url.Parse(urlString)
+	return fmt.Sprintf("%s://%s", u.Scheme, u.Host)
 }

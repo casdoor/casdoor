@@ -22,5 +22,6 @@ tmp/
 tmpFiles/
 *.tmp
 logs/
+files/
 lastupdate.tmp
 commentsRouter*.go
