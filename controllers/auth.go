@@ -212,10 +212,16 @@ func (c *ApiController) Login() {
 		organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", application.Organization))
 		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
 		providerItem := application.GetProviderItem(provider.Name)
+		if !providerItem.IsProviderVisible() {
+			resp = &Response{Status: "error", Msg: fmt.Sprintf("The provider: %s is not enabled for the application", provider.Name)}
+			c.Data["json"] = resp
+			c.ServeJSON()
+			return
+		}
 
 		idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
 		if idProvider == nil {
-			resp = &Response{Status: "error", Msg: fmt.Sprintf("provider: %s does not exist", provider.Type)}
+			resp = &Response{Status: "error", Msg: fmt.Sprintf("The provider type: %s is not supported", provider.Type)}
 			c.Data["json"] = resp
 			c.ServeJSON()
 			return
