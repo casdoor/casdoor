@@ -51,7 +51,5 @@ func (c *ApiController) Unlink() {
 	object.ClearUserOAuthProperties(user, providerType)
 
 	object.LinkUserAccount(user, providerType, "")
-	resp = Response{Status: "ok", Msg: ""}
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk()
 }
