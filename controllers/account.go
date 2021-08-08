@@ -256,9 +256,9 @@ func (c *ApiController) UploadAvatar() {
 	}
 
 	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index+1:])
-	msg := object.UploadAvatar(provider, user.GetId(), dist)
-	if msg != "" {
-		c.ResponseError(msg)
+	err := object.UploadAvatar(provider, user.GetId(), dist)
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
