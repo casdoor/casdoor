@@ -80,8 +80,6 @@ type HumanCheck struct {
 // @Success 200 {object} controllers.Response The Response object
 // @router /signup [post]
 func (c *ApiController) Signup() {
-	var resp Response
-
 	if c.GetSessionUsername() != "" {
 		c.ResponseError("Please sign out first before signing up", c.GetSessionUsername())
 		return
@@ -183,8 +181,6 @@ func (c *ApiController) Signup() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /logout [post]
 func (c *ApiController) Logout() {
-	var resp Response
-
 	user := c.GetSessionUsername()
 	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
@@ -204,8 +200,6 @@ func (c *ApiController) GetAccount() {
 	if !ok {
 		return
 	}
-
-	var resp Response
 
 	user := object.GetUser(userId)
 	if user == nil {
@@ -230,8 +224,6 @@ func (c *ApiController) UploadAvatar() {
 	if !ok {
 		return
 	}
-
-	var resp Response
 
 	user := object.GetUser(userId)
 	application := object.GetApplicationByUser(user)
