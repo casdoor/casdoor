@@ -256,13 +256,13 @@ func (c *ApiController) UploadAvatar() {
 	}
 
 	dist, _ := base64.StdEncoding.DecodeString(avatarBase64[index+1:])
-	err := object.UploadAvatar(provider, user.GetId(), dist)
+	fileUrl, err := object.UploadAvatar(provider, user.GetId(), dist)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	user.Avatar = fmt.Sprintf("%s/%s.png?time=%s", util.UrlJoin(provider.Domain, "/avatar"), user.GetId(), util.GetCurrentUnixTime())
+	user.Avatar = fileUrl
 	object.UpdateUser(user.GetId(), user)
 
 	resp = Response{Status: "ok", Msg: ""}

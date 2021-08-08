@@ -18,6 +18,8 @@ import "github.com/qor/oss"
 
 func GetStorageProvider(providerType string, clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
 	switch providerType {
+	case "Local File System":
+		return NewLocalFileSystemStorageProvider(clientId, clientSecret, region, bucket, endpoint)
 	case "AWS S3":
 		return NewAwsS3StorageProvider(clientId, clientSecret, region, bucket, endpoint)
 	case "Aliyun OSS":

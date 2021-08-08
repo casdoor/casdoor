@@ -17,14 +17,16 @@ package object
 import (
 	"bytes"
 	"fmt"
+	"strings"
+
 	"github.com/casbin/casdoor/storage"
 	"github.com/casbin/casdoor/util"
 )
 
-func UploadAvatar(provider *Provider, username string, avatar []byte) error {
+func UploadAvatar(provider *Provider, username string, avatar []byte) (string, error) {
 	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, provider.Endpoint)
 	if storageProvider == nil {
-		return fmt.Errorf("the provider type: %s is not supported", provider.Type)
+		return "", fmt.Errorf("the provider type: %s is not supported", provider.Type)
 	}
 
 	if provider.Domain == "" {
@@ -34,5 +36,22 @@ func UploadAvatar(provider *Provider, username string, avatar []byte) error {
 
 	path := fmt.Sprintf("%s/%s.png", util.UrlJoin(util.GetUrlPath(provider.Domain), "/avatar"), username)
 	_, err := storageProvider.Put(path, bytes.NewReader(avatar))
-	return err
+	if err != nil {
+		return "", err
+	}
+
+	host := ""
+	if provider.Type != "Local File System" {
+		// provider.Domain = "https://cdn.casbin.com/casdoor/"
+		host = util.GetUrlHost(provider.Domain)
+		if !strings.HasPrefix(host, "http://") && !strings.HasPrefix(host, "https://") {
+			host = fmt.Sprintf("https://%s", host)
+		}
+	} else {
+		// provider.Domain = "http://localhost:8000" or "https://door.casbin.com"
+		host = util.UrlJoin(provider.Domain, "/files")
+	}
+
+	fileUrl := fmt.Sprintf("%s?time=%s", util.UrlJoin(host, path), util.GetCurrentUnixTime())
+	return fileUrl, nil
 }

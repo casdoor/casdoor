@@ -148,7 +148,8 @@ class ProviderEditPage extends React.Component {
               } else if (value === "SMS") {
                 this.updateProviderField('type', 'Aliyun SMS');
               } else if (value === "Storage") {
-                this.updateProviderField('type', 'Aliyun OSS');
+                this.updateProviderField('type', 'Local File System');
+                this.updateProviderField('domain', Setting.getFullServerUrl());
               }
             })}>
               {
@@ -167,7 +168,12 @@ class ProviderEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:Type"), i18next.t("provider:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.provider.type} onChange={(value => {this.updateProviderField('type', value);})}>
+            <Select virtual={false} style={{width: '100%'}} value={this.state.provider.type} onChange={(value => {
+              this.updateProviderField('type', value);
+              if (value === "Local File System") {
+                this.updateProviderField('domain', Setting.getFullServerUrl());
+              }
+            })}>
               {
                 this.getProviderTypeOptions(this.state.provider).map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
               }

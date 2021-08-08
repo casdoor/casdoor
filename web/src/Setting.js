@@ -48,6 +48,14 @@ function isLocalhost() {
   return hostname === "localhost";
 }
 
+export function getFullServerUrl() {
+  let fullServerUrl = window.location.origin;
+  if (fullServerUrl === "http://localhost:7001") {
+    fullServerUrl = "http://localhost:8000";
+  }
+  return fullServerUrl;
+}
+
 export function isProviderVisible(providerItem) {
   if (providerItem.provider === undefined || providerItem.provider === null) {
     return false;
