@@ -24,7 +24,6 @@ import (
 var defaultHttpClient *http.Client
 var proxyHttpClient *http.Client
 
-// InitHttpClient ...
 func InitHttpClient() {
 	// not use proxy
 	defaultHttpClient = http.DefaultClient
