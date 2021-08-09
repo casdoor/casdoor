@@ -65,7 +65,7 @@ go run main.go
 
 That's it! Try to visit http://127.0.0.1:7001/. :small_airplane:
 
-##### Prod Mode
+##### Production Mode
 
 Edit `conf/app.conf`, set `runmode=prod`. Firstly build front-end files:
 
@@ -79,7 +79,7 @@ Then build back-end binary file, change directory to root(Relative to casdoor):
 go build main.go && sudo ./main
 ```
 
-> Notice, you should visit back-end port, default 8000. Now try to visit http://127.0.0.1:8000/
+> Notice, you should visit back-end port, default 8000. Now try to visit **http://SERVER_IP:8000/**
 
 ### Docker
 
@@ -103,7 +103,7 @@ Just execute:
 docker-compose up
 ```
 
-That's
+That's it! Try to visit http://localhost:8000/. :small_airplane:
 
 ## Detailed documentation
 
@@ -121,9 +121,9 @@ These all use casdoor as a centralized authentication platform.
 
 For casdoor, if you have any questions, you can give Issues, and you can also directly Pull Requests(but we recommend give issues first to communicate with the community).
 
-In addition to contributing codes to casdoor, uou can also contribute to the [internationalization of casdoor](https://crowdin.com/project/casdoor-web) by translating for casdoor in the language you are good at.
+### I18n notice
 
-Both are welcome! :kissing_smiling_eyes:
+If you are contributing to casdoor, please note that we use [Crowdin](https://crowdin.com/project/casdoor-web) as translating platform and i18next as translating tool. When you add some words using i18next in the ```web/``` directory, please remember to add what you have added to the ```web/src/locales/en/data.json``` file.
 
 ## License
 
