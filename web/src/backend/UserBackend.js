@@ -79,18 +79,11 @@ export function getAffiliationOptions(url, code) {
 export function uploadFile(folder, subFolder, file) {
   let formData = new FormData();
   formData.append("file", file);
-  fetch(`${Setting.ServerUrl}/api/upload-file?folder=${encodeURIComponent(folder)}&subFolder=${encodeURIComponent(subFolder)}`, {
+  return fetch(`${Setting.ServerUrl}/api/upload-file?folder=${encodeURIComponent(folder)}&subFolder=${encodeURIComponent(subFolder)}`, {
     body: formData,
     method: 'POST',
     credentials: 'include',
   }).then(res => res.json())
-    .then((res) => {
-    if (res.status === "ok") {
-      window.location.href = "/account";
-    } else {
-      Setting.showMessage("error", res.msg);
-    }
-  });
 }
 
 export function setPassword(userOwner, userName, oldPassword, newPassword) {
