@@ -1,0 +1,65 @@
+name: Release
+
+on: [push, pull_request]
+
+jobs:
+  frontend:
+    name: Front-end build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.17.0'
+      - run: yarn install && CI=false yarn run build
+        working-directory: ./web
+
+  backend:
+    name: Back-end build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16.5'
+
+      - name: Build
+        run: |
+          go build -race -ldflags "-extldflags '-static'"
+        working-directory: ./
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: [frontend, backend]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12
+      - name: Release
+        run: yarn global add semantic-release@17.4.4 && semantic-release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: shiluo/casdoor:latest
