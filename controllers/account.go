@@ -15,7 +15,6 @@
 package controllers
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -236,26 +235,38 @@ func (c *ApiController) UploadFile() {
 		c.ResponseError("No storage provider is found")
 		return
 	}
-
-	fileString := c.Ctx.Request.Form.Get("file")
-
-	var fileBytes []byte
-	pngHeader := "data:image/png;base64,"
-	if strings.HasPrefix(fileString, pngHeader) {
-		fileBytes, _ = base64.StdEncoding.DecodeString(fileString[len(pngHeader):])
-	} else {
-		fileBytes = []byte(fileString)
+	file, header, err := c.GetFile("file")
+	defer file.Close()
+	if err != nil {
+		c.ResponseError("Missing parameter")
+		return
 	}
 
-	fileUrl, err := object.UploadFile(provider, folder, subFolder, fileBytes)
+	fileType := header.Header.Get("Content-Type")
+
+	fileSuffix := ""
+	switch fileType {
+	case "image/png":
+		fileSuffix = "png"
+	case "text/html":
+		fileSuffix = "html"
+	}
+
+	fileUrl, err := object.UploadFile(provider, folder, subFolder, file, fileSuffix)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	if folder == "avatar" {
+	switch folder {
+	case "avatar":
 		user.Avatar = fileUrl
 		object.UpdateUser(user.GetId(), user)
+	case "termsofuse":
+		appId := fmt.Sprintf("admin/%s", strings.Split(subFolder, "/")[0])
+		app := object.GetApplication(appId)
+		app.TermsOfUse = fileUrl
+		object.UpdateApplication(appId, app)
 	}
 
 	c.ResponseOk(fileUrl)

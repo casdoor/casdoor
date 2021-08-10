@@ -72,6 +72,7 @@ class SignupPage extends React.Component {
       validPhone: false,
       region: "",
       isTermsOfUseVisible: false,
+      termsOfUseContent: "",
     };
 
     this.form = React.createRef();
@@ -95,6 +96,7 @@ class SignupPage extends React.Component {
         this.setState({
           application: application,
         });
+        this.getTermsofuseContent(application.termsOfUse);
       });
   }
 
@@ -116,6 +118,16 @@ class SignupPage extends React.Component {
     } else {
       return this.state.application;
     }
+  }
+
+  getTermsofuseContent(url) {
+    fetch(url, {
+      method: "GET",
+    }).then(r => {
+      r.text().then(res => {
+        this.setState({termsOfUseContent: res})
+      })
+    })
   }
 
   onUpdateAccount(account) {
@@ -407,23 +419,25 @@ class SignupPage extends React.Component {
       <Modal
         title={i18next.t("signup:Terms of Use")}
         visible={this.state.isTermsOfUseVisible}
+        width={"55vw"}
         closable={false}
-        footer={[
-          <Button key="agree" type="primary" onClick={() => {
-            this.setState({
-              isTermsOfUseVisible: false,
-            });
-          }}>
-            {i18next.t("user:OK")}
-          </Button>,
-          // <Button key="decline" onClick={() => {
-          //   this.props.history.goBack();
-          // }}>
-          //   {i18next.t("signup:Decline")}
-          // </Button>,
-        ]}
+        okText={i18next.t("signup:Accept")}
+        cancelText={i18next.t("signup:Decline")}
+        onOk={() => {
+          this.form.current.setFieldsValue({agreement: true})
+          this.setState({
+            isTermsOfUseVisible: false,
+          });
+        }}
+        onCancel={() => {
+          this.form.current.setFieldsValue({agreement: false})
+          this.setState({
+            isTermsOfUseVisible: false,
+          });
+          this.props.history.goBack();
+        }}
       >
-        <div dangerouslySetInnerHTML={{__html: this.state.application?.termsOfUse}} />
+        <iframe style={{border: 0, width: "100%", height: "60vh"}} srcDoc={this.state.termsOfUseContent}/>
       </Modal>
     )
   }
