@@ -65,6 +65,15 @@ func IsStrsEmpty(strs ...string) bool {
 	return false
 }
 
+func FindStrInSlice(str *string, slice *[]string) (int, bool) {
+	for i, item := range *slice {
+		if item == *str {
+			return i, true
+		}
+	}
+	return -1, false
+}
+
 func GetMaxLenStr(strs ...string) string {
 	m := 0
 	i := 0

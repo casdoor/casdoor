@@ -42,3 +42,9 @@ func GetUrlHost(urlString string) string {
 	u, _ := url.Parse(urlString)
 	return fmt.Sprintf("%s://%s", u.Scheme, u.Host)
 }
+
+func GetUrlParams(urlString string) map[string][]string {
+	u, _ := url.Parse(urlString)
+	q, _ := url.ParseQuery(u.RawQuery)
+	return q
+}
