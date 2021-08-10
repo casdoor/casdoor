@@ -15,6 +15,7 @@
 package object
 
 import (
+	"fmt"
 	"github.com/casbin/casdoor/util"
 )
 
@@ -24,8 +25,8 @@ type Records struct {
 }
 
 func AddRecord(record *util.Record) bool {
-	records := new(Records)
-	records.Record = *record
+	record.RequestUri = hideUriParams(record.RequestUri)
+	records := Records{Record: *record}
 
 	affected, err := adapter.Engine.Insert(records)
 	if err != nil {
@@ -33,6 +34,21 @@ func AddRecord(record *util.Record) bool {
 	}
 
 	return affected != 0
+}
+
+func hideUriParams(urlStr string) string {
+	hideKeys := []string{"accessToken", "clientSecret"}
+	params := util.GetUrlParams(urlStr)
+	paramsStr := "?"
+	for key, param := range params {
+		fmt.Println(param)
+		_, found := util.FindStrInSlice(&key, &hideKeys)
+		if found {
+			param = []string{"***"}
+		}
+		paramsStr = fmt.Sprintf("%s%s=%s&", paramsStr, key, param[0])
+	}
+	return fmt.Sprintf("%s%s", util.GetUrlPath(urlStr), paramsStr[:len(paramsStr)-1])
 }
 
 func GetRecordCount() int {
