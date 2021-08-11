@@ -15,12 +15,13 @@
 package object
 
 import (
+	"github.com/astaxie/beego"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-var jwtSecret = []byte("CasdoorSecret")
+var jwtSecret = []byte(beego.AppConfig.String("jwtSecret"))
 
 type Claims struct {
 	User

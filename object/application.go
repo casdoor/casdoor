@@ -15,6 +15,7 @@
 package object
 
 import (
+	"github.com/astaxie/beego"
 	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
 )
@@ -37,6 +38,7 @@ type Application struct {
 
 	ClientId       string   `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret   string   `xorm:"varchar(100)" json:"clientSecret"`
+	JWTSecret      string   `xorm:"varchar(100)" json:"jwtSecret"`
 	RedirectUris   []string `xorm:"varchar(1000)" json:"redirectUris"`
 	ExpireInHours  int      `json:"expireInHours"`
 	SignupUrl      string   `xorm:"varchar(100)" json:"signupUrl"`
@@ -182,6 +184,7 @@ func UpdateApplication(id string, application *Application) bool {
 func AddApplication(application *Application) bool {
 	application.ClientId = util.GenerateClientId()
 	application.ClientSecret = util.GenerateClientSecret()
+	application.JWTSecret = beego.AppConfig.String("jwtSecret")
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}
