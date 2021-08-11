@@ -1,16 +1,10 @@
 name: Build
 
-on:
-  push:
-    branches:
-      - "*"
-  pull_request:
-    branches:
-      - "*"
+on: [push, pull_request]
 
 jobs:
   frontend:
-    name: Front-end build
+    name: Front-end
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -21,7 +15,7 @@ jobs:
         working-directory: ./web
 
   backend:
-    name: Back-end build
+    name: Back-end
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -29,17 +23,44 @@ jobs:
         with:
           go-version: '^1.16.5'
       - run: go version
-
       - name: Build
         run: |
           go build -race -ldflags "-extldflags '-static'"
         working-directory: ./
 
-  docker:
-    name: Docker compose
+  release:
+    name: Release
     runs-on: ubuntu-latest
+    needs: [ frontend, backend ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Start containers
-        run: docker-compose up
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12
+      - name: Release
+        run: yarn global add semantic-release@17.4.4 && semantic-release
+        env:
+          GH_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    if: github.repository == 'casbin/casdoor' && github.event_name == 'push'
+    needs: release
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: casbin/casdoor:latest
