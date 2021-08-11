@@ -1,9 +1,25 @@
-Casdoor
-====
-
-[![Go Report Card](https://goreportcard.com/badge/github.com/casbin/casdoor)](https://goreportcard.com/report/github.com/casbin/casdoor) <img src="https://img.shields.io/github/license/casbin/casdoor?style=flat-square" alt="license"> [![GitHub issues](https://img.shields.io/github/issues/casbin/casdoor?style=flat-square)](https://github.com/casbin/casdoor/issues) [![GitHub stars](https://img.shields.io/github/stars/casbin/casdoor?style=flat-square)](https://github.com/casbin/casdoor/stargazers) [![GitHub forks](https://img.shields.io/github/forks/casbin/casdoor?style=flat-square)](https://github.com/casbin/casdoor/network) 
-
-Casdoor is a UI-first centralized authentication / Single-Sign-On (SSO) platform based on OAuth 2.0 / OIDC.
+<h1 align="center" style="border-bottom: none;">📦⚡️ Casdoor</h1>
+<h3 align="center">A UI-first centralized authentication / Single-Sign-On (SSO) platform based on OAuth 2.0 / OIDC.</h3>
+<p align="center">
+  <a href="https://goreportcard.com/report/github.com/casbin/casdoor">
+    <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/casbin/casdoor">
+  </a>
+  <a href="https://github.com/casbin/casdoor/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/casbin/casdoor?style=flat-square" alt="license">
+  </a>
+  <a href="#badge">
+    <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
+  </a>
+  <a href="https://github.com/casbin/casdoor/issues">
+    <img alt="GitHub issues" src="https://img.shields.io/github/issues/casbin/casdoor?style=flat-square">
+  </a>
+  <a href="#">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/casbin/casdoor?style=flat-square">
+  </a>
+  <a href="https://github.com/casbin/casdoor/network">
+    <img alt="GitHub forks" src="https://img.shields.io/github/forks/casbin/casdoor?style=flat-square">
+  </a>
+</p>
 
 ## Online demo
 
@@ -96,8 +112,6 @@ dataSourceName = root:123@tcp(db:3306)/
 > If you need to modify `conf/app.conf`, you need to re-run `docker-compose up`.
 
 #### Run
-
-Just execute:
 
 ```bash
 docker-compose up

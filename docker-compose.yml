@@ -3,11 +3,12 @@ services:
   casdoor:
     build:
       context: ./
-      dockerfile: go-dockerfile
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     depends_on:
       - db
+    command: ["./wait-for-it db:3306 -- ./server"]
     volumes:
       - ./conf:/conf/
   db:
