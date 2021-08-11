@@ -1,0 +1,45 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  frontend:
+    name: Front-end build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.17.0'
+      - run: yarn install && CI=false yarn run build
+        working-directory: ./web
+
+  backend:
+    name: Back-end build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16.5'
+      - run: go version
+
+      - name: Build
+        run: |
+          go build -race -ldflags "-extldflags '-static'"
+        working-directory: ./
+
+  docker:
+    name: Docker compose
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Start containers
+        run: docker-compose up
