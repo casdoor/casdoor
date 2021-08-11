@@ -80,6 +80,9 @@
     "Signin URL - Tooltip": "sign in url",
     "ID - Tooltip": "random string",
     "Favicon - Tooltip": "Application icon",
+    "Uploading": "Uploading",
+    "Start Upload": "Start Upload",
+    "Upload success": "Upload success",
     "Back Home": "Back Home",
     "Sorry, the page you visited does not exist": "Sorry, the page you visited does not exist"
   },
