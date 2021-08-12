@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+
 	"github.com/casbin/casdoor/util"
 )
 
@@ -41,7 +42,6 @@ func hideUriParams(urlStr string) string {
 	params := util.GetUrlParams(urlStr)
 	paramsStr := "?"
 	for key, param := range params {
-		fmt.Println(param)
 		_, found := util.FindStrInSlice(&key, &hideKeys)
 		if found {
 			param = []string{"***"}
