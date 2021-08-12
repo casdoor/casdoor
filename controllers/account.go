@@ -238,7 +238,7 @@ func (c *ApiController) UploadFile() {
 	file, header, err := c.GetFile("file")
 	defer file.Close()
 	if err != nil {
-		c.ResponseError("Missing parameter")
+		c.ResponseError(err.Error())
 		return
 	}
 
