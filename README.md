@@ -1,14 +1,29 @@
 <h1 align="center" style="border-bottom: none;">📦⚡️ Casdoor</h1>
 <h3 align="center">A UI-first centralized authentication / Single-Sign-On (SSO) platform based on OAuth 2.0 / OIDC.</h3>
 <p align="center">
+  <a href="#badge">
+    <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
+  </a>
+  <a href="https://hub.docker.com/r/casbin/casdoor">
+    <img alt="docker pull casbin/casdoor" src="https://img.shields.io/docker/pulls/casbin/casdoor.svg">
+  </a>
+  <a href="https://github.com/casbin/casdoor/actions/workflows/build.yml">
+    <img alt="GitHub Workflow Status (branch)" src="https://github.com/casbin/jcasbin/workflows/build/badge.svg?style=flat-square">
+  </a>
+  <a href="https://github.com/casbin/casdoor/releases/latest">
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/casbin/casdoor.svg">
+  </a>
+  <a href="https://hub.docker.com/repository/docker/casbin/casdoor">
+    <img alt="Docker Image Version (latest semver)" src="https://img.shields.io/badge/Docker%20Hub-latest-brightgreen">
+  </a>
+</p>
+
+<p align="center">
   <a href="https://goreportcard.com/report/github.com/casbin/casdoor">
-    <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/casbin/casdoor">
+    <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/casbin/casdoor?style=flat-square">
   </a>
   <a href="https://github.com/casbin/casdoor/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/casbin/casdoor?style=flat-square" alt="license">
-  </a>
-  <a href="#badge">
-    <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
   </a>
   <a href="https://github.com/casbin/casdoor/issues">
     <img alt="GitHub issues" src="https://img.shields.io/github/issues/casbin/casdoor?style=flat-square">
@@ -118,6 +133,14 @@ docker-compose up
 ```
 
 That's it! Try to visit http://localhost:8000/. :small_airplane:
+
+### Docker Hub
+
+This method requires [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) to be installed first.
+
+```bash
+docker pull casbin/casdoor
+```
 
 ## Detailed documentation
 
