@@ -8,7 +8,6 @@ services:
       - "8000:8000"
     depends_on:
       - db
-    command: ["./wait-for-it db:3306 -- ./server"]
     volumes:
       - ./conf:/conf/
   db:
