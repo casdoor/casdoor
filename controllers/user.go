@@ -64,8 +64,7 @@ func (c *ApiController) GetUser() {
 		}
 	}
 
-	c.Data["json"] = object.GetMaskedUser(user)
-	c.ServeJSON()
+	c.ResponseOk(object.GetMaskedUser(user), object.GetOrganizationByUser(user).AccountItems)
 }
 
 // UpdateUser

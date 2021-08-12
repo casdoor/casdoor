@@ -87,10 +87,13 @@ class UserEditPage extends React.Component {
 
   getUser() {
     UserBackend.getUser(this.state.organizationName, this.state.userName)
-      .then((user) => {
+      .then((res) => {
         this.setState({
-          user: user,
+          user: res.data,
         });
+        if (this.props.account === null) {
+          this.setState({accountItems: res.data2})
+        }
       });
   }
 

@@ -43,9 +43,9 @@ class PromptPage extends React.Component {
     const organizationName = this.props.account.owner;
     const userName = this.props.account.name;
     UserBackend.getUser(organizationName, userName)
-      .then((user) => {
+      .then((res) => {
         this.setState({
-          user: user,
+          user: res.data,
         });
       });
   }
