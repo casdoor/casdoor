@@ -47,7 +47,7 @@ const accountMap = {
   "Country/Region": ["region"],
   "Affiliation": ["affiliation"],
   "Tag": ["tag"],
-  "3rd-party logins": ["github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom"],
+  // "3rd-party logins": ["github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom"],
 }
 
 class UserEditPage extends React.Component {
@@ -68,15 +68,6 @@ class UserEditPage extends React.Component {
     this.getUser();
     this.getOrganizations();
     this.getUserApplication();
-    let accountItems = [];
-    if (Setting.isAdminUser(this.props.account) && !this.props.isPreview) {
-      for (let accountItem in accountMap) {
-        accountItems.push({"name": accountItem});
-      }
-    } else {
-      accountItems = this.props.accountItems;
-    }
-    this.setState({accountItems: accountItems});
   }
 
   componentWillReceiveProps(nextProps, nextContent) {
@@ -94,15 +85,28 @@ class UserEditPage extends React.Component {
       });
   }
 
+  getAccountItem(organizations, user) {
+    let accountItems = [];
+    if (this.props.account === null) {
+      accountItems = organizations.filter(item => {return item.name === user.owner})[0].accountItems
+    } else {
+      if (Setting.isAdminUser(this.props.account) && !this.props.isPreview) {
+        for (let accountItem in accountMap) {
+          accountItems.push({"name": accountItem});
+        }
+      } else {
+        accountItems = this.props.accountItems;
+      }
+    }
+    return accountItems;
+  }
+
   getOrganizations() {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
         });
-        if (this.props.account === null) {
-          this.setState({accountItems: res.filter(item => {return item.name === this.state.user.owner})[0].accountItems});
-        }
       });
   }
 
@@ -147,7 +151,9 @@ class UserEditPage extends React.Component {
   }
 
   renderFormItem(accountItem) {
-    if (Setting.isAdminUser(this.props.account)) {
+    if (this.props.account === null) {
+      accountItem.editable = false;
+    } else if (Setting.isAdminUser(this.props.account)) {
       accountItem.visible = true;
       accountItem.editable = true;
     }
@@ -416,84 +422,103 @@ class UserEditPage extends React.Component {
   }
 
   renderUser() {
+    let accountItems = this.state.accountItems;
+    if (this.state.organizations.length > 0 && accountItems.length === 0) {
+      accountItems = this.getAccountItem(this.state.organizations, this.state.user);
+    }
     return (
-      <Card size="small" title={
-        <div>
-          {i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
+      <React.Fragment>
+        <Card size="small" title={
+          <div>
+            {i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
+            {
+              this.props.isPreview || this.props.account === null ? null : (
+                <Button type="primary" onClick={() => this.submitUserEdit(accountItems)}>{i18next.t("general:Save")}</Button>
+              )
+            }
+          </div>
+        } style={(Setting.isMobile()) ? {margin: '5px'} : {}} type="inner">
           {
-            this.props.isPreview ? null : (
-              <Button type="primary" onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+            accountItems.map(accountItem => this.renderFormItem(accountItem))
+          }
+          {
+            !Setting.isAdminUser(this.props.account) ? null : (
+              <React.Fragment>
+                {/*<Row style={{marginTop: '20px'}} >*/}
+                {/*  <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>*/}
+                {/*    {i18next.t("user:Properties")}:*/}
+                {/*  </Col>*/}
+                {/*  <Col span={22} >*/}
+                {/*    <CodeMirror*/}
+                {/*      value={JSON.stringify(this.state.user.properties, null, 4)}*/}
+                {/*      options={{mode: 'javascript', theme: "material-darker"}}*/}
+                {/*    />*/}
+                {/*  </Col>*/}
+                {/*</Row>*/}
+                <Row style={{marginTop: '20px'}}>
+                  <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {Setting.getLabel(i18next.t("user:Is admin"), i18next.t("user:Is admin - Tooltip"))} :
+                  </Col>
+                  <Col span={(Setting.isMobile()) ? 22 : 2}>
+                    <Switch checked={this.state.user.isAdmin} onChange={checked => {
+                      this.updateUserField('isAdmin', checked);
+                    }}/>
+                  </Col>
+                </Row>
+                <Row style={{marginTop: '20px'}}>
+                  <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {Setting.getLabel(i18next.t("user:Is global admin"), i18next.t("user:Is global admin - Tooltip"))} :
+                  </Col>
+                  <Col span={(Setting.isMobile()) ? 22 : 2}>
+                    <Switch checked={this.state.user.isGlobalAdmin} onChange={checked => {
+                      this.updateUserField('isGlobalAdmin', checked);
+                    }}/>
+                  </Col>
+                </Row>
+                <Row style={{marginTop: '20px'}}>
+                  <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {Setting.getLabel(i18next.t("user:Is forbidden"), i18next.t("user:Is forbidden - Tooltip"))} :
+                  </Col>
+                  <Col span={(Setting.isMobile()) ? 22 : 2}>
+                    <Switch checked={this.state.user.isForbidden} onChange={checked => {
+                      this.updateUserField('isForbidden', checked);
+                    }}/>
+                  </Col>
+                </Row>
+              </React.Fragment>
             )
           }
-        </div>
-      } style={(Setting.isMobile()) ? {margin: '5px'} : {}} type="inner">
+        </Card>
         {
-          this.state.accountItems?.map(accountItem => this.renderFormItem(accountItem))
-        }
-        {
-          !Setting.isAdminUser(this.props.account) ? null : (
-            <React.Fragment>
-              {/*<Row style={{marginTop: '20px'}} >*/}
-              {/*  <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>*/}
-              {/*    {i18next.t("user:Properties")}:*/}
-              {/*  </Col>*/}
-              {/*  <Col span={22} >*/}
-              {/*    <CodeMirror*/}
-              {/*      value={JSON.stringify(this.state.user.properties, null, 4)}*/}
-              {/*      options={{mode: 'javascript', theme: "material-darker"}}*/}
-              {/*    />*/}
-              {/*  </Col>*/}
-              {/*</Row>*/}
-              <Row style={{marginTop: '20px'}}>
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("user:Is admin"), i18next.t("user:Is admin - Tooltip"))} :
-                </Col>
-                <Col span={(Setting.isMobile()) ? 22 : 2}>
-                  <Switch checked={this.state.user.isAdmin} onChange={checked => {
-                    this.updateUserField('isAdmin', checked);
-                  }}/>
-                </Col>
-              </Row>
-              <Row style={{marginTop: '20px'}}>
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("user:Is global admin"), i18next.t("user:Is global admin - Tooltip"))} :
-                </Col>
-                <Col span={(Setting.isMobile()) ? 22 : 2}>
-                  <Switch checked={this.state.user.isGlobalAdmin} onChange={checked => {
-                    this.updateUserField('isGlobalAdmin', checked);
-                  }}/>
-                </Col>
-              </Row>
-              <Row style={{marginTop: '20px'}}>
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("user:Is forbidden"), i18next.t("user:Is forbidden - Tooltip"))} :
-                </Col>
-                <Col span={(Setting.isMobile()) ? 22 : 2}>
-                  <Switch checked={this.state.user.isForbidden} onChange={checked => {
-                    this.updateUserField('isForbidden', checked);
-                  }}/>
-                </Col>
-              </Row>
-            </React.Fragment>
+          this.props.isPreview || this.props.account === null ? null : (
+            <div style={{marginTop: '20px', marginLeft: '40px'}}>
+              <Button type="primary" size="large"
+                      onClick={() => this.submitUserEdit(accountItems)}>{i18next.t("general:Save")}</Button>
+            </div>
           )
         }
-      </Card>
+      </React.Fragment>
     )
   }
 
-  submitUserEdit() {
+  submitUserEdit(accountItems) {
+    if (this.props.account === null) {
+      Setting.showMessage("error", i18next.t("user:You don't have the permission to do this."))
+    }
     let emptyFieldName;
     let user = Setting.deepCopy(this.state.user);
     try {
-      this.state.accountItems.forEach(item => {
+      accountItems.forEach(item => {
         if (item.required) {
           try {
-            accountMap[item.name].forEach(userItem => {
-              if (user[userItem].length === 0) {
-                emptyFieldName = item.name;
-                throw new Error();
-              }
-            })
+            if (item.name !== "3rd-party logins") {
+              accountMap[item.name].forEach(userItem => {
+                if (user[userItem].length === 0) {
+                  emptyFieldName = item.name;
+                  throw new Error();
+                }
+              })
+            }
           } finally {}
         }
       })
@@ -529,14 +554,6 @@ class UserEditPage extends React.Component {
       <div>
         {
           this.state.user !== null ? this.renderUser() : null
-        }
-        {
-          this.props.isPreview ? null : (
-            <div style={{marginTop: '20px', marginLeft: '40px'}}>
-              <Button type="primary" size="large"
-                      onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
-            </div>
-          )
         }
       </div>
     );
