@@ -191,7 +191,13 @@
     "Domain": "Domain",
     "Domain - Tooltip": "Storage endpoint custom domain",
     "Region": "Region",
-    "Region - Tooltip": "Storage region"
+    "Region - Tooltip": "Storage region",
+    "Access key": "Access key",
+    "Access key - Tooltip": "Access key - Tooltip",
+    "Secret access key": "Secret access key",
+    "Secret access key - Tooltip": "Secret access key - Tooltip",
+    "SMS account": "SMS account",
+    "SMS account - Tooltip": "SMS account - Tooltip"
   },
   "user": {
     "Edit User": "Edit User",
