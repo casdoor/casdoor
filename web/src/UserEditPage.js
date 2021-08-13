@@ -100,6 +100,9 @@ class UserEditPage extends React.Component {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
         });
+        if (this.props.account === null) {
+          this.setState({accountItems: res.filter(item => {return item.name === this.state.user.owner})[0].accountItems});
+        }
       });
   }
 
