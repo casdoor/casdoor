@@ -27,7 +27,7 @@ func SendCodeToPhone(provider *Provider, phone, code string) string {
 	}
 
 	param := make(map[string]string)
-	if provider.Type == "tencent" {
+	if provider.Type == go_sms_sender.TencentCloud {
 		param["0"] = code
 	} else {
 		param["code"] = code
