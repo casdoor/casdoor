@@ -89,6 +89,7 @@ class ProviderEditPage extends React.Component {
         [
           {id: 'Aliyun SMS', name: 'Aliyun SMS'},
           {id: 'Tencent Cloud SMS', name: 'Tencent Cloud SMS'},
+          {id: 'Volc Engine SMS', name: 'Volc Engine SMS'},
         ]
       );
     } else if (provider.category === "Storage") {
@@ -102,6 +103,54 @@ class ProviderEditPage extends React.Component {
     } else {
       return [];
     }
+  }
+
+  getClientIdLabel() {
+    switch (this.state.provider.category) {
+      case "Email":
+        return Setting.getLabel(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip"));
+      case "SMS":
+        if (this.state.provider.type === "Volc Engine SMS")
+          return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
+      default:
+        return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
+    }
+  }
+
+  getClientSecretLabel() {
+    switch (this.state.provider.category) {
+      case "Email":
+        return Setting.getLabel(i18next.t("login:Password"), i18next.t("login:Password - Tooltip"));
+      case "SMS":
+        if (this.state.provider.type === "Volc Engine SMS")
+          return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:SecretAccessKey - Tooltip"));
+      default:
+        return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
+    }
+  }
+
+  getAppIdRow() {
+    let text, tooltip;
+    if (this.state.provider.category === "SMS" && this.state.provider.type === "Tencent Cloud SMS") {
+      text = "provider:App ID";
+      tooltip = "provider:App ID - Tooltip";
+    } else if (this.state.provider.category === "SMS" && this.state.provider.type === "Volc Engine SMS") {
+      text = "provider:SMS account";
+      tooltip = "provider:SMS account - Tooltip";
+    } else {
+      return null;
+    }
+
+    return <Row style={{marginTop: '20px'}} >
+      <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        {Setting.getLabel(i18next.t(text), i18next.t(tooltip))} :
+      </Col>
+      <Col span={22} >
+        <Input value={this.state.provider.appId} onChange={e => {
+          this.updateProviderField('appId', e.target.value);
+        }} />
+      </Col>
+    </Row>;
   }
 
   renderProvider() {
@@ -182,7 +231,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {this.state.provider.category === "Email" ? Setting.getLabel(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip")) : Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"))} :
+            {this.getClientIdLabel()}
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.clientId} onChange={e => {
@@ -192,7 +241,7 @@ class ProviderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {this.state.provider.category === "Email" ? Setting.getLabel(i18next.t("login:Password"), i18next.t("login:Password - Tooltip")) : Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"))} :
+            {this.getClientSecretLabel()}
           </Col>
           <Col span={22} >
             <Input value={this.state.provider.clientSecret} onChange={e => {
@@ -325,18 +374,7 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           ) : null
         }
-        {this.state.provider.category === "SMS" && this.state.provider.type === "tencent" ? (
-          <Row style={{marginTop: '20px'}} >
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-              {Setting.getLabel(i18next.t("provider:App ID"), i18next.t("provider:App ID - Tooltip"))} :
-            </Col>
-            <Col span={22} >
-              <Input value={this.state.provider.appId} onChange={e => {
-                this.updateProviderField('appId', e.target.value);
-              }} />
-            </Col>
-          </Row>
-        ) : null}
+        {this.getAppIdRow()}
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:Provider URL"), i18next.t("provider:Provider URL - Tooltip"))} :
