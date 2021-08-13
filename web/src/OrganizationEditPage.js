@@ -33,7 +33,6 @@ class OrganizationEditPage extends React.Component {
       organizationName: props.match.params.organizationName,
       organization: null,
       ldaps: null,
-      previewRole: "normal-user"
     };
   }
 
@@ -90,12 +89,6 @@ class OrganizationEditPage extends React.Component {
           <Button type="primary" style={{width: "160px"}}>
             <a target="_blank" rel="noreferrer" href={"/account"}>{i18next.t("organization:Test user edit page..")}</a>
           </Button>
-          <Select value={this.state.previewRole || undefined}
-                  onChange={value => this.setState({previewRole: value})}
-                  style={{width: "140px", marginLeft: "10px"}}>
-            <Option value="admin">Admin</Option>
-            <Option value="normal-user">Normal User</Option>
-          </Select>
         </Col>
         <Col offset={1} span={22} style={{display: "flex", flexDirection: "column", marginTop: "10px"}}>
           <div style={{
@@ -107,9 +100,8 @@ class OrganizationEditPage extends React.Component {
             flexDirection: "column",
             flex: "auto"
           }}>
-            <UserEditPage organizationName={this.props.account.owner}
-                          accountItems={this.state.organization.accountItems} userName={this.props.account.name}
-                          account={this.state.previewRole === "admin" ? this.props.account : ""} isPreview={true}/>
+            <UserEditPage organizationName={this.props.account.owner} userName={this.props.account.name}
+                          accountItems={this.state.organization.accountItems} isPreview={true}/>
           </div>
         </Col>
       </React.Fragment>
