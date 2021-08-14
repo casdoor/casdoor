@@ -55,6 +55,10 @@ const LinkedInAuthLogo = `${StaticBaseUrl}/img/social_linkedin.png`;
 const WeComAuthUri = "https://open.work.weixin.qq.com/wwopen/sso/3rd_qrConnect";
 const WeComAuthLogo = `${StaticBaseUrl}/img/social_wecom.png`;
 
+// const WeComAuthScope = "";
+const LarkAuthUri = "https://open.feishu.cn/open-apis/authen/v1/index";
+const LarkAuthLogo = `${StaticBaseUrl}/img/social_lark.png`;
+
 export function getAuthLogo(provider) {
   if (provider.type === "Google") {
     return GoogleAuthLogo;
@@ -74,8 +78,10 @@ export function getAuthLogo(provider) {
     return GiteeAuthLogo;
   } else if (provider.type === "LinkedIn") {
     return LinkedInAuthLogo;
-  }  else if (provider.type === "WeCom") {
+  } else if (provider.type === "WeCom") {
     return WeComAuthLogo;
+  } else if (provider.type === "Lark") {
+    return LarkAuthLogo;
   }
 }
 
@@ -104,7 +110,9 @@ export function getAuthUrl(application, provider, method) {
     return `${GiteeAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GiteeAuthScope}&response_type=code&state=${state}`;
   } else if (provider.type === "LinkedIn") {
     return `${LinkedInAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${LinkedInAuthScope}&response_type=code&state=${state}`
-  }  else if (provider.type === "WeCom") {
+  } else if (provider.type === "WeCom") {
     return `${WeComAuthUri}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&usertype=member`
+  } else if (provider.type === "Lark") {
+    return `${LarkAuthUri}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`
   }
 }
