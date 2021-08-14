@@ -79,7 +79,12 @@
     "Signin URL": "登录URL",
     "Signin URL - Tooltip": "用户的登录地址",
     "ID - Tooltip": "唯一的随机字符串",
-    "Favicon - Tooltip": "网站的图标"
+    "Favicon - Tooltip": "网站的图标",
+    "Uploading": "Uploading",
+    "Start Upload": "Start Upload",
+    "Upload success": "Upload success",
+    "Back Home": "Back Home",
+    "Sorry, the page you visited does not exist": "Sorry, the page you visited does not exist"
   },
   "signup": {
     "Username": "用户名",
@@ -186,7 +191,13 @@
     "Domain": "Domain",
     "Domain - Tooltip": "Storage endpoint custom domain",
     "Region": "Region",
-    "Region - Tooltip": "Storage region"
+    "Region - Tooltip": "Storage region",
+    "Access key": "Access key",
+    "Access key - Tooltip": "Access key - Tooltip",
+    "Secret access key": "Secret access key",
+    "Secret access key - Tooltip": "Secret access key - Tooltip",
+    "SMS account": "SMS account",
+    "SMS account - Tooltip": "SMS account - Tooltip"
   },
   "user": {
     "Edit User": "修改用户",
