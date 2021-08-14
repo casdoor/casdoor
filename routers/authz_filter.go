@@ -22,7 +22,6 @@ import (
 
 	"github.com/astaxie/beego/context"
 	"github.com/casbin/casdoor/authz"
-	"github.com/casbin/casdoor/controllers"
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/util"
 )
@@ -101,16 +100,6 @@ func getObject(ctx *context.Context) (string, string) {
 			return "", ""
 		}
 		return obj.Owner, obj.Name
-	}
-}
-
-func denyRequest(ctx *context.Context) {
-	w := ctx.ResponseWriter
-	w.WriteHeader(403)
-	resp := &controllers.Response{Status: "error", Msg: "Unauthorized operation"}
-	_, err := w.Write([]byte(util.StructToJson(resp)))
-	if err != nil {
-		panic(err)
 	}
 }
 
