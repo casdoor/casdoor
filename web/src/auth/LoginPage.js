@@ -31,6 +31,7 @@ import WeiboLoginButton from "./WeiboLoginButton";
 import i18next from "i18next";
 import LinkedInLoginButton from "./LinkedInLoginButton";
 import WeComLoginButton from "./WeComLoginButton";
+import LarkLoginButton from "./LarkLoginButton";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -167,6 +168,8 @@ class LoginPage extends React.Component {
       return <LinkedInLoginButton text={text} align={"center"} />
     } else if (type === "WeCom") {
       return <WeComLoginButton text={text} align={"center"} />
+    } else if (type === "Lark") {
+      return <LarkLoginButton text={text} align={"center"} />
     }
 
     return text;
