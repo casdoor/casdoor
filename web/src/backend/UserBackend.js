@@ -76,10 +76,10 @@ export function getAffiliationOptions(url, code) {
   }).then(res => res.json());
 }
 
-export function uploadFile(folder, subFolder, file) {
+export function uploadFile(owner, tag, parent, fullFilePath, file) {
   let formData = new FormData();
   formData.append("file", file);
-  return fetch(`${Setting.ServerUrl}/api/upload-file?folder=${encodeURIComponent(folder)}&subFolder=${encodeURIComponent(subFolder)}`, {
+  return fetch(`${Setting.ServerUrl}/api/upload-file?owner=${owner}&tag=${tag}&parent=${parent}&fullFilePath=${encodeURIComponent(fullFilePath)}`, {
     body: formData,
     method: 'POST',
     credentials: 'include',

@@ -94,20 +94,21 @@ class ApplicationEditPage extends React.Component {
 
   handleUpload(info) {
     if (info.file.type !== "text/html") {
-      Setting.showMessage("error", i18next.t("provider:Please select a HTML file"))
-      return
+      Setting.showMessage("error", i18next.t("application:Please select a HTML file"));
+      return;
     }
-    this.setState({uploading: true})
-    UserBackend.uploadFile("termsofuse", `${this.state.applicationName}/termsofuse`, info.file)
+    this.setState({uploading: true});
+    const fullFilePath = `termsOfUse/${this.state.application.owner}/${this.state.application.name}.html`;
+    UserBackend.uploadFile(this.state.application.owner, "termsOfUse", this.state.application.name, fullFilePath, info.file)
       .then(res => {
         if (res.status === "ok") {
-          Setting.showMessage("success", i18next.t("general:Upload success"))
-          this.updateApplicationField("termsOfUse", res.data)
+          Setting.showMessage("success", i18next.t("application:File uploaded successfully"));
+          this.updateApplicationField("termsOfUse", res.data);
         } else {
-          Setting.showMessage("error", res.msg)
+          Setting.showMessage("error", res.msg);
         }
       }).finally(() => {
-        this.setState({uploading: false})
+        this.setState({uploading: false});
     })
   }
 

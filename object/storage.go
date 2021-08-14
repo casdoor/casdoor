@@ -17,15 +17,13 @@ package object
 import (
 	"bytes"
 	"fmt"
-	"io"
-	"mime/multipart"
 	"strings"
 
 	"github.com/casbin/casdoor/storage"
 	"github.com/casbin/casdoor/util"
 )
 
-func UploadFile(provider *Provider, folder string, subFolder string, file multipart.File, suffix string) (string, error) {
+func UploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, error) {
 	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, provider.Endpoint)
 	if storageProvider == nil {
 		return "", fmt.Errorf("the provider type: %s is not supported", provider.Type)
@@ -36,12 +34,8 @@ func UploadFile(provider *Provider, folder string, subFolder string, file multip
 		UpdateProvider(provider.GetId(), provider)
 	}
 
-	path := fmt.Sprintf("%s/%s.%s", util.UrlJoin(util.GetUrlPath(provider.Domain), folder), subFolder, suffix)
-	fileBuf := bytes.NewBuffer(nil)
-	if _, err := io.Copy(fileBuf, file); err != nil {
-		return "", err
-	}
-	_, err := storageProvider.Put(path, fileBuf)
+	path := util.UrlJoin(util.GetUrlPath(provider.Domain), fullFilePath)
+	_, err := storageProvider.Put(path, fileBuffer)
 	if err != nil {
 		return "", err
 	}

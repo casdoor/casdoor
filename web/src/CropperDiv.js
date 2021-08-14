@@ -55,8 +55,9 @@ export const CropperDiv = (props) => {
                 return false;
             }
             // Setting.showMessage("success", "uploading...");
-            const userId = `${user.owner}/${user.name}`;
-            UserBackend.uploadFile("avatar", userId, blob)
+            const extension = image.substring(image.indexOf('/') + 1, image.indexOf(';base64'));
+            const fullFilePath = `avatar/${user.owner}/${user.name}.${extension}`;
+            UserBackend.uploadFile("admin", "avatar", "", fullFilePath, blob)
               .then((res) => {
                   if (res.status === "ok") {
                       window.location.href = "/account";
@@ -107,7 +108,7 @@ export const CropperDiv = (props) => {
             >
                 <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
                     <Row style={{width: "100%", marginBottom: "20px"}}>
-                        <input style={{display: "none"}} ref={input => uploadButton = input} type="file" onChange={onChange}/>
+                        <input style={{display: "none"}} ref={input => uploadButton = input} type="file" accept="image/*" onChange={onChange}/>
                         <Button block onClick={selectFile}>{i18next.t("user:Select a photo...")}</Button>
                     </Row>
                     <Cropper
