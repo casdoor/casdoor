@@ -64,23 +64,41 @@ func (c *ApiController) AddResource() {
 	c.ServeJSON()
 }
 
-func (c *ApiController) DeleteResource() {
-	userId, ok := c.RequireSignedIn()
-	if !ok {
-		return
+func (c *ApiController) GetProviderParam() (*object.Provider, *object.User, bool) {
+	providerName := c.Input().Get("provider")
+	if providerName != "" {
+		provider := object.GetProvider(util.GetId(providerName))
+		if provider == nil {
+			c.ResponseError(fmt.Sprintf("The provider: %s is not found", providerName))
+			return nil, nil, false
+		}
+		return provider, nil, true
 	}
 
-	var resource object.Resource
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
-	if err != nil {
-		panic(err)
+	userId, ok := c.RequireSignedIn()
+	if !ok {
+		return nil, nil, false
 	}
 
 	user := object.GetUser(userId)
 	application := object.GetApplicationByUser(user)
 	provider := application.GetStorageProvider()
 	if provider == nil {
-		c.ResponseError("No storage provider is found")
+		c.ResponseError(fmt.Sprintf("No storage provider is found for application: %s", application.Name))
+		return nil, nil, false
+	}
+	return provider, user, true
+}
+
+func (c *ApiController) DeleteResource() {
+	var resource object.Resource
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
+	if err != nil {
+		panic(err)
+	}
+
+	provider, _, ok := c.GetProviderParam()
+	if !ok {
 		return
 	}
 
@@ -95,11 +113,6 @@ func (c *ApiController) DeleteResource() {
 }
 
 func (c *ApiController) UploadResource() {
-	userId, ok := c.RequireSignedIn()
-	if !ok {
-		return
-	}
-
 	owner := c.Input().Get("owner")
 	tag := c.Input().Get("tag")
 	parent := c.Input().Get("parent")
@@ -119,11 +132,8 @@ func (c *ApiController) UploadResource() {
 		return
 	}
 
-	user := object.GetUser(userId)
-	application := object.GetApplicationByUser(user)
-	provider := application.GetStorageProvider()
-	if provider == nil {
-		c.ResponseError("No storage provider is found")
+	provider, user, ok := c.GetProviderParam()
+	if !ok {
 		return
 	}
 
@@ -147,6 +157,7 @@ func (c *ApiController) UploadResource() {
 		Owner:       owner,
 		Name:        filename,
 		CreatedTime: util.GetCurrentTime(),
+		Provider:    provider.Name,
 		Tag:         tag,
 		Parent:      parent,
 		FileType:    fileType,

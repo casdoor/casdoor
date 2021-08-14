@@ -90,19 +90,26 @@ class ResourceListPage extends React.Component {
   renderTable(resources) {
     const columns = [
       {
+        title: i18next.t("general:Provider"),
+        dataIndex: 'provider',
+        key: 'provider',
+        width: '150px',
+        fixed: 'left',
+        sorter: (a, b) => a.provider.localeCompare(b.provider),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/providers/${text}`}>
+              {text}
+            </Link>
+          )
+        }
+      },
+      {
         title: i18next.t("general:Name"),
         dataIndex: 'name',
         key: 'name',
         width: '150px',
-        fixed: 'left',
         sorter: (a, b) => a.name.localeCompare(b.name),
-        // render: (text, record, index) => {
-        //   return (
-        //     <Link to={`/resources/${text}`}>
-        //       {text}
-        //     </Link>
-        //   )
-        // }
       },
       {
         title: i18next.t("general:Created time"),

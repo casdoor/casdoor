@@ -46,19 +46,19 @@ export function addResource(resource) {
   }).then(res => res.json());
 }
 
-export function deleteResource(resource) {
+export function deleteResource(resource, provider="") {
   let newResource = Setting.deepCopy(resource);
-  return fetch(`${Setting.ServerUrl}/api/delete-resource`, {
+  return fetch(`${Setting.ServerUrl}/api/delete-resource?provider=${provider}`, {
     method: 'POST',
     credentials: 'include',
     body: JSON.stringify(newResource),
   }).then(res => res.json());
 }
 
-export function uploadResource(owner, tag, parent, fullFilePath, file) {
+export function uploadResource(owner, tag, parent, fullFilePath, file, provider="") {
   let formData = new FormData();
   formData.append("file", file);
-  return fetch(`${Setting.ServerUrl}/api/upload-resource?owner=${owner}&tag=${tag}&parent=${parent}&fullFilePath=${encodeURIComponent(fullFilePath)}`, {
+  return fetch(`${Setting.ServerUrl}/api/upload-resource?owner=${owner}&tag=${tag}&parent=${parent}&fullFilePath=${encodeURIComponent(fullFilePath)}&provider=${provider}`, {
     body: formData,
     method: 'POST',
     credentials: 'include',

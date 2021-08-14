@@ -26,6 +26,7 @@ type Resource struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
+	Provider   string `xorm:"varchar(100)" json:"provider"`
 	Tag        string `xorm:"varchar(100)" json:"tag"`
 	Parent     string `xorm:"varchar(100)" json:"parent"`
 	FileType   string `xorm:"varchar(100)" json:"fileType"`
