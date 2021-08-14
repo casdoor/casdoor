@@ -65,10 +65,29 @@ func (c *ApiController) AddResource() {
 }
 
 func (c *ApiController) DeleteResource() {
+	userId, ok := c.RequireSignedIn()
+	if !ok {
+		return
+	}
+
 	var resource object.Resource
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
 	if err != nil {
 		panic(err)
+	}
+
+	user := object.GetUser(userId)
+	application := object.GetApplicationByUser(user)
+	provider := application.GetStorageProvider()
+	if provider == nil {
+		c.ResponseError("No storage provider is found")
+		return
+	}
+
+	err = object.DeleteFile(provider, resource.ObjectKey)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteResource(&resource))
@@ -108,20 +127,21 @@ func (c *ApiController) UploadResource() {
 		return
 	}
 
+	fileType := "unknown"
+	contentType := header.Header.Get("Content-Type")
+	if strings.HasPrefix(contentType, "image/") {
+		fileType = "image"
+	} else if strings.HasPrefix(contentType, "video/") {
+		fileType = "video"
+	}
+
 	fileUrl, objectKey, err := object.UploadFile(provider, fullFilePath, fileBuffer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	fileType := "unknown"
 	fileFormat := filepath.Ext(fullFilePath)
-	if strings.Contains(".png|.jpg|.bmp", fileFormat) {
-		fileType = "image"
-	} else if strings.Contains(".mp4|.avi", fileFormat) {
-		fileType = "video"
-	}
-
 	fileSize := int(header.Size)
 	resource := &object.Resource{
 		Owner:       owner,

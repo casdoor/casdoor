@@ -55,3 +55,17 @@ func UploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 	fileUrl := fmt.Sprintf("%s?time=%s", util.UrlJoin(host, objectKey), util.GetCurrentUnixTime())
 	return fileUrl, objectKey, nil
 }
+
+func DeleteFile(provider *Provider, objectKey string) error {
+	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, provider.Endpoint)
+	if storageProvider == nil {
+		return fmt.Errorf("the provider type: %s is not supported", provider.Type)
+	}
+
+	if provider.Domain == "" {
+		provider.Domain = storageProvider.GetEndpoint()
+		UpdateProvider(provider.GetId(), provider)
+	}
+
+	return storageProvider.Delete(objectKey)
+}
