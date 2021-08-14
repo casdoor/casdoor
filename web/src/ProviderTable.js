@@ -44,7 +44,7 @@ class ProviderTable extends React.Component {
       this.setState({addBtnDisable: true})
       return
     }
-    let row = {name: deduplicatedArray[0].name, canSignUp: false, canSignIn: true, canUnlink: true, alertType: "None"};
+    let row = {name: deduplicatedArray[0].name, canSignUp: true, canSignIn: true, canUnlink: true, alertType: "None"};
     if (table === undefined) {
       table = [];
     }
