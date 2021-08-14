@@ -437,7 +437,7 @@ class SignupPage extends React.Component {
           this.props.history.goBack();
         }}
       >
-        <iframe style={{border: 0, width: "100%", height: "60vh"}} srcDoc={this.state.termsOfUseContent}/>
+        <iframe title={"terms"} style={{border: 0, width: "100%", height: "60vh"}} srcDoc={this.state.termsOfUseContent}/>
       </Modal>
     )
   }

@@ -18,7 +18,7 @@ import "cropperjs/dist/cropper.css";
 import * as Setting from "./Setting";
 import {Button, Row, Col, Modal} from 'antd';
 import i18next from "i18next";
-import * as UserBackend from "./backend/UserBackend";
+import * as ResourceBackend from "./backend/ResourceBackend";
 
 export const CropperDiv = (props) => {
     const [image, setImage] = useState("");
@@ -27,6 +27,7 @@ export const CropperDiv = (props) => {
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const {title} = props;
     const {user} = props;
+    const {account} = props;
     const {buttonText} = props;
     let uploadButton;
 
@@ -57,7 +58,7 @@ export const CropperDiv = (props) => {
             // Setting.showMessage("success", "uploading...");
             const extension = image.substring(image.indexOf('/') + 1, image.indexOf(';base64'));
             const fullFilePath = `avatar/${user.owner}/${user.name}.${extension}`;
-            UserBackend.uploadFile("admin", "avatar", "", fullFilePath, blob)
+            ResourceBackend.uploadResource("admin", "avatar", account.name, fullFilePath, blob)
               .then((res) => {
                   if (res.status === "ok") {
                       window.location.href = "/account";

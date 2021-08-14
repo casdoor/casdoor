@@ -19,7 +19,7 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
-import * as UserBackend from "./backend/UserBackend";
+import * as ResourceBackend from "./backend/ResourceBackend";
 import SignupPage from "./auth/SignupPage";
 import LoginPage from "./auth/LoginPage";
 import i18next from "i18next";
@@ -99,7 +99,7 @@ class ApplicationEditPage extends React.Component {
     }
     this.setState({uploading: true});
     const fullFilePath = `termsOfUse/${this.state.application.owner}/${this.state.application.name}.html`;
-    UserBackend.uploadFile(this.state.application.owner, "termsOfUse", this.state.application.name, fullFilePath, info.file)
+    ResourceBackend.uploadResource(this.state.application.owner, "termsOfUse", this.state.application.name, fullFilePath, info.file)
       .then(res => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("application:File uploaded successfully"));

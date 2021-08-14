@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import * as Setting from "../Setting";
-import * as AuthBackend from "../auth/AuthBackend";
 import i18next from "i18next";
 
 export function getGlobalUsers() {
@@ -74,16 +73,6 @@ export function getAffiliationOptions(url, code) {
   return fetch(`${url}/${code}`, {
     method: "GET",
   }).then(res => res.json());
-}
-
-export function uploadFile(owner, tag, parent, fullFilePath, file) {
-  let formData = new FormData();
-  formData.append("file", file);
-  return fetch(`${Setting.ServerUrl}/api/upload-file?owner=${owner}&tag=${tag}&parent=${parent}&fullFilePath=${encodeURIComponent(fullFilePath)}`, {
-    body: formData,
-    method: 'POST',
-    credentials: 'include',
-  }).then(res => res.json())
 }
 
 export function setPassword(userOwner, userName, oldPassword, newPassword) {

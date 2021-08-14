@@ -59,12 +59,13 @@ func initAPI() {
 	beego.Router("/api/update-user", &controllers.ApiController{}, "POST:UpdateUser")
 	beego.Router("/api/add-user", &controllers.ApiController{}, "POST:AddUser")
 	beego.Router("/api/delete-user", &controllers.ApiController{}, "POST:DeleteUser")
-	beego.Router("/api/upload-file", &controllers.ApiController{}, "POST:UploadFile")
+
 	beego.Router("/api/set-password", &controllers.ApiController{}, "POST:SetPassword")
 	beego.Router("/api/get-email-and-phone", &controllers.ApiController{}, "POST:GetEmailAndPhone")
 	beego.Router("/api/send-verification-code", &controllers.ApiController{}, "POST:SendVerificationCode")
 	beego.Router("/api/reset-email-or-phone", &controllers.ApiController{}, "POST:ResetEmailOrPhone")
 	beego.Router("/api/get-human-check", &controllers.ApiController{}, "GET:GetHumanCheck")
+
 	beego.Router("/api/get-ldap-user", &controllers.ApiController{}, "POST:GetLdapUser")
 	beego.Router("/api/get-ldaps", &controllers.ApiController{}, "POST:GetLdaps")
 	beego.Router("/api/get-ldap", &controllers.ApiController{}, "POST:GetLdap")
@@ -86,6 +87,13 @@ func initAPI() {
 	beego.Router("/api/update-application", &controllers.ApiController{}, "POST:UpdateApplication")
 	beego.Router("/api/add-application", &controllers.ApiController{}, "POST:AddApplication")
 	beego.Router("/api/delete-application", &controllers.ApiController{}, "POST:DeleteApplication")
+
+	beego.Router("/api/get-resources", &controllers.ApiController{}, "GET:GetResources")
+	beego.Router("/api/get-resource", &controllers.ApiController{}, "GET:GetResource")
+	beego.Router("/api/update-resource", &controllers.ApiController{}, "POST:UpdateResource")
+	beego.Router("/api/add-resource", &controllers.ApiController{}, "POST:AddResource")
+	beego.Router("/api/delete-resource", &controllers.ApiController{}, "POST:DeleteResource")
+	beego.Router("/api/upload-resource", &controllers.ApiController{}, "POST:UploadResource")
 
 	beego.Router("/api/get-tokens", &controllers.ApiController{}, "GET:GetTokens")
 	beego.Router("/api/get-token", &controllers.ApiController{}, "GET:GetToken")

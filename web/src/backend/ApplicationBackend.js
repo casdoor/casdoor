@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import * as Setting from "../Setting";
-import * as AuthBackend from "../auth/AuthBackend";
 
 export function getApplications(owner) {
   return fetch(`${Setting.ServerUrl}/api/get-applications?owner=${owner}`, {

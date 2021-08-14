@@ -23,10 +23,10 @@ import (
 	"github.com/casbin/casdoor/util"
 )
 
-func UploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, error) {
+func UploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, string, error) {
 	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, provider.Endpoint)
 	if storageProvider == nil {
-		return "", fmt.Errorf("the provider type: %s is not supported", provider.Type)
+		return "", "", fmt.Errorf("the provider type: %s is not supported", provider.Type)
 	}
 
 	if provider.Domain == "" {
@@ -34,10 +34,10 @@ func UploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 		UpdateProvider(provider.GetId(), provider)
 	}
 
-	path := util.UrlJoin(util.GetUrlPath(provider.Domain), fullFilePath)
-	_, err := storageProvider.Put(path, fileBuffer)
+	objectKey := util.UrlJoin(util.GetUrlPath(provider.Domain), fullFilePath)
+	_, err := storageProvider.Put(objectKey, fileBuffer)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	host := ""
@@ -52,6 +52,6 @@ func UploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 		host = util.UrlJoin(provider.Domain, "/files")
 	}
 
-	fileUrl := fmt.Sprintf("%s?time=%s", util.UrlJoin(host, path), util.GetCurrentUnixTime())
-	return fileUrl, nil
+	fileUrl := fmt.Sprintf("%s?time=%s", util.UrlJoin(host, objectKey), util.GetCurrentUnixTime())
+	return fileUrl, objectKey, nil
 }

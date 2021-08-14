@@ -27,6 +27,8 @@ import ProviderListPage from "./ProviderListPage";
 import ProviderEditPage from "./ProviderEditPage";
 import ApplicationListPage from "./ApplicationListPage";
 import ApplicationEditPage from "./ApplicationEditPage";
+import ResourceListPage from "./ResourceListPage";
+// import ResourceEditPage from "./ResourceEditPage";
 import LdapEditPage from "./LdapEditPage";
 import LdapSyncPage from "./LdapSyncPage";
 import TokenListPage from "./TokenListPage";
@@ -99,6 +101,8 @@ class App extends Component {
       this.setState({ selectedMenuKey: '/providers' });
     } else if (uri.includes('/applications')) {
       this.setState({ selectedMenuKey: '/applications' });
+    } else if (uri.includes('/resources')) {
+      this.setState({ selectedMenuKey: '/resources' });
     } else if (uri.includes('/tokens')) {
       this.setState({ selectedMenuKey: '/tokens' });
     } else if (uri.includes('/records')) {
@@ -318,6 +322,13 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
+        <Menu.Item key="/resources">
+          <Link to="/resources">
+            {i18next.t("general:Resources")}
+          </Link>
+        </Menu.Item>
+      );
+      res.push(
         <Menu.Item key="/tokens">
           <Link to="/tokens">
             {i18next.t("general:Tokens")}
@@ -384,6 +395,8 @@ class App extends Component {
           <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/applications/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/resources" render={(props) => this.renderLoginIfNotLoggedIn(<ResourceListPage account={this.state.account} {...props} />)}/>
+          {/*<Route exact path="/resources/:resourceName" render={(props) => this.renderLoginIfNotLoggedIn(<ResourceEditPage account={this.state.account} {...props} />)}/>*/}
           <Route exact path="/ldap/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/ldap/sync/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapSyncPage account={this.state.account} {...props} />)}/>
           <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)}/>

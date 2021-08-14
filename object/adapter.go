@@ -124,6 +124,11 @@ func (a *Adapter) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(Resource))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(Token))
 	if err != nil {
 		panic(err)

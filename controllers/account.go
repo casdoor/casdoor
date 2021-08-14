@@ -15,10 +15,8 @@
 package controllers
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"strconv"
 
 	"github.com/casbin/casdoor/object"
@@ -210,67 +208,6 @@ func (c *ApiController) GetAccount() {
 	organization := object.GetOrganizationByUser(user)
 
 	c.ResponseOk(user, organization)
-}
-
-// UploadFile
-// @Title UploadFile
-// @Description upload file
-// @Param   owner          query       string  true    "The owner"
-// @Param   tag            query       string  true    "The tag"
-// @Param   fullFilePath   query       string  true    "The full file path"
-// @Param   file           query       string  true    "The file"
-// @Success 200 {object} controllers.Response The Response object
-// @router /upload-file [post]
-func (c *ApiController) UploadFile() {
-	userId, ok := c.RequireSignedIn()
-	if !ok {
-		return
-	}
-
-	//owner := c.Input().Get("owner")
-	tag := c.Input().Get("tag")
-	parent := c.Input().Get("parent")
-	fullFilePath := c.Input().Get("fullFilePath")
-
-	file, _, err := c.GetFile("file")
-	defer file.Close()
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	fileBuffer := bytes.NewBuffer(nil)
-	if _, err = io.Copy(fileBuffer, file); err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	user := object.GetUser(userId)
-	application := object.GetApplicationByUser(user)
-	provider := application.GetStorageProvider()
-	if provider == nil {
-		c.ResponseError("No storage provider is found")
-		return
-	}
-
-	fileUrl, err := object.UploadFile(provider, fullFilePath, fileBuffer)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	switch tag {
-	case "avatar":
-		user.Avatar = fileUrl
-		object.UpdateUser(user.GetId(), user)
-	case "termsOfUse":
-		applicationId := fmt.Sprintf("admin/%s", parent)
-		app := object.GetApplication(applicationId)
-		app.TermsOfUse = fileUrl
-		object.UpdateApplication(applicationId, app)
-	}
-
-	c.ResponseOk(fileUrl)
 }
 
 // GetHumanCheck ...
