@@ -231,3 +231,18 @@ func (c *ApiController) SetPassword() {
 	c.Data["json"] = Response{Status: "ok"}
 	c.ServeJSON()
 }
+
+func (c *ApiController) CheckUserPassword() {
+	var user object.User
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
+	if err != nil {
+		panic(err)
+	}
+
+	_, msg := object.CheckUserPassword(user.Owner, user.Name, user.Password)
+	if msg == "" {
+		c.ResponseOk()
+	} else {
+		c.ResponseError(msg)
+	}
+}

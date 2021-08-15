@@ -185,7 +185,7 @@ func (c *ApiController) Login() {
 			}
 		} else {
 			password := form.Password
-			user, msg = object.CheckUserLogin(form.Organization, form.Username, password)
+			user, msg = object.CheckUserPassword(form.Organization, form.Username, password)
 		}
 
 		if msg != "" {

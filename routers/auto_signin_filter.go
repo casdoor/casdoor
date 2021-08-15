@@ -83,7 +83,7 @@ func AutoSigninFilter(ctx *context.Context) {
 	password := queryMap.Get("password")
 	if userId != "" && password != "" {
 		owner, name := util.GetOwnerAndNameFromId(userId)
-		_, msg := object.CheckUserLogin(owner, name, password)
+		_, msg := object.CheckUserPassword(owner, name, password)
 		if msg != "" {
 			returnRequest(ctx, msg)
 			return

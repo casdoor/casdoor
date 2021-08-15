@@ -101,7 +101,7 @@ func CheckPassword(user *User, password string) string {
 	}
 }
 
-func CheckUserLogin(organization string, username string, password string) (*User, string) {
+func CheckUserPassword(organization string, username string, password string) (*User, string) {
 	user := GetUserByFields(organization, username)
 	if user == nil {
 		return nil, "the user does not exist, please sign up first"
