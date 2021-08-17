@@ -104,6 +104,8 @@ func initAPI() {
 	beego.Router("/api/login/oauth/access_token", &controllers.ApiController{}, "POST:GetOAuthToken")
 
 	beego.Router("/api/get-records", &controllers.ApiController{}, "GET:GetRecords")
+	beego.Router("/api/get-records-num", &controllers.ApiController{}, "GET:GetRecordsNum")
+	beego.Router("/api/get-records-by-limit", &controllers.ApiController{}, "GET:GetRecordsByLimit")
 	beego.Router("/api/get-records-filter", &controllers.ApiController{}, "POST:GetRecordsByFilter")
 
 	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")

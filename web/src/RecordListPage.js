@@ -24,22 +24,52 @@ class RecordListPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      pagination: {
+        current: 1,
+        pageSize: 100,
+        total: 0,
+      },
+      loading: false,
       records: null,
     };
   }
 
   UNSAFE_componentWillMount() {
-    this.getRecords();
+    this.getRecordsNum();
+    this.getRecords(this.state.pagination);
   }
 
-  getRecords() {
-    RecordBackend.getRecords()
+  getRecordsNum() {
+    let pagination = this.state.pagination
+    RecordBackend.getRecordsNum()
+      .then((res) => {
+        pagination.total = Number(res)
+        this.setState({
+          pagination: pagination,
+        })
+      })
+  }
+
+  getRecords(pagination) {
+    this.setState({
+      loading: true,
+    })
+    RecordBackend.getRecordsByLimit(pagination.pageSize,pagination.current)
       .then((res) => {
         this.setState({
+          loading: false,
           records: res,
         });
       });
   }
+
+  handleTableChange = (pagination) => {
+    this.setState({
+      pagination: pagination,
+    },()=>{
+      this.getRecords(this.state.pagination);
+    })
+  };
 
   newRecord() {
     return {
@@ -126,13 +156,14 @@ class RecordListPage extends React.Component {
 
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={this.state.pagination}
                title={() => (
                  <div>
                    {i18next.t("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;
                  </div>
                )}
-               loading={records === null}
+               loading={this.state.loading}
+               onChange={this.handleTableChange}
         />
       </div>
     );

@@ -18,7 +18,32 @@ import (
 	"encoding/json"
 
 	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/util"
 )
+
+func (c *ApiController) GetRecordsByLimit() {
+	limitStr := c.Input().Get("limit")
+	pageStr := c.Input().Get("page")
+
+	var limit,offset int
+	if len(limitStr) != 0 {
+		limit = util.ParseInt(limitStr)
+	} else {
+		limit = 100
+	}
+	if len(pageStr) != 0 {
+		page := util.ParseInt(pageStr)
+		offset = page*limit - limit
+	}
+
+	c.Data["json"] = object.GetRecordsByLimit(limit,offset)
+	c.ServeJSON()
+}
+
+func (c *ApiController) GetRecordsNum() {
+	c.Data["json"] = object.GetRecordCount()
+	c.ServeJSON()
+}
 
 // GetRecords
 // @Title GetRecords

@@ -20,3 +20,17 @@ export function getRecords() {
     credentials: "include"
   }).then(res => res.json());
 }
+
+export function getRecordsNum() {
+  return fetch(`${Setting.ServerUrl}/api/get-records-num`, {
+    method: "GET",
+    credentials: "include"
+  }).then(res => res.json());
+}
+
+export function getRecordsByLimit(limit,page) {
+  return fetch(`${Setting.ServerUrl}/api/get-records-by-limit?limit=${limit}&page=${page}`, {
+    method: "GET",
+    credentials: "include"
+  }).then(res => res.json());
+}
