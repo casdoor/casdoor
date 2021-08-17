@@ -49,14 +49,14 @@ type TokenWrapper struct {
 	Scope       string `json:"scope"`
 }
 
-func GetTokens(owner string) []*Token {
+func GetTokens(owner string, limit, start int) ([]*Token, int64) {
 	tokens := []*Token{}
-	err := adapter.Engine.Desc("created_time").Find(&tokens, &Token{Owner: owner})
+	total, err := adapter.Engine.Desc("created_time").Limit(limit, start).FindAndCount(&tokens, &Token{Owner: owner})
 	if err != nil {
 		panic(err)
 	}
 
-	return tokens
+	return tokens, total
 }
 
 func getToken(owner string, name string) *Token {

@@ -85,7 +85,8 @@
     "Start Upload": "Start Upload",
     "Upload success": "Upload success",
     "Back Home": "Back Home",
-    "Sorry, the page you visited does not exist": "Sorry, the page you visited does not exist"
+    "Sorry, the page you visited does not exist": "Sorry, the page you visited does not exist",
+    "{total} in total": "{total} in total"
   },
   "signup":
   {

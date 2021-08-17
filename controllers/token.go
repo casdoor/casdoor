@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 
 	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/util"
 )
 
 // GetTokens
@@ -28,9 +29,15 @@ import (
 // @router /get-tokens [get]
 func (c *ApiController) GetTokens() {
 	owner := c.Input().Get("owner")
+	limit := util.ParseInt(c.Input().Get("pageSize"))
+	page := util.ParseInt(c.Input().Get("page"))
+	if limit <= 0 || page < 1 {
+		c.ResponseError("Page or limit params error")
+		return
+	}
 
-	c.Data["json"] = object.GetTokens(owner)
-	c.ServeJSON()
+	tokens, total := object.GetTokens(owner, limit, (page-1)*limit)
+	c.ResponseOk(tokens, total)
 }
 
 // GetToken
