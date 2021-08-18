@@ -87,6 +87,7 @@ Edit `conf/app.conf`, set `runmode=dev`. Firstly build front-end files:
 ```bash
 cd web/ && npm install && npm run start
 ```
+*❗ A word of caution ❗: the `npm` commands above need a recommended system RAM of at least 4GB. It has a potential failure during building the files if your RAM is not sufficient.*
 
 Then build back-end binary file, change directory to root(Relative to casdoor):
 
