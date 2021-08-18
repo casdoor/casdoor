@@ -79,7 +79,12 @@
     "Signin URL": "Signin URL",
     "Signin URL - Tooltip": "sign in url",
     "ID - Tooltip": "random string",
-    "Favicon - Tooltip": "Application icon"
+    "Favicon - Tooltip": "Application icon",
+    "Uploading": "Uploading",
+    "Start Upload": "Start Upload",
+    "Upload success": "Upload success",
+    "Back Home": "Back Home",
+    "Sorry, the page you visited does not exist": "Sorry, the page you visited does not exist"
   },
   "signup": {
     "Username": "Username",
@@ -186,7 +191,13 @@
     "Domain": "Domain",
     "Domain - Tooltip": "Storage endpoint custom domain",
     "Region": "Region",
-    "Region - Tooltip": "Storage region"
+    "Region - Tooltip": "Storage region",
+    "Access key": "Access key",
+    "Access key - Tooltip": "Access key - Tooltip",
+    "Secret access key": "Secret access key",
+    "Secret access key - Tooltip": "Secret access key - Tooltip",
+    "SMS account": "SMS account",
+    "SMS account - Tooltip": "SMS account - Tooltip"
   },
   "user": {
     "Edit User": "Edit User",
