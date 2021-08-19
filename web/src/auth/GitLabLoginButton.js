@@ -12,26 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package object
+import {createButton} from "react-social-login-buttons";
+import {StaticBaseUrl} from "../Setting";
 
-import (
-	"fmt"
-
-	"github.com/casdoor/go-sms-sender"
-)
-
-func SendCodeToPhone(provider *Provider, phone, code string) string {
-	client := go_sms_sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.RegionId, provider.TemplateCode, provider.AppId)
-	if client == nil {
-		return fmt.Sprintf("Unsupported provider type: %s", provider.Type)
-	}
-
-	param := make(map[string]string)
-	if provider.Type == go_sms_sender.TencentCloud {
-		param["0"] = code
-	} else {
-		param["code"] = code
-	}
-	client.SendMessage(param, phone)
-	return ""
+function Icon({ width = 24, height = 24, color }) {
+    return <img src={`${StaticBaseUrl}/buttons/gitlab.svg`} alt="Sign in with GitLab" style={{width: 24, height: 24}} />;
 }
+
+const config = {
+    text: "Sign in with GitLab",
+    icon: Icon,
+    iconFormat: name => `fa fa-${name}`,
+    style: {background: "rgb(255,255,255)", color: "#000000"},
+    activeStyle: {background: "rgb(100,150,250)"},
+};
+
+const GitLabLoginButton = createButton(config);
+
+export default GitLabLoginButton;

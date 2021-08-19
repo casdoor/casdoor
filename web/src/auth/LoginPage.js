@@ -32,6 +32,7 @@ import i18next from "i18next";
 import LinkedInLoginButton from "./LinkedInLoginButton";
 import WeComLoginButton from "./WeComLoginButton";
 import LarkLoginButton from "./LarkLoginButton";
+import GitLabLoginButton from "./GitLabLoginButton";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -170,6 +171,8 @@ class LoginPage extends React.Component {
       return <WeComLoginButton text={text} align={"center"} />
     } else if (type === "Lark") {
       return <LarkLoginButton text={text} align={"center"} />
+    } else if (type === "GitLab") {
+      return <GitLabLoginButton text={text} align={"center"} />
     }
 
     return text;
