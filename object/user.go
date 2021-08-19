@@ -58,6 +58,7 @@ type User struct {
 	LinkedIn string `xorm:"linkedin varchar(100)" json:"linkedin"`
 	Wecom    string `xorm:"wecom varchar(100)" json:"wecom"`
 	Lark     string `xorm:"lark varchar(100)" json:"lark"`
+	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
