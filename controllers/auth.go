@@ -24,6 +24,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/casbin/casdoor/idp"
 	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/proxy"
 	"github.com/casbin/casdoor/util"
 )
 
@@ -99,9 +100,9 @@ func (c *ApiController) GetApplicationLogin() {
 
 func setHttpClient(idProvider idp.IdProvider, providerType string) {
 	if providerType == "GitHub" || providerType == "Google" || providerType == "Facebook" || providerType == "LinkedIn" {
-		idProvider.SetHttpClient(proxyHttpClient)
+		idProvider.SetHttpClient(proxy.ProxyHttpClient)
 	} else {
-		idProvider.SetHttpClient(defaultHttpClient)
+		idProvider.SetHttpClient(proxy.DefaultHttpClient)
 	}
 }
 

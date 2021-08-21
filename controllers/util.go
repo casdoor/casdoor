@@ -14,46 +14,6 @@
 
 package controllers
 
-import (
-	"net/http"
-
-	"github.com/astaxie/beego"
-	"golang.org/x/net/proxy"
-)
-
-var defaultHttpClient *http.Client
-var proxyHttpClient *http.Client
-
-func InitHttpClient() {
-	// not use proxy
-	defaultHttpClient = http.DefaultClient
-
-	// use proxy
-	httpProxy := beego.AppConfig.String("httpProxy")
-	if httpProxy == "" {
-		proxyHttpClient = &http.Client{}
-		return
-	}
-
-	// https://stackoverflow.com/questions/33585587/creating-a-go-socks5-client
-	dialer, err := proxy.SOCKS5("tcp", httpProxy, nil, proxy.Direct)
-	if err != nil {
-		panic(err)
-	}
-
-	tr := &http.Transport{Dial: dialer.Dial}
-	proxyHttpClient = &http.Client{
-		Transport: tr,
-	}
-
-	//resp, err2 := proxyHttpClient.Get("https://google.com")
-	//if err2 != nil {
-	//	panic(err2)
-	//}
-	//defer resp.Body.Close()
-	//println("Response status: %s", resp.Status)
-}
-
 // ResponseOk ...
 func (c *ApiController) ResponseOk(data ...interface{}) {
 	resp := Response{Status: "ok"}
