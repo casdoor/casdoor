@@ -236,11 +236,41 @@ class UserEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Location"), i18next.t("user:Location - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.location} onChange={e => {
+              this.updateUserField('location', e.target.value);
+            }} />
+          </Col>
+        </Row>
         {
           (this.state.application === null || this.state.user === null) ? null : (
             <AffiliationSelect labelSpan={(Setting.isMobile()) ? 22 : 2} application={this.state.application} user={this.state.user} onUpdateUserField={(key, value) => { return this.updateUserField(key, value)}} />
           )
         }
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Title"), i18next.t("user:Title - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.title} onChange={e => {
+              this.updateUserField('title', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Homepage"), i18next.t("user:Homepage - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.homepage} onChange={e => {
+              this.updateUserField('homepage', e.target.value);
+            }} />
+          </Col>
+        </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("user:Tag"), i18next.t("user:Tag - Tooltip"))} :

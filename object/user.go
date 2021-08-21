@@ -34,12 +34,17 @@ type User struct {
 	Avatar            string   `xorm:"varchar(255)" json:"avatar"`
 	Email             string   `xorm:"varchar(100)" json:"email"`
 	Phone             string   `xorm:"varchar(100)" json:"phone"`
+	Location          string   `xorm:"varchar(100)" json:"location"`
 	Address           []string `json:"address"`
 	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
+	Title             string   `xorm:"varchar(100)" json:"title"`
+	Homepage          string   `xorm:"varchar(100)" json:"homepage"`
 	Tag               string   `xorm:"varchar(100)" json:"tag"`
 	Region            string   `xorm:"varchar(100)" json:"region"`
 	Language          string   `xorm:"varchar(100)" json:"language"`
 	Score             int      `json:"score"`
+	Ranking           int      `json:"ranking"`
+	IsOnline          bool     `json:"isOnline"`
 	IsAdmin           bool     `json:"isAdmin"`
 	IsGlobalAdmin     bool     `json:"isGlobalAdmin"`
 	IsForbidden       bool     `json:"isForbidden"`
@@ -148,7 +153,7 @@ func UpdateUser(id string, user *User) bool {
 	user.UpdateUserHash()
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("owner", "display_name", "avatar",
-		"address", "region", "language", "affiliation", "score", "tag", "is_admin", "is_global_admin", "is_forbidden",
+		"location", "address", "region", "language", "affiliation", "title", "homepage", "score", "tag", "is_admin", "is_global_admin", "is_forbidden",
 		"hash", "properties").Update(user)
 	if err != nil {
 		panic(err)
