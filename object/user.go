@@ -154,6 +154,10 @@ func UpdateUser(id string, user *User) bool {
 
 	user.UpdateUserHash()
 
+	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("owner", "display_name", "avatar",
 		"location", "address", "region", "language", "affiliation", "title", "homepage", "score", "tag", "is_admin", "is_global_admin", "is_forbidden",
 		"hash", "properties").Update(user)
@@ -173,6 +177,10 @@ func UpdateUserForAllFields(id string, user *User) bool {
 
 	user.UpdateUserHash()
 
+	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
 		panic(err)
@@ -186,6 +194,10 @@ func UpdateUserForOriginalFields(user *User) bool {
 	oldUser := getUser(owner, name)
 	if oldUser == nil {
 		return false
+	}
+
+	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("display_name", "password", "phone", "avatar", "affiliation", "score", "is_forbidden", "hash", "pre_hash").Update(user)
@@ -207,6 +219,8 @@ func AddUser(user *User) bool {
 	user.UpdateUserHash()
 	user.PreHash = user.Hash
 
+	user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+
 	affected, err := adapter.Engine.Insert(user)
 	if err != nil {
 		panic(err)
@@ -226,6 +240,8 @@ func AddUsers(users []*User) bool {
 
 		user.UpdateUserHash()
 		user.PreHash = user.Hash
+
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
 	}
 
 	affected, err := adapter.Engine.Insert(users)

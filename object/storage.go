@@ -23,22 +23,8 @@ import (
 	"github.com/casbin/casdoor/util"
 )
 
-func UploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, string, error) {
-	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, provider.Endpoint)
-	if storageProvider == nil {
-		return "", "", fmt.Errorf("the provider type: %s is not supported", provider.Type)
-	}
-
-	if provider.Domain == "" {
-		provider.Domain = storageProvider.GetEndpoint()
-		UpdateProvider(provider.GetId(), provider)
-	}
-
+func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool) (string, string) {
 	objectKey := util.UrlJoin(util.GetUrlPath(provider.Domain), fullFilePath)
-	_, err := storageProvider.Put(objectKey, fileBuffer)
-	if err != nil {
-		return "", "", err
-	}
 
 	host := ""
 	if provider.Type != "Local File System" {
@@ -52,7 +38,32 @@ func UploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 		host = util.UrlJoin(provider.Domain, "/files")
 	}
 
-	fileUrl := fmt.Sprintf("%s?time=%s", util.UrlJoin(host, objectKey), util.GetCurrentUnixTime())
+	fileUrl := util.UrlJoin(host, objectKey)
+	if hasTimestamp {
+		fileUrl = fmt.Sprintf("%s?t=%s", util.UrlJoin(host, objectKey), util.GetCurrentUnixTime())
+	}
+
+	return fileUrl, objectKey
+}
+
+func UploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, string, error) {
+	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, provider.Endpoint)
+	if storageProvider == nil {
+		return "", "", fmt.Errorf("the provider type: %s is not supported", provider.Type)
+	}
+
+	if provider.Domain == "" {
+		provider.Domain = storageProvider.GetEndpoint()
+		UpdateProvider(provider.GetId(), provider)
+	}
+
+	fileUrl, objectKey := getUploadFileUrl(provider, fullFilePath, true)
+
+	_, err := storageProvider.Put(objectKey, fileBuffer)
+	if err != nil {
+		return "", "", err
+	}
+
 	return fileUrl, objectKey, nil
 }
 

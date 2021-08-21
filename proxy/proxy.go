@@ -16,6 +16,7 @@ package proxy
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/astaxie/beego"
 	"golang.org/x/net/proxy"
@@ -31,7 +32,7 @@ func InitHttpClient() {
 	// use proxy
 	httpProxy := beego.AppConfig.String("httpProxy")
 	if httpProxy == "" {
-		ProxyHttpClient = &http.Client{}
+		ProxyHttpClient = DefaultHttpClient
 		return
 	}
 
@@ -52,4 +53,12 @@ func InitHttpClient() {
 	//}
 	//defer resp.Body.Close()
 	//println("Response status: %s", resp.Status)
+}
+
+func GetHttpClient(url string) *http.Client {
+	if strings.Contains(url, "githubusercontent.com") {
+		return ProxyHttpClient
+	} else {
+		return DefaultHttpClient
+	}
 }

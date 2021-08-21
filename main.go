@@ -30,6 +30,7 @@ import (
 func main() {
 	object.InitAdapter()
 	object.InitDb()
+	object.InitDefaultStorageProvider()
 	proxy.InitHttpClient()
 	authz.InitAuthz()
 
