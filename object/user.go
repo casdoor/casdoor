@@ -32,6 +32,7 @@ type User struct {
 	Password          string   `xorm:"varchar(100)" json:"password"`
 	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
 	Avatar            string   `xorm:"varchar(255)" json:"avatar"`
+	PermanentAvatar   string   `xorm:"varchar(255)" json:"permanentAvatar"`
 	Email             string   `xorm:"varchar(100)" json:"email"`
 	Phone             string   `xorm:"varchar(100)" json:"phone"`
 	Location          string   `xorm:"varchar(100)" json:"location"`
@@ -146,7 +147,8 @@ func GetLastUser(owner string) *User {
 
 func UpdateUser(id string, user *User) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getUser(owner, name) == nil {
+	oldUser := getUser(owner, name)
+	if oldUser == nil {
 		return false
 	}
 
@@ -162,9 +164,10 @@ func UpdateUser(id string, user *User) bool {
 	return affected != 0
 }
 
-func UpdateUserInternal(id string, user *User) bool {
+func UpdateUserForAllFields(id string, user *User) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getUser(owner, name) == nil {
+	oldUser := getUser(owner, name)
+	if oldUser == nil {
 		return false
 	}
 
@@ -178,7 +181,13 @@ func UpdateUserInternal(id string, user *User) bool {
 	return affected != 0
 }
 
-func UpdateUserForOriginal(user *User) bool {
+func UpdateUserForOriginalFields(user *User) bool {
+	owner, name := util.GetOwnerAndNameFromId(user.GetId())
+	oldUser := getUser(owner, name)
+	if oldUser == nil {
+		return false
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("display_name", "password", "phone", "avatar", "affiliation", "score", "is_forbidden", "hash", "pre_hash").Update(user)
 	if err != nil {
 		panic(err)

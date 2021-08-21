@@ -135,7 +135,7 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 		}
 	}
 
-	affected := UpdateUserInternal(user.GetId(), user)
+	affected := UpdateUserForAllFields(user.GetId(), user)
 	return affected
 }
 
