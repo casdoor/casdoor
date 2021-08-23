@@ -51,8 +51,9 @@ const LinkedInAuthScope = "r_liteprofile%20r_emailaddress";
 const LinkedInAuthUri = "https://www.linkedin.com/oauth/v2/authorization";
 const LinkedInAuthLogo = `${StaticBaseUrl}/img/social_linkedin.png`;
 
-// const WeComAuthScope = "";
+const WeComSilentAuthScope = "snsapi_userinfo";
 const WeComAuthUri = "https://open.work.weixin.qq.com/wwopen/sso/3rd_qrConnect";
+const WeComSilentAuthUrl = "https://open.weixin.qq.com/connect/oauth2/authorize";
 const WeComAuthLogo = `${StaticBaseUrl}/img/social_wecom.png`;
 
 // const LarkAuthScope = "";
@@ -115,12 +116,18 @@ export function getAuthUrl(application, provider, method) {
   } else if (provider.type === "Gitee") {
     return `${GiteeAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${GiteeAuthScope}&response_type=code&state=${state}`;
   } else if (provider.type === "LinkedIn") {
-    return `${LinkedInAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${LinkedInAuthScope}&response_type=code&state=${state}`
+    return `${LinkedInAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${LinkedInAuthScope}&response_type=code&state=${state}`;
   } else if (provider.type === "WeCom") {
-    return `${WeComAuthUri}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&usertype=member`
+    if (provider.method === "Silent") {
+      return `${WeComSilentAuthUrl}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${WeComSilentAuthScope}&response_type=code#wechat_redirect`;
+    } else if (provider.method === "Normal") {
+      return `${WeComAuthUri}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&usertype=member`;
+    } else {
+      return `https://error:not-supported-provider-method:${provider.method}`;
+    }
   } else if (provider.type === "Lark") {
-    return `${LarkAuthUri}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`
+    return `${LarkAuthUri}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`;
   } else if (provider.type === "GitLab") {
-    return `${GitLabAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${GitLabAuthScope}`
+    return `${GitLabAuthUri}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${GitLabAuthScope}`;
   }
 }

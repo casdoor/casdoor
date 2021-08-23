@@ -171,6 +171,8 @@
     "Category - Tooltip": "Unique string-style identifier",
     "Type": "Type",
     "Type - Tooltip": "Unique string-style identifier",
+    "Method": "Method",
+    "Method - Tooltip": "Login behaviors, QR code or silent authorization",
     "Client ID": "Client ID",
     "Client ID - Tooltip": "Unique string-style identifier",
     "Client secret": "Client secret",
