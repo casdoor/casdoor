@@ -31,6 +31,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    if: github.repository == 'casbin/casdoor' && github.event_name == 'push'
     needs: [ frontend, backend ]
     steps:
       - name: Checkout
