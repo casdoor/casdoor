@@ -293,6 +293,7 @@ func (c *ApiController) Login() {
 					Type:              "normal-user",
 					DisplayName:       userInfo.DisplayName,
 					Avatar:            userInfo.AvatarUrl,
+					Address:           []string{},
 					Email:             userInfo.Email,
 					Score:             score,
 					IsAdmin:           false,
