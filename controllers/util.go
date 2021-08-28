@@ -14,6 +14,12 @@
 
 package controllers
 
+import (
+	"strconv"
+
+	"github.com/astaxie/beego"
+)
+
 // ResponseOk ...
 func (c *ApiController) ResponseOk(data ...interface{}) {
 	resp := Response{Status: "ok"}
@@ -50,4 +56,13 @@ func (c *ApiController) RequireSignedIn() (string, bool) {
 		return "", false
 	}
 	return userId, true
+}
+
+func getInitScore() int {
+	score, err := strconv.Atoi(beego.AppConfig.String("initScore"))
+	if err != nil {
+		panic(err)
+	}
+
+	return score
 }

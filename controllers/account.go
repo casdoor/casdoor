@@ -148,6 +148,7 @@ func (c *ApiController) Signup() {
 		Address:           []string{},
 		Affiliation:       form.Affiliation,
 		Region:            form.Region,
+		Score:             getInitScore(),
 		IsAdmin:           false,
 		IsGlobalAdmin:     false,
 		IsForbidden:       false,

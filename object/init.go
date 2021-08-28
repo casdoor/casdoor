@@ -63,6 +63,7 @@ func initBuiltInUser() {
 		Address:       []string{},
 		Affiliation:   "Example Inc.",
 		Tag:           "staff",
+		Score:         2000,
 		IsAdmin:       true,
 		IsGlobalAdmin: true,
 		IsForbidden:   false,

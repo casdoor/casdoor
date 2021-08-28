@@ -305,6 +305,7 @@ func SyncLdapUsers(owner string, users []LdapRespUser) (*[]LdapRespUser, *[]Ldap
 			Address:     []string{user.Address},
 			Affiliation: "Example Inc.",
 			Tag:         "staff",
+			Score:       2000,
 			Ldap:        user.Uuid,
 		}) {
 			failedUsers = append(failedUsers, user)

@@ -277,12 +277,6 @@ func (c *ApiController) Login() {
 					return
 				}
 
-				var score int
-				score, err = strconv.Atoi(beego.AppConfig.String("initScore"))
-				if err != nil {
-					panic(err)
-				}
-
 				properties := map[string]string{}
 				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
 				user := &object.User{
@@ -295,7 +289,7 @@ func (c *ApiController) Login() {
 					Avatar:            userInfo.AvatarUrl,
 					Address:           []string{},
 					Email:             userInfo.Email,
-					Score:             score,
+					Score:             getInitScore(),
 					IsAdmin:           false,
 					IsGlobalAdmin:     false,
 					IsForbidden:       false,
