@@ -129,6 +129,20 @@ class ResourceListPage extends React.Component {
         sorter: (a, b) => a.tag.localeCompare(b.tag),
       },
       {
+        title: i18next.t("resource:Application"),
+        dataIndex: 'application',
+        key: 'application',
+        width: '80px',
+        sorter: (a, b) => a.application.localeCompare(b.application),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/applications/${text}`}>
+              {text}
+            </Link>
+          )
+        }
+      },
+      {
         title: i18next.t("resource:Parent"),
         dataIndex: 'parent',
         key: 'parent',

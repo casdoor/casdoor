@@ -26,14 +26,15 @@ type Resource struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Provider   string `xorm:"varchar(100)" json:"provider"`
-	Tag        string `xorm:"varchar(100)" json:"tag"`
-	Parent     string `xorm:"varchar(100)" json:"parent"`
-	FileName   string `xorm:"varchar(100)" json:"fileName"`
-	FileType   string `xorm:"varchar(100)" json:"fileType"`
-	FileFormat string `xorm:"varchar(100)" json:"fileFormat"`
-	FileSize   int    `json:"fileSize"`
-	Url        string `xorm:"varchar(100)" json:"url"`
+	Provider    string `xorm:"varchar(100)" json:"provider"`
+	Application string `xorm:"varchar(100)" json:"application"`
+	Tag         string `xorm:"varchar(100)" json:"tag"`
+	Parent      string `xorm:"varchar(100)" json:"parent"`
+	FileName    string `xorm:"varchar(100)" json:"fileName"`
+	FileType    string `xorm:"varchar(100)" json:"fileType"`
+	FileFormat  string `xorm:"varchar(100)" json:"fileFormat"`
+	FileSize    int    `json:"fileSize"`
+	Url         string `xorm:"varchar(100)" json:"url"`
 }
 
 func GetResources(owner string) []*Resource {
