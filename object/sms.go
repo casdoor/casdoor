@@ -20,10 +20,10 @@ import (
 	"github.com/casdoor/go-sms-sender"
 )
 
-func SendCodeToPhone(provider *Provider, phone, code string) string {
+func SendCodeToPhone(provider *Provider, phone, code string) error {
 	client := go_sms_sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.RegionId, provider.TemplateCode, provider.AppId)
 	if client == nil {
-		return fmt.Sprintf("Unsupported provider type: %s", provider.Type)
+		return fmt.Errorf("Unsupported provider type: %s", provider.Type)
 	}
 
 	param := make(map[string]string)
@@ -33,5 +33,5 @@ func SendCodeToPhone(provider *Provider, phone, code string) string {
 		param["code"] = code
 	}
 	client.SendMessage(param, phone)
-	return ""
+	return nil
 }

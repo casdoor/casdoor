@@ -269,7 +269,8 @@ func AddUsersSafe(users []*User) bool {
 		}
 
 		tmp := users[start:end]
-		fmt.Printf("Add users: [%d - %d].\n", start, end)
+		// TODO: save to log instead of standard output
+		// fmt.Printf("Add users: [%d - %d].\n", start, end)
 		if AddUsers(tmp) {
 			affected = true
 		}

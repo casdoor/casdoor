@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"time"
@@ -39,9 +40,9 @@ type VerificationRecord struct {
 	IsUsed     bool
 }
 
-func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) string {
+func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
 	if provider == nil {
-		return "Please set an Email provider first"
+		return fmt.Errorf("Please set an Email provider first")
 	}
 
 	sender := organization.DisplayName
@@ -50,27 +51,27 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
 	content := fmt.Sprintf(provider.Content, code)
 
-	if result := AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code); len(result) != 0 {
-		return result
+	if err := AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code); err != nil {
+		return err
 	}
 
 	return SendEmail(provider, title, content, dest, sender)
 }
 
-func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) string {
+func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
 	if provider == nil {
-		return "Please set a SMS provider first"
+		return errors.New("Please set a SMS provider first")
 	}
 
 	code := getRandomCode(5)
-	if result := AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code); len(result) != 0 {
-		return result
+	if err := AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code); err != nil {
+		return err
 	}
 
 	return SendCodeToPhone(provider, dest, code)
 }
 
-func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordType, dest, code string) string {
+func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordType, dest, code string) error {
 	var record VerificationRecord
 	record.RemoteAddr = remoteAddr
 	record.Type = recordType
@@ -79,12 +80,12 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 	}
 	has, err := adapter.Engine.Desc("created_time").Get(&record)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	now := time.Now().Unix()
 	if has && now-record.Time < 60 {
-		return "You can only send one code in 60s."
+		return errors.New("You can only send one code in 60s.")
 	}
 
 	record.Owner = provider.Owner
@@ -102,10 +103,10 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 
 	_, err = adapter.Engine.Insert(record)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	return ""
+	return nil
 }
 
 func getVerificationRecord(dest string) *VerificationRecord {

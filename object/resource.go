@@ -56,9 +56,9 @@ func getResource(owner string, name string) *Resource {
 
 	if existed {
 		return &resource
-	} else {
-		return nil
 	}
+	
+	return nil
 }
 
 func GetResource(id string) *Resource {

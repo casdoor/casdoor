@@ -80,12 +80,12 @@ func (c *ApiController) SendEmail() {
 
 	ok := 0
 	for _, receiver := range emailForm.Receivers {
-		if msg := object.SendEmail(
+		if err = object.SendEmail(
 			provider,
 			emailForm.Title,
 			emailForm.Content,
 			receiver,
-			emailForm.Sender); len(msg) == 0 {
+			emailForm.Sender); err == nil {
 			ok++
 		}
 	}
