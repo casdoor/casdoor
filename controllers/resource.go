@@ -102,7 +102,7 @@ func (c *ApiController) DeleteResource() {
 		return
 	}
 
-	err = object.DeleteFile(provider, resource.ObjectKey)
+	err = object.DeleteFile(provider, resource.Name)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -155,16 +155,16 @@ func (c *ApiController) UploadResource() {
 	fileSize := int(header.Size)
 	resource := &object.Resource{
 		Owner:       owner,
-		Name:        filename,
+		Name:        objectKey,
 		CreatedTime: util.GetCurrentTime(),
 		Provider:    provider.Name,
 		Tag:         tag,
 		Parent:      parent,
+		FileName:    filename,
 		FileType:    fileType,
 		FileFormat:  fileFormat,
 		FileSize:    fileSize,
 		Url:         fileUrl,
-		ObjectKey:   objectKey,
 	}
 	object.AddOrUpdateResource(resource)
 
@@ -179,5 +179,5 @@ func (c *ApiController) UploadResource() {
 		object.UpdateApplication(applicationId, app)
 	}
 
-	c.ResponseOk(fileUrl)
+	c.ResponseOk(fileUrl, objectKey)
 }

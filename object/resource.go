@@ -16,9 +16,9 @@ package object
 
 import (
 	"fmt"
-	"xorm.io/core"
 
 	"github.com/casbin/casdoor/util"
+	"xorm.io/core"
 )
 
 type Resource struct {
@@ -29,11 +29,11 @@ type Resource struct {
 	Provider   string `xorm:"varchar(100)" json:"provider"`
 	Tag        string `xorm:"varchar(100)" json:"tag"`
 	Parent     string `xorm:"varchar(100)" json:"parent"`
+	FileName   string `xorm:"varchar(100)" json:"fileName"`
 	FileType   string `xorm:"varchar(100)" json:"fileType"`
 	FileFormat string `xorm:"varchar(100)" json:"fileFormat"`
 	FileSize   int    `json:"fileSize"`
 	Url        string `xorm:"varchar(100)" json:"url"`
-	ObjectKey  string `xorm:"varchar(100)" json:"objectKey"`
 }
 
 func GetResources(owner string) []*Resource {

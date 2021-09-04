@@ -136,6 +136,13 @@ class ResourceListPage extends React.Component {
         sorter: (a, b) => a.parent.localeCompare(b.parent),
       },
       {
+        title: i18next.t("resource:File name"),
+        dataIndex: 'fileName',
+        key: 'fileName',
+        width: '120px',
+        sorter: (a, b) => a.fileName.localeCompare(b.fileName),
+      },
+      {
         title: i18next.t("resource:File type"),
         dataIndex: 'fileType',
         key: 'fileType',
