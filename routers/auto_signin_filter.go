@@ -16,10 +16,8 @@ package routers
 
 import (
 	"fmt"
-	"net/url"
 
 	"github.com/astaxie/beego/context"
-	"github.com/casbin/casdoor/controllers"
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/util"
 )
@@ -43,33 +41,17 @@ func setSessionUser(ctx *context.Context, user string) {
 	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
 }
 
-func returnRequest(ctx *context.Context, msg string) {
-	w := ctx.ResponseWriter
-	w.WriteHeader(200)
-	resp := &controllers.Response{Status: "error", Msg: msg}
-	_, err := w.Write([]byte(util.StructToJson(resp)))
-	if err != nil {
-		panic(err)
-	}
-}
-
 func AutoSigninFilter(ctx *context.Context) {
 	//if getSessionUser(ctx) != "" {
 	//	return
 	//}
 
-	query := ctx.Request.URL.RawQuery
-	queryMap, err := url.ParseQuery(query)
-	if err != nil {
-		panic(err)
-	}
-
 	// "/page?access_token=123"
-	accessToken := queryMap.Get("accessToken")
+	accessToken := ctx.Input.Query("accessToken")
 	if accessToken != "" {
 		claims, err := object.ParseJwtToken(accessToken)
 		if err != nil {
-			returnRequest(ctx, "Invalid JWT token")
+			responseError(ctx, "invalid JWT token")
 			return
 		}
 
@@ -79,13 +61,13 @@ func AutoSigninFilter(ctx *context.Context) {
 	}
 
 	// "/page?username=abc&password=123"
-	userId := queryMap.Get("username")
-	password := queryMap.Get("password")
+	userId := ctx.Input.Query("username")
+	password := ctx.Input.Query("password")
 	if userId != "" && password != "" {
 		owner, name := util.GetOwnerAndNameFromId(userId)
 		_, msg := object.CheckUserPassword(owner, name, password)
 		if msg != "" {
-			returnRequest(ctx, msg)
+			responseError(ctx, msg)
 			return
 		}
 

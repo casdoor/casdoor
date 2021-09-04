@@ -120,11 +120,11 @@ func (c *ApiController) UploadResource() {
 	fullFilePath := c.Input().Get("fullFilePath")
 
 	file, header, err := c.GetFile("file")
-	defer file.Close()
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
+	defer file.Close()
 
 	filename := filepath.Base(fullFilePath)
 	fileBuffer := bytes.NewBuffer(nil)

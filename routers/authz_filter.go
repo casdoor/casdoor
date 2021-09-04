@@ -34,7 +34,7 @@ type Object struct {
 func getUsernameByClientIdSecret(ctx *context.Context) string {
 	clientId := ctx.Input.Query("clientId")
 	clientSecret := ctx.Input.Query("clientSecret")
-	if len(clientId) == 0 || len(clientSecret) == 0 {
+	if clientId == "" || clientSecret == "" {
 		return ""
 	}
 
@@ -42,6 +42,7 @@ func getUsernameByClientIdSecret(ctx *context.Context) string {
 	if app == nil || app.ClientSecret != clientSecret {
 		return ""
 	}
+
 	return "built-in/service"
 }
 
@@ -56,7 +57,7 @@ func getUsername(ctx *context.Context) (username string) {
 	// so we catch the panic
 	username = ctx.Input.Session("username").(string)
 
-	if len(username) == 0 {
+	if username == "" {
 		username = getUsernameByClientIdSecret(ctx)
 	}
 
@@ -79,13 +80,12 @@ func getSubject(ctx *context.Context) (string, string) {
 func getObject(ctx *context.Context) (string, string) {
 	method := ctx.Request.Method
 	if method == http.MethodGet {
-		query := ctx.Request.URL.RawQuery
 		// query == "?id=built-in/admin"
-		idParamValue := parseQuery(query, "id")
-		if idParamValue == "" {
+		id := ctx.Input.Query("id")
+		if id == "" {
 			return "", ""
 		}
-		return parseSlash(idParamValue)
+		return parseSlash(id)
 	} else {
 		body := ctx.Input.RequestBody
 
