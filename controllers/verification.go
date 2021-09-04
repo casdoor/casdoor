@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -62,8 +63,8 @@ func (c *ApiController) SendVerificationCode() {
 	user := c.getCurrentUser()
 	organization := object.GetOrganization(orgId)
 	application := object.GetApplicationByOrganizationName(organization.Name)
-
-	msg := "Invalid dest type."
+	
+	sendResp := errors.New("Invalid dest type.")
 	switch destType {
 	case "email":
 		if !util.IsEmailValid(dest) {
@@ -72,7 +73,7 @@ func (c *ApiController) SendVerificationCode() {
 		}
 
 		provider := application.GetEmailProvider()
-		msg = object.SendVerificationCodeToEmail(organization, user, provider, remoteAddr, dest)
+		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, remoteAddr, dest)
 	case "phone":
 		if !util.IsPhoneCnValid(dest) {
 			c.ResponseError("Invalid phone number")
@@ -86,15 +87,15 @@ func (c *ApiController) SendVerificationCode() {
 
 		dest = fmt.Sprintf("+%s%s", org.PhonePrefix, dest)
 		provider := application.GetSmsProvider()
-		msg = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, dest)
+		sendResp = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, dest)
 	}
 
 	status := "ok"
-	if msg != "" {
+	if sendResp != nil {
 		status = "error"
 	}
 
-	c.Data["json"] = Response{Status: status, Msg: msg}
+	c.Data["json"] = Response{Status: status, Msg: sendResp.Error()}
 	c.ServeJSON()
 }
 

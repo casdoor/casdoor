@@ -72,9 +72,9 @@ func getToken(owner string, name string) *Token {
 
 	if existed {
 		return &token
-	} else {
-		return nil
 	}
+	
+	return nil
 }
 
 func getTokenByCode(code string) *Token {
@@ -86,9 +86,9 @@ func getTokenByCode(code string) *Token {
 
 	if existed {
 		return &token
-	} else {
-		return nil
 	}
+	
+	return nil
 }
 
 func GetToken(id string) *Token {

@@ -56,9 +56,9 @@ func getOrganization(owner string, name string) *Organization {
 
 	if existed {
 		return &organization
-	} else {
-		return nil
 	}
+	
+	return nil
 }
 
 func GetOrganization(id string) *Organization {

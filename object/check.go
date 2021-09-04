@@ -83,19 +83,20 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 
 func CheckPassword(user *User, password string) string {
 	organization := GetOrganizationByUser(user)
-
+	if organization == nil {
+		return "organization does not exist"
+	}
+	
 	if organization.PasswordType == "plain" {
 		if password == user.Password {
 			return ""
-		} else {
-			return "password incorrect"
 		}
+		return "password incorrect"
 	} else if organization.PasswordType == "salt" {
 		if password == user.Password || getSaltedPassword(password, organization.PasswordSalt) == user.Password {
 			return ""
-		} else {
-			return "password incorrect"
 		}
+		return "password incorrect"
 	} else {
 		return fmt.Sprintf("unsupported password type: %s", organization.PasswordType)
 	}
