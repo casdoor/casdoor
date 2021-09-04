@@ -60,8 +60,15 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 
+	// "/page?clientId=123&clientSecret=456"
+	userId := getUsernameByClientIdSecret(ctx)
+	if userId != "" {
+		setSessionUser(ctx, userId)
+		return
+	}
+
 	// "/page?username=abc&password=123"
-	userId := ctx.Input.Query("username")
+	userId = ctx.Input.Query("username")
 	password := ctx.Input.Query("password")
 	if userId != "" && password != "" {
 		owner, name := util.GetOwnerAndNameFromId(userId)

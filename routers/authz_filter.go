@@ -22,28 +22,12 @@ import (
 
 	"github.com/astaxie/beego/context"
 	"github.com/casbin/casdoor/authz"
-	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/util"
 )
 
 type Object struct {
 	Owner string `json:"owner"`
 	Name  string `json:"name"`
-}
-
-func getUsernameByClientIdSecret(ctx *context.Context) string {
-	clientId := ctx.Input.Query("clientId")
-	clientSecret := ctx.Input.Query("clientSecret")
-	if clientId == "" || clientSecret == "" {
-		return ""
-	}
-
-	app := object.GetApplicationByClientId(clientId)
-	if app == nil || app.ClientSecret != clientSecret {
-		return ""
-	}
-
-	return "built-in/service"
 }
 
 func getUsername(ctx *context.Context) (username string) {

@@ -127,6 +127,21 @@ func GetApplicationByUser(user *User) *Application {
 	}
 }
 
+func GetApplicationByUserId(userId string) (*Application, *User) {
+	var application *Application
+
+	owner, name := util.GetOwnerAndNameFromId(userId)
+	if owner == "app" {
+		application = getApplication("admin", name)
+		return application, nil
+	}
+
+	user := GetUser(userId)
+	application = GetApplicationByUser(user)
+
+	return application, user
+}
+
 func GetApplicationByClientId(clientId string) *Application {
 	application := Application{}
 	existed, err := adapter.Engine.Where("client_id=?", clientId).Get(&application)

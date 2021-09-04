@@ -14,7 +14,12 @@
 
 package routers
 
-import "github.com/astaxie/beego/context"
+import (
+	"fmt"
+
+	"github.com/astaxie/beego/context"
+	"github.com/casbin/casdoor/object"
+)
 
 type Response struct {
 	Status string      `json:"status"`
@@ -41,4 +46,19 @@ func responseError(ctx *context.Context, error string, data ...interface{}) {
 
 func denyRequest(ctx *context.Context) {
 	responseError(ctx, "Unauthorized operation")
+}
+
+func getUsernameByClientIdSecret(ctx *context.Context) string {
+	clientId := ctx.Input.Query("clientId")
+	clientSecret := ctx.Input.Query("clientSecret")
+	if clientId == "" || clientSecret == "" {
+		return ""
+	}
+
+	application := object.GetApplicationByClientId(clientId)
+	if application == nil || application.ClientSecret != clientSecret {
+		return ""
+	}
+
+	return fmt.Sprintf("app/%s", application.Name)
 }

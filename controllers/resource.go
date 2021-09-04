@@ -19,8 +19,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"mime"
 	"path/filepath"
-	"strings"
 
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/util"
@@ -80,8 +80,7 @@ func (c *ApiController) GetProviderParam() (*object.Provider, *object.User, bool
 		return nil, nil, false
 	}
 
-	user := object.GetUser(userId)
-	application := object.GetApplicationByUser(user)
+	application, user := object.GetApplicationByUserId(userId)
 	provider := application.GetStorageProvider()
 	if provider == nil {
 		c.ResponseError(fmt.Sprintf("No storage provider is found for application: %s", application.Name))
@@ -140,10 +139,12 @@ func (c *ApiController) UploadResource() {
 
 	fileType := "unknown"
 	contentType := header.Header.Get("Content-Type")
-	if strings.HasPrefix(contentType, "image/") {
-		fileType = "image"
-	} else if strings.HasPrefix(contentType, "video/") {
-		fileType = "video"
+	fileType, _ = util.GetOwnerAndNameFromId(contentType)
+
+	if fileType != "image" && fileType != "video" {
+		ext := filepath.Ext(filename)
+		mimeType := mime.TypeByExtension(ext)
+		fileType, _ = util.GetOwnerAndNameFromId(mimeType)
 	}
 
 	fileUrl, objectKey, err := object.UploadFile(provider, fullFilePath, fileBuffer)
@@ -172,6 +173,11 @@ func (c *ApiController) UploadResource() {
 
 	switch tag {
 	case "avatar":
+		if user == nil {
+			c.ResponseError("user is nil for tag: \"avatar\"")
+			return
+		}
+
 		user.Avatar = fileUrl
 		object.UpdateUser(user.GetId(), user)
 	case "termsOfUse":
