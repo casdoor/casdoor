@@ -164,6 +164,8 @@
     "Category - Tooltip": "唯一的、字符串式的ID",
     "Type": "类型",
     "Type - Tooltip": "唯一的、字符串式的ID",
+    "Method": "方式",
+    "Method - Tooltip": "登录行为，二维码或者静默授权登录",
     "Client ID": "Client ID",
     "Client ID - Tooltip": "唯一的、字符串式的ID",
     "Client secret": "Client secret",
