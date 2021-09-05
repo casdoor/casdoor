@@ -39,10 +39,9 @@ func getUser(ctx *context.Context) (username string) {
 }
 
 func getUserByClientIdSecret(ctx *context.Context) string {
-	requestUri := ctx.Request.RequestURI
-	clientId := parseQuery(requestUri, "clientId")
-	clientSecret := parseQuery(requestUri, "clientSecret")
-	if len(clientId) == 0 || len(clientSecret) == 0 {
+	clientId := ctx.Input.Query("clientId")
+	clientSecret := ctx.Input.Query("clientSecret")
+	if clientId == "" || clientSecret == "" {
 		return ""
 	}
 
@@ -50,20 +49,23 @@ func getUserByClientIdSecret(ctx *context.Context) string {
 	if app == nil || app.ClientSecret != clientSecret {
 		return ""
 	}
+	
 	return app.Organization + "/" + app.Name
 }
 
 func RecordMessage(ctx *context.Context) {
-	if ctx.Request.URL.Path != "/api/login" {
-		user := getUser(ctx)
-		userinfo := strings.Split(user, "/")
-		if user == "" {
-			userinfo = append(userinfo, "")
-		}
-		record := util.Records(ctx)
-		record.Organization = userinfo[0]
-		record.Username = userinfo[1]
-
-		object.AddRecord(record)
+	if ctx.Request.URL.Path == "/api/login" {
+		return
 	}
+	
+	user := getUser(ctx)
+	userinfo := strings.Split(user, "/")
+	if user == "" {
+		userinfo = append(userinfo, "")
+	}
+	record := util.Records(ctx)
+	record.Organization = userinfo[0]
+	record.Username = userinfo[1]
+	
+	object.AddRecord(record)
 }
