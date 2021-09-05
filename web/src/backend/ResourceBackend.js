@@ -14,8 +14,8 @@
 
 import * as Setting from "../Setting";
 
-export function getResources(owner) {
-  return fetch(`${Setting.ServerUrl}/api/get-resources?owner=${owner}`, {
+export function getResources(owner, user) {
+  return fetch(`${Setting.ServerUrl}/api/get-resources?owner=${owner}&user=${user}`, {
     method: "GET",
     credentials: "include"
   }).then(res => res.json());

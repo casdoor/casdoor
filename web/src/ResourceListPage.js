@@ -37,7 +37,7 @@ class ResourceListPage extends React.Component {
   }
 
   getResources() {
-    ResourceBackend.getResources("admin")
+    ResourceBackend.getResources(this.props.account.owner, this.props.account.name)
       .then((res) => {
         this.setState({
           resources: res,

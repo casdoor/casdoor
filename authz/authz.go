@@ -85,6 +85,7 @@ p, *, *, GET, /api/get-user, *, *
 p, *, *, GET, /api/get-organizations, *, *
 p, *, *, GET, /api/get-user-application, *, *
 p, *, *, GET, /api/get-default-providers, *, *
+p, *, *, GET, /api/get-resources, *, *
 p, *, *, POST, /api/upload-avatar, *, *
 p, *, *, POST, /api/unlink, *, *
 p, *, *, POST, /api/set-password, *, *

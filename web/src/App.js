@@ -321,13 +321,17 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
-      res.push(
-        <Menu.Item key="/resources">
-          <Link to="/resources">
-            {i18next.t("general:Resources")}
-          </Link>
-        </Menu.Item>
-      );
+    }
+
+    res.push(
+      <Menu.Item key="/resources">
+        <Link to="/resources">
+          {i18next.t("general:Resources")}
+        </Link>
+      </Menu.Item>
+    );
+
+    if (Setting.isAdminUser(this.state.account)) {
       res.push(
         <Menu.Item key="/tokens">
           <Link to="/tokens">
@@ -336,13 +340,14 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
-          <Menu.Item key="/records">
-            <Link to="/records">
-              {i18next.t("general:Records")}
-            </Link>
-          </Menu.Item>
+        <Menu.Item key="/records">
+          <Link to="/records">
+            {i18next.t("general:Records")}
+          </Link>
+        </Menu.Item>
       );
     }
+
     res.push(
       <Menu.Item key="/swagger">
         <a target="_blank" rel="noreferrer" href={"/swagger"}>
@@ -350,6 +355,7 @@ class App extends Component {
         </a>
       </Menu.Item>
     );
+
     return res;
   }
 

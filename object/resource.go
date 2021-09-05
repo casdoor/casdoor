@@ -38,13 +38,14 @@ type Resource struct {
 	Url         string `xorm:"varchar(100)" json:"url"`
 }
 
-func GetResources(owner string) []*Resource {
-	if owner == "admin" {
+func GetResources(owner string, user string) []*Resource {
+	if owner == "built-in" {
 		owner = ""
+		user = ""
 	}
 
 	resources := []*Resource{}
-	err := adapter.Engine.Desc("created_time").Find(&resources, &Resource{Owner: owner})
+	err := adapter.Engine.Desc("created_time").Find(&resources, &Resource{Owner: owner, User: user})
 	if err != nil {
 		panic(err)
 	}

@@ -28,8 +28,9 @@ import (
 
 func (c *ApiController) GetResources() {
 	owner := c.Input().Get("owner")
+	user := c.Input().Get("user")
 
-	c.Data["json"] = object.GetResources(owner)
+	c.Data["json"] = object.GetResources(owner, user)
 	c.ServeJSON()
 }
 
