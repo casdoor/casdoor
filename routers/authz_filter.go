@@ -67,7 +67,8 @@ func getObject(ctx *context.Context) (string, string) {
 		if id == "" {
 			return "", ""
 		}
-		return parseSlash(id)
+		tokens := strings.Split(id, "/")
+		return tokens[0], tokens[1]
 	} else {
 		body := ctx.Input.RequestBody
 
