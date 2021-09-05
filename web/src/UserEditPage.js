@@ -138,7 +138,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.name} disabled={true} onChange={e => {
+            <Input value={this.state.user.name} disabled={!Setting.isAdminUser(this.props.account)} onChange={e => {
               this.updateUserField('name', e.target.value);
             }} />
           </Col>

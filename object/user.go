@@ -104,9 +104,9 @@ func getUser(owner string, name string) *User {
 
 	if existed {
 		return &user
-	} else {
-		return nil
 	}
+	
+	return nil
 }
 
 func GetUser(id string) *User {
@@ -122,6 +122,7 @@ func GetMaskedUser(user *User) *User {
 	if user.Password != "" {
 		user.Password = "***"
 	}
+	
 	return user
 }
 
@@ -152,14 +153,18 @@ func UpdateUser(id string, user *User) bool {
 	if oldUser == nil {
 		return false
 	}
-
+	
+	if user.Name == "" {
+		user.Name = oldUser.Name
+	}
+	
 	user.UpdateUserHash()
-
+	
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
 		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("owner", "display_name", "avatar",
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("owner", "display_name", "name", "avatar",
 		"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "is_admin", "is_global_admin", "is_forbidden",
 		"hash", "properties").Update(user)
 	if err != nil {
@@ -175,7 +180,7 @@ func UpdateUserForAllFields(id string, user *User) bool {
 	if oldUser == nil {
 		return false
 	}
-
+	
 	user.UpdateUserHash()
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
@@ -196,7 +201,7 @@ func UpdateUserForOriginalFields(user *User) bool {
 	if oldUser == nil {
 		return false
 	}
-
+	
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
 		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
 	}

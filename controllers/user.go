@@ -67,14 +67,26 @@ func (c *ApiController) GetUser() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-user [post]
 func (c *ApiController) UpdateUser() {
+	sid, ok := c.RequireSignedIn()
+	if !ok {
+		c.ResponseError("Please sign in first")
+		return
+	}
+	
 	id := c.Input().Get("id")
 
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
-
+	
+	signedInUser := object.GetUser(sid)
+	if signedInUser.Owner != "built-in" && !signedInUser.IsGlobalAdmin {
+		user.Name = ""
+	}
+	
 	if user.DisplayName == "" {
 		c.ResponseError("Display name cannot be empty")
 		return
