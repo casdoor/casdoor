@@ -58,7 +58,7 @@ export const CropperDiv = (props) => {
             // Setting.showMessage("success", "uploading...");
             const extension = image.substring(image.indexOf('/') + 1, image.indexOf(';base64'));
             const fullFilePath = `avatar/${user.owner}/${user.name}.${extension}`;
-            ResourceBackend.uploadResource(user.owner, user.name, "avatar", account.name, fullFilePath, blob)
+            ResourceBackend.uploadResource(user.owner, user.name, "avatar", "CropperDiv", fullFilePath, blob)
               .then((res) => {
                   if (res.status === "ok") {
                       window.location.href = "/account";

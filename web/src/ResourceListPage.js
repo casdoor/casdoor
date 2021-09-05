@@ -63,7 +63,7 @@ class ResourceListPage extends React.Component {
     this.setState({uploading: true});
     const filename = info.fileList[0].name;
     const fullFilePath = `resource/${this.props.account.owner}/${this.props.account.name}/${filename}`;
-    ResourceBackend.uploadResource(this.props.account.owner, this.props.account.name, "custom", this.props.account.name, fullFilePath, info.file)
+    ResourceBackend.uploadResource(this.props.account.owner, this.props.account.name, "custom", "ResourceListPage", fullFilePath, info.file)
       .then(res => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("application:File uploaded successfully"));
@@ -105,28 +105,18 @@ class ResourceListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Name"),
-        dataIndex: 'name',
-        key: 'name',
-        width: '150px',
-        sorter: (a, b) => a.name.localeCompare(b.name),
-      },
-      {
-        title: i18next.t("general:Created time"),
-        dataIndex: 'createdTime',
-        key: 'createdTime',
-        width: '160px',
-        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
-        render: (text, record, index) => {
-          return Setting.getFormattedDate(text);
-        }
-      },
-      {
-        title: i18next.t("resource:Tag"),
-        dataIndex: 'tag',
-        key: 'tag',
+        title: i18next.t("resource:Application"),
+        dataIndex: 'application',
+        key: 'application',
         width: '80px',
-        sorter: (a, b) => a.tag.localeCompare(b.tag),
+        sorter: (a, b) => a.application.localeCompare(b.application),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/applications/${text}`}>
+              {text}
+            </Link>
+          )
+        }
       },
       {
         title: i18next.t("resource:User"),
@@ -143,25 +133,35 @@ class ResourceListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("resource:Application"),
-        dataIndex: 'application',
-        key: 'application',
-        width: '80px',
-        sorter: (a, b) => a.application.localeCompare(b.application),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/applications/${text}`}>
-              {text}
-            </Link>
-          )
-        }
-      },
-      {
         title: i18next.t("resource:Parent"),
         dataIndex: 'parent',
         key: 'parent',
         width: '80px',
         sorter: (a, b) => a.parent.localeCompare(b.parent),
+      },
+      {
+        title: i18next.t("general:Name"),
+        dataIndex: 'name',
+        key: 'name',
+        width: '150px',
+        sorter: (a, b) => a.name.localeCompare(b.name),
+      },
+      {
+        title: i18next.t("general:Created time"),
+        dataIndex: 'createdTime',
+        key: 'createdTime',
+        width: '150px',
+        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
+        render: (text, record, index) => {
+          return Setting.getFormattedDate(text);
+        }
+      },
+      {
+        title: i18next.t("resource:Tag"),
+        dataIndex: 'tag',
+        key: 'tag',
+        width: '80px',
+        sorter: (a, b) => a.tag.localeCompare(b.tag),
       },
       {
         title: i18next.t("resource:File name"),
@@ -171,24 +171,24 @@ class ResourceListPage extends React.Component {
         sorter: (a, b) => a.fileName.localeCompare(b.fileName),
       },
       {
-        title: i18next.t("resource:File type"),
+        title: i18next.t("resource:Type"),
         dataIndex: 'fileType',
         key: 'fileType',
-        width: '120px',
+        width: '80px',
         sorter: (a, b) => a.fileType.localeCompare(b.fileType),
       },
       {
-        title: i18next.t("resource:File format"),
+        title: i18next.t("resource:Format"),
         dataIndex: 'fileFormat',
         key: 'fileFormat',
-        width: '130px',
+        width: '80px',
         sorter: (a, b) => a.fileFormat.localeCompare(b.fileFormat),
       },
       {
         title: i18next.t("resource:File size"),
         dataIndex: 'fileSize',
         key: 'fileSize',
-        width: '120px',
+        width: '100px',
         sorter: (a, b) => a.fileSize - b.fileSize,
         render: (text, record, index) => {
           return Setting.getFriendlyFileSize(text);
