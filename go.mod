@@ -1,6 +1,6 @@
 module github.com/casbin/casdoor
 
-go 1.15
+go 1.17
 
 require (
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.6+incompatible // indirect
