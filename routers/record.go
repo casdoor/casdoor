@@ -15,7 +15,7 @@
 package routers
 
 import (
-	"strings"
+	"fmt"
 
 	"github.com/astaxie/beego/context"
 	"github.com/casbin/casdoor/object"
@@ -45,27 +45,25 @@ func getUserByClientIdSecret(ctx *context.Context) string {
 		return ""
 	}
 
-	app := object.GetApplicationByClientId(clientId)
-	if app == nil || app.ClientSecret != clientSecret {
+	application := object.GetApplicationByClientId(clientId)
+	if application == nil || application.ClientSecret != clientSecret {
 		return ""
 	}
-	
-	return app.Organization + "/" + app.Name
+
+	return fmt.Sprintf("%s/%s", application.Organization, application.Name)
 }
 
 func RecordMessage(ctx *context.Context) {
 	if ctx.Request.URL.Path == "/api/login" {
 		return
 	}
-	
-	user := getUser(ctx)
-	userinfo := strings.Split(user, "/")
-	if user == "" {
-		userinfo = append(userinfo, "")
-	}
+
 	record := util.Records(ctx)
-	record.Organization = userinfo[0]
-	record.Username = userinfo[1]
-	
+
+	userId := getUser(ctx)
+	if userId != "" {
+		record.Organization, record.Username = util.GetOwnerAndNameFromId(userId)
+	}
+
 	object.AddRecord(record)
 }

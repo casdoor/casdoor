@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/astaxie/beego/context"
 	"github.com/casbin/casdoor/authz"
@@ -53,10 +52,7 @@ func getSubject(ctx *context.Context) (string, string) {
 	}
 
 	// username == "built-in/admin"
-	tokens := strings.Split(username, "/")
-	owner := tokens[0]
-	name := tokens[1]
-	return owner, name
+	return util.GetOwnerAndNameFromId(username)
 }
 
 func getObject(ctx *context.Context) (string, string) {
@@ -67,8 +63,8 @@ func getObject(ctx *context.Context) (string, string) {
 		if id == "" {
 			return "", ""
 		}
-		tokens := strings.Split(id, "/")
-		return tokens[0], tokens[1]
+
+		return util.GetOwnerAndNameFromId(id)
 	} else {
 		body := ctx.Input.RequestBody
 
