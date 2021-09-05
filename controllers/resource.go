@@ -64,31 +64,6 @@ func (c *ApiController) AddResource() {
 	c.ServeJSON()
 }
 
-func (c *ApiController) GetProviderParam() (*object.Provider, *object.User, bool) {
-	providerName := c.Input().Get("provider")
-	if providerName != "" {
-		provider := object.GetProvider(util.GetId(providerName))
-		if provider == nil {
-			c.ResponseError(fmt.Sprintf("The provider: %s is not found", providerName))
-			return nil, nil, false
-		}
-		return provider, nil, true
-	}
-
-	userId, ok := c.RequireSignedIn()
-	if !ok {
-		return nil, nil, false
-	}
-
-	application, user := object.GetApplicationByUserId(userId)
-	provider := application.GetStorageProvider()
-	if provider == nil {
-		c.ResponseError(fmt.Sprintf("No storage provider is found for application: %s", application.Name))
-		return nil, nil, false
-	}
-	return provider, user, true
-}
-
 func (c *ApiController) DeleteResource() {
 	var resource object.Resource
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
@@ -96,7 +71,7 @@ func (c *ApiController) DeleteResource() {
 		panic(err)
 	}
 
-	provider, _, ok := c.GetProviderParam()
+	provider, _, ok := c.GetProviderFromContext("Storage")
 	if !ok {
 		return
 	}
@@ -132,7 +107,7 @@ func (c *ApiController) UploadResource() {
 		return
 	}
 
-	provider, user, ok := c.GetProviderParam()
+	provider, user, ok := c.GetProviderFromContext("Storage")
 	if !ok {
 		return
 	}

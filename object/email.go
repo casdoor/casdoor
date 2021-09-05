@@ -18,7 +18,7 @@ package object
 
 import "github.com/go-gomail/gomail"
 
-func SendEmail(provider *Provider, title, content, dest, sender string) error {
+func SendEmail(provider *Provider, title string, content string, dest string, sender string) error {
 	dialer := gomail.NewDialer(provider.Host, provider.Port, provider.ClientId, provider.ClientSecret)
 
 	message := gomail.NewMessage()

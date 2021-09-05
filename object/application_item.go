@@ -14,7 +14,7 @@
 
 package object
 
-func (application *Application) getProviderByCategory(category string) *Provider {
+func (application *Application) GetProviderByCategory(category string) *Provider {
 	providers := GetProviders(application.Owner)
 	m := map[string]*Provider{}
 	for _, provider := range providers {
@@ -35,15 +35,15 @@ func (application *Application) getProviderByCategory(category string) *Provider
 }
 
 func (application *Application) GetEmailProvider() *Provider {
-	return application.getProviderByCategory("Email")
+	return application.GetProviderByCategory("Email")
 }
 
 func (application *Application) GetSmsProvider() *Provider {
-	return application.getProviderByCategory("SMS")
+	return application.GetProviderByCategory("SMS")
 }
 
 func (application *Application) GetStorageProvider() *Provider {
-	return application.getProviderByCategory("Storage")
+	return application.GetProviderByCategory("Storage")
 }
 
 func (application *Application) getSignupItem(itemName string) *SignupItem {

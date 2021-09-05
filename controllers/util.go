@@ -15,9 +15,12 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/astaxie/beego"
+	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/util"
 )
 
 // ResponseOk ...
@@ -65,4 +68,29 @@ func getInitScore() int {
 	}
 
 	return score
+}
+
+func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, *object.User, bool) {
+	providerName := c.Input().Get("provider")
+	if providerName != "" {
+		provider := object.GetProvider(util.GetId(providerName))
+		if provider == nil {
+			c.ResponseError(fmt.Sprintf("The provider: %s is not found", providerName))
+			return nil, nil, false
+		}
+		return provider, nil, true
+	}
+
+	userId, ok := c.RequireSignedIn()
+	if !ok {
+		return nil, nil, false
+	}
+
+	application, user := object.GetApplicationByUserId(userId)
+	provider := application.GetProviderByCategory(category)
+	if provider == nil {
+		c.ResponseError(fmt.Sprintf("No provider for category: \"%s\" is found for application: %s", category, application.Name))
+		return nil, nil, false
+	}
+	return provider, user, true
 }
