@@ -63,7 +63,7 @@ class ResourceListPage extends React.Component {
     this.setState({uploading: true});
     const filename = info.fileList[0].name;
     const fullFilePath = `resource/${this.props.account.owner}/${this.props.account.name}/${filename}`;
-    ResourceBackend.uploadResource("admin", "custom", this.props.account.name, fullFilePath, info.file)
+    ResourceBackend.uploadResource(this.props.account.owner, this.props.account.name, "custom", this.props.account.name, fullFilePath, info.file)
       .then(res => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("application:File uploaded successfully"));
@@ -127,6 +127,20 @@ class ResourceListPage extends React.Component {
         key: 'tag',
         width: '80px',
         sorter: (a, b) => a.tag.localeCompare(b.tag),
+      },
+      {
+        title: i18next.t("resource:User"),
+        dataIndex: 'user',
+        key: 'user',
+        width: '80px',
+        sorter: (a, b) => a.user.localeCompare(b.user),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/users/${record.owner}/${record.user}`}>
+              {text}
+            </Link>
+          )
+        }
       },
       {
         title: i18next.t("resource:Application"),

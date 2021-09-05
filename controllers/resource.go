@@ -88,6 +88,7 @@ func (c *ApiController) DeleteResource() {
 
 func (c *ApiController) UploadResource() {
 	owner := c.Input().Get("owner")
+	username := c.Input().Get("user")
 	application := c.Input().Get("application")
 	tag := c.Input().Get("tag")
 	parent := c.Input().Get("parent")
@@ -134,6 +135,7 @@ func (c *ApiController) UploadResource() {
 		Owner:       owner,
 		Name:        objectKey,
 		CreatedTime: util.GetCurrentTime(),
+		User:        username,
 		Provider:    provider.Name,
 		Application: application,
 		Tag:         tag,

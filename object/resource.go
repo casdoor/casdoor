@@ -26,6 +26,7 @@ type Resource struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
+	User        string `xorm:"varchar(100)" json:"user"`
 	Provider    string `xorm:"varchar(100)" json:"provider"`
 	Application string `xorm:"varchar(100)" json:"application"`
 	Tag         string `xorm:"varchar(100)" json:"tag"`
@@ -38,6 +39,10 @@ type Resource struct {
 }
 
 func GetResources(owner string) []*Resource {
+	if owner == "admin" {
+		owner = ""
+	}
+
 	resources := []*Resource{}
 	err := adapter.Engine.Desc("created_time").Find(&resources, &Resource{Owner: owner})
 	if err != nil {

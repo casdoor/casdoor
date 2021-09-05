@@ -55,11 +55,11 @@ export function deleteResource(resource, provider="") {
   }).then(res => res.json());
 }
 
-export function uploadResource(owner, tag, parent, fullFilePath, file, provider="") {
+export function uploadResource(owner, user, tag, parent, fullFilePath, file, provider="") {
   const application = "app-built-in";
   let formData = new FormData();
   formData.append("file", file);
-  return fetch(`${Setting.ServerUrl}/api/upload-resource?owner=${owner}&application=${application}&tag=${tag}&parent=${parent}&fullFilePath=${encodeURIComponent(fullFilePath)}&provider=${provider}`, {
+  return fetch(`${Setting.ServerUrl}/api/upload-resource?owner=${owner}&user=${user}&application=${application}&tag=${tag}&parent=${parent}&fullFilePath=${encodeURIComponent(fullFilePath)}&provider=${provider}`, {
     body: formData,
     method: 'POST',
     credentials: 'include',

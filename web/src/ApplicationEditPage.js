@@ -99,7 +99,7 @@ class ApplicationEditPage extends React.Component {
     }
     this.setState({uploading: true});
     const fullFilePath = `termsOfUse/${this.state.application.owner}/${this.state.application.name}.html`;
-    ResourceBackend.uploadResource(this.state.application.owner, "termsOfUse", this.state.application.name, fullFilePath, info.file)
+    ResourceBackend.uploadResource(this.props.account.owner, this.props.account.name, "termsOfUse", this.state.application.name, fullFilePath, info.file)
       .then(res => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("application:File uploaded successfully"));
