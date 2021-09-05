@@ -16,19 +16,19 @@ package object
 
 import "github.com/casdoor/go-sms-sender"
 
-func SendSms(provider *Provider, phone string, code string) error {
+func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 	client, err := go_sms_sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.RegionId, provider.TemplateCode, provider.AppId)
 	if err != nil {
 		return err
 	}
 
-	param := map[string]string{}
+	params := map[string]string{}
 	if provider.Type == go_sms_sender.TencentCloud {
-		param["0"] = code
+		params["0"] = content
 	} else {
-		param["code"] = code
+		params["code"] = content
 	}
 
-	err = client.SendMessage(param, phone)
+	err = client.SendMessage(params, phoneNumbers...)
 	return err
 }
