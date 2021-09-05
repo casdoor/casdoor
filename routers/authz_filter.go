@@ -37,8 +37,6 @@ func getUsername(ctx *context.Context) (username string) {
 		}
 	}()
 
-	// bug in Beego: this call will panic when file session store is empty
-	// so we catch the panic
 	username = ctx.Input.Session("username").(string)
 
 	if username == "" {

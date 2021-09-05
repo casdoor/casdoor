@@ -22,25 +22,6 @@ import (
 	"github.com/casbin/casdoor/util"
 )
 
-func getSessionUser(ctx *context.Context) string {
-	user := ctx.Input.CruSession.Get("username")
-	if user == nil {
-		return ""
-	}
-
-	return user.(string)
-}
-
-func setSessionUser(ctx *context.Context, user string) {
-	err := ctx.Input.CruSession.Set("username", user)
-	if err != nil {
-		panic(err)
-	}
-
-	// https://github.com/beego/beego/issues/3445#issuecomment-455411915
-	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
-}
-
 func AutoSigninFilter(ctx *context.Context) {
 	//if getSessionUser(ctx) != "" {
 	//	return
