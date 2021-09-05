@@ -23,7 +23,6 @@ import (
 
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/util"
-	sender "github.com/casdoor/go-sms-sender"
 )
 
 // SendEmail
@@ -95,24 +94,10 @@ func (c *ApiController) SendSms() {
 	}
 
 	var smsForm struct {
-		Receivers  []string          `json:"receivers"`
-		Parameters map[string]string `json:"parameters"`
+		Content   string   `json:"content"`
+		Receivers []string `json:"receivers"`
 	}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &smsForm)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	client, err := sender.NewSmsClient(
-		provider.Type,
-		provider.ClientId,
-		provider.ClientSecret,
-		provider.SignName,
-		provider.RegionId,
-		provider.TemplateCode,
-		provider.AppId,
-	)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -130,7 +115,7 @@ func (c *ApiController) SendSms() {
 		return
 	}
 
-	err = client.SendMessage(smsForm.Parameters, smsForm.Receivers...)
+	err = object.SendSms(provider, smsForm.Content, smsForm.Receivers...)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
