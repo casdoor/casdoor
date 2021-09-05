@@ -23,15 +23,16 @@ import (
 func SendCodeToPhone(provider *Provider, phone, code string) error {
 	client := go_sms_sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.RegionId, provider.TemplateCode, provider.AppId)
 	if client == nil {
-		return fmt.Errorf("Unsupported provider type: %s", provider.Type)
+		return fmt.Errorf("unsupported provider type: %s", provider.Type)
 	}
 
-	param := make(map[string]string)
+	param := map[string]string{}
 	if provider.Type == go_sms_sender.TencentCloud {
 		param["0"] = code
 	} else {
 		param["code"] = code
 	}
+
 	client.SendMessage(param, phone)
 	return nil
 }

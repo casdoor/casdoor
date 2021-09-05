@@ -19,6 +19,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/util"
@@ -29,22 +30,13 @@ import (
 // @Title SendEmail
 // @Description This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
 // @Param   clientId    query    string  true        "The clientId of the application"
-// @Param   clientSecret    query    string  true        "The clientSecret of the application"
-// @Param   body    body   emailForm    true        "Details of the email request"
+// @Param   clientSecret    query    string  true    "The clientSecret of the application"
+// @Param   body    body   emailForm    true         "Details of the email request"
 // @Success 200 {object}  Response object
 // @router /api/send-email [post]
 func (c *ApiController) SendEmail() {
-	clientId := c.Input().Get("clientId")
-	clientSecret := c.Input().Get("clientSecret")
-	app := object.GetApplicationByClientIdAndSecret(clientId, clientSecret)
-	if app == nil {
-		c.ResponseError("Invalid clientId or clientSecret.")
-		return
-	}
-
-	provider := app.GetEmailProvider()
-	if provider == nil {
-		c.ResponseError("No Email provider is found")
+	provider, _, ok := c.GetProviderFromContext("Email")
+	if !ok {
 		return
 	}
 
@@ -54,66 +46,61 @@ func (c *ApiController) SendEmail() {
 		Receivers []string `json:"receivers"`
 		Sender    string   `json:"sender"`
 	}
-
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &emailForm)
 	if err != nil {
-		c.ResponseError("Request body error.")
+		c.ResponseError(err.Error())
 		return
 	}
 
 	if util.IsStrsEmpty(emailForm.Title, emailForm.Content, emailForm.Sender) {
-		c.ResponseError("Missing parameters.")
+		c.ResponseError(fmt.Sprintf("Empty parameters for emailForm: %v", emailForm))
 		return
 	}
 
-	var invalidEmails []string
+	invalidReceivers := []string{}
 	for _, receiver := range emailForm.Receivers {
 		if !util.IsEmailValid(receiver) {
-			invalidEmails = append(invalidEmails, receiver)
+			invalidReceivers = append(invalidReceivers, receiver)
 		}
 	}
 
-	if len(invalidEmails) != 0 {
-		c.ResponseError("Invalid Email addresses", invalidEmails)
+	if len(invalidReceivers) != 0 {
+		c.ResponseError(fmt.Sprintf("Invalid Email receivers: %s", invalidReceivers))
 		return
 	}
 
-	ok := 0
 	for _, receiver := range emailForm.Receivers {
-		if err = object.SendEmail(
-			provider,
-			emailForm.Title,
-			emailForm.Content,
-			receiver,
-			emailForm.Sender); err == nil {
-			ok++
+		err = object.SendEmail(provider, emailForm.Title, emailForm.Content, receiver, emailForm.Sender)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
 		}
 	}
 
-	c.Data["json"] = Response{Status: "ok", Data: ok}
-	c.ServeJSON()
+	c.ResponseOk()
 }
 
 // SendSms
 // @Title SendSms
 // @Description This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
 // @Param   clientId    query    string  true        "The clientId of the application"
-// @Param   clientSecret    query    string  true        "The clientSecret of the application"
-// @Param   body    body   smsForm    true        "Details of the sms request"
+// @Param   clientSecret    query    string  true    "The clientSecret of the application"
+// @Param   body    body   smsForm    true           "Details of the sms request"
 // @Success 200 {object}  Response object
 // @router /api/send-sms [post]
 func (c *ApiController) SendSms() {
-	clientId := c.Input().Get("clientId")
-	clientSecret := c.Input().Get("clientSecret")
-	app := object.GetApplicationByClientIdAndSecret(clientId, clientSecret)
-	if app == nil {
-		c.ResponseError("Invalid clientId or clientSecret.")
+	provider, _, ok := c.GetProviderFromContext("SMS")
+	if !ok {
 		return
 	}
 
-	provider := app.GetSmsProvider()
-	if provider == nil {
-		c.ResponseError("No SMS provider is found")
+	var smsForm struct {
+		Receivers  []string          `json:"receivers"`
+		Parameters map[string]string `json:"parameters"`
+	}
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &smsForm)
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
@@ -127,18 +114,7 @@ func (c *ApiController) SendSms() {
 		provider.AppId,
 	)
 	if client == nil {
-		c.ResponseError("Invalid provider info.")
-		return
-	}
-
-	var smsForm struct {
-		Receivers  []string          `json:"receivers"`
-		Parameters map[string]string `json:"parameters"`
-	}
-
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &smsForm)
-	if err != nil {
-		c.ResponseError("Request body error.")
+		c.ResponseError("SMS client is null")
 		return
 	}
 
@@ -150,11 +126,11 @@ func (c *ApiController) SendSms() {
 	}
 
 	if len(invalidReceivers) != 0 {
-		c.ResponseError("Invalid phone numbers", invalidReceivers)
+		c.ResponseError(fmt.Sprintf("Invalid phone receivers: %s", invalidReceivers))
 		return
 	}
 
 	client.SendMessage(smsForm.Parameters, smsForm.Receivers...)
-	c.Data["json"] = Response{Status: "ok"}
-	c.ServeJSON()
+
+	c.ResponseOk()
 }

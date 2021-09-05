@@ -87,10 +87,16 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 	}
 
 	application, user := object.GetApplicationByUserId(userId)
+	if application == nil {
+		c.ResponseError(fmt.Sprintf("No application is found for userId: \"%s\"", userId))
+		return nil, nil, false
+	}
+
 	provider := application.GetProviderByCategory(category)
 	if provider == nil {
 		c.ResponseError(fmt.Sprintf("No provider for category: \"%s\" is found for application: %s", category, application.Name))
 		return nil, nil, false
 	}
+
 	return provider, user, true
 }
