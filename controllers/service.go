@@ -104,7 +104,7 @@ func (c *ApiController) SendSms() {
 		return
 	}
 
-	client := sender.NewSmsClient(
+	client, err := sender.NewSmsClient(
 		provider.Type,
 		provider.ClientId,
 		provider.ClientSecret,
@@ -113,8 +113,8 @@ func (c *ApiController) SendSms() {
 		provider.TemplateCode,
 		provider.AppId,
 	)
-	if client == nil {
-		c.ResponseError("SMS client is null")
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
@@ -130,7 +130,11 @@ func (c *ApiController) SendSms() {
 		return
 	}
 
-	client.SendMessage(smsForm.Parameters, smsForm.Receivers...)
+	err = client.SendMessage(smsForm.Parameters, smsForm.Receivers...)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	c.ResponseOk()
 }

@@ -68,7 +68,7 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 		return err
 	}
 
-	return SendCodeToPhone(provider, dest, code)
+	return SendSms(provider, dest, code)
 }
 
 func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordType, dest, code string) error {

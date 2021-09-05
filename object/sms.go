@@ -14,16 +14,12 @@
 
 package object
 
-import (
-	"fmt"
+import "github.com/casdoor/go-sms-sender"
 
-	"github.com/casdoor/go-sms-sender"
-)
-
-func SendCodeToPhone(provider *Provider, phone, code string) error {
-	client := go_sms_sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.RegionId, provider.TemplateCode, provider.AppId)
-	if client == nil {
-		return fmt.Errorf("unsupported provider type: %s", provider.Type)
+func SendSms(provider *Provider, phone string, code string) error {
+	client, err := go_sms_sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.RegionId, provider.TemplateCode, provider.AppId)
+	if err != nil {
+		return err
 	}
 
 	param := map[string]string{}
@@ -33,6 +29,6 @@ func SendCodeToPhone(provider *Provider, phone, code string) error {
 		param["code"] = code
 	}
 
-	client.SendMessage(param, phone)
-	return nil
+	err = client.SendMessage(param, phone)
+	return err
 }
