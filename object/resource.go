@@ -57,17 +57,17 @@ func getResource(owner string, name string) *Resource {
 	if existed {
 		return &resource
 	}
-	
+
 	return nil
 }
 
 func GetResource(id string) *Resource {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	return getResource(owner, name)
 }
 
 func UpdateResource(id string, resource *Resource) bool {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	if getResource(owner, name) == nil {
 		return false
 	}
