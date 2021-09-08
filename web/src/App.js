@@ -350,7 +350,7 @@ class App extends Component {
 
     res.push(
       <Menu.Item key="/swagger">
-        <a target="_blank" rel="noreferrer" href={"/swagger"}>
+        <a target="_blank" rel="noreferrer" href={Setting.isLocalhost ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
           {i18next.t("general:Swagger")}
         </a>
       </Menu.Item>

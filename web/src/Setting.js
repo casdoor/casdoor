@@ -43,7 +43,7 @@ export function initServerUrl() {
   }
 }
 
-function isLocalhost() {
+export function isLocalhost() {
   const hostname = window.location.hostname;
   return hostname === "localhost";
 }
