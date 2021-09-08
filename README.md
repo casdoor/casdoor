@@ -95,7 +95,8 @@ Then build back-end binary file, change directory to root(Relative to casdoor):
 go run main.go
 ```
 
-That's it! Try to visit http://127.0.0.1:7001/. :small_airplane:
+That's it! Try to visit http://127.0.0.1:7001/. :small_airplane:  
+**But make sure you always request the backend port 8000 when you are using SDKs.**
 
 ##### Production Mode
 
