@@ -194,9 +194,9 @@ class App extends Component {
   }
 
   handleRightDropdownClick(e) {
-    if (e.key === '201') {
+    if (e.key === '/account') {
       this.props.history.push(`/account`);
-    } else if (e.key === '202') {
+    } else if (e.key === 'logout') {
       this.logout();
     }
   }
@@ -220,11 +220,11 @@ class App extends Component {
   renderRightDropdown() {
     const menu = (
       <Menu onClick={this.handleRightDropdownClick.bind(this)}>
-        <Menu.Item key="201">
+        <Menu.Item key="/account">
           <SettingOutlined />
           {i18next.t("account:My Account")}
         </Menu.Item>
-        <Menu.Item key="202">
+        <Menu.Item key="/logout">
           <LogoutOutlined />
           {i18next.t("account:Logout")}
         </Menu.Item>
@@ -232,7 +232,7 @@ class App extends Component {
     );
 
     return (
-      <Dropdown key="200" overlay={menu} className="rightDropDown">
+      <Dropdown key="/rightDropDown" overlay={menu} className="rightDropDown">
         <div className="ant-dropdown-link" style={{float: 'right', cursor: 'pointer'}}>
           &nbsp;
           &nbsp;
