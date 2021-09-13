@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export const ShowGithubCorner = false
+export const ShowGithubCorner = false;
+export const GithubRepo = "https://github.com/casbin/casdoor";
 
-export const GithubRepo = "https://github.com/casbin/casdoor"
+export const ForceLanguage = "en";
+export const DefaultLanguage = "en";

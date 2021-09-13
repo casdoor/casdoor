@@ -30,13 +30,11 @@ class SelectLanguageBox extends React.Component {
     };
   }
 
-  onClick(e) {
-    Setting.changeLanguage(e.key);
-  };
-
   render() {
     const menu = (
-      <Menu onClick={this.onClick.bind(this)}>
+      <Menu onClick={(e) => {
+        Setting.changeLanguage(e.key);
+      }}>
         <Menu.Item key="en" icon={<IconFont type="icon-en" />}>English</Menu.Item>
         <Menu.Item key="zh" icon={<IconFont type="icon-zh" />}>简体中文</Menu.Item>
         <Menu.Item key="fr" icon={<IconFont type="icon-fr" />}>Français</Menu.Item>

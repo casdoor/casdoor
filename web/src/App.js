@@ -72,7 +72,6 @@ class App extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    Setting.setLanguage();
     this.updateMenuKey();
     this.getAccount();
   }
@@ -139,6 +138,13 @@ class App extends Component {
     return location.toString().replace(location.search, "");
   }
 
+  setLanguage(account) {
+    let language = account?.language;
+    if (language !== "" && language !== i18next.language) {
+      Setting.setLanguage(language);
+    }
+  }
+
   getAccount() {
     let query = this.getAccessTokenParam();
     if (query === "") {
@@ -153,6 +159,8 @@ class App extends Component {
         if (res.status === "ok") {
           account = res.data;
           account.organization = res.data2;
+
+          this.setLanguage(account);
         } else {
           if (res.msg !== "Please sign in first") {
             Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
@@ -196,7 +204,7 @@ class App extends Component {
   handleRightDropdownClick(e) {
     if (e.key === '/account') {
       this.props.history.push(`/account`);
-    } else if (e.key === 'logout') {
+    } else if (e.key === '/logout') {
       this.logout();
     }
   }

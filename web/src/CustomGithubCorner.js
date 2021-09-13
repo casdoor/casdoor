@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import * as Conf from "./common/Conf"
+import * as Conf from "./Conf";
 import GithubCorner from "react-github-corner";
 
 class CustomGithubCorner extends React.Component {
