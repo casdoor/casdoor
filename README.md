@@ -85,9 +85,9 @@ Casdoor provides two run modes, the difference is binary size and user prompt.
 Edit `conf/app.conf`, set `runmode=dev`. Firstly build front-end files:
 
 ```bash
-cd web/ && npm install && npm run start
+cd web/ && yarn && yarn run start
 ```
-*❗ A word of caution ❗: the `npm` commands above need a recommended system RAM of at least 4GB. It has a potential failure during building the files if your RAM is not sufficient.*
+*❗ A word of caution ❗: Casdoor's front-end is built using yarn. You should use `yarn` instead of `npm`. It has a potential failure during building the files if you use `npm`.*
 
 Then build back-end binary file, change directory to root(Relative to casdoor):
 
@@ -103,7 +103,7 @@ That's it! Try to visit http://127.0.0.1:7001/. :small_airplane:
 Edit `conf/app.conf`, set `runmode=prod`. Firstly build front-end files:
 
 ```bash
-cd web/ && npm install && npm run build
+cd web/ && yarn && yarn run build
 ```
 
 Then build back-end binary file, change directory to root(Relative to casdoor):
