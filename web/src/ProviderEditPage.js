@@ -102,6 +102,12 @@ class ProviderEditPage extends React.Component {
           {id: 'Aliyun OSS', name: 'Aliyun OSS'},
         ]
       );
+    } else if (provider.category === "Payment") {
+      return (
+          [
+            {id: 'Paypal', name: 'PayPay'}
+          ]
+      )
     } else {
       return [];
     }
@@ -201,6 +207,8 @@ class ProviderEditPage extends React.Component {
               } else if (value === "Storage") {
                 this.updateProviderField('type', 'Local File System');
                 this.updateProviderField('domain', Setting.getFullServerUrl());
+              } else if (value === "Pay") {
+                this.updateProviderField('type', 'Paypal')
               }
             })}>
               {
@@ -209,6 +217,7 @@ class ProviderEditPage extends React.Component {
                   {id: 'Email', name: 'Email'},
                   {id: 'SMS', name: 'SMS'},
                   {id: 'Storage', name: 'Storage'},
+                  {id: 'Payment', name: 'Payment'}
                 ].map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
               }
             </Select>

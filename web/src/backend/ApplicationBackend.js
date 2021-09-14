@@ -62,3 +62,10 @@ export function deleteApplication(application) {
     body: JSON.stringify(newApplication),
   }).then(res => res.json());
 }
+
+export function getApplicationByClientId(clientId){
+  return fetch(`${Setting.ServerUrl}/api/get-application-clientId?clientId=${clientId}`, {
+    method: "GET",
+    credentials: "include"
+  }).then(res => res.json());
+}

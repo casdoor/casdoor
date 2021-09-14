@@ -46,6 +46,10 @@ func (application *Application) GetStorageProvider() *Provider {
 	return application.GetProviderByCategory("Storage")
 }
 
+func (application *Application) GetPayProvider() *Provider {
+	return application.GetProviderByCategory("Pay")
+}
+
 func (application *Application) getSignupItem(itemName string) *SignupItem {
 	for _, signupItem := range application.SignupItems {
 		if signupItem.Name == itemName {

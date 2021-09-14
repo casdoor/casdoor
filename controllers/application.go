@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+
 	"github.com/casbin/casdoor/object"
 )
 
@@ -114,5 +115,12 @@ func (c *ApiController) DeleteApplication() {
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteApplication(&application))
+	c.ServeJSON()
+}
+
+func (c *ApiController) GetApplicationByClientId() {
+	clientId := c.Input().Get("clientId")
+
+	c.Data["json"] = object.GetApplicationByClientId(clientId)
 	c.ServeJSON()
 }

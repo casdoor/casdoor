@@ -49,6 +49,7 @@ func initAPI() {
 
 	beego.Router("/api/get-organizations", &controllers.ApiController{}, "GET:GetOrganizations")
 	beego.Router("/api/get-organization", &controllers.ApiController{}, "GET:GetOrganization")
+	beego.Router("/api/get-application-clientId", &controllers.ApiController{}, "Get:GetApplicationByClientId")
 	beego.Router("/api/update-organization", &controllers.ApiController{}, "POST:UpdateOrganization")
 	beego.Router("/api/add-organization", &controllers.ApiController{}, "POST:AddOrganization")
 	beego.Router("/api/delete-organization", &controllers.ApiController{}, "POST:DeleteOrganization")
@@ -108,4 +109,9 @@ func initAPI() {
 
 	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
+
+	beego.Router("/api/paypal", &controllers.ApiController{}, "POST:PaypalPay")
+	beego.Router("/api/success-pay", &controllers.ApiController{}, "GET:SuccessPay")
+	beego.Router("/api/get-payments", &controllers.ApiController{}, "Get:GetPayments")
+	beego.Router("/api/delete-payment", &controllers.ApiController{}, "POST:DeletePayment")
 }

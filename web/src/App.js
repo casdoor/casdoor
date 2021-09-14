@@ -50,6 +50,9 @@ import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from './SelectLanguageBox';
 import i18next from 'i18next';
 import PromptPage from "./auth/PromptPage";
+import PaySuccessCallback from "./PaySuccessCallback";
+import Pay from "./Pay";
+import PaymentListPage from "./PaymentListPage";
 
 const { Header, Footer } = Layout;
 
@@ -112,6 +115,8 @@ class App extends Component {
       this.setState({ selectedMenuKey: '/login' });
     } else if (uri.includes('/result')) {
       this.setState({ selectedMenuKey: '/result' });
+    }else if (uri.includes('/payment')) {
+      this.setState({ selectedMenuKey: '/payment' });
     } else {
       this.setState({ selectedMenuKey: -1 });
     }
@@ -354,6 +359,13 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
+      res.push(
+          <Menu.Item key="/payment">
+            <Link to="/payment">
+              {"Payment"}
+            </Link>
+          </Menu.Item>
+      )
     }
 
     res.push(
@@ -416,6 +428,9 @@ class App extends Component {
           <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/payment" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/pay" render={(props) => <Pay account={this.state.account} {...props}/>}/>
+            <Route exact path="/pay/success" render={(props) => <PaySuccessCallback account={this.state.account} {...props}/>}/>
           <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
                                                extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
       </Switch>
@@ -428,31 +443,35 @@ class App extends Component {
     return (
       <div style={{display: 'flex', flex: 'auto',width:"100%",flexDirection: 'column'}}>
         <Layout style={{display: 'flex', alignItems: 'stretch'}}>
-        <Header style={{ padding: '0', marginBottom: '3px'}}>
-          {
-            Setting.isMobile() ? null : (
-              <Link to={"/"}>
-                <div className="logo" />
-              </Link>
-            )
-          }
-          <Menu
-            // theme="dark"
-            mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
-            selectedKeys={[`${this.state.selectedMenuKey}`]}
-            style={{ lineHeight: '64px'}}
-          >
+
+        {window.location.pathname.indexOf("/pay") != -1 && window.location.pathname.indexOf("/payment") == -1 ?
+            null :
+            (<Header style={{ padding: '0', marginBottom: '3px'}}>
             {
-              this.renderMenu()
+              Setting.isMobile() ? null : (
+                  <Link to={"/"}>
+                    <div className="logo" />
+                  </Link>
+              )
             }
-          <div style = {{float: 'right'}}>
-          {
-            this.renderAccount()
-          }
-        <SelectLanguageBox/>
-        </div>
-          </Menu>
-        </Header>
+            <Menu
+                // theme="dark"
+                mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
+                selectedKeys={[`${this.state.selectedMenuKey}`]}
+                style={{ lineHeight: '64px'}}
+            >
+              {
+                this.renderMenu()
+              }
+              <div style = {{float: 'right'}}>
+                {
+                  this.renderAccount()
+                }
+                <SelectLanguageBox/>
+              </div>
+            </Menu>
+          </Header>)
+        }
         <Layout style={{backgroundColor: "#f5f5f5", alignItems: 'stretch'}}>
           <Card className="content-warp-card">
             {
@@ -466,31 +485,34 @@ class App extends Component {
   } else {
     return(
       <div>
-      <Header style={{ padding: '0', marginBottom: '3px'}}>
-        {
-          Setting.isMobile() ? null : (
-            <Link to={"/"}>
-              <div className="logo" />
-            </Link>
-          )
+        {window.location.pathname.indexOf("/pay") != -1 && window.location.pathname.indexOf("/payment") == -1 ?
+            null :
+            <Header style={{ padding: '0', marginBottom: '3px'}}>
+          {
+            Setting.isMobile() ? null : (
+                <Link to={"/"}>
+                  <div className="logo" />
+                </Link>
+            )
+          }
+          <Menu
+              // theme="dark"
+              mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
+              selectedKeys={[`${this.state.selectedMenuKey}`]}
+              style={{ lineHeight: '64px' }}
+          >
+            {
+              this.renderMenu()
+            }
+            <div style = {{float: 'right'}}>
+              {
+                this.renderAccount()
+              }
+              <SelectLanguageBox/>
+            </div>
+          </Menu>
+        </Header>
         }
-        <Menu
-          // theme="dark"
-          mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
-          selectedKeys={[`${this.state.selectedMenuKey}`]}
-          style={{ lineHeight: '64px' }}
-        >
-          {
-            this.renderMenu()
-          }
-          <div style = {{float: 'right'}}>
-          {
-            this.renderAccount()
-          }
-          <SelectLanguageBox/>
-        </div>
-        </Menu>
-      </Header>
       {
         this.renderRouter()
       }

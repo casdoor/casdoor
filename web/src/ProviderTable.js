@@ -151,6 +151,7 @@ class ProviderTable extends React.Component {
           )
         }
       },
+
       // {
       //   title: i18next.t("provider:alertType"),
       //   dataIndex: 'alertType',
