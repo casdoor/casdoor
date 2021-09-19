@@ -61,7 +61,7 @@ func main() {
 		beego.BConfig.WebConfig.Session.SessionProvider = "redis"
 		beego.BConfig.WebConfig.Session.SessionProviderConfig = beego.AppConfig.String("redisEndpoint")
 	}
-	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 30
+	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
 	//beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
 	err := logs.SetLogger("file", `{"filename":"logs/casdoor.log","maxdays":99999}`)
