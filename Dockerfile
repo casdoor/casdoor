@@ -11,6 +11,8 @@ RUN yarn config set registry https://registry.npm.taobao.org
 RUN yarn install && yarn run build
 
 FROM alpine:latest
+RUN sed -i 's/https/http/' /etc/apk/repositories
+RUN apk add curl
 LABEL MAINTAINER="https://casdoor.org/"
 
 COPY --from=BACK /go/src/casdoor/ ./
