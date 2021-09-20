@@ -387,7 +387,7 @@ class LoginPage extends React.Component {
     }
 
     const visibleOAuthProviderItems = application.providers.filter(providerItem => this.isProviderVisible(providerItem));
-    if (this.props.application === undefined && visibleOAuthProviderItems.length === 1) {
+    if (this.props.application === undefined && !application.enablePassword && visibleOAuthProviderItems.length === 1) {
       Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signup"));
       return (
         <div style={{textAlign: "center"}}>
