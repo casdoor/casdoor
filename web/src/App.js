@@ -331,15 +331,14 @@ class App extends Component {
       );
     }
 
-    res.push(
-      <Menu.Item key="/resources">
-        <Link to="/resources">
-          {i18next.t("general:Resources")}
-        </Link>
-      </Menu.Item>
-    );
-
     if (Setting.isAdminUser(this.state.account)) {
+      res.push(
+        <Menu.Item key="/resources">
+          <Link to="/resources">
+            {i18next.t("general:Resources")}
+          </Link>
+        </Menu.Item>
+      );
       res.push(
         <Menu.Item key="/tokens">
           <Link to="/tokens">
@@ -354,15 +353,14 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
+      res.push(
+        <Menu.Item key="/swagger">
+          <a target="_blank" rel="noreferrer" href={Setting.isLocalhost ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
+            {i18next.t("general:Swagger")}
+          </a>
+        </Menu.Item>
+      );
     }
-
-    res.push(
-      <Menu.Item key="/swagger">
-        <a target="_blank" rel="noreferrer" href={Setting.isLocalhost ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
-          {i18next.t("general:Swagger")}
-        </a>
-      </Menu.Item>
-    );
 
     return res;
   }
