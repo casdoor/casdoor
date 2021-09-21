@@ -8,7 +8,7 @@
             "email": "admin@casbin.org"
         }
     },
-    "basePath": "/api",
+    "basePath": "/",
     "paths": {
         "/api/add-application": {
             "post": {
