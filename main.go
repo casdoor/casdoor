@@ -64,7 +64,7 @@ func main() {
 	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
 	//beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
-	err := logs.SetLogger("file", `{"filename":"logs/casdoor.log","maxdays":99999}`)
+	err := logs.SetLogger("file", `{"filename":"logs/casdoor.log","maxdays":99999,"perm":"0770"}`)
 	if err != nil {
 		panic(err)
 	}
