@@ -49,8 +49,12 @@ func denyRequest(ctx *context.Context) {
 }
 
 func getUsernameByClientIdSecret(ctx *context.Context) string {
-	clientId := ctx.Input.Query("clientId")
-	clientSecret := ctx.Input.Query("clientSecret")
+	clientId, clientSecret, ok := ctx.Request.BasicAuth()
+	if !ok {
+		clientId = ctx.Input.Query("clientId")
+		clientSecret = ctx.Input.Query("clientSecret")
+	}
+
 	if clientId == "" || clientSecret == "" {
 		return ""
 	}
