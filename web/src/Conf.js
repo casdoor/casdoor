@@ -15,5 +15,5 @@
 export const ShowGithubCorner = false;
 export const GithubRepo = "https://github.com/casbin/casdoor";
 
-export const ForceLanguage = "en";
+export const ForceLanguage = "";
 export const DefaultLanguage = "en";
