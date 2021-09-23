@@ -203,6 +203,8 @@
   },
   "user": {
     "Edit User": "修改用户",
+    "User Senior": "高级设置",
+    "User Security": "账号安全",
     "Upload a photo": "上传头像",
     "Select a photo...": "选择图片...",
     "Set new profile picture": "设置新头像",

@@ -1,5 +1,6 @@
 {
-  "general": {
+  "general":
+  {
     "Home": "Home",
     "Home - Tooltip": "Application homepage",
     "Organizations": "Organizations",
@@ -62,10 +63,10 @@
     "Phone Prefix - Tooltip": "Mobile phone number prefix, used to distinguish countries or regions",
     "Enter the code": "Enter the code",
     "Captcha": "Captcha",
-    "Authorization code": "Authorization code",
-    "Access token": "Access token",
-    "Expires in": "Expires in",
-    "Scope": "Scope",
+    "Authorization code":"Authorization code",
+    "Access token":"Access token",
+    "Expires in":"Expires in",
+    "Scope":"Scope",
     "Description": "Description",
     "Description - Tooltip": "Related descriptive information",
     "Token expire": "Token expire",
@@ -86,7 +87,8 @@
     "Back Home": "Back Home",
     "Sorry, the page you visited does not exist": "Sorry, the page you visited does not exist"
   },
-  "signup": {
+  "signup":
+  {
     "Username": "Username",
     "Please input your display name!": "Please input your display name!",
     "Please input your personal name!": "Please input your personal name!",
@@ -107,7 +109,8 @@
     "Please click the below button to sign in": "Please click the below button to sign in",
     "Missing parameter.": "Missing parameter."
   },
-  "code": {
+  "code":
+  {
     "Verify code": "Verify code",
     "Please input your verification code!": "Please input your verification code!",
     "Send Code": "Send Code",
@@ -130,7 +133,8 @@
     "Missing parameter.": "Missing parameter.",
     "Submit and complete": "Submit and complete"
   },
-  "login": {
+  "login":
+  {
     "Please input your username, Email or phone!": "Please input your username, Email or phone!",
     "username, Email or phone": "username, Email or phone",
     "Please input your password!": "Please input your password!",
@@ -143,19 +147,22 @@
     "To access": "To access",
     "Sign in with {type}": "Sign in with {type}"
   },
-  "account": {
+  "account":
+  {
     "My Account": "My Account",
     "Settings for your account": "Settings for your account",
     "Login": "Login",
     "Logout": "Logout",
     "Sign Up": "Sign Up"
   },
-  "organization": {
+  "organization":
+  {
     "Edit Organization": "Edit Organization",
     "Website URL": "Website URL",
     "Website URL - Tooltip": "Unique string-style identifier"
   },
-  "provider": {
+  "provider":
+  {
     "App ID": "App ID",
     "App ID - Tooltip": "Unique string-style identifier",
     "Name": "Name",
@@ -201,8 +208,11 @@
     "SMS account": "SMS account",
     "SMS account - Tooltip": "SMS account - Tooltip"
   },
-  "user": {
+  "user":
+  {
     "Edit User": "Edit User",
+    "User Senior": "User Senior",
+    "User Security": "User Security",
     "Upload a photo": "Upload a photo",
     "Select a photo...": "Select a photo...",
     "Set new profile picture": "Set new profile picture",
@@ -261,7 +271,8 @@
     "Turing test failed.": "Turing test failed.",
     "Missing parameter.": "Missing parameter. Please check your form!"
   },
-  "application": {
+  "application":
+  {
     "Edit Application": "Edit Application",
     "Password ON": "Password ON",
     "Password ON - Tooltip": "Whether to allow password login",
@@ -277,7 +288,8 @@
     "Signup items": "Signup items",
     "Signup items - Tooltip": "Signup items that need to be filled in when users register"
   },
-  "forget": {
+  "forget":
+  {
     "Please input your application!": "Please input your application!",
     "Please input your organization!": "Please input your organization!",
     "Unknown forgot type:": "Unknown forgot type:",
@@ -298,7 +310,8 @@
     "Change Password": "Change Password",
     "Choose email verification or mobile verification": "Choose email verification or mobile verification"
   },
-  "ldap": {
+  "ldap":
+  {
     "Server Name": "Server Name",
     "Host": "Host",
     "Server": "Server",
