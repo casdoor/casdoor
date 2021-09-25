@@ -12,32 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package routers
+package controllers
 
-import (
-	"net/http"
-	"strings"
+import "github.com/casbin/casdoor/object"
 
-	"github.com/astaxie/beego/context"
-	"github.com/casbin/casdoor/util"
-)
-
-func StaticFilter(ctx *context.Context) {
-	urlPath := ctx.Request.URL.Path
-	if strings.HasPrefix(urlPath, "/api/") || strings.HasPrefix(urlPath, "/.well-known/") {
-		return
-	}
-
-	path := "web/build"
-	if urlPath == "/" {
-		path += "/index.html"
-	} else {
-		path += urlPath
-	}
-
-	if util.FileExist(path) {
-		http.ServeFile(ctx.ResponseWriter, ctx.Request, path)
-	} else {
-		http.ServeFile(ctx.ResponseWriter, ctx.Request, "web/build/index.html")
-	}
+func (c *ApiController) GetOidcDiscovery() {
+	c.Data["json"] = object.GetOidcDiscovery()
+	c.ServeJSON()
 }

@@ -93,6 +93,7 @@ p, *, *, POST, /api/send-verification-code, *, *
 p, *, *, GET, /api/get-human-check, *, *
 p, *, *, POST, /api/reset-email-or-phone, *, *
 p, *, *, POST, /api/upload-resource, *, *
+p, *, *, GET, /.well-known/openid-configuration, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

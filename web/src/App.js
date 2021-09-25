@@ -50,6 +50,7 @@ import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from './SelectLanguageBox';
 import i18next from 'i18next';
 import PromptPage from "./auth/PromptPage";
+import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
 
 const { Header, Footer } = Layout;
 
@@ -355,7 +356,7 @@ class App extends Component {
       );
       res.push(
         <Menu.Item key="/swagger">
-          <a target="_blank" rel="noreferrer" href={Setting.isLocalhost ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
+          <a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
             {i18next.t("general:Swagger")}
           </a>
         </Menu.Item>
@@ -414,6 +415,7 @@ class App extends Component {
           <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />}/>
           <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
                                                extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
       </Switch>
