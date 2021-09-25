@@ -49,8 +49,8 @@ func init() {
 	// https://access.line.me/.well-known/openid-configuration
 	oidcDiscovery = OidcDiscovery{
 		Issuer:                                 oidcOrigin,
-		AuthorizationEndpoint:                  fmt.Sprintf("%s/api/login/oauth/authorize", oidcOrigin),
-		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", oidcOrigin),
+		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", oidcOrigin),
+		TokenEndpoint:                          fmt.Sprintf("%s/api/login", oidcOrigin),
 		UserinfoEndpoint:                       fmt.Sprintf("%s/api/get-account", oidcOrigin),
 		JwksUri:                                fmt.Sprintf("%s/api/certs", oidcOrigin),
 		ResponseTypesSupported:                 []string{"id_token"},
