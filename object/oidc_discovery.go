@@ -14,9 +14,17 @@
 
 package object
 
+import (
+	"fmt"
+
+	"github.com/astaxie/beego"
+)
+
 type OidcDiscovery struct {
 	Issuer                                 string   `json:"issuer"`
 	AuthorizationEndpoint                  string   `json:"authorization_endpoint"`
+	TokenEndpoint                          string   `json:"token_endpoint"`
+	UserinfoEndpoint                       string   `json:"userinfo_endpoint"`
 	JwksUri                                string   `json:"jwks_uri"`
 	ResponseTypesSupported                 []string `json:"response_types_supported"`
 	ResponseModesSupported                 []string `json:"response_modes_supported"`
@@ -32,19 +40,28 @@ type OidcDiscovery struct {
 var oidcDiscovery OidcDiscovery
 
 func init() {
+	oidcOrigin := beego.AppConfig.String("oidcOrigin")
+
+	// Examples:
+	// https://login.okta.com/.well-known/openid-configuration
+	// https://auth0.auth0.com/.well-known/openid-configuration
+	// https://accounts.google.com/.well-known/openid-configuration
+	// https://access.line.me/.well-known/openid-configuration
 	oidcDiscovery = OidcDiscovery{
-		Issuer:                                 "",
-		AuthorizationEndpoint:                  "",
-		JwksUri:                                "",
-		ResponseTypesSupported:                 nil,
-		ResponseModesSupported:                 nil,
-		GrantTypesSupported:                    nil,
-		SubjectTypesSupported:                  nil,
-		IdTokenSigningAlgValuesSupported:       nil,
-		ScopesSupported:                        nil,
-		ClaimsSupported:                        nil,
-		RequestParameterSupported:              false,
-		RequestObjectSigningAlgValuesSupported: nil,
+		Issuer:                                 oidcOrigin,
+		AuthorizationEndpoint:                  fmt.Sprintf("%s/api/login/oauth/authorize", oidcOrigin),
+		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", oidcOrigin),
+		UserinfoEndpoint:                       fmt.Sprintf("%s/api/get-account", oidcOrigin),
+		JwksUri:                                fmt.Sprintf("%s/api/certs", oidcOrigin),
+		ResponseTypesSupported:                 []string{"id_token"},
+		ResponseModesSupported:                 []string{"login", "code", "link"},
+		GrantTypesSupported:                    []string{"password", "authorization_code"},
+		SubjectTypesSupported:                  []string{"public"},
+		IdTokenSigningAlgValuesSupported:       []string{"RS256"},
+		ScopesSupported:                        []string{"openid", "email", "profile", "address", "phone", "offline_access"},
+		ClaimsSupported:                        []string{"iss", "ver", "sub", "aud", "iat", "exp", "id", "type", "displayName", "avatar", "permanentAvatar", "email", "phone", "location", "affiliation", "title", "homepage", "bio", "tag", "region", "language", "score", "ranking", "isOnline", "isAdmin", "isGlobalAdmin", "isForbidden", "signupApplication", "ldap"},
+		RequestParameterSupported:              true,
+		RequestObjectSigningAlgValuesSupported: []string{"HS256", "HS384", "HS512"},
 	}
 }
 
