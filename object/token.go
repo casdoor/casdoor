@@ -149,6 +149,8 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		return "redirect_uri doesn't exist in the allowed Redirect URL list", application
 	}
 
+	// Mask application for /api/get-app-login
+	application.ClientSecret = ""
 	return "", application
 }
 
