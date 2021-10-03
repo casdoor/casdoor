@@ -78,7 +78,7 @@ class ResourceListPage extends React.Component {
 
   renderUpload() {
     return (
-      <Upload maxCount={1} accept="image/*,video/*" showUploadList={false}
+      <Upload maxCount={1} accept="image/*,video/*,audio/*,.pdf" showUploadList={false}
               beforeUpload={file => {return false}} onChange={info => {this.handleUpload(info)}}>
         <Button icon={<UploadOutlined />} loading={this.state.uploading} type="primary" size="small">
           {i18next.t("resource:Upload a file...")}
