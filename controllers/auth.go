@@ -91,6 +91,10 @@ func (c *ApiController) GetApplicationLogin() {
 	state := c.Input().Get("state")
 
 	msg, application := object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
+
+    // Mask application for /api/get-app-login
+	application.ClientSecret = ""
+
 	if msg != "" {
 		c.ResponseError(msg, application)
 	} else {

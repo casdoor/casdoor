@@ -15,6 +15,7 @@
 package object
 
 import (
+    "fmt"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -47,13 +48,14 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 	}
 
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := tokenClaims.SignedString(jwtSecret)
+	token, err := tokenClaims.SignedString([]byte(application.ClientSecret))
 
 	return token, err
 }
 
 func ParseJwtToken(token string) (*Claims, error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+	    // TODO: 获取 token 关联的 application.ClientSecret， 并替代 jwtSecret
 		return jwtSecret, nil
 	})
 
