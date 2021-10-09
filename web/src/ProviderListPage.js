@@ -111,7 +111,7 @@ class ProviderListPage extends React.Component {
         title: i18next.t("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
-        width: '160px',
+        width: '180px',
         sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -136,16 +136,22 @@ class ProviderListPage extends React.Component {
         dataIndex: 'type',
         key: 'type',
         width: '80px',
+        align: 'center',
         sorter: (a, b) => a.type.localeCompare(b.type),
         render: (text, record, index) => {
-          if (record.category !== "OAuth") {
-            return text;
+          const url = Provider.getProviderUrl(record);
+          if (url !== "") {
+            return (
+              <Tooltip title={record.type}>
+                <a target="_blank" rel="noreferrer" href={Provider.getProviderUrl(record)}>
+                  <img width={36} height={36} src={Provider.getProviderLogo(record)} alt={record.displayName} />
+                </a>
+              </Tooltip>
+            )
           } else {
             return (
               <Tooltip title={record.type}>
-                <a target="_blank" rel="noreferrer" href={Provider.getAuthHomepage(record)}>
-                  <img width={30} height={30} src={Provider.getAuthLogo(record)} alt={record.displayName} />
-                </a>
+                <img width={36} height={36} src={Provider.getProviderLogo(record)} alt={record.displayName} />
               </Tooltip>
             )
           }

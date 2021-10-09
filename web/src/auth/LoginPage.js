@@ -183,7 +183,7 @@ class LoginPage extends React.Component {
     if (size === "small") {
       return (
         <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-          <img width={width} height={width} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
+          <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
         </a>
       )
     } else {

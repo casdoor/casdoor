@@ -65,24 +65,69 @@ const authInfo = {
     scope: "read_user+profile",
     endpoint: "https://gitlab.com/oauth/authorize",
   },
-}
+};
 
-export function getAuthLogo(provider) {
-  return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
-}
+const otherProviderInfo = {
+  SMS: {
+    "Aliyun SMS": {
+      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      url: "https://aliyun.com/product/sms",
+    },
+    "Tencent Cloud SMS": {
+      logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
+      url: "https://cloud.tencent.com/product/sms",
+    },
+    "Volc Engine SMS": {
+      logo: `${StaticBaseUrl}/img/social_volc_engine.jpg`,
+      url: "https://www.volcengine.com/products/cloud-sms",
+    },
+  },
+  Email: {
+    "Default": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "",
+    },
+  },
+  Storage: {
+    "Local File System": {
+      logo: `${StaticBaseUrl}/img/social_file.png`,
+      url: "",
+    },
+    "AWS S3": {
+      logo: `${StaticBaseUrl}/img/social_aws.png`,
+      url: "https://aws.amazon.com/s3",
+    },
+    "Aliyun OSS": {
+      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      url: "https://aliyun.com/product/oss",
+    },
+  },
+};
 
-export function getAuthHomepage(provider) {
-  const endpoint = authInfo[provider.type].endpoint;
-  const urlObj = new URL(endpoint);
-
-  let host = urlObj.host;
-  let tokens = host.split(".");
-  if (tokens.length > 2) {
-    tokens = tokens.slice(1);
+export function getProviderLogo(provider) {
+  if (provider.category === "OAuth") {
+    return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
+  } else {
+    return otherProviderInfo[provider.category][provider.type].logo;
   }
-  host = tokens.join(".");
+}
 
-  return `${urlObj.protocol}//${host}`;
+export function getProviderUrl(provider) {
+  if (provider.category === "OAuth") {
+    const endpoint = authInfo[provider.type].endpoint;
+    const urlObj = new URL(endpoint);
+
+    let host = urlObj.host;
+    let tokens = host.split(".");
+    if (tokens.length > 2) {
+      tokens = tokens.slice(1);
+    }
+    host = tokens.join(".");
+
+    return `${urlObj.protocol}//${host}`;
+  } else {
+    return otherProviderInfo[provider.category][provider.type].url;
+  }
 }
 
 export function getAuthUrl(application, provider, method) {
