@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table} from 'antd';
+import {Button, Popconfirm, Table, Tooltip} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
@@ -142,7 +142,11 @@ class ProviderListPage extends React.Component {
             return text;
           } else {
             return (
-              <img width={30} height={30} src={Provider.getAuthLogo(record)} alt={record.displayName} />
+              <Tooltip title={record.type}>
+                <a target="_blank" rel="noreferrer" href={Provider.getAuthHomepage(record)}>
+                  <img width={30} height={30} src={Provider.getAuthLogo(record)} alt={record.displayName} />
+                </a>
+              </Tooltip>
             )
           }
         }

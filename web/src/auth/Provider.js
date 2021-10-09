@@ -71,6 +71,20 @@ export function getAuthLogo(provider) {
   return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
 }
 
+export function getAuthHomepage(provider) {
+  const endpoint = authInfo[provider.type].endpoint;
+  const urlObj = new URL(endpoint);
+
+  let host = urlObj.host;
+  let tokens = host.split(".");
+  if (tokens.length > 2) {
+    tokens = tokens.slice(1);
+  }
+  host = tokens.join(".");
+
+  return `${urlObj.protocol}//${host}`;
+}
+
 export function getAuthUrl(application, provider, method) {
   if (application === null || provider === null) {
     return "";
