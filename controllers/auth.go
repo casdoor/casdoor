@@ -341,8 +341,15 @@ func (c *ApiController) Login() {
 			}
 		}
 	} else {
-		c.ResponseError(fmt.Sprintf("unknown authentication type (not password or provider), form = %s", util.StructToJson(form)))
-		return
+		if c.GetSessionUsername() != "" {
+			// user already signed in to Casdoor, so let the user click the avatar button to do the quick sign-in
+			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+			user := c.getCurrentUser()
+			resp = c.HandleLoggedIn(application, user, &form)
+		} else {
+			c.ResponseError(fmt.Sprintf("unknown authentication type (not password or provider), form = %s", util.StructToJson(form)))
+			return
+		}
 	}
 
 	c.Data["json"] = resp
