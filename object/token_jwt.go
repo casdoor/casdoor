@@ -17,14 +17,14 @@ package object
 import (
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 var jwtSecret = []byte("CasdoorSecret")
 
 type Claims struct {
 	User
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func generateJwtToken(application *Application, user *User) (string, error) {
@@ -35,14 +35,14 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 
 	claims := Claims{
 		User: *user,
-		StandardClaims: jwt.StandardClaims{
-			Audience:  application.ClientId,
-			ExpiresAt: expireTime.Unix(),
-			Id:        "",
-			IssuedAt:  nowTime.Unix(),
-			Issuer:    "casdoor",
-			NotBefore: nowTime.Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    "Casdoor",
 			Subject:   user.Id,
+			Audience:  []string{application.ClientId},
+			ExpiresAt: jwt.NewNumericDate(expireTime),
+			NotBefore: jwt.NewNumericDate(nowTime),
+			IssuedAt:  jwt.NewNumericDate(nowTime),
+			ID:        "",
 		},
 	}
 
