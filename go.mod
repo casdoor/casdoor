@@ -1,6 +1,6 @@
 module github.com/casbin/casdoor
 
-go 1.15
+go 1.16
 
 require (
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.6+incompatible // indirect
@@ -23,6 +23,7 @@ require (
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/thanhpk/randstr v1.0.4
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
 	golang.org/x/oauth2 v0.0.0-20210628180205-a41e5a781914
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect

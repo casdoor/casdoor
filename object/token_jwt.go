@@ -15,12 +15,18 @@
 package object
 
 import (
+	_ "embed"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
 
-var jwtSecret = []byte("CasdoorSecret")
+//go:embed token_jwt_key.pem
+var tokenJwtPublicKey string
+
+//go:embed token_jwt_key.key
+var tokenJwtPrivateKey string
 
 type Claims struct {
 	User
@@ -46,19 +52,37 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 		},
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtSecret)
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+
+	// Use "token_jwt_key.key" as RSA private key
+	privateKey := tokenJwtPrivateKey
+	key, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(privateKey))
+	if err != nil {
+		return "", err
+	}
+
+	tokenString, err := token.SignedString(key)
 
 	return tokenString, err
 }
 
-func ParseJwtToken(tokenString string) (*Claims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return jwtSecret, nil
+func ParseJwtToken(token string) (*Claims, error) {
+	t, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
+		// Use "token_jwt_key.pem" as RSA public key
+		publicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(tokenJwtPublicKey))
+		if err != nil {
+			return nil, err
+		}
+
+		return publicKey, nil
 	})
 
-	if token != nil {
-		if claims, ok := token.Claims.(*Claims); ok && token.Valid {
+	if t != nil {
+		if claims, ok := t.Claims.(*Claims); ok && t.Valid {
 			return claims, nil
 		}
 	}
