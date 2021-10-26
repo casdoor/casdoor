@@ -44,6 +44,8 @@ type Application struct {
 	ForgetUrl      string   `xorm:"varchar(100)" json:"forgetUrl"`
 	AffiliationUrl string   `xorm:"varchar(100)" json:"affiliationUrl"`
 	TermsOfUse     string   `xorm:"varchar(1000)" json:"termsOfUse"`
+	SignupHtml     string   `xorm:"mediumtext" json:"signupHtml"`
+	SigninHtml     string   `xorm:"mediumtext" json:"signinHtml"`
 }
 
 func GetApplications(owner string) []*Application {
