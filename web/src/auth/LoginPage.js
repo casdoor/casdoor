@@ -412,6 +412,12 @@ class LoginPage extends React.Component {
       return Util.renderMessageLarge(this, this.state.msg);
     }
 
+    if (application.signinHtml !== "") {
+      return (
+        <div dangerouslySetInnerHTML={{ __html: application.signinHtml}} />
+      )
+    }
+
     const visibleOAuthProviderItems = application.providers.filter(providerItem => this.isProviderVisible(providerItem));
     if (this.props.application === undefined && !application.enablePassword && visibleOAuthProviderItems.length === 1) {
       Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signup"));

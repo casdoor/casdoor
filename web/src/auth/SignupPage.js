@@ -520,6 +520,12 @@ class SignupPage extends React.Component {
       return null;
     }
 
+    if (application.signupHtml !== "") {
+      return (
+        <div dangerouslySetInnerHTML={{ __html: application.signupHtml}} />
+      )
+    }
+
     return (
       <div>
         &nbsp;
