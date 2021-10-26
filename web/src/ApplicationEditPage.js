@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch, Upload} from 'antd';
+import {Button, Card, Col, Input, Popover, Row, Select, Switch, Upload} from 'antd';
 import {LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
@@ -27,6 +27,12 @@ import UrlTable from "./UrlTable";
 import ProviderTable from "./ProviderTable";
 import SignupTable from "./SignupTable";
 import PromptPage from "./auth/PromptPage";
+
+import {Controlled as CodeMirror} from 'react-codemirror2';
+import "codemirror/lib/codemirror.css";
+require('codemirror/theme/material-darker.css');
+require("codemirror/mode/htmlmixed/htmlmixed");
+
 const { Option } = Select;
 
 class ApplicationEditPage extends React.Component {
@@ -307,12 +313,56 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Input value={this.state.application.termsOfUse} style={{marginBottom: "10px"}} onChange={e => {
-              this.updateApplicationField("termsOfUse", e.target.value)
+              this.updateApplicationField("termsOfUse", e.target.value);
             }}/>
             <Upload maxCount={1} accept=".html" showUploadList={false}
                     beforeUpload={file => {return false}} onChange={info => {this.handleUpload(info)}}>
               <Button icon={<UploadOutlined />} loading={this.state.uploading}>Click to Upload</Button>
             </Upload>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Signup HTML"), i18next.t("provider:Signup HTML - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Popover placement="right" content={
+              <div style={{width: "900px", height: "300px"}} >
+                <CodeMirror
+                  value={this.state.application.signupHtml}
+                  options={{mode: 'htmlmixed', theme: "material-darker"}}
+                  onBeforeChange={(editor, data, value) => {
+                    this.updateApplicationField("signupHtml", value);
+                  }}
+                />
+              </div>
+            } title={i18next.t("provider:Signup HTML - Edit")} trigger="click">
+              <Input value={this.state.application.signupHtml} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("signupHtml", e.target.value)
+              }}/>
+            </Popover>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Signin HTML"), i18next.t("provider:Signin HTML - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Popover placement="right" content={
+              <div style={{width: "900px", height: "300px"}} >
+                <CodeMirror
+                  value={this.state.application.signinHtml}
+                  options={{mode: 'htmlmixed', theme: "material-darker"}}
+                  onBeforeChange={(editor, data, value) => {
+                    this.updateApplicationField("signinHtml", value);
+                  }}
+                />
+              </div>
+            } title={i18next.t("provider:Signin HTML - Edit")} trigger="click">
+              <Input value={this.state.application.signinHtml} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("signinHtml", e.target.value)
+              }}/>
+            </Popover>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

@@ -15,16 +15,22 @@
 package object
 
 import (
+	_ "embed"
+	"fmt"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 )
 
-var jwtSecret = []byte("CasdoorSecret")
+//go:embed token_jwt_key.pem
+var tokenJwtPublicKey string
+
+//go:embed token_jwt_key.key
+var tokenJwtPrivateKey string
 
 type Claims struct {
 	User
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func generateJwtToken(application *Application, user *User) (string, error) {
@@ -35,30 +41,48 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 
 	claims := Claims{
 		User: *user,
-		StandardClaims: jwt.StandardClaims{
-			Audience:  application.ClientId,
-			ExpiresAt: expireTime.Unix(),
-			Id:        "",
-			IssuedAt:  nowTime.Unix(),
-			Issuer:    "casdoor",
-			NotBefore: nowTime.Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    "Casdoor",
 			Subject:   user.Id,
+			Audience:  []string{application.ClientId},
+			ExpiresAt: jwt.NewNumericDate(expireTime),
+			NotBefore: jwt.NewNumericDate(nowTime),
+			IssuedAt:  jwt.NewNumericDate(nowTime),
+			ID:        "",
 		},
 	}
 
-	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := tokenClaims.SignedString(jwtSecret)
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 
-	return token, err
+	// Use "token_jwt_key.key" as RSA private key
+	privateKey := tokenJwtPrivateKey
+	key, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(privateKey))
+	if err != nil {
+		return "", err
+	}
+
+	tokenString, err := token.SignedString(key)
+
+	return tokenString, err
 }
 
 func ParseJwtToken(token string) (*Claims, error) {
-	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return jwtSecret, nil
+	t, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
+		// Use "token_jwt_key.pem" as RSA public key
+		publicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(tokenJwtPublicKey))
+		if err != nil {
+			return nil, err
+		}
+
+		return publicKey, nil
 	})
 
-	if tokenClaims != nil {
-		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
+	if t != nil {
+		if claims, ok := t.Claims.(*Claims); ok && t.Valid {
 			return claims, nil
 		}
 	}

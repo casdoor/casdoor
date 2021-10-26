@@ -21,6 +21,7 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Provider from "./Provider";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
+import SelfLoginButton from "./SelfLoginButton";
 import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
 import FacebookLoginButton from "./FacebookLoginButton";
 import QqLoginButton from "./QqLoginButton";
@@ -182,7 +183,7 @@ class LoginPage extends React.Component {
     if (size === "small") {
       return (
         <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-          <img width={width} height={width} src={Provider.getAuthLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
+          <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
         </a>
       )
     } else {
@@ -380,10 +381,41 @@ class LoginPage extends React.Component {
     }
   }
 
+  renderSignedInBox() {
+    if (this.props.account === undefined || this.props.account === null) {
+      return null;
+    }
+
+    return (
+      <div>
+        <div style={{fontSize: 16, textAlign: "left"}}>
+          {i18next.t("login:Continue with")}&nbsp;:
+        </div>
+        <br/>
+        <SelfLoginButton account={this.props.account} onClick={() => {
+          let values = {};
+          values["application"] = this.state.application.name;
+          this.onFinish(values);
+        }} />
+        <br/>
+        <br/>
+        <div style={{fontSize: 16, textAlign: "left"}}>
+          {i18next.t("login:Or sign in with another account")}&nbsp;:
+        </div>
+      </div>
+    )
+  }
+
   render() {
     const application = this.getApplicationObj();
     if (application === null) {
       return Util.renderMessageLarge(this, this.state.msg);
+    }
+
+    if (application.signinHtml !== "") {
+      return (
+        <div dangerouslySetInnerHTML={{ __html: application.signinHtml}} />
+      )
     }
 
     const visibleOAuthProviderItems = application.providers.filter(providerItem => this.isProviderVisible(providerItem));
@@ -409,6 +441,9 @@ class LoginPage extends React.Component {
             {/*{*/}
             {/*  this.state.clientId !== null ? "Redirect" : null*/}
             {/*}*/}
+            {
+              this.renderSignedInBox()
+            }
             {
               this.renderForm(application)
             }
