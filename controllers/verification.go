@@ -63,7 +63,7 @@ func (c *ApiController) SendVerificationCode() {
 	user := c.getCurrentUser()
 	organization := object.GetOrganization(orgId)
 	application := object.GetApplicationByOrganizationName(organization.Name)
-	
+
 	sendResp := errors.New("Invalid dest type.")
 	switch destType {
 	case "email":
@@ -90,12 +90,12 @@ func (c *ApiController) SendVerificationCode() {
 		sendResp = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, dest)
 	}
 
-	status := "ok"
 	if sendResp != nil {
-		status = "error"
+		c.Data["json"] = Response{Status: "error", Msg: sendResp.Error()}
+	} else {
+		c.Data["json"] = Response{Status: "ok"}
 	}
 
-	c.Data["json"] = Response{Status: status, Msg: sendResp.Error()}
 	c.ServeJSON()
 }
 

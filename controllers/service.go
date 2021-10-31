@@ -96,6 +96,7 @@ func (c *ApiController) SendSms() {
 	var smsForm struct {
 		Content   string   `json:"content"`
 		Receivers []string `json:"receivers"`
+		OrgId     string   `json:"organizationId"` // e.g. "admin/built-in"
 	}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &smsForm)
 	if err != nil {
@@ -103,10 +104,13 @@ func (c *ApiController) SendSms() {
 		return
 	}
 
+	org := object.GetOrganization(smsForm.OrgId)
 	var invalidReceivers []string
-	for _, receiver := range smsForm.Receivers {
+	for idx, receiver := range smsForm.Receivers {
 		if !util.IsPhoneCnValid(receiver) {
 			invalidReceivers = append(invalidReceivers, receiver)
+		} else {
+			smsForm.Receivers[idx] = fmt.Sprintf("+%s%s", org.PhonePrefix, receiver)
 		}
 	}
 
