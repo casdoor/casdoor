@@ -71,6 +71,15 @@ type User struct {
 	Properties map[string]string `json:"properties"`
 }
 
+func GetGlobalUserCount() int {
+	count, err := adapter.Engine.Count(&User{})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
 func GetGlobalUsers() []*User {
 	users := []*User{}
 	err := adapter.Engine.Desc("created_time").Find(&users)
@@ -81,9 +90,38 @@ func GetGlobalUsers() []*User {
 	return users
 }
 
+func GetPaginationGlobalUsers(offset, limit int) []*User {
+	users := []*User{}
+	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&users)
+	if err != nil {
+		panic(err)
+	}
+
+	return users
+}
+
+func GetUserCount(owner string) int {
+	count, err := adapter.Engine.Count(&User{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
 func GetUsers(owner string) []*User {
 	users := []*User{}
 	err := adapter.Engine.Desc("created_time").Find(&users, &User{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return users
+}
+
+func GetPaginationUsers(owner string, offset, limit int) []*User {
+	users := []*User{}
+	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&users, &User{Owner: owner})
 	if err != nil {
 		panic(err)
 	}

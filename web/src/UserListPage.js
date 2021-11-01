@@ -27,39 +27,47 @@ class UserListPage extends React.Component {
       classes: props,
       users: null,
       organizationName: props.match.params.organizationName,
+      total: 0,
     };
   }
 
   UNSAFE_componentWillMount() {
-    this.getUsers();
+    this.getUsers(1, 10);
   }
 
-  getUsers() {
+  getUsers(page, pageSize) {
     if (this.state.organizationName === undefined) {
-      UserBackend.getGlobalUsers()
+      UserBackend.getGlobalUsers(page, pageSize)
           .then((res) => {
-            this.setState({
-              users: res,
-            });
+            if (res.status === "ok") {
+              this.setState({
+                users: res.data,
+                total: res.data2
+              });
+            }
           });
     } else {
-      UserBackend.getUsers(this.state.organizationName)
+      UserBackend.getUsers(this.state.organizationName, page, pageSize)
           .then((res) => {
-            this.setState({
-              users: res,
-            });
+            if (res.status === "ok") {
+              this.setState({
+                users: res.data,
+                total: res.data2
+              });
+            }
           });
     }
   }
 
   newUser() {
+    var randomName = Math.random().toString(36).slice(-6)
     return {
       owner: "built-in", // this.props.account.username,
-      name: `user_${this.state.users.length}`,
+      name: `user_${randomName}`,
       createdTime: moment().format(),
       type: "normal-user",
       password: "123",
-      displayName: `New User - ${this.state.users.length}`,
+      displayName: `New User - ${randomName}`,
       avatar: "https://casbin.org/img/casbin.svg",
       email: "user@example.com",
       phone: "12345678",
@@ -81,6 +89,7 @@ class UserListPage extends React.Component {
           Setting.showMessage("success", `User added successfully`);
           this.setState({
             users: Setting.prependRow(this.state.users, newUser),
+            total: this.state.total + 1
           });
         }
       )
@@ -95,6 +104,7 @@ class UserListPage extends React.Component {
           Setting.showMessage("success", `User deleted successfully`);
           this.setState({
             users: Setting.deleteRow(this.state.users, i),
+            total: this.state.total - 1
           });
         }
       )
@@ -287,9 +297,18 @@ class UserListPage extends React.Component {
       },
     ];
 
+    const paginationProps = {
+      total: this.state.total,
+      showQuickJumper: true,
+      showSizeChanger: true,
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
+      onChange: (page, pageSize) => this.getUsers(page, pageSize),
+      onShowSizeChange: (current, size) => this.getUsers(current, size),
+    };
+
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={users} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={users} rowKey="name" size="middle" bordered pagination={paginationProps}
                title={() => (
                  <div>
                   {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;

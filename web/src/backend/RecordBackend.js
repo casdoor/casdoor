@@ -14,8 +14,8 @@
 
 import * as Setting from "../Setting";
 
-export function getRecords() {
-  return fetch(`${Setting.ServerUrl}/api/get-records`, {
+export function getRecords(page, pageSize) {
+  return fetch(`${Setting.ServerUrl}/api/get-records?pageSize=${pageSize}&p=${page}`, {
     method: "GET",
     credentials: "include"
   }).then(res => res.json());

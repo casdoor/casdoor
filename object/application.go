@@ -48,9 +48,28 @@ type Application struct {
 	SigninHtml     string   `xorm:"mediumtext" json:"signinHtml"`
 }
 
+func GetApplicationCount(owner string) int {
+	count, err := adapter.Engine.Count(&Application{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
 func GetApplications(owner string) []*Application {
 	applications := []*Application{}
 	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return applications
+}
+
+func GetPaginationApplications(owner string, offset, limit int) []*Application {
+	applications := []*Application{}
+	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&applications, &Application{Owner: owner})
 	if err != nil {
 		panic(err)
 	}

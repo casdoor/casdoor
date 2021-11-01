@@ -19,8 +19,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/original"
+	"github.com/casbin/casdoor/util"
 )
 
 // GetGlobalUsers
@@ -29,8 +31,17 @@ import (
 // @Success 200 {array} object.User The Response object
 // @router /get-global-users [get]
 func (c *ApiController) GetGlobalUsers() {
-	c.Data["json"] = object.GetMaskedUsers(object.GetGlobalUsers())
-	c.ServeJSON()
+	limit := c.Input().Get("pageSize")
+	page := c.Input().Get("p")
+	if limit == "" || page == "" {
+		c.Data["json"] = object.GetMaskedUsers(object.GetGlobalUsers())
+		c.ServeJSON()
+	} else {
+		limit := util.ParseInt(limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGlobalUserCount()))
+		users := object.GetPaginationGlobalUsers(paginator.Offset(), limit)
+		c.ResponseOk(users, paginator.Nums())
+	}
 }
 
 // GetUsers
@@ -41,9 +52,17 @@ func (c *ApiController) GetGlobalUsers() {
 // @router /get-users [get]
 func (c *ApiController) GetUsers() {
 	owner := c.Input().Get("owner")
-
-	c.Data["json"] = object.GetMaskedUsers(object.GetUsers(owner))
-	c.ServeJSON()
+	limit := c.Input().Get("pageSize")
+	page := c.Input().Get("p")
+	if limit == "" || page == "" {
+		c.Data["json"] = object.GetMaskedUsers(object.GetUsers(owner))
+		c.ServeJSON()
+	} else {
+		limit := util.ParseInt(limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetUserCount(owner)))
+		users := object.GetPaginationUsers(owner, paginator.Offset(), limit)
+		c.ResponseOk(users, paginator.Nums())
+	}
 }
 
 // GetUser

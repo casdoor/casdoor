@@ -25,19 +25,23 @@ class RecordListPage extends React.Component {
     this.state = {
       classes: props,
       records: null,
+      total: 0,
     };
   }
 
   UNSAFE_componentWillMount() {
-    this.getRecords();
+    this.getRecords(1, 10);
   }
 
-  getRecords() {
-    RecordBackend.getRecords()
+  getRecords(page, pageSize) {
+    RecordBackend.getRecords(page, pageSize)
       .then((res) => {
-        this.setState({
-          records: res,
-        });
+        if (res.status === "ok") {
+          this.setState({
+            records: res.data,
+            total: res.data2
+          });
+        }
       });
   }
 
@@ -124,9 +128,18 @@ class RecordListPage extends React.Component {
       },
     ];
 
+    const paginationProps = {
+      total: this.state.total,
+      showQuickJumper: true,
+      showSizeChanger: true,
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
+      onChange: (page, pageSize) => this.getRecords(page, pageSize),
+      onShowSizeChange: (current, size) => this.getRecords(current, size),
+    };
+
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={paginationProps}
                title={() => (
                  <div>
                    {i18next.t("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;

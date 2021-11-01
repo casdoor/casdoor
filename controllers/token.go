@@ -17,20 +17,32 @@ package controllers
 import (
 	"encoding/json"
 
+	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/util"
 )
 
 // GetTokens
 // @Title GetTokens
 // @Description get tokens
 // @Param   owner     query    string  true        "The owner of tokens"
+// @Param   pageSize     query    string  true        "The size of each page"
+// @Param   p     query    string  true        "The number of the page"
 // @Success 200 {array} object.Token The Response object
 // @router /get-tokens [get]
 func (c *ApiController) GetTokens() {
 	owner := c.Input().Get("owner")
-
-	c.Data["json"] = object.GetTokens(owner)
-	c.ServeJSON()
+	limit := c.Input().Get("pageSize")
+	page := c.Input().Get("p")
+	if limit == "" || page == "" {
+		c.Data["json"] = object.GetTokens(owner)
+		c.ServeJSON()
+	} else {
+		limit := util.ParseInt(limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetTokenCount(owner)))
+		tokens := object.GetPaginationTokens(owner, paginator.Offset(), limit)
+		c.ResponseOk(tokens, paginator.Nums())
+	}
 }
 
 // GetToken
