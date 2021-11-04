@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package object
+package cred
 
 import (
 	"crypto/sha256"
 	"encoding/hex"
 )
+
+type Sha256SaltCredManager struct{}
 
 func getSha256(data []byte) []byte {
 	hash := sha256.Sum256(data)
@@ -30,8 +32,13 @@ func getSha256HexDigest(s string) string {
 	return res
 }
 
-func getSaltedPassword(password string, salt string) string {
-	hash1 := getSha256HexDigest(password)
-	res := getSha256HexDigest(hash1 + salt)
+func NewSha256SaltCredManager() *Sha256SaltCredManager {
+	cm := &Sha256SaltCredManager{}
+	return cm
+}
+
+func (cm *Sha256SaltCredManager) GetSealedPassword(password string, userSalt string, organizationSalt string) string {
+	hash := getSha256HexDigest(password)
+	res := getSha256HexDigest(hash + organizationSalt)
 	return res
 }

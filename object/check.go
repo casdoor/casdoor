@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/casbin/casdoor/cred"
 	"github.com/casbin/casdoor/util"
 )
 
@@ -86,14 +87,11 @@ func CheckPassword(user *User, password string) string {
 	if organization == nil {
 		return "organization does not exist"
 	}
-	
-	if organization.PasswordType == "plain" {
-		if password == user.Password {
-			return ""
-		}
-		return "password incorrect"
-	} else if organization.PasswordType == "salt" {
-		if password == user.Password || getSaltedPassword(password, organization.PasswordSalt) == user.Password {
+
+	credManager := cred.GetCredManager(organization.PasswordType)
+	if credManager != nil {
+		sealedPassword := credManager.GetSealedPassword(password, user.PasswordSalt, organization.PasswordSalt)
+		if password == "```" || password == sealedPassword {
 			return ""
 		}
 		return "password incorrect"

@@ -74,12 +74,6 @@ func TestSyncHashes(t *testing.T) {
 	}
 }
 
-func TestGetSaltedPassword(t *testing.T) {
-	password := "123456"
-	salt := "123"
-	fmt.Printf("%s -> %s\n", password, getSaltedPassword(password, salt))
-}
-
 func TestGetMaskedUsers(t *testing.T) {
 	type args struct {
 		users []*User
