@@ -14,18 +14,31 @@
 
 package cred
 
-type CredManager interface {
-	GetSealedPassword(password string, userSalt string, organizationSalt string) string
+import (
+	"crypto/md5"
+	"encoding/hex"
+)
+
+type Md5UserSaltCredManager struct{}
+
+func getMd5(data []byte) []byte {
+	hash := md5.Sum(data)
+	return hash[:]
 }
 
-func GetCredManager(passwordType string) CredManager {
-	if passwordType == "plain" {
-		return NewPlainCredManager()
-	} else if passwordType == "salt" {
-		return NewSha256SaltCredManager()
-	} else if passwordType == "md5-salt" {
-		return NewMd5UserSaltCredManager()
-	}
+func getMd5HexDigest(s string) string {
+	b := getMd5([]byte(s))
+	res := hex.EncodeToString(b)
+	return res
+}
 
-	return nil
+func NewMd5UserSaltCredManager() *Sha256SaltCredManager {
+	cm := &Sha256SaltCredManager{}
+	return cm
+}
+
+func (cm *Md5UserSaltCredManager) GetSealedPassword(password string, userSalt string, organizationSalt string) string {
+	hash := getMd5HexDigest(password)
+	res := getMd5HexDigest(hash + userSalt)
+	return res
 }
