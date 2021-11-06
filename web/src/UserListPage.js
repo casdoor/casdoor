@@ -67,6 +67,7 @@ class UserListPage extends React.Component {
       createdTime: moment().format(),
       type: "normal-user",
       password: "123",
+      passwordSalt: "",
       displayName: `New User - ${randomName}`,
       avatar: "https://casbin.org/img/casbin.svg",
       email: "user@example.com",
@@ -78,6 +79,7 @@ class UserListPage extends React.Component {
       isAdmin: false,
       isGlobalAdmin: false,
       IsForbidden: false,
+      isDeleted: false,
       properties: {},
     }
   }
@@ -164,7 +166,7 @@ class UserListPage extends React.Component {
         title: i18next.t("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
-        width: '180px',
+        width: '160px',
         sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -243,7 +245,7 @@ class UserListPage extends React.Component {
         title: i18next.t("user:Is admin"),
         dataIndex: 'isAdmin',
         key: 'isAdmin',
-        width: '100px',
+        width: '110px',
         sorter: (a, b) => a.isAdmin - b.isAdmin,
         render: (text, record, index) => {
           return (
@@ -255,7 +257,7 @@ class UserListPage extends React.Component {
         title: i18next.t("user:Is global admin"),
         dataIndex: 'isGlobalAdmin',
         key: 'isGlobalAdmin',
-        width: '100px',
+        width: '110px',
         sorter: (a, b) => a.isGlobalAdmin - b.isGlobalAdmin,
         render: (text, record, index) => {
           return (
@@ -267,8 +269,20 @@ class UserListPage extends React.Component {
         title: i18next.t("user:Is forbidden"),
         dataIndex: 'isForbidden',
         key: 'isForbidden',
-        width: '100px',
+        width: '110px',
         sorter: (a, b) => a.isForbidden - b.isForbidden,
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          )
+        }
+      },
+      {
+        title: i18next.t("user:Is deleted"),
+        dataIndex: 'isDeleted',
+        key: 'isDeleted',
+        width: '110px',
+        sorter: (a, b) => a.isDeleted - b.isDeleted,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />

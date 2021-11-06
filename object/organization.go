@@ -24,13 +24,14 @@ type Organization struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName   string `xorm:"varchar(100)" json:"displayName"`
-	WebsiteUrl    string `xorm:"varchar(100)" json:"websiteUrl"`
-	Favicon       string `xorm:"varchar(100)" json:"favicon"`
-	PasswordType  string `xorm:"varchar(100)" json:"passwordType"`
-	PasswordSalt  string `xorm:"varchar(100)" json:"passwordSalt"`
-	PhonePrefix   string `xorm:"varchar(10)"  json:"phonePrefix"`
-	DefaultAvatar string `xorm:"varchar(100)" json:"defaultAvatar"`
+	DisplayName        string `xorm:"varchar(100)" json:"displayName"`
+	WebsiteUrl         string `xorm:"varchar(100)" json:"websiteUrl"`
+	Favicon            string `xorm:"varchar(100)" json:"favicon"`
+	PasswordType       string `xorm:"varchar(100)" json:"passwordType"`
+	PasswordSalt       string `xorm:"varchar(100)" json:"passwordSalt"`
+	PhonePrefix        string `xorm:"varchar(10)"  json:"phonePrefix"`
+	DefaultAvatar      string `xorm:"varchar(100)" json:"defaultAvatar"`
+	EnableSoftDeletion bool   `json:"enableSoftDeletion"`
 }
 
 func GetOrganizationCount(owner string) int {

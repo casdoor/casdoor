@@ -353,6 +353,16 @@ class UserEditPage extends React.Component {
                   }} />
                 </Col>
               </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("user:Is deleted"), i18next.t("user:Is deleted - Tooltip"))} :
+                </Col>
+                <Col span={(Setting.isMobile()) ? 22 : 2} >
+                  <Switch checked={this.state.user.isDeleted} onChange={checked => {
+                    this.updateUserField('isDeleted', checked);
+                  }} />
+                </Col>
+              </Row>
             </React.Fragment>
           )
         }

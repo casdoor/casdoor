@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table} from 'antd';
+import {Button, Popconfirm, Switch, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -59,6 +59,7 @@ class OrganizationListPage extends React.Component {
       PasswordSalt: "",
       phonePrefix: "86",
       defaultAvatar: "https://casbin.org/img/casbin.svg",
+      enableSoftDeletion: false,
     }
   }
 
@@ -158,7 +159,7 @@ class OrganizationListPage extends React.Component {
         title: i18next.t("general:Password type"),
         dataIndex: 'passwordType',
         key: 'passwordType',
-        width: '100px',
+        width: '150px',
         sorter: (a, b) => a.passwordType.localeCompare(b.passwordType),
       },
       {
@@ -172,12 +173,24 @@ class OrganizationListPage extends React.Component {
         title: i18next.t("organization:Default avatar"),
         dataIndex: 'defaultAvatar',
         key: 'defaultAvatar',
-        width: '50px',
+        width: '120px',
         render: (text, record, index) => {
           return (
               <a target="_blank" rel="noreferrer" href={text}>
                 <img src={text} alt={text} width={40} />
               </a>
+          )
+        }
+      },
+      {
+        title: i18next.t("organization:Soft deletion"),
+        dataIndex: 'enableSoftDeletion',
+        key: 'enableSoftDeletion',
+        width: '140px',
+        sorter: (a, b) => a.enableSoftDeletion - b.enableSoftDeletion,
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           )
         }
       },

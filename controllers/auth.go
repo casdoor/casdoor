@@ -251,7 +251,7 @@ func (c *ApiController) Login() {
 				user = object.GetUserByField(application.Organization, "name", userInfo.Username)
 			}
 
-			if user != nil {
+			if user != nil && user.IsDeleted == false {
 				// Sign in via OAuth (want to sign up but already have account)
 
 				if user.IsForbidden {
@@ -293,6 +293,7 @@ func (c *ApiController) Login() {
 					IsAdmin:           false,
 					IsGlobalAdmin:     false,
 					IsForbidden:       false,
+					IsDeleted:         false,
 					SignupApplication: application.Name,
 					Properties:        properties,
 				}

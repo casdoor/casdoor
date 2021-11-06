@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select} from 'antd';
+import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
 import * as Setting from "./Setting";
@@ -203,6 +203,16 @@ class OrganizationEditPage extends React.Component {
                 </a>
               </Col>
             </Row>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("organization:Soft deletion"), i18next.t("organization:Soft deletion - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.organization.enableSoftDeletion} onChange={checked => {
+              this.updateOrganizationField('enableSoftDeletion', checked);
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}}>
