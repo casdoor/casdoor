@@ -14,7 +14,7 @@
 
 import * as Setting from "../Setting";
 
-export function getProviders(owner, page, pageSize) {
+export function getProviders(owner, page = "", pageSize = "") {
   return fetch(`${Setting.ServerUrl}/api/get-providers?owner=${owner}&p=${page}&pageSize=${pageSize}`, {
     method: "GET",
     credentials: "include"

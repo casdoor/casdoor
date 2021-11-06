@@ -14,7 +14,7 @@
 
 import * as Setting from "../Setting";
 
-export function getTokens(owner, page, pageSize) {
+export function getTokens(owner, page = "", pageSize = "") {
   return fetch(`${Setting.ServerUrl}/api/get-tokens?owner=${owner}&p=${page}&pageSize=${pageSize}`, {
     method: "GET",
     credentials: "include"

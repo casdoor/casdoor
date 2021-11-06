@@ -14,7 +14,7 @@
 
 import * as Setting from "../Setting";
 
-export function getResources(owner, user, page, pageSize) {
+export function getResources(owner, user, page = "", pageSize = "") {
   return fetch(`${Setting.ServerUrl}/api/get-resources?owner=${owner}&user=${user}&p=${page}&pageSize=${pageSize}`, {
     method: "GET",
     credentials: "include"

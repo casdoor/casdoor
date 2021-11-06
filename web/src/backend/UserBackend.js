@@ -22,7 +22,7 @@ export function getGlobalUsers(page, pageSize) {
   }).then(res => res.json());
 }
 
-export function getUsers(owner, page, pageSize) {
+export function getUsers(owner, page = "", pageSize = "") {
   return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}`, {
     method: "GET",
     credentials: "include"
