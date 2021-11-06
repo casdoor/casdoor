@@ -207,7 +207,7 @@ func (c *ApiController) GetAccount() {
 		return
 	}
 
-	organization := object.GetOrganizationByUser(user)
+	organization := object.GetMaskedOrganization(object.GetOrganizationByUser(user))
 
 	c.ResponseOk(user, organization)
 }

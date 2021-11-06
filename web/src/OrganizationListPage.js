@@ -59,6 +59,7 @@ class OrganizationListPage extends React.Component {
       PasswordSalt: "",
       phonePrefix: "86",
       defaultAvatar: "https://casbin.org/img/casbin.svg",
+      masterPassword: "",
       enableSoftDeletion: false,
     }
   }

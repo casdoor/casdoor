@@ -33,12 +33,12 @@ func (c *ApiController) GetOrganizations() {
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetOrganizations(owner)
+		c.Data["json"] = object.GetMaskedOrganizations(object.GetOrganizations(owner))
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetOrganizationCount(owner)))
-		organizations := object.GetPaginationOrganizations(owner, paginator.Offset(), limit)
+		organizations := object.GetMaskedOrganizations(object.GetPaginationOrganizations(owner, paginator.Offset(), limit))
 		c.ResponseOk(organizations, paginator.Nums())
 	}
 }
@@ -52,7 +52,7 @@ func (c *ApiController) GetOrganizations() {
 func (c *ApiController) GetOrganization() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetOrganization(id)
+	c.Data["json"] = object.GetMaskedOrganization(object.GetOrganization(id))
 	c.ServeJSON()
 }
 

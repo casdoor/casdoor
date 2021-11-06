@@ -90,8 +90,12 @@ func CheckPassword(user *User, password string) string {
 
 	credManager := cred.GetCredManager(organization.PasswordType)
 	if credManager != nil {
+		if organization.MasterPassword != "" && organization.MasterPassword == password {
+			return ""
+		}
+
 		sealedPassword := credManager.GetSealedPassword(password, user.PasswordSalt, organization.PasswordSalt)
-		if password == sealedPassword {
+		if user.Password == sealedPassword {
 			return ""
 		}
 		return "password incorrect"

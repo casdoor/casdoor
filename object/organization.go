@@ -31,6 +31,7 @@ type Organization struct {
 	PasswordSalt       string `xorm:"varchar(100)" json:"passwordSalt"`
 	PhonePrefix        string `xorm:"varchar(10)"  json:"phonePrefix"`
 	DefaultAvatar      string `xorm:"varchar(100)" json:"defaultAvatar"`
+	MasterPassword     string `xorm:"varchar(100)" json:"masterPassword"`
 	EnableSoftDeletion bool   `json:"enableSoftDeletion"`
 }
 
@@ -84,6 +85,24 @@ func getOrganization(owner string, name string) *Organization {
 func GetOrganization(id string) *Organization {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getOrganization(owner, name)
+}
+
+func GetMaskedOrganization(organization *Organization) *Organization {
+	if organization == nil {
+		return nil
+	}
+
+	if organization.MasterPassword != "" {
+		organization.MasterPassword = "***"
+	}
+	return organization
+}
+
+func GetMaskedOrganizations(organizations []*Organization) []*Organization {
+	for _, organization := range organizations {
+		organization = GetMaskedOrganization(organization)
+	}
+	return organizations
 }
 
 func UpdateOrganization(id string, organization *Organization) bool {
