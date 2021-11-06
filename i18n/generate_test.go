@@ -12,28 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package util
+package i18n
 
-import "encoding/json"
+import "testing"
 
-func StructToJson(v interface{}) string {
-	data, err := json.Marshal(v)
-	if err != nil {
-		panic(err)
-	}
+func applyToOtherLanguage(dataEn *I18nData, lang string) {
+	dataOther := readI18nFile(lang)
+	println(dataOther)
 
-	return string(data)
+	applyData(dataEn, dataOther)
+	writeI18nFile(lang, dataEn)
 }
 
-func StructToJsonFormatted(v interface{}) string {
-	data, err := json.MarshalIndent(v, "", "  ")
-	if err != nil {
-		panic(err)
-	}
+func TestGenerateI18nStrings(t *testing.T) {
+	dataEn := parseToData()
+	writeI18nFile("en", dataEn)
 
-	return string(data)
-}
-
-func JsonToStruct(data string, v interface{}) error {
-	return json.Unmarshal([]byte(data), v)
+	applyToOtherLanguage(dataEn, "de")
+	applyToOtherLanguage(dataEn, "fr")
+	applyToOtherLanguage(dataEn, "ja")
+	applyToOtherLanguage(dataEn, "ko")
+	applyToOtherLanguage(dataEn, "ru")
+	applyToOtherLanguage(dataEn, "zh")
 }
