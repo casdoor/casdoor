@@ -24,6 +24,7 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
 import {CountDownInput} from "../component/CountDownInput";
 import SelectRegionBox from "../SelectRegionBox";
+import CustomGithubCorner from "../CustomGithubCorner";
 
 const formItemLayout = {
   labelCol: {
@@ -528,6 +529,7 @@ class SignupPage extends React.Component {
 
     return (
       <div>
+        <CustomGithubCorner />
         &nbsp;
         <Row>
           <Col span={24} style={{display: "flex", justifyContent:  "center"}} >

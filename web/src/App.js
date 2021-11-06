@@ -425,9 +425,47 @@ class App extends Component {
 
   renderContent() {
     if (!Setting.isMobile()) {
-    return (
-      <div style={{display: 'flex', flex: 'auto',width:"100%",flexDirection: 'column'}}>
-        <Layout style={{display: 'flex', alignItems: 'stretch'}}>
+      return (
+        <div style={{display: 'flex', flex: 'auto',width:"100%",flexDirection: 'column'}}>
+          <Layout style={{display: 'flex', alignItems: 'stretch'}}>
+          <Header style={{ padding: '0', marginBottom: '3px'}}>
+            {
+              Setting.isMobile() ? null : (
+                <Link to={"/"}>
+                  <div className="logo" />
+                </Link>
+              )
+            }
+            <Menu
+              // theme="dark"
+              mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
+              selectedKeys={[`${this.state.selectedMenuKey}`]}
+              style={{ lineHeight: '64px'}}
+            >
+              {
+                this.renderMenu()
+              }
+            <div style = {{float: 'right'}}>
+            {
+              this.renderAccount()
+            }
+          <SelectLanguageBox/>
+          </div>
+            </Menu>
+          </Header>
+          <Layout style={{backgroundColor: "#f5f5f5", alignItems: 'stretch'}}>
+            <Card className="content-warp-card">
+              {
+              this.renderRouter()
+              }
+            </Card>
+          </Layout>
+          </Layout>
+        </div>
+      )
+    } else {
+      return(
+        <div>
         <Header style={{ padding: '0', marginBottom: '3px'}}>
           {
             Setting.isMobile() ? null : (
@@ -440,65 +478,26 @@ class App extends Component {
             // theme="dark"
             mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
             selectedKeys={[`${this.state.selectedMenuKey}`]}
-            style={{ lineHeight: '64px'}}
+            style={{ lineHeight: '64px' }}
           >
             {
               this.renderMenu()
             }
-          <div style = {{float: 'right'}}>
-          {
-            this.renderAccount()
-          }
-        <SelectLanguageBox/>
-        </div>
+            <div style = {{float: 'right'}}>
+            {
+              this.renderAccount()
+            }
+            <SelectLanguageBox/>
+          </div>
           </Menu>
         </Header>
-        <Layout style={{backgroundColor: "#f5f5f5", alignItems: 'stretch'}}>
-          <Card className="content-warp-card">
-            {
-            this.renderRouter()
-            }
-          </Card>
-        </Layout>
-        </Layout>
-      </div>
-    )
-  } else {
-    return(
-      <div>
-      <Header style={{ padding: '0', marginBottom: '3px'}}>
         {
-          Setting.isMobile() ? null : (
-            <Link to={"/"}>
-              <div className="logo" />
-            </Link>
-          )
+          this.renderRouter()
         }
-        <Menu
-          // theme="dark"
-          mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
-          selectedKeys={[`${this.state.selectedMenuKey}`]}
-          style={{ lineHeight: '64px' }}
-        >
-          {
-            this.renderMenu()
-          }
-          <div style = {{float: 'right'}}>
-          {
-            this.renderAccount()
-          }
-          <SelectLanguageBox/>
-        </div>
-        </Menu>
-      </Header>
-      {
-        this.renderRouter()
-      }
-    </div>
-    )
+      </div>
+      )
+    }
   }
-}
-
 
   renderFooter() {
     // How to keep your footer where it belongs ?

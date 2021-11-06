@@ -13,21 +13,16 @@
 // limitations under the License.
 
 import React from "react";
-import { Button, Col, Divider, Form, Select, Input, Row, Steps } from "antd";
+import {Button, Col, Divider, Form, Select, Input, Row, Steps} from "antd";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
 import i18next from "i18next";
-import { CountDownInput } from "../component/CountDownInput";
+import {CountDownInput} from "../component/CountDownInput";
 import * as UserBackend from "../backend/UserBackend";
-import {
-  CheckCircleOutlined,
-  KeyOutlined,
-  LockOutlined,
-  SolutionOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import {CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
+import CustomGithubCorner from "../CustomGithubCorner";
 
 const { Step } = Steps;
 const { Option } = Select;
@@ -474,7 +469,7 @@ class ForgetPage extends React.Component {
     }
 
     return (
-        <>
+        <React.Fragment>
           <Divider style={{ fontSize: "28px" }}>
             {i18next.t("forget:Retrieve password")}
           </Divider>
@@ -512,7 +507,8 @@ class ForgetPage extends React.Component {
               </div>
             </Col>
           </Row>
-        </>
+          <CustomGithubCorner />
+        </React.Fragment>
     );
   }
 }

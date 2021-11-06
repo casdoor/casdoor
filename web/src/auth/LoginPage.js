@@ -34,6 +34,7 @@ import LinkedInLoginButton from "./LinkedInLoginButton";
 import WeComLoginButton from "./WeComLoginButton";
 import LarkLoginButton from "./LarkLoginButton";
 import GitLabLoginButton from "./GitLabLoginButton";
+import CustomGithubCorner from "../CustomGithubCorner";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -435,6 +436,7 @@ class LoginPage extends React.Component {
             {
               Setting.renderHelmet(application)
             }
+            <CustomGithubCorner />
             {
               Setting.renderLogo(application)
             }
