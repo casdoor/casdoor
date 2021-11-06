@@ -54,6 +54,16 @@ func GetRecords() []*Records {
 	return records
 }
 
+func GetPaginationRecords(offset, limit int) []*Records {
+	records := []*Records{}
+	err := adapter.Engine.Desc("id").Limit(limit, offset).Find(&records)
+	if err != nil {
+		panic(err)
+	}
+
+	return records
+}
+
 func GetRecordsByField(record *Records) []*Records {
 	records := []*Records{}
 	err := adapter.Engine.Find(&records, record)

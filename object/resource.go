@@ -38,6 +38,15 @@ type Resource struct {
 	Url         string `xorm:"varchar(1000)" json:"url"`
 }
 
+func GetResourceCount(owner string, user string) int {
+	count, err := adapter.Engine.Count(&Resource{Owner: owner, User: user})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
 func GetResources(owner string, user string) []*Resource {
 	if owner == "built-in" {
 		owner = ""
@@ -46,6 +55,21 @@ func GetResources(owner string, user string) []*Resource {
 
 	resources := []*Resource{}
 	err := adapter.Engine.Desc("created_time").Find(&resources, &Resource{Owner: owner, User: user})
+	if err != nil {
+		panic(err)
+	}
+
+	return resources
+}
+
+func GetPaginationResources(owner, user string, offset, limit int) []*Resource {
+	if owner == "built-in" {
+		owner = ""
+		user = ""
+	}
+
+	resources := []*Resource{}
+	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&resources, &Resource{Owner: owner, User: user})
 	if err != nil {
 		panic(err)
 	}

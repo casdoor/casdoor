@@ -15,15 +15,15 @@
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
-export function getGlobalUsers() {
-  return fetch(`${Setting.ServerUrl}/api/get-global-users`, {
+export function getGlobalUsers(page, pageSize) {
+  return fetch(`${Setting.ServerUrl}/api/get-global-users?p=${page}&pageSize=${pageSize}`, {
     method: "GET",
     credentials: "include"
   }).then(res => res.json());
 }
 
-export function getUsers(owner) {
-  return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}`, {
+export function getUsers(owner, page, pageSize) {
+  return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}`, {
     method: "GET",
     credentials: "include"
   }).then(res => res.json());

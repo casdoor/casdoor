@@ -14,8 +14,8 @@
 
 import * as Setting from "../Setting";
 
-export function getApplications(owner) {
-  return fetch(`${Setting.ServerUrl}/api/get-applications?owner=${owner}`, {
+export function getApplications(owner, page, pageSize) {
+  return fetch(`${Setting.ServerUrl}/api/get-applications?owner=${owner}&p=${page}&pageSize=${pageSize}`, {
     method: "GET",
     credentials: "include"
   }).then(res => res.json());

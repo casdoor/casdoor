@@ -29,19 +29,23 @@ class ResourceListPage extends React.Component {
       resources: null,
       fileList: [],
       uploading: false,
+      total: 0,
     };
   }
 
   UNSAFE_componentWillMount() {
-    this.getResources();
+    this.getResources(1, 10);
   }
 
-  getResources() {
-    ResourceBackend.getResources(this.props.account.owner, this.props.account.name)
+  getResources(page, pageSize) {
+    ResourceBackend.getResources(this.props.account.owner, this.props.account.name, page, pageSize)
       .then((res) => {
-        this.setState({
-          resources: res,
-        });
+        if (res.status === "ok") {
+          this.setState({
+            resources: res.data,
+            total: res.data2
+          });
+        }
       });
   }
 
@@ -51,6 +55,7 @@ class ResourceListPage extends React.Component {
         Setting.showMessage("success", `Resource deleted successfully`);
           this.setState({
             resources: Setting.deleteRow(this.state.resources, i),
+            total: this.state.total - 1
           });
         }
       )
@@ -260,9 +265,18 @@ class ResourceListPage extends React.Component {
       },
     ];
 
+    const paginationProps = {
+      total: this.state.total,
+      showQuickJumper: true,
+      showSizeChanger: true,
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
+      onChange: (page, pageSize) => this.getResources(page, pageSize),
+      onShowSizeChange: (current, size) => this.getResources(current, size),
+    };
+
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={resources} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={resources} rowKey="name" size="middle" bordered pagination={paginationProps}
                title={() => (
                  <div>
                    {i18next.t("general:Resources")}&nbsp;&nbsp;&nbsp;&nbsp;

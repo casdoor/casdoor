@@ -26,26 +26,30 @@ class TokenListPage extends React.Component {
     this.state = {
       classes: props,
       tokens: null,
+      total: 0,
     };
   }
 
   UNSAFE_componentWillMount() {
-    this.getTokens();
+    this.getTokens(1, 10);
   }
 
-  getTokens() {
-    TokenBackend.getTokens("admin")
+  getTokens(page, pageSize) {
+    TokenBackend.getTokens("admin", page, pageSize)
       .then((res) => {
-        this.setState({
-          tokens: res,
-        });
+        if (res.status === "ok") {
+          this.setState({
+            tokens: res.data,
+            total: res.data2
+          });
+        }
       });
   }
 
   newToken() {
     return {
       owner: "admin", // this.props.account.tokenname,
-      name: `token_${this.state.tokens.length}`,
+      name: `token_${Math.random().toString(36).slice(-6)}`,
       createdTime: moment().format(),
       application: "app-built-in",
       accessToken: "",
@@ -62,6 +66,7 @@ class TokenListPage extends React.Component {
           Setting.showMessage("success", `Token added successfully`);
           this.setState({
             tokens: Setting.prependRow(this.state.tokens, newToken),
+            total: this.state.total + 1
           });
         }
       )
@@ -76,6 +81,7 @@ class TokenListPage extends React.Component {
           Setting.showMessage("success", `Token deleted successfully`);
           this.setState({
             tokens: Setting.deleteRow(this.state.tokens, i),
+            total: this.state.total - 1
           });
         }
       )
@@ -217,9 +223,18 @@ class TokenListPage extends React.Component {
       },
     ];
 
+    const paginationProps = {
+      total: this.state.total,
+      showQuickJumper: true,
+      showSizeChanger: true,
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
+      onChange: (page, pageSize) => this.getTokens(page, pageSize),
+      onShowSizeChange: (current, size) => this.getTokens(current, size),
+    };
+
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={tokens} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={tokens} rowKey="name" size="middle" bordered pagination={paginationProps}
                title={() => (
                  <div>
                    {i18next.t("general:Tokens")}&nbsp;&nbsp;&nbsp;&nbsp;
