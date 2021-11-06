@@ -91,7 +91,7 @@ func CheckPassword(user *User, password string) string {
 	credManager := cred.GetCredManager(organization.PasswordType)
 	if credManager != nil {
 		sealedPassword := credManager.GetSealedPassword(password, user.PasswordSalt, organization.PasswordSalt)
-		if password == "```" || password == sealedPassword {
+		if password == sealedPassword {
 			return ""
 		}
 		return "password incorrect"
