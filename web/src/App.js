@@ -34,6 +34,8 @@ import LdapSyncPage from "./LdapSyncPage";
 import TokenListPage from "./TokenListPage";
 import TokenEditPage from "./TokenEditPage";
 import RecordListPage from "./RecordListPage";
+import WebhookListPage from "./WebhookListPage";
+import WebhookEditPage from "./WebhookEditPage";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
@@ -107,6 +109,8 @@ class App extends Component {
       this.setState({ selectedMenuKey: '/tokens' });
     } else if (uri.includes('/records')) {
       this.setState({ selectedMenuKey: '/records' });
+    } else if (uri.includes('/webhooks')) {
+      this.setState({ selectedMenuKey: '/webhooks' });
     } else if (uri.includes('/signup')) {
       this.setState({ selectedMenuKey: '/signup' });
     } else if (uri.includes('/login')) {
@@ -355,6 +359,13 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
+        <Menu.Item key="/webhooks">
+          <Link to="/webhooks">
+            {i18next.t("general:Webhooks")}
+          </Link>
+        </Menu.Item>
+      );
+      res.push(
         <Menu.Item key="/swagger">
           <a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
             {i18next.t("general:Swagger")}
@@ -414,6 +425,8 @@ class App extends Component {
           <Route exact path="/ldap/sync/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapSyncPage account={this.state.account} {...props} />)}/>
           <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/webhooks" render={(props) => this.renderLoginIfNotLoggedIn(<WebhookListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/webhooks/:webhookName" render={(props) => this.renderLoginIfNotLoggedIn(<WebhookEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />}/>
           <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}

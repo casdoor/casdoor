@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {message, Tooltip} from "antd";
+import {message, Tag, Tooltip} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
@@ -509,5 +509,21 @@ export function getArrayItem(array, key, value) {
 
 export function getDeduplicatedArray(array, filterArray, key) {
   const res = array.filter(item => filterArray.filter(filterItem => filterItem[key] === item[key]).length === 0);
+  return res;
+}
+
+export function getTagColor(s) {
+  return "success";
+}
+
+export function getTags(tags) {
+  let res = [];
+  tags.forEach((tag, i) => {
+    res.push(
+      <Tag color={getTagColor(tag)}>
+        {tag}
+      </Tag>
+    );
+  });
   return res;
 }
