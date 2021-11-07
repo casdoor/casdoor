@@ -33,6 +33,8 @@ type Record struct {
 	User         string `xorm:"varchar(100)" json:"user"`
 	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
 	Action       string `xorm:"varchar(1000)" json:"action"`
+
+	IsTriggered bool `json:"isTriggered"`
 }
 
 func NewRecord(ctx *context.Context) *Record {
