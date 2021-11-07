@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Table} from 'antd';
+import {Switch, Table} from 'antd';
 import * as Setting from "./Setting";
 import * as RecordBackend from "./backend/RecordBackend";
 import i18next from "i18next";
@@ -57,6 +57,7 @@ class RecordListPage extends React.Component {
       username: "admin",
       requestUri: "/api/get-account",
       action: "login",
+      isTriggered: false,
     }
   }
 
@@ -66,28 +67,35 @@ class RecordListPage extends React.Component {
         title: i18next.t("general:Name"),
         dataIndex: 'name',
         key: 'name',
-        width: '220px',
+        width: '320px',
         sorter: (a, b) => a.name.localeCompare(b.name),
       },
       {
         title: i18next.t("general:ID"),
         dataIndex: 'id',
         key: 'id',
-        width: '100px',
+        width: '90px',
         sorter: (a, b) => a.id - b.id,
       },
       {
         title: i18next.t("general:Client IP"),
         dataIndex: 'clientIp',
         key: 'clientIp',
-        width: '100px',
+        width: '150px',
         sorter: (a, b) => a.clientIp.localeCompare(b.clientIp),
+        render: (text, record, index) => {
+          return (
+            <a target="_blank" rel="noreferrer" href={`https://db-ip.com/${text}`}>
+              {text}
+            </a>
+          )
+        }
       },
       {
         title: i18next.t("general:Timestamp"),
         dataIndex: 'createdTime',
         key: 'createdTime',
-        width: '120px',
+        width: '180px',
         sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -97,7 +105,7 @@ class RecordListPage extends React.Component {
         title: i18next.t("general:Organization"),
         dataIndex: 'organization',
         key: 'organization',
-        width: '120px',
+        width: '80px',
         sorter: (a, b) => a.organization.localeCompare(b.organization),
         render: (text, record, index) => {
           return (
@@ -113,22 +121,41 @@ class RecordListPage extends React.Component {
         key: 'user',
         width: '120px',
         sorter: (a, b) => a.user.localeCompare(b.user),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/users/${record.organization}/${record.user}`}>
+              {text}
+            </Link>
+          )
+        }
       },
       {
         title: i18next.t("general:Request URI"),
         dataIndex: 'requestUri',
         key: 'requestUri',
-        width: '250px',
+        // width: '300px',
         sorter: (a, b) => a.requestUri.localeCompare(b.requestUri),
       },
       {
         title: i18next.t("general:Action"),
         dataIndex: 'action',
         key: 'action',
-        width: '160px',
+        width: '200px',
         sorter: (a, b) => a.action.localeCompare(b.action),
         render: (text, record, index) => {
           return text;
+        }
+      },
+      {
+        title: i18next.t("record:Is Triggered"),
+        dataIndex: 'isTriggered',
+        key: 'isTriggered',
+        width: '140px',
+        sorter: (a, b) => a.isTriggered - b.isTriggered,
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          )
         }
       },
     ];
