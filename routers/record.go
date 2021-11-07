@@ -62,7 +62,7 @@ func RecordMessage(ctx *context.Context) {
 
 	userId := getUser(ctx)
 	if userId != "" {
-		record.Organization, record.Username = util.GetOwnerAndNameFromId(userId)
+		record.Organization, record.User = util.GetOwnerAndNameFromId(userId)
 	}
 
 	object.AddRecord(record)
