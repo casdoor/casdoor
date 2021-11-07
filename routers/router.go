@@ -106,6 +106,12 @@ func initAPI() {
 	beego.Router("/api/get-records", &controllers.ApiController{}, "GET:GetRecords")
 	beego.Router("/api/get-records-filter", &controllers.ApiController{}, "POST:GetRecordsByFilter")
 
+	beego.Router("/api/get-webhooks", &controllers.ApiController{}, "GET:GetWebhooks")
+	beego.Router("/api/get-webhook", &controllers.ApiController{}, "GET:GetWebhook")
+	beego.Router("/api/update-webhook", &controllers.ApiController{}, "POST:UpdateWebhook")
+	beego.Router("/api/add-webhook", &controllers.ApiController{}, "POST:AddWebhook")
+	beego.Router("/api/delete-webhook", &controllers.ApiController{}, "POST:DeleteWebhook")
+
 	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
 
