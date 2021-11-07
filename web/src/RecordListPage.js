@@ -18,6 +18,7 @@ import {Table} from 'antd';
 import * as Setting from "./Setting";
 import * as RecordBackend from "./backend/RecordBackend";
 import i18next from "i18next";
+import moment from "moment";
 
 class RecordListPage extends React.Component {
   constructor(props) {
@@ -47,12 +48,14 @@ class RecordListPage extends React.Component {
 
   newRecord() {
     return {
-      id  : "",
-      clientIp: "",
-      timestamp: "",
-      organization: "",
-      username: "",
-      requestUri: "",
+      owner: "built-in",
+      name: "1234",
+      id : "1234",
+      clientIp: "::1",
+      timestamp: moment().format(),
+      organization: "built-in",
+      username: "admin",
+      requestUri: "/api/get-account",
       action: "login",
     }
   }
@@ -60,25 +63,32 @@ class RecordListPage extends React.Component {
   renderTable(records) {
     const columns = [
       {
+        title: i18next.t("general:Name"),
+        dataIndex: 'name',
+        key: 'name',
+        width: '220px',
+        sorter: (a, b) => a.name.localeCompare(b.name),
+      },
+      {
         title: i18next.t("general:ID"),
         dataIndex: 'id',
         key: 'id',
-        width: '120px',
+        width: '100px',
         sorter: (a, b) => a.id - b.id,
       },
       {
         title: i18next.t("general:Client IP"),
         dataIndex: 'clientIp',
         key: 'clientIp',
-        width: '120px',
+        width: '100px',
         sorter: (a, b) => a.clientIp.localeCompare(b.clientIp),
       },
       {
         title: i18next.t("general:Timestamp"),
-        dataIndex: 'timestamp',
-        key: 'timestamp',
-        width: '160px',
-        sorter: (a, b) => a.timestamp.localeCompare(b.timestamp),
+        dataIndex: 'createdTime',
+        key: 'createdTime',
+        width: '120px',
+        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         }
@@ -101,14 +111,14 @@ class RecordListPage extends React.Component {
         title: i18next.t("general:User"),
         dataIndex: 'user',
         key: 'user',
-        width: '160px',
+        width: '120px',
         sorter: (a, b) => a.user.localeCompare(b.user),
       },
       {
         title: i18next.t("general:Request URI"),
         dataIndex: 'requestUri',
         key: 'requestUri',
-        width: '160px',
+        width: '250px',
         sorter: (a, b) => a.requestUri.localeCompare(b.requestUri),
       },
       {

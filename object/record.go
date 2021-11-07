@@ -24,9 +24,12 @@ import (
 type Record struct {
 	Id int `xorm:"int notnull pk autoincr" json:"id"`
 
-	ClientIp     string `xorm:"varchar(100)" json:"clientIp"`
-	Timestamp    string `xorm:"varchar(100)" json:"timestamp"`
+	Owner       string `xorm:"varchar(100) index" json:"owner"`
+	Name        string `xorm:"varchar(100) index" json:"name"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+
 	Organization string `xorm:"varchar(100)" json:"organization"`
+	ClientIp     string `xorm:"varchar(100)" json:"clientIp"`
 	User         string `xorm:"varchar(100)" json:"user"`
 	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
 	Action       string `xorm:"varchar(1000)" json:"action"`
@@ -37,17 +40,19 @@ func NewRecord(ctx *context.Context) *Record {
 	action := strings.Replace(ctx.Request.URL.Path, "/api/", "", -1)
 
 	record := Record{
-		ClientIp:     ip,
-		Timestamp:    util.GetCurrentTime(),
-		RequestUri:   ctx.Request.RequestURI,
-		User:         "",
-		Organization: "",
-		Action:       action,
+		Name:        util.GenerateId(),
+		CreatedTime: util.GetCurrentTime(),
+		ClientIp:    ip,
+		RequestUri:  ctx.Request.RequestURI,
+		User:        "",
+		Action:      action,
 	}
 	return &record
 }
 
 func AddRecord(record *Record) bool {
+	record.Owner = record.Organization
+
 	affected, err := adapter.Engine.Insert(record)
 	if err != nil {
 		panic(err)
