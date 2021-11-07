@@ -142,6 +142,7 @@ class RecordListPage extends React.Component {
         key: 'action',
         width: '200px',
         sorter: (a, b) => a.action.localeCompare(b.action),
+        fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return text;
         }
@@ -152,7 +153,12 @@ class RecordListPage extends React.Component {
         key: 'isTriggered',
         width: '140px',
         sorter: (a, b) => a.isTriggered - b.isTriggered,
+        fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
+          if (!["signup", "login", "logout", "update-user"].includes(record.action)) {
+            return null;
+          }
+
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           )

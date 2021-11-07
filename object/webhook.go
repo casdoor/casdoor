@@ -30,7 +30,7 @@ type Webhook struct {
 	ContentType string   `xorm:"varchar(100)" json:"contentType"`
 	Events      []string `xorm:"varchar(100)" json:"events"`
 
-	Organization string `xorm:"varchar(100)" json:"organization"`
+	Organization string `xorm:"varchar(100) index" json:"organization"`
 }
 
 func GetWebhookCount(owner string) int {
@@ -55,6 +55,16 @@ func GetWebhooks(owner string) []*Webhook {
 func GetPaginationWebhooks(owner string, offset, limit int) []*Webhook {
 	webhooks := []*Webhook{}
 	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&webhooks, &Webhook{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return webhooks
+}
+
+func getWebhooksByOrganization(organization string) []*Webhook {
+	webhooks := []*Webhook{}
+	err := adapter.Engine.Desc("created_time").Find(&webhooks, &Webhook{Organization: organization})
 	if err != nil {
 		panic(err)
 	}

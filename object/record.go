@@ -48,6 +48,7 @@ func NewRecord(ctx *context.Context) *Record {
 		RequestUri:  ctx.Request.RequestURI,
 		User:        "",
 		Action:      action,
+		IsTriggered: false,
 	}
 	return &record
 }
@@ -55,9 +56,18 @@ func NewRecord(ctx *context.Context) *Record {
 func AddRecord(record *Record) bool {
 	record.Owner = record.Organization
 
+	errWebhook := SendWebhooks(record)
+	if errWebhook == nil {
+		record.IsTriggered = true
+	}
+
 	affected, err := adapter.Engine.Insert(record)
 	if err != nil {
 		panic(err)
+	}
+
+	if errWebhook != nil {
+		panic(errWebhook)
 	}
 
 	return affected != 0
@@ -100,4 +110,26 @@ func GetRecordsByField(record *Record) []*Record {
 	}
 
 	return records
+}
+
+func SendWebhooks(record *Record) error {
+	webhooks := getWebhooksByOrganization(record.Organization)
+	for _, webhook := range webhooks {
+		matched := false
+		for _, event := range webhook.Events {
+			if record.Action == event {
+				matched = true
+				break
+			}
+		}
+
+		if matched {
+			err := sendWebhook(webhook, record)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }

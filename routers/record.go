@@ -65,5 +65,5 @@ func RecordMessage(ctx *context.Context) {
 		record.Organization, record.User = util.GetOwnerAndNameFromId(userId)
 	}
 
-	object.AddRecord(record)
+	go object.AddRecord(record)
 }
