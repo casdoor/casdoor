@@ -27,7 +27,7 @@ type Record struct {
 	ClientIp     string `xorm:"varchar(100)" json:"clientIp"`
 	Timestamp    string `xorm:"varchar(100)" json:"timestamp"`
 	Organization string `xorm:"varchar(100)" json:"organization"`
-	Username     string `xorm:"varchar(100)" json:"username"`
+	User         string `xorm:"varchar(100)" json:"user"`
 	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
 	Action       string `xorm:"varchar(1000)" json:"action"`
 }
@@ -40,7 +40,7 @@ func NewRecord(ctx *context.Context) *Record {
 		ClientIp:     ip,
 		Timestamp:    util.GetCurrentTime(),
 		RequestUri:   ctx.Request.RequestURI,
-		Username:     "",
+		User:         "",
 		Organization: "",
 		Action:       action,
 	}
