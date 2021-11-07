@@ -58,7 +58,7 @@ func RecordMessage(ctx *context.Context) {
 		return
 	}
 
-	record := util.Records(ctx)
+	record := object.NewRecord(ctx)
 
 	userId := getUser(ctx)
 	if userId != "" {
