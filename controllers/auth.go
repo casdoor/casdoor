@@ -198,7 +198,7 @@ func (c *ApiController) Login() {
 			record := object.NewRecord(c.Ctx)
 			record.Organization = application.Organization
 			record.User = user.Name
-			object.AddRecord(record)
+			go object.AddRecord(record)
 		}
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
@@ -262,7 +262,7 @@ func (c *ApiController) Login() {
 				record := object.NewRecord(c.Ctx)
 				record.Organization = application.Organization
 				record.User = user.Name
-				object.AddRecord(record)
+				go object.AddRecord(record)
 			} else {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
@@ -307,7 +307,7 @@ func (c *ApiController) Login() {
 				record := object.NewRecord(c.Ctx)
 				record.Organization = application.Organization
 				record.User = user.Name
-				object.AddRecord(record)
+				go object.AddRecord(record)
 			}
 			//resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"
