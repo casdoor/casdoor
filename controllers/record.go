@@ -15,8 +15,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/util"
@@ -50,12 +48,14 @@ func (c *ApiController) GetRecords() {
 // @Success 200 {array} object.Records The Response object
 // @router /get-records-filter [post]
 func (c *ApiController) GetRecordsByFilter() {
-	var record object.Records
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &record)
+	body := string(c.Ctx.Input.RequestBody)
+
+	record := &object.Record{}
+	err := util.JsonToStruct(body, record)
 	if err != nil {
 		panic(err)
 	}
 
-	c.Data["json"] = object.GetRecordsByField(&record)
+	c.Data["json"] = object.GetRecordsByField(record)
 	c.ServeJSON()
 }

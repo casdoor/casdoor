@@ -15,19 +15,40 @@
 package object
 
 import (
+	"strings"
+
+	"github.com/astaxie/beego/context"
 	"github.com/casbin/casdoor/util"
 )
 
-type Records struct {
-	Id     int         `xorm:"int notnull pk autoincr" json:"id"`
-	Record util.Record `xorm:"extends"`
+type Record struct {
+	Id int `xorm:"int notnull pk autoincr" json:"id"`
+
+	ClientIp     string `xorm:"varchar(100)" json:"clientIp"`
+	Timestamp    string `xorm:"varchar(100)" json:"timestamp"`
+	Organization string `xorm:"varchar(100)" json:"organization"`
+	Username     string `xorm:"varchar(100)" json:"username"`
+	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
+	Action       string `xorm:"varchar(1000)" json:"action"`
 }
 
-func AddRecord(record *util.Record) bool {
-	records := new(Records)
-	records.Record = *record
+func NewRecord(ctx *context.Context) *Record {
+	ip := strings.Replace(util.GetIPFromRequest(ctx.Request), ": ", "", -1)
+	action := strings.Replace(ctx.Request.URL.Path, "/api/", "", -1)
 
-	affected, err := adapter.Engine.Insert(records)
+	record := Record{
+		ClientIp:     ip,
+		Timestamp:    util.GetCurrentTime(),
+		RequestUri:   ctx.Request.RequestURI,
+		Username:     "",
+		Organization: "",
+		Action:       action,
+	}
+	return &record
+}
+
+func AddRecord(record *Record) bool {
+	affected, err := adapter.Engine.Insert(record)
 	if err != nil {
 		panic(err)
 	}
@@ -36,7 +57,7 @@ func AddRecord(record *util.Record) bool {
 }
 
 func GetRecordCount() int {
-	count, err := adapter.Engine.Count(&Records{})
+	count, err := adapter.Engine.Count(&Record{})
 	if err != nil {
 		panic(err)
 	}
@@ -44,8 +65,8 @@ func GetRecordCount() int {
 	return int(count)
 }
 
-func GetRecords() []*Records {
-	records := []*Records{}
+func GetRecords() []*Record {
+	records := []*Record{}
 	err := adapter.Engine.Desc("id").Find(&records)
 	if err != nil {
 		panic(err)
@@ -54,8 +75,8 @@ func GetRecords() []*Records {
 	return records
 }
 
-func GetPaginationRecords(offset, limit int) []*Records {
-	records := []*Records{}
+func GetPaginationRecords(offset, limit int) []*Record {
+	records := []*Record{}
 	err := adapter.Engine.Desc("id").Limit(limit, offset).Find(&records)
 	if err != nil {
 		panic(err)
@@ -64,8 +85,8 @@ func GetPaginationRecords(offset, limit int) []*Records {
 	return records
 }
 
-func GetRecordsByField(record *Records) []*Records {
-	records := []*Records{}
+func GetRecordsByField(record *Record) []*Record {
+	records := []*Record{}
 	err := adapter.Engine.Find(&records, record)
 	if err != nil {
 		panic(err)

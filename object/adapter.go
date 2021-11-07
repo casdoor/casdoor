@@ -139,7 +139,7 @@ func (a *Adapter) createTable() {
 		panic(err)
 	}
 
-	err = a.Engine.Sync2(new(Records))
+	err = a.Engine.Sync2(new(Record))
 	if err != nil {
 		panic(err)
 	}

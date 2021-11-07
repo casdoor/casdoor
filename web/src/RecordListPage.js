@@ -48,46 +48,47 @@ class RecordListPage extends React.Component {
   newRecord() {
     return {
       id  : "",
-      Record:{
-        clientIp:"",
-        timestamp:"",
-        organization:"",
-        username:"",
-        requestUri:"",
-        action:"login",
-      },
+      clientIp: "",
+      timestamp: "",
+      organization: "",
+      username: "",
+      requestUri: "",
+      action: "login",
     }
   }
 
   renderTable(records) {
     const columns = [
       {
-        title: i18next.t("general:Client ip"),
-        dataIndex: ['Record', 'clientIp'],
+        title: i18next.t("general:ID"),
+        dataIndex: 'id',
         key: 'id',
         width: '120px',
-        fixed: 'left',
-        sorter: (a, b) => a.Record.clientIp.localeCompare(b.Record.clientIp),
-        render: (text, record, index) => {
-          return text;
-        }
+        sorter: (a, b) => a.id - b.id,
+      },
+      {
+        title: i18next.t("general:Client IP"),
+        dataIndex: 'clientIp',
+        key: 'clientIp',
+        width: '120px',
+        sorter: (a, b) => a.clientIp.localeCompare(b.clientIp),
       },
       {
         title: i18next.t("general:Timestamp"),
-        dataIndex: ['Record', 'timestamp'],
-        key: 'id',
+        dataIndex: 'timestamp',
+        key: 'timestamp',
         width: '160px',
-        sorter: (a, b) => a.Record.timestamp.localeCompare(b.Record.timestamp),
+        sorter: (a, b) => a.timestamp.localeCompare(b.timestamp),
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         }
       },
       {
         title: i18next.t("general:Organization"),
-        dataIndex: ['Record', 'organization'],
-        key: 'id',
+        dataIndex: 'organization',
+        key: 'organization',
         width: '120px',
-        sorter: (a, b) => a.Record.organization.localeCompare(b.Record.organization),
+        sorter: (a, b) => a.organization.localeCompare(b.organization),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -97,31 +98,25 @@ class RecordListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Username"),
-        dataIndex: ['Record', 'username'],
-        key: 'id',
+        title: i18next.t("general:User"),
+        dataIndex: 'user',
+        key: 'user',
         width: '160px',
-        sorter: (a, b) => a.Record.username.localeCompare(b.Record.username),
-        render: (text, record, index) => {
-          return text;
-        }
+        sorter: (a, b) => a.user.localeCompare(b.user),
       },
       {
-        title: i18next.t("general:Request uri"),
-        dataIndex: ['Record', 'requestUri'],
-        key: 'id',
+        title: i18next.t("general:Request URI"),
+        dataIndex: 'requestUri',
+        key: 'requestUri',
         width: '160px',
-        sorter: (a, b) => a.Record.requestUri.localeCompare(b.Record.requestUri),
-        render: (text, record, index) => {
-          return text;
-        }
+        sorter: (a, b) => a.requestUri.localeCompare(b.requestUri),
       },
       {
         title: i18next.t("general:Action"),
-        dataIndex: ['Record', 'action'],
-        key: 'id',
+        dataIndex: 'action',
+        key: 'action',
         width: '160px',
-        sorter: (a, b) => a.Record.action.localeCompare(b.Record.action),
+        sorter: (a, b) => a.action.localeCompare(b.action),
         render: (text, record, index) => {
           return text;
         }
