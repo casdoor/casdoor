@@ -112,13 +112,36 @@ func (c *ApiController) DeleteToken() {
 	c.ServeJSON()
 }
 
+// GetOAuthCode
+// @Title GetOAuthCode
+// @Description get OAuth code
+// @Param   user_id     query    string  true        "The id of user"
+// @Param   client_id     query    string  true        "OAuth client id"
+// @Param   response_type     query    string  true        "OAuth response type"
+// @Param   redirect_uri     query    string  true        "OAuth redirect URI"
+// @Param   scope     query    string  true        "OAuth scope"
+// @Param   state     query    string  true        "OAuth state"
+// @Success 200 {object} object.TokenWrapper The Response object
+// @router /login/oauth/code [post]
+func (c *ApiController) GetOAuthCode() {
+	userId := c.Input().Get("user_id")
+	clientId := c.Input().Get("client_id")
+	responseType := c.Input().Get("response_type")
+	redirectUri := c.Input().Get("redirect_uri")
+	scope := c.Input().Get("scope")
+	state := c.Input().Get("state")
+
+	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state)
+	c.ServeJSON()
+}
+
 // GetOAuthToken
 // @Title GetOAuthToken
-// @Description get oAuth token
-// @Param   grant_type     query    string  true        "oAuth grant type"
-// @Param   client_id     query    string  true        "oAuth client id"
-// @Param   client_secret     query    string  true        "oAuth client secret"
-// @Param   code     query    string  true        "oAuth code"
+// @Description get OAuth access token
+// @Param   grant_type     query    string  true        "OAuth grant type"
+// @Param   client_id     query    string  true        "OAuth client id"
+// @Param   client_secret     query    string  true        "OAuth client secret"
+// @Param   code     query    string  true        "OAuth code"
 // @Success 200 {object} object.TokenWrapper The Response object
 // @router /login/oauth/access_token [post]
 func (c *ApiController) GetOAuthToken() {
