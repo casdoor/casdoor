@@ -95,32 +95,32 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	if application.IsSignupItemVisible("Email") {
-		checkResult := object.CheckVerificationCode(form.Email, form.EmailCode)
-		if len(checkResult) != 0 {
-			c.ResponseError(fmt.Sprintf("Email%s", checkResult))
-			return
-		}
-	}
-
-	var checkPhone string
-	if application.IsSignupItemVisible("Phone") {
-		checkPhone = fmt.Sprintf("+%s%s", form.PhonePrefix, form.Phone)
-		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode)
-		if len(checkResult) != 0 {
-			c.ResponseError(fmt.Sprintf("Phone%s", checkResult))
-			return
-		}
-	}
-
-	userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
-
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", form.Organization))
 	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.Email, form.Phone, form.Affiliation)
 	if msg != "" {
 		c.ResponseError(msg)
 		return
 	}
+
+	if application.IsSignupItemVisible("Email") && form.Email != "" {
+		checkResult := object.CheckVerificationCode(form.Email, form.EmailCode)
+		if len(checkResult) != 0 {
+			c.ResponseError(fmt.Sprintf("Email: %s", checkResult))
+			return
+		}
+	}
+
+	var checkPhone string
+	if application.IsSignupItemVisible("Phone") && form.Phone != "" {
+		checkPhone = fmt.Sprintf("+%s%s", form.PhonePrefix, form.Phone)
+		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode)
+		if len(checkResult) != 0 {
+			c.ResponseError(fmt.Sprintf("Phone: %s", checkResult))
+			return
+		}
+	}
+
+	userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
 
 	id := util.GenerateId()
 	if application.GetSignupItemRule("ID") == "Incremental" {

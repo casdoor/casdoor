@@ -64,6 +64,15 @@ func (application *Application) IsSignupItemVisible(itemName string) bool {
 	return signupItem.Visible
 }
 
+func (application *Application) IsSignupItemRequired(itemName string) bool {
+	signupItem := application.getSignupItem(itemName)
+	if signupItem == nil {
+		return false
+	}
+
+	return signupItem.Required
+}
+
 func (application *Application) GetSignupItemRule(itemName string) string {
 	signupItem := application.getSignupItem(itemName)
 	if signupItem == nil {
