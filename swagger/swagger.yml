@@ -97,6 +97,82 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/add-webhook:
+    post:
+      tags:
+      - api
+      description: add webhook
+      operationId: ApiController.AddWebhook
+      parameters:
+      - in: body
+        name: body
+        description: The details of the webhook
+        required: true
+        schema:
+          $ref: '#/definitions/object.Webhook'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/api/send-email:
+    post:
+      tags:
+      - api
+      description: This API is not for Casdoor frontend to call, it is for Casdoor
+        SDKs.
+      operationId: ApiController.SendEmail
+      parameters:
+      - in: query
+        name: clientId
+        description: The clientId of the application
+        required: true
+        type: string
+      - in: query
+        name: clientSecret
+        description: The clientSecret of the application
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: Details of the email request
+        required: true
+        schema:
+          $ref: '#/definitions/emailForm'
+      responses:
+        "200":
+          description: object
+          schema:
+            $ref: '#/definitions/Response'
+  /api/api/send-sms:
+    post:
+      tags:
+      - api
+      description: This API is not for Casdoor frontend to call, it is for Casdoor
+        SDKs.
+      operationId: ApiController.SendSms
+      parameters:
+      - in: query
+        name: clientId
+        description: The clientId of the application
+        required: true
+        type: string
+      - in: query
+        name: clientSecret
+        description: The clientSecret of the application
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: Details of the sms request
+        required: true
+        schema:
+          $ref: '#/definitions/smsForm'
+      responses:
+        "200":
+          description: object
+          schema:
+            $ref: '#/definitions/Response'
   /api/delete-application:
     post:
       tags:
@@ -187,6 +263,24 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/delete-webhook:
+    post:
+      tags:
+      - api
+      description: delete webhook
+      operationId: ApiController.DeleteWebhook
+      parameters:
+      - in: body
+        name: body
+        description: The details of the webhook
+        required: true
+        schema:
+          $ref: '#/definitions/object.Webhook'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/get-account:
     get:
       tags:
@@ -234,23 +328,6 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Application'
-  /api/get-default-application:
-    get:
-      tags:
-      - api
-      description: get the detail of the default application
-      operationId: ApiController.GetDefaultApplication
-      parameters:
-      - in: query
-        name: owner
-        description: The owner of the application.
-        required: true
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/object.Application'
   /api/get-email-and-phone:
     post:
       tags:
@@ -364,6 +441,17 @@ paths:
       - api
       description: get all records
       operationId: ApiController.GetRecords
+      parameters:
+      - in: query
+        name: pageSize
+        description: The size of each page
+        required: true
+        type: string
+      - in: query
+        name: p
+        description: The number of the page
+        required: true
+        type: string
       responses:
         "200":
           description: The Response object
@@ -420,6 +508,16 @@ paths:
         description: The owner of tokens
         required: true
         type: string
+      - in: query
+        name: pageSize
+        description: The size of each page
+        required: true
+        type: string
+      - in: query
+        name: p
+        description: The number of the page
+        required: true
+        type: string
       responses:
         "200":
           description: The Response object
@@ -444,6 +542,23 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.User'
+  /api/get-user-application:
+    get:
+      tags:
+      - api
+      description: get the detail of the user's application
+      operationId: ApiController.GetUserApplication
+      parameters:
+      - in: query
+        name: id
+        description: The id of the user
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Application'
   /api/get-users:
     get:
       tags:
@@ -462,6 +577,42 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.User'
+  /api/get-webhook:
+    get:
+      tags:
+      - api
+      description: get webhook
+      operationId: ApiController.GetWebhook
+      parameters:
+      - in: query
+        name: id
+        description: The id of the webhook
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Webhook'
+  /api/get-webhooks:
+    get:
+      tags:
+      - api
+      description: get webhooks
+      operationId: ApiController.GetWebhooks
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of webhooks
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Webhook'
   /api/login:
     post:
       tags:
@@ -489,27 +640,69 @@ paths:
     post:
       tags:
       - api
-      description: get oAuth token
+      description: get OAuth access token
       operationId: ApiController.GetOAuthToken
       parameters:
       - in: query
         name: grant_type
-        description: oAuth grant type
+        description: OAuth grant type
         required: true
         type: string
       - in: query
         name: client_id
-        description: oAuth client id
+        description: OAuth client id
         required: true
         type: string
       - in: query
         name: client_secret
-        description: oAuth client secret
+        description: OAuth client secret
         required: true
         type: string
       - in: query
         name: code
-        description: oAuth code
+        description: OAuth code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.TokenWrapper'
+  /api/login/oauth/code:
+    post:
+      tags:
+      - api
+      description: get OAuth code
+      operationId: ApiController.GetOAuthCode
+      parameters:
+      - in: query
+        name: user_id
+        description: The id of user
+        required: true
+        type: string
+      - in: query
+        name: client_id
+        description: OAuth client id
+        required: true
+        type: string
+      - in: query
+        name: response_type
+        description: OAuth response type
+        required: true
+        type: string
+      - in: query
+        name: redirect_uri
+        description: OAuth redirect URI
+        required: true
+        type: string
+      - in: query
+        name: scope
+        description: OAuth scope
+        required: true
+        type: string
+      - in: query
+        name: state
+        description: OAuth state
         required: true
         type: string
       responses:
@@ -733,46 +926,50 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
-  /api/upload-avatar:
+  /api/update-webhook:
     post:
       tags:
       - api
-      description: upload avatar
-      operationId: ApiController.UploadAvatar
+      description: update webhook
+      operationId: ApiController.UpdateWebhook
       parameters:
-      - in: formData
-        name: avatarfile
-        description: The base64 encode of avatarfile
+      - in: query
+        name: id
+        description: The id of the webhook
         required: true
         type: string
-      - in: formData
-        name: password
-        description: The password
+      - in: body
+        name: body
+        description: The details of the webhook
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/object.Webhook'
       responses:
         "200":
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
 definitions:
-  1671.0xc00044ab10.false:
+  1773.0xc000093bf0.false:
     title: "false"
     type: object
-  1705.0xc00044ab40.false:
+  1808.0xc000093c20.false:
     title: "false"
     type: object
   RequestForm:
     title: RequestForm
+    type: object
+  Response:
+    title: Response
     type: object
   controllers.Response:
     title: Response
     type: object
     properties:
       data:
-        $ref: '#/definitions/1671.0xc00044ab10.false'
+        $ref: '#/definitions/1773.0xc000093bf0.false'
       data2:
-        $ref: '#/definitions/1705.0xc00044ab40.false'
+        $ref: '#/definitions/1808.0xc000093c20.false'
       msg:
         type: string
       status:
@@ -782,13 +979,16 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/1671.0xc00044ab10.false'
+        $ref: '#/definitions/1773.0xc000093bf0.false'
       data2:
-        $ref: '#/definitions/1705.0xc00044ab40.false'
+        $ref: '#/definitions/1808.0xc000093c20.false'
       msg:
         type: string
       status:
         type: string
+  emailForm:
+    title: emailForm
+    type: object
   object.Application:
     title: Application
     type: object
@@ -834,13 +1034,19 @@ definitions:
         type: array
         items:
           type: string
+      signinHtml:
+        type: string
       signinUrl:
+        type: string
+      signupHtml:
         type: string
       signupItems:
         type: array
         items:
           $ref: '#/definitions/object.SignupItem'
       signupUrl:
+        type: string
+      termsOfUse:
         type: string
   object.Organization:
     title: Organization
@@ -852,7 +1058,11 @@ definitions:
         type: string
       displayName:
         type: string
+      enableSoftDeletion:
+        type: boolean
       favicon:
+        type: string
+      masterPassword:
         type: string
       name:
         type: string
@@ -872,6 +1082,8 @@ definitions:
     properties:
       appId:
         type: string
+      bucket:
+        type: string
       category:
         type: string
       clientId:
@@ -884,7 +1096,13 @@ definitions:
         type: string
       displayName:
         type: string
+      domain:
+        type: string
+      endpoint:
+        type: string
       host:
+        type: string
+      method:
         type: string
       name:
         type: string
@@ -926,12 +1144,6 @@ definitions:
   object.Records:
     title: Records
     type: object
-    properties:
-      Record:
-        $ref: '#/definitions/util.Record'
-      id:
-        type: integer
-        format: int64
   object.SignupItem:
     title: SignupItem
     type: object
@@ -998,6 +1210,8 @@ definitions:
         type: string
       avatar:
         type: string
+      bio:
+        type: string
       createdTime:
         type: string
       dingtalk:
@@ -1012,25 +1226,45 @@ definitions:
         type: string
       github:
         type: string
+      gitlab:
+        type: string
       google:
         type: string
       hash:
+        type: string
+      homepage:
         type: string
       id:
         type: string
       isAdmin:
         type: boolean
+      isDeleted:
+        type: boolean
       isForbidden:
         type: boolean
       isGlobalAdmin:
         type: boolean
+      isOnline:
+        type: boolean
       language:
+        type: string
+      lark:
+        type: string
+      ldap:
+        type: string
+      linkedin:
+        type: string
+      location:
         type: string
       name:
         type: string
       owner:
         type: string
       password:
+        type: string
+      passwordSalt:
+        type: string
+      permanentAvatar:
         type: string
       phone:
         type: string
@@ -1041,6 +1275,11 @@ definitions:
           type: string
       qq:
         type: string
+      ranking:
+        type: integer
+        format: int64
+      region:
+        type: string
       score:
         type: integer
         format: int64
@@ -1048,27 +1287,38 @@ definitions:
         type: string
       tag:
         type: string
+      title:
+        type: string
       type:
         type: string
       updatedTime:
         type: string
       wechat:
         type: string
+      wecom:
+        type: string
       weibo:
         type: string
-  util.Record:
-    title: Record
+  object.Webhook:
+    title: Webhook
     type: object
     properties:
-      ip:
+      contentType:
+        type: string
+      createdTime:
+        type: string
+      events:
+        type: array
+        items:
+          type: string
+      name:
         type: string
       organization:
         type: string
-      requestTime:
+      owner:
         type: string
-      requestUri:
+      url:
         type: string
-      urlpath:
-        type: string
-      username:
-        type: string
+  smsForm:
+    title: smsForm
+    type: object
