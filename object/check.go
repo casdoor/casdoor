@@ -48,6 +48,14 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 	}
 
 	if application.IsSignupItemVisible("Email") {
+		if email == "" {
+			if application.IsSignupItemRequired("Email") {
+				return "email cannot be empty"
+			} else {
+				return ""
+			}
+		}
+
 		if HasUserByField(organization.Name, "email", email) {
 			return "email already exists"
 		} else if !util.IsEmailValid(email) {
@@ -56,6 +64,14 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 	}
 
 	if application.IsSignupItemVisible("Phone") {
+		if phone == "" {
+			if application.IsSignupItemRequired("Phone") {
+				return "phone cannot be empty"
+			} else {
+				return ""
+			}
+		}
+
 		if HasUserByField(organization.Name, "phone", phone) {
 			return "phone already exists"
 		} else if organization.PhonePrefix == "86" && !util.IsPhoneCnValid(phone) {
