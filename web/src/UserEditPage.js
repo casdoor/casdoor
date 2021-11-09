@@ -276,7 +276,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:Bio"), i18next.t("user:Bio - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.bio} onChange={e => {
+            <Input.TextArea rows={4} value={this.state.user.bio} onChange={e => {
               this.updateUserField('bio', e.target.value);
             }} />
           </Col>
