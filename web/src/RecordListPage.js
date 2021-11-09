@@ -130,6 +130,13 @@ class RecordListPage extends React.Component {
         }
       },
       {
+        title: i18next.t("general:Method"),
+        dataIndex: 'method',
+        key: 'method',
+        width: '100px',
+        sorter: (a, b) => a.method.localeCompare(b.method),
+      },
+      {
         title: i18next.t("general:Request URI"),
         dataIndex: 'requestUri',
         key: 'requestUri',

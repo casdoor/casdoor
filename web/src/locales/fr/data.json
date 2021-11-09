@@ -60,7 +60,7 @@
     "Avatar - Tooltip": "Avatar to show to others",
     "Back Home": "Back Home",
     "Captcha": "Captcha",
-    "Client ip": "Client ip",
+    "Client IP": "Client IP",
     "Created time": "Created time",
     "Default avatar": "Default avatar",
     "Default avatar - Tooltip": "default avatar",
@@ -79,10 +79,14 @@
     "Forget URL - Tooltip": "Unique string-style identifier",
     "Home": "Home",
     "Home - Tooltip": "Application homepage",
+    "ID": "ID",
     "ID - Tooltip": "random string",
     "LDAPs": "LDAPs",
     "LDAPs - Tooltip": "LDAPs - Tooltip",
     "Logo - Tooltip": "App's image tag",
+    "Master password": "Master password",
+    "Master password - Tooltip": "Master password - Tooltip",
+    "Method": "Method",
     "Name": "Name",
     "Name - Tooltip": "Unique string-style identifier",
     "OAuth providers": "OAuth providers",
@@ -106,7 +110,7 @@
     "Providers": "Providers",
     "Providers - Tooltip": "List of third-party applications that can be used to log in",
     "Records": "Records",
-    "Request uri": "Request uri",
+    "Request URI": "Request URI",
     "Resources": "Resources",
     "Save": "Save",
     "Scope": "Scope",
@@ -127,9 +131,9 @@
     "User containers": "User containers",
     "User type": "User type",
     "User type - Tooltip": "Permission role owned by the user",
-    "Username": "Username",
     "Users": "Users",
     "Users under all organizations": "Users under all organizations",
+    "Webhooks": "Webhooks",
     "{total} in total": "{total} in total"
   },
   "ldap": {
@@ -244,6 +248,9 @@
     "rule": "rule",
     "visible": "visible"
   },
+  "record": {
+    "Is Triggered": "Is Triggered"
+  },
   "resource": {
     "Application": "Application",
     "Copy Link": "Copy Link",
@@ -339,5 +346,14 @@
     "Unlink": "Unlink",
     "Upload a photo": "Upload a photo",
     "input password": "input password"
+  },
+  "webhook": {
+    "Content type": "Content type",
+    "Content type - Tooltip": "Content type - Tooltip",
+    "Edit Webhook": "Edit Webhook",
+    "Events": "Events",
+    "Events - Tooltip": "Events - Tooltip",
+    "URL": "URL",
+    "URL - Tooltip": "URL - Tooltip"
   }
 }
