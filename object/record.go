@@ -40,12 +40,13 @@ type Record struct {
 func NewRecord(ctx *context.Context) *Record {
 	ip := strings.Replace(util.GetIPFromRequest(ctx.Request), ": ", "", -1)
 	action := strings.Replace(ctx.Request.URL.Path, "/api/", "", -1)
-
+	requestUri := util.FilterQuery(ctx.Request.RequestURI, []string{ "accessToken" })
+	
 	record := Record{
 		Name:        util.GenerateId(),
 		CreatedTime: util.GetCurrentTime(),
 		ClientIp:    ip,
-		RequestUri:  ctx.Request.RequestURI,
+		RequestUri:  requestUri,
 		User:        "",
 		Action:      action,
 		IsTriggered: false,
