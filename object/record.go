@@ -17,9 +17,20 @@ package object
 import (
 	"strings"
 
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/casbin/casdoor/util"
 )
+
+var logPostOnly bool
+
+func init() {
+	var err error
+	logPostOnly, err = beego.AppConfig.Bool("logPostOnly")
+	if err != nil {
+		panic(err)
+	}
+}
 
 type Record struct {
 	Id int `xorm:"int notnull pk autoincr" json:"id"`
@@ -56,6 +67,12 @@ func NewRecord(ctx *context.Context) *Record {
 }
 
 func AddRecord(record *Record) bool {
+	if logPostOnly {
+		if record.Method == "GET" {
+			return false
+		}
+	}
+
 	record.Owner = record.Organization
 
 	errWebhook := SendWebhooks(record)
