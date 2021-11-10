@@ -28,18 +28,17 @@ func initConfig() {
 	if err != nil {
 		panic(err)
 	}
-
-	initAdapter()
 }
 
-func initAdapter() {
+func InitAdapter() bool {
 	if dbName == "dbName" {
 		adapter = nil
-		return
+		return false
 	}
 
 	adapter = object.NewAdapter(beego.AppConfig.String("driverName"), beego.AppConfig.String("dataSourceName"), dbName)
 	createTable(adapter)
+	return true
 }
 
 func createTable(a *object.Adapter) {

@@ -21,6 +21,7 @@ import (
 	_ "github.com/astaxie/beego/session/redis"
 	"github.com/casbin/casdoor/authz"
 	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/original"
 	"github.com/casbin/casdoor/proxy"
 	"github.com/casbin/casdoor/routers"
 
@@ -33,6 +34,10 @@ func main() {
 	object.InitDefaultStorageProvider()
 	proxy.InitHttpClient()
 	authz.InitAuthz()
+
+	if original.InitAdapter() {
+		go original.RunSyncUsersJob()
+	}
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowOrigins:     []string{"*"},

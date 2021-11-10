@@ -17,14 +17,13 @@ package original
 import (
 	"fmt"
 	"testing"
-	"time"
 
 	"github.com/casbin/casdoor/object"
 )
 
 func TestGetUsers(t *testing.T) {
 	initConfig()
-	initAdapter()
+	InitAdapter()
 
 	users := getUsersOriginal()
 	for _, user := range users {
@@ -34,16 +33,8 @@ func TestGetUsers(t *testing.T) {
 
 func TestSyncUsers(t *testing.T) {
 	initConfig()
-	initAdapter()
+	InitAdapter()
 	object.InitAdapter()
 
-	syncUsers()
-
-	// run at every minute
-	schedule := "* * * * *"
-	err := ctab.AddJob(schedule, syncUsers)
-	if err != nil {
-		panic(err)
-	}
-	time.Sleep(time.Duration(1<<63 - 1))
+	RunSyncUsersJob()
 }

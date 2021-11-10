@@ -22,7 +22,7 @@ import (
 
 func isEnabled() bool {
 	if adapter == nil {
-		initAdapter()
+		InitAdapter()
 		if adapter == nil {
 			return false
 		}
