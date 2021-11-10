@@ -14,6 +14,11 @@
 
 package cred
 
+import (
+	"net/url"
+	"strings"
+)
+
 type PlainCredManager struct{}
 
 func NewPlainCredManager() *PlainCredManager {
@@ -21,6 +26,26 @@ func NewPlainCredManager() *PlainCredManager {
 	return cm
 }
 
-func (cm *PlainCredManager) GetSealedPassword(password string, userSalt string, organizationSalt string) string {
-	return password
+func (cm *PlainCredManager) GetSealedPassword(password string, organizationSalt string) string {
+	password = strings.ReplaceAll(url.QueryEscape(password), "$", "%24")
+
+	res := new(StandardPassword)
+	res.Type = "plain"
+	res.OrganizationSalt = ""
+	res.UserSalt = ""
+	// to prevent $ in password
+	res.PasswordHash = password
+
+	return res.String()
+}
+
+func (cm *PlainCredManager) CheckSealedPassword(password string, sealedPassword string) bool {
+	password = strings.ReplaceAll(url.QueryEscape(password), "$", "%24")
+
+	currentPassword, err := ParseStandardPassword(sealedPassword)
+	if err != nil {
+		return password == sealedPassword
+	} else {
+		return password == currentPassword.PasswordHash
+	}
 }

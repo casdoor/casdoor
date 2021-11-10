@@ -17,10 +17,11 @@ package object
 import (
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/casbin/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 	"github.com/thanhpk/randstr"
-	"strings"
 )
 
 type Ldap struct {
@@ -297,7 +298,7 @@ func SyncLdapUsers(owner string, users []LdapRespUser) (*[]LdapRespUser, *[]Ldap
 			Owner:       owner,
 			Name:        buildLdapUserName(user.Uid, user.UidNumber),
 			CreatedTime: util.GetCurrentTime(),
-			Password:    "123",
+			Password:    "$plain$$123",
 			DisplayName: user.Cn,
 			Avatar:      "https://casbin.org/img/casbin.svg",
 			Email:       user.Email,
