@@ -1901,9 +1901,6 @@
                 "password": {
                     "type": "string"
                 },
-                "passwordSalt": {
-                    "type": "string"
-                },
                 "permanentAvatar": {
                     "type": "string"
                 },

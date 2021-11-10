@@ -55,7 +55,7 @@ func initBuiltInUser() {
 		CreatedTime:   util.GetCurrentTime(),
 		Id:            util.GenerateId(),
 		Type:          "normal-user",
-		Password:      "123",
+		Password:      "$plain$$123",
 		DisplayName:   "Admin",
 		Avatar:        "https://casbin.org/img/casbin.svg",
 		Email:         "admin@example.com",

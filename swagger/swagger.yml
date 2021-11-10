@@ -1262,8 +1262,6 @@ definitions:
         type: string
       password:
         type: string
-      passwordSalt:
-        type: string
       permanentAvatar:
         type: string
       phone:
