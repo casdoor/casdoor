@@ -15,16 +15,26 @@
 package cred
 
 type CredManager interface {
-	GetSealedPassword(password string, userSalt string, organizationSalt string) string
+	GetSealedPassword(password string, organizationSalt string) string
+	CheckSealedPassword(password string, sealedPassword string) bool
+}
+
+func GetPasswordType(passwordHash string) string {
+	passwordInfo, err := ParseStandardPassword(passwordHash)
+	if err != nil {
+		return "plain"
+	} else {
+		return passwordInfo.Type
+	}
 }
 
 func GetCredManager(passwordType string) CredManager {
 	if passwordType == "plain" {
 		return NewPlainCredManager()
-	} else if passwordType == "salt" {
+	} else if passwordType == "sha256-salt" {
 		return NewSha256SaltCredManager()
 	} else if passwordType == "md5-salt" {
-		return NewMd5UserSaltCredManager()
+		return NewMd5SaltCredManager()
 	}
 
 	return nil

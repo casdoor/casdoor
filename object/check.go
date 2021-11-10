@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"regexp"
+	"xorm.io/core"
 
 	"github.com/casbin/casdoor/cred"
 	"github.com/casbin/casdoor/util"
@@ -104,14 +105,20 @@ func CheckPassword(user *User, password string) string {
 		return "organization does not exist"
 	}
 
-	credManager := cred.GetCredManager(organization.PasswordType)
+	passwordType := cred.GetPasswordType(user.Password)
+	credManager := cred.GetCredManager(passwordType)
 	if credManager != nil {
 		if organization.MasterPassword != "" && organization.MasterPassword == password {
 			return ""
 		}
 
-		sealedPassword := credManager.GetSealedPassword(password, user.PasswordSalt, organization.PasswordSalt)
-		if user.Password == sealedPassword {
+		if credManager.CheckSealedPassword(password, user.Password) {
+			if passwordType != organization.PasswordType {
+				// try to update algo
+				user.Password = password
+				user.UpdateUserPassword(organization)
+				_, _ = adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("password").Update(user)
+			}
 			return ""
 		}
 		return "password incorrect"

@@ -35,7 +35,7 @@ func (user *User) UpdateUserHash() {
 func (user *User) UpdateUserPassword(organization *Organization) {
 	credManager := cred.GetCredManager(organization.PasswordType)
 	if credManager != nil {
-		sealedPassword := credManager.GetSealedPassword(user.Password, user.PasswordSalt, organization.PasswordSalt)
+		sealedPassword := credManager.GetSealedPassword(user.Password, organization.PasswordSalt)
 		user.Password = sealedPassword
 	}
 }
