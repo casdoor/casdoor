@@ -52,6 +52,10 @@ type Record struct {
 func NewRecord(ctx *context.Context) *Record {
 	ip := strings.Replace(util.GetIPFromRequest(ctx.Request), ": ", "", -1)
 	action := strings.Replace(ctx.Request.URL.Path, "/api/", "", -1)
+	requestUri := util.FilterQuery(ctx.Request.RequestURI, []string{ "accessToken" })
+	if len(requestUri) > 1000 {
+		requestUri = requestUri[0:1000]
+	}
 
 	record := Record{
 		Name:        util.GenerateId(),
@@ -59,7 +63,7 @@ func NewRecord(ctx *context.Context) *Record {
 		ClientIp:    ip,
 		User:        "",
 		Method:      ctx.Request.Method,
-		RequestUri:  ctx.Request.RequestURI,
+		RequestUri:  requestUri,
 		Action:      action,
 		IsTriggered: false,
 	}
