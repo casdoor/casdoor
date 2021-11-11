@@ -47,7 +47,7 @@ class SelectRegionBox extends React.Component {
           >
             {
                 Setting.CountryRegionData.map((item, index) => (
-                    <Option key={index} value={item.name} label={item.name} >
+                    <Option key={index} value={item.code} label={item.code} >
                         <img src={`${Setting.StaticBaseUrl}/flag-icons/${item.code}.svg`} alt={item.name} height={20} style={{marginRight: 10}}/>
                         {`${item.name} (${item.code})`}
                     </Option>

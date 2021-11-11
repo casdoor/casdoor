@@ -116,6 +116,13 @@ class UserListPage extends React.Component {
   }
 
   renderTable(users) {
+    // transfer country code to name based on selected language
+    var countries = require("i18n-iso-countries");
+    countries.registerLocale(require("i18n-iso-countries/langs/" + i18next.language + ".json"));
+    for (var index in users) {
+      users[index].region = countries.getName(users[index].region, i18next.language, {select: "official"})
+    }
+
     const columns = [
       {
         title: i18next.t("general:Organization"),
