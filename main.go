@@ -31,6 +31,7 @@ import (
 func main() {
 	object.InitAdapter()
 	object.InitDb()
+	object.InitJwtToken()
 	object.InitDefaultStorageProvider()
 	proxy.InitHttpClient()
 	authz.InitAuthz()

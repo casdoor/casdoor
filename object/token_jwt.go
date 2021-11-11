@@ -17,15 +17,17 @@ package object
 import (
 	_ "embed"
 	"fmt"
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
+	"github.com/casbin/casdoor/util"
+	"io/ioutil"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
 
-//go:embed token_jwt_key.pem
 var tokenJwtPublicKey string
 
-//go:embed token_jwt_key.key
 var tokenJwtPrivateKey string
 
 type Claims struct {
@@ -64,6 +66,29 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 	tokenString, err := token.SignedString(key)
 
 	return tokenString, err
+}
+
+func InitJwtToken() {
+	publicKeyFile := beego.AppConfig.String("jwtPublicKeyFile")
+	privateKeyFile := beego.AppConfig.String("jwtPrivateKeyFile")
+	if !util.FileExist(publicKeyFile) && !util.FileExist(privateKeyFile) {
+		// generate new certs
+		logs.Info("Generating jwt tokens")
+		generateRsaKeys(privateKeyFile, publicKeyFile)
+		logs.Info("Generated jwt token: %s and %s", publicKeyFile, privateKeyFile)
+	}
+
+	buffer, err := ioutil.ReadFile(publicKeyFile)
+	if err != nil {
+		panic(err)
+	}
+	tokenJwtPublicKey = string(buffer)
+
+	buffer, err = ioutil.ReadFile(privateKeyFile)
+	if err != nil {
+		panic(err)
+	}
+	tokenJwtPrivateKey = string(buffer)
 }
 
 func ParseJwtToken(token string) (*Claims, error) {

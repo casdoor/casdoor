@@ -18,5 +18,5 @@ import "testing"
 
 func TestGenerateRsaKeys(t *testing.T) {
 	fileId := "token_jwt_key"
-	generateRsaKeys(fileId)
+	generateRsaKeys(fileId + ".key", fileId + ".pem")
 }

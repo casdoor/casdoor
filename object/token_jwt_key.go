@@ -20,14 +20,13 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"fmt"
 	"math/big"
 	"time"
 
 	"github.com/casbin/casdoor/util"
 )
 
-func generateRsaKeys(fileId string) {
+func generateRsaKeys(privateKeyFile string, certFile string) {
 	// https://stackoverflow.com/questions/64104586/use-golang-to-get-rsa-key-the-same-way-openssl-genrsa
 	// https://stackoverflow.com/questions/43822945/golang-can-i-create-x509keypair-using-rsa-key
 
@@ -71,8 +70,8 @@ func generateRsaKeys(fileId string) {
 	})
 
 	// Write private key to file.
-	util.WriteBytesToPath(privateKeyPem, fmt.Sprintf("%s.key", fileId))
+	util.WriteBytesToPath(privateKeyPem, privateKeyFile)
 
 	// Write certificate (aka public key) to file.
-	util.WriteBytesToPath(certPem, fmt.Sprintf("%s.pem", fileId))
+	util.WriteBytesToPath(certPem, certFile)
 }
