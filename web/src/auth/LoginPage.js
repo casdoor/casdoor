@@ -386,6 +386,10 @@ class LoginPage extends React.Component {
     if (this.props.account === undefined || this.props.account === null) {
       return null;
     }
+    let application = this.getApplicationObj()
+    if (this.props.account.owner !== application.organization) {
+      return null;
+    }
 
     return (
       <div>
