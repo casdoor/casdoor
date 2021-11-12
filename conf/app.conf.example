@@ -1,0 +1,16 @@
+appname = casdoor
+httpport = 8000
+runmode = dev
+SessionOn = true
+copyrequestbody = true
+driverName = mysql
+dataSourceName = root:123456@tcp(localhost:3306)/
+dbName = casdoor
+redisEndpoint =
+defaultStorageProvider = 
+authState = "casdoor"
+httpProxy = "127.0.0.1:10808"
+verificationCodeTimeout = 10
+initScore = 2000
+logPostOnly = true
+oidcOrigin = "https://door.casbin.com"
