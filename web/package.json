@@ -34,7 +34,7 @@
     "test": "craco test",
     "eject": "craco eject",
     "crowdin:sync": "crowdin upload && crowdin download",
-    "preinstall": "npx use-yarn -m 'Please use yarn!'"
+    "preinstall": "node -e \"if (process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('Use yarn for installing: https://yarnpkg.com/en/docs/install')\""
   },
   "eslintConfig": {
     "extends": "react-app"
