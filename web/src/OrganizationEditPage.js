@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select} from 'antd';
+import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
 import * as Setting from "./Setting";
@@ -152,7 +152,7 @@ class OrganizationEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.organization.passwordType} onChange={(value => {this.updateOrganizationField('passwordType', value);})}>
               {
-                ['plain', 'salt']
+                ['plain', 'salt', 'md5-salt']
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
@@ -170,7 +170,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Phone Prefix"), i18next.t("general:Phone Prefix - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Phone prefix"), i18next.t("general:Phone prefix - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input addonBefore={"+"} value={this.state.organization.phonePrefix} onChange={e => {
@@ -203,6 +203,26 @@ class OrganizationEditPage extends React.Component {
                 </a>
               </Col>
             </Row>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Master password"), i18next.t("general:Master password - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.organization.masterPassword} onChange={e => {
+              this.updateOrganizationField('masterPassword', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("organization:Soft deletion"), i18next.t("organization:Soft deletion - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.organization.enableSoftDeletion} onChange={checked => {
+              this.updateOrganizationField('enableSoftDeletion', checked);
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}}>

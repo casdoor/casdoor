@@ -64,9 +64,28 @@ func getMaskedProvider(provider *Provider) *Provider {
 	return p
 }
 
+func GetProviderCount(owner string) int {
+	count, err := adapter.Engine.Count(&Provider{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
 func GetProviders(owner string) []*Provider {
 	providers := []*Provider{}
 	err := adapter.Engine.Desc("created_time").Find(&providers, &Provider{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return providers
+}
+
+func GetPaginationProviders(owner string, offset, limit int) []*Provider {
+	providers := []*Provider{}
+	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&providers, &Provider{Owner: owner})
 	if err != nil {
 		panic(err)
 	}

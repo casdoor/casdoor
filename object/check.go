@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/casbin/casdoor/cred"
 	"github.com/casbin/casdoor/util"
 )
 
@@ -47,6 +48,14 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 	}
 
 	if application.IsSignupItemVisible("Email") {
+		if email == "" {
+			if application.IsSignupItemRequired("Email") {
+				return "email cannot be empty"
+			} else {
+				return ""
+			}
+		}
+
 		if HasUserByField(organization.Name, "email", email) {
 			return "email already exists"
 		} else if !util.IsEmailValid(email) {
@@ -55,6 +64,14 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 	}
 
 	if application.IsSignupItemVisible("Phone") {
+		if phone == "" {
+			if application.IsSignupItemRequired("Phone") {
+				return "phone cannot be empty"
+			} else {
+				return ""
+			}
+		}
+
 		if HasUserByField(organization.Name, "phone", phone) {
 			return "phone already exists"
 		} else if organization.PhonePrefix == "86" && !util.IsPhoneCnValid(phone) {
@@ -86,14 +103,15 @@ func CheckPassword(user *User, password string) string {
 	if organization == nil {
 		return "organization does not exist"
 	}
-	
-	if organization.PasswordType == "plain" {
-		if password == user.Password {
+
+	credManager := cred.GetCredManager(organization.PasswordType)
+	if credManager != nil {
+		if organization.MasterPassword != "" && organization.MasterPassword == password {
 			return ""
 		}
-		return "password incorrect"
-	} else if organization.PasswordType == "salt" {
-		if password == user.Password || getSaltedPassword(password, organization.PasswordSalt) == user.Password {
+
+		sealedPassword := credManager.GetSealedPassword(password, user.PasswordSalt, organization.PasswordSalt)
+		if user.Password == sealedPassword {
 			return ""
 		}
 		return "password incorrect"
@@ -104,7 +122,7 @@ func CheckPassword(user *User, password string) string {
 
 func CheckUserPassword(organization string, username string, password string) (*User, string) {
 	user := GetUserByFields(organization, username)
-	if user == nil {
+	if user == nil || user.IsDeleted == true {
 		return nil, "the user does not exist, please sign up first"
 	}
 

@@ -24,6 +24,7 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
 import {CountDownInput} from "../component/CountDownInput";
 import SelectRegionBox from "../SelectRegionBox";
+import CustomGithubCorner from "../CustomGithubCorner";
 
 const formItemLayout = {
   labelCol: {
@@ -254,14 +255,14 @@ class SignupPage extends React.Component {
                 message: i18next.t("signup:Please input your Email!"),
               },
               {
-                validator: (_, value) =>{
-                  if( Setting.EmailRegEx.test(this.state.email) ) {
-                    this.setState({validEmail: true})
-                    return Promise.resolve()
-                  } else {
-                    this.setState({validEmail: false})
-                    return Promise.reject(i18next.t("signup:The input is not valid Email!"))
+                validator: (_, value) => {
+                  if (this.state.email !== "" && !Setting.isValidEmail(this.state.email)) {
+                    this.setState({validEmail: false});
+                    return Promise.reject(i18next.t("signup:The input is not valid Email!"));
                   }
+
+                  this.setState({validEmail: true});
+                  return Promise.resolve();
                 }
               }
             ]}
@@ -282,6 +283,60 @@ class SignupPage extends React.Component {
               defaultButtonText={i18next.t("code:Send Code")}
               onButtonClick={UserBackend.sendCode}
               onButtonClickArgs={[this.state.email, "email", application?.organizationObj.owner + "/" + application?.organizationObj.name]}
+              coolDownTime={60}
+            />
+          </Form.Item>
+        </React.Fragment>
+      )
+    } else if (signupItem.name === "Phone") {
+      return (
+        <React.Fragment>
+          <Form.Item
+            name="phone"
+            key="phone"
+            label={i18next.t("general:Phone")}
+            rules={[
+              {
+                required: required,
+                message: i18next.t("signup:Please input your phone number!"),
+              },
+              {
+                validator: (_, value) =>{
+                  if (this.state.phone !== "" && !Setting.isValidPhone(this.state.phone)) {
+                    this.setState({validPhone: false});
+                    return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
+                  }
+
+                  this.setState({validPhone: true});
+                  return Promise.resolve();
+                }
+              }
+            ]}
+          >
+            <Input
+              style={{
+                width: '100%',
+              }}
+              addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+              onChange={e => this.setState({phone: e.target.value})}
+            />
+          </Form.Item>
+          <Form.Item
+            name="phoneCode"
+            key="phoneCode"
+            label={i18next.t("code:Phone code")}
+            rules={[
+              {
+                required: required,
+                message: i18next.t("code:Please input your phone verification code!"),
+              },
+            ]}
+          >
+            <CountDownInput
+              disabled={!this.state.validPhone}
+              defaultButtonText={i18next.t("code:Send Code")}
+              onButtonClick={UserBackend.sendCode}
+              onButtonClickArgs={[this.state.phone, "phone", application.organizationObj.owner + "/" + application.organizationObj.name]}
               coolDownTime={60}
             />
           </Form.Item>
@@ -330,60 +385,6 @@ class SignupPage extends React.Component {
         >
           <Input.Password />
         </Form.Item>
-      )
-    } else if (signupItem.name === "Phone") {
-      return (
-        <React.Fragment>
-          <Form.Item
-            name="phone"
-            key="phone"
-            label={i18next.t("general:Phone")}
-            rules={[
-              {
-                required: required,
-                message: i18next.t("signup:Please input your phone number!"),
-              },
-              {
-                validator: (_, value) =>{
-                  if ( Setting.PhoneRegEx.test(this.state.phone)) {
-                    this.setState({validPhone: true})
-                    return Promise.resolve()
-                  } else {
-                    this.setState({validPhone: false})
-                    return Promise.reject(i18next.t("signup:The input is not valid Phone!"))
-                  }
-                }
-              }
-            ]}
-          >
-            <Input
-              style={{
-                width: '100%',
-              }}
-              addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
-              onChange={e => this.setState({phone: e.target.value})}
-            />
-          </Form.Item>
-          <Form.Item
-            name="phoneCode"
-            key="phoneCode"
-            label={i18next.t("code:Phone code")}
-            rules={[
-              {
-                required: required,
-                message: i18next.t("code:Please input your phone verification code!"),
-              },
-            ]}
-          >
-            <CountDownInput
-              disabled={!this.state.validPhone}
-              defaultButtonText={i18next.t("code:Send Code")}
-              onButtonClick={UserBackend.sendCode}
-              onButtonClickArgs={[this.state.phone, "phone", application.organizationObj.owner + "/" + application.organizationObj.name]}
-              coolDownTime={60}
-            />
-          </Form.Item>
-        </React.Fragment>
       )
     } else if (signupItem.name === "Agreement") {
       return (
@@ -520,8 +521,15 @@ class SignupPage extends React.Component {
       return null;
     }
 
+    if (application.signupHtml !== "") {
+      return (
+        <div dangerouslySetInnerHTML={{ __html: application.signupHtml}} />
+      )
+    }
+
     return (
       <div>
+        <CustomGithubCorner />
         &nbsp;
         <Row>
           <Col span={24} style={{display: "flex", justifyContent:  "center"}} >

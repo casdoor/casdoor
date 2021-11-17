@@ -1,6 +1,6 @@
 module github.com/casbin/casdoor
 
-go 1.15
+go 1.16
 
 require (
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.6+incompatible // indirect
@@ -11,10 +11,10 @@ require (
 	github.com/casbin/xorm-adapter/v2 v2.3.1
 	github.com/casdoor/go-sms-sender v0.0.4
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
 	github.com/go-ldap/ldap/v3 v3.3.0
 	github.com/go-sql-driver/mysql v1.5.0
+	github.com/golang-jwt/jwt/v4 v4.1.0
 	github.com/google/uuid v1.2.0
 	github.com/jinzhu/configor v1.2.1 // indirect
 	github.com/mileusna/crontab v1.0.1
@@ -23,6 +23,7 @@ require (
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/thanhpk/randstr v1.0.4
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
 	golang.org/x/oauth2 v0.0.0-20210628180205-a41e5a781914
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect

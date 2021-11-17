@@ -14,10 +14,11 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Table} from 'antd';
+import {Switch, Table} from 'antd';
 import * as Setting from "./Setting";
 import * as RecordBackend from "./backend/RecordBackend";
 import i18next from "i18next";
+import moment from "moment";
 
 class RecordListPage extends React.Component {
   constructor(props) {
@@ -25,65 +26,87 @@ class RecordListPage extends React.Component {
     this.state = {
       classes: props,
       records: null,
+      total: 0,
     };
   }
 
   UNSAFE_componentWillMount() {
-    this.getRecords();
+    this.getRecords(1, 10);
   }
 
-  getRecords() {
-    RecordBackend.getRecords()
+  getRecords(page, pageSize) {
+    RecordBackend.getRecords(page, pageSize)
       .then((res) => {
-        this.setState({
-          records: res,
-        });
+        if (res.status === "ok") {
+          this.setState({
+            records: res.data,
+            total: res.data2
+          });
+        }
       });
   }
 
   newRecord() {
     return {
-      id  : "",
-      Record:{
-        clientIp:"",
-        timestamp:"",
-        organization:"",
-        username:"",
-        requestUri:"",
-        action:"login",
-      },
+      owner: "built-in",
+      name: "1234",
+      id : "1234",
+      clientIp: "::1",
+      timestamp: moment().format(),
+      organization: "built-in",
+      username: "admin",
+      requestUri: "/api/get-account",
+      action: "login",
+      isTriggered: false,
     }
   }
 
   renderTable(records) {
     const columns = [
       {
-        title: i18next.t("general:Client ip"),
-        dataIndex: ['Record', 'clientIp'],
+        title: i18next.t("general:Name"),
+        dataIndex: 'name',
+        key: 'name',
+        width: '320px',
+        sorter: (a, b) => a.name.localeCompare(b.name),
+      },
+      {
+        title: i18next.t("general:ID"),
+        dataIndex: 'id',
         key: 'id',
-        width: '120px',
-        fixed: 'left',
-        sorter: (a, b) => a.Record.clientIp.localeCompare(b.Record.clientIp),
+        width: '90px',
+        sorter: (a, b) => a.id - b.id,
+      },
+      {
+        title: i18next.t("general:Client IP"),
+        dataIndex: 'clientIp',
+        key: 'clientIp',
+        width: '150px',
+        sorter: (a, b) => a.clientIp.localeCompare(b.clientIp),
         render: (text, record, index) => {
-          return text;
+          return (
+            <a target="_blank" rel="noreferrer" href={`https://db-ip.com/${text}`}>
+              {text}
+            </a>
+          )
         }
       },
       {
         title: i18next.t("general:Timestamp"),
-        dataIndex: ['Record', 'timestamp'],
-        key: 'id',
-        width: '160px',
-        sorter: (a, b) => a.Record.timestamp.localeCompare(b.Record.timestamp),
+        dataIndex: 'createdTime',
+        key: 'createdTime',
+        width: '180px',
+        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         }
       },
       {
         title: i18next.t("general:Organization"),
-        dataIndex: ['Record', 'organization'],
-        key: 'id',
-        width: '120px',
-        sorter: (a, b) => a.Record.organization.localeCompare(b.Record.organization),
+        dataIndex: 'organization',
+        key: 'organization',
+        width: '80px',
+        sorter: (a, b) => a.organization.localeCompare(b.organization),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -93,40 +116,75 @@ class RecordListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Username"),
-        dataIndex: ['Record', 'username'],
-        key: 'id',
-        width: '160px',
-        sorter: (a, b) => a.Record.username.localeCompare(b.Record.username),
+        title: i18next.t("general:User"),
+        dataIndex: 'user',
+        key: 'user',
+        width: '120px',
+        sorter: (a, b) => a.user.localeCompare(b.user),
         render: (text, record, index) => {
-          return text;
+          return (
+            <Link to={`/users/${record.organization}/${record.user}`}>
+              {text}
+            </Link>
+          )
         }
       },
       {
-        title: i18next.t("general:Request uri"),
-        dataIndex: ['Record', 'requestUri'],
-        key: 'id',
-        width: '160px',
-        sorter: (a, b) => a.Record.requestUri.localeCompare(b.Record.requestUri),
-        render: (text, record, index) => {
-          return text;
-        }
+        title: i18next.t("general:Method"),
+        dataIndex: 'method',
+        key: 'method',
+        width: '100px',
+        sorter: (a, b) => a.method.localeCompare(b.method),
+      },
+      {
+        title: i18next.t("general:Request URI"),
+        dataIndex: 'requestUri',
+        key: 'requestUri',
+        // width: '300px',
+        sorter: (a, b) => a.requestUri.localeCompare(b.requestUri),
       },
       {
         title: i18next.t("general:Action"),
-        dataIndex: ['Record', 'action'],
-        key: 'id',
-        width: '160px',
-        sorter: (a, b) => a.Record.action.localeCompare(b.Record.action),
+        dataIndex: 'action',
+        key: 'action',
+        width: '200px',
+        sorter: (a, b) => a.action.localeCompare(b.action),
+        fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return text;
+        }
+      },
+      {
+        title: i18next.t("record:Is Triggered"),
+        dataIndex: 'isTriggered',
+        key: 'isTriggered',
+        width: '140px',
+        sorter: (a, b) => a.isTriggered - b.isTriggered,
+        fixed: (Setting.isMobile()) ? "false" : "right",
+        render: (text, record, index) => {
+          if (!["signup", "login", "logout", "update-user"].includes(record.action)) {
+            return null;
+          }
+
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          )
         }
       },
     ];
 
+    const paginationProps = {
+      total: this.state.total,
+      showQuickJumper: true,
+      showSizeChanger: true,
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
+      onChange: (page, pageSize) => this.getRecords(page, pageSize),
+      onShowSizeChange: (current, size) => this.getRecords(current, size),
+    };
+
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={paginationProps}
                title={() => (
                  <div>
                    {i18next.t("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;

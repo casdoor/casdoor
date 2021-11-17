@@ -34,6 +34,8 @@ import LdapSyncPage from "./LdapSyncPage";
 import TokenListPage from "./TokenListPage";
 import TokenEditPage from "./TokenEditPage";
 import RecordListPage from "./RecordListPage";
+import WebhookListPage from "./WebhookListPage";
+import WebhookEditPage from "./WebhookEditPage";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
@@ -50,6 +52,7 @@ import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from './SelectLanguageBox';
 import i18next from 'i18next';
 import PromptPage from "./auth/PromptPage";
+import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
 
 const { Header, Footer } = Layout;
 
@@ -72,7 +75,6 @@ class App extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    Setting.setLanguage();
     this.updateMenuKey();
     this.getAccount();
   }
@@ -107,6 +109,8 @@ class App extends Component {
       this.setState({ selectedMenuKey: '/tokens' });
     } else if (uri.includes('/records')) {
       this.setState({ selectedMenuKey: '/records' });
+    } else if (uri.includes('/webhooks')) {
+      this.setState({ selectedMenuKey: '/webhooks' });
     } else if (uri.includes('/signup')) {
       this.setState({ selectedMenuKey: '/signup' });
     } else if (uri.includes('/login')) {
@@ -139,6 +143,13 @@ class App extends Component {
     return location.toString().replace(location.search, "");
   }
 
+  setLanguage(account) {
+    let language = account?.language;
+    if (language !== "" && language !== i18next.language) {
+      Setting.setLanguage(language);
+    }
+  }
+
   getAccount() {
     let query = this.getAccessTokenParam();
     if (query === "") {
@@ -153,6 +164,8 @@ class App extends Component {
         if (res.status === "ok") {
           account = res.data;
           account.organization = res.data2;
+
+          this.setLanguage(account);
         } else {
           if (res.msg !== "Please sign in first") {
             Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
@@ -194,9 +207,9 @@ class App extends Component {
   }
 
   handleRightDropdownClick(e) {
-    if (e.key === '201') {
+    if (e.key === '/account') {
       this.props.history.push(`/account`);
-    } else if (e.key === '202') {
+    } else if (e.key === '/logout') {
       this.logout();
     }
   }
@@ -220,11 +233,11 @@ class App extends Component {
   renderRightDropdown() {
     const menu = (
       <Menu onClick={this.handleRightDropdownClick.bind(this)}>
-        <Menu.Item key="201">
+        <Menu.Item key="/account">
           <SettingOutlined />
           {i18next.t("account:My Account")}
         </Menu.Item>
-        <Menu.Item key="202">
+        <Menu.Item key="/logout">
           <LogoutOutlined />
           {i18next.t("account:Logout")}
         </Menu.Item>
@@ -232,7 +245,7 @@ class App extends Component {
     );
 
     return (
-      <Dropdown key="200" overlay={menu} className="rightDropDown">
+      <Dropdown key="/rightDropDown" overlay={menu} className="rightDropDown">
         <div className="ant-dropdown-link" style={{float: 'right', cursor: 'pointer'}}>
           &nbsp;
           &nbsp;
@@ -323,15 +336,14 @@ class App extends Component {
       );
     }
 
-    res.push(
-      <Menu.Item key="/resources">
-        <Link to="/resources">
-          {i18next.t("general:Resources")}
-        </Link>
-      </Menu.Item>
-    );
-
     if (Setting.isAdminUser(this.state.account)) {
+      res.push(
+        <Menu.Item key="/resources">
+          <Link to="/resources">
+            {i18next.t("general:Resources")}
+          </Link>
+        </Menu.Item>
+      );
       res.push(
         <Menu.Item key="/tokens">
           <Link to="/tokens">
@@ -346,15 +358,21 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
+      res.push(
+        <Menu.Item key="/webhooks">
+          <Link to="/webhooks">
+            {i18next.t("general:Webhooks")}
+          </Link>
+        </Menu.Item>
+      );
+      res.push(
+        <Menu.Item key="/swagger">
+          <a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
+            {i18next.t("general:Swagger")}
+          </a>
+        </Menu.Item>
+      );
     }
-
-    res.push(
-      <Menu.Item key="/swagger">
-        <a target="_blank" rel="noreferrer" href={"/swagger"}>
-          {i18next.t("general:Swagger")}
-        </a>
-      </Menu.Item>
-    );
 
     return res;
   }
@@ -407,7 +425,10 @@ class App extends Component {
           <Route exact path="/ldap/sync/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapSyncPage account={this.state.account} {...props} />)}/>
           <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/webhooks" render={(props) => this.renderLoginIfNotLoggedIn(<WebhookListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/webhooks/:webhookName" render={(props) => this.renderLoginIfNotLoggedIn(<WebhookEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />}/>
           <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
                                                extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
       </Switch>
@@ -417,9 +438,47 @@ class App extends Component {
 
   renderContent() {
     if (!Setting.isMobile()) {
-    return (
-      <div style={{display: 'flex', flex: 'auto',width:"100%",flexDirection: 'column'}}>
-        <Layout style={{display: 'flex', alignItems: 'stretch'}}>
+      return (
+        <div style={{display: 'flex', flex: 'auto',width:"100%",flexDirection: 'column'}}>
+          <Layout style={{display: 'flex', alignItems: 'stretch'}}>
+          <Header style={{ padding: '0', marginBottom: '3px'}}>
+            {
+              Setting.isMobile() ? null : (
+                <Link to={"/"}>
+                  <div className="logo" />
+                </Link>
+              )
+            }
+            <Menu
+              // theme="dark"
+              mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
+              selectedKeys={[`${this.state.selectedMenuKey}`]}
+              style={{ lineHeight: '64px'}}
+            >
+              {
+                this.renderMenu()
+              }
+            <div style = {{float: 'right'}}>
+            {
+              this.renderAccount()
+            }
+          <SelectLanguageBox/>
+          </div>
+            </Menu>
+          </Header>
+          <Layout style={{backgroundColor: "#f5f5f5", alignItems: 'stretch'}}>
+            <Card className="content-warp-card">
+              {
+              this.renderRouter()
+              }
+            </Card>
+          </Layout>
+          </Layout>
+        </div>
+      )
+    } else {
+      return(
+        <div>
         <Header style={{ padding: '0', marginBottom: '3px'}}>
           {
             Setting.isMobile() ? null : (
@@ -432,65 +491,26 @@ class App extends Component {
             // theme="dark"
             mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
             selectedKeys={[`${this.state.selectedMenuKey}`]}
-            style={{ lineHeight: '64px'}}
+            style={{ lineHeight: '64px' }}
           >
             {
               this.renderMenu()
             }
-          <div style = {{float: 'right'}}>
-          {
-            this.renderAccount()
-          }
-        <SelectLanguageBox/>
-        </div>
+            <div style = {{float: 'right'}}>
+            {
+              this.renderAccount()
+            }
+            <SelectLanguageBox/>
+          </div>
           </Menu>
         </Header>
-        <Layout style={{backgroundColor: "#f5f5f5", alignItems: 'stretch'}}>
-          <Card className="content-warp-card">
-            {
-            this.renderRouter()
-            }
-          </Card>
-        </Layout>
-        </Layout>
-      </div>
-    )
-  } else {
-    return(
-      <div>
-      <Header style={{ padding: '0', marginBottom: '3px'}}>
         {
-          Setting.isMobile() ? null : (
-            <Link to={"/"}>
-              <div className="logo" />
-            </Link>
-          )
+          this.renderRouter()
         }
-        <Menu
-          // theme="dark"
-          mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
-          selectedKeys={[`${this.state.selectedMenuKey}`]}
-          style={{ lineHeight: '64px' }}
-        >
-          {
-            this.renderMenu()
-          }
-          <div style = {{float: 'right'}}>
-          {
-            this.renderAccount()
-          }
-          <SelectLanguageBox/>
-        </div>
-        </Menu>
-      </Header>
-      {
-        this.renderRouter()
-      }
-    </div>
-    )
+      </div>
+      )
+    }
   }
-}
-
 
   renderFooter() {
     // How to keep your footer where it belongs ?
@@ -521,11 +541,11 @@ class App extends Component {
     if (this.isDoorPages()) {
       return (
         <Switch>
-          <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...props} />)}/>
-          <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />)}/>
-          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...props} />)}/>
-          <Route exact path="/signup/oauth/authorize" render={(props) => <LoginPage type={"code"} mode={"signup"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
-          <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage type={"code"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
+          <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />)}/>
+          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/signup/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signup"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
+          <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
           <Route exact path="/callback" component={AuthCallback}/>
           <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)}/>
           <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)}/>

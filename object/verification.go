@@ -68,7 +68,7 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 		return err
 	}
 
-	return SendSms(provider, dest, code)
+	return SendSms(provider, code, dest)
 }
 
 func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordType, dest, code string) error {
@@ -112,7 +112,7 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 func getVerificationRecord(dest string) *VerificationRecord {
 	var record VerificationRecord
 	record.Receiver = dest
-	has, err := adapter.Engine.Desc("time").Where("is_used = 0").Get(&record)
+	has, err := adapter.Engine.Desc("time").Where("is_used = false").Get(&record)
 	if err != nil {
 		panic(err)
 	}

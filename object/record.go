@@ -15,28 +15,89 @@
 package object
 
 import (
+	"strings"
+
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/context"
 	"github.com/casbin/casdoor/util"
 )
 
-type Records struct {
-	Id     int         `xorm:"int notnull pk autoincr" json:"id"`
-	Record util.Record `xorm:"extends"`
-}
+var logPostOnly bool
 
-func AddRecord(record *util.Record) bool {
-	records := new(Records)
-	records.Record = *record
-
-	affected, err := adapter.Engine.Insert(records)
+func init() {
+	var err error
+	logPostOnly, err = beego.AppConfig.Bool("logPostOnly")
 	if err != nil {
 		panic(err)
+	}
+}
+
+type Record struct {
+	Id int `xorm:"int notnull pk autoincr" json:"id"`
+
+	Owner       string `xorm:"varchar(100) index" json:"owner"`
+	Name        string `xorm:"varchar(100) index" json:"name"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+
+	Organization string `xorm:"varchar(100)" json:"organization"`
+	ClientIp     string `xorm:"varchar(100)" json:"clientIp"`
+	User         string `xorm:"varchar(100)" json:"user"`
+	Method       string `xorm:"varchar(100)" json:"method"`
+	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
+	Action       string `xorm:"varchar(1000)" json:"action"`
+
+	IsTriggered bool `json:"isTriggered"`
+}
+
+func NewRecord(ctx *context.Context) *Record {
+	ip := strings.Replace(util.GetIPFromRequest(ctx.Request), ": ", "", -1)
+	action := strings.Replace(ctx.Request.URL.Path, "/api/", "", -1)
+	requestUri := util.FilterQuery(ctx.Request.RequestURI, []string{ "accessToken" })
+	if len(requestUri) > 1000 {
+		requestUri = requestUri[0:1000]
+	}
+
+	record := Record{
+		Name:        util.GenerateId(),
+		CreatedTime: util.GetCurrentTime(),
+		ClientIp:    ip,
+		User:        "",
+		Method:      ctx.Request.Method,
+		RequestUri:  requestUri,
+		Action:      action,
+		IsTriggered: false,
+	}
+	return &record
+}
+
+func AddRecord(record *Record) bool {
+	if logPostOnly {
+		if record.Method == "GET" {
+			return false
+		}
+	}
+
+	record.Owner = record.Organization
+
+	errWebhook := SendWebhooks(record)
+	if errWebhook == nil {
+		record.IsTriggered = true
+	}
+
+	affected, err := adapter.Engine.Insert(record)
+	if err != nil {
+		panic(err)
+	}
+
+	if errWebhook != nil {
+		panic(errWebhook)
 	}
 
 	return affected != 0
 }
 
 func GetRecordCount() int {
-	count, err := adapter.Engine.Count(&Records{})
+	count, err := adapter.Engine.Count(&Record{})
 	if err != nil {
 		panic(err)
 	}
@@ -44,8 +105,8 @@ func GetRecordCount() int {
 	return int(count)
 }
 
-func GetRecords() []*Records {
-	records := []*Records{}
+func GetRecords() []*Record {
+	records := []*Record{}
 	err := adapter.Engine.Desc("id").Find(&records)
 	if err != nil {
 		panic(err)
@@ -54,12 +115,44 @@ func GetRecords() []*Records {
 	return records
 }
 
-func GetRecordsByField(record *Records) []*Records {
-	records := []*Records{}
+func GetPaginationRecords(offset, limit int) []*Record {
+	records := []*Record{}
+	err := adapter.Engine.Desc("id").Limit(limit, offset).Find(&records)
+	if err != nil {
+		panic(err)
+	}
+
+	return records
+}
+
+func GetRecordsByField(record *Record) []*Record {
+	records := []*Record{}
 	err := adapter.Engine.Find(&records, record)
 	if err != nil {
 		panic(err)
 	}
 
 	return records
+}
+
+func SendWebhooks(record *Record) error {
+	webhooks := getWebhooksByOrganization(record.Organization)
+	for _, webhook := range webhooks {
+		matched := false
+		for _, event := range webhook.Events {
+			if record.Action == event {
+				matched = true
+				break
+			}
+		}
+
+		if matched {
+			err := sendWebhook(webhook, record)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }

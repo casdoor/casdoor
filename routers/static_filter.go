@@ -24,7 +24,7 @@ import (
 
 func StaticFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
-	if strings.HasPrefix(urlPath, "/api/") {
+	if strings.HasPrefix(urlPath, "/api/") || strings.HasPrefix(urlPath, "/.well-known/") {
 		return
 	}
 

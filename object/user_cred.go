@@ -18,6 +18,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/casbin/casdoor/cred"
 	"github.com/casbin/casdoor/util"
 )
 
@@ -32,7 +33,9 @@ func (user *User) UpdateUserHash() {
 }
 
 func (user *User) UpdateUserPassword(organization *Organization) {
-	if organization.PasswordType == "salt" {
-		user.Password = getSaltedPassword(user.Password, organization.PasswordSalt)
+	credManager := cred.GetCredManager(organization.PasswordType)
+	if credManager != nil {
+		sealedPassword := credManager.GetSealedPassword(user.Password, user.PasswordSalt, organization.PasswordSalt)
+		user.Password = sealedPassword
 	}
 }

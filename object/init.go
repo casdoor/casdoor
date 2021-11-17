@@ -67,6 +67,7 @@ func initBuiltInUser() {
 		IsAdmin:       true,
 		IsGlobalAdmin: true,
 		IsForbidden:   false,
+		IsDeleted:     false,
 		Properties:    make(map[string]string),
 	}
 	AddUser(user)
@@ -89,9 +90,18 @@ func initBuiltInApplication() {
 		EnablePassword: true,
 		EnableSignUp:   true,
 		Providers:      []*ProviderItem{},
-		SignupItems:    []*SignupItem{},
-		RedirectUris:   []string{},
-		ExpireInHours:  168,
+		SignupItems: []*SignupItem{
+			{Name: "ID", Visible: false, Required: true, Prompted: false, Rule: "Random"},
+			{Name: "Username", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Display name", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Password", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Confirm password", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Email", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Phone", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Agreement", Visible: true, Required: true, Prompted: false, Rule: "None"},
+		},
+		RedirectUris:  []string{},
+		ExpireInHours: 168,
 	}
 	AddApplication(application)
 }

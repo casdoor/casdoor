@@ -64,6 +64,7 @@ func createUserFromOriginalUser(originalUser *User, affiliationMap map[int]strin
 		IsAdmin:       false,
 		IsGlobalAdmin: false,
 		IsForbidden:   originalUser.Deleted != 0,
+		IsDeleted:     false,
 		Properties:    map[string]string{},
 	}
 	return user

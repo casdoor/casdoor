@@ -15,19 +15,30 @@
 package controllers
 
 import (
-	"encoding/json"
-
+	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/util"
 )
 
 // GetRecords
 // @Title GetRecords
 // @Description get all records
+// @Param   pageSize     query    string  true        "The size of each page"
+// @Param   p     query    string  true        "The number of the page"
 // @Success 200 {array} object.Records The Response object
 // @router /get-records [get]
 func (c *ApiController) GetRecords() {
-	c.Data["json"] = object.GetRecords()
-	c.ServeJSON()
+	limit := c.Input().Get("pageSize")
+	page := c.Input().Get("p")
+	if limit == "" || page == "" {
+		c.Data["json"] = object.GetRecords()
+		c.ServeJSON()
+	} else {
+		limit := util.ParseInt(limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetRecordCount()))
+		records := object.GetPaginationRecords(paginator.Offset(), limit)
+		c.ResponseOk(records, paginator.Nums())
+	}
 }
 
 // GetRecordsByFilter
@@ -37,12 +48,14 @@ func (c *ApiController) GetRecords() {
 // @Success 200 {array} object.Records The Response object
 // @router /get-records-filter [post]
 func (c *ApiController) GetRecordsByFilter() {
-	var record object.Records
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &record)
+	body := string(c.Ctx.Input.RequestBody)
+
+	record := &object.Record{}
+	err := util.JsonToStruct(body, record)
 	if err != nil {
 		panic(err)
 	}
 
-	c.Data["json"] = object.GetRecordsByField(&record)
+	c.Data["json"] = object.GetRecordsByField(record)
 	c.ServeJSON()
 }

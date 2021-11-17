@@ -30,6 +30,7 @@ type User struct {
 	Id                string   `xorm:"varchar(100)" json:"id"`
 	Type              string   `xorm:"varchar(100)" json:"type"`
 	Password          string   `xorm:"varchar(100)" json:"password"`
+	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
 	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
 	Avatar            string   `xorm:"varchar(255)" json:"avatar"`
 	PermanentAvatar   string   `xorm:"varchar(255)" json:"permanentAvatar"`
@@ -50,6 +51,7 @@ type User struct {
 	IsAdmin           bool     `json:"isAdmin"`
 	IsGlobalAdmin     bool     `json:"isGlobalAdmin"`
 	IsForbidden       bool     `json:"isForbidden"`
+	IsDeleted         bool     `json:"isDeleted"`
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
@@ -71,6 +73,15 @@ type User struct {
 	Properties map[string]string `json:"properties"`
 }
 
+func GetGlobalUserCount() int {
+	count, err := adapter.Engine.Count(&User{})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
 func GetGlobalUsers() []*User {
 	users := []*User{}
 	err := adapter.Engine.Desc("created_time").Find(&users)
@@ -81,9 +92,38 @@ func GetGlobalUsers() []*User {
 	return users
 }
 
+func GetPaginationGlobalUsers(offset, limit int) []*User {
+	users := []*User{}
+	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&users)
+	if err != nil {
+		panic(err)
+	}
+
+	return users
+}
+
+func GetUserCount(owner string) int {
+	count, err := adapter.Engine.Count(&User{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
 func GetUsers(owner string) []*User {
 	users := []*User{}
 	err := adapter.Engine.Desc("created_time").Find(&users, &User{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return users
+}
+
+func GetPaginationUsers(owner string, offset, limit int) []*User {
+	users := []*User{}
+	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&users, &User{Owner: owner})
 	if err != nil {
 		panic(err)
 	}
@@ -160,8 +200,8 @@ func UpdateUser(id string, user *User) bool {
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("owner", "display_name", "avatar",
-		"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "is_admin", "is_global_admin", "is_forbidden",
-		"hash", "properties").Update(user)
+		"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag",
+		"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "properties").Update(user)
 	if err != nil {
 		panic(err)
 	}

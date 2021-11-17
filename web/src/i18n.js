@@ -12,38 +12,85 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import i18n from 'i18next'
-import zh from './locales/zh/data.json'
-import en from './locales/en/data.json'
-import fr from './locales/fr/data.json'
-import de from './locales/de/data.json'
-import ko from './locales/ko/data.json'
-import ru from './locales/ru/data.json'
-import ja from './locales/ja/data.json'
+import i18n from "i18next";
+import zh from "./locales/zh/data.json";
+import en from "./locales/en/data.json";
+import fr from "./locales/fr/data.json";
+import de from "./locales/de/data.json";
+import ko from "./locales/ko/data.json";
+import ru from "./locales/ru/data.json";
+import ja from "./locales/ja/data.json";
+import * as Conf from "./Conf";
+import * as Setting from "./Setting";
 
 const resources = {
   en: en,
   zh: zh,
   fr: fr,
-  ja: ja,
   de: de,
   ko: ko,
   ru: ru,
+  ja: ja,
 };
 
-i18n
-  .init({
-    lng: "en",
+function initLanguage() {
+  let language = localStorage.getItem("language");
+  if (language === undefined || language == null) {
+    if (Conf.ForceLanguage !== "") {
+      language = Conf.ForceLanguage;
+    } else {
+      let userLanguage;
+      userLanguage = navigator.language;
+      switch (userLanguage) {
+        case "zh-CN":
+          language = "zh";
+          break;
+        case "zh":
+          language = "zh";
+          break;
+        case "en":
+          language = "en";
+          break;
+        case "en-US":
+          language = "en";
+          break;
+        case "fr":
+          language = "fr";
+          break;
+        case "de":
+          language = "de";
+          break;
+        case "ko":
+          language = "ko";
+          break;
+        case "ru":
+          language = "ru";
+          break;
+        case "ja":
+          language = "ja";
+          break;
+        default:
+          language = Conf.DefaultLanguage;
+      }
+    }
+  }
+  Setting.changeMomentLanguage(language);
 
-    resources: resources,
+  return language;
+}
 
-    keySeparator: false,
+i18n.init({
+  lng: initLanguage(),
 
-    interpolation: {
-      escapeValue: false
-    },
-    
-    saveMissing: true,
-  })
+  resources: resources,
+
+  keySeparator: false,
+
+  interpolation: {
+    escapeValue: false,
+  },
+  //debug: true,
+  saveMissing: true,
+});
 
 export default i18n;

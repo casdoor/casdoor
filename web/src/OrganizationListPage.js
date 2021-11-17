@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table} from 'antd';
+import {Button, Popconfirm, Switch, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -26,34 +26,41 @@ class OrganizationListPage extends React.Component {
     this.state = {
       classes: props,
       organizations: null,
+      total: 0
     };
   }
 
   UNSAFE_componentWillMount() {
-    this.getOrganizations();
+    this.getOrganizations(1, 10);
   }
 
-  getOrganizations() {
-    OrganizationBackend.getOrganizations("admin")
+  getOrganizations(page, pageSize) {
+    OrganizationBackend.getOrganizations("admin", page, pageSize)
       .then((res) => {
-        this.setState({
-          organizations: res,
-        });
+        if (res.status === "ok") {
+          this.setState({
+            organizations: res.data,
+            total: res.data2
+          });
+        }
       });
   }
 
   newOrganization() {
+    var randomName = Math.random().toString(36).slice(-6)
     return {
       owner: "admin", // this.props.account.organizationname,
-      name: `organization_${this.state.organizations.length}`,
+      name: `organization_${randomName}`,
       createdTime: moment().format(),
-      displayName: `New Organization - ${this.state.organizations.length}`,
+      displayName: `New Organization - ${randomName}`,
       websiteUrl: "https://door.casbin.com",
       favicon: "https://cdn.casbin.com/static/favicon.ico",
       passwordType: "plain",
       PasswordSalt: "",
       phonePrefix: "86",
       defaultAvatar: "https://casbin.org/img/casbin.svg",
+      masterPassword: "",
+      enableSoftDeletion: false,
     }
   }
 
@@ -64,6 +71,7 @@ class OrganizationListPage extends React.Component {
           Setting.showMessage("success", `Organization added successfully`);
           this.setState({
             organizations: Setting.prependRow(this.state.organizations, newOrganization),
+            total: this.state.total + 1
           });
         }
       )
@@ -78,6 +86,7 @@ class OrganizationListPage extends React.Component {
           Setting.showMessage("success", `Organization deleted successfully`);
           this.setState({
             organizations: Setting.deleteRow(this.state.organizations, i),
+            total: this.state.total - 1
           });
         }
       )
@@ -151,7 +160,7 @@ class OrganizationListPage extends React.Component {
         title: i18next.t("general:Password type"),
         dataIndex: 'passwordType',
         key: 'passwordType',
-        width: '100px',
+        width: '150px',
         sorter: (a, b) => a.passwordType.localeCompare(b.passwordType),
       },
       {
@@ -165,12 +174,24 @@ class OrganizationListPage extends React.Component {
         title: i18next.t("organization:Default avatar"),
         dataIndex: 'defaultAvatar',
         key: 'defaultAvatar',
-        width: '50px',
+        width: '120px',
         render: (text, record, index) => {
           return (
               <a target="_blank" rel="noreferrer" href={text}>
                 <img src={text} alt={text} width={40} />
               </a>
+          )
+        }
+      },
+      {
+        title: i18next.t("organization:Soft deletion"),
+        dataIndex: 'enableSoftDeletion',
+        key: 'enableSoftDeletion',
+        width: '140px',
+        sorter: (a, b) => a.enableSoftDeletion - b.enableSoftDeletion,
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           )
         }
       },
@@ -197,9 +218,18 @@ class OrganizationListPage extends React.Component {
       },
     ];
 
+    const paginationProps = {
+      total: this.state.total,
+      showQuickJumper: true,
+      showSizeChanger: true,
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
+      onChange: (page, pageSize) => this.getOrganizations(page, pageSize),
+      onShowSizeChange: (current, size) => this.getOrganizations(current, size),
+    };
+
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={paginationProps}
                title={() => (
                  <div>
                   {i18next.t("general:Organizations")}&nbsp;&nbsp;&nbsp;&nbsp;

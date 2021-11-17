@@ -101,11 +101,20 @@ func initAPI() {
 	beego.Router("/api/update-token", &controllers.ApiController{}, "POST:UpdateToken")
 	beego.Router("/api/add-token", &controllers.ApiController{}, "POST:AddToken")
 	beego.Router("/api/delete-token", &controllers.ApiController{}, "POST:DeleteToken")
+	beego.Router("/api/login/oauth/code", &controllers.ApiController{}, "POST:GetOAuthCode")
 	beego.Router("/api/login/oauth/access_token", &controllers.ApiController{}, "POST:GetOAuthToken")
 
 	beego.Router("/api/get-records", &controllers.ApiController{}, "GET:GetRecords")
 	beego.Router("/api/get-records-filter", &controllers.ApiController{}, "POST:GetRecordsByFilter")
 
+	beego.Router("/api/get-webhooks", &controllers.ApiController{}, "GET:GetWebhooks")
+	beego.Router("/api/get-webhook", &controllers.ApiController{}, "GET:GetWebhook")
+	beego.Router("/api/update-webhook", &controllers.ApiController{}, "POST:UpdateWebhook")
+	beego.Router("/api/add-webhook", &controllers.ApiController{}, "POST:AddWebhook")
+	beego.Router("/api/delete-webhook", &controllers.ApiController{}, "POST:DeleteWebhook")
+
 	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
+
+	beego.Router("/.well-known/openid-configuration", &controllers.ApiController{}, "GET:GetOidcDiscovery")
 }

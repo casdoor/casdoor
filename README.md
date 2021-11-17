@@ -123,7 +123,7 @@ This method requires [docker](https://docs.docker.com/get-docker/) and [docker-c
 Edit `conf/app.conf`, modify `dataSourceName` to the fixed content:
 
 ```bash
-dataSourceName = root:123@tcp(db:3306)/
+dataSourceName = root:123456@tcp(db:3306)/
 ```
 
 > If you need to modify `conf/app.conf`, you need to re-run `docker-compose up`.

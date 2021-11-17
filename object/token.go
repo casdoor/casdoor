@@ -49,9 +49,28 @@ type TokenWrapper struct {
 	Scope       string `json:"scope"`
 }
 
+func GetTokenCount(owner string) int {
+	count, err := adapter.Engine.Count(&Token{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
 func GetTokens(owner string) []*Token {
 	tokens := []*Token{}
 	err := adapter.Engine.Desc("created_time").Find(&tokens, &Token{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return tokens
+}
+
+func GetPaginationTokens(owner string, offset, limit int) []*Token {
+	tokens := []*Token{}
+	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&tokens, &Token{Owner: owner})
 	if err != nil {
 		panic(err)
 	}
@@ -73,7 +92,7 @@ func getToken(owner string, name string) *Token {
 	if existed {
 		return &token
 	}
-	
+
 	return nil
 }
 
@@ -87,7 +106,7 @@ func getTokenByCode(code string) *Token {
 	if existed {
 		return &token
 	}
-	
+
 	return nil
 }
 
@@ -149,6 +168,8 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		return "redirect_uri doesn't exist in the allowed Redirect URL list", application
 	}
 
+	// Mask application for /api/get-app-login
+	application.ClientSecret = ""
 	return "", application
 }
 

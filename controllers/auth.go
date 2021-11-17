@@ -195,11 +195,10 @@ func (c *ApiController) Login() {
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 			resp = c.HandleLoggedIn(application, user, &form)
 
-			record := util.Records(c.Ctx)
+			record := object.NewRecord(c.Ctx)
 			record.Organization = application.Organization
-			record.Username = user.Name
-
-			object.AddRecord(record)
+			record.User = user.Name
+			go object.AddRecord(record)
 		}
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
@@ -251,7 +250,7 @@ func (c *ApiController) Login() {
 				user = object.GetUserByField(application.Organization, "name", userInfo.Username)
 			}
 
-			if user != nil {
+			if user != nil && user.IsDeleted == false {
 				// Sign in via OAuth (want to sign up but already have account)
 
 				if user.IsForbidden {
@@ -260,11 +259,10 @@ func (c *ApiController) Login() {
 
 				resp = c.HandleLoggedIn(application, user, &form)
 
-				record := util.Records(c.Ctx)
+				record := object.NewRecord(c.Ctx)
 				record.Organization = application.Organization
-				record.Username = user.Name
-
-				object.AddRecord(record)
+				record.User = user.Name
+				go object.AddRecord(record)
 			} else {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
@@ -293,6 +291,7 @@ func (c *ApiController) Login() {
 					IsAdmin:           false,
 					IsGlobalAdmin:     false,
 					IsForbidden:       false,
+					IsDeleted:         false,
 					SignupApplication: application.Name,
 					Properties:        properties,
 				}
@@ -305,11 +304,10 @@ func (c *ApiController) Login() {
 
 				resp = c.HandleLoggedIn(application, user, &form)
 
-				record := util.Records(c.Ctx)
+				record := object.NewRecord(c.Ctx)
 				record.Organization = application.Organization
-				record.Username = user.Name
-
-				object.AddRecord(record)
+				record.User = user.Name
+				go object.AddRecord(record)
 			}
 			//resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"
@@ -341,8 +339,15 @@ func (c *ApiController) Login() {
 			}
 		}
 	} else {
-		c.ResponseError(fmt.Sprintf("unknown authentication type (not password or provider), form = %s", util.StructToJson(form)))
-		return
+		if c.GetSessionUsername() != "" {
+			// user already signed in to Casdoor, so let the user click the avatar button to do the quick sign-in
+			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+			user := c.getCurrentUser()
+			resp = c.HandleLoggedIn(application, user, &form)
+		} else {
+			c.ResponseError(fmt.Sprintf("unknown authentication type (not password or provider), form = %s", util.StructToJson(form)))
+			return
+		}
 	}
 
 	c.Data["json"] = resp

@@ -21,6 +21,7 @@ import (
 	_ "github.com/astaxie/beego/session/redis"
 	"github.com/casbin/casdoor/authz"
 	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/original"
 	"github.com/casbin/casdoor/proxy"
 	"github.com/casbin/casdoor/routers"
 
@@ -33,6 +34,10 @@ func main() {
 	object.InitDefaultStorageProvider()
 	proxy.InitHttpClient()
 	authz.InitAuthz()
+
+	if original.InitAdapter() {
+		go original.RunSyncUsersJob()
+	}
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowOrigins:     []string{"*"},
@@ -61,10 +66,10 @@ func main() {
 		beego.BConfig.WebConfig.Session.SessionProvider = "redis"
 		beego.BConfig.WebConfig.Session.SessionProviderConfig = beego.AppConfig.String("redisEndpoint")
 	}
-	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 30
+	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
 	//beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
-	err := logs.SetLogger("file", `{"filename":"logs/casdoor.log","maxdays":99999}`)
+	err := logs.SetLogger("file", `{"filename":"logs/casdoor.log","maxdays":99999,"perm":"0770"}`)
 	if err != nil {
 		panic(err)
 	}

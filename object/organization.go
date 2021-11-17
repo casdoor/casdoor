@@ -24,18 +24,39 @@ type Organization struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName   string `xorm:"varchar(100)" json:"displayName"`
-	WebsiteUrl    string `xorm:"varchar(100)" json:"websiteUrl"`
-	Favicon       string `xorm:"varchar(100)" json:"favicon"`
-	PasswordType  string `xorm:"varchar(100)" json:"passwordType"`
-	PasswordSalt  string `xorm:"varchar(100)" json:"passwordSalt"`
-	PhonePrefix   string `xorm:"varchar(10)"  json:"phonePrefix"`
-	DefaultAvatar string `xorm:"varchar(100)" json:"defaultAvatar"`
+	DisplayName        string `xorm:"varchar(100)" json:"displayName"`
+	WebsiteUrl         string `xorm:"varchar(100)" json:"websiteUrl"`
+	Favicon            string `xorm:"varchar(100)" json:"favicon"`
+	PasswordType       string `xorm:"varchar(100)" json:"passwordType"`
+	PasswordSalt       string `xorm:"varchar(100)" json:"passwordSalt"`
+	PhonePrefix        string `xorm:"varchar(10)"  json:"phonePrefix"`
+	DefaultAvatar      string `xorm:"varchar(100)" json:"defaultAvatar"`
+	MasterPassword     string `xorm:"varchar(100)" json:"masterPassword"`
+	EnableSoftDeletion bool   `json:"enableSoftDeletion"`
+}
+
+func GetOrganizationCount(owner string) int {
+	count, err := adapter.Engine.Count(&Organization{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
 }
 
 func GetOrganizations(owner string) []*Organization {
 	organizations := []*Organization{}
 	err := adapter.Engine.Desc("created_time").Find(&organizations, &Organization{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return organizations
+}
+
+func GetPaginationOrganizations(owner string, offset, limit int) []*Organization {
+	organizations := []*Organization{}
+	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&organizations, &Provider{Owner: owner})
 	if err != nil {
 		panic(err)
 	}
@@ -57,13 +78,31 @@ func getOrganization(owner string, name string) *Organization {
 	if existed {
 		return &organization
 	}
-	
+
 	return nil
 }
 
 func GetOrganization(id string) *Organization {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getOrganization(owner, name)
+}
+
+func GetMaskedOrganization(organization *Organization) *Organization {
+	if organization == nil {
+		return nil
+	}
+
+	if organization.MasterPassword != "" {
+		organization.MasterPassword = "***"
+	}
+	return organization
+}
+
+func GetMaskedOrganizations(organizations []*Organization) []*Organization {
+	for _, organization := range organizations {
+		organization = GetMaskedOrganization(organization)
+	}
+	return organizations
 }
 
 func UpdateOrganization(id string, organization *Organization) bool {

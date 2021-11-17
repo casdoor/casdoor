@@ -22,6 +22,7 @@ import (
 	"mime"
 	"path/filepath"
 
+	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/util"
 )
@@ -29,9 +30,17 @@ import (
 func (c *ApiController) GetResources() {
 	owner := c.Input().Get("owner")
 	user := c.Input().Get("user")
-
-	c.Data["json"] = object.GetResources(owner, user)
-	c.ServeJSON()
+	limit := c.Input().Get("pageSize")
+	page := c.Input().Get("p")
+	if limit == "" || page == "" {
+		c.Data["json"] = object.GetResources(owner, user)
+		c.ServeJSON()
+	} else {
+		limit := util.ParseInt(limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetResourceCount(owner, user)))
+		resources := object.GetPaginationResources(owner, user, paginator.Offset(), limit)
+		c.ResponseOk(resources, paginator.Nums())
+	}
 }
 
 func (c *ApiController) GetResource() {

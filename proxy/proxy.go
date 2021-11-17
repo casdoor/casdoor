@@ -15,8 +15,11 @@
 package proxy
 
 import (
+	"fmt"
+	"net"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/astaxie/beego"
 	"golang.org/x/net/proxy"
@@ -30,10 +33,34 @@ func InitHttpClient() {
 	DefaultHttpClient = http.DefaultClient
 
 	// use proxy
+	ProxyHttpClient = getProxyHttpClient()
+}
+
+func isAddressOpen(address string) bool {
+	timeout := time.Millisecond * 100
+	conn, err := net.DialTimeout("tcp", address, timeout)
+	if err != nil {
+		// cannot connect to address, proxy is not active
+		return false
+	}
+
+	if conn != nil {
+		defer conn.Close()
+		fmt.Printf("Socks5 proxy enabled: %s\n", address)
+		return true
+	}
+
+	return false
+}
+
+func getProxyHttpClient() *http.Client {
 	httpProxy := beego.AppConfig.String("httpProxy")
 	if httpProxy == "" {
-		ProxyHttpClient = DefaultHttpClient
-		return
+		return &http.Client{}
+	}
+
+	if !isAddressOpen(httpProxy) {
+		return &http.Client{}
 	}
 
 	// https://stackoverflow.com/questions/33585587/creating-a-go-socks5-client
@@ -43,16 +70,9 @@ func InitHttpClient() {
 	}
 
 	tr := &http.Transport{Dial: dialer.Dial}
-	ProxyHttpClient = &http.Client{
+	return &http.Client{
 		Transport: tr,
 	}
-
-	//resp, err2 := ProxyHttpClient.Get("https://google.com")
-	//if err2 != nil {
-	//	panic(err2)
-	//}
-	//defer resp.Body.Close()
-	//println("Response status: %s", resp.Status)
 }
 
 func GetHttpClient(url string) *http.Client {

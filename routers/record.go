@@ -58,12 +58,12 @@ func RecordMessage(ctx *context.Context) {
 		return
 	}
 
-	record := util.Records(ctx)
+	record := object.NewRecord(ctx)
 
 	userId := getUser(ctx)
 	if userId != "" {
-		record.Organization, record.Username = util.GetOwnerAndNameFromId(userId)
+		record.Organization, record.User = util.GetOwnerAndNameFromId(userId)
 	}
 
-	object.AddRecord(record)
+	go object.AddRecord(record)
 }

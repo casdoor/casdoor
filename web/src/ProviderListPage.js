@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table} from 'antd';
+import {Button, Popconfirm, Table, Tooltip} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
@@ -27,28 +27,33 @@ class ProviderListPage extends React.Component {
     this.state = {
       classes: props,
       providers: null,
+      total: 0,
     };
   }
 
   UNSAFE_componentWillMount() {
-    this.getProviders();
+    this.getProviders(1, 10);
   }
 
-  getProviders() {
-    ProviderBackend.getProviders("admin")
+  getProviders(page, pageSize) {
+    ProviderBackend.getProviders("admin", page, pageSize)
       .then((res) => {
-        this.setState({
-          providers: res,
-        });
+        if (res.status === "ok") {
+          this.setState({
+            providers: res.data,
+            total: res.data2
+          });
+        }
       });
   }
 
   newProvider() {
+    var randomName = Math.random().toString(36).slice(-6)
     return {
       owner: "admin", // this.props.account.providername,
-      name: `provider_${this.state.providers.length}`,
+      name: `provider_${randomName}`,
       createdTime: moment().format(),
-      displayName: `New Provider - ${this.state.providers.length}`,
+      displayName: `New Provider - ${randomName}`,
       category: "OAuth",
       type: "GitHub",
       method: "Normal",
@@ -68,6 +73,7 @@ class ProviderListPage extends React.Component {
           Setting.showMessage("success", `Provider added successfully`);
           this.setState({
             providers: Setting.prependRow(this.state.providers, newProvider),
+            total: this.state.total + 1
           });
         }
       )
@@ -82,6 +88,7 @@ class ProviderListPage extends React.Component {
           Setting.showMessage("success", `Provider deleted successfully`);
           this.setState({
             providers: Setting.deleteRow(this.state.providers, i),
+            total: this.state.total - 1
           });
         }
       )
@@ -111,7 +118,7 @@ class ProviderListPage extends React.Component {
         title: i18next.t("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
-        width: '160px',
+        width: '180px',
         sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -136,13 +143,23 @@ class ProviderListPage extends React.Component {
         dataIndex: 'type',
         key: 'type',
         width: '80px',
+        align: 'center',
         sorter: (a, b) => a.type.localeCompare(b.type),
         render: (text, record, index) => {
-          if (record.category !== "OAuth") {
-            return text;
+          const url = Provider.getProviderUrl(record);
+          if (url !== "") {
+            return (
+              <Tooltip title={record.type}>
+                <a target="_blank" rel="noreferrer" href={Provider.getProviderUrl(record)}>
+                  <img width={36} height={36} src={Provider.getProviderLogo(record)} alt={record.displayName} />
+                </a>
+              </Tooltip>
+            )
           } else {
             return (
-              <img width={30} height={30} src={Provider.getAuthLogo(record)} alt={record.displayName} />
+              <Tooltip title={record.type}>
+                <img width={36} height={36} src={Provider.getProviderLogo(record)} alt={record.displayName} />
+              </Tooltip>
             )
           }
         }
@@ -202,9 +219,18 @@ class ProviderListPage extends React.Component {
       },
     ];
 
+    const paginationProps = {
+      total: this.state.total,
+      showQuickJumper: true,
+      showSizeChanger: true,
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
+      onChange: (page, pageSize) => this.getProviders(page, pageSize),
+      onShowSizeChange: (current, size) => this.getProviders(current, size),
+    };
+
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={providers} rowKey="name" size="middle" bordered pagination={{pageSize: 100}}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={providers} rowKey="name" size="middle" bordered pagination={paginationProps}
                title={() => (
                  <div>
                    {i18next.t("general:Providers")}&nbsp;&nbsp;&nbsp;&nbsp;

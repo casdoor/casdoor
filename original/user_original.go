@@ -17,6 +17,7 @@ package original
 import (
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/casbin/casdoor/util"
 )
@@ -76,4 +77,16 @@ func updateUser(user *User) bool {
 func calculateHash(user *User) string {
 	s := strings.Join([]string{strconv.Itoa(user.Id), user.Password, user.Name, getFullAvatarUrl(user.Avatar), user.Cellphone, strconv.Itoa(user.SchoolId)}, "|")
 	return util.GetMd5Hash(s)
+}
+
+func RunSyncUsersJob() {
+	syncUsers()
+
+	// run at every minute
+	schedule := "* * * * *"
+	err := ctab.AddJob(schedule, syncUsers)
+	if err != nil {
+		panic(err)
+	}
+	time.Sleep(time.Duration(1<<63 - 1))
 }
