@@ -55,6 +55,8 @@ func initAPI() {
 
 	beego.Router("/api/get-global-users", &controllers.ApiController{}, "GET:GetGlobalUsers")
 	beego.Router("/api/get-users", &controllers.ApiController{}, "GET:GetUsers")
+	beego.Router("/api/get-sorted-users", &controllers.ApiController{}, "GET:GetSortedUsers")
+	beego.Router("/api/get-user-count", &controllers.ApiController{}, "GET:GetUserCount")
 	beego.Router("/api/get-user", &controllers.ApiController{}, "GET:GetUser")
 	beego.Router("/api/update-user", &controllers.ApiController{}, "POST:UpdateUser")
 	beego.Router("/api/add-user", &controllers.ApiController{}, "POST:AddUser")

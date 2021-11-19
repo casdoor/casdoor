@@ -111,9 +111,28 @@ func GetUserCount(owner string) int {
 	return int(count)
 }
 
+func GetOnlineUserCount(owner string, isOnline int) int {
+	count, err := adapter.Engine.Where("is_online = ?", isOnline).Count(&User{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
 func GetUsers(owner string) []*User {
 	users := []*User{}
 	err := adapter.Engine.Desc("created_time").Find(&users, &User{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return users
+}
+
+func GetSortedUsers(owner string, sorter string, limit int) []*User {
+	users := []*User{}
+	err := adapter.Engine.Desc(sorter).Limit(limit, 0).Find(&users, &User{Owner: owner})
 	if err != nil {
 		panic(err)
 	}
@@ -137,6 +156,24 @@ func getUser(owner string, name string) *User {
 	}
 
 	user := User{Owner: owner, Name: name}
+	existed, err := adapter.Engine.Get(&user)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &user
+	} else {
+		return nil
+	}
+}
+
+func GetUserByEmail(owner string, email string) *User {
+	if owner == "" || email == "" {
+		return nil
+	}
+
+	user := User{Owner: owner, Email: email}
 	existed, err := adapter.Engine.Get(&user)
 	if err != nil {
 		panic(err)
