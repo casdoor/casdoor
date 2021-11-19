@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/astaxie/beego"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -42,7 +43,7 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 	claims := Claims{
 		User: *user,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "Casdoor",
+			Issuer:    beego.AppConfig.String("oidcOrigin"),
 			Subject:   user.Id,
 			Audience:  []string{application.ClientId},
 			ExpiresAt: jwt.NewNumericDate(expireTime),
