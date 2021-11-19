@@ -194,7 +194,7 @@ class ProviderTable extends React.Component {
       },
     ];
 
-    if (!this.props.application.enableSignUp || this.props.application.enablePassword) {
+    if (!this.props.application.enableSignUp) {
       columns = columns.filter(column => column.key !== "canSignUp");
     }
 
