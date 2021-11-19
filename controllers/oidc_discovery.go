@@ -20,3 +20,13 @@ func (c *ApiController) GetOidcDiscovery() {
 	c.Data["json"] = object.GetOidcDiscovery()
 	c.ServeJSON()
 }
+
+func (c *ApiController) GetOidcCert() {
+	jwks, err := object.GetJSONWebKeySet()
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.Data["json"] = jwks
+	c.ServeJSON()
+}

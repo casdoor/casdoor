@@ -119,4 +119,5 @@ func initAPI() {
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
 
 	beego.Router("/.well-known/openid-configuration", &controllers.ApiController{}, "GET:GetOidcDiscovery")
+	beego.Router("/api/certs",&controllers.ApiController{},"*:GetOidcCert")
 }
