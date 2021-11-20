@@ -166,7 +166,7 @@ func (c *ApiController) UploadResource() {
 	switch tag {
 	case "avatar":
 		if user == nil {
-			user = object.GetUser(username)
+			user = object.GetUserNoCheck(username)
 			if user == nil {
 				c.ResponseError("user is nil for tag: \"avatar\"")
 				return

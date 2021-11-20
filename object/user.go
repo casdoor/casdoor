@@ -200,6 +200,11 @@ func GetUser(id string) *User {
 	return getUser(owner, name)
 }
 
+func GetUserNoCheck(id string) *User {
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
+	return getUser(owner, name)
+}
+
 func GetMaskedUser(user *User) *User {
 	if user == nil {
 		return nil
@@ -233,7 +238,7 @@ func GetLastUser(owner string) *User {
 }
 
 func UpdateUser(id string, user *User) bool {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	oldUser := getUser(owner, name)
 	if oldUser == nil {
 		return false
