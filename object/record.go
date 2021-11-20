@@ -77,6 +77,10 @@ func AddRecord(record *Record) bool {
 		}
 	}
 
+	if record.Organization == "app" {
+		return false
+	}
+
 	record.Owner = record.Organization
 
 	errWebhook := SendWebhooks(record)

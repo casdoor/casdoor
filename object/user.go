@@ -246,7 +246,7 @@ func UpdateUser(id string, user *User) bool {
 
 	user.UpdateUserHash()
 
-	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
+	if user.Avatar != oldUser.Avatar && user.Avatar != "" && user.PermanentAvatar != "*" {
 		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
 	}
 

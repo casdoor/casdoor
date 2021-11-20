@@ -46,7 +46,7 @@ func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 	return fileUrl, objectKey
 }
 
-func UploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, string, error) {
+func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, string, error) {
 	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, provider.Endpoint)
 	if storageProvider == nil {
 		return "", "", fmt.Errorf("the provider type: %s is not supported", provider.Type)
@@ -64,6 +64,25 @@ func UploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 		return "", "", err
 	}
 
+	return fileUrl, objectKey, nil
+}
+
+func UploadFileSafe(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, string, error) {
+	var fileUrl string
+	var objectKey string
+	var err error
+	times := 0
+	for {
+		fileUrl, objectKey, err = uploadFile(provider, fullFilePath, fileBuffer)
+		if err != nil {
+			times += 1
+			if times >= 5 {
+				return "", "", err
+			}
+		} else {
+			break
+		}
+	}
 	return fileUrl, objectKey, nil
 }
 
