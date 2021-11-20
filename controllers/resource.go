@@ -111,6 +111,11 @@ func (c *ApiController) UploadResource() {
 	}
 	defer file.Close()
 
+	if username == "" || fullFilePath == "" {
+		c.ResponseError(fmt.Sprintf("username or fullFilePath is empty: username = %s, fullFilePath = %s", username, fullFilePath))
+		return
+	}
+
 	filename := filepath.Base(fullFilePath)
 	fileBuffer := bytes.NewBuffer(nil)
 	if _, err = io.Copy(fileBuffer, file); err != nil {
@@ -161,8 +166,11 @@ func (c *ApiController) UploadResource() {
 	switch tag {
 	case "avatar":
 		if user == nil {
-			c.ResponseError("user is nil for tag: \"avatar\"")
-			return
+			user = object.GetUser(username)
+			if user == nil {
+				c.ResponseError("user is nil for tag: \"avatar\"")
+				return
+			}
 		}
 
 		user.Avatar = fileUrl
