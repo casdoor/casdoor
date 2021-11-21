@@ -103,6 +103,8 @@ func (c *ApiController) UploadResource() {
 	tag := c.Input().Get("tag")
 	parent := c.Input().Get("parent")
 	fullFilePath := c.Input().Get("fullFilePath")
+	createdTime := c.Input().Get("createdTime")
+	description := c.Input().Get("description")
 
 	file, header, err := c.GetFile("file")
 	if err != nil {
@@ -144,12 +146,15 @@ func (c *ApiController) UploadResource() {
 		return
 	}
 
+	if createdTime == "" {
+		createdTime = util.GetCurrentTime()
+	}
 	fileFormat := filepath.Ext(fullFilePath)
 	fileSize := int(header.Size)
 	resource := &object.Resource{
 		Owner:       owner,
 		Name:        objectKey,
-		CreatedTime: util.GetCurrentTime(),
+		CreatedTime: createdTime,
 		User:        username,
 		Provider:    provider.Name,
 		Application: application,
@@ -160,6 +165,7 @@ func (c *ApiController) UploadResource() {
 		FileFormat:  fileFormat,
 		FileSize:    fileSize,
 		Url:         fileUrl,
+		Description: description,
 	}
 	object.AddOrUpdateResource(resource)
 

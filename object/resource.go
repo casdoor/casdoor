@@ -36,6 +36,7 @@ type Resource struct {
 	FileFormat  string `xorm:"varchar(100)" json:"fileFormat"`
 	FileSize    int    `json:"fileSize"`
 	Url         string `xorm:"varchar(1000)" json:"url"`
+	Description string `xorm:"varchar(1000)" json:"description"`
 }
 
 func GetResourceCount(owner string, user string) int {
