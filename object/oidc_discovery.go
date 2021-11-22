@@ -15,7 +15,11 @@
 package object
 
 import (
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
+
+	jose "gopkg.in/square/go-jose.v2"
 
 	"github.com/astaxie/beego"
 )
@@ -67,4 +71,21 @@ func init() {
 
 func GetOidcDiscovery() OidcDiscovery {
 	return oidcDiscovery
+}
+
+func GetJSONWebKeySet() (jose.JSONWebKeySet, error) {
+	//follows the protocol rfc 7517(draft)
+	//link here: https://self-issued.info/docs/draft-ietf-jose-json-web-key.html
+	//or https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key
+	certPEMBlock := []byte(tokenJwtPublicKey)
+	certDERBlock, _ := pem.Decode(certPEMBlock)
+	x509Cert, _ := x509.ParseCertificate(certDERBlock.Bytes)
+
+	var jwk jose.JSONWebKey
+	jwk.Key = x509Cert.PublicKey
+	jwk.Certificates = []*x509.Certificate{x509Cert}
+
+	var jwks jose.JSONWebKeySet
+	jwks.Keys = []jose.JSONWebKey{jwk}
+	return jwks, nil
 }
