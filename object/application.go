@@ -39,10 +39,10 @@ type Application struct {
 	ClientSecret   string   `xorm:"varchar(100)" json:"clientSecret"`
 	RedirectUris   []string `xorm:"varchar(1000)" json:"redirectUris"`
 	ExpireInHours  int      `json:"expireInHours"`
-	SignupUrl      string   `xorm:"varchar(100)" json:"signupUrl"`
-	SigninUrl      string   `xorm:"varchar(100)" json:"signinUrl"`
-	ForgetUrl      string   `xorm:"varchar(100)" json:"forgetUrl"`
-	AffiliationUrl string   `xorm:"varchar(100)" json:"affiliationUrl"`
+	SignupUrl      string   `xorm:"varchar(1000)" json:"signupUrl"`
+	SigninUrl      string   `xorm:"varchar(1000)" json:"signinUrl"`
+	ForgetUrl      string   `xorm:"varchar(1000)" json:"forgetUrl"`
+	AffiliationUrl string   `xorm:"varchar(1000)" json:"affiliationUrl"`
 	TermsOfUse     string   `xorm:"varchar(1000)" json:"termsOfUse"`
 	SignupHtml     string   `xorm:"mediumtext" json:"signupHtml"`
 	SigninHtml     string   `xorm:"mediumtext" json:"signinHtml"`
