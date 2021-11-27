@@ -15,6 +15,7 @@
 package object
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/astaxie/beego"
@@ -86,15 +87,13 @@ func AddRecord(record *Record) bool {
 	errWebhook := SendWebhooks(record)
 	if errWebhook == nil {
 		record.IsTriggered = true
+	} else {
+		fmt.Println(errWebhook)
 	}
 
 	affected, err := adapter.Engine.Insert(record)
 	if err != nil {
 		panic(err)
-	}
-
-	if errWebhook != nil {
-		panic(errWebhook)
 	}
 
 	return affected != 0
