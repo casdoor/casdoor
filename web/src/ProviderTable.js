@@ -38,7 +38,7 @@ class ProviderTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: "Please select a provider", canSignUp: true, canSignIn: true, canUnlink: true, alertType: "None"};
+    let row = {name: Setting.getNewRowNameForTable(table, "Please select a provider"), canSignUp: true, canSignIn: true, canUnlink: true, alertType: "None"};
     if (table === undefined) {
       table = [];
     }

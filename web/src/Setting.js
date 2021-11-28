@@ -526,6 +526,15 @@ export function getDeduplicatedArray(array, filterArray, key) {
   return res;
 }
 
+export function getNewRowNameForTable(table, rowName) {
+  const emptyCount = table.filter(row => row.name.includes(rowName)).length;
+  let res = rowName;
+  for (let i = 0; i < emptyCount; i ++) {
+    res = res + " ";
+  }
+  return res;
+}
+
 export function getTagColor(s) {
   return "success";
 }
