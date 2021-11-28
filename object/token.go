@@ -15,6 +15,7 @@
 package object
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/casbin/casdoor/util"
@@ -44,6 +45,7 @@ type Token struct {
 
 type TokenWrapper struct {
 	AccessToken string `json:"access_token"`
+	IDToken     string `json:"id_token"`
 	TokenType   string `json:"token_type"`
 	ExpiresIn   int    `json:"expires_in"`
 	Scope       string `json:"scope"`
@@ -216,7 +218,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string) *TokenWrapper {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string) (*TokenWrapper, error) {
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
 		return &TokenWrapper{
@@ -224,7 +226,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-		}
+		}, fmt.Errorf("error: invalid client_id")
 	}
 
 	if grantType != "authorization_code" {
@@ -233,7 +235,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-		}
+		}, fmt.Errorf("error: grant_type should be \"authorization_code\"")
 	}
 
 	if code == "" {
@@ -242,7 +244,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-		}
+		}, fmt.Errorf("error: code should not be empty")
 	}
 
 	token := getTokenByCode(code)
@@ -252,7 +254,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-		}
+		}, fmt.Errorf("error: invalid code")
 	}
 
 	if application.Name != token.Application {
@@ -261,7 +263,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-		}
+		}, fmt.Errorf("error: the token is for wrong application (client_id)")
 	}
 
 	if application.ClientSecret != clientSecret {
@@ -270,15 +272,16 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-		}
+		}, fmt.Errorf("error: invalid client_secret")
 	}
 
 	tokenWrapper := &TokenWrapper{
 		AccessToken: token.AccessToken,
+		IDToken:     token.AccessToken,
 		TokenType:   token.TokenType,
 		ExpiresIn:   token.ExpiresIn,
 		Scope:       token.Scope,
 	}
 
-	return tokenWrapper
+	return tokenWrapper, nil
 }

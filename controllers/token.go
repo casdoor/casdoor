@@ -145,11 +145,28 @@ func (c *ApiController) GetOAuthCode() {
 // @Success 200 {object} object.TokenWrapper The Response object
 // @router /login/oauth/access_token [post]
 func (c *ApiController) GetOAuthToken() {
-	grantType := c.Input().Get("grant_type")
-	clientId := c.Input().Get("client_id")
-	clientSecret := c.Input().Get("client_secret")
-	code := c.Input().Get("code")
 
-	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code)
+	var clientID, clientSecret string
+
+	clientIDInHeader, clientSecretInHeader, ok := c.Ctx.Request.BasicAuth()
+
+	if !ok || clientIDInHeader == "" || clientSecretInHeader == "" {
+		//client is trying to use post form to pass the id and secret
+
+		clientID = c.Input().Get("client_id")
+		clientSecret = c.Input().Get("client_secret")
+	} else {
+		//oauth clinet is trying to use RFC 2617 Auth Header to pass the id and secret
+
+		clientID = clientIDInHeader
+		clientSecret = clientSecretInHeader
+	}
+	grantType := c.Input().Get("grant_type")
+	code := c.Input().Get("code")
+	token, err := object.GetOAuthToken(grantType, clientID, clientSecret, code)
+	if err != nil {
+		c.Controller.Ctx.Output.SetStatus(400)
+	}
+	c.Data["json"] = token
 	c.ServeJSON()
 }
