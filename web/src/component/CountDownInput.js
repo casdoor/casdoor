@@ -137,11 +137,14 @@ export const CountDownInput = (props) => {
         visible={visible}
         okText={i18next.t("user:OK")}
         cancelText={i18next.t("user:Cancel")}
-        onCancel={handleCancel}
         onOk={handleOk}
+        onCancel={handleCancel}
+        okButtonProps={{disabled: key.length !== 5}}
         width={248}
       >
-        {renderCheck()}
+        {
+          renderCheck()
+        }
       </Modal>
     </div>
   );

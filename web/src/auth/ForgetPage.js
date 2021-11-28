@@ -495,46 +495,61 @@ class ForgetPage extends React.Component {
     }
 
     return (
-        <React.Fragment>
-          <Divider style={{ fontSize: "28px" }}>
-            {i18next.t("forget:Retrieve password")}
-          </Divider>
+      <Row>
+        <Col span={24} style={{justifyContent: "center"}}>
           <Row>
-            <Col span={24} style={{ display: "flex", justifyContent: "center" }}>
+            <Col span={24}>
+              <div style={{marginTop: "80px", marginBottom: "10px", textAlign: "center"}}>
+                {
+                  Setting.renderHelmet(application)
+                }
+                <CustomGithubCorner />
+                {
+                  Setting.renderLogo(application)
+                }
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <div style={{textAlign: "center", fontSize: "28px"}}>
+                {i18next.t("forget:Retrieve password")}
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
               <Steps
-                  current={this.state.current}
-                  style={{
-                    width: "90%",
-                    maxWidth: "500px",
-                    margin: "auto",
-                    marginTop: "80px",
-                  }}
+                current={this.state.current}
+                style={{
+                  width: "90%",
+                  maxWidth: "500px",
+                  margin: "auto",
+                  marginTop: "80px",
+                }}
               >
                 <Step
-                    title={i18next.t("forget:Account")}
-                    icon={<UserOutlined />}
+                  title={i18next.t("forget:Account")}
+                  icon={<UserOutlined />}
                 />
                 <Step
-                    title={i18next.t("forget:Verify")}
-                    icon={<SolutionOutlined />}
+                  title={i18next.t("forget:Verify")}
+                  icon={<SolutionOutlined />}
                 />
                 <Step
-                    title={i18next.t("forget:Reset")}
-                    icon={<KeyOutlined />}
+                  title={i18next.t("forget:Reset")}
+                  icon={<KeyOutlined />}
                 />
               </Steps>
             </Col>
           </Row>
-          <Row>
-            <Col span={24} style={{ display: "flex", justifyContent: "center" }}>
-              <div style={{ marginTop: "10px", textAlign: "center" }}>
-                {Setting.renderHelmet(application)}
-                {this.renderForm(application)}
-              </div>
-            </Col>
-          </Row>
-          <CustomGithubCorner />
-        </React.Fragment>
+        </Col>
+        <Col span={24} style={{ display: "flex", justifyContent: "center" }}>
+          <div style={{ marginTop: "10px", textAlign: "center" }}>
+            {this.renderForm(application)}
+          </div>
+        </Col>
+      </Row>
     );
   }
 }
