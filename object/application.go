@@ -24,16 +24,17 @@ type Application struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName     string          `xorm:"varchar(100)" json:"displayName"`
-	Logo            string          `xorm:"varchar(100)" json:"logo"`
-	HomepageUrl     string          `xorm:"varchar(100)" json:"homepageUrl"`
-	Description     string          `xorm:"varchar(100)" json:"description"`
-	Organization    string          `xorm:"varchar(100)" json:"organization"`
-	EnablePassword  bool            `json:"enablePassword"`
-	EnableSignUp    bool            `json:"enableSignUp"`
-	Providers       []*ProviderItem `xorm:"varchar(10000)" json:"providers"`
-	SignupItems     []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
-	OrganizationObj *Organization   `xorm:"-" json:"organizationObj"`
+	DisplayName      string          `xorm:"varchar(100)" json:"displayName"`
+	Logo             string          `xorm:"varchar(100)" json:"logo"`
+	HomepageUrl      string          `xorm:"varchar(100)" json:"homepageUrl"`
+	Description      string          `xorm:"varchar(100)" json:"description"`
+	Organization     string          `xorm:"varchar(100)" json:"organization"`
+	EnablePassword   bool            `json:"enablePassword"`
+	EnableSignUp     bool            `json:"enableSignUp"`
+	EnableCodeSignin bool            `json:"enableCodeSignin"`
+	Providers        []*ProviderItem `xorm:"varchar(10000)" json:"providers"`
+	SignupItems      []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
+	OrganizationObj  *Organization   `xorm:"-" json:"organizationObj"`
 
 	ClientId       string   `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret   string   `xorm:"varchar(100)" json:"clientSecret"`

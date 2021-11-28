@@ -35,6 +35,7 @@ import WeComLoginButton from "./WeComLoginButton";
 import LarkLoginButton from "./LarkLoginButton";
 import GitLabLoginButton from "./GitLabLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
+import {CountDownInput} from "../component/CountDownInput";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -45,7 +46,9 @@ class LoginPage extends React.Component {
       applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
       mode: props.mode !== undefined ? props.mode : (props.match === undefined ? null : props.match.params.mode), // "signup" or "signin"
+      isCodeSignin: false,
       msg: null,
+      username: null,
     };
   }
 
@@ -243,7 +246,7 @@ class LoginPage extends React.Component {
             autoSignin: true,
           }}
           onFinish={(values) => {this.onFinish(values)}}
-          style={{width: "250px"}}
+          style={{width: "300px"}}
           size="large"
         >
           <Form.Item
@@ -276,19 +279,38 @@ class LoginPage extends React.Component {
               prefix={<UserOutlined className="site-form-item-icon" />}
               placeholder={i18next.t("login:username, Email or phone")}
               disabled={!application.enablePassword}
+              onChange={e => {
+                this.setState({
+                  username: e.target.value,
+                });
+              }}
             />
           </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: i18next.t("login:Please input your password!") }]}
-          >
-            <Input
-              prefix={<LockOutlined className="site-form-item-icon" />}
-              type="password"
-              placeholder={i18next.t("login:Password")}
-              disabled={!application.enablePassword}
-            />
-          </Form.Item>
+          {
+            this.state.isCodeSignin ? (
+              <Form.Item
+                name="code"
+                rules={[{ required: true, message: i18next.t("login:Please input your code!") }]}
+              >
+                <CountDownInput
+                  disabled={this.state.username?.length === 0}
+                  onButtonClickArgs={[this.state.email, "email", Setting.getApplicationOrgName(application)]}
+                />
+              </Form.Item>
+            ) : (
+              <Form.Item
+                name="password"
+                rules={[{ required: true, message: i18next.t("login:Please input your password!") }]}
+              >
+                <Input
+                  prefix={<LockOutlined className="site-form-item-icon" />}
+                  type="password"
+                  placeholder={i18next.t("login:Password")}
+                  disabled={!application.enablePassword}
+                />
+              </Form.Item>
+            )
+          }
           <Form.Item>
             <Form.Item name="autoSignin" valuePropName="checked" noStyle>
               <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
@@ -370,14 +392,25 @@ class LoginPage extends React.Component {
       )
     } else {
       return (
-        <div style={{float: "right"}}>
-          {i18next.t("login:No account yet?")}&nbsp;
-          <a onClick={() => {
-            Setting.goToSignup(this, application);
-          }}>
-            {i18next.t("login:sign up now")}
-          </a>
-        </div>
+        <React.Fragment>
+          <span style={{float: "left"}}>
+            <a onClick={() => {
+              this.setState({
+                isCodeSignin: !this.state.isCodeSignin,
+              });
+            }}>
+              {this.state.isCodeSignin ? i18next.t("login:Sign in with password") : i18next.t("login:Sign in with code")}
+            </a>
+          </span>
+          <span style={{float: "right"}}>
+            {i18next.t("login:No account?")}&nbsp;
+            <a onClick={() => {
+              Setting.goToSignup(this, application);
+            }}>
+              {i18next.t("login:sign up now")}
+            </a>
+          </span>
+        </React.Fragment>
       )
     }
   }

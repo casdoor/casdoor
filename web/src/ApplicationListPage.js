@@ -57,6 +57,7 @@ class ApplicationListPage extends React.Component {
       logo: "https://cdn.casbin.com/logo/logo_1024x256.png",
       enablePassword: true,
       enableSignUp: true,
+      EnableCodeSignin: false,
       providers: [],
       signupItems: [
         {name: "ID", visible: false, required: true, rule: "Random"},
