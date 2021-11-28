@@ -17,7 +17,7 @@ package object
 import "github.com/casdoor/go-sms-sender"
 
 func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
-	client, err := go_sms_sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.RegionId, provider.TemplateCode, provider.AppId)
+	client, err := go_sms_sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.AppId)
 	if err != nil {
 		return err
 	}

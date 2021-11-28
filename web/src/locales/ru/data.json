@@ -38,6 +38,7 @@
   "forget": {
     "Account": "Account",
     "Change Password": "Change Password",
+    "Choose email or phone": "Choose email or phone",
     "Confirm": "Confirm",
     "Next Step": "Next Step",
     "Password": "Password",
@@ -219,8 +220,6 @@
     "Port - Tooltip": "Unique string-style identifier",
     "Provider URL": "Provider URL",
     "Provider URL - Tooltip": "Unique string-style identifier",
-    "Region": "Region",
-    "Region - Tooltip": "Storage region",
     "Region ID": "Region ID",
     "Region ID - Tooltip": "Region ID - Tooltip",
     "Secret access key": "Secret access key",
