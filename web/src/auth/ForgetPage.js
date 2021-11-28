@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Divider, Form, Select, Input, Row, Steps} from "antd";
+import {Button, Col, Form, Select, Input, Row, Steps} from "antd";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Util from "./Util";
@@ -174,13 +174,13 @@ class ForgetPage extends React.Component {
     if (this.state.phone !== "") {
       options.push(
         <Option key={"phone"} value={"phone"}>
-          {Setting.getMaskedPhone(this.state.phone)}
+          &nbsp;&nbsp;{Setting.getMaskedPhone(this.state.phone)}
         </Option>
       );
     } else if (this.state.email !== "") {
       options.push(
         <Option key={"email"} value={"email"}>
-          {Setting.getMaskedEmail(this.state.email)}
+          &nbsp;&nbsp;{Setting.getMaskedEmail(this.state.email)}
         </Option>
       );
     }
