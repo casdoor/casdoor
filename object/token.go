@@ -44,6 +44,7 @@ type Token struct {
 
 type TokenWrapper struct {
 	AccessToken string `json:"access_token"`
+	IdToken     string `json:"id_token"`
 	TokenType   string `json:"token_type"`
 	ExpiresIn   int    `json:"expires_in"`
 	Scope       string `json:"scope"`
@@ -275,6 +276,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	tokenWrapper := &TokenWrapper{
 		AccessToken: token.AccessToken,
+		IdToken:     token.AccessToken,
 		TokenType:   token.TokenType,
 		ExpiresIn:   token.ExpiresIn,
 		Scope:       token.Scope,

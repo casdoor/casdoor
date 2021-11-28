@@ -150,6 +150,10 @@ func (c *ApiController) GetOAuthToken() {
 	clientSecret := c.Input().Get("client_secret")
 	code := c.Input().Get("code")
 
+	if clientId == "" && clientSecret == "" {
+		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
+	}
+
 	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code)
 	c.ServeJSON()
 }
