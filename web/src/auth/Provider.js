@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import React from "react";
+import {Tooltip} from "antd";
 import * as Util from "./Util";
 import {StaticBaseUrl} from "../Setting";
 
@@ -127,6 +129,29 @@ export function getProviderUrl(provider) {
     return `${urlObj.protocol}//${host}`;
   } else {
     return otherProviderInfo[provider.category][provider.type].url;
+  }
+}
+
+export function getProviderLogoWidget(provider) {
+  if (provider === undefined) {
+    return null;
+  }
+
+  const url = getProviderUrl(provider);
+  if (url !== "") {
+    return (
+      <Tooltip title={provider.type}>
+        <a target="_blank" rel="noreferrer" href={getProviderUrl(provider)}>
+          <img width={36} height={36} src={getProviderLogo(provider)} alt={provider.displayName} />
+        </a>
+      </Tooltip>
+    )
+  } else {
+    return (
+      <Tooltip title={provider.type}>
+        <img width={36} height={36} src={getProviderLogo(provider)} alt={provider.displayName} />
+      </Tooltip>
+    )
   }
 }
 

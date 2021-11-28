@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table, Tooltip} from 'antd';
+import {Button, Popconfirm, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
@@ -146,22 +146,7 @@ class ProviderListPage extends React.Component {
         align: 'center',
         sorter: (a, b) => a.type.localeCompare(b.type),
         render: (text, record, index) => {
-          const url = Provider.getProviderUrl(record);
-          if (url !== "") {
-            return (
-              <Tooltip title={record.type}>
-                <a target="_blank" rel="noreferrer" href={Provider.getProviderUrl(record)}>
-                  <img width={36} height={36} src={Provider.getProviderLogo(record)} alt={record.displayName} />
-                </a>
-              </Tooltip>
-            )
-          } else {
-            return (
-              <Tooltip title={record.type}>
-                <img width={36} height={36} src={Provider.getProviderLogo(record)} alt={record.displayName} />
-              </Tooltip>
-            )
-          }
+          return Provider.getProviderLogoWidget(record);
         }
       },
       {
