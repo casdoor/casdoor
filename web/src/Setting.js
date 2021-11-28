@@ -499,7 +499,11 @@ function maskString(s) {
   }
 }
 
-export function maskEmail(email) {
+export function getMaskedPhone(s) {
+  return s.replace(/(\d{3})\d*(\d{4})/,'$1****$2');
+}
+
+export function getMaskedEmail(email) {
   if (email === "") return;
   const tokens = email.split("@");
   let username = tokens[0];

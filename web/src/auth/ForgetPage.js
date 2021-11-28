@@ -50,7 +50,7 @@ class ForgetPage extends React.Component {
       phone: "",
       emailCode: "",
       phoneCode: "",
-      verifyType: "", // "email" or "phone"
+      verifyType: null, // "email" or "phone"
       current: 0,
     };
   }
@@ -98,23 +98,36 @@ class ForgetPage extends React.Component {
                   username: username
               }).then((res) => {
                   if (res.status === "ok") {
-                      this.setState({phone: res.data.phone, email: res.data.email, username: res.data.name});
-                      switch (res.data2) {
-                          case "email":
-                              this.setState({isFixed: true, fixedContent: res.data.email, verifyType: "email"});
-                              break
-                          case "phone":
-                              this.setState({isFixed: true, fixedContent: res.data.phone, verifyType: "phone"});
-                              break
-                          default:
-                              break
-                      }
-                      if (this.state.isFixed) {
-                          forms.step2.setFieldsValue({email: this.state.fixedContent})
-                      }
-                      this.setState({current: 1})
+                    const phone = res.data.phone;
+                    const email = res.data.email;
+                    this.setState({phone: phone, email: email, username: res.data.name});
+
+                    if (phone !== "" && email === "") {
+                      this.setState({
+                        verifyType: "phone",
+                      });
+                    } else if (phone === "" && email !== "") {
+                      this.setState({
+                        verifyType: "email",
+                      });
+                    }
+
+                    switch (res.data2) {
+                      case "email":
+                        this.setState({isFixed: true, fixedContent: email, verifyType: "email"});
+                        break
+                      case "phone":
+                        this.setState({isFixed: true, fixedContent: phone, verifyType: "phone"});
+                        break
+                      default:
+                        break
+                    }
+                    if (this.state.isFixed) {
+                      forms.step2.setFieldsValue({email: this.state.fixedContent})
+                    }
+                    this.setState({current: 1})
                   } else {
-                      Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+                    Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
                   }
               });
               break;
@@ -154,6 +167,26 @@ class ForgetPage extends React.Component {
   }
 
   onFinishFailed(values, errorFields) {}
+
+  renderOptions() {
+    let options = [];
+
+    if (this.state.phone !== "") {
+      options.push(
+        <Option key={"phone"} value={"phone"}>
+          {Setting.getMaskedPhone(this.state.phone)}
+        </Option>
+      );
+    } else if (this.state.email !== "") {
+      options.push(
+        <Option key={"email"} value={"email"}>
+          {Setting.getMaskedEmail(this.state.email)}
+        </Option>
+      );
+    }
+
+    return options;
+  }
 
   renderForm(application) {
     return (
@@ -278,27 +311,20 @@ class ForgetPage extends React.Component {
                {
                   this.state.isFixed ? <Input disabled/> :
                      <Select
-                         disabled={this.state.username === ""}
-                         placeholder={i18next.t(
-                             "forget:Choose email verification or mobile verification"
-                         )}
-                         onChange={(value) => {
-                           if (value === this.state.phone) {
-                             this.setState({ verifyType: "phone" });
-                           }
-                           if (value === this.state.email) {
-                             this.setState({ verifyType: "email" });
-                           }
-                         }}
-                         allowClear
-                         style={{ textAlign: "left" }}
+                       key={this.state.verifyType}
+                       virtual={false} style={{textAlign: 'left'}}
+                       defaultValue={this.state.verifyType}
+                       disabled={this.state.username === ""}
+                       placeholder={i18next.t("forget:Choose email or phone")}
+                       onChange={(value) => {
+                         this.setState({
+                           verifyType: value,
+                         });
+                       }}
                      >
-                       <Option key={1} value={this.state.phone}>
-                         {this.state.phone.replace(/(\d{3})\d*(\d{4})/,'$1****$2')}
-                       </Option>
-                       <Option key={2} value={this.state.email}>
-                         {Setting.maskEmail(this.state.email)}
-                       </Option>
+                       {
+                         this.renderOptions()
+                       }
                      </Select>
                }
             </Form.Item>
