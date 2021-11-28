@@ -550,3 +550,7 @@ export function getTags(tags) {
   });
   return res;
 }
+
+export function getApplicationOrgName(application) {
+  return `${application?.organizationObj.owner}/${application?.organizationObj.name}`;
+}
