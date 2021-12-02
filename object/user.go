@@ -345,7 +345,7 @@ func AddUsers(users []*User) bool {
 	return affected != 0
 }
 
-func AddUsersSafe(users []*User) bool {
+func AddUsersInBatch(users []*User) bool {
 	batchSize := 1000
 
 	if len(users) == 0 {
