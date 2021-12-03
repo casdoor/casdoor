@@ -104,6 +104,12 @@ const otherProviderInfo = {
       url: "https://aliyun.com/product/oss",
     },
   },
+  SAML: {
+    "Aliyun IDaaS": {
+      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      url: "https://aliyun.com/product/idaas"
+    },
+  },
 };
 
 export function getProviderLogo(provider) {

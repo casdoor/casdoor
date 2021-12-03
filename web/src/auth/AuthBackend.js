@@ -76,3 +76,18 @@ export function unlink(values) {
     body: JSON.stringify(values),
   }).then(res => res.json());
 }
+
+export function getSamlLogin() {
+  return fetch(`${authConfig.serverUrl}/api/get-saml-login?id=admin/aliyun-idaas`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then(res => res.json());
+}
+
+export function loginWithSaml(values) {
+  return fetch(`${authConfig.serverUrl}/api/login`, {
+    method: 'POST',
+    credentials: "include",
+    body: JSON.stringify(values),
+  }).then(res => res.json());
+}

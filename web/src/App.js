@@ -53,6 +53,7 @@ import SelectLanguageBox from './SelectLanguageBox';
 import i18next from 'i18next';
 import PromptPage from "./auth/PromptPage";
 import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
+import SamlCallback from './auth/SamlCallback';
 
 const { Header, Footer } = Layout;
 
@@ -534,7 +535,8 @@ class App extends Component {
       window.location.pathname.startsWith("/login") ||
       window.location.pathname.startsWith("/callback") ||
       window.location.pathname.startsWith("/prompt") ||
-      window.location.pathname.startsWith("/forget");
+      window.location.pathname.startsWith("/forget") || 
+      window.location.pathname.startsWith("/saml/callback");
   }
 
   renderPage() {
@@ -547,6 +549,7 @@ class App extends Component {
           <Route exact path="/signup/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signup"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
           <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
           <Route exact path="/callback" component={AuthCallback}/>
+          <Route exact path="/saml/callback" component={SamlCallback}/>
           <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)}/>
           <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)}/>
           <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)}/>

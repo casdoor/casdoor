@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -210,44 +211,56 @@ func (c *ApiController) Login() {
 			return
 		}
 
-		idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
-		if idProvider == nil {
-			c.ResponseError(fmt.Sprintf("The provider type: %s is not supported", provider.Type))
-			return
-		}
+		userInfo := &idp.UserInfo{}
+		if provider.Category == "SAML" {
+			// SAML
+			userInfo.Id = object.ParseSamlResponse(form.SamlResponse)
+		} else if provider.Category == "OAuth" {
+			// OAuth
+			idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
+			if idProvider == nil {
+				c.ResponseError(fmt.Sprintf("The provider type: %s is not supported", provider.Type))
+				return
+			}
 
-		setHttpClient(idProvider, provider.Type)
+			setHttpClient(idProvider, provider.Type)
 
-		if form.State != beego.AppConfig.String("authState") && form.State != application.Name {
-			c.ResponseError(fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("authState"), form.State))
-			return
-		}
+			if form.State != beego.AppConfig.String("authState") && form.State != application.Name {
+				c.ResponseError(fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("authState"), form.State))
+				return
+			}
 
-		// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
-		token, err := idProvider.GetToken(form.Code)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
+			// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
+			token, err := idProvider.GetToken(form.Code)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 
-		if !token.Valid() {
-			c.ResponseError("Invalid token")
-			return
-		}
+			if !token.Valid() {
+				c.ResponseError("Invalid token")
+				return
+			}
 
-		userInfo, err := idProvider.GetUserInfo(token)
-		if err != nil {
-			c.ResponseError(fmt.Sprintf("Failed to login in: %s", err.Error()))
-			return
+			userInfo, err = idProvider.GetUserInfo(token)
+			if err != nil {
+				c.ResponseError(fmt.Sprintf("Failed to login in: %s", err.Error()))
+				return
+			}
 		}
 
 		if form.Method == "signup" {
-			user := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
-			if user == nil {
-				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
-			}
-			if user == nil {
-				user = object.GetUserByField(application.Organization, "name", userInfo.Username)
+			user := &object.User{}
+			if provider.Category == "SAML" {
+				user = object.GetUserByField(application.Organization, "id", userInfo.Id)
+			} else if provider.Category == "OAuth" {
+				user := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+				if user == nil {
+					user = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
+				}
+				if user == nil {
+					user = object.GetUserByField(application.Organization, "name", userInfo.Username)
+				}
 			}
 
 			if user != nil && user.IsDeleted == false {
@@ -263,7 +276,7 @@ func (c *ApiController) Login() {
 				record.Organization = application.Organization
 				record.User = user.Name
 				go object.AddRecord(record)
-			} else {
+			} else if provider.Category == "OAuth" {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
 					c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username, userInfo.DisplayName))
@@ -277,7 +290,7 @@ func (c *ApiController) Login() {
 
 				properties := map[string]string{}
 				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
-				user := &object.User{
+				user = &object.User{
 					Owner:             application.Organization,
 					Name:              userInfo.Username,
 					CreatedTime:       util.GetCurrentTime(),
@@ -295,10 +308,10 @@ func (c *ApiController) Login() {
 					SignupApplication: application.Name,
 					Properties:        properties,
 				}
-				object.AddUser(user)
-
 				// sync info from 3rd-party if possible
 				object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
+
+				object.AddUser(user)
 
 				object.LinkUserAccount(user, provider.Type, userInfo.Id)
 
@@ -308,6 +321,8 @@ func (c *ApiController) Login() {
 				record.Organization = application.Organization
 				record.User = user.Name
 				go object.AddRecord(record)
+			} else if provider.Category == "SAML" {
+				resp = &Response{Status: "error", Msg: "The account does not exist"}
 			}
 			//resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"
@@ -352,4 +367,18 @@ func (c *ApiController) Login() {
 
 	c.Data["json"] = resp
 	c.ServeJSON()
+}
+
+func (c *ApiController) GetSamlLogin() {
+	providerId := c.Input().Get("id")
+	authURL := object.GenerateSamlLoginUrl(providerId)
+	c.ResponseOk(authURL)
+}
+
+func (c *ApiController) HandleSamlLogin() {
+	relayState := c.Input().Get("RelayState")
+	samlResponse := c.Input().Get("SAMLResponse")
+	samlResponse = url.QueryEscape(samlResponse)
+	targetUrl := beego.AppConfig.String("samlRequestOrigin") + "/saml/callback?relayState=" + relayState + "&samlResponse=" + samlResponse
+	c.Redirect(targetUrl, 303)
 }

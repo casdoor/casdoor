@@ -95,6 +95,8 @@ p, *, *, POST, /api/reset-email-or-phone, *, *
 p, *, *, POST, /api/upload-resource, *, *
 p, *, *, GET, /.well-known/openid-configuration, *, *
 p, *, *, *, /api/certs, *, *
+p, *, *, GET, /api/get-saml-login, *, *
+p, *, *, POST, /api/acs, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

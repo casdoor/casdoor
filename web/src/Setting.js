@@ -66,7 +66,7 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (providerItem.provider.category !== "OAuth") {
+  if (providerItem.provider.category !== "OAuth" && providerItem.provider.category !== "SAML") {
     return false;
   }
 

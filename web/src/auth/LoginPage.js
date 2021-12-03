@@ -183,13 +183,28 @@ class LoginPage extends React.Component {
     return text;
   }
 
+  getSamlUrl() {
+    AuthBackend.getSamlLogin().then((res) => {
+      window.location.href = res.data
+    });
+  }
+
   renderProviderLogo(provider, application, width, margin, size) {
     if (size === "small") {
-      return (
-        <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-          <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
-        </a>
-      )
+      if (provider.category === "OAuth") {
+        return (
+          <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
+            <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
+          </a>
+        )
+      } else if (provider.category === "SAML") {
+        return (
+          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this)}>
+            <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
+          </a>
+        )
+      }
+      
     } else {
       return (
         <div key={provider.displayName} style={{marginBottom: "10px"}}>

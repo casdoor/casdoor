@@ -46,6 +46,8 @@ func initAPI() {
 	beego.Router("/api/logout", &controllers.ApiController{}, "POST:Logout")
 	beego.Router("/api/get-account", &controllers.ApiController{}, "GET:GetAccount")
 	beego.Router("/api/unlink", &controllers.ApiController{}, "POST:Unlink")
+	beego.Router("/api/get-saml-login", &controllers.ApiController{}, "GET:GetSamlLogin")
+	beego.Router("/api/acs", &controllers.ApiController{}, "POST:HandleSamlLogin")
 
 	beego.Router("/api/get-organizations", &controllers.ApiController{}, "GET:GetOrganizations")
 	beego.Router("/api/get-organization", &controllers.ApiController{}, "GET:GetOrganization")
@@ -119,5 +121,5 @@ func initAPI() {
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
 
 	beego.Router("/.well-known/openid-configuration", &controllers.ApiController{}, "GET:GetOidcDiscovery")
-	beego.Router("/api/certs",&controllers.ApiController{},"*:GetOidcCert")
+	beego.Router("/api/certs", &controllers.ApiController{}, "*:GetOidcCert")
 }

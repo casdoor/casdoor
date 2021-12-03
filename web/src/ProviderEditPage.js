@@ -102,6 +102,10 @@ class ProviderEditPage extends React.Component {
           {id: 'Aliyun OSS', name: 'Aliyun OSS'},
         ]
       );
+    } else if (provider.category === "SAML") {
+      return ([
+          {id: 'Aliyun IDaaS', name: 'Aliyun IDaaS'},
+      ]);
     } else {
       return [];
     }
@@ -201,6 +205,8 @@ class ProviderEditPage extends React.Component {
               } else if (value === "Storage") {
                 this.updateProviderField('type', 'Local File System');
                 this.updateProviderField('domain', Setting.getFullServerUrl());
+              } else if (value === "SAML") {
+                this.updateProviderField('type', 'Aliyun IDaaS');
               }
             })}>
               {
@@ -209,6 +215,7 @@ class ProviderEditPage extends React.Component {
                   {id: 'Email', name: 'Email'},
                   {id: 'SMS', name: 'SMS'},
                   {id: 'Storage', name: 'Storage'},
+                  {id: 'SAML', name: 'SAML'},
                 ].map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
               }
             </Select>
@@ -376,6 +383,39 @@ class ProviderEditPage extends React.Component {
                 <Col span={22} >
                   <Input value={this.state.provider.templateCode} onChange={e => {
                     this.updateProviderField('templateCode', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            </React.Fragment>
+          ) : this.state.provider.category === "SAML" ? (
+            <React.Fragment>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:SAML 2.0 Endpoint (HTTP)"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.endpoint} onChange={e => {
+                    this.updateProviderField('endpoint', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:IdP"), i18next.t("provider:IdP public key"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.idP} onChange={e => {
+                    this.updateProviderField('idP', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Issuer URL"), i18next.t("provider:Issuer URL - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.issuerUrl} onChange={e => {
+                    this.updateProviderField('issuerUrl', e.target.value);
                   }} />
                 </Col>
               </Row>
