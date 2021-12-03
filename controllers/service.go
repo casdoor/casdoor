@@ -27,6 +27,7 @@ import (
 
 // SendEmail
 // @Title SendEmail
+// @Tag Service API
 // @Description This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
 // @Param   clientId    query    string  true        "The clientId of the application"
 // @Param   clientSecret    query    string  true    "The clientSecret of the application"
@@ -81,6 +82,7 @@ func (c *ApiController) SendEmail() {
 
 // SendSms
 // @Title SendSms
+// @Tag Service API
 // @Description This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
 // @Param   clientId    query    string  true        "The clientId of the application"
 // @Param   clientSecret    query    string  true    "The clientSecret of the application"

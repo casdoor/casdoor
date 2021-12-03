@@ -31,10 +31,15 @@ func init() {
 
 func initAPI() {
 	ns :=
-		beego.NewNamespace("/api",
+		beego.NewNamespace("/",
 			beego.NSNamespace("/api",
 				beego.NSInclude(
 					&controllers.ApiController{},
+				),
+			),
+			beego.NSNamespace("",
+				beego.NSInclude(
+					&controllers.RootController{},
 				),
 			),
 		)
@@ -118,6 +123,6 @@ func initAPI() {
 	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
 
-	beego.Router("/.well-known/openid-configuration", &controllers.ApiController{}, "GET:GetOidcDiscovery")
-	beego.Router("/api/certs",&controllers.ApiController{},"*:GetOidcCert")
+	beego.Router("/.well-known/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscovery")
+	beego.Router("/api/certs", &controllers.RootController{}, "*:GetOidcCert")
 }

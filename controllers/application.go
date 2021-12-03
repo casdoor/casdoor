@@ -24,6 +24,7 @@ import (
 
 // GetApplications
 // @Title GetApplications
+// @Tag Application API
 // @Description get all applications
 // @Param   owner     query    string  true        "The owner of applications."
 // @Success 200 {array} object.Application The Response object
@@ -45,6 +46,7 @@ func (c *ApiController) GetApplications() {
 
 // GetApplication
 // @Title GetApplication
+// @Tag Application API
 // @Description get the detail of an application
 // @Param   id     query    string  true        "The id of the application."
 // @Success 200 {object} object.Application The Response object
@@ -58,6 +60,7 @@ func (c *ApiController) GetApplication() {
 
 // GetUserApplication
 // @Title GetUserApplication
+// @Tag Application API
 // @Description get the detail of the user's application
 // @Param   id     query    string  true        "The id of the user"
 // @Success 200 {object} object.Application The Response object
@@ -76,6 +79,7 @@ func (c *ApiController) GetUserApplication() {
 
 // UpdateApplication
 // @Title UpdateApplication
+// @Tag Application API
 // @Description update an application
 // @Param   id     query    string  true        "The id of the application"
 // @Param   body    body   object.Application  true        "The details of the application"
@@ -96,6 +100,7 @@ func (c *ApiController) UpdateApplication() {
 
 // AddApplication
 // @Title AddApplication
+// @Tag Application API
 // @Description add an application
 // @Param   body    body   object.Application  true        "The details of the application"
 // @Success 200 {object} controllers.Response The Response object
@@ -113,6 +118,7 @@ func (c *ApiController) AddApplication() {
 
 // DeleteApplication
 // @Title DeleteApplication
+// @Tag Application API
 // @Description delete an application
 // @Param   body    body   object.Application  true        "The details of the application"
 // @Success 200 {object} controllers.Response The Response object

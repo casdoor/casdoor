@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/util"
 )
@@ -43,6 +44,9 @@ type LdapSyncResp struct {
 	Failed []object.LdapRespUser `json:"failed"`
 }
 
+// @Tag Account API
+// @Title GetLdapser
+// @router /get-ldap-user [post]
 func (c *ApiController) GetLdapUser() {
 	ldapServer := LdapServer{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldapServer)
@@ -96,6 +100,9 @@ func (c *ApiController) GetLdapUser() {
 	c.ServeJSON()
 }
 
+// @Tag Account API
+// @Title GetLdaps
+// @router /get-ldaps [post]
 func (c *ApiController) GetLdaps() {
 	owner := c.Input().Get("owner")
 
@@ -103,6 +110,9 @@ func (c *ApiController) GetLdaps() {
 	c.ServeJSON()
 }
 
+// @Tag Account API
+// @Title GetLdap
+// @router /get-ldap [post]
 func (c *ApiController) GetLdap() {
 	id := c.Input().Get("id")
 
@@ -115,6 +125,9 @@ func (c *ApiController) GetLdap() {
 	c.ServeJSON()
 }
 
+// @Tag Account API
+// @Title AddLdap
+// @router /add-ldap [post]
 func (c *ApiController) AddLdap() {
 	var ldap object.Ldap
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
@@ -143,6 +156,9 @@ func (c *ApiController) AddLdap() {
 	c.ServeJSON()
 }
 
+// @Tag Account API
+// @Title UpdateLdap
+// @router /update-ldap [post]
 func (c *ApiController) UpdateLdap() {
 	var ldap object.Ldap
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
@@ -161,6 +177,9 @@ func (c *ApiController) UpdateLdap() {
 	c.ServeJSON()
 }
 
+// @Tag Account API
+// @Title DeleteLdap
+// @router /delete-ldap [post]
 func (c *ApiController) DeleteLdap() {
 	var ldap object.Ldap
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
@@ -172,6 +191,9 @@ func (c *ApiController) DeleteLdap() {
 	c.ServeJSON()
 }
 
+// @Tag Account API
+// @Title SyncLdapUsers
+// @router /sync-ldap-users [post]
 func (c *ApiController) SyncLdapUsers() {
 	owner := c.Input().Get("owner")
 	ldapId := c.Input().Get("ldapId")
@@ -191,6 +213,9 @@ func (c *ApiController) SyncLdapUsers() {
 	c.ServeJSON()
 }
 
+// @Tag Account API
+// @Title CheckLdapUserExist
+// @router /check-ldap-users-exist [post]
 func (c *ApiController) CheckLdapUsersExist() {
 	owner := c.Input().Get("owner")
 	var uuids []string
