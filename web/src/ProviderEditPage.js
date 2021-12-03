@@ -100,6 +100,7 @@ class ProviderEditPage extends React.Component {
           {id: 'Local File System', name: 'Local File System'},
           {id: 'AWS S3', name: 'AWS S3'},
           {id: 'Aliyun OSS', name: 'Aliyun OSS'},
+          {id: 'Tencent Cloud COS', name: 'Tencent Cloud COS'},
         ]
       );
     } else {
@@ -299,7 +300,7 @@ class ProviderEditPage extends React.Component {
                 }} />
               </Col>
             </Row>
-            {this.state.provider.type === "AWSS3" ? (
+            {this.state.provider.type === "AWS S3" || this.state.provider.type === "Tencent Cloud COS" ? (
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Region ID"), i18next.t("provider:Region ID - Tooltip"))} :
