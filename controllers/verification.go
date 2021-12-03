@@ -35,6 +35,9 @@ func (c *ApiController) getCurrentUser() *object.User {
 }
 
 // SendVerificationCode ...
+// @Title SendVerificationCode
+// @Tag Verification API
+// @router /send-verification-code [post] 
 func (c *ApiController) SendVerificationCode() {
 	destType := c.Ctx.Request.Form.Get("type")
 	dest := c.Ctx.Request.Form.Get("dest")
@@ -100,6 +103,9 @@ func (c *ApiController) SendVerificationCode() {
 }
 
 // ResetEmailOrPhone ...
+// @Tag Account API
+// @Title ResetEmailOrPhone
+// @router /api/reset-email-or-phone [post]
 func (c *ApiController) ResetEmailOrPhone() {
 	userId, ok := c.RequireSignedIn()
 	if !ok {

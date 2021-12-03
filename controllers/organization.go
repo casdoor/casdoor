@@ -24,6 +24,7 @@ import (
 
 // GetOrganizations ...
 // @Title GetOrganizations
+// @Tag Organization API
 // @Description get organizations
 // @Param   owner     query    string  true        "owner"
 // @Success 200 {array} object.Organization The Response object
@@ -45,6 +46,7 @@ func (c *ApiController) GetOrganizations() {
 
 // GetOrganization ...
 // @Title GetOrganization
+// @Tag Organization API
 // @Description get organization
 // @Param   id     query    string  true        "organization id"
 // @Success 200 {object} object.Organization The Response object
@@ -58,6 +60,7 @@ func (c *ApiController) GetOrganization() {
 
 // UpdateOrganization ...
 // @Title UpdateOrganization
+// @Tag Organization API
 // @Description update organization
 // @Param   id     query    string  true        "The id of the organization"
 // @Param   body    body   object.Organization  true        "The details of the organization"
@@ -78,6 +81,7 @@ func (c *ApiController) UpdateOrganization() {
 
 // AddOrganization ...
 // @Title AddOrganization
+// @Tag Organization API
 // @Description add organization
 // @Param   body    body   object.Organization  true        "The details of the organization"
 // @Success 200 {object} controllers.Response The Response object
@@ -95,6 +99,7 @@ func (c *ApiController) AddOrganization() {
 
 // DeleteOrganization ...
 // @Title DeleteOrganization
+// @Tag Organization API
 // @Description delete organization
 // @Param   body    body   object.Organization  true        "The details of the organization"
 // @Success 200 {object} controllers.Response The Response object

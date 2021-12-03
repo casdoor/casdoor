@@ -27,6 +27,9 @@ import (
 	"github.com/casbin/casdoor/util"
 )
 
+// @router /get-resources [get]
+// @Tag Resource API
+// @Title GetResources
 func (c *ApiController) GetResources() {
 	owner := c.Input().Get("owner")
 	user := c.Input().Get("user")
@@ -43,6 +46,9 @@ func (c *ApiController) GetResources() {
 	}
 }
 
+// @Tag Resource API
+// @Title GetResource
+// @router /get-resource [get]
 func (c *ApiController) GetResource() {
 	id := c.Input().Get("id")
 
@@ -50,6 +56,9 @@ func (c *ApiController) GetResource() {
 	c.ServeJSON()
 }
 
+// @Tag Resource API
+// @Title UpdateResource
+// @router /update-resource [post]
 func (c *ApiController) UpdateResource() {
 	id := c.Input().Get("id")
 
@@ -63,6 +72,9 @@ func (c *ApiController) UpdateResource() {
 	c.ServeJSON()
 }
 
+// @Tag Resource API
+// @Title AddResource
+// @router /add-resource [post]
 func (c *ApiController) AddResource() {
 	var resource object.Resource
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
@@ -74,6 +86,9 @@ func (c *ApiController) AddResource() {
 	c.ServeJSON()
 }
 
+// @Tag Resource API
+// @Title DeleteResource
+// @router /delete-resource [post]
 func (c *ApiController) DeleteResource() {
 	var resource object.Resource
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
@@ -96,6 +111,9 @@ func (c *ApiController) DeleteResource() {
 	c.ServeJSON()
 }
 
+// @Tag Resource API
+// @Title UploadResource
+// @router /upload-resource [post]
 func (c *ApiController) UploadResource() {
 	owner := c.Input().Get("owner")
 	username := c.Input().Get("user")
