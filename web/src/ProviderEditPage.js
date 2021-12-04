@@ -272,11 +272,21 @@ class ProviderEditPage extends React.Component {
           <div>
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Endpoint - Tooltip"))} :
+                {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Region endpoint for Internet"))} :
               </Col>
               <Col span={22} >
                 <Input value={this.state.provider.endpoint} onChange={e => {
                   this.updateProviderField('endpoint', e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={2}>
+                {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.provider.intranetEndpoint} onChange={e => {
+                  this.updateProviderField('intranetEndpoint', e.target.value);
                 }} />
               </Col>
             </Row>

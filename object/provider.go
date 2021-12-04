@@ -43,9 +43,10 @@ type Provider struct {
 	TemplateCode string `xorm:"varchar(100)" json:"templateCode"`
 	AppId        string `xorm:"varchar(100)" json:"appId"`
 
-	Endpoint string `xorm:"varchar(100)" json:"endpoint"`
-	Domain   string `xorm:"varchar(100)" json:"domain"`
-	Bucket   string `xorm:"varchar(100)" json:"bucket"`
+	Endpoint         string `xorm:"varchar(100)" json:"endpoint"`
+	IntranetEndpoint string `xorm:"varchar(100)" json:"intranetEndpoint"`
+	Domain           string `xorm:"varchar(100)" json:"domain"`
+	Bucket           string `xorm:"varchar(100)" json:"bucket"`
 
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
 }
