@@ -23,10 +23,9 @@ import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import moment from "moment";
 
-export let ServerUrl = "";
+export const ServerUrl = process.env.REACT_APP_BACKEND_URL;
 
-// export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
-export const StaticBaseUrl = "https://cdn.casbin.org";
+export const StaticBaseUrl = process.env.REACT_APP_STATIC_BASE_URL;
 
 // https://catamphetamine.gitlab.io/country-flag-icons/3x2/index.html
 export const CountryRegionData = getCountryRegionData()
@@ -36,29 +35,14 @@ export function getCountryRegionData() {
   countries.registerLocale(require("i18n-iso-countries/langs/" + i18next.language + ".json"));
   var data = countries.getNames(i18next.language, {select: "official"});
   var result = []
-  for (var i in data) 
+  for (var i in data)
     result.push({code:i, name:data[i]})
   return result
-}
-
-export function initServerUrl() {
-  const hostname = window.location.hostname;
-  if (hostname === "localhost") {
-    ServerUrl = `http://${hostname}:8000`;
-  }
 }
 
 export function isLocalhost() {
   const hostname = window.location.hostname;
   return hostname === "localhost";
-}
-
-export function getFullServerUrl() {
-  let fullServerUrl = window.location.origin;
-  if (fullServerUrl === "http://localhost:7001") {
-    fullServerUrl = "http://localhost:8000";
-  }
-  return fullServerUrl;
 }
 
 export function isProviderVisible(providerItem) {

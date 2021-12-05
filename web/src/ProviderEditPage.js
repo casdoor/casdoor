@@ -201,7 +201,7 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField('type', 'Aliyun SMS');
               } else if (value === "Storage") {
                 this.updateProviderField('type', 'Local File System');
-                this.updateProviderField('domain', Setting.getFullServerUrl());
+                this.updateProviderField('domain', Setting.ServerUrl);
               }
             })}>
               {
@@ -223,7 +223,7 @@ class ProviderEditPage extends React.Component {
             <Select virtual={false} style={{width: '100%'}} value={this.state.provider.type} onChange={(value => {
               this.updateProviderField('type', value);
               if (value === "Local File System") {
-                this.updateProviderField('domain', Setting.getFullServerUrl());
+                this.updateProviderField('domain', Setting.ServerUrl);
               }
             })}>
               {

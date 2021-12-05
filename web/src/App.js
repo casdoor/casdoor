@@ -65,13 +65,6 @@ class App extends Component {
       account: undefined,
       uri: null,
     };
-
-    Setting.initServerUrl();
-    Auth.initAuthWithConfig({
-      serverUrl: Setting.ServerUrl,
-      appName: "app-built-in",
-      organizationName: "built-in",
-    });
   }
 
   UNSAFE_componentWillMount() {
@@ -367,7 +360,7 @@ class App extends Component {
       );
       res.push(
         <Menu.Item key="/swagger">
-          <a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
+          <a target="_blank" rel="noreferrer" href={`${Setting.ServerUrl}/swagger`}>
             {i18next.t("general:Swagger")}
           </a>
         </Menu.Item>
