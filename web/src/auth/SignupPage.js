@@ -344,7 +344,8 @@ class SignupPage extends React.Component {
           rules={[
             {
               required: required,
-              message: i18next.t("login:Please input your password!"),
+              min: 6,
+              message: i18next.t("login:Please input your password, at least 6 characters!"),
             },
           ]}
           hasFeedback
