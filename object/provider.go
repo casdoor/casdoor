@@ -47,6 +47,7 @@ type Provider struct {
 	Domain   string `xorm:"varchar(100)" json:"domain"`
 	Bucket   string `xorm:"varchar(100)" json:"bucket"`
 
+	Metadata  string `xorm:"mediumtext" json:"metadata"`
 	IdP       string `xorm:"mediumtext" json:"idP"`
 	IssuerUrl string `xorm:"varchar(100)" json:"issuerUrl"`
 
