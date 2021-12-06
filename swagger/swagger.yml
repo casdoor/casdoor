@@ -5,12 +5,17 @@ info:
   version: 1.0.0
   contact:
     email: admin@casbin.org
-basePath: /api
+basePath: /
 paths:
+  /.well-known/openid-configuration:
+    get:
+      tags:
+      - OIDC API
+      operationId: RootController.GetOidcDiscovery
   /api/add-application:
     post:
       tags:
-      - api
+      - Application API
       description: add an application
       operationId: ApiController.AddApplication
       parameters:
@@ -25,10 +30,15 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/add-ldap:
+    post:
+      tags:
+      - Account API
+      operationId: ApiController.AddLdap
   /api/add-organization:
     post:
       tags:
-      - api
+      - Organization API
       description: add organization
       operationId: ApiController.AddOrganization
       parameters:
@@ -46,7 +56,7 @@ paths:
   /api/add-provider:
     post:
       tags:
-      - api
+      - Provider API
       description: add provider
       operationId: ApiController.AddProvider
       parameters:
@@ -61,10 +71,15 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/add-resource:
+    post:
+      tags:
+      - Resource API
+      operationId: ApiController.AddResource
   /api/add-token:
     post:
       tags:
-      - api
+      - Token API
       description: add token
       operationId: ApiController.AddToken
       parameters:
@@ -82,7 +97,7 @@ paths:
   /api/add-user:
     post:
       tags:
-      - api
+      - User API
       description: add user
       operationId: ApiController.AddUser
       parameters:
@@ -100,7 +115,7 @@ paths:
   /api/add-webhook:
     post:
       tags:
-      - api
+      - Webhook API
       description: add webhook
       operationId: ApiController.AddWebhook
       parameters:
@@ -115,12 +130,21 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/api/get-human-check:
+    get:
+      tags:
+      - Login API
+      operationId: ApiController.GetHumancheck
+  /api/api/reset-email-or-phone:
+    post:
+      tags:
+      - Account API
+      operationId: ApiController.ResetEmailOrPhone
   /api/api/send-email:
     post:
       tags:
-      - api
-      description: This API is not for Casdoor frontend to call, it is for Casdoor
-        SDKs.
+      - Service API
+      description: This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
       operationId: ApiController.SendEmail
       parameters:
       - in: query
@@ -147,9 +171,8 @@ paths:
   /api/api/send-sms:
     post:
       tags:
-      - api
-      description: This API is not for Casdoor frontend to call, it is for Casdoor
-        SDKs.
+      - Service API
+      description: This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
       operationId: ApiController.SendSms
       parameters:
       - in: query
@@ -173,10 +196,25 @@ paths:
           description: object
           schema:
             $ref: '#/definitions/Response'
+  /api/certs:
+    get:
+      tags:
+      - OIDC API
+      operationId: RootController.GetOidcCert
+  /api/check-ldap-users-exist:
+    post:
+      tags:
+      - Account API
+      operationId: ApiController.CheckLdapUserExist
+  /api/check-user-password:
+    post:
+      tags:
+      - User API
+      operationId: ApiController.CheckUserPassword
   /api/delete-application:
     post:
       tags:
-      - api
+      - Application API
       description: delete an application
       operationId: ApiController.DeleteApplication
       parameters:
@@ -191,10 +229,15 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/delete-ldap:
+    post:
+      tags:
+      - Account API
+      operationId: ApiController.DeleteLdap
   /api/delete-organization:
     post:
       tags:
-      - api
+      - Organization API
       description: delete organization
       operationId: ApiController.DeleteOrganization
       parameters:
@@ -212,7 +255,7 @@ paths:
   /api/delete-provider:
     post:
       tags:
-      - api
+      - Provider API
       description: delete provider
       operationId: ApiController.DeleteProvider
       parameters:
@@ -227,10 +270,15 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/delete-resource:
+    post:
+      tags:
+      - Resource API
+      operationId: ApiController.DeleteResource
   /api/delete-token:
     post:
       tags:
-      - api
+      - Token API
       description: delete token
       operationId: ApiController.DeleteToken
       parameters:
@@ -248,7 +296,7 @@ paths:
   /api/delete-user:
     post:
       tags:
-      - api
+      - User API
       description: delete user
       operationId: ApiController.DeleteUser
       parameters:
@@ -266,7 +314,7 @@ paths:
   /api/delete-webhook:
     post:
       tags:
-      - api
+      - Webhook API
       description: delete webhook
       operationId: ApiController.DeleteWebhook
       parameters:
@@ -284,7 +332,7 @@ paths:
   /api/get-account:
     get:
       tags:
-      - api
+      - Account API
       description: get the details of the current account
       operationId: ApiController.GetAccount
       responses:
@@ -295,7 +343,7 @@ paths:
   /api/get-application:
     get:
       tags:
-      - api
+      - Application API
       description: get the detail of an application
       operationId: ApiController.GetApplication
       parameters:
@@ -312,7 +360,7 @@ paths:
   /api/get-applications:
     get:
       tags:
-      - api
+      - Application API
       description: get all applications
       operationId: ApiController.GetApplications
       parameters:
@@ -331,7 +379,7 @@ paths:
   /api/get-email-and-phone:
     post:
       tags:
-      - api
+      - User API
       description: get email and phone by username
       operationId: ApiController.GetEmailAndPhone
       parameters:
@@ -353,7 +401,7 @@ paths:
   /api/get-global-users:
     get:
       tags:
-      - api
+      - User API
       description: get global users
       operationId: ApiController.GetGlobalUsers
       responses:
@@ -363,10 +411,25 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.User'
+  /api/get-ldap:
+    post:
+      tags:
+      - Account API
+      operationId: ApiController.GetLdap
+  /api/get-ldap-user:
+    post:
+      tags:
+      - Account API
+      operationId: ApiController.GetLdapser
+  /api/get-ldaps:
+    post:
+      tags:
+      - Account API
+      operationId: ApiController.GetLdaps
   /api/get-organization:
     get:
       tags:
-      - api
+      - Organization API
       description: get organization
       operationId: ApiController.GetOrganization
       parameters:
@@ -383,7 +446,7 @@ paths:
   /api/get-organizations:
     get:
       tags:
-      - api
+      - Organization API
       description: get organizations
       operationId: ApiController.GetOrganizations
       parameters:
@@ -402,7 +465,7 @@ paths:
   /api/get-provider:
     get:
       tags:
-      - api
+      - Provider API
       description: get provider
       operationId: ApiController.GetProvider
       parameters:
@@ -419,7 +482,7 @@ paths:
   /api/get-providers:
     get:
       tags:
-      - api
+      - Provider API
       description: get providers
       operationId: ApiController.GetProviders
       parameters:
@@ -438,7 +501,7 @@ paths:
   /api/get-records:
     get:
       tags:
-      - api
+      - Record API
       description: get all records
       operationId: ApiController.GetRecords
       parameters:
@@ -462,7 +525,7 @@ paths:
   /api/get-records-filter:
     post:
       tags:
-      - api
+      - Record API
       description: get records by filter
       operationId: ApiController.GetRecordsByFilter
       parameters:
@@ -479,10 +542,48 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Records'
+  /api/get-resource:
+    get:
+      tags:
+      - Resource API
+      operationId: ApiController.GetResource
+  /api/get-resources:
+    get:
+      tags:
+      - Resource API
+      operationId: ApiController.GetResources
+  /api/get-sorted-users:
+    get:
+      tags:
+      - User API
+      operationId: ApiController.GetSortedUsers
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of users
+        required: true
+        type: string
+      - in: query
+        name: sorter
+        description: The DB column name to sort by, e.g., created_time
+        required: true
+        type: string
+      - in: query
+        name: limit
+        description: The count of users to return, e.g., 25
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.User'
   /api/get-token:
     get:
       tags:
-      - api
+      - Token API
       description: get token
       operationId: ApiController.GetToken
       parameters:
@@ -499,7 +600,7 @@ paths:
   /api/get-tokens:
     get:
       tags:
-      - api
+      - Token API
       description: get tokens
       operationId: ApiController.GetTokens
       parameters:
@@ -528,7 +629,7 @@ paths:
   /api/get-user:
     get:
       tags:
-      - api
+      - User API
       description: get user
       operationId: ApiController.GetUser
       parameters:
@@ -545,7 +646,7 @@ paths:
   /api/get-user-application:
     get:
       tags:
-      - api
+      - Application API
       description: get the detail of the user's application
       operationId: ApiController.GetUserApplication
       parameters:
@@ -559,10 +660,29 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.Application'
+  /api/get-user-count:
+    get:
+      tags:
+      - User API
+      operationId: ApiController.GetUserCount
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of users
+        required: true
+        type: string
+      - in: query
+        name: isOnline
+        description: The filter for query, 1 for online, 0 for offline, empty string for all users
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{int} int The count of filtered users for an organization'
   /api/get-users:
     get:
       tags:
-      - api
+      - User API
       operationId: ApiController.GetUsers
       parameters:
       - in: query
@@ -580,7 +700,7 @@ paths:
   /api/get-webhook:
     get:
       tags:
-      - api
+      - Webhook API
       description: get webhook
       operationId: ApiController.GetWebhook
       parameters:
@@ -597,7 +717,7 @@ paths:
   /api/get-webhooks:
     get:
       tags:
-      - api
+      - Webhook API
       description: get webhooks
       operationId: ApiController.GetWebhooks
       parameters:
@@ -616,7 +736,7 @@ paths:
   /api/login:
     post:
       tags:
-      - api
+      - Login API
       description: login
       operationId: ApiController.Login
       parameters:
@@ -639,7 +759,7 @@ paths:
   /api/login/oauth/access_token:
     post:
       tags:
-      - api
+      - Token API
       description: get OAuth access token
       operationId: ApiController.GetOAuthToken
       parameters:
@@ -671,7 +791,7 @@ paths:
   /api/login/oauth/code:
     post:
       tags:
-      - api
+      - Token API
       description: get OAuth code
       operationId: ApiController.GetOAuthCode
       parameters:
@@ -713,7 +833,7 @@ paths:
   /api/logout:
     post:
       tags:
-      - api
+      - Login API
       description: logout the current user
       operationId: ApiController.Logout
       responses:
@@ -721,10 +841,15 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/send-verification-code:
+    post:
+      tags:
+      - Verification API
+      operationId: ApiController.SendVerificationCode
   /api/set-password:
     post:
       tags:
-      - api
+      - Account API
       description: set password
       operationId: ApiController.SetPassword
       parameters:
@@ -756,7 +881,7 @@ paths:
   /api/signup:
     post:
       tags:
-      - api
+      - Login API
       description: sign up a new user
       operationId: ApiController.Signup
       parameters:
@@ -775,10 +900,19 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/sync-ldap-users:
+    post:
+      tags:
+      - Account API
+      operationId: ApiController.SyncLdapUsers
+  /api/unlink:
+    post:
+      tags:
+      - Login API
   /api/update-application:
     get:
       tags:
-      - api
+      - Login API
       description: get application login
       operationId: ApiController.GetApplicationLogin
       parameters:
@@ -814,7 +948,7 @@ paths:
             $ref: '#/definitions/controllers.api_controller.Response'
     post:
       tags:
-      - api
+      - Application API
       description: update an application
       operationId: ApiController.UpdateApplication
       parameters:
@@ -834,10 +968,15 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/update-ldap:
+    post:
+      tags:
+      - Account API
+      operationId: ApiController.UpdateLdap
   /api/update-organization:
     post:
       tags:
-      - api
+      - Organization API
       description: update organization
       operationId: ApiController.UpdateOrganization
       parameters:
@@ -860,7 +999,7 @@ paths:
   /api/update-provider:
     post:
       tags:
-      - api
+      - Provider API
       description: update provider
       operationId: ApiController.UpdateProvider
       parameters:
@@ -880,10 +1019,15 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/update-resource:
+    post:
+      tags:
+      - Resource API
+      operationId: ApiController.UpdateResource
   /api/update-token:
     post:
       tags:
-      - api
+      - Token API
       description: update token
       operationId: ApiController.UpdateToken
       parameters:
@@ -906,7 +1050,7 @@ paths:
   /api/update-user:
     post:
       tags:
-      - api
+      - User API
       description: update user
       operationId: ApiController.UpdateUser
       parameters:
@@ -929,7 +1073,7 @@ paths:
   /api/update-webhook:
     post:
       tags:
-      - api
+      - Webhook API
       description: update webhook
       operationId: ApiController.UpdateWebhook
       parameters:
@@ -949,11 +1093,16 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/upload-resource:
+    post:
+      tags:
+      - Resource API
+      operationId: ApiController.UploadResource
 definitions:
-  1773.0xc000093bf0.false:
+  1713.0xc000393f50.false:
     title: "false"
     type: object
-  1808.0xc000093c20.false:
+  1747.0xc000393f80.false:
     title: "false"
     type: object
   RequestForm:
@@ -967,9 +1116,9 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/1773.0xc000093bf0.false'
+        $ref: '#/definitions/1713.0xc000393f50.false'
       data2:
-        $ref: '#/definitions/1808.0xc000093c20.false'
+        $ref: '#/definitions/1747.0xc000393f80.false'
       msg:
         type: string
       status:
@@ -979,9 +1128,9 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/1773.0xc000093bf0.false'
+        $ref: '#/definitions/1713.0xc000393f50.false'
       data2:
-        $ref: '#/definitions/1808.0xc000093c20.false'
+        $ref: '#/definitions/1747.0xc000393f80.false'
       msg:
         type: string
       status:
@@ -1005,6 +1154,8 @@ definitions:
         type: string
       displayName:
         type: string
+      enableCodeSignin:
+        type: boolean
       enablePassword:
         type: boolean
       enableSignUp:
@@ -1194,6 +1345,8 @@ definitions:
       expires_in:
         type: integer
         format: int64
+      id_token:
+        type: string
       scope:
         type: string
       token_type:
@@ -1212,15 +1365,23 @@ definitions:
         type: string
       bio:
         type: string
+      birthday:
+        type: string
+      createdIp:
+        type: string
       createdTime:
         type: string
       dingtalk:
         type: string
       displayName:
         type: string
+      education:
+        type: string
       email:
         type: string
       facebook:
+        type: string
+      gender:
         type: string
       gitee:
         type: string
@@ -1236,7 +1397,13 @@ definitions:
         type: string
       id:
         type: string
+      idCard:
+        type: string
+      idCardType:
+        type: string
       isAdmin:
+        type: boolean
+      isDefaultAvatar:
         type: boolean
       isDeleted:
         type: boolean
@@ -1249,6 +1416,10 @@ definitions:
       language:
         type: string
       lark:
+        type: string
+      lastSigninIp:
+        type: string
+      lastSigninTime:
         type: string
       ldap:
         type: string

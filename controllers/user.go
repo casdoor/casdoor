@@ -27,6 +27,7 @@ import (
 
 // GetGlobalUsers
 // @Title GetGlobalUsers
+// @Tag User API
 // @Description get global users
 // @Success 200 {array} object.User The Response object
 // @router /get-global-users [get]
@@ -46,6 +47,7 @@ func (c *ApiController) GetGlobalUsers() {
 
 // GetUsers
 // @Title GetUsers
+// @Tag User API
 // @Description
 // @Param   owner     query    string  true        "The owner of users"
 // @Success 200 {array} object.User The Response object
@@ -67,6 +69,7 @@ func (c *ApiController) GetUsers() {
 
 // GetUser
 // @Title GetUser
+// @Tag User API
 // @Description get user
 // @Param   id     query    string  true        "The id of the user"
 // @Success 200 {object} object.User The Response object
@@ -89,6 +92,7 @@ func (c *ApiController) GetUser() {
 
 // UpdateUser
 // @Title UpdateUser
+// @Tag User API
 // @Description update user
 // @Param   id     query    string  true        "The id of the user"
 // @Param   body    body   object.User  true        "The details of the user"
@@ -120,6 +124,7 @@ func (c *ApiController) UpdateUser() {
 
 // AddUser
 // @Title AddUser
+// @Tag User API
 // @Description add user
 // @Param   body    body   object.User  true        "The details of the user"
 // @Success 200 {object} controllers.Response The Response object
@@ -137,6 +142,7 @@ func (c *ApiController) AddUser() {
 
 // DeleteUser
 // @Title DeleteUser
+// @Tag User API
 // @Description delete user
 // @Param   body    body   object.User  true        "The details of the user"
 // @Success 200 {object} controllers.Response The Response object
@@ -154,6 +160,7 @@ func (c *ApiController) DeleteUser() {
 
 // GetEmailAndPhone
 // @Title GetEmailAndPhone
+// @Tag User API
 // @Description get email and phone by username
 // @Param   username    formData   string  true        "The username of the user"
 // @Param   organization    formData   string  true        "The organization of the user"
@@ -188,6 +195,7 @@ func (c *ApiController) GetEmailAndPhone() {
 
 // SetPassword
 // @Title SetPassword
+// @Tag Account API
 // @Description set password
 // @Param   userOwner   formData    string  true        "The owner of the user"
 // @Param   userName   formData    string  true        "The name of the user"
@@ -260,6 +268,9 @@ func (c *ApiController) SetPassword() {
 	c.ServeJSON()
 }
 
+// @Title CheckUserPassword
+// @router /check-user-password [post]
+// @Tag User API
 func (c *ApiController) CheckUserPassword() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
@@ -277,6 +288,7 @@ func (c *ApiController) CheckUserPassword() {
 
 // GetSortedUsers
 // @Title GetSortedUsers
+// @Tag User API
 // @Description
 // @Param   owner     query    string  true        "The owner of users"
 // @Param   sorter     query    string  true        "The DB column name to sort by, e.g., created_time"
@@ -294,6 +306,7 @@ func (c *ApiController) GetSortedUsers() {
 
 // GetUserCount
 // @Title GetUserCount
+// @Tag User API
 // @Description
 // @Param   owner     query    string  true        "The owner of users"
 // @Param   isOnline     query    string  true        "The filter for query, 1 for online, 0 for offline, empty string for all users"

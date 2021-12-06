@@ -19,7 +19,7 @@ import (
 	"github.com/qor/oss/aliyun"
 )
 
-func NewAliyunStorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
+func NewAliyunOssStorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
 	sp := aliyun.New(&aliyun.Config{
 		AccessID:  clientId,
 		AccessKey: clientSecret,

@@ -76,6 +76,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 // GetApplicationLogin ...
 // @Title GetApplicationLogin
+// @Tag Login API
 // @Description get application login
 // @Param   clientId    query    string  true        "client id"
 // @Param   responseType    query    string  true        "response type"
@@ -109,6 +110,7 @@ func setHttpClient(idProvider idp.IdProvider, providerType string) {
 
 // Login ...
 // @Title Login
+// @Tag Login API
 // @Description login
 // @Param   oAuthParams     query    string  true        "oAuth parameters"
 // @Param   body    body   RequestForm  true        "Login information"

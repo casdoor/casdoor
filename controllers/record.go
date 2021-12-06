@@ -22,6 +22,7 @@ import (
 
 // GetRecords
 // @Title GetRecords
+// @Tag Record API
 // @Description get all records
 // @Param   pageSize     query    string  true        "The size of each page"
 // @Param   p     query    string  true        "The number of the page"
@@ -42,6 +43,7 @@ func (c *ApiController) GetRecords() {
 }
 
 // GetRecordsByFilter
+// @Tag Record API
 // @Title GetRecordsByFilter
 // @Description get records by filter
 // @Param   body    body   object.Records  true  "filter Record message"

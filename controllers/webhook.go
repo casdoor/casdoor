@@ -24,6 +24,7 @@ import (
 
 // GetWebhooks
 // @Title GetWebhooks
+// @Tag Webhook API
 // @Description get webhooks
 // @Param   owner     query    string  true        "The owner of webhooks"
 // @Success 200 {array} object.Webhook The Response object
@@ -44,6 +45,7 @@ func (c *ApiController) GetWebhooks() {
 }
 
 // @Title GetWebhook
+// @Tag Webhook API
 // @Description get webhook
 // @Param   id    query    string  true        "The id of the webhook"
 // @Success 200 {object} object.Webhook The Response object
@@ -56,6 +58,7 @@ func (c *ApiController) GetWebhook() {
 }
 
 // @Title UpdateWebhook
+// @Tag Webhook API
 // @Description update webhook
 // @Param   id    query    string  true        "The id of the webhook"
 // @Param   body    body   object.Webhook  true        "The details of the webhook"
@@ -75,6 +78,7 @@ func (c *ApiController) UpdateWebhook() {
 }
 
 // @Title AddWebhook
+// @Tag Webhook API
 // @Description add webhook
 // @Param   body    body   object.Webhook  true        "The details of the webhook"
 // @Success 200 {object} controllers.Response The Response object
@@ -91,6 +95,7 @@ func (c *ApiController) AddWebhook() {
 }
 
 // @Title DeleteWebhook
+// @Tag Webhook API
 // @Description delete webhook
 // @Param   body    body   object.Webhook  true        "The details of the webhook"
 // @Success 200 {object} controllers.Response The Response object

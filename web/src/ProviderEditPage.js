@@ -102,6 +102,7 @@ class ProviderEditPage extends React.Component {
           {id: 'Local File System', name: 'Local File System'},
           {id: 'AWS S3', name: 'AWS S3'},
           {id: 'Aliyun OSS', name: 'Aliyun OSS'},
+          {id: 'Tencent Cloud COS', name: 'Tencent Cloud COS'},
         ]
       );
     } else if (provider.category === "SAML") {
@@ -291,11 +292,21 @@ class ProviderEditPage extends React.Component {
           <div>
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Endpoint - Tooltip"))} :
+                {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Region endpoint for Internet"))} :
               </Col>
               <Col span={22} >
                 <Input value={this.state.provider.endpoint} onChange={e => {
                   this.updateProviderField('endpoint', e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={2}>
+                {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.provider.intranetEndpoint} onChange={e => {
+                  this.updateProviderField('intranetEndpoint', e.target.value);
                 }} />
               </Col>
             </Row>
@@ -319,7 +330,7 @@ class ProviderEditPage extends React.Component {
                 }} />
               </Col>
             </Row>
-            {this.state.provider.type === "AWSS3" ? (
+            {this.state.provider.type === "AWS S3" || this.state.provider.type === "Tencent Cloud COS" ? (
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Region ID"), i18next.t("provider:Region ID - Tooltip"))} :

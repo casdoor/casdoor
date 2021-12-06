@@ -74,6 +74,7 @@ type HumanCheck struct {
 }
 
 // Signup
+// @Tag Login API
 // @Title Signup
 // @Description sign up a new user
 // @Param   username     formData    string  true        "The username to sign up"
@@ -180,6 +181,7 @@ func (c *ApiController) Signup() {
 
 // Logout
 // @Title Logout
+// @Tag Login API
 // @Description logout the current user
 // @Success 200 {object} controllers.Response The Response object
 // @router /logout [post]
@@ -195,6 +197,7 @@ func (c *ApiController) Logout() {
 
 // GetAccount
 // @Title GetAccount
+// @Tag Account API
 // @Description get the details of the current account
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-account [get]
@@ -216,6 +219,9 @@ func (c *ApiController) GetAccount() {
 }
 
 // GetHumanCheck ...
+// @Tag Login API
+// @Title GetHumancheck
+// @router /api/get-human-check [get]
 func (c *ApiController) GetHumanCheck() {
 	c.Data["json"] = HumanCheck{Type: "none"}
 
