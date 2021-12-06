@@ -183,8 +183,8 @@ class LoginPage extends React.Component {
     return text;
   }
 
-  getSamlUrl() {
-    AuthBackend.getSamlLogin().then((res) => {
+  getSamlUrl(providerId) {
+    AuthBackend.getSamlLogin(providerId).then((res) => {
       window.location.href = res.data
     });
   }
@@ -199,7 +199,7 @@ class LoginPage extends React.Component {
         )
       } else if (provider.category === "SAML") {
         return (
-          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this)}>
+          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider.owner + "/" + provider.name)}>
             <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
           </a>
         )
