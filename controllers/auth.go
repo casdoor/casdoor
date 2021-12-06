@@ -214,7 +214,11 @@ func (c *ApiController) Login() {
 		userInfo := &idp.UserInfo{}
 		if provider.Category == "SAML" {
 			// SAML
-			userInfo.Id = object.ParseSamlResponse(form.SamlResponse)
+			userInfo.Id, err = object.ParseSamlResponse(form.SamlResponse)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		} else if provider.Category == "OAuth" {
 			// OAuth
 			idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
@@ -371,7 +375,10 @@ func (c *ApiController) Login() {
 
 func (c *ApiController) GetSamlLogin() {
 	providerId := c.Input().Get("id")
-	authURL := object.GenerateSamlLoginUrl(providerId)
+	authURL, err := object.GenerateSamlLoginUrl(providerId)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
 	c.ResponseOk(authURL)
 }
 
@@ -379,6 +386,7 @@ func (c *ApiController) HandleSamlLogin() {
 	relayState := c.Input().Get("RelayState")
 	samlResponse := c.Input().Get("SAMLResponse")
 	samlResponse = url.QueryEscape(samlResponse)
-	targetUrl := beego.AppConfig.String("samlRequestOrigin") + "/saml/callback?relayState=" + relayState + "&samlResponse=" + samlResponse
+	targetUrl := fmt.Sprintf("%s/callback/saml?replayState=%s&samlResponse=%s",
+		beego.AppConfig.String("samlRequestOrigin"), relayState, samlResponse)
 	c.Redirect(targetUrl, 303)
 }

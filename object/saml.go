@@ -17,6 +17,7 @@ package object
 import (
 	"crypto/x509"
 	"encoding/base64"
+	"fmt"
 	"net/url"
 	"regexp"
 	"strings"
@@ -26,71 +27,73 @@ import (
 	dsig "github.com/russellhaering/goxmldsig"
 )
 
-func ParseSamlResponse(samlResponse string) string {
-	certStore := dsig.MemoryX509CertificateStore{
-		Roots: []*x509.Certificate{},
-	}
+func ParseSamlResponse(samlResponse string) (string, error) {
 	samlResponse, _ = url.QueryUnescape(samlResponse)
-	de, err := base64.StdEncoding.DecodeString(samlResponse)
+	sp, err := buildSp(nil, samlResponse)
 	if err != nil {
-		panic(err)
-	}
-	deStr := strings.Replace(string(de), "\n", "", -1)
-	res := regexp.MustCompile(`<ds:X509Certificate>(.*?)</ds:X509Certificate>`).FindAllStringSubmatch(deStr, -1)
-	str := res[0][0]
-	str = str[20 : len(str)-21]
-
-	certData, err := base64.StdEncoding.DecodeString(str)
-	if err != nil {
-		panic(err)
-	}
-	idpCert, err := x509.ParseCertificate(certData)
-	if err != nil {
-		panic(err)
-	}
-	certStore.Roots = append(certStore.Roots, idpCert)
-
-	samlOrigin := beego.AppConfig.String("samlOrigin")
-	sp := &saml2.SAMLServiceProvider{
-		ServiceProviderIssuer:       samlOrigin + "/api/acs",
-		AssertionConsumerServiceURL: samlOrigin + "/api/acs",
-		IDPCertificateStore:         &certStore,
+		return "", err
 	}
 	assertionInfo, err := sp.RetrieveAssertionInfo(samlResponse)
 	if err != nil {
 		panic(err)
 	}
-	return assertionInfo.NameID
+	return assertionInfo.NameID, nil
 }
 
-func GenerateSamlLoginUrl(id string) string {
-	certStore := dsig.MemoryX509CertificateStore{
-		Roots: []*x509.Certificate{},
-	}
+func GenerateSamlLoginUrl(id string) (string, error) {
 	provider := GetProvider(id)
-	certData, err := base64.StdEncoding.DecodeString(provider.IdP)
-	if err != nil {
-		panic(err)
+	if provider.Category != "SAML" {
+		return "", fmt.Errorf("Provider %s's category is not SAML", provider.Name)
 	}
-	idpCert, err := x509.ParseCertificate(certData)
+	sp, err := buildSp(provider, "")
 	if err != nil {
-		panic(err)
-	}
-	certStore.Roots = append(certStore.Roots, idpCert)
-	randomKeyStore := dsig.RandomKeyStoreForTest()
-	samlOrigin := beego.AppConfig.String("samlOrigin")
-	sp := &saml2.SAMLServiceProvider{
-		IdentityProviderSSOURL:      provider.Endpoint,
-		IdentityProviderIssuer:      provider.IssuerUrl,
-		ServiceProviderIssuer:       samlOrigin + "/api/acs",
-		AssertionConsumerServiceURL: samlOrigin + "/api/acs",
-		SignAuthnRequests:           false,
-		IDPCertificateStore:         &certStore,
-		SPKeyStore:                  randomKeyStore,
+		return "", err
 	}
 	authURL, err := sp.BuildAuthURL("")
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return authURL
+	return authURL, nil
+}
+
+func buildSp(provider *Provider, samlResponse string) (*saml2.SAMLServiceProvider, error) {
+	certStore := dsig.MemoryX509CertificateStore{
+		Roots: []*x509.Certificate{},
+	}
+	samlOrigin := beego.AppConfig.String("samlOrigin")
+	certEncodedData := ""
+	if samlResponse != "" {
+		de, err := base64.StdEncoding.DecodeString(samlResponse)
+		if err != nil {
+			panic(err)
+		}
+		deStr := strings.Replace(string(de), "\n", "", -1)
+		res := regexp.MustCompile(`<ds:X509Certificate>(.*?)</ds:X509Certificate>`).FindAllStringSubmatch(deStr, -1)
+		str := res[0][0]
+		certEncodedData = str[20 : len(str)-21]
+	} else if provider != nil {
+		certEncodedData = provider.IdP
+	}
+	certData, err := base64.StdEncoding.DecodeString(certEncodedData)
+	if err != nil {
+		return nil, err
+	}
+	idpCert, err := x509.ParseCertificate(certData)
+	if err != nil {
+		return nil, err
+	}
+	certStore.Roots = append(certStore.Roots, idpCert)
+	sp := &saml2.SAMLServiceProvider{
+		ServiceProviderIssuer:       fmt.Sprintf("%s/api/acs", samlOrigin),
+		AssertionConsumerServiceURL: fmt.Sprintf("%s/api/acs", samlOrigin),
+		IDPCertificateStore:         &certStore,
+	}
+	if provider != nil {
+		randomKeyStore := dsig.RandomKeyStoreForTest()
+		sp.IdentityProviderSSOURL = provider.Endpoint
+		sp.IdentityProviderIssuer = provider.IssuerUrl
+		sp.SignAuthnRequests = false
+		sp.SPKeyStore = randomKeyStore
+	}
+	return sp, nil
 }
