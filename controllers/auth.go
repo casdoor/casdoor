@@ -139,53 +139,35 @@ func (c *ApiController) Login() {
 
 		if form.Password == "" {
 			var verificationCodeType string
+			var checkResult string
 
 			// check result through Email or Phone
-			if strings.Contains(form.Email, "@") {
+			if strings.Contains(form.Username, "@") {
 				verificationCodeType = "email"
-				checkResult := object.CheckVerificationCode(form.Email, form.EmailCode)
-				if len(checkResult) != 0 {
-					responseText := fmt.Sprintf("Email%s", checkResult)
-					c.ResponseError(responseText)
-					return
-				}
+				checkResult = object.CheckVerificationCode(form.Username, form.Code)
 			} else {
 				verificationCodeType = "phone"
-				checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Email)
-				checkResult := object.CheckVerificationCode(checkPhone, form.EmailCode)
-				if len(checkResult) != 0 {
-					responseText := fmt.Sprintf("Phone%s", checkResult)
+				if len(form.PhonePrefix) == 0 {
+					responseText := fmt.Sprintf("%s%s", verificationCodeType, "No phone prefix")
 					c.ResponseError(responseText)
 					return
 				}
+				checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username)
+				checkResult = object.CheckVerificationCode(checkPhone, form.Code)
 			}
-
-			// get user
-			var userId string
-			if form.Username == "" {
-				userId, _ = c.RequireSignedIn()
-			} else {
-				userId = fmt.Sprintf("%s/%s", form.Organization, form.Username)
-			}
-
-			user = object.GetUser(userId)
-			if user == nil {
-				c.ResponseError("No such user.")
+			if len(checkResult) != 0 {
+				responseText := fmt.Sprintf("%s%s", verificationCodeType, checkResult)
+				c.ResponseError(responseText)
 				return
 			}
 
 			// disable the verification code
-			switch verificationCodeType {
-			case "email":
-				if user.Email != form.Email {
-					c.ResponseError("wrong email!")
-				}
-				object.DisableVerificationCode(form.Email)
-			case "phone":
-				if user.Phone != form.Email {
-					c.ResponseError("wrong phone!")
-				}
-				object.DisableVerificationCode(form.Email)
+			object.DisableVerificationCode(form.Username)
+
+			user = object.GetUserByFields(form.Organization, form.Username)
+			if user == nil {
+				c.ResponseError("No such user.")
+				return
 			}
 		} else {
 			password := form.Password

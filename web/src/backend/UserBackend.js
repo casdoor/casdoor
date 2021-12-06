@@ -88,7 +88,7 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
   }).then(res => res.json());
 }
 
-export function sendCode(checkType, checkId, checkKey, dest, type, orgId) {
+export function sendCode(checkType, checkId, checkKey, dest, type, orgId, checkUser) {
   let formData = new FormData();
   formData.append("checkType", checkType);
   formData.append("checkId", checkId);
@@ -96,6 +96,7 @@ export function sendCode(checkType, checkId, checkKey, dest, type, orgId) {
   formData.append("dest", dest);
   formData.append("type", type);
   formData.append("organizationId", orgId);
+  formData.append("checkUser", checkUser);
   return fetch(`${Setting.ServerUrl}/api/send-verification-code`, {
     method: "POST",
     credentials: "include",
