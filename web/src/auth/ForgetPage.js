@@ -136,10 +136,9 @@ class ForgetPage extends React.Component {
               AuthBackend.login({
                   application: forms.step2.getFieldValue("application"),
                   organization: forms.step2.getFieldValue("organization"),
-                  email: forms.step2.getFieldValue("email"),
-                  emailCode: forms.step2.getFieldValue("emailCode"),
+                  username: forms.step2.getFieldValue("email"),
+                  code: forms.step2.getFieldValue("emailCode"),
                   phonePrefix: this.state.application?.organizationObj.phonePrefix,
-                  username: this.state.username,
                   type: "login"
               }, oAuthParams).then(res => {
                   if (res.status === "ok") {

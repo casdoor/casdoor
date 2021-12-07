@@ -53,6 +53,9 @@ type RequestForm struct {
 	PhonePrefix string `json:"phonePrefix"`
 
 	AutoSignin bool `json:"autoSignin"`
+
+	RelayState   string `json:"relayState"`
+	SamlResponse string `json:"samlResponse"`
 }
 
 type Response struct {

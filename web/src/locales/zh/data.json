@@ -176,6 +176,8 @@
     "Password - Tooltip": "密码",
     "Please input your code!": "请输入您的验证码！",
     "Please input your password!": "请输入您的密码！",
+    "Please input your password, at least 6 characters!": "请输入您的密码，不少于6位",
+    "Please input your Email or phone!": "请输入您的Email或手机号！",
     "Please input your username, Email or phone!": "请输入您的用户名、Email或手机号！",
     "Sign In": "登录",
     "Sign in with code": "验证码登录",
@@ -184,7 +186,10 @@
     "Signing in...": "正在登录...",
     "To access": "访问",
     "sign up now": "立即注册",
-    "username, Email or phone": "用户名、Email或手机号"
+    "Email or phone": "Email或手机号",
+    "username, Email or phone": "用户名、Email或手机号",
+    "Invalid Email or phone": "无效的Email或手机号",
+    "The input is not valid Email or Phone!": "您输入的电子邮箱格式或手机号有误！"
   },
   "organization": {
     "Default avatar": "默认头像",

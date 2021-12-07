@@ -49,6 +49,7 @@ class LoginPage extends React.Component {
       isCodeSignin: false,
       msg: null,
       username: null,
+      validEmailOrPhone: false
     };
   }
 
@@ -109,6 +110,7 @@ class LoginPage extends React.Component {
     const application = this.getApplicationObj();
     const ths = this;
     values["type"] = this.state.type;
+    values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix;
     const oAuthParams = Util.getOAuthGetParameters();
 
     AuthBackend.login(values, oAuthParams)
@@ -183,13 +185,28 @@ class LoginPage extends React.Component {
     return text;
   }
 
+  getSamlUrl(providerId) {
+    AuthBackend.getSamlLogin(providerId).then((res) => {
+      window.location.href = res.data
+    });
+  }
+
   renderProviderLogo(provider, application, width, margin, size) {
     if (size === "small") {
-      return (
-        <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-          <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
-        </a>
-      )
+      if (provider.category === "OAuth") {
+        return (
+          <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
+            <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
+          </a>
+        )
+      } else if (provider.category === "SAML") {
+        return (
+          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider.owner + "/" + provider.name)}>
+            <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
+          </a>
+        )
+      }
+      
     } else {
       return (
         <div key={provider.displayName} style={{marginBottom: "10px"}}>
@@ -273,11 +290,28 @@ class LoginPage extends React.Component {
           </Form.Item>
           <Form.Item
             name="username"
-            rules={[{ required: true, message: i18next.t("login:Please input your username, Email or phone!") }]}
+            rules={[
+                {
+                  required: true,
+                  message: i18next.t("login:Please input your username, Email or phone!")
+                },
+                {
+                  validator: (_, value) => {
+                    if (this.state.isCodeSignin) {
+                      if (this.state.email !== "" && !Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
+                        this.setState({validEmailOrPhone: false});
+                        return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
+                      }
+                    }
+                    this.setState({validEmailOrPhone: true});
+                    return Promise.resolve();
+                  }
+                }
+              ]}
           >
             <Input
               prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder={i18next.t("login:username, Email or phone")}
+              placeholder={ this.state.isCodeSignin ? i18next.t("login:Email or phone") : i18next.t("login:username, Email or phone") }
               disabled={!application.enablePassword}
               onChange={e => {
                 this.setState({
@@ -293,8 +327,8 @@ class LoginPage extends React.Component {
                 rules={[{ required: true, message: i18next.t("login:Please input your code!") }]}
               >
                 <CountDownInput
-                  disabled={this.state.username?.length === 0}
-                  onButtonClickArgs={[this.state.email, "email", Setting.getApplicationOrgName(application)]}
+                  disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
+                  onButtonClickArgs={[this.state.username, "", Setting.getApplicationOrgName(application), true]}
                 />
               </Form.Item>
             ) : (

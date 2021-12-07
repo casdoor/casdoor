@@ -108,6 +108,12 @@ const otherProviderInfo = {
       url: "https://cloud.tencent.com/product/cos",
     },
   },
+  SAML: {
+    "Aliyun IDaaS": {
+      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      url: "https://aliyun.com/product/idaas"
+    },
+  },
 };
 
 export function getProviderLogo(provider) {

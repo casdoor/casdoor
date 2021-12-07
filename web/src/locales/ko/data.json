@@ -176,6 +176,8 @@
     "Password - Tooltip": "Password - Tooltip",
     "Please input your code!": "Please input your code!",
     "Please input your password!": "Please input your password!",
+    "Please input your password, at least 6 characters!": "Please input your password, at least 6 characters!",
+    "Please input your Email or phone!": "Please input your Email or phone!",
     "Please input your username, Email or phone!": "Please input your username, Email or phone!",
     "Sign In": "Sign In",
     "Sign in with code": "Sign in with code",
@@ -184,7 +186,10 @@
     "Signing in...": "Signing in...",
     "To access": "To access",
     "sign up now": "sign up now",
-    "username, Email or phone": "username, Email or phone"
+    "Email or phone": "Email or phone",
+    "username, Email or phone": "username, Email or phone",
+    "Invalid Email or phone": "Invalid Email or phone",
+    "The input is not valid Email or Phone!": "The input is not valid Email or Phone!"
   },
   "organization": {
     "Default avatar": "Default avatar",
