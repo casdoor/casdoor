@@ -78,6 +78,9 @@ class ProviderEditPage extends React.Component {
           {id: 'WeCom', name: 'WeCom'},
           {id: 'Lark', name: 'Lark'},
           {id: 'GitLab', name: 'GitLab'},
+          {id: 'Apple', name: 'Apple'},
+          {id: 'AzureAD', name: 'AzureAD'},
+          {id: 'Slack', name: 'Slack'},
         ]
       );
     } else if (provider.category === "Email") {

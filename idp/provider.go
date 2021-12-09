@@ -16,6 +16,7 @@ package idp
 
 import (
 	"net/http"
+	"strings"
 
 	"golang.org/x/oauth2"
 )
@@ -59,7 +60,20 @@ func GetIdProvider(providerType string, clientId string, clientSecret string, re
 		return NewLarkIdProvider(clientId, clientSecret, redirectUrl)
 	} else if providerType == "GitLab" {
 		return NewGitlabIdProvider(clientId, clientSecret, redirectUrl)
+	} else if isGothSupport(providerType) {
+		return NewGothIdProvider(providerType, clientId, clientSecret, redirectUrl)
 	}
 
 	return nil
+}
+
+var gothList = []string{"Apple", "AzureAd", "Slack"}
+
+func isGothSupport(provider string) bool {
+	for _, value := range gothList {
+		if strings.EqualFold(value, provider) {
+			return true
+		}
+	}
+	return false
 }
