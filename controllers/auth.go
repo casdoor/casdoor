@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/url"
@@ -369,8 +370,14 @@ func (c *ApiController) GetSamlLogin() {
 func (c *ApiController) HandleSamlLogin() {
 	relayState := c.Input().Get("RelayState")
 	samlResponse := c.Input().Get("SAMLResponse")
+	decode, err := base64.StdEncoding.DecodeString(relayState)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+	slice := strings.Split(string(decode), "&")
+	relayState = url.QueryEscape(relayState)
 	samlResponse = url.QueryEscape(samlResponse)
-	targetUrl := fmt.Sprintf("%s/callback/saml?replayState=%s&samlResponse=%s",
-		beego.AppConfig.String("samlRequestOrigin"), relayState, samlResponse)
+	targetUrl := fmt.Sprintf("%s?relayState=%s&samlResponse=%s",
+		slice[4], relayState, samlResponse)
 	c.Redirect(targetUrl, 303)
 }

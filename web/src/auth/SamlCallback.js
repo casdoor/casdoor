@@ -19,6 +19,7 @@ import * as AuthBackend from "./AuthBackend";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
 import i18next from "i18next";
+import {authConfig} from "./Auth";
 
 class SamlCallback extends React.Component {
     constructor(props) {
@@ -29,28 +30,61 @@ class SamlCallback extends React.Component {
       };
     }
 
+    getResponseType(redirectUri) {
+        const authServerUrl = authConfig.serverUrl;
+        // Casdoor's own login page, so "code" is not necessary
+        if (redirectUri === "null") {
+            return "login";
+        }
+        const realRedirectUrl = new URL(redirectUri).origin;
+        // For Casdoor itself, we use "login" directly
+        if (authServerUrl === realRedirectUrl) {
+            return "login";
+        } else {
+            return "code";
+        }
+    }
+
     UNSAFE_componentWillMount() {
         const params = new URLSearchParams(this.props.location.search);
         let relayState = params.get('relayState')
         let samlResponse = params.get('samlResponse')
-        let redirectUri = `${window.location.origin}/callback`;
-        const applicationName = "app-built-in"
+        const messages = atob(relayState).split('&');
+        const clientId = messages[0];
+        const applicationName = messages[1] === "null" ? "app-built-in" : messages[1];
+        const providerName = messages[2];
+        const redirectUri = messages[3];
+        const responseType = this.getResponseType(redirectUri);
+
         const body = {
-            type: "login",
+            type: responseType,
             application: applicationName,
-            provider: "aliyun-idaas",
+            provider: providerName,
             state: applicationName,
-            redirectUri: redirectUri,
+            redirectUri: `${window.location.origin}/callback`,
             method: "signup",
             relayState: relayState,
             samlResponse: encodeURIComponent(samlResponse),
           };
-        AuthBackend.loginWithSaml(body)
+
+        let param;
+        if (clientId === null || clientId === "") {
+            param = ""
+        } else {
+            param = `?clientId=${clientId}&responseType=${responseType}&redirectUri=${redirectUri}&scope=read&state=${applicationName}`
+        }
+
+        AuthBackend.loginWithSaml(body, param)
           .then((res) => {
             if (res.status === 'ok') {
-                  Util.showMessage("success", `Logged in successfully`);
-                  // Setting.goToLinkSoft(this, "/");
-                  Setting.goToLink("/");
+                const responseType = this.getResponseType(redirectUri);
+                if (responseType === "login") {
+                    Util.showMessage("success", `Logged in successfully`);
+                    Setting.goToLink("/");
+                } else if (responseType === "code") {
+                    const code = res.data;
+                    Setting.goToLink(`${redirectUri}?code=${code}&state=${applicationName}`);
+                }
               } else {
                 this.setState({
                   msg: res.msg,

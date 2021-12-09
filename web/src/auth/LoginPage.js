@@ -186,8 +186,15 @@ class LoginPage extends React.Component {
   }
 
   getSamlUrl(providerId) {
+    const params = new URLSearchParams(this.props.location.search);
+    let clientId = params.get("client_id")
+    let application = params.get("state");
+    let realRedirectUri = params.get("redirect_uri");
+    let redirectUri = `${window.location.origin}/callback/saml`
+    let providerName = providerId.split('/')[1];
     AuthBackend.getSamlLogin(providerId).then((res) => {
-      window.location.href = res.data
+      const replyState = `${clientId}&${application}&${providerName}&${realRedirectUri}&${redirectUri}`;
+      window.location.href = `${res.data}&RelayState=${btoa(replyState)}`;
     });
   }
 
