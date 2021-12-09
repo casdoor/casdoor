@@ -25,6 +25,8 @@ type LinkForm struct {
 }
 
 // Unlink ...
+// @router /unlink [post]
+// @Tag Login API
 func (c *ApiController) Unlink() {
 	userId, ok := c.RequireSignedIn()
 	if !ok {

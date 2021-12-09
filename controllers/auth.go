@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -75,6 +76,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 // GetApplicationLogin ...
 // @Title GetApplicationLogin
+// @Tag Login API
 // @Description get application login
 // @Param   clientId    query    string  true        "client id"
 // @Param   responseType    query    string  true        "response type"
@@ -108,6 +110,7 @@ func setHttpClient(idProvider idp.IdProvider, providerType string) {
 
 // Login ...
 // @Title Login
+// @Tag Login API
 // @Description login
 // @Param   oAuthParams     query    string  true        "oAuth parameters"
 // @Param   body    body   RequestForm  true        "Login information"
@@ -136,53 +139,35 @@ func (c *ApiController) Login() {
 
 		if form.Password == "" {
 			var verificationCodeType string
+			var checkResult string
 
 			// check result through Email or Phone
-			if strings.Contains(form.Email, "@") {
+			if strings.Contains(form.Username, "@") {
 				verificationCodeType = "email"
-				checkResult := object.CheckVerificationCode(form.Email, form.EmailCode)
-				if len(checkResult) != 0 {
-					responseText := fmt.Sprintf("Email%s", checkResult)
-					c.ResponseError(responseText)
-					return
-				}
+				checkResult = object.CheckVerificationCode(form.Username, form.Code)
 			} else {
 				verificationCodeType = "phone"
-				checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Email)
-				checkResult := object.CheckVerificationCode(checkPhone, form.EmailCode)
-				if len(checkResult) != 0 {
-					responseText := fmt.Sprintf("Phone%s", checkResult)
+				if len(form.PhonePrefix) == 0 {
+					responseText := fmt.Sprintf("%s%s", verificationCodeType, "No phone prefix")
 					c.ResponseError(responseText)
 					return
 				}
+				checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username)
+				checkResult = object.CheckVerificationCode(checkPhone, form.Code)
 			}
-
-			// get user
-			var userId string
-			if form.Username == "" {
-				userId, _ = c.RequireSignedIn()
-			} else {
-				userId = fmt.Sprintf("%s/%s", form.Organization, form.Username)
-			}
-
-			user = object.GetUser(userId)
-			if user == nil {
-				c.ResponseError("No such user.")
+			if len(checkResult) != 0 {
+				responseText := fmt.Sprintf("%s%s", verificationCodeType, checkResult)
+				c.ResponseError(responseText)
 				return
 			}
 
 			// disable the verification code
-			switch verificationCodeType {
-			case "email":
-				if user.Email != form.Email {
-					c.ResponseError("wrong email!")
-				}
-				object.DisableVerificationCode(form.Email)
-			case "phone":
-				if user.Phone != form.Email {
-					c.ResponseError("wrong phone!")
-				}
-				object.DisableVerificationCode(form.Email)
+			object.DisableVerificationCode(form.Username)
+
+			user = object.GetUserByFields(form.Organization, form.Username)
+			if user == nil {
+				c.ResponseError("No such user.")
+				return
 			}
 		} else {
 			password := form.Password
@@ -210,44 +195,60 @@ func (c *ApiController) Login() {
 			return
 		}
 
-		idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
-		if idProvider == nil {
-			c.ResponseError(fmt.Sprintf("The provider type: %s is not supported", provider.Type))
-			return
-		}
+		userInfo := &idp.UserInfo{}
+		if provider.Category == "SAML" {
+			// SAML
+			userInfo.Id, err = object.ParseSamlResponse(form.SamlResponse)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		} else if provider.Category == "OAuth" {
+			// OAuth
+			idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
+			if idProvider == nil {
+				c.ResponseError(fmt.Sprintf("The provider type: %s is not supported", provider.Type))
+				return
+			}
 
-		setHttpClient(idProvider, provider.Type)
+			setHttpClient(idProvider, provider.Type)
 
-		if form.State != beego.AppConfig.String("authState") && form.State != application.Name {
-			c.ResponseError(fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("authState"), form.State))
-			return
-		}
+			if form.State != beego.AppConfig.String("authState") && form.State != application.Name {
+				c.ResponseError(fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("authState"), form.State))
+				return
+			}
 
-		// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
-		token, err := idProvider.GetToken(form.Code)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
+			// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
+			token, err := idProvider.GetToken(form.Code)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 
-		if !token.Valid() {
-			c.ResponseError("Invalid token")
-			return
-		}
+			if !token.Valid() {
+				c.ResponseError("Invalid token")
+				return
+			}
 
-		userInfo, err := idProvider.GetUserInfo(token)
-		if err != nil {
-			c.ResponseError(fmt.Sprintf("Failed to login in: %s", err.Error()))
-			return
+			userInfo, err = idProvider.GetUserInfo(token)
+			if err != nil {
+				c.ResponseError(fmt.Sprintf("Failed to login in: %s", err.Error()))
+				return
+			}
 		}
 
 		if form.Method == "signup" {
-			user := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
-			if user == nil {
-				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
-			}
-			if user == nil {
-				user = object.GetUserByField(application.Organization, "name", userInfo.Username)
+			user := &object.User{}
+			if provider.Category == "SAML" {
+				user = object.GetUserByField(application.Organization, "id", userInfo.Id)
+			} else if provider.Category == "OAuth" {
+				user := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+				if user == nil {
+					user = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
+				}
+				if user == nil {
+					user = object.GetUserByField(application.Organization, "name", userInfo.Username)
+				}
 			}
 
 			if user != nil && user.IsDeleted == false {
@@ -263,7 +264,7 @@ func (c *ApiController) Login() {
 				record.Organization = application.Organization
 				record.User = user.Name
 				go object.AddRecord(record)
-			} else {
+			} else if provider.Category == "OAuth" {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
 					c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username, userInfo.DisplayName))
@@ -277,7 +278,7 @@ func (c *ApiController) Login() {
 
 				properties := map[string]string{}
 				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
-				user := &object.User{
+				user = &object.User{
 					Owner:             application.Organization,
 					Name:              userInfo.Username,
 					CreatedTime:       util.GetCurrentTime(),
@@ -295,10 +296,10 @@ func (c *ApiController) Login() {
 					SignupApplication: application.Name,
 					Properties:        properties,
 				}
-				object.AddUser(user)
-
 				// sync info from 3rd-party if possible
 				object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
+
+				object.AddUser(user)
 
 				object.LinkUserAccount(user, provider.Type, userInfo.Id)
 
@@ -308,6 +309,8 @@ func (c *ApiController) Login() {
 				record.Organization = application.Organization
 				record.User = user.Name
 				go object.AddRecord(record)
+			} else if provider.Category == "SAML" {
+				resp = &Response{Status: "error", Msg: "The account does not exist"}
 			}
 			//resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"
@@ -352,4 +355,22 @@ func (c *ApiController) Login() {
 
 	c.Data["json"] = resp
 	c.ServeJSON()
+}
+
+func (c *ApiController) GetSamlLogin() {
+	providerId := c.Input().Get("id")
+	authURL, err := object.GenerateSamlLoginUrl(providerId)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+	c.ResponseOk(authURL)
+}
+
+func (c *ApiController) HandleSamlLogin() {
+	relayState := c.Input().Get("RelayState")
+	samlResponse := c.Input().Get("SAMLResponse")
+	samlResponse = url.QueryEscape(samlResponse)
+	targetUrl := fmt.Sprintf("%s/callback/saml?replayState=%s&samlResponse=%s",
+		beego.AppConfig.String("samlRequestOrigin"), relayState, samlResponse)
+	c.Redirect(targetUrl, 303)
 }

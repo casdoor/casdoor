@@ -115,6 +115,16 @@ const otherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://aliyun.com/product/oss",
     },
+    "Tencent Cloud COS": {
+      logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
+      url: "https://cloud.tencent.com/product/cos",
+    },
+  },
+  SAML: {
+    "Aliyun IDaaS": {
+      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      url: "https://aliyun.com/product/idaas"
+    },
   },
 };
 

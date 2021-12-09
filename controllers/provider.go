@@ -24,6 +24,7 @@ import (
 
 // GetProviders
 // @Title GetProviders
+// @Tag Provider API
 // @Description get providers
 // @Param   owner     query    string  true        "The owner of providers"
 // @Success 200 {array} object.Provider The Response object
@@ -44,6 +45,7 @@ func (c *ApiController) GetProviders() {
 }
 
 // @Title GetProvider
+// @Tag Provider API
 // @Description get provider
 // @Param   id    query    string  true        "The id of the provider"
 // @Success 200 {object} object.Provider The Response object
@@ -56,6 +58,7 @@ func (c *ApiController) GetProvider() {
 }
 
 // @Title UpdateProvider
+// @Tag Provider API
 // @Description update provider
 // @Param   id    query    string  true        "The id of the provider"
 // @Param   body    body   object.Provider  true        "The details of the provider"
@@ -75,6 +78,7 @@ func (c *ApiController) UpdateProvider() {
 }
 
 // @Title AddProvider
+// @Tag Provider API
 // @Description add provider
 // @Param   body    body   object.Provider  true        "The details of the provider"
 // @Success 200 {object} controllers.Response The Response object
@@ -91,6 +95,7 @@ func (c *ApiController) AddProvider() {
 }
 
 // @Title DeleteProvider
+// @Tag Provider API
 // @Description delete provider
 // @Param   body    body   object.Provider  true        "The details of the provider"
 // @Success 200 {object} controllers.Response The Response object

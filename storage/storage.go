@@ -23,7 +23,9 @@ func GetStorageProvider(providerType string, clientId string, clientSecret strin
 	case "AWS S3":
 		return NewAwsS3StorageProvider(clientId, clientSecret, region, bucket, endpoint)
 	case "Aliyun OSS":
-		return NewAliyunStorageProvider(clientId, clientSecret, region, bucket, endpoint)
+		return NewAliyunOssStorageProvider(clientId, clientSecret, region, bucket, endpoint)
+	case "Tencent Cloud COS":
+		return NewTencentCloudCosStorageProvider(clientId, clientSecret, region, bucket, endpoint)
 	}
 
 	return nil

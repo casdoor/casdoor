@@ -136,10 +136,9 @@ class ForgetPage extends React.Component {
               AuthBackend.login({
                   application: forms.step2.getFieldValue("application"),
                   organization: forms.step2.getFieldValue("organization"),
-                  email: forms.step2.getFieldValue("email"),
-                  emailCode: forms.step2.getFieldValue("emailCode"),
+                  username: forms.step2.getFieldValue("email"),
+                  code: forms.step2.getFieldValue("emailCode"),
                   phonePrefix: this.state.application?.organizationObj.phonePrefix,
-                  username: this.state.username,
                   type: "login"
               }, oAuthParams).then(res => {
                   if (res.status === "ok") {
@@ -341,33 +340,13 @@ class ForgetPage extends React.Component {
             >
               {this.state.verifyType === "email" ? (
                   <CountDownInput
-                      disabled={this.state.username === "" || this.state.verifyType === ""}
-                      placeHolder={i18next.t("code:Verify code")}
-                      defaultButtonText={i18next.t("code:Send Code")}
-                      onButtonClick={UserBackend.sendCode}
-                      onButtonClickArgs={[
-                        this.state.email,
-                        "email",
-                        this.state.application?.organizationObj.owner +
-                        "/" +
-                        this.state.application?.organizationObj.name,
-                      ]}
-                      coolDownTime={60}
+                    disabled={this.state.username === "" || this.state.verifyType === ""}
+                    onButtonClickArgs={[this.state.email, "email", Setting.getApplicationOrgName(this.state.application)]}
                   />
               ) : (
                   <CountDownInput
-                      disabled={this.state.username === "" || this.state.verifyType === ""}
-                      placeHolder={i18next.t("code:Verify code")}
-                      defaultButtonText={i18next.t("code:Send Code")}
-                      onButtonClick={UserBackend.sendCode}
-                      onButtonClickArgs={[
-                        this.state.phone,
-                        "phone",
-                        this.state.application?.organizationObj.owner +
-                        "/" +
-                        this.state.application?.organizationObj.name,
-                      ]}
-                      coolDownTime={60}
+                    disabled={this.state.username === "" || this.state.verifyType === ""}
+                    onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationOrgName(this.state.application)]}
                   />
               )}
             </Form.Item>

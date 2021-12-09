@@ -10,10 +10,18 @@
     },
     "basePath": "/",
     "paths": {
+        "/.well-known/openid-configuration": {
+            "get": {
+                "tags": [
+                    "OIDC API"
+                ],
+                "operationId": "RootController.GetOidcDiscovery"
+            }
+        },
         "/api/add-application": {
             "post": {
                 "tags": [
-                    "api"
+                    "Application API"
                 ],
                 "description": "add an application",
                 "operationId": "ApiController.AddApplication",
@@ -38,10 +46,18 @@
                 }
             }
         },
+        "/api/add-ldap": {
+            "post": {
+                "tags": [
+                    "Account API"
+                ],
+                "operationId": "ApiController.AddLdap"
+            }
+        },
         "/api/add-organization": {
             "post": {
                 "tags": [
-                    "api"
+                    "Organization API"
                 ],
                 "description": "add organization",
                 "operationId": "ApiController.AddOrganization",
@@ -69,7 +85,7 @@
         "/api/add-provider": {
             "post": {
                 "tags": [
-                    "api"
+                    "Provider API"
                 ],
                 "description": "add provider",
                 "operationId": "ApiController.AddProvider",
@@ -94,10 +110,18 @@
                 }
             }
         },
+        "/api/add-resource": {
+            "post": {
+                "tags": [
+                    "Resource API"
+                ],
+                "operationId": "ApiController.AddResource"
+            }
+        },
         "/api/add-token": {
             "post": {
                 "tags": [
-                    "api"
+                    "Token API"
                 ],
                 "description": "add token",
                 "operationId": "ApiController.AddToken",
@@ -125,7 +149,7 @@
         "/api/add-user": {
             "post": {
                 "tags": [
-                    "api"
+                    "User API"
                 ],
                 "description": "add user",
                 "operationId": "ApiController.AddUser",
@@ -153,7 +177,7 @@
         "/api/add-webhook": {
             "post": {
                 "tags": [
-                    "api"
+                    "Webhook API"
                 ],
                 "description": "add webhook",
                 "operationId": "ApiController.AddWebhook",
@@ -178,10 +202,26 @@
                 }
             }
         },
+        "/api/api/get-human-check": {
+            "get": {
+                "tags": [
+                    "Login API"
+                ],
+                "operationId": "ApiController.GetHumancheck"
+            }
+        },
+        "/api/api/reset-email-or-phone": {
+            "post": {
+                "tags": [
+                    "Account API"
+                ],
+                "operationId": "ApiController.ResetEmailOrPhone"
+            }
+        },
         "/api/api/send-email": {
             "post": {
                 "tags": [
-                    "api"
+                    "Service API"
                 ],
                 "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.",
                 "operationId": "ApiController.SendEmail",
@@ -223,7 +263,7 @@
         "/api/api/send-sms": {
             "post": {
                 "tags": [
-                    "api"
+                    "Service API"
                 ],
                 "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.",
                 "operationId": "ApiController.SendSms",
@@ -262,10 +302,34 @@
                 }
             }
         },
+        "/api/certs": {
+            "get": {
+                "tags": [
+                    "OIDC API"
+                ],
+                "operationId": "RootController.GetOidcCert"
+            }
+        },
+        "/api/check-ldap-users-exist": {
+            "post": {
+                "tags": [
+                    "Account API"
+                ],
+                "operationId": "ApiController.CheckLdapUserExist"
+            }
+        },
+        "/api/check-user-password": {
+            "post": {
+                "tags": [
+                    "User API"
+                ],
+                "operationId": "ApiController.CheckUserPassword"
+            }
+        },
         "/api/delete-application": {
             "post": {
                 "tags": [
-                    "api"
+                    "Application API"
                 ],
                 "description": "delete an application",
                 "operationId": "ApiController.DeleteApplication",
@@ -290,10 +354,18 @@
                 }
             }
         },
+        "/api/delete-ldap": {
+            "post": {
+                "tags": [
+                    "Account API"
+                ],
+                "operationId": "ApiController.DeleteLdap"
+            }
+        },
         "/api/delete-organization": {
             "post": {
                 "tags": [
-                    "api"
+                    "Organization API"
                 ],
                 "description": "delete organization",
                 "operationId": "ApiController.DeleteOrganization",
@@ -321,7 +393,7 @@
         "/api/delete-provider": {
             "post": {
                 "tags": [
-                    "api"
+                    "Provider API"
                 ],
                 "description": "delete provider",
                 "operationId": "ApiController.DeleteProvider",
@@ -346,10 +418,18 @@
                 }
             }
         },
+        "/api/delete-resource": {
+            "post": {
+                "tags": [
+                    "Resource API"
+                ],
+                "operationId": "ApiController.DeleteResource"
+            }
+        },
         "/api/delete-token": {
             "post": {
                 "tags": [
-                    "api"
+                    "Token API"
                 ],
                 "description": "delete token",
                 "operationId": "ApiController.DeleteToken",
@@ -377,7 +457,7 @@
         "/api/delete-user": {
             "post": {
                 "tags": [
-                    "api"
+                    "User API"
                 ],
                 "description": "delete user",
                 "operationId": "ApiController.DeleteUser",
@@ -405,7 +485,7 @@
         "/api/delete-webhook": {
             "post": {
                 "tags": [
-                    "api"
+                    "Webhook API"
                 ],
                 "description": "delete webhook",
                 "operationId": "ApiController.DeleteWebhook",
@@ -433,7 +513,7 @@
         "/api/get-account": {
             "get": {
                 "tags": [
-                    "api"
+                    "Account API"
                 ],
                 "description": "get the details of the current account",
                 "operationId": "ApiController.GetAccount",
@@ -450,7 +530,7 @@
         "/api/get-application": {
             "get": {
                 "tags": [
-                    "api"
+                    "Application API"
                 ],
                 "description": "get the detail of an application",
                 "operationId": "ApiController.GetApplication",
@@ -476,7 +556,7 @@
         "/api/get-applications": {
             "get": {
                 "tags": [
-                    "api"
+                    "Application API"
                 ],
                 "description": "get all applications",
                 "operationId": "ApiController.GetApplications",
@@ -505,7 +585,7 @@
         "/api/get-email-and-phone": {
             "post": {
                 "tags": [
-                    "api"
+                    "User API"
                 ],
                 "description": "get email and phone by username",
                 "operationId": "ApiController.GetEmailAndPhone",
@@ -538,7 +618,7 @@
         "/api/get-global-users": {
             "get": {
                 "tags": [
-                    "api"
+                    "User API"
                 ],
                 "description": "get global users",
                 "operationId": "ApiController.GetGlobalUsers",
@@ -555,10 +635,34 @@
                 }
             }
         },
+        "/api/get-ldap": {
+            "post": {
+                "tags": [
+                    "Account API"
+                ],
+                "operationId": "ApiController.GetLdap"
+            }
+        },
+        "/api/get-ldap-user": {
+            "post": {
+                "tags": [
+                    "Account API"
+                ],
+                "operationId": "ApiController.GetLdapser"
+            }
+        },
+        "/api/get-ldaps": {
+            "post": {
+                "tags": [
+                    "Account API"
+                ],
+                "operationId": "ApiController.GetLdaps"
+            }
+        },
         "/api/get-organization": {
             "get": {
                 "tags": [
-                    "api"
+                    "Organization API"
                 ],
                 "description": "get organization",
                 "operationId": "ApiController.GetOrganization",
@@ -584,7 +688,7 @@
         "/api/get-organizations": {
             "get": {
                 "tags": [
-                    "api"
+                    "Organization API"
                 ],
                 "description": "get organizations",
                 "operationId": "ApiController.GetOrganizations",
@@ -613,7 +717,7 @@
         "/api/get-provider": {
             "get": {
                 "tags": [
-                    "api"
+                    "Provider API"
                 ],
                 "description": "get provider",
                 "operationId": "ApiController.GetProvider",
@@ -639,7 +743,7 @@
         "/api/get-providers": {
             "get": {
                 "tags": [
-                    "api"
+                    "Provider API"
                 ],
                 "description": "get providers",
                 "operationId": "ApiController.GetProviders",
@@ -668,7 +772,7 @@
         "/api/get-records": {
             "get": {
                 "tags": [
-                    "api"
+                    "Record API"
                 ],
                 "description": "get all records",
                 "operationId": "ApiController.GetRecords",
@@ -704,7 +808,7 @@
         "/api/get-records-filter": {
             "post": {
                 "tags": [
-                    "api"
+                    "Record API"
                 ],
                 "description": "get records by filter",
                 "operationId": "ApiController.GetRecordsByFilter",
@@ -732,10 +836,68 @@
                 }
             }
         },
+        "/api/get-resource": {
+            "get": {
+                "tags": [
+                    "Resource API"
+                ],
+                "operationId": "ApiController.GetResource"
+            }
+        },
+        "/api/get-resources": {
+            "get": {
+                "tags": [
+                    "Resource API"
+                ],
+                "operationId": "ApiController.GetResources"
+            }
+        },
+        "/api/get-sorted-users": {
+            "get": {
+                "tags": [
+                    "User API"
+                ],
+                "operationId": "ApiController.GetSortedUsers",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of users",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sorter",
+                        "description": "The DB column name to sort by, e.g., created_time",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "The count of users to return, e.g., 25",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.User"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/get-token": {
             "get": {
                 "tags": [
-                    "api"
+                    "Token API"
                 ],
                 "description": "get token",
                 "operationId": "ApiController.GetToken",
@@ -761,7 +923,7 @@
         "/api/get-tokens": {
             "get": {
                 "tags": [
-                    "api"
+                    "Token API"
                 ],
                 "description": "get tokens",
                 "operationId": "ApiController.GetTokens",
@@ -804,7 +966,7 @@
         "/api/get-user": {
             "get": {
                 "tags": [
-                    "api"
+                    "User API"
                 ],
                 "description": "get user",
                 "operationId": "ApiController.GetUser",
@@ -830,7 +992,7 @@
         "/api/get-user-application": {
             "get": {
                 "tags": [
-                    "api"
+                    "Application API"
                 ],
                 "description": "get the detail of the user's application",
                 "operationId": "ApiController.GetUserApplication",
@@ -853,10 +1015,39 @@
                 }
             }
         },
+        "/api/get-user-count": {
+            "get": {
+                "tags": [
+                    "User API"
+                ],
+                "operationId": "ApiController.GetUserCount",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of users",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "isOnline",
+                        "description": "The filter for query, 1 for online, 0 for offline, empty string for all users",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{int} int The count of filtered users for an organization"
+                    }
+                }
+            }
+        },
         "/api/get-users": {
             "get": {
                 "tags": [
-                    "api"
+                    "User API"
                 ],
                 "operationId": "ApiController.GetUsers",
                 "parameters": [
@@ -884,7 +1075,7 @@
         "/api/get-webhook": {
             "get": {
                 "tags": [
-                    "api"
+                    "Webhook API"
                 ],
                 "description": "get webhook",
                 "operationId": "ApiController.GetWebhook",
@@ -910,7 +1101,7 @@
         "/api/get-webhooks": {
             "get": {
                 "tags": [
-                    "api"
+                    "Webhook API"
                 ],
                 "description": "get webhooks",
                 "operationId": "ApiController.GetWebhooks",
@@ -939,7 +1130,7 @@
         "/api/login": {
             "post": {
                 "tags": [
-                    "api"
+                    "Login API"
                 ],
                 "description": "login",
                 "operationId": "ApiController.Login",
@@ -974,7 +1165,7 @@
         "/api/login/oauth/access_token": {
             "post": {
                 "tags": [
-                    "api"
+                    "Token API"
                 ],
                 "description": "get OAuth access token",
                 "operationId": "ApiController.GetOAuthToken",
@@ -1021,7 +1212,7 @@
         "/api/login/oauth/code": {
             "post": {
                 "tags": [
-                    "api"
+                    "Token API"
                 ],
                 "description": "get OAuth code",
                 "operationId": "ApiController.GetOAuthCode",
@@ -1082,7 +1273,7 @@
         "/api/logout": {
             "post": {
                 "tags": [
-                    "api"
+                    "Login API"
                 ],
                 "description": "logout the current user",
                 "operationId": "ApiController.Logout",
@@ -1096,10 +1287,18 @@
                 }
             }
         },
+        "/api/send-verification-code": {
+            "post": {
+                "tags": [
+                    "Verification API"
+                ],
+                "operationId": "ApiController.SendVerificationCode"
+            }
+        },
         "/api/set-password": {
             "post": {
                 "tags": [
-                    "api"
+                    "Account API"
                 ],
                 "description": "set password",
                 "operationId": "ApiController.SetPassword",
@@ -1146,7 +1345,7 @@
         "/api/signup": {
             "post": {
                 "tags": [
-                    "api"
+                    "Login API"
                 ],
                 "description": "sign up a new user",
                 "operationId": "ApiController.Signup",
@@ -1176,10 +1375,25 @@
                 }
             }
         },
+        "/api/sync-ldap-users": {
+            "post": {
+                "tags": [
+                    "Account API"
+                ],
+                "operationId": "ApiController.SyncLdapUsers"
+            }
+        },
+        "/api/unlink": {
+            "post": {
+                "tags": [
+                    "Login API"
+                ]
+            }
+        },
         "/api/update-application": {
             "get": {
                 "tags": [
-                    "api"
+                    "Login API"
                 ],
                 "description": "get application login",
                 "operationId": "ApiController.GetApplicationLogin",
@@ -1231,7 +1445,7 @@
             },
             "post": {
                 "tags": [
-                    "api"
+                    "Application API"
                 ],
                 "description": "update an application",
                 "operationId": "ApiController.UpdateApplication",
@@ -1263,10 +1477,18 @@
                 }
             }
         },
+        "/api/update-ldap": {
+            "post": {
+                "tags": [
+                    "Account API"
+                ],
+                "operationId": "ApiController.UpdateLdap"
+            }
+        },
         "/api/update-organization": {
             "post": {
                 "tags": [
-                    "api"
+                    "Organization API"
                 ],
                 "description": "update organization",
                 "operationId": "ApiController.UpdateOrganization",
@@ -1301,7 +1523,7 @@
         "/api/update-provider": {
             "post": {
                 "tags": [
-                    "api"
+                    "Provider API"
                 ],
                 "description": "update provider",
                 "operationId": "ApiController.UpdateProvider",
@@ -1333,10 +1555,18 @@
                 }
             }
         },
+        "/api/update-resource": {
+            "post": {
+                "tags": [
+                    "Resource API"
+                ],
+                "operationId": "ApiController.UpdateResource"
+            }
+        },
         "/api/update-token": {
             "post": {
                 "tags": [
-                    "api"
+                    "Token API"
                 ],
                 "description": "update token",
                 "operationId": "ApiController.UpdateToken",
@@ -1371,7 +1601,7 @@
         "/api/update-user": {
             "post": {
                 "tags": [
-                    "api"
+                    "User API"
                 ],
                 "description": "update user",
                 "operationId": "ApiController.UpdateUser",
@@ -1406,7 +1636,7 @@
         "/api/update-webhook": {
             "post": {
                 "tags": [
-                    "api"
+                    "Webhook API"
                 ],
                 "description": "update webhook",
                 "operationId": "ApiController.UpdateWebhook",
@@ -1437,14 +1667,22 @@
                     }
                 }
             }
+        },
+        "/api/upload-resource": {
+            "post": {
+                "tags": [
+                    "Resource API"
+                ],
+                "operationId": "ApiController.UploadResource"
+            }
         }
     },
     "definitions": {
-        "1773.0xc000093bf0.false": {
+        "1713.0xc000393f50.false": {
             "title": "false",
             "type": "object"
         },
-        "1808.0xc000093c20.false": {
+        "1747.0xc000393f80.false": {
             "title": "false",
             "type": "object"
         },
@@ -1461,10 +1699,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1773.0xc000093bf0.false"
+                    "$ref": "#/definitions/1713.0xc000393f50.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/1808.0xc000093c20.false"
+                    "$ref": "#/definitions/1747.0xc000393f80.false"
                 },
                 "msg": {
                     "type": "string"
@@ -1479,10 +1717,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1773.0xc000093bf0.false"
+                    "$ref": "#/definitions/1713.0xc000393f50.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/1808.0xc000093c20.false"
+                    "$ref": "#/definitions/1747.0xc000393f80.false"
                 },
                 "msg": {
                     "type": "string"
@@ -1517,6 +1755,9 @@
                 },
                 "displayName": {
                     "type": "string"
+                },
+                "enableCodeSignin": {
+                    "type": "boolean"
                 },
                 "enablePassword": {
                     "type": "boolean"
@@ -1799,6 +2040,9 @@
                     "type": "integer",
                     "format": "int64"
                 },
+                "id_token": {
+                    "type": "string"
+                },
                 "scope": {
                     "type": "string"
                 },
@@ -1826,6 +2070,12 @@
                 "bio": {
                     "type": "string"
                 },
+                "birthday": {
+                    "type": "string"
+                },
+                "createdIp": {
+                    "type": "string"
+                },
                 "createdTime": {
                     "type": "string"
                 },
@@ -1835,10 +2085,16 @@
                 "displayName": {
                     "type": "string"
                 },
+                "education": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
                 "facebook": {
+                    "type": "string"
+                },
+                "gender": {
                     "type": "string"
                 },
                 "gitee": {
@@ -1862,7 +2118,16 @@
                 "id": {
                     "type": "string"
                 },
+                "idCard": {
+                    "type": "string"
+                },
+                "idCardType": {
+                    "type": "string"
+                },
                 "isAdmin": {
+                    "type": "boolean"
+                },
+                "isDefaultAvatar": {
                     "type": "boolean"
                 },
                 "isDeleted": {
@@ -1881,6 +2146,12 @@
                     "type": "string"
                 },
                 "lark": {
+                    "type": "string"
+                },
+                "lastSigninIp": {
+                    "type": "string"
+                },
+                "lastSigninTime": {
                     "type": "string"
                 },
                 "ldap": {

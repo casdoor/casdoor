@@ -35,6 +35,9 @@ func (c *ApiController) getCurrentUser() *object.User {
 }
 
 // SendVerificationCode ...
+// @Title SendVerificationCode
+// @Tag Verification API
+// @router /send-verification-code [post] 
 func (c *ApiController) SendVerificationCode() {
 	destType := c.Ctx.Request.Form.Get("type")
 	dest := c.Ctx.Request.Form.Get("dest")
@@ -42,6 +45,7 @@ func (c *ApiController) SendVerificationCode() {
 	checkType := c.Ctx.Request.Form.Get("checkType")
 	checkId := c.Ctx.Request.Form.Get("checkId")
 	checkKey := c.Ctx.Request.Form.Get("checkKey")
+	checkUser := c.Ctx.Request.Form.Get("checkUser")
 	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
 
 	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || !strings.Contains(orgId, "/") || len(checkType) == 0 || len(checkId) == 0 || len(checkKey) == 0 {
@@ -63,6 +67,12 @@ func (c *ApiController) SendVerificationCode() {
 	user := c.getCurrentUser()
 	organization := object.GetOrganization(orgId)
 	application := object.GetApplicationByOrganizationName(organization.Name)
+
+	if checkUser == "true" && user == nil &&
+		object.GetUserByFields(organization.Name, dest) == nil {
+		c.ResponseError("No such user.")
+		return
+	}
 
 	sendResp := errors.New("Invalid dest type.")
 	switch destType {
@@ -100,6 +110,9 @@ func (c *ApiController) SendVerificationCode() {
 }
 
 // ResetEmailOrPhone ...
+// @Tag Account API
+// @Title ResetEmailOrPhone
+// @router /api/reset-email-or-phone [post]
 func (c *ApiController) ResetEmailOrPhone() {
 	userId, ok := c.RequireSignedIn()
 	if !ok {

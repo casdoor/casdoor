@@ -141,7 +141,7 @@ func syncUsers() {
 			}
 		}
 	}
-	object.AddUsersSafe(newUsers)
+	object.AddUsersInBatch(newUsers)
 
 	for _, user := range users {
 		id := user.Id

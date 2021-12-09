@@ -31,7 +31,7 @@ class RecordListPage extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
-    this.getRecords(1, 10);
+    this.getRecords(1, 20);
   }
 
   getRecords(page, pageSize) {
@@ -174,6 +174,7 @@ class RecordListPage extends React.Component {
     ];
 
     const paginationProps = {
+      pageSize: 20,
       total: this.state.total,
       showQuickJumper: true,
       showSizeChanger: true,

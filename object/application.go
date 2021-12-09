@@ -24,26 +24,27 @@ type Application struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName     string          `xorm:"varchar(100)" json:"displayName"`
-	Logo            string          `xorm:"varchar(100)" json:"logo"`
-	HomepageUrl     string          `xorm:"varchar(100)" json:"homepageUrl"`
-	Description     string          `xorm:"varchar(100)" json:"description"`
-	Organization    string          `xorm:"varchar(100)" json:"organization"`
-	EnablePassword  bool            `json:"enablePassword"`
-	EnableSignUp    bool            `json:"enableSignUp"`
-	Providers       []*ProviderItem `xorm:"varchar(10000)" json:"providers"`
-	SignupItems     []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
-	OrganizationObj *Organization   `xorm:"-" json:"organizationObj"`
+	DisplayName      string          `xorm:"varchar(100)" json:"displayName"`
+	Logo             string          `xorm:"varchar(100)" json:"logo"`
+	HomepageUrl      string          `xorm:"varchar(100)" json:"homepageUrl"`
+	Description      string          `xorm:"varchar(100)" json:"description"`
+	Organization     string          `xorm:"varchar(100)" json:"organization"`
+	EnablePassword   bool            `json:"enablePassword"`
+	EnableSignUp     bool            `json:"enableSignUp"`
+	EnableCodeSignin bool            `json:"enableCodeSignin"`
+	Providers        []*ProviderItem `xorm:"mediumtext" json:"providers"`
+	SignupItems      []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
+	OrganizationObj  *Organization   `xorm:"-" json:"organizationObj"`
 
 	ClientId       string   `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret   string   `xorm:"varchar(100)" json:"clientSecret"`
 	RedirectUris   []string `xorm:"varchar(1000)" json:"redirectUris"`
 	ExpireInHours  int      `json:"expireInHours"`
-	SignupUrl      string   `xorm:"varchar(1000)" json:"signupUrl"`
-	SigninUrl      string   `xorm:"varchar(1000)" json:"signinUrl"`
-	ForgetUrl      string   `xorm:"varchar(1000)" json:"forgetUrl"`
-	AffiliationUrl string   `xorm:"varchar(1000)" json:"affiliationUrl"`
-	TermsOfUse     string   `xorm:"varchar(1000)" json:"termsOfUse"`
+	SignupUrl      string   `xorm:"varchar(200)" json:"signupUrl"`
+	SigninUrl      string   `xorm:"varchar(200)" json:"signinUrl"`
+	ForgetUrl      string   `xorm:"varchar(200)" json:"forgetUrl"`
+	AffiliationUrl string   `xorm:"varchar(100)" json:"affiliationUrl"`
+	TermsOfUse     string   `xorm:"varchar(100)" json:"termsOfUse"`
 	SignupHtml     string   `xorm:"mediumtext" json:"signupHtml"`
 	SigninHtml     string   `xorm:"mediumtext" json:"signinHtml"`
 }

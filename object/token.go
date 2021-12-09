@@ -15,6 +15,7 @@
 package object
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/casbin/casdoor/util"
@@ -166,7 +167,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		}
 	}
 	if !validUri {
-		return "redirect_uri doesn't exist in the allowed Redirect URL list", application
+		return fmt.Sprintf("Redirect URI: \"%s\" doesn't exist in the allowed Redirect URI list", redirectUri), application
 	}
 
 	// Mask application for /api/get-app-login

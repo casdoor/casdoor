@@ -18,6 +18,8 @@ import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
+import { authConfig } from "./auth/Auth";
+import copy from 'copy-to-clipboard';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -103,8 +105,13 @@ class ProviderEditPage extends React.Component {
           {id: 'Local File System', name: 'Local File System'},
           {id: 'AWS S3', name: 'AWS S3'},
           {id: 'Aliyun OSS', name: 'Aliyun OSS'},
+          {id: 'Tencent Cloud COS', name: 'Tencent Cloud COS'},
         ]
       );
+    } else if (provider.category === "SAML") {
+      return ([
+          {id: 'Aliyun IDaaS', name: 'Aliyun IDaaS'},
+      ]);
     } else {
       return [];
     }
@@ -158,6 +165,17 @@ class ProviderEditPage extends React.Component {
     </Row>;
   }
 
+  loadSamlConfiguration() {
+    var parser = new DOMParser();
+    var xmlDoc = parser.parseFromString(this.state.provider.metadata, "text/xml");
+    var cert = xmlDoc.getElementsByTagName("ds:X509Certificate")[0].childNodes[0].nodeValue;
+    var endpoint = xmlDoc.getElementsByTagName("md:SingleSignOnService")[0].getAttribute("Location");
+    var issuerUrl = xmlDoc.getElementsByTagName("md:EntityDescriptor")[0].getAttribute("entityID");
+    this.updateProviderField("idP", cert);
+    this.updateProviderField("endpoint", endpoint);
+    this.updateProviderField("issuerUrl", issuerUrl);
+  }
+
   renderProvider() {
     return (
       <Card size="small" title={
@@ -204,6 +222,8 @@ class ProviderEditPage extends React.Component {
               } else if (value === "Storage") {
                 this.updateProviderField('type', 'Local File System');
                 this.updateProviderField('domain', Setting.getFullServerUrl());
+              } else if (value === "SAML") {
+                this.updateProviderField('type', 'Aliyun IDaaS');
               }
             })}>
               {
@@ -212,6 +232,7 @@ class ProviderEditPage extends React.Component {
                   {id: 'Email', name: 'Email'},
                   {id: 'SMS', name: 'SMS'},
                   {id: 'Storage', name: 'Storage'},
+                  {id: 'SAML', name: 'SAML'},
                 ].map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
               }
             </Select>
@@ -274,11 +295,21 @@ class ProviderEditPage extends React.Component {
           <div>
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Endpoint - Tooltip"))} :
+                {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Region endpoint for Internet"))} :
               </Col>
               <Col span={22} >
                 <Input value={this.state.provider.endpoint} onChange={e => {
                   this.updateProviderField('endpoint', e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={2}>
+                {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.provider.intranetEndpoint} onChange={e => {
+                  this.updateProviderField('intranetEndpoint', e.target.value);
                 }} />
               </Col>
             </Row>
@@ -302,7 +333,7 @@ class ProviderEditPage extends React.Component {
                 }} />
               </Col>
             </Row>
-            {this.state.provider.type === "AWSS3" ? (
+            {this.state.provider.type === "AWS S3" || this.state.provider.type === "Tencent Cloud COS" ? (
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Region ID"), i18next.t("provider:Region ID - Tooltip"))} :
@@ -380,6 +411,96 @@ class ProviderEditPage extends React.Component {
                   <Input value={this.state.provider.templateCode} onChange={e => {
                     this.updateProviderField('templateCode', e.target.value);
                   }} />
+                </Col>
+              </Row>
+            </React.Fragment>
+          ) : this.state.provider.category === "SAML" ? (
+            <React.Fragment>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Metadata"), i18next.t("provider:Metadata - Tooltip"))} :
+                </Col>
+                <Col span={22}>
+                  <TextArea rows={4} value={this.state.provider.metadata} onChange={e => {
+                    this.updateProviderField('metadata', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}}>
+                <Col style={{marginTop: '5px'}} span={2}></Col>
+                <Col span={2}>
+                  <Button type="primary" onClick={() => {
+                      try {
+                        this.loadSamlConfiguration();
+                        Setting.showMessage("success", i18next.t("provider:Parse Metadata successfully"));
+                      } catch (err) {
+                        Setting.showMessage("error", i18next.t("provider:Can not parse Metadata"));
+                      }
+                    }}>
+                    {i18next.t("provider:Parse")}
+                  </Button>
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:SAML 2.0 Endpoint (HTTP)"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.endpoint} onChange={e => {
+                    this.updateProviderField('endpoint', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:IdP"), i18next.t("provider:IdP public key"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.idP} onChange={e => {
+                    this.updateProviderField('idP', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Issuer URL"), i18next.t("provider:Issuer URL - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.issuerUrl} onChange={e => {
+                    this.updateProviderField('issuerUrl', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:SP ACS URL"), i18next.t("provider:SP ACS URL - Tooltip"))} :
+                </Col>
+                <Col span={21} >
+                  <Input value={`${authConfig.serverUrl}/api/acs`} readOnly="readonly" />
+                </Col>
+                <Col span={1}>
+                  <Button type="primary" onClick={() => {
+                    copy(`${authConfig.serverUrl}/api/acs`);
+                    Setting.showMessage("success", i18next.t("provider:Link copied to clipboard successfully"));
+                  }}>
+                    {i18next.t("provider:Copy")}
+                  </Button>
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:SP Entity ID"), i18next.t("provider:SP ACS URL - Tooltip"))} :
+                </Col>
+                <Col span={21} >
+                  <Input value={`${authConfig.serverUrl}/api/acs`} readOnly="readonly" />
+                </Col>
+                <Col span={1}>
+                  <Button type="primary" onClick={() => {
+                    copy(`${authConfig.serverUrl}/api/acs`);
+                    Setting.showMessage("success", i18next.t("provider:Link copied to clipboard successfully"));
+                  }}>
+                    {i18next.t("provider:Copy")}
+                  </Button>
                 </Col>
               </Row>
             </React.Fragment>

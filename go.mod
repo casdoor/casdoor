@@ -21,6 +21,8 @@ require (
 	github.com/mileusna/crontab v1.0.1
 	github.com/qiangmzsx/string-adapter/v2 v2.1.0
 	github.com/qor/oss v0.0.0-20191031055114-aef9ba66bf76
+	github.com/russellhaering/gosaml2 v0.6.0
+	github.com/russellhaering/goxmldsig v1.1.1
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/thanhpk/randstr v1.0.4

@@ -25,7 +25,7 @@ export const ResetModal = (props) => {
   const [confirmLoading, setConfirmLoading] = React.useState(false);
   const [dest, setDest] = React.useState("");
   const [code, setCode] = React.useState("");
-  const {buttonText, destType, coolDownTime, org} = props;
+  const {buttonText, destType, org} = props;
 
   const showModal = () => {
     setVisible(true);
@@ -87,13 +87,9 @@ export const ResetModal = (props) => {
           </Row>
           <Row style={{width: "100%", marginBottom: "20px"}}>
             <CountDownInput
-              defaultButtonText={i18next.t("code:Send Code")}
               textBefore={i18next.t("code:Code You Received")}
-              placeHolder={i18next.t("code:Enter your code")}
               onChange={setCode}
-              onButtonClick={UserBackend.sendCode}
-              onButtonClickArgs={[dest, destType, org?.owner + "/" + org?.name]}
-              coolDownTime={coolDownTime}
+              onButtonClickArgs={[dest, destType, `${org?.owner}/${org?.name}`]}
             />
           </Row>
         </Col>

@@ -34,7 +34,7 @@ func (application *Application) GetProviderItem(providerName string) *ProviderIt
 }
 
 func (pi *ProviderItem) IsProviderVisible() bool {
-	return pi.Provider.Category == "OAuth"
+	return pi.Provider.Category == "OAuth" || pi.Provider.Category == "SAML"
 }
 
 func (pi *ProviderItem) isProviderPrompted() bool {

@@ -24,6 +24,7 @@ import (
 
 // GetTokens
 // @Title GetTokens
+// @Tag Token API
 // @Description get tokens
 // @Param   owner     query    string  true        "The owner of tokens"
 // @Param   pageSize     query    string  true        "The size of each page"
@@ -47,6 +48,7 @@ func (c *ApiController) GetTokens() {
 
 // GetToken
 // @Title GetToken
+// @Tag Token API
 // @Description get token
 // @Param   id     query    string  true        "The id of token"
 // @Success 200 {object} object.Token The Response object
@@ -60,6 +62,7 @@ func (c *ApiController) GetToken() {
 
 // UpdateToken
 // @Title UpdateToken
+// @Tag Token API
 // @Description update token
 // @Param   id     query    string  true        "The id of token"
 // @Param   body    body   object.Token  true        "Details of the token"
@@ -80,6 +83,7 @@ func (c *ApiController) UpdateToken() {
 
 // AddToken
 // @Title AddToken
+// @Tag Token API
 // @Description add token
 // @Param   body    body   object.Token  true        "Details of the token"
 // @Success 200 {object} controllers.Response The Response object
@@ -96,6 +100,7 @@ func (c *ApiController) AddToken() {
 }
 
 // DeleteToken
+// @Tag Token API
 // @Title DeleteToken
 // @Description delete token
 // @Param   body    body   object.Token  true        "Details of the token"
@@ -114,6 +119,7 @@ func (c *ApiController) DeleteToken() {
 
 // GetOAuthCode
 // @Title GetOAuthCode
+// @Tag Token API
 // @Description get OAuth code
 // @Param   user_id     query    string  true        "The id of user"
 // @Param   client_id     query    string  true        "OAuth client id"
@@ -137,6 +143,7 @@ func (c *ApiController) GetOAuthCode() {
 
 // GetOAuthToken
 // @Title GetOAuthToken
+// @Tag Token API
 // @Description get OAuth access token
 // @Param   grant_type     query    string  true        "OAuth grant type"
 // @Param   client_id     query    string  true        "OAuth client id"

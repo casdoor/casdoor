@@ -66,7 +66,7 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (providerItem.provider.category !== "OAuth") {
+  if (providerItem.provider.category !== "OAuth" && providerItem.provider.category !== "SAML") {
     return false;
   }
 
@@ -549,4 +549,8 @@ export function getTags(tags) {
     );
   });
   return res;
+}
+
+export function getApplicationOrgName(application) {
+  return `${application?.organizationObj.owner}/${application?.organizationObj.name}`;
 }

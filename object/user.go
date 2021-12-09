@@ -52,6 +52,7 @@ type User struct {
 	Education         string   `xorm:"varchar(100)" json:"education"`
 	Score             int      `json:"score"`
 	Ranking           int      `json:"ranking"`
+	IsDefaultAvatar   bool     `json:"isDefaultAvatar"`
 	IsOnline          bool     `json:"isOnline"`
 	IsAdmin           bool     `json:"isAdmin"`
 	IsGlobalAdmin     bool     `json:"isGlobalAdmin"`
@@ -255,7 +256,7 @@ func UpdateUser(id string, user *User) bool {
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("owner", "display_name", "avatar",
 		"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag",
-		"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "properties").Update(user)
+		"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties").Update(user)
 	if err != nil {
 		panic(err)
 	}
@@ -347,7 +348,7 @@ func AddUsers(users []*User) bool {
 	return affected != 0
 }
 
-func AddUsersSafe(users []*User) bool {
+func AddUsersInBatch(users []*User) bool {
 	batchSize := 1000
 
 	if len(users) == 0 {

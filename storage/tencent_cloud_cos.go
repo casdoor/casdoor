@@ -12,27 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package controllers
+package storage
 
-import "github.com/casbin/casdoor/object"
+import (
+	"github.com/qor/oss"
+	"github.com/qor/oss/tencent"
+)
 
-// @Title GetOidcDiscovery
-// @Tag OIDC API
-// @router /.well-known/openid-configuration [get]
-func (c *RootController) GetOidcDiscovery() {
-	c.Data["json"] = object.GetOidcDiscovery()
-	c.ServeJSON()
-}
+func NewTencentCloudCosStorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
+	sp := tencent.New(&tencent.Config{
+		AccessID:  clientId,
+		AccessKey: clientSecret,
+		Region:    region,
+		Bucket:    bucket,
+		Endpoint:  endpoint,
+	})
 
-// @Title GetOidcCert
-// @Tag OIDC API
-// @router /api/certs [get]
-func (c *RootController) GetOidcCert() {
-	jwks, err := object.GetJSONWebKeySet()
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	c.Data["json"] = jwks
-	c.ServeJSON()
+	return sp
 }
