@@ -78,6 +78,9 @@ type User struct {
 	Wecom    string `xorm:"wecom varchar(100)" json:"wecom"`
 	Lark     string `xorm:"lark varchar(100)" json:"lark"`
 	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab"`
+	Apple    string `xorm:"apple varchar(100)" json:"apple"`
+	AzureAD  string `xorm:"azuread varchar(100)" json:"azuread"`
+	Slack    string `xorm:"slack varchar(100)" json:"slack"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`

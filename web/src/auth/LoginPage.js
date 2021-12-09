@@ -34,6 +34,9 @@ import LinkedInLoginButton from "./LinkedInLoginButton";
 import WeComLoginButton from "./WeComLoginButton";
 import LarkLoginButton from "./LarkLoginButton";
 import GitLabLoginButton from "./GitLabLoginButton";
+import AppleLoginButton from "./AppleLoginButton"
+import AzureADLoginButton from "./AzureADLoginButton";
+import SlackLoginButton from "./SlackLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../component/CountDownInput";
 
@@ -180,6 +183,12 @@ class LoginPage extends React.Component {
       return <LarkLoginButton text={text} align={"center"} />
     } else if (type === "GitLab") {
       return <GitLabLoginButton text={text} align={"center"} />
+    } else if (type === "Apple") {
+      return <AppleLoginButton text={text} align={"center"} />
+    } else if (type === "AzureAD") {
+      return <AzureADLoginButton text={text} align={"center"} />
+    } else if (type === "Slack") {
+      return <SlackLoginButton text={text} align={"center"} />
     }
 
     return text;

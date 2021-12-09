@@ -67,6 +67,18 @@ const authInfo = {
     scope: "read_user+profile",
     endpoint: "https://gitlab.com/oauth/authorize",
   },
+  Apple: {
+    scope: "name%20email",
+    endpoint: "https://appleid.apple.com/auth/authorize",
+  },
+  AzureAD: {
+    scope: "user_impersonation",
+    endpoint: "https://login.microsoftonline.com/common/oauth2/authorize",
+  },
+  Slack: {
+    scope: "users:read",
+    endpoint: "https://slack.com/oauth/authorize",
+  },
 };
 
 const otherProviderInfo = {
@@ -205,5 +217,11 @@ export function getAuthUrl(application, provider, method) {
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`;
   } else if (provider.type === "GitLab") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
-  }
+  } else if (provider.type === "Apple") {
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&response_mode=form_post`;
+  } else if (provider.type === "AzureAD") {
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&resource=https://graph.windows.net/`;
+  } else if (provider.type === "Slack") {
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
+  } 
 }
