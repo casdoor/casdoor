@@ -17,10 +17,11 @@ package object
 import (
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/casbin/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 	"github.com/thanhpk/randstr"
-	"strings"
 )
 
 type Ldap struct {
