@@ -17,6 +17,7 @@
 
 .idea/
 *.iml
+.vscode/
 
 tmp/
 tmpFiles/
