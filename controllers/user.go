@@ -100,6 +100,7 @@ func (c *ApiController) GetUser() {
 // @router /update-user [post]
 func (c *ApiController) UpdateUser() {
 	id := c.Input().Get("id")
+	columnsStr := c.Input().Get("columns")
 
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
@@ -112,7 +113,12 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
-	affected := object.UpdateUser(id, &user)
+	columns := []string{}
+	if columnsStr != "" {
+		columns = strings.Split(columnsStr, ",")
+	}
+
+	affected := object.UpdateUser(id, &user, columns)
 	if affected {
 		original.UpdateUserToOriginalDatabase(&user)
 	}

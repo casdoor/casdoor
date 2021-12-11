@@ -241,7 +241,7 @@ func GetLastUser(owner string) *User {
 	return nil
 }
 
-func UpdateUser(id string, user *User) bool {
+func UpdateUser(id string, user *User, columns []string) bool {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	oldUser := getUser(owner, name)
 	if oldUser == nil {
@@ -254,9 +254,13 @@ func UpdateUser(id string, user *User) bool {
 		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("owner", "display_name", "avatar",
-		"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag",
-		"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties").Update(user)
+	if len(columns) == 0 {
+		columns = []string{"owner", "display_name", "avatar",
+			"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag",
+			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties"}
+	}
+
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
 	if err != nil {
 		panic(err)
 	}

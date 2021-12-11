@@ -198,7 +198,7 @@ func (c *ApiController) UploadResource() {
 		}
 
 		user.Avatar = fileUrl
-		object.UpdateUser(user.GetId(), user)
+		object.UpdateUser(user.GetId(), user, []string{"avatar"})
 	case "termsOfUse":
 		applicationId := fmt.Sprintf("admin/%s", parent)
 		app := object.GetApplication(applicationId)
