@@ -194,14 +194,14 @@ class LoginPage extends React.Component {
     return text;
   }
 
-  getSamlUrl(providerId) {
+  getSamlUrl(provider) {
     const params = new URLSearchParams(this.props.location.search);
-    let clientId = params.get("client_id")
+    let clientId = params.get("client_id");
     let application = params.get("state");
     let realRedirectUri = params.get("redirect_uri");
-    let redirectUri = `${window.location.origin}/callback/saml`
-    let providerName = providerId.split('/')[1];
-    AuthBackend.getSamlLogin(providerId).then((res) => {
+    let redirectUri = `${window.location.origin}/callback/saml`;
+    let providerName = provider.name;
+    AuthBackend.getSamlLogin(`${provider.owner}/${providerName}`).then((res) => {
       const replyState = `${clientId}&${application}&${providerName}&${realRedirectUri}&${redirectUri}`;
       window.location.href = `${res.data}&RelayState=${btoa(replyState)}`;
     });
@@ -217,7 +217,7 @@ class LoginPage extends React.Component {
         )
       } else if (provider.category === "SAML") {
         return (
-          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider.owner + "/" + provider.name)}>
+          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
             <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
           </a>
         )

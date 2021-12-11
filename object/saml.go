@@ -27,9 +27,9 @@ import (
 	dsig "github.com/russellhaering/goxmldsig"
 )
 
-func ParseSamlResponse(samlResponse string) (string, error) {
+func ParseSamlResponse(samlResponse string, providerType string) (string, error) {
 	samlResponse, _ = url.QueryUnescape(samlResponse)
-	sp, err := buildSp(nil, samlResponse)
+	sp, err := buildSp(&Provider{Type: providerType}, samlResponse)
 	if err != nil {
 		return "", err
 	}
@@ -63,15 +63,8 @@ func buildSp(provider *Provider, samlResponse string) (*saml2.SAMLServiceProvide
 	origin := beego.AppConfig.String("origin")
 	certEncodedData := ""
 	if samlResponse != "" {
-		de, err := base64.StdEncoding.DecodeString(samlResponse)
-		if err != nil {
-			panic(err)
-		}
-		deStr := strings.Replace(string(de), "\n", "", -1)
-		res := regexp.MustCompile(`<ds:X509Certificate>(.*?)</ds:X509Certificate>`).FindAllStringSubmatch(deStr, -1)
-		str := res[0][0]
-		certEncodedData = str[20 : len(str)-21]
-	} else if provider != nil {
+		certEncodedData = parseSamlResponse(samlResponse, provider.Type)
+	} else if provider.IdP != "" {
 		certEncodedData = provider.IdP
 	}
 	certData, err := base64.StdEncoding.DecodeString(certEncodedData)
@@ -88,7 +81,7 @@ func buildSp(provider *Provider, samlResponse string) (*saml2.SAMLServiceProvide
 		AssertionConsumerServiceURL: fmt.Sprintf("%s/api/acs", origin),
 		IDPCertificateStore:         &certStore,
 	}
-	if provider != nil {
+	if provider.Endpoint != "" {
 		randomKeyStore := dsig.RandomKeyStoreForTest()
 		sp.IdentityProviderSSOURL = provider.Endpoint
 		sp.IdentityProviderIssuer = provider.IssuerUrl
@@ -96,4 +89,22 @@ func buildSp(provider *Provider, samlResponse string) (*saml2.SAMLServiceProvide
 		sp.SPKeyStore = randomKeyStore
 	}
 	return sp, nil
+}
+
+func parseSamlResponse(samlResponse string, providerType string) string {
+	de, err := base64.StdEncoding.DecodeString(samlResponse)
+	if err != nil {
+		panic(err)
+	}
+	deStr := strings.Replace(string(de), "\n", "", -1)
+	tagMap := map[string]string{
+		"Aliyun IDaaS": "ds",
+		"Keycloak": "dsig",
+	}
+	tag := tagMap[providerType]
+	expression := fmt.Sprintf("<%s:X509Certificate>([\\s\\S]*?)</%s:X509Certificate>", tag, tag)
+	res := regexp.MustCompile(expression).FindStringSubmatch(deStr)
+	str := res[0]
+	tagLength := len("<:X509Certificate>") + len(tag)
+	return str[tagLength : len(str) - tagLength - 1]
 }
