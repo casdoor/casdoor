@@ -114,8 +114,7 @@ func (c *ApiController) UpdateUser() {
 
 	affected := object.UpdateUser(id, &user)
 	if affected {
-		newUser := object.GetUser(user.GetId())
-		original.UpdateUserToOriginalDatabase(newUser)
+		original.UpdateUserToOriginalDatabase(&user)
 	}
 
 	c.Data["json"] = wrapActionResponse(affected)
