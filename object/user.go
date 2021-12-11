@@ -51,7 +51,7 @@ type User struct {
 	Birthday          string   `xorm:"varchar(100)" json:"birthday"`
 	Education         string   `xorm:"varchar(100)" json:"education"`
 	Score             int      `json:"score"`
-	Ranking           int      `json:"ranking"`
+	Ranking           int      `xorm:"int notnull index autoincr" json:"ranking"`
 	IsDefaultAvatar   bool     `json:"isDefaultAvatar"`
 	IsOnline          bool     `json:"isOnline"`
 	IsAdmin           bool     `json:"isAdmin"`
