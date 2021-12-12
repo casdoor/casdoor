@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, List, Popconfirm, Table, Tooltip} from 'antd';
+import {Button, Col, List, Popconfirm, Row, Table, Tooltip} from 'antd';
 import {EditOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as Setting from "./Setting";
@@ -171,32 +171,54 @@ class ApplicationListPage extends React.Component {
         title: i18next.t("general:Providers"),
         dataIndex: 'providers',
         key: 'providers',
-        width: '300px',
+        // width: '600px',
         render: (text, record, index) => {
           const providers = text;
           if (providers.length === 0) {
             return "(empty)";
           }
 
+          const half = Math.floor((providers.length + 1) / 2);
+
+          const getList = (providers) => {
+            return (
+              <List
+                size="small"
+                locale={{emptyText: " "}}
+                dataSource={providers}
+                renderItem={(providerItem, i) => {
+                  return (
+                    <List.Item>
+                      <div style={{display: "inline"}}>
+                        <Tooltip placement="topLeft" title="Edit">
+                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${providerItem.name}`)} />
+                        </Tooltip>
+                        <Link to={`/providers/${providerItem.name}`}>
+                          {providerItem.name}
+                        </Link>
+                      </div>
+                    </List.Item>
+                  )
+                }}
+              />
+            )
+          }
+
           return (
-            <List
-              size="small"
-              dataSource={providers}
-              renderItem={(providerItem, i) => {
-                return (
-                  <List.Item>
-                    <div style={{display: "inline"}}>
-                      <Tooltip placement="topLeft" title="Edit">
-                        <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${providerItem.name}`)} />
-                      </Tooltip>
-                      <Link to={`/providers/${providerItem.name}`}>
-                        {providerItem.name}
-                      </Link>
-                    </div>
-                  </List.Item>
-                )
-              }}
-            />
+            <div>
+              <Row>
+                <Col span={12}>
+                  {
+                    getList(providers.slice(0, half))
+                  }
+                </Col>
+                <Col span={12}>
+                  {
+                    getList(providers.slice(half))
+                  }
+                </Col>
+              </Row>
+            </div>
           )
         },
       },
