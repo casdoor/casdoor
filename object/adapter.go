@@ -72,6 +72,28 @@ func NewAdapter(driverName string, dataSourceName string, dbName string) *Adapte
 	return a
 }
 
+func (a *Adapter) testDatabaseConnection() error {
+	engine, originalErr := xorm.NewEngine(a.driverName, a.dataSourceName)
+	if originalErr == nil {
+		originalErr = engine.Ping()
+		if originalErr == nil {
+			return nil
+		}
+	}
+
+	//for those who first try casdoor image under dev mode but forgot modifing app.conf
+	if runmode := beego.AppConfig.String("runmode"); runmode == "dev" {
+		a.dataSourceName = "root:123456@tcp(db:3306)/"
+	}
+	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName)
+	if err != nil {
+		return originalErr
+	} else if err := engine.Ping(); err != nil {
+		return originalErr
+	}
+	return nil
+}
+
 func (a *Adapter) createDatabase() error {
 	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName)
 	if err != nil {
@@ -84,6 +106,10 @@ func (a *Adapter) createDatabase() error {
 }
 
 func (a *Adapter) open() {
+	if err := a.testDatabaseConnection(); err != nil {
+		panic(err)
+	}
+
 	if a.driverName != "postgres" {
 		if err := a.createDatabase(); err != nil {
 			panic(err)

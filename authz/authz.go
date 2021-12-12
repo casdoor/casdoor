@@ -27,7 +27,15 @@ var Enforcer *casbin.Enforcer
 func InitAuthz() {
 	var err error
 
-	a, err := xormadapter.NewAdapter(beego.AppConfig.String("driverName"), beego.AppConfig.String("dataSourceName")+beego.AppConfig.String("dbName"), true)
+	adapter, err := xormadapter.NewAdapter(beego.AppConfig.String("driverName"), beego.AppConfig.String("dataSourceName")+beego.AppConfig.String("dbName"), true)
+	if err != nil && beego.AppConfig.String("runmode") == "dev" {
+		//for those who first try casdoor image under dev mode but forgot modifing app.conf
+		newAdapter, newerr := xormadapter.NewAdapter(beego.AppConfig.String("driverName"), "root:123456@tcp(db:3306)/"+beego.AppConfig.String("dbName"), true)
+		if newerr == nil {
+			err = nil
+			adapter = newAdapter
+		}
+	}
 	if err != nil {
 		panic(err)
 	}
@@ -60,7 +68,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 		panic(err)
 	}
 
-	Enforcer, err = casbin.NewEnforcer(m, a)
+	Enforcer, err = casbin.NewEnforcer(m, adapter)
 	if err != nil {
 		panic(err)
 	}
