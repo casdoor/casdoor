@@ -73,6 +73,7 @@ class OrganizationListPage extends React.Component {
             organizations: Setting.prependRow(this.state.organizations, newOrganization),
             total: this.state.total + 1
           });
+          this.props.history.push(`/organizations/${newOrganization.name}`);
         }
       )
       .catch(error => {
