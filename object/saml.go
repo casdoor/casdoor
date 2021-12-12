@@ -60,7 +60,7 @@ func buildSp(provider *Provider, samlResponse string) (*saml2.SAMLServiceProvide
 	certStore := dsig.MemoryX509CertificateStore{
 		Roots: []*x509.Certificate{},
 	}
-	samlOrigin := beego.AppConfig.String("samlOrigin")
+	origin := beego.AppConfig.String("origin")
 	certEncodedData := ""
 	if samlResponse != "" {
 		de, err := base64.StdEncoding.DecodeString(samlResponse)
@@ -84,8 +84,8 @@ func buildSp(provider *Provider, samlResponse string) (*saml2.SAMLServiceProvide
 	}
 	certStore.Roots = append(certStore.Roots, idpCert)
 	sp := &saml2.SAMLServiceProvider{
-		ServiceProviderIssuer:       fmt.Sprintf("%s/api/acs", samlOrigin),
-		AssertionConsumerServiceURL: fmt.Sprintf("%s/api/acs", samlOrigin),
+		ServiceProviderIssuer:       fmt.Sprintf("%s/api/acs", origin),
+		AssertionConsumerServiceURL: fmt.Sprintf("%s/api/acs", origin),
 		IDPCertificateStore:         &certStore,
 	}
 	if provider != nil {

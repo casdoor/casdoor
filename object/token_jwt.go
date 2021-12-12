@@ -43,7 +43,7 @@ func generateJwtToken(application *Application, user *User) (string, error) {
 	claims := Claims{
 		User: *user,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    beego.AppConfig.String("oidcOrigin"),
+			Issuer:    beego.AppConfig.String("origin"),
 			Subject:   user.Id,
 			Audience:  []string{application.ClientId},
 			ExpiresAt: jwt.NewNumericDate(expireTime),
