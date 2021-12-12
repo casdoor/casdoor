@@ -22,7 +22,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -132,7 +131,7 @@ func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		}
 	}(resp.Body)
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, _ := io.ReadAll(resp.Body)
 	info := InfoResp{}
 	_ = json.Unmarshal(body, &info)
 	errCode := info.Errcode
@@ -148,7 +147,7 @@ func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 			return
 		}
 	}(resp.Body)
-	body, _ = ioutil.ReadAll(resp.Body)
+	body, _ = io.ReadAll(resp.Body)
 	tokenResp := DingTalkAccessToken{}
 	_ = json.Unmarshal(body, &tokenResp)
 	if tokenResp.ErrCode != 0 {
