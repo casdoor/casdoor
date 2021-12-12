@@ -16,7 +16,6 @@ package routers
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/astaxie/beego/context"
 	"github.com/casbin/casdoor/object"
@@ -66,13 +65,9 @@ func AutoSigninFilter(ctx *context.Context) {
 
 	//Bearer token
 	//headers: {"Authorization":accessToken}
-	BearerToken := strings.Split(ctx.Request.Header.Get("Authorization"), " ")
-	if len(BearerToken) > 1 {
-		claims, err := object.ParseJwtToken(BearerToken[1])
-		if err == nil {
-			setSessionUser(ctx, fmt.Sprintf("%v/%v", claims.Owner, claims.Name))
-			setSeesionExpire(ctx, claims.ExpiresAt.Unix())
-			return
-		}
+	if claims, ok := parseBearer(ctx); ok {
+		setSessionUser(ctx, fmt.Sprintf("%s/%s", claims.Owner, claims.Name))
+		setSessionExpire(ctx, claims.ExpiresAt.Unix())
+		return
 	}
 }
