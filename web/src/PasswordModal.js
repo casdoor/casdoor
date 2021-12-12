@@ -25,6 +25,7 @@ export const PasswordModal = (props) => {
   const [newPassword, setNewPassword] = React.useState("");
   const [rePassword, setRePassword] = React.useState("");
   const {user} = props;
+  const {account} = props;
 
   const showModal = () => {
     setVisible(true);
@@ -73,7 +74,7 @@ export const PasswordModal = (props) => {
         width={600}
       >
         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
-          { hasOldPassword ? (
+          { (hasOldPassword && !Setting.isAdminUser(account)) ? (
             <Row style={{width: "100%", marginBottom: "20px"}}>
               <Input.Password addonBefore={i18next.t("user:Old Password")} placeholder={i18next.t("user:input password")} onChange={(e) => setOldPassword(e.target.value)}/>
             </Row>

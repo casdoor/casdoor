@@ -202,7 +202,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <PasswordModal user={this.state.user} />
+            <PasswordModal user={this.state.user} account={this.props.account} />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
