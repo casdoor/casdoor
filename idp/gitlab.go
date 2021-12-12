@@ -204,7 +204,7 @@ type GitlabUserInfo struct {
 
 // GetUserInfo use GitlabProviderToken gotten before return GitlabUserInfo
 func (idp *GitlabIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	resp, err := idp.Client.Get("https://gitlab.com/api/v4/user?access_token="+token.AccessToken)
+	resp, err := idp.Client.Get("https://gitlab.com/api/v4/user?access_token=" + token.AccessToken)
 	if err != nil {
 		return nil, err
 	}
@@ -215,7 +215,7 @@ func (idp *GitlabIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	}
 
 	guser := GitlabUserInfo{}
-	if err = json.Unmarshal(data, &guser);err != nil {
+	if err = json.Unmarshal(data, &guser); err != nil {
 		return nil, err
 	}
 

@@ -26,7 +26,7 @@ import (
 var defaultStorageProvider *Provider = nil
 
 func InitDefaultStorageProvider() {
-	 defaultStorageProviderStr := beego.AppConfig.String("defaultStorageProvider")
+	defaultStorageProviderStr := beego.AppConfig.String("defaultStorageProvider")
 	if defaultStorageProviderStr != "" {
 		defaultStorageProvider = getProvider("admin", defaultStorageProviderStr)
 	}

@@ -37,7 +37,7 @@ func (c *ApiController) getCurrentUser() *object.User {
 // SendVerificationCode ...
 // @Title SendVerificationCode
 // @Tag Verification API
-// @router /send-verification-code [post] 
+// @router /send-verification-code [post]
 func (c *ApiController) SendVerificationCode() {
 	destType := c.Ctx.Request.Form.Get("type")
 	dest := c.Ctx.Request.Form.Get("dest")
