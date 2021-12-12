@@ -110,7 +110,8 @@ class UserEditPage extends React.Component {
       <Card size="small" title={
         <div>
           {i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -370,7 +371,7 @@ class UserEditPage extends React.Component {
     )
   }
 
-  submitUserEdit() {
+  submitUserEdit(willExist) {
     let user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.organizationName, this.state.userName, user)
       .then((res) => {
@@ -382,7 +383,11 @@ class UserEditPage extends React.Component {
           });
 
           if (this.props.history !== undefined) {
-            this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
+            if (willExist) {
+              this.props.history.push(`/users`);
+            } else {
+              this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
+            }
           }
         } else {
           Setting.showMessage("error", res.msg);
@@ -402,7 +407,8 @@ class UserEditPage extends React.Component {
         this.state.user !== null ? this.renderUser() : null
       }
       <div style={{marginTop: '20px', marginLeft: '40px'}}>
-        <Button type="primary" size="large" onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+        <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
+        <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
       </div>
     </div>
     );

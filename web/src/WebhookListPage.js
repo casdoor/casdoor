@@ -47,14 +47,14 @@ class WebhookListPage extends React.Component {
   }
 
   newWebhook() {
-    var randomName = Math.random().toString(36).slice(-6)
+    const randomName = Setting.getRandomName();
     return {
       owner: "admin", // this.props.account.webhookname,
       name: `webhook_${randomName}`,
       createdTime: moment().format(),
       url: "https://example.com/callback",
       contentType: "application/json",
-      events: [],
+      events: ["signup", "login", "logout", "update-user"],
       organization: "built-in",
     }
   }
@@ -68,6 +68,7 @@ class WebhookListPage extends React.Component {
             webhooks: Setting.prependRow(this.state.webhooks, newWebhook),
             total: this.state.total + 1
           });
+          this.props.history.push(`/webhooks/${newWebhook.name}`);
         }
       )
       .catch(error => {

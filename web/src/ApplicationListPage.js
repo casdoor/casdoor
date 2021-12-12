@@ -48,7 +48,7 @@ class ApplicationListPage extends React.Component {
   }
 
   newApplication() {
-    var randomName = Math.random().toString(36).slice(-6)
+    const randomName = Setting.getRandomName();
     return {
       owner: "admin", // this.props.account.applicationname,
       name: `application_${randomName}`,
@@ -83,6 +83,7 @@ class ApplicationListPage extends React.Component {
             applications: Setting.prependRow(this.state.applications, newApplication),
             total: this.state.total + 1
           });
+          this.props.history.push(`/applications/${newApplication.name}`);
         }
       )
       .catch(error => {

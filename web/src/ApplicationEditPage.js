@@ -123,7 +123,8 @@ class ApplicationEditPage extends React.Component {
       <Card size="small" title={
         <div>
           {i18next.t("application:Edit Application")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitApplicationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          <Button onClick={() => this.submitApplicationEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -509,7 +510,7 @@ class ApplicationEditPage extends React.Component {
     )
   }
 
-  submitApplicationEdit() {
+  submitApplicationEdit(willExist) {
     let application = Setting.deepCopy(this.state.application);
     ApplicationBackend.updateApplication(this.state.application.owner, this.state.applicationName, application)
       .then((res) => {
@@ -518,7 +519,12 @@ class ApplicationEditPage extends React.Component {
           this.setState({
             applicationName: this.state.application.name,
           });
-          this.props.history.push(`/applications/${this.state.application.name}`);
+
+          if (willExist) {
+            this.props.history.push(`/applications`);
+          } else {
+            this.props.history.push(`/applications/${this.state.application.name}`);
+          }
         } else {
           Setting.showMessage("error", res.msg);
           this.updateApplicationField('name', this.state.applicationName);
@@ -536,7 +542,8 @@ class ApplicationEditPage extends React.Component {
         this.state.application !== null ? this.renderApplication() : null
       }
       <div style={{marginTop: '20px', marginLeft: '40px'}}>
-        <Button type="primary" size="large" onClick={this.submitApplicationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+        <Button size="large" onClick={() => this.submitApplicationEdit(false)}>{i18next.t("general:Save")}</Button>
+        <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
       </div>
     </div>
     );

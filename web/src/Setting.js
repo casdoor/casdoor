@@ -554,3 +554,7 @@ export function getTags(tags) {
 export function getApplicationOrgName(application) {
   return `${application?.organizationObj.owner}/${application?.organizationObj.name}`;
 }
+
+export function getRandomName() {
+  return Math.random().toString(36).slice(-6);
+}

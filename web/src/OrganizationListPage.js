@@ -47,7 +47,7 @@ class OrganizationListPage extends React.Component {
   }
 
   newOrganization() {
-    var randomName = Math.random().toString(36).slice(-6)
+    const randomName = Setting.getRandomName();
     return {
       owner: "admin", // this.props.account.organizationname,
       name: `organization_${randomName}`,

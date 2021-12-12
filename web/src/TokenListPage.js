@@ -47,11 +47,14 @@ class TokenListPage extends React.Component {
   }
 
   newToken() {
+    const randomName = Setting.getRandomName();
     return {
       owner: "admin", // this.props.account.tokenname,
-      name: `token_${Math.random().toString(36).slice(-6)}`,
+      name: `token_${randomName}`,
       createdTime: moment().format(),
       application: "app-built-in",
+      organization: "built-in",
+      user: "admin",
       accessToken: "",
       expiresIn: 7200,
       scope: "read",
@@ -68,6 +71,7 @@ class TokenListPage extends React.Component {
             tokens: Setting.prependRow(this.state.tokens, newToken),
             total: this.state.total + 1
           });
+          this.props.history.push(`/tokens/${newToken.name}`);
         }
       )
       .catch(error => {
