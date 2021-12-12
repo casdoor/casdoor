@@ -243,7 +243,7 @@ func (c *ApiController) Login() {
 			if provider.Category == "SAML" {
 				user = object.GetUserByField(application.Organization, "id", userInfo.Id)
 			} else if provider.Category == "OAuth" {
-				user := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
 				if user == nil {
 					user = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
 				}
