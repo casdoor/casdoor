@@ -97,19 +97,17 @@ func setSessionExpire(ctx *context.Context, ExpireTime int64) {
 	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
 }
 
-func parseBearer(ctx *context.Context) (*object.Claims, bool) {
-	bearer := ctx.Request.Header.Get("Authorization")
-	bearerList := strings.Split(bearer, " ")
-	if len(bearerList) != 2 {
-		return nil, false
+func parseBearerToken(ctx *context.Context) string {
+	header := ctx.Request.Header.Get("Authorization")
+	tokens := strings.Split(header, " ")
+	if len(tokens) != 2 {
+		return ""
 	}
-	prefix := bearerList[0]
+
+	prefix := tokens[0]
 	if prefix != "Bearer" {
-		return nil, false
+		return ""
 	}
-	claims, err := object.ParseJwtToken(bearerList[1])
-	if err != nil {
-		return nil, false
-	}
-	return claims, true
+
+	return tokens[1]
 }

@@ -63,11 +63,17 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 
-	//Bearer token
-	//headers: {"Authorization":accessToken}
-	if claims, ok := parseBearer(ctx); ok {
+	// HTTP Bearer token
+	// Authorization: Bearer bearerToken
+	bearerToken := parseBearerToken(ctx)
+	if bearerToken != "" {
+		claims, err := object.ParseJwtToken(bearerToken)
+		if err != nil {
+			responseError(ctx, err.Error())
+			return
+		}
+
 		setSessionUser(ctx, fmt.Sprintf("%s/%s", claims.Owner, claims.Name))
 		setSessionExpire(ctx, claims.ExpiresAt.Unix())
-		return
 	}
 }
