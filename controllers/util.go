@@ -17,6 +17,7 @@ package controllers
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/astaxie/beego"
 	"github.com/casbin/casdoor/object"
@@ -53,6 +54,14 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 
 // RequireSignedIn ...
 func (c *ApiController) RequireSignedIn() (string, bool) {
+	accessToken := strings.Split(c.Ctx.Request.Header.Get("Authorization"), " ")
+	if len(accessToken) > 1 {
+		claims, err := object.ParseJwtToken(accessToken[1])
+		if err == nil {
+			c.SetSessionUsername(fmt.Sprintf("%v/%v", claims.Owner, claims.Name))
+			c.SetSessionData(&SessionData{ExpireTime: claims.ExpiresAt.Unix()})
+		}
+	}
 	userId := c.GetSessionUsername()
 	if userId == "" {
 		c.ResponseError("Please sign in first")
