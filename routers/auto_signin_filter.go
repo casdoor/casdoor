@@ -62,4 +62,12 @@ func AutoSigninFilter(ctx *context.Context) {
 		setSessionUser(ctx, userId)
 		return
 	}
+
+	//Bearer token
+	//headers: {"Authorization":accessToken}
+	if claims, ok := parseBearer(ctx); ok {
+		setSessionUser(ctx, fmt.Sprintf("%s/%s", claims.Owner, claims.Name))
+		setSessionExpire(ctx, claims.ExpiresAt.Unix())
+		return
+	}
 }
