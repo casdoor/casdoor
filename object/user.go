@@ -313,6 +313,10 @@ func AddUser(user *User) bool {
 		user.Id = util.GenerateId()
 	}
 
+	if user.Owner == "" || user.Name == "" {
+		return false
+	}
+
 	organization := GetOrganizationByUser(user)
 	user.UpdateUserPassword(organization)
 

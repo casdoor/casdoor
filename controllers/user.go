@@ -228,7 +228,7 @@ func (c *ApiController) SetPassword() {
 	userId := fmt.Sprintf("%s/%s", userOwner, userName)
 	targetUser := object.GetUser(userId)
 	if targetUser == nil {
-		c.ResponseError("Invalid user id.")
+		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
 		return
 	}
 

@@ -162,9 +162,12 @@ func (c *ApiController) Signup() {
 	}
 
 	affected := object.AddUser(user)
-	if affected {
-		original.AddUserToOriginalDatabase(user)
+	if !affected {
+		c.ResponseError(fmt.Sprintf("Failed to create user, user information is invalid: %s", util.StructToJson(user)))
+		return
 	}
+
+	original.AddUserToOriginalDatabase(user)
 
 	if application.HasPromptPage() {
 		// The prompt page needs the user to be signed in
