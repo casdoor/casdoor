@@ -111,6 +111,7 @@ class ProviderEditPage extends React.Component {
     } else if (provider.category === "SAML") {
       return ([
           {id: 'Aliyun IDaaS', name: 'Aliyun IDaaS'},
+          {id: 'Keycloak', name: 'Keycloak'},
       ]);
     } else {
       return [];

@@ -375,7 +375,7 @@ export function getClickable(text) {
 }
 
 export function getProviderLogo(provider) {
-  const idp = provider.type.toLowerCase();
+  const idp = provider.type.toLowerCase().trim().split(' ')[0];
   const url = `${StaticBaseUrl}/img/social_${idp}.png`;
   return (
     <img width={30} height={30} src={url} alt={idp} />

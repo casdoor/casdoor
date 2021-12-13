@@ -125,6 +125,10 @@ const otherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://aliyun.com/product/idaas"
     },
+    "Keycloak": {
+      logo: `${StaticBaseUrl}/img/social_keycloak.png`,
+      url: "https://www.keycloak.org/"
+    },
   },
 };
 

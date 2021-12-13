@@ -29,6 +29,7 @@ import SelectRegionBox from "./SelectRegionBox";
 
 import {Controlled as CodeMirror} from 'react-codemirror2';
 import "codemirror/lib/codemirror.css";
+import SamlWidget from "./common/SamlWidget";
 require('codemirror/theme/material-darker.css');
 require("codemirror/mode/javascript/javascript");
 
@@ -302,7 +303,13 @@ class UserEditPage extends React.Component {
                 <div style={{marginBottom: 20}}>
                   {
                     (this.state.application === null || this.state.user === null) ? null : (
-                      this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) => <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />)
+                      this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) =>
+                          (providerItem.category === "OAuth") ? (
+                              <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />
+                          ) : (
+                              <SamlWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />
+                          )
+                      )
                     )
                   }
                 </div>

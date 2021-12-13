@@ -199,7 +199,7 @@ func (c *ApiController) Login() {
 		userInfo := &idp.UserInfo{}
 		if provider.Category == "SAML" {
 			// SAML
-			userInfo.Id, err = object.ParseSamlResponse(form.SamlResponse)
+			userInfo.Id, err = object.ParseSamlResponse(form.SamlResponse, provider.Type)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -241,7 +241,7 @@ func (c *ApiController) Login() {
 		if form.Method == "signup" {
 			user := &object.User{}
 			if provider.Category == "SAML" {
-				user = object.GetUserByField(application.Organization, "id", userInfo.Id)
+				user = object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Id))
 			} else if provider.Category == "OAuth" {
 				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
 				if user == nil {
