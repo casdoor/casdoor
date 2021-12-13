@@ -53,7 +53,9 @@ func UpdateUserToOriginalDatabase(user *object.User) {
 		return
 	}
 
-	updatedOUser := createOriginalUserFromUser(user)
+	newUser := object.GetUser(user.GetId())
+
+	updatedOUser := createOriginalUserFromUser(newUser)
 	updateUser(updatedOUser)
 	fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
 }

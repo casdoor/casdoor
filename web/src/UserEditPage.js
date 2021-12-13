@@ -29,6 +29,7 @@ import SelectRegionBox from "./SelectRegionBox";
 
 import {Controlled as CodeMirror} from 'react-codemirror2';
 import "codemirror/lib/codemirror.css";
+import SamlWidget from "./common/SamlWidget";
 require('codemirror/theme/material-darker.css');
 require("codemirror/mode/javascript/javascript");
 
@@ -110,7 +111,8 @@ class UserEditPage extends React.Component {
       <Card size="small" title={
         <div>
           {i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -201,7 +203,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <PasswordModal user={this.state.user} />
+            <PasswordModal user={this.state.user} account={this.props.account} />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
@@ -301,7 +303,13 @@ class UserEditPage extends React.Component {
                 <div style={{marginBottom: 20}}>
                   {
                     (this.state.application === null || this.state.user === null) ? null : (
-                      this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) => <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />)
+                      this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) =>
+                          (providerItem.category === "OAuth") ? (
+                              <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />
+                          ) : (
+                              <SamlWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />
+                          )
+                      )
                     )
                   }
                 </div>
@@ -370,7 +378,7 @@ class UserEditPage extends React.Component {
     )
   }
 
-  submitUserEdit() {
+  submitUserEdit(willExist) {
     let user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.organizationName, this.state.userName, user)
       .then((res) => {
@@ -382,7 +390,11 @@ class UserEditPage extends React.Component {
           });
 
           if (this.props.history !== undefined) {
-            this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
+            if (willExist) {
+              this.props.history.push(`/users`);
+            } else {
+              this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
+            }
           }
         } else {
           Setting.showMessage("error", res.msg);
@@ -402,7 +414,8 @@ class UserEditPage extends React.Component {
         this.state.user !== null ? this.renderUser() : null
       }
       <div style={{marginTop: '20px', marginLeft: '40px'}}>
-        <Button type="primary" size="large" onClick={this.submitUserEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+        <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
+        <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
       </div>
     </div>
     );

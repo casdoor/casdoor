@@ -19,9 +19,8 @@ import (
 	"encoding/pem"
 	"fmt"
 
-	jose "gopkg.in/square/go-jose.v2"
-
 	"github.com/astaxie/beego"
+	"gopkg.in/square/go-jose.v2"
 )
 
 type OidcDiscovery struct {
@@ -44,7 +43,7 @@ type OidcDiscovery struct {
 var oidcDiscovery OidcDiscovery
 
 func init() {
-	oidcOrigin := beego.AppConfig.String("oidcOrigin")
+	origin := beego.AppConfig.String("origin")
 
 	// Examples:
 	// https://login.okta.com/.well-known/openid-configuration
@@ -52,11 +51,11 @@ func init() {
 	// https://accounts.google.com/.well-known/openid-configuration
 	// https://access.line.me/.well-known/openid-configuration
 	oidcDiscovery = OidcDiscovery{
-		Issuer:                                 oidcOrigin,
-		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", oidcOrigin),
-		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", oidcOrigin),
-		UserinfoEndpoint:                       fmt.Sprintf("%s/api/get-account", oidcOrigin),
-		JwksUri:                                fmt.Sprintf("%s/api/certs", oidcOrigin),
+		Issuer:                                 origin,
+		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", origin),
+		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", origin),
+		UserinfoEndpoint:                       fmt.Sprintf("%s/api/get-account", origin),
+		JwksUri:                                fmt.Sprintf("%s/api/certs", origin),
 		ResponseTypesSupported:                 []string{"id_token"},
 		ResponseModesSupported:                 []string{"login", "code", "link"},
 		GrantTypesSupported:                    []string{"password", "authorization_code"},

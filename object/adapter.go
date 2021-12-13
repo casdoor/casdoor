@@ -19,6 +19,7 @@ import (
 	"runtime"
 
 	"github.com/astaxie/beego"
+	"github.com/casbin/casdoor/conf"
 	_ "github.com/go-sql-driver/mysql" // db = mysql
 	//_ "github.com/lib/pq"              // db = postgres
 	"xorm.io/xorm"
@@ -36,7 +37,7 @@ func InitConfig() {
 }
 
 func InitAdapter() {
-	adapter = NewAdapter(beego.AppConfig.String("driverName"), beego.AppConfig.String("dataSourceName"), beego.AppConfig.String("dbName"))
+	adapter = NewAdapter(beego.AppConfig.String("driverName"), conf.GetBeegoConfDataSourceName(), beego.AppConfig.String("dbName"))
 	adapter.createTable()
 }
 

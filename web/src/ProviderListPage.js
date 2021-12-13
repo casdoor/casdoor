@@ -48,7 +48,7 @@ class ProviderListPage extends React.Component {
   }
 
   newProvider() {
-    var randomName = Math.random().toString(36).slice(-6)
+    const randomName = Setting.getRandomName();
     return {
       owner: "admin", // this.props.account.providername,
       name: `provider_${randomName}`,
@@ -75,6 +75,7 @@ class ProviderListPage extends React.Component {
             providers: Setting.prependRow(this.state.providers, newProvider),
             total: this.state.total + 1
           });
+          this.props.history.push(`/providers/${newProvider.name}`);
         }
       )
       .catch(error => {

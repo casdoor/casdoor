@@ -85,7 +85,8 @@ class OrganizationEditPage extends React.Component {
       <Card size="small" title={
         <div>
           {i18next.t("organization:Edit Organization")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitOrganizationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          <Button onClick={() => this.submitOrganizationEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitOrganizationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -243,7 +244,7 @@ class OrganizationEditPage extends React.Component {
     )
   }
 
-  submitOrganizationEdit() {
+  submitOrganizationEdit(willExist) {
     let organization = Setting.deepCopy(this.state.organization);
     OrganizationBackend.updateOrganization(this.state.organization.owner, this.state.organizationName, organization)
       .then((res) => {
@@ -252,7 +253,12 @@ class OrganizationEditPage extends React.Component {
           this.setState({
             organizationName: this.state.organization.name,
           });
-          this.props.history.push(`/organizations/${this.state.organization.name}`);
+
+          if (willExist) {
+            this.props.history.push(`/organizations`);
+          } else {
+            this.props.history.push(`/organizations/${this.state.organization.name}`);
+          }
         } else {
           Setting.showMessage("error", res.msg);
           this.updateOrganizationField('name', this.state.organizationName);
@@ -270,7 +276,8 @@ class OrganizationEditPage extends React.Component {
           this.state.organization !== null ? this.renderOrganization() : null
         }
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
-          <Button type="primary" size="large" onClick={this.submitOrganizationEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          <Button size="large" onClick={() => this.submitOrganizationEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitOrganizationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
         </div>
       </div>
     );

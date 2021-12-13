@@ -100,6 +100,7 @@ func (c *ApiController) GetUser() {
 // @router /update-user [post]
 func (c *ApiController) UpdateUser() {
 	id := c.Input().Get("id")
+	columnsStr := c.Input().Get("columns")
 
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
@@ -112,10 +113,14 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
-	affected := object.UpdateUser(id, &user)
+	columns := []string{}
+	if columnsStr != "" {
+		columns = strings.Split(columnsStr, ",")
+	}
+
+	affected := object.UpdateUser(id, &user, columns)
 	if affected {
-		newUser := object.GetUser(user.GetId())
-		original.UpdateUserToOriginalDatabase(newUser)
+		original.UpdateUserToOriginalDatabase(&user)
 	}
 
 	c.Data["json"] = wrapActionResponse(affected)
@@ -223,7 +228,7 @@ func (c *ApiController) SetPassword() {
 	userId := fmt.Sprintf("%s/%s", userOwner, userName)
 	targetUser := object.GetUser(userId)
 	if targetUser == nil {
-		c.ResponseError("Invalid user id.")
+		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
 		return
 	}
 

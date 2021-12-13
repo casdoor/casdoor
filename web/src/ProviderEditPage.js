@@ -80,6 +80,9 @@ class ProviderEditPage extends React.Component {
           {id: 'WeCom', name: 'WeCom'},
           {id: 'Lark', name: 'Lark'},
           {id: 'GitLab', name: 'GitLab'},
+          {id: 'Apple', name: 'Apple'},
+          {id: 'AzureAD', name: 'AzureAD'},
+          {id: 'Slack', name: 'Slack'},
         ]
       );
     } else if (provider.category === "Email") {
@@ -108,6 +111,7 @@ class ProviderEditPage extends React.Component {
     } else if (provider.category === "SAML") {
       return ([
           {id: 'Aliyun IDaaS', name: 'Aliyun IDaaS'},
+          {id: 'Keycloak', name: 'Keycloak'},
       ]);
     } else {
       return [];
@@ -178,7 +182,8 @@ class ProviderEditPage extends React.Component {
       <Card size="small" title={
         <div>
           {i18next.t("provider:Edit Provider")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitProviderEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          <Button onClick={() => this.submitProviderEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitProviderEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -518,7 +523,7 @@ class ProviderEditPage extends React.Component {
     )
   }
 
-  submitProviderEdit() {
+  submitProviderEdit(willExist) {
     let provider = Setting.deepCopy(this.state.provider);
     ProviderBackend.updateProvider(this.state.provider.owner, this.state.providerName, provider)
       .then((res) => {
@@ -527,7 +532,12 @@ class ProviderEditPage extends React.Component {
           this.setState({
             providerName: this.state.provider.name,
           });
-          this.props.history.push(`/providers/${this.state.provider.name}`);
+
+          if (willExist) {
+            this.props.history.push(`/providers`);
+          } else {
+            this.props.history.push(`/providers/${this.state.provider.name}`);
+          }
         } else {
           Setting.showMessage("error", res.msg);
           this.updateProviderField('name', this.state.providerName);
@@ -545,7 +555,8 @@ class ProviderEditPage extends React.Component {
           this.state.provider !== null ? this.renderProvider() : null
         }
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
-          <Button type="primary" size="large" onClick={this.submitProviderEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          <Button size="large" onClick={() => this.submitProviderEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitProviderEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
         </div>
       </div>
     );

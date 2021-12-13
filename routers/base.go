@@ -16,9 +16,11 @@ package routers
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/astaxie/beego/context"
 	"github.com/casbin/casdoor/object"
+	"github.com/casbin/casdoor/util"
 )
 
 type Response struct {
@@ -84,4 +86,28 @@ func setSessionUser(ctx *context.Context, user string) {
 
 	// https://github.com/beego/beego/issues/3445#issuecomment-455411915
 	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
+}
+
+func setSessionExpire(ctx *context.Context, ExpireTime int64) {
+	SessionData := struct{ ExpireTime int64 }{ExpireTime: ExpireTime}
+	err := ctx.Input.CruSession.Set("SessionData", util.StructToJson(SessionData))
+	if err != nil {
+		panic(err)
+	}
+	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
+}
+
+func parseBearerToken(ctx *context.Context) string {
+	header := ctx.Request.Header.Get("Authorization")
+	tokens := strings.Split(header, " ")
+	if len(tokens) != 2 {
+		return ""
+	}
+
+	prefix := tokens[0]
+	if prefix != "Bearer" {
+		return ""
+	}
+
+	return tokens[1]
 }

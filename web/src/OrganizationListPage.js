@@ -47,7 +47,7 @@ class OrganizationListPage extends React.Component {
   }
 
   newOrganization() {
-    var randomName = Math.random().toString(36).slice(-6)
+    const randomName = Setting.getRandomName();
     return {
       owner: "admin", // this.props.account.organizationname,
       name: `organization_${randomName}`,
@@ -73,6 +73,7 @@ class OrganizationListPage extends React.Component {
             organizations: Setting.prependRow(this.state.organizations, newOrganization),
             total: this.state.total + 1
           });
+          this.props.history.push(`/organizations/${newOrganization.name}`);
         }
       )
       .catch(error => {

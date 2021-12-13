@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -93,7 +92,7 @@ func (idp *GiteeIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	rbs, err := ioutil.ReadAll(resp.Body)
+	rbs, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

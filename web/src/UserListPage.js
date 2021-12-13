@@ -60,7 +60,7 @@ class UserListPage extends React.Component {
   }
 
   newUser() {
-    var randomName = Math.random().toString(36).slice(-6)
+    const randomName = Setting.getRandomName();
     return {
       owner: "built-in", // this.props.account.username,
       name: `user_${randomName}`,
@@ -81,6 +81,7 @@ class UserListPage extends React.Component {
       IsForbidden: false,
       isDeleted: false,
       properties: {},
+      signupApplication: "app-built-in",
     }
   }
 
@@ -93,6 +94,7 @@ class UserListPage extends React.Component {
             users: Setting.prependRow(this.state.users, newUser),
             total: this.state.total + 1
           });
+          this.props.history.push(`/users/${newUser.owner}/${newUser.name}`);
         }
       )
       .catch(error => {

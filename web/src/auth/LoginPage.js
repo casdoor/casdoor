@@ -34,6 +34,9 @@ import LinkedInLoginButton from "./LinkedInLoginButton";
 import WeComLoginButton from "./WeComLoginButton";
 import LarkLoginButton from "./LarkLoginButton";
 import GitLabLoginButton from "./GitLabLoginButton";
+import AppleLoginButton from "./AppleLoginButton"
+import AzureADLoginButton from "./AzureADLoginButton";
+import SlackLoginButton from "./SlackLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../component/CountDownInput";
 
@@ -180,14 +183,27 @@ class LoginPage extends React.Component {
       return <LarkLoginButton text={text} align={"center"} />
     } else if (type === "GitLab") {
       return <GitLabLoginButton text={text} align={"center"} />
+    } else if (type === "Apple") {
+      return <AppleLoginButton text={text} align={"center"} />
+    } else if (type === "AzureAD") {
+      return <AzureADLoginButton text={text} align={"center"} />
+    } else if (type === "Slack") {
+      return <SlackLoginButton text={text} align={"center"} />
     }
 
     return text;
   }
 
-  getSamlUrl(providerId) {
-    AuthBackend.getSamlLogin(providerId).then((res) => {
-      window.location.href = res.data
+  getSamlUrl(provider) {
+    const params = new URLSearchParams(this.props.location.search);
+    let clientId = params.get("client_id");
+    let application = params.get("state");
+    let realRedirectUri = params.get("redirect_uri");
+    let redirectUri = `${window.location.origin}/callback/saml`;
+    let providerName = provider.name;
+    AuthBackend.getSamlLogin(`${provider.owner}/${providerName}`).then((res) => {
+      const replyState = `${clientId}&${application}&${providerName}&${realRedirectUri}&${redirectUri}`;
+      window.location.href = `${res.data}&RelayState=${btoa(replyState)}`;
     });
   }
 
@@ -201,7 +217,7 @@ class LoginPage extends React.Component {
         )
       } else if (provider.category === "SAML") {
         return (
-          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider.owner + "/" + provider.name)}>
+          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
             <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
           </a>
         )

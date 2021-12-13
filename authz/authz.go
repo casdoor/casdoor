@@ -18,6 +18,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
+	"github.com/casbin/casdoor/conf"
 	xormadapter "github.com/casbin/xorm-adapter/v2"
 	stringadapter "github.com/qiangmzsx/string-adapter/v2"
 )
@@ -27,7 +28,7 @@ var Enforcer *casbin.Enforcer
 func InitAuthz() {
 	var err error
 
-	a, err := xormadapter.NewAdapter(beego.AppConfig.String("driverName"), beego.AppConfig.String("dataSourceName")+beego.AppConfig.String("dbName"), true)
+	a, err := xormadapter.NewAdapter(beego.AppConfig.String("driverName"), conf.GetBeegoConfDataSourceName()+beego.AppConfig.String("dbName"), true)
 	if err != nil {
 		panic(err)
 	}

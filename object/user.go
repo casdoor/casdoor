@@ -78,6 +78,9 @@ type User struct {
 	Wecom    string `xorm:"wecom varchar(100)" json:"wecom"`
 	Lark     string `xorm:"lark varchar(100)" json:"lark"`
 	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab"`
+	Apple    string `xorm:"apple varchar(100)" json:"apple"`
+	AzureAD  string `xorm:"azuread varchar(100)" json:"azuread"`
+	Slack    string `xorm:"slack varchar(100)" json:"slack"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
@@ -238,7 +241,7 @@ func GetLastUser(owner string) *User {
 	return nil
 }
 
-func UpdateUser(id string, user *User) bool {
+func UpdateUser(id string, user *User, columns []string) bool {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	oldUser := getUser(owner, name)
 	if oldUser == nil {
@@ -251,9 +254,13 @@ func UpdateUser(id string, user *User) bool {
 		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols("owner", "display_name", "avatar",
-		"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag",
-		"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties").Update(user)
+	if len(columns) == 0 {
+		columns = []string{"owner", "display_name", "avatar",
+			"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag",
+			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties"}
+	}
+
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
 	if err != nil {
 		panic(err)
 	}
@@ -304,6 +311,10 @@ func UpdateUserForOriginalFields(user *User) bool {
 func AddUser(user *User) bool {
 	if user.Id == "" {
 		user.Id = util.GenerateId()
+	}
+
+	if user.Owner == "" || user.Name == "" {
+		return false
 	}
 
 	organization := GetOrganizationByUser(user)

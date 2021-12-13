@@ -78,7 +78,8 @@ class WebhookEditPage extends React.Component {
       <Card size="small" title={
         <div>
           {i18next.t("webhook:Edit Webhook")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitWebhookEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          <Button onClick={() => this.submitWebhookEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitWebhookEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -154,7 +155,7 @@ class WebhookEditPage extends React.Component {
     )
   }
 
-  submitWebhookEdit() {
+  submitWebhookEdit(willExist) {
     let webhook = Setting.deepCopy(this.state.webhook);
     WebhookBackend.updateWebhook(this.state.webhook.owner, this.state.webhookName, webhook)
       .then((res) => {
@@ -163,7 +164,12 @@ class WebhookEditPage extends React.Component {
           this.setState({
             webhookName: this.state.webhook.name,
           });
-          this.props.history.push(`/webhooks/${this.state.webhook.name}`);
+
+          if (willExist) {
+            this.props.history.push(`/webhooks`);
+          } else {
+            this.props.history.push(`/webhooks/${this.state.webhook.name}`);
+          }
         } else {
           Setting.showMessage("error", res.msg);
           this.updateWebhookField('name', this.state.webhookName);
@@ -181,7 +187,8 @@ class WebhookEditPage extends React.Component {
           this.state.webhook !== null ? this.renderWebhook() : null
         }
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
-          <Button type="primary" size="large" onClick={this.submitWebhookEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          <Button size="large" onClick={() => this.submitWebhookEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitWebhookEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
         </div>
       </div>
     );

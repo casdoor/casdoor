@@ -12,39 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package original
+package conf
 
 import (
+	"os"
+	"strings"
+
 	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/conf"
-	"github.com/casbin/casdoor/object"
-	_ "github.com/go-sql-driver/mysql" // db = mysql
-	//_ "github.com/lib/pq"              // db = postgres
 )
 
-var adapter *object.Adapter
+func GetBeegoConfDataSourceName() string {
+	dataSourceName := beego.AppConfig.String("dataSourceName")
 
-func initConfig() {
-	err := beego.LoadAppConfig("ini", "../conf/app.conf")
-	if err != nil {
-		panic(err)
-	}
-}
-
-func InitAdapter() bool {
-	if dbName == "dbName" {
-		adapter = nil
-		return false
+	runningInDocker := os.Getenv("RUNNING_IN_DOCKER")
+	if runningInDocker != "" {
+		dataSourceName = strings.ReplaceAll(dataSourceName, "localhost", "host.docker.internal")
 	}
 
-	adapter = object.NewAdapter(beego.AppConfig.String("driverName"), conf.GetBeegoConfDataSourceName(), dbName)
-	createTable(adapter)
-	return true
-}
-
-func createTable(a *object.Adapter) {
-	err := a.Engine.Sync2(new(User))
-	if err != nil {
-		panic(err)
-	}
+	return dataSourceName
 }

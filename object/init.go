@@ -64,6 +64,7 @@ func initBuiltInUser() {
 		Affiliation:   "Example Inc.",
 		Tag:           "staff",
 		Score:         2000,
+		Ranking:       1,
 		IsAdmin:       true,
 		IsGlobalAdmin: true,
 		IsForbidden:   false,

@@ -17,7 +17,7 @@ package idp
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -85,7 +85,7 @@ func (idp *GitlabIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -204,18 +204,18 @@ type GitlabUserInfo struct {
 
 // GetUserInfo use GitlabProviderToken gotten before return GitlabUserInfo
 func (idp *GitlabIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	resp, err := idp.Client.Get("https://gitlab.com/api/v4/user?access_token="+token.AccessToken)
+	resp, err := idp.Client.Get("https://gitlab.com/api/v4/user?access_token=" + token.AccessToken)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
 	guser := GitlabUserInfo{}
-	if err = json.Unmarshal(data, &guser);err != nil {
+	if err = json.Unmarshal(data, &guser); err != nil {
 		return nil, err
 	}
 

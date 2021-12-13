@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/url"
@@ -198,7 +199,7 @@ func (c *ApiController) Login() {
 		userInfo := &idp.UserInfo{}
 		if provider.Category == "SAML" {
 			// SAML
-			userInfo.Id, err = object.ParseSamlResponse(form.SamlResponse)
+			userInfo.Id, err = object.ParseSamlResponse(form.SamlResponse, provider.Type)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -240,9 +241,9 @@ func (c *ApiController) Login() {
 		if form.Method == "signup" {
 			user := &object.User{}
 			if provider.Category == "SAML" {
-				user = object.GetUserByField(application.Organization, "id", userInfo.Id)
+				user = object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Id))
 			} else if provider.Category == "OAuth" {
-				user := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
 				if user == nil {
 					user = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
 				}
@@ -299,7 +300,11 @@ func (c *ApiController) Login() {
 				// sync info from 3rd-party if possible
 				object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
 
-				object.AddUser(user)
+				affected := object.AddUser(user)
+				if !affected {
+					c.ResponseError(fmt.Sprintf("Failed to create user, user information is invalid: %s", util.StructToJson(user)))
+					return
+				}
 
 				object.LinkUserAccount(user, provider.Type, userInfo.Id)
 
@@ -369,8 +374,14 @@ func (c *ApiController) GetSamlLogin() {
 func (c *ApiController) HandleSamlLogin() {
 	relayState := c.Input().Get("RelayState")
 	samlResponse := c.Input().Get("SAMLResponse")
+	decode, err := base64.StdEncoding.DecodeString(relayState)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+	slice := strings.Split(string(decode), "&")
+	relayState = url.QueryEscape(relayState)
 	samlResponse = url.QueryEscape(samlResponse)
-	targetUrl := fmt.Sprintf("%s/callback/saml?replayState=%s&samlResponse=%s",
-		beego.AppConfig.String("samlRequestOrigin"), relayState, samlResponse)
+	targetUrl := fmt.Sprintf("%s?relayState=%s&samlResponse=%s",
+		slice[4], relayState, samlResponse)
 	c.Redirect(targetUrl, 303)
 }

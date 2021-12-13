@@ -63,7 +63,8 @@ class TokenEditPage extends React.Component {
       <Card size="small" title={
         <div>
           {i18next.t("token:Edit Token")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={this.submitTokenEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+          <Button onClick={() => this.submitTokenEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitTokenEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -83,6 +84,26 @@ class TokenEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.token.application} onChange={e => {
               this.updateTokenField('application', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Organization")}:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.token.organization} onChange={e => {
+              this.updateTokenField('organization', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:User")}:
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.token.user} onChange={e => {
+              this.updateTokenField('user', e.target.value);
             }} />
           </Col>
         </Row>
@@ -140,7 +161,7 @@ class TokenEditPage extends React.Component {
     )
   }
 
-  submitTokenEdit() {
+  submitTokenEdit(willExist) {
     let token = Setting.deepCopy(this.state.token);
     TokenBackend.updateToken(this.state.token.owner, this.state.tokenName, token)
       .then((res) => {
@@ -149,7 +170,12 @@ class TokenEditPage extends React.Component {
           this.setState({
             tokenName: this.state.token.name,
           });
-          this.props.history.push(`/tokens/${this.state.token.name}`);
+
+          if (willExist) {
+            this.props.history.push(`/tokens`);
+          } else {
+            this.props.history.push(`/tokens/${this.state.token.name}`);
+          }
         } else {
           Setting.showMessage("error", res.msg);
           this.updateTokenField('name', this.state.tokenName);
@@ -167,7 +193,8 @@ class TokenEditPage extends React.Component {
         this.state.token !== null ? this.renderToken() : null
       }
       <div style={{marginTop: '20px', marginLeft: '40px'}}>
-        <Button type="primary" size="large" onClick={this.submitTokenEdit.bind(this)}>{i18next.t("general:Save")}</Button>
+        <Button size="large" onClick={() => this.submitTokenEdit(false)}>{i18next.t("general:Save")}</Button>
+        <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitTokenEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
       </div>
     </div>
     );

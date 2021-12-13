@@ -84,8 +84,8 @@ export function getSamlLogin(providerId) {
   }).then(res => res.json());
 }
 
-export function loginWithSaml(values) {
-  return fetch(`${authConfig.serverUrl}/api/login`, {
+export function loginWithSaml(values, param) {
+  return fetch(`${authConfig.serverUrl}/api/login${param}`, {
     method: 'POST',
     credentials: "include",
     body: JSON.stringify(values),
