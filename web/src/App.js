@@ -70,8 +70,7 @@ class App extends Component {
     Setting.initServerUrl();
     Auth.initAuthWithConfig({
       serverUrl: Setting.ServerUrl,
-      appName: "app-built-in",
-      organizationName: "built-in",
+      appName: "app-built-in", // the application name of Casdoor itself, do not change it
     });
   }
 

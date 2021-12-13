@@ -12,11 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export let authConfig = {
-  serverUrl: "http://example.com", // your Casdoor URL, like the official one: https://door.casbin.com
-  appName: "app-built-in", // your Casdoor application name, like: "app-built-in"
-  organizationName: "built-in", // your Casdoor organization name, like: "built-in"
-}
+export let authConfig = {};
 
 export function initAuthWithConfig(config) {
   authConfig = config;
