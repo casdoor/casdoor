@@ -104,7 +104,5 @@ func parseSamlResponse(samlResponse string, providerType string) string {
 	tag := tagMap[providerType]
 	expression := fmt.Sprintf("<%s:X509Certificate>([\\s\\S]*?)</%s:X509Certificate>", tag, tag)
 	res := regexp.MustCompile(expression).FindStringSubmatch(deStr)
-	str := res[0]
-	tagLength := len("<:X509Certificate>") + len(tag)
-	return str[tagLength : len(str) - tagLength - 1]
+	return res[1]
 }
