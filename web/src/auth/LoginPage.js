@@ -201,9 +201,13 @@ class LoginPage extends React.Component {
     let realRedirectUri = params.get("redirect_uri");
     let redirectUri = `${window.location.origin}/callback/saml`;
     let providerName = provider.name;
-    AuthBackend.getSamlLogin(`${provider.owner}/${providerName}`).then((res) => {
-      const replyState = `${clientId}&${application}&${providerName}&${realRedirectUri}&${redirectUri}`;
-      window.location.href = `${res.data}&RelayState=${btoa(replyState)}`;
+    let relayState = `${clientId}&${application}&${providerName}&${realRedirectUri}&${redirectUri}`;
+    AuthBackend.getSamlLogin(`${provider.owner}/${providerName}`, btoa(relayState)).then((res) => {
+      if (res.data2 === "POST") {
+        document.write(res.data)
+      } else {
+        window.location.href = res.data
+      }
     });
   }
 

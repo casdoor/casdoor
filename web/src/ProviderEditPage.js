@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select} from 'antd';
+import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from 'antd';
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
@@ -418,6 +418,16 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           ) : this.state.provider.category === "SAML" ? (
             <React.Fragment>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Sign request"), i18next.t("provider:Sign request - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Switch checked={this.state.provider.enableSignAuthnRequest} onChange={checked => {
+                    this.updateProviderField('enableSignAuthnRequest', checked);
+                  }} />
+                </Col>
+              </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Metadata"), i18next.t("provider:Metadata - Tooltip"))} :

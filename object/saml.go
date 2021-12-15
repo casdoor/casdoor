@@ -15,6 +15,7 @@
 package object
 
 import (
+	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
 	"fmt"
@@ -40,20 +41,32 @@ func ParseSamlResponse(samlResponse string, providerType string) (string, error)
 	return assertionInfo.NameID, nil
 }
 
-func GenerateSamlLoginUrl(id string) (string, error) {
+func GenerateSamlLoginUrl(id, relayState string) (string, string, error) {
 	provider := GetProvider(id)
 	if provider.Category != "SAML" {
-		return "", fmt.Errorf("Provider %s's category is not SAML", provider.Name)
+		return "", "", fmt.Errorf("Provider %s's category is not SAML", provider.Name)
 	}
 	sp, err := buildSp(provider, "")
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	authURL, err := sp.BuildAuthURL("")
-	if err != nil {
-		return "", err
+	auth := ""
+	method := ""
+	if provider.EnableSignAuthnRequest {
+		post, err := sp.BuildAuthBodyPost(relayState)
+		if err != nil {
+			return "", "", err
+		}
+		auth = string(post[:])
+		method = "POST"
+	} else {
+		auth, err = sp.BuildAuthURL(relayState)
+		if err != nil {
+			return "", "", err
+		}
+		method = "GET"
 	}
-	return authURL, nil
+	return auth, method, nil
 }
 
 func buildSp(provider *Provider, samlResponse string) (*saml2.SAMLServiceProvider, error) {
@@ -80,13 +93,16 @@ func buildSp(provider *Provider, samlResponse string) (*saml2.SAMLServiceProvide
 		ServiceProviderIssuer:       fmt.Sprintf("%s/api/acs", origin),
 		AssertionConsumerServiceURL: fmt.Sprintf("%s/api/acs", origin),
 		IDPCertificateStore:         &certStore,
+		SignAuthnRequests:           false,
+		SPKeyStore:                  dsig.RandomKeyStoreForTest(),
 	}
 	if provider.Endpoint != "" {
-		randomKeyStore := dsig.RandomKeyStoreForTest()
 		sp.IdentityProviderSSOURL = provider.Endpoint
 		sp.IdentityProviderIssuer = provider.IssuerUrl
-		sp.SignAuthnRequests = false
-		sp.SPKeyStore = randomKeyStore
+	}
+	if provider.EnableSignAuthnRequest {
+		sp.SignAuthnRequests = true
+		sp.SPKeyStore = buildSpKeyStore()
 	}
 	return sp, nil
 }
@@ -99,10 +115,21 @@ func parseSamlResponse(samlResponse string, providerType string) string {
 	deStr := strings.Replace(string(de), "\n", "", -1)
 	tagMap := map[string]string{
 		"Aliyun IDaaS": "ds",
-		"Keycloak": "dsig",
+		"Keycloak":     "dsig",
 	}
 	tag := tagMap[providerType]
 	expression := fmt.Sprintf("<%s:X509Certificate>([\\s\\S]*?)</%s:X509Certificate>", tag, tag)
 	res := regexp.MustCompile(expression).FindStringSubmatch(deStr)
 	return res[1]
+}
+
+func buildSpKeyStore() dsig.X509KeyStore {
+	keyPair, err := tls.LoadX509KeyPair("object/token_jwt_key.pem", "object/token_jwt_key.key")
+	if err != nil {
+		panic(err)
+	}
+	return &dsig.TLSCertKeyStore {
+		PrivateKey:  keyPair.PrivateKey,
+		Certificate: keyPair.Certificate,
+	}
 }
