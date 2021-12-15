@@ -32,6 +32,7 @@ func main() {
 	object.InitAdapter()
 	object.InitDb()
 	object.InitDefaultStorageProvider()
+	object.InitLdapAutoSynchronizer()
 	proxy.InitHttpClient()
 	authz.InitAuthz()
 
@@ -73,7 +74,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	logs.SetLevel(logs.LevelInformational)
+	//logs.SetLevel(logs.LevelInformational)
 	logs.SetLogFuncCall(false)
 
 	beego.Run()

@@ -178,7 +178,7 @@ class LdapEditPage extends React.Component {
             {Setting.getLabel(i18next.t("ldap:Auto Sync"), i18next.t("ldap:Auto Sync - Tooltip"))} :
           </Col>
           <Col span={21}>
-            <InputNumber min={0} formatter={value => value.replace(/\$\s?|(,*)/g, "")} disabled={true}
+            <InputNumber min={0} formatter={value => value.replace(/\$\s?|(,*)/g, "")} disabled={false}
                          value={this.state.ldap.autoSync} onChange={value => {
               this.updateLdapField("autoSync", value);
             }}/><span>&nbsp;mins</span>
