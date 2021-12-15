@@ -48,9 +48,10 @@ type Provider struct {
 	Domain           string `xorm:"varchar(100)" json:"domain"`
 	Bucket           string `xorm:"varchar(100)" json:"bucket"`
 
-	Metadata  string `xorm:"mediumtext" json:"metadata"`
-	IdP       string `xorm:"mediumtext" json:"idP"`
-	IssuerUrl string `xorm:"varchar(100)" json:"issuerUrl"`
+	Metadata               string `xorm:"mediumtext" json:"metadata"`
+	IdP                    string `xorm:"mediumtext" json:"idP"`
+	IssuerUrl              string `xorm:"varchar(100)" json:"issuerUrl"`
+	EnableSignAuthnRequest bool   `json:"enableSignAuthnRequest"`
 
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
 }

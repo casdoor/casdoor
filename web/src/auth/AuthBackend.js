@@ -77,8 +77,8 @@ export function unlink(values) {
   }).then(res => res.json());
 }
 
-export function getSamlLogin(providerId) {
-  return fetch(`${authConfig.serverUrl}/api/get-saml-login?id=${providerId}`, {
+export function getSamlLogin(providerId, relayState) {
+  return fetch(`${authConfig.serverUrl}/api/get-saml-login?id=${providerId}&relayState=${relayState}`, {
     method: 'GET',
     credentials: 'include',
   }).then(res => res.json());

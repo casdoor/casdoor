@@ -364,11 +364,12 @@ func (c *ApiController) Login() {
 
 func (c *ApiController) GetSamlLogin() {
 	providerId := c.Input().Get("id")
-	authURL, err := object.GenerateSamlLoginUrl(providerId)
+	relayState := c.Input().Get("relayState")
+	authURL, method, err := object.GenerateSamlLoginUrl(providerId, relayState)
 	if err != nil {
 		c.ResponseError(err.Error())
 	}
-	c.ResponseOk(authURL)
+	c.ResponseOk(authURL, method)
 }
 
 func (c *ApiController) HandleSamlLogin() {
