@@ -51,8 +51,8 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		redirectUri := c.Input().Get("redirectUri")
 		scope := c.Input().Get("scope")
 		state := c.Input().Get("state")
-
-		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state)
+		nonce := c.Input().Get("nonce")
+		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce)
 		resp = codeToResponse(code)
 
 		if application.HasPromptPage() {

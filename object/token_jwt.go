@@ -31,17 +31,19 @@ var tokenJwtPrivateKey string
 
 type Claims struct {
 	User
+	Nonce string `json:"nonce,omitempty"`
 	jwt.RegisteredClaims
 }
 
-func generateJwtToken(application *Application, user *User) (string, error) {
+func generateJwtToken(application *Application, user *User, nonce string) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 
 	user.Password = ""
 
 	claims := Claims{
-		User: *user,
+		User:  *user,
+		Nonce: nonce,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    beego.AppConfig.String("origin"),
 			Subject:   user.Id,

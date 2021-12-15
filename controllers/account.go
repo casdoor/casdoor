@@ -61,6 +61,7 @@ type RequestForm struct {
 type Response struct {
 	Status string      `json:"status"`
 	Msg    string      `json:"msg"`
+	Sub    string      `json:"sub"`
 	Data   interface{} `json:"data"`
 	Data2  interface{} `json:"data2"`
 }
@@ -217,8 +218,14 @@ func (c *ApiController) GetAccount() {
 	}
 
 	organization := object.GetMaskedOrganization(object.GetOrganizationByUser(user))
-
-	c.ResponseOk(user, organization)
+	resp := Response{
+		Status: "ok",
+		Sub:    userId,
+		Data:   user,
+		Data2:  organization,
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
 }
 
 // GetHumanCheck ...

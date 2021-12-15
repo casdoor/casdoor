@@ -82,6 +82,7 @@ export function getOAuthGetParameters(params) {
   const redirectUri = queries.get("redirect_uri");
   const scope = queries.get("scope");
   const state = queries.get("state");
+  const nonce = queries.get("nonce")
 
   if (clientId === undefined || clientId === null) {
     // login
@@ -94,6 +95,7 @@ export function getOAuthGetParameters(params) {
       redirectUri: redirectUri,
       scope: scope,
       state: state,
+      nonce: nonce,
     };
   }
 }

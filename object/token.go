@@ -175,7 +175,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 	return "", application
 }
 
-func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string) *Code {
+func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string, nonce string) *Code {
 	user := GetUser(userId)
 	if user == nil {
 		return &Code{
@@ -192,7 +192,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		}
 	}
 
-	accessToken, err := generateJwtToken(application, user)
+	accessToken, err := generateJwtToken(application, user, nonce)
 	if err != nil {
 		panic(err)
 	}
