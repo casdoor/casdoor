@@ -151,6 +151,9 @@ func (c *ApiController) AddLdap() {
 	if affected {
 		resp.Data2 = ldap
 	}
+	if ldap.AutoSync != 0 {
+		object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
+	}
 
 	c.Data["json"] = resp
 	c.ServeJSON()
@@ -172,6 +175,9 @@ func (c *ApiController) UpdateLdap() {
 	if affected {
 		resp.Data2 = ldap
 	}
+	if ldap.AutoSync != 0 {
+		object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
+	}
 
 	c.Data["json"] = resp
 	c.ServeJSON()
@@ -187,6 +193,7 @@ func (c *ApiController) DeleteLdap() {
 		panic(err)
 	}
 
+	object.GetLdapAutoSynchronizer().StopAutoSync(ldap.Id)
 	c.Data["json"] = wrapActionResponse(object.DeleteLdap(&ldap))
 	c.ServeJSON()
 }

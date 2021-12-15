@@ -78,6 +78,32 @@ type LdapRespUser struct {
 	Address string `json:"address"`
 }
 
+func LdapUsersToLdapRespUsers(users []ldapUser) []LdapRespUser {
+	returnAnyNotEmpty := func(strs ...string) string {
+		for _, str := range strs {
+			if str != "" {
+				return str
+			}
+		}
+		return ""
+	}
+
+	res := make([]LdapRespUser, 0)
+	for _, user := range users {
+		res = append(res, LdapRespUser{
+			UidNumber: user.UidNumber,
+			Uid:       user.Uid,
+			Cn:        user.Cn,
+			GroupId:   user.GidNumber,
+			Uuid:      user.Uuid,
+			Email:     returnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
+			Phone:     returnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
+			Address:   returnAnyNotEmpty(user.PostalAddress, user.RegisteredAddress),
+		})
+	}
+	return res
+}
+
 func GetLdapConn(host string, port int, adminUser string, adminPasswd string) (*ldapConn, error) {
 	conn, err := goldap.Dial("tcp", fmt.Sprintf("%s:%d", host, port))
 	if err != nil {
@@ -286,15 +312,16 @@ func SyncLdapUsers(owner string, users []LdapRespUser) (*[]LdapRespUser, *[]Ldap
 	existUuids := CheckLdapUuidExist(owner, uuids)
 
 	for _, user := range users {
+		found := false
 		if len(existUuids) > 0 {
-			for index, existUuid := range existUuids {
+			for _, existUuid := range existUuids {
 				if user.Uuid == existUuid {
 					existUsers = append(existUsers, user)
-					existUuids = append(existUuids[:index], existUuids[index+1:]...)
+					found = true
 				}
 			}
 		}
-		if !AddUser(&User{
+		if !found && !AddUser(&User{
 			Owner:       owner,
 			Name:        buildLdapUserName(user.Uid, user.UidNumber),
 			CreatedTime: util.GetCurrentTime(),
@@ -327,6 +354,7 @@ func UpdateLdapSyncTime(ldapId string) {
 func CheckLdapUuidExist(owner string, uuids []string) []string {
 	var results []User
 	var existUuids []string
+	existUuidSet := make(map[string]struct{})
 
 	//whereStr := ""
 	//for i, uuid := range uuids {
@@ -344,8 +372,12 @@ func CheckLdapUuidExist(owner string, uuids []string) []string {
 
 	if len(results) > 0 {
 		for _, result := range results {
-			existUuids = append(existUuids, result.Ldap)
+			existUuidSet[result.Ldap] = struct{}{}
 		}
+	}
+
+	for uuid, _ := range existUuidSet {
+		existUuids = append(existUuids, uuid)
 	}
 	return existUuids
 }
