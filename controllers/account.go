@@ -220,7 +220,7 @@ func (c *ApiController) GetAccount() {
 	organization := object.GetMaskedOrganization(object.GetOrganizationByUser(user))
 	resp := Response{
 		Status: "ok",
-		Sub:    userId,
+		Sub:    user.Id,
 		Data:   user,
 		Data2:  organization,
 	}
