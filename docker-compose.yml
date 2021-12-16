@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     environment:
-      RUNNING_IN_DOCKER: true
+      RUNNING_IN_DOCKER: "true"
     volumes:
       - ./conf:/conf/
   db:
