@@ -25,7 +25,7 @@ func GetBeegoConfDataSourceName() string {
 	dataSourceName := beego.AppConfig.String("dataSourceName")
 
 	runningInDocker := os.Getenv("RUNNING_IN_DOCKER")
-	if runningInDocker != "" {
+	if runningInDocker == "true" {
 		dataSourceName = strings.ReplaceAll(dataSourceName, "localhost", "host.docker.internal")
 	}
 
