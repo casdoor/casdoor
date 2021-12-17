@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table} from 'antd';
+import {Button, Popconfirm, Switch, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as SyncerBackend from "./backend/SyncerBackend";
@@ -102,7 +102,7 @@ class SyncerListPage extends React.Component {
         title: i18next.t("general:Organization"),
         dataIndex: 'organization',
         key: 'organization',
-        width: '80px',
+        width: '120px',
         sorter: (a, b) => a.organization.localeCompare(b.organization),
         render: (text, record, index) => {
           return (
@@ -141,57 +141,69 @@ class SyncerListPage extends React.Component {
         title: i18next.t("provider:Type"),
         dataIndex: 'type',
         key: 'type',
-        width: '150px',
+        width: '100px',
         sorter: (a, b) => a.type.localeCompare(b.type),
       },
       {
         title: i18next.t("provider:Host"),
         dataIndex: 'host',
         key: 'host',
-        width: '150px',
+        width: '120px',
         sorter: (a, b) => a.host.localeCompare(b.host),
       },
       {
         title: i18next.t("provider:Port"),
         dataIndex: 'port',
         key: 'port',
-        width: '150px',
+        width: '100px',
         sorter: (a, b) => a.port - b.port,
       },
       {
         title: i18next.t("general:User"),
         dataIndex: 'user',
         key: 'user',
-        width: '150px',
+        width: '120px',
         sorter: (a, b) => a.user.localeCompare(b.user),
       },
       {
         title: i18next.t("general:Password"),
         dataIndex: 'password',
         key: 'password',
-        width: '150px',
+        width: '120px',
         sorter: (a, b) => a.password.localeCompare(b.password),
       },
       {
         title: i18next.t("syncer:Database"),
         dataIndex: 'database',
         key: 'database',
-        width: '150px',
+        width: '120px',
         sorter: (a, b) => a.database.localeCompare(b.database),
       },
       {
         title: i18next.t("syncer:Table"),
         dataIndex: 'table',
         key: 'table',
-        width: '150px',
+        width: '120px',
         sorter: (a, b) => a.table.localeCompare(b.table),
       },
       {
         title: i18next.t("syncer:Sync interval"),
         dataIndex: 'syncInterval',
         key: 'syncInterval',
-        width: '150px',
+        width: '120px',
         sorter: (a, b) => a.syncInterval.localeCompare(b.syncInterval),
+      },
+      {
+        title: i18next.t("record:Is Enabled"),
+        dataIndex: 'isEnabled',
+        key: 'isEnabled',
+        width: '120px',
+        sorter: (a, b) => a.isEnabled - b.isEnabled,
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          )
+        }
       },
       {
         title: i18next.t("general:Action"),

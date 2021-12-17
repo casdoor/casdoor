@@ -29,14 +29,16 @@ type Syncer struct {
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	Type         string `xorm:"varchar(100)" json:"type"`
 
-	Host     string `xorm:"varchar(100)" json:"host"`
-	Port     int    `json:"port"`
-	User     string `xorm:"varchar(100)" json:"user"`
-	Password string `xorm:"varchar(100)" json:"password"`
-	Database string `xorm:"varchar(100)" json:"database"`
-	Table    string `xorm:"varchar(100)" json:"table"`
-
-	SyncInterval int `json:"syncInterval"`
+	Host             string `xorm:"varchar(100)" json:"host"`
+	Port             int    `json:"port"`
+	User             string `xorm:"varchar(100)" json:"user"`
+	Password         string `xorm:"varchar(100)" json:"password"`
+	Database         string `xorm:"varchar(100)" json:"database"`
+	Table            string `xorm:"varchar(100)" json:"table"`
+	AffiliationTable string `xorm:"varchar(100)" json:"affiliationTable"`
+	AvatarBaseUrl    string `xorm:"varchar(100)" json:"avatarBaseUrl"`
+	SyncInterval     int    `json:"syncInterval"`
+	IsEnabled        bool   `json:"isEnabled"`
 }
 
 func GetSyncerCount(owner string) int {
@@ -89,6 +91,24 @@ func getSyncer(owner string, name string) *Syncer {
 func GetSyncer(id string) *Syncer {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getSyncer(owner, name)
+}
+
+func GetMaskedSyncer(syncer *Syncer) *Syncer {
+	if syncer == nil {
+		return nil
+	}
+
+	if syncer.Password != "" {
+		syncer.Password = "***"
+	}
+	return syncer
+}
+
+func GetMaskedSyncers(syncers []*Syncer) []*Syncer {
+	for _, syncer := range syncers {
+		syncer = GetMaskedSyncer(syncer)
+	}
+	return syncers
 }
 
 func UpdateSyncer(id string, syncer *Syncer) bool {
