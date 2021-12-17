@@ -12,12 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package original
+package object
 
-import "github.com/mileusna/crontab"
+func (syncer *Syncer) getUsers() []*User {
+	users := GetUsers(syncer.Organization)
+	return users
+}
 
-var ctab *crontab.Crontab
+func (syncer *Syncer) getUserMap() ([]*User, map[string]*User) {
+	users := syncer.getUsers()
 
-func init() {
-	ctab = crontab.New()
+	m := map[string]*User{}
+	for _, user := range users {
+		m[user.Name] = user
+	}
+	return users, m
 }

@@ -12,21 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package original
+package object
 
-import "github.com/casbin/casdoor/object"
+import "github.com/mileusna/crontab"
 
-func getUsers() []*object.User {
-	users := object.GetUsers(orgName)
-	return users
+var cronMap map[string]*crontab.Crontab
+
+func init() {
+	cronMap = map[string]*crontab.Crontab{}
 }
 
-func getUserMap() ([]*object.User, map[string]*object.User) {
-	users := getUsers()
-
-	m := map[string]*object.User{}
-	for _, user := range users {
-		m[user.Name] = user
+func getCrontab(name string) *crontab.Crontab {
+	ctab, ok := cronMap[name]
+	if !ok {
+		ctab = crontab.New()
+		cronMap[name] = ctab
 	}
-	return users, m
+	return ctab
+}
+
+func clearCrontab(name string) {
+	ctab, ok := cronMap[name]
+	if ok {
+		ctab.Clear()
+		delete(cronMap, name)
+	}
 }

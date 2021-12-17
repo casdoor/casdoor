@@ -12,50 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package original
+package object
 
-import (
-	"fmt"
+import "fmt"
 
-	"github.com/casbin/casdoor/object"
-)
-
-func isEnabled() bool {
-	if adapter == nil {
-		InitAdapter()
-		if adapter == nil {
-			return false
+func getEnabledSyncerForOrganization(organization string) *Syncer {
+	syncers := GetSyncers("admin")
+	for _, syncer := range syncers {
+		if syncer.Organization == organization && syncer.IsEnabled {
+			return syncer
 		}
 	}
-	return true
+	return nil
 }
 
-func AddUserToOriginalDatabase(user *object.User) {
-	if user.Owner != orgName {
+func AddUserToOriginalDatabase(user *User) {
+	syncer := getEnabledSyncerForOrganization(user.Owner)
+	if syncer == nil {
 		return
 	}
 
-	if !isEnabled() {
-		return
-	}
-
-	updatedOUser := createOriginalUserFromUser(user)
-	addUser(updatedOUser)
+	updatedOUser := syncer.createOriginalUserFromUser(user)
+	syncer.addUser(updatedOUser)
 	fmt.Printf("Add from user to oUser: %v\n", updatedOUser)
 }
 
-func UpdateUserToOriginalDatabase(user *object.User) {
-	if user.Owner != orgName {
+func UpdateUserToOriginalDatabase(user *User) {
+	syncer := getEnabledSyncerForOrganization(user.Owner)
+	if syncer == nil {
 		return
 	}
 
-	if !isEnabled() {
-		return
-	}
+	newUser := GetUser(user.GetId())
 
-	newUser := object.GetUser(user.GetId())
-
-	updatedOUser := createOriginalUserFromUser(newUser)
-	updateUser(updatedOUser)
+	updatedOUser := syncer.createOriginalUserFromUser(newUser)
+	syncer.updateUser(updatedOUser)
 	fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
 }

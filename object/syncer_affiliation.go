@@ -12,20 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package original
+package object
 
 type Affiliation struct {
 	Id   int    `xorm:"int notnull pk autoincr" json:"id"`
 	Name string `xorm:"varchar(128)" json:"name"`
 }
 
-func (Affiliation) TableName() string {
-	return affiliationTableName
-}
-
-func getAffiliations() []*Affiliation {
+func (syncer *Syncer) getAffiliations() []*Affiliation {
 	affiliations := []*Affiliation{}
-	err := adapter.Engine.Asc("id").Find(&affiliations)
+	err := syncer.Adapter.Engine.Table(syncer.AffiliationTable).Asc("id").Find(&affiliations)
 	if err != nil {
 		panic(err)
 	}
@@ -33,8 +29,8 @@ func getAffiliations() []*Affiliation {
 	return affiliations
 }
 
-func getAffiliationMap() ([]*Affiliation, map[int]string) {
-	affiliations := getAffiliations()
+func (syncer *Syncer) getAffiliationMap() ([]*Affiliation, map[int]string) {
+	affiliations := syncer.getAffiliations()
 
 	m := map[int]string{}
 	for _, affiliation := range affiliations {

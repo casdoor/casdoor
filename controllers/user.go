@@ -21,7 +21,6 @@ import (
 
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/original"
 	"github.com/casbin/casdoor/util"
 )
 
@@ -120,7 +119,7 @@ func (c *ApiController) UpdateUser() {
 
 	affected := object.UpdateUser(id, &user, columns)
 	if affected {
-		original.UpdateUserToOriginalDatabase(&user)
+		object.UpdateUserToOriginalDatabase(&user)
 	}
 
 	c.Data["json"] = wrapActionResponse(affected)

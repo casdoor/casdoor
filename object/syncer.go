@@ -39,6 +39,8 @@ type Syncer struct {
 	AvatarBaseUrl    string `xorm:"varchar(100)" json:"avatarBaseUrl"`
 	SyncInterval     int    `json:"syncInterval"`
 	IsEnabled        bool   `json:"isEnabled"`
+
+	Adapter *Adapter `xorm:"-" json:"-"`
 }
 
 func GetSyncerCount(owner string) int {
@@ -143,6 +145,6 @@ func DeleteSyncer(syncer *Syncer) bool {
 	return affected != 0
 }
 
-func (p *Syncer) GetId() string {
-	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
+func (syncer *Syncer) GetId() string {
+	return fmt.Sprintf("%s/%s", syncer.Owner, syncer.Name)
 }

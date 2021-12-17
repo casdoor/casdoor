@@ -12,11 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package original
+package object
 
-var dbName = "dbName"
-var userTableName = "userTableName"
-var affiliationTableName = "affiliationTableName"
-var avatarBaseUrl = "https://cdn.example.com/"
+import (
+	"fmt"
+	"testing"
+)
 
-var orgName = "orgName"
+func TestGetUsers(t *testing.T) {
+	InitConfig()
+	InitAdapter()
+
+	syncer := getEnabledSyncerForOrganization("built-in")
+	users := syncer.getUsersOriginal()
+	for _, user := range users {
+		fmt.Printf("%v\n", user)
+	}
+}
+
+func TestSyncUsers(t *testing.T) {
+	InitConfig()
+	InitAdapter()
+
+	RunSyncUsersJob()
+}

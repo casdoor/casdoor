@@ -20,7 +20,6 @@ import (
 	"strconv"
 
 	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/original"
 	"github.com/casbin/casdoor/util"
 )
 
@@ -168,7 +167,7 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	original.AddUserToOriginalDatabase(user)
+	object.AddUserToOriginalDatabase(user)
 
 	if application.HasPromptPage() {
 		// The prompt page needs the user to be signed in
