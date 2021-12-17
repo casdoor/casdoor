@@ -122,6 +122,12 @@ func initAPI() {
 	beego.Router("/api/add-webhook", &controllers.ApiController{}, "POST:AddWebhook")
 	beego.Router("/api/delete-webhook", &controllers.ApiController{}, "POST:DeleteWebhook")
 
+	beego.Router("/api/get-syncers", &controllers.ApiController{}, "GET:GetSyncers")
+	beego.Router("/api/get-syncer", &controllers.ApiController{}, "GET:GetSyncer")
+	beego.Router("/api/update-syncer", &controllers.ApiController{}, "POST:UpdateSyncer")
+	beego.Router("/api/add-syncer", &controllers.ApiController{}, "POST:AddSyncer")
+	beego.Router("/api/delete-syncer", &controllers.ApiController{}, "POST:DeleteSyncer")
+
 	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
 
