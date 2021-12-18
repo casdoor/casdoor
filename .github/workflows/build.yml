@@ -91,4 +91,4 @@ jobs:
         if: github.repository == 'casbin/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           push: true
-          tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }}
+          tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
