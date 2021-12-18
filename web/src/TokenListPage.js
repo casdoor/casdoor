@@ -164,7 +164,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Authorization code"),
+        title: i18next.t("token:Authorization code"),
         dataIndex: 'code',
         key: 'code',
         // width: '150px',
@@ -174,7 +174,7 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Access token"),
+        title: i18next.t("token:Access token"),
         dataIndex: 'accessToken',
         key: 'accessToken',
         // width: '150px',
@@ -185,14 +185,14 @@ class TokenListPage extends React.Component {
         }
       },
       {
-        title: i18next.t("general:Expires in"),
+        title: i18next.t("token:Expires in"),
         dataIndex: 'expiresIn',
         key: 'expiresIn',
         width: '120px',
         sorter: (a, b) => a.expiresIn - b.expiresIn,
       },
       {
-        title: i18next.t("general:Scope"),
+        title: i18next.t("token:Scope"),
         dataIndex: 'scope',
         key: 'scope',
         width: '100px',

@@ -55,7 +55,6 @@
     "Verify": "验证"
   },
   "general": {
-    "Access token": "访问令牌",
     "Action": "操作",
     "Add": "添加",
     "Affiliation URL": "工作单位URL",
@@ -63,7 +62,6 @@
     "Application": "应用",
     "Applications": "应用",
     "Applications that require authentication": "需要鉴权的应用",
-    "Authorization code": "授权码",
     "Avatar": "头像",
     "Avatar - Tooltip": "向其他人展示的头像",
     "Back Home": "返回到首页",
@@ -81,7 +79,6 @@
     "Edit": "修改",
     "Email": "电子邮箱",
     "Email - Tooltip": "电子邮件：",
-    "Expires in": "有效期",
     "Favicon - Tooltip": "网站的图标",
     "Forget URL": "忘记密码URL",
     "Forget URL - Tooltip": "忘记密码URL",
@@ -122,7 +119,6 @@
     "Resources": "资源",
     "Save": "保存",
     "Save & Exit": "保存 & 退出",
-    "Scope": "范围",
     "Signin URL": "登录URL",
     "Signin URL - Tooltip": "用户的登录地址",
     "Signup URL": "注册URL",
@@ -131,7 +127,6 @@
     "Swagger": "API文档",
     "Syncers": "同步器",
     "Timestamp": "时间戳",
-    "Token type": "令牌类型",
     "Tokens": "令牌",
     "URL": "链接",
     "Up": "上移",
@@ -338,7 +333,11 @@
     "Table - Tooltip": "数据库表名"
   },
   "token": {
+    "Access token": "Access token",
+    "Authorization code": "授权码",
     "Edit Token": "修改令牌",
+    "Expires in": "有效期",
+    "Scope": "范围",
     "Token type": "令牌类型"
   },
   "user": {

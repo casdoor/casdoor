@@ -55,7 +55,6 @@
     "Verify": "Verify"
   },
   "general": {
-    "Access token": "Access token",
     "Action": "Action",
     "Add": "Add",
     "Affiliation URL": "Affiliation URL",
@@ -63,7 +62,6 @@
     "Application": "Application",
     "Applications": "Applications",
     "Applications that require authentication": "Applications that require authentication",
-    "Authorization code": "Authorization code",
     "Avatar": "Avatar",
     "Avatar - Tooltip": "Avatar to show to others",
     "Back Home": "Back Home",
@@ -81,7 +79,6 @@
     "Edit": "Edit",
     "Email": "Email",
     "Email - Tooltip": "email",
-    "Expires in": "Expires in",
     "Favicon - Tooltip": "Application icon",
     "Forget URL": "Forget URL",
     "Forget URL - Tooltip": "Unique string-style identifier",
@@ -122,7 +119,6 @@
     "Resources": "Resources",
     "Save": "Save",
     "Save & Exit": "Save & Exit",
-    "Scope": "Scope",
     "Signin URL": "Signin URL",
     "Signin URL - Tooltip": "sign in url",
     "Signup URL": "Signup URL",
@@ -131,7 +127,6 @@
     "Swagger": "Swagger",
     "Syncers": "Syncers",
     "Timestamp": "Timestamp",
-    "Token type": "Token type",
     "Tokens": "Tokens",
     "URL": "URL",
     "Up": "Up",
@@ -338,7 +333,11 @@
     "Table - Tooltip": "Table - Tooltip"
   },
   "token": {
+    "Access token": "Access token",
+    "Authorization code": "Authorization code",
     "Edit Token": "Edit Token",
+    "Expires in": "Expires in",
+    "Scope": "Scope",
     "Token type": "Token type"
   },
   "user": {

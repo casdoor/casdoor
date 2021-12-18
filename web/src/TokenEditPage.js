@@ -109,7 +109,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Authorization code")}:
+            {i18next.t("token:Authorization code")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.code} onChange={e => {
@@ -119,7 +119,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Access token")}:
+            {i18next.t("token:Access token")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.accessToken} onChange={e => {
@@ -129,7 +129,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Expires in")}:
+            {i18next.t("token:Expires in")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.expiresIn} onChange={e => {
@@ -139,7 +139,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Scope")}:
+            {i18next.t("token:Scope")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.scope} onChange={e => {
@@ -149,7 +149,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Token type")}:
+            {i18next.t("token:Token type")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.tokenType} onChange={e => {
