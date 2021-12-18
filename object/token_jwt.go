@@ -60,9 +60,9 @@ func generateJwtToken(application *Application, user *User, nonce string) (strin
 	//all fields of the User struct are not added in "JWT-Empty" format
 	if application.TokenFormat == "JWT-Empty" {
 		claims.User = nil
-		claims.Name = user.Name
-		claims.Owner = user.Owner
 	}
+	claims.Name = user.Name
+	claims.Owner = user.Owner
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	claims.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
