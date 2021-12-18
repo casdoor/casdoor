@@ -39,7 +39,7 @@ func (c *ApiController) GetSyncers() {
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetSyncerCount(owner)))
-		syncers := object.GetMaskedSyncers(object.GetPaginationSyncers(owner, paginator.Offset(), limit))
+		syncers := object.GetPaginationSyncers(owner, paginator.Offset(), limit)
 		c.ResponseOk(syncers, paginator.Nums())
 	}
 }
@@ -53,7 +53,7 @@ func (c *ApiController) GetSyncers() {
 func (c *ApiController) GetSyncer() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetMaskedSyncer(object.GetSyncer(id))
+	c.Data["json"] = object.GetSyncer(id)
 	c.ServeJSON()
 }
 

@@ -194,7 +194,7 @@ class SyncerListPage extends React.Component {
         sorter: (a, b) => a.syncInterval.localeCompare(b.syncInterval),
       },
       {
-        title: i18next.t("record:Is Enabled"),
+        title: i18next.t("syncer:Is enabled"),
         dataIndex: 'isEnabled',
         key: 'isEnabled',
         width: '120px',
