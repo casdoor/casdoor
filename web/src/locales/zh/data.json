@@ -19,11 +19,17 @@
     "Redirect URL": "回调URL",
     "Redirect URLs": "回调URLs",
     "Redirect URLs - Tooltip": "登录成功后重定向地址列表",
+    "Refresh token expire": "Refresh Token过期时间",
+    "Refresh token expire - Tooltip": "Refresh Token过期时间",
     "Signup items": "注册项",
     "Signup items - Tooltip": "注册用户注册时需要填写的项目",
     "Test prompt page..": "测试提醒页面..",
     "Test signin page..": "测试登录页面..",
-    "Test signup page..": "测试注册页面.."
+    "Test signup page..": "测试注册页面..",
+    "Token expire": "Access Token过期时间",
+    "Token expire - Tooltip": "Access Token过期时间",
+    "Token format": "Access Token格式",
+    "Token format - Tooltip": "Access Token格式"
   },
   "code": {
     "Code You Received": "验证码",
@@ -125,8 +131,6 @@
     "Swagger": "API文档",
     "Syncers": "同步器",
     "Timestamp": "时间戳",
-    "Token expire": "令牌过期时间",
-    "Token expire - Tooltip": "签发的令牌的授权时间",
     "Token type": "令牌类型",
     "Tokens": "令牌",
     "URL": "链接",

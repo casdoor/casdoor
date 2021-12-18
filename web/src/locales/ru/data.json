@@ -19,11 +19,17 @@
     "Redirect URL": "Redirect URL",
     "Redirect URLs": "Redirect URLs",
     "Redirect URLs - Tooltip": "List of redirect addresses after successful login",
+    "Refresh token expire": "Refresh token expire",
+    "Refresh token expire - Tooltip": "Refresh token expire - Tooltip",
     "Signup items": "Signup items",
     "Signup items - Tooltip": "Signup items that need to be filled in when users register",
     "Test prompt page..": "Test prompt page..",
     "Test signin page..": "Test signin page..",
-    "Test signup page..": "Test signup page.."
+    "Test signup page..": "Test signup page..",
+    "Token expire": "Token expire",
+    "Token expire - Tooltip": "Token expire - Tooltip",
+    "Token format": "Token format",
+    "Token format - Tooltip": "Token format - Tooltip"
   },
   "code": {
     "Code You Received": "Code You Received",
@@ -125,8 +131,6 @@
     "Swagger": "Swagger",
     "Syncers": "Syncers",
     "Timestamp": "Timestamp",
-    "Token expire": "Token expire",
-    "Token expire - Tooltip": "Token authorization time",
     "Token type": "Token type",
     "Tokens": "Tokens",
     "URL": "URL",
