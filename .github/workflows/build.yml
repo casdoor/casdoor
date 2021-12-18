@@ -14,6 +14,7 @@ jobs:
       - run: yarn install && CI=false yarn run build
         working-directory: ./web
 
+
   backend:
     name: Back-end
     runs-on: ubuntu-latest
@@ -28,8 +29,8 @@ jobs:
           go build -race -ldflags "-extldflags '-static'"
         working-directory: ./
 
-  release:
-    name: Release
+  release-and-push:
+    name: Release And Push
     runs-on: ubuntu-latest
     if: github.repository == 'casbin/casdoor' && github.event_name == 'push'
     needs: [ frontend, backend ]
@@ -42,26 +43,52 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 12
+
+      - name: Fetch Previous version
+        id: get-previous-tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+
       - name: Release
         run: yarn global add semantic-release@17.4.4 && semantic-release
         env:
           GH_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
 
-  publish:
-    name: Publish
-    runs-on: ubuntu-latest
-    if: github.repository == 'casbin/casdoor' && github.event_name == 'push'
-    needs: release
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
+      - name: Fetch Current version
+        id: get-current-tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+
+      - name: Decide Should_Push Or Not
+        id: should_push
+        run: |
+          old_version=${{steps.get-previous-tag.outputs.tag}}
+          new_version=${{steps.get-current-tag.outputs.tag }}
+
+          old_array=(${old_version//\./ })
+          new_array=(${new_version//\./ })
+
+          if [ ${old_array[0]} != ${new_array[0]} ]
+          then 
+              echo ::set-output name=push::'true'
+          elif [ ${old_array[1]} != ${new_array[1]} ]
+          then 
+              echo ::set-output name=push::'true'
+              
+          else
+              echo ::set-output name=push::'false'
+              
+          fi
+        
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
+        if: github.repository == 'casbin/casdoor' && github.event_name == 'push' &&steps.should_push.outputs.push=='true'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+          
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
+        if: github.repository == 'casbin/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           push: true
-          tags: casbin/casdoor:latest
+          tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }}
