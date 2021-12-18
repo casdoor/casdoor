@@ -21,9 +21,10 @@ import (
 
 func TestGetUsers(t *testing.T) {
 	InitConfig()
-	InitAdapter()
 
-	syncer := getEnabledSyncerForOrganization("built-in")
+	syncers := GetSyncers("admin")
+	syncer := syncers[0]
+	syncer.initAdapter()
 	users := syncer.getUsersOriginal()
 	for _, user := range users {
 		fmt.Printf("%v\n", user)
@@ -32,7 +33,6 @@ func TestGetUsers(t *testing.T) {
 
 func TestSyncUsers(t *testing.T) {
 	InitConfig()
-	InitAdapter()
 
 	RunSyncUsersJob()
 }
