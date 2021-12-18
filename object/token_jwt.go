@@ -30,7 +30,9 @@ var tokenJwtPublicKey string
 var tokenJwtPrivateKey string
 
 type Claims struct {
-	User
+	*User
+	Name  string `json:"name,omitempty"`
+	Owner string `json:"owner,omitempty"`
 	Nonce string `json:"nonce,omitempty"`
 	jwt.RegisteredClaims
 }
@@ -43,7 +45,7 @@ func generateJwtToken(application *Application, user *User, nonce string) (strin
 	user.Password = ""
 
 	claims := Claims{
-		User:  *user,
+		User:  user,
 		Nonce: nonce,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    beego.AppConfig.String("origin"),
@@ -55,10 +57,12 @@ func generateJwtToken(application *Application, user *User, nonce string) (strin
 			ID:        "",
 		},
 	}
-
+	//all fields of the User struct are not added in "JWT-Empty" format
 	if application.TokenFormat == "JWT-Empty" {
-		claims.User = User{}
+		claims.User = nil
 	}
+	claims.Name = user.Name
+	claims.Owner = user.Owner
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	claims.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
