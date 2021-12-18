@@ -240,6 +240,19 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Token format"), i18next.t("general:Token format - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: '100%'}} value={this.state.application.tokenFormat} onChange={(value => {this.updateApplicationField('tokenFormat', value);})}>
+              {
+                ['JWT', 'JWT-Empty']
+                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Token expire"), i18next.t("general:Token expire - Tooltip"))} :
           </Col>
           <Col span={22} >

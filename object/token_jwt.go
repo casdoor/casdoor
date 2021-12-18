@@ -55,6 +55,10 @@ func generateJwtToken(application *Application, user *User, nonce string) (strin
 		},
 	}
 
+	if application.TokenFormat == "JWT-Empty" {
+		claims.User = User{}
+	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 
 	// Use "token_jwt_key.key" as RSA private key

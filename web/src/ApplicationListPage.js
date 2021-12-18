@@ -70,6 +70,7 @@ class ApplicationListPage extends React.Component {
         {name: "Agreement", visible: true, required: true, rule: "None"},
       ],
       redirectUris: ["http://localhost:9000/callback"],
+      tokenFormat: "JWT",
       expireInHours: 24 * 7,
     }
   }

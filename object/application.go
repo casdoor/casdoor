@@ -39,6 +39,7 @@ type Application struct {
 	ClientId       string   `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret   string   `xorm:"varchar(100)" json:"clientSecret"`
 	RedirectUris   []string `xorm:"varchar(1000)" json:"redirectUris"`
+	TokenFormat    string   `xorm:"varchar(100)" json:"tokenFormat"`
 	ExpireInHours  int      `json:"expireInHours"`
 	SignupUrl      string   `xorm:"varchar(200)" json:"signupUrl"`
 	SigninUrl      string   `xorm:"varchar(200)" json:"signinUrl"`
