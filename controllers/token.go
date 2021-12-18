@@ -165,3 +165,24 @@ func (c *ApiController) GetOAuthToken() {
 	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code)
 	c.ServeJSON()
 }
+
+// RefreshToken
+// @Title RefreshToken
+// @Description refresh OAuth access token
+// @Param   grant_type     query    string  true        "OAuth grant type"
+// @Param	refresh_token	query	string	true		"OAuth refresh token"
+// @Param   scope     query    string  true        "OAuth scope"
+// @Param   client_id     query    string  true        "OAuth client id"
+// @Param   client_secret     query    string  true        "OAuth client secret"
+// @Success 200 {object} object.TokenWrapper The Response object
+// @router /login/oauth/refresh_token [post]
+func (c *ApiController) RefreshToken() {
+	grantType := c.Input().Get("grant_type")
+	refreshToken := c.Input().Get("refresh_token")
+	scope := c.Input().Get("scope")
+	clientId := c.Input().Get("client_id")
+	clientSecret := c.Input().Get("client_secret")
+
+	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret)
+	c.ServeJSON()
+}

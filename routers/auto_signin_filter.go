@@ -16,6 +16,7 @@ package routers
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/astaxie/beego/context"
 	"github.com/casbin/casdoor/object"
@@ -34,6 +35,9 @@ func AutoSigninFilter(ctx *context.Context) {
 		if err != nil {
 			responseError(ctx, "invalid JWT token")
 			return
+		}
+		if time.Now().Unix() > claims.ExpiresAt.Unix() {
+			responseError(ctx, "expired JWT token")
 		}
 
 		userId := fmt.Sprintf("%s/%s", claims.User.Owner, claims.User.Name)

@@ -35,9 +35,10 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func generateJwtToken(application *Application, user *User, nonce string) (string, error) {
+func generateJwtToken(application *Application, user *User, nonce string) (string, string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
+	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours) * time.Hour)
 
 	user.Password = ""
 
@@ -60,17 +61,23 @@ func generateJwtToken(application *Application, user *User, nonce string) (strin
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	claims.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 
 	// Use "token_jwt_key.key" as RSA private key
 	privateKey := tokenJwtPrivateKey
 	key, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(privateKey))
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	tokenString, err := token.SignedString(key)
+	if err != nil {
+		return "", "", err
+	}
+	refreshTokenString, err := refreshToken.SignedString(key)
 
-	return tokenString, err
+	return tokenString, refreshTokenString, err
 }
 
 func ParseJwtToken(token string) (*Claims, error) {
