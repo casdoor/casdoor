@@ -69,6 +69,7 @@ We provide two start up methods for all kinds of users.
 ### Manual
 
 #### Simple configuration
+Casdoor requires a running Relational database to be operational.Thus you need to modify configuration to point out the location of database.
 
 Edit `conf/app.conf`, modify `dataSourceName` to correct database info, which follows this format:
 
@@ -119,8 +120,9 @@ go build main.go && sudo ./main
 This method requires [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) to be installed first.
 
 #### Simple configuration
+For the convenience of your first attempt, docker-compose.yml contains commands to start a database via docker.
 
-Edit `conf/app.conf`, modify `dataSourceName` to the fixed content:
+Thus edit `conf/app.conf` to point out the location of database(db:3306), modify `dataSourceName` to the fixed content:
 
 ```bash
 dataSourceName = root:123456@tcp(db:3306)/
@@ -158,7 +160,7 @@ These all use casdoor as a centralized authentication platform.
 
 ## Contribute
 
-For casdoor, if you have any questions, you can give Issues, and you can also directly Pull Requests(but we recommend give issues first to communicate with the community).
+For casdoor, if you have any questions, you can give Issues, or you can also directly start Pull Requests(but we recommend giving issues first to communicate with the community).
 
 ### I18n notice
 
