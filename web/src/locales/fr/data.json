@@ -8,8 +8,8 @@
   },
   "application": {
     "Edit Application": "Edit Application",
-    "Enable Code Signin": "Enable Code Signin",
-    "Enable Code Signin - Tooltip": "Enable Code Signin - Tooltip",
+    "Enable code signin": "Enable code signin",
+    "Enable code signin - Tooltip": "Enable code signin - Tooltip",
     "Enable signup": "Enable signup",
     "Enable signup - Tooltip": "Whether to allow users to sign up",
     "File uploaded successfully": "File uploaded successfully",
