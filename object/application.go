@@ -36,18 +36,19 @@ type Application struct {
 	SignupItems      []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
 	OrganizationObj  *Organization   `xorm:"-" json:"organizationObj"`
 
-	ClientId       string   `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret   string   `xorm:"varchar(100)" json:"clientSecret"`
-	RedirectUris   []string `xorm:"varchar(1000)" json:"redirectUris"`
-	TokenFormat    string   `xorm:"varchar(100)" json:"tokenFormat"`
-	ExpireInHours  int      `json:"expireInHours"`
-	SignupUrl      string   `xorm:"varchar(200)" json:"signupUrl"`
-	SigninUrl      string   `xorm:"varchar(200)" json:"signinUrl"`
-	ForgetUrl      string   `xorm:"varchar(200)" json:"forgetUrl"`
-	AffiliationUrl string   `xorm:"varchar(100)" json:"affiliationUrl"`
-	TermsOfUse     string   `xorm:"varchar(100)" json:"termsOfUse"`
-	SignupHtml     string   `xorm:"mediumtext" json:"signupHtml"`
-	SigninHtml     string   `xorm:"mediumtext" json:"signinHtml"`
+	ClientId             string   `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret         string   `xorm:"varchar(100)" json:"clientSecret"`
+	RedirectUris         []string `xorm:"varchar(1000)" json:"redirectUris"`
+	TokenFormat          string   `xorm:"varchar(100)" json:"tokenFormat"`
+	ExpireInHours        int      `json:"expireInHours"`
+	RefreshExpireInHours int      `json:"refreshExpireInHours"`
+	SignupUrl            string   `xorm:"varchar(200)" json:"signupUrl"`
+	SigninUrl            string   `xorm:"varchar(200)" json:"signinUrl"`
+	ForgetUrl            string   `xorm:"varchar(200)" json:"forgetUrl"`
+	AffiliationUrl       string   `xorm:"varchar(100)" json:"affiliationUrl"`
+	TermsOfUse           string   `xorm:"varchar(100)" json:"termsOfUse"`
+	SignupHtml           string   `xorm:"mediumtext" json:"signupHtml"`
+	SigninHtml           string   `xorm:"mediumtext" json:"signinHtml"`
 }
 
 func GetApplicationCount(owner string) int {

@@ -82,7 +82,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   parseApplicationField(key, value) {
-    if (["expireInHours"].includes(key)) {
+    if (["expireInHours"].includes(key) || ["refreshExpireInHours"].includes(key)) {
       value = Setting.myParseInt(value);
     }
     return value;
@@ -258,6 +258,16 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <Input style={{width: "150px"}} value={this.state.application.expireInHours} suffix="Hours" onChange={e => {
               this.updateApplicationField('expireInHours', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Refresh token expire"), i18next.t("general:Refresh token expire - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input style={{width: "150px"}} value={this.state.application.refreshExpireInHours} suffix="Hours" onChange={e => {
+              this.updateApplicationField('refreshExpireInHours', e.target.value);
             }} />
           </Col>
         </Row>

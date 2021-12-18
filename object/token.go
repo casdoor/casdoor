@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
@@ -36,11 +37,12 @@ type Token struct {
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	User         string `xorm:"varchar(100)" json:"user"`
 
-	Code        string `xorm:"varchar(100)" json:"code"`
-	AccessToken string `xorm:"mediumtext" json:"accessToken"`
-	ExpiresIn   int    `json:"expiresIn"`
-	Scope       string `xorm:"varchar(100)" json:"scope"`
-	TokenType   string `xorm:"varchar(100)" json:"tokenType"`
+	Code         string `xorm:"varchar(100)" json:"code"`
+	AccessToken  string `xorm:"mediumtext" json:"accessToken"`
+	RefreshToken string `xorm:"mediumtext" json:"refreshToken"`
+	ExpiresIn    int    `json:"expiresIn"`
+	Scope        string `xorm:"varchar(100)" json:"scope"`
+	TokenType    string `xorm:"varchar(100)" json:"tokenType"`
 }
 
 type TokenWrapper struct {
@@ -192,7 +194,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		}
 	}
 
-	accessToken, err := generateJwtToken(application, user, nonce)
+	accessToken, refreshToken, err := generateJwtToken(application, user, nonce)
 	if err != nil {
 		panic(err)
 	}
@@ -206,6 +208,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		User:         user.Name,
 		Code:         util.GenerateClientId(),
 		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 		ExpiresIn:    application.ExpireInHours * 60,
 		Scope:        scope,
 		TokenType:    "Bearer",
@@ -284,4 +287,76 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	}
 
 	return tokenWrapper
+}
+
+func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string) *Code {
+	// check parameters
+	if grantType != "refresh_token" {
+		return &Code{
+			Message: "error: grant_type should be \"refresh_token\"",
+			Code:    "",
+		}
+	}
+	application := GetApplicationByClientId(clientId)
+	if application == nil {
+		return &Code{
+			Message: "error: invalid client_id",
+			Code:    "",
+		}
+	}
+	if application.ClientSecret != clientSecret {
+		return &Code{
+			Message: "error: invalid client_secret",
+			Code:    "",
+		}
+	}
+	// check whether the refresh token is valid, and has not expired.
+	token := Token{RefreshToken: refreshToken}
+	existed, err := adapter.Engine.Get(&token)
+	if err != nil || !existed {
+		return &Code{
+			Message: "error: invalid refresh_token",
+			Code:    "",
+		}
+	}
+	claims, err := ParseJwtToken(refreshToken)
+	if err != nil {
+		return &Code{
+			Message: "error: invalid refresh_token",
+			Code:    "",
+		}
+	}
+	if time.Now().Unix() > claims.ExpiresAt.Unix() {
+		return &Code{
+			Message: "error: expired refresh_token",
+			Code:    "",
+		}
+	}
+	// generate a new token
+	user := getUser(application.Owner, token.User)
+	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "")
+	if err != nil {
+		panic(err)
+	}
+
+	newToken := &Token{
+		Owner:        application.Owner,
+		Name:         util.GenerateId(),
+		CreatedTime:  util.GetCurrentTime(),
+		Application:  application.Name,
+		Organization: user.Owner,
+		User:         user.Name,
+		Code:         util.GenerateClientId(),
+		AccessToken:  newAccessToken,
+		RefreshToken: newRefreshToken,
+		ExpiresIn:    application.ExpireInHours * 60,
+		Scope:        scope,
+		TokenType:    "Bearer",
+	}
+	AddToken(newToken)
+
+	return &Code{
+		Message: "",
+		Code:    token.Code,
+	}
 }
