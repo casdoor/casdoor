@@ -41,7 +41,7 @@ func (syncer *Syncer) syncUsers() {
 					updatedUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
 					updatedUser.Hash = oHash
 					updatedUser.PreHash = oHash
-					UpdateUserForOriginalFields(updatedUser)
+					syncer.updateUserForOriginalFields(updatedUser)
 					fmt.Printf("Update from oUser to user: %v\n", updatedUser)
 				}
 			} else {
@@ -62,7 +62,7 @@ func (syncer *Syncer) syncUsers() {
 						updatedUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
 						updatedUser.Hash = oHash
 						updatedUser.PreHash = oHash
-						UpdateUserForOriginalFields(updatedUser)
+						syncer.updateUserForOriginalFields(updatedUser)
 						fmt.Printf("Update from oUser to user (2nd condition): %v\n", updatedUser)
 					}
 				}

@@ -21,6 +21,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/casbin/casdoor/util"
+	"xorm.io/core"
 )
 
 type OriginalUser = User
@@ -55,7 +56,7 @@ func (syncer *Syncer) addUser(user *OriginalUser) bool {
 	return affected != 0
 }
 
-func (syncer *Syncer) getActiveColumns() []string {
+func (syncer *Syncer) getOriginalColumns() []string {
 	res := []string{}
 	for _, tableColumn := range syncer.TableColumns {
 		if tableColumn.CasdoorName != "Id" {
@@ -65,10 +66,42 @@ func (syncer *Syncer) getActiveColumns() []string {
 	return res
 }
 
+func (syncer *Syncer) getCasdoorColumns() []string {
+	res := []string{}
+	for _, tableColumn := range syncer.TableColumns {
+		if tableColumn.CasdoorName != "Id" {
+			v := util.CamelToSnakeCase(tableColumn.CasdoorName)
+			res = append(res, v)
+		}
+	}
+	return res
+}
+
 func (syncer *Syncer) updateUser(user *OriginalUser) bool {
 	m := syncer.getMapFromOriginalUser(user)
-	columns := syncer.getActiveColumns()
+	columns := syncer.getOriginalColumns()
 	affected, err := syncer.Adapter.Engine.Table(syncer.Table).ID(syncer.TablePrimaryKey).Cols(columns...).Update(m)
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
+}
+
+func (syncer *Syncer) updateUserForOriginalFields(user *User) bool {
+	owner, name := util.GetOwnerAndNameFromId(user.GetId())
+	oldUser := getUser(owner, name)
+	if oldUser == nil {
+		return false
+	}
+
+	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+	}
+
+	columns := syncer.getCasdoorColumns()
+	columns = append(columns, "affiliation", "hash", "pre_hash")
+	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols(columns...).Update(user)
 	if err != nil {
 		panic(err)
 	}
@@ -81,7 +114,7 @@ func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 	m := syncer.getMapFromOriginalUser(user)
 	for _, tableColumn := range syncer.TableColumns {
 		if tableColumn.IsHashed {
-			values = append(values, m[tableColumn.CasdoorName])
+			values = append(values, m[tableColumn.Name])
 		}
 	}
 

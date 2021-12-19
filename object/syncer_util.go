@@ -52,6 +52,7 @@ func (syncer *Syncer) createUserFromOriginalUser(originalUser *OriginalUser, aff
 	if user.Type == "" {
 		user.Type = "normal-user"
 	}
+	user.Avatar = syncer.getFullAvatarUrl(user.Avatar)
 	if originalUser.Score != 0 {
 		affiliation, ok := affiliationMap[originalUser.Score]
 		if !ok {
@@ -196,7 +197,7 @@ func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]stri
 
 	m2 := map[string]string{}
 	for _, tableColumn := range syncer.TableColumns {
-		m2[tableColumn.CasdoorName] = m[tableColumn.CasdoorName]
+		m2[tableColumn.Name] = m[tableColumn.CasdoorName]
 	}
 
 	return m2

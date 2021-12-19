@@ -15,6 +15,7 @@
 package util
 
 import (
+	"bytes"
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
@@ -50,6 +51,22 @@ func BoolToString(b bool) string {
 	} else {
 		return "0"
 	}
+}
+
+func CamelToSnakeCase(camel string) string {
+	var buf bytes.Buffer
+	for _, c := range camel {
+		if 'A' <= c && c <= 'Z' {
+			// just convert [A-Z] to _[a-z]
+			if buf.Len() > 0 {
+				buf.WriteRune('_')
+			}
+			buf.WriteRune(c - 'A' + 'a')
+		} else {
+			buf.WriteRune(c)
+		}
+	}
+	return buf.String()
 }
 
 func GetOwnerAndNameFromId(id string) (string, string) {
