@@ -98,9 +98,9 @@ class SyncerTableColumnTable extends React.Component {
           return (
             <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {this.updateField(table, index, 'casdoorName', value);})}>
               {
-                ['name', 'createdTime', 'updatedTime', 'id', 'type', 'password', 'passwordSalt', 'displayName', 'avatar', 'permanentAvatar', 'email', 'phone',
-                  'location', 'address', 'affiliation', 'title', 'idCardType', 'idCard', 'homepage', 'bio', 'tag', 'region', 'language', 'gender', 'birthday',
-                  'education', 'score', 'ranking', 'isDefaultAvatar', 'isOnline', 'isAdmin', 'isGlobalAdmin', 'isForbidden', 'isDeleted', 'CreatedIp']
+                ['Name', 'CreatedTime', 'UpdatedTime', 'Id', 'Type', 'Password', 'PasswordSalt', 'DisplayName', 'Avatar', 'PermanentAvatar', 'Email', 'Phone',
+                  'Location', 'Address', 'Affiliation', 'Title', 'IdCardType', 'IdCard', 'Homepage', 'Bio', 'Tag', 'Region', 'Language', 'Gender', 'Birthday',
+                  'Education', 'Score', 'Ranking', 'IsDefaultAvatar', 'IsOnline', 'IsAdmin', 'IsGlobalAdmin', 'IsForbidden', 'IsDeleted', 'CreatedIp']
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>

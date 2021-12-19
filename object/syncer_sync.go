@@ -14,23 +14,20 @@
 
 package object
 
-import (
-	"fmt"
-	"strconv"
-)
+import "fmt"
 
 func (syncer *Syncer) syncUsers() {
 	fmt.Printf("Running syncUsers()..\n")
 
 	users, userMap := syncer.getUserMap()
-	oUsers, oUserMap := syncer.getUserMapOriginal()
+	oUsers, oUserMap := syncer.getOriginalUserMap()
 	fmt.Printf("Users: %d, oUsers: %d\n", len(users), len(oUsers))
 
 	_, affiliationMap := syncer.getAffiliationMap()
 
 	newUsers := []*User{}
 	for _, oUser := range oUsers {
-		id := strconv.Itoa(oUser.Id)
+		id := oUser.Id
 		if _, ok := userMap[id]; !ok {
 			newUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
 			fmt.Printf("New user: %v\n", newUser)

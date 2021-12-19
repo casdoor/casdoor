@@ -14,17 +14,15 @@
 
 package object
 
-import (
-	"strconv"
-	"strings"
-
-	"github.com/casbin/casdoor/cred"
-	"github.com/casbin/casdoor/util"
-)
+import "github.com/casbin/casdoor/cred"
 
 func calculateHash(user *User) string {
-	s := strings.Join([]string{user.Id, user.Password, user.DisplayName, user.Avatar, user.Phone, strconv.Itoa(user.Score)}, "|")
-	return util.GetMd5Hash(s)
+	syncer := getDbSyncerForUser(user)
+	if syncer == nil {
+		return ""
+	}
+
+	return syncer.calculateHash(user)
 }
 
 func (user *User) UpdateUserHash() {

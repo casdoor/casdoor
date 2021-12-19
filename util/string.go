@@ -27,12 +27,29 @@ import (
 )
 
 func ParseInt(s string) int {
+	if s == "" {
+		return 0
+	}
+
 	i, err := strconv.Atoi(s)
 	if err != nil {
 		panic(err)
 	}
 
 	return i
+}
+
+func ParseBool(s string) bool {
+	i := ParseInt(s)
+	return i != 0
+}
+
+func BoolToString(b bool) string {
+	if b {
+		return "1"
+	} else {
+		return "0"
+	}
 }
 
 func GetOwnerAndNameFromId(id string) (string, string) {

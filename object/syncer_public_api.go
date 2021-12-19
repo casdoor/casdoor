@@ -16,6 +16,16 @@ package object
 
 import "fmt"
 
+func getDbSyncerForUser(user *User) *Syncer {
+	syncers := GetSyncers("admin")
+	for _, syncer := range syncers {
+		if syncer.Organization == user.Owner && syncer.IsEnabled && syncer.Type == "Database" {
+			return syncer
+		}
+	}
+	return nil
+}
+
 func getEnabledSyncerForOrganization(organization string) *Syncer {
 	syncers := GetSyncers("admin")
 	for _, syncer := range syncers {

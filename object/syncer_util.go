@@ -23,6 +23,10 @@ import (
 )
 
 func (syncer *Syncer) getFullAvatarUrl(avatar string) string {
+	if syncer.AvatarBaseUrl == "" {
+		return avatar
+	}
+
 	if !strings.HasPrefix(avatar, "https://") {
 		return fmt.Sprintf("%s%s", syncer.AvatarBaseUrl, avatar)
 	}
@@ -36,53 +40,164 @@ func (syncer *Syncer) getPartialAvatarUrl(avatar string) string {
 	return avatar
 }
 
-func (syncer *Syncer) createUserFromOriginalUser(originalUser *DbUser, affiliationMap map[int]string) *User {
-	affiliation := ""
-	if originalUser.SchoolId != 0 {
-		var ok bool
-		affiliation, ok = affiliationMap[originalUser.SchoolId]
+func (syncer *Syncer) createUserFromOriginalUser(originalUser *OriginalUser, affiliationMap map[int]string) *User {
+	user := *originalUser
+	user.Owner = syncer.Organization
+	if user.Name == "" {
+		user.Name = originalUser.Id
+	}
+	if user.CreatedTime == "" {
+		user.CreatedTime = util.GetCurrentTime()
+	}
+	if user.Type == "" {
+		user.Type = "normal-user"
+	}
+	if originalUser.Score != 0 {
+		affiliation, ok := affiliationMap[originalUser.Score]
 		if !ok {
-			panic(fmt.Sprintf("SchoolId not found: %d", originalUser.SchoolId))
+			panic(fmt.Sprintf("Affiliation not found: %d", originalUser.Score))
 		}
+		user.Affiliation = affiliation
 	}
+	if user.Properties == nil {
+		user.Properties = map[string]string{}
+	}
+	return &user
+}
 
-	user := &User{
-		Owner:         syncer.Organization,
-		Name:          strconv.Itoa(originalUser.Id),
-		CreatedTime:   util.GetCurrentTime(),
-		Id:            strconv.Itoa(originalUser.Id),
-		Type:          "normal-user",
-		Password:      originalUser.Password,
-		DisplayName:   originalUser.Name,
-		Avatar:        syncer.getFullAvatarUrl(originalUser.Avatar),
-		Email:         "",
-		Phone:         originalUser.Cellphone,
-		Address:       []string{},
-		Affiliation:   affiliation,
-		Score:         originalUser.SchoolId,
-		IsAdmin:       false,
-		IsGlobalAdmin: false,
-		IsForbidden:   originalUser.Deleted != 0,
-		IsDeleted:     false,
-		Properties:    map[string]string{},
-	}
+func (syncer *Syncer) createOriginalUserFromUser(user *User) *OriginalUser {
 	return user
 }
 
-func (syncer *Syncer) createOriginalUserFromUser(user *User) *DbUser {
-	deleted := 0
-	if user.IsForbidden {
-		deleted = 1
+func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
+	switch key {
+	case "Name":
+		user.Name = value
+	case "CreatedTime":
+		user.CreatedTime = value
+	case "UpdatedTime":
+		user.UpdatedTime = value
+	case "Id":
+		user.Id = value
+	case "Type":
+		user.Type = value
+	case "Password":
+		user.Password = value
+	case "PasswordSalt":
+		user.PasswordSalt = value
+	case "DisplayName":
+		user.DisplayName = value
+	case "Avatar":
+		user.Avatar = syncer.getPartialAvatarUrl(value)
+	case "PermanentAvatar":
+		user.PermanentAvatar = value
+	case "Email":
+		user.Email = value
+	case "Phone":
+		user.Phone = value
+	case "Location":
+		user.Location = value
+	case "Address":
+		user.Address = []string{value}
+	case "Affiliation":
+		user.Affiliation = value
+	case "Title":
+		user.Title = value
+	case "IdCardType":
+		user.IdCardType = value
+	case "IdCard":
+		user.IdCard = value
+	case "Homepage":
+		user.Homepage = value
+	case "Bio":
+		user.Bio = value
+	case "Tag":
+		user.Tag = value
+	case "Region":
+		user.Region = value
+	case "Language":
+		user.Language = value
+	case "Gender":
+		user.Gender = value
+	case "Birthday":
+		user.Birthday = value
+	case "Education":
+		user.Education = value
+	case "Score":
+		user.Score = util.ParseInt(value)
+	case "Ranking":
+		user.Ranking = util.ParseInt(value)
+	case "IsDefaultAvatar":
+		user.IsDefaultAvatar = util.ParseBool(value)
+	case "IsOnline":
+		user.IsOnline = util.ParseBool(value)
+	case "IsAdmin":
+		user.IsAdmin = util.ParseBool(value)
+	case "IsGlobalAdmin":
+		user.IsGlobalAdmin = util.ParseBool(value)
+	case "IsForbidden":
+		user.IsForbidden = util.ParseBool(value)
+	case "IsDeleted":
+		user.IsDeleted = util.ParseBool(value)
+	case "CreatedIp":
+		user.CreatedIp = value
+	}
+}
+
+func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*OriginalUser {
+	users := []*OriginalUser{}
+	for _, result := range results {
+		originalUser := &OriginalUser{}
+		for _, tableColumn := range syncer.TableColumns {
+			syncer.setUserByKeyValue(originalUser, tableColumn.CasdoorName, result[tableColumn.Name])
+		}
+		users = append(users, originalUser)
+	}
+	return users
+}
+
+func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]string {
+	m := map[string]string{}
+	m["Name"] = user.Name
+	m["CreatedTime"] = user.CreatedTime
+	m["UpdatedTime"] = user.UpdatedTime
+	m["Id"] = user.Id
+	m["Type"] = user.Type
+	m["Password"] = user.Password
+	m["PasswordSalt"] = user.PasswordSalt
+	m["DisplayName"] = user.DisplayName
+	m["Avatar"] = syncer.getFullAvatarUrl(user.Avatar)
+	m["PermanentAvatar"] = user.PermanentAvatar
+	m["Email"] = user.Email
+	m["Phone"] = user.Phone
+	m["Location"] = user.Location
+	m["Address"] = strings.Join(user.Address, "|")
+	m["Affiliation"] = user.Affiliation
+	m["Title"] = user.Title
+	m["IdCardType"] = user.IdCardType
+	m["IdCard"] = user.IdCard
+	m["Homepage"] = user.Homepage
+	m["Bio"] = user.Bio
+	m["Tag"] = user.Tag
+	m["Region"] = user.Region
+	m["Language"] = user.Language
+	m["Gender"] = user.Gender
+	m["Birthday"] = user.Birthday
+	m["Education"] = user.Education
+	m["Score"] = strconv.Itoa(user.Score)
+	m["Ranking"] = strconv.Itoa(user.Ranking)
+	m["IsDefaultAvatar"] = util.BoolToString(user.IsDefaultAvatar)
+	m["IsOnline"] = util.BoolToString(user.IsOnline)
+	m["IsAdmin"] = util.BoolToString(user.IsAdmin)
+	m["IsGlobalAdmin"] = util.BoolToString(user.IsGlobalAdmin)
+	m["IsForbidden"] = util.BoolToString(user.IsForbidden)
+	m["IsDeleted"] = util.BoolToString(user.IsDeleted)
+	m["CreatedIp"] = user.CreatedIp
+
+	m2 := map[string]string{}
+	for _, tableColumn := range syncer.TableColumns {
+		m2[tableColumn.CasdoorName] = m[tableColumn.CasdoorName]
 	}
 
-	originalUser := &DbUser{
-		Id:        util.ParseInt(user.Id),
-		Name:      user.DisplayName,
-		Password:  user.Password,
-		Cellphone: user.Phone,
-		SchoolId:  user.Score,
-		Avatar:    syncer.getPartialAvatarUrl(user.Avatar),
-		Deleted:   deleted,
-	}
-	return originalUser
+	return m2
 }
