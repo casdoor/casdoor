@@ -14,7 +14,7 @@
 
 import React from "react";
 import {DownOutlined, DeleteOutlined, UpOutlined} from '@ant-design/icons';
-import {Button, Col, Input, Row, Select, Table, Tooltip} from 'antd';
+import {Button, Col, Input, Row, Select, Switch, Table, Tooltip} from 'antd';
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
@@ -104,6 +104,18 @@ class SyncerTableColumnTable extends React.Component {
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
+          )
+        }
+      },
+      {
+        title: i18next.t("syncer:Is hashed"),
+        dataIndex: 'isHashed',
+        key: 'isHashed',
+        render: (text, record, index) => {
+          return (
+            <Switch checked={text} onChange={checked => {
+              this.updateField(table, index, 'isHashed', checked);
+            }} />
           )
         }
       },

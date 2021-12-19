@@ -25,6 +25,7 @@ type TableColumn struct {
 	Name        string   `json:"name"`
 	Type        string   `json:"type"`
 	CasdoorName string   `json:"casdoorName"`
+	IsHashed    bool     `json:"isHashed"`
 	Values      []string `json:"values"`
 }
 

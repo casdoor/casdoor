@@ -80,7 +80,9 @@ func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 	values := []string{}
 	m := syncer.getMapFromOriginalUser(user)
 	for _, tableColumn := range syncer.TableColumns {
-		values = append(values, m[tableColumn.Name])
+		if tableColumn.IsHashed {
+			values = append(values, m[tableColumn.CasdoorName])
+		}
 	}
 
 	s := strings.Join(values, "|")
