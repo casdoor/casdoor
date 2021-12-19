@@ -43,6 +43,7 @@ type Syncer struct {
 	Password         string         `xorm:"varchar(100)" json:"password"`
 	Database         string         `xorm:"varchar(100)" json:"database"`
 	Table            string         `xorm:"varchar(100)" json:"table"`
+	TablePrimaryKey  string         `xorm:"varchar(100)" json:"tablePrimaryKey"`
 	TableColumns     []*TableColumn `xorm:"mediumtext" json:"tableColumns"`
 	AffiliationTable string         `xorm:"varchar(100)" json:"affiliationTable"`
 	AvatarBaseUrl    string         `xorm:"varchar(100)" json:"avatarBaseUrl"`

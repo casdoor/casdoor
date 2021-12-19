@@ -180,6 +180,16 @@ class SyncerEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("syncer:Table primary key"), i18next.t("syncer:Table primary key - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.syncer.tablePrimaryKey} onChange={e => {
+              this.updateSyncerField('tablePrimaryKey', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("syncer:Table columns"), i18next.t("syncer:Table columns - Tooltip"))} :
           </Col>
           <Col span={22} >

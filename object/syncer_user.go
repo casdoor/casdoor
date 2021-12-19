@@ -68,7 +68,7 @@ func (syncer *Syncer) getActiveColumns() []string {
 func (syncer *Syncer) updateUser(user *OriginalUser) bool {
 	m := syncer.getMapFromOriginalUser(user)
 	columns := syncer.getActiveColumns()
-	affected, err := syncer.Adapter.Engine.Table(syncer.Table).ID(user.Id).Cols(columns...).Update(m)
+	affected, err := syncer.Adapter.Engine.Table(syncer.Table).ID(syncer.TablePrimaryKey).Cols(columns...).Update(m)
 	if err != nil {
 		panic(err)
 	}
