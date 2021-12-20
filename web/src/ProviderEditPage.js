@@ -257,7 +257,8 @@ class ProviderEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
-        {this.state.provider.type === "WeCom" || this.state.provider.type === "WeChat" ? (
+        {
+          this.state.provider.type !== "WeCom" ? null : (
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={2}>
                 {Setting.getLabel(i18next.t("provider:Method"), i18next.t("provider:Method - Tooltip"))} :
@@ -272,7 +273,8 @@ class ProviderEditPage extends React.Component {
                 </Select>
               </Col>
             </Row>
-        ) : null}
+          )
+        }
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {this.getClientIdLabel()}
@@ -293,6 +295,32 @@ class ProviderEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        {
+          this.state.provider.type !== "WeChat" ? null : (
+            <React.Fragment>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Client ID 2"), i18next.t("provider:Client ID 2 - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.clientId2} onChange={e => {
+                    this.updateProviderField('clientId2', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Client secret 2"), i18next.t("provider:Client secret 2 - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.clientSecret2} onChange={e => {
+                    this.updateProviderField('clientSecret2', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            </React.Fragment>
+          )
+        }
         {this.state.provider.category === "Storage" ? (
           <div>
             <Row style={{marginTop: '20px'}} >
