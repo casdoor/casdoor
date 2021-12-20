@@ -88,7 +88,7 @@ func getProviderMap(owner string) map[string]*Provider {
 		//	continue
 		//}
 
-		m[provider.Name] = getMaskedProvider(provider)
+		m[provider.Name] = GetMaskedProvider(provider)
 	}
 	return m
 }

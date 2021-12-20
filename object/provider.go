@@ -58,18 +58,26 @@ type Provider struct {
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
 }
 
-func getMaskedProvider(provider *Provider) *Provider {
-	p := &Provider{
-		Owner:       provider.Owner,
-		Name:        provider.Name,
-		CreatedTime: provider.CreatedTime,
-		DisplayName: provider.DisplayName,
-		Category:    provider.Category,
-		Type:        provider.Type,
-		Method:      provider.Method,
-		ClientId:    provider.ClientId,
+func GetMaskedProvider(provider *Provider) *Provider {
+	if provider == nil {
+		return nil
 	}
-	return p
+
+	if provider.ClientSecret != "" {
+		provider.ClientSecret = "***"
+	}
+	if provider.ClientSecret2 != "" {
+		provider.ClientSecret2 = "***"
+	}
+
+	return provider
+}
+
+func GetMaskedProviders(providers []*Provider) []*Provider {
+	for _, provider := range providers {
+		provider = GetMaskedProvider(provider)
+	}
+	return providers
 }
 
 func GetProviderCount(owner string) int {

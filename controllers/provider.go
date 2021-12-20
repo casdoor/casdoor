@@ -34,12 +34,12 @@ func (c *ApiController) GetProviders() {
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetProviders(owner)
+		c.Data["json"] = object.GetMaskedProviders(object.GetProviders(owner))
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetProviderCount(owner)))
-		providers := object.GetPaginationProviders(owner, paginator.Offset(), limit)
+		providers := object.GetMaskedProviders(object.GetPaginationProviders(owner, paginator.Offset(), limit))
 		c.ResponseOk(providers, paginator.Nums())
 	}
 }
@@ -53,7 +53,7 @@ func (c *ApiController) GetProviders() {
 func (c *ApiController) GetProvider() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetProvider(id)
+	c.Data["json"] = object.GetMaskedProvider(object.GetProvider(id))
 	c.ServeJSON()
 }
 
