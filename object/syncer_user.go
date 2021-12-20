@@ -16,46 +16,39 @@ package object
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/astaxie/beego"
 	"github.com/casbin/casdoor/util"
+	"xorm.io/core"
 )
 
-type DbUser struct {
-	Id        int    `xorm:"int notnull pk autoincr" json:"id"`
-	Name      string `xorm:"varchar(128)" json:"name"`
-	Password  string `xorm:"varchar(128)" json:"password"`
-	Cellphone string `xorm:"varchar(128)" json:"cellphone"`
-	SchoolId  int    `json:"schoolId"`
-	Avatar    string `xorm:"varchar(128)" json:"avatar"`
-	Deleted   int    `xorm:"tinyint(1)" json:"deleted"`
-}
+type OriginalUser = User
 
-func (syncer *Syncer) getUsersOriginal() []*DbUser {
-	users := []*DbUser{}
-	err := syncer.Adapter.Engine.Table(syncer.Table).Asc("id").Find(&users)
+func (syncer *Syncer) getOriginalUsers() []*OriginalUser {
+	sql := fmt.Sprintf("select * from %s", syncer.Table)
+	results, err := syncer.Adapter.Engine.QueryString(sql)
 	if err != nil {
 		panic(err)
 	}
 
-	return users
+	return syncer.getOriginalUsersFromMap(results)
 }
 
-func (syncer *Syncer) getUserMapOriginal() ([]*DbUser, map[string]*DbUser) {
-	users := syncer.getUsersOriginal()
+func (syncer *Syncer) getOriginalUserMap() ([]*OriginalUser, map[string]*OriginalUser) {
+	users := syncer.getOriginalUsers()
 
-	m := map[string]*DbUser{}
+	m := map[string]*OriginalUser{}
 	for _, user := range users {
-		m[strconv.Itoa(user.Id)] = user
+		m[user.Id] = user
 	}
 	return users, m
 }
 
-func (syncer *Syncer) addUser(user *DbUser) bool {
-	affected, err := syncer.Adapter.Engine.Table(syncer.Table).Insert(user)
+func (syncer *Syncer) addUser(user *OriginalUser) bool {
+	m := syncer.getMapFromOriginalUser(user)
+	affected, err := syncer.Adapter.Engine.Table(syncer.Table).Insert(m)
 	if err != nil {
 		panic(err)
 	}
@@ -63,8 +56,31 @@ func (syncer *Syncer) addUser(user *DbUser) bool {
 	return affected != 0
 }
 
-func (syncer *Syncer) updateUser(user *DbUser) bool {
-	affected, err := syncer.Adapter.Engine.Table(syncer.Table).ID(user.Id).Cols("name", "password", "cellphone", "school_id", "avatar", "deleted").Update(user)
+func (syncer *Syncer) getOriginalColumns() []string {
+	res := []string{}
+	for _, tableColumn := range syncer.TableColumns {
+		if tableColumn.CasdoorName != "Id" {
+			res = append(res, tableColumn.Name)
+		}
+	}
+	return res
+}
+
+func (syncer *Syncer) getCasdoorColumns() []string {
+	res := []string{}
+	for _, tableColumn := range syncer.TableColumns {
+		if tableColumn.CasdoorName != "Id" {
+			v := util.CamelToSnakeCase(tableColumn.CasdoorName)
+			res = append(res, v)
+		}
+	}
+	return res
+}
+
+func (syncer *Syncer) updateUser(user *OriginalUser) bool {
+	m := syncer.getMapFromOriginalUser(user)
+	columns := syncer.getOriginalColumns()
+	affected, err := syncer.Adapter.Engine.Table(syncer.Table).ID(syncer.TablePrimaryKey).Cols(columns...).Update(m)
 	if err != nil {
 		panic(err)
 	}
@@ -72,8 +88,37 @@ func (syncer *Syncer) updateUser(user *DbUser) bool {
 	return affected != 0
 }
 
-func (syncer *Syncer) calculateHash(user *DbUser) string {
-	s := strings.Join([]string{strconv.Itoa(user.Id), user.Password, user.Name, syncer.getFullAvatarUrl(user.Avatar), user.Cellphone, strconv.Itoa(user.SchoolId)}, "|")
+func (syncer *Syncer) updateUserForOriginalFields(user *User) bool {
+	owner, name := util.GetOwnerAndNameFromId(user.GetId())
+	oldUser := getUser(owner, name)
+	if oldUser == nil {
+		return false
+	}
+
+	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+	}
+
+	columns := syncer.getCasdoorColumns()
+	columns = append(columns, "affiliation", "hash", "pre_hash")
+	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols(columns...).Update(user)
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
+}
+
+func (syncer *Syncer) calculateHash(user *OriginalUser) string {
+	values := []string{}
+	m := syncer.getMapFromOriginalUser(user)
+	for _, tableColumn := range syncer.TableColumns {
+		if tableColumn.IsHashed {
+			values = append(values, m[tableColumn.Name])
+		}
+	}
+
+	s := strings.Join(values, "|")
 	return util.GetMd5Hash(s)
 }
 

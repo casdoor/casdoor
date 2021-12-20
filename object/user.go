@@ -289,25 +289,6 @@ func UpdateUserForAllFields(id string, user *User) bool {
 	return affected != 0
 }
 
-func UpdateUserForOriginalFields(user *User) bool {
-	owner, name := util.GetOwnerAndNameFromId(user.GetId())
-	oldUser := getUser(owner, name)
-	if oldUser == nil {
-		return false
-	}
-
-	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
-		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
-	}
-
-	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("display_name", "password", "phone", "avatar", "affiliation", "score", "is_forbidden", "hash", "pre_hash").Update(user)
-	if err != nil {
-		panic(err)
-	}
-
-	return affected != 0
-}
-
 func AddUser(user *User) bool {
 	if user.Id == "" {
 		user.Id = util.GenerateId()

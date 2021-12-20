@@ -21,6 +21,14 @@ import (
 	"xorm.io/core"
 )
 
+type TableColumn struct {
+	Name        string   `json:"name"`
+	Type        string   `json:"type"`
+	CasdoorName string   `json:"casdoorName"`
+	IsHashed    bool     `json:"isHashed"`
+	Values      []string `json:"values"`
+}
+
 type Syncer struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -29,16 +37,18 @@ type Syncer struct {
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	Type         string `xorm:"varchar(100)" json:"type"`
 
-	Host             string `xorm:"varchar(100)" json:"host"`
-	Port             int    `json:"port"`
-	User             string `xorm:"varchar(100)" json:"user"`
-	Password         string `xorm:"varchar(100)" json:"password"`
-	Database         string `xorm:"varchar(100)" json:"database"`
-	Table            string `xorm:"varchar(100)" json:"table"`
-	AffiliationTable string `xorm:"varchar(100)" json:"affiliationTable"`
-	AvatarBaseUrl    string `xorm:"varchar(100)" json:"avatarBaseUrl"`
-	SyncInterval     int    `json:"syncInterval"`
-	IsEnabled        bool   `json:"isEnabled"`
+	Host             string         `xorm:"varchar(100)" json:"host"`
+	Port             int            `json:"port"`
+	User             string         `xorm:"varchar(100)" json:"user"`
+	Password         string         `xorm:"varchar(100)" json:"password"`
+	Database         string         `xorm:"varchar(100)" json:"database"`
+	Table            string         `xorm:"varchar(100)" json:"table"`
+	TablePrimaryKey  string         `xorm:"varchar(100)" json:"tablePrimaryKey"`
+	TableColumns     []*TableColumn `xorm:"mediumtext" json:"tableColumns"`
+	AffiliationTable string         `xorm:"varchar(100)" json:"affiliationTable"`
+	AvatarBaseUrl    string         `xorm:"varchar(100)" json:"avatarBaseUrl"`
+	SyncInterval     int            `json:"syncInterval"`
+	IsEnabled        bool           `json:"isEnabled"`
 
 	Adapter *Adapter `xorm:"-" json:"-"`
 }

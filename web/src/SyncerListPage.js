@@ -60,7 +60,11 @@ class SyncerListPage extends React.Component {
       password: "123456",
       database: "dbName",
       table: "tableName",
+      tableColumns: [],
+      affiliationTable: "",
+      avatarBaseUrl: "",
       syncInterval: 1,
+      isEnabled: true,
     }
   }
 
