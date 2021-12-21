@@ -30,14 +30,21 @@ export const CountDownInput = (props) => {
   const [captchaImg, setCaptchaImg] = React.useState("");
   const [checkType, setCheckType] = React.useState("");
   const [checkId, setCheckId] = React.useState("");
-  const [buttonDisabled, setButtonDisabled] = React.useState(false);
+  const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
+  const [buttonLoading, setButtonLoading] = React.useState(false);
 
-  const countDown = (leftTime) => {
-    if (leftTime === 0) {
-      setButtonDisabled(false);
-      return;
+  const handleCountDown = (leftTime = 60) => {
+    let leftTimeSecond = leftTime
+    setButtonLeftTime(leftTimeSecond)
+    const countDown = () => {
+      leftTimeSecond--;
+      setButtonLeftTime(leftTimeSecond)
+      if (leftTimeSecond === 0) {
+        return;
+      }
+      setTimeout(countDown, 1000);
     }
-    setTimeout(() => countDown(leftTime - 1), 1000);
+    setTimeout(countDown, 1000);
   }
 
   const handleOk = () => {
@@ -50,11 +57,12 @@ export const CountDownInput = (props) => {
         Util.showMessage("error", i18next.t("login:Invalid Email or phone"))
         return;
     }
+    setButtonLoading(true)
     UserBackend.sendCode(checkType, checkId, key, ...onButtonClickArgs).then(res => {
       setKey("");
+      setButtonLoading(false)
       if (res) {
-        setButtonDisabled(true)
-        countDown(60);
+        handleCountDown(60);
       }
     })
   }
@@ -81,22 +89,23 @@ export const CountDownInput = (props) => {
 
   const renderCaptcha = () => {
     return (
-      <Col>
-        <Row
-          style={{
-            backgroundImage: `url('data:image/png;base64,${captchaImg}')`,
-            backgroundRepeat: "no-repeat",
-            height: "80px",
-            width: "200px",
-            borderRadius: "3px",
-            border: "1px solid #ccc",
-            marginBottom: 10
-          }}
-        />
-        <Row>
-          <Input autoFocus value={key} prefix={<SafetyOutlined />} placeholder={i18next.t("general:Captcha")} onPressEnter={handleOk} onChange={e => setKey(e.target.value)} />
-        </Row>
-      </Col>
+        <Col>
+          <Row
+              style={{
+                backgroundImage: `url('data:image/png;base64,${captchaImg}')`,
+                backgroundRepeat: "no-repeat",
+                height: "80px",
+                width: "200px",
+                borderRadius: "3px",
+                border: "1px solid #ccc",
+                marginBottom: 10
+              }}
+          />
+          <Row>
+            <Input autoFocus value={key} prefix={<SafetyOutlined/>} placeholder={i18next.t("general:Captcha")}
+                   onPressEnter={handleOk} onChange={e => setKey(e.target.value)}/>
+          </Row>
+        </Col>
     )
   }
 
@@ -106,39 +115,38 @@ export const CountDownInput = (props) => {
   }
 
   return (
-    <React.Fragment>
-      <Search
-        addonBefore={textBefore}
-        disabled={disabled}
-        prefix={<SafetyOutlined />}
-        placeholder={i18next.t("code:Enter your code")}
-        onChange={e => onChange(e.target.value)}
-        enterButton={
-          <Button type={"primary"} disabled={disabled || buttonDisabled}>
-            <div style={{fontSize: 14}}>
-              {i18next.t("code:Send Code")}
-            </div>
-          </Button>
-        }
-        onSearch={loadHumanCheck}
-      />
-      <Modal
-        closable={false}
-        maskClosable={false}
-        destroyOnClose={true}
-        title={i18next.t("general:Captcha")}
-        visible={visible}
-        okText={i18next.t("user:OK")}
-        cancelText={i18next.t("user:Cancel")}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okButtonProps={{disabled: key.length !== 5}}
-        width={248}
-      >
-        {
-          renderCheck()
-        }
-      </Modal>
-    </React.Fragment>
+      <React.Fragment>
+        <Search
+            addonBefore={textBefore}
+            disabled={disabled}
+            prefix={<SafetyOutlined/>}
+            placeholder={i18next.t("code:Enter your code")}
+            onChange={e => onChange(e.target.value)}
+            enterButton={
+              <Button style={{fontSize: 14}} type={"primary"} disabled={disabled || buttonLeftTime > 0}
+                      loading={buttonLoading}>
+                {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending Code") : i18next.t("code:Send Code")}
+              </Button>
+            }
+            onSearch={loadHumanCheck}
+        />
+        <Modal
+            closable={false}
+            maskClosable={false}
+            destroyOnClose={true}
+            title={i18next.t("general:Captcha")}
+            visible={visible}
+            okText={i18next.t("user:OK")}
+            cancelText={i18next.t("user:Cancel")}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            okButtonProps={{disabled: key.length !== 5}}
+            width={248}
+        >
+          {
+            renderCheck()
+          }
+        </Modal>
+      </React.Fragment>
   );
 }
