@@ -20,42 +20,34 @@ import * as Setting from "./Setting";
 import * as ResourceBackend from "./backend/ResourceBackend";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
+import BaseListPage from "./BaseListPage";
+import * as ProviderBackend from "./backend/ProviderBackend";
 
-class ResourceListPage extends React.Component {
+class ResourceListPage extends BaseListPage {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
-      resources: null,
+      data: [],
+      pagination: {
+        current: 1,
+        pageSize: 10,
+      },
+      loading: false,
+      searchText: '',
+      searchedColumn: '',
       fileList: [],
       uploading: false,
-      total: 0,
     };
   }
 
-  UNSAFE_componentWillMount() {
-    this.getResources(1, 10);
-  }
-
-  getResources(page, pageSize) {
-    ResourceBackend.getResources(this.props.account.owner, this.props.account.name, page, pageSize)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            resources: res.data,
-            total: res.data2
-          });
-        }
-      });
-  }
-
   deleteResource(i) {
-    ResourceBackend.deleteResource(this.state.resources[i])
+    ResourceBackend.deleteResource(this.state.data[i])
       .then((res) => {
         Setting.showMessage("success", `Resource deleted successfully`);
           this.setState({
-            resources: Setting.deleteRow(this.state.resources, i),
-            total: this.state.total - 1
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
           });
         }
       )
@@ -100,7 +92,8 @@ class ResourceListPage extends React.Component {
         key: 'provider',
         width: '150px',
         fixed: 'left',
-        sorter: (a, b) => a.provider.localeCompare(b.provider),
+        sorter: true,
+        ...this.getColumnSearchProps('provider'),
         render: (text, record, index) => {
           return (
             <Link to={`/providers/${text}`}>
@@ -114,7 +107,8 @@ class ResourceListPage extends React.Component {
         dataIndex: 'application',
         key: 'application',
         width: '80px',
-        sorter: (a, b) => a.application.localeCompare(b.application),
+        sorter: true,
+        ...this.getColumnSearchProps('application'),
         render: (text, record, index) => {
           return (
             <Link to={`/applications/${text}`}>
@@ -128,7 +122,8 @@ class ResourceListPage extends React.Component {
         dataIndex: 'user',
         key: 'user',
         width: '80px',
-        sorter: (a, b) => a.user.localeCompare(b.user),
+        sorter: true,
+        ...this.getColumnSearchProps('user'),
         render: (text, record, index) => {
           return (
             <Link to={`/users/${record.owner}/${record.user}`}>
@@ -142,21 +137,23 @@ class ResourceListPage extends React.Component {
         dataIndex: 'parent',
         key: 'parent',
         width: '80px',
-        sorter: (a, b) => a.parent.localeCompare(b.parent),
+        sorter: true,
+        ...this.getColumnSearchProps('parent'),
       },
       {
         title: i18next.t("general:Name"),
         dataIndex: 'name',
         key: 'name',
         width: '150px',
-        sorter: (a, b) => a.name.localeCompare(b.name),
+        sorter: true,
+        ...this.getColumnSearchProps('name'),
       },
       {
         title: i18next.t("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '150px',
-        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
+        sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         }
@@ -166,7 +163,8 @@ class ResourceListPage extends React.Component {
         dataIndex: 'tag',
         key: 'tag',
         width: '80px',
-        sorter: (a, b) => a.tag.localeCompare(b.tag),
+        sorter: true,
+        ...this.getColumnSearchProps('tag'),
       },
       // {
       //   title: i18next.t("resource:File name"),
@@ -180,21 +178,23 @@ class ResourceListPage extends React.Component {
         dataIndex: 'fileType',
         key: 'fileType',
         width: '80px',
-        sorter: (a, b) => a.fileType.localeCompare(b.fileType),
+        sorter: true,
+        ...this.getColumnSearchProps('fileType'),
       },
       {
         title: i18next.t("resource:Format"),
         dataIndex: 'fileFormat',
         key: 'fileFormat',
         width: '80px',
-        sorter: (a, b) => a.fileFormat.localeCompare(b.fileFormat),
+        sorter: true,
+        ...this.getColumnSearchProps('fileFormat'),
       },
       {
         title: i18next.t("resource:File size"),
         dataIndex: 'fileSize',
         key: 'fileSize',
         width: '100px',
-        sorter: (a, b) => a.fileSize - b.fileSize,
+        sorter: true,
         render: (text, record, index) => {
           return Setting.getFriendlyFileSize(text);
         }
@@ -266,12 +266,10 @@ class ResourceListPage extends React.Component {
     ];
 
     const paginationProps = {
-      total: this.state.total,
+      total: this.state.pagination.total,
       showQuickJumper: true,
       showSizeChanger: true,
-      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
-      onChange: (page, pageSize) => this.getResources(page, pageSize),
-      onShowSizeChange: (current, size) => this.getResources(current, size),
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
     return (
@@ -286,21 +284,33 @@ class ResourceListPage extends React.Component {
                    }
                  </div>
                )}
-               loading={resources === null}
+               loading={this.state.loading}
+               onChange={this.handleTableChange}
         />
       </div>
     );
   }
 
-  render() {
-    return (
-      <div>
-        {
-          this.renderTable(this.state.resources)
+  fetch = (params = {}) => {
+    let field = params.searchedColumn, value = params.searchText;
+    let sortField = params.sortField, sortOrder = params.sortOrder;
+    this.setState({ loading: true });
+    ResourceBackend.getResources(this.props.account.owner, this.props.account.name, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            loading: false,
+            data: res.data,
+            pagination: {
+              ...params.pagination,
+              total: res.data2,
+            },
+            searchText: params.searchText,
+            searchedColumn: params.searchedColumn,
+          });
         }
-      </div>
-    );
-  }
+      });
+  };
 }
 
 export default ResourceListPage;

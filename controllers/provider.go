@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/util"
@@ -33,13 +32,17 @@ func (c *ApiController) GetProviders() {
 	owner := c.Input().Get("owner")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
 		c.Data["json"] = object.GetMaskedProviders(object.GetProviders(owner))
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetProviderCount(owner)))
-		providers := object.GetMaskedProviders(object.GetPaginationProviders(owner, paginator.Offset(), limit))
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetProviderCount(owner, field, value)))
+		providers := object.GetMaskedProviders(object.GetPaginationProviders(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
 		c.ResponseOk(providers, paginator.Nums())
 	}
 }

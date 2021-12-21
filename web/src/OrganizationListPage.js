@@ -19,32 +19,9 @@ import moment from "moment";
 import * as Setting from "./Setting";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import i18next from "i18next";
+import BaseListPage from "./BaseListPage";
 
-class OrganizationListPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      classes: props,
-      organizations: null,
-      total: 0
-    };
-  }
-
-  UNSAFE_componentWillMount() {
-    this.getOrganizations(1, 10);
-  }
-
-  getOrganizations(page, pageSize) {
-    OrganizationBackend.getOrganizations("admin", page, pageSize)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            organizations: res.data,
-            total: res.data2
-          });
-        }
-      });
-  }
+class OrganizationListPage extends BaseListPage {
 
   newOrganization() {
     const randomName = Setting.getRandomName();
@@ -69,10 +46,6 @@ class OrganizationListPage extends React.Component {
     OrganizationBackend.addOrganization(newOrganization)
       .then((res) => {
           Setting.showMessage("success", `Organization added successfully`);
-          this.setState({
-            organizations: Setting.prependRow(this.state.organizations, newOrganization),
-            total: this.state.total + 1
-          });
           this.props.history.push(`/organizations/${newOrganization.name}`);
         }
       )
@@ -82,12 +55,12 @@ class OrganizationListPage extends React.Component {
   }
 
   deleteOrganization(i) {
-    OrganizationBackend.deleteOrganization(this.state.organizations[i])
+    OrganizationBackend.deleteOrganization(this.state.data[i])
       .then((res) => {
           Setting.showMessage("success", `Organization deleted successfully`);
           this.setState({
-            organizations: Setting.deleteRow(this.state.organizations, i),
-            total: this.state.total - 1
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
           });
         }
       )
@@ -104,7 +77,8 @@ class OrganizationListPage extends React.Component {
         key: 'name',
         width: '120px',
         fixed: 'left',
-        sorter: (a, b) => a.name.localeCompare(b.name),
+        sorter: true,
+        ...this.getColumnSearchProps('name'),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -118,7 +92,7 @@ class OrganizationListPage extends React.Component {
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
-        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
+        sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         }
@@ -128,7 +102,8 @@ class OrganizationListPage extends React.Component {
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',
-        sorter: (a, b) => a.displayName.localeCompare(b.displayName),
+        sorter: true,
+        ...this.getColumnSearchProps('displayName'),
       },
       {
         title: i18next.t("organization:Favicon"),
@@ -148,7 +123,8 @@ class OrganizationListPage extends React.Component {
         dataIndex: 'websiteUrl',
         key: 'websiteUrl',
         width: '300px',
-        sorter: (a, b) => a.websiteUrl.localeCompare(b.websiteUrl),
+        sorter: true,
+        ...this.getColumnSearchProps('websiteUrl'),
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
@@ -162,14 +138,21 @@ class OrganizationListPage extends React.Component {
         dataIndex: 'passwordType',
         key: 'passwordType',
         width: '150px',
-        sorter: (a, b) => a.passwordType.localeCompare(b.passwordType),
+        sorter: true,
+        filterMultiple: false,
+        filters: [
+          {text: 'plain', value: 'plain'},
+          {text: 'salt', value: 'salt'},
+          {text: 'md5-salt', value: 'md5-salt'},
+        ],
       },
       {
         title: i18next.t("general:Password salt"),
         dataIndex: 'passwordSalt',
         key: 'passwordSalt',
         width: '150px',
-        sorter: (a, b) => a.passwordSalt.localeCompare(b.passwordSalt),
+        sorter: true,
+        ...this.getColumnSearchProps('passwordSalt'),
       },
       {
         title: i18next.t("organization:Default avatar"),
@@ -189,7 +172,7 @@ class OrganizationListPage extends React.Component {
         dataIndex: 'enableSoftDeletion',
         key: 'enableSoftDeletion',
         width: '140px',
-        sorter: (a, b) => a.enableSoftDeletion - b.enableSoftDeletion,
+        sorter: true,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
@@ -220,12 +203,10 @@ class OrganizationListPage extends React.Component {
     ];
 
     const paginationProps = {
-      total: this.state.total,
+      total: this.state.pagination.total,
       showQuickJumper: true,
       showSizeChanger: true,
-      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
-      onChange: (page, pageSize) => this.getOrganizations(page, pageSize),
-      onShowSizeChange: (current, size) => this.getOrganizations(current, size),
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
     return (
@@ -237,21 +218,37 @@ class OrganizationListPage extends React.Component {
                   <Button type="primary" size="small" onClick={this.addOrganization.bind(this)}>{i18next.t("general:Add")}</Button>
                  </div>
                )}
-               loading={organizations === null}
+               loading={this.state.loading}
+               onChange={this.handleTableChange}
         />
       </div>
     );
   }
 
-  render() {
-    return (
-      <div>
-        {
-          this.renderTable(this.state.organizations)
+  fetch = (params = {}) => {
+    let field = params.searchedColumn, value = params.searchText;
+    let sortField = params.sortField, sortOrder = params.sortOrder;
+    if (params.passwordType !== undefined && params.passwordType !== null) {
+      field = "passwordType";
+      value = params.passwordType;
+    }
+    this.setState({ loading: true });
+    OrganizationBackend.getOrganizations("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            loading: false,
+            data: res.data,
+            pagination: {
+              ...params.pagination,
+              total: res.data2,
+            },
+            searchText: params.searchText,
+            searchedColumn: params.searchedColumn,
+          });
         }
-      </div>
-    );
-  }
+      });
+  };
 }
 
 export default OrganizationListPage;

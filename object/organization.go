@@ -15,6 +15,7 @@
 package object
 
 import (
+	"fmt"
 	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
 )
@@ -35,8 +36,12 @@ type Organization struct {
 	EnableSoftDeletion bool   `json:"enableSoftDeletion"`
 }
 
-func GetOrganizationCount(owner string) int {
-	count, err := adapter.Engine.Count(&Organization{Owner: owner})
+func GetOrganizationCount(owner, field, value string) int {
+	session := adapter.Engine.Where("owner=?", owner)
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&Organization{})
 	if err != nil {
 		panic(err)
 	}
@@ -54,9 +59,10 @@ func GetOrganizations(owner string) []*Organization {
 	return organizations
 }
 
-func GetPaginationOrganizations(owner string, offset, limit int) []*Organization {
+func GetPaginationOrganizations(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Organization {
 	organizations := []*Organization{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&organizations, &Provider{Owner: owner})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&organizations)
 	if err != nil {
 		panic(err)
 	}

@@ -33,13 +33,17 @@ import (
 func (c *ApiController) GetGlobalUsers() {
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
 		c.Data["json"] = object.GetMaskedUsers(object.GetGlobalUsers())
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGlobalUserCount()))
-		users := object.GetPaginationGlobalUsers(paginator.Offset(), limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGlobalUserCount(field, value)))
+		users := object.GetPaginationGlobalUsers(paginator.Offset(), limit, field, value, sortField, sortOrder)
 		c.ResponseOk(users, paginator.Nums())
 	}
 }
@@ -55,13 +59,17 @@ func (c *ApiController) GetUsers() {
 	owner := c.Input().Get("owner")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
 		c.Data["json"] = object.GetMaskedUsers(object.GetUsers(owner))
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetUserCount(owner)))
-		users := object.GetPaginationUsers(owner, paginator.Offset(), limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetUserCount(owner, field, value)))
+		users := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		c.ResponseOk(users, paginator.Nums())
 	}
 }
@@ -322,7 +330,7 @@ func (c *ApiController) GetUserCount() {
 
 	count := 0
 	if isOnline == "" {
-		count = object.GetUserCount(owner)
+		count = object.GetUserCount(owner, "", "")
 	} else {
 		count = object.GetOnlineUserCount(owner, util.ParseInt(isOnline))
 	}

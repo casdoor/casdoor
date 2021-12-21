@@ -80,8 +80,12 @@ func GetMaskedProviders(providers []*Provider) []*Provider {
 	return providers
 }
 
-func GetProviderCount(owner string) int {
-	count, err := adapter.Engine.Count(&Provider{Owner: owner})
+func GetProviderCount(owner, field, value string) int {
+	session := adapter.Engine.Where("owner=?", owner)
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&Provider{})
 	if err != nil {
 		panic(err)
 	}
@@ -99,9 +103,10 @@ func GetProviders(owner string) []*Provider {
 	return providers
 }
 
-func GetPaginationProviders(owner string, offset, limit int) []*Provider {
+func GetPaginationProviders(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Provider {
 	providers := []*Provider{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&providers, &Provider{Owner: owner})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&providers)
 	if err != nil {
 		panic(err)
 	}

@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"github.com/casbin/casdoor/util"
 	"runtime"
 
 	"github.com/astaxie/beego"
@@ -159,4 +160,23 @@ func (a *Adapter) createTable() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
+	session := adapter.Engine.Limit(limit, offset).Where("1=1")
+	if owner != "" {
+		session = session.And("owner=?", owner)
+	}
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	if sortField == "" || sortOrder == "" {
+		sortField = "created_time"
+	}
+	if sortOrder == "ascend" {
+		session = session.Asc(util.SnakeString(sortField))
+	} else {
+		session = session.Desc(util.SnakeString(sortField))
+	}
+	return session
 }

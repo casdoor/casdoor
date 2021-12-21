@@ -14,8 +14,8 @@
 
 import * as Setting from "../Setting";
 
-export function getTokens(owner, page = "", pageSize = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-tokens?owner=${owner}&p=${page}&pageSize=${pageSize}`, {
+export function getTokens(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-tokens?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include"
   }).then(res => res.json());
