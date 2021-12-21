@@ -42,3 +42,7 @@ func (cm *Sha256SaltCredManager) GetSealedPassword(password string, userSalt str
 	res := getSha256HexDigest(hash + organizationSalt)
 	return res
 }
+
+func (cm *Sha256SaltCredManager) ValidatePasswords(plainPwd string,hashedPwd string, userSalt string, organizationSalt string) bool {
+	return hashedPwd == cm.GetSealedPassword(plainPwd, userSalt, organizationSalt)
+}

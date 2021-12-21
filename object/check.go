@@ -104,15 +104,12 @@ func CheckPassword(user *User, password string) string {
 	if organization == nil {
 		return "organization does not exist"
 	}
-
 	credManager := cred.GetCredManager(organization.PasswordType)
 	if credManager != nil {
 		if organization.MasterPassword != "" && organization.MasterPassword == password {
 			return ""
 		}
-
-		sealedPassword := credManager.GetSealedPassword(password, user.PasswordSalt, organization.PasswordSalt)
-		if user.Password == sealedPassword {
+		if credManager.ValidatePasswords(password,user.Password,user.PasswordSalt,organization.PasswordSalt) {
 			return ""
 		}
 		return "password incorrect"

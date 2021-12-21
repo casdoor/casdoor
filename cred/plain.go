@@ -24,3 +24,7 @@ func NewPlainCredManager() *PlainCredManager {
 func (cm *PlainCredManager) GetSealedPassword(password string, userSalt string, organizationSalt string) string {
 	return password
 }
+
+func (cm *PlainCredManager) ValidatePasswords(plainPwd string,hashedPwd string, userSalt string, organizationSalt string) bool {
+	return hashedPwd == plainPwd
+}
