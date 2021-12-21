@@ -92,3 +92,11 @@ jobs:
         with:
           push: true
           tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
+          
+      - name: Push All In One Version to Docker Hub
+        uses: docker/build-push-action@v2
+        if: github.repository == 'casbin/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
+        with:
+          target: ALLINONE
+          push: true
+          tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
