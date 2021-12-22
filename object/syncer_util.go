@@ -43,26 +43,35 @@ func (syncer *Syncer) getPartialAvatarUrl(avatar string) string {
 func (syncer *Syncer) createUserFromOriginalUser(originalUser *OriginalUser, affiliationMap map[int]string) *User {
 	user := *originalUser
 	user.Owner = syncer.Organization
+
 	if user.Name == "" {
 		user.Name = originalUser.Id
 	}
+
 	if user.CreatedTime == "" {
 		user.CreatedTime = util.GetCurrentTime()
 	}
+
 	if user.Type == "" {
 		user.Type = "normal-user"
 	}
+
 	user.Avatar = syncer.getFullAvatarUrl(user.Avatar)
-	if originalUser.Score != 0 {
-		affiliation, ok := affiliationMap[originalUser.Score]
-		if !ok {
-			panic(fmt.Sprintf("Affiliation not found: %d", originalUser.Score))
+
+	if affiliationMap != nil {
+		if originalUser.Score != 0 {
+			affiliation, ok := affiliationMap[originalUser.Score]
+			if !ok {
+				panic(fmt.Sprintf("Affiliation not found: %d", originalUser.Score))
+			}
+			user.Affiliation = affiliation
 		}
-		user.Affiliation = affiliation
 	}
+
 	if user.Properties == nil {
 		user.Properties = map[string]string{}
 	}
+
 	return &user
 }
 

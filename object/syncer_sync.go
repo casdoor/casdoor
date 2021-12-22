@@ -23,7 +23,10 @@ func (syncer *Syncer) syncUsers() {
 	oUsers, oUserMap := syncer.getOriginalUserMap()
 	fmt.Printf("Users: %d, oUsers: %d\n", len(users), len(oUsers))
 
-	_, affiliationMap := syncer.getAffiliationMap()
+	var affiliationMap map[int]string
+	if syncer.AffiliationTable != "" {
+		_, affiliationMap = syncer.getAffiliationMap()
+	}
 
 	newUsers := []*User{}
 	for _, oUser := range oUsers {
