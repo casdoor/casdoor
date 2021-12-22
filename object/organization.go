@@ -15,6 +15,7 @@
 package object
 
 import (
+	"github.com/casbin/casdoor/cred"
 	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
 )
@@ -109,6 +110,14 @@ func UpdateOrganization(id string, organization *Organization) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if getOrganization(owner, name) == nil {
 		return false
+	}
+
+	if organization.MasterPassword != "" {
+		credManager := cred.GetCredManager(organization.PasswordType)
+		if credManager != nil {
+			hashedPassword := credManager.GetHashedPassword(organization.MasterPassword, "", organization.PasswordSalt)
+			organization.MasterPassword = hashedPassword
+		}
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(organization)
