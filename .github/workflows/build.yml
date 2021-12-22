@@ -32,7 +32,7 @@ jobs:
   release-and-push:
     name: Release And Push
     runs-on: ubuntu-latest
-    if: github.repository == 'casbin/casdoor' && github.event_name == 'push'
+    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
     needs: [ frontend, backend ]
     steps:
       - name: Checkout
@@ -80,7 +80,7 @@ jobs:
         
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
-        if: github.repository == 'casbin/casdoor' && github.event_name == 'push' &&steps.should_push.outputs.push=='true'
+        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' &&steps.should_push.outputs.push=='true'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -88,14 +88,14 @@ jobs:
           
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
-        if: github.repository == 'casbin/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
+        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           push: true
           tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
           
       - name: Push All In One Version to Docker Hub
         uses: docker/build-push-action@v2
-        if: github.repository == 'casbin/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
+        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           target: ALLINONE
           push: true
