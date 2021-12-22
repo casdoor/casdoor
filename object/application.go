@@ -15,6 +15,8 @@
 package object
 
 import (
+	"fmt"
+
 	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
 )
@@ -73,6 +75,16 @@ func GetApplications(owner string) []*Application {
 func GetPaginationApplications(owner string, offset, limit int) []*Application {
 	applications := []*Application{}
 	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&applications, &Application{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return applications
+}
+
+func getApplicationsByOrganizationName(owner string, organization string) []*Application {
+	applications := []*Application{}
+	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner, Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -248,4 +260,8 @@ func DeleteApplication(application *Application) bool {
 	}
 
 	return affected != 0
+}
+
+func (application *Application) GetId() string {
+	return fmt.Sprintf("%s/%s", application.Owner, application.Name)
 }

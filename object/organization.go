@@ -116,6 +116,14 @@ func UpdateOrganization(id string, organization *Organization) bool {
 		organization.Name = name
 	}
 
+	if name != organization.Name {
+		applications := getApplicationsByOrganizationName("admin", name)
+		for _, application := range applications {
+			application.Organization = organization.Name
+			UpdateApplication(application.GetId(), application)
+		}
+	}
+
 	if organization.MasterPassword != "" {
 		credManager := cred.GetCredManager(organization.PasswordType)
 		if credManager != nil {
