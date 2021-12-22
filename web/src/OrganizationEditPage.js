@@ -153,7 +153,7 @@ class OrganizationEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.organization.passwordType} onChange={(value => {this.updateOrganizationField('passwordType', value);})}>
               {
-                ['plain', 'salt', 'md5-salt']
+                ['plain', 'salt', 'md5-salt', 'bcrypt']
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>

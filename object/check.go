@@ -111,8 +111,7 @@ func CheckPassword(user *User, password string) string {
 			return ""
 		}
 
-		sealedPassword := credManager.GetSealedPassword(password, user.PasswordSalt, organization.PasswordSalt)
-		if user.Password == sealedPassword {
+		if credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt, organization.PasswordSalt) {
 			return ""
 		}
 		return "password incorrect"
