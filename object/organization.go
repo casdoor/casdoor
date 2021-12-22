@@ -112,6 +112,10 @@ func UpdateOrganization(id string, organization *Organization) bool {
 		return false
 	}
 
+	if name == "built-in" {
+		organization.Name = name
+	}
+
 	if organization.MasterPassword != "" {
 		credManager := cred.GetCredManager(organization.PasswordType)
 		if credManager != nil {
@@ -138,6 +142,10 @@ func AddOrganization(organization *Organization) bool {
 }
 
 func DeleteOrganization(organization *Organization) bool {
+	if organization.Name == "built-in" {
+		return false
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{organization.Owner, organization.Name}).Delete(&Organization{})
 	if err != nil {
 		panic(err)

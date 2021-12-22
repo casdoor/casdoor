@@ -206,6 +206,10 @@ func UpdateApplication(id string, application *Application) bool {
 		return false
 	}
 
+	if name == "app-built-in" {
+		application.Name = name
+	}
+
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}
@@ -234,6 +238,10 @@ func AddApplication(application *Application) bool {
 }
 
 func DeleteApplication(application *Application) bool {
+	if application.Name == "app-built-in" {
+		return false
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{application.Owner, application.Name}).Delete(&Application{})
 	if err != nil {
 		panic(err)
