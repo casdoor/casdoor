@@ -159,7 +159,11 @@ func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*OriginalUser {
 	users := []*OriginalUser{}
 	for _, result := range results {
-		originalUser := &OriginalUser{}
+		originalUser := &OriginalUser{
+			Address:    []string{},
+			Properties: map[string]string{},
+		}
+
 		for _, tableColumn := range syncer.TableColumns {
 			syncer.setUserByKeyValue(originalUser, tableColumn.CasdoorName, result[tableColumn.Name])
 		}
