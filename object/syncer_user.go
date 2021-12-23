@@ -125,6 +125,9 @@ func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 func (syncer *Syncer) initAdapter() {
 	if syncer.Adapter == nil {
 		dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%d)/", syncer.User, syncer.Password, syncer.Host, syncer.Port)
+		if !isCloudIntranet {
+			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
+		}
 		syncer.Adapter = NewAdapter(beego.AppConfig.String("driverName"), dataSourceName, syncer.Database)
 	}
 }
