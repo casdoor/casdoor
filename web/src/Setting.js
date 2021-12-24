@@ -612,3 +612,7 @@ export function getApplicationOrgName(application) {
 export function getRandomName() {
   return Math.random().toString(36).slice(-6);
 }
+
+export function getRandomNumber() {
+  return Math.random().toString(10).slice(-11);
+}

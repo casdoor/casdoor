@@ -163,3 +163,11 @@ func DeleteSyncer(syncer *Syncer) bool {
 func (syncer *Syncer) GetId() string {
 	return fmt.Sprintf("%s/%s", syncer.Owner, syncer.Name)
 }
+
+func (syncer *Syncer) getTableColumnsTypeMap() map[string]string {
+	m := map[string]string{}
+	for _, tableColumn := range syncer.TableColumns {
+		m[tableColumn.Name] = tableColumn.Type
+	}
+	return m
+}

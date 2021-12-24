@@ -193,8 +193,9 @@ class OrganizationListPage extends BaseListPage {
               <Popconfirm
                 title={`Sure to delete organization: ${record.name} ?`}
                 onConfirm={() => this.deleteOrganization(index)}
+                disabled={record.name === "built-in"}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: '10px'}} disabled={record.name === "built-in"} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           )

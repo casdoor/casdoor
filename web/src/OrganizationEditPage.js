@@ -94,7 +94,7 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.organization.name} onChange={e => {
+            <Input value={this.state.organization.name} disabled={this.state.organization.name === "built-in"} onChange={e => {
               this.updateOrganizationField('name', e.target.value);
             }} />
           </Col>
