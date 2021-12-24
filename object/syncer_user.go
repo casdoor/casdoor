@@ -106,7 +106,7 @@ func (syncer *Syncer) updateUser(user *OriginalUser) bool {
 
 func (syncer *Syncer) updateUserForOriginalFields(user *User) bool {
 	owner, name := util.GetOwnerAndNameFromId(user.GetId())
-	oldUser := getUser(owner, name)
+	oldUser := getUserById(owner, name)
 	if oldUser == nil {
 		return false
 	}
@@ -117,7 +117,7 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User) bool {
 
 	columns := syncer.getCasdoorColumns()
 	columns = append(columns, "affiliation", "hash", "pre_hash")
-	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols(columns...).Update(user)
+	affected, err := adapter.Engine.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
 	if err != nil {
 		panic(err)
 	}

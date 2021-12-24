@@ -181,6 +181,24 @@ func getUser(owner string, name string) *User {
 	}
 }
 
+func getUserById(owner string, id string) *User {
+	if owner == "" || id == "" {
+		return nil
+	}
+
+	user := User{Owner: owner, Id: id}
+	existed, err := adapter.Engine.Get(&user)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &user
+	} else {
+		return nil
+	}
+}
+
 func GetUserByEmail(owner string, email string) *User {
 	if owner == "" || email == "" {
 		return nil
