@@ -41,8 +41,7 @@
 Deployed site: https://door.casbin.com/
 
 ## Quick Start
-
-Run your own casdoor program in a few minutes:smiley:
+Run your own casdoor program in a few minutes.
 
 ### Download
 
@@ -117,9 +116,26 @@ go build main.go && sudo ./main
 
 ### Docker
 
+Casdoor provide 2 kinds of image: 
+- casbin/casdoor-all-in-one, in which casdoor binary, a mysql database and all necessary configurations are packed up. This image is for new user to have a trial on casdoor quickly. **With this image you can start a casdoor immediately with one single command (or two) without any complex configuration**. **Note: we DO NOT recommend you to use this image in productive environment**
+
+- casbin/casdoor: normal & graceful casdoor image with only casdoor and environment installed. 
+
 This method requires [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) to be installed first.
 
-#### Simple configuration
+### Start casdoor with casbin/casdoor-all-in-one
+if the image is not pulled, pull it from dockerhub
+```shell
+docker pull casbin/casdoor-all-in-one
+```
+Start it with
+```shell
+docker run -p 8000:8000 casbin/casdoor-all-in-one
+```
+Now you can visit http://localhost:8000 and have a try. Default account and password is 'admin' and '123'. Go for it!
+
+### Start casdoor with casbin/casdoor
+#### modify the configurations
 For the convenience of your first attempt, docker-compose.yml contains commands to start a database via docker.
 
 Thus edit `conf/app.conf` to point out the location of database(db:3306), modify `dataSourceName` to the fixed content:
@@ -137,14 +153,6 @@ docker-compose up
 ```
 
 That's it! Try to visit http://localhost:8000/. :small_airplane:
-
-### Docker Hub
-
-This method requires [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) to be installed first.
-
-```bash
-docker pull casbin/casdoor
-```
 
 ## Detailed documentation
 
