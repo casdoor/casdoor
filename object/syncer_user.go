@@ -19,7 +19,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/astaxie/beego"
 	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
 )
@@ -28,6 +27,10 @@ type OriginalUser = User
 
 func (syncer *Syncer) getOriginalUsers() []*OriginalUser {
 	sql := fmt.Sprintf("select * from %s", syncer.Table)
+	if syncer.DatabaseType == "mssql" {
+		sql = fmt.Sprintf("select * from [%s]", syncer.Table)
+	}
+
 	results, err := syncer.Adapter.Engine.QueryString(sql)
 	if err != nil {
 		panic(err)
@@ -142,11 +145,18 @@ func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 
 func (syncer *Syncer) initAdapter() {
 	if syncer.Adapter == nil {
-		dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%d)/", syncer.User, syncer.Password, syncer.Host, syncer.Port)
+		var dataSourceName string
+		if syncer.DatabaseType == "mssql" {
+			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", syncer.User, syncer.Password, syncer.Host, syncer.Port, syncer.Database)
+		} else {
+			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/", syncer.User, syncer.Password, syncer.Host, syncer.Port)
+		}
+
 		if !isCloudIntranet {
 			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
 		}
-		syncer.Adapter = NewAdapter(beego.AppConfig.String("driverName"), dataSourceName, syncer.Database)
+
+		syncer.Adapter = NewAdapter(syncer.DatabaseType, dataSourceName, syncer.Database)
 	}
 }
 

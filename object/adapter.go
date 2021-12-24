@@ -20,8 +20,9 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/casbin/casdoor/conf"
+	//_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql" // db = mysql
-	//_ "github.com/lib/pq"              // db = postgres
+	//_ "github.com/lib/pq"                // db = postgres
 	"xorm.io/xorm"
 )
 
@@ -85,13 +86,18 @@ func (a *Adapter) createDatabase() error {
 }
 
 func (a *Adapter) open() {
-	if a.driverName != "postgres" {
+	if a.driverName != "postgres" && a.driverName != "mssql" {
 		if err := a.createDatabase(); err != nil {
 			panic(err)
 		}
 	}
 
-	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName+a.dbName)
+	dataSourceName := a.dataSourceName + a.dbName
+	if a.driverName != "mysql" {
+		dataSourceName = a.dataSourceName
+	}
+
+	engine, err := xorm.NewEngine(a.driverName, dataSourceName)
 	if err != nil {
 		panic(err)
 	}

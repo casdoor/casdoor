@@ -40,8 +40,8 @@
     "Please input your phone verification code!": "请输入您的手机验证码！",
     "Please input your verification code!": "请输入您的验证码！",
     "Send Code": "发送验证码",
-    "Submit and complete": "完成提交",
-    "Sending Code": "发送中"
+    "Sending Code": "发送中",
+    "Submit and complete": "完成提交"
   },
   "forget": {
     "Account": "账号",
@@ -212,8 +212,12 @@
     "Category - Tooltip": "分类",
     "Client ID": "Client ID",
     "Client ID - Tooltip": "Client ID",
+    "Client ID 2": "Client ID 2",
+    "Client ID 2 - Tooltip": "Client ID 2 - Tooltip",
     "Client secret": "Client secret",
     "Client secret - Tooltip": "Client secret",
+    "Client secret 2": "Client secret 2",
+    "Client secret 2 - Tooltip": "Client secret 2 - Tooltip",
     "Copy": "Copy",
     "Domain": "域名",
     "Domain - Tooltip": "存储节点自定义域名",
@@ -328,6 +332,8 @@
     "Column type": "列类型",
     "Database": "数据库",
     "Database - Tooltip": "数据库名称",
+    "Database type": "数据库类型",
+    "Database type - Tooltip": "数据库类型",
     "Edit Syncer": "修改同步器",
     "Is enabled": "已启用",
     "Is enabled - Tooltip": "是否启用",

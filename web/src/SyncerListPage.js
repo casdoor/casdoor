@@ -58,6 +58,7 @@ class SyncerListPage extends React.Component {
       port: 3306,
       user: "root",
       password: "123456",
+      databaseType: "mysql",
       database: "dbName",
       table: "tableName",
       tableColumns: [],
@@ -175,6 +176,13 @@ class SyncerListPage extends React.Component {
         key: 'password',
         width: '120px',
         sorter: (a, b) => a.password.localeCompare(b.password),
+      },
+      {
+        title: i18next.t("syncer:Database type"),
+        dataIndex: 'databaseType',
+        key: 'databaseType',
+        width: '120px',
+        sorter: (a, b) => a.databaseType.localeCompare(b.databaseType),
       },
       {
         title: i18next.t("syncer:Database"),
