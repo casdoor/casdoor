@@ -133,10 +133,11 @@ class ForgetPage extends React.Component {
               break;
           case "step2":
               const oAuthParams = Util.getOAuthGetParameters();
+              const verifyType = forms.step2.getFieldValue("email")
               AuthBackend.login({
                   application: forms.step2.getFieldValue("application"),
                   organization: forms.step2.getFieldValue("organization"),
-                  username: forms.step2.getFieldValue("email"),
+                  username: this.state[verifyType],
                   code: forms.step2.getFieldValue("emailCode"),
                   phonePrefix: this.state.application?.organizationObj.phonePrefix,
                   type: "login"
@@ -169,17 +170,18 @@ class ForgetPage extends React.Component {
 
   renderOptions() {
     let options = [];
-
-    if (this.state.phone !== "") {
+    const {phone,email} = this.state
+    if (phone) {
       options.push(
         <Option key={"phone"} value={"phone"}>
-          &nbsp;&nbsp;{Setting.getMaskedPhone(this.state.phone)}
+          &nbsp;&nbsp;{Setting.getMaskedPhone(phone)}
         </Option>
       );
-    } else if (this.state.email !== "") {
+    }
+    if (email) {
       options.push(
         <Option key={"email"} value={"email"}>
-          &nbsp;&nbsp;{Setting.getMaskedEmail(this.state.email)}
+          &nbsp;&nbsp;{Setting.getMaskedEmail(email)}
         </Option>
       );
     }
@@ -280,7 +282,6 @@ class ForgetPage extends React.Component {
           >
             <Form.Item
                 style={{ height: 0, visibility: "hidden" }}
-                name="application"
                 rules={[
                   {
                     required: true,
@@ -292,7 +293,6 @@ class ForgetPage extends React.Component {
             />
             <Form.Item
                 style={{ height: 0, visibility: "hidden" }}
-                name="organization"
                 rules={[
                   {
                     required: true,
@@ -312,7 +312,6 @@ class ForgetPage extends React.Component {
                      <Select
                        key={this.state.verifyType}
                        virtual={false} style={{textAlign: 'left'}}
-                       defaultValue={this.state.verifyType}
                        disabled={this.state.username === ""}
                        placeholder={i18next.t("forget:Choose email or phone")}
                        onChange={(value) => {
