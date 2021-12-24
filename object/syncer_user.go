@@ -26,11 +26,7 @@ import (
 type OriginalUser = User
 
 func (syncer *Syncer) getOriginalUsers() []*OriginalUser {
-	sql := fmt.Sprintf("select * from %s", syncer.Table)
-	if syncer.DatabaseType == "mssql" {
-		sql = fmt.Sprintf("select * from [%s]", syncer.Table)
-	}
-
+	sql := fmt.Sprintf("select * from %s", syncer.getTable())
 	results, err := syncer.Adapter.Engine.QueryString(sql)
 	if err != nil {
 		panic(err)
@@ -51,10 +47,9 @@ func (syncer *Syncer) getOriginalUserMap() ([]*OriginalUser, map[string]*Origina
 
 func (syncer *Syncer) addUser(user *OriginalUser) bool {
 	m := syncer.getMapFromOriginalUser(user)
-	keyString := syncer.getSqlKeyStringFromMap(m)
-	valueString := syncer.getSqlValueStringFromMap(m)
+	keyString, valueString := syncer.getSqlKeyValueStringFromMap(m)
 
-	sql := fmt.Sprintf("insert into %s (%s) values (%s)", syncer.Table, keyString, valueString)
+	sql := fmt.Sprintf("insert into %s (%s) values (%s)", syncer.getTable(), keyString, valueString)
 	res, err := syncer.Adapter.Engine.Exec(sql)
 	if err != nil {
 		panic(err)
@@ -95,7 +90,7 @@ func (syncer *Syncer) updateUser(user *OriginalUser) bool {
 	delete(m, syncer.TablePrimaryKey)
 	setString := syncer.getSqlSetStringFromMap(m)
 
-	sql := fmt.Sprintf("update %s set %s where %s = %s", syncer.Table, setString, syncer.TablePrimaryKey, pkValue)
+	sql := fmt.Sprintf("update %s set %s where %s = %s", syncer.getTable(), setString, syncer.TablePrimaryKey, pkValue)
 	res, err := syncer.Adapter.Engine.Exec(sql)
 	if err != nil {
 		panic(err)

@@ -24,7 +24,7 @@ func (syncer *Syncer) getUserMap() ([]*User, map[string]*User) {
 
 	m := map[string]*User{}
 	for _, user := range users {
-		m[user.Name] = user
+		m[user.Id] = user
 	}
 	return users, m
 }

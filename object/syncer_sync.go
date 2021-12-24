@@ -77,7 +77,9 @@ func (syncer *Syncer) syncUsers() {
 	for _, user := range users {
 		id := user.Id
 		if _, ok := oUserMap[id]; !ok {
-			panic(fmt.Sprintf("New original user: cannot create now, user = %v", user))
+			newOUser := syncer.createOriginalUserFromUser(user)
+			syncer.addUser(newOUser)
+			fmt.Printf("New oUser: %v\n", newOUser)
 		}
 	}
 }

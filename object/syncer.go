@@ -167,3 +167,11 @@ func (syncer *Syncer) getTableColumnsTypeMap() map[string]string {
 	}
 	return m
 }
+
+func (syncer *Syncer) getTable() string {
+	if syncer.DatabaseType == "mssql" {
+		return fmt.Sprintf("[%s]", syncer.Table)
+	} else {
+		return syncer.Table
+	}
+}
