@@ -10,6 +10,19 @@ COPY ./web .
 RUN yarn config set registry https://registry.npm.taobao.org
 RUN yarn install && yarn run build
 
+
+FROM debian:latest AS ALLINONE
+RUN apt update && apt install -y mariadb-server mariadb-client&&mkdir -p web/build && chmod 777 /tmp
+LABEL MAINTAINER="https://casdoor.org/"
+COPY --from=BACK /go/src/casdoor/ ./
+COPY --from=BACK /usr/bin/wait-for-it ./
+COPY --from=FRONT /web/build /web/build
+CMD chmod 777 /tmp && service mariadb start&&\
+if [ "${MYSQL_ROOT_PASSWORD}" = "" ] ;then MYSQL_ROOT_PASSWORD=123456 ; fi&&\
+mysqladmin -u root password ${MYSQL_ROOT_PASSWORD} &&\
+./wait-for-it localhost:3306 -- ./server
+
+
 FROM alpine:latest
 RUN sed -i 's/https/http/' /etc/apk/repositories
 RUN apk add curl
@@ -20,3 +33,4 @@ COPY --from=BACK /usr/bin/wait-for-it ./
 RUN mkdir -p web/build && apk add --no-cache bash coreutils
 COPY --from=FRONT /web/build /web/build
 CMD ./wait-for-it db:3306 -- ./server
+

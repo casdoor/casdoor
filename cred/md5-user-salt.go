@@ -37,8 +37,12 @@ func NewMd5UserSaltCredManager() *Sha256SaltCredManager {
 	return cm
 }
 
-func (cm *Md5UserSaltCredManager) GetSealedPassword(password string, userSalt string, organizationSalt string) string {
+func (cm *Md5UserSaltCredManager) GetHashedPassword(password string, userSalt string, organizationSalt string) string {
 	hash := getMd5HexDigest(password)
 	res := getMd5HexDigest(hash + userSalt)
 	return res
+}
+
+func (cm *Md5UserSaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, userSalt string, organizationSalt string) bool {
+	return hashedPwd == cm.GetHashedPassword(plainPwd, userSalt, organizationSalt)
 }

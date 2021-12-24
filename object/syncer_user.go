@@ -48,7 +48,16 @@ func (syncer *Syncer) getOriginalUserMap() ([]*OriginalUser, map[string]*Origina
 
 func (syncer *Syncer) addUser(user *OriginalUser) bool {
 	m := syncer.getMapFromOriginalUser(user)
-	affected, err := syncer.Adapter.Engine.Table(syncer.Table).Insert(m)
+	keyString := syncer.getSqlKeyStringFromMap(m)
+	valueString := syncer.getSqlValueStringFromMap(m)
+
+	sql := fmt.Sprintf("insert into %s (%s) values (%s)", syncer.Table, keyString, valueString)
+	res, err := syncer.Adapter.Engine.Exec(sql)
+	if err != nil {
+		panic(err)
+	}
+
+	affected, err := res.RowsAffected()
 	if err != nil {
 		panic(err)
 	}
@@ -56,7 +65,7 @@ func (syncer *Syncer) addUser(user *OriginalUser) bool {
 	return affected != 0
 }
 
-func (syncer *Syncer) getOriginalColumns() []string {
+/*func (syncer *Syncer) getOriginalColumns() []string {
 	res := []string{}
 	for _, tableColumn := range syncer.TableColumns {
 		if tableColumn.CasdoorName != "Id" {
@@ -64,7 +73,7 @@ func (syncer *Syncer) getOriginalColumns() []string {
 		}
 	}
 	return res
-}
+}*/
 
 func (syncer *Syncer) getCasdoorColumns() []string {
 	res := []string{}
@@ -79,8 +88,17 @@ func (syncer *Syncer) getCasdoorColumns() []string {
 
 func (syncer *Syncer) updateUser(user *OriginalUser) bool {
 	m := syncer.getMapFromOriginalUser(user)
-	columns := syncer.getOriginalColumns()
-	affected, err := syncer.Adapter.Engine.Table(syncer.Table).ID(syncer.TablePrimaryKey).Cols(columns...).Update(m)
+	pkValue := m[syncer.TablePrimaryKey]
+	delete(m, syncer.TablePrimaryKey)
+	setString := syncer.getSqlSetStringFromMap(m)
+
+	sql := fmt.Sprintf("update %s set %s where %s = %s", syncer.Table, setString, syncer.TablePrimaryKey, pkValue)
+	res, err := syncer.Adapter.Engine.Exec(sql)
+	if err != nil {
+		panic(err)
+	}
+
+	affected, err := res.RowsAffected()
 	if err != nil {
 		panic(err)
 	}
@@ -125,6 +143,9 @@ func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 func (syncer *Syncer) initAdapter() {
 	if syncer.Adapter == nil {
 		dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%d)/", syncer.User, syncer.Password, syncer.Host, syncer.Port)
+		if !isCloudIntranet {
+			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
+		}
 		syncer.Adapter = NewAdapter(beego.AppConfig.String("driverName"), dataSourceName, syncer.Database)
 	}
 }

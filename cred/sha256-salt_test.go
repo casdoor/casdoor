@@ -23,5 +23,5 @@ func TestGetSaltedPassword(t *testing.T) {
 	password := "123456"
 	salt := "123"
 	cm := NewSha256SaltCredManager()
-	fmt.Printf("%s -> %s\n", password, cm.GetSealedPassword(password, "", salt))
+	fmt.Printf("%s -> %s\n", password, cm.GetHashedPassword(password, "", salt))
 }
