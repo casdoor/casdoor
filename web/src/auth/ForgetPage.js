@@ -176,7 +176,9 @@ class ForgetPage extends React.Component {
           &nbsp;&nbsp;{Setting.getMaskedPhone(this.state.phone)}
         </Option>
       );
-    } else if (this.state.email !== "") {
+    }
+
+    if (this.state.email !== "") {
       options.push(
         <Option key={"email"} value={"email"}>
           &nbsp;&nbsp;{Setting.getMaskedEmail(this.state.email)}
