@@ -99,8 +99,12 @@ func AddRecord(record *Record) bool {
 	return affected != 0
 }
 
-func GetRecordCount() int {
-	count, err := adapter.Engine.Count(&Record{})
+func GetRecordCount(field, value string) int {
+	session := adapter.Engine.Where("1=1")
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&Record{})
 	if err != nil {
 		panic(err)
 	}
@@ -118,9 +122,10 @@ func GetRecords() []*Record {
 	return records
 }
 
-func GetPaginationRecords(offset, limit int) []*Record {
+func GetPaginationRecords(offset, limit int, field, value, sortField, sortOrder string) []*Record {
 	records := []*Record{}
-	err := adapter.Engine.Desc("id").Limit(limit, offset).Find(&records)
+	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&records)
 	if err != nil {
 		panic(err)
 	}

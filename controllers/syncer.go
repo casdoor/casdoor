@@ -33,13 +33,17 @@ func (c *ApiController) GetSyncers() {
 	owner := c.Input().Get("owner")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
 		c.Data["json"] = object.GetSyncers(owner)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetSyncerCount(owner)))
-		syncers := object.GetPaginationSyncers(owner, paginator.Offset(), limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetSyncerCount(owner, field, value)))
+		syncers := object.GetPaginationSyncers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		c.ResponseOk(syncers, paginator.Nums())
 	}
 }

@@ -39,8 +39,12 @@ type Resource struct {
 	Description string `xorm:"varchar(1000)" json:"description"`
 }
 
-func GetResourceCount(owner string, user string) int {
-	count, err := adapter.Engine.Count(&Resource{Owner: owner, User: user})
+func GetResourceCount(owner, user, field, value string) int {
+	session := adapter.Engine.Where("owner=? and user=?", owner, user)
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&Resource{})
 	if err != nil {
 		panic(err)
 	}
@@ -63,14 +67,15 @@ func GetResources(owner string, user string) []*Resource {
 	return resources
 }
 
-func GetPaginationResources(owner, user string, offset, limit int) []*Resource {
+func GetPaginationResources(owner, user string, offset, limit int, field, value, sortField, sortOrder string) []*Resource {
 	if owner == "built-in" {
 		owner = ""
 		user = ""
 	}
 
 	resources := []*Resource{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&resources, &Resource{Owner: owner, User: user})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&resources, &Resource{User: user})
 	if err != nil {
 		panic(err)
 	}

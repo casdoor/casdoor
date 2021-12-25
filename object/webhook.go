@@ -33,8 +33,12 @@ type Webhook struct {
 	Organization string `xorm:"varchar(100) index" json:"organization"`
 }
 
-func GetWebhookCount(owner string) int {
-	count, err := adapter.Engine.Count(&Webhook{Owner: owner})
+func GetWebhookCount(owner, field, value string) int {
+	session := adapter.Engine.Where("owner=?", owner)
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&Webhook{})
 	if err != nil {
 		panic(err)
 	}
@@ -52,9 +56,10 @@ func GetWebhooks(owner string) []*Webhook {
 	return webhooks
 }
 
-func GetPaginationWebhooks(owner string, offset, limit int) []*Webhook {
+func GetPaginationWebhooks(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Webhook {
 	webhooks := []*Webhook{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&webhooks, &Webhook{Owner: owner})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&webhooks)
 	if err != nil {
 		panic(err)
 	}

@@ -20,32 +20,9 @@ import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Provider from "./auth/Provider";
 import i18next from "i18next";
+import BaseListPage from "./BaseListPage";
 
-class ProviderListPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      classes: props,
-      providers: null,
-      total: 0,
-    };
-  }
-
-  UNSAFE_componentWillMount() {
-    this.getProviders(1, 10);
-  }
-
-  getProviders(page, pageSize) {
-    ProviderBackend.getProviders("admin", page, pageSize)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            providers: res.data,
-            total: res.data2
-          });
-        }
-      });
-  }
+class ProviderListPage extends BaseListPage {
 
   newProvider() {
     const randomName = Setting.getRandomName();
@@ -71,10 +48,6 @@ class ProviderListPage extends React.Component {
     ProviderBackend.addProvider(newProvider)
       .then((res) => {
           Setting.showMessage("success", `Provider added successfully`);
-          this.setState({
-            providers: Setting.prependRow(this.state.providers, newProvider),
-            total: this.state.total + 1
-          });
           this.props.history.push(`/providers/${newProvider.name}`);
         }
       )
@@ -84,12 +57,12 @@ class ProviderListPage extends React.Component {
   }
 
   deleteProvider(i) {
-    ProviderBackend.deleteProvider(this.state.providers[i])
+    ProviderBackend.deleteProvider(this.state.data[i])
       .then((res) => {
           Setting.showMessage("success", `Provider deleted successfully`);
           this.setState({
-            providers: Setting.deleteRow(this.state.providers, i),
-            total: this.state.total - 1
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
           });
         }
       )
@@ -106,7 +79,8 @@ class ProviderListPage extends React.Component {
         key: 'name',
         width: '120px',
         fixed: 'left',
-        sorter: (a, b) => a.name.localeCompare(b.name),
+        sorter: true,
+        ...this.getColumnSearchProps('name'),
         render: (text, record, index) => {
           return (
             <Link to={`/providers/${text}`}>
@@ -120,7 +94,7 @@ class ProviderListPage extends React.Component {
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '180px',
-        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
+        sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         }
@@ -130,14 +104,23 @@ class ProviderListPage extends React.Component {
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',
-        sorter: (a, b) => a.displayName.localeCompare(b.displayName),
+        sorter: true,
+        ...this.getColumnSearchProps('displayName'),
       },
       {
         title: i18next.t("provider:Category"),
         dataIndex: 'category',
         key: 'category',
+        filterMultiple: false,
+        filters: [
+          {text: 'OAuth', value: 'OAuth'},
+          {text: 'Email', value: 'Email'},
+          {text: 'SMS', value: 'SMS'},
+          {text: 'Storage', value: 'Storage'},
+          {text: 'SAML', value: 'SAML'},
+        ],
         width: '100px',
-        sorter: (a, b) => a.category.localeCompare(b.category),
+        sorter: true,
       },
       {
         title: i18next.t("provider:Type"),
@@ -145,7 +128,15 @@ class ProviderListPage extends React.Component {
         key: 'type',
         width: '80px',
         align: 'center',
-        sorter: (a, b) => a.type.localeCompare(b.type),
+        filterMultiple: false,
+        filters: [
+          {text: 'OAuth', value: 'OAuth', children: Setting.getProviderTypeOptions('OAuth').map((o) => {return {text:o.id, value:o.name}})},
+          {text: 'Email', value: 'Email', children: Setting.getProviderTypeOptions('Email').map((o) => {return {text:o.id, value:o.name}})},
+          {text: 'SMS', value: 'SMS', children: Setting.getProviderTypeOptions('SMS').map((o) => {return {text:o.id, value:o.name}})},
+          {text: 'Storage', value: 'Storage', children: Setting.getProviderTypeOptions('Storage').map((o) => {return {text:o.id, value:o.name}})},
+          {text: 'SAML', value: 'SAML', children: Setting.getProviderTypeOptions('SAML').map((o) => {return {text:o.id, value:o.name}})},
+        ],
+        sorter: true,
         render: (text, record, index) => {
           return Provider.getProviderLogoWidget(record);
         }
@@ -155,7 +146,8 @@ class ProviderListPage extends React.Component {
         dataIndex: 'clientId',
         key: 'clientId',
         width: '100px',
-        sorter: (a, b) => a.clientId.localeCompare(b.clientId),
+        sorter: true,
+        ...this.getColumnSearchProps('clientId'),
         render: (text, record, index) => {
           return Setting.getShortText(text);
         }
@@ -172,7 +164,8 @@ class ProviderListPage extends React.Component {
         dataIndex: 'providerUrl',
         key: 'providerUrl',
         width: '150px',
-        sorter: (a, b) => a.providerUrl.localeCompare(b.providerUrl),
+        sorter: true,
+        ...this.getColumnSearchProps('providerUrl'),
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
@@ -206,12 +199,10 @@ class ProviderListPage extends React.Component {
     ];
 
     const paginationProps = {
-      total: this.state.total,
+      total: this.state.pagination.total,
       showQuickJumper: true,
       showSizeChanger: true,
-      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
-      onChange: (page, pageSize) => this.getProviders(page, pageSize),
-      onShowSizeChange: (current, size) => this.getProviders(current, size),
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
     return (
@@ -223,21 +214,40 @@ class ProviderListPage extends React.Component {
                    <Button type="primary" size="small" onClick={this.addProvider.bind(this)}>{i18next.t("general:Add")}</Button>
                  </div>
                )}
-               loading={providers === null}
+               loading={this.state.loading}
+               onChange={this.handleTableChange}
         />
       </div>
     );
   }
 
-  render() {
-    return (
-      <div>
-        {
-          this.renderTable(this.state.providers)
+  fetch = (params = {}) => {
+    let field = params.searchedColumn, value = params.searchText;
+    let sortField = params.sortField, sortOrder = params.sortOrder;
+    if (params.category !== undefined && params.category !== null) {
+      field = "category";
+      value = params.category;
+    } else if (params.type !== undefined && params.type !== null) {
+      field = "type";
+      value = params.type;
+    }
+    this.setState({ loading: true });
+    ProviderBackend.getProviders("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            loading: false,
+            data: res.data,
+            pagination: {
+              ...params.pagination,
+              total: res.data2,
+            },
+            searchText: params.searchText,
+            searchedColumn: params.searchedColumn,
+          });
         }
-      </div>
-    );
-  }
+      });
+  };
 }
 
 export default ProviderListPage;

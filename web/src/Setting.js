@@ -382,6 +382,60 @@ export function getProviderLogo(provider) {
   )
 }
 
+export function getProviderTypeOptions(category) {
+  if (category === "OAuth") {
+    return (
+      [
+        {id: 'Google', name: 'Google'},
+        {id: 'GitHub', name: 'GitHub'},
+        {id: 'QQ', name: 'QQ'},
+        {id: 'WeChat', name: 'WeChat'},
+        {id: 'Facebook', name: 'Facebook'},
+        {id: 'DingTalk', name: 'DingTalk'},
+        {id: 'Weibo', name: 'Weibo'},
+        {id: 'Gitee', name: 'Gitee'},
+        {id: 'LinkedIn', name: 'LinkedIn'},
+        {id: 'WeCom', name: 'WeCom'},
+        {id: 'Lark', name: 'Lark'},
+        {id: 'GitLab', name: 'GitLab'},
+        {id: 'Apple', name: 'Apple'},
+        {id: 'AzureAD', name: 'AzureAD'},
+        {id: 'Slack', name: 'Slack'},
+      ]
+    );
+  } else if (category === "Email") {
+    return (
+      [
+        {id: 'Default', name: 'Default'},
+      ]
+    );
+  } else if (category === "SMS") {
+    return (
+      [
+        {id: 'Aliyun SMS', name: 'Aliyun SMS'},
+        {id: 'Tencent Cloud SMS', name: 'Tencent Cloud SMS'},
+        {id: 'Volc Engine SMS', name: 'Volc Engine SMS'},
+      ]
+    );
+  } else if (category === "Storage") {
+    return (
+      [
+        {id: 'Local File System', name: 'Local File System'},
+        {id: 'AWS S3', name: 'AWS S3'},
+        {id: 'Aliyun OSS', name: 'Aliyun OSS'},
+        {id: 'Tencent Cloud COS', name: 'Tencent Cloud COS'},
+      ]
+    );
+  } else if (category === "SAML") {
+    return ([
+      {id: 'Aliyun IDaaS', name: 'Aliyun IDaaS'},
+      {id: 'Keycloak', name: 'Keycloak'},
+    ]);
+  } else {
+    return [];
+  }
+}
+
 export function renderLogo(application) {
   if (application === null) {
     return null;

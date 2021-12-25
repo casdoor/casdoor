@@ -35,13 +35,17 @@ func (c *ApiController) GetResources() {
 	user := c.Input().Get("user")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
 		c.Data["json"] = object.GetResources(owner, user)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetResourceCount(owner, user)))
-		resources := object.GetPaginationResources(owner, user, paginator.Offset(), limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetResourceCount(owner, user, field, value)))
+		resources := object.GetPaginationResources(owner, user, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		c.ResponseOk(resources, paginator.Nums())
 	}
 }

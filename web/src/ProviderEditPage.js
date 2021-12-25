@@ -64,60 +64,6 @@ class ProviderEditPage extends React.Component {
     });
   }
 
-  getProviderTypeOptions(provider) {
-    if (provider.category === "OAuth") {
-      return (
-        [
-          {id: 'Google', name: 'Google'},
-          {id: 'GitHub', name: 'GitHub'},
-          {id: 'QQ', name: 'QQ'},
-          {id: 'WeChat', name: 'WeChat'},
-          {id: 'Facebook', name: 'Facebook'},
-          {id: 'DingTalk', name: 'DingTalk'},
-          {id: 'Weibo', name: 'Weibo'},
-          {id: 'Gitee', name: 'Gitee'},
-          {id: 'LinkedIn', name: 'LinkedIn'},
-          {id: 'WeCom', name: 'WeCom'},
-          {id: 'Lark', name: 'Lark'},
-          {id: 'GitLab', name: 'GitLab'},
-          {id: 'Apple', name: 'Apple'},
-          {id: 'AzureAD', name: 'AzureAD'},
-          {id: 'Slack', name: 'Slack'},
-        ]
-      );
-    } else if (provider.category === "Email") {
-      return (
-        [
-          {id: 'Default', name: 'Default'},
-        ]
-      );
-    } else if (provider.category === "SMS") {
-      return (
-        [
-          {id: 'Aliyun SMS', name: 'Aliyun SMS'},
-          {id: 'Tencent Cloud SMS', name: 'Tencent Cloud SMS'},
-          {id: 'Volc Engine SMS', name: 'Volc Engine SMS'},
-        ]
-      );
-    } else if (provider.category === "Storage") {
-      return (
-        [
-          {id: 'Local File System', name: 'Local File System'},
-          {id: 'AWS S3', name: 'AWS S3'},
-          {id: 'Aliyun OSS', name: 'Aliyun OSS'},
-          {id: 'Tencent Cloud COS', name: 'Tencent Cloud COS'},
-        ]
-      );
-    } else if (provider.category === "SAML") {
-      return ([
-          {id: 'Aliyun IDaaS', name: 'Aliyun IDaaS'},
-          {id: 'Keycloak', name: 'Keycloak'},
-      ]);
-    } else {
-      return [];
-    }
-  }
-
   getClientIdLabel() {
     switch (this.state.provider.category) {
       case "Email":
@@ -252,7 +198,7 @@ class ProviderEditPage extends React.Component {
               }
             })}>
               {
-                this.getProviderTypeOptions(this.state.provider).map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
+                Setting.getProviderTypeOptions(this.state.provider.category).map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
               }
             </Select>
           </Col>

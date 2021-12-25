@@ -53,8 +53,12 @@ type TokenWrapper struct {
 	Scope       string `json:"scope"`
 }
 
-func GetTokenCount(owner string) int {
-	count, err := adapter.Engine.Count(&Token{Owner: owner})
+func GetTokenCount(owner, field, value string) int {
+	session := adapter.Engine.Where("owner=?", owner)
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&Token{})
 	if err != nil {
 		panic(err)
 	}
@@ -72,9 +76,10 @@ func GetTokens(owner string) []*Token {
 	return tokens
 }
 
-func GetPaginationTokens(owner string, offset, limit int) []*Token {
+func GetPaginationTokens(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Token {
 	tokens := []*Token{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&tokens, &Token{Owner: owner})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&tokens)
 	if err != nil {
 		panic(err)
 	}

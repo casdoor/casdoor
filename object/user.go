@@ -86,8 +86,12 @@ type User struct {
 	Properties map[string]string `json:"properties"`
 }
 
-func GetGlobalUserCount() int {
-	count, err := adapter.Engine.Count(&User{})
+func GetGlobalUserCount(field, value string) int {
+	session := adapter.Engine.Where("1=1")
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&User{})
 	if err != nil {
 		panic(err)
 	}
@@ -105,9 +109,10 @@ func GetGlobalUsers() []*User {
 	return users
 }
 
-func GetPaginationGlobalUsers(offset, limit int) []*User {
+func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOrder string) []*User {
 	users := []*User{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&users)
+	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&users)
 	if err != nil {
 		panic(err)
 	}
@@ -115,8 +120,12 @@ func GetPaginationGlobalUsers(offset, limit int) []*User {
 	return users
 }
 
-func GetUserCount(owner string) int {
-	count, err := adapter.Engine.Count(&User{Owner: owner})
+func GetUserCount(owner, field, value string) int {
+	session := adapter.Engine.Where("owner=?", owner)
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&User{})
 	if err != nil {
 		panic(err)
 	}
@@ -153,9 +162,10 @@ func GetSortedUsers(owner string, sorter string, limit int) []*User {
 	return users
 }
 
-func GetPaginationUsers(owner string, offset, limit int) []*User {
+func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string) []*User {
 	users := []*User{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&users, &User{Owner: owner})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&users)
 	if err != nil {
 		panic(err)
 	}
