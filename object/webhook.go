@@ -21,17 +21,23 @@ import (
 	"xorm.io/core"
 )
 
+type Header struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
 type Webhook struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Url         string   `xorm:"varchar(100)" json:"url"`
-	Method      string   `xorm:"varchar(100)" json:"method"`
-	ContentType string   `xorm:"varchar(100)" json:"contentType"`
-	Events      []string `xorm:"varchar(100)" json:"events"`
-
 	Organization string `xorm:"varchar(100) index" json:"organization"`
+
+	Url         string    `xorm:"varchar(100)" json:"url"`
+	Method      string    `xorm:"varchar(100)" json:"method"`
+	ContentType string    `xorm:"varchar(100)" json:"contentType"`
+	Headers     []*Header `xorm:"mediumtext" json:"headers"`
+	Events      []string  `xorm:"varchar(100)" json:"events"`
 }
 
 func GetWebhookCount(owner, field, value string) int {

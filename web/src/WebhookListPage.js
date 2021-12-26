@@ -28,11 +28,12 @@ class WebhookListPage extends BaseListPage {
       owner: "admin", // this.props.account.webhookname,
       name: `webhook_${randomName}`,
       createdTime: moment().format(),
+      organization: "built-in",
       url: "https://example.com/callback",
       method: "POST",
       contentType: "application/json",
+      headers: [],
       events: ["signup", "login", "logout", "update-user"],
-      organization: "built-in",
     }
   }
 

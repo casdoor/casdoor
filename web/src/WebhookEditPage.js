@@ -19,6 +19,7 @@ import * as WebhookBackend from "./backend/WebhookBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
+import WebhookHeaderTable from "./WebhookHeaderTable";
 
 const { Option } = Select;
 
@@ -144,6 +145,18 @@ class WebhookEditPage extends React.Component {
                 ].map((contentType, index) => <Option key={index} value={contentType.id}>{contentType.name}</Option>)
               }
             </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("webhook:Headers"), i18next.t("webhook:Headers - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <WebhookHeaderTable
+              title={i18next.t("webhook:Headers")}
+              table={this.state.webhook.headers}
+              onUpdateTable={(value) => { this.updateWebhookField('headers', value)}}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

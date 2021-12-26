@@ -16,11 +16,11 @@ package object
 
 import (
 	"fmt"
-	"github.com/casbin/casdoor/util"
 	"runtime"
 
 	"github.com/astaxie/beego"
 	"github.com/casbin/casdoor/conf"
+	"github.com/casbin/casdoor/util"
 	//_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql" // db = mysql
 	//_ "github.com/lib/pq"                // db = postgres

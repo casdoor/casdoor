@@ -33,6 +33,10 @@ func sendWebhook(webhook *Webhook, record *Record) error {
 
 	req.Header.Set("Content-Type", webhook.ContentType)
 
+	for _, header := range webhook.Headers {
+		req.Header.Set(header.Name, header.Value)
+	}
+
 	_, err = client.Do(req)
 	return err
 }
