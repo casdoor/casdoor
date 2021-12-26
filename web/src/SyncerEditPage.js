@@ -250,7 +250,7 @@ class SyncerEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("syncer:Is enabled"), i18next.t("syncer:Is enabled - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.syncer.isEnabled} onChange={checked => {

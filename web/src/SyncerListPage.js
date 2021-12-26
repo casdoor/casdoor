@@ -192,7 +192,7 @@ class SyncerListPage extends BaseListPage {
         ...this.getColumnSearchProps('syncInterval'),
       },
       {
-        title: i18next.t("syncer:Is enabled"),
+        title: i18next.t("general:Is enabled"),
         dataIndex: 'isEnabled',
         key: 'isEnabled',
         width: '120px',

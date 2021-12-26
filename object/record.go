@@ -146,6 +146,10 @@ func GetRecordsByField(record *Record) []*Record {
 func SendWebhooks(record *Record) error {
 	webhooks := getWebhooksByOrganization(record.Organization)
 	for _, webhook := range webhooks {
+		if !webhook.IsEnabled {
+			continue
+		}
+
 		matched := false
 		for _, event := range webhook.Events {
 			if record.Action == event {

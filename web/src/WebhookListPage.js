@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table} from 'antd';
+import {Button, Popconfirm, Switch, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as WebhookBackend from "./backend/WebhookBackend";
@@ -34,6 +34,7 @@ class WebhookListPage extends BaseListPage {
       contentType: "application/json",
       headers: [],
       events: ["signup", "login", "logout", "update-user"],
+      isEnabled: true,
     }
   }
 
@@ -154,6 +155,18 @@ class WebhookListPage extends BaseListPage {
         ...this.getColumnSearchProps('events'),
         render: (text, record, index) => {
           return Setting.getTags(text);
+        }
+      },
+      {
+        title: i18next.t("general:Is enabled"),
+        dataIndex: 'isEnabled',
+        key: 'isEnabled',
+        width: '120px',
+        sorter: true,
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          )
         }
       },
       {

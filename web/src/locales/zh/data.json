@@ -87,6 +87,8 @@
     "Home - Tooltip": "应用的首页",
     "ID": "ID",
     "ID - Tooltip": "唯一的随机字符串",
+    "Is enabled": "已启用",
+    "Is enabled - Tooltip": "是否启用",
     "LDAPs": "LDAPs",
     "LDAPs - Tooltip": "LDAPs",
     "Logo - Tooltip": "应用程序向外展示的图标",
@@ -335,8 +337,6 @@
     "Database type": "数据库类型",
     "Database type - Tooltip": "数据库类型",
     "Edit Syncer": "修改同步器",
-    "Is enabled": "已启用",
-    "Is enabled - Tooltip": "是否启用",
     "Is hashed": "是否参与哈希计算",
     "Sync interval": "同步间隔",
     "Sync interval - Tooltip": "单位为分钟",
@@ -417,7 +417,13 @@
     "Edit Webhook": "修改Webhook",
     "Events": "事件",
     "Events - Tooltip": "事件",
+    "Headers": "协议头",
+    "Headers - Tooltip": "HTTP协议头（键值对）",
+    "Method": "方法",
+    "Method - Tooltip": "HTTP方法",
+    "Name": "名称",
     "URL": "URL",
-    "URL - Tooltip": "URL"
+    "URL - Tooltip": "URL",
+    "Value": "值"
   }
 }

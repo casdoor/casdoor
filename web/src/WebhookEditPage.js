@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select} from 'antd';
+import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
 import {LinkOutlined} from "@ant-design/icons";
 import * as WebhookBackend from "./backend/WebhookBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -179,6 +179,16 @@ class WebhookEditPage extends React.Component {
                 )
               }
             </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.webhook.isEnabled} onChange={checked => {
+              this.updateWebhookField('isEnabled', checked);
+            }} />
           </Col>
         </Row>
       </Card>

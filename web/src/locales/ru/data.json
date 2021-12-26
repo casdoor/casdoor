@@ -87,6 +87,8 @@
     "Home - Tooltip": "Application homepage",
     "ID": "ID",
     "ID - Tooltip": "random string",
+    "Is enabled": "Is enabled",
+    "Is enabled - Tooltip": "Is enabled - Tooltip",
     "LDAPs": "LDAPs",
     "LDAPs - Tooltip": "LDAPs - Tooltip",
     "Logo - Tooltip": "App's image tag",
@@ -335,8 +337,6 @@
     "Database type": "Database type",
     "Database type - Tooltip": "Database type - Tooltip",
     "Edit Syncer": "Edit Syncer",
-    "Is enabled": "Is enabled",
-    "Is enabled - Tooltip": "Is enabled - Tooltip",
     "Is hashed": "Is hashed",
     "Sync interval": "Sync interval",
     "Sync interval - Tooltip": "Sync interval - Tooltip",
@@ -417,7 +417,13 @@
     "Edit Webhook": "Edit Webhook",
     "Events": "Events",
     "Events - Tooltip": "Events - Tooltip",
+    "Headers": "Headers",
+    "Headers - Tooltip": "Headers - Tooltip",
+    "Method": "Method",
+    "Method - Tooltip": "Method - Tooltip",
+    "Name": "Name",
     "URL": "URL",
-    "URL - Tooltip": "URL - Tooltip"
+    "URL - Tooltip": "URL - Tooltip",
+    "Value": "Value"
   }
 }

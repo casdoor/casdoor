@@ -38,6 +38,7 @@ type Webhook struct {
 	ContentType string    `xorm:"varchar(100)" json:"contentType"`
 	Headers     []*Header `xorm:"mediumtext" json:"headers"`
 	Events      []string  `xorm:"varchar(100)" json:"events"`
+	IsEnabled   bool      `json:"isEnabled"`
 }
 
 func GetWebhookCount(owner, field, value string) int {
