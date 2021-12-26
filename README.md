@@ -34,6 +34,9 @@
   <a href="https://github.com/casbin/casdoor/network">
     <img alt="GitHub forks" src="https://img.shields.io/github/forks/casbin/casdoor?style=flat-square">
   </a>
+  <a href="https://crowdin.com/project/casdoor-site">
+    <img alt="Crowdin" src="https://badges.crowdin.net/casdoor-site/localized.svg">
+  </a>
 </p>
 
 ## Online demo
