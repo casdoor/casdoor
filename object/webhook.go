@@ -27,6 +27,7 @@ type Webhook struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	Url         string   `xorm:"varchar(100)" json:"url"`
+	Method      string   `xorm:"varchar(100)" json:"method"`
 	ContentType string   `xorm:"varchar(100)" json:"contentType"`
 	Events      []string `xorm:"varchar(100)" json:"events"`
 

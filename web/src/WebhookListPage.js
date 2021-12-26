@@ -20,10 +20,8 @@ import * as Setting from "./Setting";
 import * as WebhookBackend from "./backend/WebhookBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import * as ProviderBackend from "./backend/ProviderBackend";
 
 class WebhookListPage extends BaseListPage {
-
   newWebhook() {
     const randomName = Setting.getRandomName();
     return {
@@ -31,6 +29,7 @@ class WebhookListPage extends BaseListPage {
       name: `webhook_${randomName}`,
       createdTime: moment().format(),
       url: "https://example.com/callback",
+      method: "POST",
       contentType: "application/json",
       events: ["signup", "login", "logout", "update-user"],
       organization: "built-in",
@@ -126,10 +125,18 @@ class WebhookListPage extends BaseListPage {
         }
       },
       {
+        title: i18next.t("webhook:Method"),
+        dataIndex: 'method',
+        key: 'method',
+        width: '120px',
+        sorter: true,
+        ...this.getColumnSearchProps('method'),
+      },
+      {
         title: i18next.t("webhook:Content type"),
         dataIndex: 'contentType',
         key: 'contentType',
-        width: '150px',
+        width: '200px',
         sorter: true,
         filterMultiple: false,
         filters: [
