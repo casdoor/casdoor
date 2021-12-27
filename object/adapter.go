@@ -75,24 +75,7 @@ func NewAdapter(driverName string, dataSourceName string, dbName string) *Adapte
 	return a
 }
 
-func (a *Adapter) createDatabase() error {
-	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName)
-	if err != nil {
-		return err
-	}
-	defer engine.Close()
-
-	_, err = engine.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default charset utf8 COLLATE utf8_general_ci", a.dbName))
-	return err
-}
-
 func (a *Adapter) open() {
-	if a.driverName != "postgres" && a.driverName != "mssql" {
-		if err := a.createDatabase(); err != nil {
-			panic(err)
-		}
-	}
-
 	dataSourceName := a.dataSourceName + a.dbName
 	if a.driverName != "mysql" {
 		dataSourceName = a.dataSourceName
