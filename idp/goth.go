@@ -21,6 +21,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/casbin/casdoor/util"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/amazon"
 	"github.com/markbates/goth/providers/apple"
@@ -244,11 +245,27 @@ func getUser(gothUser goth.User) *UserInfo {
 	//Some idp return an empty Name
 	//so construct the Name with firstname and lastname or nickname
 	if user.Username == "" {
-		user.Username = fmt.Sprintf("%v%v", gothUser.FirstName, gothUser.LastName)
+		if gothUser.FirstName != "" && gothUser.LastName != "" {
+			user.Username = getName(gothUser.FirstName, gothUser.LastName)
+		} else {
+			user.Username = gothUser.NickName
+		}
 	}
-	if user.Username == "" {
-		user.Username = gothUser.NickName
+	if user.DisplayName == "" {
+		if gothUser.FirstName != "" && gothUser.LastName != "" {
+			user.DisplayName = getName(gothUser.FirstName, gothUser.LastName)
+		} else {
+			user.DisplayName = user.Username
+		}
 	}
 
 	return &user
+}
+
+func getName(firstName, lastName string) string {
+	if util.IsChinese(firstName) || util.IsChinese(lastName) {
+		return fmt.Sprintf("%s%s", lastName, firstName)
+	} else {
+		return fmt.Sprintf("%s %s", firstName, lastName)
+	}
 }

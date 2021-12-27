@@ -23,6 +23,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"github.com/google/uuid"
 )
@@ -179,4 +180,15 @@ func SnakeString(s string) string {
 		data = append(data, d)
 	}
 	return strings.ToLower(string(data[:]))
+}
+
+func IsChinese(str string) bool {
+	var flag bool
+	for _, v := range str {
+		if unicode.Is(unicode.Han, v) {
+			flag = true
+			break
+		}
+	}
+	return flag
 }
