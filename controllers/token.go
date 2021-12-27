@@ -35,13 +35,17 @@ func (c *ApiController) GetTokens() {
 	owner := c.Input().Get("owner")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
 		c.Data["json"] = object.GetTokens(owner)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetTokenCount(owner)))
-		tokens := object.GetPaginationTokens(owner, paginator.Offset(), limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetTokenCount(owner, field, value)))
+		tokens := object.GetPaginationTokens(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		c.ResponseOk(tokens, paginator.Nums())
 	}
 }

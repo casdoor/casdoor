@@ -21,20 +21,32 @@ import (
 	"xorm.io/core"
 )
 
+type Header struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
 type Webhook struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Url         string   `xorm:"varchar(100)" json:"url"`
-	ContentType string   `xorm:"varchar(100)" json:"contentType"`
-	Events      []string `xorm:"varchar(100)" json:"events"`
-
 	Organization string `xorm:"varchar(100) index" json:"organization"`
+
+	Url         string    `xorm:"varchar(100)" json:"url"`
+	Method      string    `xorm:"varchar(100)" json:"method"`
+	ContentType string    `xorm:"varchar(100)" json:"contentType"`
+	Headers     []*Header `xorm:"mediumtext" json:"headers"`
+	Events      []string  `xorm:"varchar(100)" json:"events"`
+	IsEnabled   bool      `json:"isEnabled"`
 }
 
-func GetWebhookCount(owner string) int {
-	count, err := adapter.Engine.Count(&Webhook{Owner: owner})
+func GetWebhookCount(owner, field, value string) int {
+	session := adapter.Engine.Where("owner=?", owner)
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&Webhook{})
 	if err != nil {
 		panic(err)
 	}
@@ -52,9 +64,10 @@ func GetWebhooks(owner string) []*Webhook {
 	return webhooks
 }
 
-func GetPaginationWebhooks(owner string, offset, limit int) []*Webhook {
+func GetPaginationWebhooks(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Webhook {
 	webhooks := []*Webhook{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&webhooks, &Webhook{Owner: owner})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&webhooks)
 	if err != nil {
 		panic(err)
 	}

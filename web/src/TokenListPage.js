@@ -19,32 +19,10 @@ import moment from "moment";
 import * as Setting from "./Setting";
 import * as TokenBackend from "./backend/TokenBackend";
 import i18next from "i18next";
+import * as ResourceBackend from "./backend/ResourceBackend";
+import BaseListPage from "./BaseListPage";
 
-class TokenListPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      classes: props,
-      tokens: null,
-      total: 0,
-    };
-  }
-
-  UNSAFE_componentWillMount() {
-    this.getTokens(1, 10);
-  }
-
-  getTokens(page, pageSize) {
-    TokenBackend.getTokens("admin", page, pageSize)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            tokens: res.data,
-            total: res.data2
-          });
-        }
-      });
-  }
+class TokenListPage extends BaseListPage {
 
   newToken() {
     const randomName = Setting.getRandomName();
@@ -67,10 +45,6 @@ class TokenListPage extends React.Component {
     TokenBackend.addToken(newToken)
       .then((res) => {
           Setting.showMessage("success", `Token added successfully`);
-          this.setState({
-            tokens: Setting.prependRow(this.state.tokens, newToken),
-            total: this.state.total + 1
-          });
           this.props.history.push(`/tokens/${newToken.name}`);
         }
       )
@@ -80,12 +54,12 @@ class TokenListPage extends React.Component {
   }
 
   deleteToken(i) {
-    TokenBackend.deleteToken(this.state.tokens[i])
+    TokenBackend.deleteToken(this.state.data[i])
       .then((res) => {
           Setting.showMessage("success", `Token deleted successfully`);
           this.setState({
-            tokens: Setting.deleteRow(this.state.tokens, i),
-            total: this.state.total - 1
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
           });
         }
       )
@@ -102,7 +76,8 @@ class TokenListPage extends React.Component {
         key: 'name',
         width: (Setting.isMobile()) ? "100px" : "300px",
         fixed: 'left',
-        sorter: (a, b) => a.name.localeCompare(b.name),
+        sorter: true,
+        ...this.getColumnSearchProps('name'),
         render: (text, record, index) => {
           return (
             <Link to={`/tokens/${text}`}>
@@ -116,7 +91,7 @@ class TokenListPage extends React.Component {
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
-        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
+        sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         }
@@ -126,7 +101,8 @@ class TokenListPage extends React.Component {
         dataIndex: 'application',
         key: 'application',
         width: '120px',
-        sorter: (a, b) => a.application.localeCompare(b.application),
+        sorter: true,
+        ...this.getColumnSearchProps('application'),
         render: (text, record, index) => {
           return (
             <Link to={`/applications/${text}`}>
@@ -140,7 +116,8 @@ class TokenListPage extends React.Component {
         dataIndex: 'organization',
         key: 'organization',
         width: '120px',
-        sorter: (a, b) => a.organization.localeCompare(b.organization),
+        sorter: true,
+        ...this.getColumnSearchProps('organization'),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -154,7 +131,8 @@ class TokenListPage extends React.Component {
         dataIndex: 'user',
         key: 'user',
         width: '120px',
-        sorter: (a, b) => a.user.localeCompare(b.user),
+        sorter: true,
+        ...this.getColumnSearchProps('user'),
         render: (text, record, index) => {
           return (
             <Link to={`/users/${record.organization}/${text}`}>
@@ -168,7 +146,8 @@ class TokenListPage extends React.Component {
         dataIndex: 'code',
         key: 'code',
         // width: '150px',
-        sorter: (a, b) => a.code.localeCompare(b.code),
+        sorter: true,
+        ...this.getColumnSearchProps('code'),
         render: (text, record, index) => {
           return Setting.getClickable(text);
         }
@@ -178,8 +157,9 @@ class TokenListPage extends React.Component {
         dataIndex: 'accessToken',
         key: 'accessToken',
         // width: '150px',
-        sorter: (a, b) => a.accessToken.localeCompare(b.accessToken),
+        sorter: true,
         ellipsis: true,
+        ...this.getColumnSearchProps('accessToken'),
         render: (text, record, index) => {
           return Setting.getClickable(text);
         }
@@ -189,14 +169,16 @@ class TokenListPage extends React.Component {
         dataIndex: 'expiresIn',
         key: 'expiresIn',
         width: '120px',
-        sorter: (a, b) => a.expiresIn - b.expiresIn,
+        sorter: true,
+        ...this.getColumnSearchProps('expiresIn'),
       },
       {
         title: i18next.t("token:Scope"),
         dataIndex: 'scope',
         key: 'scope',
         width: '100px',
-        sorter: (a, b) => a.scope.localeCompare(b.scope),
+        sorter: true,
+        ...this.getColumnSearchProps('scope'),
       },
       // {
       //   title: i18next.t("token:Token type"),
@@ -228,12 +210,10 @@ class TokenListPage extends React.Component {
     ];
 
     const paginationProps = {
-      total: this.state.total,
+      total: this.state.pagination.total,
       showQuickJumper: true,
       showSizeChanger: true,
-      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
-      onChange: (page, pageSize) => this.getTokens(page, pageSize),
-      onShowSizeChange: (current, size) => this.getTokens(current, size),
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
     return (
@@ -245,21 +225,33 @@ class TokenListPage extends React.Component {
                    <Button type="primary" size="small" onClick={this.addToken.bind(this)}>{i18next.t("general:Add")}</Button>
                  </div>
                )}
-               loading={tokens === null}
+               loading={this.state.loading}
+               onChange={this.handleTableChange}
         />
       </div>
     );
   }
 
-  render() {
-    return (
-      <div>
-        {
-          this.renderTable(this.state.tokens)
+  fetch = (params = {}) => {
+    let field = params.searchedColumn, value = params.searchText;
+    let sortField = params.sortField, sortOrder = params.sortOrder;
+    this.setState({ loading: true });
+    TokenBackend.getTokens("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            loading: false,
+            data: res.data,
+            pagination: {
+              ...params.pagination,
+              total: res.data2,
+            },
+            searchText: params.searchText,
+            searchedColumn: params.searchedColumn,
+          });
         }
-      </div>
-    );
-  }
+      });
+  };
 }
 
 export default TokenListPage;

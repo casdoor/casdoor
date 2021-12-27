@@ -206,7 +206,15 @@ func (c *ApiController) Login() {
 			}
 		} else if provider.Category == "OAuth" {
 			// OAuth
-			idProvider := idp.GetIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, form.RedirectUri)
+
+			clientId := provider.ClientId
+			clientSecret := provider.ClientSecret
+			if provider.Type == "WeChat" && strings.Contains(c.Ctx.Request.UserAgent(), "MicroMessenger") {
+				clientId = provider.ClientId2
+				clientSecret = provider.ClientSecret2
+			}
+
+			idProvider := idp.GetIdProvider(provider.Type, clientId, clientSecret, form.RedirectUri)
 			if idProvider == nil {
 				c.ResponseError(fmt.Sprintf("The provider type: %s is not supported", provider.Type))
 				return

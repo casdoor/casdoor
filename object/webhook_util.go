@@ -26,12 +26,16 @@ func sendWebhook(webhook *Webhook, record *Record) error {
 
 	body := strings.NewReader(util.StructToJson(record))
 
-	req, err := http.NewRequest("POST", webhook.Url, body)
+	req, err := http.NewRequest(webhook.Method, webhook.Url, body)
 	if err != nil {
 		return err
 	}
 
 	req.Header.Set("Content-Type", webhook.ContentType)
+
+	for _, header := range webhook.Headers {
+		req.Header.Set(header.Name, header.Value)
+	}
 
 	_, err = client.Do(req)
 	return err

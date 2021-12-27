@@ -23,7 +23,10 @@ func (syncer *Syncer) syncUsers() {
 	oUsers, oUserMap := syncer.getOriginalUserMap()
 	fmt.Printf("Users: %d, oUsers: %d\n", len(users), len(oUsers))
 
-	_, affiliationMap := syncer.getAffiliationMap()
+	var affiliationMap map[int]string
+	if syncer.AffiliationTable != "" {
+		_, affiliationMap = syncer.getAffiliationMap()
+	}
 
 	newUsers := []*User{}
 	for _, oUser := range oUsers {
@@ -74,7 +77,9 @@ func (syncer *Syncer) syncUsers() {
 	for _, user := range users {
 		id := user.Id
 		if _, ok := oUserMap[id]; !ok {
-			panic(fmt.Sprintf("New original user: cannot create now, user = %v", user))
+			newOUser := syncer.createOriginalUserFromUser(user)
+			syncer.addUser(newOUser)
+			fmt.Printf("New oUser: %v\n", newOUser)
 		}
 	}
 }

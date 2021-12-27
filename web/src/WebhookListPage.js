@@ -14,48 +14,27 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table} from 'antd';
+import {Button, Popconfirm, Switch, Table} from 'antd';
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as WebhookBackend from "./backend/WebhookBackend";
 import i18next from "i18next";
+import BaseListPage from "./BaseListPage";
 
-class WebhookListPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      classes: props,
-      webhooks: null,
-      total: 0,
-    };
-  }
-
-  UNSAFE_componentWillMount() {
-    this.getWebhooks(1, 10);
-  }
-
-  getWebhooks(page, pageSize) {
-    WebhookBackend.getWebhooks("admin", page, pageSize)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            webhooks: res.data,
-            total: res.data2
-          });
-        }
-      });
-  }
-
+class WebhookListPage extends BaseListPage {
   newWebhook() {
     const randomName = Setting.getRandomName();
     return {
       owner: "admin", // this.props.account.webhookname,
       name: `webhook_${randomName}`,
       createdTime: moment().format(),
-      url: "https://example.com/callback",
-      contentType: "application/json",
-      events: ["signup", "login", "logout", "update-user"],
       organization: "built-in",
+      url: "https://example.com/callback",
+      method: "POST",
+      contentType: "application/json",
+      headers: [],
+      events: ["signup", "login", "logout", "update-user"],
+      isEnabled: true,
     }
   }
 
@@ -64,10 +43,6 @@ class WebhookListPage extends React.Component {
     WebhookBackend.addWebhook(newWebhook)
       .then((res) => {
           Setting.showMessage("success", `Webhook added successfully`);
-          this.setState({
-            webhooks: Setting.prependRow(this.state.webhooks, newWebhook),
-            total: this.state.total + 1
-          });
           this.props.history.push(`/webhooks/${newWebhook.name}`);
         }
       )
@@ -77,12 +52,12 @@ class WebhookListPage extends React.Component {
   }
 
   deleteWebhook(i) {
-    WebhookBackend.deleteWebhook(this.state.webhooks[i])
+    WebhookBackend.deleteWebhook(this.state.data[i])
       .then((res) => {
           Setting.showMessage("success", `Webhook deleted successfully`);
           this.setState({
-            webhooks: Setting.deleteRow(this.state.webhooks, i),
-            total: this.state.total - 1
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
           });
         }
       )
@@ -98,7 +73,8 @@ class WebhookListPage extends React.Component {
         dataIndex: 'organization',
         key: 'organization',
         width: '80px',
-        sorter: (a, b) => a.organization.localeCompare(b.organization),
+        sorter: true,
+        ...this.getColumnSearchProps('organization'),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -113,7 +89,8 @@ class WebhookListPage extends React.Component {
         key: 'name',
         width: '150px',
         fixed: 'left',
-        sorter: (a, b) => a.name.localeCompare(b.name),
+        sorter: true,
+        ...this.getColumnSearchProps('name'),
         render: (text, record, index) => {
           return (
             <Link to={`/webhooks/${text}`}>
@@ -127,7 +104,7 @@ class WebhookListPage extends React.Component {
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '180px',
-        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
+        sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         }
@@ -137,7 +114,8 @@ class WebhookListPage extends React.Component {
         dataIndex: 'url',
         key: 'url',
         width: '300px',
-        sorter: (a, b) => a.url.localeCompare(b.url),
+        sorter: true,
+        ...this.getColumnSearchProps('url'),
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
@@ -149,20 +127,46 @@ class WebhookListPage extends React.Component {
         }
       },
       {
+        title: i18next.t("webhook:Method"),
+        dataIndex: 'method',
+        key: 'method',
+        width: '120px',
+        sorter: true,
+        ...this.getColumnSearchProps('method'),
+      },
+      {
         title: i18next.t("webhook:Content type"),
         dataIndex: 'contentType',
         key: 'contentType',
-        width: '150px',
-        sorter: (a, b) => a.contentType.localeCompare(b.contentType),
+        width: '200px',
+        sorter: true,
+        filterMultiple: false,
+        filters: [
+          {text: 'application/json', value: 'application/json'},
+          {text: 'application/x-www-form-urlencoded', value: 'application/x-www-form-urlencoded'},
+        ]
       },
       {
         title: i18next.t("webhook:Events"),
         dataIndex: 'events',
         key: 'events',
         // width: '100px',
-        sorter: (a, b) => a.events.localeCompare(b.events),
+        sorter: true,
+        ...this.getColumnSearchProps('events'),
         render: (text, record, index) => {
           return Setting.getTags(text);
+        }
+      },
+      {
+        title: i18next.t("general:Is enabled"),
+        dataIndex: 'isEnabled',
+        key: 'isEnabled',
+        width: '120px',
+        sorter: true,
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          )
         }
       },
       {
@@ -188,12 +192,10 @@ class WebhookListPage extends React.Component {
     ];
 
     const paginationProps = {
-      total: this.state.total,
+      total: this.state.pagination.total,
       showQuickJumper: true,
       showSizeChanger: true,
-      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
-      onChange: (page, pageSize) => this.getWebhooks(page, pageSize),
-      onShowSizeChange: (current, size) => this.getWebhooks(current, size),
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
     return (
@@ -205,21 +207,37 @@ class WebhookListPage extends React.Component {
                    <Button type="primary" size="small" onClick={this.addWebhook.bind(this)}>{i18next.t("general:Add")}</Button>
                  </div>
                )}
-               loading={webhooks === null}
+               loading={this.state.loading}
+               onChange={this.handleTableChange}
         />
       </div>
     );
   }
 
-  render() {
-    return (
-      <div>
-        {
-          this.renderTable(this.state.webhooks)
+  fetch = (params = {}) => {
+    let field = params.searchedColumn, value = params.searchText;
+    let sortField = params.sortField, sortOrder = params.sortOrder;
+    if (params.contentType !== undefined && params.contentType !== null) {
+      field = "contentType";
+      value = params.contentType;
+    }
+    this.setState({ loading: true });
+    WebhookBackend.getWebhooks("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            loading: false,
+            data: res.data,
+            pagination: {
+              ...params.pagination,
+              total: res.data2,
+            },
+            searchText: params.searchText,
+            searchedColumn: params.searchedColumn,
+          });
         }
-      </div>
-    );
-  }
+      });
+  };
 }
 
 export default WebhookListPage;

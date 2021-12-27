@@ -19,44 +19,24 @@ import moment from "moment";
 import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
+import BaseListPage from "./BaseListPage";
+import * as ProviderBackend from "./backend/ProviderBackend";
 
-class UserListPage extends React.Component {
+class UserListPage extends BaseListPage {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
-      users: null,
       organizationName: props.match.params.organizationName,
-      total: 0,
+      data: [],
+      pagination: {
+        current: 1,
+        pageSize: 10,
+      },
+      loading: false,
+      searchText: '',
+      searchedColumn: '',
     };
-  }
-
-  UNSAFE_componentWillMount() {
-    this.getUsers(1, 10);
-  }
-
-  getUsers(page, pageSize) {
-    if (this.state.organizationName === undefined) {
-      UserBackend.getGlobalUsers(page, pageSize)
-          .then((res) => {
-            if (res.status === "ok") {
-              this.setState({
-                users: res.data,
-                total: res.data2
-              });
-            }
-          });
-    } else {
-      UserBackend.getUsers(this.state.organizationName, page, pageSize)
-          .then((res) => {
-            if (res.status === "ok") {
-              this.setState({
-                users: res.data,
-                total: res.data2
-              });
-            }
-          });
-    }
   }
 
   newUser() {
@@ -70,8 +50,8 @@ class UserListPage extends React.Component {
       passwordSalt: "",
       displayName: `New User - ${randomName}`,
       avatar: "https://casbin.org/img/casbin.svg",
-      email: "user@example.com",
-      phone: "12345678",
+      email: `${randomName}@example.com`,
+      phone: Setting.getRandomNumber(),
       address: [],
       affiliation: "Example Inc.",
       tag: "staff",
@@ -90,10 +70,6 @@ class UserListPage extends React.Component {
     UserBackend.addUser(newUser)
       .then((res) => {
           Setting.showMessage("success", `User added successfully`);
-          this.setState({
-            users: Setting.prependRow(this.state.users, newUser),
-            total: this.state.total + 1
-          });
           this.props.history.push(`/users/${newUser.owner}/${newUser.name}`);
         }
       )
@@ -103,12 +79,12 @@ class UserListPage extends React.Component {
   }
 
   deleteUser(i) {
-    UserBackend.deleteUser(this.state.users[i])
+    UserBackend.deleteUser(this.state.data[i])
       .then((res) => {
           Setting.showMessage("success", `User deleted successfully`);
           this.setState({
-            users: Setting.deleteRow(this.state.users, i),
-            total: this.state.total - 1
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
           });
         }
       )
@@ -132,7 +108,8 @@ class UserListPage extends React.Component {
         key: 'owner',
         width: (Setting.isMobile()) ? "100px" : "120px",
         fixed: 'left',
-        sorter: (a, b) => a.owner.localeCompare(b.owner),
+        sorter: true,
+        ...this.getColumnSearchProps('owner'),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -147,7 +124,8 @@ class UserListPage extends React.Component {
         key: 'signupApplication',
         width: (Setting.isMobile()) ? "100px" : "120px",
         fixed: 'left',
-        sorter: (a, b) => a.owner.localeCompare(b.owner),
+        sorter: true,
+        ...this.getColumnSearchProps('signupApplication'),
         render: (text, record, index) => {
           return (
             <Link to={`/applications/${text}`}>
@@ -162,7 +140,8 @@ class UserListPage extends React.Component {
         key: 'name',
         width: (Setting.isMobile()) ? "80px" : "100px",
         fixed: 'left',
-        sorter: (a, b) => a.name.localeCompare(b.name),
+        sorter: true,
+        ...this.getColumnSearchProps('name'),
         render: (text, record, index) => {
           return (
             <Link to={`/users/${record.owner}/${text}`}>
@@ -176,7 +155,7 @@ class UserListPage extends React.Component {
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
-        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
+        sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         }
@@ -186,7 +165,8 @@ class UserListPage extends React.Component {
         dataIndex: 'displayName',
         key: 'displayName',
         width: '100px',
-        sorter: (a, b) => a.displayName.localeCompare(b.displayName),
+        sorter: true,
+        ...this.getColumnSearchProps('displayName'),
       },
       {
         title: i18next.t("general:Avatar"),
@@ -206,7 +186,8 @@ class UserListPage extends React.Component {
         dataIndex: 'email',
         key: 'email',
         width: '160px',
-        sorter: (a, b) => a.email.localeCompare(b.email),
+        sorter: true,
+        ...this.getColumnSearchProps('email'),
         render: (text, record, index) => {
           return (
             <a href={`mailto:${text}`}>
@@ -220,7 +201,8 @@ class UserListPage extends React.Component {
         dataIndex: 'phone',
         key: 'phone',
         width: '120px',
-        sorter: (a, b) => a.phone.localeCompare(b.phone),
+        sorter: true,
+        ...this.getColumnSearchProps('phone'),
       },
       // {
       //   title: 'Phone',
@@ -234,28 +216,31 @@ class UserListPage extends React.Component {
         dataIndex: 'affiliation',
         key: 'affiliation',
         width: '120px',
-        sorter: (a, b) => a.affiliation.localeCompare(b.affiliation),
+        sorter: true,
+        ...this.getColumnSearchProps('affiliation'),
       },
       {
         title: i18next.t("user:Country/Region"),
         dataIndex: 'region',
         key: 'region',
         width: '120px',
-        sorter: (a, b) => a.region.localeCompare(b.region),
+        sorter: true,
+        ...this.getColumnSearchProps('region'),
       },
       {
         title: i18next.t("user:Tag"),
         dataIndex: 'tag',
         key: 'tag',
         width: '100px',
-        sorter: (a, b) => a.tag.localeCompare(b.tag),
+        sorter: true,
+        ...this.getColumnSearchProps('tag'),
       },
       {
         title: i18next.t("user:Is admin"),
         dataIndex: 'isAdmin',
         key: 'isAdmin',
         width: '110px',
-        sorter: (a, b) => a.isAdmin - b.isAdmin,
+        sorter: true,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
@@ -267,7 +252,7 @@ class UserListPage extends React.Component {
         dataIndex: 'isGlobalAdmin',
         key: 'isGlobalAdmin',
         width: '110px',
-        sorter: (a, b) => a.isGlobalAdmin - b.isGlobalAdmin,
+        sorter: true,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
@@ -279,7 +264,7 @@ class UserListPage extends React.Component {
         dataIndex: 'isForbidden',
         key: 'isForbidden',
         width: '110px',
-        sorter: (a, b) => a.isForbidden - b.isForbidden,
+        sorter: true,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
@@ -291,7 +276,7 @@ class UserListPage extends React.Component {
         dataIndex: 'isDeleted',
         key: 'isDeleted',
         width: '110px',
-        sorter: (a, b) => a.isDeleted - b.isDeleted,
+        sorter: true,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
@@ -321,12 +306,10 @@ class UserListPage extends React.Component {
     ];
 
     const paginationProps = {
-      total: this.state.total,
+      total: this.state.pagination.total,
       showQuickJumper: true,
       showSizeChanger: true,
-      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
-      onChange: (page, pageSize) => this.getUsers(page, pageSize),
-      onShowSizeChange: (current, size) => this.getUsers(current, size),
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
     return (
@@ -338,21 +321,51 @@ class UserListPage extends React.Component {
                   <Button type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")}</Button>
                  </div>
                )}
-               loading={users === null}
+               loading={this.state.loading}
+               onChange={this.handleTableChange}
         />
       </div>
     );
   }
 
-  render() {
-    return (
-      <div>
-        {
-          this.renderTable(this.state.users)
-        }
-      </div>
-    );
-  }
+  fetch = (params = {}) => {
+    let field = params.searchedColumn, value = params.searchText;
+    let sortField = params.sortField, sortOrder = params.sortOrder;
+    this.setState({ loading: true });
+    if (this.state.organizationName === undefined) {
+      UserBackend.getGlobalUsers(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+        .then((res) => {
+          if (res.status === "ok") {
+            this.setState({
+              loading: false,
+              data: res.data,
+              pagination: {
+                ...params.pagination,
+                total: res.data2,
+              },
+              searchText: params.searchText,
+              searchedColumn: params.searchedColumn,
+            });
+          }
+        });
+    } else {
+      UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+        .then((res) => {
+          if (res.status === "ok") {
+            this.setState({
+              loading: false,
+              data: res.data,
+              pagination: {
+                ...params.pagination,
+                total: res.data2,
+              },
+              searchText: params.searchText,
+              searchedColumn: params.searchedColumn,
+            });
+          }
+        });
+    }
+  };
 }
 
 export default UserListPage;

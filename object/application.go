@@ -15,6 +15,8 @@
 package object
 
 import (
+	"fmt"
+
 	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
 )
@@ -51,8 +53,12 @@ type Application struct {
 	SigninHtml           string   `xorm:"mediumtext" json:"signinHtml"`
 }
 
-func GetApplicationCount(owner string) int {
-	count, err := adapter.Engine.Count(&Application{Owner: owner})
+func GetApplicationCount(owner, field, value string) int {
+	session := adapter.Engine.Where("owner=?", owner)
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&Application{})
 	if err != nil {
 		panic(err)
 	}
@@ -70,9 +76,20 @@ func GetApplications(owner string) []*Application {
 	return applications
 }
 
-func GetPaginationApplications(owner string, offset, limit int) []*Application {
+func GetPaginationApplications(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
 	applications := []*Application{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&applications, &Application{Owner: owner})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&applications)
+	if err != nil {
+		panic(err)
+	}
+
+	return applications
+}
+
+func getApplicationsByOrganizationName(owner string, organization string) []*Application {
+	applications := []*Application{}
+	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner, Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -88,7 +105,7 @@ func getProviderMap(owner string) map[string]*Provider {
 		//	continue
 		//}
 
-		m[provider.Name] = getMaskedProvider(provider)
+		m[provider.Name] = GetMaskedProvider(provider)
 	}
 	return m
 }
@@ -206,6 +223,10 @@ func UpdateApplication(id string, application *Application) bool {
 		return false
 	}
 
+	if name == "app-built-in" {
+		application.Name = name
+	}
+
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}
@@ -234,10 +255,18 @@ func AddApplication(application *Application) bool {
 }
 
 func DeleteApplication(application *Application) bool {
+	if application.Name == "app-built-in" {
+		return false
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{application.Owner, application.Name}).Delete(&Application{})
 	if err != nil {
 		panic(err)
 	}
 
 	return affected != 0
+}
+
+func (application *Application) GetId() string {
+	return fmt.Sprintf("%s/%s", application.Owner, application.Name)
 }

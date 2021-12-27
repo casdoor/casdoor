@@ -41,6 +41,7 @@ type Syncer struct {
 	Port             int            `json:"port"`
 	User             string         `xorm:"varchar(100)" json:"user"`
 	Password         string         `xorm:"varchar(100)" json:"password"`
+	DatabaseType     string         `xorm:"varchar(100)" json:"databaseType"`
 	Database         string         `xorm:"varchar(100)" json:"database"`
 	Table            string         `xorm:"varchar(100)" json:"table"`
 	TablePrimaryKey  string         `xorm:"varchar(100)" json:"tablePrimaryKey"`
@@ -53,8 +54,12 @@ type Syncer struct {
 	Adapter *Adapter `xorm:"-" json:"-"`
 }
 
-func GetSyncerCount(owner string) int {
-	count, err := adapter.Engine.Count(&Syncer{Owner: owner})
+func GetSyncerCount(owner, field, value string) int {
+	session := adapter.Engine.Where("owner=?", owner)
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&Syncer{})
 	if err != nil {
 		panic(err)
 	}
@@ -72,9 +77,10 @@ func GetSyncers(owner string) []*Syncer {
 	return syncers
 }
 
-func GetPaginationSyncers(owner string, offset, limit int) []*Syncer {
+func GetPaginationSyncers(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Syncer {
 	syncers := []*Syncer{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&syncers, &Syncer{Owner: owner})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&syncers)
 	if err != nil {
 		panic(err)
 	}
@@ -157,4 +163,20 @@ func DeleteSyncer(syncer *Syncer) bool {
 
 func (syncer *Syncer) GetId() string {
 	return fmt.Sprintf("%s/%s", syncer.Owner, syncer.Name)
+}
+
+func (syncer *Syncer) getTableColumnsTypeMap() map[string]string {
+	m := map[string]string{}
+	for _, tableColumn := range syncer.TableColumns {
+		m[tableColumn.Name] = tableColumn.Type
+	}
+	return m
+}
+
+func (syncer *Syncer) getTable() string {
+	if syncer.DatabaseType == "mssql" {
+		return fmt.Sprintf("[%s]", syncer.Table)
+	} else {
+		return syncer.Table
+	}
 }

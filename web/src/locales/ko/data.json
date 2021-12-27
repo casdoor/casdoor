@@ -40,6 +40,7 @@
     "Please input your phone verification code!": "Please input your phone verification code!",
     "Please input your verification code!": "Please input your verification code!",
     "Send Code": "Send Code",
+    "Sending Code": "Sending Code",
     "Submit and complete": "Submit and complete"
   },
   "forget": {
@@ -86,6 +87,8 @@
     "Home - Tooltip": "Application homepage",
     "ID": "ID",
     "ID - Tooltip": "random string",
+    "Is enabled": "Is enabled",
+    "Is enabled - Tooltip": "Is enabled - Tooltip",
     "LDAPs": "LDAPs",
     "LDAPs - Tooltip": "LDAPs - Tooltip",
     "Logo - Tooltip": "App's image tag",
@@ -211,8 +214,12 @@
     "Category - Tooltip": "Unique string-style identifier",
     "Client ID": "Client ID",
     "Client ID - Tooltip": "Unique string-style identifier",
+    "Client ID 2": "Client ID 2",
+    "Client ID 2 - Tooltip": "Client ID 2 - Tooltip",
     "Client secret": "Client secret",
     "Client secret - Tooltip": "Unique string-style identifier",
+    "Client secret 2": "Client secret 2",
+    "Client secret 2 - Tooltip": "Client secret 2 - Tooltip",
     "Copy": "Copy",
     "Domain": "Domain",
     "Domain - Tooltip": "Storage endpoint custom domain",
@@ -327,9 +334,9 @@
     "Column type": "Column type",
     "Database": "Database",
     "Database - Tooltip": "Database - Tooltip",
+    "Database type": "Database type",
+    "Database type - Tooltip": "Database type - Tooltip",
     "Edit Syncer": "Edit Syncer",
-    "Is enabled": "Is enabled",
-    "Is enabled - Tooltip": "Is enabled - Tooltip",
     "Is hashed": "Is hashed",
     "Sync interval": "Sync interval",
     "Sync interval - Tooltip": "Sync interval - Tooltip",
@@ -410,7 +417,13 @@
     "Edit Webhook": "Edit Webhook",
     "Events": "Events",
     "Events - Tooltip": "Events - Tooltip",
+    "Headers": "Headers",
+    "Headers - Tooltip": "Headers - Tooltip",
+    "Method": "Method",
+    "Method - Tooltip": "Method - Tooltip",
+    "Name": "Name",
     "URL": "URL",
-    "URL - Tooltip": "URL - Tooltip"
+    "URL - Tooltip": "URL - Tooltip",
+    "Value": "Value"
   }
 }

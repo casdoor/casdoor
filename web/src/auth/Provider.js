@@ -33,6 +33,8 @@ const authInfo = {
   WeChat: {
     scope: "snsapi_login",
     endpoint: "https://open.weixin.qq.com/connect/qrconnect",
+    mpScope: "snsapi_userinfo",
+    mpEndpoint: "https://open.weixin.qq.com/connect/oauth2/authorize"
   },
   Facebook: {
     scope: "email,public_profile",
@@ -198,7 +200,11 @@ export function getAuthUrl(application, provider, method) {
   } else if (provider.type === "QQ") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "WeChat") {
-    return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}#wechat_redirect`;
+    if (navigator.userAgent.includes("MicroMessenger")) {
+      return `${authInfo[provider.type].mpEndpoint}?appid=${provider.clientId2}&redirect_uri=${redirectUri}&state=${state}&scope=${authInfo[provider.type].mpScope}&response_type=code#wechat_redirect`;
+    } else {
+      return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}#wechat_redirect`;
+    }
   } else if (provider.type === "Facebook") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "DingTalk") {

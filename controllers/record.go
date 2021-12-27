@@ -31,13 +31,17 @@ import (
 func (c *ApiController) GetRecords() {
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
 		c.Data["json"] = object.GetRecords()
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetRecordCount()))
-		records := object.GetPaginationRecords(paginator.Offset(), limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetRecordCount(field, value)))
+		records := object.GetPaginationRecords(paginator.Offset(), limit, field, value, sortField, sortOrder)
 		c.ResponseOk(records, paginator.Nums())
 	}
 }

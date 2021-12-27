@@ -32,8 +32,8 @@ type User struct {
 	Password          string   `xorm:"varchar(100)" json:"password"`
 	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
 	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
-	Avatar            string   `xorm:"varchar(255)" json:"avatar"`
-	PermanentAvatar   string   `xorm:"varchar(255)" json:"permanentAvatar"`
+	Avatar            string   `xorm:"varchar(500)" json:"avatar"`
+	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
 	Email             string   `xorm:"varchar(100)" json:"email"`
 	Phone             string   `xorm:"varchar(100)" json:"phone"`
 	Location          string   `xorm:"varchar(100)" json:"location"`
@@ -86,8 +86,12 @@ type User struct {
 	Properties map[string]string `json:"properties"`
 }
 
-func GetGlobalUserCount() int {
-	count, err := adapter.Engine.Count(&User{})
+func GetGlobalUserCount(field, value string) int {
+	session := adapter.Engine.Where("1=1")
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&User{})
 	if err != nil {
 		panic(err)
 	}
@@ -105,9 +109,10 @@ func GetGlobalUsers() []*User {
 	return users
 }
 
-func GetPaginationGlobalUsers(offset, limit int) []*User {
+func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOrder string) []*User {
 	users := []*User{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&users)
+	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&users)
 	if err != nil {
 		panic(err)
 	}
@@ -115,8 +120,12 @@ func GetPaginationGlobalUsers(offset, limit int) []*User {
 	return users
 }
 
-func GetUserCount(owner string) int {
-	count, err := adapter.Engine.Count(&User{Owner: owner})
+func GetUserCount(owner, field, value string) int {
+	session := adapter.Engine.Where("owner=?", owner)
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&User{})
 	if err != nil {
 		panic(err)
 	}
@@ -153,9 +162,10 @@ func GetSortedUsers(owner string, sorter string, limit int) []*User {
 	return users
 }
 
-func GetPaginationUsers(owner string, offset, limit int) []*User {
+func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string) []*User {
 	users := []*User{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&users, &User{Owner: owner})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&users)
 	if err != nil {
 		panic(err)
 	}
@@ -169,6 +179,24 @@ func getUser(owner string, name string) *User {
 	}
 
 	user := User{Owner: owner, Name: name}
+	existed, err := adapter.Engine.Get(&user)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &user
+	} else {
+		return nil
+	}
+}
+
+func getUserById(owner string, id string) *User {
+	if owner == "" || id == "" {
+		return nil
+	}
+
+	user := User{Owner: owner, Id: id}
 	existed, err := adapter.Engine.Get(&user)
 	if err != nil {
 		panic(err)

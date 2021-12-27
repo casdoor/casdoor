@@ -33,13 +33,17 @@ func (c *ApiController) GetApplications() {
 	owner := c.Input().Get("owner")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
 		c.Data["json"] = object.GetApplications(owner)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetApplicationCount(owner)))
-		applications := object.GetPaginationApplications(owner, paginator.Offset(), limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetApplicationCount(owner, field, value)))
+		applications := object.GetPaginationApplications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		c.ResponseOk(applications, paginator.Nums())
 	}
 }

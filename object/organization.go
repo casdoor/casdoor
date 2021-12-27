@@ -15,6 +15,9 @@
 package object
 
 import (
+	"fmt"
+
+	"github.com/casbin/casdoor/cred"
 	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
 )
@@ -35,8 +38,12 @@ type Organization struct {
 	EnableSoftDeletion bool   `json:"enableSoftDeletion"`
 }
 
-func GetOrganizationCount(owner string) int {
-	count, err := adapter.Engine.Count(&Organization{Owner: owner})
+func GetOrganizationCount(owner, field, value string) int {
+	session := adapter.Engine.Where("owner=?", owner)
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+	}
+	count, err := session.Count(&Organization{})
 	if err != nil {
 		panic(err)
 	}
@@ -54,9 +61,10 @@ func GetOrganizations(owner string) []*Organization {
 	return organizations
 }
 
-func GetPaginationOrganizations(owner string, offset, limit int) []*Organization {
+func GetPaginationOrganizations(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Organization {
 	organizations := []*Organization{}
-	err := adapter.Engine.Desc("created_time").Limit(limit, offset).Find(&organizations, &Provider{Owner: owner})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&organizations)
 	if err != nil {
 		panic(err)
 	}
@@ -111,6 +119,26 @@ func UpdateOrganization(id string, organization *Organization) bool {
 		return false
 	}
 
+	if name == "built-in" {
+		organization.Name = name
+	}
+
+	if name != organization.Name {
+		applications := getApplicationsByOrganizationName("admin", name)
+		for _, application := range applications {
+			application.Organization = organization.Name
+			UpdateApplication(application.GetId(), application)
+		}
+	}
+
+	if organization.MasterPassword != "" {
+		credManager := cred.GetCredManager(organization.PasswordType)
+		if credManager != nil {
+			hashedPassword := credManager.GetHashedPassword(organization.MasterPassword, "", organization.PasswordSalt)
+			organization.MasterPassword = hashedPassword
+		}
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(organization)
 	if err != nil {
 		panic(err)
@@ -129,6 +157,10 @@ func AddOrganization(organization *Organization) bool {
 }
 
 func DeleteOrganization(organization *Organization) bool {
+	if organization.Name == "built-in" {
+		return false
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{organization.Owner, organization.Name}).Delete(&Organization{})
 	if err != nil {
 		panic(err)

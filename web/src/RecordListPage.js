@@ -19,31 +19,15 @@ import * as Setting from "./Setting";
 import * as RecordBackend from "./backend/RecordBackend";
 import i18next from "i18next";
 import moment from "moment";
+import BaseListPage from "./BaseListPage";
+import * as ProviderBackend from "./backend/ProviderBackend";
 
-class RecordListPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      classes: props,
-      records: null,
-      total: 0,
-    };
-  }
+class RecordListPage extends BaseListPage {
 
   UNSAFE_componentWillMount() {
-    this.getRecords(1, 20);
-  }
-
-  getRecords(page, pageSize) {
-    RecordBackend.getRecords(page, pageSize)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            records: res.data,
-            total: res.data2
-          });
-        }
-      });
+    this.state.pagination.pageSize = 20;
+    const { pagination } = this.state;
+    this.fetch({ pagination });
   }
 
   newRecord() {
@@ -68,21 +52,24 @@ class RecordListPage extends React.Component {
         dataIndex: 'name',
         key: 'name',
         width: '320px',
-        sorter: (a, b) => a.name.localeCompare(b.name),
+        sorter: true,
+        ...this.getColumnSearchProps('name'),
       },
       {
         title: i18next.t("general:ID"),
         dataIndex: 'id',
         key: 'id',
         width: '90px',
-        sorter: (a, b) => a.id - b.id,
+        sorter: true,
+        ...this.getColumnSearchProps('id'),
       },
       {
         title: i18next.t("general:Client IP"),
         dataIndex: 'clientIp',
         key: 'clientIp',
         width: '150px',
-        sorter: (a, b) => a.clientIp.localeCompare(b.clientIp),
+        sorter: true,
+        ...this.getColumnSearchProps('clientIp'),
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={`https://db-ip.com/${text}`}>
@@ -96,7 +83,7 @@ class RecordListPage extends React.Component {
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '180px',
-        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
+        sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         }
@@ -106,7 +93,8 @@ class RecordListPage extends React.Component {
         dataIndex: 'organization',
         key: 'organization',
         width: '80px',
-        sorter: (a, b) => a.organization.localeCompare(b.organization),
+        sorter: true,
+        ...this.getColumnSearchProps('organization'),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -120,7 +108,8 @@ class RecordListPage extends React.Component {
         dataIndex: 'user',
         key: 'user',
         width: '120px',
-        sorter: (a, b) => a.user.localeCompare(b.user),
+        sorter: true,
+        ...this.getColumnSearchProps('user'),
         render: (text, record, index) => {
           return (
             <Link to={`/users/${record.organization}/${record.user}`}>
@@ -134,21 +123,35 @@ class RecordListPage extends React.Component {
         dataIndex: 'method',
         key: 'method',
         width: '100px',
-        sorter: (a, b) => a.method.localeCompare(b.method),
+        sorter: true,
+        filterMultiple: false,
+        filters: [
+          {text: 'GET', value: 'GET'},
+          {text: 'HEAD', value: 'HEAD'},
+          {text: 'POST', value: 'POST'},
+          {text: 'PUT', value: 'PUT'},
+          {text: 'DELETE', value: 'DELETE'},
+          {text: 'CONNECT', value: 'CONNECT'},
+          {text: 'OPTIONS', value: 'OPTIONS'},
+          {text: 'TRACE', value: 'TRACE'},
+          {text: 'PATCH', value: 'PATCH'},
+        ],
       },
       {
         title: i18next.t("general:Request URI"),
         dataIndex: 'requestUri',
         key: 'requestUri',
         // width: '300px',
-        sorter: (a, b) => a.requestUri.localeCompare(b.requestUri),
+        sorter: true,
+        ...this.getColumnSearchProps('requestUri'),
       },
       {
         title: i18next.t("general:Action"),
         dataIndex: 'action',
         key: 'action',
         width: '200px',
-        sorter: (a, b) => a.action.localeCompare(b.action),
+        sorter: true,
+        ...this.getColumnSearchProps('action'),
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return text;
@@ -159,7 +162,7 @@ class RecordListPage extends React.Component {
         dataIndex: 'isTriggered',
         key: 'isTriggered',
         width: '140px',
-        sorter: (a, b) => a.isTriggered - b.isTriggered,
+        sorter: true,
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           if (!["signup", "login", "logout", "update-user"].includes(record.action)) {
@@ -174,13 +177,11 @@ class RecordListPage extends React.Component {
     ];
 
     const paginationProps = {
-      pageSize: 20,
-      total: this.state.total,
+      total: this.state.pagination.total,
+      pageSize: this.state.pagination.pageSize,
       showQuickJumper: true,
       showSizeChanger: true,
-      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
-      onChange: (page, pageSize) => this.getRecords(page, pageSize),
-      onShowSizeChange: (current, size) => this.getRecords(current, size),
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
     return (
@@ -191,21 +192,37 @@ class RecordListPage extends React.Component {
                    {i18next.t("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;
                  </div>
                )}
-               loading={records === null}
+               loading={this.state.loading}
+               onChange={this.handleTableChange}
         />
       </div>
     );
   }
 
-  render() {
-    return (
-      <div>
-        {
-          this.renderTable(this.state.records)
+  fetch = (params = {}) => {
+    let field = params.searchedColumn, value = params.searchText;
+    let sortField = params.sortField, sortOrder = params.sortOrder;
+    if (params.method !== undefined && params.method !== null) {
+      field = "method";
+      value = params.method;
+    }
+    this.setState({ loading: true });
+    RecordBackend.getRecords(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            loading: false,
+            data: res.data,
+            pagination: {
+              ...params.pagination,
+              total: res.data2,
+            },
+            searchText: params.searchText,
+            searchedColumn: params.searchedColumn,
+          });
         }
-      </div>
-    );
-  }
+      });
+  };
 }
 
 export default RecordListPage;

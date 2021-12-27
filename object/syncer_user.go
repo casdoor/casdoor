@@ -19,7 +19,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/astaxie/beego"
 	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
 )
@@ -27,7 +26,7 @@ import (
 type OriginalUser = User
 
 func (syncer *Syncer) getOriginalUsers() []*OriginalUser {
-	sql := fmt.Sprintf("select * from %s", syncer.Table)
+	sql := fmt.Sprintf("select * from %s", syncer.getTable())
 	results, err := syncer.Adapter.Engine.QueryString(sql)
 	if err != nil {
 		panic(err)
@@ -48,7 +47,15 @@ func (syncer *Syncer) getOriginalUserMap() ([]*OriginalUser, map[string]*Origina
 
 func (syncer *Syncer) addUser(user *OriginalUser) bool {
 	m := syncer.getMapFromOriginalUser(user)
-	affected, err := syncer.Adapter.Engine.Table(syncer.Table).Insert(m)
+	keyString, valueString := syncer.getSqlKeyValueStringFromMap(m)
+
+	sql := fmt.Sprintf("insert into %s (%s) values (%s)", syncer.getTable(), keyString, valueString)
+	res, err := syncer.Adapter.Engine.Exec(sql)
+	if err != nil {
+		panic(err)
+	}
+
+	affected, err := res.RowsAffected()
 	if err != nil {
 		panic(err)
 	}
@@ -56,7 +63,7 @@ func (syncer *Syncer) addUser(user *OriginalUser) bool {
 	return affected != 0
 }
 
-func (syncer *Syncer) getOriginalColumns() []string {
+/*func (syncer *Syncer) getOriginalColumns() []string {
 	res := []string{}
 	for _, tableColumn := range syncer.TableColumns {
 		if tableColumn.CasdoorName != "Id" {
@@ -64,7 +71,7 @@ func (syncer *Syncer) getOriginalColumns() []string {
 		}
 	}
 	return res
-}
+}*/
 
 func (syncer *Syncer) getCasdoorColumns() []string {
 	res := []string{}
@@ -79,8 +86,17 @@ func (syncer *Syncer) getCasdoorColumns() []string {
 
 func (syncer *Syncer) updateUser(user *OriginalUser) bool {
 	m := syncer.getMapFromOriginalUser(user)
-	columns := syncer.getOriginalColumns()
-	affected, err := syncer.Adapter.Engine.Table(syncer.Table).ID(syncer.TablePrimaryKey).Cols(columns...).Update(m)
+	pkValue := m[syncer.TablePrimaryKey]
+	delete(m, syncer.TablePrimaryKey)
+	setString := syncer.getSqlSetStringFromMap(m)
+
+	sql := fmt.Sprintf("update %s set %s where %s = %s", syncer.getTable(), setString, syncer.TablePrimaryKey, pkValue)
+	res, err := syncer.Adapter.Engine.Exec(sql)
+	if err != nil {
+		panic(err)
+	}
+
+	affected, err := res.RowsAffected()
 	if err != nil {
 		panic(err)
 	}
@@ -90,7 +106,7 @@ func (syncer *Syncer) updateUser(user *OriginalUser) bool {
 
 func (syncer *Syncer) updateUserForOriginalFields(user *User) bool {
 	owner, name := util.GetOwnerAndNameFromId(user.GetId())
-	oldUser := getUser(owner, name)
+	oldUser := getUserById(owner, name)
 	if oldUser == nil {
 		return false
 	}
@@ -101,7 +117,7 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User) bool {
 
 	columns := syncer.getCasdoorColumns()
 	columns = append(columns, "affiliation", "hash", "pre_hash")
-	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols(columns...).Update(user)
+	affected, err := adapter.Engine.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
 	if err != nil {
 		panic(err)
 	}
@@ -124,8 +140,18 @@ func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 
 func (syncer *Syncer) initAdapter() {
 	if syncer.Adapter == nil {
-		dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%d)/", syncer.User, syncer.Password, syncer.Host, syncer.Port)
-		syncer.Adapter = NewAdapter(beego.AppConfig.String("driverName"), dataSourceName, syncer.Database)
+		var dataSourceName string
+		if syncer.DatabaseType == "mssql" {
+			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", syncer.User, syncer.Password, syncer.Host, syncer.Port, syncer.Database)
+		} else {
+			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/", syncer.User, syncer.Password, syncer.Host, syncer.Port)
+		}
+
+		if !isCloudIntranet {
+			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
+		}
+
+		syncer.Adapter = NewAdapter(syncer.DatabaseType, dataSourceName, syncer.Database)
 	}
 }
 

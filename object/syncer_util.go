@@ -27,7 +27,7 @@ func (syncer *Syncer) getFullAvatarUrl(avatar string) string {
 		return avatar
 	}
 
-	if !strings.HasPrefix(avatar, "https://") {
+	if !strings.HasPrefix(avatar, "http") {
 		return fmt.Sprintf("%s%s", syncer.AvatarBaseUrl, avatar)
 	}
 	return avatar
@@ -43,31 +43,42 @@ func (syncer *Syncer) getPartialAvatarUrl(avatar string) string {
 func (syncer *Syncer) createUserFromOriginalUser(originalUser *OriginalUser, affiliationMap map[int]string) *User {
 	user := *originalUser
 	user.Owner = syncer.Organization
+
 	if user.Name == "" {
 		user.Name = originalUser.Id
 	}
+
 	if user.CreatedTime == "" {
 		user.CreatedTime = util.GetCurrentTime()
 	}
+
 	if user.Type == "" {
 		user.Type = "normal-user"
 	}
+
 	user.Avatar = syncer.getFullAvatarUrl(user.Avatar)
-	if originalUser.Score != 0 {
-		affiliation, ok := affiliationMap[originalUser.Score]
-		if !ok {
-			panic(fmt.Sprintf("Affiliation not found: %d", originalUser.Score))
+
+	if affiliationMap != nil {
+		if originalUser.Score != 0 {
+			affiliation, ok := affiliationMap[originalUser.Score]
+			if !ok {
+				panic(fmt.Sprintf("Affiliation not found: %d", originalUser.Score))
+			}
+			user.Affiliation = affiliation
 		}
-		user.Affiliation = affiliation
 	}
+
 	if user.Properties == nil {
 		user.Properties = map[string]string{}
 	}
+
 	return &user
 }
 
 func (syncer *Syncer) createOriginalUserFromUser(user *User) *OriginalUser {
-	return user
+	originalUser := *user
+	originalUser.Avatar = syncer.getPartialAvatarUrl(user.Avatar)
+	return &originalUser
 }
 
 func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
@@ -148,7 +159,11 @@ func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*OriginalUser {
 	users := []*OriginalUser{}
 	for _, result := range results {
-		originalUser := &OriginalUser{}
+		originalUser := &OriginalUser{
+			Address:    []string{},
+			Properties: map[string]string{},
+		}
+
 		for _, tableColumn := range syncer.TableColumns {
 			syncer.setUserByKeyValue(originalUser, tableColumn.CasdoorName, result[tableColumn.Name])
 		}
@@ -201,4 +216,35 @@ func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]stri
 	}
 
 	return m2
+}
+
+func (syncer *Syncer) getSqlSetStringFromMap(m map[string]string) string {
+	typeMap := syncer.getTableColumnsTypeMap()
+
+	tokens := []string{}
+	for k, v := range m {
+		token := fmt.Sprintf("%s = %s", k, v)
+		if typeMap[k] == "string" {
+			token = fmt.Sprintf("%s = '%s'", k, v)
+		}
+
+		tokens = append(tokens, token)
+	}
+	return strings.Join(tokens, ", ")
+}
+
+func (syncer *Syncer) getSqlKeyValueStringFromMap(m map[string]string) (string, string) {
+	typeMap := syncer.getTableColumnsTypeMap()
+
+	keys := []string{}
+	values := []string{}
+	for k, v := range m {
+		if typeMap[k] == "string" {
+			v = fmt.Sprintf("'%s'", v)
+		}
+
+		keys = append(keys, k)
+		values = append(values, v)
+	}
+	return strings.Join(keys, ", "), strings.Join(values, ", ")
 }

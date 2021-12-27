@@ -20,32 +20,10 @@ import moment from "moment";
 import * as Setting from "./Setting";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import i18next from "i18next";
+import BaseListPage from "./BaseListPage";
+import * as ProviderBackend from "./backend/ProviderBackend";
 
-class ApplicationListPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      classes: props,
-      applications: null,
-      total: 0,
-    };
-  }
-
-  UNSAFE_componentWillMount() {
-    this.getApplications(1, 10);
-  }
-
-  getApplications(page, pageSize) {
-    ApplicationBackend.getApplications("admin", page, pageSize)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            applications: res.data,
-            total: res.data2
-          });
-        }
-      });
-  }
+class ApplicationListPage extends BaseListPage {
 
   newApplication() {
     const randomName = Setting.getRandomName();
@@ -80,10 +58,6 @@ class ApplicationListPage extends React.Component {
     ApplicationBackend.addApplication(newApplication)
       .then((res) => {
           Setting.showMessage("success", `Application added successfully`);
-          this.setState({
-            applications: Setting.prependRow(this.state.applications, newApplication),
-            total: this.state.total + 1
-          });
           this.props.history.push(`/applications/${newApplication.name}`);
         }
       )
@@ -93,12 +67,12 @@ class ApplicationListPage extends React.Component {
   }
 
   deleteApplication(i) {
-    ApplicationBackend.deleteApplication(this.state.applications[i])
+    ApplicationBackend.deleteApplication(this.state.data[i])
       .then((res) => {
           Setting.showMessage("success", `Application deleted successfully`);
           this.setState({
-            applications: Setting.deleteRow(this.state.applications, i),
-            total: this.state.total - 1
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
           });
         }
       )
@@ -115,7 +89,8 @@ class ApplicationListPage extends React.Component {
         key: 'name',
         width: '150px',
         fixed: 'left',
-        sorter: (a, b) => a.name.localeCompare(b.name),
+        sorter: true,
+        ...this.getColumnSearchProps('name'),
         render: (text, record, index) => {
           return (
             <Link to={`/applications/${text}`}>
@@ -129,7 +104,7 @@ class ApplicationListPage extends React.Component {
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '160px',
-        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
+        sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         }
@@ -139,7 +114,8 @@ class ApplicationListPage extends React.Component {
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',
-        sorter: (a, b) => a.displayName.localeCompare(b.displayName),
+        sorter: true,
+        ...this.getColumnSearchProps('displayName'),
       },
       {
         title: 'Logo',
@@ -159,7 +135,8 @@ class ApplicationListPage extends React.Component {
         dataIndex: 'organization',
         key: 'organization',
         width: '150px',
-        sorter: (a, b) => a.organization.localeCompare(b.organization),
+        sorter: true,
+        ...this.getColumnSearchProps('organization'),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -172,6 +149,7 @@ class ApplicationListPage extends React.Component {
         title: i18next.t("general:Providers"),
         dataIndex: 'providers',
         key: 'providers',
+        ...this.getColumnSearchProps('providers'),
         // width: '600px',
         render: (text, record, index) => {
           const providers = text;
@@ -236,8 +214,9 @@ class ApplicationListPage extends React.Component {
               <Popconfirm
                 title={`Sure to delete application: ${record.name} ?`}
                 onConfirm={() => this.deleteApplication(index)}
+                disabled={record.name === "app-built-in"}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: '10px'}} disabled={record.name === "app-built-in"} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           )
@@ -246,12 +225,10 @@ class ApplicationListPage extends React.Component {
     ];
 
     const paginationProps = {
-      total: this.state.total,
+      total: this.state.pagination.total,
       showQuickJumper: true,
       showSizeChanger: true,
-      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
-      onChange: (page, pageSize) => this.getApplications(page, pageSize),
-      onShowSizeChange: (current, size) => this.getApplications(current, size),
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
     return (
@@ -263,21 +240,33 @@ class ApplicationListPage extends React.Component {
                   <Button type="primary" size="small" onClick={this.addApplication.bind(this)}>{i18next.t("general:Add")}</Button>
                  </div>
                )}
-               loading={applications === null}
+               loading={this.state.loading}
+               onChange={this.handleTableChange}
         />
       </div>
     );
   }
 
-  render() {
-    return (
-      <div>
-        {
-          this.renderTable(this.state.applications)
+  fetch = (params = {}) => {
+    let field = params.searchedColumn, value = params.searchText;
+    let sortField = params.sortField, sortOrder = params.sortOrder;
+    this.setState({ loading: true });
+    ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            loading: false,
+            data: res.data,
+            pagination: {
+              ...params.pagination,
+              total: res.data2,
+            },
+            searchText: params.searchText,
+            searchedColumn: params.searchedColumn,
+          });
         }
-      </div>
-    );
-  }
+      });
+  };
 }
 
 export default ApplicationListPage;

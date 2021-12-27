@@ -19,32 +19,10 @@ import moment from "moment";
 import * as Setting from "./Setting";
 import * as SyncerBackend from "./backend/SyncerBackend";
 import i18next from "i18next";
+import BaseListPage from "./BaseListPage";
+import * as ProviderBackend from "./backend/ProviderBackend";
 
-class SyncerListPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      classes: props,
-      syncers: null,
-      total: 0,
-    };
-  }
-
-  UNSAFE_componentWillMount() {
-    this.getSyncers(1, 10);
-  }
-
-  getSyncers(page, pageSize) {
-    SyncerBackend.getSyncers("admin", page, pageSize)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            syncers: res.data,
-            total: res.data2
-          });
-        }
-      });
-  }
+class SyncerListPage extends BaseListPage {
 
   newSyncer() {
     const randomName = Setting.getRandomName();
@@ -58,6 +36,7 @@ class SyncerListPage extends React.Component {
       port: 3306,
       user: "root",
       password: "123456",
+      databaseType: "mysql",
       database: "dbName",
       table: "tableName",
       tableColumns: [],
@@ -73,10 +52,6 @@ class SyncerListPage extends React.Component {
     SyncerBackend.addSyncer(newSyncer)
       .then((res) => {
           Setting.showMessage("success", `Syncer added successfully`);
-          this.setState({
-            syncers: Setting.prependRow(this.state.syncers, newSyncer),
-            total: this.state.total + 1
-          });
           this.props.history.push(`/syncers/${newSyncer.name}`);
         }
       )
@@ -86,12 +61,12 @@ class SyncerListPage extends React.Component {
   }
 
   deleteSyncer(i) {
-    SyncerBackend.deleteSyncer(this.state.syncers[i])
+    SyncerBackend.deleteSyncer(this.state.data[i])
       .then((res) => {
           Setting.showMessage("success", `Syncer deleted successfully`);
           this.setState({
-            syncers: Setting.deleteRow(this.state.syncers, i),
-            total: this.state.total - 1
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
           });
         }
       )
@@ -107,7 +82,8 @@ class SyncerListPage extends React.Component {
         dataIndex: 'organization',
         key: 'organization',
         width: '120px',
-        sorter: (a, b) => a.organization.localeCompare(b.organization),
+        sorter: true,
+        ...this.getColumnSearchProps('organization'),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -122,7 +98,8 @@ class SyncerListPage extends React.Component {
         key: 'name',
         width: '150px',
         fixed: 'left',
-        sorter: (a, b) => a.name.localeCompare(b.name),
+        sorter: true,
+        ...this.getColumnSearchProps('name'),
         render: (text, record, index) => {
           return (
             <Link to={`/syncers/${text}`}>
@@ -136,7 +113,7 @@ class SyncerListPage extends React.Component {
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '180px',
-        sorter: (a, b) => a.createdTime.localeCompare(b.createdTime),
+        sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         }
@@ -146,63 +123,80 @@ class SyncerListPage extends React.Component {
         dataIndex: 'type',
         key: 'type',
         width: '100px',
-        sorter: (a, b) => a.type.localeCompare(b.type),
+        sorter: true,
+        filterMultiple: false,
+        filters: [
+          {text: 'Database', value: 'Database'},
+          {text: 'LDAP', value: 'LDAP'},
+        ],
       },
       {
         title: i18next.t("provider:Host"),
         dataIndex: 'host',
         key: 'host',
         width: '120px',
-        sorter: (a, b) => a.host.localeCompare(b.host),
+        sorter: true,
+        ...this.getColumnSearchProps('host'),
       },
       {
         title: i18next.t("provider:Port"),
         dataIndex: 'port',
         key: 'port',
         width: '100px',
-        sorter: (a, b) => a.port - b.port,
+        sorter: true,
+        ...this.getColumnSearchProps('port'),
       },
       {
         title: i18next.t("general:User"),
         dataIndex: 'user',
         key: 'user',
         width: '120px',
-        sorter: (a, b) => a.user.localeCompare(b.user),
+        sorter: true,
+        ...this.getColumnSearchProps('user'),
       },
       {
         title: i18next.t("general:Password"),
         dataIndex: 'password',
         key: 'password',
         width: '120px',
-        sorter: (a, b) => a.password.localeCompare(b.password),
+        sorter: true,
+        ...this.getColumnSearchProps('password'),
+      },
+      {
+        title: i18next.t("syncer:Database type"),
+        dataIndex: 'databaseType',
+        key: 'databaseType',
+        width: '120px',
+        sorter: (a, b) => a.databaseType.localeCompare(b.databaseType),
       },
       {
         title: i18next.t("syncer:Database"),
         dataIndex: 'database',
         key: 'database',
         width: '120px',
-        sorter: (a, b) => a.database.localeCompare(b.database),
+        sorter: true,
       },
       {
         title: i18next.t("syncer:Table"),
         dataIndex: 'table',
         key: 'table',
         width: '120px',
-        sorter: (a, b) => a.table.localeCompare(b.table),
+        sorter: true,
       },
       {
         title: i18next.t("syncer:Sync interval"),
         dataIndex: 'syncInterval',
         key: 'syncInterval',
         width: '120px',
-        sorter: (a, b) => a.syncInterval.localeCompare(b.syncInterval),
+        sorter: true,
+        ...this.getColumnSearchProps('syncInterval'),
       },
       {
-        title: i18next.t("syncer:Is enabled"),
+        title: i18next.t("general:Is enabled"),
         dataIndex: 'isEnabled',
         key: 'isEnabled',
         width: '120px',
-        sorter: (a, b) => a.isEnabled - b.isEnabled,
+        sorter: true,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
@@ -232,12 +226,10 @@ class SyncerListPage extends React.Component {
     ];
 
     const paginationProps = {
-      total: this.state.total,
+      total: this.state.pagination.total,
       showQuickJumper: true,
       showSizeChanger: true,
-      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.total),
-      onChange: (page, pageSize) => this.getSyncers(page, pageSize),
-      onShowSizeChange: (current, size) => this.getSyncers(current, size),
+      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
     return (
@@ -249,21 +241,37 @@ class SyncerListPage extends React.Component {
                    <Button type="primary" size="small" onClick={this.addSyncer.bind(this)}>{i18next.t("general:Add")}</Button>
                  </div>
                )}
-               loading={syncers === null}
+               loading={this.state.loading}
+               onChange={this.handleTableChange}
         />
       </div>
     );
   }
 
-  render() {
-    return (
-      <div>
-        {
-          this.renderTable(this.state.syncers)
+  fetch = (params = {}) => {
+    let field = params.searchedColumn, value = params.searchText;
+    let sortField = params.sortField, sortOrder = params.sortOrder;
+    if (params.type !== undefined && params.type !== null) {
+      field = "type";
+      value = params.type;
+    }
+    this.setState({ loading: true });
+    SyncerBackend.getSyncers("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            loading: false,
+            data: res.data,
+            pagination: {
+              ...params.pagination,
+              total: res.data2,
+            },
+            searchText: params.searchText,
+            searchedColumn: params.searchedColumn,
+          });
         }
-      </div>
-    );
-  }
+      });
+  };
 }
 
 export default SyncerListPage;
