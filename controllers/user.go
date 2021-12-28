@@ -272,8 +272,6 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	c.SetSessionUsername("")
-
 	targetUser.Password = newPassword
 	object.SetUserField(targetUser, "password", targetUser.Password)
 	c.Data["json"] = Response{Status: "ok"}
