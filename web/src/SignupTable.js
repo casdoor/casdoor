@@ -74,6 +74,7 @@ class SignupTable extends React.Component {
             {id: 'Display name', name: 'Display name'},
             {id: 'Affiliation', name: 'Affiliation'},
             {id: 'Country/Region', name: 'Country/Region'},
+            {id: 'ID card', name: 'ID card'},
             {id: 'Email', name: 'Email'},
             {id: 'Password', name: 'Password'},
             {id: 'Confirm password', name: 'Confirm password'},

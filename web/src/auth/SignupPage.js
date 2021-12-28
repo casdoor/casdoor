@@ -225,6 +225,28 @@ class SignupPage extends React.Component {
           <Input />
         </Form.Item>
       )
+    } else if (signupItem.name === "ID card") {
+      return (
+        <Form.Item
+          name="idCard"
+          key="idCard"
+          label={i18next.t("user:ID card")}
+          rules={[
+            {
+              required: required,
+              message: i18next.t("signup:Please input your ID card number!"),
+              whitespace: true,
+            },
+            {
+              required: required,
+              pattern: new RegExp(/^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9X]$/, "g"),
+              message: i18next.t("signup:Please input the correct ID card number!"),
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+      )
     } else if (signupItem.name === "Country/Region") {
       return (
         <Form.Item
