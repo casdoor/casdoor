@@ -55,7 +55,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce)
 		resp = codeToResponse(code)
 
-		if application.HasPromptPage() {
+		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
 		}

@@ -35,7 +35,8 @@ class ApplicationListPage extends BaseListPage {
       logo: "https://cdn.casbin.com/logo/logo_1024x256.png",
       enablePassword: true,
       enableSignUp: true,
-      EnableCodeSignin: false,
+      enableSigninSession: true,
+      enableCodeSignin: false,
       providers: [],
       signupItems: [
         {name: "ID", visible: false, required: true, rule: "Random"},
