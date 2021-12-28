@@ -46,11 +46,12 @@ type Token struct {
 }
 
 type TokenWrapper struct {
-	AccessToken string `json:"access_token"`
-	IdToken     string `json:"id_token"`
-	TokenType   string `json:"token_type"`
-	ExpiresIn   int    `json:"expires_in"`
-	Scope       string `json:"scope"`
+	AccessToken  string `json:"access_token"`
+	IdToken      string `json:"id_token"`
+	RefreshToken string `json:"refresh_token"`
+	TokenType    string `json:"token_type"`
+	ExpiresIn    int    `json:"expires_in"`
+	Scope        string `json:"scope"`
 }
 
 func GetTokenCount(owner, field, value string) int {
@@ -190,6 +191,12 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 			Code:    "",
 		}
 	}
+	if user.IsForbidden {
+		return &Code{
+			Message: "error: the user is forbidden to sign in, please contact the administrator",
+			Code:    "",
+		}
+	}
 
 	msg, application := CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
 	if msg != "" {
@@ -284,11 +291,12 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	}
 
 	tokenWrapper := &TokenWrapper{
-		AccessToken: token.AccessToken,
-		IdToken:     token.AccessToken,
-		TokenType:   token.TokenType,
-		ExpiresIn:   token.ExpiresIn,
-		Scope:       token.Scope,
+		AccessToken:  token.AccessToken,
+		IdToken:      token.AccessToken,
+		RefreshToken: token.RefreshToken,
+		TokenType:    token.TokenType,
+		ExpiresIn:    token.ExpiresIn,
+		Scope:        token.Scope,
 	}
 
 	return tokenWrapper
@@ -339,6 +347,12 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	}
 	// generate a new token
 	user := getUser(application.Owner, token.User)
+	if user.IsForbidden {
+		return &Code{
+			Message: "error: the user is forbidden to sign in, please contact the administrator",
+			Code:    "",
+		}
+	}
 	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "")
 	if err != nil {
 		panic(err)
