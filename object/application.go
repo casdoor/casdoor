@@ -200,22 +200,35 @@ func GetApplicationByClientId(clientId string) *Application {
 	}
 }
 
-func GetApplicationByClientIdAndSecret(clientId, clientSecret string) *Application {
-	if util.IsStrsEmpty(clientId, clientSecret) {
-		return nil
-	}
-
-	app := GetApplicationByClientId(clientId)
-	if app == nil || app.ClientSecret != clientSecret {
-		return nil
-	}
-
-	return app
-}
-
 func GetApplication(id string) *Application {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getApplication(owner, name)
+}
+
+func GetMaskedApplication(application *Application, userId string) *Application {
+	if isUserIdGlobalAdmin(userId) {
+		return application
+	}
+
+	if application == nil {
+		return nil
+	}
+
+	if application.ClientSecret != "" {
+		application.ClientSecret = "***"
+	}
+	return application
+}
+
+func GetMaskedApplications(applications []*Application, userId string) []*Application {
+	if isUserIdGlobalAdmin(userId) {
+		return applications
+	}
+
+	for _, application := range applications {
+		application = GetMaskedApplication(application, userId)
+	}
+	return applications
 }
 
 func UpdateApplication(id string, application *Application) bool {

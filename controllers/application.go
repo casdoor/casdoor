@@ -30,6 +30,7 @@ import (
 // @Success 200 {array} object.Application The Response object
 // @router /get-applications [get]
 func (c *ApiController) GetApplications() {
+	userId := c.GetSessionUsername()
 	owner := c.Input().Get("owner")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
@@ -38,12 +39,12 @@ func (c *ApiController) GetApplications() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetApplications(owner)
+		c.Data["json"] = object.GetMaskedApplications(object.GetApplications(owner), userId)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetApplicationCount(owner, field, value)))
-		applications := object.GetPaginationApplications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		applications := object.GetMaskedApplications(object.GetPaginationApplications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder), userId)
 		c.ResponseOk(applications, paginator.Nums())
 	}
 }
@@ -56,9 +57,10 @@ func (c *ApiController) GetApplications() {
 // @Success 200 {object} object.Application The Response object
 // @router /get-application [get]
 func (c *ApiController) GetApplication() {
+	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetApplication(id)
+	c.Data["json"] = object.GetMaskedApplication(object.GetApplication(id), userId)
 	c.ServeJSON()
 }
 
@@ -70,6 +72,7 @@ func (c *ApiController) GetApplication() {
 // @Success 200 {object} object.Application The Response object
 // @router /get-user-application [get]
 func (c *ApiController) GetUserApplication() {
+	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
 	user := object.GetUser(id)
 	if user == nil {
@@ -77,7 +80,7 @@ func (c *ApiController) GetUserApplication() {
 		return
 	}
 
-	c.Data["json"] = object.GetApplicationByUser(user)
+	c.Data["json"] = object.GetMaskedApplication(object.GetApplicationByUser(user), userId)
 	c.ServeJSON()
 }
 

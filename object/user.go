@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
@@ -406,4 +407,8 @@ func LinkUserAccount(user *User, field string, value string) bool {
 
 func (user *User) GetId() string {
 	return fmt.Sprintf("%s/%s", user.Owner, user.Name)
+}
+
+func isUserIdGlobalAdmin(userId string) bool {
+	return strings.HasPrefix(userId, "built-in/")
 }
