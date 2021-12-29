@@ -119,14 +119,14 @@ class ProviderListPage extends BaseListPage {
           {text: 'Storage', value: 'Storage'},
           {text: 'SAML', value: 'SAML'},
         ],
-        width: '100px',
+        width: '110px',
         sorter: true,
       },
       {
         title: i18next.t("provider:Type"),
         dataIndex: 'type',
         key: 'type',
-        width: '80px',
+        width: '110px',
         align: 'center',
         filterMultiple: false,
         filters: [
@@ -152,13 +152,6 @@ class ProviderListPage extends BaseListPage {
           return Setting.getShortText(text);
         }
       },
-      // {
-      //   title: 'Client secret',
-      //   dataIndex: 'clientSecret',
-      //   key: 'clientSecret',
-      //   width: '150px',
-      //   sorter: (a, b) => a.clientSecret.localeCompare(b.clientSecret),
-      // },
       {
         title: i18next.t("provider:Provider URL"),
         dataIndex: 'providerUrl',

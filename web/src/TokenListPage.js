@@ -176,7 +176,7 @@ class TokenListPage extends BaseListPage {
         title: i18next.t("token:Scope"),
         dataIndex: 'scope',
         key: 'scope',
-        width: '100px',
+        width: '110px',
         sorter: true,
         ...this.getColumnSearchProps('scope'),
       },

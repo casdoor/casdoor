@@ -21,7 +21,6 @@ import * as ResourceBackend from "./backend/ResourceBackend";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
 import BaseListPage from "./BaseListPage";
-import * as ProviderBackend from "./backend/ProviderBackend";
 
 class ResourceListPage extends BaseListPage {
   constructor(props) {

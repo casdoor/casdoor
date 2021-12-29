@@ -21,7 +21,6 @@ import * as Setting from "./Setting";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import * as ProviderBackend from "./backend/ProviderBackend";
 
 class ApplicationListPage extends BaseListPage {
 

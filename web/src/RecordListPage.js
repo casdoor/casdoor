@@ -20,7 +20,6 @@ import * as RecordBackend from "./backend/RecordBackend";
 import i18next from "i18next";
 import moment from "moment";
 import BaseListPage from "./BaseListPage";
-import * as ProviderBackend from "./backend/ProviderBackend";
 
 class RecordListPage extends BaseListPage {
 
@@ -92,7 +91,7 @@ class RecordListPage extends BaseListPage {
         title: i18next.t("general:Organization"),
         dataIndex: 'organization',
         key: 'organization',
-        width: '80px',
+        width: '110px',
         sorter: true,
         ...this.getColumnSearchProps('organization'),
         render: (text, record, index) => {
@@ -122,7 +121,7 @@ class RecordListPage extends BaseListPage {
         title: i18next.t("general:Method"),
         dataIndex: 'method',
         key: 'method',
-        width: '100px',
+        width: '110px',
         sorter: true,
         filterMultiple: false,
         filters: [

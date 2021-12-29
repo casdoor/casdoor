@@ -20,7 +20,6 @@ import * as Setting from "./Setting";
 import * as SyncerBackend from "./backend/SyncerBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import * as ProviderBackend from "./backend/ProviderBackend";
 
 class SyncerListPage extends BaseListPage {
 
@@ -112,7 +111,7 @@ class SyncerListPage extends BaseListPage {
         title: i18next.t("general:Created time"),
         dataIndex: 'createdTime',
         key: 'createdTime',
-        width: '180px',
+        width: '160px',
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -187,7 +186,7 @@ class SyncerListPage extends BaseListPage {
         title: i18next.t("syncer:Sync interval"),
         dataIndex: 'syncInterval',
         key: 'syncInterval',
-        width: '120px',
+        width: '130px',
         sorter: true,
         ...this.getColumnSearchProps('syncInterval'),
       },

@@ -20,7 +20,6 @@ import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import * as ProviderBackend from "./backend/ProviderBackend";
 
 class UserListPage extends BaseListPage {
   constructor(props) {
@@ -164,7 +163,7 @@ class UserListPage extends BaseListPage {
         title: i18next.t("general:Display name"),
         dataIndex: 'displayName',
         key: 'displayName',
-        width: '100px',
+        // width: '100px',
         sorter: true,
         ...this.getColumnSearchProps('displayName'),
       },
@@ -215,7 +214,7 @@ class UserListPage extends BaseListPage {
         title: i18next.t("user:Affiliation"),
         dataIndex: 'affiliation',
         key: 'affiliation',
-        width: '120px',
+        width: '140px',
         sorter: true,
         ...this.getColumnSearchProps('affiliation'),
       },
@@ -223,7 +222,7 @@ class UserListPage extends BaseListPage {
         title: i18next.t("user:Country/Region"),
         dataIndex: 'region',
         key: 'region',
-        width: '120px',
+        width: '140px',
         sorter: true,
         ...this.getColumnSearchProps('region'),
       },
@@ -231,7 +230,7 @@ class UserListPage extends BaseListPage {
         title: i18next.t("user:Tag"),
         dataIndex: 'tag',
         key: 'tag',
-        width: '100px',
+        width: '110px',
         sorter: true,
         ...this.getColumnSearchProps('tag'),
       },
@@ -251,7 +250,7 @@ class UserListPage extends BaseListPage {
         title: i18next.t("user:Is global admin"),
         dataIndex: 'isGlobalAdmin',
         key: 'isGlobalAdmin',
-        width: '110px',
+        width: '140px',
         sorter: true,
         render: (text, record, index) => {
           return (

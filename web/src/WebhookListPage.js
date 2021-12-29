@@ -72,7 +72,7 @@ class WebhookListPage extends BaseListPage {
         title: i18next.t("general:Organization"),
         dataIndex: 'organization',
         key: 'organization',
-        width: '80px',
+        width: '110px',
         sorter: true,
         ...this.getColumnSearchProps('organization'),
         render: (text, record, index) => {
