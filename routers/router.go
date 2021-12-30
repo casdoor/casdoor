@@ -128,6 +128,12 @@ func initAPI() {
 	beego.Router("/api/add-syncer", &controllers.ApiController{}, "POST:AddSyncer")
 	beego.Router("/api/delete-syncer", &controllers.ApiController{}, "POST:DeleteSyncer")
 
+	beego.Router("/api/get-certs", &controllers.ApiController{}, "GET:GetCerts")
+	beego.Router("/api/get-cert", &controllers.ApiController{}, "GET:GetCert")
+	beego.Router("/api/update-cert", &controllers.ApiController{}, "POST:UpdateCert")
+	beego.Router("/api/add-cert", &controllers.ApiController{}, "POST:AddCert")
+	beego.Router("/api/delete-cert", &controllers.ApiController{}, "POST:DeleteCert")
+
 	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
 
