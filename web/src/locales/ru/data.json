@@ -13,6 +13,8 @@
     "Edit Application": "Изменить приложение",
     "Enable SAML compress": "Enable SAML compress",
     "Enable SAML compress - Tooltip": "Enable SAML compress - Tooltip",
+    "Enable WebAuthn signin": "Enable WebAuthn signin",
+    "Enable WebAuthn signin - Tooltip": "Enable WebAuthn signin - Tooltip",
     "Enable code signin": "Включить кодовый вход",
     "Enable code signin - Tooltip": "Включить вход с кодом - Tooltip",
     "Enable signin session - Tooltip": "Включить сеанс входа - Подсказка",
@@ -248,6 +250,7 @@
     "Please input your password, at least 6 characters!": "Пожалуйста, введите ваш пароль, по крайней мере 6 символов!",
     "Please input your username, Email or phone!": "Пожалуйста, введите ваше имя пользователя, адрес электронной почты или телефон!",
     "Sign In": "Войти",
+    "Sign in with WebAuthn": "Sign in with WebAuthn",
     "Sign in with code": "Войти с помощью кода",
     "Sign in with password": "Войти с помощью пароля",
     "Sign in with {type}": "Войти с помощью {type}",
@@ -639,6 +642,7 @@
     "Unlink": "Отвязать",
     "Upload (.xlsx)": "Загрузить (.xlsx)",
     "Upload a photo": "Загрузить фото",
+    "WebAuthn credentials": "WebAuthn credentials",
     "input password": "пароль для ввода"
   },
   "webhook": {

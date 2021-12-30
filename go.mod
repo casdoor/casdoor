@@ -14,6 +14,7 @@ require (
 	github.com/casdoor/goth v1.69.0-FIX1
 	github.com/casdoor/oss v1.2.0
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
+	github.com/duo-labs/webauthn v0.0.0-20211221191814-a22482edaa3b
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
 	github.com/go-ldap/ldap/v3 v3.3.0
 	github.com/go-pay/gopay v1.5.72
