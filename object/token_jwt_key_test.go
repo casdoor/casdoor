@@ -14,9 +14,20 @@
 
 package object
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+
+	"github.com/casbin/casdoor/util"
+)
 
 func TestGenerateRsaKeys(t *testing.T) {
 	fileId := "token_jwt_key"
-	generateRsaKeys(fileId)
+	publicKey, privateKey := generateRsaKeys(4096, 20, "Casdoor Cert", "Casdoor Organization")
+
+	// Write certificate (aka public key) to file.
+	util.WriteStringToPath(publicKey, fmt.Sprintf("%s.pem", fileId))
+
+	// Write private key to file.
+	util.WriteStringToPath(privateKey, fmt.Sprintf("%s.key", fileId))
 }

@@ -14,12 +14,23 @@
 
 package object
 
-import "github.com/casbin/casdoor/util"
+import (
+	_ "embed"
+
+	"github.com/casbin/casdoor/util"
+)
+
+//go:embed token_jwt_key.pem
+var tokenJwtPublicKey string
+
+//go:embed token_jwt_key.key
+var tokenJwtPrivateKey string
 
 func InitDb() {
 	initBuiltInOrganization()
 	initBuiltInUser()
 	initBuiltInApplication()
+	initBuiltInCert()
 	initBuiltInLdap()
 }
 
@@ -90,6 +101,7 @@ func initBuiltInApplication() {
 		Logo:           "https://cdn.casbin.com/logo/logo_1024x256.png",
 		HomepageUrl:    "https://casdoor.org",
 		Organization:   "built-in",
+		Cert:           "cert-built-in",
 		EnablePassword: true,
 		EnableSignUp:   true,
 		Providers:      []*ProviderItem{},
@@ -107,6 +119,28 @@ func initBuiltInApplication() {
 		ExpireInHours: 168,
 	}
 	AddApplication(application)
+}
+
+func initBuiltInCert() {
+	cert := getCert("admin", "cert-built-in")
+	if cert != nil {
+		return
+	}
+
+	cert = &Cert{
+		Owner:           "admin",
+		Name:            "cert-built-in",
+		CreatedTime:     util.GetCurrentTime(),
+		DisplayName:     "Built-in Cert",
+		Scope:           "JWT",
+		Type:            "x509",
+		CryptoAlgorithm: "RSA",
+		BitSize:         4096,
+		ExpireInYears:   20,
+		PublicKey:       tokenJwtPublicKey,
+		PrivateKey:      tokenJwtPrivateKey,
+	}
+	AddCert(cert)
 }
 
 func initBuiltInLdap() {

@@ -72,13 +72,15 @@ func GetOidcDiscovery() OidcDiscovery {
 	return oidcDiscovery
 }
 
-func GetJSONWebKeySet() (jose.JSONWebKeySet, error) {
+func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
+	cert := GetDefaultCert()
+
 	//follows the protocol rfc 7517(draft)
 	//link here: https://self-issued.info/docs/draft-ietf-jose-json-web-key.html
 	//or https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key
-	certPEMBlock := []byte(tokenJwtPublicKey)
-	certDERBlock, _ := pem.Decode(certPEMBlock)
-	x509Cert, _ := x509.ParseCertificate(certDERBlock.Bytes)
+	certPemBlock := []byte(cert.PublicKey)
+	certDerBlock, _ := pem.Decode(certPemBlock)
+	x509Cert, _ := x509.ParseCertificate(certDerBlock.Bytes)
 
 	var jwk jose.JSONWebKey
 	jwk.Key = x509Cert.PublicKey

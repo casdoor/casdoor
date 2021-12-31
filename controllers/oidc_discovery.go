@@ -28,7 +28,7 @@ func (c *RootController) GetOidcDiscovery() {
 // @Tag OIDC API
 // @router /api/certs [get]
 func (c *RootController) GetOidcCert() {
-	jwks, err := object.GetJSONWebKeySet()
+	jwks, err := object.GetJsonWebKeySet()
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

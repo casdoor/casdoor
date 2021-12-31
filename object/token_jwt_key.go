@@ -20,18 +20,13 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"fmt"
 	"math/big"
 	"time"
-
-	"github.com/casbin/casdoor/util"
 )
 
-func generateRsaKeys(fileId string) {
+func generateRsaKeys(bitSize int, expireInYears int, commonName string, organization string) (string, string) {
 	// https://stackoverflow.com/questions/64104586/use-golang-to-get-rsa-key-the-same-way-openssl-genrsa
 	// https://stackoverflow.com/questions/43822945/golang-can-i-create-x509keypair-using-rsa-key
-
-	bitSize := 4096
 
 	// Generate RSA key.
 	key, err := rsa.GenerateKey(rand.Reader, bitSize)
@@ -50,12 +45,12 @@ func generateRsaKeys(fileId string) {
 	tml := x509.Certificate{
 		// you can add any attr that you need
 		NotBefore: time.Now(),
-		NotAfter:  time.Now().AddDate(20, 0, 0),
+		NotAfter:  time.Now().AddDate(expireInYears, 0, 0),
 		// you have to generate a different serial number each execution
 		SerialNumber: big.NewInt(123456),
 		Subject: pkix.Name{
-			CommonName:   "Casdoor Cert",
-			Organization: []string{"Casdoor Organization"},
+			CommonName:   commonName,
+			Organization: []string{organization},
 		},
 		BasicConstraintsValid: true,
 	}
@@ -70,9 +65,5 @@ func generateRsaKeys(fileId string) {
 		Bytes: cert,
 	})
 
-	// Write private key to file.
-	util.WriteBytesToPath(privateKeyPem, fmt.Sprintf("%s.key", fileId))
-
-	// Write certificate (aka public key) to file.
-	util.WriteBytesToPath(certPem, fmt.Sprintf("%s.pem", fileId))
+	return string(certPem), string(privateKeyPem)
 }

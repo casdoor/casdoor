@@ -332,7 +332,9 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			Code:    "",
 		}
 	}
-	claims, err := ParseJwtToken(refreshToken)
+
+	cert := getCertByApplication(application)
+	claims, err := ParseJwtToken(refreshToken, cert)
 	if err != nil {
 		return &Code{
 			Message: "error: invalid refresh_token",

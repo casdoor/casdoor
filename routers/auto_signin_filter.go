@@ -31,7 +31,8 @@ func AutoSigninFilter(ctx *context.Context) {
 	// "/page?access_token=123"
 	accessToken := ctx.Input.Query("accessToken")
 	if accessToken != "" {
-		claims, err := object.ParseJwtToken(accessToken)
+		cert := object.GetDefaultCert()
+		claims, err := object.ParseJwtToken(accessToken, cert)
 		if err != nil {
 			responseError(ctx, "invalid JWT token")
 			return
@@ -71,7 +72,8 @@ func AutoSigninFilter(ctx *context.Context) {
 	// Authorization: Bearer bearerToken
 	bearerToken := parseBearerToken(ctx)
 	if bearerToken != "" {
-		claims, err := object.ParseJwtToken(bearerToken)
+		cert := object.GetDefaultCert()
+		claims, err := object.ParseJwtToken(bearerToken, cert)
 		if err != nil {
 			responseError(ctx, err.Error())
 			return

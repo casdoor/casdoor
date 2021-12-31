@@ -137,7 +137,7 @@ class UserListPage extends BaseListPage {
         title: i18next.t("general:Name"),
         dataIndex: 'name',
         key: 'name',
-        width: (Setting.isMobile()) ? "80px" : "100px",
+        width: (Setting.isMobile()) ? "80px" : "110px",
         fixed: 'left',
         sorter: true,
         ...this.getColumnSearchProps('name'),

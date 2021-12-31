@@ -31,6 +31,7 @@ type Application struct {
 	HomepageUrl         string          `xorm:"varchar(100)" json:"homepageUrl"`
 	Description         string          `xorm:"varchar(100)" json:"description"`
 	Organization        string          `xorm:"varchar(100)" json:"organization"`
+	Cert                string          `xorm:"varchar(100)" json:"cert"`
 	EnablePassword      bool            `json:"enablePassword"`
 	EnableSignUp        bool            `json:"enableSignUp"`
 	EnableSigninSession bool            `json:"enableSigninSession"`

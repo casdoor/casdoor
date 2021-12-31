@@ -124,6 +124,12 @@ func UpdateCert(id string, cert *Cert) bool {
 }
 
 func AddCert(cert *Cert) bool {
+	if cert.PublicKey == "" || cert.PrivateKey == "" {
+		publicKey, privateKey := generateRsaKeys(cert.BitSize, cert.ExpireInYears, cert.Name, cert.Owner)
+		cert.PublicKey = publicKey
+		cert.PrivateKey = privateKey
+	}
+
 	affected, err := adapter.Engine.Insert(cert)
 	if err != nil {
 		panic(err)
@@ -143,4 +149,16 @@ func DeleteCert(cert *Cert) bool {
 
 func (p *Cert) GetId() string {
 	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
+}
+
+func getCertByApplication(application *Application) *Cert {
+	if application.Cert != "" {
+		return getCert("admin", application.Cert)
+	} else {
+		return GetDefaultCert()
+	}
+}
+
+func GetDefaultCert() *Cert {
+	return getCert("admin", "cert-built-in")
 }
