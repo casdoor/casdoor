@@ -68,6 +68,7 @@ func initAPI() {
 	beego.Router("/api/update-user", &controllers.ApiController{}, "POST:UpdateUser")
 	beego.Router("/api/add-user", &controllers.ApiController{}, "POST:AddUser")
 	beego.Router("/api/delete-user", &controllers.ApiController{}, "POST:DeleteUser")
+	beego.Router("/api/upload-users", &controllers.ApiController{}, "POST:UploadUsers")
 
 	beego.Router("/api/set-password", &controllers.ApiController{}, "POST:SetPassword")
 	beego.Router("/api/check-user-password", &controllers.ApiController{}, "POST:CheckUserPassword")
