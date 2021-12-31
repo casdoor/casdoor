@@ -62,6 +62,7 @@ type Response struct {
 	Status string      `json:"status"`
 	Msg    string      `json:"msg"`
 	Sub    string      `json:"sub"`
+	Name   string      `json:"name"`
 	Data   interface{} `json:"data"`
 	Data2  interface{} `json:"data2"`
 }
@@ -222,6 +223,7 @@ func (c *ApiController) GetAccount() {
 	resp := Response{
 		Status: "ok",
 		Sub:    user.Id,
+		Name:   user.Name,
 		Data:   user,
 		Data2:  organization,
 	}
