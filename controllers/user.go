@@ -226,11 +226,6 @@ func (c *ApiController) SetPassword() {
 		c.ResponseError("Please login first.")
 		return
 	}
-	requestUser := object.GetUser(requestUserId)
-	if requestUser == nil {
-		c.ResponseError("Session outdated. Please login again.")
-		return
-	}
 
 	userId := fmt.Sprintf("%s/%s", userOwner, userName)
 	targetUser := object.GetUser(userId)
@@ -240,15 +235,22 @@ func (c *ApiController) SetPassword() {
 	}
 
 	hasPermission := false
-
-	if requestUser.IsGlobalAdmin {
+	if strings.HasPrefix(requestUserId, "app/") {
 		hasPermission = true
-	} else if requestUserId == userId {
-		hasPermission = true
-	} else if targetUser.Owner == requestUser.Owner && requestUser.IsAdmin {
-		hasPermission = true
+	} else {
+		requestUser := object.GetUser(requestUserId)
+		if requestUser == nil {
+			c.ResponseError("Session outdated. Please login again.")
+			return
+		}
+		if requestUser.IsGlobalAdmin {
+			hasPermission = true
+		} else if requestUserId == userId {
+			hasPermission = true
+		} else if targetUser.Owner == requestUser.Owner && requestUser.IsAdmin {
+			hasPermission = true
+		}
 	}
-
 	if !hasPermission {
 		c.ResponseError("You don't have the permission to do this.")
 		return
