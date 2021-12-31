@@ -448,13 +448,17 @@ class LoginPage extends React.Component {
       return (
         <React.Fragment>
           <span style={{float: "left"}}>
-            <a onClick={() => {
-              this.setState({
-                isCodeSignin: !this.state.isCodeSignin,
-              });
-            }}>
-              {this.state.isCodeSignin ? i18next.t("login:Sign in with password") : i18next.t("login:Sign in with code")}
-            </a>
+            {
+              !application.enableCodeSignin ? null : (
+                <a onClick={() => {
+                  this.setState({
+                    isCodeSignin: !this.state.isCodeSignin,
+                  });
+                }}>
+                  {this.state.isCodeSignin ? i18next.t("login:Sign in with password") : i18next.t("login:Sign in with code")}
+                </a>
+              )
+            }
           </span>
           <span style={{float: "right"}}>
             {i18next.t("login:No account?")}&nbsp;
