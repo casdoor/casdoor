@@ -17,7 +17,6 @@ package object
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/casbin/casdoor/util"
 	"xorm.io/core"
@@ -302,57 +301,63 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	return tokenWrapper
 }
 
-func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string) *Code {
+func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string) *TokenWrapper {
 	// check parameters
 	if grantType != "refresh_token" {
-		return &Code{
-			Message: "error: grant_type should be \"refresh_token\"",
-			Code:    "",
+		return &TokenWrapper{
+			AccessToken: "error: grant_type should be \"refresh_token\"",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
 		}
 	}
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
-		return &Code{
-			Message: "error: invalid client_id",
-			Code:    "",
+		return &TokenWrapper{
+			AccessToken: "error: invalid client_id",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
 		}
 	}
 	if application.ClientSecret != clientSecret {
-		return &Code{
-			Message: "error: invalid client_secret",
-			Code:    "",
+		return &TokenWrapper{
+			AccessToken: "error: invalid client_secret",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
 		}
 	}
 	// check whether the refresh token is valid, and has not expired.
 	token := Token{RefreshToken: refreshToken}
 	existed, err := adapter.Engine.Get(&token)
 	if err != nil || !existed {
-		return &Code{
-			Message: "error: invalid refresh_token",
-			Code:    "",
+		return &TokenWrapper{
+			AccessToken: "error: invalid refresh_token",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
 		}
 	}
 
 	cert := getCertByApplication(application)
-	claims, err := ParseJwtToken(refreshToken, cert)
+	_, err = ParseJwtToken(refreshToken, cert)
 	if err != nil {
-		return &Code{
-			Message: "error: invalid refresh_token",
-			Code:    "",
-		}
-	}
-	if time.Now().Unix() > claims.ExpiresAt.Unix() {
-		return &Code{
-			Message: "error: expired refresh_token",
-			Code:    "",
+		return &TokenWrapper{
+			AccessToken: fmt.Sprintf("error: %s", err.Error()),
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
 		}
 	}
 	// generate a new token
-	user := getUser(application.Owner, token.User)
+	user := getUser(application.Organization, token.User)
 	if user.IsForbidden {
-		return &Code{
-			Message: "error: the user is forbidden to sign in, please contact the administrator",
-			Code:    "",
+		return &TokenWrapper{
+			AccessToken: "error: the user is forbidden to sign in, please contact the administrator",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
 		}
 	}
 	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "")
@@ -376,8 +381,14 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	}
 	AddToken(newToken)
 
-	return &Code{
-		Message: "",
-		Code:    token.Code,
+	tokenWrapper := &TokenWrapper{
+		AccessToken:  token.AccessToken,
+		IdToken:      token.AccessToken,
+		RefreshToken: token.RefreshToken,
+		TokenType:    token.TokenType,
+		ExpiresIn:    token.ExpiresIn,
+		Scope:        token.Scope,
 	}
+
+	return tokenWrapper
 }
