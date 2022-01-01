@@ -23,6 +23,8 @@ import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
 import UserListPage from "./UserListPage";
 import UserEditPage from "./UserEditPage";
+import RoleListPage from "./RoleListPage";
+import RoleEditPage from "./RoleEditPage";
 import ProviderListPage from "./ProviderListPage";
 import ProviderEditPage from "./ProviderEditPage";
 import ApplicationListPage from "./ApplicationListPage";
@@ -102,6 +104,8 @@ class App extends Component {
       this.setState({ selectedMenuKey: '/organizations' });
     } else if (uri.includes('/users')) {
       this.setState({ selectedMenuKey: '/users' });
+    } else if (uri.includes('/roles')) {
+      this.setState({ selectedMenuKey: '/roles' });
     } else if (uri.includes('/providers')) {
       this.setState({ selectedMenuKey: '/providers' });
     } else if (uri.includes('/applications')) {
@@ -328,6 +332,13 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
+        <Menu.Item key="/roles">
+          <Link to="/roles">
+            {i18next.t("general:Roles")}
+          </Link>
+        </Menu.Item>
+      );
+      res.push(
         <Menu.Item key="/providers">
           <Link to="/providers">
             {i18next.t("general:Providers")}
@@ -436,6 +447,8 @@ class App extends Component {
           <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />}/>
+          <Route exact path="/roles" render={(props) => this.renderLoginIfNotLoggedIn(<RoleListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/roles/:organizationName/:roleName" render={(props) => this.renderLoginIfNotLoggedIn(<RoleEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)}/>

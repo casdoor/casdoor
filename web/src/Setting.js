@@ -590,7 +590,7 @@ export function getNewRowNameForTable(table, rowName) {
 }
 
 export function getTagColor(s) {
-  return "success";
+  return "processing";
 }
 
 export function getTags(tags) {

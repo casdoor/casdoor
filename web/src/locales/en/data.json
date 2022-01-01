@@ -146,6 +146,7 @@
     "Records": "Records",
     "Request URI": "Request URI",
     "Resources": "Resources",
+    "Roles": "Roles",
     "Save": "Save",
     "Save & Exit": "Save & Exit",
     "Signin URL": "Signin URL",
@@ -324,6 +325,13 @@
     "Type": "Type",
     "Upload a file...": "Upload a file...",
     "User": "User"
+  },
+  "role": {
+    "Edit Role": "Edit Role",
+    "Sub roles": "Sub roles",
+    "Sub roles - Tooltip": "Sub roles - Tooltip",
+    "Sub users": "Sub users",
+    "Sub users - Tooltip": "Sub users - Tooltip"
   },
   "signup": {
     "Accept": "Accept",
