@@ -41,6 +41,9 @@
 
 ## Online demo
 
+[![Join the chat at https://gitter.im/casbin/casdoor](https://badges.gitter.im/casbin/casdoor.svg)](https://gitter.im/casbin/casdoor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+
 Deployed site: https://door.casbin.com/
 
 ## Quick Start
