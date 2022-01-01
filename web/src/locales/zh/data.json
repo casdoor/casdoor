@@ -133,6 +133,7 @@
     "Password salt - Tooltip": "用于密码加密的随机参数",
     "Password type": "密码类型",
     "Password type - Tooltip": "密码在数据库中存储的形式",
+    "Permissions": "权限",
     "Personal name": "姓名",
     "Phone": "手机号",
     "Phone - Tooltip": "手机号",
@@ -230,6 +231,16 @@
     "Soft deletion - Tooltip": "启用后，删除用户信息时不会在数据库彻底清除，只会标记为已删除状态",
     "Website URL": "网页地址",
     "Website URL - Tooltip": "网页地址"
+  },
+  "permission": {
+    "Actions": "动作",
+    "Actions - Tooltip": "授权的动作",
+    "Edit Permission": "编辑权限",
+    "Effect": "效果",
+    "Effect - Tooltip": "允许还是拒绝",
+    "Resource type": "资源类型",
+    "Resource type - Tooltip": "授权资源的类型",
+    "Resources": "资源"
   },
   "provider": {
     "Access key": "Access key",

@@ -133,6 +133,7 @@
     "Password salt - Tooltip": "Random parameters used for password encryption",
     "Password type": "Password type",
     "Password type - Tooltip": "The form in which the password is stored in the database",
+    "Permissions": "Permissions",
     "Personal name": "Personal name",
     "Phone": "Phone",
     "Phone - Tooltip": "Phone",
@@ -230,6 +231,16 @@
     "Soft deletion - Tooltip": "Soft deletion - Tooltip",
     "Website URL": "Website URL",
     "Website URL - Tooltip": "Unique string-style identifier"
+  },
+  "permission": {
+    "Actions": "Actions",
+    "Actions - Tooltip": "Actions - Tooltip",
+    "Edit Permission": "Edit Permission",
+    "Effect": "Effect",
+    "Effect - Tooltip": "Effect - Tooltip",
+    "Resource type": "Resource type",
+    "Resource type - Tooltip": "Resource type - Tooltip",
+    "Resources": "Resources"
   },
   "provider": {
     "Access key": "Access key",
