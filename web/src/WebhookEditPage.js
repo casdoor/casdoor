@@ -28,7 +28,7 @@ require("codemirror/mode/javascript/javascript");
 
 const { Option } = Select;
 
-const preview = {
+const previewTemplate = {
   "id": 9078,
   "owner": "built-in",
   "name": "68f55b28-7380-46b1-9bde-64fe1576e3b3",
@@ -40,6 +40,52 @@ const preview = {
   "requestUri": "/api/login",
   "action": "login",
   "isTriggered": false,
+};
+
+const userTemplate = {
+  "owner": "built-in",
+  "name": "admin",
+  "createdTime": "2020-07-16T21:46:52+08:00",
+  "updatedTime": "",
+  "id": "9eb20f79-3bb5-4e74-99ac-39e3b9a171e8",
+  "type": "normal-user",
+  "password": "123",
+  "passwordSalt": "",
+  "displayName": "Admin",
+  "avatar": "https://cdn.casbin.com/usercontent/admin/avatar/1596241359.png",
+  "permanentAvatar": "https://cdn.casbin.com/casdoor/avatar/casbin/admin.png",
+  "email": "admin@example.com",
+  "phone": "",
+  "location": "",
+  "address": null,
+  "affiliation": "",
+  "title": "",
+  "score": 10000,
+  "ranking": 10,
+  "isOnline": false,
+  "isAdmin": true,
+  "isGlobalAdmin": false,
+  "isForbidden": false,
+  "isDeleted": false,
+  "signupApplication": "app-casnode",
+  "properties": {
+    "bio": "",
+    "checkinDate": "20200801",
+    "editorType": "",
+    "emailVerifiedTime": "2020-07-16T21:46:52+08:00",
+    "fileQuota": "50",
+    "location": "",
+    "no": "22",
+    "oauth_QQ_displayName": "",
+    "oauth_QQ_verifiedTime": "",
+    "oauth_WeChat_displayName": "",
+    "oauth_WeChat_verifiedTime": "",
+    "onlineStatus": "false",
+    "phoneVerifiedTime": "",
+    "renameQuota": "3",
+    "tagline": "",
+    "website": ""
+  }
 };
 
 class WebhookEditPage extends React.Component {
@@ -94,6 +140,12 @@ class WebhookEditPage extends React.Component {
   }
 
   renderWebhook() {
+    let preview = Setting.deepCopy(previewTemplate);
+    if (this.state.webhook.isUserExtended) {
+      preview["extendedUser"] = userTemplate;
+    }
+    const previewText = JSON.stringify(preview, null, 2);
+
     return (
       <Card size="small" title={
         <div>
@@ -201,13 +253,23 @@ class WebhookEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("webhook:Is user extended"), i18next.t("webhook:Is user extended - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.webhook.isUserExtended} onChange={checked => {
+              this.updateWebhookField('isUserExtended', checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
           </Col>
           <Col span={22} >
             <div style={{width: "900px", height: "300px"}} >
               <CodeMirror
-                value={JSON.stringify(preview, null, 2)}
+                value={previewText}
                 options={{mode: 'javascript', theme: "material-darker"}}
                 onBeforeChange={(editor, data, value) => {}}
               />

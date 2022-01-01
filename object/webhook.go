@@ -33,12 +33,13 @@ type Webhook struct {
 
 	Organization string `xorm:"varchar(100) index" json:"organization"`
 
-	Url         string    `xorm:"varchar(100)" json:"url"`
-	Method      string    `xorm:"varchar(100)" json:"method"`
-	ContentType string    `xorm:"varchar(100)" json:"contentType"`
-	Headers     []*Header `xorm:"mediumtext" json:"headers"`
-	Events      []string  `xorm:"varchar(100)" json:"events"`
-	IsEnabled   bool      `json:"isEnabled"`
+	Url            string    `xorm:"varchar(100)" json:"url"`
+	Method         string    `xorm:"varchar(100)" json:"method"`
+	ContentType    string    `xorm:"varchar(100)" json:"contentType"`
+	Headers        []*Header `xorm:"mediumtext" json:"headers"`
+	Events         []string  `xorm:"varchar(100)" json:"events"`
+	IsUserExtended bool      `json:"isUserExtended"`
+	IsEnabled      bool      `json:"isEnabled"`
 }
 
 func GetWebhookCount(owner, field, value string) int {

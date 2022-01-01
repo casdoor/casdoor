@@ -449,6 +449,8 @@
     "Events - Tooltip": "事件",
     "Headers": "协议头",
     "Headers - Tooltip": "HTTP协议头（键值对）",
+    "Is user extended": "扩展用户字段",
+    "Is user extended - Tooltip": "JSON里加入extendedUser来扩展用户字段",
     "Method": "方法",
     "Method - Tooltip": "HTTP方法",
     "Name": "名称",

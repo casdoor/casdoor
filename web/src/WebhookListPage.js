@@ -158,6 +158,18 @@ class WebhookListPage extends BaseListPage {
         }
       },
       {
+        title: i18next.t("webhook:Is user extended"),
+        dataIndex: 'isUserExtended',
+        key: 'isUserExtended',
+        width: '160px',
+        sorter: true,
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          )
+        }
+      },
+      {
         title: i18next.t("general:Is enabled"),
         dataIndex: 'isEnabled',
         key: 'isEnabled',

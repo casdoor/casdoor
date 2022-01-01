@@ -47,6 +47,8 @@ type Record struct {
 	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
 	Action       string `xorm:"varchar(1000)" json:"action"`
 
+	ExtendedUser *User `xorm:"-" json:"extendedUser"`
+
 	IsTriggered bool `json:"isTriggered"`
 }
 
@@ -159,6 +161,11 @@ func SendWebhooks(record *Record) error {
 		}
 
 		if matched {
+			if webhook.IsUserExtended {
+				user := getUser(record.Organization, record.User)
+				record.ExtendedUser = user
+			}
+
 			err := sendWebhook(webhook, record)
 			if err != nil {
 				return err
