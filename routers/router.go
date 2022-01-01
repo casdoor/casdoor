@@ -113,6 +113,7 @@ func initAPI() {
 	beego.Router("/api/delete-token", &controllers.ApiController{}, "POST:DeleteToken")
 	beego.Router("/api/login/oauth/code", &controllers.ApiController{}, "POST:GetOAuthCode")
 	beego.Router("/api/login/oauth/access_token", &controllers.ApiController{}, "POST:GetOAuthToken")
+	beego.Router("/api/login/oauth/refresh_token", &controllers.ApiController{}, "POST:RefreshToken")
 
 	beego.Router("/api/get-records", &controllers.ApiController{}, "GET:GetRecords")
 	beego.Router("/api/get-records-filter", &controllers.ApiController{}, "POST:GetRecordsByFilter")

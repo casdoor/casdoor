@@ -80,6 +80,7 @@ p, *, *, GET, /api/get-app-login, *, *
 p, *, *, POST, /api/logout, *, *
 p, *, *, GET, /api/get-account, *, *
 p, *, *, POST, /api/login/oauth/access_token, *, *
+p, *, *, POST, /api/login/oauth/refresh_token, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-users, *, *
 p, *, *, GET, /api/get-user, *, *
