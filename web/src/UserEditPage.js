@@ -25,11 +25,11 @@ import PasswordModal from "./PasswordModal";
 import ResetModal from "./ResetModal";
 import AffiliationSelect from "./common/AffiliationSelect";
 import OAuthWidget from "./common/OAuthWidget";
+import SamlWidget from "./common/SamlWidget";
 import SelectRegionBox from "./SelectRegionBox";
 
 import {Controlled as CodeMirror} from 'react-codemirror2';
 import "codemirror/lib/codemirror.css";
-import SamlWidget from "./common/SamlWidget";
 require('codemirror/theme/material-darker.css');
 require("codemirror/mode/javascript/javascript");
 
