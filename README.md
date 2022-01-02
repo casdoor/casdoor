@@ -37,6 +37,9 @@
   <a href="https://crowdin.com/project/casdoor-site">
     <img alt="Crowdin" src="https://badges.crowdin.net/casdoor-site/localized.svg">
   </a>
+  <a href="https://gitter.im/casbin/casdoor">
+    <img alt="Gitter" src="https://badges.gitter.im/casbin/casdoor.svg">
+  </a>
 </p>
 
 ## Online demo
