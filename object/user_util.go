@@ -64,6 +64,12 @@ func GetUserByFields(organization string, field string) *User {
 		return user
 	}
 
+	// check ID card
+	user = GetUserByField(organization, "idCard", field)
+	if user != nil {
+		return user
+	}
+
 	return nil
 }
 
