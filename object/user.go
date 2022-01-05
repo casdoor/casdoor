@@ -32,6 +32,8 @@ type User struct {
 	Type              string   `xorm:"varchar(100)" json:"type"`
 	Password          string   `xorm:"varchar(100)" json:"password"`
 	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
+	TotpSecret        string   `xorm:"varchar(100)" json:"-"`
+	RecoveryCode      string   `xorm:"varchar(100)" json:"-"`
 	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
 	Avatar            string   `xorm:"varchar(500)" json:"avatar"`
 	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
@@ -59,6 +61,7 @@ type User struct {
 	IsGlobalAdmin     bool     `json:"isGlobalAdmin"`
 	IsForbidden       bool     `json:"isForbidden"`
 	IsDeleted         bool     `json:"isDeleted"`
+	Is2fa             bool     `json:"is2fa"`
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`

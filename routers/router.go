@@ -151,6 +151,9 @@ func initAPI() {
 	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
 
+	beego.Router("api/totp", &controllers.ApiController{}, "GET:InitTOTP")
+	beego.Router("api/totp", &controllers.ApiController{}, "POST:SetTOTP")
+	beego.Router("api/totp", &controllers.ApiController{}, "DELETE:DeleteTOTP")
 	beego.Router("/.well-known/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscovery")
 	beego.Router("/api/certs", &controllers.RootController{}, "*:GetOidcCert")
 }
