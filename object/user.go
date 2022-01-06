@@ -37,14 +37,14 @@ type User struct {
 	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
 	Avatar            string   `xorm:"varchar(500)" json:"avatar"`
 	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
-	Email             string   `xorm:"varchar(100)" json:"email"`
-	Phone             string   `xorm:"varchar(100)" json:"phone"`
+	Email             string   `xorm:"varchar(100) index" json:"email"`
+	Phone             string   `xorm:"varchar(100) index" json:"phone"`
 	Location          string   `xorm:"varchar(100)" json:"location"`
 	Address           []string `json:"address"`
 	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
 	Title             string   `xorm:"varchar(100)" json:"title"`
 	IdCardType        string   `xorm:"varchar(100)" json:"idCardType"`
-	IdCard            string   `xorm:"varchar(100)" json:"idCard"`
+	IdCard            string   `xorm:"varchar(100) index" json:"idCard"`
 	Homepage          string   `xorm:"varchar(100)" json:"homepage"`
 	Bio               string   `xorm:"varchar(100)" json:"bio"`
 	Tag               string   `xorm:"varchar(100)" json:"tag"`
