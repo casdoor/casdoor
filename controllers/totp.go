@@ -25,14 +25,12 @@ type TOTPInit struct {
 	URL           string `json:"qrcode-url"`
 }
 
-//
-// @Title:
-// @Tag:
-// @Description:
-// @Param:
-// @Success:
-// @router:
-//
+// InitTOTP
+// @Title: InitTOTP
+// @Tag: TOTP API
+// @Description: Initialize the user's TOTP information and return recovery_code and secret
+// @Success: 200 {object} TOTPInit The Response object
+// @router: /totp [get]
 func (c *ApiController) InitTOTP() {
 	userId, ok := c.RequireSignedIn()
 	if !ok {
@@ -61,6 +59,14 @@ func (c *ApiController) InitTOTP() {
 	c.ServeJSON()
 }
 
+// SetTOTP
+// @Title: SetTOTP
+// @Tag: TOTP API
+// @Description: Verify that the user has set the correct TOTP
+// @Param: secret  formData    string  true        "The totp secret returned by casdoor"
+// @Param: code  formData    string  true        "Code generated using totp secret"
+// @Success: controllers.Response The Response object
+// @router: /totp [post]
 func (c *ApiController) SetTOTP() {
 	userId, ok := c.RequireSignedIn()
 	if !ok {
@@ -91,6 +97,13 @@ func (c *ApiController) SetTOTP() {
 
 }
 
+// DeleteTOTP
+// @Title: DeleteTOTP
+// @Tag: TOTP API
+// @Description: Delete TOTP set by the user
+// @Param: recovery-code  formData    string  true        "The recovery-code returned by casdoor"
+// @Success: controllers.Response The Response object
+// @router: /totp [delete]
 func (c *ApiController) DeleteTOTP() {
 	userId, ok := c.RequireSignedIn()
 	if !ok {
