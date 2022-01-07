@@ -19,7 +19,7 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
 import i18next from "i18next";
-import {CountDownInput} from "../component/CountDownInput";
+import {CountDownInput} from "../common/CountDownInput";
 import * as UserBackend from "../backend/UserBackend";
 import {CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../CustomGithubCorner";

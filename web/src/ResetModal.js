@@ -17,7 +17,7 @@ import i18next from "i18next";
 import React from "react";
 import * as Setting from "./Setting"
 import * as UserBackend from "./backend/UserBackend"
-import {CountDownInput} from "./component/CountDownInput";
+import {CountDownInput} from "./common/CountDownInput";
 import {MailOutlined, PhoneOutlined} from "@ant-design/icons";
 
 export const ResetModal = (props) => {
