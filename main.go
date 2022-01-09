@@ -15,6 +15,10 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+	"os"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/plugins/cors"
@@ -23,12 +27,15 @@ import (
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/proxy"
 	"github.com/casbin/casdoor/routers"
-
 	_ "github.com/casbin/casdoor/routers"
+	"github.com/casbin/casdoor/util"
+	"github.com/go-ini/ini"
 )
 
 func main() {
-	object.InitAdapter()
+	createDatabase := flag.Bool("createDatabase", false, "true if you need casdoor to create database")
+	flag.Parse()
+	object.InitAdapter(*createDatabase)
 	object.InitDb()
 	object.InitDefaultStorageProvider()
 	object.InitLdapAutoSynchronizer()
@@ -74,5 +81,82 @@ func main() {
 	//logs.SetLevel(logs.LevelInformational)
 	logs.SetLogFuncCall(false)
 
+	if casnodeConf := os.Getenv("CASNODE_CONF"); casnodeConf != "" {
+		initCasnodeInformation(casnodeConf)
+	}
+
 	beego.Run()
+}
+
+func initCasnodeInformation(casnodeConfiguration string) {
+	cfg, err := ini.Load(casnodeConfiguration)
+	if err != nil {
+		logs.Warning("failed to detect casnode configuration at " + casnodeConfiguration)
+		return
+	}
+	casnodeEndpoint := cfg.Section("").Key("casnodeEndpoint").String()
+	casdoorOrganization := cfg.Section("").Key("casdoorOrganization").String()
+	casdoorApplication := cfg.Section("").Key("casdoorApplication").String()
+	clientID := cfg.Section("").Key("clientId").String()
+	clientSecret := cfg.Section("").Key("clientSecret").String()
+	if casnodeEndpoint == "" || casdoorOrganization == "" || casdoorApplication == "" || clientID == "" || clientSecret == "" {
+		logs.Warning("missing required fields in " + casnodeConfiguration)
+		return
+	}
+	organization := &object.Organization{
+		Owner:         "admin",
+		Name:          casdoorOrganization,
+		CreatedTime:   util.GetCurrentTime(),
+		DisplayName:   casdoorOrganization,
+		WebsiteUrl:    "https://example.com",
+		Favicon:       "https://cdn.casbin.com/static/favicon.ico",
+		PhonePrefix:   "86",
+		DefaultAvatar: "https://casbin.org/img/casbin.svg",
+		PasswordType:  "plain",
+	}
+	if org := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", casdoorOrganization)); org == nil {
+		object.AddOrganization(organization)
+	} else {
+		logs.Warning("organization already exists")
+		return
+	}
+
+	application := object.Application{
+		Owner:                "admin",
+		Name:                 casdoorApplication,
+		CreatedTime:          util.GetCurrentTime(),
+		DisplayName:          casdoorApplication,
+		Logo:                 "https://cdn.casbin.com/logo/logo_1024x256.png",
+		HomepageUrl:          "https://casdoor.org",
+		Organization:         organization.Name,
+		EnablePassword:       true,
+		EnableSignUp:         true,
+		EnableSigninSession:  true,
+		ClientId:             clientID,
+		ClientSecret:         clientSecret,
+		RedirectUris:         []string{casnodeEndpoint},
+		TokenFormat:          "JWT",
+		ExpireInHours:        168,
+		RefreshExpireInHours: 0,
+		Providers:            []*object.ProviderItem{},
+		SignupItems: []*object.SignupItem{
+			{Name: "ID", Visible: false, Required: true, Prompted: false, Rule: "Random"},
+			{Name: "Username", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Display name", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Password", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Confirm password", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Email", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Phone", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Agreement", Visible: true, Required: true, Prompted: false, Rule: "None"},
+		},
+	}
+	if app := object.GetApplication(fmt.Sprintf("admin/%s", casdoorApplication)); app == nil {
+		object.AddApplication(&application)
+	} else {
+		logs.Warning("application already exists")
+		return
+	}
+
+	logs.Info("organization and applications for casnode created")
+
 }

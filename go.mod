@@ -12,6 +12,7 @@ require (
 	github.com/casdoor/go-sms-sender v0.0.5
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
+	github.com/go-ini/ini v1.66.2
 	github.com/go-ldap/ldap/v3 v3.3.0
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/golang-jwt/jwt/v4 v4.1.0
