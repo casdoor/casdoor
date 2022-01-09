@@ -15,6 +15,8 @@
 package main
 
 import (
+	"flag"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/plugins/cors"
@@ -23,12 +25,13 @@ import (
 	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/proxy"
 	"github.com/casbin/casdoor/routers"
-
 	_ "github.com/casbin/casdoor/routers"
 )
 
 func main() {
-	object.InitAdapter()
+	createDatabase := flag.Bool("createDatabase", false, "true if you need casdoor to create database")
+	flag.Parse()
+	object.InitAdapter(*createDatabase)
 	object.InitDb()
 	object.InitDefaultStorageProvider()
 	object.InitLdapAutoSynchronizer()
