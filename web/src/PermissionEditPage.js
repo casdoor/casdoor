@@ -95,11 +95,7 @@ class PermissionEditPage extends React.Component {
 
   updatePermissionField(key, value) {
     value = this.parsePermissionField(key, value);
-
     let permission = this.state.permission;
-    if (key === "actions" || key === "resources") {
-      value = value.split(',')
-    }
     permission[key] = value;
     this.setState({ permission });
   }
@@ -124,7 +120,6 @@ class PermissionEditPage extends React.Component {
   remoteTag(key, item) {
     let permission = this.state.permission
     permission[key] = permission[key].filter(f => f !== item)
-    console.log(item, permission[key])
     this.setState({ permission })
   }
 
