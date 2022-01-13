@@ -26,6 +26,7 @@ import (
 type Claims struct {
 	*User
 	Nonce string `json:"nonce,omitempty"`
+	Tag   string `json:"tag,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -67,6 +68,8 @@ func generateJwtToken(application *Application, user *User, nonce string) (strin
 	claims := Claims{
 		User:  user,
 		Nonce: nonce,
+		// FIXME: A workaround for custom claim by reusing `tag` in user info
+		Tag: user.Tag,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    beego.AppConfig.String("origin"),
 			Subject:   user.Id,
@@ -102,6 +105,7 @@ func generateJwtToken(application *Application, user *User, nonce string) (strin
 		return "", "", err
 	}
 
+	token.Header["kid"] = cert.Name
 	tokenString, err := token.SignedString(key)
 	if err != nil {
 		return "", "", err
