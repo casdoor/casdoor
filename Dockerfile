@@ -20,7 +20,7 @@ COPY --from=FRONT /web/build /web/build
 CMD chmod 777 /tmp && service mariadb start&&\
 if [ "${MYSQL_ROOT_PASSWORD}" = "" ] ;then MYSQL_ROOT_PASSWORD=123456 ; fi&&\
 mysqladmin -u root password ${MYSQL_ROOT_PASSWORD} &&\
-./wait-for-it localhost:3306 -- ./server
+./wait-for-it localhost:3306 -- ./server --createDatabase=true
 
 
 FROM alpine:latest

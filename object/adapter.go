@@ -35,11 +35,15 @@ func InitConfig() {
 		panic(err)
 	}
 
-	InitAdapter()
+	InitAdapter(true)
 }
 
-func InitAdapter() {
+func InitAdapter(createDatabase bool) {
+
 	adapter = NewAdapter(beego.AppConfig.String("driverName"), conf.GetBeegoConfDataSourceName(), beego.AppConfig.String("dbName"))
+	if createDatabase {
+		adapter.CreateDatabase()
+	}
 	adapter.createTable()
 }
 
@@ -73,6 +77,17 @@ func NewAdapter(driverName string, dataSourceName string, dbName string) *Adapte
 	runtime.SetFinalizer(a, finalizer)
 
 	return a
+}
+
+func (a *Adapter) CreateDatabase() error {
+	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName)
+	if err != nil {
+		return err
+	}
+	defer engine.Close()
+
+	_, err = engine.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default charset utf8 COLLATE utf8_general_ci", a.dbName))
+	return err
 }
 
 func (a *Adapter) open() {
