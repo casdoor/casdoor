@@ -19,6 +19,7 @@ require (
 	github.com/jinzhu/configor v1.2.1 // indirect
 	github.com/markbates/goth v1.68.1-0.20211006204042-9dc8905b41c8
 	github.com/mileusna/crontab v1.0.1
+	github.com/pquerna/otp v1.3.0
 	github.com/qiangmzsx/string-adapter/v2 v2.1.0
 	github.com/qor/oss v0.0.0-20191031055114-aef9ba66bf76
 	github.com/russellhaering/gosaml2 v0.6.0
