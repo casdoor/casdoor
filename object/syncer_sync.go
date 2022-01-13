@@ -20,7 +20,11 @@ func (syncer *Syncer) syncUsers() {
 	fmt.Printf("Running syncUsers()..\n")
 
 	users, userMap := syncer.getUserMap()
-	oUsers, oUserMap := syncer.getOriginalUserMap()
+	oUsers, oUserMap, err := syncer.getOriginalUserMap()
+	if err != nil {
+		syncer.SetErrorMessage(err)
+		return
+	}
 	fmt.Printf("Users: %d, oUsers: %d\n", len(users), len(oUsers))
 
 	var affiliationMap map[int]string
@@ -44,13 +48,19 @@ func (syncer *Syncer) syncUsers() {
 					updatedUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
 					updatedUser.Hash = oHash
 					updatedUser.PreHash = oHash
-					syncer.updateUserForOriginalFields(updatedUser)
+					if err := syncer.updateUserForOriginalFields(updatedUser); err != nil {
+						syncer.SetErrorMessage(err)
+						return
+					}
 					fmt.Printf("Update from oUser to user: %v\n", updatedUser)
 				}
 			} else {
 				if user.PreHash == oHash {
 					updatedOUser := syncer.createOriginalUserFromUser(user)
-					syncer.updateUser(updatedOUser)
+					if err := syncer.updateUser(updatedOUser); err != nil {
+						syncer.SetErrorMessage(err)
+						return
+					}
 					fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
 
 					// update preHash
@@ -65,7 +75,10 @@ func (syncer *Syncer) syncUsers() {
 						updatedUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
 						updatedUser.Hash = oHash
 						updatedUser.PreHash = oHash
-						syncer.updateUserForOriginalFields(updatedUser)
+						if err := syncer.updateUserForOriginalFields(updatedUser); err != nil {
+							syncer.SetErrorMessage(err)
+							return
+						}
 						fmt.Printf("Update from oUser to user (2nd condition): %v\n", updatedUser)
 					}
 				}
@@ -78,8 +91,13 @@ func (syncer *Syncer) syncUsers() {
 		id := user.Id
 		if _, ok := oUserMap[id]; !ok {
 			newOUser := syncer.createOriginalUserFromUser(user)
-			syncer.addUser(newOUser)
+			if err := syncer.addUser(newOUser); err != nil {
+				syncer.SetErrorMessage(err)
+				return
+			}
 			fmt.Printf("New oUser: %v\n", newOUser)
 		}
 	}
+	//if everything works well here, we are supposed to make sure the err message is empty
+	syncer.SetErrorMessage(nil)
 }

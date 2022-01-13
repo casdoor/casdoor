@@ -39,8 +39,11 @@ func InitConfig() {
 }
 
 func InitAdapter(createDatabase bool) {
-
-	adapter = NewAdapter(beego.AppConfig.String("driverName"), conf.GetBeegoConfDataSourceName(), beego.AppConfig.String("dbName"))
+	var err error
+	adapter,err = NewAdapter(beego.AppConfig.String("driverName"), conf.GetBeegoConfDataSourceName(), beego.AppConfig.String("dbName"))
+	if err!=nil{
+		panic(err)
+	}
 	if createDatabase {
 		adapter.CreateDatabase()
 	}
@@ -64,19 +67,22 @@ func finalizer(a *Adapter) {
 }
 
 // NewAdapter is the constructor for Adapter.
-func NewAdapter(driverName string, dataSourceName string, dbName string) *Adapter {
+func NewAdapter(driverName string, dataSourceName string, dbName string) (*Adapter,error) {
 	a := &Adapter{}
 	a.driverName = driverName
 	a.dataSourceName = dataSourceName
 	a.dbName = dbName
 
 	// Open the DB, create it if not existed.
-	a.open()
+	err:=a.open()
+	if err!=nil{
+		return nil,err
+	}
 
 	// Call the destructor when the object is released.
 	runtime.SetFinalizer(a, finalizer)
 
-	return a
+	return a,nil
 }
 
 func (a *Adapter) CreateDatabase() error {
@@ -90,7 +96,7 @@ func (a *Adapter) CreateDatabase() error {
 	return err
 }
 
-func (a *Adapter) open() {
+func (a *Adapter) open() error {
 	dataSourceName := a.dataSourceName + a.dbName
 	if a.driverName != "mysql" {
 		dataSourceName = a.dataSourceName
@@ -98,10 +104,11 @@ func (a *Adapter) open() {
 
 	engine, err := xorm.NewEngine(a.driverName, dataSourceName)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	a.Engine = engine
+	return nil
 }
 
 func (a *Adapter) close() {

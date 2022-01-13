@@ -50,6 +50,7 @@ type Syncer struct {
 	AvatarBaseUrl    string         `xorm:"varchar(100)" json:"avatarBaseUrl"`
 	SyncInterval     int            `json:"syncInterval"`
 	IsEnabled        bool           `json:"isEnabled"`
+	LastErrorMessage string         `json:"lastErrorMessage" xorm:"varchar(100)"`
 
 	Adapter *Adapter `xorm:"-" json:"-"`
 }
@@ -178,5 +179,20 @@ func (syncer *Syncer) getTable() string {
 		return fmt.Sprintf("[%s]", syncer.Table)
 	} else {
 		return syncer.Table
+	}
+}
+
+func (syncer *Syncer) SetErrorMessage(err error) {
+	fmt.Println("SetErrorMessage",err)
+	errMsg:=""
+	if err!=nil{
+		errMsg=err.Error()
+	}
+	if errMsg != syncer.LastErrorMessage {
+		syncer.LastErrorMessage = errMsg
+		_, err := adapter.Engine.Update(syncer)
+		if err != nil {
+			panic(err)
+		}
 	}
 }

@@ -25,42 +25,45 @@ import (
 
 type OriginalUser = User
 
-func (syncer *Syncer) getOriginalUsers() []*OriginalUser {
+func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
 	sql := fmt.Sprintf("select * from %s", syncer.getTable())
 	results, err := syncer.Adapter.Engine.QueryString(sql)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return syncer.getOriginalUsersFromMap(results)
+	return syncer.getOriginalUsersFromMap(results), nil
 }
 
-func (syncer *Syncer) getOriginalUserMap() ([]*OriginalUser, map[string]*OriginalUser) {
-	users := syncer.getOriginalUsers()
+func (syncer *Syncer) getOriginalUserMap() ([]*OriginalUser, map[string]*OriginalUser, error) {
+	users, err := syncer.getOriginalUsers()
+	if err != nil {
+		return nil, nil, err
+	}
 
 	m := map[string]*OriginalUser{}
 	for _, user := range users {
 		m[user.Id] = user
 	}
-	return users, m
+	return users, m, nil
 }
 
-func (syncer *Syncer) addUser(user *OriginalUser) bool {
+func (syncer *Syncer) addUser(user *OriginalUser) error {
 	m := syncer.getMapFromOriginalUser(user)
 	keyString, valueString := syncer.getSqlKeyValueStringFromMap(m)
 
 	sql := fmt.Sprintf("insert into %s (%s) values (%s)", syncer.getTable(), keyString, valueString)
 	res, err := syncer.Adapter.Engine.Exec(sql)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	affected, err := res.RowsAffected()
+	_, err = res.RowsAffected()
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	return affected != 0
+	return nil
 }
 
 /*func (syncer *Syncer) getOriginalColumns() []string {
@@ -84,7 +87,7 @@ func (syncer *Syncer) getCasdoorColumns() []string {
 	return res
 }
 
-func (syncer *Syncer) updateUser(user *OriginalUser) bool {
+func (syncer *Syncer) updateUser(user *OriginalUser) error {
 	m := syncer.getMapFromOriginalUser(user)
 	pkValue := m[syncer.TablePrimaryKey]
 	delete(m, syncer.TablePrimaryKey)
@@ -93,22 +96,22 @@ func (syncer *Syncer) updateUser(user *OriginalUser) bool {
 	sql := fmt.Sprintf("update %s set %s where %s = %s", syncer.getTable(), setString, syncer.TablePrimaryKey, pkValue)
 	res, err := syncer.Adapter.Engine.Exec(sql)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	affected, err := res.RowsAffected()
+	_, err = res.RowsAffected()
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	return affected != 0
+	return nil
 }
 
-func (syncer *Syncer) updateUserForOriginalFields(user *User) bool {
+func (syncer *Syncer) updateUserForOriginalFields(user *User) error {
 	owner, name := util.GetOwnerAndNameFromId(user.GetId())
 	oldUser := getUserById(owner, name)
 	if oldUser == nil {
-		return false
+		return fmt.Errorf("user %s not found in original database", user.Id)
 	}
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
@@ -117,12 +120,12 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User) bool {
 
 	columns := syncer.getCasdoorColumns()
 	columns = append(columns, "affiliation", "hash", "pre_hash")
-	affected, err := adapter.Engine.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
+	_, err := adapter.Engine.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	return affected != 0
+	return nil
 }
 
 func (syncer *Syncer) calculateHash(user *OriginalUser) string {
@@ -138,7 +141,8 @@ func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 	return util.GetMd5Hash(s)
 }
 
-func (syncer *Syncer) initAdapter() {
+func (syncer *Syncer) initAdapter() error {
+	var err error = nil
 	if syncer.Adapter == nil {
 		var dataSourceName string
 		if syncer.DatabaseType == "mssql" {
@@ -151,8 +155,9 @@ func (syncer *Syncer) initAdapter() {
 			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
 		}
 
-		syncer.Adapter = NewAdapter(syncer.DatabaseType, dataSourceName, syncer.Database)
+		syncer.Adapter, err = NewAdapter(syncer.DatabaseType, dataSourceName, syncer.Database)
 	}
+	return err
 }
 
 func RunSyncUsersJob() {
@@ -162,7 +167,11 @@ func RunSyncUsersJob() {
 			continue
 		}
 
-		syncer.initAdapter()
+		err := syncer.initAdapter()
+		syncer.SetErrorMessage(err)
+		if err != nil {
+			continue
+		}
 
 		syncer.syncUsers()
 
@@ -170,7 +179,7 @@ func RunSyncUsersJob() {
 		//schedule := fmt.Sprintf("* * * * %d", syncer.SyncInterval)
 		schedule := "* * * * *"
 		ctab := getCrontab(syncer.Name)
-		err := ctab.AddJob(schedule, syncer.syncUsers)
+		err = ctab.AddJob(schedule, syncer.syncUsers)
 		if err != nil {
 			panic(err)
 		}

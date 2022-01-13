@@ -392,7 +392,8 @@
     "Table columns": "Table columns",
     "Table columns - Tooltip": "Table columns - Tooltip",
     "Table primary key": "Table primary key",
-    "Table primary key - Tooltip": "Table primary key - Tooltip"
+    "Table primary key - Tooltip": "Table primary key - Tooltip",
+    "Error Message":"Error Message"
   },
   "token": {
     "Access token": "Access token",
