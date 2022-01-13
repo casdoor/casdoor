@@ -117,7 +117,7 @@ class PermissionEditPage extends React.Component {
     })
   }
 
-  remoteTag(key, item) {
+  removeTag(key, item) {
     let permission = this.state.permission
     permission[key] = permission[key].filter(f => f !== item)
     this.setState({ permission })
