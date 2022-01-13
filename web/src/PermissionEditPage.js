@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Tag, Input, Select, Switch, Form, Space} from 'antd';
+import {Button, Card, Input, Select, Switch, Form, Space} from 'antd';
 import * as PermissionBackend from "./backend/PermissionBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as UserBackend from "./backend/UserBackend";
@@ -127,17 +127,17 @@ class PermissionEditPage extends React.Component {
     return (
       <Card size="small"
         title={
-          <div>
-            {i18next.t("permission:Edit Permission")}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Space size={10}>
+            {i18next.t("permission:Edit Permission")}
             <Button onClick={() => this.submitPermissionEdit(false)}>{i18next.t("general:Save")}</Button>
-            <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitPermissionEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          </div>
+            <Button type="primary" onClick={() => this.submitPermissionEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          </Space>
         }
         style={(Setting.isMobile())? {margin: '5px'}:{}}
         type="inner"
       >
         <Form
-          labelCol={{ span: 2 }}
+          labelCol={{ span: 3 }}
           wrapperCol={{ span: 10 }}>
           <Form.Item label={Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))}>
             <Select
@@ -288,15 +288,15 @@ class PermissionEditPage extends React.Component {
 
   render() {
     return (
-      <div>
+      <Form>
         {
           this.state.permission !== null ? this.renderPermission() : null
         }
-        <div style={{marginTop: '20px', marginLeft: '40px'}}>
+        <Form.Item style={{marginTop: '20px', marginLeft: '40px'}}>
           <Button size="large" onClick={() => this.submitPermissionEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitPermissionEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-        </div>
-      </div>
+        </Form.Item>
+      </Form>
     );
   }
 }

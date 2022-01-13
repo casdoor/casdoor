@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
+import {Button, Card, Input, Select, Switch, Form, Space, Image} from 'antd';
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
 import * as Setting from "./Setting";
@@ -83,154 +83,100 @@ class OrganizationEditPage extends React.Component {
   renderOrganization() {
     return (
       <Card size="small" title={
-        <div>
-          {i18next.t("organization:Edit Organization")}&nbsp;&nbsp;&nbsp;&nbsp;
+        <Space size={10}>
+          {i18next.t("organization:Edit Organization")}
           <Button onClick={() => this.submitOrganizationEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitOrganizationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-        </div>
-      } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
-        <Row style={{marginTop: '10px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.organization.name} disabled={this.state.organization.name === "built-in"} onChange={e => {
+          <Button type="primary" onClick={() => this.submitOrganizationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+        </Space>
+        }
+        type="inner"
+      >
+        <Form
+          labelCol={{ span: 3 }}
+          wrapperCol={{ span: 21 }}
+        >
+          <Form.Item label={Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))}>
+            <Input value={this.state.organization.name} disabled={this.state.organization.name === "built-in"}
+              onChange={e => {
               this.updateOrganizationField('name', e.target.value);
             }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.organization.displayName} onChange={e => {
+          </Form.Item>
+          <Form.Item label={Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))}>
+            <Input value={this.state.organization.displayName}
+              onChange={e => {
               this.updateOrganizationField('displayName', e.target.value);
             }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel("Favicon", i18next.t("general:Favicon - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                URL:
-              </Col>
-              <Col span={23} >
-                <Input prefix={<LinkOutlined/>} value={this.state.organization.favicon} onChange={e => {
-                  this.updateOrganizationField('favicon', e.target.value);
-                }} />
-              </Col>
-            </Row>
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                {i18next.t("general:Preview")}:
-              </Col>
-              <Col span={23} >
-                <a target="_blank" rel="noreferrer" href={this.state.organization.favicon}>
-                  <img src={this.state.organization.favicon} alt={this.state.organization.favicon} height={90} style={{marginBottom: '20px'}}/>
-                </a>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("organization:Website URL"), i18next.t("organization:Website URL - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.organization.websiteUrl} onChange={e => {
-              this.updateOrganizationField('websiteUrl', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Password type"), i18next.t("general:Password type - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.organization.passwordType} onChange={(value => {this.updateOrganizationField('passwordType', value);})}>
-              {
-                ['plain', 'salt', 'md5-salt', 'bcrypt']
-                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
-              }
-            </Select>
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Password salt"), i18next.t("general:Password salt - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.organization.passwordSalt} onChange={e => {
-              this.updateOrganizationField('passwordSalt', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Phone prefix"), i18next.t("general:Phone prefix - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input addonBefore={"+"} value={this.state.organization.phonePrefix} onChange={e => {
-              this.updateOrganizationField('phonePrefix', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Default avatar"), i18next.t("general:Default avatar - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                URL:
-              </Col>
-              <Col span={23} >
-                <Input prefix={<LinkOutlined/>} value={this.state.organization.defaultAvatar} onChange={e => {
+          </Form.Item>
+          <Form.Item label={Setting.getLabel("Favicon", i18next.t("general:Favicon - Tooltip"))}>
+            <Form.Item>
+              <Input prefix={<LinkOutlined/>} value={this.state.organization.favicon}
+                onChange={e => {
+                this.updateOrganizationField('favicon', e.target.value);
+              }} />
+            </Form.Item>
+            <Form.Item label={i18next.t("general:Preview")}>
+              <Image
+                src={this.state.organization.favicon}
+                alt={this.state.organization.favicon}
+                height={90}
+              ></Image>
+            </Form.Item>
+          </Form.Item>
+          <Form.Item label={Setting.getLabel(i18next.t("organization:Website URL"), i18next.t("organization:Website URL - Tooltip"))}>
+              <Input prefix={<LinkOutlined/>} value={this.state.organization.websiteUrl}
+                onChange={e => {
+                this.updateOrganizationField('websiteUrl', e.target.value);
+              }} />
+          </Form.Item>
+          <Form.Item label={Setting.getLabel(i18next.t("general:Password type"), i18next.t("general:Password type - Tooltip"))}>
+              <Select virtual={false} style={{width: '100%'}} value={this.state.organization.passwordType}
+                onChange={(value => {this.updateOrganizationField('passwordType', value);})}>
+                {
+                  ['plain', 'salt', 'md5-salt', 'bcrypt']
+                    .map((item, index) => <Option key={index} value={item}>{item}</Option>)
+                }
+              </Select>
+          </Form.Item>
+          <Form.Item label={Setting.getLabel(i18next.t("general:Password salt"), i18next.t("general:Password salt - Tooltip"))}>
+              <Input value={this.state.organization.passwordSalt}
+                onChange={e => {
+                this.updateOrganizationField('passwordSalt', e.target.value);
+              }} />
+          </Form.Item>
+          <Form.Item label={Setting.getLabel(i18next.t("general:Phone prefix"), i18next.t("general:Phone prefix - Tooltip"))}>
+              <Input addonBefore={"+"} value={this.state.organization.phonePrefix}
+                onChange={e => {
+                this.updateOrganizationField('phonePrefix', e.target.value);
+              }} />
+          </Form.Item>
+          <Form.Item label={Setting.getLabel(i18next.t("general:Default avatar"), i18next.t("general:Default avatar - Tooltip"))}>
+              <Form.Item>
+                <Input prefix={<LinkOutlined/>} value={this.state.organization.defaultAvatar}
+                  onChange={e => {
                   this.updateOrganizationField('defaultAvatar', e.target.value);
                 }} />
-              </Col>
-            </Row>
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                {i18next.t("general:Preview")}:
-              </Col>
-              <Col span={23} >
-                <a target="_blank" rel="noreferrer" href={this.state.organization.defaultAvatar}>
-                  <img src={this.state.organization.defaultAvatar} alt={this.state.organization.defaultAvatar} height={90} style={{marginBottom: '20px'}}/>
-                </a>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Master password"), i18next.t("general:Master password - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.organization.masterPassword} onChange={e => {
+              </Form.Item>
+              <Form.Item label={i18next.t("general:Preview")}>
+                <Image
+                  src={this.state.organization.defaultAvatar}
+                  alt={this.state.organization.defaultAvatar}
+                  height={90}
+                ></Image>
+              </Form.Item>
+          </Form.Item>
+          <Form.Item label={Setting.getLabel(i18next.t("general:Master password"), i18next.t("general:Master password - Tooltip"))}>
+            <Input value={this.state.organization.masterPassword}
+              onChange={e => {
               this.updateOrganizationField('masterPassword', e.target.value);
             }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("organization:Soft deletion"), i18next.t("organization:Soft deletion - Tooltip"))} :
-          </Col>
-          <Col span={1} >
-            <Switch checked={this.state.organization.enableSoftDeletion} onChange={checked => {
+          </Form.Item>
+          <Form.Item label={Setting.getLabel(i18next.t("organization:Soft deletion"), i18next.t("organization:Soft deletion - Tooltip"))}>
+            <Switch checked={this.state.organization.enableSoftDeletion}
+              onChange={checked => {
               this.updateOrganizationField('enableSoftDeletion', checked);
             }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}}>
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:LDAPs"), i18next.t("general:LDAPs - Tooltip"))} :
-          </Col>
-          <Col span={22}>
+          </Form.Item>
+          <Form.Item label={Setting.getLabel(i18next.t("general:LDAPs"), i18next.t("general:LDAPs - Tooltip"))}>
             <LdapTable
               title={i18next.t("general:LDAPs")}
               table={this.state.ldaps}
@@ -238,8 +184,8 @@ class OrganizationEditPage extends React.Component {
               onUpdateTable={(value) => {
                 this.setState({ldaps: value}) }}
             />
-          </Col>
-        </Row>
+          </Form.Item>
+        </Form>
       </Card>
     )
   }
