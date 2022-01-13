@@ -125,7 +125,8 @@ func (c *ApiController) UpdateUser() {
 		columns = strings.Split(columnsStr, ",")
 	}
 
-	affected := object.UpdateUser(id, &user, columns)
+	isGlobalAdmin := c.IsGlobalAdmin()
+	affected := object.UpdateUser(id, &user, columns, isGlobalAdmin)
 	if affected {
 		object.UpdateUserToOriginalDatabase(&user)
 	}

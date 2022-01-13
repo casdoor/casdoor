@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/casbin/casdoor/object"
 	"github.com/casbin/casdoor/util"
 )
 
@@ -33,6 +34,12 @@ type RootController struct {
 
 type SessionData struct {
 	ExpireTime int64
+}
+
+func (c *ApiController) IsGlobalAdmin() bool {
+	username := c.GetSessionUsername()
+	user := object.GetUser(username)
+	return user.Owner == "built-in" || user.IsGlobalAdmin
 }
 
 // GetSessionUsername ...
