@@ -596,6 +596,7 @@ export function getTagColor(s) {
 
 export function getTags(tags) {
   let res = [];
+  if (!tags) return
   tags.forEach((tag, i) => {
     res.push(
       <Tag color={getTagColor(tag)}>
