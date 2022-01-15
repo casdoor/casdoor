@@ -45,12 +45,14 @@ class UserEditPage extends React.Component {
       user: null,
       application: null,
       organizations: [],
+      applications: [],
     };
   }
 
   UNSAFE_componentWillMount() {
     this.getUser();
     this.getOrganizations();
+    this.getApplicationsByOrganization(this.state.organizationName);
     this.getUserApplication();
   }
 
@@ -68,6 +70,15 @@ class UserEditPage extends React.Component {
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
+        });
+      });
+  }
+
+  getApplicationsByOrganization(organizationName) {
+    ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
+      .then((res) => {
+        this.setState({
+          applications: (res.msg === undefined) ? res : [],
         });
       });
   }
@@ -291,6 +302,18 @@ class UserEditPage extends React.Component {
             <Input value={this.state.user.tag} onChange={e => {
               this.updateUserField('tag', e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Signup application"), i18next.t("general:Signup application - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: '100%'}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.user.signupApplication} onChange={(value => {this.updateUserField('signupApplication', value);})}>
+              {
+                this.state.applications.map((application, index) => <Option key={index} value={application.name}>{application.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         {

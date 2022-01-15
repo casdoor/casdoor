@@ -89,7 +89,7 @@ func GetPaginationApplications(owner string, offset, limit int, field, value, so
 	return applications
 }
 
-func getApplicationsByOrganizationName(owner string, organization string) []*Application {
+func GetApplicationsByOrganizationName(owner string, organization string) []*Application {
 	applications := []*Application{}
 	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner, Organization: organization})
 	if err != nil {

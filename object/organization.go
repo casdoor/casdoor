@@ -124,7 +124,7 @@ func UpdateOrganization(id string, organization *Organization) bool {
 	}
 
 	if name != organization.Name {
-		applications := getApplicationsByOrganizationName("admin", name)
+		applications := GetApplicationsByOrganizationName("admin", name)
 		for _, application := range applications {
 			application.Organization = organization.Name
 			UpdateApplication(application.GetId(), application)

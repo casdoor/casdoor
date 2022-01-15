@@ -154,6 +154,8 @@
     "Signin URL - Tooltip": "用户的登录地址",
     "Signup URL": "注册URL",
     "Signup URL - Tooltip": "展示给用户的注册地址",
+    "Signup application": "注册应用",
+    "Signup application - Tooltip": "表示用户注册时通过哪个应用注册的",
     "Sorry, the page you visited does not exist.": "抱歉，您访问的页面不存在",
     "Swagger": "API文档",
     "Syncers": "同步器",
