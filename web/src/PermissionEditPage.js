@@ -13,14 +13,13 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Input, Select, Switch, Form, Space} from 'antd';
+import {Button, Card, Input, Select, Switch, Form, Space, Radio} from 'antd';
 import * as PermissionBackend from "./backend/PermissionBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as UserBackend from "./backend/UserBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import * as RoleBackend from "./backend/RoleBackend";
-import { CloseOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
@@ -28,10 +27,6 @@ class PermissionEditPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      form: {
-        actions: '',
-        resources: '',
-      },
       classes: props,
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       permissionName: props.match.params.permissionName,
@@ -106,23 +101,6 @@ class PermissionEditPage extends React.Component {
     this.setState({ form })
   }
 
-  pushTag(key) {
-    let permission = this.state.permission
-    const form = this.state.form
-    if (permission[key] === null) permission[key] = []
-    permission[key].push(form[key])
-    this.setState({ permission }, () => {
-      form[key] = ''
-      this.setState({form})
-    })
-  }
-
-  removeTag(key, item) {
-    let permission = this.state.permission
-    permission[key] = permission[key].filter(f => f !== item)
-    this.setState({ permission })
-  }
-
   renderPermission() {
     return (
       <Card size="small"
@@ -190,47 +168,48 @@ class PermissionEditPage extends React.Component {
               }
             </Select>
           </Form.Item>
-          <Form.Item label={Setting.getLabel(i18next.t("permission:Resource"), i18next.t("permission:Resource - Tooltip"))}>
-            <Input.Group compact>
-              <Input
-                value={this.state.form.resources}
-                style={{ width: 'calc(100% - 200px)' }}
-                onChange={e => {
-                  this.updateFormField('resources', e.target.value);
-                }}
-              />
-              <Button onClick={() => this.pushTag('resources')}>添加</Button>
-            </Input.Group>
-            <Space size={4} data={this.state.permission.resources}>
-              {this.state.permission.resources.map(item =>
-                <Button onClick={() => this.remoteTag('resources', item)} icon={<CloseOutlined />}>{item}</Button>
-              )}
-            </Space>
-          </Form.Item>
           <Form.Item label={Setting.getLabel(i18next.t("permission:Resource type"), i18next.t("permission:Resource type - Tooltip"))}>
-            <Input
-              value={this.state.permission.resourceType}
-              onChange={e => {
-                this.updatePermissionField('resourceType', e.target.value);
-              }}
-            />
+            <Radio.Group
+              defaultValue={this.state.permission.resourceType}
+              onChange={
+                e => {
+                  this.updatePermissionField('resourceType', e.target.value);
+                }
+              }
+            >
+              <Radio value="Application">Application</Radio>
+              <Radio value="Api">Api</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item label={Setting.getLabel(i18next.t("permission:Resources"), i18next.t("permission:Resources - Tooltip"))}>
+            <Select
+              virtual={false}
+              mode="tags"
+              value={this.state.permission.resources}
+              onChange={(value => {
+                this.updatePermissionField('resources', value);
+              })}>
+              {
+                this.state.permission.resources.map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+              }
+            </Select>
           </Form.Item>
           <Form.Item label={Setting.getLabel(i18next.t("permission:Actions"), i18next.t("permission:Actions - Tooltip"))}>
-            <Input.Group compact>
-              <Input
-                style={{ width: 'calc(100% - 200px)' }}
-                value={this.state.form.actions}
-                onChange={e => {
-                  this.updateFormField('actions', e.target.value)
-                }}
-              />
-              <Button onClick={() => this.pushTag('actions')}>添加</Button>
-            </Input.Group>
-            <Space size={4} data={this.state.permission.actions}>
-              {this.state.permission.actions?.map(item =>
-                <Button onClick={() => this.remoteTag('actions', item)} icon={<CloseOutlined />}>{item}</Button>
-              )}
-            </Space>
+            <Select
+              virtual={false}
+              mode="tags"
+              value={this.state.permission.actions}
+              onChange={(value => {
+                this.updatePermissionField('actions', value);
+              })}>
+              {
+                [
+                  {id: 'Read', name: 'Read'},
+                  {id: 'Write', name: 'Write'},
+                  {id: 'Admin', name: 'Admin'},
+                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+              }
+            </Select>
           </Form.Item>
           <Form.Item label={Setting.getLabel(i18next.t("permission:Effect"), i18next.t("permission:Effect - Tooltip"))}>
             <Select
