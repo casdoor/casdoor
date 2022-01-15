@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"strings"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -38,7 +39,16 @@ type SessionData struct {
 
 func (c *ApiController) IsGlobalAdmin() bool {
 	username := c.GetSessionUsername()
+	if strings.HasPrefix(username, "app/") {
+		// e.g., "app/app-casnode"
+		return true
+	}
+
 	user := object.GetUser(username)
+	if user == nil {
+		return false
+	}
+
 	return user.Owner == "built-in" || user.IsGlobalAdmin
 }
 
