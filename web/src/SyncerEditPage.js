@@ -21,6 +21,11 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import SyncerTableColumnTable from "./SyncerTableColumnTable";
 
+import {Controlled as CodeMirror} from 'react-codemirror2';
+import "codemirror/lib/codemirror.css";
+require('codemirror/theme/material-darker.css');
+require("codemirror/mode/javascript/javascript");
+
 const { Option } = Select;
 
 class SyncerEditPage extends React.Component {
@@ -246,6 +251,22 @@ class SyncerEditPage extends React.Component {
             <InputNumber value={this.state.syncer.syncInterval} onChange={value => {
               this.updateSyncerField('syncInterval', value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("syncer:Error text"), i18next.t("syncer:Error text - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <div style={{width: "100%", height: "300px"}} >
+              <CodeMirror
+                value={this.state.syncer.errorText}
+                options={{mode: 'javascript', theme: "material-darker"}}
+                onBeforeChange={(editor, data, value) => {
+                  this.updateSyncerField("errorText", value);
+                }}
+              />
+            </div>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

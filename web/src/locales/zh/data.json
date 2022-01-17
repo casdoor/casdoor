@@ -386,6 +386,8 @@
     "Database type": "数据库类型",
     "Database type - Tooltip": "数据库类型",
     "Edit Syncer": "编辑同步器",
+    "Error text": "错误信息",
+    "Error text - Tooltip": "同步器连接数据库时发生的错误",
     "Is hashed": "是否参与哈希计算",
     "Sync interval": "同步间隔",
     "Sync interval - Tooltip": "单位为秒",

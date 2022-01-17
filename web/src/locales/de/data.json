@@ -386,6 +386,8 @@
     "Database type": "Datenbanktyp",
     "Database type - Tooltip": "Datenbanktyp - Tooltip",
     "Edit Syncer": "Syncer bearbeiten",
+    "Error text": "Error text",
+    "Error text - Tooltip": "Error text - Tooltip",
     "Is hashed": "Ist gehasht",
     "Sync interval": "Sync-Intervall",
     "Sync interval - Tooltip": "Sync-Intervall - Tooltip",

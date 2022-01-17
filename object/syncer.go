@@ -48,6 +48,7 @@ type Syncer struct {
 	TableColumns     []*TableColumn `xorm:"mediumtext" json:"tableColumns"`
 	AffiliationTable string         `xorm:"varchar(100)" json:"affiliationTable"`
 	AvatarBaseUrl    string         `xorm:"varchar(100)" json:"avatarBaseUrl"`
+	ErrorText        string         `xorm:"mediumtext" json:"errorText"`
 	SyncInterval     int            `json:"syncInterval"`
 	IsEnabled        bool           `json:"isEnabled"`
 
@@ -142,6 +143,22 @@ func UpdateSyncer(id string, syncer *Syncer) bool {
 
 	if affected == 1 {
 		addSyncerJob(syncer)
+	}
+
+	return affected != 0
+}
+
+func updateSyncerErrorText(syncer *Syncer, line string) bool {
+	s := getSyncer(syncer.Owner, syncer.Name)
+	if s == nil {
+		return false
+	}
+
+	s.ErrorText = s.ErrorText + line
+
+	affected, err := adapter.Engine.ID(core.PK{s.Owner, s.Name}).Cols("error_text").Update(s)
+	if err != nil {
+		panic(err)
 	}
 
 	return affected != 0

@@ -386,6 +386,8 @@
     "Database type": "Тип базы данных",
     "Database type - Tooltip": "Тип базы данных - Подсказка",
     "Edit Syncer": "Изменить синхронизатор",
+    "Error text": "Error text",
+    "Error text - Tooltip": "Error text - Tooltip",
     "Is hashed": "Хэшировано",
     "Sync interval": "Интервал синхронизации",
     "Sync interval - Tooltip": "Интервал синхронизации - Tooltip",

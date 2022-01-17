@@ -386,6 +386,8 @@
     "Database type": "データベースの種類",
     "Database type - Tooltip": "データベース タイプ - ツールチップ",
     "Edit Syncer": "同期ツールを編集",
+    "Error text": "Error text",
+    "Error text - Tooltip": "Error text - Tooltip",
     "Is hashed": "ハッシュされました",
     "Sync interval": "同期間隔",
     "Sync interval - Tooltip": "同期間隔 - ツールチップ",

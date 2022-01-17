@@ -14,13 +14,25 @@
 
 package object
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func (syncer *Syncer) syncUsers() {
 	fmt.Printf("Running syncUsers()..\n")
 
 	users, userMap := syncer.getUserMap()
-	oUsers, oUserMap := syncer.getOriginalUserMap()
+	oUsers, oUserMap, err := syncer.getOriginalUserMap()
+	if err != nil {
+		fmt.Printf(err.Error())
+
+		timestamp := time.Now().Format("2006-01-02 15:04:05")
+		line := fmt.Sprintf("[%s] %s\n", timestamp, err.Error())
+		updateSyncerErrorText(syncer, line)
+		return
+	}
+
 	fmt.Printf("Users: %d, oUsers: %d\n", len(users), len(oUsers))
 
 	var affiliationMap map[int]string
