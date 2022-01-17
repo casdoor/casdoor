@@ -351,9 +351,10 @@ func AddUsers(users []*User) bool {
 		return false
 	}
 
-	organization := GetOrganizationByUser(users[0])
+	//organization := GetOrganizationByUser(users[0])
 	for _, user := range users {
-		user.UpdateUserPassword(organization)
+		// this function is only used for syncer or batch upload, so no need to encrypt the password
+		//user.UpdateUserPassword(organization)
 
 		user.UpdateUserHash()
 		user.PreHash = user.Hash
