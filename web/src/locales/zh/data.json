@@ -388,7 +388,7 @@
     "Edit Syncer": "编辑同步器",
     "Is hashed": "是否参与哈希计算",
     "Sync interval": "同步间隔",
-    "Sync interval - Tooltip": "单位为分钟",
+    "Sync interval - Tooltip": "单位为秒",
     "Table": "表名",
     "Table - Tooltip": "数据库表名",
     "Table columns": "表格列",

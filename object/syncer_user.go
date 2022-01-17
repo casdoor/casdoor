@@ -166,14 +166,14 @@ func RunSyncUsersJob() {
 
 		syncer.syncUsers()
 
-		// run at every minute
-		//schedule := fmt.Sprintf("* * * * %d", syncer.SyncInterval)
-		schedule := "* * * * *"
-		ctab := getCrontab(syncer.Name)
-		err := ctab.AddJob(schedule, syncer.syncUsers)
+		schedule := fmt.Sprintf("@every %ds", syncer.SyncInterval)
+		cron := getCronMap(syncer.Name)
+		_, err := cron.AddFunc(schedule, syncer.syncUsers)
 		if err != nil {
 			panic(err)
 		}
+
+		cron.Start()
 	}
 
 	time.Sleep(time.Duration(1<<63 - 1))

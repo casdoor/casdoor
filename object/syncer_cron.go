@@ -14,27 +14,27 @@
 
 package object
 
-import "github.com/mileusna/crontab"
+import "github.com/robfig/cron/v3"
 
-var cronMap map[string]*crontab.Crontab
+var cronMap map[string]*cron.Cron
 
 func init() {
-	cronMap = map[string]*crontab.Crontab{}
+	cronMap = map[string]*cron.Cron{}
 }
 
-func getCrontab(name string) *crontab.Crontab {
-	ctab, ok := cronMap[name]
+func getCronMap(name string) *cron.Cron {
+	m, ok := cronMap[name]
 	if !ok {
-		ctab = crontab.New()
-		cronMap[name] = ctab
+		m = cron.New()
+		cronMap[name] = m
 	}
-	return ctab
+	return m
 }
 
-func clearCrontab(name string) {
-	ctab, ok := cronMap[name]
+func clearCron(name string) {
+	cron, ok := cronMap[name]
 	if ok {
-		ctab.Clear()
+		cron.Stop()
 		delete(cronMap, name)
 	}
 }
