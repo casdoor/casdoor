@@ -14,7 +14,11 @@
 
 package object
 
-import "github.com/robfig/cron/v3"
+import (
+	"fmt"
+
+	"github.com/robfig/cron/v3"
+)
 
 var cronMap map[string]*cron.Cron
 
@@ -37,4 +41,29 @@ func clearCron(name string) {
 		cron.Stop()
 		delete(cronMap, name)
 	}
+}
+
+func addSyncerJob(syncer *Syncer) {
+	deleteSyncerJob(syncer)
+
+	if !syncer.IsEnabled {
+		return
+	}
+
+	syncer.initAdapter()
+
+	syncer.syncUsers()
+
+	schedule := fmt.Sprintf("@every %ds", syncer.SyncInterval)
+	cron := getCronMap(syncer.Name)
+	_, err := cron.AddFunc(schedule, syncer.syncUsers)
+	if err != nil {
+		panic(err)
+	}
+
+	cron.Start()
+}
+
+func deleteSyncerJob(syncer *Syncer) {
+	clearCron(syncer.Name)
 }

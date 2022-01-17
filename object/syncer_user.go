@@ -158,22 +158,7 @@ func (syncer *Syncer) initAdapter() {
 func RunSyncUsersJob() {
 	syncers := GetSyncers("admin")
 	for _, syncer := range syncers {
-		if !syncer.IsEnabled {
-			continue
-		}
-
-		syncer.initAdapter()
-
-		syncer.syncUsers()
-
-		schedule := fmt.Sprintf("@every %ds", syncer.SyncInterval)
-		cron := getCronMap(syncer.Name)
-		_, err := cron.AddFunc(schedule, syncer.syncUsers)
-		if err != nil {
-			panic(err)
-		}
-
-		cron.Start()
+		addSyncerJob(syncer)
 	}
 
 	time.Sleep(time.Duration(1<<63 - 1))

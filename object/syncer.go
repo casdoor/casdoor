@@ -140,6 +140,10 @@ func UpdateSyncer(id string, syncer *Syncer) bool {
 		panic(err)
 	}
 
+	if affected == 1 {
+		addSyncerJob(syncer)
+	}
+
 	return affected != 0
 }
 
@@ -149,6 +153,10 @@ func AddSyncer(syncer *Syncer) bool {
 		panic(err)
 	}
 
+	if affected == 1 {
+		addSyncerJob(syncer)
+	}
+
 	return affected != 0
 }
 
@@ -156,6 +164,10 @@ func DeleteSyncer(syncer *Syncer) bool {
 	affected, err := adapter.Engine.ID(core.PK{syncer.Owner, syncer.Name}).Delete(&Syncer{})
 	if err != nil {
 		panic(err)
+	}
+
+	if affected == 1 {
+		deleteSyncerJob(syncer)
 	}
 
 	return affected != 0
