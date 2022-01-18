@@ -17,6 +17,7 @@
     "i18n-iso-countries": "^7.0.0",
     "i18next": "^19.8.9",
     "moment": "^2.29.1",
+    "qrcode.react": "^1.0.1",
     "qs": "^6.10.2",
     "react": "^17.0.2",
     "react-codemirror2": "^7.2.1",

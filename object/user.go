@@ -33,7 +33,7 @@ type User struct {
 	Password          string   `xorm:"varchar(100)" json:"password"`
 	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
 	TotpSecret        string   `xorm:"varchar(100)" json:"-"`
-	RecoveryCode      string   `xorm:"varchar(100)" json:"-"`
+	RecoveryCode      string   `xorm:"varchar(100)" json:"recoveryCode"`
 	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
 	Avatar            string   `xorm:"varchar(500)" json:"avatar"`
 	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
