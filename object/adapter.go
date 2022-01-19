@@ -110,6 +110,9 @@ func (a *Adapter) close() {
 }
 
 func (a *Adapter) createTable() {
+	showSql, _ := beego.AppConfig.Bool("showSql")
+	a.Engine.ShowSQL(showSql)
+
 	err := a.Engine.Sync2(new(Organization))
 	if err != nil {
 		panic(err)
