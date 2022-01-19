@@ -15,6 +15,7 @@ services:
   db:
     restart: always
     image: mysql:8.0.25
+    platform: linux/amd64
     ports:
       - "3306:3306"
     environment:
