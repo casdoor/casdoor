@@ -28,7 +28,8 @@ var Enforcer *casbin.Enforcer
 func InitAuthz() {
 	var err error
 
-	a, err := xormadapter.NewAdapter(beego.AppConfig.String("driverName"), conf.GetBeegoConfDataSourceName()+beego.AppConfig.String("dbName"), true)
+	tableNamePrefix := beego.AppConfig.String("tableNamePrefix")
+	a, err := xormadapter.NewAdapterWithTableName(beego.AppConfig.String("driverName"), conf.GetBeegoConfDataSourceName()+beego.AppConfig.String("dbName"), "casbin_rule", tableNamePrefix, true)
 	if err != nil {
 		panic(err)
 	}

@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go v1.37.30
 	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
 	github.com/casbin/casbin/v2 v2.30.1
-	github.com/casbin/xorm-adapter/v2 v2.3.1
+	github.com/casbin/xorm-adapter/v2 v2.5.1
 	github.com/casdoor/go-sms-sender v0.0.5
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
