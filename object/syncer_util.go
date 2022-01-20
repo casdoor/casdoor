@@ -19,7 +19,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 )
 
 func (syncer *Syncer) getFullAvatarUrl(avatar string) string {

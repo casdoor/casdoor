@@ -19,8 +19,8 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego/context"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 type Response struct {

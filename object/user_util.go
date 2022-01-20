@@ -19,7 +19,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/casbin/casdoor/idp"
+	"github.com/casdoor/casdoor/idp"
 	"xorm.io/core"
 )
 

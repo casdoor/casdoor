@@ -19,7 +19,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 

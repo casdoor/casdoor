@@ -20,8 +20,8 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/storage"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/storage"
+	"github.com/casdoor/casdoor/util"
 )
 
 var isCloudIntranet bool

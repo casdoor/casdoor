@@ -21,11 +21,11 @@ import (
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/plugins/cors"
 	_ "github.com/astaxie/beego/session/redis"
-	"github.com/casbin/casdoor/authz"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/proxy"
-	"github.com/casbin/casdoor/routers"
-	_ "github.com/casbin/casdoor/routers"
+	"github.com/casdoor/casdoor/authz"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/routers"
+	_ "github.com/casdoor/casdoor/routers"
 )
 
 func main() {

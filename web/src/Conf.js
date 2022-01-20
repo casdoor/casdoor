@@ -13,7 +13,7 @@
 // limitations under the License.
 
 export const ShowGithubCorner = false;
-export const GithubRepo = "https://github.com/casbin/casdoor";
+export const GithubRepo = "https://github.com/casdoor/casdoor";
 
 export const ForceLanguage = "";
 export const DefaultLanguage = "en";

@@ -19,8 +19,8 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // controller for handlers under /api uri

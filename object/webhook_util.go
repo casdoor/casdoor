@@ -18,7 +18,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 )
 
 func sendWebhook(webhook *Webhook, record *Record) error {

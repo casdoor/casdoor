@@ -18,8 +18,8 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
-	"github.com/casbin/casdoor/conf"
 	xormadapter "github.com/casbin/xorm-adapter/v2"
+	"github.com/casdoor/casdoor/conf"
 	stringadapter "github.com/qiangmzsx/string-adapter/v2"
 )
 

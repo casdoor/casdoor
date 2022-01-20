@@ -22,7 +22,7 @@ package routers
 import (
 	"github.com/astaxie/beego"
 
-	"github.com/casbin/casdoor/controllers"
+	"github.com/casdoor/casdoor/controllers"
 )
 
 func init() {

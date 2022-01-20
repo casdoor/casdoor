@@ -14,7 +14,7 @@
 
 package controllers
 
-import "github.com/casbin/casdoor/object"
+import "github.com/casdoor/casdoor/object"
 
 // @Title GetOidcDiscovery
 // @Tag OIDC API

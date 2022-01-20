@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 )
 
 func getI18nFilePath(language string) string {

@@ -19,8 +19,8 @@ import (
 	"strconv"
 
 	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // ResponseOk ...

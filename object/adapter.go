@@ -20,8 +20,8 @@ import (
 	"xorm.io/core"
 
 	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/conf"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 	//_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql" // db = mysql
 	//_ "github.com/lib/pq"                // db = postgres

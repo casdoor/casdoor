@@ -19,7 +19,7 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego/context"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 )
 
 func StaticFilter(ctx *context.Context) {

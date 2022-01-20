@@ -16,8 +16,8 @@ package controllers
 
 import (
 	"github.com/astaxie/beego/utils/pagination"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // GetRecords

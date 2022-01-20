@@ -19,8 +19,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 func (c *ApiController) getCurrentUser() *object.User {
