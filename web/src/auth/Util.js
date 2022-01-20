@@ -85,6 +85,7 @@ export function getOAuthGetParameters(params) {
   const nonce = queries.get("nonce")
   const challengeMethod = queries.get("code_challenge_method")
   const codeChallenge = queries.get("code_challenge")
+  
   if (clientId === undefined || clientId === null) {
     // login
     return null;

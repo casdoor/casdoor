@@ -145,7 +145,7 @@ func (c *ApiController) GetOAuthCode() {
 	challengeMethod := c.Input().Get("code_challenge_method")
 	codeChallenge := c.Input().Get("code_challenge")
 
-	if challengeMethod != "S256" && challengeMethod != "" {
+	if challengeMethod != "S256" && challengeMethod != "null" {
 		c.ResponseError("Challenge method should be S256")
 		return
 	}
@@ -170,6 +170,7 @@ func (c *ApiController) GetOAuthToken() {
 	clientSecret := c.Input().Get("client_secret")
 	code := c.Input().Get("code")
 	verifier := c.Input().Get("code_verifier")
+
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
 	}

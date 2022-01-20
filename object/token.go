@@ -213,6 +213,10 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		panic(err)
 	}
 
+	if challenge == "null"{
+		challenge = ""
+	}
+
 	token := &Token{
 		Owner:         application.Owner,
 		Name:          util.GenerateId(),
