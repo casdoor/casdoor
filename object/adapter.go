@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"runtime"
+	"xorm.io/core"
 
 	"github.com/astaxie/beego"
 	"github.com/casbin/casdoor/conf"
@@ -112,6 +113,10 @@ func (a *Adapter) close() {
 func (a *Adapter) createTable() {
 	showSql, _ := beego.AppConfig.Bool("showSql")
 	a.Engine.ShowSQL(showSql)
+
+	tableNamePrefix := beego.AppConfig.String("tableNamePrefix")
+	tbMapper := core.NewPrefixMapper(core.SnakeMapper{}, tableNamePrefix)
+	a.Engine.SetTableMapper(tbMapper)
 
 	err := a.Engine.Sync2(new(Organization))
 	if err != nil {
