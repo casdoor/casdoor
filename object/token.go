@@ -15,6 +15,8 @@
 package object
 
 import (
+	"crypto/sha256"
+	"encoding/base64"
 	"fmt"
 	"strings"
 
@@ -36,12 +38,13 @@ type Token struct {
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	User         string `xorm:"varchar(100)" json:"user"`
 
-	Code         string `xorm:"varchar(100)" json:"code"`
-	AccessToken  string `xorm:"mediumtext" json:"accessToken"`
-	RefreshToken string `xorm:"mediumtext" json:"refreshToken"`
-	ExpiresIn    int    `json:"expiresIn"`
-	Scope        string `xorm:"varchar(100)" json:"scope"`
-	TokenType    string `xorm:"varchar(100)" json:"tokenType"`
+	Code          string `xorm:"varchar(100)" json:"code"`
+	AccessToken   string `xorm:"mediumtext" json:"accessToken"`
+	RefreshToken  string `xorm:"mediumtext" json:"refreshToken"`
+	ExpiresIn     int    `json:"expiresIn"`
+	Scope         string `xorm:"varchar(100)" json:"scope"`
+	TokenType     string `xorm:"varchar(100)" json:"tokenType"`
+	CodeChallenge string `xorm:"varchar(100)" json:"codeChallenge"`
 }
 
 type TokenWrapper struct {
@@ -182,7 +185,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 	return "", application
 }
 
-func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string, nonce string) *Code {
+func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string) *Code {
 	user := GetUser(userId)
 	if user == nil {
 		return &Code{
@@ -210,19 +213,24 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		panic(err)
 	}
 
+	if challenge == "null"{
+		challenge = ""
+	}
+
 	token := &Token{
-		Owner:        application.Owner,
-		Name:         util.GenerateId(),
-		CreatedTime:  util.GetCurrentTime(),
-		Application:  application.Name,
-		Organization: user.Owner,
-		User:         user.Name,
-		Code:         util.GenerateClientId(),
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		ExpiresIn:    application.ExpireInHours * 60,
-		Scope:        scope,
-		TokenType:    "Bearer",
+		Owner:         application.Owner,
+		Name:          util.GenerateId(),
+		CreatedTime:   util.GetCurrentTime(),
+		Application:   application.Name,
+		Organization:  user.Owner,
+		User:          user.Name,
+		Code:          util.GenerateClientId(),
+		AccessToken:   accessToken,
+		RefreshToken:  refreshToken,
+		ExpiresIn:     application.ExpireInHours * 60,
+		Scope:         scope,
+		TokenType:     "Bearer",
+		CodeChallenge: challenge,
 	}
 	AddToken(token)
 
@@ -232,7 +240,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string) *TokenWrapper {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string) *TokenWrapper {
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
 		return &TokenWrapper{
@@ -283,6 +291,14 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	if application.ClientSecret != clientSecret {
 		return &TokenWrapper{
 			AccessToken: "error: invalid client_secret",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
+		}
+	}
+	if token.CodeChallenge != "" && pkceChallenge(verifier) != token.CodeChallenge {
+		return &TokenWrapper{
+			AccessToken: "error: incorrect code_verifier",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
@@ -391,4 +407,11 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	}
 
 	return tokenWrapper
+}
+
+// PkceChallenge: base64-URL-encoded SHA256 hash of verifier, per rfc 7636
+func pkceChallenge(verifier string) string {
+	sum := sha256.Sum256([]byte(verifier))
+	challenge := base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(sum[:])
+	return challenge
 }

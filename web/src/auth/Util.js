@@ -83,7 +83,9 @@ export function getOAuthGetParameters(params) {
   const scope = queries.get("scope");
   const state = queries.get("state");
   const nonce = queries.get("nonce")
-
+  const challengeMethod = queries.get("code_challenge_method")
+  const codeChallenge = queries.get("code_challenge")
+  
   if (clientId === undefined || clientId === null) {
     // login
     return null;
@@ -96,6 +98,8 @@ export function getOAuthGetParameters(params) {
       scope: scope,
       state: state,
       nonce: nonce,
+      challengeMethod: challengeMethod,
+      codeChallenge: codeChallenge,
     };
   }
 }
