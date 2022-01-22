@@ -60,6 +60,8 @@ func GetIdProvider(providerType string, clientId string, clientSecret string, re
 		return NewLarkIdProvider(clientId, clientSecret, redirectUrl)
 	} else if providerType == "GitLab" {
 		return NewGitlabIdProvider(clientId, clientSecret, redirectUrl)
+	} else if providerType == "Baidu" {
+		return NewBaiduIdProvider(clientId, clientSecret, redirectUrl)
 	} else if isGothSupport(providerType) {
 		return NewGothIdProvider(providerType, clientId, clientSecret, redirectUrl)
 	}

@@ -398,6 +398,7 @@ export function getProviderTypeOptions(category) {
         {id: 'WeCom', name: 'WeCom'},
         {id: 'Lark', name: 'Lark'},
         {id: 'GitLab', name: 'GitLab'},
+        {id: 'Baidu', name: 'Baidu'},
         {id: 'Apple', name: 'Apple'},
         {id: 'AzureAD', name: 'AzureAD'},
         {id: 'Slack', name: 'Slack'},
