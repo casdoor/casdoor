@@ -514,6 +514,13 @@ export function goToForget(ths, application) {
   }
 }
 
+export function goToTotp(ths, application) {
+  if (application === null) {
+    return;
+  }
+  goToLinkSoft(ths, `/set-totp/${application.name}`);
+}
+
 export function renderHelmet(application) {
   if (application === undefined || application === null || application.organizationObj === undefined || application.organizationObj === null ||application.organizationObj === "") {
     return null;

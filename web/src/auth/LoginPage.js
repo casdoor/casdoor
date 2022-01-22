@@ -38,7 +38,7 @@ import AppleLoginButton from "./AppleLoginButton"
 import AzureADLoginButton from "./AzureADLoginButton";
 import SlackLoginButton from "./SlackLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
-import {CountDownInput} from "../component/CountDownInput";
+import {CountDownInput} from "../common/CountDownInput";
 
 class LoginPage extends React.Component {
   constructor(props) {

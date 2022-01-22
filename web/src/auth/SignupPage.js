@@ -21,7 +21,7 @@ import i18next from "i18next";
 import * as Util from "./Util";
 import {authConfig} from "./Auth";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
-import {CountDownInput} from "../component/CountDownInput";
+import {CountDownInput} from "../common/CountDownInput";
 import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
 

@@ -28,7 +28,6 @@ import OAuthWidget from "./common/OAuthWidget";
 import SamlWidget from "./common/SamlWidget";
 import SelectRegionBox from "./SelectRegionBox";
 
-import {Controlled as CodeMirror} from 'react-codemirror2';
 import "codemirror/lib/codemirror.css";
 require('codemirror/theme/material-darker.css');
 require("codemirror/mode/javascript/javascript");
@@ -45,6 +44,7 @@ class UserEditPage extends React.Component {
       user: null,
       application: null,
       organizations: [],
+      is2fa: 0,
     };
   }
 
@@ -59,6 +59,7 @@ class UserEditPage extends React.Component {
       .then((user) => {
         this.setState({
           user: user,
+          is2fa: user.is2fa
         });
       });
   }
@@ -290,6 +291,30 @@ class UserEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.user.tag} onChange={e => {
               this.updateUserField('tag', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:2-Step"), i18next.t("user:2-Step Verification - Tooltip"))} :
+          </Col>
+          <Col span={(Setting.isMobile()) ? 22 : 2} >
+            <Switch checked={this.state.is2fa} onChange={checked => {
+              if (checked) {
+                Setting.goToTotp(this, this.state.application)
+              } else {
+                // Delete TOTP
+                UserBackend.deleteTOTP(this.state.user.recoveryCode).then((res, e) => {
+                  if (res.status === "ok") {
+                    this.state.is2fa = 0;
+                    this.setState({
+                      is2fa: 0
+                    })
+                  } else {
+                    Setting.showMessage("error", res.msg);
+                  }
+                });
+              }
             }} />
           </Col>
         </Row>

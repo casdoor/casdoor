@@ -21,8 +21,8 @@ import (
 
 type TOTPInit struct {
 	Secret        string `json:"secret"`
-	RecoveryCodes string `json:"recovery-code"`
-	URL           string `json:"qrcode-url"`
+	RecoveryCodes string `json:"recoveryCode"`
+	URL           string `json:"qrcodeUrl"`
 }
 
 // InitTOTP
@@ -103,7 +103,7 @@ func (c *ApiController) SetTOTP() {
 // @Description: Delete TOTP set by the user
 // @Param: recovery-code  formData    string  true        "The recovery-code returned by casdoor"
 // @Success: controllers.Response The Response object
-// @router: /totp [delete]
+// @router: /delete-totp [post]
 func (c *ApiController) DeleteTOTP() {
 	userId, ok := c.RequireSignedIn()
 	if !ok {
@@ -114,7 +114,7 @@ func (c *ApiController) DeleteTOTP() {
 		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
 		return
 	}
-	recoveryCode := c.Input().Get("recovery-code")
+	recoveryCode := c.Input().Get("recoveryCode")
 	if recoveryCode != user.RecoveryCode {
 		c.ResponseError("get wrong recovery code")
 	}
