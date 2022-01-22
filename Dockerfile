@@ -32,5 +32,5 @@ COPY --from=BACK /go/src/casdoor/ ./
 COPY --from=BACK /usr/bin/wait-for-it ./
 RUN mkdir -p web/build && apk add --no-cache bash coreutils
 COPY --from=FRONT /web/build /web/build
-CMD ./wait-for-it db:3306 -- ./server
+CMD  ./server
 
