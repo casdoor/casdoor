@@ -107,9 +107,10 @@ func (idp *BaiduIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) 
 	}
 
 	userInfo := UserInfo{
-		Id:        baiduUser.OpenId,
-		Username:  baiduUser.Username,
-		AvatarUrl: fmt.Sprintf("https://himg.bdimg.com/sys/portrait/item/%s", baiduUser.Portrait),
+		Id:          baiduUser.OpenId,
+		Username:    baiduUser.Username,
+		DisplayName: baiduUser.Username,
+		AvatarUrl:   fmt.Sprintf("https://himg.bdimg.com/sys/portrait/item/%s", baiduUser.Portrait),
 	}
 	return &userInfo, nil
 }
