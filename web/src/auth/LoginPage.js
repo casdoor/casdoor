@@ -485,6 +485,19 @@ class LoginPage extends React.Component {
       return null;
     }
 
+    const params = new URLSearchParams(this.props.location.search);
+    let silentSignin = params.get("silentSignin");
+    if (silentSignin !== null) {
+      if (window !== window.parent) {
+        const message = {tag: "Casdoor", type: "SilentSignin", data: "signing-in"};
+        window.parent.postMessage(message, "*");
+      }
+
+      let values = {};
+      values["application"] = this.state.application.name;
+      this.onFinish(values);
+    }
+
     return (
       <div>
         <div style={{fontSize: 16, textAlign: "left"}}>
