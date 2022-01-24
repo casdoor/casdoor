@@ -1,6 +1,5 @@
 version: '3.1'
 services:
-  restart: always
   casdoor:
     build:
       context: ./
@@ -13,6 +12,7 @@ services:
       RUNNING_IN_DOCKER: "true"
     volumes:
       - ./conf:/conf/
+    restart: always
   db:
     restart: always
     image: mysql:8.0.25
