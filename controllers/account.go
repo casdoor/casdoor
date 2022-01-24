@@ -67,6 +67,14 @@ type Response struct {
 	Data2  interface{} `json:"data2"`
 }
 
+type Userinfo struct {
+	Sub         string `json:"sub"`
+	Name        string `json:"name"`
+	DisplayName string `json:"preferred_username"`
+	Email       string `json:"email"`
+	Avatar      string `json:"picture"`
+}
+
 type HumanCheck struct {
 	Type         string      `json:"type"`
 	AppKey       string      `json:"appKey"`
@@ -226,6 +234,33 @@ func (c *ApiController) GetAccount() {
 		Name:   user.Name,
 		Data:   user,
 		Data2:  organization,
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
+// UserInfo
+// @Title UserInfo
+// @Tag Account API
+// @Description return user information according to OIDC standards
+// @Success 200 {object} controllers.Userinfo The Response object
+// @router /userinfo [get]
+func (c *ApiController) GetUserinfo() {
+	userId, ok := c.RequireSignedIn()
+	if !ok {
+		return
+	}
+	user := object.GetUser(userId)
+	if user == nil {
+		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
+		return
+	}
+	resp := Userinfo{
+		Sub:         user.Id,
+		Name:        user.Name,
+		DisplayName: user.DisplayName,
+		Email:       user.Email,
+		Avatar:      user.Avatar,
 	}
 	c.Data["json"] = resp
 	c.ServeJSON()
