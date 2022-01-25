@@ -18,7 +18,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
+	"github.com/astaxie/beego"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -69,10 +71,14 @@ type Response struct {
 
 type Userinfo struct {
 	Sub         string `json:"sub"`
-	Name        string `json:"name"`
-	DisplayName string `json:"preferred_username"`
-	Email       string `json:"email"`
-	Avatar      string `json:"picture"`
+	Iss         string `json:"iss"`
+	Aud         string `json:"aud"`
+	Name        string `json:"name,omitempty"`
+	DisplayName string `json:"preferred_username,omitempty"`
+	Email       string `json:"email,omitempty"`
+	Avatar      string `json:"picture,omitempty"`
+	Address     string `json:"address,omitempty"`
+	Phone       string `json:"phone,omitempty"`
 }
 
 type HumanCheck struct {
@@ -255,12 +261,26 @@ func (c *ApiController) GetUserinfo() {
 		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
 		return
 	}
+	scope, aud := c.GetSessionOIDC()
+	iss := beego.AppConfig.String("origin")
 	resp := Userinfo{
-		Sub:         user.Id,
-		Name:        user.Name,
-		DisplayName: user.DisplayName,
-		Email:       user.Email,
-		Avatar:      user.Avatar,
+		Sub: user.Id,
+		Iss: iss,
+		Aud: aud,
+	}
+	if strings.Contains(scope, "profile") {
+		resp.Name = user.Name
+		resp.DisplayName = user.DisplayName
+		resp.Avatar = user.Avatar
+	}
+	if strings.Contains(scope, "email") {
+		resp.Email = user.Email
+	}
+	if strings.Contains(scope, "address") {
+		resp.Address = user.Location
+	}
+	if strings.Contains(scope, "phone") {
+		resp.Phone = user.Phone
 	}
 	c.Data["json"] = resp
 	c.ServeJSON()

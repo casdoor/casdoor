@@ -72,6 +72,28 @@ func (c *ApiController) GetSessionUsername() string {
 	return user.(string)
 }
 
+func (c *ApiController) GetSessionOIDC() (string, string) {
+	sessionData := c.GetSessionData()
+	if sessionData != nil &&
+		sessionData.ExpireTime != 0 &&
+		sessionData.ExpireTime < time.Now().Unix() {
+		c.SetSessionUsername("")
+		c.SetSessionData(nil)
+		return "", ""
+	}
+	scopeValue := c.GetSession("scope")
+	audValue := c.GetSession("aud")
+	var scope, aud string
+	var ok bool
+	if scope, ok = scopeValue.(string); !ok {
+		scope = ""
+	}
+	if aud, ok = audValue.(string); !ok {
+		aud = ""
+	}
+	return scope, aud
+}
+
 // SetSessionUsername ...
 func (c *ApiController) SetSessionUsername(user string) {
 	c.SetSession("username", user)
