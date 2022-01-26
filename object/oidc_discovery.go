@@ -54,7 +54,7 @@ func init() {
 		Issuer:                                 origin,
 		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", origin),
 		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", origin),
-		UserinfoEndpoint:                       fmt.Sprintf("%s/api/get-account", origin),
+		UserinfoEndpoint:                       fmt.Sprintf("%s/api/userinfo", origin),
 		JwksUri:                                fmt.Sprintf("%s/api/certs", origin),
 		ResponseTypesSupported:                 []string{"id_token"},
 		ResponseModesSupported:                 []string{"login", "code", "link"},

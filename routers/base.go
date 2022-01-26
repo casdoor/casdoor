@@ -97,7 +97,7 @@ func setSessionExpire(ctx *context.Context, ExpireTime int64) {
 	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
 }
 
-func setSessionOIDC(ctx *context.Context, scope string, aud string) {
+func setSessionOidc(ctx *context.Context, scope string, aud string) {
 	err := ctx.Input.CruSession.Set("scope", scope)
 	if err != nil {
 		panic(err)

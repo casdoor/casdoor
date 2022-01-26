@@ -72,7 +72,7 @@ func (c *ApiController) GetSessionUsername() string {
 	return user.(string)
 }
 
-func (c *ApiController) GetSessionOIDC() (string, string) {
+func (c *ApiController) GetSessionOidc() (string, string) {
 	sessionData := c.GetSessionData()
 	if sessionData != nil &&
 		sessionData.ExpireTime != 0 &&

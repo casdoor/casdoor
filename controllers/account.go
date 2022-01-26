@@ -261,7 +261,7 @@ func (c *ApiController) GetUserinfo() {
 		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
 		return
 	}
-	scope, aud := c.GetSessionOIDC()
+	scope, aud := c.GetSessionOidc()
 	iss := beego.AppConfig.String("origin")
 	resp := Userinfo{
 		Sub: user.Id,

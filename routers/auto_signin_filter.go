@@ -43,7 +43,7 @@ func AutoSigninFilter(ctx *context.Context) {
 
 		userId := fmt.Sprintf("%s/%s", claims.User.Owner, claims.User.Name)
 		setSessionUser(ctx, userId)
-		setSessionOIDC(ctx, claims.Scope, claims.Audience[0])
+		setSessionOidc(ctx, claims.Scope, claims.Audience[0])
 		return
 	}
 
@@ -82,6 +82,6 @@ func AutoSigninFilter(ctx *context.Context) {
 
 		setSessionUser(ctx, fmt.Sprintf("%s/%s", claims.Owner, claims.Name))
 		setSessionExpire(ctx, claims.ExpiresAt.Unix())
-		setSessionOIDC(ctx, claims.Scope, claims.Audience[0])
+		setSessionOidc(ctx, claims.Scope, claims.Audience[0])
 	}
 }
