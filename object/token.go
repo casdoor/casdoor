@@ -208,12 +208,12 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		}
 	}
 
-	accessToken, refreshToken, err := generateJwtToken(application, user, nonce)
+	accessToken, refreshToken, err := generateJwtToken(application, user, nonce, scope)
 	if err != nil {
 		panic(err)
 	}
 
-	if challenge == "null"{
+	if challenge == "null" {
 		challenge = ""
 	}
 
@@ -376,7 +376,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			Scope:       "",
 		}
 	}
-	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "")
+	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "", scope)
 	if err != nil {
 		panic(err)
 	}

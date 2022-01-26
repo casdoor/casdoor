@@ -97,6 +97,18 @@ func setSessionExpire(ctx *context.Context, ExpireTime int64) {
 	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
 }
 
+func setSessionOidc(ctx *context.Context, scope string, aud string) {
+	err := ctx.Input.CruSession.Set("scope", scope)
+	if err != nil {
+		panic(err)
+	}
+	err = ctx.Input.CruSession.Set("aud", aud)
+	if err != nil {
+		panic(err)
+	}
+	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
+}
+
 func parseBearerToken(ctx *context.Context) string {
 	header := ctx.Request.Header.Get("Authorization")
 	tokens := strings.Split(header, " ")
