@@ -23,10 +23,14 @@ import (
 	goldap "github.com/go-ldap/ldap/v3"
 )
 
-var reWhiteSpace *regexp.Regexp
+var (
+	reWhiteSpace     *regexp.Regexp
+	reFieldWhiteList *regexp.Regexp
+)
 
 func init() {
 	reWhiteSpace, _ = regexp.Compile(`\s`)
+	reFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
 }
 
 func CheckUserSignup(application *Application, organization *Organization, username string, password string, displayName string, email string, phone string, affiliation string) string {
@@ -178,4 +182,8 @@ func CheckUserPassword(organization string, username string, password string) (*
 	}
 
 	return user, ""
+}
+
+func filterField(field string) bool {
+	return reFieldWhiteList.MatchString(field)
 }

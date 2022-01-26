@@ -89,10 +89,7 @@ type User struct {
 }
 
 func GetGlobalUserCount(field, value string) int {
-	session := adapter.Engine.Where("1=1")
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession("", -1, -1, field, value, "", "")
 	count, err := session.Count(&User{})
 	if err != nil {
 		panic(err)
@@ -123,10 +120,7 @@ func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOr
 }
 
 func GetUserCount(owner, field, value string) int {
-	session := adapter.Engine.Where("owner=?", owner)
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&User{})
 	if err != nil {
 		panic(err)
