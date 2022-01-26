@@ -190,12 +190,17 @@ func (a *Adapter) createTable() {
 }
 
 func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
-	session := adapter.Engine.Limit(limit, offset).Where("1=1")
+	session := adapter.Engine.Prepare()
+	if offset != -1 && limit != -1 {
+		session.Limit(limit, offset)
+	}
 	if owner != "" {
 		session = session.And("owner=?", owner)
 	}
 	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+		if filterField(field) {
+			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+		}
 	}
 	if sortField == "" || sortOrder == "" {
 		sortField = "created_time"

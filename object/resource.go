@@ -40,11 +40,8 @@ type Resource struct {
 }
 
 func GetResourceCount(owner, user, field, value string) int {
-	session := adapter.Engine.Where("owner=? and user=?", owner, user)
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
-	count, err := session.Count(&Resource{})
+	session := GetSession(owner, -1, -1, field, value, "", "")
+	count, err := session.Count(&Resource{User: user})
 	if err != nil {
 		panic(err)
 	}
