@@ -19,6 +19,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -45,6 +46,8 @@ type Token struct {
 	Scope         string `xorm:"varchar(100)" json:"scope"`
 	TokenType     string `xorm:"varchar(100)" json:"tokenType"`
 	CodeChallenge string `xorm:"varchar(100)" json:"codeChallenge"`
+	CodeIsUsed    bool   `json:"codeIsUsed"`
+	CodeExpireIn  int64  `json:"codeExpireIn"`
 }
 
 type TokenWrapper struct {
@@ -117,6 +120,15 @@ func getTokenByCode(code string) *Token {
 	}
 
 	return nil
+}
+
+func updateUsedByCode(token *Token) bool {
+	affected, err := adapter.Engine.Where("code=?", token.Code).Cols("code_is_used").Update(token)
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
 }
 
 func GetToken(id string) *Token {
@@ -228,6 +240,8 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		Scope:         scope,
 		TokenType:     "Bearer",
 		CodeChallenge: challenge,
+		CodeIsUsed:    false,
+		CodeExpireIn:  time.Now().Add(time.Minute * 5).Unix(),
 	}
 	AddToken(token)
 
@@ -301,7 +315,29 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			Scope:       "",
 		}
 	}
+	if token.CodeIsUsed {
+		//Resist replay attacks, if the code is reused, the token generated with this code will be deleted
+		DeleteToken(token)
+		return &TokenWrapper{
+			AccessToken: "error: code has been used.",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
+		}
+	}
+	if time.Now().Unix() > token.CodeExpireIn {
+		//can only use the code to generate a token within five minutes
+		DeleteToken(token)
+		return &TokenWrapper{
+			AccessToken: "error: code has expired",
+			TokenType:   "",
+			ExpiresIn:   0,
+			Scope:       "",
+		}
+	}
 
+	token.CodeIsUsed = true
+	updateUsedByCode(token)
 	tokenWrapper := &TokenWrapper{
 		AccessToken:  token.AccessToken,
 		IdToken:      token.AccessToken,
