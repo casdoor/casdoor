@@ -437,6 +437,19 @@ export function getProviderTypeOptions(category) {
   }
 }
 
+export function getProviderSubTypeOptions(type) {
+  if (type === "WeCom") {
+    return (
+      [
+        {id: 'Internal', name: 'Internal'},
+        {id: 'Third-party', name: 'Third-party'},
+      ]
+    );
+  } else {
+    return [];
+  }
+}
+
 export function renderLogo(application) {
   if (application === null) {
     return null;

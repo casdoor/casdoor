@@ -91,18 +91,21 @@ class ProviderEditPage extends React.Component {
   getAppIdRow() {
     let text, tooltip;
     if (this.state.provider.category === "SMS" && this.state.provider.type === "Tencent Cloud SMS") {
-      text = "provider:App ID";
-      tooltip = "provider:App ID - Tooltip";
+      text = i18next.t("provider:App ID");
+      tooltip = i18next.t("provider:App ID - Tooltip");
+    } else if (this.state.provider.type === "WeCom" && this.state.provider.subType === "Internal") {
+      text = i18next.t("provider:Agent ID");
+      tooltip = i18next.t("provider:Agent ID - Tooltip");
     } else if (this.state.provider.category === "SMS" && this.state.provider.type === "Volc Engine SMS") {
-      text = "provider:SMS account";
-      tooltip = "provider:SMS account - Tooltip";
+      text = i18next.t("provider:SMS account");
+      tooltip = i18next.t("provider:SMS account - Tooltip");
     } else {
       return null;
     }
 
     return <Row style={{marginTop: '20px'}} >
       <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-        {Setting.getLabel(i18next.t(text), i18next.t(tooltip))} :
+        {Setting.getLabel(text, tooltip)} :
       </Col>
       <Col span={22} >
         <Input value={this.state.provider.appId} onChange={e => {
@@ -205,20 +208,36 @@ class ProviderEditPage extends React.Component {
         </Row>
         {
           this.state.provider.type !== "WeCom" ? null : (
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Method"), i18next.t("provider:Method - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <Select virtual={false} style={{width: '100%'}} value={this.state.provider.method} onChange={value => {
-                  this.updateProviderField('method', value);
-                }}>
-                  {
-                    [{name: "Normal"}, {name: "Silent"}].map((method, index) => <Option key={index} value={method.name}>{method.name}</Option>)
-                  }
-                </Select>
-              </Col>
-            </Row>
+            <React.Fragment>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:Sub type"), i18next.t("provider:Sub type - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Select virtual={false} style={{width: '100%'}} value={this.state.provider.subType} onChange={value => {
+                    this.updateProviderField('subType', value);
+                  }}>
+                    {
+                      Setting.getProviderSubTypeOptions(this.state.provider.type).map((providerSubType, index) => <Option key={index} value={providerSubType.id}>{providerSubType.name}</Option>)
+                    }
+                  </Select>
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:Method"), i18next.t("provider:Method - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Select virtual={false} style={{width: '100%'}} value={this.state.provider.method} onChange={value => {
+                    this.updateProviderField('method', value);
+                  }}>
+                    {
+                      [{name: "Normal"}, {name: "Silent"}].map((method, index) => <Option key={index} value={method.name}>{method.name}</Option>)
+                    }
+                  </Select>
+                </Col>
+              </Row>
+            </React.Fragment>
           )
         }
         <Row style={{marginTop: '20px'}} >

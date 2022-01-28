@@ -60,6 +60,7 @@ const authInfo = {
     scope: "snsapi_userinfo",
     endpoint: "https://open.work.weixin.qq.com/wwopen/sso/3rd_qrConnect",
     silentEndpoint: "https://open.weixin.qq.com/connect/oauth2/authorize",
+    internalEndpoint: "https://open.work.weixin.qq.com/wwopen/sso/qrConnect",
   },
   Lark: {
     // scope: "email",
@@ -192,7 +193,7 @@ export function getAuthUrl(application, provider, method) {
     return "";
   }
 
-  const endpoint = authInfo[provider.type].endpoint;
+  let endpoint = authInfo[provider.type].endpoint;
   const redirectUri = `${window.location.origin}/callback`;
   const scope = authInfo[provider.type].scope;
   const state = Util.getQueryParamsToState(application.name, provider.name, method);
@@ -220,12 +221,27 @@ export function getAuthUrl(application, provider, method) {
   } else if (provider.type === "LinkedIn") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "WeCom") {
-    if (provider.method === "Silent") {
-      return `${authInfo[provider.type].silentEndpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code#wechat_redirect`;
-    } else if (provider.method === "Normal") {
-      return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&usertype=member`;
+    if (provider.subType === "Internal") {
+      if (provider.method === "Silent") {
+        endpoint = authInfo[provider.type].silentEndpoint;
+        return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code#wechat_redirect`;
+      } else if (provider.method === "Normal") {
+        endpoint = authInfo[provider.type].internalEndpoint;
+        return `${endpoint}?appid=${provider.clientId}&agentid=${provider.appId}&redirect_uri=${redirectUri}&state=${state}&usertype=member`;
+      } else {
+        return `https://error:not-supported-provider-method:${provider.method}`;
+      }
+    } else if (provider.subType === "Third-party") {
+      if (provider.method === "Silent") {
+        endpoint = authInfo[provider.type].silentEndpoint;
+        return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code#wechat_redirect`;
+      } else if (provider.method === "Normal") {
+        return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&usertype=member`;
+      } else {
+        return `https://error:not-supported-provider-method:${provider.method}`;
+      }
     } else {
-      return `https://error:not-supported-provider-method:${provider.method}`;
+      return `https://error:not-supported-provider-sub-type:${provider.subType}`;
     }
   } else if (provider.type === "Lark") {
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`;
