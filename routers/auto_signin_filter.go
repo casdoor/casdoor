@@ -16,7 +16,6 @@ package routers
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/astaxie/beego/context"
 	"github.com/casdoor/casdoor/object"
@@ -28,22 +27,26 @@ func AutoSigninFilter(ctx *context.Context) {
 	//	return
 	//}
 
-	// "/page?access_token=123"
+	// "/page?access_token=123" or HTTP Bearer token
+	// Authorization: Bearer bearerToken
 	accessToken := ctx.Input.Query("accessToken")
+	if accessToken == "" {
+		accessToken = parseBearerToken(ctx)
+	}
 	if accessToken != "" {
-		cert := object.GetDefaultCert()
-		claims, err := object.ParseJwtToken(accessToken, cert)
-		if err != nil {
-			responseError(ctx, "invalid JWT token")
+		token := object.GetTokenByAccessToken(accessToken)
+		if token == nil {
+			responseError(ctx, "non-existent accessToken")
 			return
 		}
-		if time.Now().Unix() > claims.ExpiresAt.Unix() {
-			responseError(ctx, "expired JWT token")
+		if !util.CheckTokenExpireTime(token.CreatedTime, token.ExpiresIn) {
+			responseError(ctx, "expired accessToken")
+			return
 		}
-
-		userId := fmt.Sprintf("%s/%s", claims.User.Owner, claims.User.Name)
+		userId := fmt.Sprintf("%s/%s", token.Organization, token.User)
+		application, _ := object.GetApplicationByUserId(fmt.Sprintf("app/%s", token.Application))
 		setSessionUser(ctx, userId)
-		setSessionOidc(ctx, claims.Scope, claims.Audience[0])
+		setSessionOidc(ctx, token.Scope, application.ClientId)
 		return
 	}
 
@@ -69,19 +72,4 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 
-	// HTTP Bearer token
-	// Authorization: Bearer bearerToken
-	bearerToken := parseBearerToken(ctx)
-	if bearerToken != "" {
-		cert := object.GetDefaultCert()
-		claims, err := object.ParseJwtToken(bearerToken, cert)
-		if err != nil {
-			responseError(ctx, err.Error())
-			return
-		}
-
-		setSessionUser(ctx, fmt.Sprintf("%s/%s", claims.Owner, claims.Name))
-		setSessionExpire(ctx, claims.ExpiresAt.Unix())
-		setSessionOidc(ctx, claims.Scope, claims.Audience[0])
-	}
 }
