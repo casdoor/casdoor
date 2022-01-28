@@ -156,6 +156,16 @@ func DeleteToken(token *Token) bool {
 	return affected != 0
 }
 
+func GetTokenByAccessToken(accessToken string) *Token {
+	//Check if the accessToken is in the database
+	token := Token{}
+	existed, err := adapter.Engine.Where("access_token=?", accessToken).Get(&token)
+	if err != nil || !existed {
+		return nil
+	}
+	return &token
+}
+
 func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string) (string, *Application) {
 	if responseType != "code" {
 		return "response_type should be \"code\"", nil
