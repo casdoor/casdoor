@@ -106,8 +106,8 @@ func getToken(owner string, name string) *Token {
 }
 
 func getTokenByCode(code string) *Token {
-	token := Token{}
-	existed, err := adapter.Engine.Where("code=?", code).Get(&token)
+	token := Token{Code: code}
+	existed, err := adapter.Engine.Get(&token)
 	if err != nil {
 		panic(err)
 	}
@@ -158,8 +158,8 @@ func DeleteToken(token *Token) bool {
 
 func GetTokenByAccessToken(accessToken string) *Token {
 	//Check if the accessToken is in the database
-	token := Token{}
-	existed, err := adapter.Engine.Where("access_token=?", accessToken).Get(&token)
+	token := Token{AccessToken: accessToken}
+	existed, err := adapter.Engine.Get(&token)
 	if err != nil || !existed {
 		return nil
 	}
