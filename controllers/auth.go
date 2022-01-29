@@ -221,7 +221,7 @@ func (c *ApiController) Login() {
 				clientSecret = provider.ClientSecret2
 			}
 
-			idProvider := idp.GetIdProvider(provider.Type, clientId, clientSecret, form.RedirectUri)
+			idProvider := idp.GetIdProvider(provider.Type, provider.SubType, clientId, clientSecret, form.RedirectUri)
 			if idProvider == nil {
 				c.ResponseError(fmt.Sprintf("The provider type: %s is not supported", provider.Type))
 				return

@@ -35,35 +35,41 @@ type IdProvider interface {
 	GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 }
 
-func GetIdProvider(providerType string, clientId string, clientSecret string, redirectUrl string) IdProvider {
-	if providerType == "GitHub" {
+func GetIdProvider(typ string, subType string, clientId string, clientSecret string, redirectUrl string) IdProvider {
+	if typ == "GitHub" {
 		return NewGithubIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "Google" {
+	} else if typ == "Google" {
 		return NewGoogleIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "QQ" {
+	} else if typ == "QQ" {
 		return NewQqIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "WeChat" {
+	} else if typ == "WeChat" {
 		return NewWeChatIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "Facebook" {
+	} else if typ == "Facebook" {
 		return NewFacebookIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "DingTalk" {
+	} else if typ == "DingTalk" {
 		return NewDingTalkIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "Weibo" {
+	} else if typ == "Weibo" {
 		return NewWeiBoIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "Gitee" {
+	} else if typ == "Gitee" {
 		return NewGiteeIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "LinkedIn" {
+	} else if typ == "LinkedIn" {
 		return NewLinkedInIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "WeCom" {
-		return NewWeComIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "Lark" {
+	} else if typ == "WeCom" {
+		if subType == "Internal" {
+			return NewWeComInternalIdProvider(clientId, clientSecret, redirectUrl)
+		} else if subType == "Third-party" {
+			return NewWeComIdProvider(clientId, clientSecret, redirectUrl)
+		} else {
+			return nil
+		}
+	} else if typ == "Lark" {
 		return NewLarkIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "GitLab" {
+	} else if typ == "GitLab" {
 		return NewGitlabIdProvider(clientId, clientSecret, redirectUrl)
-	} else if providerType == "Baidu" {
+	} else if typ == "Baidu" {
 		return NewBaiduIdProvider(clientId, clientSecret, redirectUrl)
-	} else if isGothSupport(providerType) {
-		return NewGothIdProvider(providerType, clientId, clientSecret, redirectUrl)
+	} else if isGothSupport(typ) {
+		return NewGothIdProvider(typ, clientId, clientSecret, redirectUrl)
 	}
 
 	return nil
