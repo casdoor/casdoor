@@ -163,5 +163,9 @@ func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo,
 		AvatarUrl:   infoResp.Avatar,
 	}
 
+	if userInfo.Id == "" {
+		userInfo.Id = userInfo.Username
+	}
+
 	return &userInfo, nil
 }
