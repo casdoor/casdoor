@@ -56,6 +56,8 @@ func GetIdProvider(providerType string, clientId string, clientSecret string, re
 		return NewLinkedInIdProvider(clientId, clientSecret, redirectUrl)
 	} else if providerType == "WeCom" {
 		return NewWeComIdProvider(clientId, clientSecret, redirectUrl)
+	} else if providerType == "WeComInternal" {
+		return NewWeComInternalIdProvider(clientId, clientSecret, redirectUrl)
 	} else if providerType == "Lark" {
 		return NewLarkIdProvider(clientId, clientSecret, redirectUrl)
 	} else if providerType == "GitLab" {
