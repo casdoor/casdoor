@@ -20,7 +20,8 @@ import "github.com/casdoor/casdoor/object"
 // @Tag OIDC API
 // @router /.well-known/openid-configuration [get]
 func (c *RootController) GetOidcDiscovery() {
-	c.Data["json"] = object.GetOidcDiscovery()
+	host := c.Ctx.Request.Host
+	c.Data["json"] = object.GetOidcDiscovery(host)
 	c.ServeJSON()
 }
 
