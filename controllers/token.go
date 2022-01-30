@@ -145,7 +145,7 @@ func (c *ApiController) GetOAuthCode() {
 	challengeMethod := c.Input().Get("code_challenge_method")
 	codeChallenge := c.Input().Get("code_challenge")
 
-	if challengeMethod != "S256" && challengeMethod != "null" {
+	if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
 		c.ResponseError("Challenge method should be S256")
 		return
 	}
