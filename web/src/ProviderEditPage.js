@@ -184,6 +184,7 @@ class ProviderEditPage extends React.Component {
                   {id: 'SMS', name: 'SMS'},
                   {id: 'Storage', name: 'Storage'},
                   {id: 'SAML', name: 'SAML'},
+                  {id: 'Payment', name: 'Payment'},
                 ].map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
               }
             </Select>

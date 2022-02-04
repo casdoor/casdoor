@@ -133,6 +133,7 @@
     "Password salt - Tooltip": "用于密码加密的随机参数",
     "Password type": "密码类型",
     "Password type - Tooltip": "密码在数据库中存储的形式",
+    "Payments": "付款",
     "Permissions": "权限",
     "Personal name": "姓名",
     "Phone": "手机号",
@@ -142,6 +143,7 @@
     "Preview": "预览",
     "Preview - Tooltip": "预览",
     "Provider": "提供商",
+    "Provider - Tooltip": "第三方登录需要配置的提供方",
     "Providers": "提供商",
     "Providers - Tooltip": "第三方登录需要配置的提供方",
     "Records": "日志",
@@ -233,6 +235,15 @@
     "Soft deletion - Tooltip": "启用后，删除用户信息时不会在数据库彻底清除，只会标记为已删除状态",
     "Website URL": "网页地址",
     "Website URL - Tooltip": "网页地址"
+  },
+  "payment": {
+    "Amount": "金额",
+    "Amount - Tooltip": "付款的金额",
+    "Currency": "币种",
+    "Currency - Tooltip": "如USD（美元），CNY（人民币）等",
+    "Edit Payment": "编辑付款",
+    "Good": "商品",
+    "Good - Tooltip": "购买的商品名称"
   },
   "permission": {
     "Actions": "动作",

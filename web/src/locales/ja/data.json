@@ -133,6 +133,7 @@
     "Password salt - Tooltip": "Random parameters used for password encryption",
     "Password type": "パスワードの種類",
     "Password type - Tooltip": "The form in which the password is stored in the database",
+    "Payments": "Payments",
     "Permissions": "アクセス許可",
     "Personal name": "個人名",
     "Phone": "電話番号",
@@ -142,6 +143,7 @@
     "Preview": "プレビュー",
     "Preview - Tooltip": "The form in which the password is stored in the database",
     "Provider": "プロバイダー",
+    "Provider - Tooltip": "Provider - Tooltip",
     "Providers": "プロバイダー",
     "Providers - Tooltip": "List of third-party applications that can be used to log in",
     "Records": "レコード",
@@ -233,6 +235,15 @@
     "Soft deletion - Tooltip": "ソフト削除 - ツールチップ",
     "Website URL": "Website URL",
     "Website URL - Tooltip": "Unique string-style identifier"
+  },
+  "payment": {
+    "Amount": "Amount",
+    "Amount - Tooltip": "Amount - Tooltip",
+    "Currency": "Currency",
+    "Currency - Tooltip": "Currency - Tooltip",
+    "Edit Payment": "Edit Payment",
+    "Good": "Good",
+    "Good - Tooltip": "Good - Tooltip"
   },
   "permission": {
     "Actions": "アクション",

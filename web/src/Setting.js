@@ -432,6 +432,12 @@ export function getProviderTypeOptions(category) {
       {id: 'Aliyun IDaaS', name: 'Aliyun IDaaS'},
       {id: 'Keycloak', name: 'Keycloak'},
     ]);
+  } else if (category === "Payment") {
+    return ([
+      {id: 'Alipay', name: 'Alipay'},
+      {id: 'WeChat Pay', name: 'WeChat Pay'},
+      {id: 'PayPal', name: 'PayPal'},
+    ]);
   } else {
     return [];
   }

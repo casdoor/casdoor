@@ -137,6 +137,20 @@ const otherProviderInfo = {
       url: "https://www.keycloak.org/"
     },
   },
+  Payment: {
+    "Alipay": {
+      logo: `${StaticBaseUrl}/img/payment_alipay.png`,
+      url: "https://www.alipay.com/"
+    },
+    "WeChat Pay": {
+      logo: `${StaticBaseUrl}/img/payment_wechat_pay.png`,
+      url: "https://pay.weixin.qq.com/"
+    },
+    "PayPal": {
+      logo: `${StaticBaseUrl}/img/payment_paypal.png`,
+      url: "https://www.paypal.com/"
+    },
+  },
 };
 
 export function getProviderLogo(provider) {

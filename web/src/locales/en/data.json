@@ -133,6 +133,7 @@
     "Password salt - Tooltip": "Password salt - Tooltip",
     "Password type": "Password type",
     "Password type - Tooltip": "Password type - Tooltip",
+    "Payments": "Payments",
     "Permissions": "Permissions",
     "Personal name": "Personal name",
     "Phone": "Phone",
@@ -142,6 +143,7 @@
     "Preview": "Preview",
     "Preview - Tooltip": "Preview - Tooltip",
     "Provider": "Provider",
+    "Provider - Tooltip": "Provider - Tooltip",
     "Providers": "Providers",
     "Providers - Tooltip": "Providers - Tooltip",
     "Records": "Records",
@@ -233,6 +235,15 @@
     "Soft deletion - Tooltip": "Soft deletion - Tooltip",
     "Website URL": "Website URL",
     "Website URL - Tooltip": "Website URL - Tooltip"
+  },
+  "payment": {
+    "Amount": "Amount",
+    "Amount - Tooltip": "Amount - Tooltip",
+    "Currency": "Currency",
+    "Currency - Tooltip": "Currency - Tooltip",
+    "Edit Payment": "Edit Payment",
+    "Good": "Good",
+    "Good - Tooltip": "Good - Tooltip"
   },
   "permission": {
     "Actions": "Actions",

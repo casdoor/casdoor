@@ -133,6 +133,7 @@
     "Password salt - Tooltip": "Random parameters used for password encryption",
     "Password type": "Passworttyp",
     "Password type - Tooltip": "The form in which the password is stored in the database",
+    "Payments": "Payments",
     "Permissions": "Berechtigungen",
     "Personal name": "Persönlicher Name",
     "Phone": "Telefon",
@@ -142,6 +143,7 @@
     "Preview": "Vorschau",
     "Preview - Tooltip": "The form in which the password is stored in the database",
     "Provider": "Anbieter",
+    "Provider - Tooltip": "Provider - Tooltip",
     "Providers": "Anbieter",
     "Providers - Tooltip": "List of third-party applications that can be used to log in",
     "Records": "Datensätze",
@@ -233,6 +235,15 @@
     "Soft deletion - Tooltip": "Weiche Löschung - Tooltip",
     "Website URL": "Website-URL",
     "Website URL - Tooltip": "Unique string-style identifier"
+  },
+  "payment": {
+    "Amount": "Amount",
+    "Amount - Tooltip": "Amount - Tooltip",
+    "Currency": "Currency",
+    "Currency - Tooltip": "Currency - Tooltip",
+    "Edit Payment": "Edit Payment",
+    "Good": "Good",
+    "Good - Tooltip": "Good - Tooltip"
   },
   "permission": {
     "Actions": "Aktionen",
