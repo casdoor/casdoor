@@ -35,7 +35,7 @@ type IdProvider interface {
 	GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 }
 
-func GetIdProvider(typ string, subType string, clientId string, clientSecret string, redirectUrl string) IdProvider {
+func GetIdProvider(typ string, subType string, clientId string, clientSecret string, appId string, redirectUrl string) IdProvider {
 	if typ == "GitHub" {
 		return NewGithubIdProvider(clientId, clientSecret, redirectUrl)
 	} else if typ == "Google" {
