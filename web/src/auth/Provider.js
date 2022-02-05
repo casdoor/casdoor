@@ -74,6 +74,9 @@ const authInfo = {
     scope: "basic",
     endpoint: "http://openapi.baidu.com/oauth/2.0/authorize",
   },
+  Infoflow: {
+    endpoint: "https://xpc.im.baidu.com/oauth2/authorize",
+  },
   Apple: {
     scope: "name%20email",
     endpoint: "https://appleid.apple.com/auth/authorize",
@@ -249,6 +252,8 @@ export function getAuthUrl(application, provider, method) {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Baidu") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&display=popup`;
+  } else if (provider.type === "Infoflow"){
+    return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}`
   } else if (provider.type === "Apple") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&response_mode=form_post`;
   } else if (provider.type === "AzureAD") {

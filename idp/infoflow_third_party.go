@@ -19,18 +19,21 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
+	"time"
 
 	"golang.org/x/oauth2"
 )
 
-type InfoflowInternalIdProvider struct {
+type InfoflowIdProvider struct {
 	Client  *http.Client
 	Config  *oauth2.Config
 	AgentId string
+	Ticket  string
 }
 
-func NewInfoflowInternalIdProvider(clientId string, clientSecret string, appId string, redirectUrl string) *InfoflowInternalIdProvider {
-	idp := &InfoflowInternalIdProvider{}
+func NewInfoflowIdProvider(clientId string, clientSecret string, appId string, redirectUrl string) *InfoflowIdProvider {
+	idp := &InfoflowIdProvider{}
 
 	config := idp.getConfig(clientId, clientSecret, redirectUrl)
 	idp.Config = config
@@ -38,11 +41,11 @@ func NewInfoflowInternalIdProvider(clientId string, clientSecret string, appId s
 	return idp
 }
 
-func (idp *InfoflowInternalIdProvider) SetHttpClient(client *http.Client) {
+func (idp *InfoflowIdProvider) SetHttpClient(client *http.Client) {
 	idp.Client = client
 }
 
-func (idp *InfoflowInternalIdProvider) getConfig(clientId string, clientSecret string, redirectUrl string) *oauth2.Config {
+func (idp *InfoflowIdProvider) getConfig(clientId string, clientSecret string, redirectUrl string) *oauth2.Config {
 	var config = &oauth2.Config{
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
@@ -52,28 +55,23 @@ func (idp *InfoflowInternalIdProvider) getConfig(clientId string, clientSecret s
 	return config
 }
 
-type InfoflowInterToken struct {
+type InfoflowToken struct {
 	Errcode     int    `json:"errcode"`
 	Errmsg      string `json:"errmsg"`
-	AccessToken string `json:"access_token"`
+	AccessToken string `json:"suite_access_token"`
+	ExpiresIn   int    `json:"expires_in"`
 }
 
-// get more detail via: https://qy.baidu.com/doc/index.html#/inner_quickstart/flow?id=%E8%8E%B7%E5%8F%96accesstoken
-func (idp *InfoflowInternalIdProvider) GetToken(code string) (*oauth2.Token, error) {
+// get more detail via: https://qy.baidu.com/doc/index.html#/third_serverapi/authority
+func (idp *InfoflowIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	pTokenParams := &struct {
-		CorpId     string `json:"corpid"`
-		Corpsecret string `json:"corpsecret"`
-	}{idp.Config.ClientID, idp.Config.ClientSecret}
-	resp, err := idp.Client.Get(fmt.Sprintf("https://qy.im.baidu.com/api/gettoken?corpid=%s&corpsecret=%s", pTokenParams.CorpId, pTokenParams.Corpsecret))
-	if err != nil {
-		return nil, err
-	}
+		SuiteId     string `json:"suite_id"`
+		SuiteSecret string `json:"suite_secret"`
+		SuiteTicket string `json:"suite_ticket"`
+	}{idp.Config.ClientID, idp.Config.ClientSecret, idp.Ticket}
+	data, err := idp.postWithBody(pTokenParams, "https://api.im.baidu.com/api/service/get_suite_token")
 
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	pToken := &InfoflowInterToken{}
+	pToken := &InfoflowToken{}
 	err = json.Unmarshal(data, pToken)
 	if err != nil {
 		return nil, err
@@ -83,6 +81,7 @@ func (idp *InfoflowInternalIdProvider) GetToken(code string) (*oauth2.Token, err
 	}
 	token := &oauth2.Token{
 		AccessToken: pToken.AccessToken,
+		Expiry:      time.Unix(time.Now().Unix()+int64(pToken.ExpiresIn), 0),
 	}
 
 	raw := make(map[string]interface{})
@@ -92,13 +91,13 @@ func (idp *InfoflowInternalIdProvider) GetToken(code string) (*oauth2.Token, err
 	return token, nil
 }
 
-type InfoflowInternalUserResp struct {
+type InfoflowUserResp struct {
 	Errcode int    `json:"errcode"`
 	Errmsg  string `json:"errmsg"`
 	UserId  string `json:"UserId"`
 }
 
-type InfoflowInternalUserInfo struct {
+type InfoflowUserInfo struct {
 	Errcode int    `json:"errcode"`
 	Errmsg  string `json:"errmsg"`
 	Imid    string `json:"imid"`
@@ -106,12 +105,12 @@ type InfoflowInternalUserInfo struct {
 	Email   string `json:"email"`
 }
 
-// get more detail via: https://qy.baidu.com/doc/index.html#/inner_serverapi/contacts?id=%e8%8e%b7%e5%8f%96%e6%88%90%e5%91%98
-func (idp *InfoflowInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+// get more detail via: https://qy.baidu.com/doc/index.html#/third_serverapi/verify
+func (idp *InfoflowIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	//Get userid first
 	accessToken := token.AccessToken
 	code := token.Extra("code").(string)
-	resp, err := idp.Client.Get(fmt.Sprintf("https://qy.im.baidu.com/api/user/getuserinfo?access_token=%s&code=%s&agentid=%s", accessToken, code, idp.AgentId))
+	resp, err := idp.Client.Get(fmt.Sprintf("https://api.im.baidu.com/api/user/getuserinfo?access_token=%s&code=%s&agentid=%s", accessToken, code, idp.AgentId))
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +119,7 @@ func (idp *InfoflowInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserIn
 	if err != nil {
 		return nil, err
 	}
-	userResp := &InfoflowInternalUserResp{}
+	userResp := &InfoflowUserResp{}
 	err = json.Unmarshal(data, userResp)
 	if err != nil {
 		return nil, err
@@ -138,7 +137,7 @@ func (idp *InfoflowInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserIn
 	if err != nil {
 		return nil, err
 	}
-	infoResp := &InfoflowInternalUserInfo{}
+	infoResp := &InfoflowUserInfo{}
 	err = json.Unmarshal(data, infoResp)
 	if err != nil {
 		return nil, err
@@ -157,4 +156,28 @@ func (idp *InfoflowInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserIn
 		userInfo.Id = userInfo.Username
 	}
 	return &userInfo, nil
+}
+
+func (idp *InfoflowIdProvider) postWithBody(body interface{}, url string) ([]byte, error) {
+	bs, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	r := strings.NewReader(string(bs))
+	resp, err := idp.Client.Post(url, "application/json;charset=UTF-8", r)
+	if err != nil {
+		return nil, err
+	}
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			return
+		}
+	}(resp.Body)
+
+	return data, nil
 }

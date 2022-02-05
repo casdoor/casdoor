@@ -80,6 +80,7 @@ type User struct {
 	Lark     string `xorm:"lark varchar(100)" json:"lark"`
 	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab"`
 	Baidu    string `xorm:"baidu varchar(100)" json:"baidu"`
+	Infoflow string `xorm:"infoflow varchar(100)" json:"infoflow"`
 	Apple    string `xorm:"apple varchar(100)" json:"apple"`
 	AzureAD  string `xorm:"azuread varchar(100)" json:"azuread"`
 	Slack    string `xorm:"slack varchar(100)" json:"slack"`
