@@ -35,7 +35,7 @@ type IdProvider interface {
 	GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 }
 
-func GetIdProvider(typ string, subType string, clientId string, clientSecret string, redirectUrl string) IdProvider {
+func GetIdProvider(typ string, subType string, clientId string, clientSecret string, appId string, redirectUrl string) IdProvider {
 	if typ == "GitHub" {
 		return NewGithubIdProvider(clientId, clientSecret, redirectUrl)
 	} else if typ == "Google" {
@@ -68,6 +68,14 @@ func GetIdProvider(typ string, subType string, clientId string, clientSecret str
 		return NewGitlabIdProvider(clientId, clientSecret, redirectUrl)
 	} else if typ == "Baidu" {
 		return NewBaiduIdProvider(clientId, clientSecret, redirectUrl)
+	} else if typ == "Infoflow" {
+		if subType == "Internal" {
+			return NewInfoflowInternalIdProvider(clientId, clientId, appId, redirectUrl)
+		} else if subType == "Third-party" {
+			return NewInfoflowIdProvider(clientId, clientSecret, appId, redirectUrl)
+		} else {
+			return nil
+		}
 	} else if isGothSupport(typ) {
 		return NewGothIdProvider(typ, clientId, clientSecret, redirectUrl)
 	}

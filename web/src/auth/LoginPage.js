@@ -35,6 +35,7 @@ import WeComLoginButton from "./WeComLoginButton";
 import LarkLoginButton from "./LarkLoginButton";
 import GitLabLoginButton from "./GitLabLoginButton";
 import BaiduLoginButton from "./BaiduLoginButton";
+import InfoflowLoginButton from "./InfoflowLoginButton";
 import AppleLoginButton from "./AppleLoginButton"
 import AzureADLoginButton from "./AzureADLoginButton";
 import SlackLoginButton from "./SlackLoginButton";
@@ -186,6 +187,8 @@ class LoginPage extends React.Component {
       return <GitLabLoginButton text={text} align={"center"} />
     } else if (type === "Baidu") {
       return <BaiduLoginButton text={text} align={"center"} />
+    } else if (type === "Infoflow") {
+      return <InfoflowLoginButton text={text} align={"center"} />
     } else if (type === "Apple") {
       return <AppleLoginButton text={text} align={"center"} />
     } else if (type === "AzureAD") {

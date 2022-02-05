@@ -399,6 +399,7 @@ export function getProviderTypeOptions(category) {
         {id: 'Lark', name: 'Lark'},
         {id: 'GitLab', name: 'GitLab'},
         {id: 'Baidu', name: 'Baidu'},
+        {id: 'Infoflow', name: 'Infoflow'},
         {id: 'Apple', name: 'Apple'},
         {id: 'AzureAD', name: 'AzureAD'},
         {id: 'Slack', name: 'Slack'},
@@ -444,7 +445,7 @@ export function getProviderTypeOptions(category) {
 }
 
 export function getProviderSubTypeOptions(type) {
-  if (type === "WeCom") {
+  if (type === "WeCom" || type === "Infoflow") {
     return (
       [
         {id: 'Internal', name: 'Internal'},

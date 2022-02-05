@@ -96,6 +96,9 @@ class ProviderEditPage extends React.Component {
     } else if (this.state.provider.type === "WeCom" && this.state.provider.subType === "Internal") {
       text = i18next.t("provider:Agent ID");
       tooltip = i18next.t("provider:Agent ID - Tooltip");
+    } else if (this.state.provider.type === "Infoflow"){
+      text = i18next.t("provider:Agent ID");
+      tooltip = i18next.t("provider:Agent ID - Tooltip");
     } else if (this.state.provider.category === "SMS" && this.state.provider.type === "Volc Engine SMS") {
       text = i18next.t("provider:SMS account");
       tooltip = i18next.t("provider:SMS account - Tooltip");
@@ -208,7 +211,7 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         {
-          this.state.provider.type !== "WeCom" ? null : (
+          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" ? null : (
             <React.Fragment>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
@@ -224,20 +227,23 @@ class ProviderEditPage extends React.Component {
                   </Select>
                 </Col>
               </Row>
-              <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={2}>
-                  {Setting.getLabel(i18next.t("provider:Method"), i18next.t("provider:Method - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <Select virtual={false} style={{width: '100%'}} value={this.state.provider.method} onChange={value => {
-                    this.updateProviderField('method', value);
-                  }}>
-                    {
-                      [{name: "Normal"}, {name: "Silent"}].map((method, index) => <Option key={index} value={method.name}>{method.name}</Option>)
-                    }
-                  </Select>
-                </Col>
-              </Row>
+              {
+                this.state.provider.type !== "WeCom"  ? null : (    
+                  <Row style={{marginTop: '20px'}} >
+                    <Col style={{marginTop: '5px'}} span={2}>
+                      {Setting.getLabel(i18next.t("provider:Method"), i18next.t("provider:Method - Tooltip"))} :
+                    </Col>
+                    <Col span={22} >
+                      <Select virtual={false} style={{width: '100%'}} value={this.state.provider.method} onChange={value => {
+                        this.updateProviderField('method', value);
+                      }}>
+                        {
+                          [{name: "Normal"}, {name: "Silent"}].map((method, index) => <Option key={index} value={method.name}>{method.name}</Option>)
+                        }
+                      </Select>
+                    </Col>
+                  </Row>)
+              }
             </React.Fragment>
           )
         }
