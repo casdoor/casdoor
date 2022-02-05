@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2022 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -91,6 +91,35 @@ func (idp *InfoflowInternalIdProvider) GetToken(code string) (*oauth2.Token, err
 
 	return token, nil
 }
+
+/*
+{
+    "errcode": 0,
+    "errmsg": "ok",
+    "userid": "lili",
+    "name": "丽丽",
+    "department": [1],
+    "mobile": "13500088888",
+    "email": "lili4@gzdev.com",
+    "imid": 40000318,
+    "hiuname": "lili4",
+    "status": 1,
+    "extattr":
+        {
+            "attrs": [
+                {
+                    "name": "爱好",
+                    "value": "旅游"
+                },
+                {
+                    "name": "卡号,
+                    "value": "1234567234"
+                }
+            ]
+        },
+   "lm": 14236463257
+}
+*/
 
 type InfoflowInternalUserResp struct {
 	Errcode int    `json:"errcode"`

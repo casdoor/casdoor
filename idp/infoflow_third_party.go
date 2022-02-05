@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2022 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -91,6 +91,34 @@ func (idp *InfoflowIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	return token, nil
 }
 
+/*
+{
+    "errcode": 0,
+    "errmsg": "ok",
+    "userid": "lili",
+    "name": "丽丽",
+    "department": [1],
+    "mobile": "13500088888",
+    "email": "lili4@gzdev.com",
+    "imid": 40000318,
+    "hiuname": "lili4",
+    "status": 1,
+    "extattr": {
+        "attrs": [
+            {
+                "name": "爱好",
+                "value": "旅游"
+            },
+            {
+                "name": "卡号",
+                "value": "1234567234"
+            }
+        ]
+    },
+    "lm" : 14236463257
+}
+*/
+
 type InfoflowUserResp struct {
 	Errcode int    `json:"errcode"`
 	Errmsg  string `json:"errmsg"`
@@ -105,7 +133,7 @@ type InfoflowUserInfo struct {
 	Email   string `json:"email"`
 }
 
-// get more detail via: https://qy.baidu.com/doc/index.html#/third_serverapi/verify
+// get more detail via: https://qy.baidu.com/doc/index.html#/third_serverapi/contacts?id=%e8%8e%b7%e5%8f%96%e6%88%90%e5%91%98
 func (idp *InfoflowIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	//Get userid first
 	accessToken := token.AccessToken
