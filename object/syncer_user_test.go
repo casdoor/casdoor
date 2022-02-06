@@ -25,7 +25,7 @@ func TestGetUsers(t *testing.T) {
 	syncers := GetSyncers("admin")
 	syncer := syncers[0]
 	syncer.initAdapter()
-	users := syncer.getOriginalUsers()
+	users, _ := syncer.getOriginalUsers()
 	for _, user := range users {
 		fmt.Printf("%v\n", user)
 	}
