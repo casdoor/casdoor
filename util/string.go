@@ -49,11 +49,11 @@ func ParseBool(s string) bool {
 func BoolToString(b bool) string {
 	if b {
 		return "1"
-	} else {
-		return "0"
 	}
+	return "0"
 }
 
+//CamelToSnakeCase This function transform camelcase in snakecase LoremIpsum in lorem_ipsum
 func CamelToSnakeCase(camel string) string {
 	var buf bytes.Buffer
 	for _, c := range camel {
@@ -63,11 +63,11 @@ func CamelToSnakeCase(camel string) string {
 				buf.WriteRune('_')
 			}
 			buf.WriteRune(c - 'A' + 'a')
-		} else {
-			buf.WriteRune(c)
+			continue
 		}
+		buf.WriteRune(c)
 	}
-	return buf.String()
+	return strings.ReplaceAll(buf.String(), " ", "")
 }
 
 func GetOwnerAndNameFromId(id string) (string, string) {
@@ -124,7 +124,7 @@ func GetMinLenStr(strs ...string) string {
 	i := 0
 	for j, str := range strs {
 		l := len(str)
-		if l > m {
+		if l < m {
 			m = l
 			i = j
 		}
@@ -148,23 +148,7 @@ func WriteStringToPath(s string, path string) {
 	}
 }
 
-func ReadBytesFromPath(path string) []byte {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		panic(err)
-	}
-
-	return data
-}
-
-func WriteBytesToPath(b []byte, path string) {
-	err := os.WriteFile(path, b, 0644)
-	if err != nil {
-		panic(err)
-	}
-}
-
-// SnakeString XxYy to xx_yy
+// SnakeString transform XxYy to xx_yy
 func SnakeString(s string) string {
 	data := make([]byte, 0, len(s)*2)
 	j := false
@@ -179,7 +163,8 @@ func SnakeString(s string) string {
 		}
 		data = append(data, d)
 	}
-	return strings.ToLower(string(data[:]))
+	result := strings.ToLower(string(data[:]))
+	return strings.ReplaceAll(result, " ", "")
 }
 
 func IsChinese(str string) bool {
