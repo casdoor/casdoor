@@ -40,7 +40,7 @@ func AutoSigninFilter(ctx *context.Context) {
 			return
 		}
 
-		if !util.IsTokenExpired(token.CreatedTime, token.ExpiresIn) {
+		if util.IsTokenExpired(token.CreatedTime, token.ExpiresIn) {
 			responseError(ctx, "Access token has expired")
 			return
 		}
