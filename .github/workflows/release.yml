@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release-and-push:
+    name: Release And Push
+    if: github.repository == 'casdoor/casdoor'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Semantic Release
+        id: semantic-release
+        uses: cycjimmy/semantic-release-action@v2
+        with:
+          semantic_version: 17.4.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        if: steps.semantic-release.new_release_published == 'true'
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        if: steps.semantic-release.new_release_published == 'true'
+        with:
+          push: true
+          tags: casbin/casdoor:v${{ steps.semantic-releaser.new_release_version }},casbin/casdoor:latest
+
+      - name: Push All In One Version to Docker Hub
+        uses: docker/build-push-action@v2
+        if: steps.semantic-release.new_release_published == 'true'
+        with:
+          target: ALLINONE
+          push: true
+          tags: casbin/casdoor-all-in-one:v${{ steps.semantic-releaser.new_release_version }},casbin/casdoor-all-in-one:latest
