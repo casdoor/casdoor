@@ -96,9 +96,9 @@ func TestCamelToSnakeCase(t *testing.T) {
 		expected    interface{}
 	}{
 		{"Should be return casdor_is_the_best", "CasdoorIsTheBest", "casdoor_is_the_best"},
-		{"Should be return Lorem Ipsum", "Lorem Ipsum", "lorem_ipsum"},
+		{"Should be return lorem_ipsum", "Lorem Ipsum", "lorem_ipsum"},
 		{"Should be return Lorem Ipsum", "lorem Ipsum", "lorem_ipsum"},
-		{"Should be return Lorem Ipsum", "lorem ipsum", "loremipsum"},
+		{"Should be return lorem_ipsum", "lorem ipsum", "loremipsum"},
 	}
 	for _, scenery := range scenarios {
 		t.Run(scenery.description, func(t *testing.T) {
@@ -173,9 +173,9 @@ func TestSnakeString(t *testing.T) {
 		expected    interface{}
 	}{
 		{"Should be return casdor_is_the_best", "CasdoorIsTheBest", "casdoor_is_the_best"},
-		{"Should be return Lorem Ipsum", "Lorem Ipsum", "lorem_ipsum"},
-		{"Should be return Lorem Ipsum", "lorem Ipsum", "lorem_ipsum"},
-		{"Should be return Lorem Ipsum", "lorem ipsum", "loremipsum"},
+		{"Should be return lorem_ipsum", "Lorem Ipsum", "lorem_ipsum"},
+		{"Should be return lorem_ipsum", "lorem Ipsum", "lorem_ipsum"},
+		{"Should be return loremipsum", "lorem ipsum", "loremipsum"},
 	}
 	for _, scenery := range scenarios {
 		t.Run(scenery.description, func(t *testing.T) {
