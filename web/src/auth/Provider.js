@@ -267,7 +267,7 @@ export function getAuthUrl(application, provider, method) {
   } else if (provider.type === "Baidu") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&display=popup`;
   } else if (provider.type === "Infoflow"){
-    return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}`
+    return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}?state=${state}`
   } else if (provider.type === "Apple") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&response_mode=form_post`;
   } else if (provider.type === "AzureAD") {
