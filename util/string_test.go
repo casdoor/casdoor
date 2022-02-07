@@ -15,6 +15,7 @@
 package util
 
 import (
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -104,6 +105,66 @@ func TestCamelToSnakeCase(t *testing.T) {
 		t.Run(scenery.description, func(t *testing.T) {
 			actual := CamelToSnakeCase(scenery.input)
 			assert.Equal(t, scenery.expected, actual, "The returned value not is expected")
+		})
+	}
+}
+
+func TestGenerateId(t *testing.T) {
+	scenarios := []struct {
+		description string
+		input       string
+		expected    interface{}
+	}{
+		{"Scenery one", GenerateId(), nil},
+		{"Scenery two", GenerateId(), nil},
+		{"Scenery three", "00000000-0000-0000-0000-000000000000", nil},
+	}
+	for _, scenery := range scenarios {
+		t.Run(scenery.description, func(t *testing.T) {
+			_, err := uuid.Parse(scenery.input)
+			assert.Equal(t, scenery.expected, err, "Should be return empty")
+		})
+	}
+
+	_, SceneryTree := uuid.Parse("00000000-0000-0000-0000-00000000000S")
+	assert.Equal(t, "invalid UUID format", SceneryTree.Error(), "Errou")
+
+	_, SceneryFor := uuid.Parse("00000000-0000-0000-0000-000000000000S")
+	assert.Equal(t, "invalid UUID length: 37", SceneryFor.Error(), "Errou")
+}
+
+func TestGetId(t *testing.T) {
+	scenarios := []struct {
+		description string
+		input       string
+		expected    interface{}
+	}{
+		{"Scenery one", "casdoor", "admin/casdoor"},
+		{"Scenery two", "casbin", "admin/casbin"},
+		{"Scenery three", "lorem ipsum", "admin/lorem ipsum"},
+	}
+	for _, scenery := range scenarios {
+		t.Run(scenery.description, func(t *testing.T) {
+			actual := GetId(scenery.input)
+			assert.Equal(t, scenery.expected, actual, "This not is a valid MD5")
+		})
+	}
+}
+
+func TestGetMd5Hash(t *testing.T) {
+	scenarios := []struct {
+		description string
+		input       string
+		expected    interface{}
+	}{
+		{"Scenery one", "casdoor", "0b874f488b4705693a60256b8f3a32da"},
+		{"Scenery two", "casbin", "59c5a967f086f65366a80dbdd1205a6c"},
+		{"Scenery three", "lorem ipsum", "80a751fde577028640c419000e33eba6"},
+	}
+	for _, scenery := range scenarios {
+		t.Run(scenery.description, func(t *testing.T) {
+			actual := GetMd5Hash(scenery.input)
+			assert.Equal(t, scenery.expected, actual, "This not is a valid MD5")
 		})
 	}
 }
