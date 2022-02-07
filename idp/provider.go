@@ -70,7 +70,7 @@ func GetIdProvider(typ string, subType string, clientId string, clientSecret str
 		return NewBaiduIdProvider(clientId, clientSecret, redirectUrl)
 	} else if typ == "Infoflow" {
 		if subType == "Internal" {
-			return NewInfoflowInternalIdProvider(clientId, clientId, appId, redirectUrl)
+			return NewInfoflowInternalIdProvider(clientId, clientSecret, appId, redirectUrl)
 		} else if subType == "Third-party" {
 			return NewInfoflowIdProvider(clientId, clientSecret, appId, redirectUrl)
 		} else {

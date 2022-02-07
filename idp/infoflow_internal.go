@@ -130,8 +130,10 @@ type InfoflowInternalUserResp struct {
 type InfoflowInternalUserInfo struct {
 	Errcode int    `json:"errcode"`
 	Errmsg  string `json:"errmsg"`
-	Imid    string `json:"imid"`
+	UserId  string `json:"userid"`
+	Imid    int    `json:"imid"`
 	Name    string `json:"name"`
+	Avatar  string `json:"headimg"`
 	Email   string `json:"email"`
 }
 
@@ -176,9 +178,10 @@ func (idp *InfoflowInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserIn
 		return nil, fmt.Errorf("userInfoResp.errcode = %d, userInfoResp.errmsg = %s", infoResp.Errcode, infoResp.Errmsg)
 	}
 	userInfo := UserInfo{
-		Id:          infoResp.Imid,
-		Username:    infoResp.Name,
+		Id:          infoResp.UserId,
+		Username:    infoResp.UserId,
 		DisplayName: infoResp.Name,
+		AvatarUrl:   infoResp.Avatar,
 		Email:       infoResp.Email,
 	}
 
