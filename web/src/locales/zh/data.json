@@ -92,6 +92,8 @@
     "Avatar - Tooltip": "向其他人展示的头像",
     "Back Home": "返回到首页",
     "Captcha": "人机验证码",
+    "Cert": "证书",
+    "Cert - Tooltip": "该应用所对应的客户端SDK需要验证的公钥证书",
     "Certs": "证书",
     "Client IP": "客户端IP",
     "Created time": "创建时间",

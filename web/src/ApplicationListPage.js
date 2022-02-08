@@ -47,6 +47,7 @@ class ApplicationListPage extends BaseListPage {
         {name: "Phone", visible: true, required: true, rule: "None"},
         {name: "Agreement", visible: true, required: true, rule: "None"},
       ],
+      cert: "cert-built-in",
       redirectUris: ["http://localhost:9000/callback"],
       tokenFormat: "JWT",
       expireInHours: 24 * 7,

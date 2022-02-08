@@ -16,6 +16,7 @@ import React from "react";
 import {Button, Card, Col, Input, Popover, Row, Select, Switch, Upload} from 'antd';
 import {LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
+import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -43,6 +44,7 @@ class ApplicationEditPage extends React.Component {
       applicationName: props.match.params.applicationName,
       application: null,
       organizations: [],
+      certs: [],
       providers: [],
       uploading: false,
     };
@@ -51,6 +53,7 @@ class ApplicationEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getApplication();
     this.getOrganizations();
+    this.getCerts();
     this.getProviders();
   }
 
@@ -68,6 +71,15 @@ class ApplicationEditPage extends React.Component {
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
+        });
+      });
+  }
+
+  getCerts() {
+    CertBackend.getCerts("admin")
+      .then((res) => {
+        this.setState({
+          certs: (res.msg === undefined) ? res : [],
         });
       });
   }
@@ -224,6 +236,18 @@ class ApplicationEditPage extends React.Component {
             <Input value={this.state.application.clientSecret} onChange={e => {
               this.updateApplicationField('clientSecret', e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Cert"), i18next.t("general:Cert - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: '100%'}} value={this.state.application.cert} onChange={(value => {this.updateApplicationField('cert', value);})}>
+              {
+                this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
