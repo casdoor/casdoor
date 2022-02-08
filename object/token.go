@@ -283,7 +283,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	if code == "" {
 		return &TokenWrapper{
-			AccessToken: "error: code should not be empty",
+			AccessToken: "error: authorization code should not be empty",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
@@ -293,7 +293,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	token := getTokenByCode(code)
 	if token == nil {
 		return &TokenWrapper{
-			AccessToken: "error: invalid code",
+			AccessToken: "error: invalid authorization code",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
@@ -317,6 +317,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			Scope:       "",
 		}
 	}
+
 	if token.CodeChallenge != "" && pkceChallenge(verifier) != token.CodeChallenge {
 		return &TokenWrapper{
 			AccessToken: "error: incorrect code_verifier",
@@ -325,21 +326,21 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			Scope:       "",
 		}
 	}
+
 	if token.CodeIsUsed {
-		//Resist replay attacks, if the code is reused, the token generated with this code will be deleted
-		DeleteToken(token)
+		// anti replay attacks
 		return &TokenWrapper{
-			AccessToken: "error: code has been used.",
+			AccessToken: "error: authorization code has been used",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
 		}
 	}
+
 	if time.Now().Unix() > token.CodeExpireIn {
-		//can only use the code to generate a token within five minutes
-		DeleteToken(token)
+		// code must be used within 5 minutes
 		return &TokenWrapper{
-			AccessToken: "error: code has expired",
+			AccessToken: "error: authorization code has expired",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
