@@ -24,10 +24,10 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/idp"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/proxy"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/idp"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/util"
 )
 
 func codeToResponse(code *object.Code) *Response {
@@ -52,7 +52,14 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		scope := c.Input().Get("scope")
 		state := c.Input().Get("state")
 		nonce := c.Input().Get("nonce")
-		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce)
+		challengeMethod := c.Input().Get("code_challenge_method")
+		codeChallenge := c.Input().Get("code_challenge")
+
+		if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
+			c.ResponseError("Challenge method should be S256")
+			return
+		}
+		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge)
 		resp = codeToResponse(code)
 
 		if application.EnableSigninSession || application.HasPromptPage() {
@@ -214,7 +221,7 @@ func (c *ApiController) Login() {
 				clientSecret = provider.ClientSecret2
 			}
 
-			idProvider := idp.GetIdProvider(provider.Type, clientId, clientSecret, form.RedirectUri)
+			idProvider := idp.GetIdProvider(provider.Type, provider.SubType, clientId, clientSecret, provider.AppId, form.RedirectUri)
 			if idProvider == nil {
 				c.ResponseError(fmt.Sprintf("The provider type: %s is not supported", provider.Type))
 				return

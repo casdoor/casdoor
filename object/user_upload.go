@@ -15,8 +15,8 @@
 package object
 
 import (
-	"github.com/casbin/casdoor/util"
-	"github.com/casbin/casdoor/xlsx"
+	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/casdoor/xlsx"
 )
 
 func getUserMap(owner string) map[string]*User {

@@ -34,6 +34,8 @@ import LinkedInLoginButton from "./LinkedInLoginButton";
 import WeComLoginButton from "./WeComLoginButton";
 import LarkLoginButton from "./LarkLoginButton";
 import GitLabLoginButton from "./GitLabLoginButton";
+import BaiduLoginButton from "./BaiduLoginButton";
+import InfoflowLoginButton from "./InfoflowLoginButton";
 import AppleLoginButton from "./AppleLoginButton"
 import AzureADLoginButton from "./AzureADLoginButton";
 import SlackLoginButton from "./SlackLoginButton";
@@ -183,6 +185,10 @@ class LoginPage extends React.Component {
       return <LarkLoginButton text={text} align={"center"} />
     } else if (type === "GitLab") {
       return <GitLabLoginButton text={text} align={"center"} />
+    } else if (type === "Baidu") {
+      return <BaiduLoginButton text={text} align={"center"} />
+    } else if (type === "Infoflow") {
+      return <InfoflowLoginButton text={text} align={"center"} />
     } else if (type === "Apple") {
       return <AppleLoginButton text={text} align={"center"} />
     } else if (type === "AzureAD") {
@@ -480,6 +486,19 @@ class LoginPage extends React.Component {
     let application = this.getApplicationObj()
     if (this.props.account.owner !== application.organization) {
       return null;
+    }
+
+    const params = new URLSearchParams(this.props.location.search);
+    let silentSignin = params.get("silentSignin");
+    if (silentSignin !== null) {
+      if (window !== window.parent) {
+        const message = {tag: "Casdoor", type: "SilentSignin", data: "signing-in"};
+        window.parent.postMessage(message, "*");
+      }
+
+      let values = {};
+      values["application"] = this.state.application.name;
+      this.onFinish(values);
     }
 
     return (

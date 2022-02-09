@@ -17,7 +17,7 @@ package object
 import (
 	"fmt"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
@@ -39,10 +39,7 @@ type Permission struct {
 }
 
 func GetPermissionCount(owner, field, value string) int {
-	session := adapter.Engine.Where("owner=?", owner)
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Permission{})
 	if err != nil {
 		panic(err)

@@ -22,7 +22,7 @@ package routers
 import (
 	"github.com/astaxie/beego"
 
-	"github.com/casbin/casdoor/controllers"
+	"github.com/casdoor/casdoor/controllers"
 )
 
 func init() {
@@ -50,6 +50,7 @@ func initAPI() {
 	beego.Router("/api/get-app-login", &controllers.ApiController{}, "GET:GetApplicationLogin")
 	beego.Router("/api/logout", &controllers.ApiController{}, "POST:Logout")
 	beego.Router("/api/get-account", &controllers.ApiController{}, "GET:GetAccount")
+	beego.Router("/api/userinfo", &controllers.ApiController{}, "GET:GetUserinfo")
 	beego.Router("/api/unlink", &controllers.ApiController{}, "POST:Unlink")
 	beego.Router("/api/get-saml-login", &controllers.ApiController{}, "GET:GetSamlLogin")
 	beego.Router("/api/acs", &controllers.ApiController{}, "POST:HandleSamlLogin")
@@ -147,6 +148,12 @@ func initAPI() {
 	beego.Router("/api/update-cert", &controllers.ApiController{}, "POST:UpdateCert")
 	beego.Router("/api/add-cert", &controllers.ApiController{}, "POST:AddCert")
 	beego.Router("/api/delete-cert", &controllers.ApiController{}, "POST:DeleteCert")
+
+	beego.Router("/api/get-payments", &controllers.ApiController{}, "GET:GetPayments")
+	beego.Router("/api/get-payment", &controllers.ApiController{}, "GET:GetPayment")
+	beego.Router("/api/update-payment", &controllers.ApiController{}, "POST:UpdatePayment")
+	beego.Router("/api/add-payment", &controllers.ApiController{}, "POST:AddPayment")
+	beego.Router("/api/delete-payment", &controllers.ApiController{}, "POST:DeletePayment")
 
 	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")

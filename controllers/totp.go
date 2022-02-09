@@ -16,7 +16,7 @@ package controllers
 import (
 	"fmt"
 
-	"github.com/casbin/casdoor/object"
+	"github.com/casdoor/casdoor/object"
 )
 
 type TOTPInit struct {

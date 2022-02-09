@@ -19,7 +19,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/casbin/casdoor/idp"
+	"github.com/casdoor/casdoor/idp"
 	"xorm.io/core"
 )
 
@@ -65,7 +65,7 @@ func GetUserByFields(organization string, field string) *User {
 	}
 
 	// check ID card
-	user = GetUserByField(organization, "idCard", field)
+	user = GetUserByField(organization, "id_card", field)
 	if user != nil {
 		return user
 	}

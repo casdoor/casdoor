@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
@@ -28,7 +28,7 @@ type User struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
-	Id                string   `xorm:"varchar(100)" json:"id"`
+	Id                string   `xorm:"varchar(100) index" json:"id"`
 	Type              string   `xorm:"varchar(100)" json:"type"`
 	Password          string   `xorm:"varchar(100)" json:"password"`
 	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
@@ -82,6 +82,8 @@ type User struct {
 	Wecom    string `xorm:"wecom varchar(100)" json:"wecom"`
 	Lark     string `xorm:"lark varchar(100)" json:"lark"`
 	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab"`
+	Baidu    string `xorm:"baidu varchar(100)" json:"baidu"`
+	Infoflow string `xorm:"infoflow varchar(100)" json:"infoflow"`
 	Apple    string `xorm:"apple varchar(100)" json:"apple"`
 	AzureAD  string `xorm:"azuread varchar(100)" json:"azuread"`
 	Slack    string `xorm:"slack varchar(100)" json:"slack"`
@@ -91,10 +93,7 @@ type User struct {
 }
 
 func GetGlobalUserCount(field, value string) int {
-	session := adapter.Engine.Where("1=1")
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession("", -1, -1, field, value, "", "")
 	count, err := session.Count(&User{})
 	if err != nil {
 		panic(err)
@@ -125,10 +124,7 @@ func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOr
 }
 
 func GetUserCount(owner, field, value string) int {
-	session := adapter.Engine.Where("owner=?", owner)
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&User{})
 	if err != nil {
 		panic(err)
@@ -273,7 +269,7 @@ func GetLastUser(owner string) *User {
 	return nil
 }
 
-func UpdateUser(id string, user *User, columns []string) bool {
+func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) bool {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	oldUser := getUser(owner, name)
 	if oldUser == nil {
@@ -288,8 +284,11 @@ func UpdateUser(id string, user *User, columns []string) bool {
 
 	if len(columns) == 0 {
 		columns = []string{"owner", "display_name", "avatar",
-			"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag",
+			"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "signup_application",
 			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties"}
+	}
+	if isGlobalAdmin {
+		columns = append(columns, "name")
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
@@ -351,9 +350,10 @@ func AddUsers(users []*User) bool {
 		return false
 	}
 
-	organization := GetOrganizationByUser(users[0])
+	//organization := GetOrganizationByUser(users[0])
 	for _, user := range users {
-		user.UpdateUserPassword(organization)
+		// this function is only used for syncer or batch upload, so no need to encrypt the password
+		//user.UpdateUserPassword(organization)
 
 		user.UpdateUserHash()
 		user.PreHash = user.Hash

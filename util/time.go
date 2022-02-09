@@ -28,3 +28,9 @@ func GetCurrentTime() string {
 func GetCurrentUnixTime() string {
 	return strconv.FormatInt(time.Now().UnixNano(), 10)
 }
+
+func IsTokenExpired(createdTime string, expiresIn int) bool {
+	createdTimeObj, _ := time.Parse(time.RFC3339, createdTime)
+	expiresAtObj := createdTimeObj.Add(time.Duration(expiresIn) * time.Minute)
+	return time.Now().After(expiresAtObj)
+}

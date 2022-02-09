@@ -7,10 +7,10 @@
   <a href="https://hub.docker.com/r/casbin/casdoor">
     <img alt="docker pull casbin/casdoor" src="https://img.shields.io/docker/pulls/casbin/casdoor.svg">
   </a>
-  <a href="https://github.com/casbin/casdoor/actions/workflows/build.yml">
+  <a href="https://github.com/casdoor/casdoor/actions/workflows/build.yml">
     <img alt="GitHub Workflow Status (branch)" src="https://github.com/casbin/jcasbin/workflows/build/badge.svg?style=flat-square">
   </a>
-  <a href="https://github.com/casbin/casdoor/releases/latest">
+  <a href="https://github.com/casdoor/casdoor/releases/latest">
     <img alt="GitHub Release" src="https://img.shields.io/github/v/release/casbin/casdoor.svg">
   </a>
   <a href="https://hub.docker.com/repository/docker/casbin/casdoor">
@@ -19,19 +19,19 @@
 </p>
 
 <p align="center">
-  <a href="https://goreportcard.com/report/github.com/casbin/casdoor">
-    <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/casbin/casdoor?style=flat-square">
+  <a href="https://goreportcard.com/report/github.com/casdoor/casdoor">
+    <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/casdoor/casdoor?style=flat-square">
   </a>
-  <a href="https://github.com/casbin/casdoor/blob/master/LICENSE">
+  <a href="https://github.com/casdoor/casdoor/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/casbin/casdoor?style=flat-square" alt="license">
   </a>
-  <a href="https://github.com/casbin/casdoor/issues">
+  <a href="https://github.com/casdoor/casdoor/issues">
     <img alt="GitHub issues" src="https://img.shields.io/github/issues/casbin/casdoor?style=flat-square">
   </a>
   <a href="#">
     <img alt="GitHub stars" src="https://img.shields.io/github/stars/casbin/casdoor?style=flat-square">
   </a>
-  <a href="https://github.com/casbin/casdoor/network">
+  <a href="https://github.com/casdoor/casdoor/network">
     <img alt="GitHub forks" src="https://img.shields.io/github/forks/casbin/casdoor?style=flat-square">
   </a>
   <a href="https://crowdin.com/project/casdoor-site">
@@ -54,13 +54,13 @@ Run your own casdoor program in a few minutes.
 There are two methods, get code via go subcommand `get`:
 
 ```shell
-go get github.com/casbin/casdoor
+go get github.com/casdoor/casdoor
 ```
 
   or `git`:
 
 ```bash
-git clone https://github.com/casbin/casdoor
+git clone https://github.com/casdoor/casdoor
 ```
 
 Finally, change directory:
@@ -182,5 +182,5 @@ If you are contributing to casdoor, please note that we use [Crowdin](https://cr
 
 ## License
 
- [Apache-2.0](https://github.com/casbin/casdoor/blob/master/LICENSE)
+ [Apache-2.0](https://github.com/casdoor/casdoor/blob/master/LICENSE)
 

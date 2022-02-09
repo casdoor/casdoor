@@ -20,7 +20,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 )
 
 var logPostOnly bool
@@ -102,10 +102,7 @@ func AddRecord(record *Record) bool {
 }
 
 func GetRecordCount(field, value string) int {
-	session := adapter.Engine.Where("1=1")
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession("", -1, -1, field, value, "", "")
 	count, err := session.Count(&Record{})
 	if err != nil {
 		panic(err)

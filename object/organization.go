@@ -15,10 +15,8 @@
 package object
 
 import (
-	"fmt"
-
-	"github.com/casbin/casdoor/cred"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/cred"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
@@ -39,10 +37,7 @@ type Organization struct {
 }
 
 func GetOrganizationCount(owner, field, value string) int {
-	session := adapter.Engine.Where("owner=?", owner)
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Organization{})
 	if err != nil {
 		panic(err)
@@ -124,7 +119,7 @@ func UpdateOrganization(id string, organization *Organization) bool {
 	}
 
 	if name != organization.Name {
-		applications := getApplicationsByOrganizationName("admin", name)
+		applications := GetApplicationsByOrganizationName("admin", name)
 		for _, application := range applications {
 			application.Organization = organization.Name
 			UpdateApplication(application.GetId(), application)

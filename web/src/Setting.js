@@ -42,10 +42,10 @@ export function getCountryRegionData() {
 }
 
 export function initServerUrl() {
-  const hostname = window.location.hostname;
-  if (hostname === "localhost") {
-    ServerUrl = `http://${hostname}:8000`;
-  }
+  //const hostname = window.location.hostname;
+  // if (hostname === "localhost") {
+  //   ServerUrl = `http://${hostname}:8000`;
+  // }
 }
 
 export function isLocalhost() {
@@ -398,6 +398,8 @@ export function getProviderTypeOptions(category) {
         {id: 'WeCom', name: 'WeCom'},
         {id: 'Lark', name: 'Lark'},
         {id: 'GitLab', name: 'GitLab'},
+        {id: 'Baidu', name: 'Baidu'},
+        {id: 'Infoflow', name: 'Infoflow'},
         {id: 'Apple', name: 'Apple'},
         {id: 'AzureAD', name: 'AzureAD'},
         {id: 'Slack', name: 'Slack'},
@@ -431,6 +433,25 @@ export function getProviderTypeOptions(category) {
       {id: 'Aliyun IDaaS', name: 'Aliyun IDaaS'},
       {id: 'Keycloak', name: 'Keycloak'},
     ]);
+  } else if (category === "Payment") {
+    return ([
+      {id: 'Alipay', name: 'Alipay'},
+      {id: 'WeChat Pay', name: 'WeChat Pay'},
+      {id: 'PayPal', name: 'PayPal'},
+    ]);
+  } else {
+    return [];
+  }
+}
+
+export function getProviderSubTypeOptions(type) {
+  if (type === "WeCom" || type === "Infoflow") {
+    return (
+      [
+        {id: 'Internal', name: 'Internal'},
+        {id: 'Third-party', name: 'Third-party'},
+      ]
+    );
   } else {
     return [];
   }
@@ -602,6 +623,7 @@ export function getTagColor(s) {
 
 export function getTags(tags) {
   let res = [];
+  if (!tags) return res;
   tags.forEach((tag, i) => {
     res.push(
       <Tag color={getTagColor(tag)}>

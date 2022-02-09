@@ -17,10 +17,11 @@ package object
 import (
 	"fmt"
 	"runtime"
+	"xorm.io/core"
 
 	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/conf"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 	//_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql" // db = mysql
 	//_ "github.com/lib/pq"                // db = postgres
@@ -35,11 +36,15 @@ func InitConfig() {
 		panic(err)
 	}
 
-	InitAdapter()
+	InitAdapter(true)
 }
 
-func InitAdapter() {
+func InitAdapter(createDatabase bool) {
+
 	adapter = NewAdapter(beego.AppConfig.String("driverName"), conf.GetBeegoConfDataSourceName(), beego.AppConfig.String("dbName"))
+	if createDatabase {
+		adapter.CreateDatabase()
+	}
 	adapter.createTable()
 }
 
@@ -75,6 +80,17 @@ func NewAdapter(driverName string, dataSourceName string, dbName string) *Adapte
 	return a
 }
 
+func (a *Adapter) CreateDatabase() error {
+	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName)
+	if err != nil {
+		return err
+	}
+	defer engine.Close()
+
+	_, err = engine.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default charset utf8 COLLATE utf8_general_ci", a.dbName))
+	return err
+}
+
 func (a *Adapter) open() {
 	dataSourceName := a.dataSourceName + a.dbName
 	if a.driverName != "mysql" {
@@ -95,6 +111,13 @@ func (a *Adapter) close() {
 }
 
 func (a *Adapter) createTable() {
+	showSql, _ := beego.AppConfig.Bool("showSql")
+	a.Engine.ShowSQL(showSql)
+
+	tableNamePrefix := beego.AppConfig.String("tableNamePrefix")
+	tbMapper := core.NewPrefixMapper(core.SnakeMapper{}, tableNamePrefix)
+	a.Engine.SetTableMapper(tbMapper)
+
 	err := a.Engine.Sync2(new(Organization))
 	if err != nil {
 		panic(err)
@@ -160,6 +183,11 @@ func (a *Adapter) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(Payment))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(Ldap))
 	if err != nil {
 		panic(err)
@@ -167,12 +195,17 @@ func (a *Adapter) createTable() {
 }
 
 func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
-	session := adapter.Engine.Limit(limit, offset).Where("1=1")
+	session := adapter.Engine.Prepare()
+	if offset != -1 && limit != -1 {
+		session.Limit(limit, offset)
+	}
 	if owner != "" {
 		session = session.And("owner=?", owner)
 	}
 	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+		if filterField(field) {
+			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+		}
 	}
 	if sortField == "" || sortOrder == "" {
 		sortField = "created_time"

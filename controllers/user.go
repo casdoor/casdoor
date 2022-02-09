@@ -20,8 +20,8 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego/utils/pagination"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // GetGlobalUsers
@@ -125,7 +125,8 @@ func (c *ApiController) UpdateUser() {
 		columns = strings.Split(columnsStr, ",")
 	}
 
-	affected := object.UpdateUser(id, &user, columns)
+	isGlobalAdmin := c.IsGlobalAdmin()
+	affected := object.UpdateUser(id, &user, columns, isGlobalAdmin)
 	if affected {
 		object.UpdateUserToOriginalDatabase(&user)
 	}

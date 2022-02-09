@@ -75,16 +75,22 @@ export function renderMessageLarge(ths, msg) {
   }
 }
 
+function getRefinedValue(value){
+  return (value === null)? "" : value
+}
+
 export function getOAuthGetParameters(params) {
   const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
-  const clientId = queries.get("client_id");
-  const responseType = queries.get("response_type");
-  const redirectUri = queries.get("redirect_uri");
-  const scope = queries.get("scope");
-  const state = queries.get("state");
-  const nonce = queries.get("nonce")
-
-  if (clientId === undefined || clientId === null) {
+  const clientId = getRefinedValue(queries.get("client_id"));
+  const responseType = getRefinedValue(queries.get("response_type"));
+  const redirectUri = getRefinedValue(queries.get("redirect_uri"));
+  const scope = getRefinedValue(queries.get("scope"));
+  const state = getRefinedValue(queries.get("state"));
+  const nonce = getRefinedValue(queries.get("nonce"))
+  const challengeMethod = getRefinedValue(queries.get("code_challenge_method"))
+  const codeChallenge = getRefinedValue(queries.get("code_challenge"))
+  
+  if (clientId === undefined || clientId === null || clientId === "") {
     // login
     return null;
   } else {
@@ -96,6 +102,8 @@ export function getOAuthGetParameters(params) {
       scope: scope,
       state: state,
       nonce: nonce,
+      challengeMethod: challengeMethod,
+      codeChallenge: codeChallenge,
     };
   }
 }

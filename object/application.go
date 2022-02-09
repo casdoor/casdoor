@@ -17,7 +17,7 @@ package object
 import (
 	"fmt"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
@@ -58,10 +58,7 @@ type Application struct {
 }
 
 func GetApplicationCount(owner, field, value string) int {
-	session := adapter.Engine.Where("owner=?", owner)
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Application{})
 	if err != nil {
 		panic(err)
@@ -91,7 +88,7 @@ func GetPaginationApplications(owner string, offset, limit int, field, value, so
 	return applications
 }
 
-func getApplicationsByOrganizationName(owner string, organization string) []*Application {
+func GetApplicationsByOrganizationName(owner string, organization string) []*Application {
 	applications := []*Application{}
 	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner, Organization: organization})
 	if err != nil {

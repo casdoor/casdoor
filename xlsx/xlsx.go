@@ -15,7 +15,7 @@
 package xlsx
 
 import (
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 	"github.com/tealeg/xlsx"
 )
 

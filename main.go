@@ -15,20 +15,22 @@
 package main
 
 import (
+	"flag"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
-	"github.com/astaxie/beego/plugins/cors"
 	_ "github.com/astaxie/beego/session/redis"
-	"github.com/casbin/casdoor/authz"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/proxy"
-	"github.com/casbin/casdoor/routers"
-
-	_ "github.com/casbin/casdoor/routers"
+	"github.com/casdoor/casdoor/authz"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/routers"
+	_ "github.com/casdoor/casdoor/routers"
 )
 
 func main() {
-	object.InitAdapter()
+	createDatabase := flag.Bool("createDatabase", false, "true if you need casdoor to create database")
+	flag.Parse()
+	object.InitAdapter(*createDatabase)
 	object.InitDb()
 	object.InitDefaultStorageProvider()
 	object.InitLdapAutoSynchronizer()
@@ -36,14 +38,6 @@ func main() {
 	authz.InitAuthz()
 
 	go object.RunSyncUsersJob()
-
-	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "PUT", "PATCH"},
-		AllowHeaders:     []string{"Origin"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-	}))
 
 	//beego.DelStaticPath("/static")
 	beego.SetStaticPath("/static", "web/build/static")

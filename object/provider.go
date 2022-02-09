@@ -17,7 +17,7 @@ package object
 import (
 	"fmt"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
@@ -29,6 +29,7 @@ type Provider struct {
 	DisplayName   string `xorm:"varchar(100)" json:"displayName"`
 	Category      string `xorm:"varchar(100)" json:"category"`
 	Type          string `xorm:"varchar(100)" json:"type"`
+	SubType       string `xorm:"varchar(100)" json:"subType"`
 	Method        string `xorm:"varchar(100)" json:"method"`
 	ClientId      string `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret  string `xorm:"varchar(100)" json:"clientSecret"`
@@ -81,10 +82,7 @@ func GetMaskedProviders(providers []*Provider) []*Provider {
 }
 
 func GetProviderCount(owner, field, value string) int {
-	session := adapter.Engine.Where("owner=?", owner)
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Provider{})
 	if err != nil {
 		panic(err)

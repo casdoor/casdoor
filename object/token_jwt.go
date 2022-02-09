@@ -26,6 +26,8 @@ import (
 type Claims struct {
 	*User
 	Nonce string `json:"nonce,omitempty"`
+	Tag   string `json:"tag,omitempty"`
+	Scope string `json:"scope,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -37,6 +39,7 @@ type UserShort struct {
 type ClaimsShort struct {
 	*UserShort
 	Nonce string `json:"nonce,omitempty"`
+	Scope string `json:"scope,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -52,12 +55,13 @@ func getShortClaims(claims Claims) ClaimsShort {
 	res := ClaimsShort{
 		UserShort:        getShortUser(claims.User),
 		Nonce:            claims.Nonce,
+		Scope:            claims.Scope,
 		RegisteredClaims: claims.RegisteredClaims,
 	}
 	return res
 }
 
-func generateJwtToken(application *Application, user *User, nonce string) (string, string, error) {
+func generateJwtToken(application *Application, user *User, nonce string, scope string) (string, string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours) * time.Hour)
@@ -67,6 +71,9 @@ func generateJwtToken(application *Application, user *User, nonce string) (strin
 	claims := Claims{
 		User:  user,
 		Nonce: nonce,
+		// FIXME: A workaround for custom claim by reusing `tag` in user info
+		Tag:   user.Tag,
+		Scope: scope,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    beego.AppConfig.String("origin"),
 			Subject:   user.Id,
@@ -102,6 +109,7 @@ func generateJwtToken(application *Application, user *User, nonce string) (strin
 		return "", "", err
 	}
 
+	token.Header["kid"] = cert.Name
 	tokenString, err := token.SignedString(key)
 	if err != nil {
 		return "", "", err

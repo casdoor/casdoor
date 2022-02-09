@@ -21,6 +21,13 @@ export function getApplications(owner, page = "", pageSize = "", field = "", val
   }).then(res => res.json());
 }
 
+export function getApplicationsByOrganization(owner, organization) {
+  return fetch(`${Setting.ServerUrl}/api/get-applications?owner=${owner}&organization=${organization}`, {
+    method: "GET",
+    credentials: "include"
+  }).then(res => res.json());
+}
+
 export function getApplication(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-application?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",

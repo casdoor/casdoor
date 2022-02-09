@@ -18,8 +18,8 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego/utils/pagination"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // GetTokens
@@ -142,7 +142,15 @@ func (c *ApiController) GetOAuthCode() {
 	state := c.Input().Get("state")
 	nonce := c.Input().Get("nonce")
 
-	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce)
+	challengeMethod := c.Input().Get("code_challenge_method")
+	codeChallenge := c.Input().Get("code_challenge")
+
+	if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
+		c.ResponseError("Challenge method should be S256")
+		return
+	}
+
+	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge)
 	c.ServeJSON()
 }
 
@@ -161,12 +169,13 @@ func (c *ApiController) GetOAuthToken() {
 	clientId := c.Input().Get("client_id")
 	clientSecret := c.Input().Get("client_secret")
 	code := c.Input().Get("code")
+	verifier := c.Input().Get("code_verifier")
 
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
 	}
 
-	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code)
+	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier)
 	c.ServeJSON()
 }
 

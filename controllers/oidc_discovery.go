@@ -14,13 +14,14 @@
 
 package controllers
 
-import "github.com/casbin/casdoor/object"
+import "github.com/casdoor/casdoor/object"
 
 // @Title GetOidcDiscovery
 // @Tag OIDC API
 // @router /.well-known/openid-configuration [get]
 func (c *RootController) GetOidcDiscovery() {
-	c.Data["json"] = object.GetOidcDiscovery()
+	host := c.Ctx.Request.Host
+	c.Data["json"] = object.GetOidcDiscovery(host)
 	c.ServeJSON()
 }
 

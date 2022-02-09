@@ -1,4 +1,4 @@
-module github.com/casbin/casdoor
+module github.com/casdoor/casdoor
 
 go 1.16
 
@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go v1.37.30
 	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
 	github.com/casbin/casbin/v2 v2.30.1
-	github.com/casbin/xorm-adapter/v2 v2.3.1
+	github.com/casbin/xorm-adapter/v2 v2.5.1
 	github.com/casdoor/go-sms-sender v0.0.5
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
@@ -22,6 +22,7 @@ require (
 	github.com/pquerna/otp v1.3.0
 	github.com/qiangmzsx/string-adapter/v2 v2.1.0
 	github.com/qor/oss v0.0.0-20191031055114-aef9ba66bf76
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/russellhaering/gosaml2 v0.6.0
 	github.com/russellhaering/goxmldsig v1.1.1
 	github.com/satori/go.uuid v1.2.0 // indirect
@@ -36,6 +37,7 @@ require (
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0
+	gopkg.in/yaml.v2 v2.3.0 // indirect
 	xorm.io/core v0.7.2
 	xorm.io/xorm v1.0.3
 )

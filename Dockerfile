@@ -20,7 +20,7 @@ COPY --from=FRONT /web/build /web/build
 CMD chmod 777 /tmp && service mariadb start&&\
 if [ "${MYSQL_ROOT_PASSWORD}" = "" ] ;then MYSQL_ROOT_PASSWORD=123456 ; fi&&\
 mysqladmin -u root password ${MYSQL_ROOT_PASSWORD} &&\
-./wait-for-it localhost:3306 -- ./server
+./wait-for-it localhost:3306 -- ./server --createDatabase=true
 
 
 FROM alpine:latest
@@ -32,5 +32,5 @@ COPY --from=BACK /go/src/casdoor/ ./
 COPY --from=BACK /usr/bin/wait-for-it ./
 RUN mkdir -p web/build && apk add --no-cache bash coreutils
 COPY --from=FRONT /web/build /web/build
-CMD ./wait-for-it db:3306 -- ./server
+CMD  ./server
 

@@ -17,7 +17,7 @@ package object
 import (
 	_ "embed"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 )
 
 //go:embed token_jwt_key.pem

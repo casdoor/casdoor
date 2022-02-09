@@ -20,7 +20,7 @@ import (
 	"io"
 
 	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/proxy"
+	"github.com/casdoor/casdoor/proxy"
 )
 
 var defaultStorageProvider *Provider = nil

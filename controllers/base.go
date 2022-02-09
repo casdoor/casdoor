@@ -15,10 +15,12 @@
 package controllers
 
 import (
+	"strings"
 	"time"
 
 	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // controller for handlers under /api uri
@@ -33,6 +35,21 @@ type RootController struct {
 
 type SessionData struct {
 	ExpireTime int64
+}
+
+func (c *ApiController) IsGlobalAdmin() bool {
+	username := c.GetSessionUsername()
+	if strings.HasPrefix(username, "app/") {
+		// e.g., "app/app-casnode"
+		return true
+	}
+
+	user := object.GetUser(username)
+	if user == nil {
+		return false
+	}
+
+	return user.Owner == "built-in" || user.IsGlobalAdmin
 }
 
 // GetSessionUsername ...
@@ -53,6 +70,28 @@ func (c *ApiController) GetSessionUsername() string {
 	}
 
 	return user.(string)
+}
+
+func (c *ApiController) GetSessionOidc() (string, string) {
+	sessionData := c.GetSessionData()
+	if sessionData != nil &&
+		sessionData.ExpireTime != 0 &&
+		sessionData.ExpireTime < time.Now().Unix() {
+		c.SetSessionUsername("")
+		c.SetSessionData(nil)
+		return "", ""
+	}
+	scopeValue := c.GetSession("scope")
+	audValue := c.GetSession("aud")
+	var scope, aud string
+	var ok bool
+	if scope, ok = scopeValue.(string); !ok {
+		scope = ""
+	}
+	if aud, ok = audValue.(string); !ok {
+		aud = ""
+	}
+	return scope, aud
 }
 
 // SetSessionUsername ...

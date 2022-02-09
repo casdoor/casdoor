@@ -43,6 +43,8 @@ import SyncerListPage from "./SyncerListPage";
 import SyncerEditPage from "./SyncerEditPage";
 import CertListPage from "./CertListPage";
 import CertEditPage from "./CertEditPage";
+import PaymentListPage from "./PaymentListPage";
+import PaymentEditPage from "./PaymentEditPage";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
@@ -127,6 +129,8 @@ class App extends Component {
       this.setState({ selectedMenuKey: '/syncers' });
     } else if (uri.includes('/certs')) {
       this.setState({ selectedMenuKey: '/certs' });
+    } else if (uri.includes('/payments')) {
+      this.setState({ selectedMenuKey: '/payments' });
     } else if (uri.includes('/signup')) {
       this.setState({ selectedMenuKey: '/signup' });
     } else if (uri.includes('/login')) {
@@ -410,6 +414,13 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
+        <Menu.Item key="/payments">
+          <Link to="/payments">
+            {i18next.t("general:Payments")}
+          </Link>
+        </Menu.Item>
+      );
+      res.push(
         <Menu.Item key="/swagger">
           <a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
             {i18next.t("general:Swagger")}
@@ -479,6 +490,8 @@ class App extends Component {
           <Route exact path="/syncers/:syncerName" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/certs" render={(props) => this.renderLoginIfNotLoggedIn(<CertListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/certs/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/payments" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />}/>
           <Route exact path="/set-totp" render={(props) => this.renderLoginIfNotLoggedIn(<TotpPage account={this.state.account} {...props} />)}/>

@@ -18,8 +18,8 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego/utils/pagination"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // GetApplications
@@ -38,8 +38,17 @@ func (c *ApiController) GetApplications() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+	organization := c.Input().Get("organization")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedApplications(object.GetApplications(owner), userId)
+		var applications []*object.Application
+		if organization == "" {
+			applications = object.GetApplications(owner)
+		} else {
+			applications = object.GetApplicationsByOrganizationName(owner, organization)
+		}
+
+		c.Data["json"] = object.GetMaskedApplications(applications, userId)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
