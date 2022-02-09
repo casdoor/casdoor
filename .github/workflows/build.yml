@@ -23,7 +23,7 @@ jobs:
           go-version: '^1.16.5'
       - name: Tests
         run: |
-          go test -v ./...
+          go test -v $(go list ./...) -tags skipCi
         working-directory: ./
 
   frontend:
