@@ -41,8 +41,8 @@ const authInfo = {
     endpoint: "https://www.facebook.com/dialog/oauth",
   },
   DingTalk: {
-    scope: "snsapi_login",
-    endpoint: "https://oapi.dingtalk.com/connect/oauth2/sns_authorize",
+    scope: "openid",
+    endpoint: "https://login.dingtalk.com/oauth2/auth",
   },
   Weibo: {
     scope: "email",
@@ -230,7 +230,7 @@ export function getAuthUrl(application, provider, method) {
   } else if (provider.type === "Facebook") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "DingTalk") {
-    return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}&prompt=consent`;
   } else if (provider.type === "Weibo") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "Gitee") {

@@ -74,6 +74,10 @@ class AuthCallback extends React.Component {
     if (code === null) {
       code = params.get("auth_code");
     }
+    // Dingtalk now  returns "authCode=xxx" instead of "code=xxx"
+    if (code === null) {
+      code = params.get("authCode")
+    }
 
     const innerParams = this.getInnerParams();
     const applicationName = innerParams.get("application");
