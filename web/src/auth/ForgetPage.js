@@ -124,6 +124,7 @@ class ForgetPage extends React.Component {
                     }
                     if (this.state.isFixed) {
                       forms.step2.setFieldsValue({email: this.state.fixedContent})
+                      this.setState({username: this.state.fixedContent})
                     }
                     this.setState({current: 1})
                   } else {
@@ -133,10 +134,15 @@ class ForgetPage extends React.Component {
               break;
           case "step2":
               const oAuthParams = Util.getOAuthGetParameters();
+              if(this.state.verifyType=="email"){
+                this.setState({username: this.state.email})
+              }else if(this.state.verifyType=="phone"){
+                this.setState({username: this.state.phone})
+              }
               AuthBackend.login({
                   application: forms.step2.getFieldValue("application"),
                   organization: forms.step2.getFieldValue("organization"),
-                  username: forms.step2.getFieldValue("email"),
+                  username: this.state.username,
                   code: forms.step2.getFieldValue("emailCode"),
                   phonePrefix: this.state.application?.organizationObj.phonePrefix,
                   type: "login"
