@@ -7,7 +7,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOPROXY=https://goproxy.cn,direct go b
 FROM node:16.13.0 AS FRONT
 WORKDIR /web
 COPY ./web .
-RUN yarn config set registry https://registry.npm.taobao.org
+RUN yarn config set registry https://registry.npmmirror.com
 RUN yarn install && yarn run build
 
 
