@@ -441,6 +441,7 @@ class App extends Component {
 
   renderLoginIfNotLoggedIn(component) {
     if (this.state.account === null) {
+      sessionStorage.setItem("from", window.location.pathname);
       return <Redirect to='/login' />
     } else if (this.state.account === undefined) {
       return null;

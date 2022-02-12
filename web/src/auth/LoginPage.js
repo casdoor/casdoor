@@ -124,7 +124,9 @@ class LoginPage extends React.Component {
           const responseType = this.state.type;
           if (responseType === "login") {
             Util.showMessage("success", `Logged in successfully`);
-            Setting.goToLink("/");
+
+            const link = Setting.getFromLink();
+            Setting.goToLink(link);
           } else if (responseType === "code") {
             const code = res.data;
 

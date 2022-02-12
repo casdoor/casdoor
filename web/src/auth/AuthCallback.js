@@ -104,7 +104,9 @@ class AuthCallback extends React.Component {
           if (responseType === "login") {
             Util.showMessage("success", `Logged in successfully`);
             // Setting.goToLinkSoft(this, "/");
-            Setting.goToLink("/");
+
+            const link = Setting.getFromLink();
+            Setting.goToLink(link);
           } else if (responseType === "code") {
             const code = res.data;
             Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
