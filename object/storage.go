@@ -53,7 +53,7 @@ func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 			host = fmt.Sprintf("https://%s", host)
 		}
 	} else {
-		// provider.Domain = "http://localhost:8000" or "https://door.casbin.com"
+		// provider.Domain = "http://localhost:8000" or "https://door.casdoor.com"
 		host = util.UrlJoin(provider.Domain, "/files")
 	}
 

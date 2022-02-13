@@ -44,7 +44,7 @@
 
 ## Online demo
 
-Deployed site: https://door.casbin.com/
+Deployed site: https://door.casdoor.com/
 
 ## Quick Start
 Run your own casdoor program in a few minutes.
