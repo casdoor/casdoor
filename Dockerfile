@@ -12,7 +12,7 @@ RUN yarn install && yarn run build
 
 
 FROM debian:latest AS ALLINONE
-RUN apt update && apt install -y mariadb-server mariadb-client&&mkdir -p web/build && chmod 777 /tmp
+RUN apt update &&apt install -y ca-certificates&& apt install -y mariadb-server mariadb-client&&mkdir -p web/build && chmod 777 /tmp
 LABEL MAINTAINER="https://casdoor.org/"
 COPY --from=BACK /go/src/casdoor/ ./
 COPY --from=BACK /usr/bin/wait-for-it ./
