@@ -644,7 +644,7 @@ class App extends Component {
       return (
         <React.Fragment>
           <Helmet>
-            <link rel="icon" href={"https://cdn.casbin.com/static/favicon.ico"} />
+            <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
           </Helmet>
           {
             this.renderPage()

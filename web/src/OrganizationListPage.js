@@ -31,7 +31,7 @@ class OrganizationListPage extends BaseListPage {
       createdTime: moment().format(),
       displayName: `New Organization - ${randomName}`,
       websiteUrl: "https://door.casdoor.com",
-      favicon: "https://cdn.casbin.com/static/favicon.ico",
+      favicon: "https://cdn.casdoor.com/static/favicon.png",
       passwordType: "plain",
       PasswordSalt: "",
       phonePrefix: "86",
