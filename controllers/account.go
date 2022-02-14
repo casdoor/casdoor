@@ -145,7 +145,12 @@ func (c *ApiController) Signup() {
 	id := util.GenerateId()
 	if application.GetSignupItemRule("ID") == "Incremental" {
 		lastUser := object.GetLastUser(form.Organization)
-		lastIdInt := util.ParseInt(lastUser.Id)
+
+		lastIdInt := -1
+		if lastUser != nil {
+			lastIdInt = util.ParseInt(lastUser.Id)
+		}
+
 		id = strconv.Itoa(lastIdInt + 1)
 	}
 
