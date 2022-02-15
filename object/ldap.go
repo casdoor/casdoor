@@ -162,7 +162,7 @@ func (l *ldapConn) GetLdapUsers(baseDn string) ([]ldapUser, error) {
 	searchReq := goldap.NewSearchRequest(baseDn,
 		goldap.ScopeWholeSubtree, goldap.NeverDerefAliases, 0, 0, false,
 		SearchFilter, SearchAttributes, nil)
-	searchResult, err := l.Conn.Search(searchReq)
+	searchResult, err := l.Conn.SearchWithPaging(searchReq, 100)
 	if err != nil {
 		return nil, err
 	}

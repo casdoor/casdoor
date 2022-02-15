@@ -26,7 +26,7 @@ class LdapSyncPage extends React.Component {
       ldap: null,
       users: [],
       existUuids: [],
-      selectedUsers: []
+      selectedUsers: [],
     };
   }
 
@@ -212,7 +212,7 @@ class LdapSyncPage extends React.Component {
     return (
       <div>
         <Table rowSelection={rowSelection} columns={columns} dataSource={users} rowKey="uuid" bordered
-               pagination={{pageSize: 100}}
+               pagination={{defaultPageSize: 10, showQuickJumper: true, showSizeChanger: true}}
                title={() => (
                  <div>
                    <span>{this.state.ldap?.serverName}</span>
