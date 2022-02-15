@@ -16,6 +16,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
@@ -65,8 +66,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	port := beego.AppConfig.DefaultInt("httpport", 8000)
 	//logs.SetLevel(logs.LevelInformational)
 	logs.SetLogFuncCall(false)
-
-	beego.Run()
+	beego.Run(fmt.Sprintf(":%v", port))
 }

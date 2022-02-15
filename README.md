@@ -158,6 +158,19 @@ dataSourceName = root:123456@tcp(db:3306)/
 docker-compose up
 ```
 
+### K8S
+You could use helm to deploy casdoor in k8s. At first, you should modify the [configmap](./manifests/casdoor/templates/configmap.yaml) for your application.
+And then run bellow command to deploy it.
+
+```bash
+IMG_TAG=latest make deploy 
+```
+
+And undeploy it with:
+```bash
+make undeploy
+```
+
 That's it! Try to visit http://localhost:8000/. :small_airplane:
 
 ## Detailed documentation
