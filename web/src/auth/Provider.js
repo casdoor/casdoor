@@ -89,6 +89,9 @@ const authInfo = {
     scope: "users:read",
     endpoint: "https://slack.com/oauth/authorize",
   },
+  Steam: {
+    endpoint: "https://steamcommunity.com/openid/login",
+  },
 };
 
 const otherProviderInfo = {
@@ -274,5 +277,7 @@ export function getAuthUrl(application, provider, method) {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&resource=https://graph.windows.net/`;
   } else if (provider.type === "Slack") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
+  } else if (provider.type === "Steam") {
+    return `${endpoint}?openid.claimed_id=http://specs.openid.net/auth/2.0/identifier_select&openid.identity=http://specs.openid.net/auth/2.0/identifier_select&openid.mode=checkid_setup&openid.ns=http://specs.openid.net/auth/2.0&openid.realm=${window.location.origin}&openid.return_to=${redirectUri}?state=${state}`;
   } 
 }

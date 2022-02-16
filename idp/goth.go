@@ -45,6 +45,7 @@ import (
 	"github.com/markbates/goth/providers/salesforce"
 	"github.com/markbates/goth/providers/shopify"
 	"github.com/markbates/goth/providers/slack"
+	"github.com/markbates/goth/providers/steam"
 	"github.com/markbates/goth/providers/tumblr"
 	"github.com/markbates/goth/providers/twitter"
 	"github.com/markbates/goth/providers/yahoo"
@@ -171,6 +172,11 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 			Provider: slack.New(clientId, clientSecret, redirectUrl),
 			Session:  &slack.Session{},
 		}
+	case "Steam":
+		idp = GothIdProvider{
+			Provider: steam.New(clientSecret, redirectUrl),
+			Session:  &steam.Session{},
+		}
 	case "Tumblr":
 		idp = GothIdProvider{
 			Provider: tumblr.New(clientId, clientSecret, redirectUrl),
@@ -209,10 +215,21 @@ func (idp *GothIdProvider) SetHttpClient(client *http.Client) {
 
 func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	var expireAt time.Time
-	//Need to construct variables supported by goth
-	//to call the function to obtain accessToken
-	value := url.Values{}
-	value.Add("code", code)
+	var value url.Values
+	var err error
+	if idp.Provider.Name() == "steam" {
+		value, err = url.ParseQuery(code)
+		returnUrl := reflect.ValueOf(idp.Session).Elem().FieldByName("CallbackURL")
+		returnUrl.Set(reflect.ValueOf(value.Get("openid.return_to")))
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		//Need to construct variables supported by goth
+		//to call the function to obtain accessToken
+		value = url.Values{}
+		value.Add("code", code)
+	}
 	accessToken, err := idp.Session.Authorize(idp.Provider, value)
 	//Get ExpiresAt's value
 	valueOfExpire := reflect.ValueOf(idp.Session).Elem().FieldByName("ExpiresAt")
@@ -231,10 +248,10 @@ func (idp *GothIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	return getUser(gothUser), nil
+	return getUser(gothUser, idp.Provider.Name()), nil
 }
 
-func getUser(gothUser goth.User) *UserInfo {
+func getUser(gothUser goth.User, provider string) *UserInfo {
 	user := UserInfo{
 		Id:          gothUser.UserID,
 		Username:    gothUser.Name,
@@ -258,7 +275,10 @@ func getUser(gothUser goth.User) *UserInfo {
 			user.DisplayName = user.Username
 		}
 	}
-
+	if provider == "steam" {
+		user.Username = user.DisplayName
+		user.Email = ""
+	}
 	return &user
 }
 
