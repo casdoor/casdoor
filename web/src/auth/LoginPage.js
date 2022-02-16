@@ -39,7 +39,7 @@ import InfoflowLoginButton from "./InfoflowLoginButton";
 import AppleLoginButton from "./AppleLoginButton"
 import AzureADLoginButton from "./AzureADLoginButton";
 import SlackLoginButton from "./SlackLoginButton";
-import SteamLoginButton from "./SreamLoginButton";
+import SteamLoginButton from "./SteamLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 
