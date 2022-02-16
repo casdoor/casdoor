@@ -403,6 +403,7 @@ export function getProviderTypeOptions(category) {
         {id: 'Apple', name: 'Apple'},
         {id: 'AzureAD', name: 'AzureAD'},
         {id: 'Slack', name: 'Slack'},
+        {id: 'Steam', name: 'Steam'},
       ]
     );
   } else if (category === "Email") {

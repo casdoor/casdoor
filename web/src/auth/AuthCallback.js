@@ -69,6 +69,7 @@ class AuthCallback extends React.Component {
 
   UNSAFE_componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
+    let isSteam = params.get("openid.mode")
     let code = params.get("code");
     // WeCom returns "auth_code=xxx" instead of "code=xxx"
     if (code === null) {
@@ -77,6 +78,10 @@ class AuthCallback extends React.Component {
     // Dingtalk now  returns "authCode=xxx" instead of "code=xxx"
     if (code === null) {
       code = params.get("authCode")
+    }
+    //Steam don't use code, so we should use all params as code.
+    if (isSteam !== null && code === null) {
+      code = this.props.location.search
     }
 
     const innerParams = this.getInnerParams();

@@ -109,7 +109,7 @@ func (c *ApiController) GetApplicationLogin() {
 }
 
 func setHttpClient(idProvider idp.IdProvider, providerType string) {
-	if providerType == "GitHub" || providerType == "Google" || providerType == "Facebook" || providerType == "LinkedIn" {
+	if providerType == "GitHub" || providerType == "Google" || providerType == "Facebook" || providerType == "LinkedIn" || providerType == "Steam" {
 		idProvider.SetHttpClient(proxy.ProxyHttpClient)
 	} else {
 		idProvider.SetHttpClient(proxy.DefaultHttpClient)

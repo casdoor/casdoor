@@ -84,6 +84,7 @@ type User struct {
 	Apple    string `xorm:"apple varchar(100)" json:"apple"`
 	AzureAD  string `xorm:"azuread varchar(100)" json:"azuread"`
 	Slack    string `xorm:"slack varchar(100)" json:"slack"`
+	Steam    string `xorm:"steam varchar(100)" json:"steam"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
