@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/astaxie/beego"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -88,6 +89,18 @@ type User struct {
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
+}
+
+type Userinfo struct {
+	Sub         string `json:"sub"`
+	Iss         string `json:"iss"`
+	Aud         string `json:"aud"`
+	Name        string `json:"name,omitempty"`
+	DisplayName string `json:"preferred_username,omitempty"`
+	Email       string `json:"email,omitempty"`
+	Avatar      string `json:"picture,omitempty"`
+	Address     string `json:"address,omitempty"`
+	Phone       string `json:"phone,omitempty"`
 }
 
 func GetGlobalUserCount(field, value string) int {
@@ -400,6 +413,39 @@ func DeleteUser(user *User) bool {
 	}
 
 	return affected != 0
+}
+
+func GetUserInfo(userId string, scope string, aud string, host string) (*Userinfo, error) {
+	user := GetUser(userId)
+	if user == nil {
+		return nil, fmt.Errorf("the user: %s doesn't exist", userId)
+	}
+	origin := beego.AppConfig.String("origin")
+	_, originBackend := getOriginFromHost(host)
+	if origin != "" {
+		originBackend = origin
+	}
+
+	resp := Userinfo{
+		Sub: user.Id,
+		Iss: originBackend,
+		Aud: aud,
+	}
+	if strings.Contains(scope, "profile") {
+		resp.Name = user.Name
+		resp.DisplayName = user.DisplayName
+		resp.Avatar = user.Avatar
+	}
+	if strings.Contains(scope, "email") {
+		resp.Email = user.Email
+	}
+	if strings.Contains(scope, "address") {
+		resp.Address = user.Location
+	}
+	if strings.Contains(scope, "phone") {
+		resp.Phone = user.Phone
+	}
+	return &resp, nil
 }
 
 func LinkUserAccount(user *User, field string, value string) bool {

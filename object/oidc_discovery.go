@@ -69,7 +69,7 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 	// https://accounts.google.com/.well-known/openid-configuration
 	// https://access.line.me/.well-known/openid-configuration
 	oidcDiscovery := OidcDiscovery{
-		Issuer:                                 originFrontend,
+		Issuer:                                 originBackend,
 		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", originFrontend),
 		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
 		UserinfoEndpoint:                       fmt.Sprintf("%s/api/userinfo", originBackend),

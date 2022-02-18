@@ -59,7 +59,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			c.ResponseError("Challenge method should be S256")
 			return
 		}
-		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge)
+		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, c.Ctx.Request.Host)
 		resp = codeToResponse(code)
 
 		if application.EnableSigninSession || application.HasPromptPage() {
