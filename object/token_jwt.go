@@ -61,12 +61,17 @@ func getShortClaims(claims Claims) ClaimsShort {
 	return res
 }
 
-func generateJwtToken(application *Application, user *User, nonce string, scope string) (string, string, error) {
+func generateJwtToken(application *Application, user *User, nonce string, scope string, host string) (string, string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours) * time.Hour)
 
 	user.Password = ""
+	origin := beego.AppConfig.String("origin")
+	_, originBackend := getOriginFromHost(host)
+	if origin != "" {
+		originBackend = origin
+	}
 
 	claims := Claims{
 		User:  user,
@@ -75,7 +80,7 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		Tag:   user.Tag,
 		Scope: scope,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    beego.AppConfig.String("origin"),
+			Issuer:    originBackend,
 			Subject:   user.Id,
 			Audience:  []string{application.ClientId},
 			ExpiresAt: jwt.NewNumericDate(expireTime),

@@ -46,6 +46,34 @@
                 }
             }
         },
+        "/api/add-cert": {
+            "post": {
+                "tags": [
+                    "Cert API"
+                ],
+                "description": "add cert",
+                "operationId": "ApiController.AddCert",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the cert",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Cert"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/add-ldap": {
             "post": {
                 "tags": [
@@ -69,6 +97,62 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/object.Organization"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/add-payment": {
+            "post": {
+                "tags": [
+                    "Payment API"
+                ],
+                "description": "add payment",
+                "operationId": "ApiController.AddPayment",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the payment",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Payment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/add-permission": {
+            "post": {
+                "tags": [
+                    "Permission API"
+                ],
+                "description": "add permission",
+                "operationId": "ApiController.AddPermission",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the permission",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Permission"
                         }
                     }
                 ],
@@ -116,6 +200,62 @@
                     "Resource API"
                 ],
                 "operationId": "ApiController.AddResource"
+            }
+        },
+        "/api/add-role": {
+            "post": {
+                "tags": [
+                    "Role API"
+                ],
+                "description": "add role",
+                "operationId": "ApiController.AddRole",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the role",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Role"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/add-syncer": {
+            "post": {
+                "tags": [
+                    "Syncer API"
+                ],
+                "description": "add syncer",
+                "operationId": "ApiController.AddSyncer",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the syncer",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Syncer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/add-token": {
@@ -354,6 +494,34 @@
                 }
             }
         },
+        "/api/delete-cert": {
+            "post": {
+                "tags": [
+                    "Cert API"
+                ],
+                "description": "delete cert",
+                "operationId": "ApiController.DeleteCert",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the cert",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Cert"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/delete-ldap": {
             "post": {
                 "tags": [
@@ -377,6 +545,62 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/object.Organization"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/delete-payment": {
+            "post": {
+                "tags": [
+                    "Payment API"
+                ],
+                "description": "delete payment",
+                "operationId": "ApiController.DeletePayment",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the payment",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Payment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/delete-permission": {
+            "post": {
+                "tags": [
+                    "Permission API"
+                ],
+                "description": "delete permission",
+                "operationId": "ApiController.DeletePermission",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the permission",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Permission"
                         }
                     }
                 ],
@@ -424,6 +648,62 @@
                     "Resource API"
                 ],
                 "operationId": "ApiController.DeleteResource"
+            }
+        },
+        "/api/delete-role": {
+            "post": {
+                "tags": [
+                    "Role API"
+                ],
+                "description": "delete role",
+                "operationId": "ApiController.DeleteRole",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the role",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Role"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/delete-syncer": {
+            "post": {
+                "tags": [
+                    "Syncer API"
+                ],
+                "description": "delete syncer",
+                "operationId": "ApiController.DeleteSyncer",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the syncer",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Syncer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/delete-token": {
@@ -582,6 +862,61 @@
                 }
             }
         },
+        "/api/get-cert": {
+            "get": {
+                "tags": [
+                    "Cert API"
+                ],
+                "description": "get cert",
+                "operationId": "ApiController.GetCert",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the cert",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Cert"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-certs": {
+            "get": {
+                "tags": [
+                    "Cert API"
+                ],
+                "description": "get certs",
+                "operationId": "ApiController.GetCerts",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of certs",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Cert"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/get-email-and-phone": {
             "post": {
                 "tags": [
@@ -708,6 +1043,116 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/object.Organization"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-payment": {
+            "get": {
+                "tags": [
+                    "Payment API"
+                ],
+                "description": "get payment",
+                "operationId": "ApiController.GetPayment",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the payment",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Payment"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-payments": {
+            "get": {
+                "tags": [
+                    "Payment API"
+                ],
+                "description": "get payments",
+                "operationId": "ApiController.GetPayments",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of payments",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Payment"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-permission": {
+            "get": {
+                "tags": [
+                    "Permission API"
+                ],
+                "description": "get permission",
+                "operationId": "ApiController.GetPermission",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the permission",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Permission"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-permissions": {
+            "get": {
+                "tags": [
+                    "Permission API"
+                ],
+                "description": "get permissions",
+                "operationId": "ApiController.GetPermissions",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of permissions",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Permission"
                             }
                         }
                     }
@@ -852,6 +1297,61 @@
                 "operationId": "ApiController.GetResources"
             }
         },
+        "/api/get-role": {
+            "get": {
+                "tags": [
+                    "Role API"
+                ],
+                "description": "get role",
+                "operationId": "ApiController.GetRole",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the role",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Role"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-roles": {
+            "get": {
+                "tags": [
+                    "Role API"
+                ],
+                "description": "get roles",
+                "operationId": "ApiController.GetRoles",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of roles",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Role"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/get-sorted-users": {
             "get": {
                 "tags": [
@@ -888,6 +1388,61 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/object.User"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-syncer": {
+            "get": {
+                "tags": [
+                    "Syncer API"
+                ],
+                "description": "get syncer",
+                "operationId": "ApiController.GetSyncer",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the syncer",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Syncer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-syncers": {
+            "get": {
+                "tags": [
+                    "Syncer API"
+                ],
+                "description": "get syncers",
+                "operationId": "ApiController.GetSyncers",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of syncers",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Syncer"
                             }
                         }
                     }
@@ -1270,6 +1825,57 @@
                 }
             }
         },
+        "/api/login/oauth/refresh_token": {
+            "post": {
+                "description": "refresh OAuth access token",
+                "operationId": "ApiController.RefreshToken",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "grant_type",
+                        "description": "OAuth grant type",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "refresh_token",
+                        "description": "OAuth refresh token",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "scope",
+                        "description": "OAuth scope",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "client_id",
+                        "description": "OAuth client id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "client_secret",
+                        "description": "OAuth client secret",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenWrapper"
+                        }
+                    }
+                }
+            }
+        },
         "/api/logout": {
             "post": {
                 "tags": [
@@ -1477,6 +2083,41 @@
                 }
             }
         },
+        "/api/update-cert": {
+            "post": {
+                "tags": [
+                    "Cert API"
+                ],
+                "description": "update cert",
+                "operationId": "ApiController.UpdateCert",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the cert",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the cert",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Cert"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/update-ldap": {
             "post": {
                 "tags": [
@@ -1507,6 +2148,76 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/object.Organization"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/update-payment": {
+            "post": {
+                "tags": [
+                    "Payment API"
+                ],
+                "description": "update payment",
+                "operationId": "ApiController.UpdatePayment",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the payment",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the payment",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Payment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/update-permission": {
+            "post": {
+                "tags": [
+                    "Permission API"
+                ],
+                "description": "update permission",
+                "operationId": "ApiController.UpdatePermission",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the permission",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the permission",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Permission"
                         }
                     }
                 ],
@@ -1561,6 +2272,76 @@
                     "Resource API"
                 ],
                 "operationId": "ApiController.UpdateResource"
+            }
+        },
+        "/api/update-role": {
+            "post": {
+                "tags": [
+                    "Role API"
+                ],
+                "description": "update role",
+                "operationId": "ApiController.UpdateRole",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the role",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the role",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Role"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/update-syncer": {
+            "post": {
+                "tags": [
+                    "Syncer API"
+                ],
+                "description": "update syncer",
+                "operationId": "ApiController.UpdateSyncer",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the syncer",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the syncer",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Syncer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/update-token": {
@@ -1675,14 +2456,31 @@
                 ],
                 "operationId": "ApiController.UploadResource"
             }
+        },
+        "/api/userinfo": {
+            "get": {
+                "tags": [
+                    "Account API"
+                ],
+                "description": "return user information according to OIDC standards",
+                "operationId": "ApiController.UserInfo",
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Userinfo"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "1713.0xc000393f50.false": {
+        "1867.0xc0003b2ea0.false": {
             "title": "false",
             "type": "object"
         },
-        "1747.0xc000393f80.false": {
+        "1901.0xc0003b2ed0.false": {
             "title": "false",
             "type": "object"
         },
@@ -1699,15 +2497,21 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1713.0xc000393f50.false"
+                    "$ref": "#/definitions/1867.0xc0003b2ea0.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/1747.0xc000393f80.false"
+                    "$ref": "#/definitions/1901.0xc0003b2ed0.false"
                 },
                 "msg": {
                     "type": "string"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "status": {
+                    "type": "string"
+                },
+                "sub": {
                     "type": "string"
                 }
             }
@@ -1717,15 +2521,21 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1713.0xc000393f50.false"
+                    "$ref": "#/definitions/1867.0xc0003b2ea0.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/1747.0xc000393f80.false"
+                    "$ref": "#/definitions/1901.0xc0003b2ed0.false"
                 },
                 "msg": {
                     "type": "string"
                 },
+                "name": {
+                    "type": "string"
+                },
                 "status": {
+                    "type": "string"
+                },
+                "sub": {
                     "type": "string"
                 }
             }
@@ -1734,11 +2544,32 @@
             "title": "emailForm",
             "type": "object"
         },
+        "object.Adapter": {
+            "title": "Adapter",
+            "type": "object",
+            "properties": {
+                "Engine": {
+                    "$ref": "#/definitions/xorm.Engine"
+                },
+                "dataSourceName": {
+                    "type": "string"
+                },
+                "dbName": {
+                    "type": "string"
+                },
+                "driverName": {
+                    "type": "string"
+                }
+            }
+        },
         "object.Application": {
             "title": "Application",
             "type": "object",
             "properties": {
                 "affiliationUrl": {
+                    "type": "string"
+                },
+                "cert": {
                     "type": "string"
                 },
                 "clientId": {
@@ -1763,6 +2594,9 @@
                     "type": "boolean"
                 },
                 "enableSignUp": {
+                    "type": "boolean"
+                },
+                "enableSigninSession": {
                     "type": "boolean"
                 },
                 "expireInHours": {
@@ -1802,6 +2636,10 @@
                         "type": "string"
                     }
                 },
+                "refreshExpireInHours": {
+                    "type": "integer",
+                    "format": "int64"
+                },
                 "signinHtml": {
                     "type": "string"
                 },
@@ -1821,6 +2659,62 @@
                     "type": "string"
                 },
                 "termsOfUse": {
+                    "type": "string"
+                },
+                "tokenFormat": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.Cert": {
+            "title": "Cert",
+            "type": "object",
+            "properties": {
+                "bitSize": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "cryptoAlgorithm": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "expireInYears": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "privateKey": {
+                    "type": "string"
+                },
+                "publicKey": {
+                    "type": "string"
+                },
+                "scope": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.Header": {
+            "title": "Header",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "value": {
                     "type": "string"
                 }
             }
@@ -1867,6 +2761,99 @@
                 }
             }
         },
+        "object.Payment": {
+            "title": "Payment",
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "good": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "organization": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.Permission": {
+            "title": "Permission",
+            "type": "object",
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "effect": {
+                    "type": "string"
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "resourceType": {
+                    "type": "string"
+                },
+                "resources": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "object.Provider": {
             "title": "Provider",
             "type": "object",
@@ -1883,7 +2870,13 @@
                 "clientId": {
                     "type": "string"
                 },
+                "clientId2": {
+                    "type": "string"
+                },
                 "clientSecret": {
+                    "type": "string"
+                },
+                "clientSecret2": {
                     "type": "string"
                 },
                 "content": {
@@ -1898,10 +2891,25 @@
                 "domain": {
                     "type": "string"
                 },
+                "enableSignAuthnRequest": {
+                    "type": "boolean"
+                },
                 "endpoint": {
                     "type": "string"
                 },
                 "host": {
+                    "type": "string"
+                },
+                "idP": {
+                    "type": "string"
+                },
+                "intranetEndpoint": {
+                    "type": "string"
+                },
+                "issuerUrl": {
+                    "type": "string"
+                },
+                "metadata": {
                     "type": "string"
                 },
                 "method": {
@@ -1924,6 +2932,9 @@
                     "type": "string"
                 },
                 "signName": {
+                    "type": "string"
+                },
+                "subType": {
                     "type": "string"
                 },
                 "templateCode": {
@@ -1968,6 +2979,39 @@
             "title": "Records",
             "type": "object"
         },
+        "object.Role": {
+            "title": "Role",
+            "type": "object",
+            "properties": {
+                "createdTime": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "object.SignupItem": {
             "title": "SignupItem",
             "type": "object",
@@ -1989,6 +3033,98 @@
                 }
             }
         },
+        "object.Syncer": {
+            "title": "Syncer",
+            "type": "object",
+            "properties": {
+                "affiliationTable": {
+                    "type": "string"
+                },
+                "avatarBaseUrl": {
+                    "type": "string"
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "database": {
+                    "type": "string"
+                },
+                "databaseType": {
+                    "type": "string"
+                },
+                "errorText": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "organization": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "syncInterval": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "table": {
+                    "type": "string"
+                },
+                "tableColumns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.TableColumn"
+                    }
+                },
+                "tablePrimaryKey": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.TableColumn": {
+            "title": "TableColumn",
+            "type": "object",
+            "properties": {
+                "casdoorName": {
+                    "type": "string"
+                },
+                "isHashed": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "object.Token": {
             "title": "Token",
             "type": "object",
@@ -2001,6 +3137,16 @@
                 },
                 "code": {
                     "type": "string"
+                },
+                "codeChallenge": {
+                    "type": "string"
+                },
+                "codeExpireIn": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "codeIsUsed": {
+                    "type": "boolean"
                 },
                 "createdTime": {
                     "type": "string"
@@ -2016,6 +3162,9 @@
                     "type": "string"
                 },
                 "owner": {
+                    "type": "string"
+                },
+                "refreshToken": {
                     "type": "string"
                 },
                 "scope": {
@@ -2043,6 +3192,9 @@
                 "id_token": {
                     "type": "string"
                 },
+                "refresh_token": {
+                    "type": "string"
+                },
                 "scope": {
                     "type": "string"
                 },
@@ -2064,7 +3216,16 @@
                 "affiliation": {
                     "type": "string"
                 },
+                "apple": {
+                    "type": "string"
+                },
                 "avatar": {
+                    "type": "string"
+                },
+                "azuread": {
+                    "type": "string"
+                },
+                "baidu": {
                     "type": "string"
                 },
                 "bio": {
@@ -2122,6 +3283,9 @@
                     "type": "string"
                 },
                 "idCardType": {
+                    "type": "string"
+                },
+                "infoflow": {
                     "type": "string"
                 },
                 "isAdmin": {
@@ -2206,6 +3370,12 @@
                 "signupApplication": {
                     "type": "string"
                 },
+                "slack": {
+                    "type": "string"
+                },
+                "steam": {
+                    "type": "string"
+                },
                 "tag": {
                     "type": "string"
                 },
@@ -2229,6 +3399,39 @@
                 }
             }
         },
+        "object.Userinfo": {
+            "title": "Userinfo",
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "aud": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "iss": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "picture": {
+                    "type": "string"
+                },
+                "preferred_username": {
+                    "type": "string"
+                },
+                "sub": {
+                    "type": "string"
+                }
+            }
+        },
         "object.Webhook": {
             "title": "Webhook",
             "type": "object",
@@ -2244,6 +3447,21 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "headers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.Header"
+                    }
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "isUserExtended": {
+                    "type": "boolean"
+                },
+                "method": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -2261,6 +3479,10 @@
         },
         "smsForm": {
             "title": "smsForm",
+            "type": "object"
+        },
+        "xorm.Engine": {
+            "title": "Engine",
             "type": "object"
         }
     }

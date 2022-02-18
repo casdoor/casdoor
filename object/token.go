@@ -204,7 +204,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 	return "", application
 }
 
-func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string) *Code {
+func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, host string) *Code {
 	user := GetUser(userId)
 	if user == nil {
 		return &Code{
@@ -227,7 +227,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		}
 	}
 
-	accessToken, refreshToken, err := generateJwtToken(application, user, nonce, scope)
+	accessToken, refreshToken, err := generateJwtToken(application, user, nonce, scope, host)
 	if err != nil {
 		panic(err)
 	}
@@ -361,7 +361,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	return tokenWrapper
 }
 
-func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string) *TokenWrapper {
+func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string, host string) *TokenWrapper {
 	// check parameters
 	if grantType != "refresh_token" {
 		return &TokenWrapper{
@@ -420,7 +420,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			Scope:       "",
 		}
 	}
-	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "", scope)
+	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "", scope, host)
 	if err != nil {
 		panic(err)
 	}

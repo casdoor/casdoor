@@ -149,8 +149,9 @@ func (c *ApiController) GetOAuthCode() {
 		c.ResponseError("Challenge method should be S256")
 		return
 	}
+	host := c.Ctx.Request.Host
 
-	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge)
+	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, host)
 	c.ServeJSON()
 }
 
@@ -195,7 +196,8 @@ func (c *ApiController) RefreshToken() {
 	scope := c.Input().Get("scope")
 	clientId := c.Input().Get("client_id")
 	clientSecret := c.Input().Get("client_secret")
+	host := c.Ctx.Request.Host
 
-	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret)
+	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
 	c.ServeJSON()
 }
