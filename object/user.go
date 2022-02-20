@@ -80,6 +80,7 @@ type User struct {
 	Wecom    string `xorm:"wecom varchar(100)" json:"wecom"`
 	Lark     string `xorm:"lark varchar(100)" json:"lark"`
 	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab"`
+	Adfs     string `xorm:"adfs varchar(100)" json:"adfs"`
 	Baidu    string `xorm:"baidu varchar(100)" json:"baidu"`
 	Infoflow string `xorm:"infoflow varchar(100)" json:"infoflow"`
 	Apple    string `xorm:"apple varchar(100)" json:"apple"`

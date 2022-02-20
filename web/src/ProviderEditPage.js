@@ -293,6 +293,20 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           )
         }
+        {
+          this.state.provider.type !== "Adfs" ? null : (
+            <Row style={{marginTop: '20px'}} >
+            <Col style={{marginTop: '5px'}} span={2}>
+              {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
+            </Col>
+            <Col span={22} >
+              <Input value={this.state.provider.domain} onChange={e => {
+                this.updateProviderField('domain', e.target.value);
+              }} />
+            </Col>
+          </Row>
+          )
+        }
         {this.state.provider.category === "Storage" ? (
           <div>
             <Row style={{marginTop: '20px'}} >

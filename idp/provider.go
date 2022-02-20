@@ -35,7 +35,7 @@ type IdProvider interface {
 	GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 }
 
-func GetIdProvider(typ string, subType string, clientId string, clientSecret string, appId string, redirectUrl string) IdProvider {
+func GetIdProvider(typ string, subType string, clientId string, clientSecret string, appId string, redirectUrl string, hostUrl string) IdProvider {
 	if typ == "GitHub" {
 		return NewGithubIdProvider(clientId, clientSecret, redirectUrl)
 	} else if typ == "Google" {
@@ -66,6 +66,8 @@ func GetIdProvider(typ string, subType string, clientId string, clientSecret str
 		return NewLarkIdProvider(clientId, clientSecret, redirectUrl)
 	} else if typ == "GitLab" {
 		return NewGitlabIdProvider(clientId, clientSecret, redirectUrl)
+	} else if typ == "Adfs" {
+		return NewAdfsIdProvider(clientId, clientSecret, redirectUrl, hostUrl)
 	} else if typ == "Baidu" {
 		return NewBaiduIdProvider(clientId, clientSecret, redirectUrl)
 	} else if typ == "Infoflow" {
