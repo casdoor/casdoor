@@ -70,6 +70,10 @@ const authInfo = {
     scope: "read_user+profile",
     endpoint: "https://gitlab.com/oauth/authorize",
   },
+  Adfs: {
+    scope: "openid",
+    endpoint: "http://example.com",
+  },
   Baidu: {
     scope: "basic",
     endpoint: "http://openapi.baidu.com/oauth/2.0/authorize",
@@ -267,6 +271,8 @@ export function getAuthUrl(application, provider, method) {
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`;
   } else if (provider.type === "GitLab") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
+  } else if (provider.type === "Adfs") {
+    return `${provider.domain}/adfs/oauth2/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&nonce=casdoor&scope=openid`;
   } else if (provider.type === "Baidu") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&display=popup`;
   } else if (provider.type === "Infoflow"){
