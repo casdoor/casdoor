@@ -73,7 +73,7 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", originFrontend),
 		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
 		UserinfoEndpoint:                       fmt.Sprintf("%s/api/userinfo", originBackend),
-		JwksUri:                                fmt.Sprintf("%s/api/certs", originBackend),
+		JwksUri:                                fmt.Sprintf("%s/.well-known/jwks", originBackend),
 		ResponseTypesSupported:                 []string{"id_token"},
 		ResponseModesSupported:                 []string{"login", "code", "link"},
 		GrantTypesSupported:                    []string{"password", "authorization_code"},
@@ -89,21 +89,22 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 }
 
 func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
-	cert := GetDefaultCert()
-
+	certs := GetCerts("admin")
+	jwks := jose.JSONWebKeySet{}
 	//follows the protocol rfc 7517(draft)
 	//link here: https://self-issued.info/docs/draft-ietf-jose-json-web-key.html
 	//or https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key
-	certPemBlock := []byte(cert.PublicKey)
-	certDerBlock, _ := pem.Decode(certPemBlock)
-	x509Cert, _ := x509.ParseCertificate(certDerBlock.Bytes)
+	for _, cert := range certs {
+		certPemBlock := []byte(cert.PublicKey)
+		certDerBlock, _ := pem.Decode(certPemBlock)
+		x509Cert, _ := x509.ParseCertificate(certDerBlock.Bytes)
 
-	var jwk jose.JSONWebKey
-	jwk.Key = x509Cert.PublicKey
-	jwk.Certificates = []*x509.Certificate{x509Cert}
-	jwk.KeyID = cert.Name
+		var jwk jose.JSONWebKey
+		jwk.Key = x509Cert.PublicKey
+		jwk.Certificates = []*x509.Certificate{x509Cert}
+		jwk.KeyID = cert.Name
+		jwks.Keys = append(jwks.Keys, jwk)
+	}
 
-	var jwks jose.JSONWebKeySet
-	jwks.Keys = []jose.JSONWebKey{jwk}
 	return jwks, nil
 }

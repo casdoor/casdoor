@@ -10,6 +10,14 @@
     },
     "basePath": "/",
     "paths": {
+        "/.well-known/jwks": {
+            "get": {
+                "tags": [
+                    "OIDC API"
+                ],
+                "operationId": "RootController.GetJwks"
+            }
+        },
         "/.well-known/openid-configuration": {
             "get": {
                 "tags": [
@@ -440,14 +448,6 @@
                         }
                     }
                 }
-            }
-        },
-        "/api/certs": {
-            "get": {
-                "tags": [
-                    "OIDC API"
-                ],
-                "operationId": "RootController.GetOidcCert"
             }
         },
         "/api/check-ldap-users-exist": {
@@ -2476,11 +2476,11 @@
         }
     },
     "definitions": {
-        "1867.0xc0003b2ea0.false": {
+        "1867.0xc00029b560.false": {
             "title": "false",
             "type": "object"
         },
-        "1901.0xc0003b2ed0.false": {
+        "1901.0xc00029b590.false": {
             "title": "false",
             "type": "object"
         },
@@ -2497,10 +2497,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1867.0xc0003b2ea0.false"
+                    "$ref": "#/definitions/1867.0xc00029b560.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/1901.0xc0003b2ed0.false"
+                    "$ref": "#/definitions/1901.0xc00029b590.false"
                 },
                 "msg": {
                     "type": "string"
@@ -2521,10 +2521,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1867.0xc0003b2ea0.false"
+                    "$ref": "#/definitions/1867.0xc00029b560.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/1901.0xc0003b2ed0.false"
+                    "$ref": "#/definitions/1901.0xc00029b590.false"
                 },
                 "msg": {
                     "type": "string"
@@ -3212,6 +3212,9 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "adfs": {
+                    "type": "string"
                 },
                 "affiliation": {
                     "type": "string"

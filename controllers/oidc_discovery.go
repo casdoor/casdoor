@@ -25,10 +25,10 @@ func (c *RootController) GetOidcDiscovery() {
 	c.ServeJSON()
 }
 
-// @Title GetOidcCert
+// @Title GetJwks
 // @Tag OIDC API
-// @router /api/certs [get]
-func (c *RootController) GetOidcCert() {
+// @router /.well-known/jwks [get]
+func (c *RootController) GetJwks() {
 	jwks, err := object.GetJsonWebKeySet()
 	if err != nil {
 		c.ResponseError(err.Error())
