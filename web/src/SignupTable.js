@@ -170,7 +170,7 @@ class SignupTable extends React.Component {
           } if (record.name === "Display name") {
             options = [
               {id: 'None', name: 'None'},
-              {id: 'Personal', name: 'Personal'},
+              {id: 'Real name', name: 'Real name'},
             ];
           }
 

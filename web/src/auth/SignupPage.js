@@ -196,11 +196,11 @@ class SignupPage extends React.Component {
         <Form.Item
           name="name"
           key="name"
-          label={signupItem.rule === "Personal" ? i18next.t("general:Personal name") : i18next.t("general:Display name")}
+          label={signupItem.rule === "Real name" ? i18next.t("general:Real name") : i18next.t("general:Display name")}
           rules={[
             {
               required: required,
-              message: signupItem.rule === "Personal" ? i18next.t("signup:Please input your personal name!") : i18next.t("signup:Please input your display name!"),
+              message: signupItem.rule === "Real name" ? i18next.t("signup:Please input your real name!") : i18next.t("signup:Please input your display name!"),
               whitespace: true,
             },
           ]}
