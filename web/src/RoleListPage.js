@@ -40,7 +40,7 @@ class RoleListPage extends BaseListPage {
     RoleBackend.addRole(newRole)
       .then((res) => {
           Setting.showMessage("success", `Role added successfully`);
-          this.props.history.push(`/roles/${newRole.owner}/${newRole.name}`);
+          this.props.history.push({pathname: `/roles/${newRole.owner}/${newRole.name}`, mode: "add"});
         }
       )
       .catch(error => {

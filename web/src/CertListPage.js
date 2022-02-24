@@ -45,7 +45,7 @@ class CertListPage extends BaseListPage {
     CertBackend.addCert(newCert)
       .then((res) => {
           Setting.showMessage("success", `Cert added successfully`);
-          this.props.history.push(`/certs/${newCert.name}`);
+          this.props.history.push({pathname: `/certs/${newCert.name}`, mode: "add"});
         }
       )
       .catch(error => {

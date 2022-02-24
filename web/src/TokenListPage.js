@@ -45,7 +45,7 @@ class TokenListPage extends BaseListPage {
     TokenBackend.addToken(newToken)
       .then((res) => {
           Setting.showMessage("success", `Token added successfully`);
-          this.props.history.push(`/tokens/${newToken.name}`);
+          this.props.history.push({pathname: `/tokens/${newToken.name}`, mode: "add"});
         }
       )
       .catch(error => {

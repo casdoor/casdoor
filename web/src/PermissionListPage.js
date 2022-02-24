@@ -44,7 +44,7 @@ class PermissionListPage extends BaseListPage {
     PermissionBackend.addPermission(newPermission)
       .then((res) => {
           Setting.showMessage("success", `Permission added successfully`);
-          this.props.history.push(`/permissions/${newPermission.owner}/${newPermission.name}`);
+          this.props.history.push({pathname: `/permissions/${newPermission.owner}/${newPermission.name}`, mode: "add"});
         }
       )
       .catch(error => {

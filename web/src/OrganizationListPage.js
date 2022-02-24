@@ -46,7 +46,7 @@ class OrganizationListPage extends BaseListPage {
     OrganizationBackend.addOrganization(newOrganization)
       .then((res) => {
           Setting.showMessage("success", `Organization added successfully`);
-          this.props.history.push(`/organizations/${newOrganization.name}`);
+          this.props.history.push({pathname: `/organizations/${newOrganization.name}`, mode: "add"});
         }
       )
       .catch(error => {

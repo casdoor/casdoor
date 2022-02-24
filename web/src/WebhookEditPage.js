@@ -96,6 +96,7 @@ class WebhookEditPage extends React.Component {
       webhookName: props.match.params.webhookName,
       webhook: null,
       organizations: [],
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -149,9 +150,10 @@ class WebhookEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("webhook:Edit Webhook")}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("webhook:New Webhook") : i18next.t("webhook:Edit Webhook")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitWebhookEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitWebhookEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.deleteWebhook()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -315,6 +317,17 @@ class WebhookEditPage extends React.Component {
       });
   }
 
+  deleteWebhook() {
+    WebhookBackend.deleteWebhook(this.state.webhook)
+      .then(() => {
+        Setting.showMessage("success", `Webhook deleted successfully`);
+        this.props.history.push(`/webhooks`);
+      })
+      .catch(error => {
+        Setting.showMessage("error", `Webhook failed to delete: ${error}`);
+      });
+  }
+
   render() {
     return (
       <div>
@@ -324,6 +337,7 @@ class WebhookEditPage extends React.Component {
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
           <Button size="large" onClick={() => this.submitWebhookEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitWebhookEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.deleteWebhook()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );
