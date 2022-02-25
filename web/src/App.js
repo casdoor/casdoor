@@ -412,13 +412,13 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
-      res.push(
-        <Menu.Item key="/payments">
-          <Link to="/payments">
-            {i18next.t("general:Payments")}
-          </Link>
-        </Menu.Item>
-      );
+      // res.push(
+      //   <Menu.Item key="/payments">
+      //     <Link to="/payments">
+      //       {i18next.t("general:Payments")}
+      //     </Link>
+      //   </Menu.Item>
+      // );
       res.push(
         <Menu.Item key="/swagger">
           <a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
