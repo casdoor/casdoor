@@ -451,7 +451,7 @@ class ApplicationEditPage extends React.Component {
                     }} >
               {
                 (
-                  ["authorization_code","implicit","password","client_credentials"].map((option, index) => {
+                  ["authorization_code","password","client_credentials"].map((option, index) => {
                     return (
                       <Option key={option} value={option}>{option}</Option>
                     )
