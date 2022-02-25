@@ -10,7 +10,7 @@
     "Edit Application": "Edit Application",
     "Enable code signin": "Enable code signin",
     "Enable code signin - Tooltip": "Enable code signin - Tooltip",
-    "Enable signin session - Tooltip": "Enable signin session - Tooltip",
+    "Enable signin session - Tooltip": "Whether to preserve the session in Casdoor after login",
     "Enable signup": "Enable signup",
     "Enable signup - Tooltip": "Enable signup - Tooltip",
     "File uploaded successfully": "File uploaded successfully",

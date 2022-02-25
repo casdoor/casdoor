@@ -34,7 +34,7 @@ class ApplicationListPage extends BaseListPage {
       logo: "https://cdn.casdoor.com/logo/casdoor-logo_1185x256.png",
       enablePassword: true,
       enableSignUp: true,
-      enableSigninSession: true,
+      enableSigninSession: false,
       enableCodeSignin: false,
       providers: [],
       signupItems: [
