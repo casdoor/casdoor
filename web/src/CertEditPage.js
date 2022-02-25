@@ -71,7 +71,7 @@ class CertEditPage extends React.Component {
           {this.state.mode === "add" ? i18next.t("cert:New Cert") : i18next.t("cert:Edit Cert")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitCertEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitCertEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.deleteCert()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteCert()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -241,7 +241,6 @@ class CertEditPage extends React.Component {
   deleteCert() {
     CertBackend.deleteCert(this.state.cert)
       .then(() => {
-        Setting.showMessage("success", `Cert deleted successfully`);
         this.props.history.push(`/certs`);
       })
       .catch(error => {
@@ -258,7 +257,7 @@ class CertEditPage extends React.Component {
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
           <Button size="large" onClick={() => this.submitCertEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitCertEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.deleteCert()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteCert()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );

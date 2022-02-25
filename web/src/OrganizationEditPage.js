@@ -88,7 +88,7 @@ class OrganizationEditPage extends React.Component {
           {this.state.mode === "add" ? i18next.t("organization:New Organization") : i18next.t("organization:Edit Organization")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitOrganizationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitOrganizationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.deleteOrganization()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteOrganization()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -274,7 +274,6 @@ class OrganizationEditPage extends React.Component {
   deleteOrganization() {
     OrganizationBackend.deleteOrganization(this.state.organization)
       .then(() => {
-        Setting.showMessage("success", `Organization deleted successfully`);
         this.props.history.push(`/organizations`);
       })
       .catch(error => {
@@ -291,7 +290,7 @@ class OrganizationEditPage extends React.Component {
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
           <Button size="large" onClick={() => this.submitOrganizationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitOrganizationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.deleteOrganization()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteOrganization()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );

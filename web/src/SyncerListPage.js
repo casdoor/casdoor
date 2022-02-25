@@ -50,7 +50,6 @@ class SyncerListPage extends BaseListPage {
     const newSyncer = this.newSyncer();
     SyncerBackend.addSyncer(newSyncer)
       .then((res) => {
-          Setting.showMessage("success", `Syncer added successfully`);
           this.props.history.push({pathname: `/syncers/${newSyncer.name}`, mode: "add"});
         }
       )

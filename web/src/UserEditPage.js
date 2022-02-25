@@ -125,7 +125,7 @@ class UserEditPage extends React.Component {
           {this.state.mode === "add" ? i18next.t("user:New User") : i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -435,7 +435,6 @@ class UserEditPage extends React.Component {
   deleteUser() {
     UserBackend.deleteUser(this.state.user)
       .then(() => {
-        Setting.showMessage("success", `User deleted successfully`);
         this.props.history.push(`/users`);
       })
       .catch(error => {
@@ -452,7 +451,7 @@ class UserEditPage extends React.Component {
       <div style={{marginTop: '20px', marginLeft: '40px'}}>
         <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
         <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-        {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
+        {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
       </div>
     </div>
     );

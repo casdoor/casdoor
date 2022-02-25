@@ -66,7 +66,7 @@ class TokenEditPage extends React.Component {
           {this.state.mode === "add" ? i18next.t("token:New Token") : i18next.t("token:Edit Token")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitTokenEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitTokenEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.deleteToken()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteToken()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -191,7 +191,6 @@ class TokenEditPage extends React.Component {
   deleteToken() {
     TokenBackend.deleteToken(this.state.token)
       .then(() => {
-        Setting.showMessage("success", `Token deleted successfully`);
         this.props.history.push(`/tokens`);
       })
       .catch(error => {
@@ -208,7 +207,7 @@ class TokenEditPage extends React.Component {
       <div style={{marginTop: '20px', marginLeft: '40px'}}>
         <Button size="large" onClick={() => this.submitTokenEdit(false)}>{i18next.t("general:Save")}</Button>
         <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitTokenEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-        {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.deleteToken()}>{i18next.t("general:Cancel")}</Button> : null}
+        {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteToken()}>{i18next.t("general:Cancel")}</Button> : null}
       </div>
     </div>
     );

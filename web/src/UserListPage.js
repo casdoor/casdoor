@@ -70,7 +70,6 @@ class UserListPage extends BaseListPage {
     const newUser = this.newUser();
     UserBackend.addUser(newUser)
       .then((res) => {
-          Setting.showMessage("success", `User added successfully`);
           this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add"});
         }
       )

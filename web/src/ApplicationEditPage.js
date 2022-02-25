@@ -138,7 +138,7 @@ class ApplicationEditPage extends React.Component {
           {this.state.mode === "add" ? i18next.t("application:New Application") : i18next.t("application:Edit Application")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitApplicationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -597,7 +597,6 @@ class ApplicationEditPage extends React.Component {
   deleteApplication() {
     ApplicationBackend.deleteApplication(this.state.application)
       .then(() => {
-        Setting.showMessage("success", `Application deleted successfully`);
         this.props.history.push(`/applications`);
       })
       .catch(error => {
@@ -614,7 +613,7 @@ class ApplicationEditPage extends React.Component {
       <div style={{marginTop: '20px', marginLeft: '40px'}}>
         <Button size="large" onClick={() => this.submitApplicationEdit(false)}>{i18next.t("general:Save")}</Button>
         <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-        {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
+        {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
       </div>
     </div>
     );

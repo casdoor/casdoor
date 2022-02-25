@@ -105,7 +105,7 @@ class RoleEditPage extends React.Component {
           {this.state.mode === "add" ? i18next.t("role:New Role") : i18next.t("role:Edit Role")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitRoleEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitRoleEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.deleteRole()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteRole()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -206,7 +206,6 @@ class RoleEditPage extends React.Component {
   deleteRole() {
     RoleBackend.deleteRole(this.state.role)
       .then(() => {
-        Setting.showMessage("success", `Role deleted successfully`);
         this.props.history.push(`/roles`);
       })
       .catch(error => {
@@ -223,7 +222,7 @@ class RoleEditPage extends React.Component {
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
           <Button size="large" onClick={() => this.submitRoleEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitRoleEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.deleteRole()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteRole()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );
