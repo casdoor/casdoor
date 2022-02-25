@@ -58,8 +58,7 @@ class ApplicationListPage extends BaseListPage {
     const newApplication = this.newApplication();
     ApplicationBackend.addApplication(newApplication)
       .then((res) => {
-          Setting.showMessage("success", `Application added successfully`);
-          this.props.history.push(`/applications/${newApplication.name}`);
+          this.props.history.push({pathname: `/applications/${newApplication.name}`, mode: "add"});
         }
       )
       .catch(error => {

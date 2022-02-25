@@ -36,6 +36,7 @@ class SyncerEditPage extends React.Component {
       syncerName: props.match.params.syncerName,
       syncer: null,
       organizations: [],
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -83,9 +84,10 @@ class SyncerEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("syncer:Edit Syncer")}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("syncer:New Syncer") : i18next.t("syncer:Edit Syncer")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitSyncerEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitSyncerEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteSyncer()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -308,6 +310,16 @@ class SyncerEditPage extends React.Component {
       });
   }
 
+  deleteSyncer() {
+    SyncerBackend.deleteSyncer(this.state.syncer)
+      .then(() => {
+        this.props.history.push(`/syncers`);
+      })
+      .catch(error => {
+        Setting.showMessage("error", `Syncer failed to delete: ${error}`);
+      });
+  }
+
   render() {
     return (
       <div>
@@ -317,6 +329,7 @@ class SyncerEditPage extends React.Component {
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
           <Button size="large" onClick={() => this.submitSyncerEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitSyncerEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteSyncer()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );

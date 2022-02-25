@@ -31,6 +31,7 @@ class ProviderEditPage extends React.Component {
       classes: props,
       providerName: props.match.params.providerName,
       provider: null,
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -133,9 +134,10 @@ class ProviderEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("provider:Edit Provider")}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("provider:New Provider") : i18next.t("provider:Edit Provider")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitProviderEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitProviderEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteProvider()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -572,6 +574,16 @@ class ProviderEditPage extends React.Component {
       });
   }
 
+  deleteProvider() {
+    ProviderBackend.deleteProvider(this.state.provider)
+      .then(() => {
+        this.props.history.push(`/providers`);
+      })
+      .catch(error => {
+        Setting.showMessage("error", `Provider failed to delete: ${error}`);
+      });
+  }
+
   render() {
     return (
       <div>
@@ -581,6 +593,7 @@ class ProviderEditPage extends React.Component {
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
           <Button size="large" onClick={() => this.submitProviderEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitProviderEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteProvider()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );
