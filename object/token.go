@@ -17,6 +17,7 @@ package object
 import (
 	"crypto/sha256"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -261,7 +262,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string) *TokenWrapper {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string) *TokenWrapper {
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
 		return &TokenWrapper{
@@ -272,75 +273,37 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		}
 	}
 
-	if grantType != "authorization_code" {
+	//Check if grantType is allowed in the current application
+	if !checkMethodValid(grantType, application.AllowMethods) {
 		return &TokenWrapper{
-			AccessToken: "error: grant_type should be \"authorization_code\"",
+			AccessToken: "error: grant_type does not support in this application",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
 		}
 	}
 
-	if code == "" {
+	var token *Token
+	var err error
+	switch grantType {
+	case "authorization_code": // Authorization Code Grant
+		token, err = GetAuthorizationCodeToken(application, clientSecret, code, verifier)
+	case "password": //	Resource Owner Password Credentials Grant
+		token, err = GetPasswordToken(application, username, password, scope, host)
+	case "client_credentials": // Client Credentials Grant
+		token, err = GetClientCredentialsToken(application, clientSecret, scope, host)
+	default:
 		return &TokenWrapper{
-			AccessToken: "error: authorization code should not be empty",
+			AccessToken: "error: grant_type does not support",
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
 		}
 	}
 
-	token := getTokenByCode(code)
-	if token == nil {
+	if err != nil {
 		return &TokenWrapper{
-			AccessToken: "error: invalid authorization code",
-			TokenType:   "",
-			ExpiresIn:   0,
-			Scope:       "",
-		}
-	}
-
-	if application.Name != token.Application {
-		return &TokenWrapper{
-			AccessToken: "error: the token is for wrong application (client_id)",
-			TokenType:   "",
-			ExpiresIn:   0,
-			Scope:       "",
-		}
-	}
-
-	if application.ClientSecret != clientSecret {
-		return &TokenWrapper{
-			AccessToken: "error: invalid client_secret",
-			TokenType:   "",
-			ExpiresIn:   0,
-			Scope:       "",
-		}
-	}
-
-	if token.CodeChallenge != "" && pkceChallenge(verifier) != token.CodeChallenge {
-		return &TokenWrapper{
-			AccessToken: "error: incorrect code_verifier",
-			TokenType:   "",
-			ExpiresIn:   0,
-			Scope:       "",
-		}
-	}
-
-	if token.CodeIsUsed {
-		// anti replay attacks
-		return &TokenWrapper{
-			AccessToken: "error: authorization code has been used",
-			TokenType:   "",
-			ExpiresIn:   0,
-			Scope:       "",
-		}
-	}
-
-	if time.Now().Unix() > token.CodeExpireIn {
-		// code must be used within 5 minutes
-		return &TokenWrapper{
-			AccessToken: "error: authorization code has expired",
+			AccessToken: err.Error(),
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
@@ -458,4 +421,116 @@ func pkceChallenge(verifier string) string {
 	sum := sha256.Sum256([]byte(verifier))
 	challenge := base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(sum[:])
 	return challenge
+}
+
+// Check if grantType is allowed in the current application
+// authorization_code is allowed by default
+func checkMethodValid(method string, AllowMethods []string) bool {
+	if method == "authorization_code" {
+		return true
+	}
+	for _, m := range AllowMethods {
+		if m == method {
+			return true
+		}
+	}
+	return false
+}
+
+// Authorization code flow
+func GetAuthorizationCodeToken(application *Application, clientSecret string, code string, verifier string) (*Token, error) {
+	if code == "" {
+		return nil, errors.New("error: authorization code should not be empty")
+	}
+
+	token := getTokenByCode(code)
+	if token == nil {
+		return nil, errors.New("error: invalid authorization code")
+	}
+	if token.CodeIsUsed {
+		// anti replay attacks
+		return nil, errors.New("error: authorization code has been used")
+	}
+	if application.ClientSecret != clientSecret {
+		return nil, errors.New("error: invalid client_secret")
+	}
+
+	if application.Name != token.Application {
+		return nil, errors.New("error: the token is for wrong application (client_id)")
+	}
+
+	if token.CodeChallenge != "" && pkceChallenge(verifier) != token.CodeChallenge {
+		return nil, errors.New("error: incorrect code_verifier")
+	}
+
+	if time.Now().Unix() > token.CodeExpireIn {
+		// code must be used within 5 minutes
+		return nil, errors.New("error: authorization code has expired")
+	}
+	return token, nil
+}
+
+// Resource Owner Password Credentials flow
+func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, error) {
+	user := getUser(application.Organization, username)
+	if user == nil {
+		return nil, errors.New("error: invalid username or password")
+	}
+	if user.Password != password {
+		return nil, errors.New("error: invalid username or password")
+	}
+	if user.IsForbidden {
+		return nil, errors.New("error: the user is forbidden to sign in, please contact the administrator")
+	}
+	accessToken, refreshToken, err := generateJwtToken(application, user, "", scope, host)
+	if err != nil {
+		return nil, err
+	}
+	token := &Token{
+		Owner:        application.Owner,
+		Name:         util.GenerateId(),
+		CreatedTime:  util.GetCurrentTime(),
+		Application:  application.Name,
+		Organization: user.Owner,
+		User:         user.Name,
+		Code:         util.GenerateClientId(),
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		ExpiresIn:    application.ExpireInHours * 60,
+		Scope:        scope,
+		TokenType:    "Bearer",
+		CodeIsUsed:   true,
+	}
+	AddToken(token)
+	return token, nil
+}
+
+// Client Credentials flow
+func GetClientCredentialsToken(application *Application, clientSecret string, scope string, host string) (*Token, error) {
+	if application.ClientSecret != clientSecret {
+		return nil, errors.New("error: invalid client_secret")
+	}
+	nullUser := &User{
+		Name: fmt.Sprintf("app/%s", application.Name),
+	}
+	accessToken, _, err := generateJwtToken(application, nullUser, "", scope, host)
+	if err != nil {
+		return nil, err
+	}
+	token := &Token{
+		Owner:        application.Owner,
+		Name:         util.GenerateId(),
+		CreatedTime:  util.GetCurrentTime(),
+		Application:  application.Name,
+		Organization: application.Organization,
+		User:         nullUser.Name,
+		Code:         util.GenerateClientId(),
+		AccessToken:  accessToken,
+		ExpiresIn:    application.ExpireInHours * 60,
+		Scope:        scope,
+		TokenType:    "Bearer",
+		CodeIsUsed:   true,
+	}
+	AddToken(token)
+	return token, nil
 }

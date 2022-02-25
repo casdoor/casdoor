@@ -38,6 +38,7 @@ type Application struct {
 	EnableCodeSignin    bool            `json:"enableCodeSignin"`
 	Providers           []*ProviderItem `xorm:"mediumtext" json:"providers"`
 	SignupItems         []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
+	AllowMethods        []string        `xorm:"varchar(1000)" json:"allowMethods"`
 	OrganizationObj     *Organization   `xorm:"-" json:"organizationObj"`
 
 	ClientId             string   `xorm:"varchar(100)" json:"clientId"`

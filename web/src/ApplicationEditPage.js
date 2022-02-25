@@ -61,6 +61,9 @@ class ApplicationEditPage extends React.Component {
   getApplication() {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
+        if (application.allowMethods === null || application.allowMethods.length === 0) {
+          application.allowMethods = ["authorization_code"];
+        }
         this.setState({
           application: application,
         });
@@ -433,6 +436,29 @@ class ApplicationEditPage extends React.Component {
                 this.updateApplicationField("signinHtml", e.target.value)
               }}/>
             </Popover>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Method"), i18next.t("application:Method - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            
+            <Select virtual={false} mode="tags" style={{width: '100%'}}
+                    value={this.state.application.allowMethods}
+                    onChange={value => {
+                      this.updateApplicationField('allowMethods', value);
+                    }} >
+              {
+                (
+                  ["authorization_code","implicit","password","client_credentials"].map((option, index) => {
+                    return (
+                      <Option key={option} value={option}>{option}</Option>
+                    )
+                  })
+                )
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
