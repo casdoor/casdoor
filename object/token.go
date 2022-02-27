@@ -274,9 +274,9 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	}
 
 	//Check if grantType is allowed in the current application
-	if !checkMethodValid(grantType, application.GrantTypes) {
+	if !isGrantTypeValid(grantType, application.GrantTypes) {
 		return &TokenWrapper{
-			AccessToken: "error: grant_type does not support in this application",
+			AccessToken: fmt.Sprintf("error: grant_type: %s is not supported in this application", grantType),
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
@@ -425,11 +425,11 @@ func pkceChallenge(verifier string) string {
 
 // Check if grantType is allowed in the current application
 // authorization_code is allowed by default
-func checkMethodValid(method string, GrantTypes []string) bool {
+func isGrantTypeValid(method string, grantTypes []string) bool {
 	if method == "authorization_code" {
 		return true
 	}
-	for _, m := range GrantTypes {
+	for _, m := range grantTypes {
 		if m == method {
 			return true
 		}
@@ -474,7 +474,7 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, error) {
 	user := getUser(application.Organization, username)
 	if user == nil {
-		return nil, errors.New("error: invalid username or password")
+		return nil, errors.New("error: the user does not exist")
 	}
 	if user.Password != password {
 		return nil, errors.New("error: invalid username or password")
