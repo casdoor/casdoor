@@ -61,6 +61,9 @@ class ApplicationEditPage extends React.Component {
   getApplication() {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
+        if (application.grantTypes === null || application.grantTypes.length === 0) {
+          application.grantTypes = ["authorization_code"];
+        }
         this.setState({
           application: application,
         });
@@ -433,6 +436,27 @@ class ApplicationEditPage extends React.Component {
                 this.updateApplicationField("signinHtml", e.target.value)
               }}/>
             </Popover>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Grant Types"), i18next.t("application:Grant Types - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            
+            <Select virtual={false} mode="tags" style={{width: '100%'}}
+                    value={this.state.application.grantTypes}
+                    onChange={(value => {
+                      this.updateApplicationField('grantTypes', value);
+                    })} >
+                      {
+                        [
+                          {id: "authorization_code", name: "Authorization Code"},
+                          {id: "password", name: "Password"},
+                          {id: "client_credentials", name: "Client Credentials"},
+                        ].map((item, index)=><Option key={index} value={item.id}>{item.name}</Option>)
+                      }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
