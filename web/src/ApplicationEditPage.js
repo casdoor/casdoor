@@ -443,7 +443,6 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Grant types"), i18next.t("application:Grant types - Tooltip"))} :
           </Col>
           <Col span={22} >
-            
             <Select virtual={false} mode="tags" style={{width: '100%'}}
                     value={this.state.application.grantTypes}
                     onChange={(value => {
@@ -518,13 +517,13 @@ class ApplicationEditPage extends React.Component {
     if (!Setting.isMobile()) {
     return (
       <React.Fragment>
-        <Col span={11} style={{display:'flex',flexDirection:'column'}}>
-          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signUpUrl}>
+        <Col span={11} style={{display:"flex", flexDirection: "column"}}>
+          <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signUpUrl}>
             <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
           </a>
           <br/>
           <br/>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888" ,alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto'}}>
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
             {
               this.state.application.enablePassword ? (
                 <SignupPage application={this.state.application} />
@@ -534,13 +533,13 @@ class ApplicationEditPage extends React.Component {
             }
           </div>
         </Col>
-        <Col span={11} style={{display:'flex',flexDirection:'column'}}>
-          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signInUrl}>
+        <Col span={11} style={{display:"flex", flexDirection: "column"}}>
+          <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signInUrl}>
             <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
           </a>
           <br/>
           <br/>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto' }}>
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
           </div>
         </Col>
@@ -549,11 +548,11 @@ class ApplicationEditPage extends React.Component {
   } else{
     return(
       <React.Fragment>
-        <Col span={24} style={{display:'flex',flexDirection:'column'}}>
-          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signUpUrl}>
+        <Col span={24} style={{display:"flex", flexDirection: "column"}}>
+          <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signUpUrl}>
             <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
           </a>
-          <div style={{marginBottom:'10px', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888" ,alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto'}}>
+          <div style={{marginBottom:"10px", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
             {
               this.state.application.enablePassword ? (
                 <SignupPage application={this.state.application} />
@@ -562,10 +561,10 @@ class ApplicationEditPage extends React.Component {
               )
             }
           </div>
-          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signInUrl}>
+          <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signInUrl}>
             <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
           </a>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto' }}>
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
           </div>
         </Col>
@@ -579,13 +578,13 @@ class ApplicationEditPage extends React.Component {
 
     return (
       <React.Fragment>
-        <Col span={(Setting.isMobile()) ? 24 : 11} style={{display:'flex',flexDirection:'column',flex:'auto'}} >
-          <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={promptUrl}>
+        <Col span={(Setting.isMobile()) ? 24 : 11} style={{display:"flex", flexDirection: "column", flex: "auto"}} >
+          <a style={{marginBottom: "10px"}} target="_blank" rel="noreferrer" href={promptUrl}>
             <Button type="primary">{i18next.t("application:Test prompt page..")}</Button>
           </a>
-          <br style={(Setting.isMobile()) ? {display:'none'} : {}} />
-          <br style={(Setting.isMobile()) ? {display:'none'} : {}} />
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",flexDirection:'column',flex:'auto'}}>
+          <br style={(Setting.isMobile()) ? {display: "none"} : {}} />
+          <br style={(Setting.isMobile()) ? {display: "none"} : {}} />
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
             <PromptPage application={this.state.application} account={this.props.account} />
           </div>
         </Col>

@@ -28,6 +28,7 @@ type Product struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
 	Image     string   `xorm:"varchar(100)" json:"image"`
+	Detail    string   `xorm:"varchar(100)" json:"detail"`
 	Tag       string   `xorm:"varchar(100)" json:"tag"`
 	Currency  string   `xorm:"varchar(100)" json:"currency"`
 	Price     int      `json:"price"`

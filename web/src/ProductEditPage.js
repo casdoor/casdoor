@@ -19,6 +19,7 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
+import ProductBuyPage from "./ProductBuyPage";
 
 const { Option } = Select;
 
@@ -144,6 +145,16 @@ class ProductEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("product:Detail"), i18next.t("product:Detail - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.product.detail} onChange={e => {
+              this.updateProductField('detail', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("product:Currency"), i18next.t("product:Currency - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -218,7 +229,31 @@ class ProductEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
+          </Col>
+          {
+            this.renderPreview()
+          }
+        </Row>
       </Card>
+    )
+  }
+
+  renderPreview() {
+    let buyUrl = `/products/${this.state.product.name}/buy`;
+    return (
+      <Col span={22} style={{display: "flex", flexDirection: "column"}}>
+        <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={buyUrl}>
+          <Button type="primary">{i18next.t("product:Test buy page..")}</Button>
+        </a>
+        <br/>
+        <br/>
+        <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
+          <ProductBuyPage product={this.state.product} />
+        </div>
+      </Col>
     )
   }
 

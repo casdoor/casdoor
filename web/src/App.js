@@ -45,6 +45,7 @@ import CertListPage from "./CertListPage";
 import CertEditPage from "./CertEditPage";
 import ProductListPage from "./ProductListPage";
 import ProductEditPage from "./ProductEditPage";
+import ProductBuyPage from "./ProductBuyPage";
 import PaymentListPage from "./PaymentListPage";
 import PaymentEditPage from "./PaymentEditPage";
 import AccountPage from "./account/AccountPage";
@@ -503,6 +504,7 @@ class App extends Component {
           <Route exact path="/certs/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/products" render={(props) => this.renderLoginIfNotLoggedIn(<ProductListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/products/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/products/:productName/buy" render={(props) => this.renderLoginIfNotLoggedIn(<ProductBuyPage account={this.state.account} {...props} />)}/>
           <Route exact path="/payments" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
