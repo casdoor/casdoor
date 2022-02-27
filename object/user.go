@@ -61,7 +61,7 @@ type User struct {
 	IsGlobalAdmin     bool     `json:"isGlobalAdmin"`
 	IsForbidden       bool     `json:"isForbidden"`
 	IsDeleted         bool     `json:"isDeleted"`
-	Is2fa             bool     `json:"is2fa"`
+	TwoFactor         bool     `json:"twoFactor"`
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
@@ -285,7 +285,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 	if len(columns) == 0 {
 		columns = []string{"owner", "display_name", "avatar",
 			"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "signup_application",
-			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties"}
+			"is2fa", "is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties"}
 	}
 	if isGlobalAdmin {
 		columns = append(columns, "name")

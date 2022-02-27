@@ -24,10 +24,10 @@ import * as UserBackend from "../backend/UserBackend";
 import {CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../CustomGithubCorner";
 import QRCode from "qrcode.react"
+import { authenticator } from "otplib";
 
 const { Step } = Steps;
 const { Option } = Select;
-
 class TotpPage extends React.Component {
 	constructor(props) {
 		super(props);
@@ -76,6 +76,26 @@ class TotpPage extends React.Component {
 		);
 	}
 
+
+	verifyTotpCode(code, secret){
+		return authenticator.check(code, secret);
+	}
+
+	updateUser2fa(flag){
+		let user = Setting.deepCopy(this.state.account);
+		user["twoFactor"] = flag
+		UserBackend.updateUser(this.state.account.organization.name, this.state.account.name,user)
+			.then((res) => {
+				console.log(res)
+				if (res.msg === "") {
+					Setting.showMessage("success", `Successfully saved`);
+				}
+			})
+			.catch(error => {
+				Setting.showMessage("error", `Failed to connect to server: ${error}`);
+			});
+	}
+
 	getApplicationObj() {
 		if (this.props.application !== undefined) {
 			return this.props.application;
@@ -92,7 +112,7 @@ class TotpPage extends React.Component {
 				UserBackend.checkUserPassword(user).then(res => {
 					if (res.status === "ok") {
 						UserBackend.initTOTP().then((res) => {
-							this.setState({current: 1, qrcodeUrl: decodeURI(res.qrcodeUrl), recoveryCode: res.recoveryCode, secret: res.secret})
+							this.setState({current: 1, qrcodeUrl: decodeURI(res.url), recoveryCode: res.recoveryCode, secret: res.secret})
 						});
 					} else {
 						Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
@@ -101,13 +121,19 @@ class TotpPage extends React.Component {
 				break;
 			case "step2":
 				const code = forms.step2.getFieldValue("code");
-				UserBackend.setTOTP(this.state.secret, code).then(res => {
+				/*UserBackend.setTOTP(this.state.secret, code).then(res => {
 					if (res.status === "ok") {
 						this.setState({current: 2})
 					} else {
 						Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
 					}
-				});
+				});*/
+				if (this.verifyTotpCode(code, this.state.secret)){
+					this.setState({current: 2})
+					this.updateUser2fa(true)
+					} else {
+						Setting.showMessage("error", i18next.t(`signup: got wrong code`));
+					}
 				break
 			default:
 				break

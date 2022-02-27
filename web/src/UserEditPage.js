@@ -44,7 +44,7 @@ class UserEditPage extends React.Component {
       user: null,
       application: null,
       organizations: [],
-      is2fa: 0,
+      twoFactor: 0,
       applications: [],
     };
   }
@@ -61,7 +61,7 @@ class UserEditPage extends React.Component {
       .then((user) => {
         this.setState({
           user: user,
-          is2fa: user.is2fa
+          twoFactor: user.twoFactor
         });
       });
   }
@@ -307,30 +307,6 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:2-Step"), i18next.t("user:2-Step Verification - Tooltip"))} :
-          </Col>
-          <Col span={(Setting.isMobile()) ? 22 : 2} >
-            <Switch checked={this.state.is2fa} onChange={checked => {
-              if (checked) {
-                Setting.goToTotp(this, this.state.application)
-              } else {
-                // Delete TOTP
-                UserBackend.deleteTOTP(this.state.user.recoveryCode).then((res, e) => {
-                  if (res.status === "ok") {
-                    this.state.is2fa = 0;
-                    this.setState({
-                      is2fa: 0
-                    })
-                  } else {
-                    Setting.showMessage("error", res.msg);
-                  }
-                });
-              }
-            }} />
-            </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Signup application"), i18next.t("general:Signup application - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -340,6 +316,22 @@ class UserEditPage extends React.Component {
               }
             </Select>
           </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:2-Step"), i18next.t("user:2-Step Verification - Tooltip"))} :
+          </Col>
+          <Col span={(Setting.isMobile()) ? 22 : 2} >
+            <Switch checked={this.state.twoFactor} onChange={checked => {
+              if (checked) {
+                Setting.goToTotp(this, this.state.application)
+              } else {
+                // Delete TOTP
+                this.updateUserField("twoFactor",false)
+                this.setState({twoFactor:0})
+              }
+            }} />
+            </Col>
         </Row>
         {
           !this.isSelfOrAdmin() ? null : (

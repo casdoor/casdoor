@@ -22,7 +22,7 @@ import (
 type TOTPInit struct {
 	Secret        string `json:"secret"`
 	RecoveryCodes string `json:"recoveryCode"`
-	URL           string `json:"qrcodeUrl"`
+	URL           string `json:"url"`
 }
 
 // InitTOTP
@@ -41,8 +41,8 @@ func (c *ApiController) InitTOTP() {
 		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
 		return
 	}
-	if user.Is2fa {
-		c.ResponseError(fmt.Sprintf("The user: %s has turned on 2fa already", userId))
+	if user.TwoFactor {
+		c.ResponseError(fmt.Sprintf("The user: %s has two-factor authentication enabled", userId))
 		return
 	}
 	application := object.GetApplicationByUser(user)
@@ -57,69 +57,4 @@ func (c *ApiController) InitTOTP() {
 	object.SetUserField(user, "recovery_code", recoveryCode)
 	c.Data["json"] = resp
 	c.ServeJSON()
-}
-
-// SetTOTP
-// @Title: SetTOTP
-// @Tag: TOTP API
-// @Description: Verify that the user has set the correct TOTP
-// @Param: secret  formData    string  true        "The totp secret returned by casdoor"
-// @Param: code  formData    string  true        "Code generated using totp secret"
-// @Success: controllers.Response The Response object
-// @router: /totp [post]
-func (c *ApiController) SetTOTP() {
-	userId, ok := c.RequireSignedIn()
-	if !ok {
-		return
-	}
-	user := object.GetUser(userId)
-	if user == nil {
-		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
-		return
-	}
-	if user.Is2fa {
-		c.ResponseError(fmt.Sprintf("The user: %s has turned on 2fa already", userId))
-		return
-	}
-	secret := c.Input().Get("secret")
-	code := c.Input().Get("code")
-	if secret != user.TotpSecret {
-		c.ResponseError("secret is not match")
-		return
-	}
-
-	if object.ValidatePassCode(code, secret) {
-		object.SetUserField(user, "is2fa", "1")
-		c.ResponseOk()
-	} else {
-		c.ResponseError("get wrong code")
-	}
-
-}
-
-// DeleteTOTP
-// @Title: DeleteTOTP
-// @Tag: TOTP API
-// @Description: Delete TOTP set by the user
-// @Param: recovery-code  formData    string  true        "The recovery-code returned by casdoor"
-// @Success: controllers.Response The Response object
-// @router: /delete-totp [post]
-func (c *ApiController) DeleteTOTP() {
-	userId, ok := c.RequireSignedIn()
-	if !ok {
-		return
-	}
-	user := object.GetUser(userId)
-	if user == nil {
-		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
-		return
-	}
-	recoveryCode := c.Input().Get("recoveryCode")
-	if recoveryCode != user.RecoveryCode {
-		c.ResponseError("get wrong recovery code")
-	}
-	object.SetUserField(user, "totp_secret", "")
-	object.SetUserField(user, "is2fa", "0")
-	object.SetUserField(user, "recovery_code", "")
-	c.ResponseOk()
 }

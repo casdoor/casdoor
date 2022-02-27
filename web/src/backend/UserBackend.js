@@ -139,22 +139,8 @@ export function checkUserPassword(values) {
 }
 
 export function initTOTP() {
-  return fetch(`${Setting.ServerUrl}/api/totp`, {
+  return fetch(`${Setting.ServerUrl}/api/init-totp`, {
     method: 'GET',
-    credentials: 'include'
-  }).then(res => res.json());
-}
-
-export function setTOTP(secret, code) {
-  return fetch(`${Setting.ServerUrl}/api/totp?secret=${secret}&code=${code}`, {
-    method: 'POST',
-    credentials: 'include'
-  }).then(res => res.json());
-}
-
-export function deleteTOTP(recoveryCode) {
-  return fetch(`${Setting.ServerUrl}/api/delete-totp?recoveryCode=${recoveryCode}`, {
-    method: 'POST',
     credentials: 'include'
   }).then(res => res.json());
 }

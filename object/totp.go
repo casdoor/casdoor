@@ -35,7 +35,7 @@ func NewTOTPKey(issuer string, accountName string, period int, secretSize int) (
 		period = 30
 	}
 	if secretSize == 0 {
-		secretSize = 6
+		secretSize = 10
 	}
 	key, err := totp.Generate(totp.GenerateOpts{
 		Issuer:      issuer,
