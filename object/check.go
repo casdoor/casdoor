@@ -33,7 +33,7 @@ func init() {
 	reFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
 }
 
-func CheckUserSignup(application *Application, organization *Organization, username string, password string, displayName string, email string, phone string, affiliation string) string {
+func CheckUserSignup(application *Application, organization *Organization, username string, password string, displayName string, firstName string, lastName string, email string, phone string, affiliation string) string {
 	if organization == nil {
 		return "organization does not exist"
 	}
@@ -85,11 +85,19 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 	}
 
 	if application.IsSignupItemVisible("Display name") {
-		if displayName == "" {
-			return "displayName cannot be blank"
-		} else if application.GetSignupItemRule("Display name") == "Real name" {
-			if !isValidRealName(displayName) {
-				return "displayName is not valid real name"
+		if application.GetSignupItemRule("Display name") == "First, last" {
+			if firstName == "" {
+				return "firstName cannot be blank"
+			} else if lastName == "" {
+				return "lastName cannot be blank"
+			}
+		} else {
+			if displayName == "" {
+				return "displayName cannot be blank"
+			} else if application.GetSignupItemRule("Display name") == "Real name" {
+				if !isValidRealName(displayName) {
+					return "displayName is not valid real name"
+				}
 			}
 		}
 	}

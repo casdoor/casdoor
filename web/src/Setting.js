@@ -325,6 +325,10 @@ export function getAvatarColor(s) {
   return colorList[random % 4];
 }
 
+export function getLanguage() {
+  return i18next.language;
+}
+
 export function setLanguage(language) {
   localStorage.setItem("language", language);
   changeMomentLanguage(language);

@@ -192,15 +192,50 @@ class SignupPage extends React.Component {
         </Form.Item>
       )
     } else if (signupItem.name === "Display name") {
+      if (signupItem.rule === "First, last" && Setting.getLanguage() !== "zh") {
+        return (
+          <React.Fragment>
+            <Form.Item
+              name="firstName"
+              key="firstName"
+              label={i18next.t("general:First name")}
+              rules={[
+                {
+                  required: required,
+                  message: i18next.t("signup:Please input your first name!"),
+                  whitespace: true,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="lastName"
+              key="lastName"
+              label={i18next.t("general:Last name")}
+              rules={[
+                {
+                  required: required,
+                  message: i18next.t("signup:Please input your last name!"),
+                  whitespace: true,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          </React.Fragment>
+        )
+      }
+
       return (
         <Form.Item
           name="name"
           key="name"
-          label={signupItem.rule === "Real name" ? i18next.t("general:Real name") : i18next.t("general:Display name")}
+          label={(signupItem.rule === "Real name" || signupItem.rule === "First, last") ? i18next.t("general:Real name") : i18next.t("general:Display name")}
           rules={[
             {
               required: required,
-              message: signupItem.rule === "Real name" ? i18next.t("signup:Please input your real name!") : i18next.t("signup:Please input your display name!"),
+              message: (signupItem.rule === "Real name" || signupItem.rule === "First, last") ? i18next.t("signup:Please input your real name!") : i18next.t("signup:Please input your display name!"),
               whitespace: true,
             },
           ]}
