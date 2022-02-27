@@ -87,9 +87,9 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 	if application.IsSignupItemVisible("Display name") {
 		if displayName == "" {
 			return "displayName cannot be blank"
-		} else if application.GetSignupItemRule("Display name") == "Personal" {
-			if !isValidPersonalName(displayName) {
-				return "displayName is not valid personal name"
+		} else if application.GetSignupItemRule("Display name") == "Real name" {
+			if !isValidRealName(displayName) {
+				return "displayName is not valid real name"
 			}
 		}
 	}

@@ -16,16 +16,16 @@ package object
 
 import "regexp"
 
-var rePersonalName *regexp.Regexp
+var reRealName *regexp.Regexp
 
 func init() {
 	var err error
-	rePersonalName, err = regexp.Compile("^[\u4E00-\u9FA5]{2,3}(?:·[\u4E00-\u9FA5]{2,3})*$")
+	reRealName, err = regexp.Compile("^[\u4E00-\u9FA5]{2,3}(?:·[\u4E00-\u9FA5]{2,3})*$")
 	if err != nil {
 		panic(err)
 	}
 }
 
-func isValidPersonalName(s string) bool {
-	return rePersonalName.MatchString(s)
+func isValidRealName(s string) bool {
+	return reRealName.MatchString(s)
 }
