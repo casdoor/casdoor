@@ -292,13 +292,6 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, err = GetPasswordToken(application, username, password, scope, host)
 	case "client_credentials": // Client Credentials Grant
 		token, err = GetClientCredentialsToken(application, clientSecret, scope, host)
-	default:
-		return &TokenWrapper{
-			AccessToken: "error: grant_type does not support",
-			TokenType:   "",
-			ExpiresIn:   0,
-			Scope:       "",
-		}
 	}
 
 	if err != nil {
