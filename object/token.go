@@ -274,7 +274,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	}
 
 	//Check if grantType is allowed in the current application
-	if !checkMethodValid(grantType, application.AllowMethods) {
+	if !checkMethodValid(grantType, application.GrantTypes) {
 		return &TokenWrapper{
 			AccessToken: "error: grant_type does not support in this application",
 			TokenType:   "",
@@ -425,11 +425,11 @@ func pkceChallenge(verifier string) string {
 
 // Check if grantType is allowed in the current application
 // authorization_code is allowed by default
-func checkMethodValid(method string, AllowMethods []string) bool {
+func checkMethodValid(method string, GrantTypes []string) bool {
 	if method == "authorization_code" {
 		return true
 	}
-	for _, m := range AllowMethods {
+	for _, m := range GrantTypes {
 		if m == method {
 			return true
 		}
