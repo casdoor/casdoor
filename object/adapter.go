@@ -17,7 +17,6 @@ package object
 import (
 	"fmt"
 	"runtime"
-	"xorm.io/core"
 
 	"github.com/astaxie/beego"
 	"github.com/casdoor/casdoor/conf"
@@ -25,6 +24,7 @@ import (
 	//_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql" // db = mysql
 	//_ "github.com/lib/pq"                // db = postgres
+	"xorm.io/core"
 	"xorm.io/xorm"
 )
 
@@ -179,6 +179,11 @@ func (a *Adapter) createTable() {
 	}
 
 	err = a.Engine.Sync2(new(Cert))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(Product))
 	if err != nil {
 		panic(err)
 	}

@@ -43,6 +43,8 @@ import SyncerListPage from "./SyncerListPage";
 import SyncerEditPage from "./SyncerEditPage";
 import CertListPage from "./CertListPage";
 import CertEditPage from "./CertEditPage";
+import ProductListPage from "./ProductListPage";
+import ProductEditPage from "./ProductEditPage";
 import PaymentListPage from "./PaymentListPage";
 import PaymentEditPage from "./PaymentEditPage";
 import AccountPage from "./account/AccountPage";
@@ -128,6 +130,8 @@ class App extends Component {
       this.setState({ selectedMenuKey: '/syncers' });
     } else if (uri.includes('/certs')) {
       this.setState({ selectedMenuKey: '/certs' });
+    } else if (uri.includes('/products')) {
+      this.setState({ selectedMenuKey: '/products' });
     } else if (uri.includes('/payments')) {
       this.setState({ selectedMenuKey: '/payments' });
     } else if (uri.includes('/signup')) {
@@ -413,6 +417,13 @@ class App extends Component {
         </Menu.Item>
       );
       // res.push(
+      //   <Menu.Item key="/products">
+      //     <Link to="/products">
+      //       {i18next.t("general:Products")}
+      //     </Link>
+      //   </Menu.Item>
+      // );
+      // res.push(
       //   <Menu.Item key="/payments">
       //     <Link to="/payments">
       //       {i18next.t("general:Payments")}
@@ -490,6 +501,8 @@ class App extends Component {
           <Route exact path="/syncers/:syncerName" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/certs" render={(props) => this.renderLoginIfNotLoggedIn(<CertListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/certs/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/products" render={(props) => this.renderLoginIfNotLoggedIn(<ProductListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/products/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/payments" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>

@@ -113,12 +113,12 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel("Favicon", i18next.t("general:Favicon - Tooltip"))} :
+            {Setting.getLabel("general:Favicon", i18next.t("general:Favicon - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                URL:
+                {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
               <Col span={23} >
                 <Input prefix={<LinkOutlined/>} value={this.state.organization.favicon} onChange={e => {
@@ -188,7 +188,7 @@ class OrganizationEditPage extends React.Component {
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                URL:
+                {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
               <Col span={23} >
                 <Input prefix={<LinkOutlined/>} value={this.state.organization.defaultAvatar} onChange={e => {
