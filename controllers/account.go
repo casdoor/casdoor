@@ -147,7 +147,7 @@ func (c *ApiController) Signup() {
 		username = id
 	}
 
-    userCount := object.GetUserCount(form.Organization,"","") + 1
+    	userCount := object.GetUserCount(form.Organization, "", "") + 1
 
 	user := &object.User{
 		Owner:             form.Organization,
