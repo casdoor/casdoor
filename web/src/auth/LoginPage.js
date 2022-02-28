@@ -116,14 +116,18 @@ class LoginPage extends React.Component {
   onFinish(values) {
     const application = this.getApplicationObj();
     const ths = this;
-    values["type"] = this.state.type;
-    values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix;
     const oAuthParams = Util.getOAuthGetParameters();
-
+    if (oAuthParams !== null && oAuthParams.responseType!= null && oAuthParams.responseType !== "") {
+      values["type"] = oAuthParams.responseType
+    }else{
+      values["type"] = this.state.type;
+    }
+    values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix;
+    
     AuthBackend.login(values, oAuthParams)
       .then((res) => {
         if (res.status === 'ok') {
-          const responseType = this.state.type;
+          const responseType = values["type"];
           if (responseType === "login") {
             Util.showMessage("success", `Logged in successfully`);
 
@@ -156,6 +160,9 @@ class LoginPage extends React.Component {
             }
 
             // Util.showMessage("success", `Authorization code: ${res.data}`);
+          } else if (responseType === "token" || responseType === "id_token") {
+            const accessToken = res.data;
+            Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
           }
         } else {
           Util.showMessage("error", `Failed to log in: ${res.msg}`);
