@@ -172,9 +172,11 @@ func (c *ApiController) Signup() {
 	}
 
 	if application.GetSignupItemRule("Display name") == "First, last" {
-		user.DisplayName = fmt.Sprintf("%s %s", form.FirstName, form.LastName)
-		user.FirstName = form.FirstName
-		user.LastName = form.LastName
+		if form.FirstName != "" || form.LastName != "" {
+			user.DisplayName = fmt.Sprintf("%s %s", form.FirstName, form.LastName)
+			user.FirstName = form.FirstName
+			user.LastName = form.LastName
+		}
 	}
 
 	affected := object.AddUser(user)

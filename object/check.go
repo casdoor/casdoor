@@ -85,7 +85,7 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 	}
 
 	if application.IsSignupItemVisible("Display name") {
-		if application.GetSignupItemRule("Display name") == "First, last" {
+		if application.GetSignupItemRule("Display name") == "First, last" && (firstName != "" || lastName != "") {
 			if firstName == "" {
 				return "firstName cannot be blank"
 			} else if lastName == "" {
