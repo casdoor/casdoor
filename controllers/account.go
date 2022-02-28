@@ -169,6 +169,7 @@ func (c *ApiController) Signup() {
 		IsDeleted:         false,
 		SignupApplication: application.Name,
 		Properties:        map[string]string{},
+		Karma:             0,
 	}
 
 	if application.GetSignupItemRule("Display name") == "First, last" {
