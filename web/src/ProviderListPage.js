@@ -47,8 +47,7 @@ class ProviderListPage extends BaseListPage {
     const newProvider = this.newProvider();
     ProviderBackend.addProvider(newProvider)
       .then((res) => {
-          Setting.showMessage("success", `Provider added successfully`);
-          this.props.history.push(`/providers/${newProvider.name}`);
+          this.props.history.push({pathname: `/providers/${newProvider.name}`, mode: "add"});
         }
       )
       .catch(error => {

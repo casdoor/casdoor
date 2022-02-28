@@ -13,15 +13,10 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
+import {Button, Card, Col, Input, Row} from 'antd';
 import * as PaymentBackend from "./backend/PaymentBackend";
-import * as OrganizationBackend from "./backend/OrganizationBackend";
-import * as UserBackend from "./backend/UserBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import * as RoleBackend from "./backend/RoleBackend";
-
-const { Option } = Select;
 
 class PaymentEditPage extends React.Component {
   constructor(props) {
@@ -31,6 +26,7 @@ class PaymentEditPage extends React.Component {
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       paymentName: props.match.params.paymentName,
       payment: null,
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -68,9 +64,10 @@ class PaymentEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("payment:Edit Payment")}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("payment:New Payment") : i18next.t("payment:Edit Payment")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitPaymentEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitPaymentEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deletePayment()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -100,16 +97,6 @@ class PaymentEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.payment.displayName} onChange={e => {
               this.updatePaymentField('displayName', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.payment.name} onChange={e => {
-              // this.updatePaymentField('name', e.target.value);
             }} />
           </Col>
         </Row>
@@ -192,6 +179,16 @@ class PaymentEditPage extends React.Component {
       });
   }
 
+  deletePayment() {
+    PaymentBackend.deletePayment(this.state.payment)
+      .then(() => {
+        this.props.history.push(`/payments`);
+      })
+      .catch(error => {
+        Setting.showMessage("error", `Payment failed to delete: ${error}`);
+      });
+  }
+
   render() {
     return (
       <div>
@@ -201,6 +198,7 @@ class PaymentEditPage extends React.Component {
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
           <Button size="large" onClick={() => this.submitPaymentEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitPaymentEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deletePayment()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );

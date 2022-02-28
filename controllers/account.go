@@ -35,6 +35,8 @@ type RequestForm struct {
 	Username     string `json:"username"`
 	Password     string `json:"password"`
 	Name         string `json:"name"`
+	FirstName    string `json:"firstName"`
+	LastName     string `json:"lastName"`
 	Email        string `json:"email"`
 	Phone        string `json:"phone"`
 	Affiliation  string `json:"affiliation"`
@@ -169,6 +171,15 @@ func (c *ApiController) Signup() {
 		IsDeleted:         false,
 		SignupApplication: application.Name,
 		Properties:        map[string]string{},
+		Karma:             0,
+	}
+
+	if application.GetSignupItemRule("Display name") == "First, last" {
+		if form.FirstName != "" || form.LastName != "" {
+			user.DisplayName = fmt.Sprintf("%s %s", form.FirstName, form.LastName)
+			user.FirstName = form.FirstName
+			user.LastName = form.LastName
+		}
 		Ranking:           userCount + 1,
 	}
 

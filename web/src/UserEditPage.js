@@ -46,6 +46,7 @@ class UserEditPage extends React.Component {
       application: null,
       organizations: [],
       applications: [],
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -121,9 +122,10 @@ class UserEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("user:New User") : i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -430,6 +432,16 @@ class UserEditPage extends React.Component {
       });
   }
 
+  deleteUser() {
+    UserBackend.deleteUser(this.state.user)
+      .then(() => {
+        this.props.history.push(`/users`);
+      })
+      .catch(error => {
+        Setting.showMessage("error", `User failed to delete: ${error}`);
+      });
+  }
+
   render() {
     return (
       <div>
@@ -439,6 +451,7 @@ class UserEditPage extends React.Component {
       <div style={{marginTop: '20px', marginLeft: '40px'}}>
         <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
         <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+        {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
       </div>
     </div>
     );

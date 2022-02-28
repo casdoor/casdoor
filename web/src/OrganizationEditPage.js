@@ -31,6 +31,7 @@ class OrganizationEditPage extends React.Component {
       organizationName: props.match.params.organizationName,
       organization: null,
       ldaps: null,
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -84,9 +85,10 @@ class OrganizationEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("organization:Edit Organization")}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("organization:New Organization") : i18next.t("organization:Edit Organization")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitOrganizationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitOrganizationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteOrganization()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -111,12 +113,12 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel("Favicon", i18next.t("general:Favicon - Tooltip"))} :
+            {Setting.getLabel("general:Favicon", i18next.t("general:Favicon - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                URL:
+                {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
               <Col span={23} >
                 <Input prefix={<LinkOutlined/>} value={this.state.organization.favicon} onChange={e => {
@@ -186,7 +188,7 @@ class OrganizationEditPage extends React.Component {
           <Col span={22} >
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                URL:
+                {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
               <Col span={23} >
                 <Input prefix={<LinkOutlined/>} value={this.state.organization.defaultAvatar} onChange={e => {
@@ -269,6 +271,16 @@ class OrganizationEditPage extends React.Component {
       });
   }
 
+  deleteOrganization() {
+    OrganizationBackend.deleteOrganization(this.state.organization)
+      .then(() => {
+        this.props.history.push(`/organizations`);
+      })
+      .catch(error => {
+        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+      });
+  }
+
   render() {
     return (
       <div>
@@ -278,6 +290,7 @@ class OrganizationEditPage extends React.Component {
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
           <Button size="large" onClick={() => this.submitOrganizationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitOrganizationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteOrganization()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );

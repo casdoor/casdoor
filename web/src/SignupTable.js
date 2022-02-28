@@ -171,6 +171,7 @@ class SignupTable extends React.Component {
             options = [
               {id: 'None', name: 'None'},
               {id: 'Real name', name: 'Real name'},
+              {id: 'First, last', name: 'First, last'},
             ];
           }
 

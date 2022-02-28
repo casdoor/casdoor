@@ -42,8 +42,7 @@ class WebhookListPage extends BaseListPage {
     const newWebhook = this.newWebhook();
     WebhookBackend.addWebhook(newWebhook)
       .then((res) => {
-          Setting.showMessage("success", `Webhook added successfully`);
-          this.props.history.push(`/webhooks/${newWebhook.name}`);
+          this.props.history.push({pathname: `/webhooks/${newWebhook.name}`, mode: "add"});
         }
       )
       .catch(error => {

@@ -21,6 +21,7 @@ import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
+import * as path from "path";
 
 class UserListPage extends BaseListPage {
   constructor(props) {
@@ -69,8 +70,7 @@ class UserListPage extends BaseListPage {
     const newUser = this.newUser();
     UserBackend.addUser(newUser)
       .then((res) => {
-          Setting.showMessage("success", `User added successfully`);
-          this.props.history.push(`/users/${newUser.owner}/${newUser.name}`);
+          this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add"});
         }
       )
       .catch(error => {

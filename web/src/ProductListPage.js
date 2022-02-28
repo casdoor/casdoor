@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2022 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,61 +15,48 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Col, List, Popconfirm, Row, Table, Tooltip} from 'antd';
-import {EditOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as Setting from "./Setting";
-import * as ApplicationBackend from "./backend/ApplicationBackend";
+import * as ProductBackend from "./backend/ProductBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
+import {EditOutlined} from "@ant-design/icons";
 
-class ApplicationListPage extends BaseListPage {
-
-  newApplication() {
+class ProductListPage extends BaseListPage {
+  newProduct() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "admin", // this.props.account.applicationname,
-      name: `application_${randomName}`,
+      owner: "admin",
+      name: `product_${randomName}`,
       createdTime: moment().format(),
-      displayName: `New Application - ${randomName}`,
-      logo: "https://cdn.casdoor.com/logo/casdoor-logo_1185x256.png",
-      enablePassword: true,
-      enableSignUp: true,
-      enableSigninSession: false,
-      enableCodeSignin: false,
+      displayName: `New Product - ${randomName}`,
+      image: "https://cdn.casdoor.com/logo/casdoor-logo_1185x256.png",
+      tag: "Casdoor Summit 2022",
+      currency: "USD",
+      price: 300,
+      quantity: 99,
+      sold: 10,
       providers: [],
-      signupItems: [
-        {name: "ID", visible: false, required: true, rule: "Random"},
-        {name: "Username", visible: true, required: true, rule: "None"},
-        {name: "Display name", visible: true, required: true, rule: "None"},
-        {name: "Password", visible: true, required: true, rule: "None"},
-        {name: "Confirm password", visible: true, required: true, rule: "None"},
-        {name: "Email", visible: true, required: true, rule: "None"},
-        {name: "Phone", visible: true, required: true, rule: "None"},
-        {name: "Agreement", visible: true, required: true, rule: "None"},
-      ],
-      cert: "cert-built-in",
-      redirectUris: ["http://localhost:9000/callback"],
-      tokenFormat: "JWT",
-      expireInHours: 24 * 7,
+      state: "Published",
     }
   }
 
-  addApplication() {
-    const newApplication = this.newApplication();
-    ApplicationBackend.addApplication(newApplication)
+  addProduct() {
+    const newProduct = this.newProduct();
+    ProductBackend.addProduct(newProduct)
       .then((res) => {
-          this.props.history.push({pathname: `/applications/${newApplication.name}`, mode: "add"});
+          this.props.history.push({pathname: `/products/${newProduct.name}`, mode: "add"});
         }
       )
       .catch(error => {
-        Setting.showMessage("error", `Application failed to add: ${error}`);
+        Setting.showMessage("error", `Product failed to add: ${error}`);
       });
   }
 
-  deleteApplication(i) {
-    ApplicationBackend.deleteApplication(this.state.data[i])
+  deleteProduct(i) {
+    ProductBackend.deleteProduct(this.state.data[i])
       .then((res) => {
-          Setting.showMessage("success", `Application deleted successfully`);
+          Setting.showMessage("success", `Product deleted successfully`);
           this.setState({
             data: Setting.deleteRow(this.state.data, i),
             pagination: {total: this.state.pagination.total - 1},
@@ -77,23 +64,23 @@ class ApplicationListPage extends BaseListPage {
         }
       )
       .catch(error => {
-        Setting.showMessage("error", `Application failed to delete: ${error}`);
+        Setting.showMessage("error", `Product failed to delete: ${error}`);
       });
   }
 
-  renderTable(applications) {
+  renderTable(products) {
     const columns = [
       {
         title: i18next.t("general:Name"),
         dataIndex: 'name',
         key: 'name',
-        width: '150px',
+        width: '140px',
         fixed: 'left',
         sorter: true,
         ...this.getColumnSearchProps('name'),
         render: (text, record, index) => {
           return (
-            <Link to={`/applications/${text}`}>
+            <Link to={`/products/${text}`}>
               {text}
             </Link>
           )
@@ -113,15 +100,15 @@ class ApplicationListPage extends BaseListPage {
         title: i18next.t("general:Display name"),
         dataIndex: 'displayName',
         key: 'displayName',
-        // width: '100px',
+        width: '170px',
         sorter: true,
         ...this.getColumnSearchProps('displayName'),
       },
       {
-        title: 'Logo',
-        dataIndex: 'logo',
-        key: 'logo',
-        width: '200px',
+        title: i18next.t("product:Image"),
+        dataIndex: 'image',
+        key: 'image',
+        width: '170px',
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
@@ -131,26 +118,59 @@ class ApplicationListPage extends BaseListPage {
         }
       },
       {
-        title: i18next.t("general:Organization"),
-        dataIndex: 'organization',
-        key: 'organization',
-        width: '150px',
+        title: i18next.t("product:Tag"),
+        dataIndex: 'tag',
+        key: 'tag',
+        width: '160px',
         sorter: true,
-        ...this.getColumnSearchProps('organization'),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/organizations/${text}`}>
-              {text}
-            </Link>
-          )
-        }
+        ...this.getColumnSearchProps('tag'),
       },
       {
-        title: i18next.t("general:Providers"),
+        title: i18next.t("product:Currency"),
+        dataIndex: 'currency',
+        key: 'currency',
+        width: '120px',
+        sorter: true,
+        ...this.getColumnSearchProps('currency'),
+      },
+      {
+        title: i18next.t("product:Price"),
+        dataIndex: 'price',
+        key: 'price',
+        width: '120px',
+        sorter: true,
+        ...this.getColumnSearchProps('price'),
+      },
+      {
+        title: i18next.t("product:Quantity"),
+        dataIndex: 'quantity',
+        key: 'quantity',
+        width: '120px',
+        sorter: true,
+        ...this.getColumnSearchProps('quantity'),
+      },
+      {
+        title: i18next.t("product:Sold"),
+        dataIndex: 'sold',
+        key: 'sold',
+        width: '120px',
+        sorter: true,
+        ...this.getColumnSearchProps('sold'),
+      },
+      {
+        title: i18next.t("general:State"),
+        dataIndex: 'state',
+        key: 'state',
+        width: '120px',
+        sorter: true,
+        ...this.getColumnSearchProps('state'),
+      },
+      {
+        title: i18next.t("product:Payment providers"),
         dataIndex: 'providers',
         key: 'providers',
+        width: '500px',
         ...this.getColumnSearchProps('providers'),
-        // width: '600px',
         render: (text, record, index) => {
           const providers = text;
           if (providers.length === 0) {
@@ -165,15 +185,15 @@ class ApplicationListPage extends BaseListPage {
                 size="small"
                 locale={{emptyText: " "}}
                 dataSource={providers}
-                renderItem={(providerItem, i) => {
+                renderItem={(providerName, i) => {
                   return (
                     <List.Item>
                       <div style={{display: "inline"}}>
                         <Tooltip placement="topLeft" title="Edit">
-                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${providerItem.name}`)} />
+                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${providerName}`)} />
                         </Tooltip>
-                        <Link to={`/providers/${providerItem.name}`}>
-                          {providerItem.name}
+                        <Link to={`/providers/${providerName}`}>
+                          {providerName}
                         </Link>
                       </div>
                     </List.Item>
@@ -210,13 +230,12 @@ class ApplicationListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/applications/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/products/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
-                title={`Sure to delete application: ${record.name} ?`}
-                onConfirm={() => this.deleteApplication(index)}
-                disabled={record.name === "app-built-in"}
+                title={`Sure to delete product: ${record.name} ?`}
+                onConfirm={() => this.deleteProduct(index)}
               >
-                <Button style={{marginBottom: '10px'}} disabled={record.name === "app-built-in"} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           )
@@ -233,11 +252,11 @@ class ApplicationListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={applications} rowKey="name" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={products} rowKey="name" size="middle" bordered pagination={paginationProps}
                title={() => (
                  <div>
-                  {i18next.t("general:Applications")}&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Button type="primary" size="small" onClick={this.addApplication.bind(this)}>{i18next.t("general:Add")}</Button>
+                   {i18next.t("general:Products")}&nbsp;&nbsp;&nbsp;&nbsp;
+                   <Button type="primary" size="small" onClick={this.addProduct.bind(this)}>{i18next.t("general:Add")}</Button>
                  </div>
                )}
                loading={this.state.loading}
@@ -250,8 +269,12 @@ class ApplicationListPage extends BaseListPage {
   fetch = (params = {}) => {
     let field = params.searchedColumn, value = params.searchText;
     let sortField = params.sortField, sortOrder = params.sortOrder;
+    if (params.type !== undefined && params.type !== null) {
+      field = "type";
+      value = params.type;
+    }
     this.setState({ loading: true });
-    ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    ProductBackend.getProducts("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
@@ -269,4 +292,4 @@ class ApplicationListPage extends BaseListPage {
   };
 }
 
-export default ApplicationListPage;
+export default ProductListPage;

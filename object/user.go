@@ -34,6 +34,8 @@ type User struct {
 	Password          string   `xorm:"varchar(100)" json:"password"`
 	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
 	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
+	FirstName         string   `xorm:"varchar(100)" json:"firstName"`
+	LastName          string   `xorm:"varchar(100)" json:"lastName"`
 	Avatar            string   `xorm:"varchar(500)" json:"avatar"`
 	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
 	Email             string   `xorm:"varchar(100) index" json:"email"`
@@ -53,6 +55,7 @@ type User struct {
 	Birthday          string   `xorm:"varchar(100)" json:"birthday"`
 	Education         string   `xorm:"varchar(100)" json:"education"`
 	Score             int      `json:"score"`
+	Karma             int      `json:"karma"`
 	Ranking           int      `json:"ranking"`
 	IsDefaultAvatar   bool     `json:"isDefaultAvatar"`
 	IsOnline          bool     `json:"isOnline"`

@@ -47,6 +47,7 @@ class ApplicationEditPage extends React.Component {
       certs: [],
       providers: [],
       uploading: false,
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -60,6 +61,9 @@ class ApplicationEditPage extends React.Component {
   getApplication() {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
+        if (application.grantTypes === null || application.grantTypes.length === 0) {
+          application.grantTypes = ["authorization_code"];
+        }
         this.setState({
           application: application,
         });
@@ -134,9 +138,10 @@ class ApplicationEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("application:Edit Application")}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("application:New Application") : i18next.t("application:Edit Application")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitApplicationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -161,12 +166,12 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel("Logo", i18next.t("general:Logo - Tooltip"))} :
+            {Setting.getLabel("general:Logo", i18next.t("general:Logo - Tooltip"))} :
           </Col>
           <Col span={22} style={(Setting.isMobile()) ? {maxWidth:'100%'} :{}}>
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 1}>
-                URL:
+                {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
               <Col span={23} >
                 <Input prefix={<LinkOutlined/>} value={this.state.application.logo} onChange={e => {
@@ -435,6 +440,26 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Grant types"), i18next.t("application:Grant types - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="tags" style={{width: '100%'}}
+                    value={this.state.application.grantTypes}
+                    onChange={(value => {
+                      this.updateApplicationField('grantTypes', value);
+                    })} >
+                      {
+                        [
+                          {id: "authorization_code", name: "Authorization Code"},
+                          {id: "password", name: "Password"},
+                          {id: "client_credentials", name: "Client Credentials"},
+                        ].map((item, index)=><Option key={index} value={item.id}>{item.name}</Option>)
+                      }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Providers"), i18next.t("general:Providers - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -492,13 +517,13 @@ class ApplicationEditPage extends React.Component {
     if (!Setting.isMobile()) {
     return (
       <React.Fragment>
-        <Col span={11} style={{display:'flex',flexDirection:'column'}}>
-          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signUpUrl}>
+        <Col span={11} style={{display:"flex", flexDirection: "column"}}>
+          <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signUpUrl}>
             <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
           </a>
           <br/>
           <br/>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888" ,alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto'}}>
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
             {
               this.state.application.enablePassword ? (
                 <SignupPage application={this.state.application} />
@@ -508,13 +533,13 @@ class ApplicationEditPage extends React.Component {
             }
           </div>
         </Col>
-        <Col span={11} style={{display:'flex',flexDirection:'column'}}>
-          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signInUrl}>
+        <Col span={11} style={{display:"flex", flexDirection: "column"}}>
+          <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signInUrl}>
             <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
           </a>
           <br/>
           <br/>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto' }}>
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
           </div>
         </Col>
@@ -523,11 +548,11 @@ class ApplicationEditPage extends React.Component {
   } else{
     return(
       <React.Fragment>
-        <Col span={24} style={{display:'flex',flexDirection:'column'}}>
-          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signUpUrl}>
+        <Col span={24} style={{display:"flex", flexDirection: "column"}}>
+          <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signUpUrl}>
             <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
           </a>
-          <div style={{marginBottom:'10px', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888" ,alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto'}}>
+          <div style={{marginBottom:"10px", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
             {
               this.state.application.enablePassword ? (
                 <SignupPage application={this.state.application} />
@@ -536,10 +561,10 @@ class ApplicationEditPage extends React.Component {
               )
             }
           </div>
-          <a style={{marginBottom: '10px',display:'flex'}} target="_blank" rel="noreferrer" href={signInUrl}>
+          <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signInUrl}>
             <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
           </a>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",alignItems:'center',overflow:'auto',flexDirection:'column',flex:'auto' }}>
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
           </div>
         </Col>
@@ -553,13 +578,13 @@ class ApplicationEditPage extends React.Component {
 
     return (
       <React.Fragment>
-        <Col span={(Setting.isMobile()) ? 24 : 11} style={{display:'flex',flexDirection:'column',flex:'auto'}} >
-          <a style={{marginBottom: '10px'}} target="_blank" rel="noreferrer" href={promptUrl}>
+        <Col span={(Setting.isMobile()) ? 24 : 11} style={{display:"flex", flexDirection: "column", flex: "auto"}} >
+          <a style={{marginBottom: "10px"}} target="_blank" rel="noreferrer" href={promptUrl}>
             <Button type="primary">{i18next.t("application:Test prompt page..")}</Button>
           </a>
-          <br style={(Setting.isMobile()) ? {display:'none'} : {}} />
-          <br style={(Setting.isMobile()) ? {display:'none'} : {}} />
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888",flexDirection:'column',flex:'auto'}}>
+          <br style={(Setting.isMobile()) ? {display: "none"} : {}} />
+          <br style={(Setting.isMobile()) ? {display: "none"} : {}} />
+          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
             <PromptPage application={this.state.application} account={this.props.account} />
           </div>
         </Col>
@@ -592,6 +617,16 @@ class ApplicationEditPage extends React.Component {
       });
   }
 
+  deleteApplication() {
+    ApplicationBackend.deleteApplication(this.state.application)
+      .then(() => {
+        this.props.history.push(`/applications`);
+      })
+      .catch(error => {
+        Setting.showMessage("error", `Application failed to delete: ${error}`);
+      });
+  }
+
   render() {
     return (
       <div>
@@ -601,6 +636,7 @@ class ApplicationEditPage extends React.Component {
       <div style={{marginTop: '20px', marginLeft: '40px'}}>
         <Button size="large" onClick={() => this.submitApplicationEdit(false)}>{i18next.t("general:Save")}</Button>
         <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitApplicationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+        {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
       </div>
     </div>
     );
