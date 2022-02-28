@@ -145,8 +145,7 @@ func (c *ApiController) Signup() {
 		username = id
 	}
 
-	//get the total user num,begin from 0,so +1
-    userCount := object.GetUserCount(form.Organization,"","") + 1
+    	userCount := object.GetUserCount(form.Organization,"","") + 1
 
 	user := &object.User{
 		Owner:             form.Organization,
@@ -170,7 +169,7 @@ func (c *ApiController) Signup() {
 		IsDeleted:         false,
 		SignupApplication: application.Name,
 		Properties:        map[string]string{},
-		Ranking:           userCount + 1, //ranking is the user num of the organization user + 1
+		Ranking:           userCount + 1,
 	}
 
 	affected := object.AddUser(user)
