@@ -128,8 +128,6 @@ func (c *ApiController) Signup() {
 		}
 	}
 
-	userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
-
 	id := util.GenerateId()
 	if application.GetSignupItemRule("ID") == "Incremental" {
 		lastUser := object.GetLastUser(form.Organization)
@@ -147,7 +145,7 @@ func (c *ApiController) Signup() {
 		username = id
 	}
 
-    	userCount := object.GetUserCount(form.Organization, "", "") + 1
+	userCount := object.GetUserCount(form.Organization, "", "") + 1
 
 	user := &object.User{
 		Owner:             form.Organization,
@@ -199,6 +197,7 @@ func (c *ApiController) Signup() {
 	object.DisableVerificationCode(form.Email)
 	object.DisableVerificationCode(checkPhone)
 
+	userId := fmt.Sprintf("%s/%s", user.Owner, user.Name)
 	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
 
 	c.ResponseOk(userId)
