@@ -54,7 +54,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
     (r.urlPath == p.urlPath || p.urlPath == "*") && \
     (r.objOwner == p.objOwner || p.objOwner == "*") && \
     (r.objName == p.objName || p.objName == "*") || \
-    (r.urlPath == "/api/update-user" && r.subOwner == r.objOwner && r.subName == r.objName)
+    (r.subOwner == r.objOwner && r.subName == r.objName)
 `
 
 	m, err := model.NewModelFromString(modelText)
