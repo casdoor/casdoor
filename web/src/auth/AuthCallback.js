@@ -58,6 +58,10 @@ class AuthCallback extends React.Component {
       if (authServerUrl === realRedirectUrl) {
         return "login";
       } else {
+        const responseType = innerParams.get("response_type");
+        if (responseType !== null) {
+          return responseType
+        }
         return "code";
       }
     } else if (method === "link") {
@@ -116,6 +120,9 @@ class AuthCallback extends React.Component {
             const code = res.data;
             Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
             // Util.showMessage("success", `Authorization code: ${res.data}`);
+          } else if (responseType === "token" || responseType === "id_token"){
+            const token = res.data;
+            Setting.goToLink(`${oAuthParams.redirectUri}?${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
           } else if (responseType === "link") {
             const from = innerParams.get("from");
             Setting.goToLinkSoft(this, from);
