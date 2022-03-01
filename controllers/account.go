@@ -24,8 +24,10 @@ import (
 )
 
 const (
-	ResponseTypeLogin = "login"
-	ResponseTypeCode  = "code"
+	ResponseTypeLogin   = "login"
+	ResponseTypeCode    = "code"
+	ResponseTypeToken   = "token"
+	ResponseTypeIdToken = "id_token"
 )
 
 type RequestForm struct {

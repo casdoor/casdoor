@@ -38,6 +38,14 @@ func codeToResponse(code *object.Code) *Response {
 	return &Response{Status: "ok", Msg: "", Data: code.Code}
 }
 
+func tokenToResponse(token *object.Token) *Response {
+	if token.AccessToken == "" {
+		return &Response{Status: "error", Msg: "fail to get accessToken", Data: token.AccessToken}
+	}
+	return &Response{Status: "ok", Msg: "", Data: token.AccessToken}
+
+}
+
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) (resp *Response) {
 	userId := user.GetId()
@@ -66,6 +74,15 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
 		}
+	} else if form.Type == ResponseTypeToken || form.Type == ResponseTypeIdToken { //implicit flow
+		if !object.IsGrantTypeValid(form.Type, application.GrantTypes) {
+			resp = &Response{Status: "error", Msg: fmt.Sprintf("error: grant_type: %s is not supported in this application", form.Type), Data: ""}
+		} else {
+			scope := c.Input().Get("scope")
+			token, _ := object.GetTokenByUser(application, user, scope, c.Ctx.Request.Host)
+			resp = tokenToResponse(token)
+		}
+
 	} else {
 		resp = &Response{Status: "error", Msg: fmt.Sprintf("Unknown response type: %s", form.Type)}
 	}

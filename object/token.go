@@ -180,8 +180,8 @@ func GetTokenByAccessToken(accessToken string) *Token {
 }
 
 func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string) (string, *Application) {
-	if responseType != "code" {
-		return "response_type should be \"code\"", nil
+	if responseType != "code" && responseType != "token" && responseType != "id_token" {
+		return fmt.Sprintf("error: grant_type: %s is not supported in this application", responseType), nil
 	}
 
 	application := GetApplicationByClientId(clientId)
@@ -274,7 +274,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	}
 
 	//Check if grantType is allowed in the current application
-	if !isGrantTypeValid(grantType, application.GrantTypes) {
+	if !IsGrantTypeValid(grantType, application.GrantTypes) {
 		return &TokenWrapper{
 			AccessToken: fmt.Sprintf("error: grant_type: %s is not supported in this application", grantType),
 			TokenType:   "",
@@ -418,7 +418,7 @@ func pkceChallenge(verifier string) string {
 
 // Check if grantType is allowed in the current application
 // authorization_code is allowed by default
-func isGrantTypeValid(method string, grantTypes []string) bool {
+func IsGrantTypeValid(method string, grantTypes []string) bool {
 	if method == "authorization_code" {
 		return true
 	}
@@ -519,6 +519,31 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		User:         nullUser.Name,
 		Code:         util.GenerateClientId(),
 		AccessToken:  accessToken,
+		ExpiresIn:    application.ExpireInHours * 60,
+		Scope:        scope,
+		TokenType:    "Bearer",
+		CodeIsUsed:   true,
+	}
+	AddToken(token)
+	return token, nil
+}
+
+// Implicit flow
+func GetTokenByUser(application *Application, user *User, scope string, host string) (*Token, error) {
+	accessToken, refreshToken, err := generateJwtToken(application, user, "", scope, host)
+	if err != nil {
+		return nil, err
+	}
+	token := &Token{
+		Owner:        application.Owner,
+		Name:         util.GenerateId(),
+		CreatedTime:  util.GetCurrentTime(),
+		Application:  application.Name,
+		Organization: user.Owner,
+		User:         user.Name,
+		Code:         util.GenerateClientId(),
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 		ExpiresIn:    application.ExpireInHours * 60,
 		Scope:        scope,
 		TokenType:    "Bearer",

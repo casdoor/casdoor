@@ -453,6 +453,8 @@ class ApplicationEditPage extends React.Component {
                           {id: "authorization_code", name: "Authorization Code"},
                           {id: "password", name: "Password"},
                           {id: "client_credentials", name: "Client Credentials"},
+                          {id: "token", name: "Token"},
+                          {id: "id_token",name:"ID Token"},
                         ].map((item, index)=><Option key={index} value={item.id}>{item.name}</Option>)
                       }
             </Select>
