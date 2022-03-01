@@ -147,7 +147,7 @@ func (c *ApiController) Signup() {
 		username = id
 	}
 
-    	userCount := object.GetUserCount(form.Organization, "", "") + 1
+	userCount := object.GetUserCount(form.Organization, "", "") + 1
 
 	user := &object.User{
 		Owner:             form.Organization,
@@ -198,6 +198,11 @@ func (c *ApiController) Signup() {
 
 	object.DisableVerificationCode(form.Email)
 	object.DisableVerificationCode(checkPhone)
+
+	record := object.NewRecord(c.Ctx)
+	record.Organization = application.Organization
+	record.User = user.Name
+	go object.AddRecord(record)
 
 	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
 
