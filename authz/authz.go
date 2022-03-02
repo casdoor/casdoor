@@ -83,6 +83,7 @@ p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
 p, *, *, POST, /api/login/oauth/access_token, *, *
 p, *, *, POST, /api/login/oauth/refresh_token, *, *
+p, *, *, GET, /api/login/oauth/logout, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-users, *, *
 p, *, *, GET, /api/get-user, *, *

@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -282,4 +283,16 @@ func DeleteApplication(application *Application) bool {
 
 func (application *Application) GetId() string {
 	return fmt.Sprintf("%s/%s", application.Owner, application.Name)
+}
+
+func CheckRedirectUriValid(application *Application, redirectUri string) bool {
+	var validUri = false
+	for _, tmpUri := range application.RedirectUris {
+		fmt.Println(tmpUri, redirectUri)
+		if strings.Contains(redirectUri, tmpUri) {
+			validUri = true
+			break
+		}
+	}
+	return validUri
 }
