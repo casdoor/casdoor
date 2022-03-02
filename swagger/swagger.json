@@ -174,6 +174,34 @@
                 }
             }
         },
+        "/api/add-product": {
+            "post": {
+                "tags": [
+                    "Product API"
+                ],
+                "description": "add product",
+                "operationId": "ApiController.AddProduct",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the product",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Product"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/add-provider": {
             "post": {
                 "tags": [
@@ -601,6 +629,34 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/object.Permission"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/delete-product": {
+            "post": {
+                "tags": [
+                    "Product API"
+                ],
+                "description": "delete product",
+                "operationId": "ApiController.DeleteProduct",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the product",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Product"
                         }
                     }
                 ],
@@ -1153,6 +1209,61 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/object.Permission"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-product": {
+            "get": {
+                "tags": [
+                    "Product API"
+                ],
+                "description": "get product",
+                "operationId": "ApiController.GetProduct",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the product",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Product"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-products": {
+            "get": {
+                "tags": [
+                    "Product API"
+                ],
+                "description": "get products",
+                "operationId": "ApiController.GetProducts",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of products",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Product"
                             }
                         }
                     }
@@ -1825,8 +1936,50 @@
                 }
             }
         },
+        "/api/login/oauth/logout": {
+            "get": {
+                "tags": [
+                    "Token API"
+                ],
+                "description": "delete token by AccessToken",
+                "operationId": "ApiController.TokenLogout",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id_token_hint",
+                        "description": "id_token_hint",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "post_logout_redirect_uri",
+                        "description": "post_logout_redirect_uri",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "state",
+                        "description": "state",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/login/oauth/refresh_token": {
             "post": {
+                "tags": [
+                    "Token API"
+                ],
                 "description": "refresh OAuth access token",
                 "operationId": "ApiController.RefreshToken",
                 "parameters": [
@@ -2231,6 +2384,41 @@
                 }
             }
         },
+        "/api/update-product": {
+            "post": {
+                "tags": [
+                    "Product API"
+                ],
+                "description": "update product",
+                "operationId": "ApiController.UpdateProduct",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the product",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the product",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Product"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/update-provider": {
             "post": {
                 "tags": [
@@ -2476,11 +2664,11 @@
         }
     },
     "definitions": {
-        "1867.0xc00029b560.false": {
+        "2015.0xc0000edb90.false": {
             "title": "false",
             "type": "object"
         },
-        "1901.0xc00029b590.false": {
+        "2049.0xc0000edbc0.false": {
             "title": "false",
             "type": "object"
         },
@@ -2497,10 +2685,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1867.0xc00029b560.false"
+                    "$ref": "#/definitions/2015.0xc0000edb90.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/1901.0xc00029b590.false"
+                    "$ref": "#/definitions/2049.0xc0000edbc0.false"
                 },
                 "msg": {
                     "type": "string"
@@ -2521,10 +2709,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1867.0xc00029b560.false"
+                    "$ref": "#/definitions/2015.0xc0000edb90.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/1901.0xc00029b590.false"
+                    "$ref": "#/definitions/2049.0xc0000edbc0.false"
                 },
                 "msg": {
                     "type": "string"
@@ -2605,6 +2793,12 @@
                 },
                 "forgetUrl": {
                     "type": "string"
+                },
+                "grantTypes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "homepageUrl": {
                     "type": "string"
@@ -2851,6 +3045,57 @@
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "object.Product": {
+            "title": "Product",
+            "type": "object",
+            "properties": {
+                "createdTime": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "providers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "quantity": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "sold": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "tag": {
+                    "type": "string"
                 }
             }
         },
@@ -3258,6 +3503,9 @@
                 "facebook": {
                     "type": "string"
                 },
+                "firstName": {
+                    "type": "string"
+                },
                 "gender": {
                     "type": "string"
                 },
@@ -3309,10 +3557,17 @@
                 "isOnline": {
                     "type": "boolean"
                 },
+                "karma": {
+                    "type": "integer",
+                    "format": "int64"
+                },
                 "language": {
                     "type": "string"
                 },
                 "lark": {
+                    "type": "string"
+                },
+                "lastName": {
                     "type": "string"
                 },
                 "lastSigninIp": {
