@@ -444,16 +444,25 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 		// anti replay attacks
 		return nil, errors.New("error: authorization code has been used")
 	}
+
+	if token.CodeChallenge != "" && pkceChallenge(verifier) != token.CodeChallenge {
+		return nil, errors.New("error: incorrect code_verifier")
+	}
+
 	if application.ClientSecret != clientSecret {
-		return nil, errors.New("error: invalid client_secret")
+		// when using PKCE, the Client Secret can be empty,
+		// but if it is provided, it must be accurate.
+		if token.CodeChallenge == "" {
+			return nil, errors.New("error: invalid client_secret")
+		} else {
+			if clientSecret != "" {
+				return nil, errors.New("error: invalid client_secret")
+			}
+		}
 	}
 
 	if application.Name != token.Application {
 		return nil, errors.New("error: the token is for wrong application (client_id)")
-	}
-
-	if token.CodeChallenge != "" && pkceChallenge(verifier) != token.CodeChallenge {
-		return nil, errors.New("error: incorrect code_verifier")
 	}
 
 	if time.Now().Unix() > token.CodeExpireIn {
