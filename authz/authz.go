@@ -83,14 +83,10 @@ p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
 p, *, *, POST, /api/login/oauth/access_token, *, *
 p, *, *, POST, /api/login/oauth/refresh_token, *, *
-p, *, *, GET, /api/get-application, *, *
-p, *, *, GET, /api/get-users, *, *
+p, *, !anonymous, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-user, *, *
-p, *, *, GET, /api/get-organizations, *, *
-p, *, *, GET, /api/get-user-application, *, *
-p, *, *, GET, /api/get-default-providers, *, *
+p, *, !anonymous, GET, /api/get-user-application, *, *
 p, *, *, GET, /api/get-resources, *, *
-p, *, *, POST, /api/upload-avatar, *, *
 p, *, *, POST, /api/unlink, *, *
 p, *, *, POST, /api/set-password, *, *
 p, *, *, POST, /api/send-verification-code, *, *
