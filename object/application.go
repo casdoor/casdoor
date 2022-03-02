@@ -216,7 +216,19 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	if application.ClientSecret != "" {
 		application.ClientSecret = "***"
 	}
-	return application
+
+	if application.OrganizationObj != nil {
+		if application.OrganizationObj.MasterPassword != "" {
+			application.OrganizationObj.MasterPassword = "***"
+		}
+		if application.OrganizationObj.PasswordType != "" {
+			application.OrganizationObj.PasswordType = "***"
+		}
+		if application.OrganizationObj.PasswordSalt != "" {
+			application.OrganizationObj.PasswordSalt = "***"
+		}
+	}
+ 	return application
 }
 
 func GetMaskedApplications(applications []*Application, userId string) []*Application {

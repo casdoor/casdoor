@@ -118,6 +118,7 @@ func (c *ApiController) GetApplicationLogin() {
 	state := c.Input().Get("state")
 
 	msg, application := object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
+	application = object.GetMaskedApplication(application, "")
 	if msg != "" {
 		c.ResponseError(msg, application)
 	} else {
