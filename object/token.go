@@ -60,6 +60,29 @@ type TokenWrapper struct {
 	Scope        string `json:"scope"`
 }
 
+type TokenIntrospectionRequest struct {
+	// access_token's value or refresh_token's value
+	Token string `json:"token"`
+	// pass this parameter to help the authorization server optimize the token lookup.
+	// value is one of `access_token` or `refresh_token`
+	TokenTypeHint string `json:"token_type_hint,omitempty"`
+}
+
+type IntrospectionResponse struct {
+	Active    bool     `json:"active"`
+	Scope     string   `json:"scope,omitempty"`
+	ClientId  string   `json:"client_id,omitempty"`
+	Username  string   `json:"username,omitempty"`
+	TokenType string   `json:"token_type,omitempty"`
+	Exp       int64    `json:"exp,omitempty"`
+	Iat       int64    `json:"iat,omitempty"`
+	Nbf       int64    `json:"nbf,omitempty"`
+	Sub       string   `json:"sub,omitempty"`
+	Aud       []string `json:"aud,omitempty"`
+	Iss       string   `json:"iss,omitempty"`
+	Jti       string   `json:"jti,omitempty"`
+}
+
 func GetTokenCount(owner, field, value string) int {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Token{})
@@ -196,6 +219,15 @@ func GetTokenByAccessToken(accessToken string) *Token {
 		return nil
 	}
 	return &token
+}
+
+func GetTokenByTokenAndApplication(token string, application string) *Token {
+	tokenResult := Token{}
+	existed, err := adapter.Engine.Where("(refresh_token = ? or access_token = ? ) and application = ?", token, token, application).Get(&tokenResult)
+	if err != nil || !existed {
+		return nil
+	}
+	return &tokenResult
 }
 
 func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string) (string, *Application) {

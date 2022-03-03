@@ -147,3 +147,7 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 
 	return nil, err
 }
+
+func ParseJwtTokenByApplication(token string, application *Application) (*Claims, error) {
+	return ParseJwtToken(token, getCertByApplication(application))
+}
