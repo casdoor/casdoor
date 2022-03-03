@@ -237,12 +237,12 @@ func (c *ApiController) TokenLogout() {
 //  representing the meta information surrounding the
 //  token, including whether this token is currently active.
 //  This endpoint only support Basic Authorization.
-// @Param body body {object.TokenIntrospectionRequest} true "the request body"
+// @Param token formData string true "access_token's value or refresh_token's value"
+// @Param token_type_hint formData string true "the token type access_token or refresh_token"
 // @Success 200 {object} object.IntrospectionResponse The Response object
 // @router /login/oauth/introspect [post]
 func (c *ApiController) IntrospectToken() {
-	var body object.TokenIntrospectionRequest
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &body)
+	tokenValue := c.Input().Get("token")
 	clientId, clientSecret, ok := c.Ctx.Request.BasicAuth()
 	if !ok {
 		util.LogWarning(c.Ctx, "Basic Authorization parses failed")
@@ -257,14 +257,14 @@ func (c *ApiController) IntrospectToken() {
 		c.ServeJSON()
 		return
 	}
-	token := object.GetTokenByTokenAndApplication(body.Token, application.Name)
+	token := object.GetTokenByTokenAndApplication(tokenValue, application.Name)
 	if token == nil {
 		util.LogWarning(c.Ctx, "application: %s can not find token", application.Name)
 		c.Data["json"] = &object.IntrospectionResponse{Active: false}
 		c.ServeJSON()
 		return
 	}
-	jwtToken, err := object.ParseJwtTokenByApplication(body.Token, application)
+	jwtToken, err := object.ParseJwtTokenByApplication(tokenValue, application)
 	if err != nil || jwtToken.Valid() != nil {
 		// and token revoked case. but we not implement
 		// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.

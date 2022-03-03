@@ -60,14 +60,6 @@ type TokenWrapper struct {
 	Scope        string `json:"scope"`
 }
 
-type TokenIntrospectionRequest struct {
-	// access_token's value or refresh_token's value
-	Token string `json:"token"`
-	// pass this parameter to help the authorization server optimize the token lookup.
-	// value is one of `access_token` or `refresh_token`
-	TokenTypeHint string `json:"token_type_hint,omitempty"`
-}
-
 type IntrospectionResponse struct {
 	Active    bool     `json:"active"`
 	Scope     string   `json:"scope,omitempty"`
