@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -216,7 +217,19 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	if application.ClientSecret != "" {
 		application.ClientSecret = "***"
 	}
-	return application
+
+	if application.OrganizationObj != nil {
+		if application.OrganizationObj.MasterPassword != "" {
+			application.OrganizationObj.MasterPassword = "***"
+		}
+		if application.OrganizationObj.PasswordType != "" {
+			application.OrganizationObj.PasswordType = "***"
+		}
+		if application.OrganizationObj.PasswordSalt != "" {
+			application.OrganizationObj.PasswordSalt = "***"
+		}
+	}
+ 	return application
 }
 
 func GetMaskedApplications(applications []*Application, userId string) []*Application {
@@ -282,4 +295,16 @@ func DeleteApplication(application *Application) bool {
 
 func (application *Application) GetId() string {
 	return fmt.Sprintf("%s/%s", application.Owner, application.Name)
+}
+
+func CheckRedirectUriValid(application *Application, redirectUri string) bool {
+	var validUri = false
+	for _, tmpUri := range application.RedirectUris {
+		fmt.Println(tmpUri, redirectUri)
+		if strings.Contains(redirectUri, tmpUri) {
+			validUri = true
+			break
+		}
+	}
+	return validUri
 }

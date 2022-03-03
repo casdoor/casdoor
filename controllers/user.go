@@ -44,6 +44,7 @@ func (c *ApiController) GetGlobalUsers() {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGlobalUserCount(field, value)))
 		users := object.GetPaginationGlobalUsers(paginator.Offset(), limit, field, value, sortField, sortOrder)
+		users = object.GetMaskedUsers(users)
 		c.ResponseOk(users, paginator.Nums())
 	}
 }
@@ -70,6 +71,7 @@ func (c *ApiController) GetUsers() {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetUserCount(owner, field, value)))
 		users := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		users = object.GetMaskedUsers(users)
 		c.ResponseOk(users, paginator.Nums())
 	}
 }

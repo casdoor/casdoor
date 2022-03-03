@@ -192,6 +192,25 @@ func DeleteToken(token *Token) bool {
 	return affected != 0
 }
 
+func DeleteTokenByAceessToken(accessToken string) (bool, *Application) {
+	token := Token{AccessToken: accessToken}
+	existed, err := adapter.Engine.Get(&token)
+	if err != nil {
+		panic(err)
+	}
+
+	if !existed {
+		return false, nil
+	}
+	application := getApplication(token.Owner, token.Application)
+	affected, err := adapter.Engine.Where("access_token=?", accessToken).Delete(&Token{})
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0, application
+}
+
 func GetTokenByAccessToken(accessToken string) *Token {
 	//Check if the accessToken is in the database
 	token := Token{AccessToken: accessToken}
