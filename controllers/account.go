@@ -146,7 +146,7 @@ func (c *ApiController) Signup() {
 	if !application.IsSignupItemVisible("Username") {
 		username = id
 	}
-  
+
 	user := &object.User{
 		Owner:             form.Organization,
 		Name:              username,
@@ -201,7 +201,7 @@ func (c *ApiController) Signup() {
 	record.User = user.Name
 	go object.AddRecord(record)
 
-  userId := fmt.Sprintf("%s/%s", user.Owner, user.Name)
+	userId := fmt.Sprintf("%s/%s", user.Owner, user.Name)
 	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
 
 	c.ResponseOk(userId)
