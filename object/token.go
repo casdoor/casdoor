@@ -556,7 +556,9 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		return nil, errors.New("error: invalid client_secret")
 	}
 	nullUser := &User{
-		Name: fmt.Sprintf("app/%s", application.Name),
+		Owner: application.Owner,
+		Id:    application.GetId(),
+		Name:  fmt.Sprintf("app/%s", application.Name),
 	}
 	accessToken, _, err := generateJwtToken(application, nullUser, "", scope, host)
 	if err != nil {
