@@ -54,17 +54,17 @@ func isAddressOpen(address string) bool {
 }
 
 func getProxyHttpClient() *http.Client {
-	httpProxy := beego.AppConfig.String("httpProxy")
-	if httpProxy == "" {
+	sock5Proxy := beego.AppConfig.String("sock5Proxy")
+	if sock5Proxy == "" {
 		return &http.Client{}
 	}
 
-	if !isAddressOpen(httpProxy) {
+	if !isAddressOpen(sock5Proxy) {
 		return &http.Client{}
 	}
 
 	// https://stackoverflow.com/questions/33585587/creating-a-go-socks5-client
-	dialer, err := proxy.SOCKS5("tcp", httpProxy, nil, proxy.Direct)
+	dialer, err := proxy.SOCKS5("tcp", sock5Proxy, nil, proxy.Direct)
 	if err != nil {
 		panic(err)
 	}

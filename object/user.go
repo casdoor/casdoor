@@ -352,6 +352,8 @@ func AddUser(user *User) bool {
 
 	user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
 
+	user.Ranking = GetUserCount(user.Owner, "", "") + 1
+
 	affected, err := adapter.Engine.Insert(user)
 	if err != nil {
 		panic(err)

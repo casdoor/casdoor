@@ -24,8 +24,10 @@ import (
 )
 
 const (
-	ResponseTypeLogin = "login"
-	ResponseTypeCode  = "code"
+	ResponseTypeLogin   = "login"
+	ResponseTypeCode    = "code"
+	ResponseTypeToken   = "token"
+	ResponseTypeIdToken = "id_token"
 )
 
 type RequestForm struct {
@@ -144,9 +146,7 @@ func (c *ApiController) Signup() {
 	if !application.IsSignupItemVisible("Username") {
 		username = id
 	}
-
-	userCount := object.GetUserCount(form.Organization, "", "") + 1
-
+  
 	user := &object.User{
 		Owner:             form.Organization,
 		Name:              username,
@@ -169,7 +169,6 @@ func (c *ApiController) Signup() {
 		IsDeleted:         false,
 		SignupApplication: application.Name,
 		Properties:        map[string]string{},
-		Ranking:           userCount + 1,
 		Karma:             0,
 	}
 
@@ -197,7 +196,12 @@ func (c *ApiController) Signup() {
 	object.DisableVerificationCode(form.Email)
 	object.DisableVerificationCode(checkPhone)
 
-	userId := fmt.Sprintf("%s/%s", user.Owner, user.Name)
+	record := object.NewRecord(c.Ctx)
+	record.Organization = application.Organization
+	record.User = user.Name
+	go object.AddRecord(record)
+
+  userId := fmt.Sprintf("%s/%s", user.Owner, user.Name)
 	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
 
 	c.ResponseOk(userId)

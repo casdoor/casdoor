@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"net/http"
 
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -186,6 +187,7 @@ func (c *ApiController) GetOAuthToken() {
 
 // RefreshToken
 // @Title RefreshToken
+// @Tag Token API
 // @Description refresh OAuth access token
 // @Param   grant_type     query    string  true        "OAuth grant type"
 // @Param	refresh_token	query	string	true		"OAuth refresh token"
@@ -203,5 +205,89 @@ func (c *ApiController) RefreshToken() {
 	host := c.Ctx.Request.Host
 
 	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+	c.ServeJSON()
+}
+
+// TokenLogout
+// @Title TokenLogout
+// @Tag Token API
+// @Description delete token by AccessToken
+// @Param   id_token_hint     query    string  true        "id_token_hint"
+// @Param   post_logout_redirect_uri    query    string  false      "post_logout_redirect_uri"
+// @Param   state     query    string  true        "state"
+// @Success 200 {object} controllers.Response The Response object
+// @router /login/oauth/logout [get]
+func (c *ApiController) TokenLogout() {
+	token := c.Input().Get("id_token_hint")
+	flag, application := object.DeleteTokenByAceessToken(token)
+	redirectUri := c.Input().Get("post_logout_redirect_uri")
+	state := c.Input().Get("state")
+	if application != nil && object.CheckRedirectUriValid(application, redirectUri) {
+		c.Ctx.Redirect(http.StatusFound, redirectUri+"?state="+state)
+		return
+	}
+	c.Data["json"] = wrapActionResponse(flag)
+	c.ServeJSON()
+}
+
+// IntrospectToken
+// @Title IntrospectToken
+// @Description The introspection endpoint is an OAuth 2.0 endpoint that takes a
+//  parameter representing an OAuth 2.0 token and returns a JSON document
+//  representing the meta information surrounding the
+//  token, including whether this token is currently active.
+//  This endpoint only support Basic Authorization.
+// @Param token formData string true "access_token's value or refresh_token's value"
+// @Param token_type_hint formData string true "the token type access_token or refresh_token"
+// @Success 200 {object} object.IntrospectionResponse The Response object
+// @router /login/oauth/introspect [post]
+func (c *ApiController) IntrospectToken() {
+	tokenValue := c.Input().Get("token")
+	clientId, clientSecret, ok := c.Ctx.Request.BasicAuth()
+	if !ok {
+		util.LogWarning(c.Ctx, "Basic Authorization parses failed")
+		c.Data["json"] = Response{Status: "error", Msg: "Unauthorized operation"}
+		c.ServeJSON()
+		return
+	}
+	application := object.GetApplicationByClientId(clientId)
+	if application == nil || application.ClientSecret != clientSecret {
+		util.LogWarning(c.Ctx, "Basic Authorization failed")
+		c.Data["json"] = Response{Status: "error", Msg: "Unauthorized operation"}
+		c.ServeJSON()
+		return
+	}
+	token := object.GetTokenByTokenAndApplication(tokenValue, application.Name)
+	if token == nil {
+		util.LogWarning(c.Ctx, "application: %s can not find token", application.Name)
+		c.Data["json"] = &object.IntrospectionResponse{Active: false}
+		c.ServeJSON()
+		return
+	}
+	jwtToken, err := object.ParseJwtTokenByApplication(tokenValue, application)
+	if err != nil || jwtToken.Valid() != nil {
+		// and token revoked case. but we not implement
+		// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
+		// refs: https://tools.ietf.org/html/rfc7009
+		util.LogWarning(c.Ctx, "token invalid")
+		c.Data["json"] = &object.IntrospectionResponse{Active: false}
+		c.ServeJSON()
+		return
+	}
+
+	c.Data["json"] = &object.IntrospectionResponse{
+		Active:    true,
+		Scope:     jwtToken.Scope,
+		ClientId:  clientId,
+		Username:  token.User,
+		TokenType: token.TokenType,
+		Exp:       jwtToken.ExpiresAt.Unix(),
+		Iat:       jwtToken.IssuedAt.Unix(),
+		Nbf:       jwtToken.NotBefore.Unix(),
+		Sub:       jwtToken.Subject,
+		Aud:       jwtToken.Audience,
+		Iss:       jwtToken.Issuer,
+		Jti:       jwtToken.Id,
+	}
 	c.ServeJSON()
 }

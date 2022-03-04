@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/astaxie/beego/context"
 	"github.com/casdoor/casdoor/authz"
@@ -57,6 +58,8 @@ func getSubject(ctx *context.Context) (string, string) {
 
 func getObject(ctx *context.Context) (string, string) {
 	method := ctx.Request.Method
+	path := ctx.Request.URL.Path
+
 	if method == http.MethodGet {
 		// query == "?id=built-in/admin"
 		id := ctx.Input.Query("id")
@@ -78,6 +81,14 @@ func getObject(ctx *context.Context) (string, string) {
 			//panic(err)
 			return "", ""
 		}
+
+		if path == "/api/delete-resource" {
+			tokens := strings.Split(obj.Name, "/")
+			if len(tokens) >= 2 {
+				obj.Name = tokens[len(tokens)-2]
+			}
+		}
+
 		return obj.Owner, obj.Name
 	}
 }
