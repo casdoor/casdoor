@@ -166,7 +166,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel("general:Logo", i18next.t("general:Logo - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Logo"), i18next.t("general:Logo - Tooltip"))} :
           </Col>
           <Col span={22} style={(Setting.isMobile()) ? {maxWidth:'100%'} :{}}>
             <Row style={{marginTop: '20px'}} >
