@@ -30,6 +30,7 @@ type OidcDiscovery struct {
 	TokenEndpoint                          string   `json:"token_endpoint"`
 	UserinfoEndpoint                       string   `json:"userinfo_endpoint"`
 	JwksUri                                string   `json:"jwks_uri"`
+	IntrospectionEndpoint                  string   `json:"introspection_endpoint"`
 	ResponseTypesSupported                 []string `json:"response_types_supported"`
 	ResponseModesSupported                 []string `json:"response_modes_supported"`
 	GrantTypesSupported                    []string `json:"grant_types_supported"`
@@ -74,6 +75,7 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
 		UserinfoEndpoint:                       fmt.Sprintf("%s/api/userinfo", originBackend),
 		JwksUri:                                fmt.Sprintf("%s/.well-known/jwks", originBackend),
+		IntrospectionEndpoint:                  fmt.Sprintf("%s/api/login/oauth/introspect", originBackend),
 		ResponseTypesSupported:                 []string{"id_token"},
 		ResponseModesSupported:                 []string{"login", "code", "link"},
 		GrantTypesSupported:                    []string{"password", "authorization_code"},
