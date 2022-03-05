@@ -484,6 +484,7 @@ class LoginPage extends React.Component {
           <span style={{float: "right"}}>
             {i18next.t("login:No account?")}&nbsp;
             <a onClick={() => {
+              sessionStorage.setItem("loginURL", window.location.href)
               Setting.goToSignup(this, application);
             }}>
               {i18next.t("login:sign up now")}
