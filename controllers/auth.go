@@ -204,6 +204,11 @@ func (c *ApiController) Login() {
 			resp = &Response{Status: "error", Msg: msg}
 		} else {
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+			if application == nil {
+				c.ResponseError(fmt.Sprintf("The application: %s does not exist", form.Application))
+				return
+			}
+
 			resp = c.HandleLoggedIn(application, user, &form)
 
 			record := object.NewRecord(c.Ctx)
@@ -213,6 +218,11 @@ func (c *ApiController) Login() {
 		}
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+		if application == nil {
+			c.ResponseError(fmt.Sprintf("The application: %s does not exist", form.Application))
+			return
+		}
+
 		organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", application.Organization))
 		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
 		providerItem := application.GetProviderItem(provider.Name)
@@ -383,6 +393,11 @@ func (c *ApiController) Login() {
 		if c.GetSessionUsername() != "" {
 			// user already signed in to Casdoor, so let the user click the avatar button to do the quick sign-in
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+			if application == nil {
+				c.ResponseError(fmt.Sprintf("The application: %s does not exist", form.Application))
+				return
+			}
+
 			user := c.getCurrentUser()
 			resp = c.HandleLoggedIn(application, user, &form)
 		} else {
