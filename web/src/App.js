@@ -51,6 +51,7 @@ import PaymentEditPage from "./PaymentEditPage";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
+import * as Conf from "./Conf";
 
 import * as Auth from "./auth/Auth";
 import SignupPage from "./auth/SignupPage";
@@ -434,20 +435,24 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
-      res.push(
-        <Menu.Item key="/products">
-          <Link to="/products">
-            {i18next.t("general:Products")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
-        <Menu.Item key="/payments">
-          <Link to="/payments">
-            {i18next.t("general:Payments")}
-          </Link>
-        </Menu.Item>
-      );
+
+      if (Conf.EnableExtraPages) {
+        res.push(
+          <Menu.Item key="/products">
+            <Link to="/products">
+              {i18next.t("general:Products")}
+            </Link>
+          </Menu.Item>
+        );
+        res.push(
+          <Menu.Item key="/payments">
+            <Link to="/payments">
+              {i18next.t("general:Payments")}
+            </Link>
+          </Menu.Item>
+        );
+      }
+
       res.push(
         <Menu.Item key="/swagger">
           <a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
