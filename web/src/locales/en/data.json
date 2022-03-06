@@ -252,14 +252,16 @@
     "Website URL - Tooltip": "Website URL - Tooltip"
   },
   "payment": {
-    "Amount": "Amount",
-    "Amount - Tooltip": "Amount - Tooltip",
     "Currency": "Currency",
     "Currency - Tooltip": "Currency - Tooltip",
     "Edit Payment": "Edit Payment",
-    "Good": "Good",
-    "Good - Tooltip": "Good - Tooltip",
-    "New Payment": "New Payment"
+    "New Payment": "New Payment",
+    "Price": "Price",
+    "Price - Tooltip": "Price - Tooltip",
+    "Product": "Product",
+    "Product - Tooltip": "Product - Tooltip",
+    "Type": "Type",
+    "Type - Tooltip": "Type - Tooltip"
   },
   "permission": {
     "Actions": "Actions",
@@ -274,6 +276,7 @@
   },
   "product": {
     "Alipay": "Alipay",
+    "Buy": "Buy",
     "Buy Product": "Buy Product",
     "CNY": "CNY",
     "Currency": "Currency",
@@ -288,6 +291,7 @@
     "Payment providers": "Payment providers",
     "Payment providers - Tooltip": "Payment providers - Tooltip",
     "Paypal": "Paypal",
+    "Placing order...": "Placing order...",
     "Price": "Price",
     "Price - Tooltip": "Price - Tooltip",
     "Quantity": "Quantity",

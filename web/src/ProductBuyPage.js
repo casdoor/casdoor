@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Descriptions} from "antd";
+import {Button, Descriptions, Spin} from "antd";
 import i18next from "i18next";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as ProviderBackend from "./backend/ProviderBackend";
@@ -28,6 +28,7 @@ class ProductBuyPage extends React.Component {
       productName: props.match?.params.productName,
       product: null,
       providers: [],
+      isPlacingOrder: false,
     };
   }
 
@@ -109,16 +110,21 @@ class ProductBuyPage extends React.Component {
   }
 
   buyProduct(product, provider) {
+    this.setState({
+      isPlacingOrder: true,
+    });
+
     ProductBackend.buyProduct(this.state.product.owner, this.state.productName, provider.name)
       .then((res) => {
         if (res.msg === "") {
           const payUrl = res.data;
           Setting.goToLink(payUrl);
-          this.setState({
-            productName: this.state.product.name,
-          });
         } else {
           Setting.showMessage("error", res.msg);
+
+          this.setState({
+            isPlacingOrder: false,
+          });
         }
       })
       .catch(error => {
@@ -182,31 +188,33 @@ class ProductBuyPage extends React.Component {
 
     return (
       <div>
-        <Descriptions title={i18next.t("product:Buy Product")} bordered>
-          <Descriptions.Item label={i18next.t("general:Name")} span={3}>
+        <Spin spinning={this.state.isPlacingOrder} size="large" tip={i18next.t("product:Placing order...")} style={{paddingTop: "10%"}} >
+          <Descriptions title={i18next.t("product:Buy Product")} bordered>
+            <Descriptions.Item label={i18next.t("general:Name")} span={3}>
             <span style={{fontSize: 28}}>
               {product?.displayName}
             </span>
-          </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{product?.detail}</span></Descriptions.Item>
-          <Descriptions.Item label={i18next.t("product:Tag")}><span style={{fontSize: 16}}>{product?.tag}</span></Descriptions.Item>
-          <Descriptions.Item label={i18next.t("product:SKU")}><span style={{fontSize: 16}}>{product?.name}</span></Descriptions.Item>
-          <Descriptions.Item label={i18next.t("product:Image")} span={3}>
-            <img src={product?.image} alt={product?.image} height={90} style={{marginBottom: '20px'}}/>
-          </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("product:Price")}>
+            </Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{product?.detail}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Tag")}><span style={{fontSize: 16}}>{product?.tag}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:SKU")}><span style={{fontSize: 16}}>{product?.name}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Image")} span={3}>
+              <img src={product?.image} alt={product?.image} height={90} style={{marginBottom: '20px'}}/>
+            </Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Price")}>
             <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
               {`${this.getCurrencySymbol(product)}${product?.price} (${this.getCurrencyText(product)})`}
             </span>
-          </Descriptions.Item>
-          <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>
-          <Descriptions.Item label={i18next.t("product:Sold")}><span style={{fontSize: 16}}>{product?.sold}</span></Descriptions.Item>
-          <Descriptions.Item label={i18next.t("product:Pay")} span={3}>
-            {
-              this.renderPay(product)
-            }
-          </Descriptions.Item>
-        </Descriptions>
+            </Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Sold")}><span style={{fontSize: 16}}>{product?.sold}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Pay")} span={3}>
+              {
+                this.renderPay(product)
+              }
+            </Descriptions.Item>
+          </Descriptions>
+        </Spin>
       </div>
     )
   }

@@ -15,7 +15,7 @@
 package pp
 
 type PaymentProvider interface {
-	Pay(productName string, paymentId string, price float64, returnUrl string, notifyUrl string) (string, error)
+	Pay(productName string, productId string, providerId string, paymentId string, price float64, returnUrl string, notifyUrl string) (string, error)
 }
 
 func GetPaymentProvider(typ string, appId string, appPublicKey string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string) PaymentProvider {

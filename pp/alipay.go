@@ -44,7 +44,7 @@ func NewAlipayPaymentProvider(appId string, appPublicKey string, appPrivateKey s
 	return pp
 }
 
-func (pp *AlipayPaymentProvider) Pay(productName string, paymentId string, price float64, returnUrl string, notifyUrl string) (string, error) {
+func (pp *AlipayPaymentProvider) Pay(productName string, productId string, providerId string, paymentId string, price float64, returnUrl string, notifyUrl string) (string, error) {
 	pp.Client.DebugSwitch = gopay.DebugOn
 
 	priceString := strings.TrimRight(strings.TrimRight(fmt.Sprintf("%.2f", price), "0"), ".")
@@ -53,9 +53,11 @@ func (pp *AlipayPaymentProvider) Pay(productName string, paymentId string, price
 	bm.Set("subject", productName)
 	bm.Set("out_trade_no", paymentId)
 	bm.Set("total_amount", priceString)
-
 	bm.Set("return_url", returnUrl)
 	bm.Set("notify_url", notifyUrl)
+
+	bm.Set("productId", productId)
+	bm.Set("providerId", productId)
 
 	payUrl, err := pp.Client.TradePagePay(context.Background(), bm)
 	if err != nil {

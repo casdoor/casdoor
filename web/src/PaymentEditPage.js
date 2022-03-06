@@ -112,7 +112,7 @@ class PaymentEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Type"), i18next.t("provider:Type - Tooltip"))} :
+            {Setting.getLabel(i18next.t("payment:Type"), i18next.t("payment:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.payment.type} onChange={e => {
@@ -122,20 +122,20 @@ class PaymentEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("payment:Good"), i18next.t("payment:Good - Tooltip"))} :
+            {Setting.getLabel(i18next.t("payment:Product"), i18next.t("payment:Product - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.payment.good} onChange={e => {
-              // this.updatePaymentField('good', e.target.value);
+            <Input value={this.state.payment.productName} onChange={e => {
+              // this.updatePaymentField('productName', e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("payment:Amount"), i18next.t("payment:Amount - Tooltip"))} :
+            {Setting.getLabel(i18next.t("payment:Price"), i18next.t("payment:Price - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.payment.amount} onChange={e => {
+            <Input value={this.state.payment.price} onChange={e => {
               // this.updatePaymentField('amount', e.target.value);
             }} />
           </Col>

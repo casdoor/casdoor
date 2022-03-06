@@ -18,6 +18,8 @@ import (
 	"fmt"
 
 	"github.com/casdoor/casdoor/util"
+	"github.com/go-pay/gopay"
+	"github.com/go-pay/gopay/alipay"
 	"xorm.io/core"
 )
 
@@ -27,13 +29,14 @@ type Payment struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
-	Provider     string `xorm:"varchar(100)" json:"provider"`
-	Type         string `xorm:"varchar(100)" json:"type"`
-	Organization string `xorm:"varchar(100)" json:"organization"`
-	User         string `xorm:"varchar(100)" json:"user"`
-	Good         string `xorm:"varchar(100)" json:"good"`
-	Amount       string `xorm:"varchar(100)" json:"amount"`
-	Currency     string `xorm:"varchar(100)" json:"currency"`
+	Provider     string  `xorm:"varchar(100)" json:"provider"`
+	Type         string  `xorm:"varchar(100)" json:"type"`
+	Organization string  `xorm:"varchar(100)" json:"organization"`
+	User         string  `xorm:"varchar(100)" json:"user"`
+	ProductId    string  `xorm:"varchar(100)" json:"productId"`
+	ProductName  string  `xorm:"varchar(100)" json:"productName"`
+	Price        float64 `json:"price"`
+	Currency     string  `xorm:"varchar(100)" json:"currency"`
 
 	State string `xorm:"varchar(100)" json:"state"`
 }
@@ -124,16 +127,58 @@ func DeletePayment(payment *Payment) bool {
 	return affected != 0
 }
 
-func NotifyPayment(id string, state string) bool {
-	owner, name := util.GetOwnerAndNameFromId(id)
-	payment := getPayment(owner, name)
-	if payment == nil {
-		return false
+func NotifyPayment(bm gopay.BodyMap) bool {
+	owner := "admin"
+	productName := bm.Get("subject")
+	paymentId := bm.Get("out_trade_no")
+	priceString := bm.Get("total_amount")
+	price := util.ParseFloat(priceString)
+	productId := bm.Get("productId")
+	providerId := bm.Get("providerId")
+
+	product := getProduct(owner, productId)
+	if product == nil {
+		panic(fmt.Errorf("the product: %s does not exist", productId))
 	}
 
-	payment.State = state
+	if productName != product.DisplayName {
+		panic(fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", productName, product.DisplayName))
+	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(payment)
+	if price != product.Price {
+		panic(fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", price, product.Price))
+	}
+
+	payment := getPayment(owner, paymentId)
+	if payment == nil {
+		panic(fmt.Errorf("the payment: %s does not exist", paymentId))
+	}
+
+	provider, err := product.getProvider(providerId)
+	if err != nil {
+		panic(err)
+	}
+
+	cert := getCert(owner, provider.Cert)
+	if cert == nil {
+		panic(fmt.Errorf("the cert: %s does not exist", provider.Cert))
+	}
+
+	ok, err := alipay.VerifySignWithCert(cert.AuthorityPublicKey, bm)
+	if err != nil {
+		panic(err)
+	}
+
+	if ok {
+		payment.State = "Paid"
+	} else {
+		if cert == nil {
+			panic(fmt.Errorf("VerifySignWithCert() failed: %v", ok))
+		}
+		//payment.State = "Failed"
+	}
+
+	affected, err := adapter.Engine.ID(core.PK{owner, paymentId}).AllCols().Update(payment)
 	if err != nil {
 		panic(err)
 	}

@@ -32,7 +32,7 @@ func TestProvider(t *testing.T) {
 	paymentId := util.GenerateTimeId()
 	returnUrl := ""
 	notifyUrl := ""
-	payUrl, err := pProvider.Pay(product.DisplayName, paymentId, product.Price, returnUrl, notifyUrl)
+	payUrl, err := pProvider.Pay(product.DisplayName, product.Name, provider.Name, paymentId, product.Price, returnUrl, notifyUrl)
 	if err != nil {
 		panic(err)
 	}

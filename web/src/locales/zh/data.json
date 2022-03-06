@@ -252,14 +252,16 @@
     "Website URL - Tooltip": "网页地址"
   },
   "payment": {
-    "Amount": "金额",
-    "Amount - Tooltip": "付款的金额",
     "Currency": "币种",
     "Currency - Tooltip": "如USD（美元），CNY（人民币）等",
     "Edit Payment": "编辑付款",
-    "Good": "商品",
-    "Good - Tooltip": "购买的商品名称",
-    "New Payment": "添加付款"
+    "New Payment": "添加付款",
+    "Price": "价格",
+    "Price - Tooltip": "商品价格",
+    "Product": "商品",
+    "Product - Tooltip": "商品名称",
+    "Type": "支付方式",
+    "Type - Tooltip": "商品购买时的支付方式"
   },
   "permission": {
     "Actions": "动作",
@@ -274,6 +276,7 @@
   },
   "product": {
     "Alipay": "支付宝",
+    "Buy": "购买",
     "Buy Product": "购买商品",
     "CNY": "人民币",
     "Currency": "币种",
@@ -288,6 +291,7 @@
     "Payment providers": "支付提供商",
     "Payment providers - Tooltip": "支付提供商 - 工具提示",
     "Paypal": "Paypal",
+    "Placing order...": "正在下单...",
     "Price": "价格",
     "Price - Tooltip": "价格 - 工具提示",
     "Quantity": "库存",

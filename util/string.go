@@ -42,6 +42,15 @@ func ParseInt(s string) int {
 	return i
 }
 
+func ParseFloat(s string) float64 {
+	f, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	return f
+}
+
 func ParseBool(s string) bool {
 	i := ParseInt(s)
 	return i != 0

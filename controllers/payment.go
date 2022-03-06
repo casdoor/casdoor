@@ -16,10 +16,12 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
+	"github.com/go-pay/gopay/alipay"
 )
 
 // GetPayments
@@ -122,12 +124,18 @@ func (c *ApiController) DeletePayment() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /notify-payment [post]
 func (c *ApiController) NotifyPayment() {
-	var payment object.Payment
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
+	bm, err := alipay.ParseNotifyToBodyMap(c.Ctx.Request)
 	if err != nil {
 		panic(err)
 	}
 
-	c.Data["json"] = wrapActionResponse(object.NotifyPayment("111", "222"))
-	c.ServeJSON()
+	ok := object.NotifyPayment(bm)
+	if ok {
+		_, err = c.Ctx.ResponseWriter.Write([]byte("success"))
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		panic(fmt.Errorf("NotifyPayment() failed: %v", ok))
+	}
 }

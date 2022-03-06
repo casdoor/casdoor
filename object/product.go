@@ -139,19 +139,28 @@ func (product *Product) isValidProvider(provider *Provider) bool {
 	return false
 }
 
+func (product *Product) getProvider(providerId string) (*Provider, error) {
+	provider := getProvider(product.Owner, providerId)
+	if provider == nil {
+		return nil, fmt.Errorf("the payment provider: %s does not exist", providerId)
+	}
+
+	if !product.isValidProvider(provider) {
+		return nil, fmt.Errorf("the payment provider: %s is not valid for the product: %s", providerId, product.Name)
+	}
+
+	return provider, nil
+}
+
 func BuyProduct(id string, providerId string, host string) (string, error) {
 	product := GetProduct(id)
 	if product == nil {
 		return "", fmt.Errorf("the product: %s does not exist", id)
 	}
 
-	provider := getProvider(product.Owner, providerId)
-	if provider == nil {
-		return "", fmt.Errorf("the payment provider: %s does not exist", providerId)
-	}
-
-	if !product.isValidProvider(provider) {
-		return "", fmt.Errorf("the payment provider: %s is not valid for the product: %s", providerId, id)
+	provider, err := product.getProvider(providerId)
+	if err != nil {
+		return "", err
 	}
 
 	cert := getCert(product.Owner, provider.Cert)
@@ -170,6 +179,6 @@ func BuyProduct(id string, providerId string, host string) (string, error) {
 	returnUrl := fmt.Sprintf("%s/payments/%s", originFrontend, paymentId)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment", originBackend)
 
-	payUrl, err := pProvider.Pay(product.DisplayName, paymentId, product.Price, returnUrl, notifyUrl)
+	payUrl, err := pProvider.Pay(product.DisplayName, product.Name, provider.Name, paymentId, product.Price, returnUrl, notifyUrl)
 	return payUrl, err
 }
