@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 
+	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -31,7 +32,7 @@ type Product struct {
 	Detail    string   `xorm:"varchar(100)" json:"detail"`
 	Tag       string   `xorm:"varchar(100)" json:"tag"`
 	Currency  string   `xorm:"varchar(100)" json:"currency"`
-	Price     int      `json:"price"`
+	Price     float64  `json:"price"`
 	Quantity  int      `json:"quantity"`
 	Sold      int      `json:"sold"`
 	Providers []string `xorm:"varchar(100)" json:"providers"`
@@ -127,4 +128,48 @@ func DeleteProduct(product *Product) bool {
 
 func (product *Product) GetId() string {
 	return fmt.Sprintf("%s/%s", product.Owner, product.Name)
+}
+
+func (product *Product) isValidProvider(provider *Provider) bool {
+	for _, providerName := range product.Providers {
+		if providerName == provider.Name {
+			return true
+		}
+	}
+	return false
+}
+
+func BuyProduct(id string, providerId string, host string) (string, error) {
+	product := GetProduct(id)
+	if product == nil {
+		return "", fmt.Errorf("the product: %s does not exist", id)
+	}
+
+	provider := getProvider(product.Owner, providerId)
+	if provider == nil {
+		return "", fmt.Errorf("the payment provider: %s does not exist", providerId)
+	}
+
+	if !product.isValidProvider(provider) {
+		return "", fmt.Errorf("the payment provider: %s is not valid for the product: %s", providerId, id)
+	}
+
+	cert := getCert(product.Owner, provider.Cert)
+	if cert == nil {
+		return "", fmt.Errorf("the cert: %s does not exist", provider.Cert)
+	}
+
+	pProvider := pp.GetPaymentProvider(provider.Type, provider.ClientId, cert.PublicKey, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey)
+	if pProvider == nil {
+		return "", fmt.Errorf("the payment provider type: %s is not supported", provider.Type)
+	}
+
+	paymentId := util.GenerateTimeId()
+
+	originFrontend, originBackend := getOriginFromHost(host)
+	returnUrl := fmt.Sprintf("%s/payments/%s", originFrontend, paymentId)
+	notifyUrl := fmt.Sprintf("%s/api/notify-payment", originBackend)
+
+	payUrl, err := pProvider.Pay(product.DisplayName, paymentId, product.Price, returnUrl, notifyUrl)
+	return payUrl, err
 }

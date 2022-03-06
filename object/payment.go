@@ -124,6 +124,23 @@ func DeletePayment(payment *Payment) bool {
 	return affected != 0
 }
 
+func NotifyPayment(id string, state string) bool {
+	owner, name := util.GetOwnerAndNameFromId(id)
+	payment := getPayment(owner, name)
+	if payment == nil {
+		return false
+	}
+
+	payment.State = state
+
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(payment)
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
+}
+
 func (payment *Payment) GetId() string {
 	return fmt.Sprintf("%s/%s", payment.Owner, payment.Name)
 }

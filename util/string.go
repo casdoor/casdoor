@@ -23,6 +23,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/google/uuid"
@@ -86,6 +87,17 @@ func GetOwnerAndNameFromIdNoCheck(id string) (string, string) {
 
 func GenerateId() string {
 	return uuid.NewString()
+}
+
+func GenerateTimeId() string {
+	timestamp := time.Now().Unix()
+	tm := time.Unix(timestamp, 0)
+	t := tm.Format("20060102_150405")
+
+	random := uuid.NewString()[0:7]
+
+	res := fmt.Sprintf("%s_%s", t, random)
+	return res
 }
 
 func GetId(name string) string {

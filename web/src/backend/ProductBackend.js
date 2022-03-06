@@ -54,3 +54,10 @@ export function deleteProduct(product) {
     body: JSON.stringify(newProduct),
   }).then(res => res.json());
 }
+
+export function buyProduct(owner, name, providerId) {
+  return fetch(`${Setting.ServerUrl}/api/buy-product?id=${owner}/${encodeURIComponent(name)}&providerId=${providerId}`, {
+    method: 'POST',
+    credentials: 'include',
+  }).then(res => res.json());
+}

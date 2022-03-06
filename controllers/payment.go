@@ -114,3 +114,20 @@ func (c *ApiController) DeletePayment() {
 	c.Data["json"] = wrapActionResponse(object.DeletePayment(&payment))
 	c.ServeJSON()
 }
+
+// @Title NotifyPayment
+// @Tag Payment API
+// @Description notify payment
+// @Param   body    body   object.Payment  true        "The details of the payment"
+// @Success 200 {object} controllers.Response The Response object
+// @router /notify-payment [post]
+func (c *ApiController) NotifyPayment() {
+	var payment object.Payment
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Data["json"] = wrapActionResponse(object.NotifyPayment("111", "222"))
+	c.ServeJSON()
+}

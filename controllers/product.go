@@ -114,3 +114,24 @@ func (c *ApiController) DeleteProduct() {
 	c.Data["json"] = wrapActionResponse(object.DeleteProduct(&product))
 	c.ServeJSON()
 }
+
+// @Title BuyProduct
+// @Tag Product API
+// @Description buy product
+// @Param   id    query    string  true          "The id of the product"
+// @Param   providerId    query    string  true  "The id of the provider"
+// @Success 200 {object} controllers.Response The Response object
+// @router /buy-product [post]
+func (c *ApiController) BuyProduct() {
+	id := c.Input().Get("id")
+	providerId := c.Input().Get("providerId")
+	host := c.Ctx.Request.Host
+
+	payUrl, err := object.BuyProduct(id, providerId, host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(payUrl)
+}

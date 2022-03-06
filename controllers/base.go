@@ -132,3 +132,11 @@ func wrapActionResponse(affected bool) *Response {
 		return &Response{Status: "ok", Msg: "", Data: "Unaffected"}
 	}
 }
+
+func wrapErrorResponse(err error) *Response {
+	if err == nil {
+		return &Response{Status: "ok", Msg: ""}
+	} else {
+		return &Response{Status: "error", Msg: err.Error()}
+	}
+}

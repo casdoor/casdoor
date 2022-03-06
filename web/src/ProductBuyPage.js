@@ -18,6 +18,7 @@ import i18next from "i18next";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Provider from "./auth/Provider";
+import * as Setting from "./Setting";
 
 class ProductBuyPage extends React.Component {
   constructor(props) {
@@ -107,6 +108,24 @@ class ProductBuyPage extends React.Component {
     // }
   }
 
+  buyProduct(product, provider) {
+    ProductBackend.buyProduct(this.state.product.owner, this.state.productName, provider.name)
+      .then((res) => {
+        if (res.msg === "") {
+          const payUrl = res.data;
+          Setting.goToLink(payUrl);
+          this.setState({
+            productName: this.state.product.name,
+          });
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+      });
+  }
+
   getPayButton(provider) {
     let text = provider.type;
     if (provider.type === "Alipay") {
@@ -131,11 +150,11 @@ class ProductBuyPage extends React.Component {
   renderProviderButton(provider, product) {
     return (
       <span key={provider.name} style={{width: "200px", marginRight: "20px", marginBottom: "10px"}}>
-        <a style={{width: "200px"}} href={this.getPayUrl(product, provider)}>
+        <span style={{width: "200px", cursor: "pointer"}} onClick={() => this.buyProduct(product, provider)}>
           {
             this.getPayButton(provider)
           }
-        </a>
+        </span>
       </span>
     )
   }
