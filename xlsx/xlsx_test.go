@@ -11,13 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// +build !skipCi
+
+//go:build !skipCi
 
 package xlsx
 
-import "testing"
-
-func TestReadSheet(t *testing.T) {
-	ticket := ReadXlsxFile("../../tmpFiles/example")
-	println(ticket)
-}
+//import "testing"
+//
+//func TestReadSheet(t *testing.T) {
+//	ticket := ReadXlsxFile("../../tmpFiles/example")
+//	println(ticket)
+//}
