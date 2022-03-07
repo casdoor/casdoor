@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -85,7 +86,7 @@ func (c *ApiController) GetUserApplication() {
 	id := c.Input().Get("id")
 	user := object.GetUser(id)
 	if user == nil {
-		c.ResponseError("No such user.")
+		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", id))
 		return
 	}
 

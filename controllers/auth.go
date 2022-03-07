@@ -192,7 +192,7 @@ func (c *ApiController) Login() {
 
 			user = object.GetUserByFields(form.Organization, form.Username)
 			if user == nil {
-				c.ResponseError("No such user.")
+				c.ResponseError(fmt.Sprintf("The user: %s/%s doesn't exist", form.Organization, form.Username))
 				return
 			}
 		} else {

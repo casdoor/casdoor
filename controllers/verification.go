@@ -68,13 +68,12 @@ func (c *ApiController) SendVerificationCode() {
 	organization := object.GetOrganization(orgId)
 	application := object.GetApplicationByOrganizationName(organization.Name)
 
-	if checkUser == "true" && user == nil &&
-		object.GetUserByFields(organization.Name, dest) == nil {
-		c.ResponseError("No such user.")
+	if checkUser == "true" && user == nil && object.GetUserByFields(organization.Name, dest) == nil {
+		c.ResponseError("Please login first")
 		return
 	}
 
-	sendResp := errors.New("Invalid dest type.")
+	sendResp := errors.New("Invalid dest type")
 	switch destType {
 	case "email":
 		if !util.IsEmailValid(dest) {
@@ -121,7 +120,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 
 	user := object.GetUser(userId)
 	if user == nil {
-		c.ResponseError("No such user.")
+		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
 		return
 	}
 
