@@ -379,7 +379,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			Scope:       "",
 		}
 	}
-	if application.ClientSecret != clientSecret {
+	if clientSecret != "" && application.ClientSecret != clientSecret {
 		return &TokenWrapper{
 			AccessToken: "error: invalid client_secret",
 			TokenType:   "",

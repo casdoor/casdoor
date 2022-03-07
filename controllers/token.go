@@ -193,7 +193,7 @@ func (c *ApiController) GetOAuthToken() {
 // @Param	refresh_token	query	string	true		"OAuth refresh token"
 // @Param   scope     query    string  true        "OAuth scope"
 // @Param   client_id     query    string  true        "OAuth client id"
-// @Param   client_secret     query    string  true        "OAuth client secret"
+// @Param   client_secret     query    string  false        "OAuth client secret"
 // @Success 200 {object} object.TokenWrapper The Response object
 // @router /login/oauth/refresh_token [post]
 func (c *ApiController) RefreshToken() {
