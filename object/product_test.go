@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !skipCi
+
 package object
 
 import (
@@ -21,7 +23,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func TestProvider(t *testing.T) {
+func TestProduct(t *testing.T) {
 	InitConfig()
 
 	product := GetProduct("admin/product_123")

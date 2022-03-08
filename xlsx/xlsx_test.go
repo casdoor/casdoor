@@ -16,9 +16,9 @@
 
 package xlsx
 
-//import "testing"
-//
-//func TestReadSheet(t *testing.T) {
-//	ticket := ReadXlsxFile("../../tmpFiles/example")
-//	println(ticket)
-//}
+import "testing"
+
+func TestReadSheet(t *testing.T) {
+	ticket := ReadXlsxFile("../../tmpFiles/example")
+	println(ticket)
+}
