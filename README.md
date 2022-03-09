@@ -82,6 +82,8 @@ Edit `conf/app.conf`, modify `dataSourceName` to correct database info, which fo
 username:password@tcp(database_ip:database_port)/
 ```
 
+Then create an empty schema (database) named `casdoor` in your relational database. After the program runs for the first time, it will automatically create tables in this schema.
+
 #### Run
 
 Casdoor provides two run modes, the difference is binary size and user prompt.
