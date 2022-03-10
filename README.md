@@ -82,7 +82,7 @@ Edit `conf/app.conf`, modify `dataSourceName` to correct database info, which fo
 username:password@tcp(database_ip:database_port)/
 ```
 
-Edit `main.go`, modify `false` to `true`. If you are connecting to the database for the first time, it will automatically create the schema in this database.
+Edit `main.go`, modify `false` to `true`. If you are connecting to the database for the first time, it will automatically create the schema (database) named `casdoor` in this database.
 
 ```bash
 createDatabase := flag.Bool("createDatabase", false, "true if you need casdoor to create database")
