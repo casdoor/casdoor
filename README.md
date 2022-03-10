@@ -84,6 +84,12 @@ username:password@tcp(database_ip:database_port)/
 
 Then create an empty schema (database) named `casdoor` in your relational database. After the program runs for the first time, it will automatically create tables in this schema.
 
+You can also edit `main.go`, modify `false` to `true`. It will automatically create the schema (database) named `casdoor` in this database.
+
+```bash
+createDatabase := flag.Bool("createDatabase", false, "true if you need casdoor to create database")
+```
+
 #### Run
 
 Casdoor provides two run modes, the difference is binary size and user prompt.
