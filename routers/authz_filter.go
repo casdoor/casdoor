@@ -84,8 +84,8 @@ func getObject(ctx *context.Context) (string, string) {
 
 		if path == "/api/delete-resource" {
 			tokens := strings.Split(obj.Name, "/")
-			if len(tokens) >= 2 {
-				obj.Name = tokens[len(tokens)-2]
+			if len(tokens) >= 5 {
+				obj.Name = tokens[4]
 			}
 		}
 
