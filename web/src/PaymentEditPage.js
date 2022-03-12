@@ -150,6 +150,16 @@ class PaymentEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("payment:State"), i18next.t("payment:State - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.payment.state} onChange={e => {
+              // this.updatePaymentField('state', e.target.value);
+            }} />
+          </Col>
+        </Row>
       </Card>
     )
   }

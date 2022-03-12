@@ -38,7 +38,8 @@ type Payment struct {
 	Price        float64 `json:"price"`
 	Currency     string  `xorm:"varchar(100)" json:"currency"`
 
-	State string `xorm:"varchar(100)" json:"state"`
+	PayUrl string `xorm:"varchar(2000)" json:"payUrl"`
+	State  string `xorm:"varchar(100)" json:"state"`
 }
 
 func GetPaymentCount(owner, field, value string) int {

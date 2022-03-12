@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -127,7 +128,19 @@ func (c *ApiController) BuyProduct() {
 	providerId := c.Input().Get("providerId")
 	host := c.Ctx.Request.Host
 
-	payUrl, err := object.BuyProduct(id, providerId, host)
+	userId := c.GetSessionUsername()
+	if userId == "" {
+		c.ResponseError("Please login first")
+		return
+	}
+
+	user := object.GetUser(userId)
+	if user == nil {
+		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
+		return
+	}
+
+	payUrl, err := object.BuyProduct(id, providerId, user, host)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

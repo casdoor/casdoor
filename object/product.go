@@ -152,7 +152,7 @@ func (product *Product) getProvider(providerId string) (*Provider, error) {
 	return provider, nil
 }
 
-func BuyProduct(id string, providerId string, host string) (string, error) {
+func BuyProduct(id string, providerId string, user *User, host string) (string, error) {
 	product := GetProduct(id)
 	if product == nil {
 		return "", fmt.Errorf("the product: %s does not exist", id)
@@ -174,11 +174,38 @@ func BuyProduct(id string, providerId string, host string) (string, error) {
 	}
 
 	paymentId := util.GenerateTimeId()
+	productName := product.DisplayName
+	productId := product.Name
 
 	originFrontend, originBackend := getOriginFromHost(host)
 	returnUrl := fmt.Sprintf("%s/payments/%s", originFrontend, paymentId)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment", originBackend)
 
-	payUrl, err := pProvider.Pay(product.DisplayName, product.Name, provider.Name, paymentId, product.Price, returnUrl, notifyUrl)
+	payUrl, err := pProvider.Pay(productName, productId, providerId, paymentId, product.Price, returnUrl, notifyUrl)
+	if err != nil {
+		return "", err
+	}
+
+	payment := Payment{
+		Owner:        product.Owner,
+		Name:         paymentId,
+		CreatedTime:  util.GetCurrentTime(),
+		DisplayName:  paymentId,
+		Provider:     provider.Name,
+		Type:         provider.Type,
+		Organization: user.Owner,
+		User:         user.Name,
+		ProductId:    productId,
+		ProductName:  productName,
+		Price:        product.Price,
+		Currency:     product.Currency,
+		PayUrl:       payUrl,
+		State:        "Created",
+	}
+	affected := AddPayment(&payment)
+	if !affected {
+		return "", fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
+	}
+
 	return payUrl, err
 }

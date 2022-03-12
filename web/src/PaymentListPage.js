@@ -73,11 +73,11 @@ class PaymentListPage extends BaseListPage {
     const columns = [
       {
         title: i18next.t("general:Organization"),
-        dataIndex: 'owner',
-        key: 'owner',
+        dataIndex: 'organization',
+        key: 'organization',
         width: '120px',
         sorter: true,
-        ...this.getColumnSearchProps('owner'),
+        ...this.getColumnSearchProps('organization'),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -105,7 +105,7 @@ class PaymentListPage extends BaseListPage {
         title: i18next.t("general:Name"),
         dataIndex: 'name',
         key: 'name',
-        width: '150px',
+        width: '180px',
         fixed: 'left',
         sorter: true,
         ...this.getColumnSearchProps('name'),
@@ -155,7 +155,7 @@ class PaymentListPage extends BaseListPage {
         title: i18next.t("payment:Type"),
         dataIndex: 'type',
         key: 'type',
-        width: '110px',
+        width: '140px',
         align: 'center',
         filterMultiple: false,
         filters: Setting.getProviderTypeOptions('Payment').map((o) => {return {text:o.id, value:o.name}}),
@@ -169,7 +169,7 @@ class PaymentListPage extends BaseListPage {
         title: i18next.t("payment:Product"),
         dataIndex: 'productName',
         key: 'productName',
-        width: '160px',
+        // width: '160px',
         sorter: true,
         ...this.getColumnSearchProps('productName'),
       },
@@ -188,6 +188,14 @@ class PaymentListPage extends BaseListPage {
         width: '120px',
         sorter: true,
         ...this.getColumnSearchProps('currency'),
+      },
+      {
+        title: i18next.t("payment:State"),
+        dataIndex: 'state',
+        key: 'state',
+        width: '120px',
+        sorter: true,
+        ...this.getColumnSearchProps('state'),
       },
       {
         title: i18next.t("general:Action"),
