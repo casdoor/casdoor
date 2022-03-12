@@ -113,6 +113,7 @@
     "Edit": "Editer",
     "Email": "Courriel",
     "Email - Tooltip": "email",
+    "Favicon": "Favicon",
     "Favicon - Tooltip": "Application icon",
     "First name": "First name",
     "Forget URL": "Oublier l'URL",
@@ -260,6 +261,8 @@
     "Price - Tooltip": "Price - Tooltip",
     "Product": "Product",
     "Product - Tooltip": "Product - Tooltip",
+    "State": "State",
+    "State - Tooltip": "State - Tooltip",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip"
   },

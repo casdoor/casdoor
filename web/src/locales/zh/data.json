@@ -113,7 +113,8 @@
     "Edit": "编辑",
     "Email": "电子邮箱",
     "Email - Tooltip": "电子邮件：",
-    "Favicon - Tooltip": "网站的图标",
+    "Favicon": "网站图标",
+    "Favicon - Tooltip": "网站的Favicon图标",
     "First name": "名字",
     "Forget URL": "忘记密码URL",
     "Forget URL - Tooltip": "忘记密码URL",
@@ -260,6 +261,8 @@
     "Price - Tooltip": "商品价格",
     "Product": "商品",
     "Product - Tooltip": "商品名称",
+    "State": "状态",
+    "State - Tooltip": "交易状态",
     "Type": "支付方式",
     "Type - Tooltip": "商品购买时的支付方式"
   },
