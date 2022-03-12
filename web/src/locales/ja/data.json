@@ -249,6 +249,8 @@
     "New Organization": "New Organization",
     "Soft deletion": "ソフト削除",
     "Soft deletion - Tooltip": "ソフト削除 - ツールチップ",
+    "Tags": "Tags",
+    "Tags - Tooltip": "Tags - Tooltip",
     "Website URL": "Website URL",
     "Website URL - Tooltip": "Unique string-style identifier"
   },

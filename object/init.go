@@ -47,9 +47,10 @@ func initBuiltInOrganization() {
 		DisplayName:   "Built-in Organization",
 		WebsiteUrl:    "https://example.com",
 		Favicon:       "https://cdn.casbin.com/static/favicon.ico",
+		PasswordType:  "plain",
 		PhonePrefix:   "86",
 		DefaultAvatar: "https://casbin.org/img/casbin.svg",
-		PasswordType:  "plain",
+		Tags:          []string{},
 	}
 	AddOrganization(organization)
 }

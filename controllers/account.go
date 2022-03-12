@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -170,6 +171,13 @@ func (c *ApiController) Signup() {
 		SignupApplication: application.Name,
 		Properties:        map[string]string{},
 		Karma:             0,
+	}
+
+	if len(organization.Tags) > 0 {
+		tokens := strings.Split(organization.Tags[0], "|")
+		if len(tokens) > 0 {
+			user.Tag = tokens[0]
+		}
 	}
 
 	if application.GetSignupItemRule("Display name") == "First, last" {

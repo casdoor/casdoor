@@ -249,6 +249,8 @@
     "New Organization": "添加组织",
     "Soft deletion": "软删除",
     "Soft deletion - Tooltip": "启用后，删除用户信息时不会在数据库彻底清除，只会标记为已删除状态",
+    "Tags": "标签集合",
+    "Tags - Tooltip": "可供用户选择的标签的集合",
     "Website URL": "网页地址",
     "Website URL - Tooltip": "网页地址"
   },

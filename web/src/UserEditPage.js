@@ -301,9 +301,24 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:Tag"), i18next.t("user:Tag - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.tag} onChange={e => {
-              this.updateUserField('tag', e.target.value);
-            }} />
+            {
+              this.state.application?.organizationObj.tags?.length > 0 ? (
+                <Select virtual={false} style={{width: '100%'}} value={this.state.user.tag} onChange={(value => {this.updateUserField('tag', value);})}>
+                  {
+                    this.state.application.organizationObj.tags?.map((tag, index) => {
+                      const tokens = tag.split("|");
+                      const value = tokens[0];
+                      const displayValue = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1];
+                      return <Option key={index} value={value}>{displayValue}</Option>
+                    })
+                  }
+                </Select>
+              ) : (
+                <Input value={this.state.user.tag} onChange={e => {
+                  this.updateUserField('tag', e.target.value);
+                }} />
+              )
+            }
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

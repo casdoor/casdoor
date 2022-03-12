@@ -249,6 +249,8 @@
     "New Organization": "New Organization",
     "Soft deletion": "Мягкое удаление",
     "Soft deletion - Tooltip": "Мягкое удаление - Подсказка",
+    "Tags": "Tags",
+    "Tags - Tooltip": "Tags - Tooltip",
     "Website URL": "URL сайта",
     "Website URL - Tooltip": "Unique string-style identifier"
   },
