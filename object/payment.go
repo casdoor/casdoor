@@ -29,14 +29,17 @@ type Payment struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
-	Provider     string  `xorm:"varchar(100)" json:"provider"`
-	Type         string  `xorm:"varchar(100)" json:"type"`
-	Organization string  `xorm:"varchar(100)" json:"organization"`
-	User         string  `xorm:"varchar(100)" json:"user"`
-	ProductId    string  `xorm:"varchar(100)" json:"productId"`
-	ProductName  string  `xorm:"varchar(100)" json:"productName"`
-	Price        float64 `json:"price"`
-	Currency     string  `xorm:"varchar(100)" json:"currency"`
+	Provider     string `xorm:"varchar(100)" json:"provider"`
+	Type         string `xorm:"varchar(100)" json:"type"`
+	Organization string `xorm:"varchar(100)" json:"organization"`
+	User         string `xorm:"varchar(100)" json:"user"`
+	ProductId    string `xorm:"varchar(100)" json:"productId"`
+	ProductName  string `xorm:"varchar(100)" json:"productName"`
+
+	Detail   string  `xorm:"varchar(100)" json:"detail"`
+	Tag      string  `xorm:"varchar(100)" json:"tag"`
+	Currency string  `xorm:"varchar(100)" json:"currency"`
+	Price    float64 `json:"price"`
 
 	PayUrl string `xorm:"varchar(2000)" json:"payUrl"`
 	State  string `xorm:"varchar(100)" json:"state"`
@@ -55,6 +58,16 @@ func GetPaymentCount(owner, field, value string) int {
 func GetPayments(owner string) []*Payment {
 	payments := []*Payment{}
 	err := adapter.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return payments
+}
+
+func GetUserPayments(owner string, organization string, user string) []*Payment {
+	payments := []*Payment{}
+	err := adapter.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner, Organization: organization, User: user})
 	if err != nil {
 		panic(err)
 	}

@@ -50,6 +50,24 @@ func (c *ApiController) GetPayments() {
 	}
 }
 
+// GetUserPayments
+// @Title GetUserPayments
+// @Tag Payment API
+// @Description get payments for a user
+// @Param   owner     query    string  true        "The owner of payments"
+// @Param   organization    query   string  true   "The organization of the user"
+// @Param   user    query   string  true           "The username of the user"
+// @Success 200 {array} object.Payment The Response object
+// @router /get-user-payments [get]
+func (c *ApiController) GetUserPayments() {
+	owner := c.Input().Get("owner")
+	organization := c.Input().Get("organization")
+	user := c.Input().Get("user")
+
+	payments := object.GetUserPayments(owner, organization, user)
+	c.ResponseOk(payments)
+}
+
 // @Title GetPayment
 // @Tag Payment API
 // @Description get payment
