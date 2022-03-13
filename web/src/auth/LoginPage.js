@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Checkbox, Col, Form, Input, Result, Row, Spin} from "antd";
+import {Button, Checkbox, Col, Form, Input, message, Result, Row, Spin} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
@@ -41,6 +41,7 @@ import AzureADLoginButton from "./AzureADLoginButton";
 import SlackLoginButton from "./SlackLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
+import {NextTwoFactor, VerityTOTP} from "./TwoFactor";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -54,7 +55,8 @@ class LoginPage extends React.Component {
       isCodeSignin: false,
       msg: null,
       username: null,
-      validEmailOrPhone: false
+      validEmailOrPhone: false,
+      getVerityTotp: null
     };
   }
 
@@ -118,45 +120,59 @@ class LoginPage extends React.Component {
     values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix;
     const oAuthParams = Util.getOAuthGetParameters();
 
-    AuthBackend.login(values, oAuthParams)
-      .then((res) => {
-        if (res.status === 'ok') {
-          const responseType = this.state.type;
-          if (responseType === "login") {
-            Util.showMessage("success", `Logged in successfully`);
-            Setting.goToLink("/");
-          } else if (responseType === "code") {
-            const code = res.data;
+    AuthBackend.login(values, oAuthParams).then((res) => {
+      const callback = () => {
+        const responseType = this.state.type;
+        if (responseType === "login") {
+          Util.showMessage("success", `Logged in successfully`);
+          Setting.goToLink("/");
+        } else if (responseType === "code") {
+          const code = res.data;
 
-            if (Setting.hasPromptPage(application)) {
-              AuthBackend.getAccount("")
-                .then((res) => {
-                  let account = null;
-                  if (res.status === "ok") {
-                    account = res.data;
-                    account.organization = res.data2;
+          if (Setting.hasPromptPage(application)) {
+            AuthBackend.getAccount("").then((res) => {
+              let account = null;
+              if (res.status === "ok") {
+                account = res.data;
+                account.organization = res.data2;
 
-                    this.onUpdateAccount(account);
+                this.onUpdateAccount(account);
 
-                    if (Setting.isPromptAnswered(account, application)) {
-                      Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
-                    } else {
-                      Setting.goToLinkSoft(ths, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
-                    }
-                  } else {
-                    Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
-                  }
-                });
-            } else {
-              Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
-            }
-
-            // Util.showMessage("success", `Authorization code: ${res.data}`);
+                if (Setting.isPromptAnswered(account, application)) {
+                  Setting.goToLink(
+                      `${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+                } else {
+                  Setting.goToLinkSoft(ths,
+                      `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
+                }
+              } else {
+                Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
+              }
+            });
+          } else {
+            Setting.goToLink(
+                `${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
           }
-        } else {
-          Util.showMessage("error", `Failed to log in: ${res.msg}`);
+          // Util.showMessage("success", `Authorization code: ${res.data}`);
         }
-      });
+      };
+      if (res.status === "ok") {
+        callback();
+      } else if (res.status === NextTwoFactor) {
+        this.setState({
+          getVerityTotp: () => {
+            return (
+                <VerityTOTP
+                    onFail={() => {
+                      message.error(i18next.t("two-factor:Verification failed"));
+                    }}
+                    onSuccess={() => callback()}/>);
+          }
+        });
+      } else {
+        Util.showMessage("error", `Failed to log in: ${res.msg}`);
+      }
+    });
   };
 
   getSigninButton(type) {
@@ -232,7 +248,7 @@ class LoginPage extends React.Component {
           </a>
         )
       }
-      
+
     } else {
       return (
         <div key={provider.displayName} style={{marginBottom: "10px"}}>
@@ -550,18 +566,18 @@ class LoginPage extends React.Component {
             {
               Setting.renderHelmet(application)
             }
-            <CustomGithubCorner />
+            <CustomGithubCorner/>
             {
               Setting.renderLogo(application)
             }
-            {/*{*/}
-            {/*  this.state.clientId !== null ? "Redirect" : null*/}
-            {/*}*/}
             {
-              this.renderSignedInBox()
+                this.state.getVerityTotp == null && this.renderSignedInBox()
             }
             {
-              this.renderForm(application)
+                this.state.getVerityTotp == null && this.renderForm(application)
+            }
+            {
+                this.state.getVerityTotp && this.state.getVerityTotp()
             }
           </div>
         </Col>

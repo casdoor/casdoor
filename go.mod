@@ -17,6 +17,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.2.0
 	github.com/google/uuid v1.3.0
 	github.com/jinzhu/configor v1.2.1 // indirect
+	github.com/json-iterator/go v1.1.11
 	github.com/markbates/goth v1.69.0
 	github.com/pquerna/otp v1.3.0
 	github.com/qiangmzsx/string-adapter/v2 v2.1.0

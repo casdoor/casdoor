@@ -499,5 +499,29 @@
     "URL": "网址",
     "URL - Tooltip": "URL",
     "Value": "值"
+  },
+  "two-factor": {
+    "Two-factor authentication": "双因子认证",
+    "Two-factor authentication description": "您已经启用双因子认证，请输入认证码",
+    "Two-factor authentication tooltip": "设置双因子认证",
+    "Verification failed": "验证失败",
+    "Verity": "验证",
+    "Setup": "设置",
+    "Remove": "移除",
+    "Removed successfully": "已移除成功",
+    "Removed failed": "移除失败",
+    "Enable": "启用",
+    "Enabled successfully": "已启用成功",
+    "Passcode": "认证码",
+    "Password": "密码",
+    "Enter passcode": "请输入认证码",
+    "Verity Fail": "请输入正确的认证码",
+    "Verify Password": "验证密码",
+    "Verify Code": "验证认证码",
+    "Protect your account with two-factor authentication": "通过双因子认证保护您的帐户",
+    "Each time you sign in to your Account, you'll need your password and a authentication code": "每次登录帐户时，都需要密码和认证码",
+    "Next step": "下一步",
+    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset two-factor authentication by this recovery code": "请保存此恢复代码。一旦您的设备无法提供身份验证码，您可以通过此恢复码重置双因子认证",
+    "Are you sure to delete?": "确定删除吗？"
   }
 }

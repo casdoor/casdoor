@@ -499,5 +499,10 @@
     "URL": "URL",
     "URL - Tooltip": "URL - Tooltip",
     "Value": "Value"
+  },
+  "two-factor": {
+    "Two-factor authentication": "Two-factor authentication",
+    "Two-factor authentication description": "You have enabled two-factor authentication. Please enter the authentication code",
+    "Two-factor authentication tooltip": "Setup two-factor authentication"
   }
 }

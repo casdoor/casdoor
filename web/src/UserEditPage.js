@@ -13,11 +13,11 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
+import {Button, Card, Col, Input, message, Popconfirm, Row, Select, Space, Switch, Tag} from "antd";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
-import {LinkOutlined} from "@ant-design/icons";
+import {CheckCircleOutlined, LinkOutlined} from "@ant-design/icons";
 import i18next from "i18next";
 import CropperDiv from "./CropperDiv.js";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
@@ -29,6 +29,7 @@ import SamlWidget from "./common/SamlWidget";
 import SelectRegionBox from "./SelectRegionBox";
 
 import "codemirror/lib/codemirror.css";
+
 require('codemirror/theme/material-darker.css');
 require("codemirror/mode/javascript/javascript");
 
@@ -46,6 +47,7 @@ class UserEditPage extends React.Component {
       organizations: [],
       twoFactor: 0,
       applications: [],
+        twoFactorRemoveTotpLoading: false
     };
   }
 
@@ -307,32 +309,72 @@ class UserEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Signup application"), i18next.t("general:Signup application - Tooltip"))} :
+              {Setting.getLabel(i18next.t("general:Signup application"), i18next.t("general:Signup application - Tooltip"))} :
           </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.user.signupApplication} onChange={(value => {this.updateUserField('signupApplication', value);})}>
-              {
-                this.state.applications.map((application, index) => <Option key={index} value={application.name}>{application.name}</Option>)
-              }
-            </Select>
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:2-Step"), i18next.t("user:2-Step Verification - Tooltip"))} :
-          </Col>
-          <Col span={(Setting.isMobile()) ? 22 : 2} >
-            <Switch checked={this.state.twoFactor} onChange={checked => {
-              if (checked) {
-                Setting.goToTotp(this, this.state.application)
-              } else {
-                // Delete TOTP
-                this.updateUserField("twoFactor",false)
-                this.setState({twoFactor:0})
-              }
-            }} />
+            <Col span={22}>
+                <Select virtual={false} style={{width: '100%'}} disabled={!Setting.isAdminUser(this.props.account)}
+                        value={this.state.user.signupApplication} onChange={(value => {
+                    this.updateUserField('signupApplication', value);
+                })}>
+                    {
+                        this.state.applications.map((application, index) => <Option key={index}
+                                                                                    value={application.name}>{application.name}</Option>)
+                    }
+                </Select>
             </Col>
         </Row>
+          {this.isSelfOrAdmin() && <Row style={{marginTop: "20px"}}>
+              <Col style={{marginTop: "5px"}}
+                   span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("two-factor:Two-factor authentication"),
+                      i18next.t("two-factor:Two-factor authentication tooltip"))} :
+              </Col>
+              <Col span={(Setting.isMobile()) ? 22 : 4}>
+                  {this.state.user.totpSecret?.length !== 0 &&
+                      <Tag icon={<CheckCircleOutlined/>} color="success">TOTP</Tag>}
+                  <Space>
+                      <Button type={"default"} onClick={() => {
+                          Setting.goToLinkSoft(this,
+                              "/set-totp/" + this.state.application.owner + "/" +
+                              this.state.user.signupApplication + "/" +
+                              this.state.user.owner + "/" + this.state.user.name);
+                      }}>{i18next.t("two-factor:Setup")}</Button>
+                      {this.state.user.totpSecret?.length !== 0 &&
+                          <Popconfirm
+                              title={i18next.t("two-factor:Are you sure to delete?")}
+                              onConfirm={() => {
+                                  this.setState({
+                                      twoFactorRemoveTotpLoading: true
+                                  });
+                                  UserBackend.twoFactorRemoveTotp({
+                                      userId: this.state.user.owner + "/" + this.state.user.name
+                                  }).then((res) => {
+                                      if (res.status === "ok") {
+                                          message.success(
+                                              i18next.t("two-factor:Removed successfully"));
+                                          this.setState({
+                                              user: {...this.state.user, totpSecret: null}
+                                          });
+                                      } else {
+                                          message.error(
+                                              i18next.t("two-factor:Removed successfully"));
+                                      }
+                                  }).finally(() => {
+                                      this.setState({
+                                          twoFactorRemoveTotpLoading: false
+                                      });
+                                  });
+                              }}
+                          >
+                              <Button loading={this.state.twoFactorRemoveTotpLoading}
+                                      danger={true} type={"primary"}>{i18next.t(
+                                  "two-factor:Remove")}</Button>
+                          </Popconfirm>
+                      }
+                  </Space>
+              </Col>
+          </Row>
+          }
         {
           !this.isSelfOrAdmin() ? null : (
             <Row style={{marginTop: '20px'}} >

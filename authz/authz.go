@@ -101,9 +101,9 @@ p, *, *, GET, /.well-known/openid-configuration, *, *
 p, *, *, *, /api/certs, *, *
 p, *, *, GET, /api/get-saml-login, *, *
 p, *, *, POST, /api/acs, *, *
-p, *, *, GET, /api/totp, *, *
-p, *, *, POST, /api/totp, *, *
-p, *, *, POST, /api/delete-totp, *, *
+p, *, *, POST, /api/two-factor/setup/totp/init, *, *
+p, *, *, POST, /api/two-factor/setup/totp/verity, *, *
+p, *, *, POST, /api/two-factor/auth/totp, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

@@ -36,8 +36,8 @@ export function getCountryRegionData() {
   countries.registerLocale(require("i18n-iso-countries/langs/" + i18next.language + ".json"));
   var data = countries.getNames(i18next.language, {select: "official"});
   var result = []
-  for (var i in data) 
-    result.push({code:i, name:data[i]})
+  for (var i in data)
+    result.push({code: i, name: data[i]})
   return result
 }
 
@@ -533,13 +533,6 @@ export function goToForget(ths, application) {
       goToLink(application.forgetUrl);
     }
   }
-}
-
-export function goToTotp(ths, application) {
-  if (application === null) {
-    return;
-  }
-  goToLinkSoft(ths, `/set-totp/${application.name}`);
 }
 
 export function renderHelmet(application) {

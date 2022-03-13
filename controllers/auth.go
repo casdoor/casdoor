@@ -30,18 +30,37 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func codeToResponse(code *object.Code) *Response {
-	if code.Code == "" {
-		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
-	}
+const TwoFactorSessionKey = "TwoFactor"
+const NextTwoFactor = "nextTwoFactor"
 
-	return &Response{Status: "ok", Msg: "", Data: code.Code}
+type TwoFactorSessionData struct {
+	UserId        string
+	EnableSession bool
+	AutoSignIn    bool
+}
+
+func (c *ApiController) SetFactorSessionData(data *TwoFactorSessionData) {
+	c.SetSession(TwoFactorSessionKey, data)
+}
+
+func (c *ApiController) GetTOTPSessionData() *TwoFactorSessionData {
+	v := c.GetSession(TwoFactorSessionKey)
+	data, ok := v.(*TwoFactorSessionData)
+	if !ok {
+		return nil
+	}
+	return data
 }
 
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) (resp *Response) {
 	userId := user.GetId()
 	if form.Type == ResponseTypeLogin {
+		if user.IsEnableTwoFactor() {
+			c.SetFactorSessionData(&TwoFactorSessionData{UserId: userId, EnableSession: true, AutoSignIn: form.AutoSignin})
+			resp = &Response{Status: NextTwoFactor}
+			return
+		}
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 		resp = &Response{Status: "ok", Msg: "", Data: userId}
@@ -60,11 +79,30 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge)
-		resp = codeToResponse(code)
+		status := ""
+		if code.Code == "" {
+			status = "error"
+		} else {
+			if user.IsEnableTwoFactor() {
+				status = NextTwoFactor
+			} else {
+				status = "ok"
+			}
+		}
+		resp = &Response{Status: status, Msg: code.Message, Data: code.Code}
 
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
-			c.SetSessionUsername(userId)
+			if user.IsEnableTwoFactor() {
+				c.SetFactorSessionData(&TwoFactorSessionData{
+					UserId:        userId,
+					EnableSession: true,
+					AutoSignIn:    form.AutoSignin,
+				})
+				return
+			} else {
+				c.SetSessionUsername(userId)
+			}
 		}
 	} else {
 		resp = &Response{Status: "error", Msg: fmt.Sprintf("Unknown response type: %s", form.Type)}
@@ -72,14 +110,18 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 	// if user did not check auto signin
 	if resp.Status == "ok" && !form.AutoSignin {
-		timestamp := time.Now().Unix()
-		timestamp += 3600 * 24
-		c.SetSessionData(&SessionData{
-			ExpireTime: timestamp,
-		})
+		c.setExpireForSession()
 	}
 
 	return resp
+}
+
+func (c *ApiController) setExpireForSession() {
+	timestamp := time.Now().Unix()
+	timestamp += 3600 * 24
+	c.SetSessionData(&SessionData{
+		ExpireTime: timestamp,
+	})
 }
 
 // GetApplicationLogin ...

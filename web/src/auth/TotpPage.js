@@ -12,340 +12,231 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import {Button, Col, Form, Select, Input, Row, Steps, Image} from "antd";
-import * as AuthBackend from "./AuthBackend";
+import React, {useState} from "react";
+import {Button, Col, Input, message, Row, Select, Spin, Steps} from "antd";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
-import * as Util from "./Util";
 import * as Setting from "../Setting";
 import i18next from "i18next";
-import {CountDownInput} from "../common/CountDownInput";
 import * as UserBackend from "../backend/UserBackend";
-import {CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
+import {CheckOutlined, KeyOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../CustomGithubCorner";
-import QRCode from "qrcode.react"
-import { authenticator } from "otplib";
+import QRCode from "qrcode.react";
+import {useFormik} from "formik";
 
-const { Step } = Steps;
-const { Option } = Select;
+const {Step} = Steps;
+const {Option} = Select;
+
+function CheckPassword({user, onSuccess, onFail}) {
+	const formik = useFormik({
+		initialValues: {
+			password: ""
+		},
+		onSubmit: ({password}) => {
+			const data = {...user, password};
+			UserBackend.checkUserPassword(data).then(res => {
+					if (res.status === "ok") {
+						onSuccess(res);
+					} else {
+						onFail(res);
+					}
+				}
+			).finally(() => {
+				formik.setSubmitting(false);
+			});
+		}
+	});
+
+	return (
+		<form style={{width: "300px"}} onSubmit={formik.handleSubmit}>
+			<Input
+				onChange={formik.handleChange("password")}
+				prefix={<UserOutlined/>}
+				placeholder={i18next.t("two-factor:Password")}
+				type="password"
+			/>
+			<Button style={{marginTop: 24}} loading={formik.isSubmitting} block
+					type="primary" htmlType="submit">
+				{i18next.t("two-factor:Next step")}
+			</Button>
+		</form>
+	);
+}
+
+function VerityTotp({totp, onSuccess, onFail}) {
+	const formik = useFormik(
+		{
+			initialValues: {
+				passcode: ""
+			},
+			onSubmit: ({passcode}) => {
+				const data = {secret: totp.secret, passcode};
+				UserBackend.twoFactorSetupVerityTotp(data).then(res => {
+						if (res.status === "ok") {
+							onSuccess(res);
+						} else {
+							onFail(res);
+						}
+					}
+				).finally(() => {
+					formik.setSubmitting(false);
+				});
+			}
+		});
+	return (
+		<form style={{width: "300px"}} onSubmit={formik.handleSubmit}>
+			<QRCode value={totp.url} size={200}/>
+			<Input
+				style={{marginTop: 24}}
+				onChange={formik.handleChange("passcode")}
+				prefix={<UserOutlined/>}
+				placeholder={i18next.t("two-factor:Passcode")}
+				type="text"
+			/>
+			<Button style={{marginTop: 24}} loading={formik.isSubmitting} block
+					type="primary"
+					htmlType="submit">
+				{i18next.t("two-factor:Next step")}
+			</Button>
+		</form>
+	);
+}
+
+function EnableTotp({user, totp, onSuccess, onFail}) {
+	const [loading, setLoading] = useState(false);
+	const requestEnableTotp = () => {
+		const data = {
+			userId: user.owner + "/" + user.name,
+			secret: totp.secret,
+			recoveryCode: totp.recoveryCode
+		};
+		setLoading(true);
+		UserBackend.twoFactorEnableTotp(data).then(res => {
+				if (res.status === "ok") {
+					onSuccess(res);
+				} else {
+					onFail(res);
+				}
+			}
+		).finally(() => {
+			setLoading(false);
+		});
+	};
+
+	return (
+		<div style={{width: "400px"}}>
+			<p>{i18next.t(
+				"two-factor:Please save this recovery code. Once your device cannot provide an authentication code, you can reset two-factor authentication by this recovery code")}</p>
+			<br/>
+			<code style={{fontStyle: 'solid'}}>{totp.recoveryCode}</code>
+			<Button style={{marginTop: 24}} loading={loading} onClick={() => {
+				requestEnableTotp();
+			}} block type="primary">
+				{i18next.t("two-factor:Enable")}
+			</Button>
+		</div>
+	);
+}
+
 class TotpPage extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			classes: props,
 			account: props.account,
-			applicationName:
-				props.applicationName !== undefined
-					? props.applicationName
-					: props.match === undefined
-						? null
-						: props.match.params.applicationName,
+			owner: props.match.params.owner,
+			organization: props.match.params.organization,
+			organizationOwner: props.match.params.organizationOwner,
+			userOwner: props.match.params.userOwner,
+			userName: props.match.params.userName,
 			application: null,
-			msg: null,
-			userId: "",
-			username: "",
-			password: "",
-			qrcodeUrl: "",
-			secret: "",
 			current: 0,
+			totp: null
 		};
 	}
 
-	UNSAFE_componentWillMount() {
-		if (this.state.applicationName !== undefined) {
-			this.getApplication();
-		} else {
-			Util.showMessage(
-				"error",
-				i18next.t(`forget:Unknown forgot type: `) + this.state.type
-			);
-		}
+	componentDidMount() {
+		this.getApplication();
 	}
 
 	getApplication() {
-		if (this.state.applicationName === null) {
-			return;
-		}
-
-		ApplicationBackend.getApplication("admin", this.state.applicationName).then(
+		ApplicationBackend.getApplication(this.state.organizationOwner,
+			this.state.organization).then(
 			(application) => {
 				this.setState({
-					application: application,
+					application: application
 				});
 			}
 		);
 	}
 
-
-	verifyTotpCode(code, secret){
-		return authenticator.check(code, secret);
+	getUser() {
+		return {
+			name: this.state.userName,
+			owner: this.state.userOwner
+		};
 	}
 
-	updateUser2fa(flag){
-		let user = Setting.deepCopy(this.state.account);
-		user["twoFactor"] = flag
-		UserBackend.updateUser(this.state.account.organization.name, this.state.account.name,user)
-			.then((res) => {
-				console.log(res)
-				if (res.msg === "") {
-					Setting.showMessage("success", `Successfully saved`);
-				}
-			})
-			.catch(error => {
-				Setting.showMessage("error", `Failed to connect to server: ${error}`);
-			});
+	getUserId() {
+		return this.state.userOwner + "/" + this.state.userName;
 	}
 
-	getApplicationObj() {
-		if (this.props.application !== undefined) {
-			return this.props.application;
-		} else {
-			return this.state.application;
-		}
-	}
-
-	onFormFinish(name, info, forms) {
-		switch (name) {
-			case "step1":
-				let user = this.state.account;
-				user.password = forms.step1.getFieldValue("password");
-				UserBackend.checkUserPassword(user).then(res => {
-					if (res.status === "ok") {
-						UserBackend.initTOTP().then((res) => {
-							this.setState({current: 1, qrcodeUrl: decodeURI(res.url), recoveryCode: res.recoveryCode, secret: res.secret})
-						});
-					} else {
-						Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
-					}
-				});
-				break;
-			case "step2":
-				const code = forms.step2.getFieldValue("code");
-				/*UserBackend.setTOTP(this.state.secret, code).then(res => {
-					if (res.status === "ok") {
-						this.setState({current: 2})
-					} else {
-						Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
-					}
-				});*/
-				if (this.verifyTotpCode(code, this.state.secret)){
-					this.setState({current: 2})
-					this.updateUser2fa(true)
-					} else {
-						Setting.showMessage("error", i18next.t(`signup: got wrong code`));
-					}
-				break
-			default:
-				break
-		}
-	}
-
-	onFinish() {
-		Setting.goToLinkSoft(this, "/account")
-	}
-
-	onFinishFailed(values, errorFields) {}
-
-	renderOptions() {
-		let options = [];
-
-		if (this.state.phone !== "") {
-			options.push(
-				<Option key={"phone"} value={"phone"}>
-					&nbsp;&nbsp;{Setting.getMaskedPhone(this.state.phone)}
-				</Option>
-			);
-		}
-
-		if (this.state.email !== "") {
-			options.push(
-				<Option key={"email"} value={"email"}>
-					&nbsp;&nbsp;{Setting.getMaskedEmail(this.state.email)}
-				</Option>
-			);
-		}
-
-		return options;
-	}
-
-	renderForm(application) {
-		return (
-			<Form.Provider onFormFinish={(name, {info, forms}) => {
-				this.onFormFinish(name, info, forms);
-			}}>
-				{/* STEP 1: input username -> get email & phone */}
-				<Form
-					hidden={this.state.current !== 0}
-					ref={this.form}
-					name="step1"
-					onFinishFailed={(errorInfo) => console.log(errorInfo)}
-					initialValues={{
-						application: application.name,
-						organization: application.organization,
-					}}
-					style={{ width: "300px" }}
-					size="large"
-				>
-					<Form.Item
-						style={{ height: 0, visibility: "hidden" }}
-						name="application"
-						rules={[
-							{
-								required: true,
-								message: i18next.t(
-									`forget:Please input your application!`
-								),
-							},
-						]}
-					/>
-					<Form.Item
-						style={{ height: 0, visibility: "hidden" }}
-						name="organization"
-						rules={[
-							{
-								required: true,
-								message: i18next.t(
-									`forget:Please input your organization!`
-								),
-							},
-						]}
-					/>
-					<Form.Item
-						name="password"
-						rules={[
-							{
-								required: true,
-								message: i18next.t(
-									"forget:Please input your password!"
-								),
-								whitespace: true,
-							},
-						]}
-					>
-						<Input
-							onChange={(e) => {
+	renderStep() {
+		switch (this.state.current) {
+			case 0:
+				return <CheckPassword
+					user={this.getUser()}
+					onSuccess={() => {
+						UserBackend.twoFactorSetupInitTotp({
+							userId: this.getUserId()
+						}).then((res) => {
+							if (res.status === "ok") {
 								this.setState({
-									password: e.target.value,
+									totp: res.data,
+									current: this.state.current + 1
 								});
-							}}
-							prefix={<UserOutlined />}
-							placeholder={i18next.t("login:password")}
-							type="password"
-						/>
-					</Form.Item>
-					<br />
-					<Form.Item>
-						<Button block type="primary" htmlType="submit">
-							{i18next.t("forget:Next Step")}
-						</Button>
-					</Form.Item>
-				</Form>
-
-				{/* STEP 2: verify code */}
-				<Form
-					hidden={this.state.current !== 1}
-					ref={this.form}
-					name="step2"
-					onFinishFailed={(errorInfo) =>
-						this.onFinishFailed(
-							errorInfo.values,
-							errorInfo.errorFields,
-							errorInfo.outOfDate
-						)
-					}
-					initialValues={{
-						application: application.name,
-						organization: application.organization,
-					}}
-					style={{ width: "300px" }}
-					size="large"
-				>
-					<Form.Item
-						style={{ height: 0, visibility: "hidden" }}
-						name="application"
-						rules={[
-							{
-								required: true,
-								message: i18next.t(
-									`forget:Please input your application!`
-								),
-							},
-						]}
-					/>
-					<Form.Item
-						style={{ height: 0, visibility: "hidden" }}
-						name="organization"
-						rules={[
-							{
-								required: true,
-								message: i18next.t(
-									`forget:Please input your organization!`
-								),
-							},
-						]}
-					/>
-					<QRCode value={this.state.qrcodeUrl} size={200} />
-					<Form.Item
-						style={{marginTop: "20px"}}
-						name="code"
-						rules={[
-							{
-								required: true,
-								message: i18next.t(
-									"totp:Please input your code!"
-								),
-								whitespace: true,
+							} else {
+								Setting.showMessage("error",
+									i18next.t(`signup:${res.msg}`));
 							}
-						]}
-					>
-						<Input
-							prefix={<UserOutlined />}
-							placeholder={i18next.t("totp:code")}
-						/>
-					</Form.Item>
-					<br />
-					<Form.Item>
-						<Button
-							block
-							type="primary"
-							htmlType="submit"
-						>
-							{i18next.t("forget:Next Step")}
-						</Button>
-					</Form.Item>
-				</Form>
-
-				{/* STEP 3 */}
-				<Form
-					hidden={this.state.current !== 2}
-					ref={this.form}
-					name="step3"
-					onFinish={(values) => this.onFinish(values)}
-					onFinishFailed={(errorInfo) =>
-						this.onFinishFailed(
-							errorInfo.values,
-							errorInfo.errorFields,
-							errorInfo.outOfDate
-						)
-					}
-					size="large"
-				>
-					<h2>{i18next.t("totp:You have enabled 2-step verification successfully!")}</h2>
-					<br />
-					<Form.Item hidden={this.state.current !== 2}>
-						<Button block type="primary"  htmlType="submit">
-							{i18next.t("totp:Done")}
-						</Button>
-					</Form.Item>
-				</Form>
-			</Form.Provider>
-		);
+						});
+					}}
+					onFail={(res) => {
+						Setting.showMessage("error",
+							i18next.t(`signup:${res.msg}`));
+					}}
+				/>;
+			case 1:
+				return <VerityTotp
+					totp={this.state?.totp}
+					onSuccess={() => {
+						this.setState({
+							current: this.state.current + 1
+						});
+					}}
+					onFail={(res) => {
+						Setting.showMessage("error",
+							i18next.t(`signup:${res.msg}`));
+					}}
+				/>;
+			case 2:
+				return <EnableTotp
+					user={this.getUser()}
+					totp={this.state?.totp}
+					onSuccess={() => {
+						message.success(i18next.t('two-factor:Enabled successfully'))
+						Setting.goToLinkSoft(this, "/account");
+					}}
+					onFail={(res) => {
+						Setting.showMessage("error",
+							i18next.t(`signup:${res.msg}`));
+					}}
+				/>;
+		}
 	}
 
 	render() {
-		const application = this.getApplicationObj();
-		if (application === null) {
-			return Util.renderMessageLarge(this, this.state.msg);
+		const application = this.state.application;
+		if (!application) {
+			return <Spin/>;
 		}
 
 		return (
@@ -353,11 +244,15 @@ class TotpPage extends React.Component {
 				<Col span={24} style={{justifyContent: "center"}}>
 					<Row>
 						<Col span={24}>
-							<div style={{marginTop: "80px", marginBottom: "10px", textAlign: "center"}}>
+							<div style={{
+								marginTop: "80px",
+								marginBottom: "10px",
+								textAlign: "center"
+							}}>
 								{
 									Setting.renderHelmet(application)
 								}
-								<CustomGithubCorner />
+								<CustomGithubCorner/>
 								{
 									Setting.renderLogo(application)
 								}
@@ -367,10 +262,16 @@ class TotpPage extends React.Component {
 					<Row>
 						<Col span={24}>
 							<div style={{textAlign: "center", fontSize: "28px"}}>
-								{i18next.t("forget:Protect your account with 2-Step Verification")}
+								{i18next.t(
+									"two-factor:Protect your account with two-factor authentication")}
 							</div>
-							<div style={{textAlign: "center", fontSize: "16px", marginTop: "10px"}}>
-								{i18next.t("forget:Each time you sign in to your Account, you'll need your password and a verification code.")}
+							<div style={{
+								textAlign: "center",
+								fontSize: "16px",
+								marginTop: "10px"
+							}}>
+								{i18next.t(
+									"two-factor:Each time you sign in to your Account, you'll need your password and a authentication code")}
 							</div>
 						</Col>
 					</Row>
@@ -382,20 +283,20 @@ class TotpPage extends React.Component {
 									width: "90%",
 									maxWidth: "500px",
 									margin: "auto",
-									marginTop: "80px",
+									marginTop: "80px"
 								}}
 							>
 								<Step
-									title={i18next.t("forget:Verify Password")}
-									icon={<UserOutlined />}
+									title={i18next.t("two-factor:Verify Password")}
+									icon={<UserOutlined/>}
 								/>
 								<Step
-									title={i18next.t("forget:Verify Code")}
-									icon={<SolutionOutlined />}
+									title={i18next.t("two-factor:Verify Code")}
+									icon={<KeyOutlined/>}
 								/>
 								<Step
-									title={i18next.t("forget:Done")}
-									icon={<KeyOutlined />}
+									title={i18next.t("two-factor:Enable")}
+									icon={<CheckOutlined/>}
 								/>
 							</Steps>
 						</Col>
@@ -403,7 +304,7 @@ class TotpPage extends React.Component {
 				</Col>
 				<Col span={24} style={{ display: "flex", justifyContent: "center" }}>
 					<div style={{ marginTop: "10px", textAlign: "center" }}>
-						{this.renderForm(application)}
+						{this.renderStep()}
 					</div>
 				</Col>
 			</Row>

@@ -17,7 +17,7 @@ import './App.less';
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
 import {DownOutlined, LogoutOutlined, SettingOutlined} from '@ant-design/icons';
-import {Avatar, BackTop, Dropdown, Layout, Menu, Card, Result, Button} from 'antd';
+import {Avatar, BackTop, Button, Card, Dropdown, Layout, Menu, Result} from 'antd';
 import {Link, Redirect, Route, Switch, withRouter} from 'react-router-dom'
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -493,11 +493,14 @@ class App extends Component {
           <Route exact path="/payments" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />}/>
-          <Route exact path="/set-totp" render={(props) => this.renderLoginIfNotLoggedIn(<TotpPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/set-totp/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<TotpPage account={this.state.account} {...props} />)}/>
-          <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
-                                               extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
+          <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage/>}/>
+          <Route exact path="/set-totp/:organizationOwner/:organization/:userOwner/:userName"
+                 render={(props) => this.renderLoginIfNotLoggedIn(<TotpPage
+                     account={this.state.account} {...props} />)}/>
+          <Route path="" render={() => <Result status="404" title="404 NOT FOUND"
+                                               subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
+                                               extra={<a href="/"><Button
+                                                   type="primary">{i18next.t("general:Back Home")}</Button></a>}/>}/>
       </Switch>
     </div>
     )
