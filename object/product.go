@@ -179,7 +179,7 @@ func BuyProduct(id string, providerId string, user *User, host string) (string, 
 	productId := product.Name
 
 	originFrontend, originBackend := getOriginFromHost(host)
-	returnUrl := fmt.Sprintf("%s/payments/%s", originFrontend, paymentId)
+	returnUrl := fmt.Sprintf("%s/payments/%s/result", originFrontend, paymentId)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment", originBackend)
 
 	payUrl, err := pProvider.Pay(productName, productId, providerId, paymentId, product.Price, returnUrl, notifyUrl)

@@ -36,9 +36,14 @@ class PaymentListPage extends BaseListPage {
       user: "admin",
       productId: "computer-1",
       productName: "A notebook computer",
-      price: 300.00,
+      detail: "This is a computer with excellent CPU, memory and disk",
+      tag: "Promotion-1",
       currency: "USD",
+      price: 300.00,
+      payUrl: "https://pay.com/pay.php",
+      returnUrl: "https://door.casdoor.com/payments",
       state: "Paid",
+      message: "",
     }
   }
 

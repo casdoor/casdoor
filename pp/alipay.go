@@ -50,12 +50,13 @@ func (pp *AlipayPaymentProvider) Pay(productName string, productId string, provi
 	priceString := strings.TrimRight(strings.TrimRight(fmt.Sprintf("%.2f", price), "0"), ".")
 
 	bm := gopay.BodyMap{}
-	bm.Set("subject", productName)
-	bm.Set("out_trade_no", paymentId)
-	bm.Set("total_amount", priceString)
+
 	bm.Set("return_url", returnUrl)
 	bm.Set("notify_url", notifyUrl)
 
+	bm.Set("subject", productName)
+	bm.Set("out_trade_no", paymentId)
+	bm.Set("total_amount", priceString)
 	bm.Set("productId", productId)
 	bm.Set("providerId", productId)
 

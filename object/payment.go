@@ -44,6 +44,7 @@ type Payment struct {
 	PayUrl    string `xorm:"varchar(2000)" json:"payUrl"`
 	ReturnUrl string `xorm:"varchar(1000)" json:"returnUrl"`
 	State     string `xorm:"varchar(100)" json:"state"`
+	Message   string `xorm:"varchar(1000)" json:"message"`
 }
 
 func GetPaymentCount(owner, field, value string) int {
@@ -142,7 +143,7 @@ func DeletePayment(payment *Payment) bool {
 	return affected != 0
 }
 
-func NotifyPayment(bm gopay.BodyMap) bool {
+func notifyPayment(bm gopay.BodyMap) (*Payment, error) {
 	owner := "admin"
 	productName := bm.Get("subject")
 	paymentId := bm.Get("out_trade_no")
@@ -153,52 +154,60 @@ func NotifyPayment(bm gopay.BodyMap) bool {
 
 	product := getProduct(owner, productId)
 	if product == nil {
-		panic(fmt.Errorf("the product: %s does not exist", productId))
+		return nil, fmt.Errorf("the product: %s does not exist", productId)
 	}
 
 	if productName != product.DisplayName {
-		panic(fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", productName, product.DisplayName))
+		return nil, fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", productName, product.DisplayName)
 	}
 
 	if price != product.Price {
-		panic(fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", price, product.Price))
+		return nil, fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", price, product.Price)
 	}
 
 	payment := getPayment(owner, paymentId)
 	if payment == nil {
-		panic(fmt.Errorf("the payment: %s does not exist", paymentId))
+		return nil, fmt.Errorf("the payment: %s does not exist", paymentId)
 	}
 
 	provider, err := product.getProvider(providerId)
 	if err != nil {
-		panic(err)
+		return payment, err
 	}
 
 	cert := getCert(owner, provider.Cert)
 	if cert == nil {
-		panic(fmt.Errorf("the cert: %s does not exist", provider.Cert))
+		return payment, fmt.Errorf("the cert: %s does not exist", provider.Cert)
 	}
 
 	ok, err := alipay.VerifySignWithCert(cert.AuthorityPublicKey, bm)
 	if err != nil {
-		panic(err)
+		return payment, err
 	}
 
-	if ok {
-		payment.State = "Paid"
-	} else {
-		if cert == nil {
-			panic(fmt.Errorf("VerifySignWithCert() failed: %v", ok))
+	if !ok {
+		return payment, fmt.Errorf("VerifySignWithCert() failed: %v", ok)
+	}
+
+	return payment, nil
+}
+
+func NotifyPayment(bm gopay.BodyMap) bool {
+	payment, err := notifyPayment(bm)
+
+	if payment != nil {
+		if err != nil {
+			payment.State = "Error"
+			payment.Message = err.Error()
+		} else {
+			payment.State = "Paid"
 		}
-		//payment.State = "Failed"
+
+		UpdatePayment(payment.GetId(), payment)
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, paymentId}).AllCols().Update(payment)
-	if err != nil {
-		panic(err)
-	}
-
-	return affected != 0
+	ok := err == nil
+	return ok
 }
 
 func (payment *Payment) GetId() string {
