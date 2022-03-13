@@ -160,6 +160,10 @@ const otherProviderInfo = {
       logo: `${StaticBaseUrl}/img/payment_paypal.png`,
       url: "https://www.paypal.com/"
     },
+    "GC": {
+      logo: `${StaticBaseUrl}/img/payment_gc.png`,
+      url: "https://gc.org"
+    },
   },
 };
 

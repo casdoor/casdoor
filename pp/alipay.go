@@ -16,8 +16,6 @@ package pp
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/alipay"
@@ -47,8 +45,6 @@ func NewAlipayPaymentProvider(appId string, appPublicKey string, appPrivateKey s
 func (pp *AlipayPaymentProvider) Pay(productName string, productId string, providerId string, paymentId string, price float64, returnUrl string, notifyUrl string) (string, error) {
 	//pp.Client.DebugSwitch = gopay.DebugOn
 
-	priceString := strings.TrimRight(strings.TrimRight(fmt.Sprintf("%.2f", price), "0"), ".")
-
 	bm := gopay.BodyMap{}
 
 	bm.Set("return_url", returnUrl)
@@ -56,7 +52,7 @@ func (pp *AlipayPaymentProvider) Pay(productName string, productId string, provi
 
 	bm.Set("subject", productName)
 	bm.Set("out_trade_no", paymentId)
-	bm.Set("total_amount", priceString)
+	bm.Set("total_amount", getPriceString(price))
 	bm.Set("productId", productId)
 	bm.Set("providerId", productId)
 

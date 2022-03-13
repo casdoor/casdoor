@@ -444,6 +444,7 @@ export function getProviderTypeOptions(category) {
       {id: 'Alipay', name: 'Alipay'},
       {id: 'WeChat Pay', name: 'WeChat Pay'},
       {id: 'PayPal', name: 'PayPal'},
+      {id: 'GC', name: 'GC'},
     ]);
   } else {
     return [];

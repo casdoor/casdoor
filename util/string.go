@@ -109,6 +109,14 @@ func GenerateTimeId() string {
 	return res
 }
 
+func GenerateSimpleTimeId() string {
+	timestamp := time.Now().Unix()
+	tm := time.Unix(timestamp, 0)
+	t := tm.Format("20060102150405")
+
+	return t
+}
+
 func GetId(name string) string {
 	return fmt.Sprintf("admin/%s", name)
 }

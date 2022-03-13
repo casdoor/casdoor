@@ -164,12 +164,15 @@ func BuyProduct(id string, providerId string, user *User, host string) (string, 
 		return "", err
 	}
 
-	cert := getCert(product.Owner, provider.Cert)
-	if cert == nil {
-		return "", fmt.Errorf("the cert: %s does not exist", provider.Cert)
+	cert := &Cert{}
+	if provider.Cert != "" {
+		cert = getCert(product.Owner, provider.Cert)
+		if cert == nil {
+			return "", fmt.Errorf("the cert: %s does not exist", provider.Cert)
+		}
 	}
 
-	pProvider := pp.GetPaymentProvider(provider.Type, provider.ClientId, cert.PublicKey, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey)
+	pProvider := pp.GetPaymentProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, cert.PublicKey, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey)
 	if pProvider == nil {
 		return "", fmt.Errorf("the payment provider type: %s is not supported", provider.Type)
 	}

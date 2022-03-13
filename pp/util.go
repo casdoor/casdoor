@@ -14,15 +14,12 @@
 
 package pp
 
-type PaymentProvider interface {
-	Pay(productName string, productId string, providerId string, paymentId string, price float64, returnUrl string, notifyUrl string) (string, error)
-}
+import (
+	"fmt"
+	"strings"
+)
 
-func GetPaymentProvider(typ string, appId string, clientSecret string, host string, appPublicKey string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string) PaymentProvider {
-	if typ == "Alipay" {
-		return NewAlipayPaymentProvider(appId, appPublicKey, appPrivateKey, authorityPublicKey, authorityRootPublicKey)
-	} else if typ == "GC" {
-		return NewGcPaymentProvider(appId, clientSecret, host)
-	}
-	return nil
+func getPriceString(price float64) string {
+	priceString := strings.TrimRight(strings.TrimRight(fmt.Sprintf("%.2f", price), "0"), ".")
+	return priceString
 }
