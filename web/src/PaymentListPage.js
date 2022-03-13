@@ -201,11 +201,12 @@ class PaymentListPage extends BaseListPage {
         title: i18next.t("general:Action"),
         dataIndex: '',
         key: 'op',
-        width: '170px',
+        width: '240px',
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} onClick={() => this.props.history.push(`/payments/${record.name}/result`)}>{i18next.t("payment:Result")}</Button>
               <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/payments/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete payment: ${record.name} ?`}

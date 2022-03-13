@@ -48,6 +48,7 @@ import ProductEditPage from "./ProductEditPage";
 import ProductBuyPage from "./ProductBuyPage";
 import PaymentListPage from "./PaymentListPage";
 import PaymentEditPage from "./PaymentEditPage";
+import PaymentResultPage from "./PaymentResultPage";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
@@ -529,6 +530,7 @@ class App extends Component {
           <Route exact path="/products/:productName/buy" render={(props) => this.renderLoginIfNotLoggedIn(<ProductBuyPage account={this.state.account} {...props} />)}/>
           <Route exact path="/payments" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/payments/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)}/>
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />}/>
           <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
