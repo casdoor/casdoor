@@ -36,6 +36,7 @@ type Product struct {
 	Quantity  int      `json:"quantity"`
 	Sold      int      `json:"sold"`
 	Providers []string `xorm:"varchar(100)" json:"providers"`
+	ReturnUrl string   `xorm:"varchar(1000)" json:"returnUrl"`
 
 	State string `xorm:"varchar(100)" json:"state"`
 }
@@ -202,6 +203,7 @@ func BuyProduct(id string, providerId string, user *User, host string) (string, 
 		Currency:     product.Currency,
 		Price:        product.Price,
 		PayUrl:       payUrl,
+		ReturnUrl:    product.ReturnUrl,
 		State:        "Created",
 	}
 	affected := AddPayment(&payment)

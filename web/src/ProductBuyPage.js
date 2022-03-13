@@ -186,6 +186,10 @@ class ProductBuyPage extends React.Component {
   render() {
     const product = this.getProductObj();
 
+    if (product === null) {
+      return null;
+    }
+
     return (
       <div>
         <Spin spinning={this.state.isPlacingOrder} size="large" tip={i18next.t("product:Placing order...")} style={{paddingTop: "10%"}} >

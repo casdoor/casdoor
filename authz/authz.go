@@ -89,6 +89,8 @@ p, *, *, GET, /api/get-user, *, *
 p, *, *, GET, /api/get-user-application, *, *
 p, *, *, GET, /api/get-resources, *, *
 p, *, *, GET, /api/get-product, *, *
+p, *, *, POST, /api/buy-product, *, *
+p, *, *, GET, /api/get-payment, *, *
 p, *, *, GET, /api/get-providers, *, *
 p, *, *, POST, /api/unlink, *, *
 p, *, *, POST, /api/set-password, *, *
