@@ -380,7 +380,9 @@ func AddUsers(users []*User) bool {
 
 	affected, err := adapter.Engine.Insert(users)
 	if err != nil {
-		panic(err)
+		if !strings.Contains(err.Error(), "Duplicate entry") {
+			panic(err)
+		}
 	}
 
 	return affected != 0
