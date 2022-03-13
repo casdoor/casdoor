@@ -14,8 +14,11 @@
 
 package pp
 
+import "net/http"
+
 type PaymentProvider interface {
-	Pay(productName string, productId string, providerId string, paymentId string, price float64, returnUrl string, notifyUrl string) (string, error)
+	Pay(providerName string, productName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error)
+	Notify(request *http.Request, body []byte, authorityPublicKey string) (string, string, float64, string, string, error)
 }
 
 func GetPaymentProvider(typ string, appId string, clientSecret string, host string, appPublicKey string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string) PaymentProvider {

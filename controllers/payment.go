@@ -21,7 +21,6 @@ import (
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-	"github.com/go-pay/gopay/alipay"
 )
 
 // GetPayments
@@ -142,14 +141,16 @@ func (c *ApiController) DeletePayment() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /notify-payment [post]
 func (c *ApiController) NotifyPayment() {
-	bm, err := alipay.ParseNotifyToBodyMap(c.Ctx.Request)
-	if err != nil {
-		panic(err)
-	}
+	owner := c.Ctx.Input.Param(":owner")
+	providerName := c.Ctx.Input.Param(":provider")
+	productName := c.Ctx.Input.Param(":product")
+	paymentName := c.Ctx.Input.Param(":payment")
 
-	ok := object.NotifyPayment(bm)
+	body := c.Ctx.Input.RequestBody
+
+	ok := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName)
 	if ok {
-		_, err = c.Ctx.ResponseWriter.Write([]byte("success"))
+		_, err := c.Ctx.ResponseWriter.Write([]byte("success"))
 		if err != nil {
 			panic(err)
 		}

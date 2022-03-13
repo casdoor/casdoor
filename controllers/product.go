@@ -119,13 +119,13 @@ func (c *ApiController) DeleteProduct() {
 // @Title BuyProduct
 // @Tag Product API
 // @Description buy product
-// @Param   id    query    string  true          "The id of the product"
-// @Param   providerId    query    string  true  "The id of the provider"
+// @Param   id    query    string  true            "The id of the product"
+// @Param   providerName    query    string  true  "The name of the provider"
 // @Success 200 {object} controllers.Response The Response object
 // @router /buy-product [post]
 func (c *ApiController) BuyProduct() {
 	id := c.Input().Get("id")
-	providerId := c.Input().Get("providerId")
+	providerName := c.Input().Get("providerName")
 	host := c.Ctx.Request.Host
 
 	userId := c.GetSessionUsername()
@@ -140,7 +140,7 @@ func (c *ApiController) BuyProduct() {
 		return
 	}
 
-	payUrl, err := object.BuyProduct(id, providerId, user, host)
+	payUrl, err := object.BuyProduct(id, providerName, user, host)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

@@ -56,7 +56,7 @@ export function deleteProduct(product) {
 }
 
 export function buyProduct(owner, name, providerId) {
-  return fetch(`${Setting.ServerUrl}/api/buy-product?id=${owner}/${encodeURIComponent(name)}&providerId=${providerId}`, {
+  return fetch(`${Setting.ServerUrl}/api/buy-product?id=${owner}/${encodeURIComponent(name)}&providerName=${providerId}`, {
     method: 'POST',
     credentials: 'include',
   }).then(res => res.json());

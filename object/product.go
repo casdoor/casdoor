@@ -17,7 +17,6 @@ package object
 import (
 	"fmt"
 
-	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -153,61 +152,54 @@ func (product *Product) getProvider(providerId string) (*Provider, error) {
 	return provider, nil
 }
 
-func BuyProduct(id string, providerId string, user *User, host string) (string, error) {
+func BuyProduct(id string, providerName string, user *User, host string) (string, error) {
 	product := GetProduct(id)
 	if product == nil {
 		return "", fmt.Errorf("the product: %s does not exist", id)
 	}
 
-	provider, err := product.getProvider(providerId)
+	provider, err := product.getProvider(providerName)
 	if err != nil {
 		return "", err
 	}
 
-	cert := &Cert{}
-	if provider.Cert != "" {
-		cert = getCert(product.Owner, provider.Cert)
-		if cert == nil {
-			return "", fmt.Errorf("the cert: %s does not exist", provider.Cert)
-		}
+	pProvider, _, err := provider.getPaymentProvider()
+	if err != nil {
+		return "", err
 	}
 
-	pProvider := pp.GetPaymentProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, cert.PublicKey, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey)
-	if pProvider == nil {
-		return "", fmt.Errorf("the payment provider type: %s is not supported", provider.Type)
-	}
-
-	paymentId := util.GenerateTimeId()
-	productName := product.DisplayName
-	productId := product.Name
+	owner := product.Owner
+	productName := product.Name
+	paymentName := util.GenerateTimeId()
+	productDisplayName := product.DisplayName
 
 	originFrontend, originBackend := getOriginFromHost(host)
-	returnUrl := fmt.Sprintf("%s/payments/%s/result", originFrontend, paymentId)
-	notifyUrl := fmt.Sprintf("%s/api/notify-payment", originBackend)
+	returnUrl := fmt.Sprintf("%s/payments/%s/result", originFrontend, paymentName)
+	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s/%s/%s", originBackend, owner, providerName, productName, paymentName)
 
-	payUrl, err := pProvider.Pay(productName, productId, providerId, paymentId, product.Price, returnUrl, notifyUrl)
+	payUrl, err := pProvider.Pay(providerName, productName, paymentName, productDisplayName, product.Price, returnUrl, notifyUrl)
 	if err != nil {
 		return "", err
 	}
 
 	payment := Payment{
-		Owner:        product.Owner,
-		Name:         paymentId,
-		CreatedTime:  util.GetCurrentTime(),
-		DisplayName:  paymentId,
-		Provider:     provider.Name,
-		Type:         provider.Type,
-		Organization: user.Owner,
-		User:         user.Name,
-		ProductId:    productId,
-		ProductName:  productName,
-		Detail:       product.Detail,
-		Tag:          product.Tag,
-		Currency:     product.Currency,
-		Price:        product.Price,
-		PayUrl:       payUrl,
-		ReturnUrl:    product.ReturnUrl,
-		State:        "Created",
+		Owner:              product.Owner,
+		Name:               paymentName,
+		CreatedTime:        util.GetCurrentTime(),
+		DisplayName:        paymentName,
+		Provider:           provider.Name,
+		Type:               provider.Type,
+		Organization:       user.Owner,
+		User:               user.Name,
+		ProductName:        productName,
+		ProductDisplayName: productDisplayName,
+		Detail:             product.Detail,
+		Tag:                product.Tag,
+		Currency:           product.Currency,
+		Price:              product.Price,
+		PayUrl:             payUrl,
+		ReturnUrl:          product.ReturnUrl,
+		State:              "Created",
 	}
 	affected := AddPayment(&payment)
 	if !affected {

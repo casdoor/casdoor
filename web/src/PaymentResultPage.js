@@ -60,7 +60,7 @@ class PaymentResultPage extends React.Component {
           }
           <Result
             status="success"
-            title={`${i18next.t("payment:You have successfully completed the payment")}: ${payment.productName}`}
+            title={`${i18next.t("payment:You have successfully completed the payment")}: ${payment.productDisplayName}`}
             subTitle={i18next.t("payment:Please click the below button to return to the original website")}
             extra={[
               <Button type="primary" key="returnUrl" onClick={() => {
@@ -80,7 +80,7 @@ class PaymentResultPage extends React.Component {
           }
           <Result
             status="info"
-            title={`${i18next.t("payment:The payment is still under processing")}: ${payment.productName}, ${i18next.t("payment:the current state is")}: ${payment.state}, ${i18next.t("payment:please wait for a few seconds...")}`}
+            title={`${i18next.t("payment:The payment is still under processing")}: ${payment.productDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}, ${i18next.t("payment:please wait for a few seconds...")}`}
             subTitle={i18next.t("payment:Please click the below button to return to the original website")}
             extra={[
               <Spin size="large" tip={i18next.t("payment:Processing...")} />,
@@ -96,7 +96,7 @@ class PaymentResultPage extends React.Component {
           }
           <Result
             status="error"
-            title={`${i18next.t("payment:The payment has failed")}: ${payment.productName}, ${i18next.t("payment:the current state is")}: ${payment.state}`}
+            title={`${i18next.t("payment:The payment has failed")}: ${payment.productDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}`}
             subTitle={i18next.t("payment:Please click the below button to return to the original website")}
             extra={[
               <Button type="primary" key="returnUrl" onClick={() => {

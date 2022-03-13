@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 
+	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -180,6 +181,23 @@ func DeleteProvider(provider *Provider) bool {
 	}
 
 	return affected != 0
+}
+
+func (p *Provider) getPaymentProvider() (pp.PaymentProvider, *Cert, error) {
+	cert := &Cert{}
+	if p.Cert != "" {
+		cert = getCert(p.Owner, p.Cert)
+		if cert == nil {
+			return nil, nil, fmt.Errorf("the cert: %s does not exist", p.Cert)
+		}
+	}
+
+	pProvider := pp.GetPaymentProvider(p.Type, p.ClientId, p.ClientSecret, p.Host, cert.PublicKey, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey)
+	if pProvider == nil {
+		return nil, cert, fmt.Errorf("the payment provider type: %s is not supported", p.Type)
+	}
+
+	return pProvider, cert, nil
 }
 
 func (p *Provider) GetId() string {

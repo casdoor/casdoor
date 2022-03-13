@@ -16,7 +16,10 @@ package pp
 
 import (
 	"context"
+	"fmt"
+	"net/http"
 
+	"github.com/casdoor/casdoor/util"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/alipay"
 )
@@ -42,23 +45,48 @@ func NewAlipayPaymentProvider(appId string, appPublicKey string, appPrivateKey s
 	return pp
 }
 
-func (pp *AlipayPaymentProvider) Pay(productName string, productId string, providerId string, paymentId string, price float64, returnUrl string, notifyUrl string) (string, error) {
+func (pp *AlipayPaymentProvider) Pay(providerName string, productName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error) {
 	//pp.Client.DebugSwitch = gopay.DebugOn
 
 	bm := gopay.BodyMap{}
 
+	bm.Set("providerName", providerName)
+	bm.Set("productName", productName)
+
 	bm.Set("return_url", returnUrl)
 	bm.Set("notify_url", notifyUrl)
 
-	bm.Set("subject", productName)
-	bm.Set("out_trade_no", paymentId)
+	bm.Set("subject", productDisplayName)
+	bm.Set("out_trade_no", paymentName)
 	bm.Set("total_amount", getPriceString(price))
-	bm.Set("productId", productId)
-	bm.Set("providerId", productId)
 
 	payUrl, err := pp.Client.TradePagePay(context.Background(), bm)
 	if err != nil {
 		return "", err
 	}
 	return payUrl, nil
+}
+
+func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string) (string, string, float64, string, string, error) {
+	bm, err := alipay.ParseNotifyToBodyMap(request)
+	if err != nil {
+		return "", "", 0, "", "", err
+	}
+
+	providerName := bm.Get("providerName")
+	productName := bm.Get("productName")
+
+	productDisplayName := bm.Get("subject")
+	paymentName := bm.Get("out_trade_no")
+	price := util.ParseFloat(bm.Get("total_amount"))
+
+	ok, err := alipay.VerifySignWithCert(authorityPublicKey, bm)
+	if err != nil {
+		return "", "", 0, "", "", err
+	}
+	if !ok {
+		return "", "", 0, "", "", fmt.Errorf("VerifySignWithCert() failed: %v", ok)
+	}
+
+	return productDisplayName, paymentName, price, productName, providerName, nil
 }

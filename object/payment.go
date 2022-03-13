@@ -16,10 +16,9 @@ package object
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/casdoor/casdoor/util"
-	"github.com/go-pay/gopay"
-	"github.com/go-pay/gopay/alipay"
 	"xorm.io/core"
 )
 
@@ -29,12 +28,12 @@ type Payment struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
-	Provider     string `xorm:"varchar(100)" json:"provider"`
-	Type         string `xorm:"varchar(100)" json:"type"`
-	Organization string `xorm:"varchar(100)" json:"organization"`
-	User         string `xorm:"varchar(100)" json:"user"`
-	ProductId    string `xorm:"varchar(100)" json:"productId"`
-	ProductName  string `xorm:"varchar(100)" json:"productName"`
+	Provider           string `xorm:"varchar(100)" json:"provider"`
+	Type               string `xorm:"varchar(100)" json:"type"`
+	Organization       string `xorm:"varchar(100)" json:"organization"`
+	User               string `xorm:"varchar(100)" json:"user"`
+	ProductName        string `xorm:"varchar(100)" json:"productName"`
+	ProductDisplayName string `xorm:"varchar(100)" json:"productDisplayName"`
 
 	Detail   string  `xorm:"varchar(100)" json:"detail"`
 	Tag      string  `xorm:"varchar(100)" json:"tag"`
@@ -143,57 +142,45 @@ func DeletePayment(payment *Payment) bool {
 	return affected != 0
 }
 
-func notifyPayment(bm gopay.BodyMap) (*Payment, error) {
-	owner := "admin"
-	productName := bm.Get("subject")
-	paymentId := bm.Get("out_trade_no")
-	priceString := bm.Get("total_amount")
-	price := util.ParseFloat(priceString)
-	productId := bm.Get("productId")
-	providerId := bm.Get("providerId")
-
-	product := getProduct(owner, productId)
-	if product == nil {
-		return nil, fmt.Errorf("the product: %s does not exist", productId)
+func notifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string) (*Payment, error) {
+	payment := getPayment(owner, paymentName)
+	if payment == nil {
+		return nil, fmt.Errorf("the payment: %s does not exist", paymentName)
 	}
 
-	if productName != product.DisplayName {
-		return nil, fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", productName, product.DisplayName)
+	product := getProduct(owner, productName)
+	if product == nil {
+		return nil, fmt.Errorf("the product: %s does not exist", productName)
+	}
+
+	provider, err := product.getProvider(providerName)
+	if err != nil {
+		return payment, err
+	}
+
+	pProvider, cert, err := provider.getPaymentProvider()
+	if err != nil {
+		return payment, err
+	}
+
+	productDisplayName, paymentName, price, productName, providerName, err := pProvider.Notify(request, body, cert.AuthorityPublicKey)
+	if err != nil {
+		return payment, err
+	}
+
+	if productDisplayName != "" && productDisplayName != product.DisplayName {
+		return nil, fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", productDisplayName, product.DisplayName)
 	}
 
 	if price != product.Price {
 		return nil, fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", price, product.Price)
 	}
 
-	payment := getPayment(owner, paymentId)
-	if payment == nil {
-		return nil, fmt.Errorf("the payment: %s does not exist", paymentId)
-	}
-
-	provider, err := product.getProvider(providerId)
-	if err != nil {
-		return payment, err
-	}
-
-	cert := getCert(owner, provider.Cert)
-	if cert == nil {
-		return payment, fmt.Errorf("the cert: %s does not exist", provider.Cert)
-	}
-
-	ok, err := alipay.VerifySignWithCert(cert.AuthorityPublicKey, bm)
-	if err != nil {
-		return payment, err
-	}
-
-	if !ok {
-		return payment, fmt.Errorf("VerifySignWithCert() failed: %v", ok)
-	}
-
 	return payment, nil
 }
 
-func NotifyPayment(bm gopay.BodyMap) bool {
-	payment, err := notifyPayment(bm)
+func NotifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string) bool {
+	payment, err := notifyPayment(request, body, owner, providerName, productName, paymentName)
 
 	if payment != nil {
 		if err != nil {
