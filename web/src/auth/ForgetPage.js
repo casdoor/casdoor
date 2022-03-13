@@ -179,7 +179,7 @@ class ForgetPage extends React.Component {
     if (this.state.phone !== "") {
       options.push(
         <Option key={"phone"} value={"phone"}>
-          &nbsp;&nbsp;{Setting.getMaskedPhone(this.state.phone)}
+          &nbsp;&nbsp;{this.state.phone}
         </Option>
       );
     }
@@ -187,7 +187,7 @@ class ForgetPage extends React.Component {
     if (this.state.email !== "") {
       options.push(
         <Option key={"email"} value={"email"}>
-          &nbsp;&nbsp;{Setting.getMaskedEmail(this.state.email)}
+          &nbsp;&nbsp;{this.state.email}
         </Option>
       );
     }
@@ -349,12 +349,12 @@ class ForgetPage extends React.Component {
               {this.state.verifyType === "email" ? (
                   <CountDownInput
                     disabled={this.state.username === "" || this.state.verifyType === ""}
-                    onButtonClickArgs={[this.state.email, "email", Setting.getApplicationOrgName(this.state.application)]}
+                    onButtonClickArgs={[this.state.email, "email", Setting.getApplicationOrgName(this.state.application), this.state.username]}
                   />
               ) : (
                   <CountDownInput
                     disabled={this.state.username === "" || this.state.verifyType === ""}
-                    onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationOrgName(this.state.application)]}
+                    onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationOrgName(this.state.application), this.state.username]}
                   />
               )}
             </Form.Item>

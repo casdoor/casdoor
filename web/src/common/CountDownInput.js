@@ -49,14 +49,6 @@ export const CountDownInput = (props) => {
 
   const handleOk = () => {
     setVisible(false);
-    if (isValidEmail(onButtonClickArgs[0])) {
-        onButtonClickArgs[1] = "email";
-    } else if (isValidPhone(onButtonClickArgs[0])) {
-        onButtonClickArgs[1] = "phone";
-    } else {
-        Util.showMessage("error", i18next.t("login:Invalid Email or phone"))
-        return;
-    }
     setButtonLoading(true)
     UserBackend.sendCode(checkType, checkId, key, ...onButtonClickArgs).then(res => {
       setKey("");

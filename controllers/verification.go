@@ -74,8 +74,16 @@ func (c *ApiController) SendVerificationCode() {
 	}
 
 	sendResp := errors.New("Invalid dest type")
+
+	if user == nil && checkUser != "" && checkUser != "true" {
+		_, name := util.GetOwnerAndNameFromId(orgId)
+		user = object.GetUser(fmt.Sprintf("%s/%s", name, checkUser))
+	}
 	switch destType {
 	case "email":
+		if user != nil && util.GetMaskedEmail(user.Email) == dest {
+			dest = user.Email
+		}
 		if !util.IsEmailValid(dest) {
 			c.ResponseError("Invalid Email address")
 			return
@@ -84,6 +92,9 @@ func (c *ApiController) SendVerificationCode() {
 		provider := application.GetEmailProvider()
 		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, remoteAddr, dest)
 	case "phone":
+		if user != nil && util.GetMaskedPhone(user.Phone) == dest {
+			dest = user.Phone
+		}
 		if !util.IsPhoneCnValid(dest) {
 			c.ResponseError("Invalid phone number")
 			return
