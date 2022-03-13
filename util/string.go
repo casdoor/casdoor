@@ -21,7 +21,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -201,8 +200,7 @@ func IsChinese(str string) bool {
 }
 
 func GetMaskedPhone(phone string) string {
-	re, _ := regexp.Compile("(\\d{3})\\d*(\\d{4})")
-	return re.ReplaceAllString(phone, "$1****$2")
+	return getMaskedPhone(phone)
 }
 
 func GetMaskedEmail(email string) string {

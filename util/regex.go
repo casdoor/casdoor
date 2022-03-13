@@ -20,10 +20,12 @@ import (
 )
 
 var rePhoneCn *regexp.Regexp
+var rePhone *regexp.Regexp
 
 func init() {
 	// https://learnku.com/articles/31543
 	rePhoneCn, _ = regexp.Compile(`^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$`)
+	rePhone, _ = regexp.Compile("(\\d{3})\\d*(\\d{4})")
 }
 
 func IsEmailValid(email string) bool {
@@ -33,4 +35,8 @@ func IsEmailValid(email string) bool {
 
 func IsPhoneCnValid(phone string) bool {
 	return rePhoneCn.MatchString(phone)
+}
+
+func getMaskedPhone(phone string) string {
+	return rePhone.ReplaceAllString(phone, "$1****$2")
 }
