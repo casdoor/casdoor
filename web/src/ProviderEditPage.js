@@ -72,6 +72,8 @@ class ProviderEditPage extends React.Component {
       case "SMS":
         if (this.state.provider.type === "Volc Engine SMS")
           return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
+        if (this.state.provider.type === "Huawei Cloud SMS")
+          return Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"));
       default:
         return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
     }
@@ -84,6 +86,8 @@ class ProviderEditPage extends React.Component {
       case "SMS":
         if (this.state.provider.type === "Volc Engine SMS")
           return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:SecretAccessKey - Tooltip"));
+        if (this.state.provider.type === "Huawei Cloud SMS")
+          return Setting.getLabel(i18next.t("provider:App secret"), i18next.t("provider:AppSecret - Tooltip"));
       default:
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
     }
@@ -103,6 +107,9 @@ class ProviderEditPage extends React.Component {
     } else if (this.state.provider.category === "SMS" && this.state.provider.type === "Volc Engine SMS") {
       text = i18next.t("provider:SMS account");
       tooltip = i18next.t("provider:SMS account - Tooltip");
+    } else if (this.state.provider.category === "SMS" && this.state.provider.type === "Huawei Cloud SMS") {
+      text = i18next.t("provider:Channel No.");
+      tooltip = i18next.t("provider:Channel No. - Tooltip");
     } else {
       return null;
     }

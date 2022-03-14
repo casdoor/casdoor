@@ -81,6 +81,8 @@ github.com/casbin/xorm-adapter/v2 v2.5.1 h1:BkpIxRHKa0s3bSMx173PpuU7oTs+Zw7XmD0B
 github.com/casbin/xorm-adapter/v2 v2.5.1/go.mod h1:AeH4dBKHC9/zYxzdPVHhPDzF8LYLqjDdb767CWJoV54=
 github.com/casdoor/go-sms-sender v0.0.5 h1:9qhlMM+UoSOvvY7puUULqSHBBA7fbe02Px/tzchQboo=
 github.com/casdoor/go-sms-sender v0.0.5/go.mod h1:TMM/BsZQAa+7JVDXl2KqgxnzZgCjmHEX5MBN662mM5M=
+github.com/casdoor/go-sms-sender v0.2.0 h1:52bin4EBOPzOee64s9UK7jxd22FODvT9/+Y/Z+PSHpg=
+github.com/casdoor/go-sms-sender v0.2.0/go.mod h1:fsZsNnALvFIo+HFcE1U/oCQv4ZT42FdglXKMsEm3WSk=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+qY=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
