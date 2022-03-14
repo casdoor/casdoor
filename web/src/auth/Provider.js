@@ -112,6 +112,10 @@ const otherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_volc_engine.jpg`,
       url: "https://www.volcengine.com/products/cloud-sms",
     },
+    "Huawei Cloud SMS": {
+      logo: `${StaticBaseUrl}/img/social_huawei.png`,
+      url: "https://www.huaweicloud.com/product/msgsms.html",
+    },
   },
   Email: {
     "Default": {

@@ -423,6 +423,7 @@ export function getProviderTypeOptions(category) {
         {id: 'Aliyun SMS', name: 'Aliyun SMS'},
         {id: 'Tencent Cloud SMS', name: 'Tencent Cloud SMS'},
         {id: 'Volc Engine SMS', name: 'Volc Engine SMS'},
+        {id: 'Huawei Cloud SMS', name: 'Huawei Cloud SMS'},
       ]
     );
   } else if (category === "Storage") {
