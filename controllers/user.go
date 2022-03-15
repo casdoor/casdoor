@@ -194,15 +194,19 @@ func (c *ApiController) GetEmailAndPhone() {
 		return
 	}
 
-	respUser := object.User{Email: user.Email, Phone: user.Phone, Name: user.Name}
+	respUser := object.User{Name: user.Name}
 	var contentType string
 	switch form.Username {
 	case user.Email:
 		contentType = "email"
+		respUser.Email = user.Email
 	case user.Phone:
 		contentType = "phone"
+		respUser.Phone = user.Phone
 	case user.Name:
 		contentType = "username"
+		respUser.Email = util.GetMaskedEmail(user.Email)
+		respUser.Phone = util.GetMaskedPhone(user.Phone)
 	}
 
 	c.ResponseOk(respUser, contentType)

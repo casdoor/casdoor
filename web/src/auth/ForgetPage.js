@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Form, Select, Input, Row, Steps} from "antd";
+import {Button, Col, Form, Input, Row, Select, Steps} from "antd";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Util from "./Util";
@@ -43,6 +43,7 @@ class ForgetPage extends React.Component {
       msg: null,
       userId: "",
       username: "",
+      name: "",
       email: "",
       isFixed: false,
       fixedContent: "",
@@ -100,7 +101,7 @@ class ForgetPage extends React.Component {
                   if (res.status === "ok") {
                     const phone = res.data.phone;
                     const email = res.data.email;
-                    this.setState({phone: phone, email: email, username: res.data.name});
+                    this.setState({phone: phone, email: email, username: res.data.name, name: res.data.name});
 
                     if (phone !== "" && email === "") {
                       this.setState({
@@ -134,15 +135,16 @@ class ForgetPage extends React.Component {
               break;
           case "step2":
               const oAuthParams = Util.getOAuthGetParameters();
-              if(this.state.verifyType=="email"){
+              if (this.state.verifyType === "email") {
                 this.setState({username: this.state.email})
-              }else if(this.state.verifyType=="phone"){
+              } else if (this.state.verifyType === "phone") {
                 this.setState({username: this.state.phone})
               }
               AuthBackend.login({
                   application: forms.step2.getFieldValue("application"),
                   organization: forms.step2.getFieldValue("organization"),
                   username: this.state.username,
+                  name: this.state.name,
                   code: forms.step2.getFieldValue("emailCode"),
                   phonePrefix: this.state.application?.organizationObj.phonePrefix,
                   type: "login"
@@ -179,7 +181,7 @@ class ForgetPage extends React.Component {
     if (this.state.phone !== "") {
       options.push(
         <Option key={"phone"} value={"phone"}>
-          &nbsp;&nbsp;{Setting.getMaskedPhone(this.state.phone)}
+          &nbsp;&nbsp;{this.state.phone}
         </Option>
       );
     }
@@ -187,7 +189,7 @@ class ForgetPage extends React.Component {
     if (this.state.email !== "") {
       options.push(
         <Option key={"email"} value={"email"}>
-          &nbsp;&nbsp;{Setting.getMaskedEmail(this.state.email)}
+          &nbsp;&nbsp;{this.state.email}
         </Option>
       );
     }
@@ -349,12 +351,12 @@ class ForgetPage extends React.Component {
               {this.state.verifyType === "email" ? (
                   <CountDownInput
                     disabled={this.state.username === "" || this.state.verifyType === ""}
-                    onButtonClickArgs={[this.state.email, "email", Setting.getApplicationOrgName(this.state.application)]}
+                    onButtonClickArgs={[this.state.email, "email", Setting.getApplicationOrgName(this.state.application), this.state.name]}
                   />
               ) : (
                   <CountDownInput
                     disabled={this.state.username === "" || this.state.verifyType === ""}
-                    onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationOrgName(this.state.application)]}
+                    onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationOrgName(this.state.application), this.state.name]}
                   />
               )}
             </Form.Item>

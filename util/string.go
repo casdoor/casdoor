@@ -206,3 +206,28 @@ func IsChinese(str string) bool {
 	}
 	return flag
 }
+
+func GetMaskedPhone(phone string) string {
+	return getMaskedPhone(phone)
+}
+
+func GetMaskedEmail(email string) string {
+	if email == "" {
+		return ""
+	}
+
+	tokens := strings.Split(email, "@")
+	username := maskString(tokens[0])
+	domain := tokens[1]
+	domainTokens := strings.Split(domain, ".")
+	domainTokens[len(domainTokens) - 2] = maskString(domainTokens[len(domainTokens) - 2])
+	return fmt.Sprintf("%s@%s", username, strings.Join(domainTokens, "."))
+}
+
+func maskString(str string) string {
+	if len(str) <= 2 {
+		return str
+	} else {
+		return fmt.Sprintf("%c%s%c", str[0], strings.Repeat("*", len(str) - 2), str[len(str) - 1])
+	}
+}
