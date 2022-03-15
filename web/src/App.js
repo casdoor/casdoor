@@ -553,22 +553,22 @@ class App extends Component {
                 </Link>
               )
             }
-            <Menu
-              // theme="dark"
-              mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
-              selectedKeys={[`${this.state.selectedMenuKey}`]}
-              style={{lineHeight: '64px', width: '100%', position: 'absolute'}}
-            >
+            <div>
+              <Menu
+                  // theme="dark"
+                  mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
+                  selectedKeys={[`${this.state.selectedMenuKey}`]}
+                  style={{lineHeight: '64px', width: '80%', position: 'absolute'}}
+              >
+                {
+                  this.renderMenu()
+                }
+              </Menu>
               {
-                this.renderMenu()
+                this.renderAccount()
               }
-            <div style = {{float: 'right'}}>
-            {
-              this.renderAccount()
-            }
-          <SelectLanguageBox/>
-          </div>
-            </Menu>
+              <SelectLanguageBox/>
+            </div>
           </Header>
           <Layout style={{backgroundColor: "#f5f5f5", alignItems: 'stretch'}}>
             <Card className="content-warp-card">
