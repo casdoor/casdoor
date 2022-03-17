@@ -83,6 +83,13 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			resp = tokenToResponse(token)
 		}
 
+	} else if form.Type == ResponseTypeSaml { // saml flow
+		res, redirectUrl, err := object.GetSamlResponse(application, user, form.SamlRequest, c.Ctx.Request.Host)
+		if err != nil {
+			c.ResponseError(err.Error(), nil)
+			return
+		}
+		resp = &Response{Status: "ok", Msg: "", Data: res, Data2: redirectUrl}
 	} else {
 		resp = &Response{Status: "error", Msg: fmt.Sprintf("Unknown response type: %s", form.Type)}
 	}
@@ -167,16 +174,9 @@ func (c *ApiController) Login() {
 			var verificationCodeType string
 			var checkResult string
 
-			if form.Name != "" {
-				user = object.GetUserByFields(form.Organization, form.Name)
-			}
-
 			// check result through Email or Phone
 			if strings.Contains(form.Username, "@") {
 				verificationCodeType = "email"
-				if user != nil && util.GetMaskedEmail(user.Email) == form.Username {
-					form.Username = user.Email
-				}
 				checkResult = object.CheckVerificationCode(form.Username, form.Code)
 			} else {
 				verificationCodeType = "phone"
@@ -184,9 +184,6 @@ func (c *ApiController) Login() {
 					responseText := fmt.Sprintf("%s%s", verificationCodeType, "No phone prefix")
 					c.ResponseError(responseText)
 					return
-				}
-				if user != nil && util.GetMaskedPhone(user.Phone) == form.Username {
-					form.Username = user.Phone
 				}
 				checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username)
 				checkResult = object.CheckVerificationCode(checkPhone, form.Code)

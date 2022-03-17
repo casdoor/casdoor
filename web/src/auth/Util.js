@@ -89,8 +89,9 @@ export function getOAuthGetParameters(params) {
   const nonce = getRefinedValue(queries.get("nonce"))
   const challengeMethod = getRefinedValue(queries.get("code_challenge_method"))
   const codeChallenge = getRefinedValue(queries.get("code_challenge"))
-  
-  if (clientId === undefined || clientId === null || clientId === "") {
+  const samlRequest = getRefinedValue(queries.get("SAMLRequest"))
+
+  if ((clientId === undefined || clientId === null || clientId === "") && (samlRequest === "" || samlRequest === undefined)) {
     // login
     return null;
   } else {

@@ -229,7 +229,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 			application.OrganizationObj.PasswordSalt = "***"
 		}
 	}
- 	return application
+	return application
 }
 
 func GetMaskedApplications(applications []*Application, userId string) []*Application {
@@ -300,7 +300,6 @@ func (application *Application) GetId() string {
 func CheckRedirectUriValid(application *Application, redirectUri string) bool {
 	var validUri = false
 	for _, tmpUri := range application.RedirectUris {
-		fmt.Println(tmpUri, redirectUri)
 		if strings.Contains(redirectUri, tmpUri) {
 			validUri = true
 			break

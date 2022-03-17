@@ -123,7 +123,12 @@ class LoginPage extends React.Component {
       values["type"] = this.state.type;
     }
     values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix;
-    
+    values["samlRequest"] = oAuthParams.samlRequest;
+
+    if (values["samlRequest"] != null && values["samlRequest"] !== "") {
+        values["type"] = "saml";
+    }
+
     AuthBackend.login(values, oAuthParams)
       .then((res) => {
         if (res.status === 'ok') {
@@ -163,6 +168,10 @@ class LoginPage extends React.Component {
           } else if (responseType === "token" || responseType === "id_token") {
             const accessToken = res.data;
             Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
+          } else if (responseType === "saml") {
+            const SAMLResponse = res.data;
+            const redirectUri = res.data2;
+            Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}`);
           }
         } else {
           Util.showMessage("error", `Failed to log in: ${res.msg}`);
