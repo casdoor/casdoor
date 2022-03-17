@@ -174,9 +174,16 @@ func (c *ApiController) Login() {
 			var verificationCodeType string
 			var checkResult string
 
+			if form.Name != "" {
+				user = object.GetUserByFields(form.Organization, form.Name)
+			}
+
 			// check result through Email or Phone
 			if strings.Contains(form.Username, "@") {
 				verificationCodeType = "email"
+				if user != nil && util.GetMaskedEmail(user.Email) == form.Username {
+					form.Username = user.Email
+				}
 				checkResult = object.CheckVerificationCode(form.Username, form.Code)
 			} else {
 				verificationCodeType = "phone"
@@ -184,6 +191,9 @@ func (c *ApiController) Login() {
 					responseText := fmt.Sprintf("%s%s", verificationCodeType, "No phone prefix")
 					c.ResponseError(responseText)
 					return
+				}
+				if user != nil && util.GetMaskedPhone(user.Phone) == form.Username {
+					form.Username = user.Phone
 				}
 				checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username)
 				checkResult = object.CheckVerificationCode(checkPhone, form.Code)
