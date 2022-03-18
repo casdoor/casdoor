@@ -57,7 +57,9 @@ class LoginPage extends React.Component {
       isCodeSignin: false,
       msg: null,
       username: null,
-      validEmailOrPhone: false
+      validEmailOrPhone: false,
+      validEmail: false,
+      validPhone: false,
     };
   }
 
@@ -347,6 +349,12 @@ class LoginPage extends React.Component {
                         return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
                       }
                     }
+                    if (Setting.isValidPhone(this.state.username)) {
+                      this.setState({validPhone: true})
+                    }
+                    if (Setting.isValidEmail(this.state.username)) {
+                      this.setState({validEmail: true})
+                    }
                     this.setState({validEmailOrPhone: true});
                     return Promise.resolve();
                   }
@@ -372,7 +380,7 @@ class LoginPage extends React.Component {
               >
                 <CountDownInput
                   disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
-                  onButtonClickArgs={[this.state.username, "", Setting.getApplicationOrgName(application), true]}
+                  onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationOrgName(application)]}
                 />
               </Form.Item>
             ) : (
