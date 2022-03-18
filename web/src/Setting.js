@@ -404,6 +404,7 @@ export function getProviderTypeOptions(category) {
         {id: 'GitLab', name: 'GitLab'},
         {id: 'Adfs', name: 'Adfs'},
         {id: 'Baidu', name: 'Baidu'},
+        {id: 'Casdoor', name: 'Casdoor'},
         {id: 'Infoflow', name: 'Infoflow'},
         {id: 'Apple', name: 'Apple'},
         {id: 'AzureAD', name: 'AzureAD'},

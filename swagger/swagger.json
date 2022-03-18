@@ -478,6 +478,39 @@
                 }
             }
         },
+        "/api/buy-product": {
+            "post": {
+                "tags": [
+                    "Product API"
+                ],
+                "description": "buy product",
+                "operationId": "ApiController.BuyProduct",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the product",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "providerName",
+                        "description": "The name of the provider",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/check-ldap-users-exist": {
             "post": {
                 "tags": [
@@ -1710,6 +1743,49 @@
                 }
             }
         },
+        "/api/get-user-payments": {
+            "get": {
+                "tags": [
+                    "Payment API"
+                ],
+                "description": "get payments for a user",
+                "operationId": "ApiController.GetUserPayments",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of payments",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "organization",
+                        "description": "The organization of the user",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "user",
+                        "description": "The username of the user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Payment"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/get-users": {
             "get": {
                 "tags": [
@@ -1936,6 +2012,36 @@
                 }
             }
         },
+        "/api/login/oauth/introspect": {
+            "post": {
+                "description": "The introspection endpoint is an OAuth 2.0 endpoint that takes a",
+                "operationId": "ApiController.IntrospectToken",
+                "parameters": [
+                    {
+                        "in": "formData",
+                        "name": "token",
+                        "description": "access_token's value or refresh_token's value",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "token_type_hint",
+                        "description": "the token type access_token or refresh_token",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.IntrospectionResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/login/oauth/logout": {
             "get": {
                 "tags": [
@@ -2015,7 +2121,6 @@
                         "in": "query",
                         "name": "client_secret",
                         "description": "OAuth client secret",
-                        "required": true,
                         "type": "string"
                     }
                 ],
@@ -2036,6 +2141,34 @@
                 ],
                 "description": "logout the current user",
                 "operationId": "ApiController.Logout",
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/notify-payment": {
+            "post": {
+                "tags": [
+                    "Payment API"
+                ],
+                "description": "notify payment",
+                "operationId": "ApiController.NotifyPayment",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the payment",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Payment"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "The Response object",
@@ -2664,11 +2797,11 @@
         }
     },
     "definitions": {
-        "2015.0xc0000edb90.false": {
+        "2026.0xc000380de0.false": {
             "title": "false",
             "type": "object"
         },
-        "2049.0xc0000edbc0.false": {
+        "2060.0xc000380e10.false": {
             "title": "false",
             "type": "object"
         },
@@ -2685,10 +2818,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2015.0xc0000edb90.false"
+                    "$ref": "#/definitions/2026.0xc000380de0.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2049.0xc0000edbc0.false"
+                    "$ref": "#/definitions/2060.0xc000380e10.false"
                 },
                 "msg": {
                     "type": "string"
@@ -2709,10 +2842,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2015.0xc0000edb90.false"
+                    "$ref": "#/definitions/2026.0xc000380de0.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2049.0xc0000edbc0.false"
+                    "$ref": "#/definitions/2060.0xc000380e10.false"
                 },
                 "msg": {
                     "type": "string"
@@ -2864,6 +2997,12 @@
             "title": "Cert",
             "type": "object",
             "properties": {
+                "authorityPublicKey": {
+                    "type": "string"
+                },
+                "authorityRootPublicKey": {
+                    "type": "string"
+                },
                 "bitSize": {
                     "type": "integer",
                     "format": "int64"
@@ -2913,6 +3052,54 @@
                 }
             }
         },
+        "object.IntrospectionResponse": {
+            "title": "IntrospectionResponse",
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "aud": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "client_id": {
+                    "type": "string"
+                },
+                "exp": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "iat": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "iss": {
+                    "type": "string"
+                },
+                "jti": {
+                    "type": "string"
+                },
+                "nbf": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "scope": {
+                    "type": "string"
+                },
+                "sub": {
+                    "type": "string"
+                },
+                "token_type": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "object.Organization": {
             "title": "Organization",
             "type": "object",
@@ -2950,6 +3137,12 @@
                 "phonePrefix": {
                     "type": "string"
                 },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "websiteUrl": {
                     "type": "string"
                 }
@@ -2959,19 +3152,19 @@
             "title": "Payment",
             "type": "object",
             "properties": {
-                "amount": {
-                    "type": "string"
-                },
                 "createdTime": {
                     "type": "string"
                 },
                 "currency": {
                     "type": "string"
                 },
+                "detail": {
+                    "type": "string"
+                },
                 "displayName": {
                     "type": "string"
                 },
-                "good": {
+                "message": {
                     "type": "string"
                 },
                 "name": {
@@ -2983,10 +3176,29 @@
                 "owner": {
                     "type": "string"
                 },
+                "payUrl": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "productDisplayName": {
+                    "type": "string"
+                },
+                "productName": {
+                    "type": "string"
+                },
                 "provider": {
                     "type": "string"
                 },
+                "returnUrl": {
+                    "type": "string"
+                },
                 "state": {
+                    "type": "string"
+                },
+                "tag": {
                     "type": "string"
                 },
                 "type": {
@@ -3074,8 +3286,8 @@
                     "type": "string"
                 },
                 "price": {
-                    "type": "integer",
-                    "format": "int64"
+                    "type": "number",
+                    "format": "double"
                 },
                 "providers": {
                     "type": "array",
@@ -3086,6 +3298,9 @@
                 "quantity": {
                     "type": "integer",
                     "format": "int64"
+                },
+                "returnUrl": {
+                    "type": "string"
                 },
                 "sold": {
                     "type": "integer",
@@ -3110,6 +3325,9 @@
                     "type": "string"
                 },
                 "category": {
+                    "type": "string"
+                },
+                "cert": {
                     "type": "string"
                 },
                 "clientId": {
@@ -3480,6 +3698,9 @@
                     "type": "string"
                 },
                 "birthday": {
+                    "type": "string"
+                },
+                "casdoor": {
                     "type": "string"
                 },
                 "createdIp": {
