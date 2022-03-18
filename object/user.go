@@ -85,6 +85,7 @@ type User struct {
 	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab"`
 	Adfs     string `xorm:"adfs varchar(100)" json:"adfs"`
 	Baidu    string `xorm:"baidu varchar(100)" json:"baidu"`
+	Casdoor  string `xorm:"casdoor varchar(100)" json:"casdoor"`
 	Infoflow string `xorm:"infoflow varchar(100)" json:"infoflow"`
 	Apple    string `xorm:"apple varchar(100)" json:"apple"`
 	AzureAD  string `xorm:"azuread varchar(100)" json:"azuread"`

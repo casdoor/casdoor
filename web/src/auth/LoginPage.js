@@ -36,6 +36,7 @@ import LarkLoginButton from "./LarkLoginButton";
 import GitLabLoginButton from "./GitLabLoginButton";
 import AdfsLoginButton from "./AdfsLoginButton";
 import BaiduLoginButton from "./BaiduLoginButton";
+import CasdoorLoginButton from "./CasdoorLoginButton";
 import InfoflowLoginButton from "./InfoflowLoginButton";
 import AppleLoginButton from "./AppleLoginButton"
 import AzureADLoginButton from "./AzureADLoginButton";
@@ -198,6 +199,8 @@ class LoginPage extends React.Component {
       return <GitLabLoginButton text={text} align={"center"} />
     } else if (type === "Adfs") {
       return <AdfsLoginButton text={text} align={"center"} />
+    } else if (type === "Casdoor") {
+      return <CasdoorLoginButton text={text} align={"center"} />
     } else if (type === "Baidu") {
       return <BaiduLoginButton text={text} align={"center"} />
     } else if (type === "Infoflow") {

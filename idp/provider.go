@@ -78,6 +78,8 @@ func GetIdProvider(typ string, subType string, clientId string, clientSecret str
 		} else {
 			return nil
 		}
+	} else if typ == "Casdoor" {
+		return NewCasdoorIdProvider(clientId, clientSecret, redirectUrl, hostUrl)
 	} else if isGothSupport(typ) {
 		return NewGothIdProvider(typ, clientId, clientSecret, redirectUrl)
 	}

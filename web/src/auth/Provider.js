@@ -78,6 +78,10 @@ const authInfo = {
     scope: "basic",
     endpoint: "http://openapi.baidu.com/oauth/2.0/authorize",
   },
+  Casdoor: {
+    scope: "openid%20profile%20email",
+    endpoint: "http://example.com",
+  },
   Infoflow: {
     endpoint: "https://xpc.im.baidu.com/oauth2/authorize",
   },
@@ -283,6 +287,8 @@ export function getAuthUrl(application, provider, method) {
     return `${provider.domain}/adfs/oauth2/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&nonce=casdoor&scope=openid`;
   } else if (provider.type === "Baidu") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&display=popup`;
+  } else if (provider.type === "Casdoor") {
+    return `${provider.domain}/login/oauth/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Infoflow"){
     return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}?state=${state}`
   } else if (provider.type === "Apple") {
