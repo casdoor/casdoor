@@ -138,6 +138,7 @@ class LoginPage extends React.Component {
             Setting.goToLink(link);
           } else if (responseType === "code") {
             const code = res.data;
+            const concatChar = oAuthParams.redirectUri.indexOf('?') === -1 ? '?' : '&';
 
             if (Setting.hasPromptPage(application)) {
               AuthBackend.getAccount("")
@@ -150,7 +151,7 @@ class LoginPage extends React.Component {
                     this.onUpdateAccount(account);
 
                     if (Setting.isPromptAnswered(account, application)) {
-                      Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+                      Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
                     } else {
                       Setting.goToLinkSoft(ths, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
                     }
@@ -159,7 +160,7 @@ class LoginPage extends React.Component {
                   }
                 });
             } else {
-              Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+              Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
             }
 
             // Util.showMessage("success", `Authorization code: ${res.data}`);

@@ -106,6 +106,7 @@ class AuthCallback extends React.Component {
       method: method,
     };
     const oAuthParams = Util.getOAuthGetParameters(innerParams);
+    const concatChar = oAuthParams.redirectUri.indexOf('?') === -1 ? '?' : '&';
     AuthBackend.login(body, oAuthParams)
       .then((res) => {
         if (res.status === 'ok') {
@@ -118,11 +119,11 @@ class AuthCallback extends React.Component {
             Setting.goToLink(link);
           } else if (responseType === "code") {
             const code = res.data;
-            Setting.goToLink(`${oAuthParams.redirectUri}?code=${code}&state=${oAuthParams.state}`);
+            Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
             // Util.showMessage("success", `Authorization code: ${res.data}`);
           } else if (responseType === "token" || responseType === "id_token"){
             const token = res.data;
-            Setting.goToLink(`${oAuthParams.redirectUri}?${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
+            Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
           } else if (responseType === "link") {
             const from = innerParams.get("from");
             Setting.goToLinkSoft(this, from);
