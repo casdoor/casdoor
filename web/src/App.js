@@ -235,8 +235,12 @@ class App extends Component {
           });
 
           Setting.showMessage("success", `Logged out successfully`);
-
-          Setting.goToLinkSoft(this, "/");
+          let redirectUri = res.data2;
+          if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
+            Setting.goToLink(redirectUri);
+          }else{
+            Setting.goToLinkSoft(this, "/");
+          }
         } else {
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);
         }

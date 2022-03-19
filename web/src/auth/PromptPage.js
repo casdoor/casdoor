@@ -147,7 +147,10 @@ class PromptPage extends React.Component {
         if (res.status === 'ok') {
           this.onUpdateAccount(null);
 
-          const redirectUrl = this.getRedirectUrl();
+          let redirectUrl = this.getRedirectUrl();
+          if (redirectUrl === "") {
+            redirectUrl = res.data2
+          }
           if (redirectUrl !== "") {
             Setting.goToLink(redirectUrl);
           } else {
