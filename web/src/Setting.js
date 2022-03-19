@@ -70,15 +70,7 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (providerItem.provider.type === "GitHub") {
-    if (isLocalhost()) {
-      return providerItem.provider.name.includes("localhost");
-    } else {
-      return !providerItem.provider.name.includes("localhost");
-    }
-  } else {
-    return true;
-  }
+  return true;
 }
 
 export function isProviderVisibleForSignUp(providerItem) {
