@@ -225,10 +225,15 @@ func (c *ApiController) Logout() {
 	user := c.GetSessionUsername()
 	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
+	application := c.GetSessionApplication()
 	c.SetSessionUsername("")
 	c.SetSessionData(nil)
 
-	c.ResponseOk(user)
+	if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
+		c.ResponseOk(user)
+		return
+	}
+	c.ResponseOk(user, application.HomepageUrl)
 }
 
 // GetAccount

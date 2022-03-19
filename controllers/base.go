@@ -72,6 +72,15 @@ func (c *ApiController) GetSessionUsername() string {
 	return user.(string)
 }
 
+func (c *ApiController) GetSessionApplication() *object.Application {
+	clientId := c.GetSession("aud")
+	if clientId == nil {
+		return nil
+	}
+	application := object.GetApplicationByClientId(clientId.(string))
+	return application
+}
+
 func (c *ApiController) GetSessionOidc() (string, string) {
 	sessionData := c.GetSessionData()
 	if sessionData != nil &&
