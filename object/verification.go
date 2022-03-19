@@ -20,7 +20,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -129,7 +129,7 @@ func CheckVerificationCode(dest, code string) string {
 		return "Code has not been sent yet!"
 	}
 
-	timeout, err := beego.AppConfig.Int64("verificationCodeTimeout")
+	timeout, err := conf.GetConfigInt64("verificationCodeTimeout")
 	if err != nil {
 		panic(err)
 	}

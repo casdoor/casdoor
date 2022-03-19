@@ -15,14 +15,49 @@
 package conf
 
 import (
+	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/astaxie/beego"
 )
 
+func GetConfigString(key string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return beego.AppConfig.String(key)
+}
+
+func GetConfigBool(key string) (bool, error) {
+	value := GetConfigString(key)
+	if value == "true" {
+		return true, nil
+	} else if value == "false" {
+		return false, nil
+	}
+	return false, fmt.Errorf("value %s cannot be converted into bool", value)
+}
+
+func GetConfigInt64(key string) (int64, error) {
+	value := GetConfigString(key)
+	num, err := strconv.ParseInt(value, 10, 64)
+	return num, err
+}
+
+func init() {
+	//this array contains the beego configuration items that may be modified via env
+	var presetConfigItems = []string{"httpport", "appname"}
+	for _, key := range presetConfigItems {
+		if value, ok := os.LookupEnv(key); ok {
+			beego.AppConfig.Set(key, value)
+		}
+	}
+}
+
 func GetBeegoConfDataSourceName() string {
-	dataSourceName := beego.AppConfig.String("dataSourceName")
+	dataSourceName := GetConfigString("dataSourceName")
 
 	runningInDocker := os.Getenv("RUNNING_IN_DOCKER")
 	if runningInDocker == "true" {
