@@ -138,7 +138,7 @@ class LoginPage extends React.Component {
             Setting.goToLink(link);
           } else if (responseType === "code") {
             const code = res.data;
-            const concatChar = oAuthParams.redirectUri.indexOf('?') === -1 ? '?' : '&';
+            const concatChar = oAuthParams?.redirectUri?.indexOf('?') === -1 ? '?' : '&';
 
             if (Setting.hasPromptPage(application)) {
               AuthBackend.getAccount("")
