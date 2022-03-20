@@ -229,7 +229,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 			application.OrganizationObj.PasswordSalt = "***"
 		}
 	}
- 	return application
+	return application
 }
 
 func GetMaskedApplications(applications []*Application, userId string) []*Application {

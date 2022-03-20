@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -67,7 +67,7 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours) * time.Hour)
 
 	user.Password = ""
-	origin := beego.AppConfig.String("origin")
+	origin := conf.GetConfigString("origin")
 	_, originBackend := getOriginFromHost(host)
 	if origin != "" {
 		originBackend = origin

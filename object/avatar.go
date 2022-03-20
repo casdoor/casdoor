@@ -19,14 +19,14 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/proxy"
 )
 
 var defaultStorageProvider *Provider = nil
 
 func InitDefaultStorageProvider() {
-	defaultStorageProviderStr := beego.AppConfig.String("defaultStorageProvider")
+	defaultStorageProviderStr := conf.GetConfigString("defaultStorageProvider")
 	if defaultStorageProviderStr != "" {
 		defaultStorageProvider = getProvider("admin", defaultStorageProviderStr)
 	}

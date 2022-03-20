@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -62,7 +62,7 @@ func (c *ApiController) RequireSignedIn() (string, bool) {
 }
 
 func getInitScore() int {
-	score, err := strconv.Atoi(beego.AppConfig.String("initScore"))
+	score, err := strconv.Atoi(conf.GetConfigString("initScore"))
 	if err != nil {
 		panic(err)
 	}

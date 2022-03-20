@@ -22,6 +22,7 @@ import (
 	"github.com/astaxie/beego/logs"
 	_ "github.com/astaxie/beego/session/redis"
 	"github.com/casdoor/casdoor/authz"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/routers"
@@ -31,6 +32,7 @@ import (
 func main() {
 	createDatabase := flag.Bool("createDatabase", false, "true if you need casdoor to create database")
 	flag.Parse()
+
 	object.InitAdapter(*createDatabase)
 	object.InitDb()
 	object.InitDefaultStorageProvider()
@@ -52,12 +54,12 @@ func main() {
 	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
 
 	beego.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
-	if beego.AppConfig.String("redisEndpoint") == "" {
+	if conf.GetConfigString("redisEndpoint") == "" {
 		beego.BConfig.WebConfig.Session.SessionProvider = "file"
 		beego.BConfig.WebConfig.Session.SessionProviderConfig = "./tmp"
 	} else {
 		beego.BConfig.WebConfig.Session.SessionProvider = "redis"
-		beego.BConfig.WebConfig.Session.SessionProviderConfig = beego.AppConfig.String("redisEndpoint")
+		beego.BConfig.WebConfig.Session.SessionProviderConfig = conf.GetConfigString("redisEndpoint")
 	}
 	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
 	//beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
