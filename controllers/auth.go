@@ -207,10 +207,22 @@ func (c *ApiController) Login() {
 			}
 		} else {
 			password := form.Password
+			user = object.GetUser(fmt.Sprintf("%s/%s", form.Organization, form.Username))
+			if user.FailedLoginAttempts >= 5 && user.LastFailedAttempt != "" {
+				lastfailedtime, _ := strconv.Atoi(user.LastFailedAttempt)
+				if time.Now().Unix()-int64(lastfailedtime) <= 300 {
+					c.ResponseError("Too many attempts, please try after sometime")
+					return
+				}
+			}
 			user, msg = object.CheckUserPassword(form.Organization, form.Username, password)
 		}
 
 		if msg != "" {
+			user = object.GetUser(fmt.Sprintf("%s/%s", form.Organization, form.Username))
+			user.LastFailedAttempt = strconv.Itoa(int(time.Now().Unix()))
+			user.FailedLoginAttempts += 1
+			object.UpdateUserForAllFields(user.GetId(), user)
 			resp = &Response{Status: "error", Msg: msg}
 		} else {
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
@@ -220,6 +232,9 @@ func (c *ApiController) Login() {
 			}
 
 			resp = c.HandleLoggedIn(application, user, &form)
+			user = object.GetUser(fmt.Sprintf("%s/%s", form.Organization, form.Username))
+			user.FailedLoginAttempts = 0
+			object.UpdateUserForAllFields(user.GetId(), user)
 
 			record := object.NewRecord(c.Ctx)
 			record.Organization = application.Organization

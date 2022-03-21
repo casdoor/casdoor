@@ -67,9 +67,11 @@ type User struct {
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
 
-	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
-	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
-	LastSigninIp   string `xorm:"varchar(100)" json:"lastSigninIp"`
+	CreatedIp           string `xorm:"varchar(100)" json:"createdIp"`
+	LastSigninTime      string `xorm:"varchar(100)" json:"lastSigninTime"`
+	LastSigninIp        string `xorm:"varchar(100)" json:"lastSigninIp"`
+	FailedLoginAttempts int    `json:"failedLoginAttempts"`
+	LastFailedAttempt   string `xorm:"varchar(100)" json:"lastFailedAttempt"`
 
 	Github   string `xorm:"varchar(100)" json:"github"`
 	Google   string `xorm:"varchar(100)" json:"google"`
