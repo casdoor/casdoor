@@ -18,10 +18,6 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-var tokenJwtPublicKey string
-
-var tokenJwtPrivateKey string
-
 func InitDb() {
 	initBuiltInOrganization()
 	initBuiltInUser()
