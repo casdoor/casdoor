@@ -15,15 +15,11 @@
 package object
 
 import (
-	_ "embed"
-
 	"github.com/casdoor/casdoor/util"
 )
 
-//go:embed token_jwt_key.pem
 var tokenJwtPublicKey string
 
-//go:embed token_jwt_key.key
 var tokenJwtPrivateKey string
 
 func InitDb() {

@@ -17,7 +17,6 @@ package idp
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -133,7 +132,7 @@ func (idp *CasdoorIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error
 		return nil, err
 	}
 
-	data, err := io.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
