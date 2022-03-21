@@ -87,6 +87,42 @@ func (c *ApiController) GetUser() {
 	id := c.Input().Get("id")
 	owner := c.Input().Get("owner")
 	email := c.Input().Get("email")
+	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", strings.Split(id, "/")[0]))
+
+	if organization.IsProfilePublic {
+		requestUserId := c.GetSessionUsername()
+		if requestUserId == "" {
+			c.ResponseError("Please login first.")
+			return
+		}
+		targetUser := object.GetUser(id)
+		if targetUser == nil {
+			c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", id))
+			return
+		}
+
+		hasPermission := false
+		if strings.HasPrefix(requestUserId, "app/") {
+			hasPermission = true
+		} else {
+			requestUser := object.GetUser(requestUserId)
+			if requestUser == nil {
+				c.ResponseError("Session outdated. Please login again.")
+				return
+			}
+			if requestUser.IsGlobalAdmin {
+				hasPermission = true
+			} else if requestUserId == id {
+				hasPermission = true
+			} else if targetUser.Owner == requestUser.Owner && requestUser.IsAdmin {
+				hasPermission = true
+			}
+		}
+		if !hasPermission {
+			c.ResponseError("You don't have the permission to do this.")
+			return
+		}
+	}
 
 	var user *object.User
 	if email == "" {
