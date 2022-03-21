@@ -17,7 +17,7 @@ package idp
 import (
 	"context"
 	"encoding/json"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
@@ -172,7 +172,7 @@ func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

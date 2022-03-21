@@ -18,7 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 
 	"golang.org/x/oauth2"
@@ -97,7 +97,7 @@ func (idp *BaiduIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) 
 		return nil, err
 	}
 
-	data, err := io.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

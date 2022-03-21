@@ -20,7 +20,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"os"
+	"io/ioutil"
 	"strconv"
 	"strings"
 	"time"
@@ -162,7 +162,7 @@ func GetMinLenStr(strs ...string) string {
 }
 
 func ReadStringFromPath(path string) string {
-	data, err := os.ReadFile(path)
+	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		panic(err)
 	}
@@ -171,7 +171,7 @@ func ReadStringFromPath(path string) string {
 }
 
 func WriteStringToPath(s string, path string) {
-	err := os.WriteFile(path, []byte(s), 0644)
+	err := ioutil.WriteFile(path, []byte(s), 0644)
 	if err != nil {
 		panic(err)
 	}

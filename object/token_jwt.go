@@ -15,7 +15,6 @@
 package object
 
 import (
-	_ "embed"
 	"fmt"
 	"time"
 

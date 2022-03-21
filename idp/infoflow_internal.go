@@ -17,7 +17,7 @@ package idp
 import (
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 
 	"golang.org/x/oauth2"
@@ -69,7 +69,7 @@ func (idp *InfoflowInternalIdProvider) GetToken(code string) (*oauth2.Token, err
 		return nil, err
 	}
 
-	data, err := io.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +147,7 @@ func (idp *InfoflowInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserIn
 		return nil, err
 	}
 
-	data, err := io.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func (idp *InfoflowInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserIn
 		return nil, err
 	}
 
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
