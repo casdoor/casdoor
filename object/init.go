@@ -15,6 +15,8 @@
 package object
 
 import (
+	"io/ioutil"
+
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -114,7 +116,22 @@ func initBuiltInApplication() {
 	AddApplication(application)
 }
 
+func readTokenFromFile() (string, string) {
+	pemPath := "./object/token_jwt_key.pem"
+	keyPath := "./object/token_jwt_key.key"
+	pem, err := ioutil.ReadFile(pemPath)
+	if err != nil {
+		return "", ""
+	}
+	key, err := ioutil.ReadFile(keyPath)
+	if err != nil {
+		return "", ""
+	}
+	return string(pem), string(key)
+}
+
 func initBuiltInCert() {
+	tokenJwtPublicKey, tokenJwtPrivateKey := readTokenFromFile()
 	cert := getCert("admin", "cert-built-in")
 	if cert != nil {
 		return
