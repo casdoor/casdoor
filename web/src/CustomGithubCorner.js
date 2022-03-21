@@ -15,6 +15,7 @@
 import React from "react";
 import * as Conf from "./Conf";
 import GithubCorner from "react-github-corner";
+import { WindowsFilled } from "@ant-design/icons";
 
 class CustomGithubCorner extends React.Component {
   constructor(props) {
@@ -25,13 +26,16 @@ class CustomGithubCorner extends React.Component {
   }
 
   render() {
-    if (!Conf.ShowGithubCorner) {
+    // Display github corner when the current page is accessed normally
+    if (window.top==window.self) {
+      return (
+        <GithubCorner href={Conf.GithubRepo} size={60} />
+      );
+    
+    // Hide github corner when the current page is displayed in an iframe
+    } else{
       return null;
     }
-
-    return (
-      <GithubCorner href={Conf.GithubRepo} size={60} />
-    );
   }
 }
 

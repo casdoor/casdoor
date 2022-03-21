@@ -29,7 +29,7 @@ import (
 )
 
 func main() {
-	createDatabase := flag.Bool("createDatabase", false, "true if you need casdoor to create database")
+	createDatabase := flag.Bool("createDatabase", true, "true if you need casdoor to create database")
 	flag.Parse()
 	object.InitAdapter(*createDatabase)
 	object.InitDb()
