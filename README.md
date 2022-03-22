@@ -130,12 +130,18 @@ go build main.go && sudo ./main
 
 ### Docker
 
+This method requires [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) to be installed first.
+
 Casdoor provide 2 kinds of image: 
+
+Name | Description | Suggestion
+----|------|----
+[casdoor-all-in-one](https://hub.docker.com/r/casbin/casdoor-all-in-one) | Both Casdoor and a MySQL database are inside the image | Already includes a toy database and only for test purpose
+[casdoor](https://hub.docker.com/r/casbin/casdoor) | Only Casdoor is inside the image | Can be connected to your own database and used in production
+
 - casbin/casdoor-all-in-one, in which casdoor binary, a mysql database and all necessary configurations are packed up. This image is for new user to have a trial on casdoor quickly. **With this image you can start a casdoor immediately with one single command (or two) without any complex configuration**. **Note: we DO NOT recommend you to use this image in productive environment**
 
 - casbin/casdoor: normal & graceful casdoor image with only casdoor and environment installed. 
-
-This method requires [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) to be installed first.
 
 ### Start casdoor with casbin/casdoor-all-in-one
 if the image is not pulled, pull it from dockerhub
@@ -160,11 +166,32 @@ dataSourceName = root:123456@tcp(db:3306)/
 
 > If you need to modify `conf/app.conf`, you need to re-run `docker-compose up`.
 
+#### create database
+
+
+
+Unlike the casdoor-all-in-one image, this image don't have a MySql database inside, which means you need to create a database named `casdoor`, before running docker.
+
+
+```bash
+
+# into database container
+docker exec -it casdoor_db_1 bash 
+
+# login mysql and enter password
+mysql -u root -p
+
+# create 
+mysql> create DATABASE casdoor;
+```
+
 #### Run
 
 ```bash
 docker-compose up
 ```
+That's it! Try to visit http://localhost:8000/. :small_airplane:
+
 
 ### K8S
 You could use helm to deploy casdoor in k8s. At first, you should modify the [configmap](./manifests/casdoor/templates/configmap.yaml) for your application.
@@ -178,8 +205,6 @@ And undeploy it with:
 ```bash
 make undeploy
 ```
-
-That's it! Try to visit http://localhost:8000/. :small_airplane:
 
 ## Detailed documentation
 
