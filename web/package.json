@@ -6,12 +6,14 @@
     "@ant-design/icons": "^4.6.2",
     "@craco/craco": "^6.1.1",
     "@crowdin/cli": "^3.6.4",
+    "@loadable/component": "^5.15.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "antd": "^4.15.5",
     "codemirror": "^5.61.1",
     "copy-to-clipboard": "^3.3.1",
+    "core-js": "^3.21.1",
     "craco-less": "^1.17.1",
     "file-saver": "^2.0.5",
     "i18n-iso-countries": "^7.0.0",
@@ -19,6 +21,7 @@
     "moment": "^2.29.1",
     "qs": "^6.10.2",
     "react": "^17.0.2",
+    "react-app-polyfill": "^3.0.0",
     "react-codemirror2": "^7.2.1",
     "react-cropper": "^2.1.7",
     "react-device-detect": "^1.14.0",
@@ -29,9 +32,7 @@
     "react-i18next": "^11.8.7",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
-    "react-social-login-buttons": "^3.4.0",
-    "react-app-polyfill": "^3.0.0",
-    "core-js": "^3.21.1"
+    "react-social-login-buttons": "^3.4.0"
   },
   "scripts": {
     "start": "cross-env PORT=7001 craco start",
