@@ -105,6 +105,7 @@ export function getOAuthGetParameters(params) {
       nonce: nonce,
       challengeMethod: challengeMethod,
       codeChallenge: codeChallenge,
+      samlRequest: samlRequest,
     };
   }
 }

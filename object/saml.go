@@ -169,7 +169,11 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 
 	//build signedResponse
 	authnResponse := saml.NewSignedResponse()
+	authnResponse.InResponseTo = authnRequest.ID
+	authnResponse.Assertion.Subject.SubjectConfirmation.SubjectConfirmationData.InResponseTo = authnRequest.ID
 	authnResponse.Destination = authnRequest.AssertionConsumerServiceURL
+	authnResponse.Issuer.SAML = "urn:oasis:names:tc:SAML:2.0:assertion"
+	authnResponse.Assertion.Issuer.SAML = "urn:oasis:names:tc:SAML:2.0:assertion"
 	authnResponse.Issuer.Url = originBackend
 	authnResponse.Assertion.Issuer.Url = originBackend
 	authnResponse.Signature.KeyInfo.X509Data.X509Certificate.Cert = publicKey
