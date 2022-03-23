@@ -27,6 +27,7 @@ import (
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/routers"
 	_ "github.com/casdoor/casdoor/routers"
+	"net/http"
 )
 
 func main() {
