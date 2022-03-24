@@ -439,6 +439,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		TokenType:    "Bearer",
 	}
 	AddToken(newToken)
+	DeleteToken(&token)
 
 	tokenWrapper := &TokenWrapper{
 		AccessToken:  token.AccessToken,
