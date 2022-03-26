@@ -231,6 +231,10 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		value.Add("code", code)
 	}
 	accessToken, err := idp.Session.Authorize(idp.Provider, value)
+	if err != nil {
+		return nil, err
+	}
+
 	//Get ExpiresAt's value
 	valueOfExpire := reflect.ValueOf(idp.Session).Elem().FieldByName("ExpiresAt")
 	if valueOfExpire.IsValid() {
@@ -240,7 +244,8 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		AccessToken: accessToken,
 		Expiry:      expireAt,
 	}
-	return &token, err
+
+	return &token, nil
 }
 
 func (idp *GothIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
