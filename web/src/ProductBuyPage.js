@@ -83,6 +83,10 @@ class ProductBuyPage extends React.Component {
     }
   }
 
+  getPrice(product) {
+    return `${this.getCurrencySymbol(product)}${product?.price} (${this.getCurrencyText(product)})`;
+  }
+
   getProviders(product) {
     if (this.state.providers.length === 0 || product.providers.length === 0) {
       return [];
@@ -207,7 +211,9 @@ class ProductBuyPage extends React.Component {
             </Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Price")}>
             <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
-              {`${this.getCurrencySymbol(product)}${product?.price} (${this.getCurrencyText(product)})`}
+              {
+                this.getPrice(product)
+              }
             </span>
             </Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>
