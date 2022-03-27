@@ -168,26 +168,14 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	_, originBackend := getOriginFromHost(host)
 
 	//build signedResponse
-	authnResponse := saml.NewSignedResponse()
-	authnResponse.InResponseTo = authnRequest.ID
-	authnResponse.Assertion.Subject.SubjectConfirmation.SubjectConfirmationData.InResponseTo = authnRequest.ID
-	authnResponse.Destination = authnRequest.AssertionConsumerServiceURL
-	authnResponse.Issuer.SAML = "urn:oasis:names:tc:SAML:2.0:assertion"
-	authnResponse.Assertion.Issuer.SAML = "urn:oasis:names:tc:SAML:2.0:assertion"
-	authnResponse.Issuer.Url = originBackend
-	authnResponse.Assertion.Issuer.Url = originBackend
-	authnResponse.Signature.KeyInfo.X509Data.X509Certificate.Cert = publicKey
-	authnResponse.Assertion.Subject.NameID.Value = user.Name
-	authnResponse.AddAttribute("email", user.Email)
-	authnResponse.Assertion.Subject.SubjectConfirmation.SubjectConfirmationData.Recipient = originBackend
-	xmlStr, err := authnResponse.String()
-
+	samlResponse := NewSamlResponse(user, originBackend, publicKey)
+	xmlStr, err := xml.MarshalIndent(samlResponse, "  ", "    ")
 	if err != nil {
 		return "", "", fmt.Errorf("err: %s", err.Error())
 	}
 
 	//sign xmlStr
-	signer, _ := signedxml.NewSigner(xmlStr)
+	signer, _ := signedxml.NewSigner(string(xmlStr))
 	keyPemBlock := []byte(cert.PrivateKey)
 	keyDerBlock, _ := pem.Decode(keyPemBlock)
 	x509key, err := x509.ParsePKCS1PrivateKey(keyDerBlock.Bytes)
@@ -196,7 +184,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 	signedXML, err := signer.Sign(x509key)
 	if err != nil {
-		return "", "", fmt.Errorf("err4: %s", err.Error())
+		return "", "", fmt.Errorf("err: %s", err.Error())
 	}
 
 	res := base64.StdEncoding.EncodeToString([]byte(signedXML))
