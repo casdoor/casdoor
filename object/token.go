@@ -442,12 +442,12 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	DeleteToken(&token)
 
 	tokenWrapper := &TokenWrapper{
-		AccessToken:  token.AccessToken,
-		IdToken:      token.AccessToken,
-		RefreshToken: token.RefreshToken,
-		TokenType:    token.TokenType,
-		ExpiresIn:    token.ExpiresIn,
-		Scope:        token.Scope,
+		AccessToken:  newToken.AccessToken,
+		IdToken:      newToken.AccessToken,
+		RefreshToken: newToken.RefreshToken,
+		TokenType:    newToken.TokenType,
+		ExpiresIn:    newToken.ExpiresIn,
+		Scope:        newToken.Scope,
 	}
 
 	return tokenWrapper
