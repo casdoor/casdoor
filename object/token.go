@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/astaxie/beego/logs"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -522,7 +523,9 @@ func GetPasswordToken(application *Application, username string, password string
 	if user == nil {
 		return nil, errors.New("error: the user does not exist")
 	}
-	if user.Password != password {
+	msg := CheckPassword(user, password)
+	if msg != "" {
+		logs.Debug(fmt.Sprintf("GetPasswordToken error: %s", msg))
 		return nil, errors.New("error: invalid username or password")
 	}
 	if user.IsForbidden {
