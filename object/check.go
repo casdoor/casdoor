@@ -180,10 +180,10 @@ func CheckUserPassword(organization string, username string, password string) (*
 		return nil, "the user is forbidden to sign in, please contact the administrator"
 	}
 
-
-	if user.Ldap != "" { //ONLY for ldap users
+	if user.Ldap != "" {
+		//ONLY for ldap users
 		return checkLdapUserPassword(user, password)
-	}else {
+	} else {
 		msg := CheckPassword(user, password)
 		if msg != "" {
 			return nil, msg
