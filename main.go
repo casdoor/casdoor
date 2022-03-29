@@ -34,7 +34,10 @@ func main() {
 	flag.Parse()
 
 	object.InitAdapter(*createDatabase)
-	object.InitDb()
+	if *createDatabase {
+		object.InitDb()
+	}
+
 	object.InitDefaultStorageProvider()
 	object.InitLdapAutoSynchronizer()
 	proxy.InitHttpClient()
