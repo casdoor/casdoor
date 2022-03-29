@@ -25,13 +25,15 @@ class CustomGithubCorner extends React.Component {
   }
 
   render() {
-    if (!Conf.ShowGithubCorner) {
+    // Display github corner when the current page is accessed normally
+    if (window.top==window.self) {
+      return (
+        <GithubCorner href={Conf.GithubRepo} size={60} />
+      );
+    } else{
+      // Hide github corner when the current page is displayed in an iframe
       return null;
     }
-
-    return (
-      <GithubCorner href={Conf.GithubRepo} size={60} />
-    );
   }
 }
 
