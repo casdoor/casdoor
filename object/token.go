@@ -522,7 +522,8 @@ func GetPasswordToken(application *Application, username string, password string
 	if user == nil {
 		return nil, errors.New("error: the user does not exist")
 	}
-	if user.Password != password {
+	msg := CheckPassword(user, password)
+	if msg != "" {
 		return nil, errors.New("error: invalid username or password")
 	}
 	if user.IsForbidden {
