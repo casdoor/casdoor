@@ -224,7 +224,11 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: '20px'}} span={11} >
-            <Input value={this.state.user.email} disabled />
+            <Input value={this.state.user.email}
+                   disabled={this.state.user.id === this.props.account?.id ? true : !Setting.isAdminUser(this.props.account)}
+                   onChange={e => {
+                      this.updateUserField('email', e.target.value);
+                    }} />
           </Col>
           <Col span={11} >
             { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />) : null}
@@ -235,7 +239,11 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: '20px'}} span={11} >
-            <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`} disabled />
+            <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+                   disabled={this.state.user.id === this.props.account?.id ? true : !Setting.isAdminUser(this.props.account)}
+                   onChange={e => {
+                      this.updateUserField('phone', e.target.value);
+                   }}/>
           </Col>
           <Col span={11} >
             { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
