@@ -21,17 +21,19 @@ import (
 )
 
 func InitDb() {
-	initBuiltInOrganization()
-	initBuiltInUser()
-	initBuiltInApplication()
-	initBuiltInCert()
-	initBuiltInLdap()
+	existed := initBuiltInOrganization()
+	if !existed {
+		initBuiltInUser()
+		initBuiltInApplication()
+		initBuiltInCert()
+		initBuiltInLdap()
+	}
 }
 
-func initBuiltInOrganization() {
+func initBuiltInOrganization() bool {
 	organization := getOrganization("admin", "built-in")
 	if organization != nil {
-		return
+		return true
 	}
 
 	organization = &Organization{
@@ -47,6 +49,7 @@ func initBuiltInOrganization() {
 		Tags:          []string{},
 	}
 	AddOrganization(organization)
+	return false
 }
 
 func initBuiltInUser() {
