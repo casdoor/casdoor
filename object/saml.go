@@ -17,6 +17,7 @@ package object
 import (
 	"bytes"
 	"compress/flate"
+	"crypto"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
@@ -30,7 +31,7 @@ import (
 
 	"github.com/RobotsAndPencils/go-saml"
 	"github.com/astaxie/beego"
-	"github.com/ma314smith/signedxml"
+	"github.com/beevik/etree"
 	saml2 "github.com/russellhaering/gosaml2"
 	dsig "github.com/russellhaering/goxmldsig"
 )
@@ -154,7 +155,6 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	if err != nil {
 		return "", "", fmt.Errorf("err: %s", err.Error())
 	}
-
 	//verify samlRequest
 	if valid := CheckRedirectUriValid(application, authnRequest.Issuer.Url); !valid {
 		return "", "", fmt.Errorf("err: invalid issuer url")
@@ -168,26 +168,25 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	_, originBackend := getOriginFromHost(host)
 
 	//build signedResponse
-	samlResponse := NewSamlResponse(user, originBackend, publicKey)
-	xmlStr, err := xml.MarshalIndent(samlResponse, "  ", "    ")
+	samlResponse, _ := NewSamlResponse(user, originBackend, publicKey, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer.Url, application.RedirectUris)
+	randomKeyStore := &X509Key{
+		PrivateKey:      cert.PrivateKey,
+		X509Certificate: publicKey,
+	}
+	ctx := dsig.NewDefaultSigningContext(randomKeyStore)
+	ctx.Hash = crypto.SHA1
+	signedXML, err := ctx.SignEnveloped(samlResponse)
 	if err != nil {
 		return "", "", fmt.Errorf("err: %s", err.Error())
 	}
 
-	//sign xmlStr
-	signer, _ := signedxml.NewSigner(string(xmlStr))
-	keyPemBlock := []byte(cert.PrivateKey)
-	keyDerBlock, _ := pem.Decode(keyPemBlock)
-	x509key, err := x509.ParsePKCS1PrivateKey(keyDerBlock.Bytes)
+	doc := etree.NewDocument()
+	doc.SetRoot(signedXML)
+	xmlStr, err := doc.WriteToString()
 	if err != nil {
 		return "", "", fmt.Errorf("err: %s", err.Error())
 	}
-	signedXML, err := signer.Sign(x509key)
-	if err != nil {
-		return "", "", fmt.Errorf("err: %s", err.Error())
-	}
-
-	res := base64.StdEncoding.EncodeToString([]byte(signedXML))
+	res := base64.StdEncoding.EncodeToString([]byte(xmlStr))
 	return res, authnRequest.AssertionConsumerServiceURL, nil
 }
 
@@ -256,6 +255,11 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 	block, _ := pem.Decode([]byte(cert.PublicKey))
 	publicKey := base64.StdEncoding.EncodeToString(block.Bytes)
 
+	origin := beego.AppConfig.String("origin")
+	_, originBackend := getOriginFromHost(host)
+	if origin != "" {
+		originBackend = origin
+	}
 	d := IdpEntityDescriptor{
 		XMLName: xml.Name{
 			Local: "md:EntityDescriptor",
@@ -263,7 +267,7 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 		DS:       "http://www.w3.org/2000/09/xmldsig#",
 		XMLNS:    "urn:oasis:names:tc:SAML:2.0:metadata",
 		MD:       "urn:oasis:names:tc:SAML:2.0:metadata",
-		EntityId: host,
+		EntityId: originBackend,
 		IdpSSODescriptor: IdpSSODescriptor{
 			SigningKeyDescriptor: KeyDescriptor{
 				Use: "signing",
