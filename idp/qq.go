@@ -76,6 +76,9 @@ func (idp *QqIdProvider) GetToken(code string) (*oauth2.Token, error) {
 
 	defer resp.Body.Close()
 	tokenContent, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	re := regexp.MustCompile("token=(.*?)&")
 	matched := re.FindAllStringSubmatch(string(tokenContent), -1)
@@ -146,6 +149,9 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 
 	defer resp.Body.Close()
 	openIdBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	re := regexp.MustCompile("\"openid\":\"(.*?)\"}")
 	matched := re.FindAllStringSubmatch(string(openIdBody), -1)
@@ -178,6 +184,7 @@ func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 
 	userInfo := UserInfo{
 		Id:          openId,
+		Username:    qqUserInfo.Nickname,
 		DisplayName: qqUserInfo.Nickname,
 		AvatarUrl:   qqUserInfo.FigureurlQq1,
 	}
