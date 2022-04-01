@@ -402,6 +402,7 @@ export function getProviderTypeOptions(category) {
         {id: 'GitLab', name: 'GitLab'},
         {id: 'Adfs', name: 'Adfs'},
         {id: 'Baidu', name: 'Baidu'},
+        {id: 'Alipay', name: 'Alipay'},
         {id: 'Casdoor', name: 'Casdoor'},
         {id: 'Infoflow', name: 'Infoflow'},
         {id: 'Apple', name: 'Apple'},
