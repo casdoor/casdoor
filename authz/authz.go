@@ -101,6 +101,7 @@ p, *, *, GET, /.well-known/openid-configuration, *, *
 p, *, *, *, /.well-known/jwks, *, *
 p, *, *, GET, /api/get-saml-login, *, *
 p, *, *, POST, /api/acs, *, *
+p, *, *, *, /cas, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

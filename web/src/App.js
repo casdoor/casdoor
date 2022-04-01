@@ -68,6 +68,7 @@ import i18next from 'i18next';
 import PromptPage from "./auth/PromptPage";
 import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
 import SamlCallback from './auth/SamlCallback';
+import CasLogout from "./auth/CasLogout";
 
 const { Header, Footer } = Layout;
 
@@ -642,7 +643,8 @@ class App extends Component {
       window.location.pathname.startsWith("/login") ||
       window.location.pathname.startsWith("/callback") ||
       window.location.pathname.startsWith("/prompt") ||
-      window.location.pathname.startsWith("/forget");
+      window.location.pathname.startsWith("/forget") ||
+      window.location.pathname.startsWith("/cas");
   }
 
   renderPage() {
@@ -654,6 +656,8 @@ class App extends Component {
           <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage account={this.state.account} {...props} />)}/>
           <Route exact path="/signup/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signup"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
           <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
+          <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout clearAccount={() => this.setState({account: null})} {...props} />)} />
+          <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage type={"cas"} mode={"signup"} account={this.state.account} {...props} />)}} />
           <Route exact path="/callback" component={AuthCallback}/>
           <Route exact path="/callback/saml" component={SamlCallback}/>
           <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)}/>

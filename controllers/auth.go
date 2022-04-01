@@ -83,8 +83,25 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			resp = tokenToResponse(token)
 		}
 
+	} else if form.Type == ResponseTypeCas {
+		//not oauth but CAS SSO protocol
+		service := c.Input().Get("service")
+		resp = wrapErrorResponse(nil)
+		if service != "" {
+			st, err := object.GenerateCasToken(userId, service)
+			if err != nil {
+				resp = wrapErrorResponse(err)
+			} else {
+				resp.Data = st
+			}
+		}
+		if application.EnableSigninSession || application.HasPromptPage() {
+			// The prompt page needs the user to be signed in
+			c.SetSessionUsername(userId)
+		}
+
 	} else {
-		resp = &Response{Status: "error", Msg: fmt.Sprintf("Unknown response type: %s", form.Type)}
+		resp = wrapErrorResponse(fmt.Errorf("Unknown response type: %s", form.Type))
 	}
 
 	// if user did not check auto signin
