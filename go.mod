@@ -8,6 +8,7 @@ require (
 	github.com/astaxie/beego v1.12.3
 	github.com/aws/aws-sdk-go v1.37.30
 	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
+	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin/v2 v2.30.1
 	github.com/casbin/xorm-adapter/v2 v2.5.1
 	github.com/casdoor/go-sms-sender v0.2.0

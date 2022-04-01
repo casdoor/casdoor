@@ -291,7 +291,7 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 			},
 			SingleSignOnService: SingleSignOnService{
 				Binding:  "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
-				Location: "http://localhost:7001/login",
+				Location: fmt.Sprintf("%s/login/oauth/authorize", host),
 			},
 			ProtocolSupportEnumeration: "urn:oasis:names:tc:SAML:2.0:protocol",
 		},
