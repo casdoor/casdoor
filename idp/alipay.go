@@ -22,7 +22,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
-	"github.com/youmark/pkcs8"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -31,6 +30,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/youmark/pkcs8"
 	"golang.org/x/oauth2"
 )
 
