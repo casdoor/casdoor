@@ -70,6 +70,8 @@ func GetIdProvider(typ string, subType string, clientId string, clientSecret str
 		return NewAdfsIdProvider(clientId, clientSecret, redirectUrl, hostUrl)
 	} else if typ == "Baidu" {
 		return NewBaiduIdProvider(clientId, clientSecret, redirectUrl)
+	} else if typ == "Alipay" {
+		return NewAlipayIdProvider(clientId, clientSecret, redirectUrl)
 	} else if typ == "Infoflow" {
 		if subType == "Internal" {
 			return NewInfoflowInternalIdProvider(clientId, clientSecret, appId, redirectUrl)
