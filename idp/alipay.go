@@ -19,6 +19,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
@@ -30,7 +31,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/youmark/pkcs8"
 	"golang.org/x/oauth2"
 )
 
@@ -251,12 +251,12 @@ func rsaSignWithRSA256(signContent string, privateKey string) (string, error) {
 	h.Write([]byte(signContent))
 	hashed := h.Sum(nil)
 
-	privateKeyRSA, err := pkcs8.ParsePKCS8PrivateKeyRSA(block.Bytes)
+	privateKeyRSA, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
 		return "", err
 	}
 
-	signature, err := rsa.SignPKCS1v15(rand.Reader, privateKeyRSA, crypto.SHA256, hashed)
+	signature, err := rsa.SignPKCS1v15(rand.Reader, privateKeyRSA.(*rsa.PrivateKey), crypto.SHA256, hashed)
 	if err != nil {
 		return "", err
 	}

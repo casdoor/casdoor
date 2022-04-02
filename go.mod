@@ -30,7 +30,6 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tealeg/xlsx v1.0.5
 	github.com/thanhpk/randstr v1.0.4
-	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
 	golang.org/x/crypto v0.0.0-20220208233918-bba287dce954
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2
 	golang.org/x/oauth2 v0.0.0-20210628180205-a41e5a781914
