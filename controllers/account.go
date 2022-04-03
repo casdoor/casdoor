@@ -29,6 +29,7 @@ const (
 	ResponseTypeCode    = "code"
 	ResponseTypeToken   = "token"
 	ResponseTypeIdToken = "id_token"
+	ResponseTypeCas     = "cas"
 )
 
 type RequestForm struct {

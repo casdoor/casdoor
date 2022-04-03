@@ -18,6 +18,22 @@ module.exports = {
       '/.well-known/openid-configuration': {
         target: 'http://localhost:8000',
         changeOrigin: true,
+      },
+      '/cas/serviceValidate': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+      '/cas/proxyValidate': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+      '/cas/proxy': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+      '/cas/validate': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
       }
     },
   },
