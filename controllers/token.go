@@ -179,6 +179,20 @@ func (c *ApiController) GetOAuthToken() {
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
 	}
+	if clientId == "" {
+		// If clientID is empty, try to read data from RequestBody
+		var tokenRequest TokenRequest
+		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
+			clientId = tokenRequest.ClientId
+			clientSecret = tokenRequest.ClientSecret
+			grantType = tokenRequest.GrantType
+			code = tokenRequest.Code
+			verifier = tokenRequest.Verifier
+			scope = tokenRequest.Scope
+			username = tokenRequest.Username
+			password = tokenRequest.Password
+		}
+	}
 	host := c.Ctx.Request.Host
 
 	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host)
@@ -203,6 +217,18 @@ func (c *ApiController) RefreshToken() {
 	clientId := c.Input().Get("client_id")
 	clientSecret := c.Input().Get("client_secret")
 	host := c.Ctx.Request.Host
+
+	if clientId == "" {
+		// If clientID is empty, try to read data from RequestBody
+		var tokenRequest TokenRequest
+		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
+			clientId = tokenRequest.ClientId
+			clientSecret = tokenRequest.ClientSecret
+			grantType = tokenRequest.GrantType
+			scope = tokenRequest.Scope
+
+		}
+	}
 
 	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
 	c.ServeJSON()
