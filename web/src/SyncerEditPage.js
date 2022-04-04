@@ -119,7 +119,7 @@ class SyncerEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.syncer.type} onChange={(value => {this.updateSyncerField('type', value);})}>
               {
-                ['Database', 'LDAP']
+                ['Database', 'LDAP', 'Keycloak']
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
