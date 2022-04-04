@@ -66,7 +66,7 @@ class ResultPage extends React.Component {
           extra={[
             <Button type="primary" key="login" onClick={() => {
               let linkInStorage = sessionStorage.getItem("loginURL")
-              if (linkInStorage!==null && linkInStorage !== "") {
+              if (linkInStorage !== null && linkInStorage !== "") {
                   Setting.goToLink(linkInStorage)
               } else {
                   Setting.goToLogin(this, application)
