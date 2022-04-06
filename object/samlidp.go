@@ -15,16 +15,22 @@
 package object
 
 import (
+	"bytes"
+	"compress/flate"
+	"crypto"
 	"crypto/rsa"
 	"encoding/base64"
 	"encoding/pem"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"time"
 
+	"github.com/RobotsAndPencils/go-saml"
 	"github.com/astaxie/beego"
 	"github.com/beevik/etree"
 	"github.com/golang-jwt/jwt/v4"
+	dsig "github.com/russellhaering/goxmldsig"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -215,4 +221,54 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 	}
 
 	return &d, nil
+}
+
+//GenerateSamlResponse generates a SAML response
+func GetSamlResponse(application *Application, user *User, samlRequest string, host string) (string, string, error) {
+	//decode samlRequest
+	defated, err := base64.StdEncoding.DecodeString(samlRequest)
+	if err != nil {
+		return "", "", fmt.Errorf("err: %s", err.Error())
+	}
+	var buffer bytes.Buffer
+	rdr := flate.NewReader(bytes.NewReader(defated))
+	io.Copy(&buffer, rdr)
+	var authnRequest saml.AuthnRequest
+	err = xml.Unmarshal(buffer.Bytes(), &authnRequest)
+	if err != nil {
+		return "", "", fmt.Errorf("err: %s", err.Error())
+	}
+	//verify samlRequest
+	if valid := CheckRedirectUriValid(application, authnRequest.Issuer.Url); !valid {
+		return "", "", fmt.Errorf("err: invalid issuer url")
+	}
+
+	//get publickey string
+	cert := getCertByApplication(application)
+	block, _ := pem.Decode([]byte(cert.PublicKey))
+	publicKey := base64.StdEncoding.EncodeToString(block.Bytes)
+
+	_, originBackend := getOriginFromHost(host)
+
+	//build signedResponse
+	samlResponse, _ := NewSamlResponse(user, originBackend, publicKey, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer.Url, application.RedirectUris)
+	randomKeyStore := &X509Key{
+		PrivateKey:      cert.PrivateKey,
+		X509Certificate: publicKey,
+	}
+	ctx := dsig.NewDefaultSigningContext(randomKeyStore)
+	ctx.Hash = crypto.SHA1
+	signedXML, err := ctx.SignEnveloped(samlResponse)
+	if err != nil {
+		return "", "", fmt.Errorf("err: %s", err.Error())
+	}
+
+	doc := etree.NewDocument()
+	doc.SetRoot(signedXML)
+	xmlStr, err := doc.WriteToString()
+	if err != nil {
+		return "", "", fmt.Errorf("err: %s", err.Error())
+	}
+	res := base64.StdEncoding.EncodeToString([]byte(xmlStr))
+	return res, authnRequest.AssertionConsumerServiceURL, nil
 }
