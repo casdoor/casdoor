@@ -25,6 +25,11 @@ import (
 
 type OriginalUser = User
 
+type Credential struct {
+	Value string `json:"value"`
+	Salt  string `json:"salt"`
+}
+
 func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
 	sql := fmt.Sprintf("select * from %s", syncer.getTable())
 	results, err := syncer.Adapter.Engine.QueryString(sql)

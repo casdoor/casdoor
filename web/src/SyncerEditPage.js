@@ -117,9 +117,13 @@ class SyncerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:Type"), i18next.t("provider:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.syncer.type} onChange={(value => {this.updateSyncerField('type', value);})}>
+            <Select virtual={false} style={{width: '100%'}} value={this.state.syncer.type} onChange={(value => {
+              this.updateSyncerField('type', value);
+              this.state.syncer["tableColumns"] = Setting.getSyncerTableColumns(this.state.syncer);
+              this.state.syncer.table = value === "Keycloak" ? "user_entity" : this.state.syncer.table;
+            })}>
               {
-                ['Database', 'LDAP']
+                ['Database', 'LDAP', 'Keycloak']
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
@@ -198,7 +202,8 @@ class SyncerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("syncer:Table"), i18next.t("syncer:Table - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.syncer.table} onChange={e => {
+            <Input value={this.state.syncer.table}
+                   disabled={this.state.syncer.type === "Keycloak"} onChange={e => {
               this.updateSyncerField('table', e.target.value);
             }} />
           </Col>
