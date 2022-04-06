@@ -83,6 +83,8 @@ github.com/casbin/xorm-adapter/v2 v2.5.1 h1:BkpIxRHKa0s3bSMx173PpuU7oTs+Zw7XmD0B
 github.com/casbin/xorm-adapter/v2 v2.5.1/go.mod h1:AeH4dBKHC9/zYxzdPVHhPDzF8LYLqjDdb767CWJoV54=
 github.com/casdoor/go-sms-sender v0.2.0 h1:52bin4EBOPzOee64s9UK7jxd22FODvT9/+Y/Z+PSHpg=
 github.com/casdoor/go-sms-sender v0.2.0/go.mod h1:fsZsNnALvFIo+HFcE1U/oCQv4ZT42FdglXKMsEm3WSk=
+github.com/casdoor/goth v1.69.0-FIX1 h1:24Y3tfaJxWGJbxickGe3F9y2c8X1PgsQynhxGXV1f9Q=
+github.com/casdoor/goth v1.69.0-FIX1/go.mod h1:Om55nRo8CkeDkPSNBbzXW4G5uI28ZUkSk5S69dPek3s=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+qY=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
@@ -135,10 +137,8 @@ github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LB
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
 github.com/gogo/protobuf v1.1.1/go.mod h1:r8qH/GZQm5c6nD/R0oafs1akxWv10x8SbQlK7atdtwQ=
 github.com/goji/httpauth v0.0.0-20160601135302-2da839ab0f4d/go.mod h1:nnjvkQ9ptGaCkuDUx6wNykzzlUixGxvkme+H/lnzb+A=
-github.com/golang-jwt/jwt v3.2.1+incompatible h1:73Z+4BJcrTC+KczS6WvTPvRGOp1WmfEP4Q1lOd9Z/+c=
-github.com/golang-jwt/jwt v3.2.1+incompatible/go.mod h1:8pz2t5EyA70fFQQSrl6XZXzqecmYZeUEB8OUGHkxJ+I=
-github.com/golang-jwt/jwt/v4 v4.1.0 h1:XUgk2Ex5veyVFVeLm0xhusUTQybEbexJXrvPNOKkSY0=
-github.com/golang-jwt/jwt/v4 v4.1.0/go.mod h1:/xlHOz8bRuivTWchD4jCa+NbatV+wEUSzwAxVc6locg=
+github.com/golang-jwt/jwt/v4 v4.2.0 h1:besgBTC8w8HjP6NzQdxwKH9Z5oQMZ24ThTrHp3cZ8eU=
+github.com/golang-jwt/jwt/v4 v4.2.0/go.mod h1:/xlHOz8bRuivTWchD4jCa+NbatV+wEUSzwAxVc6locg=
 github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe/go.mod h1:8vg3r2VgvsThLBIFL93Qb5yWzgyZWhEmBwUJWevAkK0=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
 github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
@@ -262,8 +262,6 @@ github.com/ma314smith/signedxml v0.0.0-20210628192057-abc5b481ae1c h1:UPJygtyk49
 github.com/ma314smith/signedxml v0.0.0-20210628192057-abc5b481ae1c/go.mod h1:KEgVcb43+f5KFUH/x6Vd3NROG0AIL2CuKMrIqYsmx6E=
 github.com/markbates/going v1.0.0 h1:DQw0ZP7NbNlFGcKbcE/IVSOAFzScxRtLpd0rLMzLhq0=
 github.com/markbates/going v1.0.0/go.mod h1:I6mnB4BPnEeqo85ynXIx1ZFLLbtiLHNXVgWeFO9OGOA=
-github.com/markbates/goth v1.68.1-0.20211006204042-9dc8905b41c8 h1:JibQrkJapVsb0pweJ5T14jZuuYZZTjll0PZBw4XfSCI=
-github.com/markbates/goth v1.68.1-0.20211006204042-9dc8905b41c8/go.mod h1:V2VcDMzDiMHW+YmqYl7i0cMiAUeCkAe4QE6jRKBhXZw=
 github.com/mattermost/xml-roundtrip-validator v0.0.0-20201208211235-fe770d50d911 h1:erppMjjp69Rertg1zlgRbLJH1u+eCmRPxKjMZ5I8/Ro=
 github.com/mattermost/xml-roundtrip-validator v0.0.0-20201208211235-fe770d50d911/go.mod h1:qccnGMcpgwcNaBnxqpJpWWUiPNr5H3O8eDgGV9gT5To=
 github.com/mattn/go-sqlite3 v1.10.0/go.mod h1:FPy6KqzDD04eiIsT53CuJW3U88zkxoIYsOqkbpncsNc=

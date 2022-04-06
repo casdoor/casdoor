@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/conf"
 	"gopkg.in/square/go-jose.v2"
 )
 
@@ -58,7 +58,7 @@ func getOriginFromHost(host string) (string, string) {
 func GetOidcDiscovery(host string) OidcDiscovery {
 	originFrontend, originBackend := getOriginFromHost(host)
 
-	origin := beego.AppConfig.String("origin")
+	origin := conf.GetConfigString("origin")
 	if origin != "" {
 		originFrontend = origin
 		originBackend = origin

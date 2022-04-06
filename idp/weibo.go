@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -91,7 +92,7 @@ func (idp *WeiBoIdProvider) GetToken(code string) (*oauth2.Token, error) {
 			return
 		}
 	}(resp.Body)
-	bs, err := io.ReadAll(resp.Body)
+	bs, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

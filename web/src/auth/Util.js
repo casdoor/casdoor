@@ -79,6 +79,18 @@ function getRefinedValue(value){
   return (value === null)? "" : value
 }
 
+export function getCasParameters(params){
+  const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
+  const service = getRefinedValue(queries.get("service"))
+  const renew = getRefinedValue(queries.get("renew"))
+  const gateway = getRefinedValue(queries.get("gateway"))
+  return {
+    service: service,
+    renew: renew,
+    gateway: gateway,
+  }
+}
+
 export function getOAuthGetParameters(params) {
   const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
   const clientId = getRefinedValue(queries.get("client_id"));

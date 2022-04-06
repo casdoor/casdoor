@@ -19,7 +19,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
@@ -88,7 +88,7 @@ func (idp *AdfsIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	data, err := io.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

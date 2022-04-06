@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/storage"
 	"github.com/casdoor/casdoor/util"
 )
@@ -28,7 +28,7 @@ var isCloudIntranet bool
 
 func init() {
 	var err error
-	isCloudIntranet, err = beego.AppConfig.Bool("isCloudIntranet")
+	isCloudIntranet, err = conf.GetConfigBool("isCloudIntranet")
 	if err != nil {
 		//panic(err)
 	}

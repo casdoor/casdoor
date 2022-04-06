@@ -23,7 +23,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
@@ -90,8 +90,25 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 		resp = &Response{Status: "ok", Msg: "", Data: res, Data2: redirectUrl}
+	} else if form.Type == ResponseTypeCas {
+		//not oauth but CAS SSO protocol
+		service := c.Input().Get("service")
+		resp = wrapErrorResponse(nil)
+		if service != "" {
+			st, err := object.GenerateCasToken(userId, service)
+			if err != nil {
+				resp = wrapErrorResponse(err)
+			} else {
+				resp.Data = st
+			}
+		}
+		if application.EnableSigninSession || application.HasPromptPage() {
+			// The prompt page needs the user to be signed in
+			c.SetSessionUsername(userId)
+		}
+
 	} else {
-		resp = &Response{Status: "error", Msg: fmt.Sprintf("Unknown response type: %s", form.Type)}
+		resp = wrapErrorResponse(fmt.Errorf("Unknown response type: %s", form.Type))
 	}
 
 	// if user did not check auto signin
@@ -274,8 +291,8 @@ func (c *ApiController) Login() {
 
 			setHttpClient(idProvider, provider.Type)
 
-			if form.State != beego.AppConfig.String("authState") && form.State != application.Name {
-				c.ResponseError(fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("authState"), form.State))
+			if form.State != conf.GetConfigString("authState") && form.State != application.Name {
+				c.ResponseError(fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", conf.GetConfigString("authState"), form.State))
 				return
 			}
 

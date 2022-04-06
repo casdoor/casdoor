@@ -30,8 +30,8 @@ import (
 	"strings"
 
 	"github.com/RobotsAndPencils/go-saml"
-	"github.com/astaxie/beego"
 	"github.com/beevik/etree"
+	"github.com/casdoor/casdoor/conf"
 	saml2 "github.com/russellhaering/gosaml2"
 	dsig "github.com/russellhaering/goxmldsig"
 )
@@ -81,7 +81,7 @@ func buildSp(provider *Provider, samlResponse string) (*saml2.SAMLServiceProvide
 	certStore := dsig.MemoryX509CertificateStore{
 		Roots: []*x509.Certificate{},
 	}
-	origin := beego.AppConfig.String("origin")
+	origin := conf.GetConfigString("origin")
 	certEncodedData := ""
 	if samlResponse != "" {
 		certEncodedData = parseSamlResponse(samlResponse, provider.Type)

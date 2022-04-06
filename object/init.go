@@ -15,29 +15,25 @@
 package object
 
 import (
-	_ "embed"
+	"io/ioutil"
 
 	"github.com/casdoor/casdoor/util"
 )
 
-//go:embed token_jwt_key.pem
-var tokenJwtPublicKey string
-
-//go:embed token_jwt_key.key
-var tokenJwtPrivateKey string
-
 func InitDb() {
-	initBuiltInOrganization()
-	initBuiltInUser()
-	initBuiltInApplication()
-	initBuiltInCert()
-	initBuiltInLdap()
+	existed := initBuiltInOrganization()
+	if !existed {
+		initBuiltInUser()
+		initBuiltInApplication()
+		initBuiltInCert()
+		initBuiltInLdap()
+	}
 }
 
-func initBuiltInOrganization() {
+func initBuiltInOrganization() bool {
 	organization := getOrganization("admin", "built-in")
 	if organization != nil {
-		return
+		return true
 	}
 
 	organization = &Organization{
@@ -53,6 +49,7 @@ func initBuiltInOrganization() {
 		Tags:          []string{},
 	}
 	AddOrganization(organization)
+	return false
 }
 
 func initBuiltInUser() {
@@ -122,7 +119,22 @@ func initBuiltInApplication() {
 	AddApplication(application)
 }
 
+func readTokenFromFile() (string, string) {
+	pemPath := "./object/token_jwt_key.pem"
+	keyPath := "./object/token_jwt_key.key"
+	pem, err := ioutil.ReadFile(pemPath)
+	if err != nil {
+		return "", ""
+	}
+	key, err := ioutil.ReadFile(keyPath)
+	if err != nil {
+		return "", ""
+	}
+	return string(pem), string(key)
+}
+
 func initBuiltInCert() {
+	tokenJwtPublicKey, tokenJwtPrivateKey := readTokenFromFile()
 	cert := getCert("admin", "cert-built-in")
 	if cert != nil {
 		return

@@ -1,4 +1,5 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2022 The Casdoor Authors. All Rights Reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -11,29 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build !skipCi
-// +build !skipCi
+package controllers
 
-package object
-
-import (
-	"fmt"
-	"testing"
-)
-
-func TestGetUsers(t *testing.T) {
-	InitConfig()
-	syncers := GetSyncers("admin")
-	syncer := syncers[0]
-	syncer.initAdapter()
-	users, _ := syncer.getOriginalUsers()
-	for _, user := range users {
-		fmt.Printf("%v\n", user)
-	}
-}
-
-func TestSyncUsers(t *testing.T) {
-	InitConfig()
-
-	RunSyncUsersJob()
+type TokenRequest struct {
+	GrantType    string `json:"grant_type"`
+	Code         string `json:"code"`
+	ClientId     string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
+	Verifier     string `json:"code_verifier"`
+	Scope        string `json:"scope"`
+	Username     string `json:"username"`
+	Password     string `json:"password"`
 }

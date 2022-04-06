@@ -22,35 +22,35 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/util"
-	"github.com/markbates/goth"
-	"github.com/markbates/goth/providers/amazon"
-	"github.com/markbates/goth/providers/apple"
-	"github.com/markbates/goth/providers/azuread"
-	"github.com/markbates/goth/providers/bitbucket"
-	"github.com/markbates/goth/providers/digitalocean"
-	"github.com/markbates/goth/providers/discord"
-	"github.com/markbates/goth/providers/dropbox"
-	"github.com/markbates/goth/providers/facebook"
-	"github.com/markbates/goth/providers/gitea"
-	"github.com/markbates/goth/providers/github"
-	"github.com/markbates/goth/providers/gitlab"
-	"github.com/markbates/goth/providers/google"
-	"github.com/markbates/goth/providers/heroku"
-	"github.com/markbates/goth/providers/instagram"
-	"github.com/markbates/goth/providers/kakao"
-	"github.com/markbates/goth/providers/line"
-	"github.com/markbates/goth/providers/linkedin"
-	"github.com/markbates/goth/providers/microsoftonline"
-	"github.com/markbates/goth/providers/paypal"
-	"github.com/markbates/goth/providers/salesforce"
-	"github.com/markbates/goth/providers/shopify"
-	"github.com/markbates/goth/providers/slack"
-	"github.com/markbates/goth/providers/steam"
-	"github.com/markbates/goth/providers/tumblr"
-	"github.com/markbates/goth/providers/twitter"
-	"github.com/markbates/goth/providers/yahoo"
-	"github.com/markbates/goth/providers/yandex"
-	"github.com/markbates/goth/providers/zoom"
+	"github.com/casdoor/goth"
+	"github.com/casdoor/goth/providers/amazon"
+	"github.com/casdoor/goth/providers/apple"
+	"github.com/casdoor/goth/providers/azuread"
+	"github.com/casdoor/goth/providers/bitbucket"
+	"github.com/casdoor/goth/providers/digitalocean"
+	"github.com/casdoor/goth/providers/discord"
+	"github.com/casdoor/goth/providers/dropbox"
+	"github.com/casdoor/goth/providers/facebook"
+	"github.com/casdoor/goth/providers/gitea"
+	"github.com/casdoor/goth/providers/github"
+	"github.com/casdoor/goth/providers/gitlab"
+	"github.com/casdoor/goth/providers/google"
+	"github.com/casdoor/goth/providers/heroku"
+	"github.com/casdoor/goth/providers/instagram"
+	"github.com/casdoor/goth/providers/kakao"
+	"github.com/casdoor/goth/providers/line"
+	"github.com/casdoor/goth/providers/linkedin"
+	"github.com/casdoor/goth/providers/microsoftonline"
+	"github.com/casdoor/goth/providers/paypal"
+	"github.com/casdoor/goth/providers/salesforce"
+	"github.com/casdoor/goth/providers/shopify"
+	"github.com/casdoor/goth/providers/slack"
+	"github.com/casdoor/goth/providers/steam"
+	"github.com/casdoor/goth/providers/tumblr"
+	"github.com/casdoor/goth/providers/twitter"
+	"github.com/casdoor/goth/providers/yahoo"
+	"github.com/casdoor/goth/providers/yandex"
+	"github.com/casdoor/goth/providers/zoom"
 	"golang.org/x/oauth2"
 )
 
@@ -231,6 +231,10 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		value.Add("code", code)
 	}
 	accessToken, err := idp.Session.Authorize(idp.Provider, value)
+	if err != nil {
+		return nil, err
+	}
+
 	//Get ExpiresAt's value
 	valueOfExpire := reflect.ValueOf(idp.Session).Elem().FieldByName("ExpiresAt")
 	if valueOfExpire.IsValid() {
@@ -240,7 +244,8 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		AccessToken: accessToken,
 		Expiry:      expireAt,
 	}
-	return &token, err
+
+	return &token, nil
 }
 
 func (idp *GothIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {

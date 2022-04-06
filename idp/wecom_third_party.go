@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -194,7 +195,7 @@ func (idp *WeComIdProvider) postWithBody(body interface{}, url string) ([]byte, 
 	if err != nil {
 		return nil, err
 	}
-	data, err := io.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

@@ -245,3 +245,4 @@ func TestSnakeString(t *testing.T) {
 		})
 	}
 }
+

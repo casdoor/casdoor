@@ -439,14 +439,15 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		TokenType:    "Bearer",
 	}
 	AddToken(newToken)
+	DeleteToken(&token)
 
 	tokenWrapper := &TokenWrapper{
-		AccessToken:  token.AccessToken,
-		IdToken:      token.AccessToken,
-		RefreshToken: token.RefreshToken,
-		TokenType:    token.TokenType,
-		ExpiresIn:    token.ExpiresIn,
-		Scope:        token.Scope,
+		AccessToken:  newToken.AccessToken,
+		IdToken:      newToken.AccessToken,
+		RefreshToken: newToken.RefreshToken,
+		TokenType:    newToken.TokenType,
+		ExpiresIn:    newToken.ExpiresIn,
+		Scope:        newToken.Scope,
 	}
 
 	return tokenWrapper
@@ -521,7 +522,8 @@ func GetPasswordToken(application *Application, username string, password string
 	if user == nil {
 		return nil, errors.New("error: the user does not exist")
 	}
-	if user.Password != password {
+	msg := CheckPassword(user, password)
+	if msg != "" {
 		return nil, errors.New("error: invalid username or password")
 	}
 	if user.IsForbidden {

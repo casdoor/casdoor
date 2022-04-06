@@ -42,7 +42,7 @@ class SyncerListPage extends BaseListPage {
       affiliationTable: "",
       avatarBaseUrl: "",
       syncInterval: 10,
-      isEnabled: true,
+      isEnabled: false,
     }
   }
 

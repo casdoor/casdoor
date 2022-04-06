@@ -62,6 +62,14 @@ export function login(values, oAuthParams) {
   }).then(res => res.json());
 }
 
+export function loginCas(values, params) {
+  return fetch(`${authConfig.serverUrl}/api/login?service=${params.service}`, {
+    method: 'POST',
+    credentials: "include",
+    body: JSON.stringify(values),
+  }).then(res => res.json());
+}
+
 export function logout() {
   return fetch(`${authConfig.serverUrl}/api/logout`, {
     method: 'POST',

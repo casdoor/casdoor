@@ -41,7 +41,7 @@ func InitConfig() {
 
 func InitAdapter(createDatabase bool) {
 
-	adapter = NewAdapter(beego.AppConfig.String("driverName"), conf.GetBeegoConfDataSourceName(), beego.AppConfig.String("dbName"))
+	adapter = NewAdapter(conf.GetConfigString("driverName"), conf.GetBeegoConfDataSourceName(), conf.GetConfigString("dbName"))
 	if createDatabase {
 		adapter.CreateDatabase()
 	}
@@ -111,10 +111,10 @@ func (a *Adapter) close() {
 }
 
 func (a *Adapter) createTable() {
-	showSql, _ := beego.AppConfig.Bool("showSql")
+	showSql, _ := conf.GetConfigBool("showSql")
 	a.Engine.ShowSQL(showSql)
 
-	tableNamePrefix := beego.AppConfig.String("tableNamePrefix")
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	tbMapper := core.NewPrefixMapper(core.SnakeMapper{}, tableNamePrefix)
 	a.Engine.SetTableMapper(tbMapper)
 

@@ -15,7 +15,6 @@
 package authz
 
 import (
-	"github.com/astaxie/beego"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	xormadapter "github.com/casbin/xorm-adapter/v2"
@@ -28,8 +27,8 @@ var Enforcer *casbin.Enforcer
 func InitAuthz() {
 	var err error
 
-	tableNamePrefix := beego.AppConfig.String("tableNamePrefix")
-	a, err := xormadapter.NewAdapterWithTableName(beego.AppConfig.String("driverName"), conf.GetBeegoConfDataSourceName()+beego.AppConfig.String("dbName"), "casbin_rule", tableNamePrefix, true)
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	a, err := xormadapter.NewAdapterWithTableName(conf.GetConfigString("driverName"), conf.GetBeegoConfDataSourceName()+conf.GetConfigString("dbName"), "casbin_rule", tableNamePrefix, true)
 	if err != nil {
 		panic(err)
 	}
@@ -103,6 +102,7 @@ p, *, *, *, /.well-known/jwks, *, *
 p, *, *, GET, /api/get-saml-login, *, *
 p, *, *, POST, /api/acs, *, *
 p, *, *, GET, /api/saml/metadata, *, *
+p, *, *, *, /cas, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

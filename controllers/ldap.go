@@ -178,7 +178,7 @@ func (c *ApiController) UpdateLdap() {
 	}
 	if ldap.AutoSync != 0 {
 		object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
-	} else if ldap.AutoSync == 0 && prevLdap.AutoSync != 0{
+	} else if ldap.AutoSync == 0 && prevLdap.AutoSync != 0 {
 		object.GetLdapAutoSynchronizer().StopAutoSync(ldap.Id)
 	}
 

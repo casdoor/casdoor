@@ -22,6 +22,7 @@ import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import moment from "moment";
+import * as Conf from "./Conf";
 
 export let ServerUrl = "";
 
@@ -29,12 +30,17 @@ export let ServerUrl = "";
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
 // https://catamphetamine.gitlab.io/country-flag-icons/3x2/index.html
-export const CountryRegionData = getCountryRegionData()
+export const CountryRegionData = getCountryRegionData();
 
 export function getCountryRegionData() {
+  let language = i18next.language;
+  if (language === null || language === "null") {
+    language = Conf.DefaultLanguage;
+  }
+
   var countries = require("i18n-iso-countries");
-  countries.registerLocale(require("i18n-iso-countries/langs/" + i18next.language + ".json"));
-  var data = countries.getNames(i18next.language, {select: "official"});
+  countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
+  var data = countries.getNames(language, {select: "official"});
   var result = []
   for (var i in data) 
     result.push({code:i, name:data[i]})
@@ -70,15 +76,7 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (providerItem.provider.type === "GitHub") {
-    if (isLocalhost()) {
-      return providerItem.provider.name.includes("localhost");
-    } else {
-      return !providerItem.provider.name.includes("localhost");
-    }
-  } else {
-    return true;
-  }
+  return true;
 }
 
 export function isProviderVisibleForSignUp(providerItem) {
@@ -404,6 +402,8 @@ export function getProviderTypeOptions(category) {
         {id: 'GitLab', name: 'GitLab'},
         {id: 'Adfs', name: 'Adfs'},
         {id: 'Baidu', name: 'Baidu'},
+        {id: 'Alipay', name: 'Alipay'},
+        {id: 'Casdoor', name: 'Casdoor'},
         {id: 'Infoflow', name: 'Infoflow'},
         {id: 'Apple', name: 'Apple'},
         {id: 'AzureAD', name: 'AzureAD'},

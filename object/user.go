@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -85,6 +85,8 @@ type User struct {
 	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab"`
 	Adfs     string `xorm:"adfs varchar(100)" json:"adfs"`
 	Baidu    string `xorm:"baidu varchar(100)" json:"baidu"`
+	Alipay   string `xorm:"alipay varchar(100)" json:"alipay"`
+	Casdoor  string `xorm:"casdoor varchar(100)" json:"casdoor"`
 	Infoflow string `xorm:"infoflow varchar(100)" json:"infoflow"`
 	Apple    string `xorm:"apple varchar(100)" json:"apple"`
 	AzureAD  string `xorm:"azuread varchar(100)" json:"azuread"`
@@ -303,7 +305,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties"}
 	}
 	if isGlobalAdmin {
-		columns = append(columns, "name")
+		columns = append(columns, "name", "email", "phone")
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
@@ -428,7 +430,7 @@ func GetUserInfo(userId string, scope string, aud string, host string) (*Userinf
 	if user == nil {
 		return nil, fmt.Errorf("the user: %s doesn't exist", userId)
 	}
-	origin := beego.AppConfig.String("origin")
+	origin := conf.GetConfigString("origin")
 	_, originBackend := getOriginFromHost(host)
 	if origin != "" {
 		originBackend = origin

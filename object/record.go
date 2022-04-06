@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -27,7 +27,7 @@ var logPostOnly bool
 
 func init() {
 	var err error
-	logPostOnly, err = beego.AppConfig.Bool("logPostOnly")
+	logPostOnly, err = conf.GetConfigBool("logPostOnly")
 	if err != nil {
 		//panic(err)
 	}

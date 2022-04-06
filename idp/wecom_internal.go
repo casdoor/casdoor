@@ -17,7 +17,7 @@ package idp
 import (
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -72,7 +72,7 @@ func (idp *WeComInternalIdProvider) GetToken(code string) (*oauth2.Token, error)
 		return nil, err
 	}
 
-	data, err := io.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -111,6 +111,7 @@ type WecomInternalUserInfo struct {
 	Email   string `json:"email"`
 	Avatar  string `json:"avatar"`
 	OpenId  string `json:"open_userid"`
+	UserId  string `json:"userid"`
 }
 
 func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
@@ -122,7 +123,7 @@ func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo,
 		return nil, err
 	}
 
-	data, err := io.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +144,7 @@ func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo,
 		return nil, err
 	}
 
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +157,7 @@ func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo,
 		return nil, fmt.Errorf("userInfoResp.errcode = %d, userInfoResp.errmsg = %s", infoResp.Errcode, infoResp.Errmsg)
 	}
 	userInfo := UserInfo{
-		Id:          infoResp.OpenId,
+		Id:          infoResp.UserId,
 		Username:    infoResp.Name,
 		DisplayName: infoResp.Name,
 		Email:       infoResp.Email,
