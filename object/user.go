@@ -39,7 +39,7 @@ type User struct {
 	Avatar            string   `xorm:"varchar(500)" json:"avatar"`
 	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
 	Email             string   `xorm:"varchar(100) index" json:"email"`
-	EmailVerified     bool     `xorm:"bool" json:"emailVerified"`
+	EmailVerified     bool     `json:"emailVerified"`
 	Phone             string   `xorm:"varchar(100) index" json:"phone"`
 	Location          string   `xorm:"varchar(100)" json:"location"`
 	Address           []string `json:"address"`

@@ -17,10 +17,11 @@ package object
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/casdoor/casdoor/util"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 func (syncer *Syncer) getFullAvatarUrl(avatar string) string {
