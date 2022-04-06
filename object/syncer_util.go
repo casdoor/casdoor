@@ -17,10 +17,10 @@ package object
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/casdoor/casdoor/util"
 	"strconv"
 	"strings"
-
-	"github.com/casdoor/casdoor/util"
+	"time"
 )
 
 func (syncer *Syncer) getFullAvatarUrl(avatar string) string {
@@ -110,6 +110,8 @@ func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 		user.PermanentAvatar = value
 	case "Email":
 		user.Email = value
+	case "EmailVerified":
+		user.EmailVerified = util.ParseBool(value)
 	case "Phone":
 		user.Phone = value
 	case "Location":
@@ -190,6 +192,12 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*Or
 			if len(groupResult) > 0 {
 				originalUser.SignupApplication = groupResult[0]["name"]
 			}
+			// create time
+			i, _ := strconv.ParseInt(originalUser.CreatedTime, 10, 64)
+			tm := time.Unix(i/int64(1000), 0)
+			originalUser.CreatedTime = tm.Format("2006-01-02T15:04:05+08:00")
+			// enable
+			originalUser.IsForbidden = !(result["ENABLED"] == "\x01")
 		}
 
 		users = append(users, originalUser)

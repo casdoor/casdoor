@@ -654,3 +654,94 @@ export function getFromLink() {
   }
   return from;
 }
+
+export function getSyncerTableColumns(syncer) {
+  switch (syncer.type) {
+    case "Keycloak":
+      return [
+        {
+          "name":"ID",
+          "type":"string",
+          "casdoorName":"Id",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"USERNAME",
+          "type":"string",
+          "casdoorName":"Name",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"USERNAME",
+          "type":"string",
+          "casdoorName":"DisplayName",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"EMAIL",
+          "type":"string",
+          "casdoorName":"Email",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"EMAIL_VERIFIED",
+          "type":"boolean",
+          "casdoorName":"EmailVerified",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"FIRST_NAME",
+          "type":"string",
+          "casdoorName":"FirstName",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"LAST_NAME",
+          "type":"string",
+          "casdoorName":"LastName",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"CREATED_TIMESTAMP",
+          "type":"string",
+          "casdoorName":"CreatedTime",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"ENABLED",
+          "type":"boolean",
+          "casdoorName":"IsForbidden",
+          "isHashed":true,
+          "values":[
+
+          ]
+        }
+      ]
+    default:
+      return []
+  }
+}

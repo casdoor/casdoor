@@ -52,6 +52,10 @@ func ParseFloat(s string) float64 {
 }
 
 func ParseBool(s string) bool {
+	if s == "\x01" {
+		return true
+	}
+
 	i := ParseInt(s)
 	return i != 0
 }
