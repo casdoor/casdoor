@@ -1,11 +1,28 @@
+// Copyright 2022 The Casdoor Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package object
 
 import (
 	"crypto/rsa"
 	"encoding/base64"
+	"encoding/pem"
+	"encoding/xml"
 	"fmt"
 	"time"
 
+	"github.com/astaxie/beego"
 	"github.com/beevik/etree"
 	"github.com/golang-jwt/jwt/v4"
 	uuid "github.com/satori/go.uuid"
@@ -62,9 +79,17 @@ func NewSamlResponse(user *User, host string, publicKey string, destination stri
 
 	attributes := assertion.CreateElement("saml:AttributeStatement")
 	email := attributes.CreateElement("saml:Attribute")
-	email.CreateAttr("Name", "email")
+	email.CreateAttr("Name", "Email")
 	email.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	email.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.Email)
+	name := attributes.CreateElement("saml:Attribute")
+	name.CreateAttr("Name", "Name")
+	name.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
+	name.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.Name)
+	displayName := attributes.CreateElement("saml:Attribute")
+	displayName.CreateAttr("Name", "DisplayName")
+	displayName.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
+	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
 
 	return samlResponse, nil
 
@@ -79,4 +104,115 @@ func (x X509Key) GetKeyPair() (privateKey *rsa.PrivateKey, cert []byte, err erro
 	cert, _ = base64.StdEncoding.DecodeString(x.X509Certificate)
 	privateKey, err = jwt.ParseRSAPrivateKeyFromPEM([]byte(x.PrivateKey))
 	return privateKey, cert, err
+}
+
+//SAML METADATA
+type IdpEntityDescriptor struct {
+	XMLName  xml.Name `xml:"EntityDescriptor"`
+	DS       string   `xml:"xmlns:ds,attr"`
+	XMLNS    string   `xml:"xmlns,attr"`
+	MD       string   `xml:"xmlns:md,attr"`
+	EntityId string   `xml:"entityID,attr"`
+
+	IdpSSODescriptor IdpSSODescriptor `xml:"IDPSSODescriptor"`
+}
+
+type KeyInfo struct {
+	XMLName  xml.Name `xml:"http://www.w3.org/2000/09/xmldsig# KeyInfo"`
+	X509Data X509Data `xml:",innerxml"`
+}
+
+type X509Data struct {
+	XMLName         xml.Name        `xml:"http://www.w3.org/2000/09/xmldsig# X509Data"`
+	X509Certificate X509Certificate `xml:",innerxml"`
+}
+
+type X509Certificate struct {
+	XMLName xml.Name `xml:"http://www.w3.org/2000/09/xmldsig# X509Certificate"`
+	Cert    string   `xml:",innerxml"`
+}
+
+type KeyDescriptor struct {
+	XMLName xml.Name `xml:"KeyDescriptor"`
+	Use     string   `xml:"use,attr"`
+	KeyInfo KeyInfo  `xml:"KeyInfo"`
+}
+
+type IdpSSODescriptor struct {
+	XMLName                    xml.Name `xml:"urn:oasis:names:tc:SAML:2.0:metadata IDPSSODescriptor"`
+	ProtocolSupportEnumeration string   `xml:"protocolSupportEnumeration,attr"`
+	SigningKeyDescriptor       KeyDescriptor
+	NameIDFormats              []NameIDFormat      `xml:"NameIDFormat"`
+	SingleSignOnService        SingleSignOnService `xml:"SingleSignOnService"`
+	Attribute                  []Attribute         `xml:"Attribute"`
+}
+
+type NameIDFormat struct {
+	XMLName xml.Name
+	Value   string `xml:",innerxml"`
+}
+
+type SingleSignOnService struct {
+	XMLName  xml.Name
+	Binding  string `xml:"Binding,attr"`
+	Location string `xml:"Location,attr"`
+}
+
+type Attribute struct {
+	XMLName      xml.Name
+	Name         string `xml:"Name,attr"`
+	NameFormat   string `xml:"NameFormat,attr"`
+	FriendlyName string `xml:"FriendlyName,attr"`
+	Xmlns        string `xml:"xmlns,attr"`
+}
+
+func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, error) {
+	//_, originBackend := getOriginFromHost(host)
+	cert := getCertByApplication(application)
+	block, _ := pem.Decode([]byte(cert.PublicKey))
+	publicKey := base64.StdEncoding.EncodeToString(block.Bytes)
+
+	origin := beego.AppConfig.String("origin")
+	originFrontend, originBackend := getOriginFromHost(host)
+	if origin != "" {
+		originBackend = origin
+	}
+	d := IdpEntityDescriptor{
+		XMLName: xml.Name{
+			Local: "md:EntityDescriptor",
+		},
+		DS:       "http://www.w3.org/2000/09/xmldsig#",
+		XMLNS:    "urn:oasis:names:tc:SAML:2.0:metadata",
+		MD:       "urn:oasis:names:tc:SAML:2.0:metadata",
+		EntityId: originBackend,
+		IdpSSODescriptor: IdpSSODescriptor{
+			SigningKeyDescriptor: KeyDescriptor{
+				Use: "signing",
+				KeyInfo: KeyInfo{
+					X509Data: X509Data{
+						X509Certificate: X509Certificate{
+							Cert: publicKey,
+						},
+					},
+				},
+			},
+			NameIDFormats: []NameIDFormat{
+				{Value: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"},
+				{Value: "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"},
+				{Value: "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"},
+			},
+			Attribute: []Attribute{
+				{Xmlns: "urn:oasis:names:tc:SAML:2.0:assertion", Name: "Email", NameFormat: "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", FriendlyName: "E-Mail"},
+				{Xmlns: "urn:oasis:names:tc:SAML:2.0:assertion", Name: "DisplayName", NameFormat: "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", FriendlyName: "displayName"},
+				{Xmlns: "urn:oasis:names:tc:SAML:2.0:assertion", Name: "Name", NameFormat: "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", FriendlyName: "Name"},
+			},
+			SingleSignOnService: SingleSignOnService{
+				Binding:  "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+				Location: fmt.Sprintf("%s/login/saml/authorize/%s/%s", originFrontend, application.Owner, application.Name),
+			},
+			ProtocolSupportEnumeration: "urn:oasis:names:tc:SAML:2.0:protocol",
+		},
+	}
+
+	return &d, nil
 }

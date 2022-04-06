@@ -51,6 +51,7 @@ class LoginPage extends React.Component {
       classes: props,
       type: props.type,
       applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
+      owner : props.owner !== undefined ? props.owner : (props.match === undefined ? null : props.match.params.owner),
       application: null,
       mode: props.mode !== undefined ? props.mode : (props.match === undefined ? null : props.match.params.mode), // "signup" or "signin"
       isCodeSignin: false,
@@ -65,6 +66,8 @@ class LoginPage extends React.Component {
       this.getApplication();
     } else if (this.state.type === "code") {
       this.getApplicationLogin();
+    } else if (this.state.type === "saml"){
+      this.getSamlApplication();
     } else {
       Util.showMessage("error", `Unknown authentication type: ${this.state.type}`);
     }
@@ -99,6 +102,19 @@ class LoginPage extends React.Component {
           application: application,
         });
       });
+  }
+
+  getSamlApplication(){
+    if (this.state.applicationName === null){
+      return;
+    }
+    ApplicationBackend.getApplication(this.state.owner, this.state.applicationName)
+      .then((application) => {
+        this.setState({
+          application: application,
+        });
+      }
+    );
   }
 
   getApplicationObj() {
