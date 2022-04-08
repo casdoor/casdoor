@@ -136,7 +136,7 @@ class AuthCallback extends React.Component {
           } else if (responseType === "saml") {
             const SAMLResponse = res.data;
             const redirectUri = res.data2;
-            Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}`);
+            Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
           }
         } else {
           this.setState({

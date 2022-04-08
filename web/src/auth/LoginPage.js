@@ -188,13 +188,13 @@ class LoginPage extends React.Component {
             const responseType = values["type"];
             if (responseType === "login") {
               Util.showMessage("success", `Logged in successfully`);
-  
+
               const link = Setting.getFromLink();
               Setting.goToLink(link);
             } else if (responseType === "code") {
               const code = res.data;
               const concatChar = oAuthParams?.redirectUri?.includes('?') ? '&' : '?';
-  
+
               if (Setting.hasPromptPage(application)) {
                 AuthBackend.getAccount("")
                   .then((res) => {
@@ -202,9 +202,9 @@ class LoginPage extends React.Component {
                     if (res.status === "ok") {
                       account = res.data;
                       account.organization = res.data2;
-  
+
                       this.onUpdateAccount(account);
-  
+
                       if (Setting.isPromptAnswered(account, application)) {
                         Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
                       } else {
@@ -217,7 +217,7 @@ class LoginPage extends React.Component {
               } else {
                 Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
               }
-  
+
               // Util.showMessage("success", `Authorization code: ${res.data}`);
             } else if (responseType === "token" || responseType === "id_token") {
               const accessToken = res.data;
@@ -225,7 +225,7 @@ class LoginPage extends React.Component {
             } else if (responseType === "saml") {
               const SAMLResponse = res.data;
               const redirectUri = res.data2;
-              Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}`);
+              Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
             }
           } else {
             Util.showMessage("error", `Failed to log in: ${res.msg}`);
