@@ -61,7 +61,7 @@ class ApplicationEditPage extends React.Component {
   getApplication() {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
-        if (application.grantTypes === null || application.grantTypes.length === 0) {
+        if (application.grantTypes === null || application.grantTypes === undefined || application.grantTypes.length === 0) {
           application.grantTypes = ["authorization_code"];
         }
         this.setState({
