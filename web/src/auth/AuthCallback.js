@@ -49,6 +49,10 @@ class AuthCallback extends React.Component {
       const realRedirectUri = innerParams.get("redirect_uri");
       // Casdoor's own login page, so "code" is not necessary
       if (realRedirectUri === null) {
+        const samlRequest = innerParams.get("SAMLRequest");
+        if (samlRequest !== null && samlRequest !== undefined && samlRequest !== "") {
+          return "saml"
+        }
         return "login";
       }
 
@@ -92,6 +96,7 @@ class AuthCallback extends React.Component {
     const applicationName = innerParams.get("application");
     const providerName = innerParams.get("provider");
     const method = innerParams.get("method");
+    const samlRequest = innerParams.get("SAMLRequest");
 
     let redirectUri = `${window.location.origin}/callback`;
 
@@ -100,6 +105,7 @@ class AuthCallback extends React.Component {
       application: applicationName,
       provider: providerName,
       code: code,
+      samlRequest: samlRequest,
       // state: innerParams.get("state"),
       state: applicationName,
       redirectUri: redirectUri,
@@ -127,6 +133,10 @@ class AuthCallback extends React.Component {
           } else if (responseType === "link") {
             const from = innerParams.get("from");
             Setting.goToLinkSoft(this, from);
+          } else if (responseType === "saml") {
+            const SAMLResponse = res.data;
+            const redirectUri = res.data2;
+            Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
           }
         } else {
           this.setState({

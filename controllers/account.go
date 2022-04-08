@@ -29,6 +29,7 @@ const (
 	ResponseTypeCode    = "code"
 	ResponseTypeToken   = "token"
 	ResponseTypeIdToken = "id_token"
+	ResponseTypeSaml    = "saml"
 	ResponseTypeCas     = "cas"
 )
 
@@ -61,6 +62,7 @@ type RequestForm struct {
 	AutoSignin bool `json:"autoSignin"`
 
 	RelayState   string `json:"relayState"`
+	SamlRequest  string `json:"samlRequest"`
 	SamlResponse string `json:"samlResponse"`
 }
 

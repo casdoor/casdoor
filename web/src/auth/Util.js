@@ -98,11 +98,13 @@ export function getOAuthGetParameters(params) {
   const redirectUri = getRefinedValue(queries.get("redirect_uri"));
   const scope = getRefinedValue(queries.get("scope"));
   const state = getRefinedValue(queries.get("state"));
-  const nonce = getRefinedValue(queries.get("nonce"))
-  const challengeMethod = getRefinedValue(queries.get("code_challenge_method"))
-  const codeChallenge = getRefinedValue(queries.get("code_challenge"))
-  
-  if (clientId === undefined || clientId === null || clientId === "") {
+  const nonce = getRefinedValue(queries.get("nonce"));
+  const challengeMethod = getRefinedValue(queries.get("code_challenge_method"));
+  const codeChallenge = getRefinedValue(queries.get("code_challenge"));
+  const samlRequest = getRefinedValue(queries.get("SAMLRequest"));
+  const relayState = getRefinedValue(queries.get("RelayState"));
+
+  if ((clientId === undefined || clientId === null || clientId === "") && (samlRequest === "" || samlRequest === undefined)) {
     // login
     return null;
   } else {
@@ -116,6 +118,8 @@ export function getOAuthGetParameters(params) {
       nonce: nonce,
       challengeMethod: challengeMethod,
       codeChallenge: codeChallenge,
+      samlRequest: samlRequest,
+      relayState: relayState,
     };
   }
 }

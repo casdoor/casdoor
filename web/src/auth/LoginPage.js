@@ -53,6 +53,7 @@ class LoginPage extends React.Component {
       classes: props,
       type: props.type,
       applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
+      owner : props.owner !== undefined ? props.owner : (props.match === undefined ? null : props.match.params.owner),
       application: null,
       mode: props.mode !== undefined ? props.mode : (props.match === undefined ? null : props.match.params.mode), // "signup" or "signin"
       isCodeSignin: false,
@@ -61,7 +62,6 @@ class LoginPage extends React.Component {
       validEmailOrPhone: false,
       validEmail: false,
       validPhone: false,
-      owner: null,
     };
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
       this.state.owner = props.match?.params.owner
@@ -74,6 +74,8 @@ class LoginPage extends React.Component {
       this.getApplication();
     } else if (this.state.type === "code") {
       this.getApplicationLogin();
+    } else if (this.state.type === "saml"){
+      this.getSamlApplication();
     } else {
       Util.showMessage("error", `Unknown authentication type: ${this.state.type}`);
     }
@@ -108,6 +110,19 @@ class LoginPage extends React.Component {
           application: application,
         });
       });
+  }
+
+  getSamlApplication(){
+    if (this.state.applicationName === null){
+      return;
+    }
+    ApplicationBackend.getApplication(this.state.owner, this.state.applicationName)
+      .then((application) => {
+        this.setState({
+          application: application,
+        });
+      }
+    );
   }
 
   getApplicationObj() {
@@ -157,7 +172,16 @@ class LoginPage extends React.Component {
         values["type"] = this.state.type;
       }
       values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix;
+
+      if (oAuthParams !== null){
+        values["samlRequest"] = oAuthParams.samlRequest;
+      }
       
+  
+      if (values["samlRequest"] != null && values["samlRequest"] !== "") {
+          values["type"] = "saml";
+      }
+  
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
           if (res.status === 'ok') {
@@ -198,6 +222,10 @@ class LoginPage extends React.Component {
             } else if (responseType === "token" || responseType === "id_token") {
               const accessToken = res.data;
               Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
+            } else if (responseType === "saml") {
+              const SAMLResponse = res.data;
+              const redirectUri = res.data2;
+              Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
             }
           } else {
             Util.showMessage("error", `Failed to log in: ${res.msg}`);

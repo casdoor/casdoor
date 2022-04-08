@@ -135,7 +135,7 @@ class TokenEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Input value={this.state.token.expiresIn} onChange={e => {
-              this.updateTokenField('expiresIn', e.target.value);
+              this.updateTokenField('expiresIn', parseInt(e.target.value));
             }} />
           </Col>
         </Row>
