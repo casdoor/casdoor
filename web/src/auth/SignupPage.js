@@ -561,7 +561,6 @@ class SignupPage extends React.Component {
             if(linkInStorage != null){
               Setting.goToLink(linkInStorage)
             }else{
-              application.signinUrl= `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
               Setting.goToLogin(this, application)
             }
           }}>
