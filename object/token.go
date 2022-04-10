@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -305,7 +306,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string) *TokenWrapper {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string, provider string) *TokenWrapper {
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
 		return &TokenWrapper{
@@ -335,6 +336,8 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, err = GetPasswordToken(application, username, password, scope, host)
 	case "client_credentials": // Client Credentials Grant
 		token, err = GetClientCredentialsToken(application, clientSecret, scope, host)
+	case "wechat_miniprogram": // Wechat Mini Program
+		token, err = GetWechatMiniProgramToken(application, code, provider, host)
 	}
 
 	if err != nil {
@@ -602,6 +605,62 @@ func GetTokenByUser(application *Application, user *User, scope string, host str
 		RefreshToken: refreshToken,
 		ExpiresIn:    application.ExpireInHours * 60,
 		Scope:        scope,
+		TokenType:    "Bearer",
+		CodeIsUsed:   true,
+	}
+	AddToken(token)
+	return token, nil
+}
+
+// Wechat Mini Program flow
+func GetWechatMiniProgramToken(application *Application, code string, providerName string, host string) (*Token, error) {
+	provider := GetProvider(util.GetId(providerName))
+	mpIdp := idp.NewWeChatMPIdProvider(provider.ClientId, provider.ClientSecret)
+	session, err := mpIdp.GetSeesionByCode(code)
+	if err != nil {
+		return nil, err
+	}
+	openId, unionId := session.Openid, session.Unionid
+	if openId == "" && unionId == "" {
+		return nil, errors.New("err: openid and unionid is empty")
+	}
+	user := getUserByOpenId(openId, unionId)
+	if user == nil {
+		//Add new user
+		user = &User{
+			Owner:             application.Organization,
+			Id:                util.GenerateId(),
+			Name:              fmt.Sprintf("wechat-%s", openId),
+			SignupApplication: application.Name,
+			WeChat:            openId,
+			Unionid:           unionId,
+			Type:              "normal-user",
+			CreatedTime:       util.GetCurrentTime(),
+			IsAdmin:           false,
+			IsGlobalAdmin:     false,
+			IsForbidden:       false,
+			IsDeleted:         false,
+		}
+		AddUser(user)
+	}
+
+	accessToken, refreshToken, err := generateJwtToken(application, user, "", "", host)
+	if err != nil {
+		return nil, err
+	}
+
+	token := &Token{
+		Owner:        application.Owner,
+		Name:         util.GenerateId(),
+		CreatedTime:  util.GetCurrentTime(),
+		Application:  application.Name,
+		Organization: user.Owner,
+		User:         user.Name,
+		Code:         session.Session_key, //a trick, because miniprogram does not use the code, so use the code field to save the session_key
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		ExpiresIn:    application.ExpireInHours * 60,
+		Scope:        "",
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
 	}

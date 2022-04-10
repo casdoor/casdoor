@@ -76,6 +76,7 @@ type User struct {
 	Google   string `xorm:"varchar(100)" json:"google"`
 	QQ       string `xorm:"qq varchar(100)" json:"qq"`
 	WeChat   string `xorm:"wechat varchar(100)" json:"wechat"`
+	Unionid  string `xorm:"varchar(100)" json:"unionid"`
 	Facebook string `xorm:"facebook varchar(100)" json:"facebook"`
 	DingTalk string `xorm:"dingtalk varchar(100)" json:"dingtalk"`
 	Weibo    string `xorm:"weibo varchar(100)" json:"weibo"`
@@ -222,6 +223,23 @@ func getUserById(owner string, id string) *User {
 
 	if existed {
 		return &user
+	} else {
+		return nil
+	}
+}
+
+func getUserByOpenId(openId, unionId string) *User {
+	if unionId == "" {
+		unionId = openId
+	}
+	user := &User{}
+	existed, err := adapter.Engine.Where("wechat = ? OR wechat = ? OR unionid = ?", openId, unionId, unionId).Get(user)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return user
 	} else {
 		return nil
 	}

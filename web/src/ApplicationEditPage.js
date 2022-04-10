@@ -455,6 +455,7 @@ class ApplicationEditPage extends React.Component {
                           {id: "client_credentials", name: "Client Credentials"},
                           {id: "token", name: "Token"},
                           {id: "id_token",name:"ID Token"},
+                          {id: "wechat_miniprogram", name:"WeChat Mini Program"}
                         ].map((item, index)=><Option key={index} value={item.id}>{item.name}</Option>)
                       }
             </Select>
