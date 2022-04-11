@@ -59,10 +59,14 @@ class UserEditPage extends React.Component {
 
   getUser() {
     UserBackend.getUser(this.state.organizationName, this.state.userName)
-      .then((user) => {
-        this.setState({
-          user: user,
-        });
+      .then((data) => {
+        if (data.status === "error") {
+          window.location.href = "/404";
+        } else {
+          this.setState({
+            user: data,
+          });
+        }
       });
   }
 

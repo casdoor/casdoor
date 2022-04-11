@@ -87,6 +87,16 @@ func (c *ApiController) GetUser() {
 	id := c.Input().Get("id")
 	owner := c.Input().Get("owner")
 	email := c.Input().Get("email")
+	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", strings.Split(id, "/")[0]))
+
+	if organization.IsProfilePublic {
+		requestUserId := c.GetSessionUsername()
+		hasPermission, err := object.CheckUserPermission(requestUserId, id, false)
+		if !hasPermission {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
 
 	var user *object.User
 	if email == "" {
@@ -229,39 +239,15 @@ func (c *ApiController) SetPassword() {
 	newPassword := c.Ctx.Request.Form.Get("newPassword")
 
 	requestUserId := c.GetSessionUsername()
-	if requestUserId == "" {
-		c.ResponseError("Please login first")
-		return
-	}
-
 	userId := fmt.Sprintf("%s/%s", userOwner, userName)
-	targetUser := object.GetUser(userId)
-	if targetUser == nil {
-		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
+
+	hasPermission, err := object.CheckUserPermission(requestUserId, userId, true)
+	if !hasPermission {
+		c.ResponseError(err.Error())
 		return
 	}
 
-	hasPermission := false
-	if strings.HasPrefix(requestUserId, "app/") {
-		hasPermission = true
-	} else {
-		requestUser := object.GetUser(requestUserId)
-		if requestUser == nil {
-			c.ResponseError("Session outdated. Please login again.")
-			return
-		}
-		if requestUser.IsGlobalAdmin {
-			hasPermission = true
-		} else if requestUserId == userId {
-			hasPermission = true
-		} else if targetUser.Owner == requestUser.Owner && requestUser.IsAdmin {
-			hasPermission = true
-		}
-	}
-	if !hasPermission {
-		c.ResponseError("You don't have the permission to do this.")
-		return
-	}
+	targetUser := object.GetUser(userId)
 
 	if oldPassword != "" {
 		msg := object.CheckPassword(targetUser, oldPassword)

@@ -39,6 +39,7 @@ class OrganizationListPage extends BaseListPage {
       tags: [],
       masterPassword: "",
       enableSoftDeletion: false,
+      isProfilePublic: true,
     }
   }
 
