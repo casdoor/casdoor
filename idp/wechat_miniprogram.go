@@ -23,13 +23,13 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type WeChatMPIdProvider struct {
+type WeChatMiniProgramIdProvider struct {
 	Client *http.Client
 	Config *oauth2.Config
 }
 
-func NewWeChatMPIdProvider(clientId string, clientSecret string) *WeChatMPIdProvider {
-	idp := &WeChatMPIdProvider{}
+func NewWeChatMiniProgramIdProvider(clientId string, clientSecret string) *WeChatMiniProgramIdProvider {
+	idp := &WeChatMiniProgramIdProvider{}
 
 	config := idp.getConfig(clientId, clientSecret)
 	idp.Config = config
@@ -37,12 +37,11 @@ func NewWeChatMPIdProvider(clientId string, clientSecret string) *WeChatMPIdProv
 	return idp
 }
 
-func (idp *WeChatMPIdProvider) SetHttpClient(client *http.Client) {
+func (idp *WeChatMiniProgramIdProvider) SetHttpClient(client *http.Client) {
 	idp.Client = client
 }
 
-func (idp *WeChatMPIdProvider) getConfig(clientId string, clientSecret string) *oauth2.Config {
-
+func (idp *WeChatMiniProgramIdProvider) getConfig(clientId string, clientSecret string) *oauth2.Config {
 	var config = &oauth2.Config{
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
@@ -51,15 +50,15 @@ func (idp *WeChatMPIdProvider) getConfig(clientId string, clientSecret string) *
 	return config
 }
 
-type WeChatMPSeesionResponse struct {
-	Openid      string `json:"openid"`
-	Session_key string `json:"session_key"`
-	Unionid     string `json:"unionid"`
-	Errcode     int    `json:"errcode"`
-	Errmsg      string `json:"errmsg"`
+type WeChatMiniProgramSessionResponse struct {
+	Openid     string `json:"openid"`
+	SessionKey string `json:"session_key"`
+	Unionid    string `json:"unionid"`
+	Errcode    int    `json:"errcode"`
+	Errmsg     string `json:"errmsg"`
 }
 
-func (idp *WeChatMPIdProvider) GetSeesionByCode(code string) (*WeChatMPSeesionResponse, error) {
+func (idp *WeChatMiniProgramIdProvider) GetSessionByCode(code string) (*WeChatMiniProgramSessionResponse, error) {
 	sessionUri := fmt.Sprintf("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", idp.Config.ClientID, idp.Config.ClientSecret, code)
 	sessionResponse, err := idp.Client.Get(sessionUri)
 	if err != nil {
@@ -70,14 +69,14 @@ func (idp *WeChatMPIdProvider) GetSeesionByCode(code string) (*WeChatMPSeesionRe
 	if err != nil {
 		return nil, err
 	}
-	var seesion WeChatMPSeesionResponse
-	err = json.Unmarshal(data, &seesion)
+	var session WeChatMiniProgramSessionResponse
+	err = json.Unmarshal(data, &session)
 	if err != nil {
 		return nil, err
 	}
-	if seesion.Errcode != 0 {
-		return nil, fmt.Errorf("err: %s", seesion.Errmsg)
+	if session.Errcode != 0 {
+		return nil, fmt.Errorf("err: %s", session.Errmsg)
 	}
-	return &seesion, nil
+	return &session, nil
 
 }

@@ -318,7 +318,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	}
 
 	//Check if grantType is allowed in the current application
-	if !IsGrantTypeValid(grantType, application.GrantTypes) {
+	if !IsGrantTypeValid(grantType, application.GrantTypes) && grantType != "wechat_miniprogram" {
 		return &TokenWrapper{
 			AccessToken: fmt.Sprintf("error: grant_type: %s is not supported in this application", grantType),
 			TokenType:   "",
@@ -615,8 +615,8 @@ func GetTokenByUser(application *Application, user *User, scope string, host str
 // Wechat Mini Program flow
 func GetWechatMiniProgramToken(application *Application, code string, providerName string, host string) (*Token, error) {
 	provider := GetProvider(util.GetId(providerName))
-	mpIdp := idp.NewWeChatMPIdProvider(provider.ClientId, provider.ClientSecret)
-	session, err := mpIdp.GetSeesionByCode(code)
+	mpIdp := idp.NewWeChatMiniProgramIdProvider(provider.ClientId, provider.ClientSecret)
+	session, err := mpIdp.GetSessionByCode(code)
 	if err != nil {
 		return nil, err
 	}
@@ -626,22 +626,27 @@ func GetWechatMiniProgramToken(application *Application, code string, providerNa
 	}
 	user := getUserByOpenId(openId, unionId)
 	if user == nil {
-		//Add new user
-		user = &User{
-			Owner:             application.Organization,
-			Id:                util.GenerateId(),
-			Name:              fmt.Sprintf("wechat-%s", openId),
-			SignupApplication: application.Name,
-			WeChat:            openId,
-			Unionid:           unionId,
-			Type:              "normal-user",
-			CreatedTime:       util.GetCurrentTime(),
-			IsAdmin:           false,
-			IsGlobalAdmin:     false,
-			IsForbidden:       false,
-			IsDeleted:         false,
+		if application.EnableSignUp {
+			//Add new user
+			user = &User{
+				Owner:             application.Organization,
+				Id:                util.GenerateId(),
+				Name:              fmt.Sprintf("wechat-%s", openId),
+				SignupApplication: application.Name,
+				WeChat:            openId,
+				WeChatUnionid:     unionId,
+				Type:              "normal-user",
+				CreatedTime:       util.GetCurrentTime(),
+				IsAdmin:           false,
+				IsGlobalAdmin:     false,
+				IsForbidden:       false,
+				IsDeleted:         false,
+			}
+			AddUser(user)
+		} else {
+			return nil, errors.New("err: the user does not exist")
 		}
-		AddUser(user)
+
 	}
 
 	accessToken, refreshToken, err := generateJwtToken(application, user, "", "", host)
@@ -656,7 +661,7 @@ func GetWechatMiniProgramToken(application *Application, code string, providerNa
 		Application:  application.Name,
 		Organization: user.Owner,
 		User:         user.Name,
-		Code:         session.Session_key, //a trick, because miniprogram does not use the code, so use the code field to save the session_key
+		Code:         session.SessionKey, //a trick, because miniprogram does not use the code, so use the code field to save the session_key
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		ExpiresIn:    application.ExpireInHours * 60,
