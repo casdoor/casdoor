@@ -622,31 +622,29 @@ func GetWechatMiniProgramToken(application *Application, code string, providerNa
 	}
 	openId, unionId := session.Openid, session.Unionid
 	if openId == "" && unionId == "" {
-		return nil, errors.New("err: openid and unionid is empty")
+		return nil, errors.New("err: WeChat's openid and unionid are empty")
 	}
 	user := getUserByOpenId(openId, unionId)
 	if user == nil {
-		if application.EnableSignUp {
-			//Add new user
-			user = &User{
-				Owner:             application.Organization,
-				Id:                util.GenerateId(),
-				Name:              fmt.Sprintf("wechat-%s", openId),
-				SignupApplication: application.Name,
-				WeChat:            openId,
-				WeChatUnionid:     unionId,
-				Type:              "normal-user",
-				CreatedTime:       util.GetCurrentTime(),
-				IsAdmin:           false,
-				IsGlobalAdmin:     false,
-				IsForbidden:       false,
-				IsDeleted:         false,
-			}
-			AddUser(user)
-		} else {
-			return nil, errors.New("err: the user does not exist")
+		if !application.EnableSignUp {
+			return nil, errors.New("err: the application does not allow to sign up new account")
 		}
-
+		//Add new user
+		user = &User{
+			Owner:             application.Organization,
+			Id:                util.GenerateId(),
+			Name:              fmt.Sprintf("wechat-%s", openId),
+			SignupApplication: application.Name,
+			WeChat:            openId,
+			WeChatUnionid:     unionId,
+			Type:              "normal-user",
+			CreatedTime:       util.GetCurrentTime(),
+			IsAdmin:           false,
+			IsGlobalAdmin:     false,
+			IsForbidden:       false,
+			IsDeleted:         false,
+		}
+		AddUser(user)
 	}
 
 	accessToken, refreshToken, err := generateJwtToken(application, user, "", "", host)
