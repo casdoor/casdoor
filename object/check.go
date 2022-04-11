@@ -227,5 +227,6 @@ func CheckUserPermission(requestUserId, userId string, strict bool) (bool, error
 			}
 		}
 	}
+
 	return hasPermission, fmt.Errorf("you don't have the permission to do this")
 }
