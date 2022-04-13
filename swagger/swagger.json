@@ -2797,11 +2797,11 @@
         }
     },
     "definitions": {
-        "2026.0xc000380de0.false": {
+        "2127.0xc00036c600.false": {
             "title": "false",
             "type": "object"
         },
-        "2060.0xc000380e10.false": {
+        "2161.0xc00036c630.false": {
             "title": "false",
             "type": "object"
         },
@@ -2818,10 +2818,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2026.0xc000380de0.false"
+                    "$ref": "#/definitions/2127.0xc00036c600.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2060.0xc000380e10.false"
+                    "$ref": "#/definitions/2161.0xc00036c630.false"
                 },
                 "msg": {
                     "type": "string"
@@ -2842,10 +2842,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2026.0xc000380de0.false"
+                    "$ref": "#/definitions/2127.0xc00036c600.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2060.0xc000380e10.false"
+                    "$ref": "#/definitions/2161.0xc00036c630.false"
                 },
                 "msg": {
                     "type": "string"
@@ -3648,6 +3648,9 @@
                 "access_token": {
                     "type": "string"
                 },
+                "error": {
+                    "type": "string"
+                },
                 "expires_in": {
                     "type": "integer",
                     "format": "int64"
@@ -3680,6 +3683,9 @@
                     "type": "string"
                 },
                 "affiliation": {
+                    "type": "string"
+                },
+                "alipay": {
                     "type": "string"
                 },
                 "apple": {
@@ -3720,6 +3726,9 @@
                 },
                 "email": {
                     "type": "string"
+                },
+                "emailVerified": {
+                    "type": "boolean"
                 },
                 "facebook": {
                     "type": "string"

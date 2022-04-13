@@ -58,6 +58,7 @@ type TokenWrapper struct {
 	TokenType    string `json:"token_type"`
 	ExpiresIn    int    `json:"expires_in"`
 	Scope        string `json:"scope"`
+	Error        string `json:"error,omitempty"`
 }
 
 type IntrospectionResponse struct {
@@ -313,6 +314,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       "error: invalid client_id",
 		}
 	}
 
@@ -323,6 +325,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       fmt.Sprintf("error: grant_type: %s is not supported in this application", grantType),
 		}
 	}
 
@@ -343,6 +346,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       err.Error(),
 		}
 	}
 
@@ -368,6 +372,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       "error: grant_type should be \"refresh_token\"",
 		}
 	}
 	application := GetApplicationByClientId(clientId)
@@ -377,6 +382,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       "error: invalid client_id",
 		}
 	}
 	if clientSecret != "" && application.ClientSecret != clientSecret {
@@ -385,6 +391,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       "error: invalid client_secret",
 		}
 	}
 	// check whether the refresh token is valid, and has not expired.
@@ -396,6 +403,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       "error: invalid refresh_token",
 		}
 	}
 
@@ -407,6 +415,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       fmt.Sprintf("error: %s", err.Error()),
 		}
 	}
 	// generate a new token
@@ -417,6 +426,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       "error: the user is forbidden to sign in, please contact the administrator",
 		}
 	}
 	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "", scope, host)
