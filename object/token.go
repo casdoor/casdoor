@@ -320,12 +320,13 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	//Check if grantType is allowed in the current application
 	if !IsGrantTypeValid(grantType, application.GrantTypes) {
+		errString := fmt.Sprintf("error: grant_type: %s is not supported in this application", grantType)
 		return &TokenWrapper{
-			AccessToken: fmt.Sprintf("error: grant_type: %s is not supported in this application", grantType),
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-			Error:       fmt.Sprintf("error: grant_type: %s is not supported in this application", grantType),
+			Error:       errString,
 		}
 	}
 
@@ -410,12 +411,13 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	cert := getCertByApplication(application)
 	_, err = ParseJwtToken(refreshToken, cert)
 	if err != nil {
+		errString := fmt.Sprintf("error: %s", err.Error())
 		return &TokenWrapper{
-			AccessToken: fmt.Sprintf("error: %s", err.Error()),
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-			Error:       fmt.Sprintf("error: %s", err.Error()),
+			Error:       errString,
 		}
 	}
 	// generate a new token
