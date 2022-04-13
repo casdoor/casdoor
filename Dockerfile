@@ -1,8 +1,7 @@
 FROM golang:1.17.5 AS BACK
 WORKDIR /go/src/casdoor
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOPROXY=https://goproxy.cn,direct go build -ldflags="-w -s" -o server . \
-    && apt update && apt install wait-for-it && chmod +x /usr/bin/wait-for-it
+RUN ./build.sh && apt update && apt install wait-for-it && chmod +x /usr/bin/wait-for-it
 
 FROM node:16.13.0 AS FRONT
 WORKDIR /web
