@@ -307,20 +307,22 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 }
 
 func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string) *TokenWrapper {
+	var errString string
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
+		errString = "error: invalid client_id"
 		return &TokenWrapper{
-			AccessToken: "error: invalid client_id",
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-			Error:       "error: invalid client_id",
+			Error:       errString,
 		}
 	}
 
 	//Check if grantType is allowed in the current application
 	if !IsGrantTypeValid(grantType, application.GrantTypes) {
-		errString := fmt.Sprintf("error: grant_type: %s is not supported in this application", grantType)
+		errString = fmt.Sprintf("error: grant_type: %s is not supported in this application", grantType)
 		return &TokenWrapper{
 			AccessToken: errString,
 			TokenType:   "",
@@ -342,12 +344,13 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	}
 
 	if err != nil {
+		errString = err.Error()
 		return &TokenWrapper{
-			AccessToken: err.Error(),
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-			Error:       err.Error(),
+			Error:       errString,
 		}
 	}
 
@@ -366,45 +369,50 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 }
 
 func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string, host string) *TokenWrapper {
+	var errString string
 	// check parameters
 	if grantType != "refresh_token" {
+		errString = "error: grant_type should be \"refresh_token\""
 		return &TokenWrapper{
-			AccessToken: "error: grant_type should be \"refresh_token\"",
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-			Error:       "error: grant_type should be \"refresh_token\"",
+			Error:       errString,
 		}
 	}
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
+		errString = "error: invalid client_id"
 		return &TokenWrapper{
-			AccessToken: "error: invalid client_id",
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-			Error:       "error: invalid client_id",
+			Error:       errString,
 		}
 	}
 	if clientSecret != "" && application.ClientSecret != clientSecret {
+		errString = "error: invalid client_secret"
 		return &TokenWrapper{
-			AccessToken: "error: invalid client_secret",
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-			Error:       "error: invalid client_secret",
+			Error:       errString,
 		}
 	}
 	// check whether the refresh token is valid, and has not expired.
 	token := Token{RefreshToken: refreshToken}
 	existed, err := adapter.Engine.Get(&token)
 	if err != nil || !existed {
+		errString = "error: invalid refresh_token"
 		return &TokenWrapper{
-			AccessToken: "error: invalid refresh_token",
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-			Error:       "error: invalid refresh_token",
+			Error:       errString,
 		}
 	}
 
@@ -423,12 +431,13 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	// generate a new token
 	user := getUser(application.Organization, token.User)
 	if user.IsForbidden {
+		errString = "error: the user is forbidden to sign in, please contact the administrator"
 		return &TokenWrapper{
-			AccessToken: "error: the user is forbidden to sign in, please contact the administrator",
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
-			Error:       "error: the user is forbidden to sign in, please contact the administrator",
+			Error:       errString,
 		}
 	}
 	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "", scope, host)
