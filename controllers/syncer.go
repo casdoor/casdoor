@@ -114,3 +114,21 @@ func (c *ApiController) DeleteSyncer() {
 	c.Data["json"] = wrapActionResponse(object.DeleteSyncer(&syncer))
 	c.ServeJSON()
 }
+
+// @Title SyncUsers
+// @Tag Syncer API
+// @Description sync users
+// @Param   body    body   object.Syncer  true        "The details of the syncer"
+// @Success 200 {object} controllers.Response The Response object
+// @router /sync-users [post]
+func (c *ApiController) SyncUsers() {
+	var syncer object.Syncer
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
+	if err != nil {
+		panic(err)
+	}
+
+	object.RunSyncer(&syncer)
+
+	c.ResponseOk()
+}

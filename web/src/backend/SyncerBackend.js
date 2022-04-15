@@ -54,3 +54,11 @@ export function deleteSyncer(syncer) {
     body: JSON.stringify(newSyncer),
   }).then(res => res.json());
 }
+
+export function syncUsers(syncer) {
+  return fetch(`${Setting.ServerUrl}/api/sync-users`, {
+    method: 'POST',
+    credentials: 'include',
+    body: JSON.stringify(syncer),
+  }).then(res => res.json());
+}
