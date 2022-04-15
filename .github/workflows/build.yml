@@ -70,7 +70,7 @@ jobs:
 
       - name: Fetch Previous version
         id: get-previous-tag
-        uses: actions-ecosystem/action-get-latest-tag@v1
+        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
 
       - name: Release
         run: yarn global add semantic-release@17.4.4 && semantic-release
@@ -79,7 +79,7 @@ jobs:
 
       - name: Fetch Current version
         id: get-current-tag
-        uses: actions-ecosystem/action-get-latest-tag@v1
+        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
 
       - name: Decide Should_Push Or Not
         id: should_push
@@ -101,7 +101,7 @@ jobs:
               echo ::set-output name=push::'false'
               
           fi
-        
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' &&steps.should_push.outputs.push=='true'
@@ -109,14 +109,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-          
+
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           push: true
           tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
-          
+
       - name: Push All In One Version to Docker Hub
         uses: docker/build-push-action@v2
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
