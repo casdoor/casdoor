@@ -256,6 +256,79 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           )
         }
+        {
+          this.state.provider.type !== "Private" ? null : (
+            <React.Fragment>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Auth Page"), i18next.t("provider:Auth Page - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.privateAuthPage} onChange={e => {
+                    this.updateProviderField('privateAuthPage', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.privateScope} onChange={e => {
+                    this.updateProviderField('privateScope', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Token API"), i18next.t("provider:Token API - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.privateTokenApi} onChange={e => {
+                    this.updateProviderField('privateTokenApi', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:UserInfo API"), i18next.t("provider:UserInfo API - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.privateUserInfoApi} onChange={e => {
+                    this.updateProviderField('privateUserInfoApi', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel( i18next.t("general:Favicon"), i18next.t("general:Favicon - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Row style={{marginTop: '20px'}} >
+                    <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
+                    </Col>
+                    <Col span={23} >
+                      <Input prefix={<LinkOutlined/>} value={this.state.provider.privateIcon} onChange={e => {
+                        this.updateProviderField('privateIcon', e.target.value);
+                      }} />
+                    </Col>
+                  </Row>
+                  <Row style={{marginTop: '20px'}} >
+                    <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {i18next.t("general:Preview")}:
+                    </Col>
+                    <Col span={23} >
+                      <a target="_blank" rel="noreferrer" href={this.state.provider.privateIcon}>
+                        <img src={this.state.provider.privateIcon} alt={this.state.provider.privateIcon} height={90} style={{marginBottom: '20px'}}/>
+                      </a>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </React.Fragment>
+          )
+        }
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {this.getClientIdLabel()}
