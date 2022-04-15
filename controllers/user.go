@@ -111,6 +111,10 @@ func (c *ApiController) UpdateUser() {
 	id := c.Input().Get("id")
 	columnsStr := c.Input().Get("columns")
 
+	if id == "" {
+		id = c.GetSessionUsername()
+	}
+
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {

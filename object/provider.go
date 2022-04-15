@@ -151,6 +151,16 @@ func GetDefaultHumanCheckProvider() *Provider {
 	return &provider
 }
 
+func GetWechatMiniProgramProvider(application *Application) *Provider {
+	providers := application.Providers
+	for _, provider := range providers {
+		if provider.Provider.Type == "WeChatMiniProgram" {
+			return provider.Provider
+		}
+	}
+	return nil
+}
+
 func UpdateProvider(id string, provider *Provider) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if getProvider(owner, name) == nil {

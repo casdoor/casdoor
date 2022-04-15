@@ -36,6 +36,9 @@ const authInfo = {
     mpScope: "snsapi_userinfo",
     mpEndpoint: "https://open.weixin.qq.com/connect/oauth2/authorize"
   },
+  WeChatMiniProgram: {
+    endpoint: "https://mp.weixin.qq.com/",
+  },
   Facebook: {
     scope: "email,public_profile",
     endpoint: "https://www.facebook.com/dialog/oauth",

@@ -23,4 +23,6 @@ type TokenRequest struct {
 	Scope        string `json:"scope"`
 	Username     string `json:"username"`
 	Password     string `json:"password"`
+	Tag          string `json:"tag"`
+	Avatar       string `json:"avatar"`
 }
