@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"encoding/xml"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -42,7 +43,7 @@ func (c *RootController) CasValidate() {
 		c.Ctx.Output.Body([]byte("no\n"))
 		return
 	}
-	if ok, response, issuedService := object.GetCasTokenByTicket(ticket); ok {
+	if ok, response, issuedService, _ := object.GetCasTokenByTicket(ticket); ok {
 		//check whether service is the one for which we previously issued token
 		if issuedService == service {
 			c.Ctx.Output.Body([]byte(fmt.Sprintf("yes\n%s\n", response.User)))
@@ -54,7 +55,25 @@ func (c *RootController) CasValidate() {
 	c.Ctx.Output.Body([]byte("no\n"))
 }
 
-func (c *RootController) CasServiceAndProxyValidate() {
+func (c *RootController) CasServiceValidate() {
+	ticket := c.Input().Get("ticket")
+	format := c.Input().Get("format")
+	if !strings.HasPrefix(ticket, "ST") {
+		c.sendCasAuthenticationResponseErr(InvalidTicket, fmt.Sprintf("Ticket %s not recognized", ticket), format)
+	}
+	c.CasP3ServiceAndProxyValidate()
+}
+
+func (c *RootController) CasProxyValidate() {
+	ticket := c.Input().Get("ticket")
+	format := c.Input().Get("format")
+	if !strings.HasPrefix(ticket, "PT") {
+		c.sendCasAuthenticationResponseErr(InvalidTicket, fmt.Sprintf("Ticket %s not recognized", ticket), format)
+	}
+	c.CasP3ServiceAndProxyValidate()
+}
+
+func (c *RootController) CasP3ServiceAndProxyValidate() {
 	ticket := c.Input().Get("ticket")
 	format := c.Input().Get("format")
 	service := c.Input().Get("service")
@@ -69,10 +88,9 @@ func (c *RootController) CasServiceAndProxyValidate() {
 		c.sendCasAuthenticationResponseErr(InvalidRequest, "service and ticket must exist", format)
 		return
 	}
-
+	ok, response, issuedService, userId := object.GetCasTokenByTicket(ticket)
 	//find the token
-	if ok, response, issuedService := object.GetCasTokenByTicket(ticket); ok {
-
+	if ok {
 		//check whether service is the one for which we previously issued token
 		if strings.HasPrefix(service, issuedService) {
 			serviceResponse.Success = response
@@ -89,7 +107,7 @@ func (c *RootController) CasServiceAndProxyValidate() {
 
 	if pgtUrl != "" && serviceResponse.Failure == nil {
 		//that means we are in proxy web flow
-		pgt := object.StoreCasTokenForPgt(serviceResponse.Success, service)
+		pgt := object.StoreCasTokenForPgt(serviceResponse.Success, service, userId)
 		pgtiou := serviceResponse.Success.ProxyGrantingTicket
 		//todo: check whether it is https
 		pgtUrlObj, err := url.Parse(pgtUrl)
@@ -139,7 +157,7 @@ func (c *RootController) CasProxy() {
 		return
 	}
 
-	ok, authenticationSuccess, issuedService := object.GetCasTokenByPgt(pgt)
+	ok, authenticationSuccess, issuedService, userId := object.GetCasTokenByPgt(pgt)
 	if !ok {
 		c.sendCasProxyResponseErr(UnauthorizedService, "service not authorized", format)
 		return
@@ -150,7 +168,7 @@ func (c *RootController) CasProxy() {
 		newAuthenticationSuccess.Proxies = &object.CasProxies{}
 	}
 	newAuthenticationSuccess.Proxies.Proxies = append(newAuthenticationSuccess.Proxies.Proxies, issuedService)
-	proxyTicket := object.StoreCasTokenForProxyTicket(&newAuthenticationSuccess, targetService)
+	proxyTicket := object.StoreCasTokenForProxyTicket(&newAuthenticationSuccess, targetService, userId)
 
 	serviceResponse := object.CasServiceResponse{
 		Xmlns: "http://www.yale.edu/tp/cas",
@@ -168,6 +186,55 @@ func (c *RootController) CasProxy() {
 	}
 
 }
+
+func (c *RootController) SamlValidate() {
+	c.Ctx.Output.Header("Content-Type", "text/xml; charset=utf-8")
+	target := c.Input().Get("TARGET")
+	body := c.Ctx.Input.RequestBody
+	envelopRequest := struct {
+		XMLName xml.Name `xml:"Envelope"`
+		Body    struct {
+			XMLName xml.Name `xml:"Body"`
+			Content string   `xml:",innerxml"`
+		}
+	}{}
+
+	err := xml.Unmarshal(body, &envelopRequest)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	response, service, err := object.GetValidationBySaml(envelopRequest.Body.Content, c.Ctx.Request.Host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if !strings.HasPrefix(target, service) {
+		c.ResponseError(fmt.Sprintf("service %s and %s do not match", target, service))
+		return
+	}
+
+	envelopReponse := struct {
+		XMLName xml.Name `xml:"SOAP-ENV:Envelope"`
+		Xmlns   string   `xml:"xmlns:SOAP-ENV"`
+		Body    struct {
+			XMLName xml.Name `xml:"SOAP-ENV:Body"`
+			Content string   `xml:",innerxml"`
+		}
+	}{}
+	envelopReponse.Xmlns = "http://schemas.xmlsoap.org/soap/envelope/"
+	envelopReponse.Body.Content = response
+
+	data, err := xml.Marshal(envelopReponse)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.Ctx.Output.Body([]byte(data))
+}
+
 func (c *RootController) sendCasProxyResponseErr(code, msg, format string) {
 	serviceResponse := object.CasServiceResponse{
 		Xmlns: "http://www.yale.edu/tp/cas",

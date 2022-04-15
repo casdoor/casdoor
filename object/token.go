@@ -59,6 +59,7 @@ type TokenWrapper struct {
 	TokenType    string `json:"token_type"`
 	ExpiresIn    int    `json:"expires_in"`
 	Scope        string `json:"scope"`
+	Error        string `json:"error,omitempty"`
 }
 
 type IntrospectionResponse struct {
@@ -306,24 +307,31 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}
 }
 
+
 func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string, tag string, avatar string) *TokenWrapper {
+	var errString string
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
+		errString = "error: invalid client_id"
 		return &TokenWrapper{
-			AccessToken: "error: invalid client_id",
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       errString,
 		}
 	}
 
 	//Check if grantType is allowed in the current application
+
 	if !IsGrantTypeValid(grantType, application.GrantTypes) && tag == "" {
+		errString = fmt.Sprintf("error: grant_type: %s is not supported in this application", grantType)
 		return &TokenWrapper{
-			AccessToken: fmt.Sprintf("error: grant_type: %s is not supported in this application", grantType),
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       errString,
 		}
 	}
 
@@ -344,11 +352,13 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	}
 
 	if err != nil {
+		errString = err.Error()
 		return &TokenWrapper{
-			AccessToken: err.Error(),
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       errString,
 		}
 	}
 
@@ -367,62 +377,75 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 }
 
 func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string, host string) *TokenWrapper {
+	var errString string
 	// check parameters
 	if grantType != "refresh_token" {
+		errString = "error: grant_type should be \"refresh_token\""
 		return &TokenWrapper{
-			AccessToken: "error: grant_type should be \"refresh_token\"",
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       errString,
 		}
 	}
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
+		errString = "error: invalid client_id"
 		return &TokenWrapper{
-			AccessToken: "error: invalid client_id",
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       errString,
 		}
 	}
 	if clientSecret != "" && application.ClientSecret != clientSecret {
+		errString = "error: invalid client_secret"
 		return &TokenWrapper{
-			AccessToken: "error: invalid client_secret",
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       errString,
 		}
 	}
 	// check whether the refresh token is valid, and has not expired.
 	token := Token{RefreshToken: refreshToken}
 	existed, err := adapter.Engine.Get(&token)
 	if err != nil || !existed {
+		errString = "error: invalid refresh_token"
 		return &TokenWrapper{
-			AccessToken: "error: invalid refresh_token",
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       errString,
 		}
 	}
 
 	cert := getCertByApplication(application)
 	_, err = ParseJwtToken(refreshToken, cert)
 	if err != nil {
+		errString := fmt.Sprintf("error: %s", err.Error())
 		return &TokenWrapper{
-			AccessToken: fmt.Sprintf("error: %s", err.Error()),
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       errString,
 		}
 	}
 	// generate a new token
 	user := getUser(application.Organization, token.User)
 	if user.IsForbidden {
+		errString = "error: the user is forbidden to sign in, please contact the administrator"
 		return &TokenWrapper{
-			AccessToken: "error: the user is forbidden to sign in, please contact the administrator",
+			AccessToken: errString,
 			TokenType:   "",
 			ExpiresIn:   0,
 			Scope:       "",
+			Error:       errString,
 		}
 	}
 	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "", scope, host)

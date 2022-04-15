@@ -173,9 +173,13 @@ func initAPI() {
 	beego.Router("/.well-known/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscovery")
 	beego.Router("/.well-known/jwks", &controllers.RootController{}, "*:GetJwks")
 
-	beego.Router("/cas/:organization/:application/serviceValidate", &controllers.RootController{}, "GET:CasServiceAndProxyValidate")
-	beego.Router("/cas/:organization/:application/proxyValidate", &controllers.RootController{}, "GET:CasServiceAndProxyValidate")
+	beego.Router("/cas/:organization/:application/serviceValidate", &controllers.RootController{}, "GET:CasServiceValidate")
+	beego.Router("/cas/:organization/:application/proxyValidate", &controllers.RootController{}, "GET:CasProxyValidate")
 	beego.Router("/cas/:organization/:application/proxy", &controllers.RootController{}, "GET:CasProxy")
 	beego.Router("/cas/:organization/:application/validate", &controllers.RootController{}, "GET:CasValidate")
+
+	beego.Router("/cas/:organization/:application/p3/serviceValidate", &controllers.RootController{}, "GET:CasP3ServiceAndProxyValidate")
+	beego.Router("/cas/:organization/:application/p3/proxyValidate", &controllers.RootController{}, "GET:CasP3ServiceAndProxyValidate")
+	beego.Router("/cas/:organization/:application/samlValidate", &controllers.RootController{}, "POST:SamlValidate")
 
 }

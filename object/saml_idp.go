@@ -20,6 +20,7 @@ import (
 	"crypto"
 	"crypto/rsa"
 	"encoding/base64"
+	"encoding/json"
 	"encoding/pem"
 	"encoding/xml"
 	"fmt"
@@ -34,6 +35,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+//returns a saml2 response
 func NewSamlResponse(user *User, host string, publicKey string, destination string, iss string, redirectUri []string) (*etree.Element, error) {
 	samlResponse := &etree.Element{
 		Space: "samlp",
@@ -223,7 +225,8 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 	return &d, nil
 }
 
-//GenerateSamlResponse generates a SAML response
+//GenerateSamlResponse generates a SAML2.0 response
+//parameter samlRequest is saml request in base64 format
 func GetSamlResponse(application *Application, user *User, samlRequest string, host string) (string, string, error) {
 	//decode samlRequest
 	defated, err := base64.StdEncoding.DecodeString(samlRequest)
@@ -271,4 +274,79 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 	res := base64.StdEncoding.EncodeToString([]byte(xmlStr))
 	return res, authnRequest.AssertionConsumerServiceURL, nil
+}
+
+//return a saml1.1 response(not 2.0)
+func NewSamlResponse11(user *User, requestID string, host string) *etree.Element {
+	samlResponse := &etree.Element{
+		Space: "samlp",
+		Tag:   "Response",
+	}
+	//create samlresponse
+	samlResponse.CreateAttr("xmlns:samlp", "urn:oasis:names:tc:SAML:1.0:protocol")
+	samlResponse.CreateAttr("MajorVersion", "1")
+	samlResponse.CreateAttr("MinorVersion", "1")
+
+	responseID := uuid.NewV4()
+	samlResponse.CreateAttr("ResponseID", fmt.Sprintf("_%s", responseID))
+	samlResponse.CreateAttr("InResponseTo", requestID)
+
+	now := time.Now().UTC().Format(time.RFC3339)
+	expireTime := time.Now().UTC().Add(time.Hour * 24).Format(time.RFC3339)
+
+	samlResponse.CreateAttr("IssueInstant", now)
+
+	samlResponse.CreateElement("samlp:Status").CreateElement("samlp:StatusCode").CreateAttr("Value", "samlp:Success")
+
+	//create assertion which is inside the response
+	assertion := samlResponse.CreateElement("saml:Assertion")
+	assertion.CreateAttr("xmlns:saml", "urn:oasis:names:tc:SAML:1.0:assertion")
+	assertion.CreateAttr("MajorVersion", "1")
+	assertion.CreateAttr("MinorVersion", "1")
+	assertion.CreateAttr("AssertionID", uuid.NewV4().String())
+	assertion.CreateAttr("Issuer", host)
+	assertion.CreateAttr("IssueInstant", now)
+
+	condition := assertion.CreateElement("saml:Conditions")
+	condition.CreateAttr("NotBefore", now)
+	condition.CreateAttr("NotOnOrAfter", expireTime)
+
+	//AuthenticationStatement inside assertion
+	authenticationStatement := assertion.CreateElement("saml:AuthenticationStatement")
+	authenticationStatement.CreateAttr("AuthenticationMethod", "urn:oasis:names:tc:SAML:1.0:am:password")
+	authenticationStatement.CreateAttr("AuthenticationInstant", now)
+
+	//subject inside AuthenticationStatement
+	subject := assertion.CreateElement("saml:Subject")
+	//nameIdentifier inside subject
+	nameIdentifier := subject.CreateElement("saml:NameIdentifier")
+	//nameIdentifier.CreateAttr("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress")
+	nameIdentifier.SetText(user.Name)
+
+	//subjectConfirmation inside subject
+	subjectConfirmation := subject.CreateElement("saml:SubjectConfirmation")
+	subjectConfirmation.CreateElement("saml:ConfirmationMethod").SetText("urn:oasis:names:tc:SAML:1.0:cm:artifact")
+
+	attributeStatement := assertion.CreateElement("saml:AttributeStatement")
+	subjectInAttribute := attributeStatement.CreateElement("saml:Subject")
+	nameIdentifierInAttribute := subjectInAttribute.CreateElement("saml:NameIdentifier")
+	nameIdentifierInAttribute.SetText(user.Name)
+
+	subjectConfirmationInAttribute := subjectInAttribute.CreateElement("saml:SubjectConfirmation")
+	subjectConfirmationInAttribute.CreateElement("saml:ConfirmationMethod").SetText("urn:oasis:names:tc:SAML:1.0:cm:artifact")
+
+	data, _ := json.Marshal(user)
+	tmp := map[string]string{}
+	json.Unmarshal(data, &tmp)
+
+	for k, v := range tmp {
+		if v != "" {
+			attr := attributeStatement.CreateElement("saml:Attribute")
+			attr.CreateAttr("saml:AttributeName", k)
+			attr.CreateAttr("saml:AttributeNamespace", "http://www.ja-sig.org/products/cas/")
+			attr.CreateElement("saml:AttributeValue").SetText(v)
+		}
+	}
+
+	return samlResponse
 }
