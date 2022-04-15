@@ -76,7 +76,7 @@ type User struct {
 	Google        string `xorm:"varchar(100)" json:"google"`
 	QQ            string `xorm:"qq varchar(100)" json:"qq"`
 	WeChat        string `xorm:"wechat varchar(100)" json:"wechat"`
-	WeChatUnionid string `xorm:"varchar(100)" json:"unionid"`
+	WeChatUnionId string `xorm:"varchar(100)" json:"unionId"`
 	Facebook      string `xorm:"facebook varchar(100)" json:"facebook"`
 	DingTalk      string `xorm:"dingtalk varchar(100)" json:"dingtalk"`
 	Weibo         string `xorm:"weibo varchar(100)" json:"weibo"`
@@ -228,7 +228,7 @@ func getUserById(owner string, id string) *User {
 	}
 }
 
-func getUserByOpenId(wechatOpenId string, wechatUnionId string) *User {
+func getUserByWechatId(wechatOpenId string, wechatUnionId string) *User {
 	if wechatUnionId == "" {
 		wechatUnionId = wechatOpenId
 	}

@@ -76,6 +76,10 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
+  if (providerItem.provider.type === "WeChatMiniProgram"){
+    return false
+  }
+
   return true;
 }
 
@@ -392,6 +396,7 @@ export function getProviderTypeOptions(category) {
         {id: 'GitHub', name: 'GitHub'},
         {id: 'QQ', name: 'QQ'},
         {id: 'WeChat', name: 'WeChat'},
+        {id: 'WeChatMiniProgram', name: 'WeChat Mini Program'},
         {id: 'Facebook', name: 'Facebook'},
         {id: 'DingTalk', name: 'DingTalk'},
         {id: 'Weibo', name: 'Weibo'},

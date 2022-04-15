@@ -175,7 +175,8 @@ func (c *ApiController) GetOAuthToken() {
 	scope := c.Input().Get("scope")
 	username := c.Input().Get("username")
 	password := c.Input().Get("password")
-	provider := c.Input().Get("provider")
+	tag := c.Input().Get("tag")
+	avatar := c.Input().Get("avatar")
 
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
@@ -192,11 +193,13 @@ func (c *ApiController) GetOAuthToken() {
 			scope = tokenRequest.Scope
 			username = tokenRequest.Username
 			password = tokenRequest.Password
+			tag = tokenRequest.Tag
+			avatar = tokenRequest.Avatar
 		}
 	}
 	host := c.Ctx.Request.Host
 
-	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, provider)
+	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, tag, avatar)
 	c.ServeJSON()
 }
 

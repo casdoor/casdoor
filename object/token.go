@@ -306,7 +306,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string, provider string) *TokenWrapper {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string, tag string, avatar string) *TokenWrapper {
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
 		return &TokenWrapper{
@@ -318,7 +318,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	}
 
 	//Check if grantType is allowed in the current application
-	if !IsGrantTypeValid(grantType, application.GrantTypes) && grantType != "wechat_miniprogram" {
+	if !IsGrantTypeValid(grantType, application.GrantTypes) && tag == "" {
 		return &TokenWrapper{
 			AccessToken: fmt.Sprintf("error: grant_type: %s is not supported in this application", grantType),
 			TokenType:   "",
@@ -336,8 +336,11 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, err = GetPasswordToken(application, username, password, scope, host)
 	case "client_credentials": // Client Credentials Grant
 		token, err = GetClientCredentialsToken(application, clientSecret, scope, host)
-	case "wechat_miniprogram": // Wechat Mini Program
-		token, err = GetWechatMiniProgramToken(application, code, provider, host)
+	}
+
+	if tag == "wechat_miniprogram" {
+		// Wechat Mini Program
+		token, err = GetWechatMiniProgramToken(application, code, host, username, avatar)
 	}
 
 	if err != nil {
@@ -613,8 +616,12 @@ func GetTokenByUser(application *Application, user *User, scope string, host str
 }
 
 // Wechat Mini Program flow
-func GetWechatMiniProgramToken(application *Application, code string, providerName string, host string) (*Token, error) {
-	provider := GetProvider(util.GetId(providerName))
+func GetWechatMiniProgramToken(application *Application, code string, host string, username string, avatar string) (*Token, error) {
+	mpProvider := GetWechatMiniProgramProvider(application)
+	if mpProvider == nil {
+		return nil, errors.New("error: the application does not support wechat mini program")
+	}
+	provider := GetProvider(util.GetId(mpProvider.Name))
 	mpIdp := idp.NewWeChatMiniProgramIdProvider(provider.ClientId, provider.ClientSecret)
 	session, err := mpIdp.GetSessionByCode(code)
 	if err != nil {
@@ -624,19 +631,27 @@ func GetWechatMiniProgramToken(application *Application, code string, providerNa
 	if openId == "" && unionId == "" {
 		return nil, errors.New("err: WeChat's openid and unionid are empty")
 	}
-	user := getUserByOpenId(openId, unionId)
+	user := getUserByWechatId(openId, unionId)
 	if user == nil {
 		if !application.EnableSignUp {
 			return nil, errors.New("err: the application does not allow to sign up new account")
 		}
 		//Add new user
+		var name string
+		if username != "" {
+			name = username
+		} else {
+			name = fmt.Sprintf("wechat-%s", openId)
+		}
+
 		user = &User{
 			Owner:             application.Organization,
 			Id:                util.GenerateId(),
-			Name:              fmt.Sprintf("wechat-%s", openId),
+			Name:              name,
+			Avatar:            avatar,
 			SignupApplication: application.Name,
 			WeChat:            openId,
-			WeChatUnionid:     unionId,
+			WeChatUnionId:     unionId,
 			Type:              "normal-user",
 			CreatedTime:       util.GetCurrentTime(),
 			IsAdmin:           false,
