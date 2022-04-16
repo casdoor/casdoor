@@ -414,6 +414,7 @@ export function getProviderTypeOptions(category) {
         {id: 'AzureAD', name: 'AzureAD'},
         {id: 'Slack', name: 'Slack'},
         {id: 'Steam', name: 'Steam'},
+        {id: 'Custom', name: 'Custom'},
       ]
     );
   } else if (category === "Email") {
