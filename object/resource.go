@@ -23,7 +23,7 @@ import (
 
 type Resource struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(200) notnull pk" json:"name"`
+	Name        string `xorm:"varchar(250) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	User        string `xorm:"varchar(100)" json:"user"`
@@ -31,7 +31,7 @@ type Resource struct {
 	Application string `xorm:"varchar(100)" json:"application"`
 	Tag         string `xorm:"varchar(100)" json:"tag"`
 	Parent      string `xorm:"varchar(100)" json:"parent"`
-	FileName    string `xorm:"varchar(100)" json:"fileName"`
+	FileName    string `xorm:"varchar(1000)" json:"fileName"`
 	FileType    string `xorm:"varchar(100)" json:"fileType"`
 	FileFormat  string `xorm:"varchar(100)" json:"fileFormat"`
 	FileSize    int    `json:"fileSize"`
