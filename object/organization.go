@@ -35,6 +35,7 @@ type Organization struct {
 	Tags               []string `xorm:"mediumtext" json:"tags"`
 	MasterPassword     string   `xorm:"varchar(100)" json:"masterPassword"`
 	EnableSoftDeletion bool     `json:"enableSoftDeletion"`
+	IsProfilePublic    bool     `json:"isProfilePublic"`
 }
 
 func GetOrganizationCount(owner, field, value string) int {

@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/casdoor/casdoor/cred"
 	"github.com/casdoor/casdoor/util"
@@ -194,4 +195,38 @@ func CheckUserPassword(organization string, username string, password string) (*
 
 func filterField(field string) bool {
 	return reFieldWhiteList.MatchString(field)
+}
+
+func CheckUserPermission(requestUserId, userId string, strict bool) (bool, error) {
+	if requestUserId == "" {
+		return false, fmt.Errorf("please login first")
+	}
+
+	targetUser := GetUser(userId)
+	if targetUser == nil {
+		return false, fmt.Errorf("the user: %s doesn't exist", userId)
+	}
+
+	hasPermission := false
+	if strings.HasPrefix(requestUserId, "app/") {
+		hasPermission = true
+	} else {
+		requestUser := GetUser(requestUserId)
+		if requestUser == nil {
+			return false, fmt.Errorf("session outdated, please login again")
+		}
+		if requestUser.IsGlobalAdmin {
+			hasPermission = true
+		} else if requestUserId == userId {
+			hasPermission = true
+		} else if targetUser.Owner == requestUser.Owner {
+			if strict {
+				hasPermission = requestUser.IsAdmin
+			} else {
+				hasPermission = true
+			}
+		}
+	}
+
+	return hasPermission, fmt.Errorf("you don't have the permission to do this")
 }
