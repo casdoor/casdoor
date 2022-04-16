@@ -212,6 +212,12 @@ class ProviderEditPage extends React.Component {
               if (value === "Local File System") {
                 this.updateProviderField('domain', Setting.getFullServerUrl());
               }
+              if (value === "Custom") {
+                this.updateProviderField('customAuthUrl', 'https://door.casdoor.com/login/oauth/authorize');
+                this.updateProviderField('customScope', 'openid profile email');
+                this.updateProviderField('customTokenUrl', 'https://door.casdoor.com/api/login/oauth/access_token');
+                this.updateProviderField('customUserInfoUrl', 'https://door.casdoor.com/api/userinfo');
+              }
             })}>
               {
                 Setting.getProviderTypeOptions(this.state.provider.category).map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
