@@ -26,23 +26,23 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type PrivateIdProvider struct {
+type CustomIdProvider struct {
 	Client      *http.Client
 	Config      *oauth2.Config
-	UserInfoApi string
+	UserInfoUrl string
 }
 
-func NewPrivateIdProvider(clientId string, clientSecret string, redirectUrl string, authPage string, tokenApi string, userInfoApi string) *PrivateIdProvider {
-	idp := &PrivateIdProvider{}
-	idp.UserInfoApi = userInfoApi
+func NewCustomIdProvider(clientId string, clientSecret string, redirectUrl string, authUrl string, tokenUrl string, userInfoUrl string) *CustomIdProvider {
+	idp := &CustomIdProvider{}
+	idp.UserInfoUrl = userInfoUrl
 
 	var config = &oauth2.Config{
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
 		RedirectURL:  redirectUrl,
 		Endpoint: oauth2.Endpoint{
-			AuthURL:  authPage,
-			TokenURL: tokenApi,
+			AuthURL:  authUrl,
+			TokenURL: tokenUrl,
 		},
 	}
 	idp.Config = config
@@ -50,19 +50,29 @@ func NewPrivateIdProvider(clientId string, clientSecret string, redirectUrl stri
 	return idp
 }
 
-func (idp *PrivateIdProvider) SetHttpClient(client *http.Client) {
+func (idp *CustomIdProvider) SetHttpClient(client *http.Client) {
 	idp.Client = client
 }
 
-func (idp *PrivateIdProvider) GetToken(code string) (*oauth2.Token, error) {
+func (idp *CustomIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, idp.Client)
 	return idp.Config.Exchange(ctx, code)
 }
 
-func (idp *PrivateIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	cdUserinfo := &CasdoorUserInfo{}
+type CustomUserInfo struct {
+	Id          string `json:"sub"`
+	Name        string `json:"name"`
+	DisplayName string `json:"preferred_username"`
+	Email       string `json:"email"`
+	AvatarUrl   string `json:"picture"`
+	Status      string `json:"status"`
+	Msg         string `json:"msg"`
+}
+
+func (idp *CustomIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+	ctUserinfo := &CustomUserInfo{}
 	accessToken := token.AccessToken
-	request, err := http.NewRequest("GET", idp.UserInfoApi, nil)
+	request, err := http.NewRequest("GET", idp.UserInfoUrl, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -78,21 +88,21 @@ func (idp *PrivateIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error
 		return nil, err
 	}
 
-	err = json.Unmarshal(data, cdUserinfo)
+	err = json.Unmarshal(data, ctUserinfo)
 	if err != nil {
 		return nil, err
 	}
 
-	if cdUserinfo.Status != "" {
-		return nil, fmt.Errorf("err: %s", cdUserinfo.Msg)
+	if ctUserinfo.Status != "" {
+		return nil, fmt.Errorf("err: %s", ctUserinfo.Msg)
 	}
 
 	userInfo := &UserInfo{
-		Id:          cdUserinfo.Id,
-		Username:    cdUserinfo.Name,
-		DisplayName: cdUserinfo.DisplayName,
-		Email:       cdUserinfo.Email,
-		AvatarUrl:   cdUserinfo.AvatarUrl,
+		Id:          ctUserinfo.Id,
+		Username:    ctUserinfo.Name,
+		DisplayName: ctUserinfo.DisplayName,
+		Email:       ctUserinfo.Email,
+		AvatarUrl:   ctUserinfo.AvatarUrl,
 	}
 	return userInfo, nil
 }

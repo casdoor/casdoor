@@ -27,21 +27,21 @@ type Provider struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName        string `xorm:"varchar(100)" json:"displayName"`
-	Category           string `xorm:"varchar(100)" json:"category"`
-	Type               string `xorm:"varchar(100)" json:"type"`
-	SubType            string `xorm:"varchar(100)" json:"subType"`
-	Method             string `xorm:"varchar(100)" json:"method"`
-	ClientId           string `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret       string `xorm:"varchar(2000)" json:"clientSecret"`
-	ClientId2          string `xorm:"varchar(100)" json:"clientId2"`
-	ClientSecret2      string `xorm:"varchar(100)" json:"clientSecret2"`
-	Cert               string `xorm:"varchar(100)" json:"cert"`
-	PrivateAuthPage    string `xorm:"varchar(200)" json:"privateAuthPage"`
-	PrivateScope       string `xorm:"varchar(200)" json:"privateScope"`
-	PrivateTokenApi    string `xorm:"varchar(200)" json:"privateTokenApi"`
-	PrivateUserInfoApi string `xorm:"varchar(200)" json:"privateUserInfoApi"`
-	PrivateIcon        string `xorm:"varchar(200)" json:"privateIcon"`
+	DisplayName       string `xorm:"varchar(100)" json:"displayName"`
+	Category          string `xorm:"varchar(100)" json:"category"`
+	Type              string `xorm:"varchar(100)" json:"type"`
+	SubType           string `xorm:"varchar(100)" json:"subType"`
+	Method            string `xorm:"varchar(100)" json:"method"`
+	ClientId          string `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret      string `xorm:"varchar(2000)" json:"clientSecret"`
+	ClientId2         string `xorm:"varchar(100)" json:"clientId2"`
+	ClientSecret2     string `xorm:"varchar(100)" json:"clientSecret2"`
+	Cert              string `xorm:"varchar(100)" json:"cert"`
+	CustomAuthUrl     string `xorm:"varchar(200)" json:"customAuthUrl"`
+	CustomScope       string `xorm:"varchar(200)" json:"customScope"`
+	CustomTokenUrl    string `xorm:"varchar(200)" json:"customTokenUrl"`
+	CustomUserInfoUrl string `xorm:"varchar(200)" json:"customUserInfoUrl"`
+	CustomLogo        string `xorm:"varchar(200)" json:"customLogo"`
 
 	Host    string `xorm:"varchar(100)" json:"host"`
 	Port    int    `json:"port"`

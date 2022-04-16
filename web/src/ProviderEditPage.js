@@ -257,15 +257,15 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "Private" ? null : (
+          this.state.provider.type !== "Custom" ? null : (
             <React.Fragment>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Auth Page"), i18next.t("provider:Auth Page - Tooltip"))}
+                  {Setting.getLabel(i18next.t("provider:Auth URL"), i18next.t("provider:Auth URL - Tooltip"))}
                 </Col>
                 <Col span={22} >
-                  <Input value={this.state.provider.privateAuthPage} onChange={e => {
-                    this.updateProviderField('privateAuthPage', e.target.value);
+                  <Input value={this.state.provider.customAuthUrl} onChange={e => {
+                    this.updateProviderField('customAuthUrl', e.target.value);
                   }} />
                 </Col>
               </Row>
@@ -274,28 +274,28 @@ class ProviderEditPage extends React.Component {
                   {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))}
                 </Col>
                 <Col span={22} >
-                  <Input value={this.state.provider.privateScope} onChange={e => {
-                    this.updateProviderField('privateScope', e.target.value);
+                  <Input value={this.state.provider.customScope} onChange={e => {
+                    this.updateProviderField('customScope', e.target.value);
                   }} />
                 </Col>
               </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Token API"), i18next.t("provider:Token API - Tooltip"))}
+                  {Setting.getLabel(i18next.t("provider:Token URL"), i18next.t("provider:Token URL - Tooltip"))}
                 </Col>
                 <Col span={22} >
-                  <Input value={this.state.provider.privateTokenApi} onChange={e => {
-                    this.updateProviderField('privateTokenApi', e.target.value);
+                  <Input value={this.state.provider.customTokenUrl} onChange={e => {
+                    this.updateProviderField('customTokenUrl', e.target.value);
                   }} />
                 </Col>
               </Row>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:UserInfo API"), i18next.t("provider:UserInfo API - Tooltip"))}
+                  {Setting.getLabel(i18next.t("provider:UserInfo URL"), i18next.t("provider:UserInfo URL - Tooltip"))}
                 </Col>
                 <Col span={22} >
-                  <Input value={this.state.provider.privateUserInfoApi} onChange={e => {
-                    this.updateProviderField('privateUserInfoApi', e.target.value);
+                  <Input value={this.state.provider.customUserInfoUrl} onChange={e => {
+                    this.updateProviderField('customUserInfoUrl', e.target.value);
                   }} />
                 </Col>
               </Row>
@@ -309,8 +309,8 @@ class ProviderEditPage extends React.Component {
                       {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
                     </Col>
                     <Col span={23} >
-                      <Input prefix={<LinkOutlined/>} value={this.state.provider.privateIcon} onChange={e => {
-                        this.updateProviderField('privateIcon', e.target.value);
+                      <Input prefix={<LinkOutlined/>} value={this.state.provider.customLogo} onChange={e => {
+                        this.updateProviderField('customLogo', e.target.value);
                       }} />
                     </Col>
                   </Row>
@@ -319,8 +319,8 @@ class ProviderEditPage extends React.Component {
                       {i18next.t("general:Preview")}:
                     </Col>
                     <Col span={23} >
-                      <a target="_blank" rel="noreferrer" href={this.state.provider.privateIcon}>
-                        <img src={this.state.provider.privateIcon} alt={this.state.provider.privateIcon} height={90} style={{marginBottom: '20px'}}/>
+                      <a target="_blank" rel="noreferrer" href={this.state.provider.customLogo}>
+                        <img src={this.state.provider.customLogo} alt={this.state.provider.customLogo} height={90} style={{marginBottom: '20px'}}/>
                       </a>
                     </Col>
                   </Row>
