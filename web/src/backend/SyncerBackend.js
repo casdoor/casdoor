@@ -55,10 +55,9 @@ export function deleteSyncer(syncer) {
   }).then(res => res.json());
 }
 
-export function syncUsers(syncer) {
-  return fetch(`${Setting.ServerUrl}/api/sync-users`, {
-    method: 'POST',
+export function runSyncer(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/run-syncer?id=${owner}/${encodeURIComponent(name)}`, {
+    method: 'GET',
     credentials: 'include',
-    body: JSON.stringify(syncer),
   }).then(res => res.json());
 }
