@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ class ProviderEditPage extends React.Component {
       classes: props,
       providerName: props.match.params.providerName,
       provider: null,
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -71,6 +72,8 @@ class ProviderEditPage extends React.Component {
       case "SMS":
         if (this.state.provider.type === "Volc Engine SMS")
           return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
+        if (this.state.provider.type === "Huawei Cloud SMS")
+          return Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"));
       default:
         return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
     }
@@ -83,6 +86,8 @@ class ProviderEditPage extends React.Component {
       case "SMS":
         if (this.state.provider.type === "Volc Engine SMS")
           return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:SecretAccessKey - Tooltip"));
+        if (this.state.provider.type === "Huawei Cloud SMS")
+          return Setting.getLabel(i18next.t("provider:App secret"), i18next.t("provider:AppSecret - Tooltip"));
       default:
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
     }
@@ -91,18 +96,27 @@ class ProviderEditPage extends React.Component {
   getAppIdRow() {
     let text, tooltip;
     if (this.state.provider.category === "SMS" && this.state.provider.type === "Tencent Cloud SMS") {
-      text = "provider:App ID";
-      tooltip = "provider:App ID - Tooltip";
+      text = i18next.t("provider:App ID");
+      tooltip = i18next.t("provider:App ID - Tooltip");
+    } else if (this.state.provider.type === "WeCom" && this.state.provider.subType === "Internal") {
+      text = i18next.t("provider:Agent ID");
+      tooltip = i18next.t("provider:Agent ID - Tooltip");
+    } else if (this.state.provider.type === "Infoflow"){
+      text = i18next.t("provider:Agent ID");
+      tooltip = i18next.t("provider:Agent ID - Tooltip");
     } else if (this.state.provider.category === "SMS" && this.state.provider.type === "Volc Engine SMS") {
-      text = "provider:SMS account";
-      tooltip = "provider:SMS account - Tooltip";
+      text = i18next.t("provider:SMS account");
+      tooltip = i18next.t("provider:SMS account - Tooltip");
+    } else if (this.state.provider.category === "SMS" && this.state.provider.type === "Huawei Cloud SMS") {
+      text = i18next.t("provider:Channel No.");
+      tooltip = i18next.t("provider:Channel No. - Tooltip");
     } else {
       return null;
     }
 
     return <Row style={{marginTop: '20px'}} >
       <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-        {Setting.getLabel(i18next.t(text), i18next.t(tooltip))} :
+        {Setting.getLabel(text, tooltip)} :
       </Col>
       <Col span={22} >
         <Input value={this.state.provider.appId} onChange={e => {
@@ -127,9 +141,10 @@ class ProviderEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("provider:Edit Provider")}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("provider:New Provider") : i18next.t("provider:Edit Provider")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitProviderEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitProviderEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteProvider()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -181,6 +196,7 @@ class ProviderEditPage extends React.Component {
                   {id: 'SMS', name: 'SMS'},
                   {id: 'Storage', name: 'Storage'},
                   {id: 'SAML', name: 'SAML'},
+                  {id: 'Payment', name: 'Payment'},
                 ].map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
               }
             </Select>
@@ -196,6 +212,12 @@ class ProviderEditPage extends React.Component {
               if (value === "Local File System") {
                 this.updateProviderField('domain', Setting.getFullServerUrl());
               }
+              if (value === "Custom") {
+                this.updateProviderField('customAuthUrl', 'https://door.casdoor.com/login/oauth/authorize');
+                this.updateProviderField('customScope', 'openid profile email');
+                this.updateProviderField('customTokenUrl', 'https://door.casdoor.com/api/login/oauth/access_token');
+                this.updateProviderField('customUserInfoUrl', 'https://door.casdoor.com/api/userinfo');
+              }
             })}>
               {
                 Setting.getProviderTypeOptions(this.state.provider.category).map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
@@ -204,21 +226,113 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         {
-          this.state.provider.type !== "WeCom" ? null : (
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Method"), i18next.t("provider:Method - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <Select virtual={false} style={{width: '100%'}} value={this.state.provider.method} onChange={value => {
-                  this.updateProviderField('method', value);
-                }}>
-                  {
-                    [{name: "Normal"}, {name: "Silent"}].map((method, index) => <Option key={index} value={method.name}>{method.name}</Option>)
-                  }
-                </Select>
-              </Col>
-            </Row>
+          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" ? null : (
+            <React.Fragment>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:Sub type"), i18next.t("provider:Sub type - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Select virtual={false} style={{width: '100%'}} value={this.state.provider.subType} onChange={value => {
+                    this.updateProviderField('subType', value);
+                  }}>
+                    {
+                      Setting.getProviderSubTypeOptions(this.state.provider.type).map((providerSubType, index) => <Option key={index} value={providerSubType.id}>{providerSubType.name}</Option>)
+                    }
+                  </Select>
+                </Col>
+              </Row>
+              {
+                this.state.provider.type !== "WeCom"  ? null : (    
+                  <Row style={{marginTop: '20px'}} >
+                    <Col style={{marginTop: '5px'}} span={2}>
+                      {Setting.getLabel(i18next.t("provider:Method"), i18next.t("provider:Method - Tooltip"))} :
+                    </Col>
+                    <Col span={22} >
+                      <Select virtual={false} style={{width: '100%'}} value={this.state.provider.method} onChange={value => {
+                        this.updateProviderField('method', value);
+                      }}>
+                        {
+                          [{name: "Normal"}, {name: "Silent"}].map((method, index) => <Option key={index} value={method.name}>{method.name}</Option>)
+                        }
+                      </Select>
+                    </Col>
+                  </Row>)
+              }
+            </React.Fragment>
+          )
+        }
+        {
+          this.state.provider.type !== "Custom" ? null : (
+            <React.Fragment>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Auth URL"), i18next.t("provider:Auth URL - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.customAuthUrl} onChange={e => {
+                    this.updateProviderField('customAuthUrl', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.customScope} onChange={e => {
+                    this.updateProviderField('customScope', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Token URL"), i18next.t("provider:Token URL - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.customTokenUrl} onChange={e => {
+                    this.updateProviderField('customTokenUrl', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:UserInfo URL"), i18next.t("provider:UserInfo URL - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.customUserInfoUrl} onChange={e => {
+                    this.updateProviderField('customUserInfoUrl', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel( i18next.t("general:Favicon"), i18next.t("general:Favicon - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Row style={{marginTop: '20px'}} >
+                    <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
+                    </Col>
+                    <Col span={23} >
+                      <Input prefix={<LinkOutlined/>} value={this.state.provider.customLogo} onChange={e => {
+                        this.updateProviderField('customLogo', e.target.value);
+                      }} />
+                    </Col>
+                  </Row>
+                  <Row style={{marginTop: '20px'}} >
+                    <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {i18next.t("general:Preview")}:
+                    </Col>
+                    <Col span={23} >
+                      <a target="_blank" rel="noreferrer" href={this.state.provider.customLogo}>
+                        <img src={this.state.provider.customLogo} alt={this.state.provider.customLogo} height={90} style={{marginBottom: '20px'}}/>
+                      </a>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            </React.Fragment>
           )
         }
         <Row style={{marginTop: '20px'}} >
@@ -265,6 +379,20 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             </React.Fragment>
+          )
+        }
+        {
+          this.state.provider.type !== "Adfs" &&  this.state.provider.type !== "Casdoor" ? null : (
+            <Row style={{marginTop: '20px'}} >
+            <Col style={{marginTop: '5px'}} span={2}>
+              {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
+            </Col>
+            <Col span={22} >
+              <Input value={this.state.provider.domain} onChange={e => {
+                this.updateProviderField('domain', e.target.value);
+              }} />
+            </Col>
+          </Row>
           )
         }
         {this.state.provider.category === "Storage" ? (
@@ -532,6 +660,16 @@ class ProviderEditPage extends React.Component {
       });
   }
 
+  deleteProvider() {
+    ProviderBackend.deleteProvider(this.state.provider)
+      .then(() => {
+        this.props.history.push(`/providers`);
+      })
+      .catch(error => {
+        Setting.showMessage("error", `Provider failed to delete: ${error}`);
+      });
+  }
+
   render() {
     return (
       <div>
@@ -541,6 +679,7 @@ class ProviderEditPage extends React.Component {
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
           <Button size="large" onClick={() => this.submitProviderEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitProviderEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteProvider()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );

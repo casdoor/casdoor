@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,10 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"os"
+	"io/ioutil"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/google/uuid"
@@ -41,7 +42,20 @@ func ParseInt(s string) int {
 	return i
 }
 
+func ParseFloat(s string) float64 {
+	f, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		panic(err)
+	}
+
+	return f
+}
+
 func ParseBool(s string) bool {
+	if s == "\x01" {
+		return true
+	}
+
 	i := ParseInt(s)
 	return i != 0
 }
@@ -49,11 +63,11 @@ func ParseBool(s string) bool {
 func BoolToString(b bool) string {
 	if b {
 		return "1"
-	} else {
-		return "0"
 	}
+	return "0"
 }
 
+//CamelToSnakeCase This function transform camelcase in snakecase LoremIpsum in lorem_ipsum
 func CamelToSnakeCase(camel string) string {
 	var buf bytes.Buffer
 	for _, c := range camel {
@@ -63,11 +77,11 @@ func CamelToSnakeCase(camel string) string {
 				buf.WriteRune('_')
 			}
 			buf.WriteRune(c - 'A' + 'a')
-		} else {
-			buf.WriteRune(c)
+			continue
 		}
+		buf.WriteRune(c)
 	}
-	return buf.String()
+	return strings.ReplaceAll(buf.String(), " ", "")
 }
 
 func GetOwnerAndNameFromId(id string) (string, string) {
@@ -86,6 +100,25 @@ func GetOwnerAndNameFromIdNoCheck(id string) (string, string) {
 
 func GenerateId() string {
 	return uuid.NewString()
+}
+
+func GenerateTimeId() string {
+	timestamp := time.Now().Unix()
+	tm := time.Unix(timestamp, 0)
+	t := tm.Format("20060102_150405")
+
+	random := uuid.NewString()[0:7]
+
+	res := fmt.Sprintf("%s_%s", t, random)
+	return res
+}
+
+func GenerateSimpleTimeId() string {
+	timestamp := time.Now().Unix()
+	tm := time.Unix(timestamp, 0)
+	t := tm.Format("20060102150405")
+
+	return t
 }
 
 func GetId(name string) string {
@@ -124,7 +157,7 @@ func GetMinLenStr(strs ...string) string {
 	i := 0
 	for j, str := range strs {
 		l := len(str)
-		if l > m {
+		if l < m {
 			m = l
 			i = j
 		}
@@ -133,7 +166,7 @@ func GetMinLenStr(strs ...string) string {
 }
 
 func ReadStringFromPath(path string) string {
-	data, err := os.ReadFile(path)
+	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		panic(err)
 	}
@@ -142,29 +175,13 @@ func ReadStringFromPath(path string) string {
 }
 
 func WriteStringToPath(s string, path string) {
-	err := os.WriteFile(path, []byte(s), 0644)
+	err := ioutil.WriteFile(path, []byte(s), 0644)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func ReadBytesFromPath(path string) []byte {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		panic(err)
-	}
-
-	return data
-}
-
-func WriteBytesToPath(b []byte, path string) {
-	err := os.WriteFile(path, b, 0644)
-	if err != nil {
-		panic(err)
-	}
-}
-
-// SnakeString XxYy to xx_yy
+// SnakeString transform XxYy to xx_yy
 func SnakeString(s string) string {
 	data := make([]byte, 0, len(s)*2)
 	j := false
@@ -179,7 +196,8 @@ func SnakeString(s string) string {
 		}
 		data = append(data, d)
 	}
-	return strings.ToLower(string(data[:]))
+	result := strings.ToLower(string(data[:]))
+	return strings.ReplaceAll(result, " ", "")
 }
 
 func IsChinese(str string) bool {
@@ -191,4 +209,29 @@ func IsChinese(str string) bool {
 		}
 	}
 	return flag
+}
+
+func GetMaskedPhone(phone string) string {
+	return getMaskedPhone(phone)
+}
+
+func GetMaskedEmail(email string) string {
+	if email == "" {
+		return ""
+	}
+
+	tokens := strings.Split(email, "@")
+	username := maskString(tokens[0])
+	domain := tokens[1]
+	domainTokens := strings.Split(domain, ".")
+	domainTokens[len(domainTokens)-2] = maskString(domainTokens[len(domainTokens)-2])
+	return fmt.Sprintf("%s@%s", username, strings.Join(domainTokens, "."))
+}
+
+func maskString(str string) string {
+	if len(str) <= 2 {
+		return str
+	} else {
+		return fmt.Sprintf("%c%s%c", str[0], strings.Repeat("*", len(str)-2), str[len(str)-1])
+	}
 }

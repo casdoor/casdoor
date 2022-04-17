@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,14 +18,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 const (
-	ResponseTypeLogin = "login"
-	ResponseTypeCode  = "code"
+	ResponseTypeLogin   = "login"
+	ResponseTypeCode    = "code"
+	ResponseTypeToken   = "token"
+	ResponseTypeIdToken = "id_token"
+	ResponseTypeSaml    = "saml"
+	ResponseTypeCas     = "cas"
 )
 
 type RequestForm struct {
@@ -35,6 +40,8 @@ type RequestForm struct {
 	Username     string `json:"username"`
 	Password     string `json:"password"`
 	Name         string `json:"name"`
+	FirstName    string `json:"firstName"`
+	LastName     string `json:"lastName"`
 	Email        string `json:"email"`
 	Phone        string `json:"phone"`
 	Affiliation  string `json:"affiliation"`
@@ -55,6 +62,7 @@ type RequestForm struct {
 	AutoSignin bool `json:"autoSignin"`
 
 	RelayState   string `json:"relayState"`
+	SamlRequest  string `json:"samlRequest"`
 	SamlResponse string `json:"samlResponse"`
 }
 
@@ -102,7 +110,7 @@ func (c *ApiController) Signup() {
 	}
 
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", form.Organization))
-	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.Email, form.Phone, form.Affiliation)
+	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.FirstName, form.LastName, form.Email, form.Phone, form.Affiliation)
 	if msg != "" {
 		c.ResponseError(msg)
 		return
@@ -126,12 +134,15 @@ func (c *ApiController) Signup() {
 		}
 	}
 
-	userId := fmt.Sprintf("%s/%s", form.Organization, form.Username)
-
 	id := util.GenerateId()
 	if application.GetSignupItemRule("ID") == "Incremental" {
 		lastUser := object.GetLastUser(form.Organization)
-		lastIdInt := util.ParseInt(lastUser.Id)
+
+		lastIdInt := -1
+		if lastUser != nil {
+			lastIdInt = util.ParseInt(lastUser.Id)
+		}
+
 		id = strconv.Itoa(lastIdInt + 1)
 	}
 
@@ -162,6 +173,22 @@ func (c *ApiController) Signup() {
 		IsDeleted:         false,
 		SignupApplication: application.Name,
 		Properties:        map[string]string{},
+		Karma:             0,
+	}
+
+	if len(organization.Tags) > 0 {
+		tokens := strings.Split(organization.Tags[0], "|")
+		if len(tokens) > 0 {
+			user.Tag = tokens[0]
+		}
+	}
+
+	if application.GetSignupItemRule("Display name") == "First, last" {
+		if form.FirstName != "" || form.LastName != "" {
+			user.DisplayName = fmt.Sprintf("%s %s", form.FirstName, form.LastName)
+			user.FirstName = form.FirstName
+			user.LastName = form.LastName
+		}
 	}
 
 	affected := object.AddUser(user)
@@ -180,6 +207,12 @@ func (c *ApiController) Signup() {
 	object.DisableVerificationCode(form.Email)
 	object.DisableVerificationCode(checkPhone)
 
+	record := object.NewRecord(c.Ctx)
+	record.Organization = application.Organization
+	record.User = user.Name
+	go object.AddRecord(record)
+
+	userId := fmt.Sprintf("%s/%s", user.Owner, user.Name)
 	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
 
 	c.ResponseOk(userId)
@@ -195,10 +228,15 @@ func (c *ApiController) Logout() {
 	user := c.GetSessionUsername()
 	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
+	application := c.GetSessionApplication()
 	c.SetSessionUsername("")
 	c.SetSessionData(nil)
 
-	c.ResponseOk(user)
+	if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
+		c.ResponseOk(user)
+		return
+	}
+	c.ResponseOk(user, application.HomepageUrl)
 }
 
 // GetAccount
@@ -226,6 +264,27 @@ func (c *ApiController) GetAccount() {
 		Name:   user.Name,
 		Data:   user,
 		Data2:  organization,
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
+// UserInfo
+// @Title UserInfo
+// @Tag Account API
+// @Description return user information according to OIDC standards
+// @Success 200 {object} object.Userinfo The Response object
+// @router /userinfo [get]
+func (c *ApiController) GetUserinfo() {
+	userId, ok := c.RequireSignedIn()
+	if !ok {
+		return
+	}
+	scope, aud := c.GetSessionOidc()
+	host := c.Ctx.Request.Host
+	resp, err := object.GetUserInfo(userId, scope, aud, host)
+	if err != nil {
+		c.ResponseError(err.Error())
 	}
 	c.Data["json"] = resp
 	c.ServeJSON()

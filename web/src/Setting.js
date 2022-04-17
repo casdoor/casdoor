@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import moment from "moment";
+import * as Conf from "./Conf";
 
 export let ServerUrl = "";
 
@@ -29,12 +30,17 @@ export let ServerUrl = "";
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
 // https://catamphetamine.gitlab.io/country-flag-icons/3x2/index.html
-export const CountryRegionData = getCountryRegionData()
+export const CountryRegionData = getCountryRegionData();
 
 export function getCountryRegionData() {
+  let language = i18next.language;
+  if (language === null || language === "null") {
+    language = Conf.DefaultLanguage;
+  }
+
   var countries = require("i18n-iso-countries");
-  countries.registerLocale(require("i18n-iso-countries/langs/" + i18next.language + ".json"));
-  var data = countries.getNames(i18next.language, {select: "official"});
+  countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
+  var data = countries.getNames(language, {select: "official"});
   var result = []
   for (var i in data) 
     result.push({code:i, name:data[i]})
@@ -42,10 +48,10 @@ export function getCountryRegionData() {
 }
 
 export function initServerUrl() {
-  const hostname = window.location.hostname;
-  if (hostname === "localhost") {
-    ServerUrl = `http://${hostname}:8000`;
-  }
+  //const hostname = window.location.hostname;
+  // if (hostname === "localhost") {
+  //   ServerUrl = `http://${hostname}:8000`;
+  // }
 }
 
 export function isLocalhost() {
@@ -70,15 +76,11 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (providerItem.provider.type === "GitHub") {
-    if (isLocalhost()) {
-      return providerItem.provider.name.includes("localhost");
-    } else {
-      return !providerItem.provider.name.includes("localhost");
-    }
-  } else {
-    return true;
+  if (providerItem.provider.type === "WeChatMiniProgram"){
+    return false
   }
+
+  return true;
 }
 
 export function isProviderVisibleForSignUp(providerItem) {
@@ -325,6 +327,10 @@ export function getAvatarColor(s) {
   return colorList[random % 4];
 }
 
+export function getLanguage() {
+  return i18next.language;
+}
+
 export function setLanguage(language) {
   localStorage.setItem("language", language);
   changeMomentLanguage(language);
@@ -390,6 +396,7 @@ export function getProviderTypeOptions(category) {
         {id: 'GitHub', name: 'GitHub'},
         {id: 'QQ', name: 'QQ'},
         {id: 'WeChat', name: 'WeChat'},
+        {id: 'WeChatMiniProgram', name: 'WeChat Mini Program'},
         {id: 'Facebook', name: 'Facebook'},
         {id: 'DingTalk', name: 'DingTalk'},
         {id: 'Weibo', name: 'Weibo'},
@@ -398,9 +405,16 @@ export function getProviderTypeOptions(category) {
         {id: 'WeCom', name: 'WeCom'},
         {id: 'Lark', name: 'Lark'},
         {id: 'GitLab', name: 'GitLab'},
+        {id: 'Adfs', name: 'Adfs'},
+        {id: 'Baidu', name: 'Baidu'},
+        {id: 'Alipay', name: 'Alipay'},
+        {id: 'Casdoor', name: 'Casdoor'},
+        {id: 'Infoflow', name: 'Infoflow'},
         {id: 'Apple', name: 'Apple'},
         {id: 'AzureAD', name: 'AzureAD'},
         {id: 'Slack', name: 'Slack'},
+        {id: 'Steam', name: 'Steam'},
+        {id: 'Custom', name: 'Custom'},
       ]
     );
   } else if (category === "Email") {
@@ -415,6 +429,7 @@ export function getProviderTypeOptions(category) {
         {id: 'Aliyun SMS', name: 'Aliyun SMS'},
         {id: 'Tencent Cloud SMS', name: 'Tencent Cloud SMS'},
         {id: 'Volc Engine SMS', name: 'Volc Engine SMS'},
+        {id: 'Huawei Cloud SMS', name: 'Huawei Cloud SMS'},
       ]
     );
   } else if (category === "Storage") {
@@ -431,6 +446,26 @@ export function getProviderTypeOptions(category) {
       {id: 'Aliyun IDaaS', name: 'Aliyun IDaaS'},
       {id: 'Keycloak', name: 'Keycloak'},
     ]);
+  } else if (category === "Payment") {
+    return ([
+      {id: 'Alipay', name: 'Alipay'},
+      {id: 'WeChat Pay', name: 'WeChat Pay'},
+      {id: 'PayPal', name: 'PayPal'},
+      {id: 'GC', name: 'GC'},
+    ]);
+  } else {
+    return [];
+  }
+}
+
+export function getProviderSubTypeOptions(type) {
+  if (type === "WeCom" || type === "Infoflow") {
+    return (
+      [
+        {id: 'Internal', name: 'Internal'},
+        {id: 'Third-party', name: 'Third-party'},
+      ]
+    );
   } else {
     return [];
   }
@@ -590,11 +625,12 @@ export function getNewRowNameForTable(table, rowName) {
 }
 
 export function getTagColor(s) {
-  return "success";
+  return "processing";
 }
 
 export function getTags(tags) {
   let res = [];
+  if (!tags) return res;
   tags.forEach((tag, i) => {
     res.push(
       <Tag color={getTagColor(tag)}>
@@ -615,4 +651,103 @@ export function getRandomName() {
 
 export function getRandomNumber() {
   return Math.random().toString(10).slice(-11);
+}
+
+export function getFromLink() {
+  const from = sessionStorage.getItem("from");
+  if (from === null) {
+    return "/";
+  }
+  return from;
+}
+
+export function getSyncerTableColumns(syncer) {
+  switch (syncer.type) {
+    case "Keycloak":
+      return [
+        {
+          "name":"ID",
+          "type":"string",
+          "casdoorName":"Id",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"USERNAME",
+          "type":"string",
+          "casdoorName":"Name",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"USERNAME",
+          "type":"string",
+          "casdoorName":"DisplayName",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"EMAIL",
+          "type":"string",
+          "casdoorName":"Email",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"EMAIL_VERIFIED",
+          "type":"boolean",
+          "casdoorName":"EmailVerified",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"FIRST_NAME",
+          "type":"string",
+          "casdoorName":"FirstName",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"LAST_NAME",
+          "type":"string",
+          "casdoorName":"LastName",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"CREATED_TIMESTAMP",
+          "type":"string",
+          "casdoorName":"CreatedTime",
+          "isHashed":true,
+          "values":[
+
+          ]
+        },
+        {
+          "name":"ENABLED",
+          "type":"boolean",
+          "casdoorName":"IsForbidden",
+          "isHashed":true,
+          "values":[
+
+          ]
+        }
+      ]
+    default:
+      return []
+  }
 }

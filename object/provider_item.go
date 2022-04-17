@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,6 +34,9 @@ func (application *Application) GetProviderItem(providerName string) *ProviderIt
 }
 
 func (pi *ProviderItem) IsProviderVisible() bool {
+	if pi.Provider == nil {
+		return false
+	}
 	return pi.Provider.Category == "OAuth" || pi.Provider.Category == "SAML"
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/proxy"
+	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/proxy"
 )
 
 var defaultStorageProvider *Provider = nil
 
 func InitDefaultStorageProvider() {
-	defaultStorageProviderStr := beego.AppConfig.String("defaultStorageProvider")
+	defaultStorageProviderStr := conf.GetConfigString("defaultStorageProvider")
 	if defaultStorageProviderStr != "" {
 		defaultStorageProvider = getProvider("admin", defaultStorageProviderStr)
 	}

@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,8 +44,7 @@ class TokenListPage extends BaseListPage {
     const newToken = this.newToken();
     TokenBackend.addToken(newToken)
       .then((res) => {
-          Setting.showMessage("success", `Token added successfully`);
-          this.props.history.push(`/tokens/${newToken.name}`);
+          this.props.history.push({pathname: `/tokens/${newToken.name}`, mode: "add"});
         }
       )
       .catch(error => {

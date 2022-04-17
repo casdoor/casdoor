@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
@@ -129,7 +129,7 @@ func CheckVerificationCode(dest, code string) string {
 		return "Code has not been sent yet!"
 	}
 
-	timeout, err := beego.AppConfig.Int64("verificationCodeTimeout")
+	timeout, err := conf.GetConfigInt64("verificationCodeTimeout")
 	if err != nil {
 		panic(err)
 	}

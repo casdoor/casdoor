@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package object
 import (
 	"fmt"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
@@ -33,19 +33,17 @@ type Webhook struct {
 
 	Organization string `xorm:"varchar(100) index" json:"organization"`
 
-	Url         string    `xorm:"varchar(100)" json:"url"`
-	Method      string    `xorm:"varchar(100)" json:"method"`
-	ContentType string    `xorm:"varchar(100)" json:"contentType"`
-	Headers     []*Header `xorm:"mediumtext" json:"headers"`
-	Events      []string  `xorm:"varchar(100)" json:"events"`
-	IsEnabled   bool      `json:"isEnabled"`
+	Url            string    `xorm:"varchar(100)" json:"url"`
+	Method         string    `xorm:"varchar(100)" json:"method"`
+	ContentType    string    `xorm:"varchar(100)" json:"contentType"`
+	Headers        []*Header `xorm:"mediumtext" json:"headers"`
+	Events         []string  `xorm:"varchar(100)" json:"events"`
+	IsUserExtended bool      `json:"isUserExtended"`
+	IsEnabled      bool      `json:"isEnabled"`
 }
 
 func GetWebhookCount(owner, field, value string) int {
-	session := adapter.Engine.Where("owner=?", owner)
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Webhook{})
 	if err != nil {
 		panic(err)

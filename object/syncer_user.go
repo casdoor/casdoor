@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,48 +19,56 @@ import (
 	"strings"
 	"time"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
 type OriginalUser = User
 
-func (syncer *Syncer) getOriginalUsers() []*OriginalUser {
+type Credential struct {
+	Value string `json:"value"`
+	Salt  string `json:"salt"`
+}
+
+func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
 	sql := fmt.Sprintf("select * from %s", syncer.getTable())
 	results, err := syncer.Adapter.Engine.QueryString(sql)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return syncer.getOriginalUsersFromMap(results)
+	return syncer.getOriginalUsersFromMap(results), nil
 }
 
-func (syncer *Syncer) getOriginalUserMap() ([]*OriginalUser, map[string]*OriginalUser) {
-	users := syncer.getOriginalUsers()
+func (syncer *Syncer) getOriginalUserMap() ([]*OriginalUser, map[string]*OriginalUser, error) {
+	users, err := syncer.getOriginalUsers()
+	if err != nil {
+		return users, nil, err
+	}
 
 	m := map[string]*OriginalUser{}
 	for _, user := range users {
 		m[user.Id] = user
 	}
-	return users, m
+	return users, m, nil
 }
 
-func (syncer *Syncer) addUser(user *OriginalUser) bool {
+func (syncer *Syncer) addUser(user *OriginalUser) (bool, error) {
 	m := syncer.getMapFromOriginalUser(user)
 	keyString, valueString := syncer.getSqlKeyValueStringFromMap(m)
 
 	sql := fmt.Sprintf("insert into %s (%s) values (%s)", syncer.getTable(), keyString, valueString)
 	res, err := syncer.Adapter.Engine.Exec(sql)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	affected, err := res.RowsAffected()
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 /*func (syncer *Syncer) getOriginalColumns() []string {
@@ -84,7 +92,7 @@ func (syncer *Syncer) getCasdoorColumns() []string {
 	return res
 }
 
-func (syncer *Syncer) updateUser(user *OriginalUser) bool {
+func (syncer *Syncer) updateUser(user *OriginalUser) (bool, error) {
 	m := syncer.getMapFromOriginalUser(user)
 	pkValue := m[syncer.TablePrimaryKey]
 	delete(m, syncer.TablePrimaryKey)
@@ -93,22 +101,22 @@ func (syncer *Syncer) updateUser(user *OriginalUser) bool {
 	sql := fmt.Sprintf("update %s set %s where %s = %s", syncer.getTable(), setString, syncer.TablePrimaryKey, pkValue)
 	res, err := syncer.Adapter.Engine.Exec(sql)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	affected, err := res.RowsAffected()
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func (syncer *Syncer) updateUserForOriginalFields(user *User) bool {
+func (syncer *Syncer) updateUserForOriginalFields(user *User) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(user.GetId())
 	oldUser := getUserById(owner, name)
 	if oldUser == nil {
-		return false
+		return false, nil
 	}
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
@@ -119,10 +127,10 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User) bool {
 	columns = append(columns, "affiliation", "hash", "pre_hash")
 	affected, err := adapter.Engine.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (syncer *Syncer) calculateHash(user *OriginalUser) string {
@@ -158,22 +166,7 @@ func (syncer *Syncer) initAdapter() {
 func RunSyncUsersJob() {
 	syncers := GetSyncers("admin")
 	for _, syncer := range syncers {
-		if !syncer.IsEnabled {
-			continue
-		}
-
-		syncer.initAdapter()
-
-		syncer.syncUsers()
-
-		// run at every minute
-		//schedule := fmt.Sprintf("* * * * %d", syncer.SyncInterval)
-		schedule := "* * * * *"
-		ctab := getCrontab(syncer.Name)
-		err := ctab.AddJob(schedule, syncer.syncUsers)
-		if err != nil {
-			panic(err)
-		}
+		addSyncerJob(syncer)
 	}
 
 	time.Sleep(time.Duration(1<<63 - 1))

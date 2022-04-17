@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,8 +42,7 @@ class WebhookListPage extends BaseListPage {
     const newWebhook = this.newWebhook();
     WebhookBackend.addWebhook(newWebhook)
       .then((res) => {
-          Setting.showMessage("success", `Webhook added successfully`);
-          this.props.history.push(`/webhooks/${newWebhook.name}`);
+          this.props.history.push({pathname: `/webhooks/${newWebhook.name}`, mode: "add"});
         }
       )
       .catch(error => {
@@ -155,6 +154,18 @@ class WebhookListPage extends BaseListPage {
         ...this.getColumnSearchProps('events'),
         render: (text, record, index) => {
           return Setting.getTags(text);
+        }
+      },
+      {
+        title: i18next.t("webhook:Is user extended"),
+        dataIndex: 'isUserExtended',
+        key: 'isUserExtended',
+        width: '160px',
+        sorter: true,
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          )
         }
       },
       {

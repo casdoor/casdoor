@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // ResponseOk ...
@@ -62,7 +62,7 @@ func (c *ApiController) RequireSignedIn() (string, bool) {
 }
 
 func getInitScore() int {
-	score, err := strconv.Atoi(beego.AppConfig.String("initScore"))
+	score, err := strconv.Atoi(conf.GetConfigString("initScore"))
 	if err != nil {
 		panic(err)
 	}

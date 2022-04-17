@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego/utils/pagination"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // GetGlobalUsers
@@ -44,6 +44,7 @@ func (c *ApiController) GetGlobalUsers() {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGlobalUserCount(field, value)))
 		users := object.GetPaginationGlobalUsers(paginator.Offset(), limit, field, value, sortField, sortOrder)
+		users = object.GetMaskedUsers(users)
 		c.ResponseOk(users, paginator.Nums())
 	}
 }
@@ -70,6 +71,7 @@ func (c *ApiController) GetUsers() {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetUserCount(owner, field, value)))
 		users := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		users = object.GetMaskedUsers(users)
 		c.ResponseOk(users, paginator.Nums())
 	}
 }
@@ -85,6 +87,17 @@ func (c *ApiController) GetUser() {
 	id := c.Input().Get("id")
 	owner := c.Input().Get("owner")
 	email := c.Input().Get("email")
+	userOwner, _ := util.GetOwnerAndNameFromId(id)
+	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", userOwner))
+
+	if !organization.IsProfilePublic {
+		requestUserId := c.GetSessionUsername()
+		hasPermission, err := object.CheckUserPermission(requestUserId, id, false)
+		if !hasPermission {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
 
 	var user *object.User
 	if email == "" {
@@ -109,6 +122,10 @@ func (c *ApiController) UpdateUser() {
 	id := c.Input().Get("id")
 	columnsStr := c.Input().Get("columns")
 
+	if id == "" {
+		id = c.GetSessionUsername()
+	}
+
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
@@ -125,7 +142,8 @@ func (c *ApiController) UpdateUser() {
 		columns = strings.Split(columnsStr, ",")
 	}
 
-	affected := object.UpdateUser(id, &user, columns)
+	isGlobalAdmin := c.IsGlobalAdmin()
+	affected := object.UpdateUser(id, &user, columns, isGlobalAdmin)
 	if affected {
 		object.UpdateUserToOriginalDatabase(&user)
 	}
@@ -187,19 +205,23 @@ func (c *ApiController) GetEmailAndPhone() {
 
 	user := object.GetUserByFields(form.Organization, form.Username)
 	if user == nil {
-		c.ResponseError("No such user.")
+		c.ResponseError(fmt.Sprintf("The user: %s/%s doesn't exist", form.Organization, form.Username))
 		return
 	}
 
-	respUser := object.User{Email: user.Email, Phone: user.Phone, Name: user.Name}
+	respUser := object.User{Name: user.Name}
 	var contentType string
 	switch form.Username {
 	case user.Email:
 		contentType = "email"
+		respUser.Email = user.Email
 	case user.Phone:
 		contentType = "phone"
+		respUser.Phone = user.Phone
 	case user.Name:
 		contentType = "username"
+		respUser.Email = util.GetMaskedEmail(user.Email)
+		respUser.Phone = util.GetMaskedPhone(user.Phone)
 	}
 
 	c.ResponseOk(respUser, contentType)
@@ -222,39 +244,15 @@ func (c *ApiController) SetPassword() {
 	newPassword := c.Ctx.Request.Form.Get("newPassword")
 
 	requestUserId := c.GetSessionUsername()
-	if requestUserId == "" {
-		c.ResponseError("Please login first.")
-		return
-	}
-
 	userId := fmt.Sprintf("%s/%s", userOwner, userName)
-	targetUser := object.GetUser(userId)
-	if targetUser == nil {
-		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
+
+	hasPermission, err := object.CheckUserPermission(requestUserId, userId, true)
+	if !hasPermission {
+		c.ResponseError(err.Error())
 		return
 	}
 
-	hasPermission := false
-	if strings.HasPrefix(requestUserId, "app/") {
-		hasPermission = true
-	} else {
-		requestUser := object.GetUser(requestUserId)
-		if requestUser == nil {
-			c.ResponseError("Session outdated. Please login again.")
-			return
-		}
-		if requestUser.IsGlobalAdmin {
-			hasPermission = true
-		} else if requestUserId == userId {
-			hasPermission = true
-		} else if targetUser.Owner == requestUser.Owner && requestUser.IsAdmin {
-			hasPermission = true
-		}
-	}
-	if !hasPermission {
-		c.ResponseError("You don't have the permission to do this.")
-		return
-	}
+	targetUser := object.GetUser(userId)
 
 	if oldPassword != "" {
 		msg := object.CheckPassword(targetUser, oldPassword)

@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,10 +18,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/astaxie/beego/context"
-	"github.com/casbin/casdoor/authz"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/authz"
+	"github.com/casdoor/casdoor/util"
 )
 
 type Object struct {
@@ -57,6 +58,8 @@ func getSubject(ctx *context.Context) (string, string) {
 
 func getObject(ctx *context.Context) (string, string) {
 	method := ctx.Request.Method
+	path := ctx.Request.URL.Path
+
 	if method == http.MethodGet {
 		// query == "?id=built-in/admin"
 		id := ctx.Input.Query("id")
@@ -78,6 +81,14 @@ func getObject(ctx *context.Context) (string, string) {
 			//panic(err)
 			return "", ""
 		}
+
+		if path == "/api/delete-resource" {
+			tokens := strings.Split(obj.Name, "/")
+			if len(tokens) >= 5 {
+				obj.Name = tokens[4]
+			}
+		}
+
 		return obj.Owner, obj.Name
 	}
 }
@@ -89,10 +100,17 @@ func willLog(subOwner string, subName string, method string, urlPath string, obj
 	return true
 }
 
+func getUrlPath(urlPath string) string {
+	if strings.HasPrefix(urlPath, "/cas") && (strings.HasSuffix(urlPath, "/serviceValidate") || strings.HasSuffix(urlPath, "/proxy") || strings.HasSuffix(urlPath, "/proxyValidate") || strings.HasSuffix(urlPath, "/validate") || strings.HasSuffix(urlPath, "/p3/serviceValidate") || strings.HasSuffix(urlPath, "/p3/proxyValidate") || strings.HasSuffix(urlPath, "/samlValidate")) {
+		return "/cas"
+	}
+	return urlPath
+}
+
 func AuthzFilter(ctx *context.Context) {
 	subOwner, subName := getSubject(ctx)
 	method := ctx.Request.Method
-	urlPath := ctx.Request.URL.Path
+	urlPath := getUrlPath(ctx.Request.URL.Path)
 	objOwner, objName := getObject(ctx)
 
 	isAllowed := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName)

@@ -65,6 +65,13 @@ func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) {
 	ticker := time.NewTicker(time.Duration(ldap.AutoSync) * time.Minute)
 	defer ticker.Stop()
 	for {
+		select {
+		case <-stopChan:
+			logs.Info(fmt.Sprintf("autoSync goroutine for %s stopped", ldap.Id))
+			return
+		case <-ticker.C:
+		}
+
 		UpdateLdapSyncTime(ldap.Id)
 		//fetch all users
 		conn, err := GetLdapConn(ldap.Host, ldap.Port, ldap.Admin, ldap.Passwd)
@@ -83,12 +90,6 @@ func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) {
 			logs.Warning(fmt.Sprintf("ldap autosync,%d new users,but %d user failed during :", len(users)-len(*existed)-len(*failed), len(*failed)), *failed)
 		} else {
 			logs.Info(fmt.Sprintf("ldap autosync success, %d new users, %d existing users", len(users)-len(*existed), len(*existed)))
-		}
-		select {
-		case <-stopChan:
-			logs.Info(fmt.Sprintf("autoSync goroutine for %s stopped", ldap.Id))
-			return
-		case <-ticker.C:
 		}
 	}
 

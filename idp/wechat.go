@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"golang.org/x/oauth2"
@@ -96,6 +97,11 @@ func (idp *WeChatIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	_, err = buf.ReadFrom(tokenResponse.Body)
 	if err != nil {
 		return nil, err
+	}
+
+	// {"errcode":40163,"errmsg":"code been used, rid: 6206378a-793424c0-2e4091cc"}
+	if strings.Contains(buf.String(), "errcode") {
+		return nil, fmt.Errorf(buf.String())
 	}
 
 	var wechatAccessToken WechatAccessToken

@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
 package object
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 )
 
 func (syncer *Syncer) getFullAvatarUrl(avatar string) string {
@@ -99,12 +101,18 @@ func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 		user.PasswordSalt = value
 	case "DisplayName":
 		user.DisplayName = value
+	case "FirstName":
+		user.FirstName = value
+	case "LastName":
+		user.LastName = value
 	case "Avatar":
 		user.Avatar = syncer.getPartialAvatarUrl(value)
 	case "PermanentAvatar":
 		user.PermanentAvatar = value
 	case "Email":
 		user.Email = value
+	case "EmailVerified":
+		user.EmailVerified = util.ParseBool(value)
 	case "Phone":
 		user.Phone = value
 	case "Location":
@@ -167,6 +175,32 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*Or
 		for _, tableColumn := range syncer.TableColumns {
 			syncer.setUserByKeyValue(originalUser, tableColumn.CasdoorName, result[tableColumn.Name])
 		}
+
+		if syncer.Type == "Keycloak" {
+			// query and set password and password salt from credential table
+			sql := fmt.Sprintf("select * from credential where type = 'password' and user_id = '%s'", originalUser.Id)
+			credentialResult, _ := syncer.Adapter.Engine.QueryString(sql)
+			if len(credentialResult) > 0 {
+				credential := Credential{}
+				_ = json.Unmarshal([]byte(credentialResult[0]["SECRET_DATA"]), &credential)
+				originalUser.Password = credential.Value
+				originalUser.PasswordSalt = credential.Salt
+			}
+			// query and set signup application from user group table
+			sql = fmt.Sprintf("select name from keycloak_group where id = " +
+				"(select group_id as gid from user_group_membership where user_id = '%s')", originalUser.Id)
+			groupResult, _ := syncer.Adapter.Engine.QueryString(sql)
+			if len(groupResult) > 0 {
+				originalUser.SignupApplication = groupResult[0]["name"]
+			}
+			// create time
+			i, _ := strconv.ParseInt(originalUser.CreatedTime, 10, 64)
+			tm := time.Unix(i/int64(1000), 0)
+			originalUser.CreatedTime = tm.Format("2006-01-02T15:04:05+08:00")
+			// enable
+			originalUser.IsForbidden = !(result["ENABLED"] == "\x01")
+		}
+
 		users = append(users, originalUser)
 	}
 	return users

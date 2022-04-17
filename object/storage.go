@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,16 +19,16 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/storage"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/storage"
+	"github.com/casdoor/casdoor/util"
 )
 
 var isCloudIntranet bool
 
 func init() {
 	var err error
-	isCloudIntranet, err = beego.AppConfig.Bool("isCloudIntranet")
+	isCloudIntranet, err = conf.GetConfigBool("isCloudIntranet")
 	if err != nil {
 		//panic(err)
 	}
@@ -53,7 +53,7 @@ func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 			host = fmt.Sprintf("https://%s", host)
 		}
 	} else {
-		// provider.Domain = "http://localhost:8000" or "https://door.casbin.com"
+		// provider.Domain = "http://localhost:8000" or "https://door.casdoor.com"
 		host = util.UrlJoin(provider.Domain, "/files")
 	}
 

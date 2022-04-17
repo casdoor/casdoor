@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,8 +41,8 @@ class SyncerListPage extends BaseListPage {
       tableColumns: [],
       affiliationTable: "",
       avatarBaseUrl: "",
-      syncInterval: 1,
-      isEnabled: true,
+      syncInterval: 10,
+      isEnabled: false,
     }
   }
 
@@ -50,8 +50,7 @@ class SyncerListPage extends BaseListPage {
     const newSyncer = this.newSyncer();
     SyncerBackend.addSyncer(newSyncer)
       .then((res) => {
-          Setting.showMessage("success", `Syncer added successfully`);
-          this.props.history.push(`/syncers/${newSyncer.name}`);
+          this.props.history.push({pathname: `/syncers/${newSyncer.name}`, mode: "add"});
         }
       )
       .catch(error => {

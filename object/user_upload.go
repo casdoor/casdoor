@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 package object
 
 import (
-	"github.com/casbin/casdoor/util"
-	"github.com/casbin/casdoor/xlsx"
+	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/casdoor/xlsx"
 )
 
 func getUserMap(owner string) map[string]*User {
@@ -52,8 +52,8 @@ func UploadUsers(owner string, fileId string) bool {
 
 	oldUserMap := getUserMap(owner)
 	newUsers := []*User{}
-	for _, line := range table {
-		if parseLineItem(&line, 0) == "" {
+	for index, line := range table {
+		if index == 0 || parseLineItem(&line, 0) == "" {
 			continue
 		}
 
@@ -67,38 +67,42 @@ func UploadUsers(owner string, fileId string) bool {
 			Password:          parseLineItem(&line, 6),
 			PasswordSalt:      parseLineItem(&line, 7),
 			DisplayName:       parseLineItem(&line, 8),
-			Avatar:            parseLineItem(&line, 9),
+			FirstName:         parseLineItem(&line, 9),
+			LastName:          parseLineItem(&line, 10),
+			Avatar:            parseLineItem(&line, 11),
 			PermanentAvatar:   "",
-			Email:             parseLineItem(&line, 10),
-			Phone:             parseLineItem(&line, 11),
-			Location:          parseLineItem(&line, 12),
-			Address:           []string{parseLineItem(&line, 13)},
-			Affiliation:       parseLineItem(&line, 14),
-			Title:             parseLineItem(&line, 15),
-			IdCardType:        parseLineItem(&line, 16),
-			IdCard:            parseLineItem(&line, 17),
-			Homepage:          parseLineItem(&line, 18),
-			Bio:               parseLineItem(&line, 19),
-			Tag:               parseLineItem(&line, 20),
-			Region:            parseLineItem(&line, 21),
-			Language:          parseLineItem(&line, 22),
-			Gender:            parseLineItem(&line, 23),
-			Birthday:          parseLineItem(&line, 24),
-			Education:         parseLineItem(&line, 25),
-			Score:             parseLineItemInt(&line, 26),
-			Ranking:           parseLineItemInt(&line, 27),
+			Email:             parseLineItem(&line, 12),
+			Phone:             parseLineItem(&line, 13),
+			Location:          parseLineItem(&line, 14),
+			Address:           []string{parseLineItem(&line, 15)},
+			Affiliation:       parseLineItem(&line, 16),
+			Title:             parseLineItem(&line, 17),
+			IdCardType:        parseLineItem(&line, 18),
+			IdCard:            parseLineItem(&line, 19),
+			Homepage:          parseLineItem(&line, 20),
+			Bio:               parseLineItem(&line, 21),
+			Tag:               parseLineItem(&line, 22),
+			Region:            parseLineItem(&line, 23),
+			Language:          parseLineItem(&line, 24),
+			Gender:            parseLineItem(&line, 25),
+			Birthday:          parseLineItem(&line, 26),
+			Education:         parseLineItem(&line, 27),
+			Score:             parseLineItemInt(&line, 28),
+			Karma:             parseLineItemInt(&line, 29),
+			Ranking:           parseLineItemInt(&line, 30),
 			IsDefaultAvatar:   false,
-			IsOnline:          parseLineItemBool(&line, 28),
-			IsAdmin:           parseLineItemBool(&line, 29),
-			IsGlobalAdmin:     parseLineItemBool(&line, 30),
-			IsForbidden:       parseLineItemBool(&line, 31),
-			IsDeleted:         parseLineItemBool(&line, 32),
-			SignupApplication: parseLineItem(&line, 33),
+			IsOnline:          parseLineItemBool(&line, 31),
+			IsAdmin:           parseLineItemBool(&line, 32),
+			IsGlobalAdmin:     parseLineItemBool(&line, 33),
+			IsForbidden:       parseLineItemBool(&line, 34),
+			IsDeleted:         parseLineItemBool(&line, 35),
+			SignupApplication: parseLineItem(&line, 36),
 			Hash:              "",
 			PreHash:           "",
-			CreatedIp:         parseLineItem(&line, 34),
-			LastSigninTime:    parseLineItem(&line, 35),
-			LastSigninIp:      parseLineItem(&line, 36),
+			CreatedIp:         parseLineItem(&line, 37),
+			LastSigninTime:    parseLineItem(&line, 38),
+			LastSigninIp:      parseLineItem(&line, 39),
+			Ldap:              "",
 			Properties:        map[string]string{},
 		}
 

@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,24 @@ package object
 import (
 	"fmt"
 	"regexp"
+	"strings"
 
-	"github.com/casbin/casdoor/cred"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/cred"
+	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 )
 
-var reWhiteSpace *regexp.Regexp
+var (
+	reWhiteSpace     *regexp.Regexp
+	reFieldWhiteList *regexp.Regexp
+)
 
 func init() {
 	reWhiteSpace, _ = regexp.Compile(`\s`)
+	reFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
 }
 
-func CheckUserSignup(application *Application, organization *Organization, username string, password string, displayName string, email string, phone string, affiliation string) string {
+func CheckUserSignup(application *Application, organization *Organization, username string, password string, displayName string, firstName string, lastName string, email string, phone string, affiliation string) string {
 	if organization == nil {
 		return "organization does not exist"
 	}
@@ -81,11 +86,19 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 	}
 
 	if application.IsSignupItemVisible("Display name") {
-		if displayName == "" {
-			return "displayName cannot be blank"
-		} else if application.GetSignupItemRule("Display name") == "Personal" {
-			if !isValidPersonalName(displayName) {
-				return "displayName is not valid personal name"
+		if application.GetSignupItemRule("Display name") == "First, last" && (firstName != "" || lastName != "") {
+			if firstName == "" {
+				return "firstName cannot be blank"
+			} else if lastName == "" {
+				return "lastName cannot be blank"
+			}
+		} else {
+			if displayName == "" {
+				return "displayName cannot be blank"
+			} else if application.GetSignupItemRule("Display name") == "Real name" {
+				if !isValidRealName(displayName) {
+					return "displayName is not valid real name"
+				}
 			}
 		}
 	}
@@ -167,15 +180,53 @@ func CheckUserPassword(organization string, username string, password string) (*
 	if user.IsForbidden {
 		return nil, "the user is forbidden to sign in, please contact the administrator"
 	}
-	//for ldap users
+
 	if user.Ldap != "" {
+		//ONLY for ldap users
 		return checkLdapUserPassword(user, password)
+	} else {
+		msg := CheckPassword(user, password)
+		if msg != "" {
+			return nil, msg
+		}
 	}
-
-	msg := CheckPassword(user, password)
-	if msg != "" {
-		return nil, msg
-	}
-
 	return user, ""
+}
+
+func filterField(field string) bool {
+	return reFieldWhiteList.MatchString(field)
+}
+
+func CheckUserPermission(requestUserId, userId string, strict bool) (bool, error) {
+	if requestUserId == "" {
+		return false, fmt.Errorf("please login first")
+	}
+
+	targetUser := GetUser(userId)
+	if targetUser == nil {
+		return false, fmt.Errorf("the user: %s doesn't exist", userId)
+	}
+
+	hasPermission := false
+	if strings.HasPrefix(requestUserId, "app/") {
+		hasPermission = true
+	} else {
+		requestUser := GetUser(requestUserId)
+		if requestUser == nil {
+			return false, fmt.Errorf("session outdated, please login again")
+		}
+		if requestUser.IsGlobalAdmin {
+			hasPermission = true
+		} else if requestUserId == userId {
+			hasPermission = true
+		} else if targetUser.Owner == requestUser.Owner {
+			if strict {
+				hasPermission = requestUser.IsAdmin
+			} else {
+				hasPermission = true
+			}
+		}
+	}
+
+	return hasPermission, fmt.Errorf("you don't have the permission to do this")
 }

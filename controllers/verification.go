@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 func (c *ApiController) getCurrentUser() *object.User {
@@ -68,15 +68,22 @@ func (c *ApiController) SendVerificationCode() {
 	organization := object.GetOrganization(orgId)
 	application := object.GetApplicationByOrganizationName(organization.Name)
 
-	if checkUser == "true" && user == nil &&
-		object.GetUserByFields(organization.Name, dest) == nil {
-		c.ResponseError("No such user.")
+	if checkUser == "true" && user == nil && object.GetUserByFields(organization.Name, dest) == nil {
+		c.ResponseError("Please login first")
 		return
 	}
 
-	sendResp := errors.New("Invalid dest type.")
+	sendResp := errors.New("Invalid dest type")
+
+	if user == nil && checkUser != "" && checkUser != "true" {
+		_, name := util.GetOwnerAndNameFromId(orgId)
+		user = object.GetUser(fmt.Sprintf("%s/%s", name, checkUser))
+	}
 	switch destType {
 	case "email":
+		if user != nil && util.GetMaskedEmail(user.Email) == dest {
+			dest = user.Email
+		}
 		if !util.IsEmailValid(dest) {
 			c.ResponseError("Invalid Email address")
 			return
@@ -85,6 +92,9 @@ func (c *ApiController) SendVerificationCode() {
 		provider := application.GetEmailProvider()
 		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, remoteAddr, dest)
 	case "phone":
+		if user != nil && util.GetMaskedPhone(user.Phone) == dest {
+			dest = user.Phone
+		}
 		if !util.IsPhoneCnValid(dest) {
 			c.ResponseError("Invalid phone number")
 			return
@@ -121,7 +131,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 
 	user := object.GetUser(userId)
 	if user == nil {
-		c.ResponseError("No such user.")
+		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
 		return
 	}
 

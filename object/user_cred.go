@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package object
 
-import "github.com/casbin/casdoor/cred"
+import "github.com/casdoor/casdoor/cred"
 
 func calculateHash(user *User) string {
 	syncer := getDbSyncerForUser(user)

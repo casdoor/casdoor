@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,11 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import SyncerTableColumnTable from "./SyncerTableColumnTable";
 
+import {Controlled as CodeMirror} from 'react-codemirror2';
+import "codemirror/lib/codemirror.css";
+require('codemirror/theme/material-darker.css');
+require("codemirror/mode/javascript/javascript");
+
 const { Option } = Select;
 
 class SyncerEditPage extends React.Component {
@@ -31,6 +36,7 @@ class SyncerEditPage extends React.Component {
       syncerName: props.match.params.syncerName,
       syncer: null,
       organizations: [],
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -78,9 +84,10 @@ class SyncerEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("syncer:Edit Syncer")}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("syncer:New Syncer") : i18next.t("syncer:Edit Syncer")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitSyncerEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitSyncerEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteSyncer()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -110,9 +117,13 @@ class SyncerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:Type"), i18next.t("provider:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.syncer.type} onChange={(value => {this.updateSyncerField('type', value);})}>
+            <Select virtual={false} style={{width: '100%'}} value={this.state.syncer.type} onChange={(value => {
+              this.updateSyncerField('type', value);
+              this.state.syncer["tableColumns"] = Setting.getSyncerTableColumns(this.state.syncer);
+              this.state.syncer.table = value === "Keycloak" ? "user_entity" : this.state.syncer.table;
+            })}>
               {
-                ['Database', 'LDAP']
+                ['Database', 'LDAP', 'Keycloak']
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
@@ -191,7 +202,8 @@ class SyncerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("syncer:Table"), i18next.t("syncer:Table - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.syncer.table} onChange={e => {
+            <Input value={this.state.syncer.table}
+                   disabled={this.state.syncer.type === "Keycloak"} onChange={e => {
               this.updateSyncerField('table', e.target.value);
             }} />
           </Col>
@@ -249,6 +261,22 @@ class SyncerEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("syncer:Error text"), i18next.t("syncer:Error text - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <div style={{width: "100%", height: "300px"}} >
+              <CodeMirror
+                value={this.state.syncer.errorText}
+                options={{mode: 'javascript', theme: "material-darker"}}
+                onBeforeChange={(editor, data, value) => {
+                  this.updateSyncerField("errorText", value);
+                }}
+              />
+            </div>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
           </Col>
@@ -287,6 +315,16 @@ class SyncerEditPage extends React.Component {
       });
   }
 
+  deleteSyncer() {
+    SyncerBackend.deleteSyncer(this.state.syncer)
+      .then(() => {
+        this.props.history.push(`/syncers`);
+      })
+      .catch(error => {
+        Setting.showMessage("error", `Syncer failed to delete: ${error}`);
+      });
+  }
+
   render() {
     return (
       <div>
@@ -296,6 +334,7 @@ class SyncerEditPage extends React.Component {
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
           <Button size="large" onClick={() => this.submitSyncerEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitSyncerEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteSyncer()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );

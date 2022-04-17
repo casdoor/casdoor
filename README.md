@@ -7,10 +7,10 @@
   <a href="https://hub.docker.com/r/casbin/casdoor">
     <img alt="docker pull casbin/casdoor" src="https://img.shields.io/docker/pulls/casbin/casdoor.svg">
   </a>
-  <a href="https://github.com/casbin/casdoor/actions/workflows/build.yml">
+  <a href="https://github.com/casdoor/casdoor/actions/workflows/build.yml">
     <img alt="GitHub Workflow Status (branch)" src="https://github.com/casbin/jcasbin/workflows/build/badge.svg?style=flat-square">
   </a>
-  <a href="https://github.com/casbin/casdoor/releases/latest">
+  <a href="https://github.com/casdoor/casdoor/releases/latest">
     <img alt="GitHub Release" src="https://img.shields.io/github/v/release/casbin/casdoor.svg">
   </a>
   <a href="https://hub.docker.com/repository/docker/casbin/casdoor">
@@ -19,29 +19,32 @@
 </p>
 
 <p align="center">
-  <a href="https://goreportcard.com/report/github.com/casbin/casdoor">
-    <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/casbin/casdoor?style=flat-square">
+  <a href="https://goreportcard.com/report/github.com/casdoor/casdoor">
+    <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/casdoor/casdoor?style=flat-square">
   </a>
-  <a href="https://github.com/casbin/casdoor/blob/master/LICENSE">
+  <a href="https://github.com/casdoor/casdoor/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/casbin/casdoor?style=flat-square" alt="license">
   </a>
-  <a href="https://github.com/casbin/casdoor/issues">
+  <a href="https://github.com/casdoor/casdoor/issues">
     <img alt="GitHub issues" src="https://img.shields.io/github/issues/casbin/casdoor?style=flat-square">
   </a>
   <a href="#">
     <img alt="GitHub stars" src="https://img.shields.io/github/stars/casbin/casdoor?style=flat-square">
   </a>
-  <a href="https://github.com/casbin/casdoor/network">
+  <a href="https://github.com/casdoor/casdoor/network">
     <img alt="GitHub forks" src="https://img.shields.io/github/forks/casbin/casdoor?style=flat-square">
   </a>
   <a href="https://crowdin.com/project/casdoor-site">
     <img alt="Crowdin" src="https://badges.crowdin.net/casdoor-site/localized.svg">
   </a>
+  <a href="https://gitter.im/casbin/casdoor">
+    <img alt="Gitter" src="https://badges.gitter.im/casbin/casdoor.svg">
+  </a>
 </p>
 
 ## Online demo
 
-Deployed site: https://door.casbin.com/
+Deployed site: https://door.casdoor.com/
 
 ## Quick Start
 Run your own casdoor program in a few minutes.
@@ -51,13 +54,13 @@ Run your own casdoor program in a few minutes.
 There are two methods, get code via go subcommand `get`:
 
 ```shell
-go get github.com/casbin/casdoor
+go get github.com/casdoor/casdoor
 ```
 
   or `git`:
 
 ```bash
-git clone https://github.com/casbin/casdoor
+git clone https://github.com/casdoor/casdoor
 ```
 
 Finally, change directory:
@@ -77,6 +80,14 @@ Edit `conf/app.conf`, modify `dataSourceName` to correct database info, which fo
 
 ```bash
 username:password@tcp(database_ip:database_port)/
+```
+
+Then create an empty schema (database) named `casdoor` in your relational database. After the program runs for the first time, it will automatically create tables in this schema.
+
+You can also edit `main.go`, modify `false` to `true`. It will automatically create the schema (database) named `casdoor` in this database.
+
+```bash
+createDatabase := flag.Bool("createDatabase", false, "true if you need casdoor to create database")
 ```
 
 #### Run
@@ -155,6 +166,19 @@ dataSourceName = root:123456@tcp(db:3306)/
 docker-compose up
 ```
 
+### K8S
+You could use helm to deploy casdoor in k8s. At first, you should modify the [configmap](./manifests/casdoor/templates/configmap.yaml) for your application.
+And then run bellow command to deploy it.
+
+```bash
+IMG_TAG=latest make deploy 
+```
+
+And undeploy it with:
+```bash
+make undeploy
+```
+
 That's it! Try to visit http://localhost:8000/. :small_airplane:
 
 ## Detailed documentation
@@ -179,5 +203,5 @@ If you are contributing to casdoor, please note that we use [Crowdin](https://cr
 
 ## License
 
- [Apache-2.0](https://github.com/casbin/casdoor/blob/master/LICENSE)
+ [Apache-2.0](https://github.com/casdoor/casdoor/blob/master/LICENSE)
 

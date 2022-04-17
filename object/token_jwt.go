@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,34 +15,71 @@
 package object
 
 import (
-	_ "embed"
 	"fmt"
 	"time"
 
-	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/golang-jwt/jwt/v4"
 )
 
 type Claims struct {
 	*User
-	Name  string `json:"name,omitempty"`
-	Owner string `json:"owner,omitempty"`
 	Nonce string `json:"nonce,omitempty"`
+	Tag   string `json:"tag,omitempty"`
+	Scope string `json:"scope,omitempty"`
 	jwt.RegisteredClaims
 }
 
-func generateJwtToken(application *Application, user *User, nonce string) (string, string, error) {
+type UserShort struct {
+	Owner string `xorm:"varchar(100) notnull pk" json:"owner"`
+	Name  string `xorm:"varchar(100) notnull pk" json:"name"`
+}
+
+type ClaimsShort struct {
+	*UserShort
+	Nonce string `json:"nonce,omitempty"`
+	Scope string `json:"scope,omitempty"`
+	jwt.RegisteredClaims
+}
+
+func getShortUser(user *User) *UserShort {
+	res := &UserShort{
+		Owner: user.Owner,
+		Name:  user.Name,
+	}
+	return res
+}
+
+func getShortClaims(claims Claims) ClaimsShort {
+	res := ClaimsShort{
+		UserShort:        getShortUser(claims.User),
+		Nonce:            claims.Nonce,
+		Scope:            claims.Scope,
+		RegisteredClaims: claims.RegisteredClaims,
+	}
+	return res
+}
+
+func generateJwtToken(application *Application, user *User, nonce string, scope string, host string) (string, string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours) * time.Hour)
 
 	user.Password = ""
+	origin := conf.GetConfigString("origin")
+	_, originBackend := getOriginFromHost(host)
+	if origin != "" {
+		originBackend = origin
+	}
 
 	claims := Claims{
 		User:  user,
 		Nonce: nonce,
+		// FIXME: A workaround for custom claim by reusing `tag` in user info
+		Tag:   user.Tag,
+		Scope: scope,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    beego.AppConfig.String("origin"),
+			Issuer:    originBackend,
 			Subject:   user.Id,
 			Audience:  []string{application.ClientId},
 			ExpiresAt: jwt.NewNumericDate(expireTime),
@@ -51,16 +88,22 @@ func generateJwtToken(application *Application, user *User, nonce string) (strin
 			ID:        "",
 		},
 	}
-	//all fields of the User struct are not added in "JWT-Empty" format
-	if application.TokenFormat == "JWT-Empty" {
-		claims.User = nil
-	}
-	claims.Name = user.Name
-	claims.Owner = user.Owner
 
-	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
-	claims.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
-	refreshToken := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	var token *jwt.Token
+	var refreshToken *jwt.Token
+
+	// the JWT token length in "JWT-Empty" mode will be very short, as User object only has two properties: owner and name
+	if application.TokenFormat == "JWT-Empty" {
+		claimsShort := getShortClaims(claims)
+
+		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsShort)
+		claimsShort.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
+		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsShort)
+	} else {
+		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+		claims.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
+		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	}
 
 	cert := getCertByApplication(application)
 
@@ -70,6 +113,7 @@ func generateJwtToken(application *Application, user *User, nonce string) (strin
 		return "", "", err
 	}
 
+	token.Header["kid"] = cert.Name
 	tokenString, err := token.SignedString(key)
 	if err != nil {
 		return "", "", err
@@ -101,4 +145,8 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 	}
 
 	return nil, err
+}
+
+func ParseJwtTokenByApplication(token string, application *Application) (*Claims, error) {
+	return ParseJwtToken(token, getCertByApplication(application))
 }

@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ func GetCredManager(passwordType string) CredManager {
 		return NewMd5UserSaltCredManager()
 	} else if passwordType == "bcrypt" {
 		return NewBcryptCredManager()
+	} else if passwordType == "pbkdf2-salt" {
+		return NewPbkdf2SaltCredManager()
 	}
 	return nil
 }

@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@ package object
 import (
 	"fmt"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/pp"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
@@ -26,14 +27,21 @@ type Provider struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName   string `xorm:"varchar(100)" json:"displayName"`
-	Category      string `xorm:"varchar(100)" json:"category"`
-	Type          string `xorm:"varchar(100)" json:"type"`
-	Method        string `xorm:"varchar(100)" json:"method"`
-	ClientId      string `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret  string `xorm:"varchar(100)" json:"clientSecret"`
-	ClientId2     string `xorm:"varchar(100)" json:"clientId2"`
-	ClientSecret2 string `xorm:"varchar(100)" json:"clientSecret2"`
+	DisplayName       string `xorm:"varchar(100)" json:"displayName"`
+	Category          string `xorm:"varchar(100)" json:"category"`
+	Type              string `xorm:"varchar(100)" json:"type"`
+	SubType           string `xorm:"varchar(100)" json:"subType"`
+	Method            string `xorm:"varchar(100)" json:"method"`
+	ClientId          string `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret      string `xorm:"varchar(2000)" json:"clientSecret"`
+	ClientId2         string `xorm:"varchar(100)" json:"clientId2"`
+	ClientSecret2     string `xorm:"varchar(100)" json:"clientSecret2"`
+	Cert              string `xorm:"varchar(100)" json:"cert"`
+	CustomAuthUrl     string `xorm:"varchar(200)" json:"customAuthUrl"`
+	CustomScope       string `xorm:"varchar(200)" json:"customScope"`
+	CustomTokenUrl    string `xorm:"varchar(200)" json:"customTokenUrl"`
+	CustomUserInfoUrl string `xorm:"varchar(200)" json:"customUserInfoUrl"`
+	CustomLogo        string `xorm:"varchar(200)" json:"customLogo"`
 
 	Host    string `xorm:"varchar(100)" json:"host"`
 	Port    int    `json:"port"`
@@ -81,10 +89,7 @@ func GetMaskedProviders(providers []*Provider) []*Provider {
 }
 
 func GetProviderCount(owner, field, value string) int {
-	session := adapter.Engine.Where("owner=?", owner)
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Provider{})
 	if err != nil {
 		panic(err)
@@ -151,6 +156,16 @@ func GetDefaultHumanCheckProvider() *Provider {
 	return &provider
 }
 
+func GetWechatMiniProgramProvider(application *Application) *Provider {
+	providers := application.Providers
+	for _, provider := range providers {
+		if provider.Provider.Type == "WeChatMiniProgram" {
+			return provider.Provider
+		}
+	}
+	return nil
+}
+
 func UpdateProvider(id string, provider *Provider) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if getProvider(owner, name) == nil {
@@ -181,6 +196,23 @@ func DeleteProvider(provider *Provider) bool {
 	}
 
 	return affected != 0
+}
+
+func (p *Provider) getPaymentProvider() (pp.PaymentProvider, *Cert, error) {
+	cert := &Cert{}
+	if p.Cert != "" {
+		cert = getCert(p.Owner, p.Cert)
+		if cert == nil {
+			return nil, nil, fmt.Errorf("the cert: %s does not exist", p.Cert)
+		}
+	}
+
+	pProvider := pp.GetPaymentProvider(p.Type, p.ClientId, p.ClientSecret, p.Host, cert.PublicKey, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey)
+	if pProvider == nil {
+		return nil, cert, fmt.Errorf("the payment provider type: %s is not supported", p.Type)
+	}
+
+	return pProvider, cert, nil
 }
 
 func (p *Provider) GetId() string {

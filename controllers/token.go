@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@ package controllers
 
 import (
 	"encoding/json"
+	"net/http"
 
 	"github.com/astaxie/beego/utils/pagination"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // GetTokens
@@ -142,7 +143,16 @@ func (c *ApiController) GetOAuthCode() {
 	state := c.Input().Get("state")
 	nonce := c.Input().Get("nonce")
 
-	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce)
+	challengeMethod := c.Input().Get("code_challenge_method")
+	codeChallenge := c.Input().Get("code_challenge")
+
+	if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
+		c.ResponseError("Challenge method should be S256")
+		return
+	}
+	host := c.Ctx.Request.Host
+
+	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, host)
 	c.ServeJSON()
 }
 
@@ -161,23 +171,47 @@ func (c *ApiController) GetOAuthToken() {
 	clientId := c.Input().Get("client_id")
 	clientSecret := c.Input().Get("client_secret")
 	code := c.Input().Get("code")
+	verifier := c.Input().Get("code_verifier")
+	scope := c.Input().Get("scope")
+	username := c.Input().Get("username")
+	password := c.Input().Get("password")
+	tag := c.Input().Get("tag")
+	avatar := c.Input().Get("avatar")
 
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
 	}
+	if clientId == "" {
+		// If clientID is empty, try to read data from RequestBody
+		var tokenRequest TokenRequest
+		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
+			clientId = tokenRequest.ClientId
+			clientSecret = tokenRequest.ClientSecret
+			grantType = tokenRequest.GrantType
+			code = tokenRequest.Code
+			verifier = tokenRequest.Verifier
+			scope = tokenRequest.Scope
+			username = tokenRequest.Username
+			password = tokenRequest.Password
+			tag = tokenRequest.Tag
+			avatar = tokenRequest.Avatar
+		}
+	}
+	host := c.Ctx.Request.Host
 
-	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code)
+	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, tag, avatar)
 	c.ServeJSON()
 }
 
 // RefreshToken
 // @Title RefreshToken
+// @Tag Token API
 // @Description refresh OAuth access token
 // @Param   grant_type     query    string  true        "OAuth grant type"
 // @Param	refresh_token	query	string	true		"OAuth refresh token"
 // @Param   scope     query    string  true        "OAuth scope"
 // @Param   client_id     query    string  true        "OAuth client id"
-// @Param   client_secret     query    string  true        "OAuth client secret"
+// @Param   client_secret     query    string  false        "OAuth client secret"
 // @Success 200 {object} object.TokenWrapper The Response object
 // @router /login/oauth/refresh_token [post]
 func (c *ApiController) RefreshToken() {
@@ -186,7 +220,104 @@ func (c *ApiController) RefreshToken() {
 	scope := c.Input().Get("scope")
 	clientId := c.Input().Get("client_id")
 	clientSecret := c.Input().Get("client_secret")
+	host := c.Ctx.Request.Host
 
-	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret)
+	if clientId == "" {
+		// If clientID is empty, try to read data from RequestBody
+		var tokenRequest TokenRequest
+		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
+			clientId = tokenRequest.ClientId
+			clientSecret = tokenRequest.ClientSecret
+			grantType = tokenRequest.GrantType
+			scope = tokenRequest.Scope
+
+		}
+	}
+
+	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+	c.ServeJSON()
+}
+
+// TokenLogout
+// @Title TokenLogout
+// @Tag Token API
+// @Description delete token by AccessToken
+// @Param   id_token_hint     query    string  true        "id_token_hint"
+// @Param   post_logout_redirect_uri    query    string  false      "post_logout_redirect_uri"
+// @Param   state     query    string  true        "state"
+// @Success 200 {object} controllers.Response The Response object
+// @router /login/oauth/logout [get]
+func (c *ApiController) TokenLogout() {
+	token := c.Input().Get("id_token_hint")
+	flag, application := object.DeleteTokenByAceessToken(token)
+	redirectUri := c.Input().Get("post_logout_redirect_uri")
+	state := c.Input().Get("state")
+	if application != nil && object.CheckRedirectUriValid(application, redirectUri) {
+		c.Ctx.Redirect(http.StatusFound, redirectUri+"?state="+state)
+		return
+	}
+	c.Data["json"] = wrapActionResponse(flag)
+	c.ServeJSON()
+}
+
+// IntrospectToken
+// @Title IntrospectToken
+// @Description The introspection endpoint is an OAuth 2.0 endpoint that takes a
+//  parameter representing an OAuth 2.0 token and returns a JSON document
+//  representing the meta information surrounding the
+//  token, including whether this token is currently active.
+//  This endpoint only support Basic Authorization.
+// @Param token formData string true "access_token's value or refresh_token's value"
+// @Param token_type_hint formData string true "the token type access_token or refresh_token"
+// @Success 200 {object} object.IntrospectionResponse The Response object
+// @router /login/oauth/introspect [post]
+func (c *ApiController) IntrospectToken() {
+	tokenValue := c.Input().Get("token")
+	clientId, clientSecret, ok := c.Ctx.Request.BasicAuth()
+	if !ok {
+		util.LogWarning(c.Ctx, "Basic Authorization parses failed")
+		c.Data["json"] = Response{Status: "error", Msg: "Unauthorized operation"}
+		c.ServeJSON()
+		return
+	}
+	application := object.GetApplicationByClientId(clientId)
+	if application == nil || application.ClientSecret != clientSecret {
+		util.LogWarning(c.Ctx, "Basic Authorization failed")
+		c.Data["json"] = Response{Status: "error", Msg: "Unauthorized operation"}
+		c.ServeJSON()
+		return
+	}
+	token := object.GetTokenByTokenAndApplication(tokenValue, application.Name)
+	if token == nil {
+		util.LogWarning(c.Ctx, "application: %s can not find token", application.Name)
+		c.Data["json"] = &object.IntrospectionResponse{Active: false}
+		c.ServeJSON()
+		return
+	}
+	jwtToken, err := object.ParseJwtTokenByApplication(tokenValue, application)
+	if err != nil || jwtToken.Valid() != nil {
+		// and token revoked case. but we not implement
+		// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
+		// refs: https://tools.ietf.org/html/rfc7009
+		util.LogWarning(c.Ctx, "token invalid")
+		c.Data["json"] = &object.IntrospectionResponse{Active: false}
+		c.ServeJSON()
+		return
+	}
+
+	c.Data["json"] = &object.IntrospectionResponse{
+		Active:    true,
+		Scope:     jwtToken.Scope,
+		ClientId:  clientId,
+		Username:  token.User,
+		TokenType: token.TokenType,
+		Exp:       jwtToken.ExpiresAt.Unix(),
+		Iat:       jwtToken.IssuedAt.Unix(),
+		Nbf:       jwtToken.NotBefore.Unix(),
+		Sub:       jwtToken.Subject,
+		Aud:       jwtToken.Audience,
+		Iss:       jwtToken.Issuer,
+		Jti:       jwtToken.Id,
+	}
 	c.ServeJSON()
 }

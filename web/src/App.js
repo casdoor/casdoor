@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,10 @@ import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
 import UserListPage from "./UserListPage";
 import UserEditPage from "./UserEditPage";
+import RoleListPage from "./RoleListPage";
+import RoleEditPage from "./RoleEditPage";
+import PermissionListPage from "./PermissionListPage";
+import PermissionEditPage from "./PermissionEditPage";
 import ProviderListPage from "./ProviderListPage";
 import ProviderEditPage from "./ProviderEditPage";
 import ApplicationListPage from "./ApplicationListPage";
@@ -39,9 +43,16 @@ import SyncerListPage from "./SyncerListPage";
 import SyncerEditPage from "./SyncerEditPage";
 import CertListPage from "./CertListPage";
 import CertEditPage from "./CertEditPage";
+import ProductListPage from "./ProductListPage";
+import ProductEditPage from "./ProductEditPage";
+import ProductBuyPage from "./ProductBuyPage";
+import PaymentListPage from "./PaymentListPage";
+import PaymentEditPage from "./PaymentEditPage";
+import PaymentResultPage from "./PaymentResultPage";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./CustomGithubCorner";
+import * as Conf from "./Conf";
 
 import * as Auth from "./auth/Auth";
 import SignupPage from "./auth/SignupPage";
@@ -57,6 +68,7 @@ import i18next from 'i18next';
 import PromptPage from "./auth/PromptPage";
 import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
 import SamlCallback from './auth/SamlCallback';
+import CasLogout from "./auth/CasLogout";
 
 const { Header, Footer } = Layout;
 
@@ -102,6 +114,10 @@ class App extends Component {
       this.setState({ selectedMenuKey: '/organizations' });
     } else if (uri.includes('/users')) {
       this.setState({ selectedMenuKey: '/users' });
+    } else if (uri.includes('/roles')) {
+      this.setState({ selectedMenuKey: '/roles' });
+    } else if (uri.includes('/permissions')) {
+      this.setState({ selectedMenuKey: '/permissions' });
     } else if (uri.includes('/providers')) {
       this.setState({ selectedMenuKey: '/providers' });
     } else if (uri.includes('/applications')) {
@@ -118,6 +134,10 @@ class App extends Component {
       this.setState({ selectedMenuKey: '/syncers' });
     } else if (uri.includes('/certs')) {
       this.setState({ selectedMenuKey: '/certs' });
+    } else if (uri.includes('/products')) {
+      this.setState({ selectedMenuKey: '/products' });
+    } else if (uri.includes('/payments')) {
+      this.setState({ selectedMenuKey: '/payments' });
     } else if (uri.includes('/signup')) {
       this.setState({ selectedMenuKey: '/signup' });
     } else if (uri.includes('/login')) {
@@ -129,16 +149,14 @@ class App extends Component {
     }
   }
 
-  getAccessTokenParam() {
+  getAccessTokenParam(params) {
     // "/page?access_token=123"
-    const params = new URLSearchParams(this.props.location.search);
     const accessToken = params.get("access_token");
     return accessToken === null ? "" : `?accessToken=${accessToken}`;
   }
 
-  getCredentialParams() {
+  getCredentialParams(params) {
     // "/page?username=abc&password=123"
-    const params = new URLSearchParams(this.props.location.search);
     if (params.get("username") === null || params.get("password") === null) {
       return "";
     }
@@ -146,8 +164,17 @@ class App extends Component {
   }
 
   getUrlWithoutQuery() {
-    // eslint-disable-next-line no-restricted-globals
-    return location.toString().replace(location.search, "");
+    return window.location.toString().replace(window.location.search, "");
+  }
+
+  getLanguageParam(params) {
+    // "/page?language=en"
+    const language = params.get("language");
+    if (language !== null) {
+      Setting.setLanguage(language);
+      return `language=${language}`;
+    }
+    return "";
   }
 
   setLanguage(account) {
@@ -158,13 +185,23 @@ class App extends Component {
   }
 
   getAccount() {
-    let query = this.getAccessTokenParam();
+    const params = new URLSearchParams(this.props.location.search);
+
+    let query = this.getAccessTokenParam(params);
     if (query === "") {
-      query = this.getCredentialParams();
+      query = this.getCredentialParams(params);
     }
+
+    const query2 = this.getLanguageParam(params);
+    if (query2 !== "") {
+      const url = window.location.toString().replace(new RegExp(`[?&]${query2}`), "");
+      window.history.replaceState({}, document.title, url);
+    }
+
     if (query !== "") {
       window.history.replaceState({}, document.title, this.getUrlWithoutQuery());
     }
+
     AuthBackend.getAccount(query)
       .then((res) => {
         let account = null;
@@ -199,8 +236,12 @@ class App extends Component {
           });
 
           Setting.showMessage("success", `Logged out successfully`);
-
-          Setting.goToLinkSoft(this, "/");
+          let redirectUri = res.data2;
+          if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
+            Setting.goToLink(redirectUri);
+          }else{
+            Setting.goToLinkSoft(this, "/");
+          }
         } else {
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);
         }
@@ -328,6 +369,20 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
+        <Menu.Item key="/roles">
+          <Link to="/roles">
+            {i18next.t("general:Roles")}
+          </Link>
+        </Menu.Item>
+      );
+      res.push(
+        <Menu.Item key="/permissions">
+          <Link to="/permissions">
+            {i18next.t("general:Permissions")}
+          </Link>
+        </Menu.Item>
+      );
+      res.push(
         <Menu.Item key="/providers">
           <Link to="/providers">
             {i18next.t("general:Providers")}
@@ -386,6 +441,24 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
+
+      if (Conf.EnableExtraPages) {
+        res.push(
+          <Menu.Item key="/products">
+            <Link to="/products">
+              {i18next.t("general:Products")}
+            </Link>
+          </Menu.Item>
+        );
+        res.push(
+          <Menu.Item key="/payments">
+            <Link to="/payments">
+              {i18next.t("general:Payments")}
+            </Link>
+          </Menu.Item>
+        );
+      }
+
       res.push(
         <Menu.Item key="/swagger">
           <a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
@@ -408,6 +481,7 @@ class App extends Component {
 
   renderLoginIfNotLoggedIn(component) {
     if (this.state.account === null) {
+      sessionStorage.setItem("from", window.location.pathname);
       return <Redirect to='/login' />
     } else if (this.state.account === undefined) {
       return null;
@@ -436,6 +510,10 @@ class App extends Component {
           <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />}/>
+          <Route exact path="/roles" render={(props) => this.renderLoginIfNotLoggedIn(<RoleListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/roles/:organizationName/:roleName" render={(props) => this.renderLoginIfNotLoggedIn(<RoleEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/permissions" render={(props) => this.renderLoginIfNotLoggedIn(<PermissionListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/permissions/:organizationName/:permissionName" render={(props) => this.renderLoginIfNotLoggedIn(<PermissionEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)}/>
@@ -452,6 +530,12 @@ class App extends Component {
           <Route exact path="/syncers/:syncerName" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/certs" render={(props) => this.renderLoginIfNotLoggedIn(<CertListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/certs/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/products" render={(props) => this.renderLoginIfNotLoggedIn(<ProductListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/products/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/products/:productName/buy" render={(props) => this.renderLoginIfNotLoggedIn(<ProductBuyPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/payments" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/payments/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)}/>
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />}/>
           <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
@@ -474,22 +558,22 @@ class App extends Component {
                 </Link>
               )
             }
-            <Menu
-              // theme="dark"
-              mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
-              selectedKeys={[`${this.state.selectedMenuKey}`]}
-              style={{ lineHeight: '64px'}}
-            >
+            <div>
+              <Menu
+                  // theme="dark"
+                  mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
+                  selectedKeys={[`${this.state.selectedMenuKey}`]}
+                  style={{lineHeight: '64px', width: '80%', position: 'absolute'}}
+              >
+                {
+                  this.renderMenu()
+                }
+              </Menu>
               {
-                this.renderMenu()
+                this.renderAccount()
               }
-            <div style = {{float: 'right'}}>
-            {
-              this.renderAccount()
-            }
-          <SelectLanguageBox/>
-          </div>
-            </Menu>
+              <SelectLanguageBox/>
+            </div>
           </Header>
           <Layout style={{backgroundColor: "#f5f5f5", alignItems: 'stretch'}}>
             <Card className="content-warp-card">
@@ -559,7 +643,8 @@ class App extends Component {
       window.location.pathname.startsWith("/login") ||
       window.location.pathname.startsWith("/callback") ||
       window.location.pathname.startsWith("/prompt") ||
-      window.location.pathname.startsWith("/forget");
+      window.location.pathname.startsWith("/forget") ||
+      window.location.pathname.startsWith("/cas");
   }
 
   renderPage() {
@@ -571,6 +656,9 @@ class App extends Component {
           <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage account={this.state.account} {...props} />)}/>
           <Route exact path="/signup/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signup"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
           <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
+          <Route exact path="/login/saml/authorize/:owner/:applicationName" render={(props) => <LoginPage account={this.state.account} type={"saml"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account)}} />}/>
+          <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout clearAccount={() => this.setState({account: null})} {...props} />)} />
+          <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage type={"cas"} mode={"signup"} account={this.state.account} {...props} />)}} />
           <Route exact path="/callback" component={AuthCallback}/>
           <Route exact path="/callback/saml" component={SamlCallback}/>
           <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)}/>
@@ -604,7 +692,7 @@ class App extends Component {
       return (
         <React.Fragment>
           <Helmet>
-            <link rel="icon" href={"https://cdn.casbin.com/static/favicon.ico"} />
+            <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
           </Helmet>
           {
             this.renderPage()

@@ -7,14 +7,14 @@ on:
 jobs:
   synchronize-with-crowdin:
     runs-on: ubuntu-latest
-    if: github.repository == 'casbin/casdoor' && github.event_name == 'push'
+    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
     steps:
 
     - name: Checkout
       uses: actions/checkout@v2
 
     - name: crowdin action
-      uses: crowdin/github-action@1.2.0
+      uses: crowdin/github-action@1.4.8
       with:
         upload_translations: true
 

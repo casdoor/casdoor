@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -147,7 +147,10 @@ class PromptPage extends React.Component {
         if (res.status === 'ok') {
           this.onUpdateAccount(null);
 
-          const redirectUrl = this.getRedirectUrl();
+          let redirectUrl = this.getRedirectUrl();
+          if (redirectUrl === "") {
+            redirectUrl = res.data2
+          }
           if (redirectUrl !== "") {
             Setting.goToLink(redirectUrl);
           } else {

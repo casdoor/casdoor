@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -170,7 +170,8 @@ class SignupTable extends React.Component {
           } if (record.name === "Display name") {
             options = [
               {id: 'None', name: 'None'},
-              {id: 'Personal', name: 'Personal'},
+              {id: 'Real name', name: 'Real name'},
+              {id: 'First, last', name: 'First, last'},
             ];
           }
 

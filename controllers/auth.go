@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/astaxie/beego"
-	"github.com/casbin/casdoor/idp"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/proxy"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/idp"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/util"
 )
 
 func codeToResponse(code *object.Code) *Response {
@@ -36,6 +36,14 @@ func codeToResponse(code *object.Code) *Response {
 	}
 
 	return &Response{Status: "ok", Msg: "", Data: code.Code}
+}
+
+func tokenToResponse(token *object.Token) *Response {
+	if token.AccessToken == "" {
+		return &Response{Status: "error", Msg: "fail to get accessToken", Data: token.AccessToken}
+	}
+	return &Response{Status: "ok", Msg: "", Data: token.AccessToken}
+
 }
 
 // HandleLoggedIn ...
@@ -52,15 +60,55 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		scope := c.Input().Get("scope")
 		state := c.Input().Get("state")
 		nonce := c.Input().Get("nonce")
-		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce)
+		challengeMethod := c.Input().Get("code_challenge_method")
+		codeChallenge := c.Input().Get("code_challenge")
+
+		if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
+			c.ResponseError("Challenge method should be S256")
+			return
+		}
+		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, c.Ctx.Request.Host)
 		resp = codeToResponse(code)
 
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
 		}
+	} else if form.Type == ResponseTypeToken || form.Type == ResponseTypeIdToken { //implicit flow
+		if !object.IsGrantTypeValid(form.Type, application.GrantTypes) {
+			resp = &Response{Status: "error", Msg: fmt.Sprintf("error: grant_type: %s is not supported in this application", form.Type), Data: ""}
+		} else {
+			scope := c.Input().Get("scope")
+			token, _ := object.GetTokenByUser(application, user, scope, c.Ctx.Request.Host)
+			resp = tokenToResponse(token)
+		}
+
+	} else if form.Type == ResponseTypeSaml { // saml flow
+		res, redirectUrl, err := object.GetSamlResponse(application, user, form.SamlRequest, c.Ctx.Request.Host)
+		if err != nil {
+			c.ResponseError(err.Error(), nil)
+			return
+		}
+		resp = &Response{Status: "ok", Msg: "", Data: res, Data2: redirectUrl}
+	} else if form.Type == ResponseTypeCas {
+		//not oauth but CAS SSO protocol
+		service := c.Input().Get("service")
+		resp = wrapErrorResponse(nil)
+		if service != "" {
+			st, err := object.GenerateCasToken(userId, service)
+			if err != nil {
+				resp = wrapErrorResponse(err)
+			} else {
+				resp.Data = st
+			}
+		}
+		if application.EnableSigninSession || application.HasPromptPage() {
+			// The prompt page needs the user to be signed in
+			c.SetSessionUsername(userId)
+		}
+
 	} else {
-		resp = &Response{Status: "error", Msg: fmt.Sprintf("Unknown response type: %s", form.Type)}
+		resp = wrapErrorResponse(fmt.Errorf("Unknown response type: %s", form.Type))
 	}
 
 	// if user did not check auto signin
@@ -94,6 +142,7 @@ func (c *ApiController) GetApplicationLogin() {
 	state := c.Input().Get("state")
 
 	msg, application := object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
+	application = object.GetMaskedApplication(application, "")
 	if msg != "" {
 		c.ResponseError(msg, application)
 	} else {
@@ -102,7 +151,7 @@ func (c *ApiController) GetApplicationLogin() {
 }
 
 func setHttpClient(idProvider idp.IdProvider, providerType string) {
-	if providerType == "GitHub" || providerType == "Google" || providerType == "Facebook" || providerType == "LinkedIn" {
+	if providerType == "GitHub" || providerType == "Google" || providerType == "Facebook" || providerType == "LinkedIn" || providerType == "Steam" {
 		idProvider.SetHttpClient(proxy.ProxyHttpClient)
 	} else {
 		idProvider.SetHttpClient(proxy.DefaultHttpClient)
@@ -142,9 +191,16 @@ func (c *ApiController) Login() {
 			var verificationCodeType string
 			var checkResult string
 
+			if form.Name != "" {
+				user = object.GetUserByFields(form.Organization, form.Name)
+			}
+
 			// check result through Email or Phone
 			if strings.Contains(form.Username, "@") {
 				verificationCodeType = "email"
+				if user != nil && util.GetMaskedEmail(user.Email) == form.Username {
+					form.Username = user.Email
+				}
 				checkResult = object.CheckVerificationCode(form.Username, form.Code)
 			} else {
 				verificationCodeType = "phone"
@@ -152,6 +208,9 @@ func (c *ApiController) Login() {
 					responseText := fmt.Sprintf("%s%s", verificationCodeType, "No phone prefix")
 					c.ResponseError(responseText)
 					return
+				}
+				if user != nil && util.GetMaskedPhone(user.Phone) == form.Username {
+					form.Username = user.Phone
 				}
 				checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username)
 				checkResult = object.CheckVerificationCode(checkPhone, form.Code)
@@ -167,7 +226,7 @@ func (c *ApiController) Login() {
 
 			user = object.GetUserByFields(form.Organization, form.Username)
 			if user == nil {
-				c.ResponseError("No such user.")
+				c.ResponseError(fmt.Sprintf("The user: %s/%s doesn't exist", form.Organization, form.Username))
 				return
 			}
 		} else {
@@ -179,6 +238,11 @@ func (c *ApiController) Login() {
 			resp = &Response{Status: "error", Msg: msg}
 		} else {
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+			if application == nil {
+				c.ResponseError(fmt.Sprintf("The application: %s does not exist", form.Application))
+				return
+			}
+
 			resp = c.HandleLoggedIn(application, user, &form)
 
 			record := object.NewRecord(c.Ctx)
@@ -188,6 +252,11 @@ func (c *ApiController) Login() {
 		}
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+		if application == nil {
+			c.ResponseError(fmt.Sprintf("The application: %s does not exist", form.Application))
+			return
+		}
+
 		organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", application.Organization))
 		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
 		providerItem := application.GetProviderItem(provider.Name)
@@ -214,7 +283,7 @@ func (c *ApiController) Login() {
 				clientSecret = provider.ClientSecret2
 			}
 
-			idProvider := idp.GetIdProvider(provider.Type, clientId, clientSecret, form.RedirectUri)
+			idProvider := idp.GetIdProvider(provider.Type, provider.SubType, clientId, clientSecret, provider.AppId, form.RedirectUri, provider.Domain, provider.CustomAuthUrl, provider.CustomTokenUrl, provider.CustomUserInfoUrl)
 			if idProvider == nil {
 				c.ResponseError(fmt.Sprintf("The provider type: %s is not supported", provider.Type))
 				return
@@ -222,8 +291,8 @@ func (c *ApiController) Login() {
 
 			setHttpClient(idProvider, provider.Type)
 
-			if form.State != beego.AppConfig.String("authState") && form.State != application.Name {
-				c.ResponseError(fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", beego.AppConfig.String("authState"), form.State))
+			if form.State != conf.GetConfigString("authState") && form.State != application.Name {
+				c.ResponseError(fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", conf.GetConfigString("authState"), form.State))
 				return
 			}
 
@@ -358,6 +427,11 @@ func (c *ApiController) Login() {
 		if c.GetSessionUsername() != "" {
 			// user already signed in to Casdoor, so let the user click the avatar button to do the quick sign-in
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+			if application == nil {
+				c.ResponseError(fmt.Sprintf("The application: %s does not exist", form.Application))
+				return
+			}
+
 			user := c.getCurrentUser()
 			resp = c.HandleLoggedIn(application, user, &form)
 		} else {

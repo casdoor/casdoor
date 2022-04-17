@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@ package routers
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/astaxie/beego/context"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 func AutoSigninFilter(ctx *context.Context) {
@@ -28,21 +27,26 @@ func AutoSigninFilter(ctx *context.Context) {
 	//	return
 	//}
 
-	// "/page?access_token=123"
-	accessToken := ctx.Input.Query("accessToken")
+	// GET parameter like "/page?access_token=123" or
+	// HTTP Bearer token like "Authorization: Bearer 123"
+	accessToken := util.GetMaxLenStr(ctx.Input.Query("accessToken"), ctx.Input.Query("access_token"), parseBearerToken(ctx))
+
 	if accessToken != "" {
-		cert := object.GetDefaultCert()
-		claims, err := object.ParseJwtToken(accessToken, cert)
-		if err != nil {
-			responseError(ctx, "invalid JWT token")
+		token := object.GetTokenByAccessToken(accessToken)
+		if token == nil {
+			responseError(ctx, "Access token doesn't exist")
 			return
 		}
-		if time.Now().Unix() > claims.ExpiresAt.Unix() {
-			responseError(ctx, "expired JWT token")
+
+		if util.IsTokenExpired(token.CreatedTime, token.ExpiresIn) {
+			responseError(ctx, "Access token has expired")
+			return
 		}
 
-		userId := fmt.Sprintf("%s/%s", claims.User.Owner, claims.User.Name)
+		userId := fmt.Sprintf("%s/%s", token.Organization, token.User)
+		application, _ := object.GetApplicationByUserId(fmt.Sprintf("app/%s", token.Application))
 		setSessionUser(ctx, userId)
+		setSessionOidc(ctx, token.Scope, application.ClientId)
 		return
 	}
 
@@ -56,7 +60,7 @@ func AutoSigninFilter(ctx *context.Context) {
 	// "/page?username=abc&password=123"
 	userId = ctx.Input.Query("username")
 	password := ctx.Input.Query("password")
-	if userId != "" && password != "" {
+	if userId != "" && password != "" && ctx.Input.Query("grant_type") == "" {
 		owner, name := util.GetOwnerAndNameFromId(userId)
 		_, msg := object.CheckUserPassword(owner, name, password)
 		if msg != "" {
@@ -68,18 +72,4 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 
-	// HTTP Bearer token
-	// Authorization: Bearer bearerToken
-	bearerToken := parseBearerToken(ctx)
-	if bearerToken != "" {
-		cert := object.GetDefaultCert()
-		claims, err := object.ParseJwtToken(bearerToken, cert)
-		if err != nil {
-			responseError(ctx, err.Error())
-			return
-		}
-
-		setSessionUser(ctx, fmt.Sprintf("%s/%s", claims.Owner, claims.Name))
-		setSessionExpire(ctx, claims.ExpiresAt.Unix())
-	}
 }

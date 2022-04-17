@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,16 +18,16 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 )
 
 var logPostOnly bool
 
 func init() {
 	var err error
-	logPostOnly, err = beego.AppConfig.Bool("logPostOnly")
+	logPostOnly, err = conf.GetConfigBool("logPostOnly")
 	if err != nil {
 		//panic(err)
 	}
@@ -46,6 +46,8 @@ type Record struct {
 	Method       string `xorm:"varchar(100)" json:"method"`
 	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
 	Action       string `xorm:"varchar(1000)" json:"action"`
+
+	ExtendedUser *User `xorm:"-" json:"extendedUser"`
 
 	IsTriggered bool `json:"isTriggered"`
 }
@@ -100,10 +102,7 @@ func AddRecord(record *Record) bool {
 }
 
 func GetRecordCount(field, value string) int {
-	session := adapter.Engine.Where("1=1")
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession("", -1, -1, field, value, "", "")
 	count, err := session.Count(&Record{})
 	if err != nil {
 		panic(err)
@@ -159,6 +158,11 @@ func SendWebhooks(record *Record) error {
 		}
 
 		if matched {
+			if webhook.IsUserExtended {
+				user := getUser(record.Organization, record.User)
+				record.ExtendedUser = user
+			}
+
 			err := sendWebhook(webhook, record)
 			if err != nil {
 				return err

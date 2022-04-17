@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import (
 	"path/filepath"
 
 	"github.com/astaxie/beego/utils/pagination"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // @router /get-resources [get]
@@ -202,7 +202,7 @@ func (c *ApiController) UploadResource() {
 		}
 
 		user.Avatar = fileUrl
-		object.UpdateUser(user.GetId(), user, []string{"avatar"})
+		object.UpdateUser(user.GetId(), user, []string{"avatar"}, false)
 	case "termsOfUse":
 		applicationId := fmt.Sprintf("admin/%s", parent)
 		app := object.GetApplication(applicationId)

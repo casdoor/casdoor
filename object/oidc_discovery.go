@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,8 +18,9 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"strings"
 
-	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/conf"
 	"gopkg.in/square/go-jose.v2"
 )
 
@@ -29,6 +30,7 @@ type OidcDiscovery struct {
 	TokenEndpoint                          string   `json:"token_endpoint"`
 	UserinfoEndpoint                       string   `json:"userinfo_endpoint"`
 	JwksUri                                string   `json:"jwks_uri"`
+	IntrospectionEndpoint                  string   `json:"introspection_endpoint"`
 	ResponseTypesSupported                 []string `json:"response_types_supported"`
 	ResponseModesSupported                 []string `json:"response_modes_supported"`
 	GrantTypesSupported                    []string `json:"grant_types_supported"`
@@ -40,22 +42,40 @@ type OidcDiscovery struct {
 	RequestObjectSigningAlgValuesSupported []string `json:"request_object_signing_alg_values_supported"`
 }
 
-var oidcDiscovery OidcDiscovery
+func getOriginFromHost(host string) (string, string) {
+	protocol := "https://"
+	if strings.HasPrefix(host, "localhost") {
+		protocol = "http://"
+	}
 
-func init() {
-	origin := beego.AppConfig.String("origin")
+	if host == "localhost:8000" {
+		return fmt.Sprintf("%s%s", protocol, "localhost:7001"), fmt.Sprintf("%s%s", protocol, "localhost:8000")
+	} else {
+		return fmt.Sprintf("%s%s", protocol, host), fmt.Sprintf("%s%s", protocol, host)
+	}
+}
+
+func GetOidcDiscovery(host string) OidcDiscovery {
+	originFrontend, originBackend := getOriginFromHost(host)
+
+	origin := conf.GetConfigString("origin")
+	if origin != "" {
+		originFrontend = origin
+		originBackend = origin
+	}
 
 	// Examples:
 	// https://login.okta.com/.well-known/openid-configuration
 	// https://auth0.auth0.com/.well-known/openid-configuration
 	// https://accounts.google.com/.well-known/openid-configuration
 	// https://access.line.me/.well-known/openid-configuration
-	oidcDiscovery = OidcDiscovery{
-		Issuer:                                 origin,
-		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", origin),
-		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", origin),
-		UserinfoEndpoint:                       fmt.Sprintf("%s/api/get-account", origin),
-		JwksUri:                                fmt.Sprintf("%s/api/certs", origin),
+	oidcDiscovery := OidcDiscovery{
+		Issuer:                                 originBackend,
+		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", originFrontend),
+		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
+		UserinfoEndpoint:                       fmt.Sprintf("%s/api/userinfo", originBackend),
+		JwksUri:                                fmt.Sprintf("%s/.well-known/jwks", originBackend),
+		IntrospectionEndpoint:                  fmt.Sprintf("%s/api/login/oauth/introspect", originBackend),
 		ResponseTypesSupported:                 []string{"id_token"},
 		ResponseModesSupported:                 []string{"login", "code", "link"},
 		GrantTypesSupported:                    []string{"password", "authorization_code"},
@@ -66,27 +86,27 @@ func init() {
 		RequestParameterSupported:              true,
 		RequestObjectSigningAlgValuesSupported: []string{"HS256", "HS384", "HS512"},
 	}
-}
 
-func GetOidcDiscovery() OidcDiscovery {
 	return oidcDiscovery
 }
 
 func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
-	cert := GetDefaultCert()
-
+	certs := GetCerts("admin")
+	jwks := jose.JSONWebKeySet{}
 	//follows the protocol rfc 7517(draft)
 	//link here: https://self-issued.info/docs/draft-ietf-jose-json-web-key.html
 	//or https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key
-	certPemBlock := []byte(cert.PublicKey)
-	certDerBlock, _ := pem.Decode(certPemBlock)
-	x509Cert, _ := x509.ParseCertificate(certDerBlock.Bytes)
+	for _, cert := range certs {
+		certPemBlock := []byte(cert.PublicKey)
+		certDerBlock, _ := pem.Decode(certPemBlock)
+		x509Cert, _ := x509.ParseCertificate(certDerBlock.Bytes)
 
-	var jwk jose.JSONWebKey
-	jwk.Key = x509Cert.PublicKey
-	jwk.Certificates = []*x509.Certificate{x509Cert}
+		var jwk jose.JSONWebKey
+		jwk.Key = x509Cert.PublicKey
+		jwk.Certificates = []*x509.Certificate{x509Cert}
+		jwk.KeyID = cert.Name
+		jwks.Keys = append(jwks.Keys, jwk)
+	}
 
-	var jwks jose.JSONWebKeySet
-	jwks.Keys = []jose.JSONWebKey{jwk}
 	return jwks, nil
 }

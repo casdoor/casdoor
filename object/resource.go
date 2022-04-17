@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@ package object
 import (
 	"fmt"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
 type Resource struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	Name        string `xorm:"varchar(250) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	User        string `xorm:"varchar(100)" json:"user"`
@@ -31,7 +31,7 @@ type Resource struct {
 	Application string `xorm:"varchar(100)" json:"application"`
 	Tag         string `xorm:"varchar(100)" json:"tag"`
 	Parent      string `xorm:"varchar(100)" json:"parent"`
-	FileName    string `xorm:"varchar(100)" json:"fileName"`
+	FileName    string `xorm:"varchar(1000)" json:"fileName"`
 	FileType    string `xorm:"varchar(100)" json:"fileType"`
 	FileFormat  string `xorm:"varchar(100)" json:"fileFormat"`
 	FileSize    int    `json:"fileSize"`
@@ -40,11 +40,8 @@ type Resource struct {
 }
 
 func GetResourceCount(owner, user, field, value string) int {
-	session := adapter.Engine.Where("owner=? and user=?", owner, user)
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
-	count, err := session.Count(&Resource{})
+	session := GetSession(owner, -1, -1, field, value, "", "")
+	count, err := session.Count(&Resource{User: user})
 	if err != nil {
 		panic(err)
 	}

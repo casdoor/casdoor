@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,20 +14,21 @@
 
 package controllers
 
-import "github.com/casbin/casdoor/object"
+import "github.com/casdoor/casdoor/object"
 
 // @Title GetOidcDiscovery
 // @Tag OIDC API
 // @router /.well-known/openid-configuration [get]
 func (c *RootController) GetOidcDiscovery() {
-	c.Data["json"] = object.GetOidcDiscovery()
+	host := c.Ctx.Request.Host
+	c.Data["json"] = object.GetOidcDiscovery(host)
 	c.ServeJSON()
 }
 
-// @Title GetOidcCert
+// @Title GetJwks
 // @Tag OIDC API
-// @router /api/certs [get]
-func (c *RootController) GetOidcCert() {
+// @router /.well-known/jwks [get]
+func (c *RootController) GetJwks() {
 	jwks, err := object.GetJsonWebKeySet()
 	if err != nil {
 		c.ResponseError(err.Error())

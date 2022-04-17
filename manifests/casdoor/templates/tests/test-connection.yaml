@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "casdoor.fullname" . }}-test-connection"
+  labels:
+    {{- include "casdoor.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "casdoor.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never

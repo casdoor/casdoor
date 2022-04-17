@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/casbin/casdoor/idp"
+	"github.com/casdoor/casdoor/idp"
 	"xorm.io/core"
 )
 
@@ -60,6 +60,12 @@ func GetUserByFields(organization string, field string) *User {
 
 	// check phone
 	user = GetUserByField(organization, "phone", field)
+	if user != nil {
+		return user
+	}
+
+	// check ID card
+	user = GetUserByField(organization, "id_card", field)
 	if user != nil {
 		return user
 	}

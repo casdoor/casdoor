@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/astaxie/beego/utils/pagination"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // GetApplications
@@ -38,8 +39,17 @@ func (c *ApiController) GetApplications() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+	organization := c.Input().Get("organization")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedApplications(object.GetApplications(owner), userId)
+		var applications []*object.Application
+		if organization == "" {
+			applications = object.GetApplications(owner)
+		} else {
+			applications = object.GetApplicationsByOrganizationName(owner, organization)
+		}
+
+		c.Data["json"] = object.GetMaskedApplications(applications, userId)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
@@ -76,7 +86,7 @@ func (c *ApiController) GetUserApplication() {
 	id := c.Input().Get("id")
 	user := object.GetUser(id)
 	if user == nil {
-		c.ResponseError("No such user.")
+		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", id))
 		return
 	}
 

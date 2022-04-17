@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ class ResourceListPage extends BaseListPage {
 
   renderUpload() {
     return (
-      <Upload maxCount={1} accept="image/*,video/*,audio/*,.pdf" showUploadList={false}
+      <Upload maxCount={1} accept="image/*,video/*,audio/*,.pdf,.doc,.docx" showUploadList={false}
               beforeUpload={file => {return false}} onChange={info => {this.handleUpload(info)}}>
         <Button icon={<UploadOutlined />} loading={this.state.uploading} type="primary" size="small">
           {i18next.t("resource:Upload a file...")}

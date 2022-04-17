@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,8 @@
 package object
 
 import (
-	"fmt"
-
-	"github.com/casbin/casdoor/cred"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/cred"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
@@ -27,22 +25,21 @@ type Organization struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName        string `xorm:"varchar(100)" json:"displayName"`
-	WebsiteUrl         string `xorm:"varchar(100)" json:"websiteUrl"`
-	Favicon            string `xorm:"varchar(100)" json:"favicon"`
-	PasswordType       string `xorm:"varchar(100)" json:"passwordType"`
-	PasswordSalt       string `xorm:"varchar(100)" json:"passwordSalt"`
-	PhonePrefix        string `xorm:"varchar(10)"  json:"phonePrefix"`
-	DefaultAvatar      string `xorm:"varchar(100)" json:"defaultAvatar"`
-	MasterPassword     string `xorm:"varchar(100)" json:"masterPassword"`
-	EnableSoftDeletion bool   `json:"enableSoftDeletion"`
+	DisplayName        string   `xorm:"varchar(100)" json:"displayName"`
+	WebsiteUrl         string   `xorm:"varchar(100)" json:"websiteUrl"`
+	Favicon            string   `xorm:"varchar(100)" json:"favicon"`
+	PasswordType       string   `xorm:"varchar(100)" json:"passwordType"`
+	PasswordSalt       string   `xorm:"varchar(100)" json:"passwordSalt"`
+	PhonePrefix        string   `xorm:"varchar(10)"  json:"phonePrefix"`
+	DefaultAvatar      string   `xorm:"varchar(100)" json:"defaultAvatar"`
+	Tags               []string `xorm:"mediumtext" json:"tags"`
+	MasterPassword     string   `xorm:"varchar(100)" json:"masterPassword"`
+	EnableSoftDeletion bool     `json:"enableSoftDeletion"`
+	IsProfilePublic    bool     `json:"isProfilePublic"`
 }
 
 func GetOrganizationCount(owner, field, value string) int {
-	session := adapter.Engine.Where("owner=?", owner)
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Organization{})
 	if err != nil {
 		panic(err)
@@ -124,7 +121,7 @@ func UpdateOrganization(id string, organization *Organization) bool {
 	}
 
 	if name != organization.Name {
-		applications := getApplicationsByOrganizationName("admin", name)
+		applications := GetApplicationsByOrganizationName("admin", name)
 		for _, application := range applications {
 			application.Organization = organization.Name
 			UpdateApplication(application.GetId(), application)

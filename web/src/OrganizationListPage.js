@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,14 +30,16 @@ class OrganizationListPage extends BaseListPage {
       name: `organization_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Organization - ${randomName}`,
-      websiteUrl: "https://door.casbin.com",
-      favicon: "https://cdn.casbin.com/static/favicon.ico",
+      websiteUrl: "https://door.casdoor.com",
+      favicon: "https://cdn.casdoor.com/static/favicon.png",
       passwordType: "plain",
       PasswordSalt: "",
       phonePrefix: "86",
       defaultAvatar: "https://casbin.org/img/casbin.svg",
+      tags: [],
       masterPassword: "",
       enableSoftDeletion: false,
+      isProfilePublic: true,
     }
   }
 
@@ -45,8 +47,7 @@ class OrganizationListPage extends BaseListPage {
     const newOrganization = this.newOrganization();
     OrganizationBackend.addOrganization(newOrganization)
       .then((res) => {
-          Setting.showMessage("success", `Organization added successfully`);
-          this.props.history.push(`/organizations/${newOrganization.name}`);
+          this.props.history.push({pathname: `/organizations/${newOrganization.name}`, mode: "add"});
         }
       )
       .catch(error => {

@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/conf"
 	saml2 "github.com/russellhaering/gosaml2"
 	dsig "github.com/russellhaering/goxmldsig"
 )
@@ -73,7 +73,7 @@ func buildSp(provider *Provider, samlResponse string) (*saml2.SAMLServiceProvide
 	certStore := dsig.MemoryX509CertificateStore{
 		Roots: []*x509.Certificate{},
 	}
-	origin := beego.AppConfig.String("origin")
+	origin := conf.GetConfigString("origin")
 	certEncodedData := ""
 	if samlResponse != "" {
 		certEncodedData = parseSamlResponse(samlResponse, provider.Type)
@@ -128,7 +128,7 @@ func buildSpKeyStore() dsig.X509KeyStore {
 	if err != nil {
 		panic(err)
 	}
-	return &dsig.TLSCertKeyStore {
+	return &dsig.TLSCertKeyStore{
 		PrivateKey:  keyPair.PrivateKey,
 		Certificate: keyPair.Certificate,
 	}

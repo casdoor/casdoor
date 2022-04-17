@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package idp
 import (
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -168,7 +169,7 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
 
 	resp, err := idp.Client.Do(req)
-	data, err = io.ReadAll(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 	err = resp.Body.Close()
 	if err != nil {
 		return nil, err
@@ -200,7 +201,7 @@ func (idp *LarkIdProvider) postWithBody(body interface{}, url string) ([]byte, e
 	if err != nil {
 		return nil, err
 	}
-	data, err := io.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

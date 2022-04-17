@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,10 @@
 package authz
 
 import (
-	"github.com/astaxie/beego"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
-	"github.com/casbin/casdoor/conf"
 	xormadapter "github.com/casbin/xorm-adapter/v2"
+	"github.com/casdoor/casdoor/conf"
 	stringadapter "github.com/qiangmzsx/string-adapter/v2"
 )
 
@@ -28,7 +27,8 @@ var Enforcer *casbin.Enforcer
 func InitAuthz() {
 	var err error
 
-	a, err := xormadapter.NewAdapter(beego.AppConfig.String("driverName"), conf.GetBeegoConfDataSourceName()+beego.AppConfig.String("dbName"), true)
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	a, err := xormadapter.NewAdapterWithTableName(conf.GetConfigString("driverName"), conf.GetBeegoConfDataSourceName()+conf.GetConfigString("dbName"), "casbin_rule", tableNamePrefix, true)
 	if err != nil {
 		panic(err)
 	}
@@ -53,7 +53,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
     (r.urlPath == p.urlPath || p.urlPath == "*") && \
     (r.objOwner == p.objOwner || p.objOwner == "*") && \
     (r.objName == p.objName || p.objName == "*") || \
-    (r.urlPath == "/api/update-user" && r.subOwner == r.objOwner && r.subName == r.objName)
+    (r.subOwner == r.objOwner && r.subName == r.objName)
 `
 
 	m, err := model.NewModelFromString(modelText)
@@ -79,15 +79,18 @@ p, *, *, POST, /api/login, *, *
 p, *, *, GET, /api/get-app-login, *, *
 p, *, *, POST, /api/logout, *, *
 p, *, *, GET, /api/get-account, *, *
+p, *, *, GET, /api/userinfo, *, *
 p, *, *, POST, /api/login/oauth/access_token, *, *
+p, *, *, POST, /api/login/oauth/refresh_token, *, *
+p, *, *, GET, /api/login/oauth/logout, *, *
 p, *, *, GET, /api/get-application, *, *
-p, *, *, GET, /api/get-users, *, *
 p, *, *, GET, /api/get-user, *, *
-p, *, *, GET, /api/get-organizations, *, *
 p, *, *, GET, /api/get-user-application, *, *
-p, *, *, GET, /api/get-default-providers, *, *
 p, *, *, GET, /api/get-resources, *, *
-p, *, *, POST, /api/upload-avatar, *, *
+p, *, *, GET, /api/get-product, *, *
+p, *, *, POST, /api/buy-product, *, *
+p, *, *, GET, /api/get-payment, *, *
+p, *, *, GET, /api/get-providers, *, *
 p, *, *, POST, /api/unlink, *, *
 p, *, *, POST, /api/set-password, *, *
 p, *, *, POST, /api/send-verification-code, *, *
@@ -95,9 +98,11 @@ p, *, *, GET, /api/get-human-check, *, *
 p, *, *, POST, /api/reset-email-or-phone, *, *
 p, *, *, POST, /api/upload-resource, *, *
 p, *, *, GET, /.well-known/openid-configuration, *, *
-p, *, *, *, /api/certs, *, *
+p, *, *, *, /.well-known/jwks, *, *
 p, *, *, GET, /api/get-saml-login, *, *
 p, *, *, POST, /api/acs, *, *
+p, *, *, GET, /api/saml/metadata, *, *
+p, *, *, *, /cas, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

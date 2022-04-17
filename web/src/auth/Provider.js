@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 import React from "react";
 import {Tooltip} from "antd";
 import * as Util from "./Util";
-import {StaticBaseUrl} from "../Setting";
+import * as Setting from "../Setting";
 
 const authInfo = {
   Google: {
@@ -36,13 +36,16 @@ const authInfo = {
     mpScope: "snsapi_userinfo",
     mpEndpoint: "https://open.weixin.qq.com/connect/oauth2/authorize"
   },
+  WeChatMiniProgram: {
+    endpoint: "https://mp.weixin.qq.com/",
+  },
   Facebook: {
     scope: "email,public_profile",
     endpoint: "https://www.facebook.com/dialog/oauth",
   },
   DingTalk: {
-    scope: "snsapi_login",
-    endpoint: "https://oapi.dingtalk.com/connect/oauth2/sns_authorize",
+    scope: "openid",
+    endpoint: "https://login.dingtalk.com/oauth2/auth",
   },
   Weibo: {
     scope: "email",
@@ -60,6 +63,7 @@ const authInfo = {
     scope: "snsapi_userinfo",
     endpoint: "https://open.work.weixin.qq.com/wwopen/sso/3rd_qrConnect",
     silentEndpoint: "https://open.weixin.qq.com/connect/oauth2/authorize",
+    internalEndpoint: "https://open.work.weixin.qq.com/wwopen/sso/qrConnect",
   },
   Lark: {
     // scope: "email",
@@ -68,6 +72,25 @@ const authInfo = {
   GitLab: {
     scope: "read_user+profile",
     endpoint: "https://gitlab.com/oauth/authorize",
+  },
+  Adfs: {
+    scope: "openid",
+    endpoint: "http://example.com",
+  },
+  Baidu: {
+    scope: "basic",
+    endpoint: "http://openapi.baidu.com/oauth/2.0/authorize",
+  },
+  Alipay: {
+    scope: "basic",
+    endpoint: "https://openauth.alipay.com/oauth2/publicAppAuthorize.htm",
+  },
+  Casdoor: {
+    scope: "openid%20profile%20email",
+    endpoint: "http://example.com",
+  },
+  Infoflow: {
+    endpoint: "https://xpc.im.baidu.com/oauth2/authorize",
   },
   Apple: {
     scope: "name%20email",
@@ -81,62 +104,93 @@ const authInfo = {
     scope: "users:read",
     endpoint: "https://slack.com/oauth/authorize",
   },
+  Steam: {
+    endpoint: "https://steamcommunity.com/openid/login",
+  },
+  Custom: {
+    endpoint: "https://example.com/",
+  },
 };
 
 const otherProviderInfo = {
   SMS: {
     "Aliyun SMS": {
-      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      logo: `${Setting.StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://aliyun.com/product/sms",
     },
     "Tencent Cloud SMS": {
-      logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
+      logo: `${Setting.StaticBaseUrl}/img/social_tencent_cloud.jpg`,
       url: "https://cloud.tencent.com/product/sms",
     },
     "Volc Engine SMS": {
-      logo: `${StaticBaseUrl}/img/social_volc_engine.jpg`,
+      logo: `${Setting.StaticBaseUrl}/img/social_volc_engine.jpg`,
       url: "https://www.volcengine.com/products/cloud-sms",
+    },
+    "Huawei Cloud SMS": {
+      logo: `${Setting.StaticBaseUrl}/img/social_huawei.png`,
+      url: "https://www.huaweicloud.com/product/msgsms.html",
     },
   },
   Email: {
     "Default": {
-      logo: `${StaticBaseUrl}/img/social_default.png`,
+      logo: `${Setting.StaticBaseUrl}/img/social_default.png`,
       url: "",
     },
   },
   Storage: {
     "Local File System": {
-      logo: `${StaticBaseUrl}/img/social_file.png`,
+      logo: `${Setting.StaticBaseUrl}/img/social_file.png`,
       url: "",
     },
     "AWS S3": {
-      logo: `${StaticBaseUrl}/img/social_aws.png`,
+      logo: `${Setting.StaticBaseUrl}/img/social_aws.png`,
       url: "https://aws.amazon.com/s3",
     },
     "Aliyun OSS": {
-      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      logo: `${Setting.StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://aliyun.com/product/oss",
     },
     "Tencent Cloud COS": {
-      logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
+      logo: `${Setting.StaticBaseUrl}/img/social_tencent_cloud.jpg`,
       url: "https://cloud.tencent.com/product/cos",
     },
   },
   SAML: {
     "Aliyun IDaaS": {
-      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      logo: `${Setting.StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://aliyun.com/product/idaas"
     },
     "Keycloak": {
-      logo: `${StaticBaseUrl}/img/social_keycloak.png`,
+      logo: `${Setting.StaticBaseUrl}/img/social_keycloak.png`,
       url: "https://www.keycloak.org/"
+    },
+  },
+  Payment: {
+    "Alipay": {
+      logo: `${Setting.StaticBaseUrl}/img/payment_alipay.png`,
+      url: "https://www.alipay.com/"
+    },
+    "WeChat Pay": {
+      logo: `${Setting.StaticBaseUrl}/img/payment_wechat_pay.png`,
+      url: "https://pay.weixin.qq.com/"
+    },
+    "PayPal": {
+      logo: `${Setting.StaticBaseUrl}/img/payment_paypal.png`,
+      url: "https://www.paypal.com/"
+    },
+    "GC": {
+      logo: `${Setting.StaticBaseUrl}/img/payment_gc.png`,
+      url: "https://gc.org"
     },
   },
 };
 
 export function getProviderLogo(provider) {
   if (provider.category === "OAuth") {
-    return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
+    if (provider.type === "Custom") {
+      return provider.customLogo;  
+    }
+    return `${Setting.StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
   } else {
     return otherProviderInfo[provider.category][provider.type].logo;
   }
@@ -188,7 +242,7 @@ export function getAuthUrl(application, provider, method) {
     return "";
   }
 
-  const endpoint = authInfo[provider.type].endpoint;
+  let endpoint = authInfo[provider.type].endpoint;
   const redirectUri = `${window.location.origin}/callback`;
   const scope = authInfo[provider.type].scope;
   const state = Util.getQueryParamsToState(application.name, provider.name, method);
@@ -208,7 +262,7 @@ export function getAuthUrl(application, provider, method) {
   } else if (provider.type === "Facebook") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "DingTalk") {
-    return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}&prompt=consent`;
   } else if (provider.type === "Weibo") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "Gitee") {
@@ -216,22 +270,51 @@ export function getAuthUrl(application, provider, method) {
   } else if (provider.type === "LinkedIn") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "WeCom") {
-    if (provider.method === "Silent") {
-      return `${authInfo[provider.type].silentEndpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code#wechat_redirect`;
-    } else if (provider.method === "Normal") {
-      return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&usertype=member`;
+    if (provider.subType === "Internal") {
+      if (provider.method === "Silent") {
+        endpoint = authInfo[provider.type].silentEndpoint;
+        return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code#wechat_redirect`;
+      } else if (provider.method === "Normal") {
+        endpoint = authInfo[provider.type].internalEndpoint;
+        return `${endpoint}?appid=${provider.clientId}&agentid=${provider.appId}&redirect_uri=${redirectUri}&state=${state}&usertype=member`;
+      } else {
+        return `https://error:not-supported-provider-method:${provider.method}`;
+      }
+    } else if (provider.subType === "Third-party") {
+      if (provider.method === "Silent") {
+        endpoint = authInfo[provider.type].silentEndpoint;
+        return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code#wechat_redirect`;
+      } else if (provider.method === "Normal") {
+        return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&usertype=member`;
+      } else {
+        return `https://error:not-supported-provider-method:${provider.method}`;
+      }
     } else {
-      return `https://error:not-supported-provider-method:${provider.method}`;
+      return `https://error:not-supported-provider-sub-type:${provider.subType}`;
     }
   } else if (provider.type === "Lark") {
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`;
   } else if (provider.type === "GitLab") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
+  } else if (provider.type === "Adfs") {
+    return `${provider.domain}/adfs/oauth2/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&nonce=casdoor&scope=openid`;
+  } else if (provider.type === "Baidu") {
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&display=popup`;
+  } else if (provider.type === "Alipay") {
+    return `${endpoint}?app_id=${provider.clientId}&scope=auth_user&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&display=popup`;
+  } else if (provider.type === "Casdoor") {
+    return `${provider.domain}/login/oauth/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
+  } else if (provider.type === "Infoflow"){
+    return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}?state=${state}`
   } else if (provider.type === "Apple") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&response_mode=form_post`;
   } else if (provider.type === "AzureAD") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&resource=https://graph.windows.net/`;
   } else if (provider.type === "Slack") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
+  } else if (provider.type === "Steam") {
+    return `${endpoint}?openid.claimed_id=http://specs.openid.net/auth/2.0/identifier_select&openid.identity=http://specs.openid.net/auth/2.0/identifier_select&openid.mode=checkid_setup&openid.ns=http://specs.openid.net/auth/2.0&openid.realm=${window.location.origin}&openid.return_to=${redirectUri}?state=${state}`;
+  } else if (provider.type === "Custom") {
+    return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.customScope}&response_type=code&state=${state}`;
   } 
 }

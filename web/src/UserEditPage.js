@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
+import {Button, Card, Col, Input, Result, Row, Select, Spin, Switch} from 'antd';
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -25,11 +25,11 @@ import PasswordModal from "./PasswordModal";
 import ResetModal from "./ResetModal";
 import AffiliationSelect from "./common/AffiliationSelect";
 import OAuthWidget from "./common/OAuthWidget";
+import SamlWidget from "./common/SamlWidget";
 import SelectRegionBox from "./SelectRegionBox";
 
 import {Controlled as CodeMirror} from 'react-codemirror2';
 import "codemirror/lib/codemirror.css";
-import SamlWidget from "./common/SamlWidget";
 require('codemirror/theme/material-darker.css');
 require("codemirror/mode/javascript/javascript");
 
@@ -45,20 +45,29 @@ class UserEditPage extends React.Component {
       user: null,
       application: null,
       organizations: [],
+      applications: [],
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      loading: true,
     };
   }
 
   UNSAFE_componentWillMount() {
     this.getUser();
     this.getOrganizations();
+    this.getApplicationsByOrganization(this.state.organizationName);
     this.getUserApplication();
   }
 
   getUser() {
     UserBackend.getUser(this.state.organizationName, this.state.userName)
-      .then((user) => {
+      .then((data) => {
+        if (data.status === null || data.status !== "error") {
+          this.setState({
+            user: data,
+          });
+        }
         this.setState({
-          user: user,
+          loading: false,
         });
       });
   }
@@ -68,6 +77,15 @@ class UserEditPage extends React.Component {
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
+        });
+      });
+  }
+
+  getApplicationsByOrganization(organizationName) {
+    ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
+      .then((res) => {
+        this.setState({
+          applications: (res.msg === undefined) ? res : [],
         });
       });
   }
@@ -110,9 +128,10 @@ class UserEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
+          {this.state.mode === "add" ? i18next.t("user:New User") : i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
@@ -140,7 +159,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.name} disabled={true} onChange={e => {
+            <Input value={this.state.user.name} disabled={!Setting.isAdminUser(this.props.account)} onChange={e => {
               this.updateUserField('name', e.target.value);
             }} />
           </Col>
@@ -203,7 +222,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <PasswordModal user={this.state.user} account={this.props.account} />
+            <PasswordModal user={this.state.user} account={this.props.account} disabled={this.state.userName !== this.state.user.name} />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
@@ -211,7 +230,11 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: '20px'}} span={11} >
-            <Input value={this.state.user.email} disabled />
+            <Input value={this.state.user.email}
+                   disabled={this.state.user.id === this.props.account?.id ? true : !Setting.isAdminUser(this.props.account)}
+                   onChange={e => {
+                      this.updateUserField('email', e.target.value);
+                    }} />
           </Col>
           <Col span={11} >
             { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />) : null}
@@ -222,7 +245,11 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: '20px'}} span={11} >
-            <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`} disabled />
+            <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+                   disabled={this.state.user.id === this.props.account?.id ? true : !Setting.isAdminUser(this.props.account)}
+                   onChange={e => {
+                      this.updateUserField('phone', e.target.value);
+                   }}/>
           </Col>
           <Col span={11} >
             { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
@@ -288,9 +315,36 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:Tag"), i18next.t("user:Tag - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.tag} onChange={e => {
-              this.updateUserField('tag', e.target.value);
-            }} />
+            {
+              this.state.application?.organizationObj.tags?.length > 0 ? (
+                <Select virtual={false} style={{width: '100%'}} value={this.state.user.tag} onChange={(value => {this.updateUserField('tag', value);})}>
+                  {
+                    this.state.application.organizationObj.tags?.map((tag, index) => {
+                      const tokens = tag.split("|");
+                      const value = tokens[0];
+                      const displayValue = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1];
+                      return <Option key={index} value={value}>{displayValue}</Option>
+                    })
+                  }
+                </Select>
+              ) : (
+                <Input value={this.state.user.tag} onChange={e => {
+                  this.updateUserField('tag', e.target.value);
+                }} />
+              )
+            }
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Signup application"), i18next.t("general:Signup application - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: '100%'}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.user.signupApplication} onChange={(value => {this.updateUserField('signupApplication', value);})}>
+              {
+                this.state.applications.map((application, index) => <Option key={index} value={application.name}>{application.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         {
@@ -375,6 +429,8 @@ class UserEditPage extends React.Component {
           )
         }
       </Card>
+
+
     )
   }
 
@@ -407,16 +463,38 @@ class UserEditPage extends React.Component {
       });
   }
 
+  deleteUser() {
+    UserBackend.deleteUser(this.state.user)
+      .then(() => {
+        this.props.history.push(`/users`);
+      })
+      .catch(error => {
+        Setting.showMessage("error", `User failed to delete: ${error}`);
+      });
+  }
+
   render() {
     return (
       <div>
       {
-        this.state.user !== null ? this.renderUser() : null
+        this.state.loading ? <Spin loading={this.state.loading} size="large" /> : (
+          this.state.user !== null ? this.renderUser() :
+            <Result
+              status="404"
+              title="404 NOT FOUND"
+              subTitle={i18next.t("general:Sorry, the user you visited does not exist or you are not authorized to access this user.")}
+              extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
+            />
+        )
       }
-      <div style={{marginTop: '20px', marginLeft: '40px'}}>
-        <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
-        <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-      </div>
+      {
+        this.state.user === null ? null :
+        <div style={{marginTop: '20px', marginLeft: '40px'}}>
+          <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
+        </div>
+      }
     </div>
     );
   }

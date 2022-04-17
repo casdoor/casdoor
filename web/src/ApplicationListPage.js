@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,10 +31,10 @@ class ApplicationListPage extends BaseListPage {
       name: `application_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Application - ${randomName}`,
-      logo: "https://cdn.casbin.com/logo/logo_1024x256.png",
+      logo: "https://cdn.casdoor.com/logo/casdoor-logo_1185x256.png",
       enablePassword: true,
       enableSignUp: true,
-      enableSigninSession: true,
+      enableSigninSession: false,
       enableCodeSignin: false,
       providers: [],
       signupItems: [
@@ -47,6 +47,7 @@ class ApplicationListPage extends BaseListPage {
         {name: "Phone", visible: true, required: true, rule: "None"},
         {name: "Agreement", visible: true, required: true, rule: "None"},
       ],
+      cert: "cert-built-in",
       redirectUris: ["http://localhost:9000/callback"],
       tokenFormat: "JWT",
       expireInHours: 24 * 7,
@@ -57,8 +58,7 @@ class ApplicationListPage extends BaseListPage {
     const newApplication = this.newApplication();
     ApplicationBackend.addApplication(newApplication)
       .then((res) => {
-          Setting.showMessage("success", `Application added successfully`);
-          this.props.history.push(`/applications/${newApplication.name}`);
+          this.props.history.push({pathname: `/applications/${newApplication.name}`, mode: "add"});
         }
       )
       .catch(error => {

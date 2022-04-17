@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,35 +21,36 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/casbin/casdoor/util"
-	"github.com/markbates/goth"
-	"github.com/markbates/goth/providers/amazon"
-	"github.com/markbates/goth/providers/apple"
-	"github.com/markbates/goth/providers/azuread"
-	"github.com/markbates/goth/providers/bitbucket"
-	"github.com/markbates/goth/providers/digitalocean"
-	"github.com/markbates/goth/providers/discord"
-	"github.com/markbates/goth/providers/dropbox"
-	"github.com/markbates/goth/providers/facebook"
-	"github.com/markbates/goth/providers/gitea"
-	"github.com/markbates/goth/providers/github"
-	"github.com/markbates/goth/providers/gitlab"
-	"github.com/markbates/goth/providers/google"
-	"github.com/markbates/goth/providers/heroku"
-	"github.com/markbates/goth/providers/instagram"
-	"github.com/markbates/goth/providers/kakao"
-	"github.com/markbates/goth/providers/line"
-	"github.com/markbates/goth/providers/linkedin"
-	"github.com/markbates/goth/providers/microsoftonline"
-	"github.com/markbates/goth/providers/paypal"
-	"github.com/markbates/goth/providers/salesforce"
-	"github.com/markbates/goth/providers/shopify"
-	"github.com/markbates/goth/providers/slack"
-	"github.com/markbates/goth/providers/tumblr"
-	"github.com/markbates/goth/providers/twitter"
-	"github.com/markbates/goth/providers/yahoo"
-	"github.com/markbates/goth/providers/yandex"
-	"github.com/markbates/goth/providers/zoom"
+	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/goth"
+	"github.com/casdoor/goth/providers/amazon"
+	"github.com/casdoor/goth/providers/apple"
+	"github.com/casdoor/goth/providers/azuread"
+	"github.com/casdoor/goth/providers/bitbucket"
+	"github.com/casdoor/goth/providers/digitalocean"
+	"github.com/casdoor/goth/providers/discord"
+	"github.com/casdoor/goth/providers/dropbox"
+	"github.com/casdoor/goth/providers/facebook"
+	"github.com/casdoor/goth/providers/gitea"
+	"github.com/casdoor/goth/providers/github"
+	"github.com/casdoor/goth/providers/gitlab"
+	"github.com/casdoor/goth/providers/google"
+	"github.com/casdoor/goth/providers/heroku"
+	"github.com/casdoor/goth/providers/instagram"
+	"github.com/casdoor/goth/providers/kakao"
+	"github.com/casdoor/goth/providers/line"
+	"github.com/casdoor/goth/providers/linkedin"
+	"github.com/casdoor/goth/providers/microsoftonline"
+	"github.com/casdoor/goth/providers/paypal"
+	"github.com/casdoor/goth/providers/salesforce"
+	"github.com/casdoor/goth/providers/shopify"
+	"github.com/casdoor/goth/providers/slack"
+	"github.com/casdoor/goth/providers/steam"
+	"github.com/casdoor/goth/providers/tumblr"
+	"github.com/casdoor/goth/providers/twitter"
+	"github.com/casdoor/goth/providers/yahoo"
+	"github.com/casdoor/goth/providers/yandex"
+	"github.com/casdoor/goth/providers/zoom"
 	"golang.org/x/oauth2"
 )
 
@@ -171,6 +172,11 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 			Provider: slack.New(clientId, clientSecret, redirectUrl),
 			Session:  &slack.Session{},
 		}
+	case "Steam":
+		idp = GothIdProvider{
+			Provider: steam.New(clientSecret, redirectUrl),
+			Session:  &steam.Session{},
+		}
 	case "Tumblr":
 		idp = GothIdProvider{
 			Provider: tumblr.New(clientId, clientSecret, redirectUrl),
@@ -209,11 +215,26 @@ func (idp *GothIdProvider) SetHttpClient(client *http.Client) {
 
 func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	var expireAt time.Time
-	//Need to construct variables supported by goth
-	//to call the function to obtain accessToken
-	value := url.Values{}
-	value.Add("code", code)
+	var value url.Values
+	var err error
+	if idp.Provider.Name() == "steam" {
+		value, err = url.ParseQuery(code)
+		returnUrl := reflect.ValueOf(idp.Session).Elem().FieldByName("CallbackURL")
+		returnUrl.Set(reflect.ValueOf(value.Get("openid.return_to")))
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		//Need to construct variables supported by goth
+		//to call the function to obtain accessToken
+		value = url.Values{}
+		value.Add("code", code)
+	}
 	accessToken, err := idp.Session.Authorize(idp.Provider, value)
+	if err != nil {
+		return nil, err
+	}
+
 	//Get ExpiresAt's value
 	valueOfExpire := reflect.ValueOf(idp.Session).Elem().FieldByName("ExpiresAt")
 	if valueOfExpire.IsValid() {
@@ -223,7 +244,8 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		AccessToken: accessToken,
 		Expiry:      expireAt,
 	}
-	return &token, err
+
+	return &token, nil
 }
 
 func (idp *GothIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
@@ -231,10 +253,10 @@ func (idp *GothIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	return getUser(gothUser), nil
+	return getUser(gothUser, idp.Provider.Name()), nil
 }
 
-func getUser(gothUser goth.User) *UserInfo {
+func getUser(gothUser goth.User, provider string) *UserInfo {
 	user := UserInfo{
 		Id:          gothUser.UserID,
 		Username:    gothUser.Name,
@@ -258,7 +280,10 @@ func getUser(gothUser goth.User) *UserInfo {
 			user.DisplayName = user.Username
 		}
 	}
-
+	if provider == "steam" {
+		user.Username = user.DisplayName
+		user.Email = ""
+	}
 	return &user
 }
 

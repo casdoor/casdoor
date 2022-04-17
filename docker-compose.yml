@@ -1,6 +1,7 @@
 version: '3.1'
 services:
   casdoor:
+    restart: always
     build:
       context: ./
       dockerfile: Dockerfile
@@ -10,11 +11,14 @@ services:
       - db
     environment:
       RUNNING_IN_DOCKER: "true"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./conf:/conf/
   db:
     restart: always
     image: mysql:8.0.25
+    platform: linux/amd64
     ports:
       - "3306:3306"
     environment:

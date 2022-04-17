@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -65,7 +65,12 @@ class ResultPage extends React.Component {
           subTitle={i18next.t("signup:Please click the below button to sign in")}
           extra={[
             <Button type="primary" key="login" onClick={() => {
-              Setting.goToLogin(this, application);
+              let linkInStorage = sessionStorage.getItem("loginURL")
+              if (linkInStorage !== null && linkInStorage !== "") {
+                  Setting.goToLink(linkInStorage)
+              } else {
+                  Setting.goToLogin(this, application)
+              }
             }}>
               {i18next.t("login:Sign In")}
             </Button>

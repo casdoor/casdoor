@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package object
 import (
 	"fmt"
 
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
 
@@ -48,6 +48,7 @@ type Syncer struct {
 	TableColumns     []*TableColumn `xorm:"mediumtext" json:"tableColumns"`
 	AffiliationTable string         `xorm:"varchar(100)" json:"affiliationTable"`
 	AvatarBaseUrl    string         `xorm:"varchar(100)" json:"avatarBaseUrl"`
+	ErrorText        string         `xorm:"mediumtext" json:"errorText"`
 	SyncInterval     int            `json:"syncInterval"`
 	IsEnabled        bool           `json:"isEnabled"`
 
@@ -55,10 +56,7 @@ type Syncer struct {
 }
 
 func GetSyncerCount(owner, field, value string) int {
-	session := adapter.Engine.Where("owner=?", owner)
-	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-	}
+	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Syncer{})
 	if err != nil {
 		panic(err)
@@ -140,6 +138,26 @@ func UpdateSyncer(id string, syncer *Syncer) bool {
 		panic(err)
 	}
 
+	if affected == 1 {
+		addSyncerJob(syncer)
+	}
+
+	return affected != 0
+}
+
+func updateSyncerErrorText(syncer *Syncer, line string) bool {
+	s := getSyncer(syncer.Owner, syncer.Name)
+	if s == nil {
+		return false
+	}
+
+	s.ErrorText = s.ErrorText + line
+
+	affected, err := adapter.Engine.ID(core.PK{s.Owner, s.Name}).Cols("error_text").Update(s)
+	if err != nil {
+		panic(err)
+	}
+
 	return affected != 0
 }
 
@@ -149,6 +167,10 @@ func AddSyncer(syncer *Syncer) bool {
 		panic(err)
 	}
 
+	if affected == 1 {
+		addSyncerJob(syncer)
+	}
+
 	return affected != 0
 }
 
@@ -156,6 +178,10 @@ func DeleteSyncer(syncer *Syncer) bool {
 	affected, err := adapter.Engine.ID(core.PK{syncer.Owner, syncer.Name}).Delete(&Syncer{})
 	if err != nil {
 		panic(err)
+	}
+
+	if affected == 1 {
+		deleteSyncerJob(syncer)
 	}
 
 	return affected != 0

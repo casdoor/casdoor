@@ -1,5 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
-//
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -12,6 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !skipCi
+// +build !skipCi
+
 package object
 
 import (
@@ -21,11 +23,10 @@ import (
 
 func TestGetUsers(t *testing.T) {
 	InitConfig()
-
 	syncers := GetSyncers("admin")
 	syncer := syncers[0]
 	syncer.initAdapter()
-	users := syncer.getOriginalUsers()
+	users, _ := syncer.getOriginalUsers()
 	for _, user := range users {
 		fmt.Printf("%v\n", user)
 	}

@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ export const PasswordModal = (props) => {
 
   return (
     <Row>
-      <Button type="default" onClick={showModal}>
+      <Button type="default" disabled={props.disabled} onClick={showModal}>
         { hasOldPassword ? i18next.t("user:Modify password...") : i18next.t("user:Set password...")}
       </Button>
       <Modal

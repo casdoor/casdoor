@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego/context"
-	"github.com/casbin/casdoor/object"
-	"github.com/casbin/casdoor/util"
+	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 type Response struct {
@@ -91,6 +91,18 @@ func setSessionUser(ctx *context.Context, user string) {
 func setSessionExpire(ctx *context.Context, ExpireTime int64) {
 	SessionData := struct{ ExpireTime int64 }{ExpireTime: ExpireTime}
 	err := ctx.Input.CruSession.Set("SessionData", util.StructToJson(SessionData))
+	if err != nil {
+		panic(err)
+	}
+	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
+}
+
+func setSessionOidc(ctx *context.Context, scope string, aud string) {
+	err := ctx.Input.CruSession.Set("scope", scope)
+	if err != nil {
+		panic(err)
+	}
+	err = ctx.Input.CruSession.Set("aud", aud)
 	if err != nil {
 		panic(err)
 	}

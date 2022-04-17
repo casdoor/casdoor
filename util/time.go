@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,4 +27,10 @@ func GetCurrentTime() string {
 
 func GetCurrentUnixTime() string {
 	return strconv.FormatInt(time.Now().UnixNano(), 10)
+}
+
+func IsTokenExpired(createdTime string, expiresIn int) bool {
+	createdTimeObj, _ := time.Parse(time.RFC3339, createdTime)
+	expiresAtObj := createdTimeObj.Add(time.Duration(expiresIn) * time.Minute)
+	return time.Now().After(expiresAtObj)
 }

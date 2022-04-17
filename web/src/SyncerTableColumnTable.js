@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -98,9 +98,9 @@ class SyncerTableColumnTable extends React.Component {
           return (
             <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {this.updateField(table, index, 'casdoorName', value);})}>
               {
-                ['Name', 'CreatedTime', 'UpdatedTime', 'Id', 'Type', 'Password', 'PasswordSalt', 'DisplayName', 'Avatar', 'PermanentAvatar', 'Email', 'Phone',
-                  'Location', 'Address', 'Affiliation', 'Title', 'IdCardType', 'IdCard', 'Homepage', 'Bio', 'Tag', 'Region', 'Language', 'Gender', 'Birthday',
-                  'Education', 'Score', 'Ranking', 'IsDefaultAvatar', 'IsOnline', 'IsAdmin', 'IsGlobalAdmin', 'IsForbidden', 'IsDeleted', 'CreatedIp']
+                ['Name', 'CreatedTime', 'UpdatedTime', 'Id', 'Type', 'Password', 'PasswordSalt', 'DisplayName', 'FirstName', 'LastName', 'Avatar', 'PermanentAvatar',
+                  'Email', 'EmailVerified', 'Phone', 'Location', 'Address', 'Affiliation', 'Title', 'IdCardType', 'IdCard', 'Homepage', 'Bio', 'Tag', 'Region',
+                  'Language', 'Gender', 'Birthday', 'Education', 'Score', 'Ranking', 'IsDefaultAvatar', 'IsOnline', 'IsAdmin', 'IsGlobalAdmin', 'IsForbidden', 'IsDeleted', 'CreatedIp']
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
