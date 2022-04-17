@@ -32,8 +32,8 @@ func getMd5HexDigest(s string) string {
 	return res
 }
 
-func NewMd5UserSaltCredManager() *Sha256SaltCredManager {
-	cm := &Sha256SaltCredManager{}
+func NewMd5UserSaltCredManager() *Md5UserSaltCredManager {
+	cm := &Md5UserSaltCredManager{}
 	return cm
 }
 
