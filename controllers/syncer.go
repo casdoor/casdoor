@@ -16,8 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"time"
-
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -127,7 +125,6 @@ func (c *ApiController) RunSyncer() {
 	syncer := object.GetSyncer(id)
 
 	object.RunSyncer(syncer)
-	time.Sleep(5 * time.Second)
 
 	c.ResponseOk()
 }
