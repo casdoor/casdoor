@@ -54,3 +54,10 @@ export function deleteSyncer(syncer) {
     body: JSON.stringify(newSyncer),
   }).then(res => res.json());
 }
+
+export function runSyncer(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/run-syncer?id=${owner}/${encodeURIComponent(name)}`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then(res => res.json());
+}

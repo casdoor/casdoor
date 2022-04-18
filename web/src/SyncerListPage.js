@@ -73,6 +73,20 @@ class SyncerListPage extends BaseListPage {
       });
   }
 
+  runSyncer(i) {
+    this.setState({loading: true});
+    SyncerBackend.runSyncer("admin", this.state.data[i].name)
+      .then((res) => {
+          this.setState({loading: false});
+          Setting.showMessage("success", `Syncer sync users successfully`);
+        }
+      )
+      .catch(error => {
+        this.setState({loading: false});
+        Setting.showMessage("error", `Syncer failed to sync users: ${error}`);
+      });
+  }
+
   renderTable(syncers) {
     const columns = [
       {
@@ -205,12 +219,13 @@ class SyncerListPage extends BaseListPage {
         title: i18next.t("general:Action"),
         dataIndex: '',
         key: 'op',
-        width: '170px',
+        width: '240px',
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/syncers/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.runSyncer(index)}>{i18next.t("general:Sync")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} onClick={() => this.props.history.push(`/syncers/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete syncer: ${record.name} ?`}
                 onConfirm={() => this.deleteSyncer(index)}

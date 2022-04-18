@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -113,4 +112,19 @@ func (c *ApiController) DeleteSyncer() {
 
 	c.Data["json"] = wrapActionResponse(object.DeleteSyncer(&syncer))
 	c.ServeJSON()
+}
+
+// @Title RunSyncer
+// @Tag Syncer API
+// @Description run syncer
+// @Param   body    body   object.Syncer  true        "The details of the syncer"
+// @Success 200 {object} controllers.Response The Response object
+// @router /run-syncer [get]
+func (c *ApiController) RunSyncer() {
+	id := c.Input().Get("id")
+	syncer := object.GetSyncer(id)
+
+	object.RunSyncer(syncer)
+
+	c.ResponseOk()
 }

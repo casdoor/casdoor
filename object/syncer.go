@@ -206,3 +206,8 @@ func (syncer *Syncer) getTable() string {
 		return syncer.Table
 	}
 }
+
+func RunSyncer(syncer *Syncer) {
+	syncer.initAdapter()
+	syncer.syncUsers()
+}
