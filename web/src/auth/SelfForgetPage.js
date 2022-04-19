@@ -20,15 +20,12 @@ import * as Setting from "../Setting";
 class SelfForgetPage extends React.Component {
   render() {
     return (
-        <div>
-          <ForgetPage
-              type={"forgotPassword"}
-              applicationName={authConfig.appName}
-              account={this.props.account}
-              {...this.props}
-          />
-        </div>
-
+        <ForgetPage
+            type={"forgotPassword"}
+            applicationName={authConfig.appName}
+            account={this.props.account}
+            {...this.props}
+        />
     );
   }
 }

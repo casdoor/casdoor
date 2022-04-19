@@ -20,10 +20,7 @@ import * as Setting from "../Setting";
 class SelfLoginPage extends React.Component {
   render() {
     return (
-        <div>
-          <LoginPage type={"login"} mode={"signin"} applicationName={authConfig.appName} account={this.props.account} {...this.props} />
-        </div>
-
+        <LoginPage type={"login"} mode={"signin"} applicationName={authConfig.appName} account={this.props.account} {...this.props} />
     )
   }
 }
