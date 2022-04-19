@@ -19,3 +19,6 @@ export const ForceLanguage = "";
 export const DefaultLanguage = "en";
 
 export const EnableExtraPages = true;
+
+export const ShowFooter = true;
+export const FooterText = "Powered by Casdoor";
