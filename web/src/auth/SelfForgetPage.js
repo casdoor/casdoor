@@ -15,17 +15,16 @@
 import React from "react";
 import { authConfig } from "./Auth";
 import ForgetPage from "./ForgetPage";
-import * as Setting from "../Setting";
 
 class SelfForgetPage extends React.Component {
   render() {
     return (
-        <ForgetPage
-            type={"forgotPassword"}
-            applicationName={authConfig.appName}
-            account={this.props.account}
-            {...this.props}
-        />
+      <ForgetPage
+        type={"forgotPassword"}
+        applicationName={authConfig.appName}
+        account={this.props.account}
+        {...this.props}
+      />
     );
   }
 }
