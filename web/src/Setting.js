@@ -42,7 +42,7 @@ export function getCountryRegionData() {
   countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
   var data = countries.getNames(language, {select: "official"});
   var result = []
-  for (var i in data) 
+  for (var i in data)
     result.push({code:i, name:data[i]})
   return result
 }
@@ -559,6 +559,18 @@ export function renderHelmet(application) {
       <title>{application.organizationObj.displayName}</title>
       <link rel="icon" href={application.organizationObj.favicon} />
     </Helmet>
+  )
+}
+
+export function renderFooter() {
+  if (Conf.ShowFooter === false) {
+    return null;
+  }
+
+  return (
+    <div className="footer" style={{ display: 'flex',justifyContent: 'center',fontWeight: 'bold',fontSize:'16px'}}>
+          <span>{Conf.FooterText}</span>
+    </div>
   )
 }
 

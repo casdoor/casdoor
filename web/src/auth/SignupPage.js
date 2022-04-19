@@ -605,6 +605,7 @@ class SignupPage extends React.Component {
         {
           this.renderModal()
         }
+        <div style={{paddingTop:'calc(20px)', textAlign: "center"}}>{Setting.renderFooter()}</div>
       </div>
     )
   }

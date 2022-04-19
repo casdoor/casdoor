@@ -15,11 +15,16 @@
 import React from 'react';
 import LoginPage from "./LoginPage";
 import {authConfig} from "./Auth";
+import * as Setting from "../Setting";
 
 class SelfLoginPage extends React.Component {
   render() {
     return (
-      <LoginPage type={"login"} mode={"signin"} applicationName={authConfig.appName} account={this.props.account} {...this.props} />
+        <div>
+          <LoginPage type={"login"} mode={"signin"} applicationName={authConfig.appName} account={this.props.account} {...this.props} />
+          <div style={{paddingTop:'10%', textAlign: "center"}}>{Setting.renderFooter()}</div>
+        </div>
+
     )
   }
 }
