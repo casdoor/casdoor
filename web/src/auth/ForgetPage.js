@@ -538,6 +538,7 @@ class ForgetPage extends React.Component {
             {this.renderForm(application)}
           </div>
         </Col>
+        <div style={{paddingTop:'18%', margin:'auto'}}>{Setting.renderFooter()}</div>
       </Row>
     );
   }

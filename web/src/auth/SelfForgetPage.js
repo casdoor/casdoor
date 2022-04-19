@@ -27,7 +27,6 @@ class SelfForgetPage extends React.Component {
               account={this.props.account}
               {...this.props}
           />
-          <div style={{paddingTop:'18%', textAlign: "center"}}>{Setting.renderFooter()}</div>
         </div>
 
     );

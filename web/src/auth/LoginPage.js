@@ -176,12 +176,12 @@ class LoginPage extends React.Component {
       if (oAuthParams !== null){
         values["samlRequest"] = oAuthParams.samlRequest;
       }
-      
-  
+
+
       if (values["samlRequest"] != null && values["samlRequest"] !== "") {
           values["type"] = "saml";
       }
-  
+
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
           if (res.status === 'ok') {
@@ -315,7 +315,7 @@ class LoginPage extends React.Component {
           </a>
         )
       }
-      
+
     } else {
       return (
         <div key={provider.displayName} style={{marginBottom: "10px"}}>
@@ -655,6 +655,7 @@ class LoginPage extends React.Component {
             }
           </div>
         </Col>
+        <div style={{paddingTop:'10%', margin:'auto'}}>{Setting.renderFooter()}</div>
       </Row>
     )
   }

@@ -22,7 +22,6 @@ class SelfLoginPage extends React.Component {
     return (
         <div>
           <LoginPage type={"login"} mode={"signin"} applicationName={authConfig.appName} account={this.props.account} {...this.props} />
-          <div style={{paddingTop:'10%', textAlign: "center"}}>{Setting.renderFooter()}</div>
         </div>
 
     )
