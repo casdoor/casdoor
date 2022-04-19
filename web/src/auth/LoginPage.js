@@ -21,6 +21,7 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Provider from "./Provider";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
+import * as Conf from "../Conf";
 import SelfLoginButton from "./SelfLoginButton";
 import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
 import FacebookLoginButton from "./FacebookLoginButton";
@@ -655,7 +656,7 @@ class LoginPage extends React.Component {
             }
           </div>
         </Col>
-        <div style={{paddingTop:'10%', margin:'auto'}}>{Setting.renderFooter()}</div>
+        {Conf.ShowFooter ? <div style={{paddingTop:'7%', margin:'auto'}}>{Setting.renderFooter()}</div> : ""}
       </Row>
     )
   }

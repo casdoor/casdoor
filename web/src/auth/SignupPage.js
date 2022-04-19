@@ -24,6 +24,7 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import {CountDownInput} from "../common/CountDownInput";
 import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
+import * as Conf from "../Conf";
 
 const formItemLayout = {
   labelCol: {
@@ -605,7 +606,7 @@ class SignupPage extends React.Component {
         {
           this.renderModal()
         }
-        <div style={{paddingTop:'calc(20px)', textAlign: "center"}}>{Setting.renderFooter()}</div>
+        {Conf.ShowFooter ? <div style={{paddingTop:'20px', margin:'auto'}}>{Setting.renderFooter()}</div> : ""}
       </div>
     )
   }

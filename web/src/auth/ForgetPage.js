@@ -23,6 +23,7 @@ import {CountDownInput} from "../common/CountDownInput";
 import * as UserBackend from "../backend/UserBackend";
 import {CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../CustomGithubCorner";
+import * as Conf from "../Conf";
 
 const { Step } = Steps;
 const { Option } = Select;
@@ -538,7 +539,7 @@ class ForgetPage extends React.Component {
             {this.renderForm(application)}
           </div>
         </Col>
-        <div style={{paddingTop:'18%', margin:'auto'}}>{Setting.renderFooter()}</div>
+        {Conf.ShowFooter ? <div style={{paddingTop:'16%', margin:'auto'}}>{Setting.renderFooter()}</div> : ""}
       </Row>
     );
   }
