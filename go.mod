@@ -44,5 +44,5 @@ require (
 	gopkg.in/square/go-jose.v2 v2.6.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	xorm.io/core v0.7.2
-	xorm.io/xorm v1.0.3
+	xorm.io/xorm v1.0.4
 )
