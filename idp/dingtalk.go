@@ -130,7 +130,7 @@ type DingTalkUserResponse struct {
 
 // GetUserInfo Use  access_token to get UserInfo
 // get more detail via: https://open.dingtalk.com/document/orgapp-server/dingtalk-retrieve-user-information
-func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	dtUserInfo := &DingTalkUserResponse{}
 	accessToken := token.AccessToken
 

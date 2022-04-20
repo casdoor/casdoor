@@ -87,7 +87,7 @@ type GoogleUserInfo struct {
 	Locale        string `json:"locale"`
 }
 
-func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	url := fmt.Sprintf("https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=%s", token.AccessToken)
 	resp, err := idp.Client.Get(url)
 	if err != nil {

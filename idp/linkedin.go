@@ -272,7 +272,7 @@ type LinkedInUserEmail struct {
 
 // GetUserInfo use LinkedInAccessToken gotten before return LinkedInUserInfo
 // get more detail via: https://docs.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin?context=linkedin/consumer/context
-func (idp *LinkedInIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *LinkedInIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	var linkedInUserInfo LinkedInUserInfo
 	bs, err := idp.GetUrlRespWithAuthorization("https://api.linkedIn.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))", token.AccessToken)
 	if err != nil {

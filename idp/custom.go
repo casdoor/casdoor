@@ -69,7 +69,7 @@ type CustomUserInfo struct {
 	Msg         string `json:"msg"`
 }
 
-func (idp *CustomIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *CustomIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	ctUserinfo := &CustomUserInfo{}
 	accessToken := token.AccessToken
 	request, err := http.NewRequest("GET", idp.UserInfoUrl, nil)

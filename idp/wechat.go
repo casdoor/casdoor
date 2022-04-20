@@ -151,7 +151,7 @@ type WechatUserInfo struct {
 
 // GetUserInfo use WechatAccessToken gotten before return WechatUserInfo
 // get more detail via: https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Authorized_Interface_Calling_UnionID.html
-func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	var wechatUserInfo WechatUserInfo
 	accessToken := token.AccessToken
 	openid := token.Extra("Openid")

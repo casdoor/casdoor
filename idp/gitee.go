@@ -180,7 +180,7 @@ type GiteeUserResponse struct {
 
 // GetUserInfo Use userid and access_token to get UserInfo
 // get more detail via: https://gitee.com/api/v5/swagger#/getV5User
-func (idp *GiteeIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *GiteeIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	var gtUserInfo GiteeUserResponse
 	accessToken := token.AccessToken
 

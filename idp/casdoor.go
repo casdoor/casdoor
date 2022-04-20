@@ -118,7 +118,7 @@ type CasdoorUserInfo struct {
 	Msg         string `json:"msg"`
 }
 
-func (idp *CasdoorIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *CasdoorIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	cdUserinfo := &CasdoorUserInfo{}
 	accessToken := token.AccessToken
 	request, err := http.NewRequest("GET", fmt.Sprintf("%s/api/userinfo", idp.Host), nil)

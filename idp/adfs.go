@@ -111,7 +111,7 @@ func (idp *AdfsIdProvider) GetToken(code string) (*oauth2.Token, error) {
 
 // Since the userinfo endpoint of ADFS only returns sub,
 // the id_token is used to resolve the userinfo
-func (idp *AdfsIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *AdfsIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	resp, err := idp.Client.Get(fmt.Sprintf("%s/adfs/discovery/keys", idp.Host))
 	if err != nil {
 		return nil, err

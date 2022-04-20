@@ -135,7 +135,7 @@ type InfoflowUserInfo struct {
 }
 
 // get more detail via: https://qy.baidu.com/doc/index.html#/third_serverapi/contacts?id=%e8%8e%b7%e5%8f%96%e6%88%90%e5%91%98
-func (idp *InfoflowIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *InfoflowIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	//Get userid first
 	accessToken := token.AccessToken
 	code := token.Extra("code").(string)

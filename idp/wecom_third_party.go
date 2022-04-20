@@ -155,7 +155,7 @@ type WeComUserInfo struct {
 
 // GetUserInfo use WeComProviderToken gotten before return WeComUserInfo
 // get more detail via: https://work.weixin.qq.com/api/doc/90001/90143/91125
-func (idp *WeComIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *WeComIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	accessToken := token.AccessToken
 	code := token.Extra("code").(string)
 

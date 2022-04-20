@@ -203,7 +203,7 @@ type GitlabUserInfo struct {
 }
 
 // GetUserInfo use GitlabProviderToken gotten before return GitlabUserInfo
-func (idp *GitlabIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *GitlabIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	resp, err := idp.Client.Get("https://gitlab.com/api/v4/user?access_token=" + token.AccessToken)
 	if err != nil {
 		return nil, err

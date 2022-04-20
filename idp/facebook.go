@@ -138,7 +138,7 @@ type FacebookUserInfo struct {
 
 // GetUserInfo use FacebookAccessToken gotten before return FacebookUserInfo
 // get more detail via: https://developers.facebook.com/docs/graph-api/reference/user
-func (idp *FacebookIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *FacebookIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	var facebookUserInfo FacebookUserInfo
 	accessToken := token.AccessToken
 

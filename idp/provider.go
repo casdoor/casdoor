@@ -15,24 +15,76 @@
 package idp
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"golang.org/x/oauth2"
 )
 
-type UserInfo struct {
-	Id          string
-	Username    string
-	DisplayName string
-	Email       string
-	AvatarUrl   string
+type UserInfoGetter interface {
+	GetID() string
+	GetUsername() string
+	GetDisplayName() string
+	GetEmail() string
+	GetAvatarURL() string
+	GetAllProperties() map[string]string
 }
+
+type UserInfo struct {
+	Id          string `json:"id"`
+	Username    string `json:"username"`
+	DisplayName string `json:"displayName"`
+	Email       string `json:"email"`
+	AvatarUrl   string `json:"avatarUrl"`
+}
+
+func (u *UserInfo) GetID() string {
+	return u.Id
+}
+
+func (u *UserInfo) GetUsername() string {
+	return u.Username
+}
+
+func (u *UserInfo) GetDisplayName() string {
+	return u.DisplayName
+}
+
+func (u *UserInfo) GetEmail() string {
+	return u.Email
+}
+
+func (u *UserInfo) GetAvatarURL() string {
+	return u.AvatarUrl
+}
+
+func (u *UserInfo) getAllProperties(cur interface{}) map[string]string {
+	properties := make(map[string]interface{})
+	result := make(map[string]string)
+	
+	data, _ := json.Marshal(cur)
+	_ = json.Unmarshal(data, &properties)
+	for k, v := range properties {
+		vv, ok := v.(string)
+		if !ok {
+			vv = fmt.Sprintf("%v", v)
+		}
+		result[k] = vv
+	}
+	return result
+}
+
+func (u *UserInfo) GetAllProperties() map[string]string {
+	return u.getAllProperties(u)
+}
+
 
 type IdProvider interface {
 	SetHttpClient(client *http.Client)
 	GetToken(code string) (*oauth2.Token, error)
-	GetUserInfo(token *oauth2.Token) (*UserInfo, error)
+	GetUserInfo(token *oauth2.Token) (UserInfoGetter, error)
 }
 
 func GetIdProvider(typ string, subType string, clientId string, clientSecret string, appId string, redirectUrl string, hostUrl string, authUrl string, tokenUrl string, userInfoUrl string) IdProvider {

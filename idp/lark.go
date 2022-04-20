@@ -155,7 +155,7 @@ type LarkUserInfo struct {
 
 // GetUserInfo use LarkAccessToken gotten before return LinkedInUserInfo
 // get more detail via: https://docs.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin?context=linkedin/consumer/context
-func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	body := &struct {
 		GrantType string `json:"grant_type"`
 		Code      string `json:"code"`

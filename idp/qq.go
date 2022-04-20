@@ -140,7 +140,7 @@ type QqUserInfo struct {
 	IsYellowYearVip string `json:"is_yellow_year_vip"`
 }
 
-func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *QqIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	openIdUrl := fmt.Sprintf("https://graph.qq.com/oauth2.0/me?access_token=%s", token.AccessToken)
 	resp, err := idp.Client.Get(openIdUrl)
 	if err != nil {

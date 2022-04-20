@@ -206,7 +206,7 @@ type WeiboUserinfo struct {
 
 // GetUserInfo use WeiboAccessToken gotten before return UserInfo
 // get more detail via: https://open.weibo.com/wiki/2/users/show
-func (idp *WeiBoIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *WeiBoIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	var weiboUserInfo WeiboUserinfo
 	accessToken := token.AccessToken
 	uid := idp.Config.Scopes[0]

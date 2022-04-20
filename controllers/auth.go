@@ -265,10 +265,11 @@ func (c *ApiController) Login() {
 			return
 		}
 
-		userInfo := &idp.UserInfo{}
+		userInfo := idp.UserInfoGetter(&idp.UserInfo{})
+		var samlID string
 		if provider.Category == "SAML" {
 			// SAML
-			userInfo.Id, err = object.ParseSamlResponse(form.SamlResponse, provider.Type)
+			samlID, err = object.ParseSamlResponse(form.SamlResponse, provider.Type)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -318,14 +319,14 @@ func (c *ApiController) Login() {
 		if form.Method == "signup" {
 			user := &object.User{}
 			if provider.Category == "SAML" {
-				user = object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Id))
+				user = object.GetUser(fmt.Sprintf("%s/%s", application.Organization, samlID))
 			} else if provider.Category == "OAuth" {
-				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+				user = object.GetUserByField(application.Organization, provider.Type, userInfo.GetID())
 				if user == nil {
-					user = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
+					user = object.GetUserByField(application.Organization, provider.Type, userInfo.GetUsername())
 				}
 				if user == nil {
-					user = object.GetUserByField(application.Organization, "name", userInfo.Username)
+					user = object.GetUserByField(application.Organization, "name", userInfo.GetUsername())
 				}
 			}
 
@@ -345,12 +346,12 @@ func (c *ApiController) Login() {
 			} else if provider.Category == "OAuth" {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
-					c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.Username, userInfo.DisplayName))
+					c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support", provider.Type, userInfo.GetUsername(), userInfo.GetDisplayName()))
 					return
 				}
 
 				if !providerItem.CanSignUp {
-					c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up", provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
+					c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up", provider.Type, userInfo.GetUsername(), userInfo.GetDisplayName(), provider.Type))
 					return
 				}
 
@@ -358,14 +359,14 @@ func (c *ApiController) Login() {
 				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
 				user = &object.User{
 					Owner:             application.Organization,
-					Name:              userInfo.Username,
+					Name:              userInfo.GetUsername(),
 					CreatedTime:       util.GetCurrentTime(),
 					Id:                util.GenerateId(),
 					Type:              "normal-user",
-					DisplayName:       userInfo.DisplayName,
-					Avatar:            userInfo.AvatarUrl,
+					DisplayName:       userInfo.GetDisplayName(),
+					Avatar:            userInfo.GetAvatarURL(),
 					Address:           []string{},
-					Email:             userInfo.Email,
+					Email:             userInfo.GetEmail(),
 					Score:             getInitScore(),
 					IsAdmin:           false,
 					IsGlobalAdmin:     false,
@@ -383,7 +384,7 @@ func (c *ApiController) Login() {
 					return
 				}
 
-				object.LinkUserAccount(user, provider.Type, userInfo.Id)
+				object.LinkUserAccount(user, provider.Type, userInfo.GetID())
 
 				resp = c.HandleLoggedIn(application, user, &form)
 
@@ -402,12 +403,12 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			oldUser := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+			oldUser := object.GetUserByField(application.Organization, provider.Type, userInfo.GetID())
 			if oldUser == nil {
-				oldUser = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
+				oldUser = object.GetUserByField(application.Organization, provider.Type, userInfo.GetUsername())
 			}
 			if oldUser != nil {
-				c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)", provider.Type, userInfo.Username, userInfo.DisplayName, oldUser.Name, oldUser.DisplayName))
+				c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)", provider.Type, userInfo.GetUsername(), userInfo.GetDisplayName(), oldUser.Name, oldUser.DisplayName))
 				return
 			}
 
@@ -416,7 +417,7 @@ func (c *ApiController) Login() {
 			// sync info from 3rd-party if possible
 			object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
 
-			isLinked := object.LinkUserAccount(user, provider.Type, userInfo.Id)
+			isLinked := object.LinkUserAccount(user, provider.Type, userInfo.GetID())
 			if isLinked {
 				resp = &Response{Status: "ok", Msg: "", Data: isLinked}
 			} else {

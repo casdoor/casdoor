@@ -144,7 +144,7 @@ type AlipayUserInfoShareResponse struct {
 }
 
 // GetUserInfo Use access_token to get UserInfo
-func (idp *AlipayIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *AlipayIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	atUserInfo := &AlipayUserResponse{}
 	accessToken := token.AccessToken
 

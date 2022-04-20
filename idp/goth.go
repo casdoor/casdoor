@@ -248,7 +248,7 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	return &token, nil
 }
 
-func (idp *GothIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *GothIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	gothUser, err := idp.Provider.FetchUser(idp.Session)
 	if err != nil {
 		return nil, err

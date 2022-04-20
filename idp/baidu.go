@@ -91,7 +91,7 @@ type BaiduUserInfo struct {
 	Portrait string `json:"portrait"`
 }
 
-func (idp *BaiduIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *BaiduIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	resp, err := idp.Client.Get(fmt.Sprintf("https://openapi.baidu.com/rest/2.0/passport/users/getInfo?access_token=%s", token.AccessToken))
 	if err != nil {
 		return nil, err

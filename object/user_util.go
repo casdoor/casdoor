@@ -110,35 +110,19 @@ func setUserProperty(user *User, field string, value string) {
 	}
 }
 
-func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo) bool {
-	if userInfo.Id != "" {
-		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
-		setUserProperty(user, propertyName, userInfo.Id)
+func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo idp.UserInfoGetter) bool {
+	for propertyName, propertyValue := range userInfo.GetAllProperties() {
+		propertyName := fmt.Sprintf("oauth_%s_%s", providerType, propertyName)
+		setUserProperty(user, propertyName, propertyValue)
 	}
-	if userInfo.Username != "" {
-		propertyName := fmt.Sprintf("oauth_%s_username", providerType)
-		setUserProperty(user, propertyName, userInfo.Username)
+	if userInfo.GetDisplayName() != "" && user.DisplayName == "" {
+		user.DisplayName = userInfo.GetDisplayName()
 	}
-	if userInfo.DisplayName != "" {
-		propertyName := fmt.Sprintf("oauth_%s_displayName", providerType)
-		setUserProperty(user, propertyName, userInfo.DisplayName)
-		if user.DisplayName == "" {
-			user.DisplayName = userInfo.DisplayName
-		}
+	if userInfo.GetEmail() != "" && user.DisplayName == "" {
+		user.Email = userInfo.GetEmail()
 	}
-	if userInfo.Email != "" {
-		propertyName := fmt.Sprintf("oauth_%s_email", providerType)
-		setUserProperty(user, propertyName, userInfo.Email)
-		if user.Email == "" {
-			user.Email = userInfo.Email
-		}
-	}
-	if userInfo.AvatarUrl != "" {
-		propertyName := fmt.Sprintf("oauth_%s_avatarUrl", providerType)
-		setUserProperty(user, propertyName, userInfo.AvatarUrl)
-		if user.Avatar == "" || user.Avatar == organization.DefaultAvatar {
-			user.Avatar = userInfo.AvatarUrl
-		}
+	if userInfo.GetAvatarURL() != "" && (user.Avatar == "" || user.Avatar == organization.DefaultAvatar) {
+		user.Avatar = userInfo.GetAvatarURL()
 	}
 
 	affected := UpdateUserForAllFields(user.GetId(), user)

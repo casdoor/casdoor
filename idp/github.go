@@ -190,7 +190,7 @@ type GitHubUserInfo struct {
 	} `json:"plan"`
 }
 
-func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
 	if err != nil {
 		panic(err)

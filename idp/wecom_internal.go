@@ -114,7 +114,7 @@ type WecomInternalUserInfo struct {
 	UserId  string `json:"userid"`
 }
 
-func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (UserInfoGetter, error) {
 	//Get userid first
 	accessToken := token.AccessToken
 	code := token.Extra("code").(string)
