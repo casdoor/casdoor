@@ -112,6 +112,9 @@ func setUserProperty(user *User, field string, value string) {
 
 func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo idp.UserInfoGetter) bool {
 	for propertyName, propertyValue := range userInfo.GetAllProperties() {
+		if propertyValue == "" {
+			continue
+		}
 		propertyName := fmt.Sprintf("oauth_%s_%s", providerType, propertyName)
 		setUserProperty(user, propertyName, propertyValue)
 	}
