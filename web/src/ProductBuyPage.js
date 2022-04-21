@@ -148,7 +148,7 @@ class ProductBuyPage extends React.Component {
 
     return (
       <Button style={{height: "50px", borderWidth: "2px"}} shape="round" icon={
-        <img style={{marginRight: "10px"}} width={36} height={36} src={Provider.getProviderLogo(provider)} alt={provider.displayName} />
+        <img style={{marginRight: "10px"}} width={36} height={36} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} />
       } size={"large"} >
         {
           text

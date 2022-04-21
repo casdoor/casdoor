@@ -305,13 +305,13 @@ class LoginPage extends React.Component {
       if (provider.category === "OAuth") {
         return (
           <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-            <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
+            <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
           </a>
         )
       } else if (provider.category === "SAML") {
         return (
           <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
-            <img width={width} height={width} src={Provider.getProviderLogo(provider)} alt={provider.displayName} style={{margin: margin}} />
+            <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
           </a>
         )
       }

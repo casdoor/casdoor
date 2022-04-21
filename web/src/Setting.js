@@ -32,6 +32,79 @@ export const StaticBaseUrl = "https://cdn.casbin.org";
 // https://catamphetamine.gitlab.io/country-flag-icons/3x2/index.html
 export const CountryRegionData = getCountryRegionData();
 
+export const OtherProviderInfo = {
+  SMS: {
+    "Aliyun SMS": {
+      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      url: "https://aliyun.com/product/sms",
+    },
+    "Tencent Cloud SMS": {
+      logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
+      url: "https://cloud.tencent.com/product/sms",
+    },
+    "Volc Engine SMS": {
+      logo: `${StaticBaseUrl}/img/social_volc_engine.jpg`,
+      url: "https://www.volcengine.com/products/cloud-sms",
+    },
+    "Huawei Cloud SMS": {
+      logo: `${StaticBaseUrl}/img/social_huawei.png`,
+      url: "https://www.huaweicloud.com/product/msgsms.html",
+    },
+  },
+  Email: {
+    "Default": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "",
+    },
+  },
+  Storage: {
+    "Local File System": {
+      logo: `${StaticBaseUrl}/img/social_file.png`,
+      url: "",
+    },
+    "AWS S3": {
+      logo: `${StaticBaseUrl}/img/social_aws.png`,
+      url: "https://aws.amazon.com/s3",
+    },
+    "Aliyun OSS": {
+      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      url: "https://aliyun.com/product/oss",
+    },
+    "Tencent Cloud COS": {
+      logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
+      url: "https://cloud.tencent.com/product/cos",
+    },
+  },
+  SAML: {
+    "Aliyun IDaaS": {
+      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      url: "https://aliyun.com/product/idaas"
+    },
+    "Keycloak": {
+      logo: `${StaticBaseUrl}/img/social_keycloak.png`,
+      url: "https://www.keycloak.org/"
+    },
+  },
+  Payment: {
+    "Alipay": {
+      logo: `${StaticBaseUrl}/img/payment_alipay.png`,
+      url: "https://www.alipay.com/"
+    },
+    "WeChat Pay": {
+      logo: `${StaticBaseUrl}/img/payment_wechat_pay.png`,
+      url: "https://pay.weixin.qq.com/"
+    },
+    "PayPal": {
+      logo: `${StaticBaseUrl}/img/payment_paypal.png`,
+      url: "https://www.paypal.com/"
+    },
+    "GC": {
+      logo: `${StaticBaseUrl}/img/payment_gc.png`,
+      url: "https://gc.org"
+    },
+  },
+};
+
 export function getCountryRegionData() {
   let language = i18next.language;
   if (language === null || language === "null") {
@@ -380,9 +453,20 @@ export function getClickable(text) {
   )
 }
 
+export function getProviderLogoURL(provider) {
+  if (provider.category === "OAuth") {
+    if (provider.type === "Custom") {
+      return provider.customLogo;  
+    }
+    return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
+  } else {
+    return OtherProviderInfo[provider.category][provider.type].logo;
+  }
+}
+
 export function getProviderLogo(provider) {
   const idp = provider.type.toLowerCase().trim().split(' ')[0];
-  const url = `${StaticBaseUrl}/img/social_${idp}.png`;
+  const url = getProviderLogoURL(provider);
   return (
     <img width={30} height={30} src={url} alt={idp} />
   )
