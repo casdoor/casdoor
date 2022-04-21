@@ -169,8 +169,11 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
 
 	resp, err := idp.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
 	data, err = ioutil.ReadAll(resp.Body)
-	err = resp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
