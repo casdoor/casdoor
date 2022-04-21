@@ -564,7 +564,7 @@ export function renderHelmet(application) {
 
 export function renderFooter() {
   return (
-    <div className="footer" style={{ display: 'flex',justifyContent: 'center',fontWeight: 'bold',fontSize:'16px'}}>
+    <div className="footer" style={{ display: 'flex',justifyContent: 'center',fontSize:'14px'}}>
           <span>{Conf.FooterText}</span>
     </div>
   )
