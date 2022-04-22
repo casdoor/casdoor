@@ -230,7 +230,7 @@ func (c *ApiController) RefreshToken() {
 			clientSecret = tokenRequest.ClientSecret
 			grantType = tokenRequest.GrantType
 			scope = tokenRequest.Scope
-
+			refreshToken = tokenRequest.RefreshToken
 		}
 	}
 
