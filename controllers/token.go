@@ -275,21 +275,20 @@ func (c *ApiController) IntrospectToken() {
 	tokenValue := c.Input().Get("token")
 	clientId, clientSecret, ok := c.Ctx.Request.BasicAuth()
 	if !ok {
-		util.LogWarning(c.Ctx, "Basic Authorization parses failed")
-		c.Data["json"] = Response{Status: "error", Msg: "Unauthorized operation"}
-		c.ServeJSON()
-		return
+		clientId = c.Input().Get("client_id")
+		clientSecret = c.Input().Get("client_secret")
+		if clientId == "" || clientSecret == "" {
+			c.ResponseError("empty clientId or clientSecret")
+			return
+		}
 	}
 	application := object.GetApplicationByClientId(clientId)
 	if application == nil || application.ClientSecret != clientSecret {
-		util.LogWarning(c.Ctx, "Basic Authorization failed")
-		c.Data["json"] = Response{Status: "error", Msg: "Unauthorized operation"}
-		c.ServeJSON()
+		c.ResponseError("invalid application or wrong clientSecret")
 		return
 	}
 	token := object.GetTokenByTokenAndApplication(tokenValue, application.Name)
 	if token == nil {
-		util.LogWarning(c.Ctx, "application: %s can not find token", application.Name)
 		c.Data["json"] = &object.IntrospectionResponse{Active: false}
 		c.ServeJSON()
 		return
@@ -299,7 +298,6 @@ func (c *ApiController) IntrospectToken() {
 		// and token revoked case. but we not implement
 		// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
 		// refs: https://tools.ietf.org/html/rfc7009
-		util.LogWarning(c.Ctx, "token invalid")
 		c.Data["json"] = &object.IntrospectionResponse{Active: false}
 		c.ServeJSON()
 		return
