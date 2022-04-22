@@ -248,7 +248,7 @@ func (c *ApiController) Login() {
 			record := object.NewRecord(c.Ctx)
 			record.Organization = application.Organization
 			record.User = user.Name
-			go object.AddRecord(record)
+			util.SafeGoroutine(func() {object.AddRecord(record)})
 		}
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
@@ -341,7 +341,7 @@ func (c *ApiController) Login() {
 				record := object.NewRecord(c.Ctx)
 				record.Organization = application.Organization
 				record.User = user.Name
-				go object.AddRecord(record)
+				util.SafeGoroutine(func() {object.AddRecord(record)})
 			} else if provider.Category == "OAuth" {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
@@ -390,7 +390,7 @@ func (c *ApiController) Login() {
 				record := object.NewRecord(c.Ctx)
 				record.Organization = application.Organization
 				record.User = user.Name
-				go object.AddRecord(record)
+				util.SafeGoroutine(func() {object.AddRecord(record)})
 			} else if provider.Category == "SAML" {
 				resp = &Response{Status: "error", Msg: "The account does not exist"}
 			}
