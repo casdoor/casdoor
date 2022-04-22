@@ -278,13 +278,13 @@ func (c *ApiController) IntrospectToken() {
 		clientId = c.Input().Get("client_id")
 		clientSecret = c.Input().Get("client_secret")
 		if clientId == "" || clientSecret == "" {
-			c.ResponseError("Basic Authorization parses failed")
+			c.ResponseError("empty clientId or clientSecret")
 			return
 		}
 	}
 	application := object.GetApplicationByClientId(clientId)
 	if application == nil || application.ClientSecret != clientSecret {
-		c.ResponseError("Basic Authorization failed")
+		c.ResponseError("invalid application or wrong clientSecret")
 		return
 	}
 	token := object.GetTokenByTokenAndApplication(tokenValue, application.Name)
