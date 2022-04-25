@@ -188,6 +188,17 @@ export function getSignupItem(application, itemName) {
   return signupItems[0];
 }
 
+export function isValidPersonName(personName) {
+  // https://blog.css8.cn/post/14210975.html
+  const personNameRegex = /^[\u4e00-\u9fa5]{2,6}$/;
+  return personNameRegex.test(personName);
+}
+
+export function isValidIdCard(idCard) {
+  const idCardRegex = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9X]$/;
+  return idCardRegex.test(idCard);
+}
+
 export function isValidEmail(email) {
   // https://github.com/yiminghe/async-validator/blob/057b0b047f88fac65457bae691d6cb7c6fe48ce1/src/rule/type.ts#L9
   const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -198,6 +209,23 @@ export function isValidPhone(phone) {
   // https://learnku.com/articles/31543, `^s*$` filter empty email individually.
   const phoneRegex = /^\s*$|^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/;
   return phoneRegex.test(phone);
+}
+
+export function isValidInvoiceTitle(invoiceTitle) {
+  // https://blog.css8.cn/post/14210975.html
+  const invoiceTitleRegex = /^[\(\)\（\）\u4e00-\u9fa5]{0,50}$/;
+  return invoiceTitleRegex.test(invoiceTitle);
+}
+
+export function isValidTaxId(taxId) {
+  // https://www.codetd.com/article/8592083
+  const regArr = [/^[\da-z]{10,15}$/i, /^\d{6}[\da-z]{10,12}$/i, /^[a-z]\d{6}[\da-z]{9,11}$/i, /^[a-z]{2}\d{6}[\da-z]{8,10}$/i, /^\d{14}[\dx][\da-z]{4,5}$/i, /^\d{17}[\dx][\da-z]{1,2}$/i, /^[a-z]\d{14}[\dx][\da-z]{3,4}$/i, /^[a-z]\d{17}[\dx][\da-z]{0,1}$/i, /^[\d]{6}[\da-z]{13,14}$/i];
+  for (let i = 0; i < regArr.length; i++) {
+    if (regArr[i].test(taxId)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export function isAffiliationPrompted(application) {

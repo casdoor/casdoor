@@ -492,6 +492,8 @@
     "Please input your real name!": "请输入您的姓名！",
     "Please select your country/region!": "请选择您的国家/地区",
     "Terms of Use": "《用户协议》",
+    "The input is not invoice Tax ID!": "您输入的纳税人识别号有误！",
+    "The input is not invoice title!": "您输入的发票抬头有误！",
     "The input is not valid Email!": "您输入的电子邮箱格式有误！",
     "The input is not valid Phone!": "您输入的手机号格式有误！",
     "Unknown Check Type": "未知的验证码类型",

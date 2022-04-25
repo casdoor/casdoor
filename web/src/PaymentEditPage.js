@@ -271,7 +271,55 @@ class PaymentEditPage extends React.Component {
     )
   }
 
+  checkError() {
+    if (!Setting.isValidPersonName(this.state.payment.personName)) {
+      return i18next.t("signup:Please input your real name!");
+    }
+
+    if (!Setting.isValidIdCard(this.state.payment.personIdCard)) {
+      return i18next.t("signup:Please input the correct ID card number!");
+    }
+
+    if (!Setting.isValidEmail(this.state.payment.personEmail)) {
+      return i18next.t("signup:The input is not valid Email!");
+    }
+
+    if (!Setting.isValidPhone(this.state.payment.personPhone)) {
+      return i18next.t("signup:The input is not valid Phone!");
+    }
+
+    if (!Setting.isValidPhone(this.state.payment.personPhone)) {
+      return i18next.t("signup:The input is not valid Phone!");
+    }
+
+    if (this.state.payment.invoiceType === "Individual") {
+      if (this.state.payment.invoiceTitle !== "") {
+        return i18next.t("signup:The input is not invoice title!");
+      }
+
+      if (this.state.payment.invoiceTaxId !== "") {
+        return i18next.t("signup:The input is not invoice Tax ID!");
+      }
+    } else {
+      if (!Setting.isValidInvoiceTitle(this.state.payment.invoiceTitle)) {
+        return i18next.t("signup:The input is not invoice title!");
+      }
+
+      if (!Setting.isValidTaxId(this.state.payment.invoiceTaxId)) {
+        return i18next.t("signup:The input is not invoice Tax ID!");
+      }
+    }
+
+    return "";
+  }
+
   submitPaymentEdit(willExist) {
+    const errorText = this.checkError();
+    if (errorText !== "") {
+      Setting.showMessage("error", errorText);
+      return;
+    }
+
     let payment = Setting.deepCopy(this.state.payment);
     PaymentBackend.updatePayment(this.state.payment.owner, this.state.paymentName, payment)
       .then((res) => {

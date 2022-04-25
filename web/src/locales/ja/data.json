@@ -492,6 +492,8 @@
     "Please input your real name!": "個人名を入力してください！",
     "Please select your country/region!": "あなたの国/地域を選択してください！",
     "Terms of Use": "利用規約",
+    "The input is not invoice Tax ID!": "The input is not invoice Tax ID!",
+    "The input is not invoice title!": "The input is not invoice title!",
     "The input is not valid Email!": "入力されたメールアドレスが無効です！",
     "The input is not valid Phone!": "入力された電話番号が正しくありません！",
     "Unknown Check Type": "不明なチェックタイプ",

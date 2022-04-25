@@ -492,6 +492,8 @@
     "Please input your real name!": "Veuillez entrer votre nom personnel !",
     "Please select your country/region!": "Veuillez sélectionner votre pays/région!",
     "Terms of Use": "Conditions d'utilisation",
+    "The input is not invoice Tax ID!": "The input is not invoice Tax ID!",
+    "The input is not invoice title!": "The input is not invoice title!",
     "The input is not valid Email!": "L'entrée n'est pas un email valide !",
     "The input is not valid Phone!": "L'entrée n'est pas un téléphone valide !",
     "Unknown Check Type": "Type de vérification inconnu",

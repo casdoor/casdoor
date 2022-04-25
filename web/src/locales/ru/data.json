@@ -492,6 +492,8 @@
     "Please input your real name!": "Пожалуйста, введите ваше личное имя!",
     "Please select your country/region!": "Пожалуйста, выберите вашу страну/регион!",
     "Terms of Use": "Условия использования",
+    "The input is not invoice Tax ID!": "The input is not invoice Tax ID!",
+    "The input is not invoice title!": "The input is not invoice title!",
     "The input is not valid Email!": "Ввод не является допустимым Email!",
     "The input is not valid Phone!": "Введен неверный телефон!",
     "Unknown Check Type": "Неизвестный тип проверки",
