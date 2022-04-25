@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Card, Col, Row} from "antd";
+import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Setting from "../Setting";
 import SingleCard from "./SingleCard";
 import i18next from "i18next";
@@ -23,7 +24,21 @@ class HomePage extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      applications: null,
     };
+  }
+
+  UNSAFE_componentWillMount() {
+    this.getApplicationsByOrganization(this.props.account.owner);
+  }
+
+  getApplicationsByOrganization(organizationName) {
+    ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
+      .then((res) => {
+        this.setState({
+          applications: (res.msg === undefined) ? res : [],
+        });
+      });
   }
 
   getItems() {
@@ -35,25 +50,32 @@ class HomePage extends React.Component {
         {link: "/providers", name: i18next.t("general:Providers"), organizer: i18next.t("general:OAuth providers")},
         {link: "/applications", name: i18next.t("general:Applications"), organizer: i18next.t("general:Applications that require authentication")},
       ];
-    } else {
-      items = [
-        {link: "/account", name: i18next.t("account:My Account"), organizer: i18next.t("account:Settings for your account")},
-      ];
-    }
 
-    for (let i = 0; i < items.length; i ++) {
-      let filename = items[i].link;
-      if (filename === "/account") {
-        filename = "/users";
+      for (let i = 0; i < items.length; i ++) {
+        let filename = items[i].link;
+        if (filename === "/account") {
+          filename = "/users";
+        }
+        items[i].logo = `https://cdn.casbin.com/static/img${filename}.png`;
+        items[i].createdTime = "";
       }
-      items[i].logo = `https://cdn.casbin.com/static/img${filename}.png`;
-      items[i].createdTime = "";
+    } else {
+      this.state.applications.forEach(application => {
+        console.log(application)
+        items.push({
+          link: application.homepageUrl, name: application.displayName, organizer: application.description, logo: application.logo, createdTime: "",
+        });
+      });
     }
 
     return items
   }
 
   renderCards() {
+    if (this.state.applications === null) {
+      return null;
+    }
+
     const items = this.getItems();
 
     if (Setting.isMobile()) {

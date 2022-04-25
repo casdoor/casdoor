@@ -277,6 +277,11 @@ export function goToLink(link) {
 }
 
 export function goToLinkSoft(ths, link) {
+  if (link.startsWith("http")) {
+    openLink(link);
+    return;
+  }
+
   ths.props.history.push(link);
 }
 

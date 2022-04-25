@@ -51,10 +51,10 @@ class SingleCard extends React.Component {
         <Card
           hoverable
           cover={
-            <img alt="logo" src={logo} width={"100%"} height={"100%"} />
+            <img alt="logo" src={logo} style={{width: "100%", height: "210px", objectFit: "scale-down"}} />
           }
           onClick={() => Setting.goToLinkSoft(this, link)}
-          style={isSingle ? {width: "320px"} : null}
+          style={isSingle ? {width: "320px"} : {width: "100%"}}
         >
           <Meta title={title} description={desc} />
           <br/>
