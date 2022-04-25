@@ -75,7 +75,7 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.payment.organization} onChange={e => {
+            <Input disabled={true} value={this.state.payment.organization} onChange={e => {
               // this.updatePaymentField('organization', e.target.value);
             }} />
           </Col>
@@ -85,7 +85,7 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.payment.name} onChange={e => {
+            <Input disabled={true} value={this.state.payment.name} onChange={e => {
               // this.updatePaymentField('name', e.target.value);
             }} />
           </Col>
@@ -95,7 +95,7 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.payment.displayName} onChange={e => {
+            <Input disabled={true} value={this.state.payment.displayName} onChange={e => {
               this.updatePaymentField('displayName', e.target.value);
             }} />
           </Col>
@@ -105,7 +105,7 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Provider"), i18next.t("general:Provider - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.payment.provider} onChange={e => {
+            <Input disabled={true} value={this.state.payment.provider} onChange={e => {
               // this.updatePaymentField('provider', e.target.value);
             }} />
           </Col>
@@ -115,7 +115,7 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("payment:Type"), i18next.t("payment:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.payment.type} onChange={e => {
+            <Input disabled={true} value={this.state.payment.type} onChange={e => {
               // this.updatePaymentField('type', e.target.value);
             }} />
           </Col>
@@ -125,7 +125,7 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("payment:Product"), i18next.t("payment:Product - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.payment.productName} onChange={e => {
+            <Input disabled={true} value={this.state.payment.productName} onChange={e => {
               // this.updatePaymentField('productName', e.target.value);
             }} />
           </Col>
@@ -135,7 +135,7 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("payment:Price"), i18next.t("payment:Price - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.payment.price} onChange={e => {
+            <Input disabled={true} value={this.state.payment.price} onChange={e => {
               // this.updatePaymentField('amount', e.target.value);
             }} />
           </Col>
@@ -145,7 +145,7 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("payment:Currency"), i18next.t("payment:Currency - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.payment.currency} onChange={e => {
+            <Input disabled={true} value={this.state.payment.currency} onChange={e => {
               // this.updatePaymentField('currency', e.target.value);
             }} />
           </Col>
@@ -155,7 +155,7 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("payment:State"), i18next.t("payment:State - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.payment.state} onChange={e => {
+            <Input disabled={true} value={this.state.payment.state} onChange={e => {
               // this.updatePaymentField('state', e.target.value);
             }} />
           </Col>
@@ -165,8 +165,78 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("payment:Message"), i18next.t("payment:Message - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.payment.message} onChange={e => {
+            <Input disabled={true} value={this.state.payment.message} onChange={e => {
               // this.updatePaymentField('message', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("payment:Person name"), i18next.t("payment:Person name - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.payment.personName} onChange={e => {
+              this.updatePaymentField('personName', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("payment:Person ID card"), i18next.t("payment:Person ID card - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.payment.personIdCard} onChange={e => {
+              this.updatePaymentField('personIdCard', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("payment:Person Email"), i18next.t("payment:Person Email - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.payment.personEmail} onChange={e => {
+              this.updatePaymentField('personEmail', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("payment:Person phone"), i18next.t("payment:Person phone - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.payment.personPhone} onChange={e => {
+              this.updatePaymentField('personPhone', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("payment:Invoice title"), i18next.t("payment:Invoice title - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.payment.invoiceTitle} onChange={e => {
+              this.updatePaymentField('invoiceTitle', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("payment:Invoice Tax ID"), i18next.t("payment:Invoice Tax ID - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.payment.invoiceTaxId} onChange={e => {
+              this.updatePaymentField('invoiceTaxId', e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("payment:Invoice remark"), i18next.t("payment:Invoice remark - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.payment.invoiceRemark} onChange={e => {
+              this.updatePaymentField('invoiceRemark', e.target.value);
             }} />
           </Col>
         </Row>
@@ -176,7 +246,7 @@ class PaymentEditPage extends React.Component {
 
   submitPaymentEdit(willExist) {
     let payment = Setting.deepCopy(this.state.payment);
-    PaymentBackend.updatePayment(this.state.organizationName, this.state.paymentName, payment)
+    PaymentBackend.updatePayment(this.state.payment.owner, this.state.paymentName, payment)
       .then((res) => {
         if (res.msg === "") {
           Setting.showMessage("success", `Successfully saved`);

@@ -44,6 +44,14 @@ type Payment struct {
 	ReturnUrl string `xorm:"varchar(1000)" json:"returnUrl"`
 	State     string `xorm:"varchar(100)" json:"state"`
 	Message   string `xorm:"varchar(1000)" json:"message"`
+
+	PersonName    string `xorm:"varchar(100)" json:"personName"`
+	PersonIdCard  string `xorm:"varchar(100)" json:"personIdCard"`
+	PersonEmail   string `xorm:"varchar(100)" json:"personEmail"`
+	PersonPhone   string `xorm:"varchar(100)" json:"personPhone"`
+	InvoiceTitle  string `xorm:"varchar(100)" json:"invoiceTitle"`
+	InvoiceTaxId  string `xorm:"varchar(100)" json:"invoiceTaxId"`
+	InvoiceRemark string `xorm:"varchar(100)" json:"invoiceRemark"`
 }
 
 func GetPaymentCount(owner, field, value string) int {
