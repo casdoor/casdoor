@@ -18,8 +18,6 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import {SafetyOutlined} from "@ant-design/icons";
-import * as Util from "../auth/Util";
-import {isValidEmail, isValidPhone} from "../Setting";
 
 const { Search } = Input;
 

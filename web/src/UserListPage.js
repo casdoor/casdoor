@@ -21,7 +21,6 @@ import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import * as path from "path";
 
 class UserListPage extends BaseListPage {
   constructor(props) {

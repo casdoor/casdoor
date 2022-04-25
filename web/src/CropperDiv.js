@@ -27,7 +27,6 @@ export const CropperDiv = (props) => {
     const [confirmLoading, setConfirmLoading] = React.useState(false);
     const {title} = props;
     const {user} = props;
-    const {account} = props;
     const {buttonText} = props;
     let uploadButton;
 

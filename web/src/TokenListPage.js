@@ -19,7 +19,6 @@ import moment from "moment";
 import * as Setting from "./Setting";
 import * as TokenBackend from "./backend/TokenBackend";
 import i18next from "i18next";
-import * as ResourceBackend from "./backend/ResourceBackend";
 import BaseListPage from "./BaseListPage";
 
 class TokenListPage extends BaseListPage {

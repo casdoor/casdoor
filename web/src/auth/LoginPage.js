@@ -149,7 +149,7 @@ class LoginPage extends React.Component {
       AuthBackend.loginCas(values, casParams).then((res) => {
         if (res.status === 'ok') {
           let msg = "Logged in successfully. "
-          if (casParams.service == "") {
+          if (casParams.service === "") {
             //If service was not specified, CAS MUST display a message notifying the client that it has successfully initiated a single sign-on session.
             msg += "Now you can visit apps protected by casdoor."
           }
@@ -593,6 +593,9 @@ class LoginPage extends React.Component {
 
     return (
       <div>
+        {/*{*/}
+        {/*  JSON.stringify(silentSignin)*/}
+        {/*}*/}
         <div style={{fontSize: 16, textAlign: "left"}}>
           {i18next.t("login:Continue with")}&nbsp;:
         </div>
