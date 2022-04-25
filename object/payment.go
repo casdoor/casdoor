@@ -49,6 +49,7 @@ type Payment struct {
 	PersonIdCard  string `xorm:"varchar(100)" json:"personIdCard"`
 	PersonEmail   string `xorm:"varchar(100)" json:"personEmail"`
 	PersonPhone   string `xorm:"varchar(100)" json:"personPhone"`
+	InvoiceType   string `xorm:"varchar(100)" json:"invoiceType"`
 	InvoiceTitle  string `xorm:"varchar(100)" json:"invoiceTitle"`
 	InvoiceTaxId  string `xorm:"varchar(100)" json:"invoiceTaxId"`
 	InvoiceRemark string `xorm:"varchar(100)" json:"invoiceRemark"`
