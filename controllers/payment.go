@@ -169,6 +169,9 @@ func (c *ApiController) InvoicePayment() {
 	id := c.Input().Get("id")
 
 	payment := object.GetPayment(id)
-	c.Data["json"] = wrapActionResponse(object.InvoicePayment(payment))
-	c.ServeJSON()
+	err := object.InvoicePayment(payment)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+	c.ResponseOk()
 }

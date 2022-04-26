@@ -65,7 +65,24 @@ class PaymentEditPage extends React.Component {
   }
 
   issueInvoice() {
-    alert("111")
+    this.setState({
+      isModalVisible: false,
+    });
+
+    PaymentBackend.invoicePayment(this.state.payment.owner, this.state.paymentName)
+      .then((res) => {
+        if (res.msg === "") {
+          Setting.showMessage("success", `Successfully invoiced`);
+          this.setState({
+            paymentName: this.state.payment.name,
+          });
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+      });
   }
 
   downloadInvoice() {
@@ -361,6 +378,10 @@ class PaymentEditPage extends React.Component {
   }
 
   checkError() {
+    if (this.state.payment.state !== "Paid") {
+      return i18next.t("payment:Please pay the order first!");
+    }
+
     if (!Setting.isValidPersonName(this.state.payment.personName)) {
       return i18next.t("signup:Please input your real name!");
     }

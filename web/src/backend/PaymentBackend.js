@@ -54,3 +54,10 @@ export function deletePayment(payment) {
     body: JSON.stringify(newPayment),
   }).then(res => res.json());
 }
+
+export function invoicePayment(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/invoice-payment?id=${owner}/${encodeURIComponent(name)}`, {
+    method: "POST",
+    credentials: "include"
+  }).then(res => res.json());
+}
