@@ -65,12 +65,6 @@ class PaymentEditPage extends React.Component {
   }
 
   issueInvoice() {
-    const errorText = this.checkError();
-    if (errorText !== "") {
-      Setting.showMessage("error", errorText);
-      return;
-    }
-    
     alert("111")
   }
 
@@ -80,7 +74,7 @@ class PaymentEditPage extends React.Component {
 
   renderModal() {
     const ths = this;
-    const handleChangeMyTag = () => {
+    const handleIssueInvoice = () => {
       ths.issueInvoice();
     };
 
@@ -98,7 +92,7 @@ class PaymentEditPage extends React.Component {
         </div>
       }
              visible={this.state.isModalVisible}
-             onOk={handleChangeMyTag}
+             onOk={handleIssueInvoice}
              onCancel={handleCancel}
              okText={i18next.t("payment:Issue Invoice")}
              cancelText={i18next.t("general:Cancel")}>
@@ -346,6 +340,12 @@ class PaymentEditPage extends React.Component {
             {
               this.state.payment.invoiceUrl === "" ? (
                 <Button type={"primary"} onClick={() => {
+                  const errorText = this.checkError();
+                  if (errorText !== "") {
+                    Setting.showMessage("error", errorText);
+                    return;
+                  }
+
                   this.setState({
                     isModalVisible: true,
                   });
@@ -390,7 +390,7 @@ class PaymentEditPage extends React.Component {
         return i18next.t("signup:The input is not invoice Tax ID!");
       }
     } else {
-      if (this.state.payment.invoiceTitle === "" || !Setting.isValidInvoiceTitle(this.state.payment.invoiceTitle)) {
+      if (!Setting.isValidInvoiceTitle(this.state.payment.invoiceTitle)) {
         return i18next.t("signup:The input is not invoice title!");
       }
 

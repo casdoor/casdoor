@@ -206,12 +206,20 @@ export function isValidEmail(email) {
 }
 
 export function isValidPhone(phone) {
+  if (phone === "") {
+    return false;
+  }
+
   // https://learnku.com/articles/31543, `^s*$` filter empty email individually.
   const phoneRegex = /^\s*$|^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/;
   return phoneRegex.test(phone);
 }
 
 export function isValidInvoiceTitle(invoiceTitle) {
+  if (invoiceTitle === "") {
+    return false;
+  }
+
   // https://blog.css8.cn/post/14210975.html
   const invoiceTitleRegex = /^[\(\)\（\）\u4e00-\u9fa5]{0,50}$/;
   return invoiceTitleRegex.test(invoiceTitle);
