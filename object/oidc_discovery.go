@@ -105,6 +105,8 @@ func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
 		jwk.Key = x509Cert.PublicKey
 		jwk.Certificates = []*x509.Certificate{x509Cert}
 		jwk.KeyID = cert.Name
+		jwk.Algorithm = cert.CryptoAlgorithm
+		jwk.Use = "sig"
 		jwks.Keys = append(jwks.Keys, jwk)
 	}
 
