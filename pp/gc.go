@@ -87,6 +87,27 @@ type GcResponseBody struct {
 	Sign       string `json:"sign"`
 }
 
+type GcInvoiceReqInfo struct {
+	BusNo        string `json:"busno"`
+	PayerName    string `json:"payername"`
+	IdNum        string `json:"idnum"`
+	PayerType    string `json:"payertype"`
+	InvoiceTitle string `json:"invoicetitle"`
+	Tin          string `json:"tin"`
+	Phone        string `json:"phone"`
+	Email        string `json:"email"`
+}
+
+type GcInvoiceRespInfo struct {
+	BusNo     string `json:"busno"`
+	State     string `json:"state"`
+	EbillCode string `json:"ebillcode"`
+	EbillNo   string `json:"ebillno"`
+	CheckCode string `json:"checkcode"`
+	Url       string `json:"url"`
+	Content   string `json:"content"`
+}
+
 func NewGcPaymentProvider(clientId string, clientSecret string, host string) *GcPaymentProvider {
 	pp := &GcPaymentProvider{}
 
@@ -229,4 +250,71 @@ func (pp *GcPaymentProvider) Notify(request *http.Request, body []byte, authorit
 	}
 
 	return productDisplayName, paymentName, price, productName, providerName, nil
+}
+
+func (pp *GcPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {
+	payerType := "0"
+	if invoiceType == "Organization" {
+		payerType = "1"
+	}
+
+	invoiceReqInfo := GcInvoiceReqInfo{
+		BusNo:        paymentName,
+		PayerName:    personName,
+		IdNum:        personIdCard,
+		PayerType:    payerType,
+		InvoiceTitle: invoiceTitle,
+		Tin:          invoiceTaxId,
+		Phone:        personPhone,
+		Email:        personEmail,
+	}
+
+	b, err := json.Marshal(invoiceReqInfo)
+	if err != nil {
+		return "", err
+	}
+
+	body := GcRequestBody{
+		Op:          "InvoiceEBillByOrder",
+		Xmpch:       pp.Xmpch,
+		Version:     "1.4",
+		Data:        base64.StdEncoding.EncodeToString(b),
+		RequestTime: util.GenerateSimpleTimeId(),
+	}
+
+	params := fmt.Sprintf("data=%s&op=%s&requesttime=%s&version=%s&xmpch=%s%s", body.Data, body.Op, body.RequestTime, body.Version, body.Xmpch, pp.SecretKey)
+	body.Sign = strings.ToUpper(util.GetMd5Hash(params))
+
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		return "", err
+	}
+
+	respBytes, err := pp.doPost(bodyBytes)
+	if err != nil {
+		return "", err
+	}
+
+	var respBody GcResponseBody
+	err = json.Unmarshal(respBytes, &respBody)
+	if err != nil {
+		return "", err
+	}
+
+	if respBody.ReturnCode != "SUCCESS" {
+		return "", fmt.Errorf("%s: %s", respBody.ReturnCode, respBody.ReturnMsg)
+	}
+
+	invoiceRespInfoBytes, err := base64.StdEncoding.DecodeString(respBody.Data)
+	if err != nil {
+		return "", err
+	}
+
+	var invoiceRespInfo GcInvoiceRespInfo
+	err = json.Unmarshal(invoiceRespInfoBytes, &invoiceRespInfo)
+	if err != nil {
+		return "", err
+	}
+
+	return invoiceRespInfo.Url, nil
 }

@@ -90,3 +90,7 @@ func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, auth
 
 	return productDisplayName, paymentName, price, productName, providerName, nil
 }
+
+func (pp *AlipayPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {
+	return "", nil
+}

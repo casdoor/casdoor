@@ -158,3 +158,17 @@ func (c *ApiController) NotifyPayment() {
 		panic(fmt.Errorf("NotifyPayment() failed: %v", ok))
 	}
 }
+
+// @Title InvoicePayment
+// @Tag Payment API
+// @Description invoice payment
+// @Param   id    query    string  true        "The id of the payment"
+// @Success 200 {object} controllers.Response The Response object
+// @router /invoice-payment [post]
+func (c *ApiController) InvoicePayment() {
+	id := c.Input().Get("id")
+
+	payment := object.GetPayment(id)
+	c.Data["json"] = wrapActionResponse(object.InvoicePayment(payment))
+	c.ServeJSON()
+}
