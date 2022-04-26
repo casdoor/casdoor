@@ -44,6 +44,8 @@ class PaymentEditPage extends React.Component {
         this.setState({
           payment: payment,
         });
+
+        Setting.scrollToDiv("invoice-area");
       });
   }
 
@@ -349,7 +351,7 @@ class PaymentEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
+        <Row id={"invoice-area"} style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("payment:Invoice actions"), i18next.t("payment:Invoice actions - Tooltip"))} :
           </Col>
@@ -371,6 +373,7 @@ class PaymentEditPage extends React.Component {
                 <Button type={"primary"} onClick={() => this.downloadInvoice(false)}>{i18next.t("payment:Download Invoice")}</Button>
               )
             }
+            <Button style={{marginLeft: "20px"}} onClick={() => Setting.goToLink(this.state.payment.returnUrl)}>{i18next.t("payment:Return to Website")}</Button>
           </Col>
         </Row>
       </Card>

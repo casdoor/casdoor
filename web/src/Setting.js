@@ -795,6 +795,15 @@ export function getFromLink() {
   return from;
 }
 
+export function scrollToDiv(divId) {
+  if (divId) {
+    let ele = document.getElementById(divId);
+    if (ele) {
+      ele.scrollIntoView({behavior: "smooth"});
+    }
+  }
+}
+
 export function getSyncerTableColumns(syncer) {
   switch (syncer.type) {
     case "Keycloak":
