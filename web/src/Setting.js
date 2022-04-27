@@ -337,6 +337,8 @@ export function showMessage(type, text) {
     message.success(text);
   } else if (type === "error") {
     message.error(text);
+  } else if (type === "info") {
+    message.info(text);
   }
 }
 

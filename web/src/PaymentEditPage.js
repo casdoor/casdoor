@@ -30,6 +30,7 @@ class PaymentEditPage extends React.Component {
       paymentName: props.match.params.paymentName,
       payment: null,
       isModalVisible: false,
+      isInvoiceLoading: false,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -69,20 +70,25 @@ class PaymentEditPage extends React.Component {
   issueInvoice() {
     this.setState({
       isModalVisible: false,
+      isInvoiceLoading: true,
     });
 
     PaymentBackend.invoicePayment(this.state.payment.owner, this.state.paymentName)
       .then((res) => {
+        this.setState({
+          isInvoiceLoading: false,
+        });
         if (res.msg === "") {
           Setting.showMessage("success", `Successfully invoiced`);
-          this.setState({
-            paymentName: this.state.payment.name,
-          });
+          window.location.reload();
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage(res.msg.includes("成功") ? "info" : "error", res.msg);
         }
       })
       .catch(error => {
+        this.setState({
+          isInvoiceLoading: false,
+        });
         Setting.showMessage("error", `Failed to connect to server: ${error}`);
       });
   }

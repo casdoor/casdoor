@@ -38,11 +38,14 @@ type GcPayReqInfo struct {
 	OrderDate string `json:"orderdate"`
 	OrderNo   string `json:"orderno"`
 	Amount    string `json:"amount"`
-	PayerId   string `json:"payerid"`
-	PayerName string `json:"payername"`
 	Xmpch     string `json:"xmpch"`
+	Body      string `json:"body"`
 	ReturnUrl string `json:"return_url"`
 	NotifyUrl string `json:"notify_url"`
+	PayerId   string `json:"payerid"`
+	PayerName string `json:"payername"`
+	Remark1   string `json:"remark1"`
+	Remark2   string `json:"remark2"`
 }
 
 type GcPayRespInfo struct {
@@ -151,16 +154,17 @@ func (pp *GcPaymentProvider) doPost(postBytes []byte) ([]byte, error) {
 	return respBytes, nil
 }
 
-func (pp *GcPaymentProvider) Pay(providerName string, productName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error) {
+func (pp *GcPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error) {
 	payReqInfo := GcPayReqInfo{
 		OrderDate: util.GenerateSimpleTimeId(),
-		OrderNo:   util.GenerateTimeId(),
+		OrderNo:   paymentName,
 		Amount:    getPriceString(price),
-		PayerId:   "",
-		PayerName: "",
 		Xmpch:     pp.Xmpch,
+		Body:      productDisplayName,
 		ReturnUrl: returnUrl,
 		NotifyUrl: notifyUrl,
+		Remark1:   payerName,
+		Remark2:   productName,
 	}
 
 	b, err := json.Marshal(payReqInfo)
@@ -314,6 +318,14 @@ func (pp *GcPaymentProvider) GetInvoice(paymentName string, personName string, p
 	err = json.Unmarshal(invoiceRespInfoBytes, &invoiceRespInfo)
 	if err != nil {
 		return "", err
+	}
+
+	if invoiceRespInfo.State == "0" {
+		return "", fmt.Errorf("申请成功，开票中")
+	}
+
+	if invoiceRespInfo.Url == "" {
+		return "", fmt.Errorf("invoice URL is empty")
 	}
 
 	return invoiceRespInfo.Url, nil

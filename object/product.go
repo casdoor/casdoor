@@ -170,6 +170,7 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 
 	owner := product.Owner
 	productName := product.Name
+	payerName := fmt.Sprintf("%s | %s", user.Name, user.DisplayName)
 	paymentName := util.GenerateTimeId()
 	productDisplayName := product.DisplayName
 
@@ -177,7 +178,7 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	returnUrl := fmt.Sprintf("%s/payments/%s/result", originFrontend, paymentName)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s/%s/%s", originBackend, owner, providerName, productName, paymentName)
 
-	payUrl, err := pProvider.Pay(providerName, productName, paymentName, productDisplayName, product.Price, returnUrl, notifyUrl)
+	payUrl, err := pProvider.Pay(providerName, productName, payerName, paymentName, productDisplayName, product.Price, returnUrl, notifyUrl)
 	if err != nil {
 		return "", err
 	}
