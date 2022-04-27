@@ -97,6 +97,15 @@ func UpdateRole(id string, role *Role) bool {
 		panic(err)
 	}
 
+	if affected != 0 {
+		for _, user := range role.Users {
+			_, err = Enforcer.AddRoleForUser(user, fmt.Sprintf("%s/%s", role.Owner, role.Name))
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+
 	return affected != 0
 }
 

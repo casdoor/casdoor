@@ -16,7 +16,12 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/model"
+	xormadapter "github.com/casbin/xorm-adapter/v2"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -37,6 +42,8 @@ type Permission struct {
 
 	IsEnabled bool `json:"isEnabled"`
 }
+
+var Enforcer *casbin.Enforcer
 
 func GetPermissionCount(owner, field, value string) int {
 	session := GetSession(owner, -1, -1, field, value, "", "")
@@ -103,6 +110,10 @@ func UpdatePermission(id string, permission *Permission) bool {
 		panic(err)
 	}
 
+	if affected != 0 {
+		updatePolicies(permission)
+	}
+
 	return affected != 0
 }
 
@@ -110,6 +121,10 @@ func AddPermission(permission *Permission) bool {
 	affected, err := adapter.Engine.Insert(permission)
 	if err != nil {
 		panic(err)
+	}
+
+	if affected != 0 {
+		updatePolicies(permission)
 	}
 
 	return affected != 0
@@ -126,4 +141,74 @@ func DeletePermission(permission *Permission) bool {
 
 func (permission *Permission) GetId() string {
 	return fmt.Sprintf("%s/%s", permission.Owner, permission.Name)
+}
+
+func InitPermission() {
+	var err error
+
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	adapter, err := xormadapter.NewAdapterWithTableName(conf.GetConfigString("driverName"), conf.GetBeegoConfDataSourceName()+conf.GetConfigString("dbName"), "permission_rule", tableNamePrefix, true)
+	if err != nil {
+		panic(err)
+	}
+
+	modelText := `
+[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act, eft, id
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow)) && !some(where (p.eft == deny))
+
+[matchers]
+m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
+`
+	m, err := model.NewModelFromString(modelText)
+	if err != nil {
+		panic(err)
+	}
+
+	Enforcer, err = casbin.NewEnforcer(m, adapter)
+	if err != nil {
+		panic(err)
+	}
+
+	err = Enforcer.LoadPolicy()
+	if err != nil {
+		panic(err)
+	}
+}
+
+	func updatePolicies(permission *Permission) {
+	id := fmt.Sprintf("%s/%s", permission.Owner, permission.Name)
+
+	var policies [][]string
+	for _, user := range permission.Users {
+		for _, resource := range permission.Resources {
+			for _, action := range permission.Actions {
+				policies = append(policies, []string{user, resource, strings.ToLower(action), strings.ToLower(permission.Effect), id})
+			}
+		}
+	}
+	for _, role := range permission.Roles {
+		for _, resource := range permission.Resources {
+			for _, action := range permission.Actions {
+				policies = append(policies, []string{role, resource, strings.ToLower(action), strings.ToLower(permission.Effect), id})
+			}
+		}
+	}
+
+	_, err := Enforcer.RemoveFilteredPolicy(4, id)
+	if err != nil {
+		panic(err)
+	}
+	_, err = Enforcer.AddPolicies(policies)
+	if err != nil {
+		panic(err)
+	}
 }

@@ -20,6 +20,7 @@ import * as UserBackend from "./backend/UserBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import * as RoleBackend from "./backend/RoleBackend";
+import * as ApplicationBackend from "./backend/ApplicationBackend";
 
 const { Option } = Select;
 
@@ -34,6 +35,7 @@ class PermissionEditPage extends React.Component {
       organizations: [],
       users: [],
       roles: [],
+      resources: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -52,6 +54,7 @@ class PermissionEditPage extends React.Component {
 
         this.getUsers(permission.owner);
         this.getRoles(permission.owner);
+        this.getResources(permission.owner);
       });
   }
 
@@ -78,6 +81,15 @@ class PermissionEditPage extends React.Component {
       .then((res) => {
         this.setState({
           roles: res,
+        });
+      });
+  }
+
+  getResources(organizationName) {
+    ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
+      .then((res) => {
+        this.setState({
+          resources: (res.msg === undefined) ? res : [],
         });
       });
   }
@@ -182,6 +194,18 @@ class PermissionEditPage extends React.Component {
                 [
                   {id: 'Application', name: 'Application'},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("permission:Resources"), i18next.t("permission:Resources - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="tags" style={{width: '100%'}} value={this.state.permission.resources} onChange={(value => {this.updatePermissionField('resources', value);})}>
+              {
+                this.state.resources.map((resource, index) => <Option key={index} value={`${resource.name}`}>{`${resource.name}`}</Option>)
               }
             </Select>
           </Col>
