@@ -387,7 +387,7 @@ func SyncLdapUsers(owner string, users []LdapRespUser) (*[]LdapRespUser, *[]Ldap
 			Owner:       owner,
 			Name:        buildLdapUserName(user.Uid, user.UidNumber),
 			CreatedTime: util.GetCurrentTime(),
-			Password:    "123",
+			Password:    "",
 			DisplayName: user.Cn,
 			Avatar:      "https://casbin.org/img/casbin.svg",
 			Email:       user.Email,
