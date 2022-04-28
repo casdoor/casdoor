@@ -80,7 +80,8 @@ class PaymentEditPage extends React.Component {
         });
         if (res.msg === "") {
           Setting.showMessage("success", `Successfully invoiced`);
-          window.location.reload();
+          Setting.openLinkSafe(res.data);
+          this.getPayment();
         } else {
           Setting.showMessage(res.msg.includes("成功") ? "info" : "error", res.msg);
         }
@@ -364,7 +365,7 @@ class PaymentEditPage extends React.Component {
           <Col span={22} >
             {
               this.state.payment.invoiceUrl === "" ? (
-                <Button type={"primary"} onClick={() => {
+                <Button type={"primary"} loading={this.state.isInvoiceLoading} onClick={() => {
                   const errorText = this.checkError();
                   if (errorText !== "") {
                     Setting.showMessage("error", errorText);

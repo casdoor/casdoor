@@ -169,9 +169,9 @@ func (c *ApiController) InvoicePayment() {
 	id := c.Input().Get("id")
 
 	payment := object.GetPayment(id)
-	err := object.InvoicePayment(payment)
+	invoiceUrl, err := object.InvoicePayment(payment)
 	if err != nil {
 		c.ResponseError(err.Error())
 	}
-	c.ResponseOk()
+	c.ResponseOk(invoiceUrl)
 }

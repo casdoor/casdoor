@@ -17,7 +17,6 @@ import {Button, Descriptions, Spin} from "antd";
 import i18next from "i18next";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as ProviderBackend from "./backend/ProviderBackend";
-import * as Provider from "./auth/Provider";
 import * as Setting from "./Setting";
 
 class ProductBuyPage extends React.Component {

@@ -226,23 +226,23 @@ func invoicePayment(payment *Payment) (string, error) {
 	return invoiceUrl, nil
 }
 
-func InvoicePayment(payment *Payment) error {
+func InvoicePayment(payment *Payment) (string, error) {
 	if payment.State != "Paid" {
-		return fmt.Errorf("the payment state is supposed to be: \"%s\", got: \"%s\"", "Paid", payment.State)
+		return "", fmt.Errorf("the payment state is supposed to be: \"%s\", got: \"%s\"", "Paid", payment.State)
 	}
 
 	invoiceUrl, err := invoicePayment(payment)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	payment.InvoiceUrl = invoiceUrl
 	affected := UpdatePayment(payment.GetId(), payment)
 	if !affected {
-		return fmt.Errorf("failed to update the payment: %s", payment.Name)
+		return "", fmt.Errorf("failed to update the payment: %s", payment.Name)
 	}
 
-	return nil
+	return invoiceUrl, nil
 }
 
 func (payment *Payment) GetId() string {
