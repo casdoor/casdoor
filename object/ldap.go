@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/astaxie/beego"
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 	"github.com/thanhpk/randstr"
@@ -362,7 +363,7 @@ func DeleteLdap(ldap *Ldap) bool {
 	return affected != 0
 }
 
-func SyncLdapUsers(owner string, users []LdapRespUser) (*[]LdapRespUser, *[]LdapRespUser) {
+func SyncLdapUsers(owner string, users []LdapRespUser, ldapId string) (*[]LdapRespUser, *[]LdapRespUser) {
 	var existUsers []LdapRespUser
 	var failedUsers []LdapRespUser
 	var uuids []string
@@ -372,6 +373,25 @@ func SyncLdapUsers(owner string, users []LdapRespUser) (*[]LdapRespUser, *[]Ldap
 	}
 
 	existUuids := CheckLdapUuidExist(owner, uuids)
+
+	organization := getOrganization("admin", owner)
+	ldap := GetLdap(ldapId)
+
+	var dc []string
+	for _, basedn := range strings.Split(ldap.BaseDn, ",") {
+		if strings.Contains(basedn, "dc=") {
+			dc = append(dc, basedn[3:])
+		}
+	}
+	affiliation := strings.Join(dc, ".")
+
+	var ou []string
+	for _, admin := range strings.Split(ldap.Admin, ",") {
+		if strings.Contains(admin, "ou=") {
+			ou = append(ou, admin[3:])
+		}
+	}
+	tag := strings.Join(ou, ".")
 
 	for _, user := range users {
 		found := false
@@ -387,15 +407,14 @@ func SyncLdapUsers(owner string, users []LdapRespUser) (*[]LdapRespUser, *[]Ldap
 			Owner:       owner,
 			Name:        buildLdapUserName(user.Uid, user.UidNumber),
 			CreatedTime: util.GetCurrentTime(),
-			Password:    "123",
 			DisplayName: user.Cn,
-			Avatar:      "https://casbin.org/img/casbin.svg",
+			Avatar:      organization.DefaultAvatar,
 			Email:       user.Email,
 			Phone:       user.Phone,
 			Address:     []string{user.Address},
-			Affiliation: "Example Inc.",
-			Tag:         "staff",
-			Score:       2000,
+			Affiliation: affiliation,
+			Tag:         tag,
+			Score:       beego.AppConfig.DefaultInt("initScore", 2000),
 			Ldap:        user.Uuid,
 		}) {
 			failedUsers = append(failedUsers, user)
