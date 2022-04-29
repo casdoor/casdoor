@@ -76,8 +76,20 @@ type BilibiliIdProviderTokenResponse struct {
 	Data    BilibiliProviderToken `json:"data"`
 }
 
+/*
+{
+    "code": 0,
+    "message": "0",
+    "ttl": 1,
+    "data": {
+         "access_token": "d30bedaa4d8eb3128cf35ddc1030e27d",
+         "expires_in": 1630220614,
+         "refresh_token": "WxFDKwqScZIQDm4iWmKDvetyFugM6HkX"
+    }
+}
+*/
 // GetToken use code get access_token (*operation of getting code ought to be done in front)
-// get more detail via: https://docs.gitlab.com/ee/api/oauth2.html
+// get more detail via: https://openhome.bilibili.com/doc/4/eaf0e2b5-bde9-b9a0-9be1-019bb455701c
 func (idp *BilibiliIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	pTokenParams := &struct {
 		ClientId     string `json:"client_id"`
@@ -142,7 +154,8 @@ type BilibiliUserInfoResponse struct {
 	Data    BilibiliUserInfo `json:"data"`
 }
 
-// GetUserInfo use GitlabProviderToken gotten before return GitlabUserInfo
+// GetUserInfo Use  access_token to get UserInfo
+// get more detail via: https://openhome.bilibili.com/doc/4/feb66f99-7d87-c206-00e7-d84164cd701c
 func (idp *BilibiliIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	accessToken := token.AccessToken
 	clientId := idp.Config.ClientID
