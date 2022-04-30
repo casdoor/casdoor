@@ -159,7 +159,7 @@ class SignupTable extends React.Component {
         title: i18next.t("provider:rule"),
         dataIndex: 'rule',
         key: 'rule',
-        width: '120px',
+        width: '155px',
         render: (text, record, index) => {
           let options = [];
           if (record.name === "ID") {
@@ -167,11 +167,16 @@ class SignupTable extends React.Component {
               {id: 'Random', name: 'Random'},
               {id: 'Incremental', name: 'Incremental'},
             ];
-          } if (record.name === "Display name") {
+          } else if (record.name === "Display name") {
             options = [
               {id: 'None', name: 'None'},
               {id: 'Real name', name: 'Real name'},
               {id: 'First, last', name: 'First, last'},
+            ];
+          } else if (record.name === "Email") {
+            options = [
+              {id: 'Normal', name: 'Normal'},
+              {id: 'No Verification', name: 'No Verification'},
             ];
           }
 

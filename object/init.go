@@ -109,7 +109,7 @@ func initBuiltInApplication() {
 			{Name: "Display name", Visible: true, Required: true, Prompted: false, Rule: "None"},
 			{Name: "Password", Visible: true, Required: true, Prompted: false, Rule: "None"},
 			{Name: "Confirm password", Visible: true, Required: true, Prompted: false, Rule: "None"},
-			{Name: "Email", Visible: true, Required: true, Prompted: false, Rule: "None"},
+			{Name: "Email", Visible: true, Required: true, Prompted: false, Rule: "Normal"},
 			{Name: "Phone", Visible: true, Required: true, Prompted: false, Rule: "None"},
 			{Name: "Agreement", Visible: true, Required: true, Prompted: false, Rule: "None"},
 		},

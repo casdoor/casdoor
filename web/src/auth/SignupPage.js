@@ -325,20 +325,23 @@ class SignupPage extends React.Component {
           >
             <Input onChange={e => this.setState({email: e.target.value})} />
           </Form.Item>
-          <Form.Item
-            name="emailCode"
-            key="emailCode"
-            label={i18next.t("code:Email code")}
-            rules={[{
-              required: required,
-              message: i18next.t("code:Please input your verification code!"),
-            }]}
-          >
-            <CountDownInput
-              disabled={!this.state.validEmail}
-              onButtonClickArgs={[this.state.email, "email", Setting.getApplicationOrgName(application)]}
-            />
-          </Form.Item>
+          {
+            signupItem.rule !== "No Verification" && 
+            <Form.Item
+              name="emailCode"
+              key="emailCode"
+              label={i18next.t("code:Email code")}
+              rules={[{
+                required: required,
+                message: i18next.t("code:Please input your verification code!"),
+              }]}
+            >
+              <CountDownInput
+                disabled={!this.state.validEmail}
+                onButtonClickArgs={[this.state.email, "email", Setting.getApplicationOrgName(application)]}
+              />
+            </Form.Item>
+          }
         </React.Fragment>
       )
     } else if (signupItem.name === "Phone") {

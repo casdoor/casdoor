@@ -43,7 +43,7 @@ class ApplicationListPage extends BaseListPage {
         {name: "Display name", visible: true, required: true, rule: "None"},
         {name: "Password", visible: true, required: true, rule: "None"},
         {name: "Confirm password", visible: true, required: true, rule: "None"},
-        {name: "Email", visible: true, required: true, rule: "None"},
+        {name: "Email", visible: true, required: true, rule: "Normal"},
         {name: "Phone", visible: true, required: true, rule: "None"},
         {name: "Agreement", visible: true, required: true, rule: "None"},
       ],
