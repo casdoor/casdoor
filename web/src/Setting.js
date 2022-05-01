@@ -550,6 +550,7 @@ export function getProviderTypeOptions(category) {
         {id: 'AzureAD', name: 'AzureAD'},
         {id: 'Slack', name: 'Slack'},
         {id: 'Steam', name: 'Steam'},
+        {id: 'Okta', name: 'Okta'},
         {id: 'Custom', name: 'Custom'},
       ]
     );

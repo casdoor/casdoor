@@ -43,6 +43,7 @@ import AppleLoginButton from "./AppleLoginButton"
 import AzureADLoginButton from "./AzureADLoginButton";
 import SlackLoginButton from "./SlackLoginButton";
 import SteamLoginButton from "./SteamLoginButton";
+import OktaLoginButton from "./OktaLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 
@@ -278,6 +279,8 @@ class LoginPage extends React.Component {
       return <SlackLoginButton text={text} align={"center"} />
     } else if (type === "Steam") {
       return <SteamLoginButton text={text} align={"center"} />
+    } else if (type === "Okta") {
+      return <OktaLoginButton text={text} align={"center"} />
     }
 
     return text;

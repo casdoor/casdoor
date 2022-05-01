@@ -107,6 +107,10 @@ const authInfo = {
   Steam: {
     endpoint: "https://steamcommunity.com/openid/login",
   },
+  Okta: {
+    scope: "openid%20profile%20email",
+    endpoint: "http://example.com",
+  },
   Custom: {
     endpoint: "https://example.com/",
   },
@@ -230,6 +234,8 @@ export function getAuthUrl(application, provider, method) {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Steam") {
     return `${endpoint}?openid.claimed_id=http://specs.openid.net/auth/2.0/identifier_select&openid.identity=http://specs.openid.net/auth/2.0/identifier_select&openid.mode=checkid_setup&openid.ns=http://specs.openid.net/auth/2.0&openid.realm=${window.location.origin}&openid.return_to=${redirectUri}?state=${state}`;
+  } else if (provider.type === "Okta") {
+    return `${provider.domain}/v1/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Custom") {
     return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.customScope}&response_type=code&state=${state}`;
   } 
