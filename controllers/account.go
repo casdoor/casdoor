@@ -116,7 +116,7 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No Verification" && form.Email != "" {
+	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && form.Email != "" {
 		checkResult := object.CheckVerificationCode(form.Email, form.EmailCode)
 		if len(checkResult) != 0 {
 			c.ResponseError(fmt.Sprintf("Email: %s", checkResult))
