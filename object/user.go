@@ -320,7 +320,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 	}
 
 	if len(columns) == 0 {
-		columns = []string{"owner", "display_name", "avatar",
+		columns = []string{"owner", "display_name", "avatar", "password",
 			"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "signup_application",
 			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties"}
 	}
