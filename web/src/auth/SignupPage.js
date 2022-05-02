@@ -326,7 +326,7 @@ class SignupPage extends React.Component {
             <Input onChange={e => this.setState({email: e.target.value})} />
           </Form.Item>
           {
-            signupItem.rule !== "No Verification" && 
+            signupItem.rule !== "No verification" && 
             <Form.Item
               name="emailCode"
               key="emailCode"
