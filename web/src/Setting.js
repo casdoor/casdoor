@@ -74,6 +74,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
       url: "https://cloud.tencent.com/product/cos",
     },
+    "Azure Blob": {
+      logo: `${StaticBaseUrl}/img/social_azure.jpg`,
+      url: "https://azure.microsoft.com/en-us/services/storage/blobs/"
+    }
   },
   SAML: {
     "Aliyun IDaaS": {
@@ -576,6 +580,7 @@ export function getProviderTypeOptions(category) {
         {id: 'AWS S3', name: 'AWS S3'},
         {id: 'Aliyun OSS', name: 'Aliyun OSS'},
         {id: 'Tencent Cloud COS', name: 'Tencent Cloud COS'},
+        {id: 'Azure Blob', name: 'Azure Blob'}
       ]
     );
   } else if (category === "SAML") {
