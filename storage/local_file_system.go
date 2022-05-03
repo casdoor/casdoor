@@ -15,11 +15,12 @@
 package storage
 
 import (
-	"github.com/casdoor/oss"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/casdoor/oss"
 )
 
 var baseFolder = "files"
