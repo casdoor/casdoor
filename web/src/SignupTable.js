@@ -176,7 +176,7 @@ class SignupTable extends React.Component {
           } else if (record.name === "Email") {
             options = [
               {id: 'Normal', name: 'Normal'},
-              {id: 'No Verification', name: 'No verification'},
+              {id: 'No verification', name: 'No verification'},
             ];
           }
 
