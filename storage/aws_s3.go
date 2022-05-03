@@ -16,8 +16,8 @@ package storage
 
 import (
 	awss3 "github.com/aws/aws-sdk-go/service/s3"
-	"github.com/qor/oss"
-	"github.com/qor/oss/s3"
+	"github.com/casdoor/oss"
+	"github.com/casdoor/oss/s3"
 )
 
 func NewAwsS3StorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {

@@ -14,7 +14,7 @@
 
 package storage
 
-import "github.com/qor/oss"
+import "github.com/casdoor/oss"
 
 func GetStorageProvider(providerType string, clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
 	switch providerType {
@@ -26,6 +26,8 @@ func GetStorageProvider(providerType string, clientId string, clientSecret strin
 		return NewAliyunOssStorageProvider(clientId, clientSecret, region, bucket, endpoint)
 	case "Tencent Cloud COS":
 		return NewTencentCloudCosStorageProvider(clientId, clientSecret, region, bucket, endpoint)
+	case "Azure Blob":
+		return NewAzureBlobStorageProvider(clientId, clientSecret, region, bucket, endpoint)
 	}
 
 	return nil
