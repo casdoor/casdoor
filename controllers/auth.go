@@ -133,7 +133,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 // @Param   scope    query    string  true        "scope"
 // @Param   state    query    string  true        "state"
 // @Success 200 {object} controllers.api_controller.Response The Response object
-// @router /update-application [get]
+// @router /get-app-login [get]
 func (c *ApiController) GetApplicationLogin() {
 	clientId := c.Input().Get("clientId")
 	responseType := c.Input().Get("responseType")
