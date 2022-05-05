@@ -21,6 +21,7 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import * as RoleBackend from "./backend/RoleBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
+import * as ModelBackend from "./backend/ModelBackend";
 
 const { Option } = Select;
 
@@ -36,6 +37,7 @@ class PermissionEditPage extends React.Component {
       users: [],
       roles: [],
       resources: [],
+      models: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -55,6 +57,7 @@ class PermissionEditPage extends React.Component {
         this.getUsers(permission.owner);
         this.getRoles(permission.owner);
         this.getResources(permission.owner);
+        this.getModels(permission.owner);
       });
   }
 
@@ -90,6 +93,15 @@ class PermissionEditPage extends React.Component {
       .then((res) => {
         this.setState({
           resources: (res.msg === undefined) ? res : [],
+        });
+      });
+  }
+
+  getModels(organizationName) {
+    ModelBackend.getModels(organizationName)
+      .then((res) => {
+        this.setState({
+          models: res,
         });
       });
   }
@@ -156,6 +168,20 @@ class PermissionEditPage extends React.Component {
             <Input value={this.state.permission.displayName} onChange={e => {
               this.updatePermissionField('displayName', e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Model"), i18next.t("general:Model - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: '100%'}} value={this.state.permission.model} onChange={(model => {
+              this.updatePermissionField('model', model);
+            })}>
+              {
+                this.state.models.map((model, index) => <Option key={index} value={model.name}>{model.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >

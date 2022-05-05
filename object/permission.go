@@ -35,6 +35,7 @@ type Permission struct {
 	Users []string `xorm:"mediumtext" json:"users"`
 	Roles []string `xorm:"mediumtext" json:"roles"`
 
+	Model 		 string   `xorm:"varchar(100)" json:"model"`
 	ResourceType string   `xorm:"varchar(100)" json:"resourceType"`
 	Resources    []string `xorm:"mediumtext" json:"resources"`
 	Actions      []string `xorm:"mediumtext" json:"actions"`
@@ -43,7 +44,18 @@ type Permission struct {
 	IsEnabled bool `json:"isEnabled"`
 }
 
-var Enforcer *casbin.Enforcer
+type PermissionRule struct {
+	PType      string `xorm:"varchar(100) index not null default ''"`
+	V0         string `xorm:"varchar(100) index not null default ''"`
+	V1         string `xorm:"varchar(100) index not null default ''"`
+	V2         string `xorm:"varchar(100) index not null default ''"`
+	V3         string `xorm:"varchar(100) index not null default ''"`
+	V4         string `xorm:"varchar(100) index not null default ''"`
+	V5         string `xorm:"varchar(100) index not null default ''"`
+	Permission string `xorm:"varchar(100)" json:"permission"`
+}
+
+var EnforcerMap map[string]*casbin.Enforcer
 
 func GetPermissionCount(owner, field, value string) int {
 	session := GetSession(owner, -1, -1, field, value, "", "")
@@ -124,6 +136,7 @@ func AddPermission(permission *Permission) bool {
 	}
 
 	if affected != 0 {
+		initEnforcer(permission)
 		updatePolicies(permission)
 	}
 
@@ -144,6 +157,13 @@ func (permission *Permission) GetId() string {
 }
 
 func InitPermission() {
+	EnforcerMap = make(map[string]*casbin.Enforcer)
+	for _, permission := range GetPermissions("") {
+		initEnforcer(permission)
+	}
+}
+
+func initEnforcer(permission *Permission) {
 	var err error
 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
@@ -152,40 +172,43 @@ func InitPermission() {
 		panic(err)
 	}
 
+	permissionModel := getModel(permission.Owner, permission.Model)
 	modelText := `
 [request_definition]
 r = sub, obj, act
-
 [policy_definition]
 p = sub, obj, act, eft, id
-
 [role_definition]
 g = _, _
-
 [policy_effect]
 e = some(where (p.eft == allow)) && !some(where (p.eft == deny))
-
 [matchers]
 m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 `
+	if permissionModel != nil {
+		modelText = permissionModel.ModelText
+	}
 	m, err := model.NewModelFromString(modelText)
 	if err != nil {
 		panic(err)
 	}
 
-	Enforcer, err = casbin.NewEnforcer(m, adapter)
+	enforcer, err := casbin.NewEnforcer(m, adapter)
 	if err != nil {
 		panic(err)
 	}
 
-	err = Enforcer.LoadPolicy()
+	err = enforcer.LoadPolicy()
 	if err != nil {
 		panic(err)
 	}
+
+	EnforcerMap[permission.GetId()] = enforcer
 }
 
 func updatePolicies(permission *Permission) {
-	id := fmt.Sprintf("%s/%s", permission.Owner, permission.Name)
+	id := permission.GetId()
+	enforcer := EnforcerMap[permission.GetId()]
 
 	var policies [][]string
 	for _, user := range permission.Users {
@@ -203,11 +226,11 @@ func updatePolicies(permission *Permission) {
 		}
 	}
 
-	_, err := Enforcer.RemoveFilteredPolicy(4, id)
+	_, err := enforcer.RemoveFilteredPolicy(4, id)
 	if err != nil {
 		panic(err)
 	}
-	_, err = Enforcer.AddPolicies(policies)
+	_, err = enforcer.AddPolicies(policies)
 	if err != nil {
 		panic(err)
 	}

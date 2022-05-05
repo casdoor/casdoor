@@ -50,10 +50,15 @@ func tokenToResponse(token *object.Token) *Response {
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) (resp *Response) {
 	userId := user.GetId()
 
-	allow, _ := object.Enforcer.Enforce(userId, application.Name, "read")
-	if !allow {
-		c.ResponseError("Unauthorized")
-		return
+	permissions := object.GetPermissions(application.Organization)
+	for _, permission := range permissions {
+		if permission.IsEnabled {
+			allow, _ := object.EnforcerMap[permission.GetId()].Enforce(userId, application.Name, "read")
+			if !allow {
+				c.ResponseError("Unauthorized")
+				return
+			}
+		}
 	}
 
 	if form.Type == ResponseTypeLogin {
