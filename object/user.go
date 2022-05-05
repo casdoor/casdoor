@@ -446,20 +446,19 @@ func DeleteUser(user *User) bool {
 	return affected != 0
 }
 
-func GetUserInfo(userId string, scope string, aud string, host string) (*Userinfo, error) {
+func GetUserInfo(userId string, scope string, aud string, origin string) (*Userinfo, error) {
 	user := GetUser(userId)
 	if user == nil {
 		return nil, fmt.Errorf("the user: %s doesn't exist", userId)
 	}
-	origin := conf.GetConfigString("origin")
-	_, originBackend := getOriginFromHost(host)
-	if origin != "" {
-		originBackend = origin
+	originConfig := conf.GetConfigString("origin")
+	if originConfig != "" {
+		origin = originConfig
 	}
 
 	resp := Userinfo{
 		Sub: user.Id,
-		Iss: originBackend,
+		Iss: origin,
 		Aud: aud,
 	}
 	if strings.Contains(scope, "profile") {

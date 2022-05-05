@@ -21,13 +21,13 @@ import (
 )
 
 func (c *ApiController) GetSamlMeta() {
-	host := c.Ctx.Request.Host
+	origin := fmt.Sprintf("%s://%s", c.Ctx.Input.Scheme(), c.Ctx.Request.Host)
 	paramApp := c.Input().Get("application")
 	application := object.GetApplication(paramApp)
 	if application == nil {
 		c.ResponseError(fmt.Sprintf("err: application %s not found", paramApp))
 	}
-	metadata, _ := object.GetSamlMeta(application, host)
+	metadata, _ := object.GetSamlMeta(application, origin)
 	c.Data["xml"] = metadata
 	c.ServeXML()
 }

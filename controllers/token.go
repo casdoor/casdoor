@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/astaxie/beego/utils/pagination"
@@ -150,9 +151,9 @@ func (c *ApiController) GetOAuthCode() {
 		c.ResponseError("Challenge method should be S256")
 		return
 	}
-	host := c.Ctx.Request.Host
+	origin := fmt.Sprintf("%s://%s", c.Ctx.Input.Scheme(), c.Ctx.Request.Host)
 
-	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, host)
+	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, origin)
 	c.ServeJSON()
 }
 
@@ -197,9 +198,9 @@ func (c *ApiController) GetOAuthToken() {
 			avatar = tokenRequest.Avatar
 		}
 	}
-	host := c.Ctx.Request.Host
+	origin := fmt.Sprintf("%s://%s", c.Ctx.Input.Scheme(), c.Ctx.Request.Host)
 
-	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, tag, avatar)
+	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, origin, tag, avatar)
 	c.ServeJSON()
 }
 
@@ -220,7 +221,7 @@ func (c *ApiController) RefreshToken() {
 	scope := c.Input().Get("scope")
 	clientId := c.Input().Get("client_id")
 	clientSecret := c.Input().Get("client_secret")
-	host := c.Ctx.Request.Host
+	origin := fmt.Sprintf("%s://%s", c.Ctx.Input.Scheme(), c.Ctx.Request.Host)
 
 	if clientId == "" {
 		// If clientID is empty, try to read data from RequestBody
@@ -234,7 +235,7 @@ func (c *ApiController) RefreshToken() {
 		}
 	}
 
-	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, origin)
 	c.ServeJSON()
 }
 

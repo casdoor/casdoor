@@ -254,7 +254,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 	return "", application
 }
 
-func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, host string) *Code {
+func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, origin string) *Code {
 	user := GetUser(userId)
 	if user == nil {
 		return &Code{
@@ -277,7 +277,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		}
 	}
 
-	accessToken, refreshToken, err := generateJwtToken(application, user, nonce, scope, host)
+	accessToken, refreshToken, err := generateJwtToken(application, user, nonce, scope, origin)
 	if err != nil {
 		panic(err)
 	}
@@ -311,8 +311,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}
 }
 
-
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string, tag string, avatar string) *TokenWrapper {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, origin string, tag string, avatar string) *TokenWrapper {
 	var errString string
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
@@ -345,14 +344,14 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case "authorization_code": // Authorization Code Grant
 		token, err = GetAuthorizationCodeToken(application, clientSecret, code, verifier)
 	case "password": //	Resource Owner Password Credentials Grant
-		token, err = GetPasswordToken(application, username, password, scope, host)
+		token, err = GetPasswordToken(application, username, password, scope, origin)
 	case "client_credentials": // Client Credentials Grant
-		token, err = GetClientCredentialsToken(application, clientSecret, scope, host)
+		token, err = GetClientCredentialsToken(application, clientSecret, scope, origin)
 	}
 
 	if tag == "wechat_miniprogram" {
 		// Wechat Mini Program
-		token, err = GetWechatMiniProgramToken(application, code, host, username, avatar)
+		token, err = GetWechatMiniProgramToken(application, code, origin, username, avatar)
 	}
 
 	if err != nil {
@@ -380,7 +379,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	return tokenWrapper
 }
 
-func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string, host string) *TokenWrapper {
+func RefreshToken(grantType string, refreshToken string, scope string, clientId string, clientSecret string, origin string) *TokenWrapper {
 	var errString string
 	// check parameters
 	if grantType != "refresh_token" {
@@ -452,7 +451,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			Error:       errString,
 		}
 	}
-	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "", scope, host)
+	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "", scope, origin)
 	if err != nil {
 		panic(err)
 	}
@@ -550,7 +549,7 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 }
 
 // Resource Owner Password Credentials flow
-func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, error) {
+func GetPasswordToken(application *Application, username string, password string, scope string, origin string) (*Token, error) {
 	user := getUser(application.Organization, username)
 	if user == nil {
 		return nil, errors.New("error: the user does not exist")
@@ -562,7 +561,7 @@ func GetPasswordToken(application *Application, username string, password string
 	if user.IsForbidden {
 		return nil, errors.New("error: the user is forbidden to sign in, please contact the administrator")
 	}
-	accessToken, refreshToken, err := generateJwtToken(application, user, "", scope, host)
+	accessToken, refreshToken, err := generateJwtToken(application, user, "", scope, origin)
 	if err != nil {
 		return nil, err
 	}
@@ -586,7 +585,7 @@ func GetPasswordToken(application *Application, username string, password string
 }
 
 // Client Credentials flow
-func GetClientCredentialsToken(application *Application, clientSecret string, scope string, host string) (*Token, error) {
+func GetClientCredentialsToken(application *Application, clientSecret string, scope string, origin string) (*Token, error) {
 	if application.ClientSecret != clientSecret {
 		return nil, errors.New("error: invalid client_secret")
 	}
@@ -595,7 +594,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		Id:    application.GetId(),
 		Name:  fmt.Sprintf("app/%s", application.Name),
 	}
-	accessToken, _, err := generateJwtToken(application, nullUser, "", scope, host)
+	accessToken, _, err := generateJwtToken(application, nullUser, "", scope, origin)
 	if err != nil {
 		return nil, err
 	}
@@ -618,8 +617,8 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 }
 
 // Implicit flow
-func GetTokenByUser(application *Application, user *User, scope string, host string) (*Token, error) {
-	accessToken, refreshToken, err := generateJwtToken(application, user, "", scope, host)
+func GetTokenByUser(application *Application, user *User, scope string, origin string) (*Token, error) {
+	accessToken, refreshToken, err := generateJwtToken(application, user, "", scope, origin)
 	if err != nil {
 		return nil, err
 	}
@@ -643,7 +642,7 @@ func GetTokenByUser(application *Application, user *User, scope string, host str
 }
 
 // Wechat Mini Program flow
-func GetWechatMiniProgramToken(application *Application, code string, host string, username string, avatar string) (*Token, error) {
+func GetWechatMiniProgramToken(application *Application, code string, origin string, username string, avatar string) (*Token, error) {
 	mpProvider := GetWechatMiniProgramProvider(application)
 	if mpProvider == nil {
 		return nil, errors.New("error: the application does not support wechat mini program")
@@ -689,7 +688,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		AddUser(user)
 	}
 
-	accessToken, refreshToken, err := generateJwtToken(application, user, "", "", host)
+	accessToken, refreshToken, err := generateJwtToken(application, user, "", "", origin)
 	if err != nil {
 		return nil, err
 	}

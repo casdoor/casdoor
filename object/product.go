@@ -152,7 +152,7 @@ func (product *Product) getProvider(providerId string) (*Provider, error) {
 	return provider, nil
 }
 
-func BuyProduct(id string, providerName string, user *User, host string) (string, error) {
+func BuyProduct(id string, providerName string, user *User, origin string) (string, error) {
 	product := GetProduct(id)
 	if product == nil {
 		return "", fmt.Errorf("the product: %s does not exist", id)
@@ -174,7 +174,7 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	paymentName := util.GenerateTimeId()
 	productDisplayName := product.DisplayName
 
-	originFrontend, originBackend := getOriginFromHost(host)
+	originFrontend, originBackend := getFrontendAndBackendOrigin(origin)
 	returnUrl := fmt.Sprintf("%s/payments/%s/result", originFrontend, paymentName)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s/%s/%s", originBackend, owner, providerName, productName, paymentName)
 

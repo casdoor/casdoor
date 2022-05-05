@@ -174,16 +174,16 @@ type Attribute struct {
 	Xmlns        string `xml:"xmlns,attr"`
 }
 
-func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, error) {
-	//_, originBackend := getOriginFromHost(host)
+func GetSamlMeta(application *Application, origin string) (*IdpEntityDescriptor, error) {
+	//_, originBackend := getFrontendAndBackendOrigin(origin)
 	cert := getCertByApplication(application)
 	block, _ := pem.Decode([]byte(cert.PublicKey))
 	publicKey := base64.StdEncoding.EncodeToString(block.Bytes)
 
-	origin := beego.AppConfig.String("origin")
-	originFrontend, originBackend := getOriginFromHost(host)
-	if origin != "" {
-		originBackend = origin
+	originConfig := beego.AppConfig.String("origin")
+	originFrontend, originBackend := getFrontendAndBackendOrigin(origin)
+	if originConfig != "" {
+		originBackend = originConfig
 	}
 	d := IdpEntityDescriptor{
 		XMLName: xml.Name{
@@ -227,7 +227,7 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 
 //GenerateSamlResponse generates a SAML2.0 response
 //parameter samlRequest is saml request in base64 format
-func GetSamlResponse(application *Application, user *User, samlRequest string, host string) (string, string, error) {
+func GetSamlResponse(application *Application, user *User, samlRequest string, origin string) (string, string, error) {
 	//decode samlRequest
 	defated, err := base64.StdEncoding.DecodeString(samlRequest)
 	if err != nil {
@@ -251,10 +251,8 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	block, _ := pem.Decode([]byte(cert.PublicKey))
 	publicKey := base64.StdEncoding.EncodeToString(block.Bytes)
 
-	_, originBackend := getOriginFromHost(host)
-
 	//build signedResponse
-	samlResponse, _ := NewSamlResponse(user, originBackend, publicKey, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer.Url, application.RedirectUris)
+	samlResponse, _ := NewSamlResponse(user, origin, publicKey, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer.Url, application.RedirectUris)
 	randomKeyStore := &X509Key{
 		PrivateKey:      cert.PrivateKey,
 		X509Certificate: publicKey,

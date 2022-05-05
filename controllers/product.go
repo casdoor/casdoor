@@ -126,7 +126,7 @@ func (c *ApiController) DeleteProduct() {
 func (c *ApiController) BuyProduct() {
 	id := c.Input().Get("id")
 	providerName := c.Input().Get("providerName")
-	host := c.Ctx.Request.Host
+	origin := fmt.Sprintf("%s://%s", c.Ctx.Input.Scheme(), c.Ctx.Request.Host)
 
 	userId := c.GetSessionUsername()
 	if userId == "" {
@@ -140,7 +140,7 @@ func (c *ApiController) BuyProduct() {
 		return
 	}
 
-	payUrl, err := object.BuyProduct(id, providerName, user, host)
+	payUrl, err := object.BuyProduct(id, providerName, user, origin)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

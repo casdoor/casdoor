@@ -42,24 +42,19 @@ type OidcDiscovery struct {
 	RequestObjectSigningAlgValuesSupported []string `json:"request_object_signing_alg_values_supported"`
 }
 
-func getOriginFromHost(host string) (string, string) {
-	protocol := "https://"
-	if strings.HasPrefix(host, "localhost") {
-		protocol = "http://"
-	}
-
-	if host == "localhost:8000" {
-		return fmt.Sprintf("%s%s", protocol, "localhost:7001"), fmt.Sprintf("%s%s", protocol, "localhost:8000")
+func getFrontendAndBackendOrigin(origin string) (string, string) {
+	if strings.HasSuffix(origin, "localhost:8000") {
+		return strings.ReplaceAll(origin, ":8000", ":7001"), origin
 	} else {
-		return fmt.Sprintf("%s%s", protocol, host), fmt.Sprintf("%s%s", protocol, host)
+		return origin, origin
 	}
 }
 
-func GetOidcDiscovery(host string) OidcDiscovery {
-	originFrontend, originBackend := getOriginFromHost(host)
+func GetOidcDiscovery(origin string) OidcDiscovery {
+	originFrontend, originBackend := getFrontendAndBackendOrigin(origin)
 
-	origin := conf.GetConfigString("origin")
-	if origin != "" {
+	originConfig := conf.GetConfigString("origin")
+	if originConfig != "" {
 		originFrontend = origin
 		originBackend = origin
 	}

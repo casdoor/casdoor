@@ -281,8 +281,8 @@ func (c *ApiController) GetUserinfo() {
 		return
 	}
 	scope, aud := c.GetSessionOidc()
-	host := c.Ctx.Request.Host
-	resp, err := object.GetUserInfo(userId, scope, aud, host)
+	origin := fmt.Sprintf("%s://%s", c.Ctx.Input.Scheme(), c.Ctx.Request.Host)
+	resp, err := object.GetUserInfo(userId, scope, aud, origin)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
