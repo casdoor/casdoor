@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/RobotsAndPencils/go-saml v0.0.0-20170520135329-fb13cb52a46b
+	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387 // indirect
 	github.com/astaxie/beego v1.12.3
 	github.com/aws/aws-sdk-go v1.44.4
 	github.com/beevik/etree v1.1.0
