@@ -184,7 +184,7 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
 	}
 }
 
-	func updatePolicies(permission *Permission) {
+func updatePolicies(permission *Permission) {
 	id := fmt.Sprintf("%s/%s", permission.Owner, permission.Name)
 
 	var policies [][]string
