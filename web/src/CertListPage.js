@@ -32,7 +32,7 @@ class CertListPage extends BaseListPage {
       displayName: `New Cert - ${randomName}`,
       scope: "JWT",
       type: "x509",
-      cryptoAlgorithm: "RSA",
+      cryptoAlgorithm: "RS256",
       bitSize: 4096,
       expireInYears: 20,
       publicKey: "",
@@ -131,7 +131,7 @@ class CertListPage extends BaseListPage {
         key: 'cryptoAlgorithm',
         filterMultiple: false,
         filters: [
-          {text: 'RSA', value: 'RSA'},
+          {text: 'RS256', value: 'RS256'},
         ],
         width: '190px',
         sorter: true,

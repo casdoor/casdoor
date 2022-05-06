@@ -147,7 +147,7 @@ func initBuiltInCert() {
 		DisplayName:     "Built-in Cert",
 		Scope:           "JWT",
 		Type:            "x509",
-		CryptoAlgorithm: "RSA",
+		CryptoAlgorithm: "RS256",
 		BitSize:         4096,
 		ExpireInYears:   20,
 		PublicKey:       tokenJwtPublicKey,
