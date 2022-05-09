@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -166,11 +165,23 @@ func GetWechatMiniProgramProvider(application *Application) *Provider {
 	return nil
 }
 
+func CheckMaskedProvider(provider *Provider, lastProvider *Provider) {
+	if provider.ClientSecret == "***" {
+		provider.ClientSecret = lastProvider.ClientSecret
+	}
+	if provider.ClientSecret2 == "***" {
+		provider.ClientSecret2 = lastProvider.ClientSecret2
+	}
+}
+
 func UpdateProvider(id string, provider *Provider) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getProvider(owner, name) == nil {
+
+	lastProvider := getProvider(owner, name)
+	if lastProvider == nil {
 		return false
 	}
+	CheckMaskedProvider(provider, lastProvider)
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(provider)
 	if err != nil {

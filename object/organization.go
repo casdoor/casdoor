@@ -110,11 +110,19 @@ func GetMaskedOrganizations(organizations []*Organization) []*Organization {
 	return organizations
 }
 
+func CheckMaskedOrganization(organization *Organization, lastOrganization *Organization) {
+	if organization.MasterPassword == "***" {
+		organization.MasterPassword = lastOrganization.MasterPassword
+	}
+}
+
 func UpdateOrganization(id string, organization *Organization) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getOrganization(owner, name) == nil {
+	lastOrganization := getOrganization(owner, name)
+	if lastOrganization == nil {
 		return false
 	}
+	CheckMaskedOrganization(organization, lastOrganization)
 
 	if name == "built-in" {
 		organization.Name = name

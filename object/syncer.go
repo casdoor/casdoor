@@ -127,11 +127,19 @@ func GetMaskedSyncers(syncers []*Syncer) []*Syncer {
 	return syncers
 }
 
+func CheckMaskedSyncer(syncer *Syncer, lastSyncer *Syncer) {
+	if syncer.Password == "***" {
+		syncer.Password = lastSyncer.Password
+	}
+}
+
 func UpdateSyncer(id string, syncer *Syncer) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getSyncer(owner, name) == nil {
+	lastSyncer := getSyncer(owner, name)
+	if lastSyncer == nil {
 		return false
 	}
+	CheckMaskedSyncer(syncer, lastSyncer)
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(syncer)
 	if err != nil {

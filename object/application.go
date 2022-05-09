@@ -243,11 +243,27 @@ func GetMaskedApplications(applications []*Application, userId string) []*Applic
 	return applications
 }
 
+func CheckMaskedApplication(application *Application, lastApplication *Application) {
+	if application.ClientSecret == "***" {
+		application.ClientSecret = lastApplication.ClientSecret
+	}
+	if application.OrganizationObj.MasterPassword == "***" {
+		application.OrganizationObj.MasterPassword = lastApplication.OrganizationObj.MasterPassword
+	}
+	if application.OrganizationObj.MasterPassword == "***" {
+		application.OrganizationObj.PasswordType = lastApplication.OrganizationObj.PasswordType
+	}
+	if application.OrganizationObj.MasterPassword == "***" {
+		application.OrganizationObj.PasswordSalt = lastApplication.OrganizationObj.PasswordSalt
+	}
+}
 func UpdateApplication(id string, application *Application) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getApplication(owner, name) == nil {
+	lastApplication := getApplication(owner, name)
+	if lastApplication == nil {
 		return false
 	}
+	CheckMaskedApplication(application, lastApplication)
 
 	if name == "app-built-in" {
 		application.Name = name
