@@ -257,7 +257,11 @@ func UpdateApplication(id string, application *Application) bool {
 		providerItem.Provider = nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(application)
+	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
+	if application.ClientSecret == "***" {
+		session.Omit("client_secret")
+	}
+	affected, err := session.Update(application)
 	if err != nil {
 		panic(err)
 	}

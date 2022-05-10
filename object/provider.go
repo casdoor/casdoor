@@ -172,7 +172,14 @@ func UpdateProvider(id string, provider *Provider) bool {
 		return false
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(provider)
+	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
+	if provider.ClientSecret == "***" {
+		session = session.Omit("client_secret")
+	}
+	if provider.ClientSecret2 == "***" {
+		session = session.Omit("client_secret2")
+	}
+	affected, err := session.Update(provider)
 	if err != nil {
 		panic(err)
 	}
