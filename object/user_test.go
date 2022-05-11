@@ -97,3 +97,14 @@ func TestGetMaskedUsers(t *testing.T) {
 		})
 	}
 }
+
+func TestGetUserByField(t *testing.T) {
+	InitConfig()
+
+	user := GetUserByField("built-in", "DingTalk", "test")
+	if user != nil {
+		t.Logf("%+v", user)
+	} else {
+		t.Log("no user found")
+	}
+}

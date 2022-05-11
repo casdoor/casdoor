@@ -84,6 +84,8 @@ func GetIdProvider(typ string, subType string, clientId string, clientSecret str
 		}
 	} else if typ == "Casdoor" {
 		return NewCasdoorIdProvider(clientId, clientSecret, redirectUrl, hostUrl)
+	} else if typ == "Okta" {
+		return NewOktaIdProvider(clientId, clientSecret, redirectUrl, hostUrl)
 	} else if isGothSupport(typ) {
 		return NewGothIdProvider(typ, clientId, clientSecret, redirectUrl)
 	} else if typ == "Bilibili" {

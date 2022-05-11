@@ -20,7 +20,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/qor/oss"
+	"github.com/casdoor/oss"
 )
 
 var baseFolder = "files"

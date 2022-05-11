@@ -136,7 +136,7 @@ class CertEditPage extends React.Component {
             })}>
               {
                 [
-                  {id: 'RSA', name: 'RSA'},
+                  {id: 'RS256', name: 'RS256'},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>

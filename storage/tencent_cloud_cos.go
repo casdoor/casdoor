@@ -15,8 +15,8 @@
 package storage
 
 import (
-	"github.com/qor/oss"
-	"github.com/qor/oss/tencent"
+	"github.com/casdoor/oss"
+	"github.com/casdoor/oss/tencent"
 )
 
 func NewTencentCloudCosStorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {

@@ -215,7 +215,7 @@ func (c *ApiController) SyncLdapUsers() {
 
 	object.UpdateLdapSyncTime(ldapId)
 
-	exist, failed := object.SyncLdapUsers(owner, users)
+	exist, failed := object.SyncLdapUsers(owner, users, ldapId)
 	c.Data["json"] = &Response{Status: "ok", Data: &LdapSyncResp{
 		Exist:  *exist,
 		Failed: *failed,

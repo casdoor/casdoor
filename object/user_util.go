@@ -29,7 +29,7 @@ func GetUserByField(organizationName string, field string, value string) *User {
 	}
 
 	user := User{Owner: organizationName}
-	existed, err := adapter.Engine.Where(fmt.Sprintf("%s=?", field), value).Get(&user)
+	existed, err := adapter.Engine.Where(fmt.Sprintf("%s=?", strings.ToLower(field)), value).Get(&user)
 	if err != nil {
 		panic(err)
 	}

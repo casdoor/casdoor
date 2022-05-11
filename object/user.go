@@ -95,6 +95,7 @@ type User struct {
 	Slack         string `xorm:"slack varchar(100)" json:"slack"`
 	Steam         string `xorm:"steam varchar(100)" json:"steam"`
 	Bilibili      string `xorm:"bilibili varchar(100)" json:"bilibili"`
+	Okta          string `xorm:"okta varchar(100)" json:"okta"`
 	Custom        string `xorm:"custom varchar(100)" json:"custom"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
@@ -314,6 +315,9 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 		return false
 	}
 
+	if user.Password == "***" {
+		user.Password = oldUser.Password
+	}
 	user.UpdateUserHash()
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" && user.PermanentAvatar != "*" {

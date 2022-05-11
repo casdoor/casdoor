@@ -23,6 +23,14 @@ class SelfLoginButton extends React.Component {
         };
     }
 
+    getAccountShowName() {
+        let {name, displayName} = this.props.account;
+        if (displayName !== '') {
+            name += ' (' + displayName + ')';
+        }
+        return name;
+    }
+
     render() {
         const config = {
             icon: this.generateIcon(),
@@ -32,7 +40,7 @@ class SelfLoginButton extends React.Component {
         };
 
         const SelfLoginButton = createButton(config);
-        return <SelfLoginButton text={`${this.props.account.name} (${this.props.account.displayName})`} onClick={() => this.props.onClick()} align={"center"} />
+        return <SelfLoginButton text={this.getAccountShowName()} onClick={() => this.props.onClick()} align={"center"}/>
     }
 }
 
