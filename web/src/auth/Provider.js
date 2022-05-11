@@ -110,6 +110,9 @@ const authInfo = {
   Custom: {
     endpoint: "https://example.com/",
   },
+  Bilibili: {
+    endpoint: "https://passport.bilibili.com/register/pc_oauth2.html"
+  }
 };
 
 export function getProviderUrl(provider) {
@@ -232,5 +235,7 @@ export function getAuthUrl(application, provider, method) {
     return `${endpoint}?openid.claimed_id=http://specs.openid.net/auth/2.0/identifier_select&openid.identity=http://specs.openid.net/auth/2.0/identifier_select&openid.mode=checkid_setup&openid.ns=http://specs.openid.net/auth/2.0&openid.realm=${window.location.origin}&openid.return_to=${redirectUri}?state=${state}`;
   } else if (provider.type === "Custom") {
     return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.customScope}&response_type=code&state=${state}`;
-  } 
+  } else if (provider.type === "Bilibili") {
+    return `${endpoint}#/?client_id=${provider.clientId}&return_url=${redirectUri}&state=${state}&response_type=code`
+  }
 }
