@@ -104,6 +104,7 @@ p, *, *, GET, /api/get-saml-login, *, *
 p, *, *, POST, /api/acs, *, *
 p, *, *, GET, /api/saml/metadata, *, *
 p, *, *, *, /cas, *, *
+p, *, *, *, /api/metrics, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

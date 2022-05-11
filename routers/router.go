@@ -23,6 +23,7 @@ import (
 	"github.com/astaxie/beego"
 
 	"github.com/casdoor/casdoor/controllers"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {
@@ -184,4 +185,5 @@ func initAPI() {
 	beego.Router("/cas/:organization/:application/p3/proxyValidate", &controllers.RootController{}, "GET:CasP3ServiceAndProxyValidate")
 	beego.Router("/cas/:organization/:application/samlValidate", &controllers.RootController{}, "POST:SamlValidate")
 
+	beego.Handler("/api/metrics", promhttp.Handler())
 }

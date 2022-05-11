@@ -41,7 +41,7 @@ func main() {
 	proxy.InitHttpClient()
 	authz.InitAuthz()
 
-	util.SafeGoroutine(func() {object.RunSyncUsersJob()})
+	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 
 	//beego.DelStaticPath("/static")
 	beego.SetStaticPath("/static", "web/build/static")
@@ -53,6 +53,8 @@ func main() {
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AutoSigninFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AuthzFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
+	beego.InsertFilter("*", beego.BeforeRouter, routers.PrometheusVisitTimeFilter)
+	beego.InsertFilter("*", beego.BeforeRouter, routers.PrometheusLoginTimeFilter)
 
 	beego.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
 	if conf.GetConfigString("redisEndpoint") == "" {
@@ -72,5 +74,5 @@ func main() {
 	port := beego.AppConfig.DefaultInt("httpport", 8000)
 	//logs.SetLevel(logs.LevelInformational)
 	logs.SetLogFuncCall(false)
-	beego.Run(fmt.Sprintf(":%v", port))
+	beego.RunWithMiddleWares(fmt.Sprintf(":%v", port), routers.PrometheusResponseTimeMiddleWare)
 }
