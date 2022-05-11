@@ -69,3 +69,10 @@ export function deleteApplication(application) {
     body: JSON.stringify(newApplication),
   }).then(res => res.json());
 }
+
+export function getSamlMetadata(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/saml/metadata?application=${owner}/${encodeURIComponent(name)}`, {
+    method: "GET",
+    credentials: "include"
+  }).then(res => res.text());
+}

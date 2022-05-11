@@ -35,6 +35,7 @@ require('codemirror/theme/material-darker.css');
 require("codemirror/mode/htmlmixed/htmlmixed");
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 class ApplicationEditPage extends React.Component {
   constructor(props) {
@@ -48,6 +49,7 @@ class ApplicationEditPage extends React.Component {
       providers: [],
       uploading: false,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      samlMetadata: null,
     };
   }
 
@@ -56,6 +58,7 @@ class ApplicationEditPage extends React.Component {
     this.getOrganizations();
     this.getCerts();
     this.getProviders();
+    this.getSamlMetadata();
   }
 
   getApplication() {
@@ -94,6 +97,15 @@ class ApplicationEditPage extends React.Component {
         this.setState({
           providers: res,
         });
+      });
+  }
+
+  getSamlMetadata() {
+    ApplicationBackend.getSamlMetadata("admin", this.state.applicationName)
+      .then((res) => {
+        this.setState({
+          samlMetadata: res,
+        })
       });
   }
 
@@ -459,6 +471,14 @@ class ApplicationEditPage extends React.Component {
                         ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
                       }
             </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:SAML metadata"), i18next.t("application:SAML metadata - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <TextArea rows={8} value={this.state.samlMetadata} />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
