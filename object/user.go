@@ -94,6 +94,7 @@ type User struct {
 	AzureAD       string `xorm:"azuread varchar(100)" json:"azuread"`
 	Slack         string `xorm:"slack varchar(100)" json:"slack"`
 	Steam         string `xorm:"steam varchar(100)" json:"steam"`
+	Bilibili      string `xorm:"bilibili varchar(100)" json:"bilibili"`
 	Okta          string `xorm:"okta varchar(100)" json:"okta"`
 	Custom        string `xorm:"custom varchar(100)" json:"custom"`
 

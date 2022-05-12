@@ -114,6 +114,9 @@ const authInfo = {
   Custom: {
     endpoint: "https://example.com/",
   },
+  Bilibili: {
+    endpoint: "https://passport.bilibili.com/register/pc_oauth2.html"
+  }
 };
 
 export function getProviderUrl(provider) {
@@ -238,5 +241,7 @@ export function getAuthUrl(application, provider, method) {
     return `${provider.domain}/v1/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Custom") {
     return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.customScope}&response_type=code&state=${state}`;
-  } 
+  } else if (provider.type === "Bilibili") {
+    return `${endpoint}#/?client_id=${provider.clientId}&return_url=${redirectUri}&state=${state}&response_type=code`
+  }
 }

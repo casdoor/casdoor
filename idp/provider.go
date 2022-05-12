@@ -88,6 +88,8 @@ func GetIdProvider(typ string, subType string, clientId string, clientSecret str
 		return NewOktaIdProvider(clientId, clientSecret, redirectUrl, hostUrl)
 	} else if isGothSupport(typ) {
 		return NewGothIdProvider(typ, clientId, clientSecret, redirectUrl)
+	} else if typ == "Bilibili" {
+		return NewBilibiliIdProvider(clientId, clientSecret, redirectUrl)
 	}
 
 	return nil
