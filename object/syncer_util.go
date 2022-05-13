@@ -178,7 +178,7 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*Or
 				names := strings.Split(tableColumn.Name, "+")
 				var values []string
 				for _, name := range names {
-					values = append(values, result[name])
+					values = append(values, result[strings.Trim(name, " ")])
 				}
 				value = strings.Join(values, " ")
 			} else {
