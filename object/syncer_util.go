@@ -173,7 +173,18 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*Or
 		}
 
 		for _, tableColumn := range syncer.TableColumns {
-			syncer.setUserByKeyValue(originalUser, tableColumn.CasdoorName, result[tableColumn.Name])
+			value := ""
+			if strings.Contains(tableColumn.Name, "+") {
+				names := strings.Split(tableColumn.Name, "+")
+				var values []string
+				for _, name := range names {
+					values = append(values, result[name])
+				}
+				value = strings.Join(values, " ")
+			} else {
+				value = result[tableColumn.Name]
+			}
+			syncer.setUserByKeyValue(originalUser, tableColumn.CasdoorName, value)
 		}
 
 		if syncer.Type == "Keycloak" {
