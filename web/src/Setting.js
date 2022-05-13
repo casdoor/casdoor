@@ -836,7 +836,7 @@ export function getSyncerTableColumns(syncer) {
           ]
         },
         {
-          "name":"USERNAME",
+          "name":"LAST_NAME+FIRST_NAME",
           "type":"string",
           "casdoorName":"DisplayName",
           "isHashed":true,
