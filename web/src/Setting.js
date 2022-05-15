@@ -556,6 +556,7 @@ export function getProviderTypeOptions(category) {
         {id: 'Steam', name: 'Steam'},
         {id: 'Bilibili', name: 'Bilibili'},
         {id: 'Okta', name: 'Okta'},
+        {id: 'Douyin', name: 'Douyin'},
         {id: 'Custom', name: 'Custom'},
       ]
     );
