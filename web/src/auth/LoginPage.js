@@ -44,6 +44,7 @@ import AzureADLoginButton from "./AzureADLoginButton";
 import SlackLoginButton from "./SlackLoginButton";
 import SteamLoginButton from "./SteamLoginButton";
 import OktaLoginButton from "./OktaLoginButton";
+import DouyinLoginButton from "./DouyinLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import BilibiliLoginButton from "./BilibiliLoginButton";
@@ -284,6 +285,8 @@ class LoginPage extends React.Component {
       return <BilibiliLoginButton text={text} align={"center"} />
     } else if (type === "Okta") {
       return <OktaLoginButton text={text} align={"center"} />
+    } else if (type === "Douyin") {
+      return <DouyinLoginButton text={text} align={"center"} />
     }
 
     return text;
