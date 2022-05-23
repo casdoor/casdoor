@@ -138,10 +138,17 @@ Casdoor provide 2 kinds of image:
 This method requires [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) to be installed first.
 
 ### Start casdoor with casbin/casdoor-all-in-one
-if the image is not pulled, pull it from dockerhub
+if the image is not pulled, pull it from dockerhub.
+
+For users who are not in China Mainland, use command.
 ```shell
 docker pull casbin/casdoor-all-in-one
 ```
+For users who are in China Mainland, please we provide scripts to bypass the antiquated images on AliYun acceletrator. Please use this command
+```
+curl https://raw.githubusercontent.com/casdoor/casdoor/master/scripts/pull_casdoor_allinone.sh | bash
+```
+
 Start it with
 ```shell
 docker run -p 8000:8000 casbin/casdoor-all-in-one

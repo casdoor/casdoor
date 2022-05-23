@@ -1,0 +1,1 @@
+docker pull casbin/casdoor-all-in-one:$( curl -sS "https://hub.docker.com/v2/repositories/casbin/casdoor-all-in-one/tags/?page_size=1&page=2" | sed 's/,/,\n/g'| grep '"name"'|awk -F '"' '{print $4}')
