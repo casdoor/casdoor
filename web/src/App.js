@@ -69,6 +69,8 @@ import PromptPage from "./auth/PromptPage";
 import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
 import SamlCallback from './auth/SamlCallback';
 import CasLogout from "./auth/CasLogout";
+import ModelListPage from "./ModelListPage";
+import ModelEditPage from "./ModelEditPage";
 
 const { Header, Footer } = Layout;
 
@@ -118,6 +120,8 @@ class App extends Component {
       this.setState({ selectedMenuKey: '/roles' });
     } else if (uri.includes('/permissions')) {
       this.setState({ selectedMenuKey: '/permissions' });
+    } else if (uri.includes('/models')) {
+      this.setState({ selectedMenuKey: '/models' });
     } else if (uri.includes('/providers')) {
       this.setState({ selectedMenuKey: '/providers' });
     } else if (uri.includes('/applications')) {
@@ -383,6 +387,13 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
+        <Menu.Item key="/models">
+          <Link to="/models">
+            {i18next.t("general:Models")}
+          </Link>
+        </Menu.Item>
+      );
+      res.push(
         <Menu.Item key="/providers">
           <Link to="/providers">
             {i18next.t("general:Providers")}
@@ -514,6 +525,8 @@ class App extends Component {
           <Route exact path="/roles/:organizationName/:roleName" render={(props) => this.renderLoginIfNotLoggedIn(<RoleEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/permissions" render={(props) => this.renderLoginIfNotLoggedIn(<PermissionListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/permissions/:organizationName/:permissionName" render={(props) => this.renderLoginIfNotLoggedIn(<PermissionEditPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/models" render={(props) => this.renderLoginIfNotLoggedIn(<ModelListPage account={this.state.account} {...props} />)}/>
+          <Route exact path="/models/:organizationName/:modelName" render={(props) => this.renderLoginIfNotLoggedIn(<ModelEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)}/>
           <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)}/>
