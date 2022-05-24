@@ -131,6 +131,7 @@
     "Master password": "万能密码",
     "Master password - Tooltip": "可用来登录该组织下的所有用户，方便管理员以该用户身份登录，以解决技术问题",
     "Method": "方法",
+    "Models": "模型",
     "Name": "名称",
     "Name - Tooltip": "唯一的、字符串式的ID",
     "OAuth providers": "OAuth提供方",
@@ -242,6 +243,10 @@
     "To access": "访问",
     "sign up now": "立即注册",
     "username, Email or phone": "用户名、Email或手机号"
+  },
+  "model": {
+    "Edit Model": "编辑模型",
+    "Model": "模型"
   },
   "organization": {
     "Default avatar": "默认头像",
