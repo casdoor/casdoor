@@ -30,6 +30,7 @@ type Permission struct {
 	Users []string `xorm:"mediumtext" json:"users"`
 	Roles []string `xorm:"mediumtext" json:"roles"`
 
+	Model        string   `xorm:"varchar(100)" json:"model"`
 	ResourceType string   `xorm:"varchar(100)" json:"resourceType"`
 	Resources    []string `xorm:"mediumtext" json:"resources"`
 	Actions      []string `xorm:"mediumtext" json:"actions"`

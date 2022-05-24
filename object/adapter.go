@@ -138,6 +138,11 @@ func (a *Adapter) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(Model))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(Provider))
 	if err != nil {
 		panic(err)
