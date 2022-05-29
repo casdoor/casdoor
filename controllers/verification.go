@@ -15,10 +15,15 @@
 package controllers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 	"strings"
 
+	"github.com/astaxie/beego/logs"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -34,6 +39,37 @@ func (c *ApiController) getCurrentUser() *object.User {
 	return user
 }
 
+func (c *ApiController) verifyReCaptcha(token, secret, verifySite string) bool {
+	reqData := url.Values{
+		"secret":   {secret},
+		"response": {token},
+	}
+	// resp, err := http.Post(verifySite, "application/x-www-form-urlencoded", strings.NewReader(reqData.Encode()))
+	resp, err := http.PostForm(verifySite, reqData)
+	if err != nil {
+		logs.Error("Failed post to verify captcha: %v", err)
+		return false
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		logs.Error("Failed to read from verify captcha: %v", err)
+		return false
+	}
+	type captchaResponse struct {
+		Success    bool     `json:"success"`
+	}
+	captchaResp := &captchaResponse{}
+	err = json.Unmarshal(body, captchaResp)
+	if err != nil || captchaResp == nil {
+		logs.Error("Failed to unmarshal from verify captcha: %v", err)
+		return false
+	}
+
+	return captchaResp.Success
+}
+
 // SendVerificationCode ...
 // @Title SendVerificationCode
 // @Tag Verification API
@@ -47,8 +83,9 @@ func (c *ApiController) SendVerificationCode() {
 	checkKey := c.Ctx.Request.Form.Get("checkKey")
 	checkUser := c.Ctx.Request.Form.Get("checkUser")
 	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
+	captchaToken := c.Ctx.Request.Form.Get("captchaToken")
 
-	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || !strings.Contains(orgId, "/") || len(checkType) == 0 || len(checkId) == 0 || len(checkKey) == 0 {
+	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || !strings.Contains(orgId, "/") || len(checkType) == 0 {
 		c.ResponseError("Missing parameter.")
 		return
 	}
@@ -56,7 +93,22 @@ func (c *ApiController) SendVerificationCode() {
 	isHuman := false
 	captchaProvider := object.GetDefaultHumanCheckProvider()
 	if captchaProvider == nil {
+		if len(checkId) == 0 || len(checkKey) == 0 {
+			c.ResponseError("Missing parameter.")
+			return
+		}
 		isHuman = object.VerifyCaptcha(checkId, checkKey)
+	} else {
+		if len(captchaToken) == 0 {
+			c.ResponseError("Missing parameter.")
+			return
+		}
+
+		if captchaProvider.Type == "reCaptcha" {
+			isHuman = c.verifyReCaptcha(captchaToken, captchaProvider.ClientSecret, ReCaptchaVerifySite)
+		} else if captchaProvider.Type == "hCaptcha" {
+			isHuman = c.verifyReCaptcha(captchaToken, captchaProvider.ClientSecret, HCaptchaVerifySite)
+		}
 	}
 
 	if !isHuman {

@@ -18,6 +18,8 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import {SafetyOutlined} from "@ant-design/icons";
+import ReCAPTCHA from "react-google-recaptcha";
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 const { Search } = Input;
 
@@ -30,6 +32,9 @@ export const CountDownInput = (props) => {
   const [checkId, setCheckId] = React.useState("");
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
+  const [buttonDisabled, setButtonDisabled] = React.useState(true);
+  const [captchaToken, setCaptchaToken] = React.useState("");
+  const [clientSiteKey, setClientSiteKey] = React.useState("");
 
   const handleCountDown = (leftTime = 60) => {
     let leftTimeSecond = leftTime
@@ -48,8 +53,9 @@ export const CountDownInput = (props) => {
   const handleOk = () => {
     setVisible(false);
     setButtonLoading(true)
-    UserBackend.sendCode(checkType, checkId, key, ...onButtonClickArgs).then(res => {
+    UserBackend.sendCode(checkType, checkId, key, captchaToken, ...onButtonClickArgs).then(res => {
       setKey("");
+      setCaptchaToken("");
       setButtonLoading(false)
       if (res) {
         handleCountDown(60);
@@ -70,6 +76,10 @@ export const CountDownInput = (props) => {
         setCheckId(res.captchaId);
         setCaptchaImg(res.captchaImage);
         setCheckType("captcha");
+        setVisible(true);
+      } else if (res.type === "reCaptcha" || res.type === "hCaptcha") {
+        setCheckType(res.type);
+        setClientSiteKey(res.clientSiteKey);
         setVisible(true);
       } else {
         Setting.showMessage("error", i18next.t("signup:Unknown Check Type"));
@@ -98,9 +108,40 @@ export const CountDownInput = (props) => {
     )
   }
 
+  const onSubmit = (token) => {
+    setButtonDisabled(false);
+    setCaptchaToken(token);
+  }
+
+  const renderReCaptcha = () => {
+    return (
+      <ReCAPTCHA
+        sitekey={clientSiteKey}
+        onChange={onSubmit}
+      />
+    )
+  }
+
+  const renderHCaptcha = () => {
+    return (
+      <HCaptcha
+        sitekey={clientSiteKey}
+        onVerify={onSubmit}
+      />
+    )
+  }
+
   const renderCheck = () => {
-    if (checkType === "captcha") return renderCaptcha();
-    return null;
+    switch (checkType) {
+      case "captcha":
+        return renderCaptcha();
+      case "reCaptcha":
+        return renderReCaptcha();
+      case "hCaptcha":
+        return renderHCaptcha();
+      default:
+        return null;
+    }
   }
 
   return (
@@ -128,8 +169,8 @@ export const CountDownInput = (props) => {
         cancelText={i18next.t("user:Cancel")}
         onOk={handleOk}
         onCancel={handleCancel}
-        okButtonProps={{disabled: key.length !== 5}}
-        width={248}
+        okButtonProps={{disabled: key.length !== 5 && buttonDisabled}}
+        width={348}
       >
         {
           renderCheck()

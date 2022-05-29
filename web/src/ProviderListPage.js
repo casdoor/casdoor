@@ -134,6 +134,7 @@ class ProviderListPage extends BaseListPage {
           {text: 'SMS', value: 'SMS', children: Setting.getProviderTypeOptions('SMS').map((o) => {return {text:o.id, value:o.name}})},
           {text: 'Storage', value: 'Storage', children: Setting.getProviderTypeOptions('Storage').map((o) => {return {text:o.id, value:o.name}})},
           {text: 'SAML', value: 'SAML', children: Setting.getProviderTypeOptions('SAML').map((o) => {return {text:o.id, value:o.name}})},
+          {text: 'HumanCheck', value: 'HumanCheck', children: Setting.getProviderTypeOptions('HumanCheck').map((o) => {return {text:o.id, value:o.name}})},
         ],
         sorter: true,
         render: (text, record, index) => {

@@ -88,11 +88,12 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
   }).then(res => res.json());
 }
 
-export function sendCode(checkType, checkId, checkKey, dest, type, orgId, checkUser) {
+export function sendCode(checkType, checkId, checkKey, captchaToken, dest, type, orgId, checkUser) {
   let formData = new FormData();
   formData.append("checkType", checkType);
   formData.append("checkId", checkId);
   formData.append("checkKey", checkKey);
+  formData.append("captchaToken", captchaToken);
   formData.append("dest", dest);
   formData.append("type", type);
   formData.append("organizationId", orgId);

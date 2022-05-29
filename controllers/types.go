@@ -27,3 +27,8 @@ type TokenRequest struct {
 	Avatar       string `json:"avatar"`
 	RefreshToken string `json:"refresh_token"`
 }
+
+const (
+	ReCaptchaVerifySite = "https://recaptcha.net/recaptcha/api/siteverify"
+	HCaptchaVerifySite = "https://hcaptcha.com/siteverify"
+)

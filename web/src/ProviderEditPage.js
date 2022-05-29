@@ -74,6 +74,9 @@ class ProviderEditPage extends React.Component {
           return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
         if (this.state.provider.type === "Huawei Cloud SMS")
           return Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"));
+      case "HumanCheck":
+        return Setting.getLabel(i18next.t("provider:Site key"), i18next.t("provider:Site key - Tooltip"));
+
       default:
         return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
     }
@@ -88,6 +91,8 @@ class ProviderEditPage extends React.Component {
           return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:SecretAccessKey - Tooltip"));
         if (this.state.provider.type === "Huawei Cloud SMS")
           return Setting.getLabel(i18next.t("provider:App secret"), i18next.t("provider:AppSecret - Tooltip"));
+      case "HumanCheck":
+        return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
       default:
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
     }
@@ -187,6 +192,8 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField('domain', Setting.getFullServerUrl());
               } else if (value === "SAML") {
                 this.updateProviderField('type', 'Aliyun IDaaS');
+              } else if (value === "HumanCheck") {
+                this.updateProviderField('type', 'reCaptcha');
               }
             })}>
               {
@@ -197,6 +204,7 @@ class ProviderEditPage extends React.Component {
                   {id: 'Storage', name: 'Storage'},
                   {id: 'SAML', name: 'SAML'},
                   {id: 'Payment', name: 'Payment'},
+                  {id: 'HumanCheck', name: 'HumanCheck'},
                 ].map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
               }
             </Select>

@@ -76,11 +76,12 @@ type Response struct {
 }
 
 type HumanCheck struct {
-	Type         string      `json:"type"`
-	AppKey       string      `json:"appKey"`
-	Scene        string      `json:"scene"`
-	CaptchaId    string      `json:"captchaId"`
-	CaptchaImage interface{} `json:"captchaImage"`
+	Type          string      `json:"type"`
+	AppKey        string      `json:"appKey"`
+	Scene         string      `json:"scene"`
+	CaptchaId     string      `json:"captchaId"`
+	CaptchaImage  interface{} `json:"captchaImage"`
+	ClientSiteKey string      `json:"clientSiteKey"`
 }
 
 // Signup
@@ -304,6 +305,8 @@ func (c *ApiController) GetHumanCheck() {
 		c.Data["json"] = HumanCheck{Type: "captcha", CaptchaId: id, CaptchaImage: img}
 		c.ServeJSON()
 		return
+	} else {
+		c.Data["json"] = HumanCheck{Type: provider.Type, ClientSiteKey: provider.ClientId}
 	}
 
 	c.ServeJSON()
