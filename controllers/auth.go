@@ -409,6 +409,11 @@ func (c *ApiController) Login() {
 				record.Organization = application.Organization
 				record.User = user.Name
 				util.SafeGoroutine(func() { object.AddRecord(record) })
+				record2 := object.NewRecord(c.Ctx)
+				record2.Action = "signup"
+				record2.Organization = application.Organization
+				record2.User = user.Name
+				util.SafeGoroutine(func() { object.AddRecord(record2) })
 			} else if provider.Category == "SAML" {
 				resp = &Response{Status: "error", Msg: "The account does not exist"}
 			}
@@ -452,6 +457,10 @@ func (c *ApiController) Login() {
 
 			user := c.getCurrentUser()
 			resp = c.HandleLoggedIn(application, user, &form)
+			record := object.NewRecord(c.Ctx)
+			record.Organization = application.Organization
+			record.User = user.Name
+			util.SafeGoroutine(func() { object.AddRecord(record) })
 		} else {
 			c.ResponseError(fmt.Sprintf("unknown authentication type (not password or provider), form = %s", util.StructToJson(form)))
 			return
