@@ -222,7 +222,11 @@ func (c *ApiController) Login() {
 			}
 
 			// disable the verification code
-			object.DisableVerificationCode(form.Username)
+			if strings.Contains(form.Username, "@") {
+				object.DisableVerificationCode(form.Username)
+			} else {
+				object.DisableVerificationCode(fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username))
+			}
 
 			user = object.GetUserByFields(form.Organization, form.Username)
 			if user == nil {
