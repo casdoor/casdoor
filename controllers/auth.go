@@ -18,7 +18,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 	"net/url"
 	"strconv"
 	"strings"
@@ -29,6 +28,7 @@ import (
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
+	"github.com/google/uuid"
 )
 
 func codeToResponse(code *object.Code) *Response {
@@ -359,15 +359,17 @@ func (c *ApiController) Login() {
 					return
 				}
 
-				// Handling username conflicts
-				userTmp := object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Username))
-				if userTmp != nil {
+				// Handle username conflicts
+				tmpUser := object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Username))
+				if tmpUser != nil {
 					uid, err := uuid.NewRandom()
 					if err != nil {
-						fmt.Printf("%v\n", err)
+						c.ResponseError(err.Error())
+						return
 					}
+
 					uidStr := strings.Split(uid.String(), "-")
-					userInfo.Username += "_" + uidStr[1]
+					userInfo.Username = fmt.Sprintf("%s_%s", userInfo.Username, uidStr[1])
 				}
 
 				properties := map[string]string{}
