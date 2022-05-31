@@ -26,6 +26,7 @@ func (c *ApiController) GetSamlMeta() {
 	application := object.GetApplication(paramApp)
 	if application == nil {
 		c.ResponseError(fmt.Sprintf("err: application %s not found", paramApp))
+		return
 	}
 	metadata, _ := object.GetSamlMeta(application, host)
 	c.Data["xml"] = metadata
