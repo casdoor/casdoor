@@ -185,7 +185,7 @@ func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 
 	userInfo := UserInfo{
 		Id:          id,
-		Username:    wechatUserInfo.Nickname,
+		Username:    id,
 		DisplayName: wechatUserInfo.Nickname,
 		AvatarUrl:   wechatUserInfo.Headimgurl,
 	}
