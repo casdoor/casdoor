@@ -28,6 +28,7 @@ import (
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
+	"github.com/google/uuid"
 )
 
 func codeToResponse(code *object.Code) *Response {
@@ -252,7 +253,7 @@ func (c *ApiController) Login() {
 			record := object.NewRecord(c.Ctx)
 			record.Organization = application.Organization
 			record.User = user.Name
-			util.SafeGoroutine(func() {object.AddRecord(record)})
+			util.SafeGoroutine(func() { object.AddRecord(record) })
 		}
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
@@ -345,7 +346,7 @@ func (c *ApiController) Login() {
 				record := object.NewRecord(c.Ctx)
 				record.Organization = application.Organization
 				record.User = user.Name
-				util.SafeGoroutine(func() {object.AddRecord(record)})
+				util.SafeGoroutine(func() { object.AddRecord(record) })
 			} else if provider.Category == "OAuth" {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
@@ -356,6 +357,19 @@ func (c *ApiController) Login() {
 				if !providerItem.CanSignUp {
 					c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up", provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
 					return
+				}
+
+				// Handle username conflicts
+				tmpUser := object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Username))
+				if tmpUser != nil {
+					uid, err := uuid.NewRandom()
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
+
+					uidStr := strings.Split(uid.String(), "-")
+					userInfo.Username = fmt.Sprintf("%s_%s", userInfo.Username, uidStr[1])
 				}
 
 				properties := map[string]string{}
@@ -394,7 +408,7 @@ func (c *ApiController) Login() {
 				record := object.NewRecord(c.Ctx)
 				record.Organization = application.Organization
 				record.User = user.Name
-				util.SafeGoroutine(func() {object.AddRecord(record)})
+				util.SafeGoroutine(func() { object.AddRecord(record) })
 			} else if provider.Category == "SAML" {
 				resp = &Response{Status: "error", Msg: "The account does not exist"}
 			}
