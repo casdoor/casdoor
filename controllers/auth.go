@@ -409,6 +409,7 @@ func (c *ApiController) Login() {
 				record.Organization = application.Organization
 				record.User = user.Name
 				util.SafeGoroutine(func() { object.AddRecord(record) })
+
 				record2 := object.NewRecord(c.Ctx)
 				record2.Action = "signup"
 				record2.Organization = application.Organization
@@ -457,6 +458,7 @@ func (c *ApiController) Login() {
 
 			user := c.getCurrentUser()
 			resp = c.HandleLoggedIn(application, user, &form)
+
 			record := object.NewRecord(c.Ctx)
 			record.Organization = application.Organization
 			record.User = user.Name
