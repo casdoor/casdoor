@@ -121,11 +121,15 @@ func UpdateOrganization(id string, organization *Organization) bool {
 	}
 
 	if name != organization.Name {
-		applications := GetApplicationsByOrganizationName("admin", name)
-		for _, application := range applications {
+		go func() {
+			application := new(Application)
 			application.Organization = organization.Name
-			UpdateApplication(application.GetId(), application)
-		}
+			_, _ = adapter.Engine.Where("organization=?", name).Update(application)
+
+			user := new(User)
+			user.Owner = organization.Name
+			_, _ = adapter.Engine.Where("owner=?", name).Update(user)
+		}()
 	}
 
 	if organization.MasterPassword != "" && organization.MasterPassword != "***" {
