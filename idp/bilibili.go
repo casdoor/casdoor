@@ -187,9 +187,10 @@ func (idp *BilibiliIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	}
 
 	userInfo := &UserInfo{
-		Id:        bUserInfoResponse.Data.OpenId,
-		Username:  bUserInfoResponse.Data.Name,
-		AvatarUrl: bUserInfoResponse.Data.Face,
+		Id:          bUserInfoResponse.Data.OpenId,
+		Username:    bUserInfoResponse.Data.Name,
+		DisplayName: bUserInfoResponse.Data.Name,
+		AvatarUrl:   bUserInfoResponse.Data.Face,
 	}
 
 	return userInfo, nil

@@ -28,6 +28,7 @@ import (
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
+	"github.com/google/uuid"
 )
 
 func codeToResponse(code *object.Code) *Response {
@@ -222,7 +223,11 @@ func (c *ApiController) Login() {
 			}
 
 			// disable the verification code
-			object.DisableVerificationCode(form.Username)
+			if strings.Contains(form.Username, "@") {
+				object.DisableVerificationCode(form.Username)
+			} else {
+				object.DisableVerificationCode(fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username))
+			}
 
 			user = object.GetUserByFields(form.Organization, form.Username)
 			if user == nil {
@@ -248,7 +253,7 @@ func (c *ApiController) Login() {
 			record := object.NewRecord(c.Ctx)
 			record.Organization = application.Organization
 			record.User = user.Name
-			util.SafeGoroutine(func() {object.AddRecord(record)})
+			util.SafeGoroutine(func() { object.AddRecord(record) })
 		}
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
@@ -341,7 +346,7 @@ func (c *ApiController) Login() {
 				record := object.NewRecord(c.Ctx)
 				record.Organization = application.Organization
 				record.User = user.Name
-				util.SafeGoroutine(func() {object.AddRecord(record)})
+				util.SafeGoroutine(func() { object.AddRecord(record) })
 			} else if provider.Category == "OAuth" {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
@@ -352,6 +357,19 @@ func (c *ApiController) Login() {
 				if !providerItem.CanSignUp {
 					c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up", provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
 					return
+				}
+
+				// Handle username conflicts
+				tmpUser := object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Username))
+				if tmpUser != nil {
+					uid, err := uuid.NewRandom()
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
+
+					uidStr := strings.Split(uid.String(), "-")
+					userInfo.Username = fmt.Sprintf("%s_%s", userInfo.Username, uidStr[1])
 				}
 
 				properties := map[string]string{}
@@ -390,7 +408,13 @@ func (c *ApiController) Login() {
 				record := object.NewRecord(c.Ctx)
 				record.Organization = application.Organization
 				record.User = user.Name
-				util.SafeGoroutine(func() {object.AddRecord(record)})
+				util.SafeGoroutine(func() { object.AddRecord(record) })
+
+				record2 := object.NewRecord(c.Ctx)
+				record2.Action = "signup"
+				record2.Organization = application.Organization
+				record2.User = user.Name
+				util.SafeGoroutine(func() { object.AddRecord(record2) })
 			} else if provider.Category == "SAML" {
 				resp = &Response{Status: "error", Msg: "The account does not exist"}
 			}
@@ -434,6 +458,11 @@ func (c *ApiController) Login() {
 
 			user := c.getCurrentUser()
 			resp = c.HandleLoggedIn(application, user, &form)
+
+			record := object.NewRecord(c.Ctx)
+			record.Organization = application.Organization
+			record.User = user.Name
+			util.SafeGoroutine(func() { object.AddRecord(record) })
 		} else {
 			c.ResponseError(fmt.Sprintf("unknown authentication type (not password or provider), form = %s", util.StructToJson(form)))
 			return
