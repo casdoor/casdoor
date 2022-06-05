@@ -319,7 +319,7 @@ class LoginPage extends React.Component {
         )
       } else if (provider.category === "SAML") {
         return (
-          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
+          <a href="/#" key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
             <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
           </a>
         )
@@ -475,7 +475,7 @@ class LoginPage extends React.Component {
                 {i18next.t("login:Auto sign in")}
               </Checkbox>
             </Form.Item>
-            <a style={{float: "right"}} onClick={() => {
+            <a href="/#" style={{float: "right"}} onClick={() => {
               Setting.goToForget(this, application);
             }}>
               {i18next.t("login:Forgot password?")}
@@ -554,7 +554,7 @@ class LoginPage extends React.Component {
           <span style={{float: "left"}}>
             {
               !application.enableCodeSignin ? null : (
-                <a onClick={() => {
+                <a href="/#" onClick={() => {
                   this.setState({
                     isCodeSignin: !this.state.isCodeSignin,
                   });
@@ -566,7 +566,7 @@ class LoginPage extends React.Component {
           </span>
           <span style={{float: "right"}}>
             {i18next.t("login:No account?")}&nbsp;
-            <a onClick={() => {
+            <a href="/#" onClick={() => {
               sessionStorage.setItem("loginURL", window.location.href)
               Setting.goToSignup(this, application);
             }}>

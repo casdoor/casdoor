@@ -206,7 +206,7 @@ class ProductBuyPage extends React.Component {
             <Descriptions.Item label={i18next.t("product:Tag")}><span style={{fontSize: 16}}>{product?.tag}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:SKU")}><span style={{fontSize: 16}}>{product?.name}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Image")} span={3}>
-              <img src={product?.image} alt={product?.image} height={90} style={{marginBottom: '20px'}}/>
+              <img src={product?.image} alt={"product image - " + product?.image} height={90} style={{marginBottom: '20px'}}/>
             </Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Price")}>
             <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>

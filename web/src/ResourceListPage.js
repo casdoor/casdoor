@@ -206,7 +206,7 @@ class ResourceListPage extends BaseListPage {
         render: (text, record, index) => {
           if (record.fileType === "image") {
             return (
-              <a target="_blank" href={record.url}>
+              <a target="_blank" href={record.url} rel="noreferrer">
                 <img src={record.url} alt={record.name} width={100} />
               </a>
             )

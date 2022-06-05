@@ -225,7 +225,7 @@ export function isValidInvoiceTitle(invoiceTitle) {
   }
 
   // https://blog.css8.cn/post/14210975.html
-  const invoiceTitleRegex = /^[\(\)\（\）\u4e00-\u9fa5]{0,50}$/;
+  const invoiceTitleRegex = /^[()（）\u4e00-\u9fa5]{0,50}$/;
   return invoiceTitleRegex.test(invoiceTitle);
 }
 
@@ -474,7 +474,6 @@ export function changeLanguage(language) {
 }
 
 export function changeMomentLanguage(language) {
-  return;
   if (language === "zh") {
     moment.locale("zh", {
       relativeTime: {
