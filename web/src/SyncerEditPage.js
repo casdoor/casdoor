@@ -119,8 +119,12 @@ class SyncerEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.syncer.type} onChange={(value => {
               this.updateSyncerField('type', value);
-              this.state.syncer["tableColumns"] = Setting.getSyncerTableColumns(this.state.syncer);
-              this.state.syncer.table = value === "Keycloak" ? "user_entity" : this.state.syncer.table;
+              let syncer = this.state.syncer;
+              syncer["tableColumns"] = Setting.getSyncerTableColumns(this.state.syncer);
+              syncer.table = (value === "Keycloak") ? "user_entity" : this.state.syncer.table;
+              this.setState({
+                syncer: syncer,
+              });
             })}>
               {
                 ['Database', 'LDAP', 'Keycloak']
