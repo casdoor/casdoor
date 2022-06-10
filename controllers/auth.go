@@ -326,9 +326,6 @@ func (c *ApiController) Login() {
 				user = object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Id))
 			} else if provider.Category == "OAuth" {
 				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
-				if user == nil {
-					user = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
-				}
 			}
 
 			if user != nil && user.IsDeleted == false {
@@ -424,9 +421,6 @@ func (c *ApiController) Login() {
 			}
 
 			oldUser := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
-			if oldUser == nil {
-				oldUser = object.GetUserByField(application.Organization, provider.Type, userInfo.Username)
-			}
 			if oldUser != nil {
 				c.ResponseError(fmt.Sprintf("The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)", provider.Type, userInfo.Username, userInfo.DisplayName, oldUser.Name, oldUser.DisplayName))
 				return
