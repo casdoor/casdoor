@@ -554,7 +554,20 @@ class ApplicationEditPage extends React.Component {
                 <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
               )
             }
+             <div
+            style={{ 
+              position: 'absolute',
+              top: '10%',
+              left: '0px',
+              zIndex: 10,
+              height: '90%',
+              width: '90%',
+              background: 'rgba(0,0,0,0.4)',
+            }}
+          >
           </div>
+          </div>
+         
         </Col>
         <Col span={11} style={{display:"flex", flexDirection: "column"}}>
           <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signInUrl}>
@@ -564,6 +577,18 @@ class ApplicationEditPage extends React.Component {
           <br/>
           <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
+            <div
+            style={{ 
+              position: 'absolute',
+              top: '10%',
+              left: '0px',
+              zIndex: 10,
+              height: '90%',
+              width: '90%',
+              background: 'rgba(0,0,0,0.4)',
+            }}
+          >
+          </div>
           </div>
         </Col>
       </React.Fragment>
@@ -583,12 +608,36 @@ class ApplicationEditPage extends React.Component {
                 <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
               )
             }
+            <div
+            style={{ 
+              position: 'absolute',
+              top: '10%',
+              left: '0px',
+              zIndex: 10,
+              height: '90%',
+              width: '90%',
+              background: 'rgba(0,0,0,0.4)',
+            }}
+          >
+          </div>
           </div>
           <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signInUrl}>
             <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
           </a>
           <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
+            <div
+            style={{ 
+              position: 'absolute',
+              top: '10%',
+              left: '0px',
+              zIndex: 10,
+              height: '90%',
+              width: '90%',
+              background: 'rgba(0,0,0,0.4)',
+            }}
+          >
+          </div>
           </div>
         </Col>
       </React.Fragment>
