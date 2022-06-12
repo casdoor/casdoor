@@ -534,6 +534,7 @@ class ApplicationEditPage extends React.Component {
   renderPreview() {
     let signUpUrl = `/signup/${this.state.application.name}`;
     let signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
+    let maskStyle = {position: 'absolute', top: '0px', left: '0px', zIndex: 10, height: '100%', width: '100%', background: 'rgba(0,0,0,0.4)'};
     if (!this.state.application.enablePassword) {
       signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");
     }
@@ -546,7 +547,7 @@ class ApplicationEditPage extends React.Component {
           </a>
           <br/>
           <br/>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
+          <div style={{position:'relative', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
             {
               this.state.application.enablePassword ? (
                 <SignupPage application={this.state.application} />
@@ -554,18 +555,7 @@ class ApplicationEditPage extends React.Component {
                 <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
               )
             }
-             <div
-            style={{ 
-              position: 'absolute',
-              top: '10%',
-              left: '0px',
-              zIndex: 10,
-              height: '90%',
-              width: '90%',
-              background: 'rgba(0,0,0,0.4)',
-            }}
-          >
-          </div>
+            <div style={maskStyle}></div>
           </div>
          
         </Col>
@@ -575,20 +565,9 @@ class ApplicationEditPage extends React.Component {
           </a>
           <br/>
           <br/>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
+          <div style={{position:'relative', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
-            <div
-            style={{ 
-              position: 'absolute',
-              top: '10%',
-              left: '0px',
-              zIndex: 10,
-              height: '90%',
-              width: '90%',
-              background: 'rgba(0,0,0,0.4)',
-            }}
-          >
-          </div>
+            <div style={maskStyle}></div>
           </div>
         </Col>
       </React.Fragment>
@@ -600,7 +579,7 @@ class ApplicationEditPage extends React.Component {
           <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signUpUrl}>
             <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
           </a>
-          <div style={{marginBottom:"10px", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
+          <div style={{position:'relative', marginBottom:"10px", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
             {
               this.state.application.enablePassword ? (
                 <SignupPage application={this.state.application} />
@@ -608,36 +587,14 @@ class ApplicationEditPage extends React.Component {
                 <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
               )
             }
-            <div
-            style={{ 
-              position: 'absolute',
-              top: '10%',
-              left: '0px',
-              zIndex: 10,
-              height: '90%',
-              width: '90%',
-              background: 'rgba(0,0,0,0.4)',
-            }}
-          >
-          </div>
+            <div style={maskStyle}></div>
           </div>
           <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signInUrl}>
             <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
           </a>
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
+          <div style={{position:'relative', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
-            <div
-            style={{ 
-              position: 'absolute',
-              top: '10%',
-              left: '0px',
-              zIndex: 10,
-              height: '90%',
-              width: '90%',
-              background: 'rgba(0,0,0,0.4)',
-            }}
-          >
-          </div>
+            <div style={maskStyle}></div>
           </div>
         </Col>
       </React.Fragment>
