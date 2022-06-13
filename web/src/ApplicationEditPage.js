@@ -557,7 +557,6 @@ class ApplicationEditPage extends React.Component {
             }
             <div style={maskStyle}></div>
           </div>
-         
         </Col>
         <Col span={11} style={{display:"flex", flexDirection: "column"}}>
           <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signInUrl}>
