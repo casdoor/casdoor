@@ -159,7 +159,9 @@ class LoginPage extends React.Component {
           Util.showMessage("success", msg);
           if (casParams.service !== "") {
             let st = res.data
-            window.location.href = casParams.service + "?ticket=" + st
+            let newURL = new URL(casParams.service)
+            newURL.searchParams.append("ticket", st)
+            window.location.href = newURL.toString()
           }
 
         } else {
