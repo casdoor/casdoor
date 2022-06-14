@@ -144,47 +144,48 @@ class LoginPage extends React.Component {
     const application = this.getApplicationObj();
     const ths = this;
 
-    //here we are supposed to judge whether casdoor is working as a oauth server or CAS server
+    // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     if (this.state.type === "cas") {
-      //cas
-      const casParams = Util.getCasParameters()
+      // CAS
+      const casParams = Util.getCasParameters();
       values["type"] = this.state.type;
       AuthBackend.loginCas(values, casParams).then((res) => {
         if (res.status === 'ok') {
-          let msg = "Logged in successfully. "
+          let msg = "Logged in successfully. ";
           if (casParams.service === "") {
-            //If service was not specified, CAS MUST display a message notifying the client that it has successfully initiated a single sign-on session.
-            msg += "Now you can visit apps protected by casdoor."
+            // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
+            msg += "Now you can visit apps protected by Casdoor.";
           }
           Util.showMessage("success", msg);
-          if (casParams.service !== "") {
-            let st = res.data
-            window.location.href = casParams.service + "?ticket=" + st
-          }
 
+          if (casParams.service !== "") {
+            let st = res.data;
+            let newUrl = new URL(casParams.service);
+            newUrl.searchParams.append("ticket", st);
+            window.location.href = newUrl.toString();
+          }
         } else {
           Util.showMessage("error", `Failed to log in: ${res.msg}`);
         }
       })
     } else {
-      //oauth
+      // OAuth
       const oAuthParams = Util.getOAuthGetParameters();
       if (oAuthParams !== null && oAuthParams.responseType != null && oAuthParams.responseType !== "") {
-        values["type"] = oAuthParams.responseType
-      }else{
+        values["type"] = oAuthParams.responseType;
+      } else {
         values["type"] = this.state.type;
       }
       values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix;
 
-      if (oAuthParams !== null){
+      if (oAuthParams !== null) {
         values["samlRequest"] = oAuthParams.samlRequest;
       }
-      
-  
+
       if (values["samlRequest"] != null && values["samlRequest"] !== "") {
           values["type"] = "saml";
       }
-  
+
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
           if (res.status === 'ok') {
