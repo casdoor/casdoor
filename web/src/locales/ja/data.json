@@ -24,6 +24,8 @@
     "Redirect URLs - Tooltip": "List of redirect addresses after successful login",
     "Refresh token expire": "トークンの更新の期限が切れます",
     "Refresh token expire - Tooltip": "トークンの有効期限を更新する - ツールチップ",
+    "SAML metadata": "SAML metadata",
+    "SAML metadata - Tooltip": "SAML metadata - Tooltip",
     "Signin session": "サインインセッション",
     "Signup items": "アイテムの登録",
     "Signup items - Tooltip": "Signup items that need to be filled in when users register",
@@ -131,6 +133,9 @@
     "Master password": "マスターパスワード",
     "Master password - Tooltip": "マスターパスワード - ツールチップ",
     "Method": "方法",
+    "Model": "Model",
+    "Model - Tooltip": "Model - Tooltip",
+    "Models": "Models",
     "Name": "名前",
     "Name - Tooltip": "Unique string-style identifier",
     "OAuth providers": "OAuthプロバイダー",
@@ -242,6 +247,12 @@
     "To access": "アクセスするには",
     "sign up now": "今すぐサインアップ",
     "username, Email or phone": "ユーザー名、メールアドレスまたは電話番号"
+  },
+  "model": {
+    "Edit Model": "Edit Model",
+    "Model text": "Model text",
+    "Model text - Tooltip": "Model text - Tooltip",
+    "New Model": "New Model"
   },
   "organization": {
     "Default avatar": "デフォルトのアバター",

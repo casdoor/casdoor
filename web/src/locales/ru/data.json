@@ -24,6 +24,8 @@
     "Redirect URLs - Tooltip": "List of redirect addresses after successful login",
     "Refresh token expire": "Срок действия обновления токена истекает",
     "Refresh token expire - Tooltip": "Срок обновления токена истекает - Подсказка",
+    "SAML metadata": "SAML metadata",
+    "SAML metadata - Tooltip": "SAML metadata - Tooltip",
     "Signin session": "Сессия входа",
     "Signup items": "Элементы регистрации",
     "Signup items - Tooltip": "Signup items that need to be filled in when users register",
@@ -131,6 +133,9 @@
     "Master password": "Мастер-пароль",
     "Master password - Tooltip": "Мастер-пароль - Tooltip",
     "Method": "Метод",
+    "Model": "Model",
+    "Model - Tooltip": "Model - Tooltip",
+    "Models": "Models",
     "Name": "Наименование",
     "Name - Tooltip": "Unique string-style identifier",
     "OAuth providers": "Поставщики OAuth",
@@ -242,6 +247,12 @@
     "To access": "На доступ",
     "sign up now": "зарегистрироваться",
     "username, Email or phone": "имя пользователя, адрес электронной почты или телефон"
+  },
+  "model": {
+    "Edit Model": "Edit Model",
+    "Model text": "Model text",
+    "Model text - Tooltip": "Model text - Tooltip",
+    "New Model": "New Model"
   },
   "organization": {
     "Default avatar": "Аватар по умолчанию",

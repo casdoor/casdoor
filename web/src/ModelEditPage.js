@@ -132,7 +132,7 @@ class ModelEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("model:Model"), i18next.t("model:Model - Tooltip"))} :
+            {Setting.getLabel(i18next.t("model:Model text"), i18next.t("model:Model text - Tooltip"))} :
           </Col>
           <Col span={22}>
             <TextArea rows={10} value={this.state.model.modelText} onChange={e => {

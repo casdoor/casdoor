@@ -24,6 +24,8 @@
     "Redirect URLs - Tooltip": "List of redirect addresses after successful login",
     "Refresh token expire": "Expiration du jeton d'actualisation",
     "Refresh token expire - Tooltip": "Expiration du jeton d'actualisation - infobulle",
+    "SAML metadata": "SAML metadata",
+    "SAML metadata - Tooltip": "SAML metadata - Tooltip",
     "Signin session": "Connexion à la session",
     "Signup items": "Inscrire des éléments",
     "Signup items - Tooltip": "Signup items that need to be filled in when users register",
@@ -131,6 +133,9 @@
     "Master password": "Mot de passe maître",
     "Master password - Tooltip": "Mot de passe maître - Infobulle",
     "Method": "Méthode",
+    "Model": "Model",
+    "Model - Tooltip": "Model - Tooltip",
+    "Models": "Models",
     "Name": "Nom",
     "Name - Tooltip": "Unique string-style identifier",
     "OAuth providers": "Fournisseurs OAuth",
@@ -242,6 +247,12 @@
     "To access": "Pour accéder à",
     "sign up now": "inscrivez-vous maintenant",
     "username, Email or phone": "nom d'utilisateur, e-mail ou téléphone"
+  },
+  "model": {
+    "Edit Model": "Edit Model",
+    "Model text": "Model text",
+    "Model text - Tooltip": "Model text - Tooltip",
+    "New Model": "New Model"
   },
   "organization": {
     "Default avatar": "Avatar par défaut",

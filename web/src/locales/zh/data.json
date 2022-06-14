@@ -24,6 +24,8 @@
     "Redirect URLs - Tooltip": "登录成功后重定向地址列表",
     "Refresh token expire": "Refresh Token过期时间",
     "Refresh token expire - Tooltip": "Refresh Token过期时间",
+    "SAML metadata": "SAML元数据",
+    "SAML metadata - Tooltip": "SAML协议的元数据（Metadata）信息",
     "Signin session": "保持登录会话",
     "Signup items": "注册项",
     "Signup items - Tooltip": "注册用户注册时需要填写的项目",
@@ -131,6 +133,8 @@
     "Master password": "万能密码",
     "Master password - Tooltip": "可用来登录该组织下的所有用户，方便管理员以该用户身份登录，以解决技术问题",
     "Method": "方法",
+    "Model": "模型",
+    "Model - Tooltip": "Casbin模型",
     "Models": "模型",
     "Name": "名称",
     "Name - Tooltip": "唯一的、字符串式的ID",
@@ -246,7 +250,9 @@
   },
   "model": {
     "Edit Model": "编辑模型",
-    "Model": "模型"
+    "Model text": "模型文本",
+    "Model text - Tooltip": "Casbin访问控制模型",
+    "New Model": "添加模型"
   },
   "organization": {
     "Default avatar": "默认头像",
