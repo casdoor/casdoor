@@ -603,7 +603,7 @@ class ApplicationEditPage extends React.Component {
 
   renderPreview2() {
     let promptUrl = `/prompt/${this.state.application.name}`;
-
+    let maskStyle = {position: 'absolute', top: '0px', left: '0px', zIndex: 10, height: '100%', width: '100%', background: 'rgba(0,0,0,0.4)'};
     return (
       <React.Fragment>
         <Col span={(Setting.isMobile()) ? 24 : 11} style={{display:"flex", flexDirection: "column", flex: "auto"}} >
@@ -612,8 +612,9 @@ class ApplicationEditPage extends React.Component {
           </a>
           <br style={(Setting.isMobile()) ? {display: "none"} : {}} />
           <br style={(Setting.isMobile()) ? {display: "none"} : {}} />
-          <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
+          <div style={{position:'relative', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
             <PromptPage application={this.state.application} account={this.props.account} />
+            <div style={maskStyle}></div>
           </div>
         </Col>
       </React.Fragment>
