@@ -110,7 +110,7 @@ class ProductEditPage extends React.Component {
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("product:Image"), i18next.t("product:Image - Tooltip"))} :
           </Col>
-          <Col span={22} style={(Setting.isMobile()) ? {maxWidth:'100%'} :{}}>
+          <Col span={22} style={(Setting.isMobile()) ? {maxWidth: '100%'} :{}}>
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 1}>
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
