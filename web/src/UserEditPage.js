@@ -44,9 +44,11 @@ class UserEditPage extends React.Component {
       userName: props.userName !== undefined ? props.userName : props.match.params.userName,
       user: null,
       application: null,
+      organization:null,
       organizations: [],
       applications: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      referer: props.referer !== undefined ? props.referer : "",
       loading: true,
     };
   }
@@ -66,17 +68,18 @@ class UserEditPage extends React.Component {
             user: data,
           });
         }
-        this.setState({
-          loading: false,
-        });
       });
   }
 
   getOrganizations() {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
+        let organizations = (res.msg === undefined) ? res : [];
+        let organization = organizations.filter(organization => organization.name === this.state.organizationName);
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organization: organization[0],
+          organizations: organizations,
+          loading: false,
         });
       });
   }
@@ -124,6 +127,14 @@ class UserEditPage extends React.Component {
     return (this.state.user.id === this.props.account?.id) || Setting.isAdminUser(this.props.account);
   }
 
+  isAccountItemVisible(accountItem) {
+    if (this.state.referer !== "account") {
+      return true;
+    }
+    let item = this.state.organization.accountProfileItems?.filter(item => item.name === accountItem)[0];
+    return item !== undefined ? item.visible : false;
+  }
+
   renderUser() {
     return (
       <Card size="small" title={
@@ -134,241 +145,309 @@ class UserEditPage extends React.Component {
           {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
-        <Row style={{marginTop: '10px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.user.owner} onChange={(value => {this.updateUserField('owner', value);})}>
-              {
-                this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
-              }
-            </Select>
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel("ID", i18next.t("general:ID - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.id} disabled={true} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.name} disabled={!Setting.isAdminUser(this.props.account)} onChange={e => {
-              this.updateUserField('name', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.displayName} onChange={e => {
-              this.updateUserField('displayName', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Avatar"), i18next.t("general:Avatar - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                {i18next.t("general:URL")}:
-              </Col>
-              <Col span={22} >
-                <Input prefix={<LinkOutlined/>} value={this.state.user.avatar} onChange={e => {
-                  this.updateUserField('avatar', e.target.value);
-                }} />
-              </Col>
-            </Row>
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                {i18next.t("general:Preview")}:
-              </Col>
-              <Col span={22} >
-                <a target="_blank" rel="noreferrer" href={this.state.user.avatar}>
-                  <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: '20px'}}/>
-                </a>
-              </Col>
-            </Row>
-            <Row style={{marginTop: '20px'}}>
-              <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} user={this.state.user} account={this.props.account} />
-            </Row>
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:User type"), i18next.t("general:User type - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.user.type} onChange={(value => {this.updateUserField('type', value);})}>
-              {
-                ['normal-user']
-                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
-              }
-            </Select>
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <PasswordModal user={this.state.user} account={this.props.account} disabled={this.state.userName !== this.state.user.name} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
-          </Col>
-          <Col style={{paddingRight: '20px'}} span={11} >
-            <Input value={this.state.user.email}
-                   disabled={this.state.user.id === this.props.account?.id ? true : !Setting.isAdminUser(this.props.account)}
-                   onChange={e => {
-                      this.updateUserField('email', e.target.value);
-                    }} />
-          </Col>
-          <Col span={11} >
-            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />) : null}
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
-          </Col>
-          <Col style={{paddingRight: '20px'}} span={11} >
-            <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
-                   disabled={this.state.user.id === this.props.account?.id ? true : !Setting.isAdminUser(this.props.account)}
-                   onChange={e => {
-                      this.updateUserField('phone', e.target.value);
-                   }}/>
-          </Col>
-          <Col span={11} >
-            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Country/Region"), i18next.t("user:Country/Region - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <SelectRegionBox defaultValue={this.state.user.region} onChange={(value) => {
-              this.updateUserField("region", value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Location"), i18next.t("user:Location - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.location} onChange={e => {
-              this.updateUserField('location', e.target.value);
-            }} />
-          </Col>
-        </Row>
         {
-          (this.state.application === null || this.state.user === null) ? null : (
-            <AffiliationSelect labelSpan={(Setting.isMobile()) ? 22 : 2} application={this.state.application} user={this.state.user} onUpdateUserField={(key, value) => { return this.updateUserField(key, value)}} />
-          )
-        }
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Title"), i18next.t("user:Title - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.title} onChange={e => {
-              this.updateUserField('title', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Homepage"), i18next.t("user:Homepage - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.homepage} onChange={e => {
-              this.updateUserField('homepage', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Bio"), i18next.t("user:Bio - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.bio} onChange={e => {
-              this.updateUserField('bio', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Tag"), i18next.t("user:Tag - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            {
-              this.state.application?.organizationObj.tags?.length > 0 ? (
-                <Select virtual={false} style={{width: '100%'}} value={this.state.user.tag} onChange={(value => {this.updateUserField('tag', value);})}>
+          (!this.isAccountItemVisible("Organization")) ? null :(
+            <Row style={{marginTop: '10px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Select virtual={false} style={{width: '100%'}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.user.owner} onChange={(value => {this.updateUserField('owner', value);})}>
                   {
-                    this.state.application.organizationObj.tags?.map((tag, index) => {
-                      const tokens = tag.split("|");
-                      const value = tokens[0];
-                      const displayValue = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1];
-                      return <Option key={index} value={value}>{displayValue}</Option>
-                    })
+                    this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
                   }
                 </Select>
-              ) : (
-                <Input value={this.state.user.tag} onChange={e => {
-                  this.updateUserField('tag', e.target.value);
-                }} />
-              )
-            }
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Signup application"), i18next.t("general:Signup application - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.user.signupApplication} onChange={(value => {this.updateUserField('signupApplication', value);})}>
-              {
-                this.state.applications.map((application, index) => <Option key={index} value={application.name}>{application.name}</Option>)
-              }
-            </Select>
-          </Col>
-        </Row>
-        {
-          !this.isSelfOrAdmin() ? null : (
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("user:3rd-party logins"), i18next.t("user:3rd-party logins - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <div style={{marginBottom: 20}}>
-                  {
-                    (this.state.application === null || this.state.user === null) ? null : (
-                      this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) =>
-                          (providerItem.provider.category === "OAuth") ? (
-                              <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />
-                          ) : (
-                              <SamlWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />
-                          )
-                      )
-                    )
-                  }
-                </div>
               </Col>
             </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("ID")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel("ID", i18next.t("general:ID - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.user.id} disabled={true} />
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Name")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.user.name} disabled={!Setting.isAdminUser(this.props.account)} onChange={e => {
+                  this.updateUserField('name', e.target.value);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Display name")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.user.displayName} onChange={e => {
+                  this.updateUserField('displayName', e.target.value);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Avatar")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Avatar"), i18next.t("general:Avatar - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Row style={{marginTop: '20px'}} >
+                  <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {i18next.t("general:URL")}:
+                  </Col>
+                  <Col span={22} >
+                    <Input prefix={<LinkOutlined/>} value={this.state.user.avatar} onChange={e => {
+                      this.updateUserField('avatar', e.target.value);
+                    }} />
+                  </Col>
+                </Row>
+                <Row style={{marginTop: '20px'}} >
+                  <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {i18next.t("general:Preview")}:
+                  </Col>
+                  <Col span={22} >
+                    <a target="_blank" rel="noreferrer" href={this.state.user.avatar}>
+                      <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: '20px'}}/>
+                    </a>
+                  </Col>
+                </Row>
+                <Row style={{marginTop: '20px'}}>
+                  <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} user={this.state.user} account={this.props.account} />
+                </Row>
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("User type")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:User type"), i18next.t("general:User type - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Select virtual={false} style={{width: '100%'}} value={this.state.user.type} onChange={(value => {this.updateUserField('type', value);})}>
+                  {
+                    ['normal-user']
+                      .map((item, index) => <Option key={index} value={item}>{item}</Option>)
+                  }
+                </Select>
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Password")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <PasswordModal user={this.state.user} account={this.props.account} disabled={this.state.userName !== this.state.user.name} />
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Email")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
+              </Col>
+              <Col style={{paddingRight: '20px'}} span={11} >
+                <Input value={this.state.user.email}
+                       disabled={this.state.user.id === this.props.account?.id ? true : !Setting.isAdminUser(this.props.account)}
+                       onChange={e => {
+                         this.updateUserField('email', e.target.value);
+                       }} />
+              </Col>
+              <Col span={11} >
+                { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />) : null}
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Phone")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
+              </Col>
+              <Col style={{paddingRight: '20px'}} span={11} >
+                <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+                       disabled={this.state.user.id === this.props.account?.id ? true : !Setting.isAdminUser(this.props.account)}
+                       onChange={e => {
+                         this.updateUserField('phone', e.target.value);
+                       }}/>
+              </Col>
+              <Col span={11} >
+                { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Country/Region")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("user:Country/Region"), i18next.t("user:Country/Region - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <SelectRegionBox defaultValue={this.state.user.region} onChange={(value) => {
+                  this.updateUserField("region", value);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Location")) ? null :(
+            <div>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("user:Location"), i18next.t("user:Location - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.user.location} onChange={e => {
+                    this.updateUserField('location', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              {
+                (this.state.application === null || this.state.user === null) ? null : (
+                  <AffiliationSelect labelSpan={(Setting.isMobile()) ? 22 : 2} application={this.state.application} user={this.state.user} onUpdateUserField={(key, value) => { return this.updateUserField(key, value)}} />
+                )
+              }
+            </div>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Title")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("user:Title"), i18next.t("user:Title - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.user.title} onChange={e => {
+                  this.updateUserField('title', e.target.value);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Homepage")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("user:Homepage"), i18next.t("user:Homepage - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.user.homepage} onChange={e => {
+                  this.updateUserField('homepage', e.target.value);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Bio")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("user:Bio"), i18next.t("user:Bio - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.user.bio} onChange={e => {
+                  this.updateUserField('bio', e.target.value);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Tag")) ? null :(
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("user:Tag"), i18next.t("user:Tag - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                {
+                  this.state.application?.organizationObj.tags?.length > 0 ? (
+                    <Select virtual={false} style={{width: '100%'}} value={this.state.user.tag} onChange={(value => {this.updateUserField('tag', value);})}>
+                      {
+                        this.state.application.organizationObj.tags?.map((tag, index) => {
+                          const tokens = tag.split("|");
+                          const value = tokens[0];
+                          const displayValue = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1];
+                          return <Option key={index} value={value}>{displayValue}</Option>
+                        })
+                      }
+                    </Select>
+                  ) : (
+                    <Input value={this.state.user.tag} onChange={e => {
+                      this.updateUserField('tag', e.target.value);
+                    }} />
+                  )
+                }
+              </Col>
+            </Row>
+          )
+        }
+        {
+          (!this.isAccountItemVisible("Signup application")) ? null :(
+            <div>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("general:Signup application"), i18next.t("general:Signup application - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Select virtual={false} style={{width: '100%'}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.user.signupApplication} onChange={(value => {this.updateUserField('signupApplication', value);})}>
+                    {
+                      this.state.applications.map((application, index) => <Option key={index} value={application.name}>{application.name}</Option>)
+                    }
+                  </Select>
+                </Col>
+              </Row>
+              {
+                !this.isSelfOrAdmin() ? null : (
+                  <Row style={{marginTop: '20px'}} >
+                    <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {Setting.getLabel(i18next.t("user:3rd-party logins"), i18next.t("user:3rd-party logins - Tooltip"))} :
+                    </Col>
+                    <Col span={22} >
+                      <div style={{marginBottom: 20}}>
+                        {
+                          (this.state.application === null || this.state.user === null) ? null : (
+                            this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) =>
+                              (providerItem.provider.category === "OAuth") ? (
+                                <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />
+                              ) : (
+                                <SamlWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />
+                              )
+                            )
+                          )
+                        }
+                      </div>
+                    </Col>
+                  </Row>
+                )
+              }
+            </div>
           )
         }
         {
@@ -385,52 +464,66 @@ class UserEditPage extends React.Component {
               {/*    />*/}
               {/*  </Col>*/}
               {/*</Row>*/}
-              <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("user:Is admin"), i18next.t("user:Is admin - Tooltip"))} :
-                </Col>
-                <Col span={(Setting.isMobile()) ? 22 : 2} >
-                  <Switch checked={this.state.user.isAdmin} onChange={checked => {
-                    this.updateUserField('isAdmin', checked);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("user:Is global admin"), i18next.t("user:Is global admin - Tooltip"))} :
-                </Col>
-                <Col span={(Setting.isMobile()) ? 22 : 2} >
-                  <Switch checked={this.state.user.isGlobalAdmin} onChange={checked => {
-                    this.updateUserField('isGlobalAdmin', checked);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("user:Is forbidden"), i18next.t("user:Is forbidden - Tooltip"))} :
-                </Col>
-                <Col span={(Setting.isMobile()) ? 22 : 2} >
-                  <Switch checked={this.state.user.isForbidden} onChange={checked => {
-                    this.updateUserField('isForbidden', checked);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("user:Is deleted"), i18next.t("user:Is deleted - Tooltip"))} :
-                </Col>
-                <Col span={(Setting.isMobile()) ? 22 : 2} >
-                  <Switch checked={this.state.user.isDeleted} onChange={checked => {
-                    this.updateUserField('isDeleted', checked);
-                  }} />
-                </Col>
-              </Row>
+              {
+                (!this.isAccountItemVisible("Is admin")) ? null :(
+                  <Row style={{marginTop: '20px'}} >
+                    <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {Setting.getLabel(i18next.t("user:Is admin"), i18next.t("user:Is admin - Tooltip"))} :
+                    </Col>
+                    <Col span={(Setting.isMobile()) ? 22 : 2} >
+                      <Switch checked={this.state.user.isAdmin} onChange={checked => {
+                        this.updateUserField('isAdmin', checked);
+                      }} />
+                    </Col>
+                  </Row>
+                )
+              }
+              {
+                (!this.isAccountItemVisible("Is global admin")) ? null :(
+                  <Row style={{marginTop: '20px'}} >
+                    <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {Setting.getLabel(i18next.t("user:Is global admin"), i18next.t("user:Is global admin - Tooltip"))} :
+                    </Col>
+                    <Col span={(Setting.isMobile()) ? 22 : 2} >
+                      <Switch checked={this.state.user.isGlobalAdmin} onChange={checked => {
+                        this.updateUserField('isGlobalAdmin', checked);
+                      }} />
+                    </Col>
+                  </Row>
+                )
+              }
+              {
+                (!this.isAccountItemVisible("Is forbidden")) ? null :(
+                  <Row style={{marginTop: '20px'}} >
+                    <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {Setting.getLabel(i18next.t("user:Is forbidden"), i18next.t("user:Is forbidden - Tooltip"))} :
+                    </Col>
+                    <Col span={(Setting.isMobile()) ? 22 : 2} >
+                      <Switch checked={this.state.user.isForbidden} onChange={checked => {
+                        this.updateUserField('isForbidden', checked);
+                      }} />
+                    </Col>
+                  </Row>
+                )
+              }
+              {
+                (!this.isAccountItemVisible("Is deleted")) ? null :(
+                  <Row style={{marginTop: '20px'}} >
+                    <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {Setting.getLabel(i18next.t("user:Is deleted"), i18next.t("user:Is deleted - Tooltip"))} :
+                    </Col>
+                    <Col span={(Setting.isMobile()) ? 22 : 2} >
+                      <Switch checked={this.state.user.isDeleted} onChange={checked => {
+                        this.updateUserField('isDeleted', checked);
+                      }} />
+                    </Col>
+                  </Row>
+                )
+              }
             </React.Fragment>
           )
         }
       </Card>
-
-
     )
   }
 

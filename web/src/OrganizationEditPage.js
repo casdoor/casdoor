@@ -20,6 +20,8 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./LdapTable";
+import SignupTable from "./SignupTable";
+import AccountProfileTable from "./AccountProfileTable";
 
 const { Option } = Select;
 
@@ -261,6 +263,18 @@ class OrganizationEditPage extends React.Component {
               organizationName={this.state.organizationName}
               onUpdateTable={(value) => {
                 this.setState({ldaps: value}) }}
+            />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:Account profile items"), i18next.t("organization:Account profile items - Tooltip"))} :
+          </Col>
+          <Col span={5} >
+            <AccountProfileTable
+              title={i18next.t("organization:Account profile items")}
+              table={this.state.organization.accountProfileItems}
+              onUpdateTable={(value) => { this.updateOrganizationField('accountProfileItems', value)}}
             />
           </Col>
         </Row>

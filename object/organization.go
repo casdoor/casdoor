@@ -20,22 +20,28 @@ import (
 	"xorm.io/core"
 )
 
+type AccountProfileItem struct {
+	Name     string `json:"name"`
+	Visible  bool   `json:"visible"`
+}
+
 type Organization struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName        string   `xorm:"varchar(100)" json:"displayName"`
-	WebsiteUrl         string   `xorm:"varchar(100)" json:"websiteUrl"`
-	Favicon            string   `xorm:"varchar(100)" json:"favicon"`
-	PasswordType       string   `xorm:"varchar(100)" json:"passwordType"`
-	PasswordSalt       string   `xorm:"varchar(100)" json:"passwordSalt"`
-	PhonePrefix        string   `xorm:"varchar(10)"  json:"phonePrefix"`
-	DefaultAvatar      string   `xorm:"varchar(100)" json:"defaultAvatar"`
-	Tags               []string `xorm:"mediumtext" json:"tags"`
-	MasterPassword     string   `xorm:"varchar(100)" json:"masterPassword"`
-	EnableSoftDeletion bool     `json:"enableSoftDeletion"`
-	IsProfilePublic    bool     `json:"isProfilePublic"`
+	DisplayName        string                `xorm:"varchar(100)" json:"displayName"`
+	WebsiteUrl         string                `xorm:"varchar(100)" json:"websiteUrl"`
+	Favicon            string                `xorm:"varchar(100)" json:"favicon"`
+	PasswordType       string                `xorm:"varchar(100)" json:"passwordType"`
+	PasswordSalt       string                `xorm:"varchar(100)" json:"passwordSalt"`
+	PhonePrefix        string                `xorm:"varchar(10)"  json:"phonePrefix"`
+	DefaultAvatar      string                `xorm:"varchar(100)" json:"defaultAvatar"`
+	Tags               []string              `xorm:"mediumtext" json:"tags"`
+	MasterPassword     string                `xorm:"varchar(100)" json:"masterPassword"`
+	EnableSoftDeletion bool                  `json:"enableSoftDeletion"`
+	IsProfilePublic    bool                  `json:"isProfilePublic"`
+	AccountProfileItem []*AccountProfileItem `xorm:"varchar(1000)" json:"accountProfileItems"`
 }
 
 func GetOrganizationCount(owner, field, value string) int {
