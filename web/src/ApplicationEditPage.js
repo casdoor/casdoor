@@ -402,7 +402,7 @@ class ApplicationEditPage extends React.Component {
             }}/>
             <Upload maxCount={1} accept=".html" showUploadList={false}
                     beforeUpload={file => {return false}} onChange={info => {this.handleUpload(info)}}>
-              <Button icon={<UploadOutlined />} loading={this.state.uploading}>Click to Upload</Button>
+              <Button icon={<UploadOutlined />} loading={this.state.uploading}>{i18next.t("general:Click to Upload")}</Button>
             </Upload>
           </Col>
         </Row>
