@@ -34,9 +34,9 @@ import {Controlled as CodeMirror} from 'react-codemirror2';
 import "codemirror/lib/codemirror.css";
 require('codemirror/theme/material-darker.css');
 require("codemirror/mode/htmlmixed/htmlmixed");
+require("codemirror/mode/xml/xml");
 
 const { Option } = Select;
-const { TextArea } = Input;
 
 class ApplicationEditPage extends React.Component {
   constructor(props) {
@@ -479,7 +479,11 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:SAML metadata"), i18next.t("application:SAML metadata - Tooltip"))} :
           </Col>
           <Col span={22}>
-            <TextArea rows={8} value={this.state.samlMetadata} />
+            <CodeMirror
+              value={this.state.samlMetadata}
+              options={{mode: 'xml', theme: 'default'}}
+              onBeforeChange={(editor, data, value) => {}}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
