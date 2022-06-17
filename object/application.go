@@ -22,6 +22,14 @@ import (
 	"xorm.io/core"
 )
 
+type SignupItem struct {
+	Name     string `json:"name"`
+	Visible  bool   `json:"visible"`
+	Required bool   `json:"required"`
+	Prompted bool   `json:"prompted"`
+	Rule     string `json:"rule"`
+}
+
 type Application struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`

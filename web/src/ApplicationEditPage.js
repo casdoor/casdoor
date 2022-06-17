@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Button, Card, Col, Input, Popover, Row, Select, Switch, Upload} from 'antd';
-import {LinkOutlined, UploadOutlined} from "@ant-design/icons";
+import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
@@ -28,14 +28,15 @@ import UrlTable from "./UrlTable";
 import ProviderTable from "./ProviderTable";
 import SignupTable from "./SignupTable";
 import PromptPage from "./auth/PromptPage";
+import copy from "copy-to-clipboard";
 
 import {Controlled as CodeMirror} from 'react-codemirror2';
 import "codemirror/lib/codemirror.css";
 require('codemirror/theme/material-darker.css');
 require("codemirror/mode/htmlmixed/htmlmixed");
+require("codemirror/mode/xml/xml");
 
 const { Option } = Select;
-const { TextArea } = Input;
 
 class ApplicationEditPage extends React.Component {
   constructor(props) {
@@ -180,7 +181,7 @@ class ApplicationEditPage extends React.Component {
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Logo"), i18next.t("general:Logo - Tooltip"))} :
           </Col>
-          <Col span={22} style={(Setting.isMobile()) ? {maxWidth:'100%'} :{}}>
+          <Col span={22} style={(Setting.isMobile()) ? {maxWidth: '100%'} :{}}>
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 1}>
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
@@ -402,7 +403,7 @@ class ApplicationEditPage extends React.Component {
             }}/>
             <Upload maxCount={1} accept=".html" showUploadList={false}
                     beforeUpload={file => {return false}} onChange={info => {this.handleUpload(info)}}>
-              <Button icon={<UploadOutlined />} loading={this.state.uploading}>Click to Upload</Button>
+              <Button icon={<UploadOutlined />} loading={this.state.uploading}>{i18next.t("general:Click to Upload")}</Button>
             </Upload>
           </Col>
         </Row>
@@ -478,7 +479,11 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:SAML metadata"), i18next.t("application:SAML metadata - Tooltip"))} :
           </Col>
           <Col span={22}>
-            <TextArea rows={8} value={this.state.samlMetadata} />
+            <CodeMirror
+              value={this.state.samlMetadata}
+              options={{mode: 'xml', theme: 'default'}}
+              onBeforeChange={(editor, data, value) => {}}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
@@ -500,7 +505,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
           </Col>
           {
-            this.renderPreview()
+            this.renderSignupSigninPreview()
           }
         </Row>
         {
@@ -524,30 +529,33 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
           </Col>
           {
-            this.renderPreview2()
+            this.renderPromptPreview()
           }
         </Row>
       </Card>
     )
   }
 
-  renderPreview() {
+  renderSignupSigninPreview() {
     let signUpUrl = `/signup/${this.state.application.name}`;
     let signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
     let maskStyle = {position: 'absolute', top: '0px', left: '0px', zIndex: 10, height: '100%', width: '100%', background: 'rgba(0,0,0,0.4)'};
     if (!this.state.application.enablePassword) {
       signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");
     }
-    if (!Setting.isMobile()) {
+
     return (
       <React.Fragment>
-        <Col span={11} style={{display:"flex", flexDirection: "column"}}>
-          <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signUpUrl}>
-            <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
-          </a>
+        <Col span={11}>
+          <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
+            copy(`${window.location.origin}${signUpUrl}`);
+            Setting.showMessage("success", i18next.t("application:Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
+          }}
+          >
+            {i18next.t("application:Copy signup page URL")}
+          </Button>
           <br/>
-          <br/>
-          <div style={{position:'relative', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
+          <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
             {
               this.state.application.enablePassword ? (
                 <SignupPage application={this.state.application} />
@@ -558,40 +566,16 @@ class ApplicationEditPage extends React.Component {
             <div style={maskStyle}></div>
           </div>
         </Col>
-        <Col span={11} style={{display:"flex", flexDirection: "column"}}>
-          <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signInUrl}>
-            <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
-          </a>
+        <Col span={11}>
+          <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
+            copy(`${window.location.origin}${signInUrl}`);
+            Setting.showMessage("success", i18next.t("application:Signin page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
+          }}
+          >
+            {i18next.t("application:Copy signin page URL")}
+          </Button>
           <br/>
-          <br/>
-          <div style={{position:'relative', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
-            <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
-            <div style={maskStyle}></div>
-          </div>
-        </Col>
-      </React.Fragment>
-    )
-  } else{
-    return(
-      <React.Fragment>
-        <Col span={24} style={{display:"flex", flexDirection: "column"}}>
-          <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signUpUrl}>
-            <Button type="primary">{i18next.t("application:Test signup page..")}</Button>
-          </a>
-          <div style={{position:'relative', marginBottom:"10px", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
-            {
-              this.state.application.enablePassword ? (
-                <SignupPage application={this.state.application} />
-              ) : (
-                <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
-              )
-            }
-            <div style={maskStyle}></div>
-          </div>
-          <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={signInUrl}>
-            <Button type="primary">{i18next.t("application:Test signin page..")}</Button>
-          </a>
-          <div style={{position:'relative', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
+          <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
             <div style={maskStyle}></div>
           </div>
@@ -599,25 +583,25 @@ class ApplicationEditPage extends React.Component {
       </React.Fragment>
     )
   }
-}
 
-  renderPreview2() {
+  renderPromptPreview() {
     let promptUrl = `/prompt/${this.state.application.name}`;
     let maskStyle = {position: 'absolute', top: '0px', left: '0px', zIndex: 10, height: '100%', width: '100%', background: 'rgba(0,0,0,0.4)'};
     return (
-      <React.Fragment>
-        <Col span={(Setting.isMobile()) ? 24 : 11} style={{display:"flex", flexDirection: "column", flex: "auto"}} >
-          <a style={{marginBottom: "10px"}} target="_blank" rel="noreferrer" href={promptUrl}>
-            <Button type="primary">{i18next.t("application:Test prompt page..")}</Button>
-          </a>
-          <br style={(Setting.isMobile()) ? {display: "none"} : {}} />
-          <br style={(Setting.isMobile()) ? {display: "none"} : {}} />
-          <div style={{position:'relative', width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
-            <PromptPage application={this.state.application} account={this.props.account} />
-            <div style={maskStyle}></div>
-          </div>
-        </Col>
-      </React.Fragment>
+      <Col span={11}>
+        <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
+          copy(`${window.location.origin}${promptUrl}`);
+          Setting.showMessage("success", i18next.t("application:Prompt page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
+        }}
+        >
+          {i18next.t("application:Copy prompt page URL")}
+        </Button>
+        <br/>
+        <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
+          <PromptPage application={this.state.application} account={this.props.account} />
+          <div style={maskStyle}></div>
+        </div>
+      </Col>
     )
   }
 
