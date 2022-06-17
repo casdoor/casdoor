@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2022 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import i18next from "i18next";
 
 const { Option } = Select;
 
-class SignupTable extends React.Component {
+class AccountTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,7 +38,7 @@ class SignupTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: Setting.getNewRowNameForTable(table, "Please select a signup item"), visible: true, required: true, rule: "None"};
+    let row = {name: Setting.getNewRowNameForTable(table, "Please select an account item"), visible: true};
     if (table === undefined) {
       table = [];
     }
@@ -69,17 +69,29 @@ class SignupTable extends React.Component {
         key: 'name',
         render: (text, record, index) => {
           const items = [
-            {name: "Username", displayName: i18next.t("signup:Username")},
+            {name: "Organization", displayName: i18next.t("general:Organization")},
             {name: "ID", displayName: i18next.t("general:ID")},
+            {name: "Name", displayName: i18next.t("general:Name")},
             {name: "Display name", displayName: i18next.t("general:Display name")},
-            {name: "Affiliation", displayName: i18next.t("user:Affiliation")},
-            {name: "Country/Region", displayName: i18next.t("user:Country/Region")},
-            {name: "ID card", displayName: i18next.t("user:ID card")},
+            {name: "Avatar", displayName: i18next.t("general:Avatar")},
+            {name: "User type", displayName: i18next.t("general:User type")},
+            {name: "Password", displayName: i18next.t("general:Password")},
             {name: "Email", displayName: i18next.t("general:Email")},
-            {name: "Password", displayName: i18next.t("forget:Password")},
-            {name: "Confirm password", displayName: i18next.t("forget:Confirm")},
             {name: "Phone", displayName: i18next.t("general:Phone")},
-            {name: "Agreement", displayName: i18next.t("signup:Agreement")},
+            {name: "Country/Region", displayName: i18next.t("user:Country/Region")},
+            {name: "Location", displayName: i18next.t("user:Location")},
+            {name: "Affiliation", displayName: i18next.t("user:Affiliation")},
+            {name: "Title", displayName: i18next.t("user:Title")},
+            {name: "Homepage", displayName: i18next.t("user:Homepage")},
+            {name: "Bio", displayName: i18next.t("user:Bio")},
+            {name: "Tag", displayName: i18next.t("user:Tag")},
+            {name: "Signup application", displayName: i18next.t("general:Signup application")},
+            {name: "3rd-party logins", displayName: i18next.t("user:3rd-party logins")},
+            {name: "Properties", displayName: i18next.t("user:Properties")},
+            {name: "Is admin", displayName: i18next.t("user:Is admin")},
+            {name: "Is global admin", displayName: i18next.t("user:Is global admin")},
+            {name: "Is forbidden", displayName: i18next.t("user:Is forbidden")},
+            {name: "Is deleted", displayName: i18next.t("user:Is deleted")},
           ];
 
           const getItemDisplayName = (text) => {
@@ -109,92 +121,67 @@ class SignupTable extends React.Component {
         key: 'visible',
         width: '120px',
         render: (text, record, index) => {
-          if (record.name === "ID") {
-            return null;
-          }
-
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'visible', checked);
-              if (!checked) {
-                this.updateField(table, index, 'required', false);
-              } else {
-                this.updateField(table, index, 'required', true);
-              }
             }} />
           )
         }
       },
       {
-        title: i18next.t("provider:required"),
-        dataIndex: 'required',
-        key: 'required',
-        width: '120px',
+        title: i18next.t("organization:viewRule"),
+        dataIndex: 'viewRule',
+        key: 'viewRule',
+        width: '155px',
         render: (text, record, index) => {
           if (!record.visible) {
             return null;
           }
 
+          let options = [
+            {id: 'Public', name: 'Public'},
+            {id: 'Self', name: 'Self'},
+            {id: 'Admin', name: 'Admin'},
+          ];
+
           return (
-            <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, 'required', checked);
-            }} />
+            <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {
+              this.updateField(table, index, 'viewRule', value);
+            })}>
+              {
+                options.map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+              }
+            </Select>
           )
         }
       },
       {
-        title: i18next.t("provider:prompted"),
-        dataIndex: 'prompted',
-        key: 'prompted',
-        width: '120px',
-        render: (text, record, index) => {
-          if (record.name === "ID") {
-            return null;
-          }
-
-          if (record.visible) {
-            return null;
-          }
-
-          return (
-            <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, 'prompted', checked);
-            }} />
-          )
-        }
-      },
-      {
-        title: i18next.t("application:rule"),
-        dataIndex: 'rule',
-        key: 'rule',
+        title: i18next.t("organization:modifyRule"),
+        dataIndex: 'modifyRule',
+        key: 'modifyRule',
         width: '155px',
         render: (text, record, index) => {
-          let options = [];
-          if (record.name === "ID") {
-            options = [
-              {id: 'Random', name: 'Random'},
-              {id: 'Incremental', name: 'Incremental'},
-            ];
-          } else if (record.name === "Display name") {
-            options = [
-              {id: 'None', name: 'None'},
-              {id: 'Real name', name: 'Real name'},
-              {id: 'First, last', name: 'First, last'},
-            ];
-          } else if (record.name === "Email") {
-            options = [
-              {id: 'Normal', name: 'Normal'},
-              {id: 'No verification', name: 'No verification'},
-            ];
+          if (!record.visible) {
+            return null;
           }
 
-          if (options.length === 0) {
-            return null;
+          let options;
+          if (record.viewRule === "Admin") {
+            options = [
+              {id: 'Admin', name: 'Admin'},
+              {id: 'Immutable', name: 'Immutable'},
+            ];
+          } else {
+            options = [
+              {id: 'Self', name: 'Self'},
+              {id: 'Admin', name: 'Admin'},
+              {id: 'Immutable', name: 'Immutable'},
+            ];
           }
 
           return (
             <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {
-              this.updateField(table, index, 'rule', value);
+              this.updateField(table, index, 'modifyRule', value);
             })}>
               {
                 options.map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
@@ -252,4 +239,4 @@ class SignupTable extends React.Component {
   }
 }
 
-export default SignupTable;
+export default AccountTable;

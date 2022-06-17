@@ -38,7 +38,8 @@
     "Token expire": "Token läuft ab",
     "Token expire - Tooltip": "Token läuft ab - Tooltip",
     "Token format": "Token-Format",
-    "Token format - Tooltip": "Token-Format - Tooltip"
+    "Token format - Tooltip": "Token-Format - Tooltip",
+    "rule": "rule"
   },
   "cert": {
     "Bit size": "Bitgröße",
@@ -259,6 +260,8 @@
     "New Model": "New Model"
   },
   "organization": {
+    "Account items": "Account items",
+    "Account items - Tooltip": "Account items - Tooltip",
     "Default avatar": "Standard Avatar",
     "Edit Organization": "Organisation bearbeiten",
     "Favicon": "Févicon",
@@ -270,7 +273,9 @@
     "Tags": "Tags",
     "Tags - Tooltip": "Tags - Tooltip",
     "Website URL": "Website-URL",
-    "Website URL - Tooltip": "Unique string-style identifier"
+    "Website URL - Tooltip": "Unique string-style identifier",
+    "modifyRule": "modifyRule",
+    "viewRule": "viewRule"
   },
   "payment": {
     "Confirm your invoice information": "Confirm your invoice information",
@@ -469,7 +474,6 @@
     "canUnlink": "canUnlink",
     "prompted": "gefragt",
     "required": "benötigt",
-    "rule": "regel",
     "visible": "sichtbar"
   },
   "record": {

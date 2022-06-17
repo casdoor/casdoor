@@ -38,7 +38,8 @@
     "Token expire": "Токен истекает",
     "Token expire - Tooltip": "Истек токен - Подсказка",
     "Token format": "Формат токена",
-    "Token format - Tooltip": "Формат токена - Подсказка"
+    "Token format - Tooltip": "Формат токена - Подсказка",
+    "rule": "rule"
   },
   "cert": {
     "Bit size": "Размер бита",
@@ -259,6 +260,8 @@
     "New Model": "New Model"
   },
   "organization": {
+    "Account items": "Account items",
+    "Account items - Tooltip": "Account items - Tooltip",
     "Default avatar": "Аватар по умолчанию",
     "Edit Organization": "Изменить организацию",
     "Favicon": "Иконка",
@@ -270,7 +273,9 @@
     "Tags": "Tags",
     "Tags - Tooltip": "Tags - Tooltip",
     "Website URL": "URL сайта",
-    "Website URL - Tooltip": "Unique string-style identifier"
+    "Website URL - Tooltip": "Unique string-style identifier",
+    "modifyRule": "modifyRule",
+    "viewRule": "viewRule"
   },
   "payment": {
     "Confirm your invoice information": "Confirm your invoice information",
@@ -469,7 +474,6 @@
     "canUnlink": "canUnlink",
     "prompted": "запрошено",
     "required": "обязательный",
-    "rule": "правило",
     "visible": "видимый"
   },
   "record": {

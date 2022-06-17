@@ -38,7 +38,8 @@
     "Token expire": "Access Token过期",
     "Token expire - Tooltip": "Access Token过期时间",
     "Token format": "Access Token格式",
-    "Token format - Tooltip": "Access Token格式"
+    "Token format - Tooltip": "Access Token格式",
+    "rule": "规则"
   },
   "cert": {
     "Bit size": "位大小",
@@ -259,6 +260,8 @@
     "New Model": "添加模型"
   },
   "organization": {
+    "Account items": "个人页设置项",
+    "Account items - Tooltip": "个人设置页面中的项目",
     "Default avatar": "默认头像",
     "Edit Organization": "编辑组织",
     "Favicon": "图标",
@@ -270,7 +273,9 @@
     "Tags": "标签集合",
     "Tags - Tooltip": "可供用户选择的标签的集合",
     "Website URL": "网页地址",
-    "Website URL - Tooltip": "网页地址"
+    "Website URL - Tooltip": "网页地址",
+    "modifyRule": "修改规则",
+    "viewRule": "查看规则"
   },
   "payment": {
     "Confirm your invoice information": "确认您的发票信息",
@@ -469,7 +474,6 @@
     "canUnlink": "可解绑定",
     "prompted": "注册后提醒绑定",
     "required": "是否必填项",
-    "rule": "规则",
     "visible": "是否可见"
   },
   "record": {

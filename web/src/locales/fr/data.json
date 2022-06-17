@@ -38,7 +38,8 @@
     "Token expire": "Expiration du jeton",
     "Token expire - Tooltip": "Expiration du jeton - Info-bulle",
     "Token format": "Format du jeton",
-    "Token format - Tooltip": "Format du jeton - infobulle"
+    "Token format - Tooltip": "Format du jeton - infobulle",
+    "rule": "rule"
   },
   "cert": {
     "Bit size": "Taille du bit",
@@ -259,6 +260,8 @@
     "New Model": "New Model"
   },
   "organization": {
+    "Account items": "Account items",
+    "Account items - Tooltip": "Account items - Tooltip",
     "Default avatar": "Avatar par défaut",
     "Edit Organization": "Modifier l'organisation",
     "Favicon": "Favicon",
@@ -270,7 +273,9 @@
     "Tags": "Tags",
     "Tags - Tooltip": "Tags - Tooltip",
     "Website URL": "URL du site web",
-    "Website URL - Tooltip": "Unique string-style identifier"
+    "Website URL - Tooltip": "Unique string-style identifier",
+    "modifyRule": "modifyRule",
+    "viewRule": "viewRule"
   },
   "payment": {
     "Confirm your invoice information": "Confirm your invoice information",
@@ -469,7 +474,6 @@
     "canUnlink": "canUnlink",
     "prompted": "invitée",
     "required": "Obligatoire",
-    "rule": "règle",
     "visible": "Visible"
   },
   "record": {

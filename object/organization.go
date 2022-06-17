@@ -20,6 +20,13 @@ import (
 	"xorm.io/core"
 )
 
+type AccountItem struct {
+	Name       string `json:"name"`
+	Visible    bool   `json:"visible"`
+	ViewRule   string `json:"viewRule"`
+	ModifyRule string `json:"modifyRule"`
+}
+
 type Organization struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -36,6 +43,8 @@ type Organization struct {
 	MasterPassword     string   `xorm:"varchar(100)" json:"masterPassword"`
 	EnableSoftDeletion bool     `json:"enableSoftDeletion"`
 	IsProfilePublic    bool     `json:"isProfilePublic"`
+
+	AccountItems []*AccountItem `xorm:"varchar(2000)" json:"accountItems"`
 }
 
 func GetOrganizationCount(owner, field, value string) int {

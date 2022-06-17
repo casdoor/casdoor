@@ -38,7 +38,8 @@
     "Token expire": "トークンの有効期限",
     "Token expire - Tooltip": "トークンの有効期限 - ツールチップ",
     "Token format": "トークンのフォーマット",
-    "Token format - Tooltip": "トークンフォーマット - ツールチップ"
+    "Token format - Tooltip": "トークンフォーマット - ツールチップ",
+    "rule": "rule"
   },
   "cert": {
     "Bit size": "ビットサイズ",
@@ -259,6 +260,8 @@
     "New Model": "New Model"
   },
   "organization": {
+    "Account items": "Account items",
+    "Account items - Tooltip": "Account items - Tooltip",
     "Default avatar": "デフォルトのアバター",
     "Edit Organization": "組織を編集",
     "Favicon": "ファビコン",
@@ -270,7 +273,9 @@
     "Tags": "Tags",
     "Tags - Tooltip": "Tags - Tooltip",
     "Website URL": "Website URL",
-    "Website URL - Tooltip": "Unique string-style identifier"
+    "Website URL - Tooltip": "Unique string-style identifier",
+    "modifyRule": "modifyRule",
+    "viewRule": "viewRule"
   },
   "payment": {
     "Confirm your invoice information": "Confirm your invoice information",
@@ -469,7 +474,6 @@
     "canUnlink": "canUnlink",
     "prompted": "プロンプトされた",
     "required": "必須",
-    "rule": "ルール",
     "visible": "表示"
   },
   "record": {
