@@ -49,6 +49,8 @@ import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import BilibiliLoginButton from "./BilibiliLoginButton";
 
+/* eslint-disable jsx-a11y/anchor-is-valid */
+
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
@@ -320,7 +322,7 @@ class LoginPage extends React.Component {
         )
       } else if (provider.category === "SAML") {
         return (
-          <a href="/#" key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
+          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
             <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
           </a>
         )
@@ -476,7 +478,7 @@ class LoginPage extends React.Component {
                 {i18next.t("login:Auto sign in")}
               </Checkbox>
             </Form.Item>
-            <a href="/#" style={{float: "right"}} onClick={() => {
+            <a style={{float: "right"}} onClick={() => {
               Setting.goToForget(this, application);
             }}>
               {i18next.t("login:Forgot password?")}
@@ -555,7 +557,7 @@ class LoginPage extends React.Component {
           <span style={{float: "left"}}>
             {
               !application.enableCodeSignin ? null : (
-                <a href="/#" onClick={() => {
+                <a onClick={() => {
                   this.setState({
                     isCodeSignin: !this.state.isCodeSignin,
                   });
@@ -567,7 +569,7 @@ class LoginPage extends React.Component {
           </span>
           <span style={{float: "right"}}>
             {i18next.t("login:No account?")}&nbsp;
-            <a href="/#" onClick={() => {
+            <a onClick={() => {
               sessionStorage.setItem("loginURL", window.location.href)
               Setting.goToSignup(this, application);
             }}>

@@ -25,6 +25,8 @@ import {CountDownInput} from "../common/CountDownInput";
 import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
 
+/* eslint-disable jsx-a11y/anchor-is-valid */
+
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -559,7 +561,7 @@ class SignupPage extends React.Component {
             {i18next.t("account:Sign Up")}
           </Button>
           &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
-          <a href="/#" onClick={() => {
+          <a onClick={() => {
             let linkInStorage = sessionStorage.getItem("loginURL")
             if(linkInStorage != null){
               Setting.goToLink(linkInStorage)
