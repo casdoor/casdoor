@@ -243,11 +243,11 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
-  /api/api/get-human-check:
+  /api/api/get-captcha:
     get:
       tags:
       - Login API
-      operationId: ApiController.GetHumancheck
+      operationId: ApiController.GetCaptcha
   /api/api/reset-email-or-phone:
     post:
       tags:

@@ -75,12 +75,14 @@ type Response struct {
 	Data2  interface{} `json:"data2"`
 }
 
-type HumanCheck struct {
-	Type         string      `json:"type"`
-	AppKey       string      `json:"appKey"`
-	Scene        string      `json:"scene"`
-	CaptchaId    string      `json:"captchaId"`
-	CaptchaImage interface{} `json:"captchaImage"`
+type Captcha struct {
+	Type         string `json:"type"`
+	AppKey       string `json:"appKey"`
+	Scene        string `json:"scene"`
+	CaptchaId    string `json:"captchaId"`
+	CaptchaImage []byte `json:"captchaImage"`
+	ClientId     string `json:"clientId"`
+	ClientSecret string `json:"clientSecret"`
 }
 
 // Signup
@@ -291,20 +293,36 @@ func (c *ApiController) GetUserinfo() {
 	c.ServeJSON()
 }
 
-// GetHumanCheck ...
+// GetCaptcha ...
 // @Tag Login API
-// @Title GetHumancheck
-// @router /api/get-human-check [get]
-func (c *ApiController) GetHumanCheck() {
-	c.Data["json"] = HumanCheck{Type: "none"}
-
-	provider := object.GetDefaultHumanCheckProvider()
-	if provider == nil {
+// @Title GetCaptcha
+// @router /api/get-captcha [get]
+func (c *ApiController) GetCaptcha() {
+	applicationId := c.Input().Get("applicationId")
+	isPreview := c.Input().Get("isPreview")
+	captchaProvider := &object.Provider{}
+	if isPreview == "true" {
+		provider, err := object.GetPreviewCaptchaProvider(applicationId)
+		if provider == nil || err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		captchaProvider = provider
+	} else {
+		provider, err := object.GetAppConfigCaptchaProvider(applicationId)
+		if provider == nil || err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		captchaProvider = provider
+	}
+	if captchaProvider.Type == "Default" {
 		id, img := object.GetCaptcha()
-		c.Data["json"] = HumanCheck{Type: "captcha", CaptchaId: id, CaptchaImage: img}
-		c.ServeJSON()
+		c.ResponseOk(Captcha{Type: captchaProvider.Type, CaptchaId: id, CaptchaImage: img})
+		return
+	} else if captchaProvider.Type != "" {
+		c.ResponseOk(Captcha{Type: captchaProvider.Type, ClientId: captchaProvider.ClientId, ClientSecret: captchaProvider.ClientSecret})
 		return
 	}
-
-	c.ServeJSON()
+	c.ResponseOk(Captcha{Type: "none"})
 }

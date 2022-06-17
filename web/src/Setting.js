@@ -106,6 +106,20 @@ export const OtherProviderInfo = {
       url: "https://gc.org"
     },
   },
+  Captcha: {
+    "Default": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "",
+    },
+    "ReCaptcha": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "",
+    },
+    "HCaptcha": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "",
+    }
+  }
 };
 
 export function getCountryRegionData() {
@@ -594,6 +608,12 @@ export function getProviderTypeOptions(category) {
       {id: 'WeChat Pay', name: 'WeChat Pay'},
       {id: 'PayPal', name: 'PayPal'},
       {id: 'GC', name: 'GC'},
+    ]);
+  } else if (category === "Captcha") {
+    return ([
+      {id: 'Default', name: 'Default'},
+      {id: 'ReCaptcha', name: 'ReCaptcha'},
+      {id: 'HCaptcha', name: 'HCaptcha'},
     ]);
   } else {
     return [];

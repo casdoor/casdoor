@@ -142,8 +142,8 @@ func GetProvider(id string) *Provider {
 	return getProvider(owner, name)
 }
 
-func GetDefaultHumanCheckProvider() *Provider {
-	provider := Provider{Owner: "admin", Category: "HumanCheck"}
+func GetDefaultCaptchaProvider() *Provider {
+	provider := Provider{Owner: "admin", Category: "Captcha"}
 	existed, err := adapter.Engine.Get(&provider)
 	if err != nil {
 		panic(err)
@@ -224,4 +224,35 @@ func (p *Provider) getPaymentProvider() (pp.PaymentProvider, *Cert, error) {
 
 func (p *Provider) GetId() string {
 	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
+}
+
+func GetPreviewCaptchaProvider(applicationId string) (*Provider, error) {
+	owner, name := util.GetOwnerAndNameFromId(applicationId)
+	provider := Provider{Owner: owner, Name: name, Category: "Captcha"}
+	existed, err := adapter.Engine.Get(&provider)
+	if err != nil {
+		return nil, err
+	}
+
+	if !existed {
+		return nil, fmt.Errorf("the provider: %s does not exist", applicationId)
+	}
+
+	return &provider, nil
+}
+
+func GetAppConfigCaptchaProvider(applicationId string) (*Provider, error) {
+	application := GetApplication(applicationId)
+	if application == nil || len(application.Providers) == 0 {
+		return nil, fmt.Errorf("invalid application id")
+	}
+	for _, provider := range application.Providers {
+		if provider.Provider == nil {
+			continue
+		}
+		if provider.Provider.Category == "Captcha" {
+			return provider.Provider, nil
+		}
+	}
+	return nil, fmt.Errorf("no captcha provider found")
 }

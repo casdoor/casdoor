@@ -88,11 +88,12 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
   }).then(res => res.json());
 }
 
-export function sendCode(checkType, checkId, checkKey, dest, type, orgId, checkUser) {
+export function sendCode(checkType, checkId, checkKey, captchaToken, dest, type, orgId, checkUser) {
   let formData = new FormData();
   formData.append("checkType", checkType);
   formData.append("checkId", checkId);
   formData.append("checkKey", checkKey);
+  formData.append("captchaToken", captchaToken);
   formData.append("dest", dest);
   formData.append("type", type);
   formData.append("organizationId", orgId);
@@ -104,6 +105,32 @@ export function sendCode(checkType, checkId, checkKey, dest, type, orgId, checkU
   }).then(res => res.json()).then(res => {
     if (res.status === "ok") {
       Setting.showMessage("success", i18next.t("user:Code Sent"));
+      return true;
+    } else {
+      Setting.showMessage("error", i18next.t("user:" + res.msg));
+      return false;
+    }
+  });
+}
+
+export function verifyCaptcha(captchaType, checkId, checkKey, captchaToken, clientSecret) {
+  let formData = new FormData();
+  formData.append("captchaType", captchaType);
+  formData.append("checkId", checkId);
+  formData.append("checkKey", checkKey);
+  formData.append("captchaToken", captchaToken);
+  formData.append("clientSecret", clientSecret);
+  return fetch(`${Setting.ServerUrl}/api/verify-captcha`, {
+    method: "POST",
+    credentials: "include",
+    body: formData
+  }).then(res => res.json()).then(res => {
+    if (res.status === "ok") {
+      if (res.data) {
+        Setting.showMessage("success", i18next.t("user:Captcha Verify Success"));
+      } else {
+        Setting.showMessage("error", i18next.t("user:Captcha Verify Failed"));
+      }
       return true;
     } else {
       Setting.showMessage("error", i18next.t("user:" + res.msg));
@@ -124,8 +151,8 @@ export function resetEmailOrPhone(dest, type, code) {
   }).then(res => res.json());
 }
 
-export function getHumanCheck() {
-  return fetch(`${Setting.ServerUrl}/api/get-human-check`, {
+export async function getCaptcha(owner, name, isPreview) {
+  return fetch(`${Setting.ServerUrl}/api/get-captcha?applicationId=${owner}/${encodeURIComponent(name)}&isPreview=${isPreview}`, {
     method: "GET"
-  }).then(res => res.json());
+  }).then(res => res.json()).then(res => res.data);
 }
