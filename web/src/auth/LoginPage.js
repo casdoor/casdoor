@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+/* eslint-disable jsx-a11y/anchor-is-valid */
 
 import React from "react";
 import {Link} from "react-router-dom";
@@ -320,7 +321,7 @@ class LoginPage extends React.Component {
         )
       } else if (provider.category === "SAML") {
         return (
-          <a href="/#" key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
+          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
             <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
           </a>
         )
@@ -476,7 +477,7 @@ class LoginPage extends React.Component {
                 {i18next.t("login:Auto sign in")}
               </Checkbox>
             </Form.Item>
-            <a href="/#" style={{float: "right"}} onClick={() => {
+            <a style={{float: "right"}} onClick={() => {
               Setting.goToForget(this, application);
             }}>
               {i18next.t("login:Forgot password?")}
@@ -555,7 +556,7 @@ class LoginPage extends React.Component {
           <span style={{float: "left"}}>
             {
               !application.enableCodeSignin ? null : (
-                <a href="/#" onClick={() => {
+                <a onClick={() => {
                   this.setState({
                     isCodeSignin: !this.state.isCodeSignin,
                   });
@@ -567,7 +568,7 @@ class LoginPage extends React.Component {
           </span>
           <span style={{float: "right"}}>
             {i18next.t("login:No account?")}&nbsp;
-            <a href="/#" onClick={() => {
+            <a onClick={() => {
               sessionStorage.setItem("loginURL", window.location.href)
               Setting.goToSignup(this, application);
             }}>

@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+/* eslint-disable jsx-a11y/anchor-is-valid */
 
 import React from 'react';
 import {Link} from "react-router-dom";
@@ -559,7 +560,7 @@ class SignupPage extends React.Component {
             {i18next.t("account:Sign Up")}
           </Button>
           &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
-          <a href="/#" onClick={() => {
+          <a onClick={() => {
             let linkInStorage = sessionStorage.getItem("loginURL")
             if(linkInStorage != null){
               Setting.goToLink(linkInStorage)
