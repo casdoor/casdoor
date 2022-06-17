@@ -51,7 +51,7 @@ func NewSamlResponse(user *User, host string, publicKey string, destination stri
 	samlResponse.CreateAttr("Version", "2.0")
 	samlResponse.CreateAttr("IssueInstant", now)
 	samlResponse.CreateAttr("Destination", destination)
-	samlResponse.CreateAttr("InResponseTo", fmt.Sprintf("Casdoor_%s", arId))
+	samlResponse.CreateAttr("InResponseTo", fmt.Sprintf("_%s", arId))
 	samlResponse.CreateElement("saml:Issuer").SetText(host)
 
 	samlResponse.CreateElement("samlp:Status").CreateElement("samlp:StatusCode").CreateAttr("Value", "urn:oasis:names:tc:SAML:2.0:status:Success")
@@ -261,13 +261,15 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 	ctx := dsig.NewDefaultSigningContext(randomKeyStore)
 	ctx.Hash = crypto.SHA1
-	signedXML, err := ctx.SignEnveloped(samlResponse)
-	if err != nil {
-		return "", "", fmt.Errorf("err: %s", err.Error())
-	}
+	//signedXML, err := ctx.SignEnvelopedLimix(samlResponse)
+	//if err != nil {
+	//	return "", "", fmt.Errorf("err: %s", err.Error())
+	//}
+	sig, err := ctx.ConstructSignature(samlResponse, true)
+	samlResponse.InsertChildAt(1, sig)
 
 	doc := etree.NewDocument()
-	doc.SetRoot(signedXML)
+	doc.SetRoot(samlResponse)
 	xmlStr, err := doc.WriteToString()
 	if err != nil {
 		return "", "", fmt.Errorf("err: %s", err.Error())
