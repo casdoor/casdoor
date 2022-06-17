@@ -498,6 +498,7 @@
   },
   "signup": {
     "Accept": "Accepter",
+    "Agreement": "Agreement",
     "Confirm": "Valider",
     "Decline": "Refuser",
     "Have account?": "Vous avez un compte ?",

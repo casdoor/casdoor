@@ -69,27 +69,35 @@ class SignupTable extends React.Component {
         key: 'name',
         render: (text, record, index) => {
           const items = [
-            {id: 'Username', name: 'Username'},
-            {id: 'ID', name: 'ID'},
-            {id: 'Display name', name: 'Display name'},
-            {id: 'Affiliation', name: 'Affiliation'},
-            {id: 'Country/Region', name: 'Country/Region'},
-            {id: 'ID card', name: 'ID card'},
-            {id: 'Email', name: 'Email'},
-            {id: 'Password', name: 'Password'},
-            {id: 'Confirm password', name: 'Confirm password'},
-            {id: 'Phone', name: 'Phone'},
-            {id: 'Agreement', name: 'Agreement'},
+            {name: "Username", displayName: i18next.t("signup:Username")},
+            {name: "ID", displayName: i18next.t("general:ID")},
+            {name: "Display name", displayName: i18next.t("general:Display name")},
+            {name: "Affiliation", displayName: i18next.t("user:Affiliation")},
+            {name: "Country/Region", displayName: i18next.t("user:Country/Region")},
+            {name: "ID card", displayName: i18next.t("user:ID card")},
+            {name: "Email", displayName: i18next.t("general:Email")},
+            {name: "Password", displayName: i18next.t("forget:Password")},
+            {name: "Confirm password", displayName: i18next.t("forget:Confirm")},
+            {name: "Phone", displayName: i18next.t("general:Phone")},
+            {name: "Agreement", displayName: i18next.t("signup:Agreement")},
           ];
+
+          const getItemDisplayName = (text) => {
+            const item = items.filter(item => item.name === text);
+            if (item.length === 0) {
+              return "";
+            }
+            return item[0].displayName;
+          };
 
           return (
             <Select virtual={false} style={{width: '100%'}}
-                    value={text}
+                    value={getItemDisplayName(text)}
                     onChange={value => {
                       this.updateField(table, index, 'name', value);
                     }} >
               {
-                Setting.getDeduplicatedArray(items, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
+                Setting.getDeduplicatedArray(items, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.displayName}</Option>)
               }
             </Select>
           )

@@ -498,6 +498,7 @@
   },
   "signup": {
     "Accept": "阅读并接受",
+    "Agreement": "用户协议",
     "Confirm": "确认密码",
     "Decline": "不接受",
     "Have account?": "已有账号？",

@@ -498,6 +498,7 @@
   },
   "signup": {
     "Accept": "Принять",
+    "Agreement": "Agreement",
     "Confirm": "Подтвердить",
     "Decline": "Отклонить",
     "Have account?": "Есть аккаунт?",

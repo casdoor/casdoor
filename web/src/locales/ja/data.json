@@ -498,6 +498,7 @@
   },
   "signup": {
     "Accept": "同意する",
+    "Agreement": "Agreement",
     "Confirm": "確認する",
     "Decline": "同意しない",
     "Have account?": "アカウントをお持ちですか？",
