@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-/* eslint-disable jsx-a11y/anchor-is-valid */
 
 import React from "react";
 import {Link} from "react-router-dom";
@@ -49,6 +48,8 @@ import DouyinLoginButton from "./DouyinLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import BilibiliLoginButton from "./BilibiliLoginButton";
+
+/* eslint-disable jsx-a11y/anchor-is-valid */
 
 class LoginPage extends React.Component {
   constructor(props) {
