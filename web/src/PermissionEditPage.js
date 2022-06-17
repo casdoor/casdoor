@@ -36,7 +36,9 @@ class PermissionEditPage extends React.Component {
       users: [],
       roles: [],
       models: [],
-      mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      mode: props.location.data.mode,
+      addData: props.location.data.newPermission !== undefined ? props.location.data.newPermission : null,
+      clickState: false
     };
   }
 
@@ -48,13 +50,25 @@ class PermissionEditPage extends React.Component {
   getPermission() {
     PermissionBackend.getPermission(this.state.organizationName, this.state.permissionName)
       .then((permission) => {
-        this.setState({
-          permission: permission,
-        });
+        // console.log(this.state.props)
+        // console.log(this.state.permissionName)
+        // this.setState({
+        //   permission: permission,
+        // });
 
-        this.getUsers(permission.owner);
-        this.getRoles(permission.owner);
-        this.getModels(permission.owner);
+        if(permission === null){
+          this.setState({
+            permission: this.state.addData,
+          });
+        }else{
+          this.setState({
+            permission: permission,
+          });
+        }
+
+        this.getUsers(this.state.permission.owner);
+        this.getRoles(this.state.permission.owner);
+        this.getModels(this.state.permission.owner);
       });
   }
 
@@ -263,12 +277,29 @@ class PermissionEditPage extends React.Component {
 
   submitPermissionEdit(willExist) {
     let permission = Setting.deepCopy(this.state.permission);
-    PermissionBackend.updatePermission(this.state.organizationName, this.state.permissionName, permission)
-      .then((res) => {
+    let fetchResult;
+    if(this.state.mode === 'add'){
+      if(this.state.clickState === false){
+        fetchResult = PermissionBackend.addPermission(permission)
+      }else{
+        Setting.showMessage("success", `Successfully saved`);
+        if (willExist) {
+          this.props.history.push(`/permissions`);
+        } else {
+          this.props.history.push(`/permissions/${this.state.permission.owner}/${this.state.permission.name}`);
+        }
+        return
+      }
+    }else{
+      fetchResult = PermissionBackend.updatePermission(this.state.organizationName, this.state.permissionName, permission)
+    }
+    // PermissionBackend.updatePermission(this.state.organizationName, this.state.permissionName, permission)
+    fetchResult.then((res) => {
         if (res.msg === "") {
           Setting.showMessage("success", `Successfully saved`);
           this.setState({
             permissionName: this.state.permission.name,
+            clickState: true
           });
 
           if (willExist) {

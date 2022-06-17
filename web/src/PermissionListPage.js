@@ -41,14 +41,14 @@ class PermissionListPage extends BaseListPage {
 
   addPermission() {
     const newPermission = this.newPermission();
-    PermissionBackend.addPermission(newPermission)
-      .then((res) => {
-          this.props.history.push({pathname: `/permissions/${newPermission.owner}/${newPermission.name}`, mode: "add"});
-        }
-      )
-      .catch(error => {
-        Setting.showMessage("error", `Permission failed to add: ${error}`);
-      });
+    // PermissionBackend.addPermission(newPermission)
+    //   .then((res) => {
+          this.props.history.push({pathname: `/permissions/${newPermission.owner}/${newPermission.name}`, data:{mode: "add", newPermission}});
+      //   }
+      // )
+      // .catch(error => {
+      //   Setting.showMessage("error", `Permission failed to add: ${error}`);
+      // });
   }
 
   deletePermission(i) {
@@ -205,7 +205,7 @@ class PermissionListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/permissions/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push({pathname: `/permissions/${record.owner}/${record.name}`, data:{mode:"edit"}})}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete permission: ${record.name} ?`}
                 onConfirm={() => this.deletePermission(index)}
