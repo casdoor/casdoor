@@ -18,6 +18,8 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import {SafetyOutlined} from "@ant-design/icons";
+import {authConfig} from "../auth/Auth";
+import { CaptchaWidget } from "./CaptchaWidget";
 
 const { Search } = Input;
 
@@ -30,6 +32,8 @@ export const CountDownInput = (props) => {
   const [checkId, setCheckId] = React.useState("");
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
+  const [buttonDisabled, setButtonDisabled] = React.useState(true);
+  const [clientId, setClientId] = React.useState("");
 
   const handleCountDown = (leftTime = 60) => {
     let leftTimeSecond = leftTime
@@ -62,14 +66,19 @@ export const CountDownInput = (props) => {
     setKey("");
   }
 
-  const loadHumanCheck = () => {
-    UserBackend.getHumanCheck().then(res => {
+  const loadCaptcha = () => {
+    UserBackend.getCaptcha("admin", authConfig.appName, false).then(res => {
       if (res.type === "none") {
         UserBackend.sendCode("none", "", "", ...onButtonClickArgs);
-      } else if (res.type === "captcha") {
+      } else if (res.type === "Default") {
         setCheckId(res.captchaId);
         setCaptchaImg(res.captchaImage);
-        setCheckType("captcha");
+        setCheckType("Default");
+        setVisible(true);
+      } else if (res.type === "reCAPTCHA" || res.type === "hCaptcha") {
+        setCheckType(res.type);
+        setClientId(res.clientId);
+        setCheckId(res.clientSecret);
         setVisible(true);
       } else {
         Setting.showMessage("error", i18next.t("signup:Unknown Check Type"));
@@ -98,9 +107,23 @@ export const CountDownInput = (props) => {
     )
   }
 
+  const onSubmit = (token) => {
+    setButtonDisabled(false);
+    setKey(token);
+  }
+
   const renderCheck = () => {
-    if (checkType === "captcha") return renderCaptcha();
-    return null;
+    if (checkType === "Default") {
+      return renderCaptcha();
+    } else {
+      return (
+        <CaptchaWidget
+          captchaType={checkType}
+          siteKey={clientId}
+          onChange={onSubmit}
+        />
+      );
+    }
   }
 
   return (
@@ -116,7 +139,7 @@ export const CountDownInput = (props) => {
             {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending Code") : i18next.t("code:Send Code")}
           </Button>
         }
-        onSearch={loadHumanCheck}
+        onSearch={loadCaptcha}
       />
       <Modal
         closable={false}
@@ -128,8 +151,8 @@ export const CountDownInput = (props) => {
         cancelText={i18next.t("user:Cancel")}
         onOk={handleOk}
         onCancel={handleCancel}
-        okButtonProps={{disabled: key.length !== 5}}
-        width={248}
+        okButtonProps={{disabled: key.length !== 5 && buttonDisabled}}
+        width={348}
       >
         {
           renderCheck()

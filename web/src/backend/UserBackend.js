@@ -112,6 +112,30 @@ export function sendCode(checkType, checkId, checkKey, dest, type, orgId, checkU
   });
 }
 
+export function verifyCaptcha(captchaType, captchaToken, clientSecret) {
+  let formData = new FormData();
+  formData.append("captchaType", captchaType);
+  formData.append("captchaToken", captchaToken);
+  formData.append("clientSecret", clientSecret);
+  return fetch(`${Setting.ServerUrl}/api/verify-captcha`, {
+    method: "POST",
+    credentials: "include",
+    body: formData
+  }).then(res => res.json()).then(res => {
+    if (res.status === "ok") {
+      if (res.data) {
+        Setting.showMessage("success", i18next.t("user:Captcha Verify Success"));
+      } else {
+        Setting.showMessage("error", i18next.t("user:Captcha Verify Failed"));
+      }
+      return true;
+    } else {
+      Setting.showMessage("error", i18next.t("user:" + res.msg));
+      return false;
+    }
+  });
+}
+
 export function resetEmailOrPhone(dest, type, code) {
   let formData = new FormData();
   formData.append("dest", dest);
@@ -124,8 +148,8 @@ export function resetEmailOrPhone(dest, type, code) {
   }).then(res => res.json());
 }
 
-export function getHumanCheck() {
-  return fetch(`${Setting.ServerUrl}/api/get-human-check`, {
+export function getCaptcha(owner, name, isCurrentProvider) {
+  return fetch(`${Setting.ServerUrl}/api/get-captcha?applicationId=${owner}/${encodeURIComponent(name)}&isCurrentProvider=${isCurrentProvider}`, {
     method: "GET"
-  }).then(res => res.json());
+  }).then(res => res.json()).then(res => res.data);
 }

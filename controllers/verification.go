@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -48,15 +49,25 @@ func (c *ApiController) SendVerificationCode() {
 	checkUser := c.Ctx.Request.Form.Get("checkUser")
 	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
 
-	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || !strings.Contains(orgId, "/") || len(checkType) == 0 || len(checkId) == 0 || len(checkKey) == 0 {
+	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || !strings.Contains(orgId, "/") || len(checkType) == 0 {
 		c.ResponseError("Missing parameter.")
 		return
 	}
 
-	isHuman := false
-	captchaProvider := object.GetDefaultHumanCheckProvider()
-	if captchaProvider == nil {
-		isHuman = object.VerifyCaptcha(checkId, checkKey)
+	provider := captcha.GetCaptchaProvider(checkType)
+	if provider == nil {
+		c.ResponseError("Invalid captcha provider.")
+		return
+	}
+
+	if checkKey == "" {
+		c.ResponseError("Missing parameter: checkKey.")
+		return
+	}
+	isHuman, err := provider.VerifyCaptcha(checkKey, checkId)
+	if err != nil {
+		c.ResponseError("Failed to verify captcha: %v", err)
+		return
 	}
 
 	if !isHuman {
@@ -172,4 +183,37 @@ func (c *ApiController) ResetEmailOrPhone() {
 	object.DisableVerificationCode(checkDest)
 	c.Data["json"] = Response{Status: "ok"}
 	c.ServeJSON()
+}
+
+// VerifyCaptcha ...
+// @Title VerifyCaptcha
+// @Tag Verification API
+// @router /verify-captcha [post]
+func (c *ApiController) VerifyCaptcha() {
+	captchaType := c.Ctx.Request.Form.Get("captchaType")
+
+	captchaToken := c.Ctx.Request.Form.Get("captchaToken")
+	clientSecret := c.Ctx.Request.Form.Get("clientSecret")
+	if captchaToken == "" {
+		c.ResponseError("Missing parameter: captchaToken.")
+		return
+	}
+	if clientSecret == "" {
+		c.ResponseError("Missing parameter: clientSecret.")
+		return
+	}
+
+	provider := captcha.GetCaptchaProvider(captchaType)
+	if provider == nil {
+		c.ResponseError("Invalid captcha provider.")
+		return
+	}
+
+	isValid, err := provider.VerifyCaptcha(captchaToken, clientSecret)
+	if err != nil {
+		c.ResponseError("Failed to verify captcha: %v", err)
+		return
+	}
+
+	c.ResponseOk(isValid)
 }

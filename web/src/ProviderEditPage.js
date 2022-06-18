@@ -20,6 +20,7 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import { authConfig } from "./auth/Auth";
 import copy from 'copy-to-clipboard';
+import { CaptchaPreview } from "./common/CaptchaPreview";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -77,6 +78,8 @@ class ProviderEditPage extends React.Component {
         } else {
           return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
         }
+      case "Captcha":
+        return Setting.getLabel(i18next.t("provider:Site key"), i18next.t("provider:Site key - Tooltip"));
       default:
         return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
     }
@@ -94,6 +97,8 @@ class ProviderEditPage extends React.Component {
         } else {
           return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
         }
+      case "Captcha":
+        return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
       default:
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
     }
@@ -193,6 +198,8 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField('domain', Setting.getFullServerUrl());
               } else if (value === "SAML") {
                 this.updateProviderField('type', 'Aliyun IDaaS');
+              } else if (value === "Captcha") {
+                this.updateProviderField('type', 'Default');
               }
             })}>
               {
@@ -203,6 +210,7 @@ class ProviderEditPage extends React.Component {
                   {id: 'Storage', name: 'Storage'},
                   {id: 'SAML', name: 'SAML'},
                   {id: 'Payment', name: 'Payment'},
+                  {id: 'Captcha', name: 'Captcha'},
                 ].map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
               }
             </Select>
@@ -341,26 +349,31 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           )
         }
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {this.getClientIdLabel()}
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.provider.clientId} onChange={e => {
-              this.updateProviderField('clientId', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {this.getClientSecretLabel()}
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.provider.clientSecret} onChange={e => {
-              this.updateProviderField('clientSecret', e.target.value);
-            }} />
-          </Col>
-        </Row>
+        {
+          this.state.provider.type !== "Default" && 
+          <>
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {this.getClientIdLabel()}
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.provider.clientId} onChange={e => {
+                  this.updateProviderField('clientId', e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {this.getClientSecretLabel()}
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.provider.clientSecret} onChange={e => {
+                  this.updateProviderField('clientSecret', e.target.value);
+                }} />
+              </Col>
+            </Row>
+          </>
+        }
         {
           this.state.provider.type !== "WeChat" ? null : (
             <React.Fragment>
@@ -627,16 +640,39 @@ class ProviderEditPage extends React.Component {
           ) : null
         }
         {this.getAppIdRow()}
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Provider URL"), i18next.t("provider:Provider URL - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.provider.providerUrl} onChange={e => {
-              this.updateProviderField('providerUrl', e.target.value);
-            }} />
-          </Col>
-        </Row>
+        {
+          this.state.provider.type !== "Default" &&
+          <Row style={{marginTop: '20px'}} >
+            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+              {Setting.getLabel(i18next.t("provider:Provider URL"), i18next.t("provider:Provider URL - Tooltip"))} :
+            </Col>
+            <Col span={22} >
+              <Input prefix={<LinkOutlined/>} value={this.state.provider.providerUrl} onChange={e => {
+                this.updateProviderField('providerUrl', e.target.value);
+              }} />
+            </Col>
+          </Row>
+        }
+        {
+          this.state.provider.category === "Captcha" && 
+          <Row style={{marginTop: '20px'}} >
+            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+              {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
+            </Col>
+            <Col span={22} >
+              <CaptchaPreview 
+                provider={this.state.provider}
+                providerName={this.state.providerName}
+                clientSecret={this.state.provider.clientSecret}
+                captchaType={this.state.provider.type}
+                owner={this.state.provider.owner}
+                clientId={this.state.provider.clientId}
+                name={this.state.provider.name}
+                providerUrl={this.state.provider.providerUrl}
+              />
+            </Col>
+          </Row>
+        }
       </Card>
     )
   }
