@@ -28,7 +28,6 @@ type HCaptchaProvider struct {
 
 func NewHCaptchaProvider() *HCaptchaProvider {
 	captcha := &HCaptchaProvider{}
-
 	return captcha
 }
 
@@ -41,12 +40,13 @@ func (captcha *HCaptchaProvider) VerifyCaptcha(token, clientSecret string) (bool
 	if err != nil {
 		return false, err
 	}
+
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		return false, err
 	}
+
 	type captchaResponse struct {
 		Success bool `json:"success"`
 	}
