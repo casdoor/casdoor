@@ -28,7 +28,6 @@ type ReCaptchaProvider struct {
 
 func NewReCaptchaProvider() *ReCaptchaProvider {
 	captcha := &ReCaptchaProvider{}
-
 	return captcha
 }
 
@@ -41,12 +40,13 @@ func (captcha *ReCaptchaProvider) VerifyCaptcha(token, clientSecret string) (boo
 	if err != nil {
 		return false, err
 	}
+
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		return false, err
 	}
+
 	type captchaResponse struct {
 		Success bool `json:"success"`
 	}
