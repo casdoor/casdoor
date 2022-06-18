@@ -95,8 +95,8 @@ p, *, *, GET, /api/get-providers, *, *
 p, *, *, POST, /api/unlink, *, *
 p, *, *, POST, /api/set-password, *, *
 p, *, *, POST, /api/send-verification-code, *, *
-p, *, *, POST, /api/verify-captcha, *, *
 p, *, *, GET, /api/get-captcha, *, *
+p, *, *, POST, /api/verify-captcha, *, *
 p, *, *, POST, /api/reset-email-or-phone, *, *
 p, *, *, POST, /api/upload-resource, *, *
 p, *, *, GET, /.well-known/openid-configuration, *, *
