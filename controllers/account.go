@@ -75,12 +75,14 @@ type Response struct {
 	Data2  interface{} `json:"data2"`
 }
 
-type HumanCheck struct {
-	Type         string      `json:"type"`
-	AppKey       string      `json:"appKey"`
-	Scene        string      `json:"scene"`
-	CaptchaId    string      `json:"captchaId"`
-	CaptchaImage interface{} `json:"captchaImage"`
+type Captcha struct {
+	Type         string `json:"type"`
+	AppKey       string `json:"appKey"`
+	Scene        string `json:"scene"`
+	CaptchaId    string `json:"captchaId"`
+	CaptchaImage []byte `json:"captchaImage"`
+	ClientId     string `json:"clientId"`
+	ClientSecret string `json:"clientSecret"`
 }
 
 // Signup
@@ -291,20 +293,27 @@ func (c *ApiController) GetUserinfo() {
 	c.ServeJSON()
 }
 
-// GetHumanCheck ...
+// GetCaptcha ...
 // @Tag Login API
-// @Title GetHumancheck
-// @router /api/get-human-check [get]
-func (c *ApiController) GetHumanCheck() {
-	c.Data["json"] = HumanCheck{Type: "none"}
+// @Title GetCaptcha
+// @router /api/get-captcha [get]
+func (c *ApiController) GetCaptcha() {
+	applicationId := c.Input().Get("applicationId")
+	isCurrentProvider := c.Input().Get("isCurrentProvider")
 
-	provider := object.GetDefaultHumanCheckProvider()
-	if provider == nil {
-		id, img := object.GetCaptcha()
-		c.Data["json"] = HumanCheck{Type: "captcha", CaptchaId: id, CaptchaImage: img}
-		c.ServeJSON()
+	captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider)
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ServeJSON()
+	if captchaProvider.Type == "Default" {
+		id, img := object.GetCaptcha()
+		c.ResponseOk(Captcha{Type: captchaProvider.Type, CaptchaId: id, CaptchaImage: img})
+		return
+	} else if captchaProvider.Type != "" {
+		c.ResponseOk(Captcha{Type: captchaProvider.Type, ClientId: captchaProvider.ClientId, ClientSecret: captchaProvider.ClientSecret})
+		return
+	}
+	c.ResponseOk(Captcha{Type: "none"})
 }
