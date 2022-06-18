@@ -21,7 +21,6 @@ type DefaultCaptchaProvider struct {
 
 func NewDefaultCaptchaProvider() *DefaultCaptchaProvider {
 	captcha := &DefaultCaptchaProvider{}
-
 	return captcha
 }
 
