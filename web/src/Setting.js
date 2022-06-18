@@ -109,15 +109,15 @@ export const OtherProviderInfo = {
   Captcha: {
     "Default": {
       logo: `${StaticBaseUrl}/img/social_default.png`,
-      url: "",
+      url: "https://pkg.go.dev/github.com/dchest/captcha",
     },
-    "ReCaptcha": {
-      logo: `${StaticBaseUrl}/img/social_default.png`,
-      url: "",
+    "reCAPTCHA": {
+      logo: `${StaticBaseUrl}/img/social_recaptcha.png`,
+      url: "https://www.google.com/recaptcha",
     },
-    "HCaptcha": {
-      logo: `${StaticBaseUrl}/img/social_default.png`,
-      url: "",
+    "hCaptcha": {
+      logo: `${StaticBaseUrl}/img/social_hcaptcha.png`,
+      url: "https://www.hcaptcha.com",
     }
   }
 };
@@ -612,8 +612,8 @@ export function getProviderTypeOptions(category) {
   } else if (category === "Captcha") {
     return ([
       {id: 'Default', name: 'Default'},
-      {id: 'ReCaptcha', name: 'ReCaptcha'},
-      {id: 'HCaptcha', name: 'HCaptcha'},
+      {id: 'reCAPTCHA', name: 'reCAPTCHA'},
+      {id: 'hCaptcha', name: 'hCaptcha'},
     ]);
   } else {
     return [];

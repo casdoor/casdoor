@@ -88,12 +88,11 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
   }).then(res => res.json());
 }
 
-export function sendCode(checkType, checkId, checkKey, captchaToken, dest, type, orgId, checkUser) {
+export function sendCode(checkType, checkId, checkKey, dest, type, orgId, checkUser) {
   let formData = new FormData();
   formData.append("checkType", checkType);
   formData.append("checkId", checkId);
   formData.append("checkKey", checkKey);
-  formData.append("captchaToken", captchaToken);
   formData.append("dest", dest);
   formData.append("type", type);
   formData.append("organizationId", orgId);
@@ -113,11 +112,9 @@ export function sendCode(checkType, checkId, checkKey, captchaToken, dest, type,
   });
 }
 
-export function verifyCaptcha(captchaType, checkId, checkKey, captchaToken, clientSecret) {
+export function verifyCaptcha(captchaType, captchaToken, clientSecret) {
   let formData = new FormData();
   formData.append("captchaType", captchaType);
-  formData.append("checkId", checkId);
-  formData.append("checkKey", checkKey);
   formData.append("captchaToken", captchaToken);
   formData.append("clientSecret", clientSecret);
   return fetch(`${Setting.ServerUrl}/api/verify-captcha`, {
@@ -151,8 +148,8 @@ export function resetEmailOrPhone(dest, type, code) {
   }).then(res => res.json());
 }
 
-export async function getCaptcha(owner, name, isPreview) {
-  return fetch(`${Setting.ServerUrl}/api/get-captcha?applicationId=${owner}/${encodeURIComponent(name)}&isPreview=${isPreview}`, {
+export function getCaptcha(owner, name, isCurrentProvider) {
+  return fetch(`${Setting.ServerUrl}/api/get-captcha?applicationId=${owner}/${encodeURIComponent(name)}&isCurrentProvider=${isCurrentProvider}`, {
     method: "GET"
   }).then(res => res.json()).then(res => res.data);
 }

@@ -22,32 +22,37 @@ import { CaptchaWidget } from "./CaptchaWidget";
 
 export const CaptchaPreview = ({ provider, providerName, clientSecret, captchaType, owner, clientId, name, providerUrl }) => {
   const [visible, setVisible] = React.useState(false);
-  const [key, setKey] = React.useState("");
   const [captchaImg, setCaptchaImg] = React.useState("");
-  const [checkId, setCheckId] = React.useState("");
   const [captchaToken, setCaptchaToken] = React.useState("");
   const [secret, setSecret] = React.useState(clientSecret);
 
   const handleOk = () => {
     UserBackend.verifyCaptcha(
       captchaType,
-      checkId,
-      key,
       captchaToken,
       secret
     ).then(() => {
-      setKey("");
       setCaptchaToken("");
       setVisible(false);
     });
   };
 
   const handleCancel = () => {
-    setKey("");
     setVisible(false);
   };
 
-  const getCaptcha = async () => {
+  const getCaptchaFromBackend = () => {
+    UserBackend.getCaptcha(owner, name, true).then((res) => {
+      if (captchaType === "Default") {
+        setSecret(res.captchaId);
+        setCaptchaImg(res.captchaImage);
+      } else {
+        setSecret(res.clientSecret);
+      }
+    });
+  }
+
+  const clickPreview = () => {
     setVisible(true);
     provider.name = name;
     provider.clientId = clientId;
@@ -55,16 +60,12 @@ export const CaptchaPreview = ({ provider, providerName, clientSecret, captchaTy
     provider.providerUrl = providerUrl;
     if (clientSecret !== "***") {
       provider.clientSecret = clientSecret;
-      await ProviderBackend.updateProvider(owner, providerName, provider);
+      ProviderBackend.updateProvider(owner, providerName, provider).then(() => {
+        getCaptchaFromBackend();
+      });
+    } else {
+      getCaptchaFromBackend();
     }
-    await UserBackend.getCaptcha(owner, providerName, true).then((res) => {
-      if (captchaType === "Default") {
-        setCheckId(res.captchaId);
-        setCaptchaImg(res.captchaImage);
-      } else {
-        setSecret(res.clientSecret);
-      }
-    });
   };
 
   const renderDefaultCaptcha = () => {
@@ -84,11 +85,11 @@ export const CaptchaPreview = ({ provider, providerName, clientSecret, captchaTy
         <Row>
           <Input
             autoFocus
-            value={key}
+            value={captchaToken}
             prefix={<SafetyOutlined />}
             placeholder={i18next.t("general:Captcha")}
             onPressEnter={handleOk}
-            onChange={(e) => setKey(e.target.value)}
+            onChange={(e) => setCaptchaToken(e.target.value)}
           />
         </Row>
       </Col>
@@ -116,7 +117,7 @@ export const CaptchaPreview = ({ provider, providerName, clientSecret, captchaTy
 
   return (
     <React.Fragment>
-      <Button style={{ fontSize: 14 }} type={"primary"} onClick={getCaptcha}>
+      <Button style={{ fontSize: 14 }} type={"primary"} onClick={clickPreview}>
         {i18next.t("general:Preview")}
       </Button>
       <Modal

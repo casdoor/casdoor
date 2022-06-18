@@ -28,7 +28,7 @@ export function getProvider(owner, name) {
   }).then(res => res.json());
 }
 
-export async function updateProvider(owner, name, provider) {
+export function updateProvider(owner, name, provider) {
   let newProvider = Setting.deepCopy(provider);
   return fetch(`${Setting.ServerUrl}/api/update-provider?id=${owner}/${encodeURIComponent(name)}`, {
     method: 'POST',

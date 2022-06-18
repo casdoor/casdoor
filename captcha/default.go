@@ -14,17 +14,17 @@
 
 package captcha
 
-type CaptchaProvider interface {
-	VerifyCaptcha(token, clientSecret string) (bool, error)
+import "github.com/casdoor/casdoor/object"
+
+type DefaultCaptchaProvider struct {
 }
 
-func GetCaptchaProvider(captchaType string) CaptchaProvider {
-	if captchaType == "Default" {
-		return NewDefaultCaptchaProvider()
-	} else if captchaType == "reCAPTCHA" {
-		return NewReCaptchaProvider()
-	} else if captchaType == "hCaptcha" {
-		return NewHCaptchaProvider()
-	}
-	return nil
+func NewDefaultCaptchaProvider() *DefaultCaptchaProvider {
+	captcha := &DefaultCaptchaProvider{}
+
+	return captcha
+}
+
+func (captcha *DefaultCaptchaProvider) VerifyCaptcha(token, clientSecret string) (bool, error) {
+	return object.VerifyCaptcha(clientSecret, token), nil
 }

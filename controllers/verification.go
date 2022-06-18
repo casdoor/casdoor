@@ -48,41 +48,26 @@ func (c *ApiController) SendVerificationCode() {
 	checkKey := c.Ctx.Request.Form.Get("checkKey")
 	checkUser := c.Ctx.Request.Form.Get("checkUser")
 	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
-	captchaToken := c.Ctx.Request.Form.Get("captchaToken")
 
 	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || !strings.Contains(orgId, "/") || len(checkType) == 0 {
 		c.ResponseError("Missing parameter.")
 		return
 	}
 
-	isHuman := false
-	captchaProvider := object.GetDefaultCaptchaProvider()
-	if captchaProvider != nil {
-		if captchaProvider.Type == "Default" {
-			if len(checkId) == 0 || len(checkKey) == 0 {
-				c.ResponseError("Missing parameter.")
-				return
-			}
-			isHuman = object.VerifyCaptcha(checkId, checkKey)
-		} else {
-			if len(captchaToken) == 0 {
-				c.ResponseError("Missing parameter.")
-				return
-			}
-			provider := captcha.GetCaptchaProvider(captchaProvider.Type, captchaProvider.ClientSecret)
-			if provider == nil {
-				c.ResponseError("Invalid captcha provider.")
-				return
-			}
+	provider := captcha.GetCaptchaProvider(checkType)
+	if provider == nil {
+		c.ResponseError("Invalid captcha provider.")
+		return
+	}
 
-			isValid, err := provider.VerifyCaptcha(captchaToken)
-			if err != nil {
-				c.ResponseError("Failed to verify captcha: %v", err)
-				return
-			}
-
-			isHuman = isValid
-		}
+	if checkKey == "" {
+		c.ResponseError("Missing parameter: checkKey.")
+		return
+	}
+	isHuman, err := provider.VerifyCaptcha(checkKey, checkId)
+	if err != nil {
+		c.ResponseError("Failed to verify captcha: %v", err)
+		return
 	}
 
 	if !isHuman {
@@ -205,41 +190,30 @@ func (c *ApiController) ResetEmailOrPhone() {
 // @Tag Verification API
 // @router /verify-captcha [post]
 func (c *ApiController) VerifyCaptcha() {
-	isHuman := false
-
 	captchaType := c.Ctx.Request.Form.Get("captchaType")
-	if captchaType == "Default" {
-		checkId := c.Ctx.Request.Form.Get("checkId")
-		checkKey := c.Ctx.Request.Form.Get("checkKey")
 
-		if len(checkId) == 0 || len(checkKey) == 0 {
-			c.ResponseError("Missing parameter.")
-			return
-		}
-		isHuman = object.VerifyCaptcha(checkId, checkKey)
-	} else {
-		captchaToken := c.Ctx.Request.Form.Get("captchaToken")
-		clientSecret := c.Ctx.Request.Form.Get("clientSecret")
-
-		if len(captchaToken) == 0 {
-			c.ResponseError("Missing parameter.")
-			return
-		}
-
-		provider := captcha.GetCaptchaProvider(captchaType, clientSecret)
-		if provider == nil {
-			c.ResponseError("Invalid captcha provider.")
-			return
-		}
-
-		isValid, err := provider.VerifyCaptcha(captchaToken)
-		if err != nil {
-			c.ResponseError("Failed to verify captcha: %v", err)
-			return
-		}
-
-		isHuman = isValid
+	captchaToken := c.Ctx.Request.Form.Get("captchaToken")
+	clientSecret := c.Ctx.Request.Form.Get("clientSecret")
+	if captchaToken == "" {
+		c.ResponseError("Missing parameter: captchaToken.")
+		return
+	}
+	if clientSecret == "" {
+		c.ResponseError("Missing parameter: clientSecret.")
+		return
 	}
 
-	c.ResponseOk(isHuman)
+	provider := captcha.GetCaptchaProvider(captchaType)
+	if provider == nil {
+		c.ResponseError("Invalid captcha provider.")
+		return
+	}
+
+	isValid, err := provider.VerifyCaptcha(captchaToken, clientSecret)
+	if err != nil {
+		c.ResponseError("Failed to verify captcha: %v", err)
+		return
+	}
+
+	c.ResponseOk(isValid)
 }

@@ -25,33 +25,33 @@ export const CaptchaWidget = ({ captchaType, siteKey, onChange }) => {
 
   useEffect(() => {
     switch (captchaType) {
-      case "ReCaptcha":
-        if (!window.grecaptcha) {
-          loadScript("https://recaptcha.net/recaptcha/api.js");
-        }
-        setTimeout(() => {
+      case "reCAPTCHA":
+        const reTimer = setInterval(() => {
+          if (!window.grecaptcha) {
+            loadScript("https://recaptcha.net/recaptcha/api.js");
+          }
           if (window.grecaptcha) {
             window.grecaptcha.render("captcha", {
               sitekey: siteKey,
               callback: onChange,
             });
-            clearInterval();
+            clearInterval(reTimer);
           }
-        }, 200);
+        }, 300);
         break;
-      case "HCaptcha":
-        if (!window.hcaptcha) {
-          loadScript("https://js.hcaptcha.com/1/api.js");
-        }
-        setTimeout(() => {
+      case "hCaptcha":
+        const hTimer = setInterval(() => {
+          if (!window.hcaptcha) {
+            loadScript("https://js.hcaptcha.com/1/api.js");
+          }
           if (window.hcaptcha) {
             window.hcaptcha.render("captcha", {
               sitekey: siteKey,
               callback: onChange,
             });
-            clearInterval();
+            clearInterval(hTimer);
           }
-        }, 200);
+        }, 300);
         break;
       default:
         break;

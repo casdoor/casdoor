@@ -19,38 +19,32 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-
-	"github.com/astaxie/beego/logs"
 )
 
-const ReCaptchaVerifyURL = "https://recaptcha.net/recaptcha/api/siteverify"
+const ReCaptchaVerifyUrl = "https://recaptcha.net/recaptcha/api/siteverify"
 
 type ReCaptchaProvider struct {
-	ClientSecret string
 }
 
-func NewReCaptchaProvider(clientSecret string) *ReCaptchaProvider {
+func NewReCaptchaProvider() *ReCaptchaProvider {
 	captcha := &ReCaptchaProvider{}
 
-	captcha.ClientSecret = clientSecret
 	return captcha
 }
 
-func (captcha *ReCaptchaProvider) VerifyCaptcha(token string) (bool, error) {
+func (captcha *ReCaptchaProvider) VerifyCaptcha(token, clientSecret string) (bool, error) {
 	reqData := url.Values{
-		"secret":   {captcha.ClientSecret},
+		"secret":   {clientSecret},
 		"response": {token},
 	}
-	resp, err := http.PostForm(ReCaptchaVerifyURL, reqData)
+	resp, err := http.PostForm(ReCaptchaVerifyUrl, reqData)
 	if err != nil {
-		logs.Error("Failed post to verify captcha: %v", err)
 		return false, err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		logs.Error("Failed to read from verify captcha: %v", err)
 		return false, err
 	}
 	type captchaResponse struct {
@@ -58,8 +52,7 @@ func (captcha *ReCaptchaProvider) VerifyCaptcha(token string) (bool, error) {
 	}
 	captchaResp := &captchaResponse{}
 	err = json.Unmarshal(body, captchaResp)
-	if err != nil || captchaResp == nil {
-		logs.Error("Failed to unmarshal from verify captcha: %v", err)
+	if err != nil {
 		return false, err
 	}
 

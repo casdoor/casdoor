@@ -299,23 +299,14 @@ func (c *ApiController) GetUserinfo() {
 // @router /api/get-captcha [get]
 func (c *ApiController) GetCaptcha() {
 	applicationId := c.Input().Get("applicationId")
-	isPreview := c.Input().Get("isPreview")
-	captchaProvider := &object.Provider{}
-	if isPreview == "true" {
-		provider, err := object.GetPreviewCaptchaProvider(applicationId)
-		if provider == nil || err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-		captchaProvider = provider
-	} else {
-		provider, err := object.GetAppConfigCaptchaProvider(applicationId)
-		if provider == nil || err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-		captchaProvider = provider
+	isCurrentProvider := c.Input().Get("isCurrentProvider")
+
+	captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
+
 	if captchaProvider.Type == "Default" {
 		id, img := object.GetCaptcha()
 		c.ResponseOk(Captcha{Type: captchaProvider.Type, CaptchaId: id, CaptchaImage: img})

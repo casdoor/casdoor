@@ -226,7 +226,7 @@ func (p *Provider) GetId() string {
 	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
 }
 
-func GetPreviewCaptchaProvider(applicationId string) (*Provider, error) {
+func GetCaptchaProviderByOwnerName(applicationId string) (*Provider, error) {
 	owner, name := util.GetOwnerAndNameFromId(applicationId)
 	provider := Provider{Owner: owner, Name: name, Category: "Captcha"}
 	existed, err := adapter.Engine.Get(&provider)
@@ -241,7 +241,10 @@ func GetPreviewCaptchaProvider(applicationId string) (*Provider, error) {
 	return &provider, nil
 }
 
-func GetAppConfigCaptchaProvider(applicationId string) (*Provider, error) {
+func GetCaptchaProviderByApplication(applicationId, isCurrentProvider string) (*Provider, error) {
+	if isCurrentProvider == "true" {
+		return GetCaptchaProviderByOwnerName(applicationId)
+	}
 	application := GetApplication(applicationId)
 	if application == nil || len(application.Providers) == 0 {
 		return nil, fmt.Errorf("invalid application id")
@@ -251,7 +254,7 @@ func GetAppConfigCaptchaProvider(applicationId string) (*Provider, error) {
 			continue
 		}
 		if provider.Provider.Category == "Captcha" {
-			return provider.Provider, nil
+			return GetCaptchaProviderByOwnerName(fmt.Sprintf("%s/%s", provider.Provider.Owner, provider.Provider.Name))
 		}
 	}
 	return nil, fmt.Errorf("no captcha provider found")

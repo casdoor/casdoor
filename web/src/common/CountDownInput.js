@@ -33,7 +33,6 @@ export const CountDownInput = (props) => {
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
   const [buttonDisabled, setButtonDisabled] = React.useState(true);
-  const [captchaToken, setCaptchaToken] = React.useState("");
   const [clientId, setClientId] = React.useState("");
 
   const handleCountDown = (leftTime = 60) => {
@@ -53,9 +52,8 @@ export const CountDownInput = (props) => {
   const handleOk = () => {
     setVisible(false);
     setButtonLoading(true)
-    UserBackend.sendCode(checkType, checkId, key, captchaToken, ...onButtonClickArgs).then(res => {
+    UserBackend.sendCode(checkType, checkId, key, ...onButtonClickArgs).then(res => {
       setKey("");
-      setCaptchaToken("");
       setButtonLoading(false)
       if (res) {
         handleCountDown(60);
@@ -77,9 +75,10 @@ export const CountDownInput = (props) => {
         setCaptchaImg(res.captchaImage);
         setCheckType("Default");
         setVisible(true);
-      } else if (res.type === "ReCaptcha" || res.type === "HCaptcha") {
+      } else if (res.type === "reCAPTCHA" || res.type === "hCaptcha") {
         setCheckType(res.type);
         setClientId(res.clientId);
+        setCheckId(res.clientSecret);
         setVisible(true);
       } else {
         Setting.showMessage("error", i18next.t("signup:Unknown Check Type"));
@@ -110,7 +109,7 @@ export const CountDownInput = (props) => {
 
   const onSubmit = (token) => {
     setButtonDisabled(false);
-    setCaptchaToken(token);
+    setKey(token);
   }
 
   const renderCheck = () => {
