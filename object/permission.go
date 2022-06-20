@@ -16,12 +16,12 @@ package object
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	xormadapter "github.com/casbin/xorm-adapter/v2"
 	"github.com/casdoor/casdoor/conf"
-	"strings"
-
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
