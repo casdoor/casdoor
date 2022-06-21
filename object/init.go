@@ -23,6 +23,7 @@ import (
 func InitDb() {
 	existed := initBuiltInOrganization()
 	if !existed {
+		initBuiltInProvider()
 		initBuiltInUser()
 		initBuiltInApplication()
 		initBuiltInCert()
@@ -127,7 +128,9 @@ func initBuiltInApplication() {
 		Cert:           "cert-built-in",
 		EnablePassword: true,
 		EnableSignUp:   true,
-		Providers:      []*ProviderItem{},
+		Providers: []*ProviderItem{
+			{Name: "provider_captcha_default", CanSignUp: false, CanSignIn: false, CanUnlink: false, Prompted: false, AlertType: "None", Provider: nil},
+		},
 		SignupItems: []*SignupItem{
 			{Name: "ID", Visible: false, Required: true, Prompted: false, Rule: "Random"},
 			{Name: "Username", Visible: true, Required: true, Prompted: false, Rule: "None"},
@@ -200,4 +203,21 @@ func initBuiltInLdap() {
 		LastSync:   "",
 	}
 	AddLdap(ldap)
+}
+
+func initBuiltInProvider() {
+	provider := GetProvider("admin/provider_captcha_default")
+	if provider != nil {
+		return
+	}
+
+	provider = &Provider{
+		Owner:       "admin",
+		Name:        "provider_captcha_default",
+		CreatedTime: util.GetCurrentTime(),
+		DisplayName: "Captcha Default",
+		Category:    "Captcha",
+		Type:        "Default",
+	}
+	AddProvider(provider)
 }
