@@ -22,7 +22,6 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 
 class TokenListPage extends BaseListPage {
-
   newToken() {
     const randomName = Setting.getRandomName();
     return {

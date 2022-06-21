@@ -22,7 +22,6 @@ import moment from "moment";
 import BaseListPage from "./BaseListPage";
 
 class RecordListPage extends BaseListPage {
-
   UNSAFE_componentWillMount() {
     this.state.pagination.pageSize = 20;
     const { pagination } = this.state;

@@ -23,7 +23,6 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 
 class ApplicationListPage extends BaseListPage {
-
   newApplication() {
     const randomName = Setting.getRandomName();
     return {
@@ -36,7 +35,9 @@ class ApplicationListPage extends BaseListPage {
       enableSignUp: true,
       enableSigninSession: false,
       enableCodeSignin: false,
-      providers: [],
+      providers: [
+        {name: "provider_captcha_default", canSignUp: false, canSignIn: false, canUnlink: false, prompted: false, alertType: "None"},
+      ],
       signupItems: [
         {name: "ID", visible: false, required: true, rule: "Random"},
         {name: "Username", visible: true, required: true, rule: "None"},

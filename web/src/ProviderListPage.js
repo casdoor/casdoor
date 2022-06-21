@@ -23,7 +23,6 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 
 class ProviderListPage extends BaseListPage {
-
   newProvider() {
     const randomName = Setting.getRandomName();
     return {

@@ -22,7 +22,6 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 
 class SyncerListPage extends BaseListPage {
-
   newSyncer() {
     const randomName = Setting.getRandomName();
     return {

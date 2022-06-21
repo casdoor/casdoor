@@ -22,7 +22,6 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 
 class CertListPage extends BaseListPage {
-
   newCert() {
     const randomName = Setting.getRandomName();
     return {
