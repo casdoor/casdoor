@@ -129,8 +129,16 @@ class UserEditPage extends React.Component {
       return null;
     }
 
-    const isSelf = this.state.user.id === this.props.account;
+    const isSelf = this.state.user.id === this.props.account?.id;
     const isAdmin = Setting.isAdminUser(this.props.account);
+
+    // return (
+    //   <div>
+    //     {
+    //       JSON.stringify({accountItem: accountItem, isSelf: isSelf, isAdmin: isAdmin})
+    //     }
+    //   </div>
+    // )
 
     if (accountItem.viewRule === "Self") {
       if (!isSelf && !isAdmin) {
