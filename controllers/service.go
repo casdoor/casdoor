@@ -25,13 +25,26 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+type EmailForm struct {
+	Title     string   `json:"title"`
+	Content   string   `json:"content"`
+	Sender    string   `json:"sender"`
+	Receivers []string `json:"receivers"`
+}
+
+type SmsForm struct {
+	Content   string   `json:"content"`
+	Receivers []string `json:"receivers"`
+	OrgId     string   `json:"organizationId"` // e.g. "admin/built-in"
+}
+
 // SendEmail
 // @Title SendEmail
 // @Tag Service API
 // @Description This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
 // @Param   clientId    query    string  true        "The clientId of the application"
 // @Param   clientSecret    query    string  true    "The clientSecret of the application"
-// @Param   body    body   emailForm    true         "Details of the email request"
+// @Param   from    body   controllers.EmailForm    true         "Details of the email request"
 // @Success 200 {object}  Response object
 // @router /api/send-email [post]
 func (c *ApiController) SendEmail() {
@@ -40,12 +53,8 @@ func (c *ApiController) SendEmail() {
 		return
 	}
 
-	var emailForm struct {
-		Title     string   `json:"title"`
-		Content   string   `json:"content"`
-		Sender    string   `json:"sender"`
-		Receivers []string `json:"receivers"`
-	}
+	var emailForm EmailForm
+
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &emailForm)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -86,7 +95,7 @@ func (c *ApiController) SendEmail() {
 // @Description This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
 // @Param   clientId    query    string  true        "The clientId of the application"
 // @Param   clientSecret    query    string  true    "The clientSecret of the application"
-// @Param   body    body   smsForm    true           "Details of the sms request"
+// @Param   from    body   controllers.SmsForm    true           "Details of the sms request"
 // @Success 200 {object}  Response object
 // @router /api/send-sms [post]
 func (c *ApiController) SendSms() {
@@ -95,11 +104,7 @@ func (c *ApiController) SendSms() {
 		return
 	}
 
-	var smsForm struct {
-		Content   string   `json:"content"`
-		Receivers []string `json:"receivers"`
-		OrgId     string   `json:"organizationId"` // e.g. "admin/built-in"
-	}
+	var smsForm SmsForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &smsForm)
 	if err != nil {
 		c.ResponseError(err.Error())
