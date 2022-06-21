@@ -26,7 +26,7 @@ import (
 // @Description get all records
 // @Param   pageSize     query    string  true        "The size of each page"
 // @Param   p     query    string  true        "The number of the page"
-// @Success 200 {array} object.Records The Response object
+// @Success 200 {object} object.Record The Response object
 // @router /get-records [get]
 func (c *ApiController) GetRecords() {
 	limit := c.Input().Get("pageSize")
@@ -50,8 +50,8 @@ func (c *ApiController) GetRecords() {
 // @Tag Record API
 // @Title GetRecordsByFilter
 // @Description get records by filter
-// @Param   body    body   object.Records  true  "filter Record message"
-// @Success 200 {array} object.Records The Response object
+// @Param   filter  body string     true  "filter Record message"
+// @Success 200 {object} object.Record The Response object
 // @router /get-records-filter [post]
 func (c *ApiController) GetRecordsByFilter() {
 	body := string(c.Ctx.Input.RequestBody)
