@@ -117,8 +117,6 @@ func initBuiltInApplication() {
 		return
 	}
 
-	provider := GetProvider("admin/provider-built-in")
-
 	application = &Application{
 		Owner:          "admin",
 		Name:           "app-built-in",
@@ -131,7 +129,7 @@ func initBuiltInApplication() {
 		EnablePassword: true,
 		EnableSignUp:   true,
 		Providers: []*ProviderItem{
-			{Name: provider.Name, CanSignUp: true, CanSignIn: true, CanUnlink: true, AlertType: "None", Provider: provider},
+			{Name: "provider_captcha_default", CanSignUp: false, CanSignIn: false, CanUnlink: false, Prompted: false, AlertType: "None", Provider: nil},
 		},
 		SignupItems: []*SignupItem{
 			{Name: "ID", Visible: false, Required: true, Prompted: false, Rule: "Random"},
@@ -146,7 +144,6 @@ func initBuiltInApplication() {
 		RedirectUris:  []string{},
 		ExpireInHours: 168,
 	}
-
 	AddApplication(application)
 }
 
@@ -209,16 +206,16 @@ func initBuiltInLdap() {
 }
 
 func initBuiltInProvider() {
-	provider := GetProvider("admin/provider-built-in")
+	provider := GetProvider("admin/provider_captcha_default")
 	if provider != nil {
 		return
 	}
 
 	provider = &Provider{
 		Owner:       "admin",
-		Name:        "provider-built-in",
+		Name:        "provider_captcha_default",
 		CreatedTime: util.GetCurrentTime(),
-		DisplayName: "Built-in Provider",
+		DisplayName: "Captcha Default",
 		Category:    "Captcha",
 		Type:        "Default",
 	}
