@@ -23,6 +23,7 @@ import (
 func InitDb() {
 	existed := initBuiltInOrganization()
 	if !existed {
+		initBuiltInProvider()
 		initBuiltInUser()
 		initBuiltInApplication()
 		initBuiltInCert()
@@ -141,6 +142,19 @@ func initBuiltInApplication() {
 		RedirectUris:  []string{},
 		ExpireInHours: 168,
 	}
+
+	provider := GetProvider("admin/provider-built-in")
+	if provider != nil {
+		application.Providers = append(application.Providers, &ProviderItem{
+			Name:      provider.Name,
+			CanSignUp: true,
+			CanSignIn: true,
+			CanUnlink: true,
+			AlertType: "None",
+			Provider:  provider,
+		})
+	}
+
 	AddApplication(application)
 }
 
@@ -200,4 +214,21 @@ func initBuiltInLdap() {
 		LastSync:   "",
 	}
 	AddLdap(ldap)
+}
+
+func initBuiltInProvider() {
+	provider := GetProvider("admin/provider-built-in")
+	if provider != nil {
+		return
+	}
+
+	provider = &Provider{
+		Owner:       "admin",
+		Name:        "provider-built-in",
+		CreatedTime: util.GetCurrentTime(),
+		DisplayName: "Built-in Provider",
+		Category:    "Captcha",
+		Type:        "Default",
+	}
+	AddProvider(provider)
 }
