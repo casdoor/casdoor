@@ -147,17 +147,6 @@ func initBuiltInApplication() {
 		ExpireInHours: 168,
 	}
 
-	if provider != nil {
-		application.Providers = append(application.Providers, &ProviderItem{
-			Name:      provider.Name,
-			CanSignUp: true,
-			CanSignIn: true,
-			CanUnlink: true,
-			AlertType: "None",
-			Provider:  provider,
-		})
-	}
-
 	AddApplication(application)
 }
 
