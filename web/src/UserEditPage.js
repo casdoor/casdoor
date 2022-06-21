@@ -522,7 +522,15 @@ class UserEditPage extends React.Component {
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         {
-          this.state.application?.organizationObj.accountItems?.map(accountItem => this.renderAccountItem(accountItem))
+          this.state.application?.organizationObj.accountItems?.map(accountItem => {
+            return (
+              <React.Fragment key={accountItem.name}>
+                {
+                  this.renderAccountItem(accountItem)
+                }
+              </React.Fragment>
+            )
+          })
         }
       </Card>
     )
@@ -571,7 +579,7 @@ class UserEditPage extends React.Component {
     return (
       <div>
       {
-        this.state.loading ? <Spin loading={this.state.loading} size="large" /> : (
+        this.state.loading ? <Spin size="large" /> : (
           this.state.user !== null ? this.renderUser() :
             <Result
               status="404"
