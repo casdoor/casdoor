@@ -54,25 +54,23 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
-	provider := captcha.GetCaptchaProvider(checkType)
-	if provider == nil {
-		c.ResponseError("Invalid captcha provider.")
-		return
-	}
+	captchaProvider := captcha.GetCaptchaProvider(checkType)
 
-	if checkKey == "" {
-		c.ResponseError("Missing parameter: checkKey.")
-		return
-	}
-	isHuman, err := provider.VerifyCaptcha(checkKey, checkId)
-	if err != nil {
-		c.ResponseError("Failed to verify captcha: %v", err)
-		return
-	}
-
-	if !isHuman {
-		c.ResponseError("Turing test failed.")
-		return
+	if captchaProvider != nil {
+		if checkKey == "" {
+			c.ResponseError("Missing parameter: checkKey.")
+			return
+		}
+		isHuman, err := captchaProvider.VerifyCaptcha(checkKey, checkId)
+		if err != nil {
+			c.ResponseError("Failed to verify captcha: %v", err)
+			return
+		}
+	
+		if !isHuman {
+			c.ResponseError("Turing test failed.")
+			return
+		}
 	}
 
 	user := c.getCurrentUser()

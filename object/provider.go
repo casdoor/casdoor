@@ -257,5 +257,5 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider string) (*
 			return GetCaptchaProviderByOwnerName(fmt.Sprintf("%s/%s", provider.Provider.Owner, provider.Provider.Name))
 		}
 	}
-	return nil, fmt.Errorf("no captcha provider found")
+	return nil, nil
 }
