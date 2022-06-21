@@ -104,11 +104,6 @@ func getUrlPath(urlPath string) string {
 	if strings.HasPrefix(urlPath, "/cas") && (strings.HasSuffix(urlPath, "/serviceValidate") || strings.HasSuffix(urlPath, "/proxy") || strings.HasSuffix(urlPath, "/proxyValidate") || strings.HasSuffix(urlPath, "/validate") || strings.HasSuffix(urlPath, "/p3/serviceValidate") || strings.HasSuffix(urlPath, "/p3/proxyValidate") || strings.HasSuffix(urlPath, "/samlValidate")) {
 		return "/cas"
 	}
-
-	if strings.HasPrefix(urlPath, "/api/login/oauth") {
-		return "/api/login/oauth"
-	}
-
 	return urlPath
 }
 

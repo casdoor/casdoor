@@ -80,7 +80,11 @@ p, *, *, GET, /api/get-app-login, *, *
 p, *, *, POST, /api/logout, *, *
 p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
-p, *, *, *, /api/login/oauth, *, *
+p, *, *, POST, /api/login/oauth/code, *, *
+p, *, *, POST, /api/login/oauth/access_token, *, *
+p, *, *, POST, /api/login/oauth/refresh_token, *, *
+p, *, *, GET, /api/login/oauth/logout, *, *
+p, *, *, POST, /api/login/oauth/introspect, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-applications, *, *
 p, *, *, GET, /api/get-user, *, *
