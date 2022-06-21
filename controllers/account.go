@@ -307,13 +307,16 @@ func (c *ApiController) GetCaptcha() {
 		return
 	}
 
-	if captchaProvider.Type == "Default" {
-		id, img := object.GetCaptcha()
-		c.ResponseOk(Captcha{Type: captchaProvider.Type, CaptchaId: id, CaptchaImage: img})
-		return
-	} else if captchaProvider.Type != "" {
-		c.ResponseOk(Captcha{Type: captchaProvider.Type, ClientId: captchaProvider.ClientId, ClientSecret: captchaProvider.ClientSecret})
-		return
+	if captchaProvider != nil {
+		if captchaProvider.Type == "Default" {
+			id, img := object.GetCaptcha()
+			c.ResponseOk(Captcha{Type: captchaProvider.Type, CaptchaId: id, CaptchaImage: img})
+			return
+		} else if captchaProvider.Type != "" {
+			c.ResponseOk(Captcha{Type: captchaProvider.Type, ClientId: captchaProvider.ClientId, ClientSecret: captchaProvider.ClientSecret})
+			return
+		}
 	}
+
 	c.ResponseOk(Captcha{Type: "none"})
 }
