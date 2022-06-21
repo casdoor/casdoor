@@ -117,6 +117,8 @@ func initBuiltInApplication() {
 		return
 	}
 
+	provider := GetProvider("admin/provider-built-in")
+
 	application = &Application{
 		Owner:          "admin",
 		Name:           "app-built-in",
@@ -128,7 +130,9 @@ func initBuiltInApplication() {
 		Cert:           "cert-built-in",
 		EnablePassword: true,
 		EnableSignUp:   true,
-		Providers:      []*ProviderItem{},
+		Providers: []*ProviderItem{
+			{Name: provider.Name, CanSignUp: true, CanSignIn: true, CanUnlink: true, AlertType: "None", Provider: provider},
+		},
 		SignupItems: []*SignupItem{
 			{Name: "ID", Visible: false, Required: true, Prompted: false, Rule: "Random"},
 			{Name: "Username", Visible: true, Required: true, Prompted: false, Rule: "None"},
@@ -143,7 +147,6 @@ func initBuiltInApplication() {
 		ExpireInHours: 168,
 	}
 
-	provider := GetProvider("admin/provider-built-in")
 	if provider != nil {
 		application.Providers = append(application.Providers, &ProviderItem{
 			Name:      provider.Name,
