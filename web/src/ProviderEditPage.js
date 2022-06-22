@@ -543,7 +543,7 @@ class ProviderEditPage extends React.Component {
                     this.setState({testEmail: e.target.value})
                   }} />
                 </Col>
-                <Button style={{marginBottom: "5px"}} type="primary" shape="round"
+                <Button style={{marginLeft: '10px', marginBottom: "5px"}} type="primary" shape="round"
                         disabled={!Setting.isValidEmail(this.state.testEmail)}
                         onClick={() => {
                   let provider = Setting.deepCopy(this.state.provider);
@@ -563,7 +563,7 @@ class ProviderEditPage extends React.Component {
                   {i18next.t("provider:Send Test Email")}
                 </Button>
                 <Col span={4}>
-                  <Button style={{marginBottom: "5px"}} type="primary" shape="round" onClick={() => {
+                  <Button style={{marginLeft: '10px', marginBottom: "5px"}} type="primary" shape="round" onClick={() => {
                     let provider = Setting.deepCopy(this.state.provider);
                     ProviderBackend.testEmailProvider(provider, "")
                       .then((res) => {
