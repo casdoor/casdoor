@@ -35,7 +35,7 @@ func TestProduct(t *testing.T) {
 	paymentId := util.GenerateTimeId()
 	returnUrl := ""
 	notifyUrl := ""
-	payUrl, err := pProvider.Pay(product.DisplayName, product.Name, provider.Name, paymentId, product.Price, returnUrl, notifyUrl)
+	payUrl, err := pProvider.Pay(product.Name, product.Name, provider.Name, paymentId, product.DisplayName, product.Price, returnUrl, notifyUrl)
 	if err != nil {
 		panic(err)
 	}

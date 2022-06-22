@@ -113,3 +113,36 @@ func (c *ApiController) DeleteProvider() {
 	c.Data["json"] = wrapActionResponse(object.DeleteProvider(&provider))
 	c.ServeJSON()
 }
+
+// @Title TestEmailProvider
+// @Tag Provider API
+// @Description test email provider
+// @Param   email     query    string  false        "The email adderss for test"
+// @Param   body    body   object.Provider  true        "The details of the provider"
+// @Success 200 {object} controllers.Response The Response object
+// @router /test-email-provider [post]
+func (c *ApiController) TestEmailProvider() {
+	email := c.Input().Get("email")
+
+	var provider object.Provider
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &provider)
+	if err != nil {
+		panic(err)
+	}
+
+	if email == "" {
+		err := object.DailEmailProvider(&provider)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	} else {
+		err := object.SendEmail(&provider, provider.Title, provider.Content, email, provider.DisplayName)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
+
+	c.ResponseOk()
+}
