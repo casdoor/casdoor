@@ -30,7 +30,7 @@ export const CaptchaWidget = ({ captchaType, siteKey, onChange }) => {
           if (!window.grecaptcha) {
             loadScript("https://recaptcha.net/recaptcha/api.js");
           }
-          if (window.grecaptcha) {
+          if (window.grecaptcha && window.grecaptcha.render) {
             window.grecaptcha.render("captcha", {
               sitekey: siteKey,
               callback: onChange,
@@ -44,7 +44,7 @@ export const CaptchaWidget = ({ captchaType, siteKey, onChange }) => {
           if (!window.hcaptcha) {
             loadScript("https://js.hcaptcha.com/1/api.js");
           }
-          if (window.hcaptcha) {
+          if (window.hcaptcha && window.hcaptcha.render) {
             window.hcaptcha.render("captcha", {
               sitekey: siteKey,
               callback: onChange,
@@ -56,6 +56,7 @@ export const CaptchaWidget = ({ captchaType, siteKey, onChange }) => {
       default:
         break;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [captchaType, siteKey]);
 
   return <div id="captcha"></div>;
