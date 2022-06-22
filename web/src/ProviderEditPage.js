@@ -350,29 +350,30 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "Default" && 
-          <>
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                {this.getClientIdLabel()}
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.provider.clientId} onChange={e => {
-                  this.updateProviderField('clientId', e.target.value);
-                }} />
-              </Col>
-            </Row>
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                {this.getClientSecretLabel()}
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.provider.clientSecret} onChange={e => {
-                  this.updateProviderField('clientSecret', e.target.value);
-                }} />
-              </Col>
-            </Row>
-          </>
+          this.state.provider.category === "Captcha" && this.state.provider.type === "Default" ? null : (
+            <React.Fragment>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {this.getClientIdLabel()}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.clientId} onChange={e => {
+                    this.updateProviderField('clientId', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {this.getClientSecretLabel()}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.clientSecret} onChange={e => {
+                    this.updateProviderField('clientSecret', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            </React.Fragment>
+          )
         }
         {
           this.state.provider.type !== "WeChat" ? null : (
@@ -640,38 +641,36 @@ class ProviderEditPage extends React.Component {
           ) : null
         }
         {this.getAppIdRow()}
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Provider URL"), i18next.t("provider:Provider URL - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input prefix={<LinkOutlined/>} value={this.state.provider.providerUrl} onChange={e => {
+              this.updateProviderField('providerUrl', e.target.value);
+            }} />
+          </Col>
+        </Row>
         {
-          this.state.provider.type !== "Default" &&
-          <Row style={{marginTop: '20px'}} >
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-              {Setting.getLabel(i18next.t("provider:Provider URL"), i18next.t("provider:Provider URL - Tooltip"))} :
-            </Col>
-            <Col span={22} >
-              <Input prefix={<LinkOutlined/>} value={this.state.provider.providerUrl} onChange={e => {
-                this.updateProviderField('providerUrl', e.target.value);
-              }} />
-            </Col>
-          </Row>
-        }
-        {
-          this.state.provider.category === "Captcha" && 
-          <Row style={{marginTop: '20px'}} >
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-              {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
-            </Col>
-            <Col span={22} >
-              <CaptchaPreview 
-                provider={this.state.provider}
-                providerName={this.state.providerName}
-                clientSecret={this.state.provider.clientSecret}
-                captchaType={this.state.provider.type}
-                owner={this.state.provider.owner}
-                clientId={this.state.provider.clientId}
-                name={this.state.provider.name}
-                providerUrl={this.state.provider.providerUrl}
-              />
-            </Col>
-          </Row>
+          this.state.provider.category !== "Captcha" ? null : (
+            <Row style={{marginTop: '20px'}} >
+              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <CaptchaPreview
+                  provider={this.state.provider}
+                  providerName={this.state.providerName}
+                  clientSecret={this.state.provider.clientSecret}
+                  captchaType={this.state.provider.type}
+                  owner={this.state.provider.owner}
+                  clientId={this.state.provider.clientId}
+                  name={this.state.provider.name}
+                  providerUrl={this.state.provider.providerUrl}
+                />
+              </Col>
+            </Row>
+          )
         }
       </Card>
     )
