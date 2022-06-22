@@ -19,6 +19,7 @@ import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import { authConfig } from "./auth/Auth";
+import * as AuthBackend from "./auth/AuthBackend";
 import copy from 'copy-to-clipboard';
 import { CaptchaPreview } from "./common/CaptchaPreview";
 
@@ -33,11 +34,13 @@ class ProviderEditPage extends React.Component {
       providerName: props.match.params.providerName,
       provider: null,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      testEmail: "",
     };
   }
 
   UNSAFE_componentWillMount() {
     this.getProvider();
+    this.getAccount();
   }
 
   getProvider() {
@@ -47,6 +50,21 @@ class ProviderEditPage extends React.Component {
           provider: provider,
         });
       });
+  }
+
+  getAccount() {
+    AuthBackend.getAccount("")
+      .then((res) => {
+        let account = null;
+        if (res.status === "ok") {
+          account = res.data;
+          if (account["email"] !== undefined) {
+            this.setState({
+              testEmail: account["email"],
+            });
+          }
+        }
+      })
   }
 
   parseProviderField(key, value) {
@@ -257,7 +275,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
               {
-                this.state.provider.type !== "WeCom"  ? null : (    
+                this.state.provider.type !== "WeCom"  ? null : (
                   <Row style={{marginTop: '20px'}} >
                     <Col style={{marginTop: '5px'}} span={2}>
                       {Setting.getLabel(i18next.t("provider:Method"), i18next.t("provider:Method - Tooltip"))} :
@@ -512,6 +530,56 @@ class ProviderEditPage extends React.Component {
                   <TextArea autoSize={{minRows: 1, maxRows: 100}} value={this.state.provider.content} onChange={e => {
                     this.updateProviderField('content', e.target.value);
                   }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Test Email"), i18next.t("provider:Test Email - Tooltip"))} :
+                </Col>
+                <Col span={4} >
+                  <Input value={this.state.testEmail}
+                         placeHolder = {i18next.t("user:Input your email")}
+                         onChange={e => {
+                    this.setState({testEmail: e.target.value})
+                  }} />
+                </Col>
+                <Button style={{marginLeft: '10px', marginBottom: "5px"}} type="primary"
+                        disabled={!Setting.isValidEmail(this.state.testEmail)}
+                        onClick={() => {
+                  let provider = Setting.deepCopy(this.state.provider);
+                  ProviderBackend.testEmailProvider(provider, this.state.testEmail)
+                    .then((res) => {
+                      if (res.msg === "") {
+                        Setting.showMessage("success", `Successfully Send Email`);
+                      } else {
+                        Setting.showMessage("error", res.msg);
+                      }
+                    })
+                    .catch(error => {
+                      Setting.showMessage("error", `Failed to connect to server: ${error}`);
+                    });
+                }}
+                >
+                  {i18next.t("provider:Send Test Email")}
+                </Button>
+                <Col span={4}>
+                  <Button style={{marginLeft: '10px', marginBottom: "5px"}} type="primary" onClick={() => {
+                    let provider = Setting.deepCopy(this.state.provider);
+                    ProviderBackend.testEmailProvider(provider, "")
+                      .then((res) => {
+                        if (res.msg === "") {
+                          Setting.showMessage("success", `Successfully Connecting STMP server`);
+                        } else {
+                          Setting.showMessage("error", res.msg);
+                        }
+                      })
+                      .catch(error => {
+                        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+                      });
+                  }}
+                  >
+                    {i18next.t("provider:Test Connection")}
+                  </Button>
                 </Col>
               </Row>
             </React.Fragment>
