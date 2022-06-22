@@ -538,7 +538,7 @@ class ProviderEditPage extends React.Component {
                 <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Test Email"), i18next.t("provider:Test Email - Tooltip"))} :
                 </Col>
-                <Col span={12} >
+                <Col span={4} >
                   <Input value={this.state.testEmail}  onChange={e => {
                     this.setState({testEmail: e.target.value})
                   }} />
