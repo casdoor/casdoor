@@ -535,7 +535,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
               <Row style={{marginTop: '20px'}} >
-                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 3}>
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Test Email"), i18next.t("provider:Test Email - Tooltip"))} :
                 </Col>
                 <Col span={12} >
