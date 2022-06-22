@@ -69,7 +69,9 @@ export const CountDownInput = (props) => {
   const loadCaptcha = () => {
     UserBackend.getCaptcha("admin", authConfig.appName, false).then(res => {
       if (res.type === "none") {
-        UserBackend.sendCode("none", "", "", ...onButtonClickArgs);
+        UserBackend.sendCode("none", "", "", ...onButtonClickArgs).then(res => {
+          handleCountDown(60);
+        });
       } else if (res.type === "Default") {
         setCheckId(res.captchaId);
         setCaptchaImg(res.captchaImage);
