@@ -54,12 +54,3 @@ export function deleteProvider(provider) {
     body: JSON.stringify(newProvider),
   }).then(res => res.json());
 }
-
-export function testEmailProvider(provider, email = "") {
-  let newProvider = Setting.deepCopy(provider);
-  return fetch(`${Setting.ServerUrl}/api/test-email-provider?email=${email}`, {
-    method: "POST",
-    credentials: "include",
-    body: JSON.stringify(newProvider)
-  }).then(res => res.json());
-}

@@ -26,10 +26,11 @@ import (
 )
 
 type EmailForm struct {
-	Title     string   `json:"title"`
-	Content   string   `json:"content"`
-	Sender    string   `json:"sender"`
-	Receivers []string `json:"receivers"`
+	Title     string           `json:"title"`
+	Content   string           `json:"content"`
+	Sender    string           `json:"sender"`
+	Receivers []string         `json:"receivers"`
+	Provider  *object.Provider `json:"provider"`
 }
 
 type SmsForm struct {
@@ -48,17 +49,36 @@ type SmsForm struct {
 // @Success 200 {object}  Response object
 // @router /api/send-email [post]
 func (c *ApiController) SendEmail() {
-	provider, _, ok := c.GetProviderFromContext("Email")
-	if !ok {
-		return
-	}
-
 	var emailForm EmailForm
 
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &emailForm)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	fmt.Println(*emailForm.Provider)
+
+	// if EmailForm.Receivers == `"ConnectSMTP"` , just dail the SMTP server
+	if len(emailForm.Receivers) == 1 {
+		if emailForm.Receivers[0] == "ConnectSMTP" {
+			err := object.DailSMTPServer(emailForm.Provider)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			c.ResponseOk()
+			return
+		}
+	}
+
+	var provider = emailForm.Provider
+	if provider == nil {
+		p, _, ok := c.GetProviderFromContext("Email")
+		if !ok {
+			return
+		}
+		provider = p
 	}
 
 	if util.IsStrsEmpty(emailForm.Title, emailForm.Content, emailForm.Sender) {
