@@ -30,7 +30,7 @@ type EmailForm struct {
 	Content   string   `json:"content"`
 	Sender    string   `json:"sender"`
 	Receivers []string `json:"receivers"`
-	Provider  string   `json:"provider"` // Provider.Name of `object.Provider`
+	Provider  string   `json:"provider"`
 }
 
 type SmsForm struct {
