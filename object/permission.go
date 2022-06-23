@@ -45,13 +45,13 @@ type Permission struct {
 }
 
 type PermissionRule struct {
-	PType      string `xorm:"varchar(100) index not null default ''"`
-	V0         string `xorm:"varchar(100) index not null default ''"`
-	V1         string `xorm:"varchar(100) index not null default ''"`
-	V2         string `xorm:"varchar(100) index not null default ''"`
-	V3         string `xorm:"varchar(100) index not null default ''"`
-	V4         string `xorm:"varchar(100) index not null default ''"`
-	V5         string `xorm:"varchar(100) index not null default ''"`
+	PType string `xorm:"varchar(100) index not null default ''"`
+	V0    string `xorm:"varchar(100) index not null default ''"`
+	V1    string `xorm:"varchar(100) index not null default ''"`
+	V2    string `xorm:"varchar(100) index not null default ''"`
+	V3    string `xorm:"varchar(100) index not null default ''"`
+	V4    string `xorm:"varchar(100) index not null default ''"`
+	V5    string `xorm:"varchar(100) index not null default ''"`
 }
 
 func GetPermissionCount(owner, field, value string) int {
@@ -113,8 +113,6 @@ func UpdatePermission(id string, permission *Permission) bool {
 	oldPermission := getPermission(owner, name)
 	if oldPermission == nil {
 		return false
-	} else {
-		removePolicies(oldPermission)
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(permission)
@@ -123,6 +121,7 @@ func UpdatePermission(id string, permission *Permission) bool {
 	}
 
 	if affected != 0 {
+		removePolicies(oldPermission)
 		addPolicies(permission)
 	}
 
