@@ -58,11 +58,11 @@ func (c *ApiController) SendEmail() {
 	}
 
 	var provider *object.Provider
-
-	// when emailForm.Provider is empty, it is called by Casdoor SDKs
 	if emailForm.Provider != "" {
+		// called by frontend's TestEmailWidget, provider name is set by frontend
 		provider = object.GetProvider(fmt.Sprintf("admin/%s", emailForm.Provider))
 	} else {
+		// called by Casdoor SDK via Client ID & Client Secret, so the used Email provider will be the application' Email provider or the default Email provider
 		var ok bool
 		provider, _, ok = c.GetProviderFromContext("Email")
 		if !ok {
@@ -70,7 +70,7 @@ func (c *ApiController) SendEmail() {
 		}
 	}
 
-	// if  EmailForm.Receivers == `["TestSmtpServer"]` , just dail the Smtp server
+	// when receiver is the reserved keyword: "TestSmtpServer", it means to test the SMTP server instead of sending a real Email
 	if len(emailForm.Receivers) == 1 && emailForm.Receivers[0] == "TestSmtpServer" {
 		err := object.DailSmtpServer(provider)
 		if err != nil {
