@@ -19,7 +19,7 @@ import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import { authConfig } from "./auth/Auth";
-import * as ProviderEditTestEmail from "./ProviderEditTestEmail";
+import * as ProviderEditTestEmail from "./TestEmailWidget";
 import copy from 'copy-to-clipboard';
 import { CaptchaPreview } from "./common/CaptchaPreview";
 
@@ -528,7 +528,7 @@ class ProviderEditPage extends React.Component {
                   }} />
                 </Col>
                 <Button style={{marginLeft: '10px', marginBottom: "5px"}} type="primary"
-                        onClick={() => ProviderEditTestEmail.connectSMTPServer(this.state.provider)} >
+                        onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
                   {i18next.t("provider:Test Connection")}
                 </Button>
                 <Button style={{marginLeft: '10px', marginBottom: "5px"}} type="primary"

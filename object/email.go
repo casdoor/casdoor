@@ -30,8 +30,8 @@ func SendEmail(provider *Provider, title string, content string, dest string, se
 	return dialer.DialAndSend(message)
 }
 
-// DailSMTPServer Dail STMP server
-func DailSMTPServer(provider *Provider) error {
+// DailSmtpServer Dail Smtp server
+func DailSmtpServer(provider *Provider) error {
 	dialer := gomail.NewDialer(provider.Host, provider.Port, provider.ClientId, provider.ClientSecret)
 
 	sender, err := dialer.Dial()

@@ -26,11 +26,11 @@ import (
 )
 
 type EmailForm struct {
-	Title     string           `json:"title"`
-	Content   string           `json:"content"`
-	Sender    string           `json:"sender"`
-	Receivers []string         `json:"receivers"`
-	Provider  *object.Provider `json:"provider"`
+	Title     string   `json:"title"`
+	Content   string   `json:"content"`
+	Sender    string   `json:"sender"`
+	Receivers []string `json:"receivers"`
+	Provider  string   `json:"provider"` // Provider.Name of `object.Provider`
 }
 
 type SmsForm struct {
@@ -57,28 +57,27 @@ func (c *ApiController) SendEmail() {
 		return
 	}
 
-	fmt.Println(*emailForm.Provider)
+	var provider *object.Provider
 
-	// if EmailForm.Receivers == `"ConnectSMTP"` , just dail the SMTP server
-	if len(emailForm.Receivers) == 1 {
-		if emailForm.Receivers[0] == "ConnectSMTP" {
-			err := object.DailSMTPServer(emailForm.Provider)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-			c.ResponseOk()
+	// when emailForm.Provider is empty, it is called by Casdoor SDKs
+	if emailForm.Provider != "" {
+		provider = object.GetProvider(fmt.Sprintf("admin/%s", emailForm.Provider))
+	} else {
+		var ok bool
+		provider, _, ok = c.GetProviderFromContext("Email")
+		if !ok {
 			return
 		}
 	}
 
-	var provider = emailForm.Provider
-	if provider == nil {
-		p, _, ok := c.GetProviderFromContext("Email")
-		if !ok {
+	// if  EmailForm.Receivers == `["TestSmtpServer"]` , just dail the Smtp server
+	if len(emailForm.Receivers) == 1 && emailForm.Receivers[0] == "TestSmtpServer" {
+		err := object.DailSmtpServer(provider)
+		if err != nil {
+			c.ResponseError(err.Error())
 			return
 		}
-		provider = p
+		c.ResponseOk()
 	}
 
 	if util.IsStrsEmpty(emailForm.Title, emailForm.Content, emailForm.Sender) {
