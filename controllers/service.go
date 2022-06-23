@@ -30,6 +30,7 @@ type EmailForm struct {
 	Content   string   `json:"content"`
 	Sender    string   `json:"sender"`
 	Receivers []string `json:"receivers"`
+	Provider  string   `json:"provider"`
 }
 
 type SmsForm struct {
@@ -48,17 +49,35 @@ type SmsForm struct {
 // @Success 200 {object}  Response object
 // @router /api/send-email [post]
 func (c *ApiController) SendEmail() {
-	provider, _, ok := c.GetProviderFromContext("Email")
-	if !ok {
-		return
-	}
-
 	var emailForm EmailForm
 
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &emailForm)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	var provider *object.Provider
+	if emailForm.Provider != "" {
+		// called by frontend's TestEmailWidget, provider name is set by frontend
+		provider = object.GetProvider(fmt.Sprintf("admin/%s", emailForm.Provider))
+	} else {
+		// called by Casdoor SDK via Client ID & Client Secret, so the used Email provider will be the application' Email provider or the default Email provider
+		var ok bool
+		provider, _, ok = c.GetProviderFromContext("Email")
+		if !ok {
+			return
+		}
+	}
+
+	// when receiver is the reserved keyword: "TestSmtpServer", it means to test the SMTP server instead of sending a real Email
+	if len(emailForm.Receivers) == 1 && emailForm.Receivers[0] == "TestSmtpServer" {
+		err := object.DailSmtpServer(provider)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		c.ResponseOk()
 	}
 
 	if util.IsStrsEmpty(emailForm.Title, emailForm.Content, emailForm.Sender) {

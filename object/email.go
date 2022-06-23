@@ -29,3 +29,16 @@ func SendEmail(provider *Provider, title string, content string, dest string, se
 
 	return dialer.DialAndSend(message)
 }
+
+// DailSmtpServer Dail Smtp server
+func DailSmtpServer(provider *Provider) error {
+	dialer := gomail.NewDialer(provider.Host, provider.Port, provider.ClientId, provider.ClientSecret)
+
+	sender, err := dialer.Dial()
+	if err != nil {
+		return err
+	}
+	defer sender.Close()
+
+	return nil
+}
