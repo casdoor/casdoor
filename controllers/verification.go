@@ -63,10 +63,10 @@ func (c *ApiController) SendVerificationCode() {
 		}
 		isHuman, err := captchaProvider.VerifyCaptcha(checkKey, checkId)
 		if err != nil {
-			c.ResponseError("Failed to verify captcha: %v", err)
+			c.ResponseError(err.Error())
 			return
 		}
-	
+
 		if !isHuman {
 			c.ResponseError("Turing test failed.")
 			return
@@ -209,7 +209,7 @@ func (c *ApiController) VerifyCaptcha() {
 
 	isValid, err := provider.VerifyCaptcha(captchaToken, clientSecret)
 	if err != nil {
-		c.ResponseError("Failed to verify captcha: %v", err)
+		c.ResponseError(err.Error())
 		return
 	}
 
