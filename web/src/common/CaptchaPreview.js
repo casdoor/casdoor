@@ -117,7 +117,7 @@ export const CaptchaPreview = ({ provider, providerName, clientSecret, captchaTy
 
   return (
     <React.Fragment>
-      <Button style={{ fontSize: 14 }} type={"primary"} onClick={clickPreview}>
+      <Button style={{ fontSize: 14 }} type={"primary"} onClick={clickPreview} disabled={captchaType !== "Default" && (!clientId || !clientSecret)}>
         {i18next.t("general:Preview")}
       </Button>
       <Modal
