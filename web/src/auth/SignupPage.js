@@ -504,7 +504,7 @@ class SignupPage extends React.Component {
     if (size === "small") {
       if (provider.category === "OAuth") {
         return (
-          <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signin")}>
+          <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
             <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
           </a>
         )
