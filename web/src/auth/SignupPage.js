@@ -508,7 +508,7 @@ class SignupPage extends React.Component {
           </a>
         )
       } else if (provider.category === "SAML") {
-        // TODO: handle the saml category provider login
+        // TODO: handle the saml category provider logic
       }
   } 
 
