@@ -500,8 +500,7 @@ class SignupPage extends React.Component {
     )
   }
 
-  renderProviderLogo(provider, application, width, margin, size) {
-    if (size === "small") {
+  renderProviderLogo(provider, application, width, margin) {
       if (provider.category === "OAuth") {
         return (
           <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
@@ -509,25 +508,9 @@ class SignupPage extends React.Component {
           </a>
         )
       } else if (provider.category === "SAML") {
-        return (
-          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
-            <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
-          </a>
-        )
+        // TODO: handle the saml category provider login
       }
-      
-    } else {
-      return (
-        <div key={provider.displayName} style={{marginBottom: "10px"}}>
-          <a href={Provider.getAuthUrl(application, provider, "signup")}>
-            {
-              this.getSigninButton(provider.type)
-            }
-          </a>
-        </div>
-      )
-    }
-  }
+  } 
 
   isProviderVisible(providerItem) {
     return Setting.isProviderVisibleForSignUp(providerItem);
@@ -610,7 +593,7 @@ class SignupPage extends React.Component {
         <Form.Item>
           {
             application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-              return this.renderProviderLogo(providerItem.provider, application, 30, 5, "small");
+              return this.renderProviderLogo(providerItem.provider, application, 30, 5);
             })
           }
         </Form.Item>
