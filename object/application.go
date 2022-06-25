@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/casdoor/casdoor/util"
@@ -318,4 +319,40 @@ func CheckRedirectUriValid(application *Application, redirectUri string) bool {
 		}
 	}
 	return validUri
+}
+
+func IsAllowOrigin(origin string) bool {
+	allowOrigin := false
+	originUrl, err := url.Parse(origin)
+	if err != nil {
+		return false
+	}
+
+	rows, err := adapter.Engine.Cols("redirect_uris").Rows(&Application{})
+	if err != nil {
+		panic(err)
+	}
+
+	application := Application{}
+	for rows.Next() {
+		err := rows.Scan(&application)
+		if err != nil {
+			panic(err)
+		}
+		for _, tmpRedirectUri := range application.RedirectUris {
+			u1, err := url.Parse(tmpRedirectUri)
+			if err != nil {
+				continue
+			}
+			if u1.Scheme == originUrl.Scheme && u1.Host == originUrl.Host {
+				allowOrigin = true
+				break
+			}
+		}
+		if allowOrigin {
+			break
+		}
+	}
+
+	return allowOrigin
 }
