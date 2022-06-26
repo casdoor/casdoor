@@ -16,9 +16,11 @@ package captcha
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 const HCaptchaVerifyUrl = "https://hcaptcha.com/siteverify"
@@ -48,12 +50,17 @@ func (captcha *HCaptchaProvider) VerifyCaptcha(token, clientSecret string) (bool
 	}
 
 	type captchaResponse struct {
-		Success bool `json:"success"`
+		Success    bool     `json:"success"`
+		ErrorCodes []string `json:"error-codes"`
 	}
 	captchaResp := &captchaResponse{}
 	err = json.Unmarshal(body, captchaResp)
 	if err != nil {
 		return false, err
+	}
+
+	if len(captchaResp.ErrorCodes) > 0 {
+		return false, errors.New(strings.Join(captchaResp.ErrorCodes, ","))
 	}
 
 	return captchaResp.Success, nil
