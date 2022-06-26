@@ -24,6 +24,7 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import {CountDownInput} from "../common/CountDownInput";
 import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
+import * as Provider from "./Provider";
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
@@ -502,6 +503,23 @@ class SignupPage extends React.Component {
     )
   }
 
+  renderProviderLogo(provider, application, width, margin) {
+      if (provider.category === "OAuth") {
+        return (
+          <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
+            <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
+          </a>
+        )
+      } else if (provider.category === "SAML") {
+        // TODO: handle the saml category provider logic
+      }
+  } 
+
+  isProviderVisible(providerItem) {
+    return Setting.isProviderVisibleForSignUp(providerItem);
+  }
+
+
   renderForm(application) {
     if (!application.enableSignUp) {
       return (
@@ -574,6 +592,13 @@ class SignupPage extends React.Component {
           }}>
             {i18next.t("signup:sign in now")}
           </a>
+        </Form.Item>
+        <Form.Item>
+          {
+            application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
+              return this.renderProviderLogo(providerItem.provider, application, 30, 5);
+            })
+          }
         </Form.Item>
       </Form>
     )
