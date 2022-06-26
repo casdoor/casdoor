@@ -98,7 +98,10 @@ class SignupPage extends React.Component {
         this.setState({
           application: application,
         });
-        this.getTermsofuseContent(application.termsOfUse);
+
+        if (application !== null && application !== undefined) {
+            this.getTermsofuseContent(application.termsOfUse);
+        }
       });
   }
 
