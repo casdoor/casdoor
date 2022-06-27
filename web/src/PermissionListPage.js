@@ -93,7 +93,7 @@ class PermissionListPage extends BaseListPage {
         ...this.getColumnSearchProps('name'),
         render: (text, record, index) => {
           return (
-            <Link to={`/permissions/${text}`}>
+            <Link to={`/permissions/${record.owner}/${text}`}>
               {text}
             </Link>
           )
