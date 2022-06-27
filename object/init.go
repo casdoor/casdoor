@@ -104,7 +104,7 @@ func initBuiltInUser() {
 		IsGlobalAdmin:     true,
 		IsForbidden:       false,
 		IsDeleted:         false,
-		SignupApplication: "built-in-app",
+		SignupApplication: "app-built-in",
 		CreatedIp:         "127.0.0.1",
 		Properties:        make(map[string]string),
 	}
