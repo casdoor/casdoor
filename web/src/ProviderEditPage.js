@@ -124,7 +124,7 @@ class ProviderEditPage extends React.Component {
 
   getClientSecret2Label() {
     if (this.state.provider.type === "Aliyun Captcha") {
-      return Setting.getLabel(i18next.t("provider:Appkey"), i18next.t("provider:Appkey - Tooltip"));
+      return Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"));
     } else {
       return null;
     }
