@@ -81,9 +81,21 @@ class ProviderEditPage extends React.Component {
           return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
         }
       case "Captcha":
-        return Setting.getLabel(i18next.t("provider:Site key"), i18next.t("provider:Site key - Tooltip"));
+        if (this.state.provider.type === "Aliyun Captcha") {
+          return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
+        } else {
+          return Setting.getLabel(i18next.t("provider:Site key"), i18next.t("provider:Site key - Tooltip"));
+        }
       default:
         return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
+    }
+  }
+
+  getClientId2Label() {
+    if (this.state.provider.type === "Aliyun Captcha") {
+      return Setting.getLabel(i18next.t("provider:Scene"), i18next.t("provider:Scene - Tooltip"));
+    } else {
+      return null;
     }
   }
 
@@ -100,9 +112,21 @@ class ProviderEditPage extends React.Component {
           return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
         }
       case "Captcha":
-        return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
+        if (this.state.provider.type === "Aliyun Captcha") {
+          return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:Secret access key - Tooltip"));
+        } else {
+          return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
+        }
       default:
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
+    }
+  }
+
+  getClientSecret2Label() {
+    if (this.state.provider.type === "Aliyun Captcha") {
+      return Setting.getLabel(i18next.t("provider:Appkey"), i18next.t("provider:Appkey - Tooltip"));
+    } else {
+      return null;
     }
   }
 
@@ -242,7 +266,7 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         {
-          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" ? null : (
+          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" && this.state.provider.type !== "Aliyun Captcha" ? null : (
             <React.Fragment>
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={2}>
@@ -375,6 +399,32 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             </React.Fragment>
+          )
+        }
+        {
+          this.state.provider.type !== "Aliyun Captcha" ? null : ( 
+            <>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {this.getClientId2Label()}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.clientId2} onChange={e => {
+                    this.updateProviderField('clientId2', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: '20px'}} >
+                <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {this.getClientSecret2Label()}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.clientSecret2} onChange={e => {
+                    this.updateProviderField('clientSecret2', e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            </>
           )
         }
         {
@@ -675,21 +725,24 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         {
-          this.state.provider.category !== "Captcha" ? null : (
+          this.state.provider.category === "Captcha" ? null : (
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
               </Col>
               <Col span={22} >
-                <CaptchaPreview
+                <CaptchaPreview 
                   provider={this.state.provider}
                   providerName={this.state.providerName}
                   clientSecret={this.state.provider.clientSecret}
                   captchaType={this.state.provider.type}
+                  subType={this.state.provider.subType}
                   owner={this.state.provider.owner}
                   clientId={this.state.provider.clientId}
                   name={this.state.provider.name}
                   providerUrl={this.state.provider.providerUrl}
+                  clientId2={this.state.provider.clientId2}
+                  clientSecret2={this.state.provider.clientSecret2}
                 />
               </Col>
             </Row>

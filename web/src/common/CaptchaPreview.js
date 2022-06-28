@@ -20,18 +20,27 @@ import * as ProviderBackend from "../backend/ProviderBackend";
 import { SafetyOutlined } from "@ant-design/icons";
 import { CaptchaWidget } from "./CaptchaWidget";
 
-export const CaptchaPreview = ({ provider, providerName, clientSecret, captchaType, owner, clientId, name, providerUrl }) => {
+export const CaptchaPreview = ({
+  provider,
+  providerName,
+  clientSecret,
+  captchaType,
+  subType,
+  owner,
+  clientId,
+  name,
+  providerUrl,
+  clientId2,
+  clientSecret2,
+}) => {
   const [visible, setVisible] = React.useState(false);
   const [captchaImg, setCaptchaImg] = React.useState("");
   const [captchaToken, setCaptchaToken] = React.useState("");
   const [secret, setSecret] = React.useState(clientSecret);
+  const [secret2, setSecret2] = React.useState(clientSecret2);
 
   const handleOk = () => {
-    UserBackend.verifyCaptcha(
-      captchaType,
-      captchaToken,
-      secret
-    ).then(() => {
+    UserBackend.verifyCaptcha(captchaType, captchaToken, secret).then(() => {
       setCaptchaToken("");
       setVisible(false);
     });
@@ -48,9 +57,10 @@ export const CaptchaPreview = ({ provider, providerName, clientSecret, captchaTy
         setCaptchaImg(res.captchaImage);
       } else {
         setSecret(res.clientSecret);
+        setSecret2(res.clientSecret2);
       }
     });
-  }
+  };
 
   const clickPreview = () => {
     setVisible(true);
@@ -100,24 +110,40 @@ export const CaptchaPreview = ({ provider, providerName, clientSecret, captchaTy
     setCaptchaToken(token);
   };
 
-
   const renderCheck = () => {
     if (captchaType === "Default") {
       return renderDefaultCaptcha();
     } else {
       return (
-        <CaptchaWidget
-          captchaType={captchaType}
-          siteKey={clientId}
-          onChange={onSubmit}
-        />
+        <Col>
+          <Row>
+            <CaptchaWidget
+              captchaType={captchaType}
+              subType={subType}
+              siteKey={clientId}
+              clientSecret={secret}
+              onChange={onSubmit}
+              clientId2={clientId2}
+              clientSecret2={secret2}
+            />
+          </Row>
+        </Col>
       );
     }
   };
 
   return (
     <React.Fragment>
-      <Button style={{ fontSize: 14 }} type={"primary"} onClick={clickPreview} disabled={captchaType !== "Default" && (!clientId || !clientSecret)}>
+      <Button
+        style={{ fontSize: 14 }}
+        type={"primary"}
+        onClick={clickPreview}
+        disabled={
+          (captchaType !== "Default" && (!clientId || !clientSecret)) ||
+          (captchaType === "Aliyun Captcha" &&
+            (!subType || !clientId2 || !clientSecret2))
+        }
+      >
         {i18next.t("general:Preview")}
       </Button>
       <Modal
