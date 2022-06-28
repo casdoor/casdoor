@@ -475,6 +475,16 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("application:Enable SAML compress"), i18next.t("application:Enable SAML compress - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.enableSamlCompress} onChange={checked => {
+              this.updateApplicationField('enableSamlCompress', checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:SAML metadata"), i18next.t("application:SAML metadata - Tooltip"))} :
           </Col>
@@ -484,6 +494,14 @@ class ApplicationEditPage extends React.Component {
               options={{mode: 'xml', theme: 'default'}}
               onBeforeChange={(editor, data, value) => {}}
             />
+            <br/>
+            <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
+              copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}`);
+              Setting.showMessage("success", i18next.t("application:SAML metadata URL copied to clipboard successfully"));
+            }}
+            >
+              {i18next.t("application:Copy SAML metadata URL")}
+            </Button>
           </Col>
         </Row>
         <Row style={{marginTop: '20px'}} >
