@@ -165,6 +165,8 @@ func (c *ApiController) GetOAuthCode() {
 // @Param   client_secret     query    string  true        "OAuth client secret"
 // @Param   code     query    string  true        "OAuth code"
 // @Success 200 {object} object.TokenWrapper The Response object
+// @Success 400 {object} object.TokenError The Response object
+// @Success 401 {object} object.TokenError The Response object
 // @router /login/oauth/access_token [post]
 func (c *ApiController) GetOAuthToken() {
 	grantType := c.Input().Get("grant_type")
@@ -200,6 +202,7 @@ func (c *ApiController) GetOAuthToken() {
 	host := c.Ctx.Request.Host
 
 	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, tag, avatar)
+	c.SetTokenErrorHttpStatus()
 	c.ServeJSON()
 }
 
@@ -213,6 +216,8 @@ func (c *ApiController) GetOAuthToken() {
 // @Param   client_id     query    string  true        "OAuth client id"
 // @Param   client_secret     query    string  false        "OAuth client secret"
 // @Success 200 {object} object.TokenWrapper The Response object
+// @Success 400 {object} object.TokenError The Response object
+// @Success 401 {object} object.TokenError The Response object
 // @router /login/oauth/refresh_token [post]
 func (c *ApiController) RefreshToken() {
 	grantType := c.Input().Get("grant_type")
@@ -235,6 +240,7 @@ func (c *ApiController) RefreshToken() {
 	}
 
 	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+	c.SetTokenErrorHttpStatus()
 	c.ServeJSON()
 }
 
@@ -270,6 +276,8 @@ func (c *ApiController) TokenLogout() {
 // @Param token formData string true "access_token's value or refresh_token's value"
 // @Param token_type_hint formData string true "the token type access_token or refresh_token"
 // @Success 200 {object} object.IntrospectionResponse The Response object
+// @Success 400 {object} object.TokenError The Response object
+// @Success 401 {object} object.TokenError The Response object
 // @router /login/oauth/introspect [post]
 func (c *ApiController) IntrospectToken() {
 	tokenValue := c.Input().Get("token")
@@ -279,12 +287,21 @@ func (c *ApiController) IntrospectToken() {
 		clientSecret = c.Input().Get("client_secret")
 		if clientId == "" || clientSecret == "" {
 			c.ResponseError("empty clientId or clientSecret")
+			c.Data["json"] = &object.TokenError{
+				Error: object.INVALID_REQUEST,
+			}
+			c.SetTokenErrorHttpStatus()
+			c.ServeJSON()
 			return
 		}
 	}
 	application := object.GetApplicationByClientId(clientId)
 	if application == nil || application.ClientSecret != clientSecret {
 		c.ResponseError("invalid application or wrong clientSecret")
+		c.Data["json"] = &object.TokenError{
+			Error: object.INVALID_CLIENT,
+		}
+		c.SetTokenErrorHttpStatus()
 		return
 	}
 	token := object.GetTokenByTokenAndApplication(tokenValue, application.Name)

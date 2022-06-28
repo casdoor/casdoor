@@ -2194,6 +2194,18 @@
                         "schema": {
                             "$ref": "#/definitions/object.TokenWrapper"
                         }
+                    },
+                    "400": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenError"
+                        }
+                    },
+                    "401": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenError"
+                        }
                     }
                 }
             }
@@ -2284,6 +2296,18 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/object.IntrospectionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenError"
+                        }
+                    },
+                    "401": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenError"
                         }
                     }
                 }
@@ -2376,6 +2400,18 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/object.TokenWrapper"
+                        }
+                    },
+                    "400": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenError"
+                        }
+                    },
+                    "401": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenError"
                         }
                     }
                 }
@@ -3063,11 +3099,11 @@
         }
     },
     "definitions": {
-        "2200.0xc0003c4b70.false": {
+        "2127.0xc000398090.false": {
             "title": "false",
             "type": "object"
         },
-        "2235.0xc0003c4ba0.false": {
+        "2161.0xc0003980c0.false": {
             "title": "false",
             "type": "object"
         },
@@ -3080,6 +3116,9 @@
             "type": "object",
             "properties": {
                 "content": {
+                    "type": "string"
+                },
+                "provider": {
                     "type": "string"
                 },
                 "receivers": {
@@ -3182,10 +3221,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2200.0xc0003c4b70.false"
+                    "$ref": "#/definitions/2127.0xc000398090.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2235.0xc0003c4ba0.false"
+                    "$ref": "#/definitions/2161.0xc0003980c0.false"
                 },
                 "msg": {
                     "type": "string"
@@ -4209,14 +4248,23 @@
                 }
             }
         },
+        "object.TokenError": {
+            "title": "TokenError",
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "error_description": {
+                    "type": "string"
+                }
+            }
+        },
         "object.TokenWrapper": {
             "title": "TokenWrapper",
             "type": "object",
             "properties": {
                 "access_token": {
-                    "type": "string"
-                },
-                "error": {
                     "type": "string"
                 },
                 "expires_in": {
