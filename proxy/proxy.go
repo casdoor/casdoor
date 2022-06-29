@@ -76,7 +76,7 @@ func getProxyHttpClient() *http.Client {
 }
 
 func GetHttpClient(url string) *http.Client {
-	if strings.Contains(url, "githubusercontent.com") {
+	if strings.Contains(url, "githubusercontent.com") || strings.Contains(url, "googleusercontent.com") {
 		return ProxyHttpClient
 	} else {
 		return DefaultHttpClient
