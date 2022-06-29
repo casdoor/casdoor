@@ -14,7 +14,6 @@
 
 import {Button, Col, Input, Modal, Row} from "antd";
 import React from "react";
-import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import {SafetyOutlined} from "@ant-design/icons";
