@@ -15,7 +15,8 @@ FROM alpine:latest AS STANDARD
 LABEL MAINTAINER="https://casdoor.org/"
 
 WORKDIR /app
-COPY --from=BACK /go/src/casdoor/server ./
+COPY --from=BACK /go/src/casdoor/server ./server
+COPY --from=BACK /go/src/casdoor/swagger ./swagger
 COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
 COPY --from=FRONT /web/build ./web/build
 VOLUME /app/files /app/logs
@@ -36,7 +37,8 @@ LABEL MAINTAINER="https://casdoor.org/"
 ENV MYSQL_ROOT_PASSWORD=123456
 
 WORKDIR /app
-COPY --from=BACK /go/src/casdoor/server ./
+COPY --from=BACK /go/src/casdoor/server ./server
+COPY --from=BACK /go/src/casdoor/swagger ./swagger
 COPY --from=BACK /go/src/casdoor/docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
 COPY --from=FRONT /web/build ./web/build
