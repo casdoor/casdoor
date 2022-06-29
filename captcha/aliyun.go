@@ -73,7 +73,7 @@ func (captcha *AliyunCaptchaProvider) VerifyCaptcha(token, clientSecret string) 
 
 	stringToSign := fmt.Sprintf("GET&%s&%s", url.QueryEscape("/"), url.QueryEscape(sortQuery))
 
-	signature := util.HMACSHA1(clientSecret+"&", stringToSign)
+	signature := util.GetHmacSha1(clientSecret+"&", stringToSign)
 
 	resp, err := http.Get(fmt.Sprintf("%s?%s&Signature=%s", AliyunCaptchaVerifyUrl, sortQuery, url.QueryEscape(signature)))
 	if err != nil {

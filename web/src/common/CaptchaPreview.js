@@ -132,17 +132,27 @@ export const CaptchaPreview = ({
     }
   };
 
+  const getButtonDisabled = () => {
+    if (captchaType !== "Default") {
+      if (!clientId || !clientSecret) {
+        return true;
+      }
+      if (captchaType === "Aliyun Captcha") {
+        if (!subType || !clientId2 || !clientSecret2) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
   return (
     <React.Fragment>
       <Button
         style={{ fontSize: 14 }}
         type={"primary"}
         onClick={clickPreview}
-        disabled={
-          (captchaType !== "Default" && (!clientId || !clientSecret)) ||
-          (captchaType === "Aliyun Captcha" &&
-            (!subType || !clientId2 || !clientSecret2))
-        }
+        disabled={getButtonDisabled()}
       >
         {i18next.t("general:Preview")}
       </Button>

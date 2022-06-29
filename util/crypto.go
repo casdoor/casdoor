@@ -20,7 +20,7 @@ import (
 	"encoding/base64"
 )
 
-func HMACSHA1(keyStr, value string) string {
+func GetHmacSha1(keyStr, value string) string {
 	key := []byte(keyStr)
 	mac := hmac.New(sha1.New, key)
 	mac.Write([]byte(value))
