@@ -114,6 +114,7 @@ jobs:
         uses: docker/build-push-action@v2
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
+          target: STANDARD
           push: true
           tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
 
