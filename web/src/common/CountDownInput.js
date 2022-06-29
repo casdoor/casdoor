@@ -14,7 +14,6 @@
 
 import {Button, Col, Input, Modal, Row} from "antd";
 import React from "react";
-import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import {SafetyOutlined} from "@ant-design/icons";
@@ -34,6 +33,9 @@ export const CountDownInput = (props) => {
   const [buttonLoading, setButtonLoading] = React.useState(false);
   const [buttonDisabled, setButtonDisabled] = React.useState(true);
   const [clientId, setClientId] = React.useState("");
+  const [subType, setSubType] = React.useState("");
+  const [clientId2, setClientId2] = React.useState("");
+  const [clientSecret2, setClientSecret2] = React.useState("");
 
   const handleCountDown = (leftTime = 60) => {
     let leftTimeSecond = leftTime
@@ -79,13 +81,14 @@ export const CountDownInput = (props) => {
         setCaptchaImg(res.captchaImage);
         setCheckType("Default");
         setVisible(true);
-      } else if (res.type === "reCAPTCHA" || res.type === "hCaptcha") {
+      } else {
         setCheckType(res.type);
         setClientId(res.clientId);
         setCheckId(res.clientSecret);
         setVisible(true);
-      } else {
-        Setting.showMessage("error", i18next.t("signup:Unknown Check Type"));
+        setSubType(res.subType);
+        setClientId2(res.clientId2);
+        setClientSecret2(res.clientSecret2);
       }
     })
   }
@@ -123,8 +126,12 @@ export const CountDownInput = (props) => {
       return (
         <CaptchaWidget
           captchaType={checkType}
+          subType={subType}
           siteKey={clientId}
+          clientSecret={checkId}
           onChange={onSubmit}
+          clientId2={clientId2}
+          clientSecret2={clientSecret2}
         />
       );
     }

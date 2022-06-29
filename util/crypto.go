@@ -12,21 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package captcha
+package util
 
-type CaptchaProvider interface {
-	VerifyCaptcha(token, clientSecret string) (bool, error)
-}
+import (
+	"crypto/hmac"
+	"crypto/sha1"
+	"encoding/base64"
+)
 
-func GetCaptchaProvider(captchaType string) CaptchaProvider {
-	if captchaType == "Default" {
-		return NewDefaultCaptchaProvider()
-	} else if captchaType == "reCAPTCHA" {
-		return NewReCaptchaProvider()
-	} else if captchaType == "hCaptcha" {
-		return NewHCaptchaProvider()
-	} else if captchaType == "Aliyun Captcha" {
-		return NewAliyunCaptchaProvider()
-	}
-	return nil
+func GetHmacSha1(keyStr, value string) string {
+	key := []byte(keyStr)
+	mac := hmac.New(sha1.New, key)
+	mac.Write([]byte(value))
+	res := base64.StdEncoding.EncodeToString(mac.Sum(nil))
+
+	return res
 }

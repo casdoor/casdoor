@@ -14,7 +14,7 @@
 
 import React, { useEffect } from "react";
 
-export const CaptchaWidget = ({ captchaType, siteKey, onChange }) => {
+export const CaptchaWidget = ({ captchaType, subType, siteKey, clientSecret, onChange, clientId2, clientSecret2 }) => {
   const loadScript = (src) => {
     var tag = document.createElement("script");
     tag.async = false;
@@ -53,11 +53,34 @@ export const CaptchaWidget = ({ captchaType, siteKey, onChange }) => {
           }
         }, 300);
         break;
+      case "Aliyun Captcha":
+        const AWSCTimer = setInterval(() => {
+          if (!window.AWSC) {
+            loadScript("https://g.alicdn.com/AWSC/AWSC/awsc.js");
+          }
+
+          if (window.AWSC) {
+            if (clientSecret2 && clientSecret2 !== "***") {
+              window.AWSC.use(subType, function (state, module) {
+                module.init({
+                  appkey: clientSecret2,
+                  scene: clientId2,
+                  renderTo: "captcha",
+                  success: function (data) {
+                    onChange(`SessionId=${data.sessionId}&AccessKeyId=${siteKey}&Scene=${clientId2}&AppKey=${clientSecret2}&Token=${data.token}&Sig=${data.sig}&RemoteIp=192.168.0.1`);
+                  },
+                });
+              });
+            }
+            clearInterval(AWSCTimer);
+          }
+        }, 300);
+        break;
       default:
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [captchaType, siteKey]);
+  }, [captchaType, subType, siteKey, clientSecret, clientId2, clientSecret2]);
 
   return <div id="captcha"></div>;
 };

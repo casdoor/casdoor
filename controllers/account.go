@@ -76,13 +76,16 @@ type Response struct {
 }
 
 type Captcha struct {
-	Type         string `json:"type"`
-	AppKey       string `json:"appKey"`
-	Scene        string `json:"scene"`
-	CaptchaId    string `json:"captchaId"`
-	CaptchaImage []byte `json:"captchaImage"`
-	ClientId     string `json:"clientId"`
-	ClientSecret string `json:"clientSecret"`
+	Type          string `json:"type"`
+	AppKey        string `json:"appKey"`
+	Scene         string `json:"scene"`
+	CaptchaId     string `json:"captchaId"`
+	CaptchaImage  []byte `json:"captchaImage"`
+	ClientId      string `json:"clientId"`
+	ClientSecret  string `json:"clientSecret"`
+	ClientId2     string `json:"clientId2"`
+	ClientSecret2 string `json:"clientSecret2"`
+	SubType       string `json:"subType"`
 }
 
 // Signup
@@ -313,7 +316,14 @@ func (c *ApiController) GetCaptcha() {
 			c.ResponseOk(Captcha{Type: captchaProvider.Type, CaptchaId: id, CaptchaImage: img})
 			return
 		} else if captchaProvider.Type != "" {
-			c.ResponseOk(Captcha{Type: captchaProvider.Type, ClientId: captchaProvider.ClientId, ClientSecret: captchaProvider.ClientSecret})
+			c.ResponseOk(Captcha{
+				Type:          captchaProvider.Type,
+				SubType:       captchaProvider.SubType,
+				ClientId:      captchaProvider.ClientId,
+				ClientSecret:  captchaProvider.ClientSecret,
+				ClientId2:     captchaProvider.ClientId2,
+				ClientSecret2: captchaProvider.ClientSecret2,
+			})
 			return
 		}
 	}

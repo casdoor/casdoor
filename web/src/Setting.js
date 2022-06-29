@@ -118,6 +118,10 @@ export const OtherProviderInfo = {
     "hCaptcha": {
       logo: `${StaticBaseUrl}/img/social_hcaptcha.png`,
       url: "https://www.hcaptcha.com",
+    },
+    "Aliyun Captcha": {
+      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      url: "https://help.aliyun.com/product/28308.html",
     }
   }
 };
@@ -614,6 +618,7 @@ export function getProviderTypeOptions(category) {
       {id: 'Default', name: 'Default'},
       {id: 'reCAPTCHA', name: 'reCAPTCHA'},
       {id: 'hCaptcha', name: 'hCaptcha'},
+      {id: 'Aliyun Captcha', name: 'Aliyun Captcha'},
     ]);
   } else {
     return [];
@@ -628,6 +633,11 @@ export function getProviderSubTypeOptions(type) {
         {id: 'Third-party', name: 'Third-party'},
       ]
     );
+  } else if (type === "Aliyun Captcha") {
+    return [
+      {id: 'nc', name: 'Sliding Validation'},
+      {id: 'ic', name: 'Intelligent Validation'},
+    ];
   } else {
     return [];
   }
