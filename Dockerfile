@@ -22,7 +22,7 @@ VOLUME /app/files /app/logs
 ENTRYPOINT ["/app/server"]
 
 
-FROM debian:latest AS ALLINONE_DB
+FROM debian:latest AS db
 RUN apt update \
     && apt install -y \
         mariadb-server \
@@ -30,7 +30,7 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 
-FROM ALLINONE_DB AS ALLINONE
+FROM db AS ALLINONE
 LABEL MAINTAINER="https://casdoor.org/"
 
 ENV MYSQL_ROOT_PASSWORD=123456
