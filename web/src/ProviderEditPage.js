@@ -391,14 +391,8 @@ class ProviderEditPage extends React.Component {
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                   {this.state.provider.type === "Aliyun Captcha"
-                    ? Setting.getLabel(
-                        i18next.t("provider:Scene"),
-                        i18next.t("provider:Scene - Tooltip")
-                      )
-                    : Setting.getLabel(
-                        i18next.t("provider:Client ID 2"),
-                        i18next.t("provider:Client ID 2 - Tooltip")
-                      )}
+                    ? Setting.getLabel(i18next.t("provider:Scene"), i18next.t("provider:Scene - Tooltip"))
+                    : Setting.getLabel(i18next.t("provider:Client ID 2"), i18next.t("provider:Client ID 2 - Tooltip"))}
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.clientId2} onChange={e => {
@@ -409,14 +403,8 @@ class ProviderEditPage extends React.Component {
               <Row style={{marginTop: '20px'}} >
                 <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
                   {this.state.provider.type === "Aliyun Captcha"
-                    ? Setting.getLabel(
-                        i18next.t("provider:App key"),
-                        i18next.t("provider:App key - Tooltip")
-                      )
-                    : Setting.getLabel(
-                        i18next.t("provider:Client secret 2"),
-                        i18next.t("provider:Client secret 2 - Tooltip")
-                      )}
+                    ? Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"))
+                    : Setting.getLabel(i18next.t("provider:Client secret 2"), i18next.t("provider:Client secret 2 - Tooltip"))}
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.clientSecret2} onChange={e => {
