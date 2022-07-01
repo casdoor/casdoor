@@ -31,12 +31,42 @@ import (
 	"github.com/google/uuid"
 )
 
+const TwoFactorSessionKey = "TwoFactor"
+const NextTwoFactor = "nextTwoFactor"
+
+type TwoFactorSessionData struct {
+	UserId        string
+	EnableSession bool
+	AutoSignIn    bool
+}
+
+func (c *ApiController) SetFactorSessionData(data *TwoFactorSessionData) {
+	c.SetSession(TwoFactorSessionKey, data)
+}
+
+func (c *ApiController) GetTOTPSessionData() *TwoFactorSessionData {
+	v := c.GetSession(TwoFactorSessionKey)
+	data, ok := v.(*TwoFactorSessionData)
+	if !ok {
+		return nil
+	}
+	return data
+}
+
+
 func codeToResponse(code *object.Code) *Response {
+	status := ""
 	if code.Code == "" {
 		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
+	} else {
+		if user.IsEnableTwoFactor() {
+			status = NextTwoFactor
+		} else {
+			status = "ok"
+		}
 	}
 
-	return &Response{Status: "ok", Msg: "", Data: code.Code}
+	return &Response{Status: status, Msg: code.Message, Data: code.Code}
 }
 
 func tokenToResponse(token *object.Token) *Response {
@@ -51,6 +81,11 @@ func tokenToResponse(token *object.Token) *Response {
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) (resp *Response) {
 	userId := user.GetId()
 	if form.Type == ResponseTypeLogin {
+		if user.IsEnableTwoFactor() {
+			c.SetFactorSessionData(&TwoFactorSessionData{UserId: userId, EnableSession: true, AutoSignIn: form.AutoSignin})
+			resp = &Response{Status: NextTwoFactor}
+			return
+		}
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 		resp = &Response{Status: "ok", Msg: "", Data: userId}
@@ -73,7 +108,16 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
-			c.SetSessionUsername(userId)
+			if user.IsEnableTwoFactor() {
+				c.SetFactorSessionData(&TwoFactorSessionData{
+					UserId:        userId,
+					EnableSession: true,
+					AutoSignIn:    form.AutoSignin,
+				})
+				return
+			} else {
+				c.SetSessionUsername(userId)
+			}
 		}
 	} else if form.Type == ResponseTypeToken || form.Type == ResponseTypeIdToken { //implicit flow
 		if !object.IsGrantTypeValid(form.Type, application.GrantTypes) {
@@ -114,14 +158,18 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 	// if user did not check auto signin
 	if resp.Status == "ok" && !form.AutoSignin {
-		timestamp := time.Now().Unix()
-		timestamp += 3600 * 24
-		c.SetSessionData(&SessionData{
-			ExpireTime: timestamp,
-		})
+		c.setExpireForSession()
 	}
 
 	return resp
+}
+
+func (c *ApiController) setExpireForSession() {
+	timestamp := time.Now().Unix()
+	timestamp += 3600 * 24
+	c.SetSessionData(&SessionData{
+		ExpireTime: timestamp,
+	})
 }
 
 // GetApplicationLogin ...

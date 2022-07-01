@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Checkbox, Col, Form, Input, Result, Row, Spin} from "antd";
+import {Button, Checkbox, Col, Form, Input, message, Result, Row, Spin} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
@@ -48,8 +48,10 @@ import DouyinLoginButton from "./DouyinLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import BilibiliLoginButton from "./BilibiliLoginButton";
+import {NextTwoFactor, VerityTOTP} from "./TwoFactor";
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
+
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -67,6 +69,7 @@ class LoginPage extends React.Component {
       validEmailOrPhone: false,
       validEmail: false,
       validPhone: false,
+      getVerityTotp: null
     };
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
       this.state.owner = props.match?.params.owner
@@ -233,6 +236,17 @@ class LoginPage extends React.Component {
               const redirectUri = res.data2;
               Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
             }
+          } else if (res.status === NextTwoFactor) {
+            this.setState({
+              getVerityTotp: () => {
+                return (
+                  <VerityTOTP
+                    onFail={() => {
+                      message.error(i18next.t("two-factor:Verification failed"));
+                    }}
+                    onSuccess={() => callback()}/>);
+              }
+            });
           } else {
             Util.showMessage("error", `Failed to log in: ${res.msg}`);
           }
@@ -327,7 +341,7 @@ class LoginPage extends React.Component {
           </a>
         )
       }
-      
+
     } else {
       return (
         <div key={provider.displayName} style={{marginBottom: "10px"}}>
@@ -663,10 +677,13 @@ class LoginPage extends React.Component {
             {/*  this.state.clientId !== null ? "Redirect" : null*/}
             {/*}*/}
             {
-              this.renderSignedInBox()
+              this.state.getVerityTotp == null && this.renderSignedInBox()
             }
             {
-              this.renderForm(application)
+              this.state.getVerityTotp == null && this.renderForm(application)
+            }
+            {
+              this.state.getVerityTotp && this.state.getVerityTotp()
             }
           </div>
         </Col>

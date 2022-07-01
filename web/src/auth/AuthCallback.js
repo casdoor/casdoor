@@ -13,13 +13,14 @@
 // limitations under the License.
 
 import React from "react";
-import {Spin} from "antd";
+import {message, Spin} from "antd";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
 import * as Util from "./Util";
 import {authConfig} from "./Auth";
 import * as Setting from "../Setting";
 import i18next from "i18next";
+import {NextTwoFactor, VerityTOTP} from "./TwoFactor";
 
 class AuthCallback extends React.Component {
   constructor(props) {
@@ -27,6 +28,7 @@ class AuthCallback extends React.Component {
     this.state = {
       classes: props,
       msg: null,
+      getVerityTotp: null
     };
   }
 
@@ -115,7 +117,7 @@ class AuthCallback extends React.Component {
     const concatChar = oAuthParams?.redirectUri?.includes('?') ? '&' : '?';
     AuthBackend.login(body, oAuthParams)
       .then((res) => {
-        if (res.status === 'ok') {
+        const callback = () => {
           const responseType = this.getResponseType();
           if (responseType === "login") {
             Util.showMessage("success", `Logged in successfully`);
@@ -138,6 +140,19 @@ class AuthCallback extends React.Component {
             const redirectUri = res.data2;
             Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
           }
+        }
+        if (res.status === 'ok') {
+          callback()
+        } else if (res.status === NextTwoFactor) {
+          this.setState({
+            getVerityTotp: function () {
+              return <VerityTOTP onSuccess={() => {
+                callback()
+              }} onFail={() => {
+                message.error(i18next.t('two-factor:Verification failed'));
+              }}/>
+            }
+          })
         } else {
           this.setState({
             msg: res.msg,
@@ -148,15 +163,18 @@ class AuthCallback extends React.Component {
 
   render() {
     return (
-      <div style={{textAlign: "center"}}>
-        {
-          (this.state.msg === null) ? (
-            <Spin size="large" tip={i18next.t("login:Signing in...")} style={{paddingTop: "10%"}} />
-          ) : (
-            Util.renderMessageLarge(this, this.state.msg)
-          )
-        }
-      </div>
+        <div style={{textAlign: "center"}}>
+          {
+            (this.state.msg === null) ? (
+                <Spin size="large" tip={i18next.t("login:Signing in...")} style={{paddingTop: "10%"}}/>
+            ) : (
+                Util.renderMessageLarge(this, this.state.msg)
+            )
+          }
+          {
+              this.state.getVerityTotp && this.state.getVerityTotp()
+          }
+        </div>
     )
   }
 }

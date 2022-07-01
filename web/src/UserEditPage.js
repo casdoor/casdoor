@@ -13,11 +13,11 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Result, Row, Select, Spin, Switch} from 'antd';
+import {Button, Card, Col, Input, Result, message, Popconfirm, Row, Select, Space, Spin, Switch, Tag} from 'antd';
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
-import {LinkOutlined} from "@ant-design/icons";
+import {CheckCircleOutlined, LinkOutlined} from "@ant-design/icons";
 import i18next from "i18next";
 import CropperDiv from "./CropperDiv.js";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
@@ -45,9 +45,11 @@ class UserEditPage extends React.Component {
       user: null,
       application: null,
       organizations: [],
+      twoFactor: 0,
       applications: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
       loading: true,
+      twoFactorRemoveTotpLoading: false
     };
   }
 
@@ -64,6 +66,7 @@ class UserEditPage extends React.Component {
         if (data.status === null || data.status !== "error") {
           this.setState({
             user: data,
+            twoFactor: user.twoFactor
           });
         }
         this.setState({
@@ -449,6 +452,16 @@ class UserEditPage extends React.Component {
             </Col>
           </Row>
         )
+      )
+    } else if (accountItem.name === "Two-factor authentication") {
+      return (
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: "5px"}}
+               span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("two-factor:Two-factor authentication"),
+              i18next.t("two-factor:Two-factor authentication tooltip"))} :
+          </Col>
+        </Row>
       )
     } else if (accountItem.name === "Properties") {
       return (

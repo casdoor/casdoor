@@ -153,3 +153,52 @@ export function getCaptcha(owner, name, isCurrentProvider) {
     method: "GET"
   }).then(res => res.json()).then(res => res.data);
 }
+
+export function checkUserPassword(values) {
+  return fetch(`${Setting.ServerUrl}/api/check-user-password`, {
+    method: 'POST',
+    credentials: 'include',
+    body: JSON.stringify(values)
+  }).then(res => res.json());
+}
+
+export function twoFactorSetupInitTotp(values) {
+  return fetch(`${Setting.ServerUrl}/api/two-factor/setup/totp/init`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(values)
+  }).then(res => res.json());
+}
+
+export function twoFactorSetupVerityTotp(values) {
+  return fetch(`${Setting.ServerUrl}/api/two-factor/setup/totp/verity`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(values)
+  }).then(res => res.json());
+}
+
+export function twoFactorEnableTotp(values) {
+  return fetch(`${Setting.ServerUrl}/api/two-factor/totp`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(values)
+  }).then(res => res.json());
+}
+
+export function twoFactorRemoveTotp(values) {
+  return fetch(`${Setting.ServerUrl}/api/two-factor/totp`, {
+    method: "DELETE",
+    credentials: "include",
+    body: JSON.stringify(values)
+  }).then(res => res.json());
+}
+
+export function twoFactorAuthTotp(values) {
+  return fetch(`${Setting.ServerUrl}/api/two-factor/auth/totp`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(values)
+  }).then(res => res.json());
+}
+

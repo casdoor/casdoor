@@ -105,6 +105,9 @@ p, *, *, GET, /api/get-saml-login, *, *
 p, *, *, POST, /api/acs, *, *
 p, *, *, GET, /api/saml/metadata, *, *
 p, *, *, *, /cas, *, *
+p, *, *, POST, /api/two-factor/setup/totp/init, *, *
+p, *, *, POST, /api/two-factor/setup/totp/verity, *, *
+p, *, *, POST, /api/two-factor/auth/totp, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)
