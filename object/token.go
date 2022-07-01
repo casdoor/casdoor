@@ -325,7 +325,8 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
 		return &TokenError{
-			Error: INVALID_CLIENT,
+			Error:            INVALID_CLIENT,
+			ErrorDescription: "client_id is invalid",
 		}
 	}
 
@@ -333,7 +334,8 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	if !IsGrantTypeValid(grantType, application.GrantTypes) && tag == "" {
 		return &TokenError{
-			Error: UNSUPPORTED_GRANT_TYPE,
+			Error:            UNSUPPORTED_GRANT_TYPE,
+			ErrorDescription: fmt.Sprintf("grant_type: %s is not supported in this application", grantType),
 		}
 	}
 
@@ -382,12 +384,14 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
 		return &TokenError{
-			Error: INVALID_CLIENT,
+			Error:            INVALID_CLIENT,
+			ErrorDescription: "client_id is invalid",
 		}
 	}
 	if clientSecret != "" && application.ClientSecret != clientSecret {
 		return &TokenError{
-			Error: INVALID_CLIENT,
+			Error:            INVALID_CLIENT,
+			ErrorDescription: "client_secret is invalid",
 		}
 	}
 	// check whether the refresh token is valid, and has not expired.
@@ -395,7 +399,8 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	existed, err := adapter.Engine.Get(&token)
 	if err != nil || !existed {
 		return &TokenError{
-			Error: INVALID_GRANT,
+			Error:            INVALID_GRANT,
+			ErrorDescription: "refresh token is invalid, expired or revoked",
 		}
 	}
 
@@ -404,7 +409,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	if err != nil {
 		return &TokenError{
 			Error:            INVALID_GRANT,
-			ErrorDescription: err.Error(),
+			ErrorDescription: fmt.Sprintf("parse refresh token error: %s", err.Error()),
 		}
 	}
 	// generate a new token
@@ -419,7 +424,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	if err != nil {
 		return &TokenError{
 			Error:            ENDPOINT_ERROR,
-			ErrorDescription: "failed to generate jwt token",
+			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}
 	}
 
@@ -500,7 +505,7 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 	if token.CodeChallenge != "" && pkceChallenge(verifier) != token.CodeChallenge {
 		return nil, &TokenError{
 			Error:            INVALID_GRANT,
-			ErrorDescription: "incorrect code_verifier",
+			ErrorDescription: "verifier is invalid",
 		}
 	}
 
@@ -510,13 +515,13 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 		if token.CodeChallenge == "" {
 			return nil, &TokenError{
 				Error:            INVALID_CLIENT,
-				ErrorDescription: "invalid client_secret",
+				ErrorDescription: "client_secret is invalid",
 			}
 		} else {
 			if clientSecret != "" {
 				return nil, &TokenError{
 					Error:            INVALID_CLIENT,
-					ErrorDescription: "invalid client_secret",
+					ErrorDescription: "client_secret is invalid",
 				}
 			}
 		}
@@ -565,7 +570,7 @@ func GetPasswordToken(application *Application, username string, password string
 	if err != nil {
 		return nil, &TokenError{
 			Error:            ENDPOINT_ERROR,
-			ErrorDescription: "failed to generate jwt token",
+			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}
 	}
 	token := &Token{
@@ -592,7 +597,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 	if application.ClientSecret != clientSecret {
 		return nil, &TokenError{
 			Error:            INVALID_CLIENT,
-			ErrorDescription: "invalid client_secret",
+			ErrorDescription: "client_secret is invalid",
 		}
 	}
 	nullUser := &User{
@@ -604,7 +609,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 	if err != nil {
 		return nil, &TokenError{
 			Error:            ENDPOINT_ERROR,
-			ErrorDescription: "failed to generate jwt token",
+			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}
 	}
 	token := &Token{
@@ -665,7 +670,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 	if err != nil {
 		return nil, &TokenError{
 			Error:            INVALID_GRANT,
-			ErrorDescription: err.Error(),
+			ErrorDescription: fmt.Sprintf("get wechat mini program session error: %s", err.Error()),
 		}
 	}
 	openId, unionId := session.Openid, session.Unionid
@@ -713,7 +718,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 	if err != nil {
 		return nil, &TokenError{
 			Error:            ENDPOINT_ERROR,
-			ErrorDescription: "failed to generate jwt token",
+			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
 		}
 	}
 
