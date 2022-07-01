@@ -1435,6 +1435,14 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.TokenWrapper'
+        "400":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.TokenError'
+        "401":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.TokenError'
   /api/login/oauth/code:
     post:
       tags:
@@ -1497,6 +1505,14 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.IntrospectionResponse'
+        "400":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.TokenError'
+        "401":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.TokenError'
   /api/login/oauth/logout:
     get:
       tags:
@@ -1559,6 +1575,14 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.TokenWrapper'
+        "400":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.TokenError'
+        "401":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.TokenError'
   /api/logout:
     post:
       tags:
@@ -2005,10 +2029,10 @@ paths:
       - Verification API
       operationId: ApiController.VerifyCaptcha
 definitions:
-  2200.0xc0003c4b70.false:
+  2127.0xc000398090.false:
     title: "false"
     type: object
-  2235.0xc0003c4ba0.false:
+  2161.0xc0003980c0.false:
     title: "false"
     type: object
   Response:
@@ -2019,6 +2043,8 @@ definitions:
     type: object
     properties:
       content:
+        type: string
+      provider:
         type: string
       receivers:
         type: array
@@ -2087,9 +2113,9 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/2200.0xc0003c4b70.false'
+        $ref: '#/definitions/2127.0xc000398090.false'
       data2:
-        $ref: '#/definitions/2235.0xc0003c4ba0.false'
+        $ref: '#/definitions/2161.0xc0003980c0.false'
       msg:
         type: string
       name:
@@ -2776,13 +2802,19 @@ definitions:
         type: string
       user:
         type: string
+  object.TokenError:
+    title: TokenError
+    type: object
+    properties:
+      error:
+        type: string
+      error_description:
+        type: string
   object.TokenWrapper:
     title: TokenWrapper
     type: object
     properties:
       access_token:
-        type: string
-      error:
         type: string
       expires_in:
         type: integer
