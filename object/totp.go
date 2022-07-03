@@ -17,9 +17,19 @@ package object
 import (
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
+	"xorm.io/core"
 )
 
-func NewTOTPKey(issuer string, accountName string) (*otp.Key, error) {
+const TwoFactorSessionKey = "TwoFactor"
+const NextTwoFactor = "nextTwoFactor"
+
+type TwoFactorSessionData struct {
+	UserId        string
+	EnableSession bool
+	AutoSignIn    bool
+}
+
+func NewTotpKey(issuer string, accountName string) (*otp.Key, error) {
 	period := 30
 	secretSize := 20
 	digits := otp.DigitsSix
@@ -32,6 +42,16 @@ func NewTOTPKey(issuer string, accountName string) (*otp.Key, error) {
 	})
 }
 
-func ValidateTOTPPassCode(passcode string, secret string) bool {
+func ValidateTotpPassCode(passcode string, secret string) bool {
 	return totp.Validate(passcode, secret)
+}
+
+func RecoverTotp(user *User, recoveryCode string) (bool, error) {
+	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).
+		Where("two_factor_recovery_code = ?", recoveryCode).
+		Cols("two_factor_recovery_code").Update(user)
+	if err != nil {
+		return false, err
+	}
+	return affected != 0, nil
 }

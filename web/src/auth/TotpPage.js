@@ -13,18 +13,18 @@
 // limitations under the License.
 
 import React, {useState} from "react";
-import {Button, Col, Input, message, Row, Select, Spin, Steps} from "antd";
+import {Button, Col, Input, Row, Spin, Steps} from "antd";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
-import {CheckOutlined, KeyOutlined, UserOutlined} from "@ant-design/icons";
+import {CheckOutlined, CopyOutlined, KeyOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../CustomGithubCorner";
 import QRCode from "qrcode.react";
 import {useFormik} from "formik";
+import copy from "copy-to-clipboard";
 
 const {Step} = Steps;
-const {Option} = Select;
 
 function CheckPassword({user, onSuccess, onFail}) {
 	const formik = useFormik({
@@ -85,6 +85,16 @@ function VerityTotp({totp, onSuccess, onFail}) {
 	return (
 		<form style={{width: "300px"}} onSubmit={formik.handleSubmit}>
 			<QRCode value={totp.url} size={200}/>
+			<Row type="flex" justify="center" align="middle" >
+				<Col>{Setting.getLabel(i18next.t("two-factor:Two-factor secret"), i18next.t("two-factor:Two-factor secret - Tooltip"))} :</Col>
+			</Row>
+			<Row type="flex" justify="center" align="middle" >
+				<Col><Input value={totp.secret} /></Col>
+				<Button type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
+					copy(`${totp.secret}`);
+					Setting.showMessage("success", i18next.t("two-factor:Two-factor secret to clipboard successfully"));
+				}}></Button>
+			</Row>
 			<Input
 				style={{marginTop: 24}}
 				onChange={formik.handleChange("passcode")}
@@ -222,7 +232,7 @@ class TotpPage extends React.Component {
 					user={this.getUser()}
 					totp={this.state?.totp}
 					onSuccess={() => {
-						message.success(i18next.t('two-factor:Enabled successfully'))
+					Setting.showMessage("success",i18next.t('two-factor:Enabled successfully'));
 						Setting.goToLinkSoft(this, "/account");
 					}}
 					onFail={(res) => {
@@ -230,6 +240,8 @@ class TotpPage extends React.Component {
 							i18next.t(`signup:${res.msg}`));
 					}}
 				/>;
+				default:
+					return null;
 		}
 	}
 

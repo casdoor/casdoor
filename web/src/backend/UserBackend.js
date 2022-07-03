@@ -163,42 +163,64 @@ export function checkUserPassword(values) {
 }
 
 export function twoFactorSetupInitTotp(values) {
+  let formData = new FormData();
+  formData.append("userId", values.userId);
   return fetch(`${Setting.ServerUrl}/api/two-factor/setup/totp/init`, {
     method: "POST",
     credentials: "include",
-    body: JSON.stringify(values)
+    body: formData
   }).then(res => res.json());
 }
 
 export function twoFactorSetupVerityTotp(values) {
+  let formData = new FormData();
+  formData.append("passcode", values.passcode);
+  formData.append("secret", values.secret);
   return fetch(`${Setting.ServerUrl}/api/two-factor/setup/totp/verity`, {
     method: "POST",
     credentials: "include",
-    body: JSON.stringify(values)
+    body: formData
   }).then(res => res.json());
 }
 
 export function twoFactorEnableTotp(values) {
+  let formData = new FormData();
+  formData.append("recoveryCode", values.recoveryCode);
+  formData.append("secret", values.secret);
+  formData.append("userId", values.userId);
   return fetch(`${Setting.ServerUrl}/api/two-factor/totp`, {
     method: "POST",
     credentials: "include",
-    body: JSON.stringify(values)
+    body: formData
   }).then(res => res.json());
 }
 
 export function twoFactorRemoveTotp(values) {
+  let formData = new FormData();
+  formData.append("userId", values.userId);
   return fetch(`${Setting.ServerUrl}/api/two-factor/totp`, {
     method: "DELETE",
     credentials: "include",
-    body: JSON.stringify(values)
+    body: formData
   }).then(res => res.json());
 }
 
 export function twoFactorAuthTotp(values) {
+  let formData = new FormData();
+  formData.append("passcode", values.passcode);
   return fetch(`${Setting.ServerUrl}/api/two-factor/auth/totp`, {
     method: "POST",
     credentials: "include",
-    body: JSON.stringify(values)
+    body: formData
   }).then(res => res.json());
 }
 
+export function twoFactorRecoverTotp(values) {
+  let formData = new FormData();
+  formData.append("recoveryCode", values.recoveryCode);
+  return fetch(`${Setting.ServerUrl}/api/two-factor/totp/recover`, {
+    method: "POST",
+    credentials: "include",
+    body: formData
+  }).then(res => res.json());
+}

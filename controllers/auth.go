@@ -31,36 +31,13 @@ import (
 	"github.com/google/uuid"
 )
 
-const TwoFactorSessionKey = "TwoFactor"
-const NextTwoFactor = "nextTwoFactor"
-
-type TwoFactorSessionData struct {
-	UserId        string
-	EnableSession bool
-	AutoSignIn    bool
-}
-
-func (c *ApiController) SetFactorSessionData(data *TwoFactorSessionData) {
-	c.SetSession(TwoFactorSessionKey, data)
-}
-
-func (c *ApiController) GetTOTPSessionData() *TwoFactorSessionData {
-	v := c.GetSession(TwoFactorSessionKey)
-	data, ok := v.(*TwoFactorSessionData)
-	if !ok {
-		return nil
-	}
-	return data
-}
-
-
-func codeToResponse(code *object.Code) *Response {
+func codeToResponse(user *object.User, code *object.Code) *Response {
 	status := ""
 	if code.Code == "" {
 		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
 	} else {
 		if user.IsEnableTwoFactor() {
-			status = NextTwoFactor
+			status = object.NextTwoFactor
 		} else {
 			status = "ok"
 		}
@@ -77,13 +54,26 @@ func tokenToResponse(token *object.Token) *Response {
 
 }
 
+func (c *ApiController) setFactorSessionData(data *object.TwoFactorSessionData) {
+	c.SetSession(object.TwoFactorSessionKey, data)
+}
+
+func (c *ApiController) getTotpSessionData() *object.TwoFactorSessionData {
+	v := c.GetSession(object.TwoFactorSessionKey)
+	data, ok := v.(*object.TwoFactorSessionData)
+	if !ok {
+		return nil
+	}
+	return data
+}
+
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) (resp *Response) {
 	userId := user.GetId()
 	if form.Type == ResponseTypeLogin {
 		if user.IsEnableTwoFactor() {
-			c.SetFactorSessionData(&TwoFactorSessionData{UserId: userId, EnableSession: true, AutoSignIn: form.AutoSignin})
-			resp = &Response{Status: NextTwoFactor}
+			c.setFactorSessionData(&object.TwoFactorSessionData{UserId: userId, EnableSession: true, AutoSignIn: form.AutoSignin})
+			resp = &Response{Status: object.NextTwoFactor}
 			return
 		}
 		c.SetSessionUsername(userId)
@@ -104,12 +94,12 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, c.Ctx.Request.Host)
-		resp = codeToResponse(code)
+		resp = codeToResponse(user, code)
 
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
 			if user.IsEnableTwoFactor() {
-				c.SetFactorSessionData(&TwoFactorSessionData{
+				c.setFactorSessionData(&object.TwoFactorSessionData{
 					UserId:        userId,
 					EnableSession: true,
 					AutoSignIn:    form.AutoSignin,

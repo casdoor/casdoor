@@ -41,7 +41,7 @@ func main() {
 	proxy.InitHttpClient()
 	authz.InitAuthz()
 
-	util.SafeGoroutine(func() {object.RunSyncUsersJob()})
+	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 
 	//beego.DelStaticPath("/static")
 	beego.SetStaticPath("/static", "web/build/static")

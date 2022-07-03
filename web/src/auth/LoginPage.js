@@ -48,7 +48,7 @@ import DouyinLoginButton from "./DouyinLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import BilibiliLoginButton from "./BilibiliLoginButton";
-import {NextTwoFactor, VerityTOTP} from "./TwoFactor";
+import {NextTwoFactor, VerityTotp} from "./TwoFactor";
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
@@ -193,7 +193,7 @@ class LoginPage extends React.Component {
 
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
-          if (res.status === 'ok') {
+          const callback = () => {
             const responseType = values["type"];
             if (responseType === "login") {
               Util.showMessage("success", `Logged in successfully`);
@@ -236,11 +236,14 @@ class LoginPage extends React.Component {
               const redirectUri = res.data2;
               Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
             }
+          }
+          if (res.status === 'ok') {
+            callback()
           } else if (res.status === NextTwoFactor) {
             this.setState({
               getVerityTotp: () => {
                 return (
-                  <VerityTOTP
+                  <VerityTotp
                     onFail={() => {
                       message.error(i18next.t("two-factor:Verification failed"));
                     }}

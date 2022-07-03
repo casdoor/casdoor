@@ -662,7 +662,10 @@
   "two-factor": {
     "Two-factor authentication": "双因子认证",
     "Two-factor authentication description": "您已经启用双因子认证，请输入认证码",
-    "Two-factor authentication tooltip": "设置双因子认证",
+    "Two-factor authentication - Tooltip ": "设置双因子认证",
+    "Two-factor secret": "双因子密钥",
+    "Two-factor secret - Tooltip": "双因子密钥",
+    "Two-factor secret to clipboard successfully": "双因子密钥已复制到剪贴板",
     "Verification failed": "验证失败",
     "Verity": "验证",
     "Setup": "设置",

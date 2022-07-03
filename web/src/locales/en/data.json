@@ -662,6 +662,28 @@
   "two-factor": {
     "Two-factor authentication": "Two-factor authentication",
     "Two-factor authentication description": "You have enabled two-factor authentication. Please enter the authentication code",
-    "Two-factor authentication tooltip": "Setup two-factor authentication"
+    "Two-factor authentication - Tooltip ": "Setup two-factor authentication",
+    "Two-factor secret": "Two-factor secret",
+    "Two-factor secret - Tooltip": "Two-factor secret",
+    "Two-factor secret to clipboard successfully": "Two-factor secret to clipboard successfully",
+    "Verification failed": "Verification failed",
+    "Verity": "Verity",
+    "Setup": "Setup",
+    "Remove": "Remove",
+    "Removed successfully": "Removed successfully",
+    "Removed failed": "Removed failed",
+    "Enable": "Enable",
+    "Enabled successfully": "Enabled successfully",
+    "Passcode": "Passcode",
+    "Password": "Password",
+    "Enter passcode": "Enter passcode",
+    "Verity Fail": "Verity Fail",
+    "Verify Password": "Verify Password",
+    "Verify Code": "Verify Code",
+    "Protect your account with two-factor authentication": "Protect your account with two-factor authentication",
+    "Each time you sign in to your Account, you'll need your password and a authentication code": "Each time you sign in to your Account, you'll need your password and a authentication code",
+    "Next step": "Next step",
+    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset two-factor authentication by this recovery code": "Please save this recovery code. Once your device cannot provide an authentication code, you can reset two-factor authentication by this recovery code",
+    "Are you sure to delete?": "Are you sure to delete?"
   }
 }

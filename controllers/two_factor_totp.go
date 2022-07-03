@@ -20,24 +20,25 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego"
-	jsoniter "github.com/json-iterator/go"
-
 	"github.com/casdoor/casdoor/object"
 	"github.com/google/uuid"
 )
 
-type TOTPInit struct {
+type TotpInit struct {
 	Secret       string `json:"secret"`
 	RecoveryCode string `json:"recoveryCode"`
 	URL          string `json:"url"`
 }
 
-// TwoFactorSetupInitTOTP
-// @Title: Setup init TOTP
-// @Tag: Two-Factor API
-// @router: /two-factor/setup/totp/init [post]
-func (c *ApiController) TwoFactorSetupInitTOTP() {
-	userId := jsoniter.Get(c.Ctx.Input.RequestBody, "userId").ToString()
+// TwoFactorSetupInitTotp
+// @Title TwoFactorSetupInitTotp
+// @Tag Two-Factor API
+// @Description setup totp
+// @param userId	form	string	true	"Id of user"
+// @Success 200 {object}  controllers.TotpInit The Response object
+// @router /two-factor/setup/totp/init [post]
+func (c *ApiController) TwoFactorSetupInitTotp() {
+	userId := c.Ctx.Request.Form.Get("userId")
 	if len(userId) == 0 {
 		c.ResponseError(http.StatusText(http.StatusBadRequest))
 		return
@@ -49,7 +50,7 @@ func (c *ApiController) TwoFactorSetupInitTOTP() {
 		return
 	}
 	if len(user.TotpSecret) != 0 {
-		c.ResponseError("User has TOTP two-factor authentication enabled")
+		c.ResponseError("User has Totp two-factor authentication enabled")
 		return
 	}
 
@@ -58,7 +59,7 @@ func (c *ApiController) TwoFactorSetupInitTOTP() {
 	issuer := beego.AppConfig.String("appname")
 	accountName := fmt.Sprintf("%s/%s", application.Name, user.Name)
 
-	key, err := object.NewTOTPKey(issuer, accountName)
+	key, err := object.NewTotpKey(issuer, accountName)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -70,7 +71,7 @@ func (c *ApiController) TwoFactorSetupInitTOTP() {
 		return
 	}
 
-	resp := TOTPInit{
+	resp := TotpInit{
 		Secret:       key.Secret(),
 		RecoveryCode: strings.ReplaceAll(recoveryCode.String(), "-", ""),
 		URL:          key.URL(),
@@ -78,14 +79,18 @@ func (c *ApiController) TwoFactorSetupInitTOTP() {
 	c.ResponseOk(resp)
 }
 
-// TwoFactorSetupVerityTOTP
-// @Title: Setup verity TOTP
-// @Tag: Two-Factor API
-// @router: /two-factor/setup/totp/verity [post]
-func (c *ApiController) TwoFactorSetupVerityTOTP() {
-	secret := jsoniter.Get(c.Ctx.Input.RequestBody, "secret").ToString()
-	passcode := jsoniter.Get(c.Ctx.Input.RequestBody, "passcode").ToString()
-	ok := object.ValidateTOTPPassCode(passcode, secret)
+// TwoFactorSetupVerityTotp
+// @Title TwoFactorSetupVerityTotp
+// @Tag Two-Factor API
+// @Description setup verity totp
+// @param	secret		form	string	true	"totp secret"
+// @param	passcode	form 	string 	true	"totp passcode"
+// @Success 200 {object}  Response object
+// @router /two-factor/setup/totp/verity [post]
+func (c *ApiController) TwoFactorSetupVerityTotp() {
+	secret := c.Ctx.Request.Form.Get("secret")
+	passcode := c.Ctx.Request.Form.Get("passcode")
+	ok := object.ValidateTotpPassCode(passcode, secret)
 	if ok {
 		c.ResponseOk(http.StatusText(http.StatusOK))
 	} else {
@@ -93,14 +98,18 @@ func (c *ApiController) TwoFactorSetupVerityTOTP() {
 	}
 }
 
-// TwoFactorEnableTOTP
-// @Title: Enable TOTP
-// @Tag: Two-Factor API
-// @router: /two-factor/totp [post]
-func (c *ApiController) TwoFactorEnableTOTP() {
-	userId := jsoniter.Get(c.Ctx.Input.RequestBody, "userId").ToString()
-	secret := jsoniter.Get(c.Ctx.Input.RequestBody, "secret").ToString()
-	recoveryCode := jsoniter.Get(c.Ctx.Input.RequestBody, "recoveryCode").ToString()
+// TwoFactorEnableTotp
+// @Title TwoFactorEnableTotp
+// @Tag Two-Factor API
+// @Description enable totp
+// @param	userId		form	string	true	"Id of user"
+// @param  	secret		form	string	true	"totp secret"
+// @Success 200 {object}  Response object
+// @router /two-factor/totp [post]
+func (c *ApiController) TwoFactorEnableTotp() {
+	userId := c.Ctx.Request.Form.Get("userId")
+	secret := c.Ctx.Request.Form.Get("secret")
+	recoveryCode := c.Ctx.Request.Form.Get("recoveryCode")
 
 	user := object.GetUser(userId)
 	if user == nil {
@@ -114,13 +123,15 @@ func (c *ApiController) TwoFactorEnableTOTP() {
 	c.ResponseOk(http.StatusText(http.StatusOK))
 }
 
-// TwoFactorRemoveTOTP
-// @Title: Remove TOTP
-// @Tag: Two-Factor API
-// @router: /two-factor/totp [delete]
-func (c *ApiController) TwoFactorRemoveTOTP() {
-	userId := jsoniter.Get(c.Ctx.Input.RequestBody, "userId").ToString()
-
+// TwoFactorRemoveTotp
+// @Title TwoFactorRemoveTotp
+// @Tag Two-Factor API
+// @Description: Remove Totp
+// @param	userId	form	string	true	"Id of user"
+// @Success 200 {object}  Response object
+// @router /two-factor/totp [delete]
+func (c *ApiController) TwoFactorRemoveTotp() {
+	userId := c.Ctx.Request.Form.Get("userId")
 	user := object.GetUser(userId)
 	if user == nil {
 		c.ResponseError("User doesn't exist")
@@ -131,12 +142,15 @@ func (c *ApiController) TwoFactorRemoveTOTP() {
 	c.ResponseOk(http.StatusText(http.StatusOK))
 }
 
-// TwoFactorAuthTOTP
-// @Title: Auth TOTP
-// @Tag: TOTP API
-// @router: /two-factor/auth/totp [post]
-func (c *ApiController) TwoFactorAuthTOTP() {
-	totpSessionData := c.GetTOTPSessionData()
+// TwoFactorAuthTotp
+// @Title TwoFactorAuthTotp
+// @Tag Totp API
+// @Description Auth Totp
+// @param	passcode	form	string	true	"totp passcode"
+// @Success 200 {object}  Response object
+// @router /two-factor/auth/totp [post]
+func (c *ApiController) TwoFactorAuthTotp() {
+	totpSessionData := c.getTotpSessionData()
 	if totpSessionData == nil {
 		c.ResponseError(http.StatusText(http.StatusBadRequest))
 		return
@@ -148,8 +162,47 @@ func (c *ApiController) TwoFactorAuthTOTP() {
 		return
 	}
 
-	passcode := jsoniter.Get(c.Ctx.Input.RequestBody, "passcode").ToString()
-	ok := object.ValidateTOTPPassCode(passcode, user.TotpSecret)
+	passcode := c.Ctx.Request.Form.Get("passcode")
+	ok := object.ValidateTotpPassCode(passcode, user.TotpSecret)
+	if ok {
+		if totpSessionData.EnableSession {
+			c.SetSessionUsername(totpSessionData.UserId)
+		}
+		if !totpSessionData.AutoSignIn {
+			c.setExpireForSession()
+		}
+		c.ResponseOk(http.StatusText(http.StatusOK))
+	} else {
+		c.ResponseError(http.StatusText(http.StatusUnauthorized))
+	}
+}
+
+// TwoFactorRecoverTotp
+// @Title TwoFactorRecoverTotp
+// @Tag Totp API
+// @Description recover totp
+// @param	recoveryCode	form	string	true	"totp recovery code"
+// @Success 200 {object}  Response object
+// @router /two-factor/auth/totp/recover [post]
+func (c *ApiController) TwoFactorRecoverTotp() {
+	totpSessionData := c.getTotpSessionData()
+	if totpSessionData == nil {
+		c.ResponseError(http.StatusText(http.StatusBadRequest))
+		return
+	}
+
+	user := object.GetUser(totpSessionData.UserId)
+	if user == nil {
+		c.ResponseError("User does not exist")
+		return
+	}
+
+	recoveryCode := c.Ctx.Request.Form.Get("recoveryCode")
+	ok, err := object.RecoverTotp(user, recoveryCode)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	if ok {
 		if totpSessionData.EnableSession {
 			c.SetSessionUsername(totpSessionData.UserId)

@@ -16,17 +16,18 @@
 
 import React, {useState} from "react";
 import i18next from "i18next";
-import {Button, Input, message} from "antd";
+import {Button, Input} from "antd";
+import * as Setting from "../Setting";
 import {twoFactorAuthTotp} from "../backend/UserBackend";
 
 export const NextTwoFactor = "nextTwoFactor";
 
-export function VerityTOTP({onSuccess, onFail}) {
+export function VerityTotp({onSuccess, onFail}) {
   const [loading, setLoading] = useState(false);
   const [passcode, setPasscode] = useState("");
   const verity = () => {
     if (passcode.length === 0) {
-      message.error(i18next.t("two-factor:Enter passcode"));
+      Setting.showMessage("error", i18next.t("two-factor:Enter passcode"));
       return;
     }
 
@@ -55,7 +56,7 @@ export function VerityTOTP({onSuccess, onFail}) {
                onChange={event => setPasscode(event.target.value)}/>
         <Button style={{width: "100%"}} size={"large"} loading={loading}
                 type={"primary"} onClick={() => {
-          verity();
+                  verity();
         }}>{i18next.t("two-factor:Verity")}</Button>
       </div>
   );

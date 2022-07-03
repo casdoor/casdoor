@@ -20,7 +20,7 @@ import * as Util from "./Util";
 import {authConfig} from "./Auth";
 import * as Setting from "../Setting";
 import i18next from "i18next";
-import {NextTwoFactor, VerityTOTP} from "./TwoFactor";
+import {NextTwoFactor, VerityTotp} from "./TwoFactor";
 
 class AuthCallback extends React.Component {
   constructor(props) {
@@ -146,10 +146,10 @@ class AuthCallback extends React.Component {
         } else if (res.status === NextTwoFactor) {
           this.setState({
             getVerityTotp: function () {
-              return <VerityTOTP onSuccess={() => {
+              return <VerityTotp onSuccess={() => {
                 callback()
               }} onFail={() => {
-                message.error(i18next.t('two-factor:Verification failed'));
+                Setting.showMessage("error",i18next.t('two-factor:Verification failed'));
               }}/>
             }
           })

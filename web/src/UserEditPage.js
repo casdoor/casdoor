@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Result, message, Popconfirm, Row, Select, Space, Spin, Switch, Tag} from 'antd';
+import {Button, Card, Col, Input, Result, Popconfirm, Row, Select, Space, Spin, Switch, Tag} from 'antd';
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -45,7 +45,6 @@ class UserEditPage extends React.Component {
       user: null,
       application: null,
       organizations: [],
-      twoFactor: 0,
       applications: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
       loading: true,
@@ -66,7 +65,6 @@ class UserEditPage extends React.Component {
         if (data.status === null || data.status !== "error") {
           this.setState({
             user: data,
-            twoFactor: user.twoFactor
           });
         }
         this.setState({
@@ -455,13 +453,55 @@ class UserEditPage extends React.Component {
       )
     } else if (accountItem.name === "Two-factor authentication") {
       return (
+        !this.isSelfOrAdmin() ? null : (
         <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: "5px"}}
-               span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("two-factor:Two-factor authentication"),
-              i18next.t("two-factor:Two-factor authentication tooltip"))} :
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("two-factor:Two-factor authentication"), i18next.t("two-factor:Two-factor authentication - Tooltip "))} :
+          </Col>
+          <Col span={(Setting.isMobile()) ? 22 : 2} >
+            <Space>
+              {this.state.user.totpSecret?.length !== 0 &&
+                <Tag icon={<CheckCircleOutlined/>} color="success">Totp</Tag>}
+              {this.state.user.totpSecret?.length !== 0 ? null : <Button type={"default"} onClick={() => {
+                Setting.goToLinkSoft(this,
+                  "/set-totp/" + this.state.application.owner + "/" +
+                  this.state.user.signupApplication + "/" +
+                  this.state.user.owner + "/" + this.state.user.name);
+              }}>{i18next.t("two-factor:Setup")}</Button>}
+              {this.state.user.totpSecret?.length !== 0 &&
+                <Popconfirm
+                  title={i18next.t("two-factor:Are you sure to delete?")}
+                  onConfirm={() => {
+                    this.setState({
+                      twoFactorRemoveTotpLoading: true
+                    });
+                    UserBackend.twoFactorRemoveTotp({
+                      userId: this.state.user.owner + "/" + this.state.user.name
+                    }).then((res) => {
+                      if (res.status === "ok") {
+                        Setting.showMessage("success", i18next.t("two-factor:Removed successfully"));
+                        this.setState({
+                          user: {...this.state.user, totpSecret: null}
+                        });
+                      } else {
+                        Setting.showMessage("error", i18next.t("two-factor:Removed successfully"));
+                      }
+                    }).finally(() => {
+                      this.setState({
+                        twoFactorRemoveTotpLoading: false
+                      });
+                    });
+                  }}
+                >
+                  <Button loading={this.state.twoFactorRemoveTotpLoading}
+                          danger={true} type={"primary"}>{i18next.t(
+                    "two-factor:Remove")}</Button>
+                </Popconfirm>
+              }
+            </Space>
           </Col>
         </Row>
+        )
       )
     } else if (accountItem.name === "Properties") {
       return (

@@ -67,6 +67,7 @@ func initBuiltInOrganization() bool {
 			{Name: "Tag", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
 			{Name: "Signup application", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
 			{Name: "3rd-party logins", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
+			{Name: "Two-factor authentication", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 			{Name: "Properties", Visible: false, ViewRule: "Admin", ModifyRule: "Admin"},
 			{Name: "Is admin", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 			{Name: "Is global admin", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
