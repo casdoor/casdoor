@@ -51,6 +51,10 @@ func downloadFile(url string) (*bytes.Buffer, error) {
 }
 
 func getPermanentAvatarUrl(organization string, username string, url string) string {
+	if url == "" {
+		return ""
+	}
+
 	if defaultStorageProvider == nil {
 		return ""
 	}
