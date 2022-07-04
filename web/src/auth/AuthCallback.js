@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {message, Spin} from "antd";
+import {Spin} from "antd";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
 import * as Util from "./Util";

@@ -55,14 +55,19 @@ func tokenToResponse(token *object.Token) *Response {
 }
 
 func (c *ApiController) setFactorSessionData(data *object.TwoFactorSessionData) {
-	c.SetSession(object.TwoFactorSessionKey, data)
+	c.SetSession(object.TwoFactorSessionUserId, data.UserId)
+	c.SetSession(object.TwoFactorSessionEnableSession, data.EnableSession)
+	c.SetSession(object.TwoFactorSessionAutoSignIn, data.AutoSignIn)
 }
 
 func (c *ApiController) getTotpSessionData() *object.TwoFactorSessionData {
-	v := c.GetSession(object.TwoFactorSessionKey)
-	data, ok := v.(*object.TwoFactorSessionData)
-	if !ok {
-		return nil
+	userId := c.GetSession(object.TwoFactorSessionUserId).(string)
+	enableSession := c.GetSession(object.TwoFactorSessionEnableSession).(bool)
+	autoSignIn := c.GetSession(object.TwoFactorSessionAutoSignIn).(bool)
+	data := &object.TwoFactorSessionData{
+		UserId:        userId,
+		EnableSession: enableSession,
+		AutoSignIn:    autoSignIn,
 	}
 	return data
 }

@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Checkbox, Col, Form, Input, message, Result, Row, Spin} from "antd";
+import {Button, Checkbox, Col, Form, Input, Result, Row, Spin} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
@@ -245,7 +245,7 @@ class LoginPage extends React.Component {
                 return (
                   <VerityTotp
                     onFail={() => {
-                      message.error(i18next.t("two-factor:Verification failed"));
+                      Setting.showMessage("error", i18next.t("two-factor:Verification failed"));
                     }}
                     onSuccess={() => callback()}/>);
               }

@@ -460,15 +460,12 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={(Setting.isMobile()) ? 22 : 2} >
             <Space>
-              {this.state.user.totpSecret?.length !== 0 &&
+              {this.state.user.totpSecret !== "" &&
                 <Tag icon={<CheckCircleOutlined/>} color="success">Totp</Tag>}
-              {this.state.user.totpSecret?.length !== 0 ? null : <Button type={"default"} onClick={() => {
-                Setting.goToLinkSoft(this,
-                  "/set-totp/" + this.state.application.owner + "/" +
-                  this.state.user.signupApplication + "/" +
-                  this.state.user.owner + "/" + this.state.user.name);
+              {this.state.user.totpSecret !== "" ? null : <Button type={"default"} onClick={() => {
+                Setting.goToLink(`/set-totp/${this.state.application.owner}/${this.state.user.signupApplication}/${this.state.user.owner}/${this.state.user.name}`);
               }}>{i18next.t("two-factor:Setup")}</Button>}
-              {this.state.user.totpSecret?.length !== 0 &&
+              {this.state.user.totpSecret !== "" &&
                 <Popconfirm
                   title={i18next.t("two-factor:Are you sure to delete?")}
                   onConfirm={() => {
@@ -480,11 +477,9 @@ class UserEditPage extends React.Component {
                     }).then((res) => {
                       if (res.status === "ok") {
                         Setting.showMessage("success", i18next.t("two-factor:Removed successfully"));
-                        this.setState({
-                          user: {...this.state.user, totpSecret: null}
-                        });
+                        this.updateUserField('totpSecret', "");
                       } else {
-                        Setting.showMessage("error", i18next.t("two-factor:Removed successfully"));
+                        Setting.showMessage("error", i18next.t("two-factor:Removed failed"));
                       }
                     }).finally(() => {
                       this.setState({

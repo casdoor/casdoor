@@ -1,4 +1,4 @@
-// Copyright 2022 The casbin Authors. All Rights Reserved.
+// Copyright 2022 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,14 @@ package object
 import (
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
-	"xorm.io/core"
 )
 
-const TwoFactorSessionKey = "TwoFactor"
-const NextTwoFactor = "nextTwoFactor"
+const (
+	TwoFactorSessionUserId        = "TwoFactorSessionUserId"
+	TwoFactorSessionEnableSession = "TwoFactorSessionEnableSession"
+	TwoFactorSessionAutoSignIn    = "TwoFactorSessionAutoSignIn"
+	NextTwoFactor                 = "nextTwoFactor"
+)
 
 type TwoFactorSessionData struct {
 	UserId        string
@@ -47,9 +50,13 @@ func ValidateTotpPassCode(passcode string, secret string) bool {
 }
 
 func RecoverTotp(user *User, recoveryCode string) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).
-		Where("two_factor_recovery_code = ?", recoveryCode).
-		Cols("two_factor_recovery_code").Update(user)
+	if user.TwoFactorRecoveryCode != recoveryCode {
+		return false, nil
+	}
+	user.TwoFactorRecoveryCode = ""
+	user.TotpSecret = ""
+	affected, err := adapter.Engine.
+		Cols("totp_secret", "two_factor_recovery_code").Update(user)
 	if err != nil {
 		return false, err
 	}

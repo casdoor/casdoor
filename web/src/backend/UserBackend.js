@@ -218,7 +218,7 @@ export function twoFactorAuthTotp(values) {
 export function twoFactorRecoverTotp(values) {
   let formData = new FormData();
   formData.append("recoveryCode", values.recoveryCode);
-  return fetch(`${Setting.ServerUrl}/api/two-factor/totp/recover`, {
+  return fetch(`${Setting.ServerUrl}/api/two-factor/auth/totp/recover`, {
     method: "POST",
     credentials: "include",
     body: formData

@@ -666,6 +666,8 @@
     "Two-factor secret": "双因子密钥",
     "Two-factor secret - Tooltip": "双因子密钥",
     "Two-factor secret to clipboard successfully": "双因子密钥已复制到剪贴板",
+    "Two-factor recover": "重置双因子认证",
+    "Two-factor recover description": "如果您无法访问您的设备，输入您的双因子认证恢复代码来确认您的身份",
     "Verification failed": "验证失败",
     "Verity": "验证",
     "Setup": "设置",
@@ -684,6 +686,10 @@
     "Each time you sign in to your Account, you'll need your password and a authentication code": "每次登录帐户时，都需要密码和认证码",
     "Next step": "下一步",
     "Please save this recovery code. Once your device cannot provide an authentication code, you can reset two-factor authentication by this recovery code": "请保存此恢复代码。一旦您的设备无法提供身份验证码，您可以通过此恢复码重置双因子认证",
-    "Are you sure to delete?": "确定删除吗？"
+    "Are you sure to delete?": "确定删除吗？",
+    "Have problems?": "遇到问题?",
+    "Use a recovery code": "使用恢复代码",
+    "Recovery code": "恢复代码",
+    "Enter recovery code": "输入恢复代码"
   }
 }

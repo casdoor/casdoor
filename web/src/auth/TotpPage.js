@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -215,8 +215,7 @@ class TotpPage extends React.Component {
 					}}
 				/>;
 			case 1:
-				return <VerityTotp
-					totp={this.state?.totp}
+				return <VerityTotp totp={this.state?.totp}
 					onSuccess={() => {
 						this.setState({
 							current: this.state.current + 1
@@ -228,18 +227,15 @@ class TotpPage extends React.Component {
 					}}
 				/>;
 			case 2:
-				return <EnableTotp
-					user={this.getUser()}
-					totp={this.state?.totp}
-					onSuccess={() => {
-					Setting.showMessage("success",i18next.t('two-factor:Enabled successfully'));
-						Setting.goToLinkSoft(this, "/account");
-					}}
-					onFail={(res) => {
-						Setting.showMessage("error",
-							i18next.t(`signup:${res.msg}`));
-					}}
-				/>;
+				return <EnableTotp user={this.getUser()} totp={this.state?.totp}
+					 onSuccess={() => {
+						 Setting.showMessage("success", i18next.t('two-factor:Enabled successfully'));
+						 Setting.goToLinkSoft(this, "/account");
+					 }}
+					 onFail={(res) => {
+						 Setting.showMessage("error",
+							 i18next.t(`signup:${res.msg}`));
+					 }}/>;
 				default:
 					return null;
 		}
@@ -256,68 +252,36 @@ class TotpPage extends React.Component {
 				<Col span={24} style={{justifyContent: "center"}}>
 					<Row>
 						<Col span={24}>
-							<div style={{
-								marginTop: "80px",
-								marginBottom: "10px",
-								textAlign: "center"
-							}}>
-								{
-									Setting.renderHelmet(application)
-								}
+							<div style={{marginTop: "80px", marginBottom: "10px", textAlign: "center"}}>
+								{Setting.renderHelmet(application)}
 								<CustomGithubCorner/>
-								{
-									Setting.renderLogo(application)
-								}
-							</div>
+								{Setting.renderLogo(application)}</div>
 						</Col>
 					</Row>
 					<Row>
 						<Col span={24}>
 							<div style={{textAlign: "center", fontSize: "28px"}}>
-								{i18next.t(
-									"two-factor:Protect your account with two-factor authentication")}
-							</div>
-							<div style={{
-								textAlign: "center",
-								fontSize: "16px",
-								marginTop: "10px"
-							}}>
-								{i18next.t(
-									"two-factor:Each time you sign in to your Account, you'll need your password and a authentication code")}
-							</div>
+								{i18next.t("two-factor:Protect your account with two-factor authentication")}</div>
+							<div style={{textAlign: "center", fontSize: "16px", marginTop: "10px"}}>{i18next.t("two-factor:Each time you sign in to your Account, you'll need your password and a authentication code")}</div>
 						</Col>
 					</Row>
 					<Row>
 						<Col span={24}>
-							<Steps
-								current={this.state.current}
-								style={{
+							<Steps current={this.state.current} style={{
 									width: "90%",
 									maxWidth: "500px",
 									margin: "auto",
 									marginTop: "80px"
-								}}
-							>
-								<Step
-									title={i18next.t("two-factor:Verify Password")}
-									icon={<UserOutlined/>}
-								/>
-								<Step
-									title={i18next.t("two-factor:Verify Code")}
-									icon={<KeyOutlined/>}
-								/>
-								<Step
-									title={i18next.t("two-factor:Enable")}
-									icon={<CheckOutlined/>}
-								/>
+								}} >
+								<Step title={i18next.t("two-factor:Verify Password")} icon={<UserOutlined/>} />
+								<Step title={i18next.t("two-factor:Verify Code")} icon={<KeyOutlined/>} />
+								<Step title={i18next.t("two-factor:Enable")} icon={<CheckOutlined/>} />
 							</Steps>
 						</Col>
 					</Row>
 				</Col>
 				<Col span={24} style={{ display: "flex", justifyContent: "center" }}>
-					<div style={{ marginTop: "10px", textAlign: "center" }}>
-						{this.renderStep()}
-					</div>
+					<div style={{ marginTop: "10px", textAlign: "center" }}>{this.renderStep()}</div>
 				</Col>
 			</Row>
 		);
