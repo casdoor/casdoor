@@ -97,8 +97,8 @@ const authInfo = {
     endpoint: "https://appleid.apple.com/auth/authorize",
   },
   AzureAD: {
-    scope: "user_impersonation",
-    endpoint: "https://login.microsoftonline.com/common/oauth2/authorize",
+    scope: "user.read",
+    endpoint: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
   },
   Slack: {
     scope: "users:read",
@@ -236,7 +236,7 @@ export function getAuthUrl(application, provider, method) {
   } else if (provider.type === "Apple") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&response_mode=form_post`;
   } else if (provider.type === "AzureAD") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&resource=https://graph.windows.net/`;
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Slack") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Steam") {
