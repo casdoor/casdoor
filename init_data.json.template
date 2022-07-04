@@ -1,0 +1,158 @@
+{
+  "organizations": [
+    {
+      "owner": "",
+      "name": "",
+      "displayName": "",
+      "websiteUrl": "",
+      "favicon": "",
+      "passwordType": "",
+      "phonePrefix": "",
+      "defaultAvatar": "",
+      "tags": [""]
+    }
+  ],
+  "applications": [
+    {
+      "owner": "",
+      "name": "",
+      "displayName": "",
+      "logo": "",
+      "homepageUrl": "",
+      "organization": "",
+      "cert": "",
+      "enablePassword": true,
+      "enableSignUp": true,
+      "providers": [
+        {
+          "name": "",
+          "canSignUp": true,
+          "canSignIn": true,
+          "canUnlink": false,
+          "prompted": false,
+          "alertType": "None"
+        }
+      ],
+      "signupItems": [
+        {
+          "name": "ID",
+          "visible": false,
+          "required": true,
+          "prompted": false,
+          "rule": "Random"
+        },
+        {
+          "name": "Username",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        },
+        {
+          "name": "Display name",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        },
+        {
+          "name": "Password",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        },
+        {
+          "name": "Confirm password",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        },
+        {
+          "name": "Email",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        },
+        {
+          "name": "Phone",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        },
+        {
+          "name": "Agreement",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        }
+      ],
+      "redirectUris": [""],
+      "expireInHours": 168
+    }
+  ],
+  "users": [
+    {
+      "owner": "",
+      "name": "",
+      "type": "normal-user",
+      "password": "",
+      "displayName": "",
+      "avatar": "",
+      "email": "",
+      "phone": "",
+      "address": [],
+      "affiliation": "",
+      "tag": "",
+      "score": 2000,
+      "ranking": 1,
+      "isAdmin": true,
+      "isGlobalAdmin": true,
+      "isForbidden": false,
+      "isDeleted": false,
+      "signupApplication": "",
+      "createdIp": ""
+    }
+  ],
+  "providers": [
+    {
+      "owner": "",
+      "name": "",
+      "displayName": "",
+      "category": "",
+      "type": ""
+    }
+  ],
+  "certs": [
+    {
+      "owner": "",
+      "name": "",
+      "displayName": "",
+      "scope": "JWT",
+      "type": "x509",
+      "cryptoAlgorithm": "RS256",
+      "bitSize": 4096,
+      "expireInYears": 20,
+      "publicKey": "",
+      "privateKey": ""
+    }
+  ],
+  "ldaps": [
+    {
+      "id": "",
+      "owner": "",
+      "serverName": "",
+      "host": "",
+      "port": 389,
+      "admin": "",
+      "passwd": "",
+      "baseDn": "",
+      "autoSync": 0,
+      "lastSync": ""
+    }
+  ]
+}

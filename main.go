@@ -36,6 +36,7 @@ func main() {
 
 	object.InitAdapter(*createDatabase)
 	object.InitDb()
+	object.InitFromFile()
 	object.InitDefaultStorageProvider()
 	object.InitLdapAutoSynchronizer()
 	proxy.InitHttpClient()
