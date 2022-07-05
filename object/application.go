@@ -280,8 +280,12 @@ func UpdateApplication(id string, application *Application) bool {
 }
 
 func AddApplication(application *Application) bool {
-	application.ClientId = util.GenerateClientId()
-	application.ClientSecret = util.GenerateClientSecret()
+	if application.ClientId == "" {
+		application.ClientId = util.GenerateClientId()
+	}
+	if application.ClientSecret == "" {
+		application.ClientSecret = util.GenerateClientSecret()
+	}
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}

@@ -23,6 +23,8 @@
       "cert": "",
       "enablePassword": true,
       "enableSignUp": true,
+      "clientId": "",
+      "clientSecret": "",
       "providers": [
         {
           "name": "",
