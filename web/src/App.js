@@ -71,6 +71,7 @@ import SamlCallback from './auth/SamlCallback';
 import CasLogout from "./auth/CasLogout";
 import ModelListPage from "./ModelListPage";
 import ModelEditPage from "./ModelEditPage";
+import UserMergePage from './UserMerge';
 
 const { Header, Footer } = Layout;
 
@@ -551,6 +552,8 @@ class App extends Component {
           <Route exact path="/payments/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)}/>
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
           <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />}/>
+          <Route exact path="/usermerge" render={(props) => this.renderLoginIfNotLoggedIn(<UserMergePage account={this.state.account} {...props} />)}/>
+
           <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
                                                extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
       </Switch>
