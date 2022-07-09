@@ -20,7 +20,7 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import TextArea from "antd/es/input/TextArea";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class ModelEditPage extends React.Component {
   constructor(props) {

@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Col, Form, Input, Result, Row, Spin } from "antd";
+import {LockOutlined, UserOutlined} from "@ant-design/icons";
+import {Button, Checkbox, Col, Form, Input, Result, Row, Spin} from "antd";
 import i18next from "i18next";
 import React from "react";
-import { Link } from "react-router-dom";
-import { GithubLoginButton, GoogleLoginButton } from "react-social-login-buttons";
+import {Link} from "react-router-dom";
+import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
-import { CountDownInput } from "../common/CountDownInput";
+import {CountDownInput} from "../common/CountDownInput";
 import CustomGithubCorner from "../CustomGithubCorner";
 import * as Setting from "../Setting";
 import AdfsLoginButton from "./AdfsLoginButton";
@@ -78,7 +78,7 @@ class LoginPage extends React.Component {
       this.getApplication();
     } else if (this.state.type === "code") {
       this.getApplicationLogin();
-    } else if (this.state.type === "saml"){
+    } else if (this.state.type === "saml") {
       this.getSamlApplication();
     } else {
       Util.showMessage("error", `Unknown authentication type: ${this.state.type}`);
@@ -116,8 +116,8 @@ class LoginPage extends React.Component {
       });
   }
 
-  getSamlApplication(){
-    if (this.state.applicationName === null){
+  getSamlApplication() {
+    if (this.state.applicationName === null) {
       return;
     }
     ApplicationBackend.getApplication(this.state.owner, this.state.applicationName)
@@ -172,7 +172,7 @@ class LoginPage extends React.Component {
     } else {
       // OAuth
       const oAuthParams = Util.getOAuthGetParameters();
-      if (oAuthParams !== null && oAuthParams.responseType != null && oAuthParams.responseType !== "") {
+      if (oAuthParams !== null && oAuthParams.responseType !== null && oAuthParams.responseType !== "") {
         values["type"] = oAuthParams.responseType;
       } else {
         values["type"] = this.state.type;
@@ -183,7 +183,7 @@ class LoginPage extends React.Component {
         values["samlRequest"] = oAuthParams.samlRequest;
       }
 
-      if (values["samlRequest"] != null && values["samlRequest"] !== "") {
+      if (values["samlRequest"] !== null && values["samlRequest"] !== "") {
         values["type"] = "saml";
       }
 
@@ -257,7 +257,7 @@ class LoginPage extends React.Component {
       return <WechatLoginButton text={text} align={"center"} />;
     } else if (type === "DingTalk") {
       return <DingTalkLoginButton text={text} align={"center"} />;
-    } else if (type === "LinkedIn"){
+    } else if (type === "LinkedIn") {
       return <LinkedInLoginButton text={text} align={"center"} />;
     } else if (type === "WeCom") {
       return <WeComLoginButton text={text} align={"center"} />;
@@ -437,7 +437,7 @@ class LoginPage extends React.Component {
           >
             <Input
               prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder={ this.state.isCodeSignin ? i18next.t("login:Email or phone") : i18next.t("login:username, Email or phone") }
+              placeholder={this.state.isCodeSignin ? i18next.t("login:Email or phone") : i18next.t("login:username, Email or phone")}
               disabled={!application.enablePassword}
               onChange={e => {
                 this.setState({
@@ -450,7 +450,7 @@ class LoginPage extends React.Component {
             this.state.isCodeSignin ? (
               <Form.Item
                 name="code"
-                rules={[{ required: true, message: i18next.t("login:Please input your code!") }]}
+                rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
               >
                 <CountDownInput
                   disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
@@ -460,7 +460,7 @@ class LoginPage extends React.Component {
             ) : (
               <Form.Item
                 name="password"
-                rules={[{ required: true, message: i18next.t("login:Please input your password!") }]}
+                rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
               >
                 <Input
                   prefix={<LockOutlined className="site-form-item-icon" />}
@@ -517,7 +517,7 @@ class LoginPage extends React.Component {
             </a>
             :
           </div>
-          <br/>
+          <br />
           {
             application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
               return this.renderProviderLogo(providerItem.provider, application, 40, 10, "big");
@@ -526,7 +526,7 @@ class LoginPage extends React.Component {
           {
             !application.enableSignUp ? null : (
               <div>
-                <br/>
+                <br />
                 {
                   this.renderFooter(application)
                 }
@@ -604,20 +604,20 @@ class LoginPage extends React.Component {
 
     return (
       <div>
-        {/*{*/}
+        {/* {*/}
         {/*  JSON.stringify(silentSignin)*/}
-        {/*}*/}
+        {/* }*/}
         <div style={{fontSize: 16, textAlign: "left"}}>
           {i18next.t("login:Continue with")}&nbsp;:
         </div>
-        <br/>
+        <br />
         <SelfLoginButton account={this.props.account} onClick={() => {
           let values = {};
           values["application"] = this.state.application.name;
           this.onFinish(values);
         }} />
-        <br/>
-        <br/>
+        <br />
+        <br />
         <div style={{fontSize: 16, textAlign: "left"}}>
           {i18next.t("login:Or sign in with another account")}&nbsp;:
         </div>
@@ -633,7 +633,7 @@ class LoginPage extends React.Component {
 
     if (application.signinHtml !== "") {
       return (
-        <div dangerouslySetInnerHTML={{ __html: application.signinHtml}} />
+        <div dangerouslySetInnerHTML={{__html: application.signinHtml}} />
       );
     }
 
@@ -658,9 +658,9 @@ class LoginPage extends React.Component {
             {
               Setting.renderLogo(application)
             }
-            {/*{*/}
+            {/* {*/}
             {/*  this.state.clientId !== null ? "Redirect" : null*/}
-            {/*}*/}
+            {/* }*/}
             {
               this.renderSignedInBox()
             }

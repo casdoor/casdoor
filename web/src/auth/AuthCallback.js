@@ -87,7 +87,7 @@ class AuthCallback extends React.Component {
     if (code === null) {
       code = params.get("authCode");
     }
-    //Steam don't use code, so we should use all params as code.
+    // Steam don't use code, so we should use all params as code.
     if (isSteam !== null && code === null) {
       code = this.props.location.search;
     }
@@ -127,7 +127,7 @@ class AuthCallback extends React.Component {
             const code = res.data;
             Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
             // Util.showMessage("success", `Authorization code: ${res.data}`);
-          } else if (responseType === "token" || responseType === "id_token"){
+          } else if (responseType === "token" || responseType === "id_token") {
             const token = res.data;
             Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
           } else if (responseType === "link") {

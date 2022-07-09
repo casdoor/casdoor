@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { SafetyOutlined } from "@ant-design/icons";
-import { Button, Col, Input, Modal, Row } from "antd";
+import {SafetyOutlined} from "@ant-design/icons";
+import {Button, Col, Input, Modal, Row} from "antd";
 import i18next from "i18next";
 import React from "react";
 import * as ProviderBackend from "../backend/ProviderBackend";
 import * as UserBackend from "../backend/UserBackend";
-import { CaptchaWidget } from "./CaptchaWidget";
+import {CaptchaWidget} from "./CaptchaWidget";
 
 export const CaptchaPreview = ({
   provider,
@@ -149,7 +149,7 @@ export const CaptchaPreview = ({
   return (
     <React.Fragment>
       <Button
-        style={{ fontSize: 14 }}
+        style={{fontSize: 14}}
         type={"primary"}
         onClick={clickPreview}
         disabled={getButtonDisabled()}

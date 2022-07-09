@@ -22,7 +22,7 @@ import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./LdapTable";
 import AccountTable from "./AccountTable";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class OrganizationEditPage extends React.Component {
   constructor(props) {
@@ -114,7 +114,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel( i18next.t("general:Favicon"), i18next.t("general:Favicon - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Favicon"), i18next.t("general:Favicon - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Row style={{marginTop: "20px"}} >
@@ -122,7 +122,7 @@ class OrganizationEditPage extends React.Component {
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
               <Col span={23} >
-                <Input prefix={<LinkOutlined/>} value={this.state.organization.favicon} onChange={e => {
+                <Input prefix={<LinkOutlined />} value={this.state.organization.favicon} onChange={e => {
                   this.updateOrganizationField("favicon", e.target.value);
                 }} />
               </Col>
@@ -133,7 +133,7 @@ class OrganizationEditPage extends React.Component {
               </Col>
               <Col span={23} >
                 <a target="_blank" rel="noreferrer" href={this.state.organization.favicon}>
-                  <img src={this.state.organization.favicon} alt={this.state.organization.favicon} height={90} style={{marginBottom: "20px"}}/>
+                  <img src={this.state.organization.favicon} alt={this.state.organization.favicon} height={90} style={{marginBottom: "20px"}} />
                 </a>
               </Col>
             </Row>
@@ -144,7 +144,7 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("organization:Website URL"), i18next.t("organization:Website URL - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.organization.websiteUrl} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={this.state.organization.websiteUrl} onChange={e => {
               this.updateOrganizationField("websiteUrl", e.target.value);
             }} />
           </Col>
@@ -192,7 +192,7 @@ class OrganizationEditPage extends React.Component {
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
               <Col span={23} >
-                <Input prefix={<LinkOutlined/>} value={this.state.organization.defaultAvatar} onChange={e => {
+                <Input prefix={<LinkOutlined />} value={this.state.organization.defaultAvatar} onChange={e => {
                   this.updateOrganizationField("defaultAvatar", e.target.value);
                 }} />
               </Col>
@@ -203,7 +203,7 @@ class OrganizationEditPage extends React.Component {
               </Col>
               <Col span={23} >
                 <a target="_blank" rel="noreferrer" href={this.state.organization.defaultAvatar}>
-                  <img src={this.state.organization.defaultAvatar} alt={this.state.organization.defaultAvatar} height={90} style={{marginBottom: "20px"}}/>
+                  <img src={this.state.organization.defaultAvatar} alt={this.state.organization.defaultAvatar} height={90} style={{marginBottom: "20px"}} />
                 </a>
               </Col>
             </Row>
@@ -259,7 +259,7 @@ class OrganizationEditPage extends React.Component {
             <AccountTable
               title={i18next.t("organization:Account items")}
               table={this.state.organization.accountItems}
-              onUpdateTable={(value) => { this.updateOrganizationField("accountItems", value);}}
+              onUpdateTable={(value) => {this.updateOrganizationField("accountItems", value);}}
             />
           </Col>
         </Row>
@@ -273,7 +273,7 @@ class OrganizationEditPage extends React.Component {
               table={this.state.ldaps}
               organizationName={this.state.organizationName}
               onUpdateTable={(value) => {
-                this.setState({ldaps: value}); }}
+                this.setState({ldaps: value});}}
             />
           </Col>
         </Row>

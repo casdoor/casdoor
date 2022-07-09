@@ -21,7 +21,7 @@ import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import ProductBuyPage from "./ProductBuyPage";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class ProductEditPage extends React.Component {
   constructor(props) {
@@ -116,7 +116,7 @@ class ProductEditPage extends React.Component {
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
               <Col span={23} >
-                <Input prefix={<LinkOutlined/>} value={this.state.product.image} onChange={e => {
+                <Input prefix={<LinkOutlined />} value={this.state.product.image} onChange={e => {
                   this.updateProductField("image", e.target.value);
                 }} />
               </Col>
@@ -127,7 +127,7 @@ class ProductEditPage extends React.Component {
               </Col>
               <Col span={23} >
                 <a target="_blank" rel="noreferrer" href={this.state.product.image}>
-                  <img src={this.state.product.image} alt={this.state.product.image} height={90} style={{marginBottom: "20px"}}/>
+                  <img src={this.state.product.image} alt={this.state.product.image} height={90} style={{marginBottom: "20px"}} />
                 </a>
               </Col>
             </Row>
@@ -217,7 +217,7 @@ class ProductEditPage extends React.Component {
             {Setting.getLabel(i18next.t("product:Return URL"), i18next.t("product:Return URL - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.product.returnUrl} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={this.state.product.returnUrl} onChange={e => {
               this.updateProductField("returnUrl", e.target.value);
             }} />
           </Col>
@@ -258,8 +258,8 @@ class ProductEditPage extends React.Component {
         <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={buyUrl}>
           <Button type="primary">{i18next.t("product:Test buy page..")}</Button>
         </a>
-        <br/>
-        <br/>
+        <br />
+        <br />
         <div style={{width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
           <ProductBuyPage product={this.state.product} />
         </div>

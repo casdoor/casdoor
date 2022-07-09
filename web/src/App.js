@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { DownOutlined, LogoutOutlined, SettingOutlined } from "@ant-design/icons";
-import { Avatar, BackTop, Button, Card, Dropdown, Layout, Menu, Result } from "antd";
-import React, { Component } from "react";
-import { Helmet } from "react-helmet";
-import { Link, Redirect, Route, Switch, withRouter } from "react-router-dom";
+import {DownOutlined, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
+import {Avatar, BackTop, Button, Card, Dropdown, Layout, Menu, Result} from "antd";
+import React, {Component} from "react";
+import {Helmet} from "react-helmet";
+import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import AccountPage from "./account/AccountPage";
 import "./App.less";
 import ApplicationEditPage from "./ApplicationEditPage";
@@ -72,7 +72,7 @@ import ModelEditPage from "./ModelEditPage";
 import ModelListPage from "./ModelListPage";
 import SelectLanguageBox from "./SelectLanguageBox";
 
-const { Header, Footer } = Layout;
+const {Header, Footer} = Layout;
 
 class App extends Component {
   constructor(props) {
@@ -111,45 +111,45 @@ class App extends Component {
       uri: uri,
     });
     if (uri === "/") {
-      this.setState({ selectedMenuKey: "/" });
+      this.setState({selectedMenuKey: "/"});
     } else if (uri.includes("/organizations")) {
-      this.setState({ selectedMenuKey: "/organizations" });
+      this.setState({selectedMenuKey: "/organizations"});
     } else if (uri.includes("/users")) {
-      this.setState({ selectedMenuKey: "/users" });
+      this.setState({selectedMenuKey: "/users"});
     } else if (uri.includes("/roles")) {
-      this.setState({ selectedMenuKey: "/roles" });
+      this.setState({selectedMenuKey: "/roles"});
     } else if (uri.includes("/permissions")) {
-      this.setState({ selectedMenuKey: "/permissions" });
+      this.setState({selectedMenuKey: "/permissions"});
     } else if (uri.includes("/models")) {
-      this.setState({ selectedMenuKey: "/models" });
+      this.setState({selectedMenuKey: "/models"});
     } else if (uri.includes("/providers")) {
-      this.setState({ selectedMenuKey: "/providers" });
+      this.setState({selectedMenuKey: "/providers"});
     } else if (uri.includes("/applications")) {
-      this.setState({ selectedMenuKey: "/applications" });
+      this.setState({selectedMenuKey: "/applications"});
     } else if (uri.includes("/resources")) {
-      this.setState({ selectedMenuKey: "/resources" });
+      this.setState({selectedMenuKey: "/resources"});
     } else if (uri.includes("/tokens")) {
-      this.setState({ selectedMenuKey: "/tokens" });
+      this.setState({selectedMenuKey: "/tokens"});
     } else if (uri.includes("/records")) {
-      this.setState({ selectedMenuKey: "/records" });
+      this.setState({selectedMenuKey: "/records"});
     } else if (uri.includes("/webhooks")) {
-      this.setState({ selectedMenuKey: "/webhooks" });
+      this.setState({selectedMenuKey: "/webhooks"});
     } else if (uri.includes("/syncers")) {
-      this.setState({ selectedMenuKey: "/syncers" });
+      this.setState({selectedMenuKey: "/syncers"});
     } else if (uri.includes("/certs")) {
-      this.setState({ selectedMenuKey: "/certs" });
+      this.setState({selectedMenuKey: "/certs"});
     } else if (uri.includes("/products")) {
-      this.setState({ selectedMenuKey: "/products" });
+      this.setState({selectedMenuKey: "/products"});
     } else if (uri.includes("/payments")) {
-      this.setState({ selectedMenuKey: "/payments" });
+      this.setState({selectedMenuKey: "/payments"});
     } else if (uri.includes("/signup")) {
-      this.setState({ selectedMenuKey: "/signup" });
+      this.setState({selectedMenuKey: "/signup"});
     } else if (uri.includes("/login")) {
-      this.setState({ selectedMenuKey: "/login" });
+      this.setState({selectedMenuKey: "/login"});
     } else if (uri.includes("/result")) {
-      this.setState({ selectedMenuKey: "/result" });
+      this.setState({selectedMenuKey: "/result"});
     } else {
-      this.setState({ selectedMenuKey: -1 });
+      this.setState({selectedMenuKey: -1});
     }
   }
 
@@ -269,13 +269,13 @@ class App extends Component {
   renderAvatar() {
     if (this.state.account.avatar === "") {
       return (
-        <Avatar style={{ backgroundColor: Setting.getAvatarColor(this.state.account.name), verticalAlign: "middle" }} size="large">
+        <Avatar style={{backgroundColor: Setting.getAvatarColor(this.state.account.name), verticalAlign: "middle"}} size="large">
           {Setting.getShortName(this.state.account.name)}
         </Avatar>
       );
     } else {
       return (
-        <Avatar src={this.state.account.avatar} style={{verticalAlign: "middle" }} size="large">
+        <Avatar src={this.state.account.avatar} style={{verticalAlign: "middle"}} size="large">
           {Setting.getShortName(this.state.account.name)}
         </Avatar>
       );
@@ -508,49 +508,49 @@ class App extends Component {
       window.location.pathname === "/";
   }
 
-  renderRouter(){
+  renderRouter() {
     return(
       <div>
         <Switch>
-          <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
-          <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)}/>
-          <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)}/>
-          <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />}/>
-          <Route exact path="/roles" render={(props) => this.renderLoginIfNotLoggedIn(<RoleListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/roles/:organizationName/:roleName" render={(props) => this.renderLoginIfNotLoggedIn(<RoleEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/permissions" render={(props) => this.renderLoginIfNotLoggedIn(<PermissionListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/permissions/:organizationName/:permissionName" render={(props) => this.renderLoginIfNotLoggedIn(<PermissionEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/models" render={(props) => this.renderLoginIfNotLoggedIn(<ModelListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/models/:organizationName/:modelName" render={(props) => this.renderLoginIfNotLoggedIn(<ModelEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/applications/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/resources" render={(props) => this.renderLoginIfNotLoggedIn(<ResourceListPage account={this.state.account} {...props} />)}/>
-          {/*<Route exact path="/resources/:resourceName" render={(props) => this.renderLoginIfNotLoggedIn(<ResourceEditPage account={this.state.account} {...props} />)}/>*/}
-          <Route exact path="/ldap/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/ldap/sync/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapSyncPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/webhooks" render={(props) => this.renderLoginIfNotLoggedIn(<WebhookListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/webhooks/:webhookName" render={(props) => this.renderLoginIfNotLoggedIn(<WebhookEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/syncers" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/syncers/:syncerName" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/certs" render={(props) => this.renderLoginIfNotLoggedIn(<CertListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/certs/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/products" render={(props) => this.renderLoginIfNotLoggedIn(<ProductListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/products/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/products/:productName/buy" render={(props) => this.renderLoginIfNotLoggedIn(<ProductBuyPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/payments" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/payments/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)}/>
-          <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />}/>
+          <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)} />
+          <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)} />
+          <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)} />
+          <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)} />
+          <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />} />
+          <Route exact path="/roles" render={(props) => this.renderLoginIfNotLoggedIn(<RoleListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/roles/:organizationName/:roleName" render={(props) => this.renderLoginIfNotLoggedIn(<RoleEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/permissions" render={(props) => this.renderLoginIfNotLoggedIn(<PermissionListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/permissions/:organizationName/:permissionName" render={(props) => this.renderLoginIfNotLoggedIn(<PermissionEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/models" render={(props) => this.renderLoginIfNotLoggedIn(<ModelListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/models/:organizationName/:modelName" render={(props) => this.renderLoginIfNotLoggedIn(<ModelEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/applications/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/resources" render={(props) => this.renderLoginIfNotLoggedIn(<ResourceListPage account={this.state.account} {...props} />)} />
+          {/* <Route exact path="/resources/:resourceName" render={(props) => this.renderLoginIfNotLoggedIn(<ResourceEditPage account={this.state.account} {...props} />)}/>*/}
+          <Route exact path="/ldap/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/ldap/sync/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapSyncPage account={this.state.account} {...props} />)} />
+          <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/webhooks" render={(props) => this.renderLoginIfNotLoggedIn(<WebhookListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/webhooks/:webhookName" render={(props) => this.renderLoginIfNotLoggedIn(<WebhookEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/syncers" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/syncers/:syncerName" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/certs" render={(props) => this.renderLoginIfNotLoggedIn(<CertListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/certs/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/products" render={(props) => this.renderLoginIfNotLoggedIn(<ProductListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/products/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/products/:productName/buy" render={(props) => this.renderLoginIfNotLoggedIn(<ProductBuyPage account={this.state.account} {...props} />)} />
+          <Route exact path="/payments" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/payments/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)} />
+          <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)} />
+          <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
           <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
             extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
         </Switch>
@@ -561,9 +561,9 @@ class App extends Component {
   renderContent() {
     if (!Setting.isMobile()) {
       return (
-        <div style={{display: "flex", flex: "auto",width:"100%",flexDirection: "column"}}>
+        <div style={{display: "flex", flex: "auto", width:"100%", flexDirection: "column"}}>
           <Layout style={{display: "flex", alignItems: "stretch"}}>
-            <Header style={{ padding: "0", marginBottom: "3px"}}>
+            <Header style={{padding: "0", marginBottom: "3px"}}>
               {
                 Setting.isMobile() ? null : (
                   <Link to={"/"}>
@@ -585,7 +585,7 @@ class App extends Component {
                 {
                   this.renderAccount()
                 }
-                <SelectLanguageBox/>
+                <SelectLanguageBox />
               </div>
             </Header>
             <Layout style={{backgroundColor: "#f5f5f5", alignItems: "stretch"}}>
@@ -601,7 +601,7 @@ class App extends Component {
     } else {
       return(
         <div>
-          <Header style={{ padding: "0", marginBottom: "3px"}}>
+          <Header style={{padding: "0", marginBottom: "3px"}}>
             {
               Setting.isMobile() ? null : (
                 <Link to={"/"}>
@@ -613,7 +613,7 @@ class App extends Component {
             // theme="dark"
               mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
               selectedKeys={[`${this.state.selectedMenuKey}`]}
-              style={{ lineHeight: "64px" }}
+              style={{lineHeight: "64px"}}
             >
               {
                 this.renderMenu()
@@ -622,7 +622,7 @@ class App extends Component {
                 {
                   this.renderAccount()
                 }
-                <SelectLanguageBox/>
+                <SelectLanguageBox />
               </div>
             </Menu>
           </Header>
@@ -665,22 +665,22 @@ class App extends Component {
       return (
         <div>
           <Switch>
-            <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} />)}/>
-            <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />)}/>
-            <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage account={this.state.account} {...props} />)}/>
-            <Route exact path="/signup/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signup"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />}/>
-            <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />}/>
-            <Route exact path="/login/saml/authorize/:owner/:applicationName" render={(props) => <LoginPage account={this.state.account} type={"saml"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />}/>
+            <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} />)} />
+            <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />)} />
+            <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage account={this.state.account} {...props} />)} />
+            <Route exact path="/signup/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signup"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
+            <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
+            <Route exact path="/login/saml/authorize/:owner/:applicationName" render={(props) => <LoginPage account={this.state.account} type={"saml"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
             <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout clearAccount={() => this.setState({account: null})} {...props} />)} />
             <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage type={"cas"} mode={"signup"} account={this.state.account} {...props} />);}} />
-            <Route exact path="/callback" component={AuthCallback}/>
-            <Route exact path="/callback/saml" component={SamlCallback}/>
-            <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)}/>
-            <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)}/>
-            <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)}/>
-            <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} {...props} />)}/>
+            <Route exact path="/callback" component={AuthCallback} />
+            <Route exact path="/callback/saml" component={SamlCallback} />
+            <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)} />
+            <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)} />
+            <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)} />
+            <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} {...props} />)} />
             <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
-              extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}/>} />
+              extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
           </Switch>
           {
             this.renderFooter()

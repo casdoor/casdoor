@@ -20,7 +20,7 @@ import * as UserBackend from "./backend/UserBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class RoleEditPage extends React.Component {
   constructor(props) {

@@ -24,8 +24,8 @@ import * as UserBackend from "../backend/UserBackend";
 import {CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../CustomGithubCorner";
 
-const { Step } = Steps;
-const { Option } = Select;
+const {Step} = Steps;
+const {Option} = Select;
 
 class ForgetPage extends React.Component {
   constructor(props) {
@@ -212,11 +212,11 @@ class ForgetPage extends React.Component {
             application: application.name,
             organization: application.organization,
           }}
-          style={{ width: "300px" }}
+          style={{width: "300px"}}
           size="large"
         >
           <Form.Item
-            style={{ height: 0, visibility: "hidden" }}
+            style={{height: 0, visibility: "hidden"}}
             name="application"
             rules={[
               {
@@ -228,7 +228,7 @@ class ForgetPage extends React.Component {
             ]}
           />
           <Form.Item
-            style={{ height: 0, visibility: "hidden" }}
+            style={{height: 0, visibility: "hidden"}}
             name="organization"
             rules={[
               {
@@ -285,11 +285,11 @@ class ForgetPage extends React.Component {
             application: application.name,
             organization: application.organization,
           }}
-          style={{ width: "300px" }}
+          style={{width: "300px"}}
           size="large"
         >
           <Form.Item
-            style={{ height: 0, visibility: "hidden" }}
+            style={{height: 0, visibility: "hidden"}}
             name="application"
             rules={[
               {
@@ -301,7 +301,7 @@ class ForgetPage extends React.Component {
             ]}
           />
           <Form.Item
-            style={{ height: 0, visibility: "hidden" }}
+            style={{height: 0, visibility: "hidden"}}
             name="organization"
             rules={[
               {
@@ -313,12 +313,12 @@ class ForgetPage extends React.Component {
             ]}
           />
           <Form.Item
-            name="email" //use email instead of email/phone to adapt to RequestForm in account.go
+            name="email" // use email instead of email/phone to adapt to RequestForm in account.go
             validateFirst
             hasFeedback
           >
             {
-              this.state.isFixed ? <Input disabled/> :
+              this.state.isFixed ? <Input disabled /> :
                 <Select
                   key={this.state.verifyType}
                   virtual={false} style={{textAlign: "left"}}
@@ -338,7 +338,7 @@ class ForgetPage extends React.Component {
             }
           </Form.Item>
           <Form.Item
-            name="emailCode" //use emailCode instead of email/phoneCode to adapt to RequestForm in account.go
+            name="emailCode" // use emailCode instead of email/phoneCode to adapt to RequestForm in account.go
             rules={[
               {
                 required: true,
@@ -389,11 +389,11 @@ class ForgetPage extends React.Component {
             application: application.name,
             organization: application.organization,
           }}
-          style={{ width: "300px" }}
+          style={{width: "300px"}}
           size="large"
         >
           <Form.Item
-            style={{ height: 0, visibility: "hidden" }}
+            style={{height: 0, visibility: "hidden"}}
             name="application"
             rules={[
               {
@@ -405,7 +405,7 @@ class ForgetPage extends React.Component {
             ]}
           />
           <Form.Item
-            style={{ height: 0, visibility: "hidden" }}
+            style={{height: 0, visibility: "hidden"}}
             name="organization"
             rules={[
               {
@@ -446,7 +446,7 @@ class ForgetPage extends React.Component {
                   "forget:Please confirm your password!"
                 ),
               },
-              ({ getFieldValue }) => ({
+              ({getFieldValue}) => ({
                 validator(rule, value) {
                   if (!value || getFieldValue("newPassword") === value) {
                     return Promise.resolve();
@@ -533,8 +533,8 @@ class ForgetPage extends React.Component {
             </Col>
           </Row>
         </Col>
-        <Col span={24} style={{ display: "flex", justifyContent: "center" }}>
-          <div style={{ marginTop: "10px", textAlign: "center" }}>
+        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
+          <div style={{marginTop: "10px", textAlign: "center"}}>
             {this.renderForm(application)}
           </div>
         </Col>

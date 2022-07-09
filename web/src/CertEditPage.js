@@ -20,8 +20,8 @@ import i18next from "i18next";
 import copy from "copy-to-clipboard";
 import FileSaver from "file-saver";
 
-const { Option } = Select;
-const { TextArea } = Input;
+const {Option} = Select;
+const {TextArea} = Input;
 
 class CertEditPage extends React.Component {
   constructor(props) {

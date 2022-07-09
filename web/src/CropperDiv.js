@@ -108,7 +108,7 @@ export const CropperDiv = (props) => {
       >
         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <input style={{display: "none"}} ref={input => uploadButton = input} type="file" accept="image/*" onChange={onChange}/>
+            <input style={{display: "none"}} ref={input => uploadButton = input} type="file" accept="image/*" onChange={onChange} />
             <Button block onClick={selectFile}>{i18next.t("user:Select a photo...")}</Button>
           </Row>
           <Cropper

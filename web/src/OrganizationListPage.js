@@ -258,7 +258,7 @@ class OrganizationListPage extends BaseListPage {
       field = "passwordType";
       value = params.passwordType;
     }
-    this.setState({ loading: true });
+    this.setState({loading: true});
     OrganizationBackend.getOrganizations("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {

@@ -22,7 +22,7 @@ import i18next from "i18next";
 import * as RoleBackend from "./backend/RoleBackend";
 import * as ModelBackend from "./backend/ModelBackend";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class PermissionEditPage extends React.Component {
   constructor(props) {

@@ -26,7 +26,7 @@ import "codemirror/lib/codemirror.css";
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/javascript/javascript");
 
-const { Option } = Select;
+const {Option} = Select;
 
 class SyncerEditPage extends React.Component {
   constructor(props) {
@@ -230,7 +230,7 @@ class SyncerEditPage extends React.Component {
             <SyncerTableColumnTable
               title={i18next.t("syncer:Table columns")}
               table={this.state.syncer.tableColumns}
-              onUpdateTable={(value) => { this.updateSyncerField("tableColumns", value);}}
+              onUpdateTable={(value) => {this.updateSyncerField("tableColumns", value);}}
             />
           </Col>
         </Row>
@@ -249,7 +249,7 @@ class SyncerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("syncer:Avatar base URL"), i18next.t("syncer:Avatar base URL - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.syncer.avatarBaseUrl} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={this.state.syncer.avatarBaseUrl} onChange={e => {
               this.updateSyncerField("avatarBaseUrl", e.target.value);
             }} />
           </Col>

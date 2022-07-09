@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { LinkOutlined } from "@ant-design/icons";
-import { Button, Card, Col, Input, Result, Row, Select, Spin, Switch } from "antd";
+import {LinkOutlined} from "@ant-design/icons";
+import {Button, Card, Col, Input, Result, Row, Select, Spin, Switch} from "antd";
 import i18next from "i18next";
 import React from "react";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
@@ -29,11 +29,11 @@ import SelectRegionBox from "./SelectRegionBox";
 import * as Setting from "./Setting";
 
 import "codemirror/lib/codemirror.css";
-import { Controlled as CodeMirror } from "react-codemirror2";
+import {Controlled as CodeMirror} from "react-codemirror2";
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/javascript/javascript");
 
-const { Option } = Select;
+const {Option} = Select;
 
 class UserEditPage extends React.Component {
   constructor(props) {
@@ -227,7 +227,7 @@ class UserEditPage extends React.Component {
                 {i18next.t("general:URL")}:
               </Col>
               <Col span={22} >
-                <Input prefix={<LinkOutlined/>} value={this.state.user.avatar} onChange={e => {
+                <Input prefix={<LinkOutlined />} value={this.state.user.avatar} onChange={e => {
                   this.updateUserField("avatar", e.target.value);
                 }} />
               </Col>
@@ -238,7 +238,7 @@ class UserEditPage extends React.Component {
               </Col>
               <Col span={22} >
                 <a target="_blank" rel="noreferrer" href={this.state.user.avatar}>
-                  <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: "20px"}}/>
+                  <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: "20px"}} />
                 </a>
               </Col>
             </Row>
@@ -289,7 +289,7 @@ class UserEditPage extends React.Component {
               }} />
           </Col>
           <Col span={11} >
-            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />) : null}
+            {this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />) : null}
           </Col>
         </Row>
       );
@@ -304,10 +304,10 @@ class UserEditPage extends React.Component {
               disabled={disabled}
               onChange={e => {
                 this.updateUserField("phone", e.target.value);
-              }}/>
+              }} />
           </Col>
           <Col span={11} >
-            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
+            {this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
           </Col>
         </Row>
       );
@@ -340,7 +340,7 @@ class UserEditPage extends React.Component {
     } else if (accountItem.name === "Affiliation") {
       return (
         (this.state.application === null || this.state.user === null) ? null : (
-          <AffiliationSelect labelSpan={(Setting.isMobile()) ? 22 : 2} application={this.state.application} user={this.state.user} onUpdateUserField={(key, value) => { return this.updateUserField(key, value);}} />
+          <AffiliationSelect labelSpan={(Setting.isMobile()) ? 22 : 2} application={this.state.application} user={this.state.user} onUpdateUserField={(key, value) => {return this.updateUserField(key, value);}} />
         )
       );
     } else if (accountItem.name === "Title") {
@@ -438,9 +438,9 @@ class UserEditPage extends React.Component {
                   (this.state.application === null || this.state.user === null) ? null : (
                     this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) =>
                       (providerItem.provider.category === "OAuth") ? (
-                        <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked();}} />
+                        <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => {return this.unlinked();}} />
                       ) : (
-                        <SamlWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked();}} />
+                        <SamlWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => {return this.unlinked();}} />
                       )
                     )
                   )

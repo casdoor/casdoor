@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Button, Col, Modal, Row, Input,} from "antd";
+import {Button, Col, Modal, Row, Input} from "antd";
 import i18next from "i18next";
 import React from "react";
 import * as UserBackend from "./backend/UserBackend";
@@ -60,7 +60,7 @@ export const PasswordModal = (props) => {
   return (
     <Row>
       <Button type="default" disabled={props.disabled} onClick={showModal}>
-        { hasOldPassword ? i18next.t("user:Modify password...") : i18next.t("user:Set password...")}
+        {hasOldPassword ? i18next.t("user:Modify password...") : i18next.t("user:Set password...")}
       </Button>
       <Modal
         maskClosable={false}
@@ -74,16 +74,16 @@ export const PasswordModal = (props) => {
         width={600}
       >
         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
-          { (hasOldPassword && !Setting.isAdminUser(account)) ? (
+          {(hasOldPassword && !Setting.isAdminUser(account)) ? (
             <Row style={{width: "100%", marginBottom: "20px"}}>
-              <Input.Password addonBefore={i18next.t("user:Old Password")} placeholder={i18next.t("user:input password")} onChange={(e) => setOldPassword(e.target.value)}/>
+              <Input.Password addonBefore={i18next.t("user:Old Password")} placeholder={i18next.t("user:input password")} onChange={(e) => setOldPassword(e.target.value)} />
             </Row>
           ) : null}
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input.Password addonBefore={i18next.t("user:New Password")} placeholder={i18next.t("user:input password")} onChange={(e) => setNewPassword(e.target.value)}/>
+            <Input.Password addonBefore={i18next.t("user:New Password")} placeholder={i18next.t("user:input password")} onChange={(e) => setNewPassword(e.target.value)} />
           </Row>
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input.Password addonBefore={i18next.t("user:Re-enter New")} placeholder={i18next.t("user:input password")} onChange={(e) => setRePassword(e.target.value)}/>
+            <Input.Password addonBefore={i18next.t("user:Re-enter New")} placeholder={i18next.t("user:input password")} onChange={(e) => setRePassword(e.target.value)} />
           </Row>
         </Col>
       </Modal>

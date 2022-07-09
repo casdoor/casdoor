@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { QuestionCircleTwoTone } from "@ant-design/icons";
-import { message, Tag, Tooltip } from "antd";
+import {QuestionCircleTwoTone} from "@ant-design/icons";
+import {message, Tag, Tooltip} from "antd";
 import copy from "copy-to-clipboard";
 import i18next from "i18next";
 import React from "react";
-import { isMobile as isMobileDevice } from "react-device-detect";
-import { Helmet } from "react-helmet";
-import { authConfig } from "./auth/Auth";
+import {isMobile as isMobileDevice} from "react-device-detect";
+import {Helmet} from "react-helmet";
+import {authConfig} from "./auth/Auth";
 import * as Conf from "./Conf";
 import "./i18n";
 
@@ -142,7 +142,7 @@ export function getCountryRegionData() {
 }
 
 export function initServerUrl() {
-  //const hostname = window.location.hostname;
+  // const hostname = window.location.hostname;
   // if (hostname === "localhost") {
   //   ServerUrl = `http://${hostname}:8000`;
   // }
@@ -170,7 +170,7 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (providerItem.provider.type === "WeChatMiniProgram"){
+  if (providerItem.provider.type === "WeChatMiniProgram") {
     return false;
   }
 
@@ -650,12 +650,12 @@ export function renderLogo(application) {
   if (application.homepageUrl !== "") {
     return (
       <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
-        <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "30px"}}/>
+        <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "30px"}} />
       </a>
     );
   } else {
     return (
-      <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "30px"}}/>
+      <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "30px"}} />
     );
   }
 }
@@ -736,7 +736,7 @@ export function renderHelmet(application) {
 export function getLabel(text, tooltip) {
   return (
     <React.Fragment>
-      <span style={{ marginRight: 4 }}>{text}</span>
+      <span style={{marginRight: 4}}>{text}</span>
       <Tooltip placement="top" title={tooltip}>
         <QuestionCircleTwoTone twoToneColor="rgb(45,120,213)" />
       </Tooltip>
@@ -760,7 +760,7 @@ function maskString(s) {
 }
 
 export function getMaskedPhone(s) {
-  return s.replace(/(\d{3})\d*(\d{4})/,"$1****$2");
+  return s.replace(/(\d{3})\d*(\d{4})/, "$1****$2");
 }
 
 export function getMaskedEmail(email) {

@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Button, Checkbox, Col, Form, Input, Modal, Result, Row } from "antd";
+import {Button, Checkbox, Col, Form, Input, Modal, Result, Row} from "antd";
 import i18next from "i18next";
 import React from "react";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
-import { CountDownInput } from "../common/CountDownInput";
+import {CountDownInput} from "../common/CountDownInput";
 import CustomGithubCorner from "../CustomGithubCorner";
 import SelectRegionBox from "../SelectRegionBox";
 import * as Setting from "../Setting";
-import { authConfig } from "./Auth";
+import {authConfig} from "./Auth";
 import * as AuthBackend from "./AuthBackend";
 import * as Util from "./Util";
 
@@ -360,7 +360,7 @@ class SignupPage extends React.Component {
                 message: i18next.t("signup:Please input your phone number!"),
               },
               {
-                validator: (_, value) =>{
+                validator: (_, value) => {
                   if (this.state.phone !== "" && !Setting.isValidPhone(this.state.phone)) {
                     this.setState({validPhone: false});
                     return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
@@ -429,7 +429,7 @@ class SignupPage extends React.Component {
               required: required,
               message: i18next.t("signup:Please confirm your password!"),
             },
-            ({ getFieldValue }) => ({
+            ({getFieldValue}) => ({
               validator(rule, value) {
                 if (!value || getFieldValue("password") === value) {
                   return Promise.resolve();
@@ -495,7 +495,7 @@ class SignupPage extends React.Component {
           this.props.history.goBack();
         }}
       >
-        <iframe title={"terms"} style={{border: 0, width: "100%", height: "60vh"}} srcDoc={this.state.termsOfUseContent}/>
+        <iframe title={"terms"} style={{border: 0, width: "100%", height: "60vh"}} srcDoc={this.state.termsOfUseContent} />
       </Modal>
     );
   }
@@ -564,7 +564,7 @@ class SignupPage extends React.Component {
           &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
           <a onClick={() => {
             let linkInStorage = sessionStorage.getItem("loginURL");
-            if(linkInStorage != null){
+            if(linkInStorage !== null) {
               Setting.goToLink(linkInStorage);
             }else{
               Setting.goToLogin(this, application);
@@ -585,7 +585,7 @@ class SignupPage extends React.Component {
 
     if (application.signupHtml !== "") {
       return (
-        <div dangerouslySetInnerHTML={{ __html: application.signupHtml}} />
+        <div dangerouslySetInnerHTML={{__html: application.signupHtml}} />
       );
     }
 

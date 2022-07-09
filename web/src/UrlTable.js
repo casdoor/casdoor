@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { DeleteOutlined, DownOutlined, LinkOutlined, UpOutlined } from "@ant-design/icons";
-import { Button, Col, Input, Row, Table, Tooltip } from "antd";
+import {DeleteOutlined, DownOutlined, LinkOutlined, UpOutlined} from "@ant-design/icons";
+import {Button, Col, Input, Row, Table, Tooltip} from "antd";
 import i18next from "i18next";
 import React from "react";
 import * as Setting from "./Setting";
@@ -67,7 +67,7 @@ class UrlTable extends React.Component {
         key: "id",
         render: (text, record, index) => {
           return (
-            <Input prefix={<LinkOutlined/>} value={text} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={text} onChange={e => {
               this.updateField(table, index, e.target.value);
             }} />
           );

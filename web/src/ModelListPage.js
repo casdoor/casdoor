@@ -120,7 +120,7 @@ class ModelListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return (
-            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text}/>
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
         }
       },

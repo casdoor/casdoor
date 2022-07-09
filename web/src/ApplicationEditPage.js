@@ -12,31 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import {Button, Card, Col, Input, Popover, Row, Select, Switch, Upload} from "antd";
 import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
+import {Button, Card, Col, Input, Popover, Row, Select, Switch, Upload} from "antd";
+import copy from "copy-to-clipboard";
+import i18next from "i18next";
+import React from "react";
+import LoginPage from "./auth/LoginPage";
+import PromptPage from "./auth/PromptPage";
+import SignupPage from "./auth/SignupPage";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
-import * as Setting from "./Setting";
-import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as ProviderBackend from "./backend/ProviderBackend";
 import * as ResourceBackend from "./backend/ResourceBackend";
-import SignupPage from "./auth/SignupPage";
-import LoginPage from "./auth/LoginPage";
-import i18next from "i18next";
-import UrlTable from "./UrlTable";
 import ProviderTable from "./ProviderTable";
+import * as Setting from "./Setting";
 import SignupTable from "./SignupTable";
-import PromptPage from "./auth/PromptPage";
-import copy from "copy-to-clipboard";
+import UrlTable from "./UrlTable";
 
-import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
+import {Controlled as CodeMirror} from "react-codemirror2";
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/htmlmixed/htmlmixed");
 require("codemirror/mode/xml/xml");
 
-const { Option } = Select;
+const {Option} = Select;
 
 class ApplicationEditPage extends React.Component {
   constructor(props) {
@@ -187,7 +187,7 @@ class ApplicationEditPage extends React.Component {
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
               <Col span={23} >
-                <Input prefix={<LinkOutlined/>} value={this.state.application.logo} onChange={e => {
+                <Input prefix={<LinkOutlined />} value={this.state.application.logo} onChange={e => {
                   this.updateApplicationField("logo", e.target.value);
                 }} />
               </Col>
@@ -198,7 +198,7 @@ class ApplicationEditPage extends React.Component {
               </Col>
               <Col span={23} >
                 <a target="_blank" rel="noreferrer" href={this.state.application.logo}>
-                  <img src={this.state.application.logo} alt={this.state.application.logo} height={90} style={{marginBottom: "20px"}}/>
+                  <img src={this.state.application.logo} alt={this.state.application.logo} height={90} style={{marginBottom: "20px"}} />
                 </a>
               </Col>
             </Row>
@@ -209,7 +209,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Home"), i18next.t("general:Home - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.application.homepageUrl} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={this.state.application.homepageUrl} onChange={e => {
               this.updateApplicationField("homepageUrl", e.target.value);
             }} />
           </Col>
@@ -276,7 +276,7 @@ class ApplicationEditPage extends React.Component {
             <UrlTable
               title={i18next.t("application:Redirect URLs")}
               table={this.state.application.redirectUris}
-              onUpdateTable={(value) => { this.updateApplicationField("redirectUris", value);}}
+              onUpdateTable={(value) => {this.updateApplicationField("redirectUris", value);}}
             />
           </Col>
         </Row>
@@ -358,7 +358,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Signup URL"), i18next.t("general:Signup URL - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.application.signupUrl} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={this.state.application.signupUrl} onChange={e => {
               this.updateApplicationField("signupUrl", e.target.value);
             }} />
           </Col>
@@ -368,7 +368,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Signin URL"), i18next.t("general:Signin URL - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.application.signinUrl} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={this.state.application.signinUrl} onChange={e => {
               this.updateApplicationField("signinUrl", e.target.value);
             }} />
           </Col>
@@ -378,7 +378,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Forget URL"), i18next.t("general:Forget URL - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.application.forgetUrl} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={this.state.application.forgetUrl} onChange={e => {
               this.updateApplicationField("forgetUrl", e.target.value);
             }} />
           </Col>
@@ -388,7 +388,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Affiliation URL"), i18next.t("general:Affiliation URL - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.application.affiliationUrl} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={this.state.application.affiliationUrl} onChange={e => {
               this.updateApplicationField("affiliationUrl", e.target.value);
             }} />
           </Col>
@@ -400,7 +400,7 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.application.termsOfUse} style={{marginBottom: "10px"}} onChange={e => {
               this.updateApplicationField("termsOfUse", e.target.value);
-            }}/>
+            }} />
             <Upload maxCount={1} accept=".html" showUploadList={false}
               beforeUpload={file => {return false;}} onChange={info => {this.handleUpload(info);}}>
               <Button icon={<UploadOutlined />} loading={this.state.uploading}>{i18next.t("general:Click to Upload")}</Button>
@@ -425,7 +425,7 @@ class ApplicationEditPage extends React.Component {
             } title={i18next.t("provider:Signup HTML - Edit")} trigger="click">
               <Input value={this.state.application.signupHtml} style={{marginBottom: "10px"}} onChange={e => {
                 this.updateApplicationField("signupHtml", e.target.value);
-              }}/>
+              }} />
             </Popover>
           </Col>
         </Row>
@@ -447,7 +447,7 @@ class ApplicationEditPage extends React.Component {
             } title={i18next.t("provider:Signin HTML - Edit")} trigger="click">
               <Input value={this.state.application.signinHtml} style={{marginBottom: "10px"}} onChange={e => {
                 this.updateApplicationField("signinHtml", e.target.value);
-              }}/>
+              }} />
             </Popover>
           </Col>
         </Row>
@@ -494,7 +494,7 @@ class ApplicationEditPage extends React.Component {
               options={{mode: "xml", theme: "default"}}
               onBeforeChange={(editor, data, value) => {}}
             />
-            <br/>
+            <br />
             <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
               copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}`);
               Setting.showMessage("success", i18next.t("application:SAML metadata URL copied to clipboard successfully"));
@@ -514,7 +514,7 @@ class ApplicationEditPage extends React.Component {
               table={this.state.application.providers}
               providers={this.state.providers}
               application={this.state.application}
-              onUpdateTable={(value) => { this.updateApplicationField("providers", value);}}
+              onUpdateTable={(value) => {this.updateApplicationField("providers", value);}}
             />
           </Col>
         </Row>
@@ -536,7 +536,7 @@ class ApplicationEditPage extends React.Component {
                 <SignupTable
                   title={i18next.t("application:Signup items")}
                   table={this.state.application.signupItems}
-                  onUpdateTable={(value) => { this.updateApplicationField("signupItems", value);}}
+                  onUpdateTable={(value) => {this.updateApplicationField("signupItems", value);}}
                 />
               </Col>
             </Row>
@@ -572,7 +572,7 @@ class ApplicationEditPage extends React.Component {
           >
             {i18next.t("application:Copy signup page URL")}
           </Button>
-          <br/>
+          <br />
           <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
             {
               this.state.application.enablePassword ? (
@@ -592,7 +592,7 @@ class ApplicationEditPage extends React.Component {
           >
             {i18next.t("application:Copy signin page URL")}
           </Button>
-          <br/>
+          <br />
           <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems:"center", overflow:"auto", flexDirection:"column", flex: "auto"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
             <div style={maskStyle}></div>
@@ -614,7 +614,7 @@ class ApplicationEditPage extends React.Component {
         >
           {i18next.t("application:Copy prompt page URL")}
         </Button>
-        <br/>
+        <br />
         <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
           <PromptPage application={this.state.application} account={this.props.account} />
           <div style={maskStyle}></div>

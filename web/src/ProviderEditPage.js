@@ -18,13 +18,13 @@ import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import { authConfig } from "./auth/Auth";
+import {authConfig} from "./auth/Auth";
 import * as ProviderEditTestEmail from "./TestEmailWidget";
 import copy from "copy-to-clipboard";
-import { CaptchaPreview } from "./common/CaptchaPreview";
+import {CaptchaPreview} from "./common/CaptchaPreview";
 
-const { Option } = Select;
-const { TextArea } = Input;
+const {Option} = Select;
+const {TextArea} = Input;
 
 class ProviderEditPage extends React.Component {
   constructor(props) {
@@ -122,7 +122,7 @@ class ProviderEditPage extends React.Component {
     } else if (this.state.provider.type === "WeCom" && this.state.provider.subType === "Internal") {
       text = i18next.t("provider:Agent ID");
       tooltip = i18next.t("provider:Agent ID - Tooltip");
-    } else if (this.state.provider.type === "Infoflow"){
+    } else if (this.state.provider.type === "Infoflow") {
       text = i18next.t("provider:Agent ID");
       tooltip = i18next.t("provider:Agent ID - Tooltip");
     } else if (this.state.provider.category === "SMS" && this.state.provider.type === "Volc Engine SMS") {
@@ -331,7 +331,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel( i18next.t("general:Favicon"), i18next.t("general:Favicon - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("general:Favicon"), i18next.t("general:Favicon - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Row style={{marginTop: "20px"}} >
@@ -339,7 +339,7 @@ class ProviderEditPage extends React.Component {
                       {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
                     </Col>
                     <Col span={23} >
-                      <Input prefix={<LinkOutlined/>} value={this.state.provider.customLogo} onChange={e => {
+                      <Input prefix={<LinkOutlined />} value={this.state.provider.customLogo} onChange={e => {
                         this.updateProviderField("customLogo", e.target.value);
                       }} />
                     </Col>
@@ -350,7 +350,7 @@ class ProviderEditPage extends React.Component {
                     </Col>
                     <Col span={23} >
                       <a target="_blank" rel="noreferrer" href={this.state.provider.customLogo}>
-                        <img src={this.state.provider.customLogo} alt={this.state.provider.customLogo} height={90} style={{marginBottom: "20px"}}/>
+                        <img src={this.state.provider.customLogo} alt={this.state.provider.customLogo} height={90} style={{marginBottom: "20px"}} />
                       </a>
                     </Col>
                   </Row>
@@ -493,7 +493,7 @@ class ProviderEditPage extends React.Component {
                   {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
                 </Col>
                 <Col span={22} >
-                  <Input prefix={<LinkOutlined/>} value={this.state.provider.host} onChange={e => {
+                  <Input prefix={<LinkOutlined />} value={this.state.provider.host} onChange={e => {
                     this.updateProviderField("host", e.target.value);
                   }} />
                 </Col>
@@ -681,7 +681,7 @@ class ProviderEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:Provider URL"), i18next.t("provider:Provider URL - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.provider.providerUrl} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={this.state.provider.providerUrl} onChange={e => {
               this.updateProviderField("providerUrl", e.target.value);
             }} />
           </Col>

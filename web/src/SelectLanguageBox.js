@@ -14,8 +14,8 @@
 
 import React from "react";
 import * as Setting from "./Setting";
-import { Menu, Dropdown} from "antd";
-import { createFromIconfontCN } from "@ant-design/icons";
+import {Menu, Dropdown} from "antd";
+import {createFromIconfontCN} from "@ant-design/icons";
 import "./App.less";
 
 const IconFont = createFromIconfontCN({

@@ -93,13 +93,13 @@ class UserListPage extends BaseListPage {
   }
 
   uploadFile(info) {
-    const { status, response: res } = info.file;
+    const {status, response: res} = info.file;
     if (status === "done") {
       if (res.status === "ok") {
         Setting.showMessage("success", "Users uploaded successfully, refreshing the page");
 
-        const { pagination } = this.state;
-        this.fetch({ pagination });
+        const {pagination} = this.state;
+        this.fetch({pagination});
       } else {
         Setting.showMessage("error", `Users failed to upload: ${res.msg}`);
       }
@@ -370,7 +370,7 @@ class UserListPage extends BaseListPage {
   fetch = (params = {}) => {
     let field = params.searchedColumn, value = params.searchText;
     let sortField = params.sortField, sortOrder = params.sortOrder;
-    this.setState({ loading: true });
+    this.setState({loading: true});
     if (this.state.organizationName === undefined) {
       UserBackend.getGlobalUsers(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
         .then((res) => {

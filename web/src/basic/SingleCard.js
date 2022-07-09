@@ -17,7 +17,7 @@ import {Card, Col} from "antd";
 import * as Setting from "../Setting";
 import {withRouter} from "react-router-dom";
 
-const { Meta } = Card;
+const {Meta} = Card;
 
 class SingleCard extends React.Component {
   constructor(props) {
@@ -36,7 +36,7 @@ class SingleCard extends React.Component {
 
     return (
       <Card.Grid style={gridStyle} onClick={() => Setting.goToLinkSoft(this, link)}>
-        <img src={logo} alt="logo" height={60} style={{marginBottom: "20px"}}/>
+        <img src={logo} alt="logo" height={60} style={{marginBottom: "20px"}} />
         <Meta
           title={title}
           description={desc}
@@ -57,8 +57,8 @@ class SingleCard extends React.Component {
           style={isSingle ? {width: "320px"} : {width: "100%"}}
         >
           <Meta title={title} description={desc} />
-          <br/>
-          <br/>
+          <br />
+          <br />
           <Meta title={""} description={Setting.getFormattedDateShort(time)} />
         </Card>
       </Col>

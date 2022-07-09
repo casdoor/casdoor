@@ -75,11 +75,11 @@ export function renderMessageLarge(ths, msg) {
   }
 }
 
-function getRefinedValue(value){
+function getRefinedValue(value) {
   return (value === null)? "" : value;
 }
 
-export function getCasParameters(params){
+export function getCasParameters(params) {
   const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
   const service = getRefinedValue(queries.get("service"));
   const renew = getRefinedValue(queries.get("renew"));

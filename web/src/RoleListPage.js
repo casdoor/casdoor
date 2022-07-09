@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Button, Popconfirm, Switch, Table } from "antd";
+import {Button, Popconfirm, Switch, Table} from "antd";
 import i18next from "i18next";
 import moment from "moment";
 import React from "react";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import * as RoleBackend from "./backend/RoleBackend";
 import BaseListPage from "./BaseListPage";
 import * as Setting from "./Setting";
@@ -199,7 +199,7 @@ class RoleListPage extends BaseListPage {
       field = "type";
       value = params.type;
     }
-    this.setState({ loading: true });
+    this.setState({loading: true});
     RoleBackend.getRoles("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {

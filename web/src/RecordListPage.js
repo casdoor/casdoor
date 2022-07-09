@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Switch, Table } from "antd";
+import {Switch, Table} from "antd";
 import i18next from "i18next";
 import moment from "moment";
 import React from "react";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import * as RecordBackend from "./backend/RecordBackend";
 import BaseListPage from "./BaseListPage";
 import * as Setting from "./Setting";
@@ -24,8 +24,8 @@ import * as Setting from "./Setting";
 class RecordListPage extends BaseListPage {
   UNSAFE_componentWillMount() {
     this.state.pagination.pageSize = 20;
-    const { pagination } = this.state;
-    this.fetch({ pagination });
+    const {pagination} = this.state;
+    this.fetch({pagination});
   }
 
   newRecord() {
@@ -204,7 +204,7 @@ class RecordListPage extends BaseListPage {
       field = "method";
       value = params.method;
     }
-    this.setState({ loading: true });
+    this.setState({loading: true});
     RecordBackend.getRecords(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {

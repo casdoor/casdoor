@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Button, Popconfirm, Table } from "antd";
+import {Button, Popconfirm, Table} from "antd";
 import i18next from "i18next";
 import moment from "moment";
 import React from "react";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import * as TokenBackend from "./backend/TokenBackend";
 import BaseListPage from "./BaseListPage";
 import * as Setting from "./Setting";
@@ -232,7 +232,7 @@ class TokenListPage extends BaseListPage {
  fetch = (params = {}) => {
    let field = params.searchedColumn, value = params.searchText;
    let sortField = params.sortField, sortOrder = params.sortOrder;
-   this.setState({ loading: true });
+   this.setState({loading: true});
    TokenBackend.getTokens("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
      .then((res) => {
        if (res.status === "ok") {

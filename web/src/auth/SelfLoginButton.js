@@ -19,7 +19,7 @@ class SelfLoginButton extends React.Component {
   generateIcon() {
     const avatar = this.props.account.avatar;
     return () => {
-      return <img width={36} height={36} src={avatar} alt="Sign in with Google"/>;
+      return <img width={36} height={36} src={avatar} alt="Sign in with Google" />;
     };
   }
 
@@ -40,7 +40,7 @@ class SelfLoginButton extends React.Component {
     };
 
     const SelfLoginButton = createButton(config);
-    return <SelfLoginButton text={this.getAccountShowName()} onClick={() => this.props.onClick()} align={"center"}/>;
+    return <SelfLoginButton text={this.getAccountShowName()} onClick={() => this.props.onClick()} align={"center"} />;
   }
 }
 

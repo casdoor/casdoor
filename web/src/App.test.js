@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { render } from "@testing-library/react";
+import {render} from "@testing-library/react";
 import React from "react";
 import App from "./App";
 
 // eslint-disable-next-line no-undef
 test("renders learn react link", () => {
-  const { getByText } = render(<App />);
+  const {getByText} = render(<App />);
   const linkElement = getByText(/learn react/i);
   // eslint-disable-next-line no-undef
   expect(linkElement).toBeInTheDocument();

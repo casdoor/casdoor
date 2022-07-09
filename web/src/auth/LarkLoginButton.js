@@ -15,7 +15,7 @@
 import {createButton} from "react-social-login-buttons";
 import {StaticBaseUrl} from "../Setting";
 
-function Icon({ width = 24, height = 24, color }) {
+function Icon({width = 24, height = 24, color}) {
   return <img src={`${StaticBaseUrl}/buttons/lark.svg`} alt="Sign in with Lark" style={{width: 24, height: 24}} />;
 }
 

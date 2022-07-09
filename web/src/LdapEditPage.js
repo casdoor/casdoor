@@ -106,7 +106,7 @@ class LdapEditPage extends React.Component {
             {Setting.getLabel(i18next.t("ldap:ID"), i18next.t("general:ID - Tooltip"))} :
           </Col>
           <Col span={21}>
-            <Input value={this.state.ldap.id} disabled={true}/>
+            <Input value={this.state.ldap.id} disabled={true} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>
@@ -116,7 +116,7 @@ class LdapEditPage extends React.Component {
           <Col span={21}>
             <Input value={this.state.ldap.serverName} onChange={e => {
               this.updateLdapField("serverName", e.target.value);
-            }}/>
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>
@@ -126,7 +126,7 @@ class LdapEditPage extends React.Component {
           <Col span={21}>
             <Input value={this.state.ldap.host} onChange={e => {
               this.updateLdapField("host", e.target.value);
-            }}/>
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>
@@ -137,7 +137,7 @@ class LdapEditPage extends React.Component {
             <InputNumber min={0} max={65535} formatter={value => value.replace(/\$\s?|(,*)/g, "")}
               value={this.state.ldap.port} onChange={value => {
                 this.updateLdapField("port", value);
-              }}/>
+              }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>
@@ -147,7 +147,7 @@ class LdapEditPage extends React.Component {
           <Col span={21}>
             <Input value={this.state.ldap.baseDn} onChange={e => {
               this.updateLdapField("baseDn", e.target.value);
-            }}/>
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>
@@ -157,7 +157,7 @@ class LdapEditPage extends React.Component {
           <Col span={21}>
             <Input value={this.state.ldap.admin} onChange={e => {
               this.updateLdapField("admin", e.target.value);
-            }}/>
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>
@@ -166,7 +166,7 @@ class LdapEditPage extends React.Component {
           </Col>
           <Col span={21}>
             <Input.Password
-              iconRender={visible => (visible ? <EyeTwoTone/> : <EyeInvisibleOutlined/>)} value={this.state.ldap.passwd}
+              iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} value={this.state.ldap.passwd}
               onChange={e => {
                 this.updateLdapField("passwd", e.target.value);
               }}
@@ -181,7 +181,7 @@ class LdapEditPage extends React.Component {
             <InputNumber min={0} formatter={value => value.replace(/\$\s?|(,*)/g, "")} disabled={false}
               value={this.state.ldap.autoSync} onChange={value => {
                 this.updateLdapField("autoSync", value);
-              }}/><span>&nbsp;mins</span>
+              }} /><span>&nbsp;mins</span>
             {this.renderAutoSyncWarn()}
           </Col>
         </Row>

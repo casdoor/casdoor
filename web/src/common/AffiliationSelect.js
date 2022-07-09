@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Cascader, Col, Input, Row, Select } from "antd";
+import {Cascader, Col, Input, Row, Select} from "antd";
 import i18next from "i18next";
 import React from "react";
 import * as UserBackend from "../backend/UserBackend";
 import * as Setting from "../Setting";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class AffiliationSelect extends React.Component {
   constructor(props) {

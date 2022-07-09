@@ -249,7 +249,7 @@ class ResourceListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              {/*<Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/resources/${record.name}`)}>{i18next.t("general:Edit")}</Button>*/}
+              {/* <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/resources/${record.name}`)}>{i18next.t("general:Edit")}</Button>*/}
               <Popconfirm
                 title={`Sure to delete resource: ${record.name} ?`}
                 onConfirm={() => this.deleteResource(index)}
@@ -277,7 +277,7 @@ class ResourceListPage extends BaseListPage {
           title={() => (
             <div>
               {i18next.t("general:Resources")}&nbsp;&nbsp;&nbsp;&nbsp;
-              {/*<Button type="primary" size="small" onClick={this.addResource.bind(this)}>{i18next.t("general:Add")}</Button>*/}
+              {/* <Button type="primary" size="small" onClick={this.addResource.bind(this)}>{i18next.t("general:Add")}</Button>*/}
               {
                 this.renderUpload()
               }
@@ -293,7 +293,7 @@ class ResourceListPage extends BaseListPage {
   fetch = (params = {}) => {
     let field = params.searchedColumn, value = params.searchText;
     let sortField = params.sortField, sortOrder = params.sortOrder;
-    this.setState({ loading: true });
+    this.setState({loading: true});
     ResourceBackend.getResources(this.props.account.owner, this.props.account.name, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {

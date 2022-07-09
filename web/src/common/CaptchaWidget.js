@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 
-export const CaptchaWidget = ({ captchaType, subType, siteKey, clientSecret, onChange, clientId2, clientSecret2 }) => {
+export const CaptchaWidget = ({captchaType, subType, siteKey, clientSecret, onChange, clientId2, clientSecret2}) => {
   const loadScript = (src) => {
     var tag = document.createElement("script");
     tag.async = false;

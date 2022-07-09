@@ -18,7 +18,7 @@ import {Button, Col, Input, Row, Select, Switch, Table, Tooltip} from "antd";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class SyncerTableColumnTable extends React.Component {
   constructor(props) {

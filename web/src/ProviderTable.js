@@ -19,7 +19,7 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import * as Provider from "./auth/Provider";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class ProviderTable extends React.Component {
   constructor(props) {

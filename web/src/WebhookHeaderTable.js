@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { DeleteOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
-import { Button, Col, Input, Row, Table, Tooltip } from "antd";
+import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
+import {Button, Col, Input, Row, Table, Tooltip} from "antd";
 import i18next from "i18next";
 import React from "react";
 import * as Setting from "./Setting";

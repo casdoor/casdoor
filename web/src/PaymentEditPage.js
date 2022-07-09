@@ -19,7 +19,7 @@ import * as PaymentBackend from "./backend/PaymentBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class PaymentEditPage extends React.Component {
   constructor(props) {
@@ -126,8 +126,8 @@ class PaymentEditPage extends React.Component {
           {
             i18next.t("payment:Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.")
           }
-          <br/>
-          <br/>
+          <br />
+          <br />
           <Descriptions size={"small"} bordered>
             <Descriptions.Item label={i18next.t("payment:Person name")} span={3}>{this.state.payment?.personName}</Descriptions.Item>
             <Descriptions.Item label={i18next.t("payment:Person ID card")} span={3}>{this.state.payment?.personIdCard}</Descriptions.Item>

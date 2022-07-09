@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { SafetyOutlined } from "@ant-design/icons";
-import { Button, Col, Input, Modal, Row } from "antd";
+import {SafetyOutlined} from "@ant-design/icons";
+import {Button, Col, Input, Modal, Row} from "antd";
 import i18next from "i18next";
 import React from "react";
-import { authConfig } from "../auth/Auth";
+import {authConfig} from "../auth/Auth";
 import * as UserBackend from "../backend/UserBackend";
-import { CaptchaWidget } from "./CaptchaWidget";
+import {CaptchaWidget} from "./CaptchaWidget";
 
-const { Search } = Input;
+const {Search} = Input;
 
 export const CountDownInput = (props) => {
   const {disabled, textBefore, onChange, onButtonClickArgs} = props;
@@ -108,7 +108,7 @@ export const CountDownInput = (props) => {
           }}
         />
         <Row>
-          <Input autoFocus value={key} prefix={<SafetyOutlined/>} placeholder={i18next.t("general:Captcha")} onPressEnter={handleOk} onChange={e => setKey(e.target.value)}/>
+          <Input autoFocus value={key} prefix={<SafetyOutlined />} placeholder={i18next.t("general:Captcha")} onPressEnter={handleOk} onChange={e => setKey(e.target.value)} />
         </Row>
       </Col>
     );
@@ -142,7 +142,7 @@ export const CountDownInput = (props) => {
       <Search
         addonBefore={textBefore}
         disabled={disabled}
-        prefix={<SafetyOutlined/>}
+        prefix={<SafetyOutlined />}
         placeholder={i18next.t("code:Enter your code")}
         onChange={e => onChange(e.target.value)}
         enterButton={

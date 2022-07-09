@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Button, Col, Row } from "antd";
+import {Button, Col, Row} from "antd";
 import i18next from "i18next";
 import React from "react";
 import * as AuthBackend from "../auth/AuthBackend";

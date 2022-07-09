@@ -26,7 +26,7 @@ import "codemirror/lib/codemirror.css";
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/javascript/javascript");
 
-const { Option } = Select;
+const {Option} = Select;
 
 const previewTemplate = {
   "id": 9078,
@@ -183,7 +183,7 @@ class WebhookEditPage extends React.Component {
             {Setting.getLabel(i18next.t("webhook:URL"), i18next.t("webhook:URL - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input prefix={<LinkOutlined/>} value={this.state.webhook.url} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={this.state.webhook.url} onChange={e => {
               this.updateWebhookField("url", e.target.value);
             }} />
           </Col>
@@ -228,7 +228,7 @@ class WebhookEditPage extends React.Component {
             <WebhookHeaderTable
               title={i18next.t("webhook:Headers")}
               table={this.state.webhook.headers}
-              onUpdateTable={(value) => { this.updateWebhookField("headers", value);}}
+              onUpdateTable={(value) => {this.updateWebhookField("headers", value);}}
             />
           </Col>
         </Row>

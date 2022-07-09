@@ -34,13 +34,13 @@ class BaseListPage extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
-    const { pagination } = this.state;
-    this.fetch({ pagination });
+    const {pagination} = this.state;
+    this.fetch({pagination});
   }
 
   getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }}>
+    filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
+      <div style={{padding: 8}}>
         <Input
           ref={node => {
             this.searchInput = node;
@@ -49,7 +49,7 @@ class BaseListPage extends React.Component {
           value={selectedKeys[0]}
           onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
           onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{ marginBottom: 8, display: "block" }}
+          style={{marginBottom: 8, display: "block"}}
         />
         <Space>
           <Button
@@ -57,18 +57,18 @@ class BaseListPage extends React.Component {
             onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
             size="small"
-            style={{ width: 90 }}
+            style={{width: 90}}
           >
 						Search
           </Button>
-          <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+          <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{width: 90}}>
 						Reset
           </Button>
           <Button
             type="link"
             size="small"
             onClick={() => {
-              confirm({ closeDropdown: false });
+              confirm({closeDropdown: false});
               this.setState({
                 searchText: selectedKeys[0],
                 searchedColumn: dataIndex,
@@ -80,7 +80,7 @@ class BaseListPage extends React.Component {
         </Space>
       </div>
     ),
-    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />,
+    filterIcon: filtered => <SearchOutlined style={{color: filtered ? "#1890ff" : undefined}} />,
     onFilter: (value, record) =>
       record[dataIndex]
         ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
@@ -93,7 +93,7 @@ class BaseListPage extends React.Component {
     render: text =>
       this.state.searchedColumn === dataIndex ? (
         <Highlighter
-          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          highlightStyle={{backgroundColor: "#ffc069", padding: 0}}
           searchWords={[this.state.searchText]}
           autoEscape
           textToHighlight={text ? text.toString() : ""}
@@ -109,8 +109,8 @@ class BaseListPage extends React.Component {
 
   handleReset = clearFilters => {
     clearFilters();
-    const { pagination } = this.state;
-    this.fetch({ pagination });
+    const {pagination} = this.state;
+    this.fetch({pagination});
   };
 
   handleTableChange = (pagination, filters, sorter) => {
