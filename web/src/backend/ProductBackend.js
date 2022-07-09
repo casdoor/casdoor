@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from '../Setting';
+import * as Setting from "../Setting";
 
-export function getProducts(owner, page = '', pageSize = '', field = '', value = '', sortField = '', sortOrder = '') {
+export function getProducts(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
   return fetch(`${Setting.ServerUrl}/api/get-products?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
-    method: 'GET',
-    credentials: 'include'
+    method: "GET",
+    credentials: "include"
   }).then(res => res.json());
 }
 
 export function getProduct(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-product?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'GET',
-    credentials: 'include'
+    method: "GET",
+    credentials: "include"
   }).then(res => res.json());
 }
 
 export function updateProduct(owner, name, product) {
   let newProduct = Setting.deepCopy(product);
   return fetch(`${Setting.ServerUrl}/api/update-product?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newProduct),
   }).then(res => res.json());
 }
@@ -40,8 +40,8 @@ export function updateProduct(owner, name, product) {
 export function addProduct(product) {
   let newProduct = Setting.deepCopy(product);
   return fetch(`${Setting.ServerUrl}/api/add-product`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newProduct),
   }).then(res => res.json());
 }
@@ -49,15 +49,15 @@ export function addProduct(product) {
 export function deleteProduct(product) {
   let newProduct = Setting.deepCopy(product);
   return fetch(`${Setting.ServerUrl}/api/delete-product`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newProduct),
   }).then(res => res.json());
 }
 
 export function buyProduct(owner, name, providerId) {
   return fetch(`${Setting.ServerUrl}/api/buy-product?id=${owner}/${encodeURIComponent(name)}&providerName=${providerId}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
   }).then(res => res.json());
 }

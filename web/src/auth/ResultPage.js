@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
-import {Result, Button} from 'antd';
-import i18next from 'i18next';
-import {authConfig} from './Auth';
-import * as Util from './Util';
-import * as ApplicationBackend from '../backend/ApplicationBackend';
-import * as Setting from '../Setting';
+import React from "react";
+import {Result, Button} from "antd";
+import i18next from "i18next";
+import {authConfig} from "./Auth";
+import * as Util from "./Util";
+import * as ApplicationBackend from "../backend/ApplicationBackend";
+import * as Setting from "../Setting";
 
 class ResultPage extends React.Component {
   constructor(props) {
@@ -34,7 +34,7 @@ class ResultPage extends React.Component {
     if (this.state.applicationName !== undefined) {
       this.getApplication();
     } else {
-      Util.showMessage('error', `Unknown application name: ${this.state.applicationName}`);
+      Util.showMessage("error", `Unknown application name: ${this.state.applicationName}`);
     }
   }
 
@@ -43,7 +43,7 @@ class ResultPage extends React.Component {
       return;
     }
 
-    ApplicationBackend.getApplication('admin', this.state.applicationName)
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
         this.setState({
           application: application,
@@ -61,18 +61,18 @@ class ResultPage extends React.Component {
         }
         <Result
           status="success"
-          title={i18next.t('signup:Your account has been created!')}
-          subTitle={i18next.t('signup:Please click the below button to sign in')}
+          title={i18next.t("signup:Your account has been created!")}
+          subTitle={i18next.t("signup:Please click the below button to sign in")}
           extra={[
             <Button type="primary" key="login" onClick={() => {
-              let linkInStorage = sessionStorage.getItem('loginURL');
-              if (linkInStorage !== null && linkInStorage !== '') {
+              let linkInStorage = sessionStorage.getItem("loginURL");
+              if (linkInStorage !== null && linkInStorage !== "") {
                 Setting.goToLink(linkInStorage);
               } else {
                 Setting.goToLogin(this, application);
               }
             }}>
-              {i18next.t('login:Sign In')}
+              {i18next.t("login:Sign In")}
             </Button>
           ]}
         />

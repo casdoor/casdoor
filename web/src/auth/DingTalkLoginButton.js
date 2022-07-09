@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {createButton} from 'react-social-login-buttons';
-import {StaticBaseUrl} from '../Setting';
+import {createButton} from "react-social-login-buttons";
+import {StaticBaseUrl} from "../Setting";
 
 function Icon({ width = 24, height = 24, color }) {
   return <img src={`${StaticBaseUrl}/buttons/dingtalk.svg`} alt="Sign in with DingTalk"/>;
 }
 
 const config = {
-  text: 'Sign in with DingTalk',
+  text: "Sign in with DingTalk",
   icon: Icon,
   iconFormat: name => `fa fa-${name}`,
-  style: {background: '#0191e0'},
-  activeStyle: {background: 'rgb(76,143,208)'},
+  style: {background: "#0191e0"},
+  activeStyle: {background: "rgb(76,143,208)"},
 };
 
 const DingTalkLoginButton = createButton(config);

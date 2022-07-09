@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
-import {Button, Card, Col, Input, Row} from 'antd';
-import * as TokenBackend from './backend/TokenBackend';
-import * as Setting from './Setting';
-import i18next from 'i18next';
+import React from "react";
+import {Button, Card, Col, Input, Row} from "antd";
+import * as TokenBackend from "./backend/TokenBackend";
+import * as Setting from "./Setting";
+import i18next from "i18next";
 
 class TokenEditPage extends React.Component {
   constructor(props) {
@@ -25,7 +25,7 @@ class TokenEditPage extends React.Component {
       classes: props,
       tokenName: props.match.params.tokenName,
       token: null,
-      mode: props.location.mode !== undefined ? props.location.mode : 'edit',
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -34,7 +34,7 @@ class TokenEditPage extends React.Component {
   }
 
   getToken() {
-    TokenBackend.getToken('admin', this.state.tokenName)
+    TokenBackend.getToken("admin", this.state.tokenName)
       .then((token) => {
         this.setState({
           token: token,
@@ -63,99 +63,99 @@ class TokenEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {this.state.mode === 'add' ? i18next.t('token:New Token') : i18next.t('token:Edit Token')}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button onClick={() => this.submitTokenEdit(false)}>{i18next.t('general:Save')}</Button>
-          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitTokenEdit(true)}>{i18next.t('general:Save & Exit')}</Button>
-          {this.state.mode === 'add' ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteToken()}>{i18next.t('general:Cancel')}</Button> : null}
+          {this.state.mode === "add" ? i18next.t("token:New Token") : i18next.t("token:Edit Token")}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button onClick={() => this.submitTokenEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitTokenEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteToken()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
-      } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
-        <Row style={{marginTop: '10px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t('general:Name')}:
+      } style={(Setting.isMobile())? {margin: "5px"}:{}} type="inner">
+        <Row style={{marginTop: "10px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Name")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.name} onChange={e => {
-              this.updateTokenField('name', e.target.value);
+              this.updateTokenField("name", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t('general:Application')}:
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Application")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.application} onChange={e => {
-              this.updateTokenField('application', e.target.value);
+              this.updateTokenField("application", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t('general:Organization')}:
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Organization")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.organization} onChange={e => {
-              this.updateTokenField('organization', e.target.value);
+              this.updateTokenField("organization", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t('general:User')}:
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:User")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.user} onChange={e => {
-              this.updateTokenField('user', e.target.value);
+              this.updateTokenField("user", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t('token:Authorization code')}:
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("token:Authorization code")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.code} onChange={e => {
-              this.updateTokenField('code', e.target.value);
+              this.updateTokenField("code", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t('token:Access token')}:
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("token:Access token")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.accessToken} onChange={e => {
-              this.updateTokenField('accessToken', e.target.value);
+              this.updateTokenField("accessToken", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t('token:Expires in')}:
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("token:Expires in")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.expiresIn} onChange={e => {
-              this.updateTokenField('expiresIn', parseInt(e.target.value));
+              this.updateTokenField("expiresIn", parseInt(e.target.value));
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t('token:Scope')}:
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("token:Scope")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.scope} onChange={e => {
-              this.updateTokenField('scope', e.target.value);
+              this.updateTokenField("scope", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t('token:Token type')}:
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("token:Token type")}:
           </Col>
           <Col span={22} >
             <Input value={this.state.token.tokenType} onChange={e => {
-              this.updateTokenField('tokenType', e.target.value);
+              this.updateTokenField("tokenType", e.target.value);
             }} />
           </Col>
         </Row>
@@ -167,34 +167,34 @@ class TokenEditPage extends React.Component {
     let token = Setting.deepCopy(this.state.token);
     TokenBackend.updateToken(this.state.token.owner, this.state.tokenName, token)
       .then((res) => {
-        if (res.msg === '') {
-          Setting.showMessage('success', 'Successfully saved');
+        if (res.msg === "") {
+          Setting.showMessage("success", "Successfully saved");
           this.setState({
             tokenName: this.state.token.name,
           });
 
           if (willExist) {
-            this.props.history.push('/tokens');
+            this.props.history.push("/tokens");
           } else {
             this.props.history.push(`/tokens/${this.state.token.name}`);
           }
         } else {
-          Setting.showMessage('error', res.msg);
-          this.updateTokenField('name', this.state.tokenName);
+          Setting.showMessage("error", res.msg);
+          this.updateTokenField("name", this.state.tokenName);
         }
       })
       .catch(error => {
-        Setting.showMessage('error', `failed to connect to server: ${error}`);
+        Setting.showMessage("error", `failed to connect to server: ${error}`);
       });
   }
 
   deleteToken() {
     TokenBackend.deleteToken(this.state.token)
       .then(() => {
-        this.props.history.push('/tokens');
+        this.props.history.push("/tokens");
       })
       .catch(error => {
-        Setting.showMessage('error', `Token failed to delete: ${error}`);
+        Setting.showMessage("error", `Token failed to delete: ${error}`);
       });
   }
 
@@ -204,10 +204,10 @@ class TokenEditPage extends React.Component {
         {
           this.state.token !== null ? this.renderToken() : null
         }
-        <div style={{marginTop: '20px', marginLeft: '40px'}}>
-          <Button size="large" onClick={() => this.submitTokenEdit(false)}>{i18next.t('general:Save')}</Button>
-          <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitTokenEdit(true)}>{i18next.t('general:Save & Exit')}</Button>
-          {this.state.mode === 'add' ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteToken()}>{i18next.t('general:Cancel')}</Button> : null}
+        <div style={{marginTop: "20px", marginLeft: "40px"}}>
+          <Button size="large" onClick={() => this.submitTokenEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitTokenEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteToken()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );

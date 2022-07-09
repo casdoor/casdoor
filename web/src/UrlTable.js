@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { DeleteOutlined, DownOutlined, LinkOutlined, UpOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Row, Table, Tooltip } from 'antd';
-import i18next from 'i18next';
-import React from 'react';
-import * as Setting from './Setting';
+import { DeleteOutlined, DownOutlined, LinkOutlined, UpOutlined } from "@ant-design/icons";
+import { Button, Col, Input, Row, Table, Tooltip } from "antd";
+import i18next from "i18next";
+import React from "react";
+import * as Setting from "./Setting";
 
 class UrlTable extends React.Component {
   constructor(props) {
@@ -36,7 +36,7 @@ class UrlTable extends React.Component {
   }
 
   addRow(table) {
-    let row = '';
+    let row = "";
     if (table === undefined) {
       table = [];
     }
@@ -62,9 +62,9 @@ class UrlTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t('application:Redirect URL'),
-        dataIndex: 'id',
-        key: 'id',
+        title: i18next.t("application:Redirect URL"),
+        dataIndex: "id",
+        key: "id",
         render: (text, record, index) => {
           return (
             <Input prefix={<LinkOutlined/>} value={text} onChange={e => {
@@ -74,19 +74,19 @@ class UrlTable extends React.Component {
         }
       },
       {
-        title: i18next.t('general:Action'),
-        key: 'action',
-        width: '100px',
+        title: i18next.t("general:Action"),
+        key: "action",
+        width: "100px",
         render: (text, record, index) => {
           return (
             <div>
-              <Tooltip placement="bottomLeft" title={i18next.t('general:Up')}>
-                <Button style={{marginRight: '5px'}} disabled={index === 0} icon={<UpOutlined />} size="small" onClick={() => this.upRow(table, index)} />
+              <Tooltip placement="bottomLeft" title={i18next.t("general:Up")}>
+                <Button style={{marginRight: "5px"}} disabled={index === 0} icon={<UpOutlined />} size="small" onClick={() => this.upRow(table, index)} />
               </Tooltip>
-              <Tooltip placement="topLeft" title={i18next.t('general:Down')}>
-                <Button style={{marginRight: '5px'}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
+              <Tooltip placement="topLeft" title={i18next.t("general:Down")}>
+                <Button style={{marginRight: "5px"}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
               </Tooltip>
-              <Tooltip placement="topLeft" title={i18next.t('general:Delete')}>
+              <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
                 <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
               </Tooltip>
             </div>
@@ -100,7 +100,7 @@ class UrlTable extends React.Component {
         title={() => (
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button style={{marginRight: '5px'}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t('general:Add')}</Button>
+            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
           </div>
         )}
       />
@@ -110,7 +110,7 @@ class UrlTable extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{marginTop: '20px'}} >
+        <Row style={{marginTop: "20px"}} >
           <Col span={24}>
             {
               this.renderTable(this.props.table)

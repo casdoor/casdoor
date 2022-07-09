@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Button, Checkbox, Col, Form, Input, Modal, Result, Row } from 'antd';
-import i18next from 'i18next';
-import React from 'react';
-import { Link } from 'react-router-dom';
-import * as ApplicationBackend from '../backend/ApplicationBackend';
-import { CountDownInput } from '../common/CountDownInput';
-import CustomGithubCorner from '../CustomGithubCorner';
-import SelectRegionBox from '../SelectRegionBox';
-import * as Setting from '../Setting';
-import { authConfig } from './Auth';
-import * as AuthBackend from './AuthBackend';
-import * as Util from './Util';
+import { Button, Checkbox, Col, Form, Input, Modal, Result, Row } from "antd";
+import i18next from "i18next";
+import React from "react";
+import { Link } from "react-router-dom";
+import * as ApplicationBackend from "../backend/ApplicationBackend";
+import { CountDownInput } from "../common/CountDownInput";
+import CustomGithubCorner from "../CustomGithubCorner";
+import SelectRegionBox from "../SelectRegionBox";
+import * as Setting from "../Setting";
+import { authConfig } from "./Auth";
+import * as AuthBackend from "./AuthBackend";
+import * as Util from "./Util";
 
 const formItemLayout = {
   labelCol: {
@@ -64,15 +64,15 @@ class SignupPage extends React.Component {
       classes: props,
       applicationName: props.match?.params.applicationName !== undefined ? props.match.params.applicationName : authConfig.appName,
       application: null,
-      email: '',
-      phone: '',
-      emailCode: '',
-      phoneCode: '',
+      email: "",
+      phone: "",
+      emailCode: "",
+      phoneCode: "",
       validEmail: false,
       validPhone: false,
-      region: '',
+      region: "",
       isTermsOfUseVisible: false,
-      termsOfUseContent: '',
+      termsOfUseContent: "",
     };
 
     this.form = React.createRef();
@@ -82,7 +82,7 @@ class SignupPage extends React.Component {
     if (this.state.applicationName !== undefined) {
       this.getApplication();
     } else {
-      Util.showMessage('error', `Unknown application name: ${this.state.applicationName}`);
+      Util.showMessage("error", `Unknown application name: ${this.state.applicationName}`);
     }
   }
 
@@ -91,7 +91,7 @@ class SignupPage extends React.Component {
       return;
     }
 
-    ApplicationBackend.getApplication('admin', this.state.applicationName)
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
         this.setState({
           application: application,
@@ -105,7 +105,7 @@ class SignupPage extends React.Component {
 
   getResultPath(application) {
     if (authConfig.appName === application.name) {
-      return '/result';
+      return "/result";
     } else {
       if (Setting.hasPromptPage(application)) {
         return `/prompt/${application.name}`;
@@ -125,7 +125,7 @@ class SignupPage extends React.Component {
 
   getTermsofuseContent(url) {
     fetch(url, {
-      method: 'GET',
+      method: "GET",
     }).then(r => {
       r.text().then(res => {
         this.setState({termsOfUseContent: res});
@@ -142,26 +142,26 @@ class SignupPage extends React.Component {
     values.phonePrefix = application.organizationObj.phonePrefix;
     AuthBackend.signup(values)
       .then((res) => {
-        if (res.status === 'ok') {
+        if (res.status === "ok") {
           if (Setting.hasPromptPage(application)) {
-            AuthBackend.getAccount('')
+            AuthBackend.getAccount("")
               .then((res) => {
                 let account = null;
-                if (res.status === 'ok') {
+                if (res.status === "ok") {
                   account = res.data;
                   account.organization = res.data2;
 
                   this.onUpdateAccount(account);
                   Setting.goToLinkSoft(this, this.getResultPath(application));
                 } else {
-                  Setting.showMessage('error', `Failed to sign in: ${res.msg}`);
+                  Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
                 }
               });
           } else {
             Setting.goToLinkSoft(this, this.getResultPath(application));
           }
         } else {
-          Setting.showMessage('error', i18next.t(`signup:${res.msg}`));
+          Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
         }
       });
   }
@@ -177,16 +177,16 @@ class SignupPage extends React.Component {
 
     const required = signupItem.required;
 
-    if (signupItem.name === 'Username') {
+    if (signupItem.name === "Username") {
       return (
         <Form.Item
           name="username"
           key="username"
-          label={i18next.t('signup:Username')}
+          label={i18next.t("signup:Username")}
           rules={[
             {
               required: required,
-              message: i18next.t('forget:Please input your username!'),
+              message: i18next.t("forget:Please input your username!"),
               whitespace: true,
             },
           ]}
@@ -194,18 +194,18 @@ class SignupPage extends React.Component {
           <Input />
         </Form.Item>
       );
-    } else if (signupItem.name === 'Display name') {
-      if (signupItem.rule === 'First, last' && Setting.getLanguage() !== 'zh') {
+    } else if (signupItem.name === "Display name") {
+      if (signupItem.rule === "First, last" && Setting.getLanguage() !== "zh") {
         return (
           <React.Fragment>
             <Form.Item
               name="firstName"
               key="firstName"
-              label={i18next.t('general:First name')}
+              label={i18next.t("general:First name")}
               rules={[
                 {
                   required: required,
-                  message: i18next.t('signup:Please input your first name!'),
+                  message: i18next.t("signup:Please input your first name!"),
                   whitespace: true,
                 },
               ]}
@@ -215,11 +215,11 @@ class SignupPage extends React.Component {
             <Form.Item
               name="lastName"
               key="lastName"
-              label={i18next.t('general:Last name')}
+              label={i18next.t("general:Last name")}
               rules={[
                 {
                   required: required,
-                  message: i18next.t('signup:Please input your last name!'),
+                  message: i18next.t("signup:Please input your last name!"),
                   whitespace: true,
                 },
               ]}
@@ -234,11 +234,11 @@ class SignupPage extends React.Component {
         <Form.Item
           name="name"
           key="name"
-          label={(signupItem.rule === 'Real name' || signupItem.rule === 'First, last') ? i18next.t('general:Real name') : i18next.t('general:Display name')}
+          label={(signupItem.rule === "Real name" || signupItem.rule === "First, last") ? i18next.t("general:Real name") : i18next.t("general:Display name")}
           rules={[
             {
               required: required,
-              message: (signupItem.rule === 'Real name' || signupItem.rule === 'First, last') ? i18next.t('signup:Please input your real name!') : i18next.t('signup:Please input your display name!'),
+              message: (signupItem.rule === "Real name" || signupItem.rule === "First, last") ? i18next.t("signup:Please input your real name!") : i18next.t("signup:Please input your display name!"),
               whitespace: true,
             },
           ]}
@@ -246,16 +246,16 @@ class SignupPage extends React.Component {
           <Input />
         </Form.Item>
       );
-    } else if (signupItem.name === 'Affiliation') {
+    } else if (signupItem.name === "Affiliation") {
       return (
         <Form.Item
           name="affiliation"
           key="affiliation"
-          label={i18next.t('user:Affiliation')}
+          label={i18next.t("user:Affiliation")}
           rules={[
             {
               required: required,
-              message: i18next.t('signup:Please input your affiliation!'),
+              message: i18next.t("signup:Please input your affiliation!"),
               whitespace: true,
             },
           ]}
@@ -263,61 +263,61 @@ class SignupPage extends React.Component {
           <Input />
         </Form.Item>
       );
-    } else if (signupItem.name === 'ID card') {
+    } else if (signupItem.name === "ID card") {
       return (
         <Form.Item
           name="idCard"
           key="idCard"
-          label={i18next.t('user:ID card')}
+          label={i18next.t("user:ID card")}
           rules={[
             {
               required: required,
-              message: i18next.t('signup:Please input your ID card number!'),
+              message: i18next.t("signup:Please input your ID card number!"),
               whitespace: true,
             },
             {
               required: required,
-              pattern: new RegExp(/^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9X]$/, 'g'),
-              message: i18next.t('signup:Please input the correct ID card number!'),
+              pattern: new RegExp(/^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9X]$/, "g"),
+              message: i18next.t("signup:Please input the correct ID card number!"),
             },
           ]}
         >
           <Input />
         </Form.Item>
       );
-    } else if (signupItem.name === 'Country/Region') {
+    } else if (signupItem.name === "Country/Region") {
       return (
         <Form.Item
           name="country_region"
           key="region"
-          label={i18next.t('user:Country/Region')}
+          label={i18next.t("user:Country/Region")}
           rules={[
             {
               required: required,
-              message: i18next.t('signup:Please select your country/region!'),
+              message: i18next.t("signup:Please select your country/region!"),
             },
           ]}
         >
           <SelectRegionBox onChange={(value) => {this.setState({region: value});}} />
         </Form.Item>
       );
-    } else if (signupItem.name === 'Email') {
+    } else if (signupItem.name === "Email") {
       return (
         <React.Fragment>
           <Form.Item
             name="email"
             key="email"
-            label={i18next.t('general:Email')}
+            label={i18next.t("general:Email")}
             rules={[
               {
                 required: required,
-                message: i18next.t('signup:Please input your Email!'),
+                message: i18next.t("signup:Please input your Email!"),
               },
               {
                 validator: (_, value) => {
-                  if (this.state.email !== '' && !Setting.isValidEmail(this.state.email)) {
+                  if (this.state.email !== "" && !Setting.isValidEmail(this.state.email)) {
                     this.setState({validEmail: false});
-                    return Promise.reject(i18next.t('signup:The input is not valid Email!'));
+                    return Promise.reject(i18next.t("signup:The input is not valid Email!"));
                   }
 
                   this.setState({validEmail: true});
@@ -329,41 +329,41 @@ class SignupPage extends React.Component {
             <Input onChange={e => this.setState({email: e.target.value})} />
           </Form.Item>
           {
-            signupItem.rule !== 'No verification' && 
+            signupItem.rule !== "No verification" && 
             <Form.Item
               name="emailCode"
               key="emailCode"
-              label={i18next.t('code:Email code')}
+              label={i18next.t("code:Email code")}
               rules={[{
                 required: required,
-                message: i18next.t('code:Please input your verification code!'),
+                message: i18next.t("code:Please input your verification code!"),
               }]}
             >
               <CountDownInput
                 disabled={!this.state.validEmail}
-                onButtonClickArgs={[this.state.email, 'email', Setting.getApplicationOrgName(application)]}
+                onButtonClickArgs={[this.state.email, "email", Setting.getApplicationOrgName(application)]}
               />
             </Form.Item>
           }
         </React.Fragment>
       );
-    } else if (signupItem.name === 'Phone') {
+    } else if (signupItem.name === "Phone") {
       return (
         <React.Fragment>
           <Form.Item
             name="phone"
             key="phone"
-            label={i18next.t('general:Phone')}
+            label={i18next.t("general:Phone")}
             rules={[
               {
                 required: required,
-                message: i18next.t('signup:Please input your phone number!'),
+                message: i18next.t("signup:Please input your phone number!"),
               },
               {
                 validator: (_, value) =>{
-                  if (this.state.phone !== '' && !Setting.isValidPhone(this.state.phone)) {
+                  if (this.state.phone !== "" && !Setting.isValidPhone(this.state.phone)) {
                     this.setState({validPhone: false});
-                    return Promise.reject(i18next.t('signup:The input is not valid Phone!'));
+                    return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
                   }
 
                   this.setState({validPhone: true});
@@ -374,7 +374,7 @@ class SignupPage extends React.Component {
           >
             <Input
               style={{
-                width: '100%',
+                width: "100%",
               }}
               addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
               onChange={e => this.setState({phone: e.target.value})}
@@ -383,32 +383,32 @@ class SignupPage extends React.Component {
           <Form.Item
             name="phoneCode"
             key="phoneCode"
-            label={i18next.t('code:Phone code')}
+            label={i18next.t("code:Phone code")}
             rules={[
               {
                 required: required,
-                message: i18next.t('code:Please input your phone verification code!'),
+                message: i18next.t("code:Please input your phone verification code!"),
               },
             ]}
           >
             <CountDownInput
               disabled={!this.state.validPhone}
-              onButtonClickArgs={[this.state.phone, 'phone', Setting.getApplicationOrgName(application)]}
+              onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationOrgName(application)]}
             />
           </Form.Item>
         </React.Fragment>
       );
-    } else if (signupItem.name === 'Password') {
+    } else if (signupItem.name === "Password") {
       return (
         <Form.Item
           name="password"
           key="password"
-          label={i18next.t('general:Password')}
+          label={i18next.t("general:Password")}
           rules={[
             {
               required: required,
               min: 6,
-              message: i18next.t('login:Please input your password, at least 6 characters!'),
+              message: i18next.t("login:Please input your password, at least 6 characters!"),
             },
           ]}
           hasFeedback
@@ -416,26 +416,26 @@ class SignupPage extends React.Component {
           <Input.Password />
         </Form.Item>
       );
-    } else if (signupItem.name === 'Confirm password') {
+    } else if (signupItem.name === "Confirm password") {
       return (
         <Form.Item
           name="confirm"
           key="confirm"
-          label={i18next.t('signup:Confirm')}
-          dependencies={['password']}
+          label={i18next.t("signup:Confirm")}
+          dependencies={["password"]}
           hasFeedback
           rules={[
             {
               required: required,
-              message: i18next.t('signup:Please confirm your password!'),
+              message: i18next.t("signup:Please confirm your password!"),
             },
             ({ getFieldValue }) => ({
               validator(rule, value) {
-                if (!value || getFieldValue('password') === value) {
+                if (!value || getFieldValue("password") === value) {
                   return Promise.resolve();
                 }
 
-                return Promise.reject(i18next.t('signup:Your confirmed password is inconsistent with the password!'));
+                return Promise.reject(i18next.t("signup:Your confirmed password is inconsistent with the password!"));
               },
             }),
           ]}
@@ -443,7 +443,7 @@ class SignupPage extends React.Component {
           <Input.Password />
         </Form.Item>
       );
-    } else if (signupItem.name === 'Agreement') {
+    } else if (signupItem.name === "Agreement") {
       return (
         <Form.Item
           name="agreement"
@@ -452,19 +452,19 @@ class SignupPage extends React.Component {
           rules={[
             {
               required: required,
-              message: i18next.t('signup:Please accept the agreement!'),
+              message: i18next.t("signup:Please accept the agreement!"),
             },
           ]}
           {...tailFormItemLayout}
         >
           <Checkbox>
-            {i18next.t('signup:Accept')}&nbsp;
+            {i18next.t("signup:Accept")}&nbsp;
             <Link onClick={() => {
               this.setState({
                 isTermsOfUseVisible: true,
               });
             }}>
-              {i18next.t('signup:Terms of Use')}
+              {i18next.t("signup:Terms of Use")}
             </Link>
           </Checkbox>
         </Form.Item>
@@ -475,12 +475,12 @@ class SignupPage extends React.Component {
   renderModal() {
     return (
       <Modal
-        title={i18next.t('signup:Terms of Use')}
+        title={i18next.t("signup:Terms of Use")}
         visible={this.state.isTermsOfUseVisible}
-        width={'55vw'}
+        width={"55vw"}
         closable={false}
-        okText={i18next.t('signup:Accept')}
-        cancelText={i18next.t('signup:Decline')}
+        okText={i18next.t("signup:Accept")}
+        cancelText={i18next.t("signup:Decline")}
         onOk={() => {
           this.form.current.setFieldsValue({agreement: true});
           this.setState({
@@ -495,7 +495,7 @@ class SignupPage extends React.Component {
           this.props.history.goBack();
         }}
       >
-        <iframe title={'terms'} style={{border: 0, width: '100%', height: '60vh'}} srcDoc={this.state.termsOfUseContent}/>
+        <iframe title={"terms"} style={{border: 0, width: "100%", height: "60vh"}} srcDoc={this.state.termsOfUseContent}/>
       </Modal>
     );
   }
@@ -506,7 +506,7 @@ class SignupPage extends React.Component {
         <Result
           status="error"
           title="Sign Up Error"
-          subTitle={'The application does not allow to sign up new account'}
+          subTitle={"The application does not allow to sign up new account"}
           extra={[
             <Button type="primary" key="signin" onClick={() => {
               Setting.goToLogin(this, application);
@@ -529,27 +529,27 @@ class SignupPage extends React.Component {
           application: application.name,
           organization: application.organization,
         }}
-        style={{width: !Setting.isMobile() ? '400px' : '250px'}}
+        style={{width: !Setting.isMobile() ? "400px" : "250px"}}
         size="large"
       >
         <Form.Item
-          style={{height: 0, visibility: 'hidden'}}
+          style={{height: 0, visibility: "hidden"}}
           name="application"
           rules={[
             {
               required: true,
-              message: 'Please input your application!',
+              message: "Please input your application!",
             },
           ]}
         >
         </Form.Item>
         <Form.Item
-          style={{height: 0, visibility: 'hidden'}}
+          style={{height: 0, visibility: "hidden"}}
           name="organization"
           rules={[
             {
               required: true,
-              message: 'Please input your organization!',
+              message: "Please input your organization!",
             },
           ]}
         >
@@ -559,18 +559,18 @@ class SignupPage extends React.Component {
         }
         <Form.Item {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">
-            {i18next.t('account:Sign Up')}
+            {i18next.t("account:Sign Up")}
           </Button>
-          &nbsp;&nbsp;{i18next.t('signup:Have account?')}&nbsp;
+          &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
           <a onClick={() => {
-            let linkInStorage = sessionStorage.getItem('loginURL');
+            let linkInStorage = sessionStorage.getItem("loginURL");
             if(linkInStorage != null){
               Setting.goToLink(linkInStorage);
             }else{
               Setting.goToLogin(this, application);
             }
           }}>
-            {i18next.t('signup:sign in now')}
+            {i18next.t("signup:sign in now")}
           </a>
         </Form.Item>
       </Form>
@@ -583,7 +583,7 @@ class SignupPage extends React.Component {
       return null;
     }
 
-    if (application.signupHtml !== '') {
+    if (application.signupHtml !== "") {
       return (
         <div dangerouslySetInnerHTML={{ __html: application.signupHtml}} />
       );
@@ -594,8 +594,8 @@ class SignupPage extends React.Component {
         <CustomGithubCorner />
         &nbsp;
         <Row>
-          <Col span={24} style={{display: 'flex', justifyContent:  'center'}} >
-            <div style={{marginTop: '10px', textAlign: 'center'}}>
+          <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
+            <div style={{marginTop: "10px", textAlign: "center"}}>
               {
                 Setting.renderHelmet(application)
               }

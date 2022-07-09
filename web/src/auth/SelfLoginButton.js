@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
-import {createButton} from 'react-social-login-buttons';
+import React from "react";
+import {createButton} from "react-social-login-buttons";
 
 class SelfLoginButton extends React.Component {
   generateIcon() {
@@ -25,8 +25,8 @@ class SelfLoginButton extends React.Component {
 
   getAccountShowName() {
     let {name, displayName} = this.props.account;
-    if (displayName !== '') {
-      name += ' (' + displayName + ')';
+    if (displayName !== "") {
+      name += " (" + displayName + ")";
     }
     return name;
   }
@@ -35,12 +35,12 @@ class SelfLoginButton extends React.Component {
     const config = {
       icon: this.generateIcon(),
       iconFormat: name => `fa fa-${name}`,
-      style: {background: '#ffffff', color: '#000000'},
-      activeStyle: {background: '#eff0ee'},
+      style: {background: "#ffffff", color: "#000000"},
+      activeStyle: {background: "#eff0ee"},
     };
 
     const SelfLoginButton = createButton(config);
-    return <SelfLoginButton text={this.getAccountShowName()} onClick={() => this.props.onClick()} align={'center'}/>;
+    return <SelfLoginButton text={this.getAccountShowName()} onClick={() => this.props.onClick()} align={"center"}/>;
   }
 }
 

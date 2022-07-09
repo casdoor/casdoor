@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from '../Setting';
+import * as Setting from "../Setting";
 
-export function getPayments(owner, page = '', pageSize = '', field = '', value = '', sortField = '', sortOrder = '') {
+export function getPayments(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
   return fetch(`${Setting.ServerUrl}/api/get-payments?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
-    method: 'GET',
-    credentials: 'include'
+    method: "GET",
+    credentials: "include"
   }).then(res => res.json());
 }
 
 export function getPayment(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-payment?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'GET',
-    credentials: 'include'
+    method: "GET",
+    credentials: "include"
   }).then(res => res.json());
 }
 
 export function updatePayment(owner, name, payment) {
   let newPayment = Setting.deepCopy(payment);
   return fetch(`${Setting.ServerUrl}/api/update-payment?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newPayment),
   }).then(res => res.json());
 }
@@ -40,8 +40,8 @@ export function updatePayment(owner, name, payment) {
 export function addPayment(payment) {
   let newPayment = Setting.deepCopy(payment);
   return fetch(`${Setting.ServerUrl}/api/add-payment`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newPayment),
   }).then(res => res.json());
 }
@@ -49,15 +49,15 @@ export function addPayment(payment) {
 export function deletePayment(payment) {
   let newPayment = Setting.deepCopy(payment);
   return fetch(`${Setting.ServerUrl}/api/delete-payment`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newPayment),
   }).then(res => res.json());
 }
 
 export function invoicePayment(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/invoice-payment?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include'
+    method: "POST",
+    credentials: "include"
   }).then(res => res.json());
 }

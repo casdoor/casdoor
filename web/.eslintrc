@@ -4,8 +4,9 @@
     "es6": true,
     "node": true
   },
+  "parser": "babel-eslint",
   "parserOptions": {
-    "ecmaVersion": 13,
+    "ecmaVersion": 12,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
@@ -21,7 +22,7 @@
     "semi": ["error", "always"],
     "indent": ["error", 2],
     // follow antd's style guide
-    "quotes": ["error", "single"],
+    "quotes": ["error", "double"],
     "jsx-quotes": ["error", "prefer-double"],
 
     "react/prop-types": "off",

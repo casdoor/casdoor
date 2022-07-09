@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
-import {Button, Col, Result, Row} from 'antd';
-import * as ApplicationBackend from '../backend/ApplicationBackend';
-import * as UserBackend from '../backend/UserBackend';
-import * as AuthBackend from './AuthBackend';
-import * as Setting from '../Setting';
-import i18next from 'i18next';
-import AffiliationSelect from '../common/AffiliationSelect';
-import OAuthWidget from '../common/OAuthWidget';
+import React from "react";
+import {Button, Col, Result, Row} from "antd";
+import * as ApplicationBackend from "../backend/ApplicationBackend";
+import * as UserBackend from "../backend/UserBackend";
+import * as AuthBackend from "./AuthBackend";
+import * as Setting from "../Setting";
+import i18next from "i18next";
+import AffiliationSelect from "../common/AffiliationSelect";
+import OAuthWidget from "../common/OAuthWidget";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -55,7 +55,7 @@ class PromptPage extends React.Component {
       return;
     }
 
-    ApplicationBackend.getApplication('admin', this.state.applicationName)
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
         this.setState({
           application: application,
@@ -110,7 +110,7 @@ class PromptPage extends React.Component {
 
   renderContent(application) {
     return (
-      <div style={{width: '400px'}}>
+      <div style={{width: "400px"}}>
         {
           this.renderAffiliation(application)
         }
@@ -132,11 +132,11 @@ class PromptPage extends React.Component {
   getRedirectUrl() {
     // "/prompt/app-example?redirectUri=http://localhost:2000/callback&code=8eb113b072296818f090&state=app-example"
     const params = new URLSearchParams(this.props.location.search);
-    const redirectUri = params.get('redirectUri');
-    const code = params.get('code');
-    const state = params.get('state');
+    const redirectUri = params.get("redirectUri");
+    const code = params.get("code");
+    const state = params.get("state");
     if (redirectUri === null || code === null || state === null) {
-      return '';
+      return "";
     }
     return `${redirectUri}?code=${code}&state=${state}`;
   }
@@ -144,20 +144,20 @@ class PromptPage extends React.Component {
   logout() {
     AuthBackend.logout()
       .then((res) => {
-        if (res.status === 'ok') {
+        if (res.status === "ok") {
           this.onUpdateAccount(null);
 
           let redirectUrl = this.getRedirectUrl();
-          if (redirectUrl === '') {
+          if (redirectUrl === "") {
             redirectUrl = res.data2;
           }
-          if (redirectUrl !== '') {
+          if (redirectUrl !== "") {
             Setting.goToLink(redirectUrl);
           } else {
             Setting.goToLogin(this, this.getApplicationObj());
           }
         } else {
-          Setting.showMessage('error', `Failed to log out: ${res.msg}`);
+          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
         }
       });
   }
@@ -166,21 +166,21 @@ class PromptPage extends React.Component {
     let user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.user.owner, this.state.user.name, user)
       .then((res) => {
-        if (res.msg === '') {
+        if (res.msg === "") {
           if (isFinal) {
-            Setting.showMessage('success', 'Successfully saved');
+            Setting.showMessage("success", "Successfully saved");
 
             this.logout();
           }
         } else {
           if (isFinal) {
-            Setting.showMessage('error', res.msg);
+            Setting.showMessage("error", res.msg);
           }
         }
       })
       .catch(error => {
         if (isFinal) {
-          Setting.showMessage('error', `Failed to connect to server: ${error}`);
+          Setting.showMessage("error", `Failed to connect to server: ${error}`);
         }
       });
   }
@@ -196,7 +196,7 @@ class PromptPage extends React.Component {
         <Result
           status="error"
           title="Sign Up Error"
-          subTitle={'You are unexpected to see this prompt page'}
+          subTitle={"You are unexpected to see this prompt page"}
           extra={[
             <Button type="primary" key="signin" onClick={() => {
               Setting.goToLogin(this, application);
@@ -211,8 +211,8 @@ class PromptPage extends React.Component {
 
     return (
       <Row>
-        <Col span={24} style={{display: 'flex', justifyContent: 'center'}}>
-          <div style={{marginTop: '80px', marginBottom: '50px', textAlign: 'center'}}>
+        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
+          <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center"}}>
             {
               Setting.renderHelmet(application)
             }
@@ -226,8 +226,8 @@ class PromptPage extends React.Component {
               <Col span={18}>
               </Col>
             </Row>
-            <div style={{marginTop: '50px'}}>
-              <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t('code:Submit and complete')}</Button>
+            <div style={{marginTop: "50px"}}>
+              <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
             </div>
           </div>
         </Col>

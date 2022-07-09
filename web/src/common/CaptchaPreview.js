@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { SafetyOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Modal, Row } from 'antd';
-import i18next from 'i18next';
-import React from 'react';
-import * as ProviderBackend from '../backend/ProviderBackend';
-import * as UserBackend from '../backend/UserBackend';
-import { CaptchaWidget } from './CaptchaWidget';
+import { SafetyOutlined } from "@ant-design/icons";
+import { Button, Col, Input, Modal, Row } from "antd";
+import i18next from "i18next";
+import React from "react";
+import * as ProviderBackend from "../backend/ProviderBackend";
+import * as UserBackend from "../backend/UserBackend";
+import { CaptchaWidget } from "./CaptchaWidget";
 
 export const CaptchaPreview = ({
   provider,
@@ -34,14 +34,14 @@ export const CaptchaPreview = ({
   clientSecret2,
 }) => {
   const [visible, setVisible] = React.useState(false);
-  const [captchaImg, setCaptchaImg] = React.useState('');
-  const [captchaToken, setCaptchaToken] = React.useState('');
+  const [captchaImg, setCaptchaImg] = React.useState("");
+  const [captchaToken, setCaptchaToken] = React.useState("");
   const [secret, setSecret] = React.useState(clientSecret);
   const [secret2, setSecret2] = React.useState(clientSecret2);
 
   const handleOk = () => {
     UserBackend.verifyCaptcha(captchaType, captchaToken, secret).then(() => {
-      setCaptchaToken('');
+      setCaptchaToken("");
       setVisible(false);
     });
   };
@@ -52,7 +52,7 @@ export const CaptchaPreview = ({
 
   const getCaptchaFromBackend = () => {
     UserBackend.getCaptcha(owner, name, true).then((res) => {
-      if (captchaType === 'Default') {
+      if (captchaType === "Default") {
         setSecret(res.captchaId);
         setCaptchaImg(res.captchaImage);
       } else {
@@ -68,7 +68,7 @@ export const CaptchaPreview = ({
     provider.clientId = clientId;
     provider.type = captchaType;
     provider.providerUrl = providerUrl;
-    if (clientSecret !== '***') {
+    if (clientSecret !== "***") {
       provider.clientSecret = clientSecret;
       ProviderBackend.updateProvider(owner, providerName, provider).then(() => {
         getCaptchaFromBackend();
@@ -84,11 +84,11 @@ export const CaptchaPreview = ({
         <Row
           style={{
             backgroundImage: `url('data:image/png;base64,${captchaImg}')`,
-            backgroundRepeat: 'no-repeat',
-            height: '80px',
-            width: '200px',
-            borderRadius: '3px',
-            border: '1px solid #ccc',
+            backgroundRepeat: "no-repeat",
+            height: "80px",
+            width: "200px",
+            borderRadius: "3px",
+            border: "1px solid #ccc",
             marginBottom: 10,
           }}
         />
@@ -97,7 +97,7 @@ export const CaptchaPreview = ({
             autoFocus
             value={captchaToken}
             prefix={<SafetyOutlined />}
-            placeholder={i18next.t('general:Captcha')}
+            placeholder={i18next.t("general:Captcha")}
             onPressEnter={handleOk}
             onChange={(e) => setCaptchaToken(e.target.value)}
           />
@@ -111,7 +111,7 @@ export const CaptchaPreview = ({
   };
 
   const renderCheck = () => {
-    if (captchaType === 'Default') {
+    if (captchaType === "Default") {
       return renderDefaultCaptcha();
     } else {
       return (
@@ -133,11 +133,11 @@ export const CaptchaPreview = ({
   };
 
   const getButtonDisabled = () => {
-    if (captchaType !== 'Default') {
+    if (captchaType !== "Default") {
       if (!clientId || !clientSecret) {
         return true;
       }
-      if (captchaType === 'Aliyun Captcha') {
+      if (captchaType === "Aliyun Captcha") {
         if (!subType || !clientId2 || !clientSecret2) {
           return true;
         }
@@ -150,20 +150,20 @@ export const CaptchaPreview = ({
     <React.Fragment>
       <Button
         style={{ fontSize: 14 }}
-        type={'primary'}
+        type={"primary"}
         onClick={clickPreview}
         disabled={getButtonDisabled()}
       >
-        {i18next.t('general:Preview')}
+        {i18next.t("general:Preview")}
       </Button>
       <Modal
         closable={false}
         maskClosable={false}
         destroyOnClose={true}
-        title={i18next.t('general:Captcha')}
+        title={i18next.t("general:Captcha")}
         visible={visible}
-        okText={i18next.t('user:OK')}
-        cancelText={i18next.t('user:Cancel')}
+        okText={i18next.t("user:OK")}
+        cancelText={i18next.t("user:Cancel")}
         onOk={handleOk}
         onCancel={handleCancel}
         width={348}

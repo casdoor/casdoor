@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
-import * as Setting from './Setting';
-import { Menu, Dropdown} from 'antd';
-import { createFromIconfontCN } from '@ant-design/icons';
-import './App.less';
+import React from "react";
+import * as Setting from "./Setting";
+import { Menu, Dropdown} from "antd";
+import { createFromIconfontCN } from "@ant-design/icons";
+import "./App.less";
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_2680620_ffij16fkwdg.js',
+  scriptUrl: "//at.alicdn.com/t/font_2680620_ffij16fkwdg.js",
 });
 
 class SelectLanguageBox extends React.Component {

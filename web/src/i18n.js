@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import i18n from 'i18next';
-import zh from './locales/zh/data.json';
-import en from './locales/en/data.json';
-import fr from './locales/fr/data.json';
-import de from './locales/de/data.json';
-import ko from './locales/ko/data.json';
-import ru from './locales/ru/data.json';
-import ja from './locales/ja/data.json';
-import * as Conf from './Conf';
-import * as Setting from './Setting';
+import i18n from "i18next";
+import zh from "./locales/zh/data.json";
+import en from "./locales/en/data.json";
+import fr from "./locales/fr/data.json";
+import de from "./locales/de/data.json";
+import ko from "./locales/ko/data.json";
+import ru from "./locales/ru/data.json";
+import ja from "./locales/ja/data.json";
+import * as Conf from "./Conf";
+import * as Setting from "./Setting";
 
 const resources = {
   en: en,
@@ -34,40 +34,40 @@ const resources = {
 };
 
 function initLanguage() {
-  let language = localStorage.getItem('language');
+  let language = localStorage.getItem("language");
   if (language === undefined || language == null) {
-    if (Conf.ForceLanguage !== '') {
+    if (Conf.ForceLanguage !== "") {
       language = Conf.ForceLanguage;
     } else {
       let userLanguage;
       userLanguage = navigator.language;
       switch (userLanguage) {
-      case 'zh-CN':
-        language = 'zh';
+      case "zh-CN":
+        language = "zh";
         break;
-      case 'zh':
-        language = 'zh';
+      case "zh":
+        language = "zh";
         break;
-      case 'en':
-        language = 'en';
+      case "en":
+        language = "en";
         break;
-      case 'en-US':
-        language = 'en';
+      case "en-US":
+        language = "en";
         break;
-      case 'fr':
-        language = 'fr';
+      case "fr":
+        language = "fr";
         break;
-      case 'de':
-        language = 'de';
+      case "de":
+        language = "de";
         break;
-      case 'ko':
-        language = 'ko';
+      case "ko":
+        language = "ko";
         break;
-      case 'ru':
-        language = 'ru';
+      case "ru":
+        language = "ru";
         break;
-      case 'ja':
-        language = 'ja';
+      case "ja":
+        language = "ja";
         break;
       default:
         language = Conf.DefaultLanguage;

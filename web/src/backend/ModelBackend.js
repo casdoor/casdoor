@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from '../Setting';
+import * as Setting from "../Setting";
 
-export function getModels(owner, page = '', pageSize = '', field = '', value = '', sortField = '', sortOrder = '') {
+export function getModels(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
   return fetch(`${Setting.ServerUrl}/api/get-models?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
-    method: 'GET',
-    credentials: 'include'
+    method: "GET",
+    credentials: "include"
   }).then(res => res.json());
 }
 
 export function getModel(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-model?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'GET',
-    credentials: 'include'
+    method: "GET",
+    credentials: "include"
   }).then(res => res.json());
 }
 
 export function updateModel(owner, name, model) {
   let newModel = Setting.deepCopy(model);
   return fetch(`${Setting.ServerUrl}/api/update-model?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newModel),
   }).then(res => res.json());
 }
@@ -40,8 +40,8 @@ export function updateModel(owner, name, model) {
 export function addModel(model) {
   let newModel = Setting.deepCopy(model);
   return fetch(`${Setting.ServerUrl}/api/add-model`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newModel),
   }).then(res => res.json());
 }
@@ -49,8 +49,8 @@ export function addModel(model) {
 export function deleteModel(model) {
   let newModel = Setting.deepCopy(model);
   return fetch(`${Setting.ServerUrl}/api/delete-model`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newModel),
   }).then(res => res.json());
 }

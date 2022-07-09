@@ -12,26 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
 export const CaptchaWidget = ({ captchaType, subType, siteKey, clientSecret, onChange, clientId2, clientSecret2 }) => {
   const loadScript = (src) => {
-    var tag = document.createElement('script');
+    var tag = document.createElement("script");
     tag.async = false;
     tag.src = src;
-    var body = document.getElementsByTagName('body')[0];
+    var body = document.getElementsByTagName("body")[0];
     body.appendChild(tag);
   };
 
   useEffect(() => {
     switch (captchaType) {
-    case 'reCAPTCHA':
+    case "reCAPTCHA":
       const reTimer = setInterval(() => {
         if (!window.grecaptcha) {
-          loadScript('https://recaptcha.net/recaptcha/api.js');
+          loadScript("https://recaptcha.net/recaptcha/api.js");
         }
         if (window.grecaptcha && window.grecaptcha.render) {
-          window.grecaptcha.render('captcha', {
+          window.grecaptcha.render("captcha", {
             sitekey: siteKey,
             callback: onChange,
           });
@@ -39,13 +39,13 @@ export const CaptchaWidget = ({ captchaType, subType, siteKey, clientSecret, onC
         }
       }, 300);
       break;
-    case 'hCaptcha':
+    case "hCaptcha":
       const hTimer = setInterval(() => {
         if (!window.hcaptcha) {
-          loadScript('https://js.hcaptcha.com/1/api.js');
+          loadScript("https://js.hcaptcha.com/1/api.js");
         }
         if (window.hcaptcha && window.hcaptcha.render) {
-          window.hcaptcha.render('captcha', {
+          window.hcaptcha.render("captcha", {
             sitekey: siteKey,
             callback: onChange,
           });
@@ -53,19 +53,19 @@ export const CaptchaWidget = ({ captchaType, subType, siteKey, clientSecret, onC
         }
       }, 300);
       break;
-    case 'Aliyun Captcha':
+    case "Aliyun Captcha":
       const AWSCTimer = setInterval(() => {
         if (!window.AWSC) {
-          loadScript('https://g.alicdn.com/AWSC/AWSC/awsc.js');
+          loadScript("https://g.alicdn.com/AWSC/AWSC/awsc.js");
         }
 
         if (window.AWSC) {
-          if (clientSecret2 && clientSecret2 !== '***') {
+          if (clientSecret2 && clientSecret2 !== "***") {
             window.AWSC.use(subType, function (state, module) {
               module.init({
                 appkey: clientSecret2,
                 scene: clientId2,
-                renderTo: 'captcha',
+                renderTo: "captcha",
                 success: function (data) {
                   onChange(`SessionId=${data.sessionId}&AccessKeyId=${siteKey}&Scene=${clientId2}&AppKey=${clientSecret2}&Token=${data.token}&Sig=${data.sig}&RemoteIp=192.168.0.1`);
                 },

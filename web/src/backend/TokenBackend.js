@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from '../Setting';
+import * as Setting from "../Setting";
 
-export function getTokens(owner, page = '', pageSize = '', field = '', value = '', sortField = '', sortOrder = '') {
+export function getTokens(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
   return fetch(`${Setting.ServerUrl}/api/get-tokens?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
-    method: 'GET',
-    credentials: 'include'
+    method: "GET",
+    credentials: "include"
   }).then(res => res.json());
 }
 
 export function getToken(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-token?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'GET',
-    credentials: 'include'
+    method: "GET",
+    credentials: "include"
   }).then(res => res.json());
 }
 
 export function updateToken(owner, name, token) {
   let newToken = Setting.deepCopy(token);
   return fetch(`${Setting.ServerUrl}/api/update-token?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newToken),
   }).then(res => res.json());
 }
@@ -40,8 +40,8 @@ export function updateToken(owner, name, token) {
 export function addToken(token) {
   let newToken = Setting.deepCopy(token);
   return fetch(`${Setting.ServerUrl}/api/add-token`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newToken),
   }).then(res => res.json());
 }
@@ -49,8 +49,8 @@ export function addToken(token) {
 export function deleteToken(token) {
   let newToken = Setting.deepCopy(token);
   return fetch(`${Setting.ServerUrl}/api/delete-token`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newToken),
   }).then(res => res.json());
 }

@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
-import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
-import * as RoleBackend from './backend/RoleBackend';
-import * as OrganizationBackend from './backend/OrganizationBackend';
-import * as UserBackend from './backend/UserBackend';
-import * as Setting from './Setting';
-import i18next from 'i18next';
+import React from "react";
+import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
+import * as RoleBackend from "./backend/RoleBackend";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as UserBackend from "./backend/UserBackend";
+import * as Setting from "./Setting";
+import i18next from "i18next";
 
 const { Option } = Select;
 
@@ -33,7 +33,7 @@ class RoleEditPage extends React.Component {
       organizations: [],
       users: [],
       roles: [],
-      mode: props.location.mode !== undefined ? props.location.mode : 'edit',
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
@@ -55,7 +55,7 @@ class RoleEditPage extends React.Component {
   }
 
   getOrganizations() {
-    OrganizationBackend.getOrganizations('admin')
+    OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
@@ -82,7 +82,7 @@ class RoleEditPage extends React.Component {
   }
 
   parseRoleField(key, value) {
-    if ([''].includes(key)) {
+    if ([""].includes(key)) {
       value = Setting.myParseInt(value);
     }
     return value;
@@ -102,75 +102,75 @@ class RoleEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {this.state.mode === 'add' ? i18next.t('role:New Role') : i18next.t('role:Edit Role')}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button onClick={() => this.submitRoleEdit(false)}>{i18next.t('general:Save')}</Button>
-          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitRoleEdit(true)}>{i18next.t('general:Save & Exit')}</Button>
-          {this.state.mode === 'add' ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteRole()}>{i18next.t('general:Cancel')}</Button> : null}
+          {this.state.mode === "add" ? i18next.t("role:New Role") : i18next.t("role:Edit Role")}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button onClick={() => this.submitRoleEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitRoleEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteRole()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
-      } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
-        <Row style={{marginTop: '10px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('general:Organization'), i18next.t('general:Organization - Tooltip'))} :
+      } style={(Setting.isMobile())? {margin: "5px"}:{}} type="inner">
+        <Row style={{marginTop: "10px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.role.owner} onChange={(value => {this.updateRoleField('owner', value);})}>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.role.owner} onChange={(value => {this.updateRoleField("owner", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('general:Name'), i18next.t('general:Name - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.role.name} onChange={e => {
-              this.updateRoleField('name', e.target.value);
+              this.updateRoleField("name", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('general:Display name'), i18next.t('general:Display name - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.role.displayName} onChange={e => {
-              this.updateRoleField('displayName', e.target.value);
+              this.updateRoleField("displayName", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('role:Sub users'), i18next.t('role:Sub users - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("role:Sub users"), i18next.t("role:Sub users - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: '100%'}} value={this.state.role.users} onChange={(value => {this.updateRoleField('users', value);})}>
+            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.role.users} onChange={(value => {this.updateRoleField("users", value);})}>
               {
                 this.state.users.map((user, index) => <Option key={index} value={`${user.owner}/${user.name}`}>{`${user.owner}/${user.name}`}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('role:Sub roles'), i18next.t('role:Sub roles - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("role:Sub roles"), i18next.t("role:Sub roles - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: '100%'}} value={this.state.role.roles} onChange={(value => {this.updateRoleField('roles', value);})}>
+            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.role.roles} onChange={(value => {this.updateRoleField("roles", value);})}>
               {
                 this.state.roles.filter(role => (role.owner !== this.state.role.owner || role.name !== this.state.role.name)).map((role, index) => <Option key={index} value={`${role.owner}/${role.name}`}>{`${role.owner}/${role.name}`}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t('general:Is enabled'), i18next.t('general:Is enabled - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.role.isEnabled} onChange={checked => {
-              this.updateRoleField('isEnabled', checked);
+              this.updateRoleField("isEnabled", checked);
             }} />
           </Col>
         </Row>
@@ -182,34 +182,34 @@ class RoleEditPage extends React.Component {
     let role = Setting.deepCopy(this.state.role);
     RoleBackend.updateRole(this.state.organizationName, this.state.roleName, role)
       .then((res) => {
-        if (res.msg === '') {
-          Setting.showMessage('success', 'Successfully saved');
+        if (res.msg === "") {
+          Setting.showMessage("success", "Successfully saved");
           this.setState({
             roleName: this.state.role.name,
           });
 
           if (willExist) {
-            this.props.history.push('/roles');
+            this.props.history.push("/roles");
           } else {
             this.props.history.push(`/roles/${this.state.role.owner}/${this.state.role.name}`);
           }
         } else {
-          Setting.showMessage('error', res.msg);
-          this.updateRoleField('name', this.state.roleName);
+          Setting.showMessage("error", res.msg);
+          this.updateRoleField("name", this.state.roleName);
         }
       })
       .catch(error => {
-        Setting.showMessage('error', `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `Failed to connect to server: ${error}`);
       });
   }
 
   deleteRole() {
     RoleBackend.deleteRole(this.state.role)
       .then(() => {
-        this.props.history.push('/roles');
+        this.props.history.push("/roles");
       })
       .catch(error => {
-        Setting.showMessage('error', `Role failed to delete: ${error}`);
+        Setting.showMessage("error", `Role failed to delete: ${error}`);
       });
   }
 
@@ -219,10 +219,10 @@ class RoleEditPage extends React.Component {
         {
           this.state.role !== null ? this.renderRole() : null
         }
-        <div style={{marginTop: '20px', marginLeft: '40px'}}>
-          <Button size="large" onClick={() => this.submitRoleEdit(false)}>{i18next.t('general:Save')}</Button>
-          <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitRoleEdit(true)}>{i18next.t('general:Save & Exit')}</Button>
-          {this.state.mode === 'add' ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteRole()}>{i18next.t('general:Cancel')}</Button> : null}
+        <div style={{marginTop: "20px", marginLeft: "40px"}}>
+          <Button size="large" onClick={() => this.submitRoleEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitRoleEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteRole()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );

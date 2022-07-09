@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Button, Col, Row } from 'antd';
-import i18next from 'i18next';
-import React from 'react';
-import * as AuthBackend from '../auth/AuthBackend';
-import * as Provider from '../auth/Provider';
-import * as UserBackend from '../backend/UserBackend';
-import * as Setting from '../Setting';
+import { Button, Col, Row } from "antd";
+import i18next from "i18next";
+import React from "react";
+import * as AuthBackend from "../auth/AuthBackend";
+import * as Provider from "../auth/Provider";
+import * as UserBackend from "../backend/UserBackend";
+import * as Setting from "../Setting";
 
 class OAuthWidget extends React.Component {
   constructor(props) {
@@ -36,11 +36,11 @@ class OAuthWidget extends React.Component {
   }
 
   getAddressOptions(application) {
-    if (application.affiliationUrl === '') {
+    if (application.affiliationUrl === "") {
       return;
     }
 
-    const addressUrl = application.affiliationUrl.split('|')[0];
+    const addressUrl = application.affiliationUrl.split("|")[0];
     UserBackend.getAddressOptions(addressUrl)
       .then((addressOptions) => {
         this.setState({
@@ -50,11 +50,11 @@ class OAuthWidget extends React.Component {
   }
 
   getAffiliationOptions(application, user) {
-    if (application.affiliationUrl === '') {
+    if (application.affiliationUrl === "") {
       return;
     }
 
-    const affiliationUrl = application.affiliationUrl.split('|')[1];
+    const affiliationUrl = application.affiliationUrl.split("|")[1];
     const code = user.address[user.address.length - 1];
     UserBackend.getAffiliationOptions(affiliationUrl, code)
       .then((affiliationOptions) => {
@@ -73,18 +73,18 @@ class OAuthWidget extends React.Component {
   }
 
   getProviderLink(user, provider) {
-    if (provider.type === 'GitHub') {
-      return `https://github.com/${this.getUserProperty(user, provider.type, 'username')}`;
-    } else if (provider.type === 'Google') {
-      return 'https://mail.google.com';
+    if (provider.type === "GitHub") {
+      return `https://github.com/${this.getUserProperty(user, provider.type, "username")}`;
+    } else if (provider.type === "Google") {
+      return "https://mail.google.com";
     } else {
-      return '';
+      return "";
     }
   }
 
   getUserProperty(user, providerType, propertyName) {
     const key = `oauth_${providerType}_${propertyName}`;
-    if (user.properties === null) return '';
+    if (user.properties === null) return "";
     return user.properties[key];
   }
 
@@ -94,12 +94,12 @@ class OAuthWidget extends React.Component {
     };
     AuthBackend.unlink(body)
       .then((res) => {
-        if (res.status === 'ok') {
-          Setting.showMessage('success', 'Unlinked successfully');
+        if (res.status === "ok") {
+          Setting.showMessage("success", "Unlinked successfully");
 
           this.unlinked();
         } else {
-          Setting.showMessage('error', `Failed to unlink: ${res.msg}`);
+          Setting.showMessage("error", `Failed to unlink: ${res.msg}`);
         }
       });
   }
@@ -108,14 +108,14 @@ class OAuthWidget extends React.Component {
     const provider = providerItem.provider;
     const linkedValue = user[provider.type.toLowerCase()];
     const profileUrl = this.getProviderLink(user, provider);
-    const id = this.getUserProperty(user, provider.type, 'id');
-    const username = this.getUserProperty(user, provider.type, 'username');
-    const displayName = this.getUserProperty(user, provider.type, 'displayName');
-    const email = this.getUserProperty(user, provider.type, 'email');
-    let avatarUrl = this.getUserProperty(user, provider.type, 'avatarUrl');
+    const id = this.getUserProperty(user, provider.type, "id");
+    const username = this.getUserProperty(user, provider.type, "username");
+    const displayName = this.getUserProperty(user, provider.type, "displayName");
+    const email = this.getUserProperty(user, provider.type, "email");
+    let avatarUrl = this.getUserProperty(user, provider.type, "avatarUrl");
 
-    if (avatarUrl === '' || avatarUrl === undefined) {
-      avatarUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAQAAACROWYpAAAAHElEQVR42mNkoAAwjmoe1TyqeVTzqOZRzcNZMwB18wAfEFQkPQAAAABJRU5ErkJggg==';
+    if (avatarUrl === "" || avatarUrl === undefined) {
+      avatarUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAQAAACROWYpAAAAHElEQVR42mNkoAAwjmoe1TyqeVTzqOZRzcNZMwB18wAfEFQkPQAAAABJRU5ErkJggg==";
     }
 
     let name = (username === undefined) ? displayName : `${displayName} (${username})`;
@@ -130,25 +130,25 @@ class OAuthWidget extends React.Component {
     }
 
     return (
-      <Row key={provider.name} style={{marginTop: '20px'}} >
-        <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
+      <Row key={provider.name} style={{marginTop: "20px"}} >
+        <Col style={{marginTop: "5px"}} span={this.props.labelSpan}>
           {
             Setting.getProviderLogo(provider)
           }
-          <span style={{marginLeft: '5px'}}>
+          <span style={{marginLeft: "5px"}}>
             {
               `${provider.type}:`
             }
           </span>
         </Col>
         <Col span={24 - this.props.labelSpan} >
-          <img style={{marginRight: '10px'}} width={30} height={30} src={avatarUrl} alt={name} referrerPolicy="no-referrer" />
-          <span style={{width: this.props.labelSpan === 3 ? '300px' : '130px', display: (Setting.isMobile()) ? 'inline' : 'inline-block'}}>
+          <img style={{marginRight: "10px"}} width={30} height={30} src={avatarUrl} alt={name} referrerPolicy="no-referrer" />
+          <span style={{width: this.props.labelSpan === 3 ? "300px" : "130px", display: (Setting.isMobile()) ? "inline" : "inline-block"}}>
             {
-              linkedValue === '' ? (
-                '(empty)'
+              linkedValue === "" ? (
+                "(empty)"
               ) : (
-                profileUrl === '' ? name : (
+                profileUrl === "" ? name : (
                   <a target="_blank" rel="noreferrer" href={profileUrl}>
                     {
                       name
@@ -159,12 +159,12 @@ class OAuthWidget extends React.Component {
             }
           </span>
           {
-            linkedValue === '' ? (
-              <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, 'link')}>
-                <Button style={{marginLeft: '20px', width: '80px'}} type="primary">{i18next.t('user:Link')}</Button>
+            linkedValue === "" ? (
+              <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "link")}>
+                <Button style={{marginLeft: "20px", width: "80px"}} type="primary">{i18next.t("user:Link")}</Button>
               </a>
             ) : (
-              <Button disabled={!providerItem.canUnlink} style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(provider.type)}>{i18next.t('user:Unlink')}</Button>
+              <Button disabled={!providerItem.canUnlink} style={{marginLeft: "20px", width: "80px"}} onClick={() => this.unlinkUser(provider.type)}>{i18next.t("user:Unlink")}</Button>
             )
           }
         </Col>

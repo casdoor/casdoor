@@ -12,26 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { LinkOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Input, Result, Row, Select, Spin, Switch } from 'antd';
-import i18next from 'i18next';
-import React from 'react';
-import * as ApplicationBackend from './backend/ApplicationBackend';
-import * as OrganizationBackend from './backend/OrganizationBackend';
-import * as UserBackend from './backend/UserBackend';
-import AffiliationSelect from './common/AffiliationSelect';
-import OAuthWidget from './common/OAuthWidget';
-import SamlWidget from './common/SamlWidget';
-import CropperDiv from './CropperDiv.js';
-import PasswordModal from './PasswordModal';
-import ResetModal from './ResetModal';
-import SelectRegionBox from './SelectRegionBox';
-import * as Setting from './Setting';
+import { LinkOutlined } from "@ant-design/icons";
+import { Button, Card, Col, Input, Result, Row, Select, Spin, Switch } from "antd";
+import i18next from "i18next";
+import React from "react";
+import * as ApplicationBackend from "./backend/ApplicationBackend";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as UserBackend from "./backend/UserBackend";
+import AffiliationSelect from "./common/AffiliationSelect";
+import OAuthWidget from "./common/OAuthWidget";
+import SamlWidget from "./common/SamlWidget";
+import CropperDiv from "./CropperDiv.js";
+import PasswordModal from "./PasswordModal";
+import ResetModal from "./ResetModal";
+import SelectRegionBox from "./SelectRegionBox";
+import * as Setting from "./Setting";
 
-import 'codemirror/lib/codemirror.css';
-import { Controlled as CodeMirror } from 'react-codemirror2';
-require('codemirror/theme/material-darker.css');
-require('codemirror/mode/javascript/javascript');
+import "codemirror/lib/codemirror.css";
+import { Controlled as CodeMirror } from "react-codemirror2";
+require("codemirror/theme/material-darker.css");
+require("codemirror/mode/javascript/javascript");
 
 const { Option } = Select;
 
@@ -46,7 +46,7 @@ class UserEditPage extends React.Component {
       application: null,
       organizations: [],
       applications: [],
-      mode: props.location.mode !== undefined ? props.location.mode : 'edit',
+      mode: props.location.mode !== undefined ? props.location.mode : "edit",
       loading: true,
     };
   }
@@ -61,7 +61,7 @@ class UserEditPage extends React.Component {
   getUser() {
     UserBackend.getUser(this.state.organizationName, this.state.userName)
       .then((data) => {
-        if (data.status === null || data.status !== 'error') {
+        if (data.status === null || data.status !== "error") {
           this.setState({
             user: data,
           });
@@ -73,7 +73,7 @@ class UserEditPage extends React.Component {
   }
 
   getOrganizations() {
-    OrganizationBackend.getOrganizations('admin')
+    OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
@@ -82,7 +82,7 @@ class UserEditPage extends React.Component {
   }
 
   getApplicationsByOrganization(organizationName) {
-    ApplicationBackend.getApplicationsByOrganization('admin', organizationName)
+    ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
       .then((res) => {
         this.setState({
           applications: (res.msg === undefined) ? res : [],
@@ -140,37 +140,37 @@ class UserEditPage extends React.Component {
     //   </div>
     // )
 
-    if (accountItem.viewRule === 'Self') {
+    if (accountItem.viewRule === "Self") {
       if (!isSelf && !isAdmin) {
         return null;
       }
-    } else if (accountItem.viewRule === 'Admin') {
+    } else if (accountItem.viewRule === "Admin") {
       if (!isAdmin) {
         return null;
       }
     }
 
     let disabled = false;
-    if (accountItem.modifyRule === 'Self') {
+    if (accountItem.modifyRule === "Self") {
       if (!isSelf && !isAdmin) {
         disabled = true;
       }
-    } else if (accountItem.modifyRule === 'Admin') {
+    } else if (accountItem.modifyRule === "Admin") {
       if (!isAdmin) {
         disabled = true;
       }
-    } else if (accountItem.modifyRule === 'Immutable') {
+    } else if (accountItem.modifyRule === "Immutable") {
       disabled = true;
     }
 
-    if (accountItem.name === 'Organization') {
+    if (accountItem.name === "Organization") {
       return (
-        <Row style={{marginTop: '10px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('general:Organization'), i18next.t('general:Organization - Tooltip'))} :
+        <Row style={{marginTop: "10px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} disabled={disabled} value={this.state.user.owner} onChange={(value => {this.updateUserField('owner', value);})}>
+            <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.owner} onChange={(value => {this.updateUserField("owner", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -178,246 +178,246 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'ID') {
+    } else if (accountItem.name === "ID") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel('ID', i18next.t('general:ID - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel("ID", i18next.t("general:ID - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.id} disabled={disabled} />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Name') {
+    } else if (accountItem.name === "Name") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('general:Name'), i18next.t('general:Name - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.name} disabled={disabled} onChange={e => {
-              this.updateUserField('name', e.target.value);
+              this.updateUserField("name", e.target.value);
             }} />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Display name') {
+    } else if (accountItem.name === "Display name") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('general:Display name'), i18next.t('general:Display name - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.displayName} onChange={e => {
-              this.updateUserField('displayName', e.target.value);
+              this.updateUserField("displayName", e.target.value);
             }} />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Avatar') {
+    } else if (accountItem.name === "Avatar") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('general:Avatar'), i18next.t('general:Avatar - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Avatar"), i18next.t("general:Avatar - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                {i18next.t('general:URL')}:
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {i18next.t("general:URL")}:
               </Col>
               <Col span={22} >
                 <Input prefix={<LinkOutlined/>} value={this.state.user.avatar} onChange={e => {
-                  this.updateUserField('avatar', e.target.value);
+                  this.updateUserField("avatar", e.target.value);
                 }} />
               </Col>
             </Row>
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-                {i18next.t('general:Preview')}:
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {i18next.t("general:Preview")}:
               </Col>
               <Col span={22} >
                 <a target="_blank" rel="noreferrer" href={this.state.user.avatar}>
-                  <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: '20px'}}/>
+                  <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: "20px"}}/>
                 </a>
               </Col>
             </Row>
-            <Row style={{marginTop: '20px'}}>
-              <CropperDiv buttonText={`${i18next.t('user:Upload a photo')}...`} title={i18next.t('user:Upload a photo')} user={this.state.user} account={this.props.account} />
+            <Row style={{marginTop: "20px"}}>
+              <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} user={this.state.user} account={this.props.account} />
             </Row>
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'User type') {
+    } else if (accountItem.name === "User type") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('general:User type'), i18next.t('general:User type - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:User type"), i18next.t("general:User type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.user.type} onChange={(value => {this.updateUserField('type', value);})}>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.user.type} onChange={(value => {this.updateUserField("type", value);})}>
               {
-                ['normal-user']
+                ["normal-user"]
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Password') {
+    } else if (accountItem.name === "Password") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('general:Password'), i18next.t('general:Password - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
           </Col>
           <Col span={22} >
             <PasswordModal user={this.state.user} account={this.props.account} disabled={disabled} />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Email') {
+    } else if (accountItem.name === "Email") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('general:Email'), i18next.t('general:Email - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
           </Col>
-          <Col style={{paddingRight: '20px'}} span={11} >
+          <Col style={{paddingRight: "20px"}} span={11} >
             <Input value={this.state.user.email}
               disabled={disabled}
               onChange={e => {
-                this.updateUserField('email', e.target.value);
+                this.updateUserField("email", e.target.value);
               }} />
           </Col>
           <Col span={11} >
-            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t('user:Reset Email...')} destType={'email'} />) : null}
+            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />) : null}
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Phone') {
+    } else if (accountItem.name === "Phone") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('general:Phone'), i18next.t('general:Phone - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
           </Col>
-          <Col style={{paddingRight: '20px'}} span={11} >
+          <Col style={{paddingRight: "20px"}} span={11} >
             <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
               disabled={disabled}
               onChange={e => {
-                this.updateUserField('phone', e.target.value);
+                this.updateUserField("phone", e.target.value);
               }}/>
           </Col>
           <Col span={11} >
-            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t('user:Reset Phone...')} destType={'phone'} />) : null}
+            { this.state.user.id === this.props.account?.id ? (<ResetModal org={this.state.application?.organizationObj} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Country/Region') {
+    } else if (accountItem.name === "Country/Region") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('user:Country/Region'), i18next.t('user:Country/Region - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Country/Region"), i18next.t("user:Country/Region - Tooltip"))} :
           </Col>
           <Col span={22} >
             <SelectRegionBox defaultValue={this.state.user.region} onChange={(value) => {
-              this.updateUserField('region', value);
+              this.updateUserField("region", value);
             }} />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Location') {
+    } else if (accountItem.name === "Location") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('user:Location'), i18next.t('user:Location - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Location"), i18next.t("user:Location - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.location} onChange={e => {
-              this.updateUserField('location', e.target.value);
+              this.updateUserField("location", e.target.value);
             }} />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Affiliation') {
+    } else if (accountItem.name === "Affiliation") {
       return (
         (this.state.application === null || this.state.user === null) ? null : (
           <AffiliationSelect labelSpan={(Setting.isMobile()) ? 22 : 2} application={this.state.application} user={this.state.user} onUpdateUserField={(key, value) => { return this.updateUserField(key, value);}} />
         )
       );
-    } else if (accountItem.name === 'Title') {
+    } else if (accountItem.name === "Title") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('user:Title'), i18next.t('user:Title - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Title"), i18next.t("user:Title - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.title} onChange={e => {
-              this.updateUserField('title', e.target.value);
+              this.updateUserField("title", e.target.value);
             }} />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Homepage') {
+    } else if (accountItem.name === "Homepage") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('user:Homepage'), i18next.t('user:Homepage - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Homepage"), i18next.t("user:Homepage - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.homepage} onChange={e => {
-              this.updateUserField('homepage', e.target.value);
+              this.updateUserField("homepage", e.target.value);
             }} />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Bio') {
+    } else if (accountItem.name === "Bio") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('user:Bio'), i18next.t('user:Bio - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Bio"), i18next.t("user:Bio - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.user.bio} onChange={e => {
-              this.updateUserField('bio', e.target.value);
+              this.updateUserField("bio", e.target.value);
             }} />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Tag') {
+    } else if (accountItem.name === "Tag") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('user:Tag'), i18next.t('user:Tag - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Tag"), i18next.t("user:Tag - Tooltip"))} :
           </Col>
           <Col span={22} >
             {
               this.state.application?.organizationObj.tags?.length > 0 ? (
-                <Select virtual={false} style={{width: '100%'}} value={this.state.user.tag} onChange={(value => {this.updateUserField('tag', value);})}>
+                <Select virtual={false} style={{width: "100%"}} value={this.state.user.tag} onChange={(value => {this.updateUserField("tag", value);})}>
                   {
                     this.state.application.organizationObj.tags?.map((tag, index) => {
-                      const tokens = tag.split('|');
+                      const tokens = tag.split("|");
                       const value = tokens[0];
-                      const displayValue = Setting.getLanguage() !== 'zh' ? tokens[0] : tokens[1];
+                      const displayValue = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1];
                       return <Option key={index} value={value}>{displayValue}</Option>;
                     })
                   }
                 </Select>
               ) : (
                 <Input value={this.state.user.tag} onChange={e => {
-                  this.updateUserField('tag', e.target.value);
+                  this.updateUserField("tag", e.target.value);
                 }} />
               )
             }
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Signup application') {
+    } else if (accountItem.name === "Signup application") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('general:Signup application'), i18next.t('general:Signup application - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Signup application"), i18next.t("general:Signup application - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} disabled={disabled} value={this.state.user.signupApplication} onChange={(value => {this.updateUserField('signupApplication', value);})}>
+            <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.signupApplication} onChange={(value => {this.updateUserField("signupApplication", value);})}>
               {
                 this.state.applications.map((application, index) => <Option key={index} value={application.name}>{application.name}</Option>)
               }
@@ -425,19 +425,19 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
-    } else if (accountItem.name === '3rd-party logins') {
+    } else if (accountItem.name === "3rd-party logins") {
       return (
         !this.isSelfOrAdmin() ? null : (
-          <Row style={{marginTop: '20px'}} >
-            <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-              {Setting.getLabel(i18next.t('user:3rd-party logins'), i18next.t('user:3rd-party logins - Tooltip'))} :
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {Setting.getLabel(i18next.t("user:3rd-party logins"), i18next.t("user:3rd-party logins - Tooltip"))} :
             </Col>
             <Col span={22} >
               <div style={{marginBottom: 20}}>
                 {
                   (this.state.application === null || this.state.user === null) ? null : (
                     this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) =>
-                      (providerItem.provider.category === 'OAuth') ? (
+                      (providerItem.provider.category === "OAuth") ? (
                         <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked();}} />
                       ) : (
                         <SamlWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => { return this.unlinked();}} />
@@ -450,68 +450,68 @@ class UserEditPage extends React.Component {
           </Row>
         )
       );
-    } else if (accountItem.name === 'Properties') {
+    } else if (accountItem.name === "Properties") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t('user:Properties')}:
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("user:Properties")}:
           </Col>
           <Col span={22} >
             <CodeMirror
               value={JSON.stringify(this.state.user.properties, null, 4)}
-              options={{mode: 'javascript', theme: 'material-darker'}}
+              options={{mode: "javascript", theme: "material-darker"}}
             />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Is admin') {
+    } else if (accountItem.name === "Is admin") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('user:Is admin'), i18next.t('user:Is admin - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Is admin"), i18next.t("user:Is admin - Tooltip"))} :
           </Col>
           <Col span={(Setting.isMobile()) ? 22 : 2} >
             <Switch checked={this.state.user.isAdmin} onChange={checked => {
-              this.updateUserField('isAdmin', checked);
+              this.updateUserField("isAdmin", checked);
             }} />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Is global admin') {
+    } else if (accountItem.name === "Is global admin") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('user:Is global admin'), i18next.t('user:Is global admin - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Is global admin"), i18next.t("user:Is global admin - Tooltip"))} :
           </Col>
           <Col span={(Setting.isMobile()) ? 22 : 2} >
             <Switch checked={this.state.user.isGlobalAdmin} onChange={checked => {
-              this.updateUserField('isGlobalAdmin', checked);
+              this.updateUserField("isGlobalAdmin", checked);
             }} />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Is forbidden') {
+    } else if (accountItem.name === "Is forbidden") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('user:Is forbidden'), i18next.t('user:Is forbidden - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Is forbidden"), i18next.t("user:Is forbidden - Tooltip"))} :
           </Col>
           <Col span={(Setting.isMobile()) ? 22 : 2} >
             <Switch checked={this.state.user.isForbidden} onChange={checked => {
-              this.updateUserField('isForbidden', checked);
+              this.updateUserField("isForbidden", checked);
             }} />
           </Col>
         </Row>
       );
-    } else if (accountItem.name === 'Is deleted') {
+    } else if (accountItem.name === "Is deleted") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t('user:Is deleted'), i18next.t('user:Is deleted - Tooltip'))} :
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Is deleted"), i18next.t("user:Is deleted - Tooltip"))} :
           </Col>
           <Col span={(Setting.isMobile()) ? 22 : 2} >
             <Switch checked={this.state.user.isDeleted} onChange={checked => {
-              this.updateUserField('isDeleted', checked);
+              this.updateUserField("isDeleted", checked);
             }} />
           </Col>
         </Row>
@@ -523,12 +523,12 @@ class UserEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {this.state.mode === 'add' ? i18next.t('user:New User') : i18next.t('user:Edit User')}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button onClick={() => this.submitUserEdit(false)}>{i18next.t('general:Save')}</Button>
-          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t('general:Save & Exit')}</Button>
-          {this.state.mode === 'add' ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteUser()}>{i18next.t('general:Cancel')}</Button> : null}
+          {this.state.mode === "add" ? i18next.t("user:New User") : i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
-      } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
+      } style={(Setting.isMobile())? {margin: "5px"}:{}} type="inner">
         {
           this.state.application?.organizationObj.accountItems?.map(accountItem => {
             return (
@@ -548,8 +548,8 @@ class UserEditPage extends React.Component {
     let user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.organizationName, this.state.userName, user)
       .then((res) => {
-        if (res.msg === '') {
-          Setting.showMessage('success', 'Successfully saved');
+        if (res.msg === "") {
+          Setting.showMessage("success", "Successfully saved");
           this.setState({
             organizationName: this.state.user.owner,
             userName: this.state.user.name,
@@ -557,29 +557,29 @@ class UserEditPage extends React.Component {
 
           if (this.props.history !== undefined) {
             if (willExist) {
-              this.props.history.push('/users');
+              this.props.history.push("/users");
             } else {
               this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
             }
           }
         } else {
-          Setting.showMessage('error', res.msg);
-          this.updateUserField('owner', this.state.organizationName);
-          this.updateUserField('name', this.state.userName);
+          Setting.showMessage("error", res.msg);
+          this.updateUserField("owner", this.state.organizationName);
+          this.updateUserField("name", this.state.userName);
         }
       })
       .catch(error => {
-        Setting.showMessage('error', `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `Failed to connect to server: ${error}`);
       });
   }
 
   deleteUser() {
     UserBackend.deleteUser(this.state.user)
       .then(() => {
-        this.props.history.push('/users');
+        this.props.history.push("/users");
       })
       .catch(error => {
-        Setting.showMessage('error', `User failed to delete: ${error}`);
+        Setting.showMessage("error", `User failed to delete: ${error}`);
       });
   }
 
@@ -592,17 +592,17 @@ class UserEditPage extends React.Component {
               <Result
                 status="404"
                 title="404 NOT FOUND"
-                subTitle={i18next.t('general:Sorry, the user you visited does not exist or you are not authorized to access this user.')}
-                extra={<a href="/"><Button type="primary">{i18next.t('general:Back Home')}</Button></a>}
+                subTitle={i18next.t("general:Sorry, the user you visited does not exist or you are not authorized to access this user.")}
+                extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
               />
           )
         }
         {
           this.state.user === null ? null :
-            <div style={{marginTop: '20px', marginLeft: '40px'}}>
-              <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t('general:Save')}</Button>
-              <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t('general:Save & Exit')}</Button>
-              {this.state.mode === 'add' ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteUser()}>{i18next.t('general:Cancel')}</Button> : null}
+            <div style={{marginTop: "20px", marginLeft: "40px"}}>
+              <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
+              <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+              {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
             </div>
         }
       </div>

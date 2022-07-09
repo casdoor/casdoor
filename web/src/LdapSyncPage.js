@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
-import {Button, Col, Row, Table, Popconfirm} from 'antd';
-import * as Setting from './Setting';
-import * as LdapBackend from './backend/LdapBackend';
-import i18next from 'i18next';
+import React from "react";
+import {Button, Col, Row, Table, Popconfirm} from "antd";
+import * as Setting from "./Setting";
+import * as LdapBackend from "./backend/LdapBackend";
+import i18next from "i18next";
 
 class LdapSyncPage extends React.Component {
   constructor(props) {
@@ -37,13 +37,13 @@ class LdapSyncPage extends React.Component {
   syncUsers() {
     let selectedUsers = this.state.selectedUsers;
     if (selectedUsers === null || selectedUsers.length === 0) {
-      Setting.showMessage('error', 'Please select al least 1 user first');
+      Setting.showMessage("error", "Please select al least 1 user first");
       return;
     }
 
     LdapBackend.syncUsers(this.state.ldap.owner, this.state.ldap.id, selectedUsers)
       .then((res => {
-        if (res.status === 'ok') {
+        if (res.status === "ok") {
           let exist = res.data.exist;
           let failed = res.data.failed;
           let existUser = [];
@@ -56,18 +56,18 @@ class LdapSyncPage extends React.Component {
               exist.forEach(elem => {
                 existUser.push(elem.cn);
               });
-              Setting.showMessage('error', `User [${existUser}] is already exist`);
+              Setting.showMessage("error", `User [${existUser}] is already exist`);
             }
 
             if (failed && failed.length > 0) {
               failed.forEach(elem => {
                 failedUser.push(elem.cn);
               });
-              Setting.showMessage('error', `Sync [${failedUser}] failed`);
+              Setting.showMessage("error", `Sync [${failedUser}] failed`);
             }
           }
         } else {
-          Setting.showMessage('error', res.msg);
+          Setting.showMessage("error", res.msg);
         }
       }));
   }
@@ -75,14 +75,14 @@ class LdapSyncPage extends React.Component {
   getLdap() {
     LdapBackend.getLdap(this.state.ldapId)
       .then((res) => {
-        if (res.status === 'ok') {
+        if (res.status === "ok") {
           this.setState((prevState) => {
             prevState.ldap = res.data;
             return prevState;
           });
           this.getLdapUser(res.data);
         } else {
-          Setting.showMessage('error', res.msg);
+          Setting.showMessage("error", res.msg);
         }
       });
   }
@@ -91,14 +91,14 @@ class LdapSyncPage extends React.Component {
   getLdapUser(ldap) {
     LdapBackend.getLdapUser(ldap)
       .then((res) => {
-        if (res.status === 'ok') {
+        if (res.status === "ok") {
           this.setState((prevState) => {
             prevState.users = res.data.users;
             return prevState;
           });
           this.getExistUsers(ldap.owner, res.data.users);
         } else {
-          Setting.showMessage('error', res.msg);
+          Setting.showMessage("error", res.msg);
         }
       });
   }
@@ -110,7 +110,7 @@ class LdapSyncPage extends React.Component {
     });
     LdapBackend.checkLdapUsersExist(owner, uuidArray)
       .then((res) => {
-        if (res.status === 'ok') {
+        if (res.status === "ok") {
           this.setState(prevState => {
             prevState.existUuids = res.data?.length > 0 ? res.data : [];
             return prevState;
@@ -151,48 +151,48 @@ class LdapSyncPage extends React.Component {
   renderTable(users) {
     const columns = [
       {
-        title: i18next.t('ldap:CN'),
-        dataIndex: 'cn',
-        key: 'cn',
+        title: i18next.t("ldap:CN"),
+        dataIndex: "cn",
+        key: "cn",
         sorter: (a, b) => a.cn.localeCompare(b.cn),
       },
       {
-        title: i18next.t('ldap:UidNumber / Uid'),
-        dataIndex: 'uidNumber',
-        key: 'uidNumber',
-        width: '200px',
+        title: i18next.t("ldap:UidNumber / Uid"),
+        dataIndex: "uidNumber",
+        key: "uidNumber",
+        width: "200px",
         sorter: (a, b) => a.uidNumber.localeCompare(b.uidNumber),
         render: (text, record, index) => {
           return `${text} / ${record.uid}`;
         },
       },
       {
-        title: i18next.t('ldap:Group Id'),
-        dataIndex: 'groupId',
-        key: 'groupId',
-        width: '140px',
+        title: i18next.t("ldap:Group Id"),
+        dataIndex: "groupId",
+        key: "groupId",
+        width: "140px",
         sorter: (a, b) => a.groupId.localeCompare(b.groupId),
-        filters: this.buildFilter(this.state.users, 'groupId'),
+        filters: this.buildFilter(this.state.users, "groupId"),
         onFilter: (value, record) => record.groupId.indexOf(value) === 0,
       },
       {
-        title: i18next.t('ldap:Email'),
-        dataIndex: 'email',
-        key: 'email',
-        width: '240px',
+        title: i18next.t("ldap:Email"),
+        dataIndex: "email",
+        key: "email",
+        width: "240px",
         sorter: (a, b) => a.email.localeCompare(b.email),
       },
       {
-        title: i18next.t('ldap:Phone'),
-        dataIndex: 'phone',
-        key: 'phone',
-        width: '160px',
+        title: i18next.t("ldap:Phone"),
+        dataIndex: "phone",
+        key: "phone",
+        width: "160px",
         sorter: (a, b) => a.phone.localeCompare(b.phone),
       },
       {
-        title: i18next.t('ldap:Address'),
-        dataIndex: 'address',
-        key: 'address',
+        title: i18next.t("ldap:Address"),
+        dataIndex: "address",
+        key: "address",
         sorter: (a, b) => a.address.localeCompare(b.address),
       },
     ];
@@ -216,12 +216,12 @@ class LdapSyncPage extends React.Component {
           title={() => (
             <div>
               <span>{this.state.ldap?.serverName}</span>
-              <Popconfirm placement={'right'}
-                title={'Please confirm to sync selected users'}
+              <Popconfirm placement={"right"}
+                title={"Please confirm to sync selected users"}
                 onConfirm={() => this.syncUsers()}
               >
                 <Button type="primary" size="small"
-                  style={{marginLeft: '10px'}}>{i18next.t('ldap:Sync')}</Button>
+                  style={{marginLeft: "10px"}}>{i18next.t("ldap:Sync")}</Button>
               </Popconfirm>
             </div>
           )}
@@ -234,7 +234,7 @@ class LdapSyncPage extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{width: '100%'}}>
+        <Row style={{width: "100%"}}>
           <Col span={1}>
           </Col>
           <Col span={22}>
