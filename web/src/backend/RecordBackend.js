@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from "../Setting";
+import * as Setting from '../Setting';
 
-export function getRecords(page, pageSize, field = "", value = "", sortField = "", sortOrder = "") {
+export function getRecords(page, pageSize, field = '', value = '', sortField = '', sortOrder = '') {
   return fetch(`${Setting.ServerUrl}/api/get-records?pageSize=${pageSize}&p=${page}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
-    method: "GET",
-    credentials: "include"
+    method: 'GET',
+    credentials: 'include'
   }).then(res => res.json());
 }

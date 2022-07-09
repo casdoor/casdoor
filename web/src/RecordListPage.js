@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import {Link} from "react-router-dom";
+import React from 'react';
+import {Link} from 'react-router-dom';
 import {Switch, Table} from 'antd';
-import * as Setting from "./Setting";
-import * as RecordBackend from "./backend/RecordBackend";
-import i18next from "i18next";
-import moment from "moment";
-import BaseListPage from "./BaseListPage";
+import * as Setting from './Setting';
+import * as RecordBackend from './backend/RecordBackend';
+import i18next from 'i18next';
+import moment from 'moment';
+import BaseListPage from './BaseListPage';
 
 class RecordListPage extends BaseListPage {
   UNSAFE_componentWillMount() {
@@ -30,23 +30,23 @@ class RecordListPage extends BaseListPage {
 
   newRecord() {
     return {
-      owner: "built-in",
-      name: "1234",
-      id : "1234",
-      clientIp: "::1",
+      owner: 'built-in',
+      name: '1234',
+      id : '1234',
+      clientIp: '::1',
       timestamp: moment().format(),
-      organization: "built-in",
-      username: "admin",
-      requestUri: "/api/get-account",
-      action: "login",
+      organization: 'built-in',
+      username: 'admin',
+      requestUri: '/api/get-account',
+      action: 'login',
       isTriggered: false,
-    }
+    };
   }
 
   renderTable(records) {
     const columns = [
       {
-        title: i18next.t("general:Name"),
+        title: i18next.t('general:Name'),
         dataIndex: 'name',
         key: 'name',
         width: '320px',
@@ -54,7 +54,7 @@ class RecordListPage extends BaseListPage {
         ...this.getColumnSearchProps('name'),
       },
       {
-        title: i18next.t("general:ID"),
+        title: i18next.t('general:ID'),
         dataIndex: 'id',
         key: 'id',
         width: '90px',
@@ -62,7 +62,7 @@ class RecordListPage extends BaseListPage {
         ...this.getColumnSearchProps('id'),
       },
       {
-        title: i18next.t("general:Client IP"),
+        title: i18next.t('general:Client IP'),
         dataIndex: 'clientIp',
         key: 'clientIp',
         width: '150px',
@@ -73,11 +73,11 @@ class RecordListPage extends BaseListPage {
             <a target="_blank" rel="noreferrer" href={`https://db-ip.com/${text}`}>
               {text}
             </a>
-          )
+          );
         }
       },
       {
-        title: i18next.t("general:Timestamp"),
+        title: i18next.t('general:Timestamp'),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '180px',
@@ -87,7 +87,7 @@ class RecordListPage extends BaseListPage {
         }
       },
       {
-        title: i18next.t("general:Organization"),
+        title: i18next.t('general:Organization'),
         dataIndex: 'organization',
         key: 'organization',
         width: '110px',
@@ -98,11 +98,11 @@ class RecordListPage extends BaseListPage {
             <Link to={`/organizations/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
-        title: i18next.t("general:User"),
+        title: i18next.t('general:User'),
         dataIndex: 'user',
         key: 'user',
         width: '120px',
@@ -113,11 +113,11 @@ class RecordListPage extends BaseListPage {
             <Link to={`/users/${record.organization}/${record.user}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
-        title: i18next.t("general:Method"),
+        title: i18next.t('general:Method'),
         dataIndex: 'method',
         key: 'method',
         width: '110px',
@@ -136,7 +136,7 @@ class RecordListPage extends BaseListPage {
         ],
       },
       {
-        title: i18next.t("general:Request URI"),
+        title: i18next.t('general:Request URI'),
         dataIndex: 'requestUri',
         key: 'requestUri',
         // width: '300px',
@@ -144,32 +144,32 @@ class RecordListPage extends BaseListPage {
         ...this.getColumnSearchProps('requestUri'),
       },
       {
-        title: i18next.t("general:Action"),
+        title: i18next.t('general:Action'),
         dataIndex: 'action',
         key: 'action',
         width: '200px',
         sorter: true,
         ...this.getColumnSearchProps('action'),
-        fixed: (Setting.isMobile()) ? "false" : "right",
+        fixed: (Setting.isMobile()) ? 'false' : 'right',
         render: (text, record, index) => {
           return text;
         }
       },
       {
-        title: i18next.t("record:Is Triggered"),
+        title: i18next.t('record:Is Triggered'),
         dataIndex: 'isTriggered',
         key: 'isTriggered',
         width: '140px',
         sorter: true,
-        fixed: (Setting.isMobile()) ? "false" : "right",
+        fixed: (Setting.isMobile()) ? 'false' : 'right',
         render: (text, record, index) => {
-          if (!["signup", "login", "logout", "update-user"].includes(record.action)) {
+          if (!['signup', 'login', 'logout', 'update-user'].includes(record.action)) {
             return null;
           }
 
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
-          )
+          );
         }
       },
     ];
@@ -179,19 +179,19 @@ class RecordListPage extends BaseListPage {
       pageSize: this.state.pagination.pageSize,
       showQuickJumper: true,
       showSizeChanger: true,
-      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
+      showTotal: () => i18next.t('general:{total} in total').replace('{total}', this.state.pagination.total),
     };
 
     return (
       <div>
         <Table scroll={{x: 'max-content'}} columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={paginationProps}
-               title={() => (
-                 <div>
-                   {i18next.t("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;
-                 </div>
-               )}
-               loading={this.state.loading}
-               onChange={this.handleTableChange}
+          title={() => (
+            <div>
+              {i18next.t('general:Records')}&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+          )}
+          loading={this.state.loading}
+          onChange={this.handleTableChange}
         />
       </div>
     );
@@ -201,13 +201,13 @@ class RecordListPage extends BaseListPage {
     let field = params.searchedColumn, value = params.searchText;
     let sortField = params.sortField, sortOrder = params.sortOrder;
     if (params.method !== undefined && params.method !== null) {
-      field = "method";
+      field = 'method';
       value = params.method;
     }
     this.setState({ loading: true });
     RecordBackend.getRecords(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
-        if (res.status === "ok") {
+        if (res.status === 'ok') {
           this.setState({
             loading: false,
             data: res.data,

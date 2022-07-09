@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import { authConfig } from "./Auth";
-import ForgetPage from "./ForgetPage";
+import React from 'react';
+import { authConfig } from './Auth';
+import ForgetPage from './ForgetPage';
 
 class SelfForgetPage extends React.Component {
   render() {
     return (
       <ForgetPage
-        type={"forgotPassword"}
+        type={'forgotPassword'}
         applicationName={authConfig.appName}
         account={this.props.account}
         {...this.props}

@@ -12,48 +12,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from "./Setting";
+import * as Setting from './Setting';
 
 export function sendTestEmail(provider, email) {
   testEmailProvider(provider, email)
     .then((res) => {
-      if (res.msg === "") {
-        Setting.showMessage("success", `Successfully send email`);
+      if (res.msg === '') {
+        Setting.showMessage('success', 'Successfully send email');
       } else {
-        Setting.showMessage("error", res.msg);
+        Setting.showMessage('error', res.msg);
       }
     })
     .catch(error => {
-      Setting.showMessage("error", `Failed to connect to server: ${error}`);
+      Setting.showMessage('error', `Failed to connect to server: ${error}`);
     });
 }
 
 export function connectSmtpServer(provider) {
   testEmailProvider(provider)
     .then((res) => {
-      if (res.msg === "") {
-        Setting.showMessage("success", `Successfully connecting smtp server`);
+      if (res.msg === '') {
+        Setting.showMessage('success', 'Successfully connecting smtp server');
       } else {
-        Setting.showMessage("error", res.msg);
+        Setting.showMessage('error', res.msg);
       }
     })
     .catch(error => {
-      Setting.showMessage("error", `Failed to connect to server: ${error}`);
+      Setting.showMessage('error', `Failed to connect to server: ${error}`);
     });
 }
 
-function testEmailProvider(provider, email = "") {
+function testEmailProvider(provider, email = '') {
   let emailForm = {
     title: provider.title,
     content: provider.content,
     sender: provider.displayName,
-    receivers: email === "" ? ["TestSmtpServer"] : [email],
+    receivers: email === '' ? ['TestSmtpServer'] : [email],
     provider: provider.name,
-  }
+  };
 
   return fetch(`${Setting.ServerUrl}/api/send-email`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     body: JSON.stringify(emailForm)
   }).then(res => res.json());
 }

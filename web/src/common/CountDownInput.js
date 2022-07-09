@@ -12,74 +12,74 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Button, Col, Input, Modal, Row} from "antd";
-import React from "react";
-import i18next from "i18next";
-import * as UserBackend from "../backend/UserBackend";
-import {SafetyOutlined} from "@ant-design/icons";
-import {authConfig} from "../auth/Auth";
-import { CaptchaWidget } from "./CaptchaWidget";
+import { SafetyOutlined } from '@ant-design/icons';
+import { Button, Col, Input, Modal, Row } from 'antd';
+import i18next from 'i18next';
+import React from 'react';
+import { authConfig } from '../auth/Auth';
+import * as UserBackend from '../backend/UserBackend';
+import { CaptchaWidget } from './CaptchaWidget';
 
 const { Search } = Input;
 
 export const CountDownInput = (props) => {
   const {disabled, textBefore, onChange, onButtonClickArgs} = props;
   const [visible, setVisible] = React.useState(false);
-  const [key, setKey] = React.useState("");
-  const [captchaImg, setCaptchaImg] = React.useState("");
-  const [checkType, setCheckType] = React.useState("");
-  const [checkId, setCheckId] = React.useState("");
+  const [key, setKey] = React.useState('');
+  const [captchaImg, setCaptchaImg] = React.useState('');
+  const [checkType, setCheckType] = React.useState('');
+  const [checkId, setCheckId] = React.useState('');
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
   const [buttonDisabled, setButtonDisabled] = React.useState(true);
-  const [clientId, setClientId] = React.useState("");
-  const [subType, setSubType] = React.useState("");
-  const [clientId2, setClientId2] = React.useState("");
-  const [clientSecret2, setClientSecret2] = React.useState("");
+  const [clientId, setClientId] = React.useState('');
+  const [subType, setSubType] = React.useState('');
+  const [clientId2, setClientId2] = React.useState('');
+  const [clientSecret2, setClientSecret2] = React.useState('');
 
   const handleCountDown = (leftTime = 60) => {
-    let leftTimeSecond = leftTime
-    setButtonLeftTime(leftTimeSecond)
+    let leftTimeSecond = leftTime;
+    setButtonLeftTime(leftTimeSecond);
     const countDown = () => {
       leftTimeSecond--;
-      setButtonLeftTime(leftTimeSecond)
+      setButtonLeftTime(leftTimeSecond);
       if (leftTimeSecond === 0) {
         return;
       }
       setTimeout(countDown, 1000);
-    }
+    };
     setTimeout(countDown, 1000);
-  }
+  };
 
   const handleOk = () => {
     setVisible(false);
-    setButtonLoading(true)
+    setButtonLoading(true);
     UserBackend.sendCode(checkType, checkId, key, ...onButtonClickArgs).then(res => {
-      setKey("");
-      setButtonLoading(false)
+      setKey('');
+      setButtonLoading(false);
       if (res) {
         handleCountDown(60);
       }
-    })
-  }
+    });
+  };
 
   const handleCancel = () => {
     setVisible(false);
-    setKey("");
-  }
+    setKey('');
+  };
 
   const loadCaptcha = () => {
-    UserBackend.getCaptcha("admin", authConfig.appName, false).then(res => {
-      if (res.type === "none") {
-        UserBackend.sendCode("none", "", "", ...onButtonClickArgs).then(res => {
+    UserBackend.getCaptcha('admin', authConfig.appName, false).then(res => {
+      if (res.type === 'none') {
+        UserBackend.sendCode('none', '', '', ...onButtonClickArgs).then(res => {
           if (res) {
             handleCountDown(60);
           }
         });
-      } else if (res.type === "Default") {
+      } else if (res.type === 'Default') {
         setCheckId(res.captchaId);
         setCaptchaImg(res.captchaImage);
-        setCheckType("Default");
+        setCheckType('Default');
         setVisible(true);
       } else {
         setCheckType(res.type);
@@ -90,8 +90,8 @@ export const CountDownInput = (props) => {
         setClientId2(res.clientId2);
         setClientSecret2(res.clientSecret2);
       }
-    })
-  }
+    });
+  };
 
   const renderCaptcha = () => {
     return (
@@ -99,28 +99,28 @@ export const CountDownInput = (props) => {
         <Row
           style={{
             backgroundImage: `url('data:image/png;base64,${captchaImg}')`,
-            backgroundRepeat: "no-repeat",
-            height: "80px",
-            width: "200px",
-            borderRadius: "3px",
-            border: "1px solid #ccc",
+            backgroundRepeat: 'no-repeat',
+            height: '80px',
+            width: '200px',
+            borderRadius: '3px',
+            border: '1px solid #ccc',
             marginBottom: 10
           }}
         />
         <Row>
-          <Input autoFocus value={key} prefix={<SafetyOutlined/>} placeholder={i18next.t("general:Captcha")} onPressEnter={handleOk} onChange={e => setKey(e.target.value)}/>
+          <Input autoFocus value={key} prefix={<SafetyOutlined/>} placeholder={i18next.t('general:Captcha')} onPressEnter={handleOk} onChange={e => setKey(e.target.value)}/>
         </Row>
       </Col>
-    )
-  }
+    );
+  };
 
   const onSubmit = (token) => {
     setButtonDisabled(false);
     setKey(token);
-  }
+  };
 
   const renderCheck = () => {
-    if (checkType === "Default") {
+    if (checkType === 'Default') {
       return renderCaptcha();
     } else {
       return (
@@ -135,7 +135,7 @@ export const CountDownInput = (props) => {
         />
       );
     }
-  }
+  };
 
   return (
     <React.Fragment>
@@ -143,11 +143,11 @@ export const CountDownInput = (props) => {
         addonBefore={textBefore}
         disabled={disabled}
         prefix={<SafetyOutlined/>}
-        placeholder={i18next.t("code:Enter your code")}
+        placeholder={i18next.t('code:Enter your code')}
         onChange={e => onChange(e.target.value)}
         enterButton={
-          <Button style={{fontSize: 14}} type={"primary"} disabled={disabled || buttonLeftTime > 0} loading={buttonLoading}>
-            {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending Code") : i18next.t("code:Send Code")}
+          <Button style={{fontSize: 14}} type={'primary'} disabled={disabled || buttonLeftTime > 0} loading={buttonLoading}>
+            {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t('code:Sending Code') : i18next.t('code:Send Code')}
           </Button>
         }
         onSearch={loadCaptcha}
@@ -156,10 +156,10 @@ export const CountDownInput = (props) => {
         closable={false}
         maskClosable={false}
         destroyOnClose={true}
-        title={i18next.t("general:Captcha")}
+        title={i18next.t('general:Captcha')}
         visible={visible}
-        okText={i18next.t("user:OK")}
-        cancelText={i18next.t("user:Cancel")}
+        okText={i18next.t('user:OK')}
+        cancelText={i18next.t('user:Cancel')}
         onOk={handleOk}
         onCancel={handleCancel}
         okButtonProps={{disabled: key.length !== 5 && buttonDisabled}}
@@ -171,4 +171,4 @@ export const CountDownInput = (props) => {
       </Modal>
     </React.Fragment>
   );
-}
+};

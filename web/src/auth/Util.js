@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import {Alert, Button, message, Result} from "antd";
+import React from 'react';
+import {Alert, Button, message, Result} from 'antd';
 
 export function showMessage(type, text) {
-  if (type === "success") {
+  if (type === 'success') {
     message.success(text);
-  } else if (type === "error") {
+  } else if (type === 'error') {
     message.error(text);
   }
 }
@@ -26,7 +26,7 @@ export function showMessage(type, text) {
 export function renderMessage(msg) {
   if (msg !== null) {
     return (
-      <div style={{display: "inline"}}>
+      <div style={{display: 'inline'}}>
         <Alert
           message="Login Error"
           showIcon
@@ -39,7 +39,7 @@ export function renderMessage(msg) {
           }
         />
       </div>
-    )
+    );
   } else {
     return null;
   }
@@ -48,7 +48,7 @@ export function renderMessage(msg) {
 export function renderMessageLarge(ths, msg) {
   if (msg !== null) {
     return (
-      <div style={{display: "inline"}}>
+      <div style={{display: 'inline'}}>
         <Result
           status="error"
           title="There was a problem signing you in.."
@@ -69,42 +69,42 @@ export function renderMessageLarge(ths, msg) {
         >
         </Result>
       </div>
-    )
+    );
   } else {
     return null;
   }
 }
 
 function getRefinedValue(value){
-  return (value === null)? "" : value
+  return (value === null)? '' : value;
 }
 
 export function getCasParameters(params){
   const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
-  const service = getRefinedValue(queries.get("service"))
-  const renew = getRefinedValue(queries.get("renew"))
-  const gateway = getRefinedValue(queries.get("gateway"))
+  const service = getRefinedValue(queries.get('service'));
+  const renew = getRefinedValue(queries.get('renew'));
+  const gateway = getRefinedValue(queries.get('gateway'));
   return {
     service: service,
     renew: renew,
     gateway: gateway,
-  }
+  };
 }
 
 export function getOAuthGetParameters(params) {
   const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
-  const clientId = getRefinedValue(queries.get("client_id"));
-  const responseType = getRefinedValue(queries.get("response_type"));
-  const redirectUri = getRefinedValue(queries.get("redirect_uri"));
-  const scope = getRefinedValue(queries.get("scope"));
-  const state = getRefinedValue(queries.get("state"));
-  const nonce = getRefinedValue(queries.get("nonce"));
-  const challengeMethod = getRefinedValue(queries.get("code_challenge_method"));
-  const codeChallenge = getRefinedValue(queries.get("code_challenge"));
-  const samlRequest = getRefinedValue(queries.get("SAMLRequest"));
-  const relayState = getRefinedValue(queries.get("RelayState"));
+  const clientId = getRefinedValue(queries.get('client_id'));
+  const responseType = getRefinedValue(queries.get('response_type'));
+  const redirectUri = getRefinedValue(queries.get('redirect_uri'));
+  const scope = getRefinedValue(queries.get('scope'));
+  const state = getRefinedValue(queries.get('state'));
+  const nonce = getRefinedValue(queries.get('nonce'));
+  const challengeMethod = getRefinedValue(queries.get('code_challenge_method'));
+  const codeChallenge = getRefinedValue(queries.get('code_challenge'));
+  const samlRequest = getRefinedValue(queries.get('SAMLRequest'));
+  const relayState = getRefinedValue(queries.get('RelayState'));
 
-  if ((clientId === undefined || clientId === null || clientId === "") && (samlRequest === "" || samlRequest === undefined)) {
+  if ((clientId === undefined || clientId === null || clientId === '') && (samlRequest === '' || samlRequest === undefined)) {
     // login
     return null;
   } else {
@@ -127,7 +127,7 @@ export function getOAuthGetParameters(params) {
 export function getQueryParamsToState(applicationName, providerName, method) {
   let query = window.location.search;
   query = `${query}&application=${applicationName}&provider=${providerName}&method=${method}`;
-  if (method === "link") {
+  if (method === 'link') {
     query = `${query}&from=${window.location.pathname}`;
   }
   return btoa(query);

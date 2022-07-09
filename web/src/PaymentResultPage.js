@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React from 'react';
 import {Button, Result, Spin} from 'antd';
-import * as PaymentBackend from "./backend/PaymentBackend";
-import * as Setting from "./Setting";
-import i18next from "i18next";
+import * as PaymentBackend from './backend/PaymentBackend';
+import * as Setting from './Setting';
+import i18next from 'i18next';
 
 class PaymentResultPage extends React.Component {
   constructor(props) {
@@ -33,13 +33,13 @@ class PaymentResultPage extends React.Component {
   }
 
   getPayment() {
-    PaymentBackend.getPayment("admin", this.state.paymentName)
+    PaymentBackend.getPayment('admin', this.state.paymentName)
       .then((payment) => {
         this.setState({
           payment: payment,
         });
 
-        if (payment.state === "Created") {
+        if (payment.state === 'Created') {
           setTimeout(() => this.getPayment(), 1000);
         }
       });
@@ -52,7 +52,7 @@ class PaymentResultPage extends React.Component {
       return null;
     }
 
-    if (payment.state === "Paid") {
+    if (payment.state === 'Paid') {
       return (
         <div>
           {
@@ -60,19 +60,19 @@ class PaymentResultPage extends React.Component {
           }
           <Result
             status="success"
-            title={`${i18next.t("payment:You have successfully completed the payment")}: ${payment.productDisplayName}`}
-            subTitle={i18next.t("payment:Please click the below button to return to the original website")}
+            title={`${i18next.t('payment:You have successfully completed the payment')}: ${payment.productDisplayName}`}
+            subTitle={i18next.t('payment:Please click the below button to return to the original website')}
             extra={[
               <Button type="primary" key="returnUrl" onClick={() => {
                 Setting.goToLink(payment.returnUrl);
               }}>
-                {i18next.t("payment:Return to Website")}
+                {i18next.t('payment:Return to Website')}
               </Button>
             ]}
           />
         </div>
-      )
-    } else if (payment.state === "Created") {
+      );
+    } else if (payment.state === 'Created') {
       return (
         <div>
           {
@@ -80,14 +80,14 @@ class PaymentResultPage extends React.Component {
           }
           <Result
             status="info"
-            title={`${i18next.t("payment:The payment is still under processing")}: ${payment.productDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}, ${i18next.t("payment:please wait for a few seconds...")}`}
-            subTitle={i18next.t("payment:Please click the below button to return to the original website")}
+            title={`${i18next.t('payment:The payment is still under processing')}: ${payment.productDisplayName}, ${i18next.t('payment:the current state is')}: ${payment.state}, ${i18next.t('payment:please wait for a few seconds...')}`}
+            subTitle={i18next.t('payment:Please click the below button to return to the original website')}
             extra={[
-              <Spin size="large" tip={i18next.t("payment:Processing...")} />,
+              <Spin size="large" tip={i18next.t('payment:Processing...')} />,
             ]}
           />
         </div>
-      )
+      );
     } else {
       return (
         <div>
@@ -96,18 +96,18 @@ class PaymentResultPage extends React.Component {
           }
           <Result
             status="error"
-            title={`${i18next.t("payment:The payment has failed")}: ${payment.productDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}`}
-            subTitle={i18next.t("payment:Please click the below button to return to the original website")}
+            title={`${i18next.t('payment:The payment has failed')}: ${payment.productDisplayName}, ${i18next.t('payment:the current state is')}: ${payment.state}`}
+            subTitle={i18next.t('payment:Please click the below button to return to the original website')}
             extra={[
               <Button type="primary" key="returnUrl" onClick={() => {
                 Setting.goToLink(payment.returnUrl);
               }}>
-                {i18next.t("payment:Return to Website")}
+                {i18next.t('payment:Return to Website')}
               </Button>
             ]}
           />
         </div>
-      )
+      );
     }
   }
 }

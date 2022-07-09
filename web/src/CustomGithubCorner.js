@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import * as Conf from "./Conf";
-import GithubCorner from "react-github-corner";
+import React from 'react';
+import * as Conf from './Conf';
+import GithubCorner from 'react-github-corner';
 
 class CustomGithubCorner extends React.Component {
   constructor(props) {

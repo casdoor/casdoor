@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from "../Setting";
-import i18next from "i18next";
+import * as Setting from '../Setting';
+import i18next from 'i18next';
 
-export function getGlobalUsers(page, pageSize, field = "", value = "", sortField = "", sortOrder = "") {
+export function getGlobalUsers(page, pageSize, field = '', value = '', sortField = '', sortOrder = '') {
   return fetch(`${Setting.ServerUrl}/api/get-global-users?p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
-    method: "GET",
-    credentials: "include"
+    method: 'GET',
+    credentials: 'include'
   }).then(res => res.json());
 }
 
-export function getUsers(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
+export function getUsers(owner, page = '', pageSize = '', field = '', value = '', sortField = '', sortOrder = '') {
   return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
-    method: "GET",
-    credentials: "include"
+    method: 'GET',
+    credentials: 'include'
   }).then(res => res.json());
 }
 
 export function getUser(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-user?id=${owner}/${encodeURIComponent(name)}`, {
-    method: "GET",
-    credentials: "include"
+    method: 'GET',
+    credentials: 'include'
   }).then(res => res.json());
 }
 
@@ -65,48 +65,48 @@ export function deleteUser(user) {
 
 export function getAddressOptions(url) {
   return fetch(url, {
-    method: "GET",
+    method: 'GET',
   }).then(res => res.json());
 }
 
 export function getAffiliationOptions(url, code) {
   return fetch(`${url}/${code}`, {
-    method: "GET",
+    method: 'GET',
   }).then(res => res.json());
 }
 
 export function setPassword(userOwner, userName, oldPassword, newPassword) {
   let formData = new FormData();
-  formData.append("userOwner", userOwner);
-  formData.append("userName", userName);
-  formData.append("oldPassword", oldPassword);
-  formData.append("newPassword", newPassword);
+  formData.append('userOwner', userOwner);
+  formData.append('userName', userName);
+  formData.append('oldPassword', oldPassword);
+  formData.append('newPassword', newPassword);
   return fetch(`${Setting.ServerUrl}/api/set-password`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     body: formData
   }).then(res => res.json());
 }
 
 export function sendCode(checkType, checkId, checkKey, dest, type, orgId, checkUser) {
   let formData = new FormData();
-  formData.append("checkType", checkType);
-  formData.append("checkId", checkId);
-  formData.append("checkKey", checkKey);
-  formData.append("dest", dest);
-  formData.append("type", type);
-  formData.append("organizationId", orgId);
-  formData.append("checkUser", checkUser);
+  formData.append('checkType', checkType);
+  formData.append('checkId', checkId);
+  formData.append('checkKey', checkKey);
+  formData.append('dest', dest);
+  formData.append('type', type);
+  formData.append('organizationId', orgId);
+  formData.append('checkUser', checkUser);
   return fetch(`${Setting.ServerUrl}/api/send-verification-code`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     body: formData
   }).then(res => res.json()).then(res => {
-    if (res.status === "ok") {
-      Setting.showMessage("success", i18next.t("user:Code Sent"));
+    if (res.status === 'ok') {
+      Setting.showMessage('success', i18next.t('user:Code Sent'));
       return true;
     } else {
-      Setting.showMessage("error", i18next.t("user:" + res.msg));
+      Setting.showMessage('error', i18next.t('user:' + res.msg));
       return false;
     }
   });
@@ -114,23 +114,23 @@ export function sendCode(checkType, checkId, checkKey, dest, type, orgId, checkU
 
 export function verifyCaptcha(captchaType, captchaToken, clientSecret) {
   let formData = new FormData();
-  formData.append("captchaType", captchaType);
-  formData.append("captchaToken", captchaToken);
-  formData.append("clientSecret", clientSecret);
+  formData.append('captchaType', captchaType);
+  formData.append('captchaToken', captchaToken);
+  formData.append('clientSecret', clientSecret);
   return fetch(`${Setting.ServerUrl}/api/verify-captcha`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     body: formData
   }).then(res => res.json()).then(res => {
-    if (res.status === "ok") {
+    if (res.status === 'ok') {
       if (res.data) {
-        Setting.showMessage("success", i18next.t("user:Captcha Verify Success"));
+        Setting.showMessage('success', i18next.t('user:Captcha Verify Success'));
       } else {
-        Setting.showMessage("error", i18next.t("user:Captcha Verify Failed"));
+        Setting.showMessage('error', i18next.t('user:Captcha Verify Failed'));
       }
       return true;
     } else {
-      Setting.showMessage("error", i18next.t("user:" + res.msg));
+      Setting.showMessage('error', i18next.t('user:' + res.msg));
       return false;
     }
   });
@@ -138,18 +138,18 @@ export function verifyCaptcha(captchaType, captchaToken, clientSecret) {
 
 export function resetEmailOrPhone(dest, type, code) {
   let formData = new FormData();
-  formData.append("dest", dest);
-  formData.append("type", type);
-  formData.append("code", code);
+  formData.append('dest', dest);
+  formData.append('type', type);
+  formData.append('code', code);
   return fetch(`${Setting.ServerUrl}/api/reset-email-or-phone`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     body: formData
   }).then(res => res.json());
 }
 
 export function getCaptcha(owner, name, isCurrentProvider) {
   return fetch(`${Setting.ServerUrl}/api/get-captcha?applicationId=${owner}/${encodeURIComponent(name)}&isCurrentProvider=${isCurrentProvider}`, {
-    method: "GET"
+    method: 'GET'
   }).then(res => res.json()).then(res => res.data);
 }

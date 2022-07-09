@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React from 'react';
 import {DownOutlined, DeleteOutlined, UpOutlined} from '@ant-design/icons';
 import {Button, Col, Row, Select, Switch, Table, Tooltip} from 'antd';
-import * as Setting from "./Setting";
-import i18next from "i18next";
-import * as Provider from "./auth/Provider";
+import * as Setting from './Setting';
+import i18next from 'i18next';
+import * as Provider from './auth/Provider';
 
 const { Option } = Select;
 
@@ -39,7 +39,7 @@ class ProviderTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: Setting.getNewRowNameForTable(table, "Please select a provider"), canSignUp: true, canSignIn: true, canUnlink: true, alertType: "None"};
+    let row = {name: Setting.getNewRowNameForTable(table, 'Please select a provider'), canSignUp: true, canSignIn: true, canUnlink: true, alertType: 'None'};
     if (table === undefined) {
       table = [];
     }
@@ -65,52 +65,52 @@ class ProviderTable extends React.Component {
   renderTable(table) {
     let columns = [
       {
-        title: i18next.t("provider:Name"),
+        title: i18next.t('provider:Name'),
         dataIndex: 'name',
         key: 'name',
         render: (text, record, index) => {
           return (
             <Select virtual={false} style={{width: '100%'}}
-                    value={text}
-                    onChange={value => {
-                      this.updateField(table, index, 'name', value);
-                      const provider = Setting.getArrayItem(this.props.providers, "name", value);
-                      this.updateField(table, index, 'provider', provider);
-                    }} >
+              value={text}
+              onChange={value => {
+                this.updateField(table, index, 'name', value);
+                const provider = Setting.getArrayItem(this.props.providers, 'name', value);
+                this.updateField(table, index, 'provider', provider);
+              }} >
               {
-                Setting.getDeduplicatedArray(this.props.providers, table, "name").map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
+                Setting.getDeduplicatedArray(this.props.providers, table, 'name').map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
               }
             </Select>
-          )
+          );
         }
       },
       {
-        title: i18next.t("provider:Category"),
+        title: i18next.t('provider:Category'),
         dataIndex: 'category',
         key: 'category',
         width: '100px',
         render: (text, record, index) => {
-          const provider = Setting.getArrayItem(this.props.providers, "name", record.name);
+          const provider = Setting.getArrayItem(this.props.providers, 'name', record.name);
           return provider?.category;
         }
       },
       {
-        title: i18next.t("provider:Type"),
+        title: i18next.t('provider:Type'),
         dataIndex: 'type',
         key: 'type',
         width: '80px',
         render: (text, record, index) => {
-          const provider = Setting.getArrayItem(this.props.providers, "name", record.name);
+          const provider = Setting.getArrayItem(this.props.providers, 'name', record.name);
           return Provider.getProviderLogoWidget(provider);
         }
       },
       {
-        title: i18next.t("provider:canSignUp"),
+        title: i18next.t('provider:canSignUp'),
         dataIndex: 'canSignUp',
         key: 'canSignUp',
         width: '120px',
         render: (text, record, index) => {
-          if (record.provider?.category !== "OAuth") {
+          if (record.provider?.category !== 'OAuth') {
             return null;
           }
 
@@ -118,16 +118,16 @@ class ProviderTable extends React.Component {
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'canSignUp', checked);
             }} />
-          )
+          );
         }
       },
       {
-        title: i18next.t("provider:canSignIn"),
+        title: i18next.t('provider:canSignIn'),
         dataIndex: 'canSignIn',
         key: 'canSignIn',
         width: '120px',
         render: (text, record, index) => {
-          if (record.provider?.category !== "OAuth") {
+          if (record.provider?.category !== 'OAuth') {
             return null;
           }
 
@@ -135,16 +135,16 @@ class ProviderTable extends React.Component {
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'canSignIn', checked);
             }} />
-          )
+          );
         }
       },
       {
-        title: i18next.t("provider:canUnlink"),
+        title: i18next.t('provider:canUnlink'),
         dataIndex: 'canUnlink',
         key: 'canUnlink',
         width: '120px',
         render: (text, record, index) => {
-          if (record.provider?.category !== "OAuth") {
+          if (record.provider?.category !== 'OAuth') {
             return null;
           }
 
@@ -152,16 +152,16 @@ class ProviderTable extends React.Component {
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'canUnlink', checked);
             }} />
-          )
+          );
         }
       },
       {
-        title: i18next.t("provider:prompted"),
+        title: i18next.t('provider:prompted'),
         dataIndex: 'prompted',
         key: 'prompted',
         width: '120px',
         render: (text, record, index) => {
-          if (record.provider?.category !== "OAuth") {
+          if (record.provider?.category !== 'OAuth') {
             return null;
           }
 
@@ -169,7 +169,7 @@ class ProviderTable extends React.Component {
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'prompted', checked);
             }} />
-          )
+          );
         }
       },
       // {
@@ -194,19 +194,19 @@ class ProviderTable extends React.Component {
       //   }
       // },
       {
-        title: i18next.t("general:Action"),
+        title: i18next.t('general:Action'),
         key: 'action',
         width: '100px',
         render: (text, record, index) => {
           return (
             <div>
-              <Tooltip placement="bottomLeft" title={i18next.t("general:Up")}>
-                <Button style={{marginRight: "5px"}} disabled={index === 0} icon={<UpOutlined />} size="small" onClick={() => this.upRow(table, index)} />
+              <Tooltip placement="bottomLeft" title={i18next.t('general:Up')}>
+                <Button style={{marginRight: '5px'}} disabled={index === 0} icon={<UpOutlined />} size="small" onClick={() => this.upRow(table, index)} />
               </Tooltip>
-              <Tooltip placement="topLeft" title={i18next.t("general:Down")}>
-                <Button style={{marginRight: "5px"}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
+              <Tooltip placement="topLeft" title={i18next.t('general:Down')}>
+                <Button style={{marginRight: '5px'}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
               </Tooltip>
-              <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
+              <Tooltip placement="topLeft" title={i18next.t('general:Delete')}>
                 <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
               </Tooltip>
             </div>
@@ -216,17 +216,17 @@ class ProviderTable extends React.Component {
     ];
 
     if (!this.props.application.enableSignUp) {
-      columns = columns.filter(column => column.key !== "canSignUp");
+      columns = columns.filter(column => column.key !== 'canSignUp');
     }
 
     return (
       <Table scroll={{x: 'max-content'}} rowKey="name" columns={columns} dataSource={table} size="middle" bordered pagination={false}
-             title={() => (
-               <div>
-                 {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-                 <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
-               </div>
-             )}
+        title={() => (
+          <div>
+            {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button style={{marginRight: '5px'}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t('general:Add')}</Button>
+          </div>
+        )}
       />
     );
   }
@@ -242,7 +242,7 @@ class ProviderTable extends React.Component {
           </Col>
         </Row>
       </div>
-    )
+    );
   }
 }
 

@@ -12,66 +12,66 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from "../Setting";
+import * as Setting from '../Setting';
 
 export function getLdaps(owner) {
   return fetch(`${Setting.ServerUrl}/api/get-ldaps?owner=${owner}`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
   }).then(res => res.json());
 }
 
 export function getLdap(id) {
   return fetch(`${Setting.ServerUrl}/api/get-ldap?id=${id}`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
   }).then(res => res.json());
 }
 
 export function addLdap(body) {
   return fetch(`${Setting.ServerUrl}/api/add-ldap`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     body: JSON.stringify(body),
   }).then(res => res.json());
 }
 
 export function deleteLdap(body) {
   return fetch(`${Setting.ServerUrl}/api/delete-ldap`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     body: JSON.stringify(body),
   }).then(res => res.json());
 }
 
 export function updateLdap(body) {
   return fetch(`${Setting.ServerUrl}/api/update-ldap`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     body: JSON.stringify(body),
   }).then(res => res.json());
 }
 
 export function getLdapUser(body) {
   return fetch(`${Setting.ServerUrl}/api/get-ldap-user`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     body: JSON.stringify(body),
   }).then(res => res.json());
 }
 
 export function syncUsers(owner, ldapId, body) {
   return fetch(`${Setting.ServerUrl}/api/sync-ldap-users?owner=${owner}&ldapId=${ldapId}`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     body: JSON.stringify(body),
   }).then(res => res.json());
 }
 
 export function checkLdapUsersExist(owner, body) {
   return fetch(`${Setting.ServerUrl}/api/check-ldap-users-exist?owner=${owner}`, {
-    method: "POST",
-    credentials: "include",
+    method: 'POST',
+    credentials: 'include',
     body: JSON.stringify(body),
   }).then(res => res.json());
 }

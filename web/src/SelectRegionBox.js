@@ -12,50 +12,50 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import * as Setting from "./Setting";
-import { Select } from "antd";
+import React from 'react';
+import * as Setting from './Setting';
+import { Select } from 'antd';
 
 const { Option } = Select;
 
 class SelectRegionBox extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            classes: props,
-            value: "",
-        };
-    }
-
-    onChange(e) {
-        this.props.onChange(e);
-        this.setState({value: e})
+  constructor(props) {
+    super(props);
+    this.state = {
+      classes: props,
+      value: '',
     };
+  }
 
-    render() {
-        return (
-          <Select virtual={false}
-                  showSearch
-                  optionFilterProp="label"
-                  style={{width: '100%'}}
-                  defaultValue={this.props.defaultValue || undefined}
-                  placeholder="Please select country/region"
-                  onChange={(value => {this.onChange(value);})}
-                  filterOption={(input, option) =>
-                      option.label.indexOf(input) >= 0
-                  }
-          >
-            {
-                Setting.CountryRegionData.map((item, index) => (
-                    <Option key={index} value={item.code} label={item.code} >
-                        <img src={`${Setting.StaticBaseUrl}/flag-icons/${item.code}.svg`} alt={item.name} height={20} style={{marginRight: 10}}/>
-                        {`${item.name} (${item.code})`}
-                    </Option>
-                ))
-            }
-          </Select>
-        )
-    };
+  onChange(e) {
+    this.props.onChange(e);
+    this.setState({value: e});
+  }
+
+  render() {
+    return (
+      <Select virtual={false}
+        showSearch
+        optionFilterProp="label"
+        style={{width: '100%'}}
+        defaultValue={this.props.defaultValue || undefined}
+        placeholder="Please select country/region"
+        onChange={(value => {this.onChange(value);})}
+        filterOption={(input, option) =>
+          option.label.indexOf(input) >= 0
+        }
+      >
+        {
+          Setting.CountryRegionData.map((item, index) => (
+            <Option key={index} value={item.code} label={item.code} >
+              <img src={`${Setting.StaticBaseUrl}/flag-icons/${item.code}.svg`} alt={item.name} height={20} style={{marginRight: 10}}/>
+              {`${item.name} (${item.code})`}
+            </Option>
+          ))
+        }
+      </Select>
+    );
+  }
 }
 
 export default SelectRegionBox;

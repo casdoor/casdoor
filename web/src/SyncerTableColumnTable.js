@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React from 'react';
 import {DownOutlined, DeleteOutlined, UpOutlined} from '@ant-design/icons';
 import {Button, Col, Input, Row, Select, Switch, Table, Tooltip} from 'antd';
-import * as Setting from "./Setting";
-import i18next from "i18next";
+import * as Setting from './Setting';
+import i18next from 'i18next';
 
 const { Option } = Select;
 
@@ -38,7 +38,7 @@ class SyncerTableColumnTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: `column${table.length}`, type: "string", values: []};
+    let row = {name: `column${table.length}`, type: 'string', values: []};
     if (table === undefined) {
       table = [];
     }
@@ -64,7 +64,7 @@ class SyncerTableColumnTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t("syncer:Column name"),
+        title: i18next.t('syncer:Column name'),
         dataIndex: 'name',
         key: 'name',
         render: (text, record, index) => {
@@ -72,11 +72,11 @@ class SyncerTableColumnTable extends React.Component {
             <Input value={text} onChange={e => {
               this.updateField(table, index, 'name', e.target.value);
             }} />
-          )
+          );
         }
       },
       {
-        title: i18next.t("syncer:Column type"),
+        title: i18next.t('syncer:Column type'),
         dataIndex: 'type',
         key: 'type',
         render: (text, record, index) => {
@@ -87,11 +87,11 @@ class SyncerTableColumnTable extends React.Component {
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
-          )
+          );
         }
       },
       {
-        title: i18next.t("syncer:Casdoor column"),
+        title: i18next.t('syncer:Casdoor column'),
         dataIndex: 'casdoorName',
         key: 'casdoorName',
         render: (text, record, index) => {
@@ -104,11 +104,11 @@ class SyncerTableColumnTable extends React.Component {
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
-          )
+          );
         }
       },
       {
-        title: i18next.t("syncer:Is hashed"),
+        title: i18next.t('syncer:Is hashed'),
         dataIndex: 'isHashed',
         key: 'isHashed',
         render: (text, record, index) => {
@@ -116,23 +116,23 @@ class SyncerTableColumnTable extends React.Component {
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, 'isHashed', checked);
             }} />
-          )
+          );
         }
       },
       {
-        title: i18next.t("general:Action"),
+        title: i18next.t('general:Action'),
         key: 'action',
         width: '100px',
         render: (text, record, index) => {
           return (
             <div>
-              <Tooltip placement="bottomLeft" title={i18next.t("general:Up")}>
-                <Button style={{marginRight: "5px"}} disabled={index === 0} icon={<UpOutlined />} size="small" onClick={() => this.upRow(table, index)} />
+              <Tooltip placement="bottomLeft" title={i18next.t('general:Up')}>
+                <Button style={{marginRight: '5px'}} disabled={index === 0} icon={<UpOutlined />} size="small" onClick={() => this.upRow(table, index)} />
               </Tooltip>
-              <Tooltip placement="topLeft" title={i18next.t("general:Down")}>
-                <Button style={{marginRight: "5px"}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
+              <Tooltip placement="topLeft" title={i18next.t('general:Down')}>
+                <Button style={{marginRight: '5px'}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
               </Tooltip>
-              <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
+              <Tooltip placement="topLeft" title={i18next.t('general:Delete')}>
                 <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
               </Tooltip>
             </div>
@@ -143,12 +143,12 @@ class SyncerTableColumnTable extends React.Component {
 
     return (
       <Table rowKey="index" columns={columns} dataSource={table} size="middle" bordered pagination={false}
-             title={() => (
-               <div>
-                 {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-                 <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
-               </div>
-             )}
+        title={() => (
+          <div>
+            {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button style={{marginRight: '5px'}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t('general:Add')}</Button>
+          </div>
+        )}
       />
     );
   }
@@ -164,7 +164,7 @@ class SyncerTableColumnTable extends React.Component {
           </Col>
         </Row>
       </div>
-    )
+    );
   }
 }
 

@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import UserEditPage from "../UserEditPage";
+import React from 'react';
+import UserEditPage from '../UserEditPage';
 
 class AccountPage extends React.Component {
   render() {
     return (
       <UserEditPage organizationName={this.props.account.owner} userName={this.props.account.name} account={this.props.account} location={this.props.location} />
-    )
+    );
   }
 }
 

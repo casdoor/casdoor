@@ -13,14 +13,14 @@
 // limitations under the License.
 
 import React from 'react';
-import LoginPage from "./LoginPage";
-import {authConfig} from "./Auth";
+import LoginPage from './LoginPage';
+import {authConfig} from './Auth';
 
 class SelfLoginPage extends React.Component {
   render() {
     return (
-      <LoginPage type={"login"} mode={"signin"} applicationName={authConfig.appName} account={this.props.account} {...this.props} />
-    )
+      <LoginPage type={'login'} mode={'signin'} applicationName={authConfig.appName} account={this.props.account} {...this.props} />
+    );
   }
 }
 

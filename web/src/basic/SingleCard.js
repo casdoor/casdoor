@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import {Card, Col} from "antd";
-import * as Setting from "../Setting";
-import {withRouter} from "react-router-dom";
+import React from 'react';
+import {Card, Col} from 'antd';
+import * as Setting from '../Setting';
+import {withRouter} from 'react-router-dom';
 
 const { Meta } = Card;
 
@@ -42,27 +42,27 @@ class SingleCard extends React.Component {
           description={desc}
         />
       </Card.Grid>
-    )
+    );
   }
 
   renderCard(logo, link, title, desc, time, isSingle) {
     return (
-      <Col style={{paddingLeft: "20px", paddingRight: "20px", paddingBottom: "20px", marginBottom: "20px"}} span={6}>
+      <Col style={{paddingLeft: '20px', paddingRight: '20px', paddingBottom: '20px', marginBottom: '20px'}} span={6}>
         <Card
           hoverable
           cover={
-            <img alt="logo" src={logo} style={{width: "100%", height: "210px", objectFit: "scale-down"}} />
+            <img alt="logo" src={logo} style={{width: '100%', height: '210px', objectFit: 'scale-down'}} />
           }
           onClick={() => Setting.goToLinkSoft(this, link)}
-          style={isSingle ? {width: "320px"} : {width: "100%"}}
+          style={isSingle ? {width: '320px'} : {width: '100%'}}
         >
           <Meta title={title} description={desc} />
           <br/>
           <br/>
-          <Meta title={""} description={Setting.getFormattedDateShort(time)} />
+          <Meta title={''} description={Setting.getFormattedDateShort(time)} />
         </Card>
       </Col>
-    )
+    );
   }
 
   render() {

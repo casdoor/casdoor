@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import {Cascader, Col, Input, Row, Select} from 'antd';
-import i18next from "i18next";
-import * as UserBackend from "../backend/UserBackend";
-import * as Setting from "../Setting";
+import { Cascader, Col, Input, Row, Select } from 'antd';
+import i18next from 'i18next';
+import React from 'react';
+import * as UserBackend from '../backend/UserBackend';
+import * as Setting from '../Setting';
 
 const { Option } = Select;
 
@@ -36,11 +36,11 @@ class AffiliationSelect extends React.Component {
   }
 
   getAddressOptions(application) {
-    if (application.affiliationUrl === "") {
+    if (application.affiliationUrl === '') {
       return;
     }
 
-    const addressUrl = application.affiliationUrl.split("|")[0];
+    const addressUrl = application.affiliationUrl.split('|')[0];
     UserBackend.getAddressOptions(addressUrl)
       .then((addressOptions) => {
         this.setState({
@@ -50,11 +50,11 @@ class AffiliationSelect extends React.Component {
   }
 
   getAffiliationOptions(application, user) {
-    if (application.affiliationUrl === "") {
+    if (application.affiliationUrl === '') {
       return;
     }
 
-    const affiliationUrl = application.affiliationUrl.split("|")[1];
+    const affiliationUrl = application.affiliationUrl.split('|')[1];
     const code = user.address[user.address.length - 1];
     UserBackend.getAffiliationOptions(affiliationUrl, code)
       .then((affiliationOptions) => {
@@ -72,10 +72,10 @@ class AffiliationSelect extends React.Component {
     return (
       <React.Fragment>
         {
-          this.props.application?.affiliationUrl === "" ? null : (
+          this.props.application?.affiliationUrl === '' ? null : (
             <Row style={{marginTop: '20px'}} >
               <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
-                {Setting.getLabel(i18next.t("user:Address"), i18next.t("user:Address - Tooltip"))} :
+                {Setting.getLabel(i18next.t('user:Address'), i18next.t('user:Address - Tooltip'))} :
               </Col>
               <Col span={24 - this.props.labelSpan} >
                 <Cascader style={{width: '100%', maxWidth: '400px'}} value={this.props.user.address} options={this.state.addressOptions} onChange={value => {
@@ -83,31 +83,31 @@ class AffiliationSelect extends React.Component {
                   this.updateUserField('affiliation', '');
                   this.updateUserField('score', 0);
                   this.getAffiliationOptions(this.props.application, this.props.user);
-                }} placeholder={i18next.t("signup:Please input your address!")} />
+                }} placeholder={i18next.t('signup:Please input your address!')} />
               </Col>
             </Row>
           )
         }
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
-            {Setting.getLabel(i18next.t("user:Affiliation"), i18next.t("user:Affiliation - Tooltip"))} :
+            {Setting.getLabel(i18next.t('user:Affiliation'), i18next.t('user:Affiliation - Tooltip'))} :
           </Col>
           <Col span={22} >
             {
-              this.props.application?.affiliationUrl === "" ? (
+              this.props.application?.affiliationUrl === '' ? (
                 <Input value={this.props.user.affiliation} onChange={e => {
                   this.updateUserField('affiliation', e.target.value);
                 }} />
               ) : (
                 <Select virtual={false} style={{width: '100%'}} value={this.props.user.affiliation} onChange={(value => {
                   const name = value;
-                  const affiliationOption = Setting.getArrayItem(this.state.affiliationOptions, "name", name);
+                  const affiliationOption = Setting.getArrayItem(this.state.affiliationOptions, 'name', name);
                   const id = affiliationOption.id;
                   this.updateUserField('affiliation', name);
                   this.updateUserField('score', id);
                 })}>
                   {
-                    <Option key={0} value={""}>(empty)</Option>
+                    <Option key={0} value={''}>(empty)</Option>
                   }
                   {
                     this.state.affiliationOptions.map((affiliationOption, index) => <Option key={affiliationOption.id} value={affiliationOption.name}>{affiliationOption.name}</Option>)
@@ -118,7 +118,7 @@ class AffiliationSelect extends React.Component {
           </Col>
         </Row>
       </React.Fragment>
-    )
+    );
   }
 }
 

@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from "../Setting";
+import * as Setting from '../Setting';
 
-export function getResources(owner, user, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
+export function getResources(owner, user, page = '', pageSize = '', field = '', value = '', sortField = '', sortOrder = '') {
   return fetch(`${Setting.ServerUrl}/api/get-resources?owner=${owner}&user=${user}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
-    method: "GET",
-    credentials: "include"
+    method: 'GET',
+    credentials: 'include'
   }).then(res => res.json());
 }
 
 export function getResource(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-resource?id=${owner}/${encodeURIComponent(name)}`, {
-    method: "GET",
-    credentials: "include"
+    method: 'GET',
+    credentials: 'include'
   }).then(res => res.json());
 }
 
@@ -46,7 +46,7 @@ export function addResource(resource) {
   }).then(res => res.json());
 }
 
-export function deleteResource(resource, provider="") {
+export function deleteResource(resource, provider='') {
   let newResource = Setting.deepCopy(resource);
   return fetch(`${Setting.ServerUrl}/api/delete-resource?provider=${provider}`, {
     method: 'POST',
@@ -55,13 +55,13 @@ export function deleteResource(resource, provider="") {
   }).then(res => res.json());
 }
 
-export function uploadResource(owner, user, tag, parent, fullFilePath, file, provider="") {
-  const application = "app-built-in";
+export function uploadResource(owner, user, tag, parent, fullFilePath, file, provider='') {
+  const application = 'app-built-in';
   let formData = new FormData();
-  formData.append("file", file);
+  formData.append('file', file);
   return fetch(`${Setting.ServerUrl}/api/upload-resource?owner=${owner}&user=${user}&application=${application}&tag=${tag}&parent=${parent}&fullFilePath=${encodeURIComponent(fullFilePath)}&provider=${provider}`, {
     body: formData,
     method: 'POST',
     credentials: 'include',
-  }).then(res => res.json())
+  }).then(res => res.json());
 }

@@ -12,133 +12,133 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {message, Tag, Tooltip} from "antd";
-import {QuestionCircleTwoTone} from "@ant-design/icons";
-import React from "react";
-import {isMobile as isMobileDevice} from "react-device-detect";
-import "./i18n";
-import i18next from "i18next";
-import copy from "copy-to-clipboard";
-import {authConfig} from "./auth/Auth";
-import {Helmet} from "react-helmet";
-import * as Conf from "./Conf";
+import { QuestionCircleTwoTone } from '@ant-design/icons';
+import { message, Tag, Tooltip } from 'antd';
+import copy from 'copy-to-clipboard';
+import i18next from 'i18next';
+import React from 'react';
+import { isMobile as isMobileDevice } from 'react-device-detect';
+import { Helmet } from 'react-helmet';
+import { authConfig } from './auth/Auth';
+import * as Conf from './Conf';
+import './i18n';
 
-export let ServerUrl = "";
+export let ServerUrl = '';
 
 // export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
-export const StaticBaseUrl = "https://cdn.casbin.org";
+export const StaticBaseUrl = 'https://cdn.casbin.org';
 
 // https://catamphetamine.gitlab.io/country-flag-icons/3x2/index.html
 export const CountryRegionData = getCountryRegionData();
 
 export const OtherProviderInfo = {
   SMS: {
-    "Aliyun SMS": {
+    'Aliyun SMS': {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
-      url: "https://aliyun.com/product/sms",
+      url: 'https://aliyun.com/product/sms',
     },
-    "Tencent Cloud SMS": {
+    'Tencent Cloud SMS': {
       logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
-      url: "https://cloud.tencent.com/product/sms",
+      url: 'https://cloud.tencent.com/product/sms',
     },
-    "Volc Engine SMS": {
+    'Volc Engine SMS': {
       logo: `${StaticBaseUrl}/img/social_volc_engine.jpg`,
-      url: "https://www.volcengine.com/products/cloud-sms",
+      url: 'https://www.volcengine.com/products/cloud-sms',
     },
-    "Huawei Cloud SMS": {
+    'Huawei Cloud SMS': {
       logo: `${StaticBaseUrl}/img/social_huawei.png`,
-      url: "https://www.huaweicloud.com/product/msgsms.html",
+      url: 'https://www.huaweicloud.com/product/msgsms.html',
     },
   },
   Email: {
-    "Default": {
+    'Default': {
       logo: `${StaticBaseUrl}/img/social_default.png`,
-      url: "",
+      url: '',
     },
   },
   Storage: {
-    "Local File System": {
+    'Local File System': {
       logo: `${StaticBaseUrl}/img/social_file.png`,
-      url: "",
+      url: '',
     },
-    "AWS S3": {
+    'AWS S3': {
       logo: `${StaticBaseUrl}/img/social_aws.png`,
-      url: "https://aws.amazon.com/s3",
+      url: 'https://aws.amazon.com/s3',
     },
-    "Aliyun OSS": {
+    'Aliyun OSS': {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
-      url: "https://aliyun.com/product/oss",
+      url: 'https://aliyun.com/product/oss',
     },
-    "Tencent Cloud COS": {
+    'Tencent Cloud COS': {
       logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
-      url: "https://cloud.tencent.com/product/cos",
+      url: 'https://cloud.tencent.com/product/cos',
     },
-    "Azure Blob": {
+    'Azure Blob': {
       logo: `${StaticBaseUrl}/img/social_azure.jpg`,
-      url: "https://azure.microsoft.com/en-us/services/storage/blobs/"
+      url: 'https://azure.microsoft.com/en-us/services/storage/blobs/'
     }
   },
   SAML: {
-    "Aliyun IDaaS": {
+    'Aliyun IDaaS': {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
-      url: "https://aliyun.com/product/idaas"
+      url: 'https://aliyun.com/product/idaas'
     },
-    "Keycloak": {
+    'Keycloak': {
       logo: `${StaticBaseUrl}/img/social_keycloak.png`,
-      url: "https://www.keycloak.org/"
+      url: 'https://www.keycloak.org/'
     },
   },
   Payment: {
-    "Alipay": {
+    'Alipay': {
       logo: `${StaticBaseUrl}/img/payment_alipay.png`,
-      url: "https://www.alipay.com/"
+      url: 'https://www.alipay.com/'
     },
-    "WeChat Pay": {
+    'WeChat Pay': {
       logo: `${StaticBaseUrl}/img/payment_wechat_pay.png`,
-      url: "https://pay.weixin.qq.com/"
+      url: 'https://pay.weixin.qq.com/'
     },
-    "PayPal": {
+    'PayPal': {
       logo: `${StaticBaseUrl}/img/payment_paypal.png`,
-      url: "https://www.paypal.com/"
+      url: 'https://www.paypal.com/'
     },
-    "GC": {
+    'GC': {
       logo: `${StaticBaseUrl}/img/payment_gc.png`,
-      url: "https://gc.org"
+      url: 'https://gc.org'
     },
   },
   Captcha: {
-    "Default": {
+    'Default': {
       logo: `${StaticBaseUrl}/img/social_default.png`,
-      url: "https://pkg.go.dev/github.com/dchest/captcha",
+      url: 'https://pkg.go.dev/github.com/dchest/captcha',
     },
-    "reCAPTCHA": {
+    'reCAPTCHA': {
       logo: `${StaticBaseUrl}/img/social_recaptcha.png`,
-      url: "https://www.google.com/recaptcha",
+      url: 'https://www.google.com/recaptcha',
     },
-    "hCaptcha": {
+    'hCaptcha': {
       logo: `${StaticBaseUrl}/img/social_hcaptcha.png`,
-      url: "https://www.hcaptcha.com",
+      url: 'https://www.hcaptcha.com',
     },
-    "Aliyun Captcha": {
+    'Aliyun Captcha': {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
-      url: "https://help.aliyun.com/product/28308.html",
+      url: 'https://help.aliyun.com/product/28308.html',
     }
   }
 };
 
 export function getCountryRegionData() {
   let language = i18next.language;
-  if (language === null || language === "null") {
+  if (language === null || language === 'null') {
     language = Conf.DefaultLanguage;
   }
 
-  var countries = require("i18n-iso-countries");
-  countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
-  var data = countries.getNames(language, {select: "official"});
-  var result = []
+  var countries = require('i18n-iso-countries');
+  countries.registerLocale(require('i18n-iso-countries/langs/' + language + '.json'));
+  var data = countries.getNames(language, {select: 'official'});
+  var result = [];
   for (var i in data) 
-    result.push({code:i, name:data[i]})
-  return result
+    result.push({code:i, name:data[i]});
+  return result;
 }
 
 export function initServerUrl() {
@@ -150,13 +150,13 @@ export function initServerUrl() {
 
 export function isLocalhost() {
   const hostname = window.location.hostname;
-  return hostname === "localhost";
+  return hostname === 'localhost';
 }
 
 export function getFullServerUrl() {
   let fullServerUrl = window.location.origin;
-  if (fullServerUrl === "http://localhost:7001") {
-    fullServerUrl = "http://localhost:8000";
+  if (fullServerUrl === 'http://localhost:7001') {
+    fullServerUrl = 'http://localhost:8000';
   }
   return fullServerUrl;
 }
@@ -166,12 +166,12 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (providerItem.provider.category !== "OAuth" && providerItem.provider.category !== "SAML") {
+  if (providerItem.provider.category !== 'OAuth' && providerItem.provider.category !== 'SAML') {
     return false;
   }
 
-  if (providerItem.provider.type === "WeChatMiniProgram"){
-    return false
+  if (providerItem.provider.type === 'WeChatMiniProgram'){
+    return false;
   }
 
   return true;
@@ -227,7 +227,7 @@ export function isValidEmail(email) {
 }
 
 export function isValidPhone(phone) {
-  if (phone === "") {
+  if (phone === '') {
     return false;
   }
 
@@ -237,7 +237,7 @@ export function isValidPhone(phone) {
 }
 
 export function isValidInvoiceTitle(invoiceTitle) {
-  if (invoiceTitle === "") {
+  if (invoiceTitle === '') {
     return false;
   }
 
@@ -258,7 +258,7 @@ export function isValidTaxId(taxId) {
 }
 
 export function isAffiliationPrompted(application) {
-  const signupItem = getSignupItem(application, "Affiliation");
+  const signupItem = getSignupItem(application, 'Affiliation');
   if (signupItem === null) {
     return false;
   }
@@ -283,7 +283,7 @@ function isAffiliationAnswered(user, application) {
   if (user === null) {
     return false;
   }
-  return user.affiliation !== "";
+  return user.affiliation !== '';
 }
 
 function isProviderItemAnswered(user, application, providerItem) {
@@ -293,7 +293,7 @@ function isProviderItemAnswered(user, application, providerItem) {
 
   const provider = providerItem.provider;
   const linkedValue = user[provider.type.toLowerCase()];
-  return linkedValue !== undefined && linkedValue !== "";
+  return linkedValue !== undefined && linkedValue !== '';
 }
 
 export function isPromptAnswered(user, application) {
@@ -311,7 +311,7 @@ export function isPromptAnswered(user, application) {
 }
 
 export function parseJson(s) {
-  if (s === "") {
+  if (s === '') {
     return null;
   } else {
     return JSON.parse(s);
@@ -343,7 +343,7 @@ export function goToLink(link) {
 }
 
 export function goToLinkSoft(ths, link) {
-  if (link.startsWith("http")) {
+  if (link.startsWith('http')) {
     openLink(link);
     return;
   }
@@ -352,13 +352,13 @@ export function goToLinkSoft(ths, link) {
 }
 
 export function showMessage(type, text) {
-  if (type === "") {
+  if (type === '') {
     return;
-  } else if (type === "success") {
+  } else if (type === 'success') {
     message.success(text);
-  } else if (type === "error") {
+  } else if (type === 'error') {
     message.error(text);
-  } else if (type === "info") {
+  } else if (type === 'info') {
     message.info(text);
   }
 }
@@ -367,7 +367,7 @@ export function isAdminUser(account) {
   if (account === undefined || account === null) {
     return false;
   }
-  return account.owner === "built-in" || account.isGlobalAdmin === true;
+  return account.owner === 'built-in' || account.isGlobalAdmin === true;
 }
 
 export function deepCopy(obj) {
@@ -478,13 +478,13 @@ export function getLanguage() {
 }
 
 export function setLanguage(language) {
-  localStorage.setItem("language", language);
+  localStorage.setItem('language', language);
   changeMomentLanguage(language);
   i18next.changeLanguage(language);
 }
 
 export function changeLanguage(language) {
-  localStorage.setItem("language", language);
+  localStorage.setItem('language', language);
   changeMomentLanguage(language);
   i18next.changeLanguage(language);
   window.location.reload(true);
@@ -515,19 +515,18 @@ export function changeMomentLanguage(language) {
 
 export function getClickable(text) {
   return (
-    // eslint-disable-next-line jsx-a11y/anchor-is-valid
     <a onClick={() => {
       copy(text);
-      showMessage("success", `Copied to clipboard`);
+      showMessage('success', 'Copied to clipboard');
     }}>
       {text}
     </a>
-  )
+  );
 }
 
 export function getProviderLogoURL(provider) {
-  if (provider.category === "OAuth") {
-    if (provider.type === "Custom") {
+  if (provider.category === 'OAuth') {
+    if (provider.type === 'Custom') {
       return provider.customLogo;  
     }
     return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
@@ -541,11 +540,11 @@ export function getProviderLogo(provider) {
   const url = getProviderLogoURL(provider);
   return (
     <img width={30} height={30} src={url} alt={idp} />
-  )
+  );
 }
 
 export function getProviderTypeOptions(category) {
-  if (category === "OAuth") {
+  if (category === 'OAuth') {
     return (
       [
         {id: 'Google', name: 'Google'},
@@ -576,13 +575,13 @@ export function getProviderTypeOptions(category) {
         {id: 'Custom', name: 'Custom'},
       ]
     );
-  } else if (category === "Email") {
+  } else if (category === 'Email') {
     return (
       [
         {id: 'Default', name: 'Default'},
       ]
     );
-  } else if (category === "SMS") {
+  } else if (category === 'SMS') {
     return (
       [
         {id: 'Aliyun SMS', name: 'Aliyun SMS'},
@@ -591,7 +590,7 @@ export function getProviderTypeOptions(category) {
         {id: 'Huawei Cloud SMS', name: 'Huawei Cloud SMS'},
       ]
     );
-  } else if (category === "Storage") {
+  } else if (category === 'Storage') {
     return (
       [
         {id: 'Local File System', name: 'Local File System'},
@@ -601,19 +600,19 @@ export function getProviderTypeOptions(category) {
         {id: 'Azure Blob', name: 'Azure Blob'}
       ]
     );
-  } else if (category === "SAML") {
+  } else if (category === 'SAML') {
     return ([
       {id: 'Aliyun IDaaS', name: 'Aliyun IDaaS'},
       {id: 'Keycloak', name: 'Keycloak'},
     ]);
-  } else if (category === "Payment") {
+  } else if (category === 'Payment') {
     return ([
       {id: 'Alipay', name: 'Alipay'},
       {id: 'WeChat Pay', name: 'WeChat Pay'},
       {id: 'PayPal', name: 'PayPal'},
       {id: 'GC', name: 'GC'},
     ]);
-  } else if (category === "Captcha") {
+  } else if (category === 'Captcha') {
     return ([
       {id: 'Default', name: 'Default'},
       {id: 'reCAPTCHA', name: 'reCAPTCHA'},
@@ -626,14 +625,14 @@ export function getProviderTypeOptions(category) {
 }
 
 export function getProviderSubTypeOptions(type) {
-  if (type === "WeCom" || type === "Infoflow") {
+  if (type === 'WeCom' || type === 'Infoflow') {
     return (
       [
         {id: 'Internal', name: 'Internal'},
         {id: 'Third-party', name: 'Third-party'},
       ]
     );
-  } else if (type === "Aliyun Captcha") {
+  } else if (type === 'Aliyun Captcha') {
     return [
       {id: 'nc', name: 'Sliding Validation'},
       {id: 'ic', name: 'Intelligent Validation'},
@@ -648,12 +647,12 @@ export function renderLogo(application) {
     return null;
   }
 
-  if (application.homepageUrl !== "") {
+  if (application.homepageUrl !== '') {
     return (
       <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
         <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '30px'}}/>
       </a>
-    )
+    );
   } else {
     return (
       <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '30px'}}/>
@@ -666,16 +665,16 @@ export function goToLogin(ths, application) {
     return;
   }
 
-  if (!application.enablePassword && window.location.pathname.includes("/signup/oauth/authorize")) {
-    const link = window.location.href.replace("/signup/oauth/authorize", "/login/oauth/authorize");
+  if (!application.enablePassword && window.location.pathname.includes('/signup/oauth/authorize')) {
+    const link = window.location.href.replace('/signup/oauth/authorize', '/login/oauth/authorize');
     goToLink(link);
     return;
   }
 
   if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/login");
+    goToLinkSoft(ths, '/login');
   } else {
-    if (application.signinUrl === "") {
+    if (application.signinUrl === '') {
       goToLink(`${application.homepageUrl}/login`);
     } else {
       goToLink(application.signinUrl);
@@ -688,16 +687,16 @@ export function goToSignup(ths, application) {
     return;
   }
 
-  if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
-    const link = window.location.href.replace("/login/oauth/authorize", "/signup/oauth/authorize");
+  if (!application.enablePassword && window.location.pathname.includes('/login/oauth/authorize')) {
+    const link = window.location.href.replace('/login/oauth/authorize', '/signup/oauth/authorize');
     goToLink(link);
     return;
   }
 
   if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/signup");
+    goToLinkSoft(ths, '/signup');
   } else {
-    if (application.signupUrl === "") {
+    if (application.signupUrl === '') {
       goToLinkSoft(ths, `/signup/${application.name}`);
     } else {
       goToLink(application.signupUrl);
@@ -711,9 +710,9 @@ export function goToForget(ths, application) {
   }
 
   if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/forget");
+    goToLinkSoft(ths, '/forget');
   } else {
-    if (application.forgetUrl === "") {
+    if (application.forgetUrl === '') {
       goToLinkSoft(ths, `/forget/${application.name}`);
     } else {
       goToLink(application.forgetUrl);
@@ -722,7 +721,7 @@ export function goToForget(ths, application) {
 }
 
 export function renderHelmet(application) {
-  if (application === undefined || application === null || application.organizationObj === undefined || application.organizationObj === null ||application.organizationObj === "") {
+  if (application === undefined || application === null || application.organizationObj === undefined || application.organizationObj === null ||application.organizationObj === '') {
     return null;
   }
 
@@ -731,7 +730,7 @@ export function renderHelmet(application) {
       <title>{application.organizationObj.displayName}</title>
       <link rel="icon" href={application.organizationObj.favicon} />
     </Helmet>
-  )
+  );
 }
 
 export function getLabel(text, tooltip) {
@@ -756,7 +755,7 @@ function maskString(s) {
   if (s.length <= 2) {
     return s;
   } else {
-    return `${s[0]}${repeat("*", s.length - 2)}${s[s.length - 1]}`;
+    return `${s[0]}${repeat('*', s.length - 2)}${s[s.length - 1]}`;
   }
 }
 
@@ -765,16 +764,16 @@ export function getMaskedPhone(s) {
 }
 
 export function getMaskedEmail(email) {
-  if (email === "") return;
-  const tokens = email.split("@");
+  if (email === '') return;
+  const tokens = email.split('@');
   let username = tokens[0];
   username = maskString(username);
 
   const domain = tokens[1];
-  let domainTokens = domain.split(".");
+  let domainTokens = domain.split('.');
   domainTokens[domainTokens.length - 2] = maskString(domainTokens[domainTokens.length - 2]);
 
-  return `${username}@${domainTokens.join(".")}`;
+  return `${username}@${domainTokens.join('.')}`;
 }
 
 export function getArrayItem(array, key, value) {
@@ -791,13 +790,13 @@ export function getNewRowNameForTable(table, rowName) {
   const emptyCount = table.filter(row => row.name.includes(rowName)).length;
   let res = rowName;
   for (let i = 0; i < emptyCount; i ++) {
-    res = res + " ";
+    res = res + ' ';
   }
   return res;
 }
 
 export function getTagColor(s) {
-  return "processing";
+  return 'processing';
 }
 
 export function getTags(tags) {
@@ -826,9 +825,9 @@ export function getRandomNumber() {
 }
 
 export function getFromLink() {
-  const from = sessionStorage.getItem("from");
+  const from = sessionStorage.getItem('from');
   if (from === null) {
-    return "/";
+    return '/';
   }
   return from;
 }
@@ -837,98 +836,98 @@ export function scrollToDiv(divId) {
   if (divId) {
     let ele = document.getElementById(divId);
     if (ele) {
-      ele.scrollIntoView({behavior: "smooth"});
+      ele.scrollIntoView({behavior: 'smooth'});
     }
   }
 }
 
 export function getSyncerTableColumns(syncer) {
   switch (syncer.type) {
-    case "Keycloak":
-      return [
-        {
-          "name":"ID",
-          "type":"string",
-          "casdoorName":"Id",
-          "isHashed":true,
-          "values":[
+  case 'Keycloak':
+    return [
+      {
+        'name':'ID',
+        'type':'string',
+        'casdoorName':'Id',
+        'isHashed':true,
+        'values':[
 
-          ]
-        },
-        {
-          "name":"USERNAME",
-          "type":"string",
-          "casdoorName":"Name",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        'name':'USERNAME',
+        'type':'string',
+        'casdoorName':'Name',
+        'isHashed':true,
+        'values':[
 
-          ]
-        },
-        {
-          "name":"LAST_NAME+FIRST_NAME",
-          "type":"string",
-          "casdoorName":"DisplayName",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        'name':'LAST_NAME+FIRST_NAME',
+        'type':'string',
+        'casdoorName':'DisplayName',
+        'isHashed':true,
+        'values':[
 
-          ]
-        },
-        {
-          "name":"EMAIL",
-          "type":"string",
-          "casdoorName":"Email",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        'name':'EMAIL',
+        'type':'string',
+        'casdoorName':'Email',
+        'isHashed':true,
+        'values':[
 
-          ]
-        },
-        {
-          "name":"EMAIL_VERIFIED",
-          "type":"boolean",
-          "casdoorName":"EmailVerified",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        'name':'EMAIL_VERIFIED',
+        'type':'boolean',
+        'casdoorName':'EmailVerified',
+        'isHashed':true,
+        'values':[
 
-          ]
-        },
-        {
-          "name":"FIRST_NAME",
-          "type":"string",
-          "casdoorName":"FirstName",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        'name':'FIRST_NAME',
+        'type':'string',
+        'casdoorName':'FirstName',
+        'isHashed':true,
+        'values':[
 
-          ]
-        },
-        {
-          "name":"LAST_NAME",
-          "type":"string",
-          "casdoorName":"LastName",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        'name':'LAST_NAME',
+        'type':'string',
+        'casdoorName':'LastName',
+        'isHashed':true,
+        'values':[
 
-          ]
-        },
-        {
-          "name":"CREATED_TIMESTAMP",
-          "type":"string",
-          "casdoorName":"CreatedTime",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        'name':'CREATED_TIMESTAMP',
+        'type':'string',
+        'casdoorName':'CreatedTime',
+        'isHashed':true,
+        'values':[
 
-          ]
-        },
-        {
-          "name":"ENABLED",
-          "type":"boolean",
-          "casdoorName":"IsForbidden",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        'name':'ENABLED',
+        'type':'boolean',
+        'casdoorName':'IsForbidden',
+        'isHashed':true,
+        'values':[
 
-          ]
-        }
-      ]
-    default:
-      return []
+        ]
+      }
+    ];
+  default:
+    return [];
   }
 }

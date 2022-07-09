@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from "../Setting";
+import * as Setting from '../Setting';
 
-export function getRoles(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
+export function getRoles(owner, page = '', pageSize = '', field = '', value = '', sortField = '', sortOrder = '') {
   return fetch(`${Setting.ServerUrl}/api/get-roles?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
-    method: "GET",
-    credentials: "include"
+    method: 'GET',
+    credentials: 'include'
   }).then(res => res.json());
 }
 
 export function getRole(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-role?id=${owner}/${encodeURIComponent(name)}`, {
-    method: "GET",
-    credentials: "include"
+    method: 'GET',
+    credentials: 'include'
   }).then(res => res.json());
 }
 

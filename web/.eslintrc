@@ -1,0 +1,37 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "rules": {
+    "semi": ["error", "always"],
+    "indent": ["error", 2],
+    // follow antd's style guide
+    "quotes": ["error", "single"],
+    "jsx-quotes": ["error", "prefer-double"],
+
+    "react/prop-types": "off",
+    "react/display-name": "off",
+    "react/react-in-jsx-scope": "off",
+
+    // don't use strict mod now, otherwise there are a lot of errors in the codebase
+    "no-unused-vars": "warn",
+    "react/no-deprecated": "warn",
+    "no-case-declarations": "warn",
+    "react/jsx-key": "warn"
+  }
+}

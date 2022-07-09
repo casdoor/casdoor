@@ -12,64 +12,64 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table} from 'antd';
-import moment from "moment";
-import * as Setting from "./Setting";
-import * as CertBackend from "./backend/CertBackend";
-import i18next from "i18next";
-import BaseListPage from "./BaseListPage";
+import { Button, Popconfirm, Table } from 'antd';
+import i18next from 'i18next';
+import moment from 'moment';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import * as CertBackend from './backend/CertBackend';
+import BaseListPage from './BaseListPage';
+import * as Setting from './Setting';
 
 class CertListPage extends BaseListPage {
   newCert() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "admin", // this.props.account.certname,
+      owner: 'admin', // this.props.account.certname,
       name: `cert_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Cert - ${randomName}`,
-      scope: "JWT",
-      type: "x509",
-      cryptoAlgorithm: "RS256",
+      scope: 'JWT',
+      type: 'x509',
+      cryptoAlgorithm: 'RS256',
       bitSize: 4096,
       expireInYears: 20,
-      publicKey: "",
-      privateKey: "",
-    }
+      publicKey: '',
+      privateKey: '',
+    };
   }
 
   addCert() {
     const newCert = this.newCert();
     CertBackend.addCert(newCert)
       .then((res) => {
-          this.props.history.push({pathname: `/certs/${newCert.name}`, mode: "add"});
-        }
+        this.props.history.push({pathname: `/certs/${newCert.name}`, mode: 'add'});
+      }
       )
       .catch(error => {
-        Setting.showMessage("error", `Cert failed to add: ${error}`);
+        Setting.showMessage('error', `Cert failed to add: ${error}`);
       });
   }
 
   deleteCert(i) {
     CertBackend.deleteCert(this.state.data[i])
       .then((res) => {
-          Setting.showMessage("success", `Cert deleted successfully`);
-          this.setState({
-            data: Setting.deleteRow(this.state.data, i),
-            pagination: {total: this.state.pagination.total - 1},
-          });
-        }
+        Setting.showMessage('success', 'Cert deleted successfully');
+        this.setState({
+          data: Setting.deleteRow(this.state.data, i),
+          pagination: {total: this.state.pagination.total - 1},
+        });
+      }
       )
       .catch(error => {
-        Setting.showMessage("error", `Cert failed to delete: ${error}`);
+        Setting.showMessage('error', `Cert failed to delete: ${error}`);
       });
   }
 
   renderTable(certs) {
     const columns = [
       {
-        title: i18next.t("general:Name"),
+        title: i18next.t('general:Name'),
         dataIndex: 'name',
         key: 'name',
         width: '120px',
@@ -81,11 +81,11 @@ class CertListPage extends BaseListPage {
             <Link to={`/certs/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
-        title: i18next.t("general:Created time"),
+        title: i18next.t('general:Created time'),
         dataIndex: 'createdTime',
         key: 'createdTime',
         width: '180px',
@@ -95,7 +95,7 @@ class CertListPage extends BaseListPage {
         }
       },
       {
-        title: i18next.t("general:Display name"),
+        title: i18next.t('general:Display name'),
         dataIndex: 'displayName',
         key: 'displayName',
         // width: '100px',
@@ -103,7 +103,7 @@ class CertListPage extends BaseListPage {
         ...this.getColumnSearchProps('displayName'),
       },
       {
-        title: i18next.t("cert:Scope"),
+        title: i18next.t('cert:Scope'),
         dataIndex: 'scope',
         key: 'scope',
         filterMultiple: false,
@@ -114,7 +114,7 @@ class CertListPage extends BaseListPage {
         sorter: true,
       },
       {
-        title: i18next.t("cert:Type"),
+        title: i18next.t('cert:Type'),
         dataIndex: 'type',
         key: 'type',
         filterMultiple: false,
@@ -125,7 +125,7 @@ class CertListPage extends BaseListPage {
         sorter: true,
       },
       {
-        title: i18next.t("cert:Crypto algorithm"),
+        title: i18next.t('cert:Crypto algorithm'),
         dataIndex: 'cryptoAlgorithm',
         key: 'cryptoAlgorithm',
         filterMultiple: false,
@@ -136,7 +136,7 @@ class CertListPage extends BaseListPage {
         sorter: true,
       },
       {
-        title: i18next.t("cert:Bit size"),
+        title: i18next.t('cert:Bit size'),
         dataIndex: 'bitSize',
         key: 'bitSize',
         width: '130px',
@@ -144,7 +144,7 @@ class CertListPage extends BaseListPage {
         ...this.getColumnSearchProps('bitSize'),
       },
       {
-        title: i18next.t("cert:Expire in years"),
+        title: i18next.t('cert:Expire in years'),
         dataIndex: 'expireInYears',
         key: 'expireInYears',
         width: '170px',
@@ -152,23 +152,23 @@ class CertListPage extends BaseListPage {
         ...this.getColumnSearchProps('expireInYears'),
       },
       {
-        title: i18next.t("general:Action"),
+        title: i18next.t('general:Action'),
         dataIndex: '',
         key: 'op',
         width: '170px',
-        fixed: (Setting.isMobile()) ? "false" : "right",
+        fixed: (Setting.isMobile()) ? 'false' : 'right',
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/certs/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/certs/${record.name}`)}>{i18next.t('general:Edit')}</Button>
               <Popconfirm
                 title={`Sure to delete cert: ${record.name} ?`}
                 onConfirm={() => this.deleteCert(index)}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t('general:Delete')}</Button>
               </Popconfirm>
             </div>
-          )
+          );
         }
       },
     ];
@@ -177,20 +177,20 @@ class CertListPage extends BaseListPage {
       total: this.state.pagination.total,
       showQuickJumper: true,
       showSizeChanger: true,
-      showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
+      showTotal: () => i18next.t('general:{total} in total').replace('{total}', this.state.pagination.total),
     };
 
     return (
       <div>
         <Table scroll={{x: 'max-content'}} columns={columns} dataSource={certs} rowKey="name" size="middle" bordered pagination={paginationProps}
-               title={() => (
-                 <div>
-                   {i18next.t("general:Certs")}&nbsp;&nbsp;&nbsp;&nbsp;
-                   <Button type="primary" size="small" onClick={this.addCert.bind(this)}>{i18next.t("general:Add")}</Button>
-                 </div>
-               )}
-               loading={this.state.loading}
-               onChange={this.handleTableChange}
+          title={() => (
+            <div>
+              {i18next.t('general:Certs')}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button type="primary" size="small" onClick={this.addCert.bind(this)}>{i18next.t('general:Add')}</Button>
+            </div>
+          )}
+          loading={this.state.loading}
+          onChange={this.handleTableChange}
         />
       </div>
     );
@@ -200,16 +200,16 @@ class CertListPage extends BaseListPage {
     let field = params.searchedColumn, value = params.searchText;
     let sortField = params.sortField, sortOrder = params.sortOrder;
     if (params.category !== undefined && params.category !== null) {
-      field = "category";
+      field = 'category';
       value = params.category;
     } else if (params.type !== undefined && params.type !== null) {
-      field = "type";
+      field = 'type';
       value = params.type;
     }
     this.setState({ loading: true });
-    CertBackend.getCerts("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    CertBackend.getCerts('admin', params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
-        if (res.status === "ok") {
+        if (res.status === 'ok') {
           this.setState({
             loading: false,
             data: res.data,

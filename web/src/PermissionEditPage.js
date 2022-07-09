@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React from 'react';
 import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
-import * as PermissionBackend from "./backend/PermissionBackend";
-import * as OrganizationBackend from "./backend/OrganizationBackend";
-import * as UserBackend from "./backend/UserBackend";
-import * as Setting from "./Setting";
-import i18next from "i18next";
-import * as RoleBackend from "./backend/RoleBackend";
-import * as ModelBackend from "./backend/ModelBackend";
+import * as PermissionBackend from './backend/PermissionBackend';
+import * as OrganizationBackend from './backend/OrganizationBackend';
+import * as UserBackend from './backend/UserBackend';
+import * as Setting from './Setting';
+import i18next from 'i18next';
+import * as RoleBackend from './backend/RoleBackend';
+import * as ModelBackend from './backend/ModelBackend';
 
 const { Option } = Select;
 
@@ -36,7 +36,7 @@ class PermissionEditPage extends React.Component {
       users: [],
       roles: [],
       models: [],
-      mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      mode: props.location.mode !== undefined ? props.location.mode : 'edit',
     };
   }
 
@@ -59,7 +59,7 @@ class PermissionEditPage extends React.Component {
   }
 
   getOrganizations() {
-    OrganizationBackend.getOrganizations("admin")
+    OrganizationBackend.getOrganizations('admin')
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
@@ -95,7 +95,7 @@ class PermissionEditPage extends React.Component {
   }
 
   parsePermissionField(key, value) {
-    if ([""].includes(key)) {
+    if ([''].includes(key)) {
       value = Setting.myParseInt(value);
     }
     return value;
@@ -115,15 +115,15 @@ class PermissionEditPage extends React.Component {
     return (
       <Card size="small" title={
         <div>
-          {this.state.mode === "add" ? i18next.t("permission:New Permission") : i18next.t("permission:Edit Permission")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button onClick={() => this.submitPermissionEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitPermissionEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deletePermission()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode === 'add' ? i18next.t('permission:New Permission') : i18next.t('permission:Edit Permission')}&nbsp;&nbsp;&nbsp;&nbsp;
+          <Button onClick={() => this.submitPermissionEdit(false)}>{i18next.t('general:Save')}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitPermissionEdit(true)}>{i18next.t('general:Save & Exit')}</Button>
+          {this.state.mode === 'add' ? <Button style={{marginLeft: '20px'}} onClick={() => this.deletePermission()}>{i18next.t('general:Cancel')}</Button> : null}
         </div>
       } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
         <Row style={{marginTop: '10px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+            {Setting.getLabel(i18next.t('general:Organization'), i18next.t('general:Organization - Tooltip'))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.permission.owner} onChange={(owner => {
@@ -140,7 +140,7 @@ class PermissionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
+            {Setting.getLabel(i18next.t('general:Name'), i18next.t('general:Name - Tooltip'))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.permission.name} onChange={e => {
@@ -150,7 +150,7 @@ class PermissionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
+            {Setting.getLabel(i18next.t('general:Display name'), i18next.t('general:Display name - Tooltip'))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.permission.displayName} onChange={e => {
@@ -160,7 +160,7 @@ class PermissionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Model"), i18next.t("general:Model - Tooltip"))} :
+            {Setting.getLabel(i18next.t('general:Model'), i18next.t('general:Model - Tooltip'))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.permission.model} onChange={(model => {
@@ -174,7 +174,7 @@ class PermissionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("role:Sub users"), i18next.t("role:Sub users - Tooltip"))} :
+            {Setting.getLabel(i18next.t('role:Sub users'), i18next.t('role:Sub users - Tooltip'))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="tags" style={{width: '100%'}} value={this.state.permission.users} onChange={(value => {this.updatePermissionField('users', value);})}>
@@ -186,7 +186,7 @@ class PermissionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("role:Sub roles"), i18next.t("role:Sub roles - Tooltip"))} :
+            {Setting.getLabel(i18next.t('role:Sub roles'), i18next.t('role:Sub roles - Tooltip'))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="tags" style={{width: '100%'}} value={this.state.permission.roles} onChange={(value => {this.updatePermissionField('roles', value);})}>
@@ -198,7 +198,7 @@ class PermissionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("permission:Resource type"), i18next.t("permission:Resource type - Tooltip"))} :
+            {Setting.getLabel(i18next.t('permission:Resource type'), i18next.t('permission:Resource type - Tooltip'))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.permission.resourceType} onChange={(value => {
@@ -214,7 +214,7 @@ class PermissionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("permission:Actions"), i18next.t("permission:Actions - Tooltip"))} :
+            {Setting.getLabel(i18next.t('permission:Actions'), i18next.t('permission:Actions - Tooltip'))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="tags" style={{width: '100%'}} value={this.state.permission.actions} onChange={(value => {
@@ -232,7 +232,7 @@ class PermissionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("permission:Effect"), i18next.t("permission:Effect - Tooltip"))} :
+            {Setting.getLabel(i18next.t('permission:Effect'), i18next.t('permission:Effect - Tooltip'))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: '100%'}} value={this.state.permission.effect} onChange={(value => {
@@ -249,7 +249,7 @@ class PermissionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: '20px'}} >
           <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
+            {Setting.getLabel(i18next.t('general:Is enabled'), i18next.t('general:Is enabled - Tooltip'))} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.permission.isEnabled} onChange={checked => {
@@ -258,41 +258,41 @@ class PermissionEditPage extends React.Component {
           </Col>
         </Row>
       </Card>
-    )
+    );
   }
 
   submitPermissionEdit(willExist) {
     let permission = Setting.deepCopy(this.state.permission);
     PermissionBackend.updatePermission(this.state.organizationName, this.state.permissionName, permission)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", `Successfully saved`);
+        if (res.msg === '') {
+          Setting.showMessage('success', 'Successfully saved');
           this.setState({
             permissionName: this.state.permission.name,
           });
 
           if (willExist) {
-            this.props.history.push(`/permissions`);
+            this.props.history.push('/permissions');
           } else {
             this.props.history.push(`/permissions/${this.state.permission.owner}/${this.state.permission.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage('error', res.msg);
           this.updatePermissionField('name', this.state.permissionName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage('error', `Failed to connect to server: ${error}`);
       });
   }
 
   deletePermission() {
     PermissionBackend.deletePermission(this.state.permission)
       .then(() => {
-        this.props.history.push(`/permissions`);
+        this.props.history.push('/permissions');
       })
       .catch(error => {
-        Setting.showMessage("error", `Permission failed to delete: ${error}`);
+        Setting.showMessage('error', `Permission failed to delete: ${error}`);
       });
   }
 
@@ -303,9 +303,9 @@ class PermissionEditPage extends React.Component {
           this.state.permission !== null ? this.renderPermission() : null
         }
         <div style={{marginTop: '20px', marginLeft: '40px'}}>
-          <Button size="large" onClick={() => this.submitPermissionEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitPermissionEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deletePermission()}>{i18next.t("general:Cancel")}</Button> : null}
+          <Button size="large" onClick={() => this.submitPermissionEdit(false)}>{i18next.t('general:Save')}</Button>
+          <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitPermissionEdit(true)}>{i18next.t('general:Save & Exit')}</Button>
+          {this.state.mode === 'add' ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deletePermission()}>{i18next.t('general:Cancel')}</Button> : null}
         </div>
       </div>
     );

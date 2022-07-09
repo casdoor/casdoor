@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from 'react';
-import * as Setting from "../Setting";
+import * as Setting from '../Setting';
 
 class OdicDiscoveryPage extends React.Component {
   componentWillMount() {
