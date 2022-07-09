@@ -61,12 +61,12 @@ export const CaptchaWidget = ({captchaType, subType, siteKey, clientSecret, onCh
 
         if (window.AWSC) {
           if (clientSecret2 && clientSecret2 !== "***") {
-            window.AWSC.use(subType, function (state, module) {
+            window.AWSC.use(subType, function(state, module) {
               module.init({
                 appkey: clientSecret2,
                 scene: clientId2,
                 renderTo: "captcha",
-                success: function (data) {
+                success: function(data) {
                   onChange(`SessionId=${data.sessionId}&AccessKeyId=${siteKey}&Scene=${clientId2}&AppKey=${clientSecret2}&Token=${data.token}&Sig=${data.sig}&RemoteIp=192.168.0.1`);
                 },
               });

@@ -38,6 +38,7 @@
     "spaced-comment": ["error", "always"],
     "react/jsx-tag-spacing": ["error", { "beforeSelfClosing": "always" }],
     "block-spacing": ["error", "never"],
+    "space-before-function-paren": ["error", "never"],
 
     "react/prop-types": "off",
     "react/display-name": "off",

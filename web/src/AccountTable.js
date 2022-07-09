@@ -21,23 +21,23 @@ import * as Setting from "./Setting";
 const {Option} = Select;
 
 class AccountTable extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       classes: props,
     };
   }
 
-  updateTable (table) {
+  updateTable(table) {
     this.props.onUpdateTable(table);
   }
 
-  updateField (table, index, key, value) {
+  updateField(table, index, key, value) {
     table[index][key] = value;
     this.updateTable(table);
   }
 
-  addRow (table) {
+  addRow(table) {
     let row = {name: Setting.getNewRowNameForTable(table, "Please select an account item"), visible: true};
     if (table === undefined) {
       table = [];
@@ -46,22 +46,22 @@ class AccountTable extends React.Component {
     this.updateTable(table);
   }
 
-  deleteRow (table, i) {
+  deleteRow(table, i) {
     table = Setting.deleteRow(table, i);
     this.updateTable(table);
   }
 
-  upRow (table, i) {
+  upRow(table, i) {
     table = Setting.swapRow(table, i - 1, i);
     this.updateTable(table);
   }
 
-  downRow (table, i) {
+  downRow(table, i) {
     table = Setting.swapRow(table, i, i + 1);
     this.updateTable(table);
   }
 
-  renderTable (table) {
+  renderTable(table) {
     const columns = [
       {
         title: i18next.t("provider:Name"),
@@ -224,7 +224,7 @@ class AccountTable extends React.Component {
     );
   }
   
-  render () {
+  render() {
     return (
       <div>
         <Row style={{marginTop: "20px"}} >
