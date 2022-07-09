@@ -14,6 +14,10 @@ RUN ./build.sh
 FROM alpine:latest AS STANDARD
 LABEL MAINTAINER="https://casdoor.org/"
 
+RUN sed -i 's/https/http/' /etc/apk/repositories
+RUN apk add curl
+RUN apk add ca-certificates && update-ca-certificates
+
 WORKDIR /
 COPY --from=BACK /go/src/casdoor/server ./server
 COPY --from=BACK /go/src/casdoor/swagger ./swagger
@@ -33,7 +37,8 @@ RUN apt update \
 FROM db AS ALLINONE
 LABEL MAINTAINER="https://casdoor.org/"
 
-ENV MYSQL_ROOT_PASSWORD=123456
+RUN apt update
+RUN apt install -y ca-certificates && update-ca-certificates
 
 WORKDIR /
 COPY --from=BACK /go/src/casdoor/server ./server
