@@ -817,6 +817,10 @@ export function getApplicationOrgName(application) {
   return `${application?.organizationObj.owner}/${application?.organizationObj.name}`;
 }
 
+export function getApplicationName(application) {
+  return `${application?.owner}/${application?.name}`;
+}
+
 export function getRandomName() {
   return Math.random().toString(36).slice(-6);
 }

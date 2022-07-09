@@ -25,7 +25,7 @@ export const ResetModal = (props) => {
   const [confirmLoading, setConfirmLoading] = React.useState(false);
   const [dest, setDest] = React.useState("");
   const [code, setCode] = React.useState("");
-  const {buttonText, destType, org} = props;
+  const {buttonText, destType, application} = props;
 
   const showModal = () => {
     setVisible(true);
@@ -89,7 +89,7 @@ export const ResetModal = (props) => {
             <CountDownInput
               textBefore={i18next.t("code:Code You Received")}
               onChange={setCode}
-              onButtonClickArgs={[dest, destType, `${org?.owner}/${org?.name}`]}
+              onButtonClickArgs={[dest, destType, Setting.getApplicationName(application)]}
             />
           </Row>
         </Col>
