@@ -16,10 +16,10 @@ import React, {useEffect} from "react";
 
 export const CaptchaWidget = ({captchaType, subType, siteKey, clientSecret, onChange, clientId2, clientSecret2}) => {
   const loadScript = (src) => {
-    var tag = document.createElement("script");
+    let tag = document.createElement("script");
     tag.async = false;
     tag.src = src;
-    var body = document.getElementsByTagName("body")[0];
+    let body = document.getElementsByTagName("body")[0];
     body.appendChild(tag);
   };
 

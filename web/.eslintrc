@@ -41,6 +41,9 @@
     "space-before-function-paren": ["error", "never"],
     "no-trailing-spaces": ["error", { "ignoreComments": true }],
     "eol-last": ["error", "always"],
+    "no-var": ["error"],
+    "curly": ["error", "all"],
+    "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
 
     "react/prop-types": "off",
     "react/display-name": "off",

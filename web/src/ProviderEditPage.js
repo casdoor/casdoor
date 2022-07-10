@@ -148,11 +148,11 @@ class ProviderEditPage extends React.Component {
   }
 
   loadSamlConfiguration() {
-    var parser = new DOMParser();
-    var xmlDoc = parser.parseFromString(this.state.provider.metadata, "text/xml");
-    var cert = xmlDoc.getElementsByTagName("ds:X509Certificate")[0].childNodes[0].nodeValue;
-    var endpoint = xmlDoc.getElementsByTagName("md:SingleSignOnService")[0].getAttribute("Location");
-    var issuerUrl = xmlDoc.getElementsByTagName("md:EntityDescriptor")[0].getAttribute("entityID");
+    let parser = new DOMParser();
+    let xmlDoc = parser.parseFromString(this.state.provider.metadata, "text/xml");
+    let cert = xmlDoc.getElementsByTagName("ds:X509Certificate")[0].childNodes[0].nodeValue;
+    let endpoint = xmlDoc.getElementsByTagName("md:SingleSignOnService")[0].getAttribute("Location");
+    let issuerUrl = xmlDoc.getElementsByTagName("md:EntityDescriptor")[0].getAttribute("entityID");
     this.updateProviderField("idP", cert);
     this.updateProviderField("endpoint", endpoint);
     this.updateProviderField("issuerUrl", issuerUrl);

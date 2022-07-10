@@ -57,8 +57,7 @@ export const ResetModal = (props) => {
   };
 
   let placeHolder = "";
-  if (destType === "email") placeHolder = i18next.t("user:Input your email");
-  else if (destType === "phone") placeHolder = i18next.t("user:Input your phone number");
+  if (destType === "email") {placeHolder = i18next.t("user:Input your email");} else if (destType === "phone") {placeHolder = i18next.t("user:Input your phone number");}
 
   return (
     <Row>

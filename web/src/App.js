@@ -496,8 +496,7 @@ class App extends Component {
       return <Redirect to="/login" />;
     } else if (this.state.account === undefined) {
       return null;
-    }
-    else {
+    } else {
       return component;
     }
   }

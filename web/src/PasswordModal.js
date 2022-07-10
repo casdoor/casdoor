@@ -50,8 +50,7 @@ export const PasswordModal = (props) => {
       if (res.status === "ok") {
         Setting.showMessage("success", i18next.t("user:Password Set"));
         setVisible(false);
-      }
-      else Setting.showMessage("error", i18next.t(`user:${res.msg}`));
+      } else {Setting.showMessage("error", i18next.t(`user:${res.msg}`));}
     });
   };
 

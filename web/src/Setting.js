@@ -132,12 +132,11 @@ export function getCountryRegionData() {
     language = Conf.DefaultLanguage;
   }
 
-  var countries = require("i18n-iso-countries");
+  let countries = require("i18n-iso-countries");
   countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
-  var data = countries.getNames(language, {select: "official"});
-  var result = [];
-  for (var i in data)
-    result.push({code:i, name:data[i]});
+  let data = countries.getNames(language, {select: "official"});
+  let result = [];
+  for (let i in data) {result.push({code:i, name:data[i]});}
   return result;
 }
 
@@ -399,11 +398,9 @@ export function trim(str, ch) {
   let start = 0;
   let end = str.length;
 
-  while(start < end && str[start] === ch)
-    ++start;
+  while(start < end && str[start] === ch) {++start;}
 
-  while(end > start && str[end - 1] === ch)
-    --end;
+  while(end > start && str[end - 1] === ch) {--end;}
 
   return (start > 0 || end < str.length) ? str.substring(start, end) : str;
 }
@@ -764,7 +761,7 @@ export function getMaskedPhone(s) {
 }
 
 export function getMaskedEmail(email) {
-  if (email === "") return;
+  if (email === "") {return;}
   const tokens = email.split("@");
   let username = tokens[0];
   username = maskString(username);
@@ -801,7 +798,7 @@ export function getTagColor(s) {
 
 export function getTags(tags) {
   let res = [];
-  if (!tags) return res;
+  if (!tags) {return res;}
   tags.forEach((tag, i) => {
     res.push(
       <Tag color={getTagColor(tag)}>

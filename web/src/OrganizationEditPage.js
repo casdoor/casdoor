@@ -273,7 +273,8 @@ class OrganizationEditPage extends React.Component {
               table={this.state.ldaps}
               organizationName={this.state.organizationName}
               onUpdateTable={(value) => {
-                this.setState({ldaps: value});}}
+                this.setState({ldaps: value});
+              }}
             />
           </Col>
         </Row>
