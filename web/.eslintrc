@@ -19,9 +19,9 @@
   },
   "extends": ["eslint:recommended", "plugin:react/recommended"],
   "rules": {
-    "eqeqeq": "error",
+    // "eqeqeq": "error",
     "semi": ["error", "always"],
-    // "indent": ["error", 2],
+    "indent": ["error", 2],
     // follow antd's style guide
     "quotes": ["error", "double"],
     "jsx-quotes": ["error", "prefer-double"],
@@ -41,9 +41,10 @@
     "space-before-function-paren": ["error", "never"],
     "no-trailing-spaces": ["error", { "ignoreComments": true }],
     "eol-last": ["error", "always"],
-    "no-var": ["error"],
+    // "no-var": ["error"],
     "curly": ["error", "all"],
     "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+    "no-mixed-spaces-and-tabs": "error",
 
     "react/prop-types": "off",
     "react/display-name": "off",

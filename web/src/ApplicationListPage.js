@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Col, List, Popconfirm, Row, Table, Tooltip} from 'antd';
+import {Button, Col, List, Popconfirm, Row, Table, Tooltip} from "antd";
 import {EditOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as Setting from "./Setting";
@@ -53,15 +53,15 @@ class ApplicationListPage extends BaseListPage {
       redirectUris: ["http://localhost:9000/callback"],
       tokenFormat: "JWT",
       expireInHours: 24 * 7,
-    }
+    };
   }
 
   addApplication() {
     const newApplication = this.newApplication();
     ApplicationBackend.addApplication(newApplication)
       .then((res) => {
-          this.props.history.push({pathname: `/applications/${newApplication.name}`, mode: "add"});
-        }
+        this.props.history.push({pathname: `/applications/${newApplication.name}`, mode: "add"});
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Application failed to add: ${error}`);
@@ -71,12 +71,12 @@ class ApplicationListPage extends BaseListPage {
   deleteApplication(i) {
     ApplicationBackend.deleteApplication(this.state.data[i])
       .then((res) => {
-          Setting.showMessage("success", `Application deleted successfully`);
-          this.setState({
-            data: Setting.deleteRow(this.state.data, i),
-            pagination: {total: this.state.pagination.total - 1},
-          });
-        }
+        Setting.showMessage("success", "Application deleted successfully");
+        this.setState({
+          data: Setting.deleteRow(this.state.data, i),
+          pagination: {total: this.state.pagination.total - 1},
+        });
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Application failed to delete: ${error}`);
@@ -87,25 +87,25 @@ class ApplicationListPage extends BaseListPage {
     const columns = [
       {
         title: i18next.t("general:Name"),
-        dataIndex: 'name',
-        key: 'name',
-        width: '150px',
-        fixed: 'left',
+        dataIndex: "name",
+        key: "name",
+        width: "150px",
+        fixed: "left",
         sorter: true,
-        ...this.getColumnSearchProps('name'),
+        ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
             <Link to={`/applications/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Created time"),
-        dataIndex: 'createdTime',
-        key: 'createdTime',
-        width: '160px',
+        dataIndex: "createdTime",
+        key: "createdTime",
+        width: "160px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -113,45 +113,45 @@ class ApplicationListPage extends BaseListPage {
       },
       {
         title: i18next.t("general:Display name"),
-        dataIndex: 'displayName',
-        key: 'displayName',
+        dataIndex: "displayName",
+        key: "displayName",
         // width: '100px',
         sorter: true,
-        ...this.getColumnSearchProps('displayName'),
+        ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: 'Logo',
-        dataIndex: 'logo',
-        key: 'logo',
-        width: '200px',
+        title: "Logo",
+        dataIndex: "logo",
+        key: "logo",
+        width: "200px",
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
               <img src={text} alt={text} width={150} />
             </a>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Organization"),
-        dataIndex: 'organization',
-        key: 'organization',
-        width: '150px',
+        dataIndex: "organization",
+        key: "organization",
+        width: "150px",
         sorter: true,
-        ...this.getColumnSearchProps('organization'),
+        ...this.getColumnSearchProps("organization"),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Providers"),
-        dataIndex: 'providers',
-        key: 'providers',
-        ...this.getColumnSearchProps('providers'),
+        dataIndex: "providers",
+        key: "providers",
+        ...this.getColumnSearchProps("providers"),
         // width: '600px',
         render: (text, record, index) => {
           const providers = text;
@@ -179,11 +179,11 @@ class ApplicationListPage extends BaseListPage {
                         </Link>
                       </div>
                     </List.Item>
-                  )
+                  );
                 }}
               />
-            )
-          }
+            );
+          };
 
           return (
             <div>
@@ -200,28 +200,28 @@ class ApplicationListPage extends BaseListPage {
                 </Col>
               </Row>
             </div>
-          )
+          );
         },
       },
       {
         title: i18next.t("general:Action"),
-        dataIndex: '',
-        key: 'op',
-        width: '170px',
+        dataIndex: "",
+        key: "op",
+        width: "170px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/applications/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/applications/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete application: ${record.name} ?`}
                 onConfirm={() => this.deleteApplication(index)}
                 disabled={record.name === "app-built-in"}
               >
-                <Button style={{marginBottom: '10px'}} disabled={record.name === "app-built-in"} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} disabled={record.name === "app-built-in"} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
-          )
+          );
         }
       },
     ];
@@ -235,15 +235,15 @@ class ApplicationListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={applications} rowKey="name" size="middle" bordered pagination={paginationProps}
-               title={() => (
-                 <div>
-                  {i18next.t("general:Applications")}&nbsp;&nbsp;&nbsp;&nbsp;
-                  <Button type="primary" size="small" onClick={this.addApplication.bind(this)}>{i18next.t("general:Add")}</Button>
-                 </div>
-               )}
-               loading={this.state.loading}
-               onChange={this.handleTableChange}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={applications} rowKey="name" size="middle" bordered pagination={paginationProps}
+          title={() => (
+            <div>
+              {i18next.t("general:Applications")}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button type="primary" size="small" onClick={this.addApplication.bind(this)}>{i18next.t("general:Add")}</Button>
+            </div>
+          )}
+          loading={this.state.loading}
+          onChange={this.handleTableChange}
         />
       </div>
     );
@@ -252,7 +252,7 @@ class ApplicationListPage extends BaseListPage {
   fetch = (params = {}) => {
     let field = params.searchedColumn, value = params.searchText;
     let sortField = params.sortField, sortOrder = params.sortOrder;
-    this.setState({ loading: true });
+    this.setState({loading: true});
     ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {

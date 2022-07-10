@@ -31,8 +31,8 @@ export function getOrganization(owner, name) {
 export function updateOrganization(owner, name, organization) {
   let newOrganization = Setting.deepCopy(organization);
   return fetch(`${Setting.ServerUrl}/api/update-organization?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newOrganization),
   }).then(res => res.json());
 }
@@ -40,8 +40,8 @@ export function updateOrganization(owner, name, organization) {
 export function addOrganization(organization) {
   let newOrganization = Setting.deepCopy(organization);
   return fetch(`${Setting.ServerUrl}/api/add-organization`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newOrganization),
   }).then(res => res.json());
 }
@@ -49,8 +49,8 @@ export function addOrganization(organization) {
 export function deleteOrganization(organization) {
   let newOrganization = Setting.deepCopy(organization);
   return fetch(`${Setting.ServerUrl}/api/delete-organization`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newOrganization),
   }).then(res => res.json());
 }

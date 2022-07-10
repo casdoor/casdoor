@@ -31,8 +31,8 @@ export function getPermission(owner, name) {
 export function updatePermission(owner, name, permission) {
   let newPermission = Setting.deepCopy(permission);
   return fetch(`${Setting.ServerUrl}/api/update-permission?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newPermission),
   }).then(res => res.json());
 }
@@ -40,8 +40,8 @@ export function updatePermission(owner, name, permission) {
 export function addPermission(permission) {
   let newPermission = Setting.deepCopy(permission);
   return fetch(`${Setting.ServerUrl}/api/add-permission`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newPermission),
   }).then(res => res.json());
 }
@@ -49,8 +49,8 @@ export function addPermission(permission) {
 export function deletePermission(permission) {
   let newPermission = Setting.deepCopy(permission);
   return fetch(`${Setting.ServerUrl}/api/delete-permission`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newPermission),
   }).then(res => res.json());
 }

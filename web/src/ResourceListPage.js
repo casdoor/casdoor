@@ -13,9 +13,9 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Popconfirm, Table, Upload} from 'antd';
+import {Button, Popconfirm, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
-import copy from 'copy-to-clipboard';
+import copy from "copy-to-clipboard";
 import * as Setting from "./Setting";
 import * as ResourceBackend from "./backend/ResourceBackend";
 import i18next from "i18next";
@@ -33,8 +33,8 @@ class ResourceListPage extends BaseListPage {
         pageSize: 10,
       },
       loading: false,
-      searchText: '',
-      searchedColumn: '',
+      searchText: "",
+      searchedColumn: "",
       fileList: [],
       uploading: false,
     };
@@ -43,12 +43,12 @@ class ResourceListPage extends BaseListPage {
   deleteResource(i) {
     ResourceBackend.deleteResource(this.state.data[i])
       .then((res) => {
-        Setting.showMessage("success", `Resource deleted successfully`);
-          this.setState({
-            data: Setting.deleteRow(this.state.data, i),
-            pagination: {total: this.state.pagination.total - 1},
-          });
-        }
+        Setting.showMessage("success", "Resource deleted successfully");
+        this.setState({
+          data: Setting.deleteRow(this.state.data, i),
+          pagination: {total: this.state.pagination.total - 1},
+        });
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Resource failed to delete: ${error}`);
@@ -68,90 +68,90 @@ class ResourceListPage extends BaseListPage {
           Setting.showMessage("error", res.msg);
         }
       }).finally(() => {
-      this.setState({uploading: false});
-    })
+        this.setState({uploading: false});
+      });
   }
 
   renderUpload() {
     return (
       <Upload maxCount={1} accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.csv,.xls,.xlsx" showUploadList={false}
-              beforeUpload={file => {return false}} onChange={info => {this.handleUpload(info)}}>
+        beforeUpload={file => {return false;}} onChange={info => {this.handleUpload(info);}}>
         <Button icon={<UploadOutlined />} loading={this.state.uploading} type="primary" size="small">
           {i18next.t("resource:Upload a file...")}
         </Button>
       </Upload>
-    )
+    );
   }
 
   renderTable(resources) {
     const columns = [
       {
         title: i18next.t("general:Provider"),
-        dataIndex: 'provider',
-        key: 'provider',
-        width: '150px',
-        fixed: 'left',
+        dataIndex: "provider",
+        key: "provider",
+        width: "150px",
+        fixed: "left",
         sorter: true,
-        ...this.getColumnSearchProps('provider'),
+        ...this.getColumnSearchProps("provider"),
         render: (text, record, index) => {
           return (
             <Link to={`/providers/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("resource:Application"),
-        dataIndex: 'application',
-        key: 'application',
-        width: '80px',
+        dataIndex: "application",
+        key: "application",
+        width: "80px",
         sorter: true,
-        ...this.getColumnSearchProps('application'),
+        ...this.getColumnSearchProps("application"),
         render: (text, record, index) => {
           return (
             <Link to={`/applications/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("resource:User"),
-        dataIndex: 'user',
-        key: 'user',
-        width: '80px',
+        dataIndex: "user",
+        key: "user",
+        width: "80px",
         sorter: true,
-        ...this.getColumnSearchProps('user'),
+        ...this.getColumnSearchProps("user"),
         render: (text, record, index) => {
           return (
             <Link to={`/users/${record.owner}/${record.user}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("resource:Parent"),
-        dataIndex: 'parent',
-        key: 'parent',
-        width: '80px',
+        dataIndex: "parent",
+        key: "parent",
+        width: "80px",
         sorter: true,
-        ...this.getColumnSearchProps('parent'),
+        ...this.getColumnSearchProps("parent"),
       },
       {
         title: i18next.t("general:Name"),
-        dataIndex: 'name',
-        key: 'name',
-        width: '150px',
+        dataIndex: "name",
+        key: "name",
+        width: "150px",
         sorter: true,
-        ...this.getColumnSearchProps('name'),
+        ...this.getColumnSearchProps("name"),
       },
       {
         title: i18next.t("general:Created time"),
-        dataIndex: 'createdTime',
-        key: 'createdTime',
-        width: '150px',
+        dataIndex: "createdTime",
+        key: "createdTime",
+        width: "150px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -159,11 +159,11 @@ class ResourceListPage extends BaseListPage {
       },
       {
         title: i18next.t("resource:Tag"),
-        dataIndex: 'tag',
-        key: 'tag',
-        width: '80px',
+        dataIndex: "tag",
+        key: "tag",
+        width: "80px",
         sorter: true,
-        ...this.getColumnSearchProps('tag'),
+        ...this.getColumnSearchProps("tag"),
       },
       // {
       //   title: i18next.t("resource:File name"),
@@ -174,25 +174,25 @@ class ResourceListPage extends BaseListPage {
       // },
       {
         title: i18next.t("resource:Type"),
-        dataIndex: 'fileType',
-        key: 'fileType',
-        width: '80px',
+        dataIndex: "fileType",
+        key: "fileType",
+        width: "80px",
         sorter: true,
-        ...this.getColumnSearchProps('fileType'),
+        ...this.getColumnSearchProps("fileType"),
       },
       {
         title: i18next.t("resource:Format"),
-        dataIndex: 'fileFormat',
-        key: 'fileFormat',
-        width: '80px',
+        dataIndex: "fileFormat",
+        key: "fileFormat",
+        width: "80px",
         sorter: true,
-        ...this.getColumnSearchProps('fileFormat'),
+        ...this.getColumnSearchProps("fileFormat"),
       },
       {
         title: i18next.t("resource:File size"),
-        dataIndex: 'fileSize',
-        key: 'fileSize',
-        width: '100px',
+        dataIndex: "fileSize",
+        key: "fileSize",
+        width: "100px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFriendlyFileSize(text);
@@ -200,16 +200,16 @@ class ResourceListPage extends BaseListPage {
       },
       {
         title: i18next.t("general:Preview"),
-        dataIndex: 'preview',
-        key: 'preview',
-        width: '100px',
+        dataIndex: "preview",
+        key: "preview",
+        width: "100px",
         render: (text, record, index) => {
           if (record.fileType === "image") {
             return (
               <a target="_blank" rel="noreferrer" href={record.url}>
                 <img src={record.url} alt={record.name} width={100} />
               </a>
-            )
+            );
           } else if (record.fileType === "video") {
             return (
               <div>
@@ -217,15 +217,15 @@ class ResourceListPage extends BaseListPage {
                   <source src={text} type="video/mp4" />
                 </video>
               </div>
-            )
+            );
           }
         }
       },
       {
         title: i18next.t("general:URL"),
-        dataIndex: 'url',
-        key: 'url',
-        width: '120px',
+        dataIndex: "url",
+        key: "url",
+        width: "120px",
         render: (text, record, index) => {
           return (
             <div>
@@ -237,19 +237,19 @@ class ResourceListPage extends BaseListPage {
                 {i18next.t("resource:Copy Link")}
               </Button>
             </div>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Action"),
-        dataIndex: '',
-        key: 'op',
-        width: '70px',
+        dataIndex: "",
+        key: "op",
+        width: "70px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
-              {/*<Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/resources/${record.name}`)}>{i18next.t("general:Edit")}</Button>*/}
+              {/* <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/resources/${record.name}`)}>{i18next.t("general:Edit")}</Button>*/}
               <Popconfirm
                 title={`Sure to delete resource: ${record.name} ?`}
                 onConfirm={() => this.deleteResource(index)}
@@ -259,7 +259,7 @@ class ResourceListPage extends BaseListPage {
                 <Button type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
-          )
+          );
         }
       },
     ];
@@ -273,18 +273,18 @@ class ResourceListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={resources} rowKey="name" size="middle" bordered pagination={paginationProps}
-               title={() => (
-                 <div>
-                   {i18next.t("general:Resources")}&nbsp;&nbsp;&nbsp;&nbsp;
-                   {/*<Button type="primary" size="small" onClick={this.addResource.bind(this)}>{i18next.t("general:Add")}</Button>*/}
-                   {
-                     this.renderUpload()
-                   }
-                 </div>
-               )}
-               loading={this.state.loading}
-               onChange={this.handleTableChange}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={resources} rowKey="name" size="middle" bordered pagination={paginationProps}
+          title={() => (
+            <div>
+              {i18next.t("general:Resources")}&nbsp;&nbsp;&nbsp;&nbsp;
+              {/* <Button type="primary" size="small" onClick={this.addResource.bind(this)}>{i18next.t("general:Add")}</Button>*/}
+              {
+                this.renderUpload()
+              }
+            </div>
+          )}
+          loading={this.state.loading}
+          onChange={this.handleTableChange}
         />
       </div>
     );
@@ -293,7 +293,7 @@ class ResourceListPage extends BaseListPage {
   fetch = (params = {}) => {
     let field = params.searchedColumn, value = params.searchText;
     let sortField = params.sortField, sortOrder = params.sortOrder;
-    this.setState({ loading: true });
+    this.setState({loading: true});
     ResourceBackend.getResources(this.props.account.owner, this.props.account.name, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {

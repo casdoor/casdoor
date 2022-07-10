@@ -18,7 +18,7 @@ export function sendTestEmail(provider, email) {
   testEmailProvider(provider, email)
     .then((res) => {
       if (res.msg === "") {
-        Setting.showMessage("success", `Successfully send email`);
+        Setting.showMessage("success", "Successfully send email");
       } else {
         Setting.showMessage("error", res.msg);
       }
@@ -32,7 +32,7 @@ export function connectSmtpServer(provider) {
   testEmailProvider(provider)
     .then((res) => {
       if (res.msg === "") {
-        Setting.showMessage("success", `Successfully connecting smtp server`);
+        Setting.showMessage("success", "Successfully connecting smtp server");
       } else {
         Setting.showMessage("error", res.msg);
       }
@@ -49,7 +49,7 @@ function testEmailProvider(provider, email = "") {
     sender: provider.displayName,
     receivers: email === "" ? ["TestSmtpServer"] : [email],
     provider: provider.name,
-  }
+  };
 
   return fetch(`${Setting.ServerUrl}/api/send-email`, {
     method: "POST",
