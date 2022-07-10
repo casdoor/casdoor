@@ -367,10 +367,29 @@ class ForgetPage extends React.Component {
               type="primary"
               htmlType="submit"
             >
-              {i18next.t("forget:Next Step")}
-            </Button>
-          </Form.Item>
-        </Form>
+              {this.state.verifyType === "email" ? (
+                  <CountDownInput
+                    disabled={this.state.username === "" || this.state.verifyType === ""}
+                    onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(this.state.application), this.state.name]}
+                  />
+              ) : (
+                  <CountDownInput
+                    disabled={this.state.username === "" || this.state.verifyType === ""}
+                    onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(this.state.application), this.state.name]}
+                  />
+              )}
+            </Form.Item>
+            <br />
+            <Form.Item>
+              <Button
+                  block
+                  type="primary"
+                  htmlType="submit"
+              >
+                {i18next.t("forget:Next Step")}
+              </Button>
+            </Form.Item>
+          </Form>
 
         {/* STEP 3 */}
         <Form

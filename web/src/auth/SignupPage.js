@@ -341,7 +341,7 @@ class SignupPage extends React.Component {
             >
               <CountDownInput
                 disabled={!this.state.validEmail}
-                onButtonClickArgs={[this.state.email, "email", Setting.getApplicationOrgName(application)]}
+                onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(application)]}
               />
             </Form.Item>
           }
@@ -393,7 +393,7 @@ class SignupPage extends React.Component {
           >
             <CountDownInput
               disabled={!this.state.validPhone}
-              onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationOrgName(application)]}
+              onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
             />
           </Form.Item>
         </React.Fragment>
