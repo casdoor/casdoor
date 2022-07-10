@@ -326,7 +326,7 @@ class LoginPage extends React.Component {
           </a>
         );
       }
-      
+
     } else {
       return (
         <div key={provider.displayName} style={{marginBottom: "10px"}}>

@@ -136,7 +136,7 @@ export function getCountryRegionData() {
   countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
   var data = countries.getNames(language, {select: "official"});
   var result = [];
-  for (var i in data) 
+  for (var i in data)
     result.push({code:i, name:data[i]});
   return result;
 }
@@ -527,7 +527,7 @@ export function getClickable(text) {
 export function getProviderLogoURL(provider) {
   if (provider.category === "OAuth") {
     if (provider.type === "Custom") {
-      return provider.customLogo;  
+      return provider.customLogo;
     }
     return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
   } else {

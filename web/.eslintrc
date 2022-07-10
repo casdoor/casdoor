@@ -39,6 +39,7 @@
     "react/jsx-tag-spacing": ["error", { "beforeSelfClosing": "always" }],
     "block-spacing": ["error", "never"],
     "space-before-function-paren": ["error", "never"],
+    "no-trailing-spaces": ["error", { "ignoreComments": true }],
 
     "react/prop-types": "off",
     "react/display-name": "off",

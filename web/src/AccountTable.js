@@ -223,7 +223,7 @@ class AccountTable extends React.Component {
       />
     );
   }
-  
+
   render() {
     return (
       <div>
