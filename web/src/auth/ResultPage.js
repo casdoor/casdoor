@@ -65,7 +65,7 @@ class ResultPage extends React.Component {
           subTitle={i18next.t("signup:Please click the below button to sign in")}
           extra={[
             <Button type="primary" key="login" onClick={() => {
-              let linkInStorage = sessionStorage.getItem("loginURL");
+              let linkInStorage = sessionStorage.getItem("signinUrl");
               if (linkInStorage !== null && linkInStorage !== "") {
                 Setting.goToLink(linkInStorage);
               } else {
