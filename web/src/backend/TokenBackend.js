@@ -31,8 +31,8 @@ export function getToken(owner, name) {
 export function updateToken(owner, name, token) {
   let newToken = Setting.deepCopy(token);
   return fetch(`${Setting.ServerUrl}/api/update-token?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newToken),
   }).then(res => res.json());
 }
@@ -40,8 +40,8 @@ export function updateToken(owner, name, token) {
 export function addToken(token) {
   let newToken = Setting.deepCopy(token);
   return fetch(`${Setting.ServerUrl}/api/add-token`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newToken),
   }).then(res => res.json());
 }
@@ -49,8 +49,8 @@ export function addToken(token) {
 export function deleteToken(token) {
   let newToken = Setting.deepCopy(token);
   return fetch(`${Setting.ServerUrl}/api/delete-token`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newToken),
   }).then(res => res.json());
 }

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import {DownOutlined, DeleteOutlined, UpOutlined, LinkOutlined} from '@ant-design/icons';
-import {Button, Col, Input, Row, Table, Tooltip} from 'antd';
+import {DownOutlined, DeleteOutlined, UpOutlined, LinkOutlined} from "@ant-design/icons";
+import {Button, Col, Input, Row, Table, Tooltip} from "antd";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
@@ -63,20 +63,20 @@ class UrlTable extends React.Component {
     const columns = [
       {
         title: i18next.t("application:Redirect URL"),
-        dataIndex: 'id',
-        key: 'id',
+        dataIndex: "id",
+        key: "id",
         render: (text, record, index) => {
           return (
-            <Input prefix={<LinkOutlined/>} value={text} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={text} onChange={e => {
               this.updateField(table, index, e.target.value);
             }} />
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Action"),
-        key: 'action',
-        width: '100px',
+        key: "action",
+        width: "100px",
         render: (text, record, index) => {
           return (
             <div>
@@ -97,12 +97,12 @@ class UrlTable extends React.Component {
 
     return (
       <Table rowKey="index" columns={columns} dataSource={table.map((row, i) => ({id: row, index: i}))} size="middle" bordered pagination={false}
-             title={() => (
-               <div>
-                 {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-                 <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
-               </div>
-             )}
+        title={() => (
+          <div>
+            {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+          </div>
+        )}
       />
     );
   }
@@ -110,7 +110,7 @@ class UrlTable extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{marginTop: '20px'}} >
+        <Row style={{marginTop: "20px"}} >
           <Col span={24}>
             {
               this.renderTable(this.props.table)
@@ -118,7 +118,7 @@ class UrlTable extends React.Component {
           </Col>
         </Row>
       </div>
-    )
+    );
   }
 }
 

@@ -28,7 +28,7 @@ class LdapListPage extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
-    this.getLdaps()
+    this.getLdaps();
   }
 
   getLdaps() {
@@ -43,7 +43,7 @@ class LdapListPage extends React.Component {
         this.setState((prevState) => {
           prevState.ldaps = ldapsData;
           return prevState;
-        })
+        });
       });
   }
 
@@ -64,7 +64,7 @@ class LdapListPage extends React.Component {
             <Link to={`/ldaps/${record.id}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
@@ -78,7 +78,7 @@ class LdapListPage extends React.Component {
             <Link to={`/organizations/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
@@ -88,7 +88,7 @@ class LdapListPage extends React.Component {
         ellipsis: true,
         sorter: (a, b) => a.host.localeCompare(b.host),
         render: (text, record, index) => {
-          return `${text}:${record.port}`
+          return `${text}:${record.port}`;
         }
       },
       {
@@ -113,7 +113,7 @@ class LdapListPage extends React.Component {
         sorter: (a, b) => a.autoSync.localeCompare(b.autoSync),
         render: (text, record, index) => {
           return text === 0 ? (<span style={{color: "#faad14"}}>Disable</span>) : (
-            <span style={{color: "#52c41a"}}>{text + " mins"}</span>)
+            <span style={{color: "#52c41a"}}>{text + " mins"}</span>);
         }
       },
       {
@@ -123,7 +123,7 @@ class LdapListPage extends React.Component {
         ellipsis: true,
         sorter: (a, b) => a.lastSync.localeCompare(b.lastSync),
         render: (text, record, index) => {
-          return text
+          return text;
         }
       },
       {
@@ -135,19 +135,19 @@ class LdapListPage extends React.Component {
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
-                      type="primary"
-                      onClick={() => Setting.goToLink(`/ldap/sync/${record.id}`)}>{i18next.t("ldap:Sync")}</Button>
+                type="primary"
+                onClick={() => Setting.goToLink(`/ldap/sync/${record.id}`)}>{i18next.t("ldap:Sync")}</Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
-                      onClick={() => Setting.goToLink(`/ldap/${record.id}`)}>{i18next.t("general:Edit")}</Button>
+                onClick={() => Setting.goToLink(`/ldap/${record.id}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete LDAP Config: ${record.serverName} ?`}
                 onConfirm={() => this.deleteLdap(index)}
               >
                 <Button style={{marginBottom: "10px"}}
-                        type="danger">{i18next.t("general:Delete")}</Button>
+                  type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
-          )
+          );
         }
       },
     ];
@@ -155,17 +155,17 @@ class LdapListPage extends React.Component {
     return (
       <div>
         <Table columns={columns} dataSource={ldaps} rowKey="id" size="middle" bordered
-               pagination={{pageSize: 100}}
-               title={() => (
-                 <div>
-                   <span>{i18next.t("general:LDAPs")}</span>
-                   <Button type="primary" size="small" style={{marginLeft: "10px"}}
-                           onClick={() => {
-                             this.addLdap()
-                           }}>{i18next.t("general:Add")}</Button>
-                 </div>
-               )}
-               loading={ldaps === null}
+          pagination={{pageSize: 100}}
+          title={() => (
+            <div>
+              <span>{i18next.t("general:LDAPs")}</span>
+              <Button type="primary" size="small" style={{marginLeft: "10px"}}
+                onClick={() => {
+                  this.addLdap();
+                }}>{i18next.t("general:Add")}</Button>
+            </div>
+          )}
+          loading={ldaps === null}
         />
       </div>
     );

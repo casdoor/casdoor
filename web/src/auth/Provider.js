@@ -154,13 +154,13 @@ export function getProviderLogoWidget(provider) {
           <img width={36} height={36} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} />
         </a>
       </Tooltip>
-    )
+    );
   } else {
     return (
       <Tooltip title={provider.type}>
         <img width={36} height={36} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} />
       </Tooltip>
-    )
+    );
   }
 }
 
@@ -231,8 +231,8 @@ export function getAuthUrl(application, provider, method) {
     return `${endpoint}?app_id=${provider.clientId}&scope=auth_user&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&display=popup`;
   } else if (provider.type === "Casdoor") {
     return `${provider.domain}/login/oauth/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
-  } else if (provider.type === "Infoflow"){
-    return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}?state=${state}`
+  } else if (provider.type === "Infoflow") {
+    return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}?state=${state}`;
   } else if (provider.type === "Apple") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&response_mode=form_post`;
   } else if (provider.type === "AzureAD") {
@@ -248,6 +248,6 @@ export function getAuthUrl(application, provider, method) {
   } else if (provider.type === "Custom") {
     return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.customScope}&response_type=code&state=${state}`;
   } else if (provider.type === "Bilibili") {
-    return `${endpoint}#/?client_id=${provider.clientId}&return_url=${redirectUri}&state=${state}&response_type=code`
+    return `${endpoint}#/?client_id=${provider.clientId}&return_url=${redirectUri}&state=${state}&response_type=code`;
   }
 }

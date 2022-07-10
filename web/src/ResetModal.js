@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Button, Col, Modal, Row, Input,} from "antd";
+import {Button, Col, Modal, Row, Input} from "antd";
 import i18next from "i18next";
 import React from "react";
-import * as Setting from "./Setting"
-import * as UserBackend from "./backend/UserBackend"
+import * as Setting from "./Setting";
+import * as UserBackend from "./backend/UserBackend";
 import {CountDownInput} from "./common/CountDownInput";
 import {MailOutlined, PhoneOutlined} from "@ant-design/icons";
 
@@ -53,12 +53,11 @@ export const ResetModal = (props) => {
         Setting.showMessage("error", i18next.t("user:" + res.msg));
         setConfirmLoading(false);
       }
-    })
-  }
+    });
+  };
 
   let placeHolder = "";
-  if (destType === "email") placeHolder = i18next.t("user:Input your email");
-  else if (destType === "phone") placeHolder = i18next.t("user:Input your phone number");
+  if (destType === "email") {placeHolder = i18next.t("user:Input your email");} else if (destType === "phone") {placeHolder = i18next.t("user:Input your phone number");}
 
   return (
     <Row>
@@ -95,7 +94,7 @@ export const ResetModal = (props) => {
         </Col>
       </Modal>
     </Row>
-  )
-}
+  );
+};
 
 export default ResetModal;

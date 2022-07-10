@@ -135,14 +135,13 @@ export function getCountryRegionData() {
   var countries = require("i18n-iso-countries");
   countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
   var data = countries.getNames(language, {select: "official"});
-  var result = []
-  for (var i in data) 
-    result.push({code:i, name:data[i]})
-  return result
+  var result = [];
+  for (var i in data) {result.push({code:i, name:data[i]});}
+  return result;
 }
 
 export function initServerUrl() {
-  //const hostname = window.location.hostname;
+  // const hostname = window.location.hostname;
   // if (hostname === "localhost") {
   //   ServerUrl = `http://${hostname}:8000`;
   // }
@@ -170,8 +169,8 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (providerItem.provider.type === "WeChatMiniProgram"){
-    return false
+  if (providerItem.provider.type === "WeChatMiniProgram") {
+    return false;
   }
 
   return true;
@@ -325,16 +324,16 @@ export function myParseInt(i) {
 
 export function openLink(link) {
   // this.props.history.push(link);
-  const w = window.open('about:blank');
+  const w = window.open("about:blank");
   w.location.href = link;
 }
 
 export function openLinkSafe(link) {
   // Javascript window.open issue in safari
   // https://stackoverflow.com/questions/45569893/javascript-window-open-issue-in-safari
-  let a = document.createElement('a');
+  let a = document.createElement("a");
   a.href = link;
-  a.setAttribute('target', '_blank');
+  a.setAttribute("target", "_blank");
   a.click();
 }
 
@@ -399,11 +398,9 @@ export function trim(str, ch) {
   let start = 0;
   let end = str.length;
 
-  while(start < end && str[start] === ch)
-    ++start;
+  while(start < end && str[start] === ch) {++start;}
 
-  while(end > start && str[end - 1] === ch)
-    --end;
+  while(end > start && str[end - 1] === ch) {--end;}
 
   return (start > 0 || end < str.length) ? str.substring(start, end) : str;
 }
@@ -418,8 +415,8 @@ export function getFormattedDate(date) {
     return null;
   }
 
-  date = date.replace('T', ' ');
-  date = date.replace('+08:00', ' ');
+  date = date.replace("T", " ");
+  date = date.replace("+08:00", " ");
   return date;
 }
 
@@ -428,7 +425,7 @@ export function getFormattedDateShort(date) {
 }
 
 export function getShortName(s) {
-  return s.split('/').slice(-1)[0];
+  return s.split("/").slice(-1)[0];
 }
 
 export function getShortText(s, maxLength=35) {
@@ -441,14 +438,14 @@ export function getShortText(s, maxLength=35) {
 
 export function getFriendlyFileSize(size) {
   if (size < 1024) {
-    return size + ' B';
+    return size + " B";
   }
 
   let i = Math.floor(Math.log(size) / Math.log(1024));
   let num = (size / Math.pow(1024, i));
   let round = Math.round(num);
   num = round < 10 ? num.toFixed(2) : round < 100 ? num.toFixed(1) : round;
-  return `${num} ${'KMGTPEZY'[i-1]}B`;
+  return `${num} ${"KMGTPEZY"[i-1]}B`;
 }
 
 function getRandomInt(s) {
@@ -465,7 +462,7 @@ function getRandomInt(s) {
 }
 
 export function getAvatarColor(s) {
-  const colorList = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'];
+  const colorList = ["#f56a00", "#7265e6", "#ffbf00", "#00a2ae"];
   let random = getRandomInt(s);
   if (random < 0) {
     random = -random;
@@ -515,20 +512,19 @@ export function changeMomentLanguage(language) {
 
 export function getClickable(text) {
   return (
-    // eslint-disable-next-line jsx-a11y/anchor-is-valid
     <a onClick={() => {
       copy(text);
-      showMessage("success", `Copied to clipboard`);
+      showMessage("success", "Copied to clipboard");
     }}>
       {text}
     </a>
-  )
+  );
 }
 
 export function getProviderLogoURL(provider) {
   if (provider.category === "OAuth") {
     if (provider.type === "Custom") {
-      return provider.customLogo;  
+      return provider.customLogo;
     }
     return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
   } else {
@@ -537,88 +533,88 @@ export function getProviderLogoURL(provider) {
 }
 
 export function getProviderLogo(provider) {
-  const idp = provider.type.toLowerCase().trim().split(' ')[0];
+  const idp = provider.type.toLowerCase().trim().split(" ")[0];
   const url = getProviderLogoURL(provider);
   return (
     <img width={30} height={30} src={url} alt={idp} />
-  )
+  );
 }
 
 export function getProviderTypeOptions(category) {
   if (category === "OAuth") {
     return (
       [
-        {id: 'Google', name: 'Google'},
-        {id: 'GitHub', name: 'GitHub'},
-        {id: 'QQ', name: 'QQ'},
-        {id: 'WeChat', name: 'WeChat'},
-        {id: 'WeChatMiniProgram', name: 'WeChat Mini Program'},
-        {id: 'Facebook', name: 'Facebook'},
-        {id: 'DingTalk', name: 'DingTalk'},
-        {id: 'Weibo', name: 'Weibo'},
-        {id: 'Gitee', name: 'Gitee'},
-        {id: 'LinkedIn', name: 'LinkedIn'},
-        {id: 'WeCom', name: 'WeCom'},
-        {id: 'Lark', name: 'Lark'},
-        {id: 'GitLab', name: 'GitLab'},
-        {id: 'Adfs', name: 'Adfs'},
-        {id: 'Baidu', name: 'Baidu'},
-        {id: 'Alipay', name: 'Alipay'},
-        {id: 'Casdoor', name: 'Casdoor'},
-        {id: 'Infoflow', name: 'Infoflow'},
-        {id: 'Apple', name: 'Apple'},
-        {id: 'AzureAD', name: 'AzureAD'},
-        {id: 'Slack', name: 'Slack'},
-        {id: 'Steam', name: 'Steam'},
-        {id: 'Bilibili', name: 'Bilibili'},
-        {id: 'Okta', name: 'Okta'},
-        {id: 'Douyin', name: 'Douyin'},
-        {id: 'Custom', name: 'Custom'},
+        {id: "Google", name: "Google"},
+        {id: "GitHub", name: "GitHub"},
+        {id: "QQ", name: "QQ"},
+        {id: "WeChat", name: "WeChat"},
+        {id: "WeChatMiniProgram", name: "WeChat Mini Program"},
+        {id: "Facebook", name: "Facebook"},
+        {id: "DingTalk", name: "DingTalk"},
+        {id: "Weibo", name: "Weibo"},
+        {id: "Gitee", name: "Gitee"},
+        {id: "LinkedIn", name: "LinkedIn"},
+        {id: "WeCom", name: "WeCom"},
+        {id: "Lark", name: "Lark"},
+        {id: "GitLab", name: "GitLab"},
+        {id: "Adfs", name: "Adfs"},
+        {id: "Baidu", name: "Baidu"},
+        {id: "Alipay", name: "Alipay"},
+        {id: "Casdoor", name: "Casdoor"},
+        {id: "Infoflow", name: "Infoflow"},
+        {id: "Apple", name: "Apple"},
+        {id: "AzureAD", name: "AzureAD"},
+        {id: "Slack", name: "Slack"},
+        {id: "Steam", name: "Steam"},
+        {id: "Bilibili", name: "Bilibili"},
+        {id: "Okta", name: "Okta"},
+        {id: "Douyin", name: "Douyin"},
+        {id: "Custom", name: "Custom"},
       ]
     );
   } else if (category === "Email") {
     return (
       [
-        {id: 'Default', name: 'Default'},
+        {id: "Default", name: "Default"},
       ]
     );
   } else if (category === "SMS") {
     return (
       [
-        {id: 'Aliyun SMS', name: 'Aliyun SMS'},
-        {id: 'Tencent Cloud SMS', name: 'Tencent Cloud SMS'},
-        {id: 'Volc Engine SMS', name: 'Volc Engine SMS'},
-        {id: 'Huawei Cloud SMS', name: 'Huawei Cloud SMS'},
+        {id: "Aliyun SMS", name: "Aliyun SMS"},
+        {id: "Tencent Cloud SMS", name: "Tencent Cloud SMS"},
+        {id: "Volc Engine SMS", name: "Volc Engine SMS"},
+        {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
       ]
     );
   } else if (category === "Storage") {
     return (
       [
-        {id: 'Local File System', name: 'Local File System'},
-        {id: 'AWS S3', name: 'AWS S3'},
-        {id: 'Aliyun OSS', name: 'Aliyun OSS'},
-        {id: 'Tencent Cloud COS', name: 'Tencent Cloud COS'},
-        {id: 'Azure Blob', name: 'Azure Blob'}
+        {id: "Local File System", name: "Local File System"},
+        {id: "AWS S3", name: "AWS S3"},
+        {id: "Aliyun OSS", name: "Aliyun OSS"},
+        {id: "Tencent Cloud COS", name: "Tencent Cloud COS"},
+        {id: "Azure Blob", name: "Azure Blob"}
       ]
     );
   } else if (category === "SAML") {
     return ([
-      {id: 'Aliyun IDaaS', name: 'Aliyun IDaaS'},
-      {id: 'Keycloak', name: 'Keycloak'},
+      {id: "Aliyun IDaaS", name: "Aliyun IDaaS"},
+      {id: "Keycloak", name: "Keycloak"},
     ]);
   } else if (category === "Payment") {
     return ([
-      {id: 'Alipay', name: 'Alipay'},
-      {id: 'WeChat Pay', name: 'WeChat Pay'},
-      {id: 'PayPal', name: 'PayPal'},
-      {id: 'GC', name: 'GC'},
+      {id: "Alipay", name: "Alipay"},
+      {id: "WeChat Pay", name: "WeChat Pay"},
+      {id: "PayPal", name: "PayPal"},
+      {id: "GC", name: "GC"},
     ]);
   } else if (category === "Captcha") {
     return ([
-      {id: 'Default', name: 'Default'},
-      {id: 'reCAPTCHA', name: 'reCAPTCHA'},
-      {id: 'hCaptcha', name: 'hCaptcha'},
-      {id: 'Aliyun Captcha', name: 'Aliyun Captcha'},
+      {id: "Default", name: "Default"},
+      {id: "reCAPTCHA", name: "reCAPTCHA"},
+      {id: "hCaptcha", name: "hCaptcha"},
+      {id: "Aliyun Captcha", name: "Aliyun Captcha"},
     ]);
   } else {
     return [];
@@ -629,14 +625,14 @@ export function getProviderSubTypeOptions(type) {
   if (type === "WeCom" || type === "Infoflow") {
     return (
       [
-        {id: 'Internal', name: 'Internal'},
-        {id: 'Third-party', name: 'Third-party'},
+        {id: "Internal", name: "Internal"},
+        {id: "Third-party", name: "Third-party"},
       ]
     );
   } else if (type === "Aliyun Captcha") {
     return [
-      {id: 'nc', name: 'Sliding Validation'},
-      {id: 'ic', name: 'Intelligent Validation'},
+      {id: "nc", name: "Sliding Validation"},
+      {id: "ic", name: "Intelligent Validation"},
     ];
   } else {
     return [];
@@ -651,12 +647,12 @@ export function renderLogo(application) {
   if (application.homepageUrl !== "") {
     return (
       <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
-        <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '30px'}}/>
+        <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "30px"}} />
       </a>
-    )
+    );
   } else {
     return (
-      <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: '30px'}}/>
+      <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "30px"}} />
     );
   }
 }
@@ -731,13 +727,13 @@ export function renderHelmet(application) {
       <title>{application.organizationObj.displayName}</title>
       <link rel="icon" href={application.organizationObj.favicon} />
     </Helmet>
-  )
+  );
 }
 
 export function getLabel(text, tooltip) {
   return (
     <React.Fragment>
-      <span style={{ marginRight: 4 }}>{text}</span>
+      <span style={{marginRight: 4}}>{text}</span>
       <Tooltip placement="top" title={tooltip}>
         <QuestionCircleTwoTone twoToneColor="rgb(45,120,213)" />
       </Tooltip>
@@ -761,11 +757,11 @@ function maskString(s) {
 }
 
 export function getMaskedPhone(s) {
-  return s.replace(/(\d{3})\d*(\d{4})/,'$1****$2');
+  return s.replace(/(\d{3})\d*(\d{4})/, "$1****$2");
 }
 
 export function getMaskedEmail(email) {
-  if (email === "") return;
+  if (email === "") {return;}
   const tokens = email.split("@");
   let username = tokens[0];
   username = maskString(username);
@@ -802,7 +798,7 @@ export function getTagColor(s) {
 
 export function getTags(tags) {
   let res = [];
-  if (!tags) return res;
+  if (!tags) {return res;}
   tags.forEach((tag, i) => {
     res.push(
       <Tag color={getTagColor(tag)}>
@@ -848,91 +844,91 @@ export function scrollToDiv(divId) {
 
 export function getSyncerTableColumns(syncer) {
   switch (syncer.type) {
-    case "Keycloak":
-      return [
-        {
-          "name":"ID",
-          "type":"string",
-          "casdoorName":"Id",
-          "isHashed":true,
-          "values":[
+  case "Keycloak":
+    return [
+      {
+        "name":"ID",
+        "type":"string",
+        "casdoorName":"Id",
+        "isHashed":true,
+        "values":[
 
-          ]
-        },
-        {
-          "name":"USERNAME",
-          "type":"string",
-          "casdoorName":"Name",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        "name":"USERNAME",
+        "type":"string",
+        "casdoorName":"Name",
+        "isHashed":true,
+        "values":[
 
-          ]
-        },
-        {
-          "name":"LAST_NAME+FIRST_NAME",
-          "type":"string",
-          "casdoorName":"DisplayName",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        "name":"LAST_NAME+FIRST_NAME",
+        "type":"string",
+        "casdoorName":"DisplayName",
+        "isHashed":true,
+        "values":[
 
-          ]
-        },
-        {
-          "name":"EMAIL",
-          "type":"string",
-          "casdoorName":"Email",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        "name":"EMAIL",
+        "type":"string",
+        "casdoorName":"Email",
+        "isHashed":true,
+        "values":[
 
-          ]
-        },
-        {
-          "name":"EMAIL_VERIFIED",
-          "type":"boolean",
-          "casdoorName":"EmailVerified",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        "name":"EMAIL_VERIFIED",
+        "type":"boolean",
+        "casdoorName":"EmailVerified",
+        "isHashed":true,
+        "values":[
 
-          ]
-        },
-        {
-          "name":"FIRST_NAME",
-          "type":"string",
-          "casdoorName":"FirstName",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        "name":"FIRST_NAME",
+        "type":"string",
+        "casdoorName":"FirstName",
+        "isHashed":true,
+        "values":[
 
-          ]
-        },
-        {
-          "name":"LAST_NAME",
-          "type":"string",
-          "casdoorName":"LastName",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        "name":"LAST_NAME",
+        "type":"string",
+        "casdoorName":"LastName",
+        "isHashed":true,
+        "values":[
 
-          ]
-        },
-        {
-          "name":"CREATED_TIMESTAMP",
-          "type":"string",
-          "casdoorName":"CreatedTime",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        "name":"CREATED_TIMESTAMP",
+        "type":"string",
+        "casdoorName":"CreatedTime",
+        "isHashed":true,
+        "values":[
 
-          ]
-        },
-        {
-          "name":"ENABLED",
-          "type":"boolean",
-          "casdoorName":"IsForbidden",
-          "isHashed":true,
-          "values":[
+        ]
+      },
+      {
+        "name":"ENABLED",
+        "type":"boolean",
+        "casdoorName":"IsForbidden",
+        "isHashed":true,
+        "values":[
 
-          ]
-        }
-      ]
-    default:
-      return []
+        ]
+      }
+    ];
+  default:
+    return [];
   }
 }

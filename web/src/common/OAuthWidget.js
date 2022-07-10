@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Row} from 'antd';
+import {Button, Col, Row} from "antd";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import * as Setting from "../Setting";
@@ -84,7 +84,7 @@ class OAuthWidget extends React.Component {
 
   getUserProperty(user, providerType, propertyName) {
     const key = `oauth_${providerType}_${propertyName}`;
-    if (user.properties === null) return "";
+    if (user.properties === null) {return "";}
     return user.properties[key];
   }
 
@@ -94,8 +94,8 @@ class OAuthWidget extends React.Component {
     };
     AuthBackend.unlink(body)
       .then((res) => {
-        if (res.status === 'ok') {
-          Setting.showMessage("success", `Unlinked successfully`);
+        if (res.status === "ok") {
+          Setting.showMessage("success", "Unlinked successfully");
 
           this.unlinked();
         } else {
@@ -130,20 +130,20 @@ class OAuthWidget extends React.Component {
     }
 
     return (
-      <Row key={provider.name} style={{marginTop: '20px'}} >
-        <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
+      <Row key={provider.name} style={{marginTop: "20px"}} >
+        <Col style={{marginTop: "5px"}} span={this.props.labelSpan}>
           {
             Setting.getProviderLogo(provider)
           }
-          <span style={{marginLeft: '5px'}}>
+          <span style={{marginLeft: "5px"}}>
             {
               `${provider.type}:`
             }
           </span>
         </Col>
         <Col span={24 - this.props.labelSpan} >
-          <img style={{marginRight: '10px'}} width={30} height={30} src={avatarUrl} alt={name} referrerPolicy="no-referrer" />
-          <span style={{width: this.props.labelSpan === 3 ? '300px' : '130px', display: (Setting.isMobile()) ? 'inline' : "inline-block"}}>
+          <img style={{marginRight: "10px"}} width={30} height={30} src={avatarUrl} alt={name} referrerPolicy="no-referrer" />
+          <span style={{width: this.props.labelSpan === 3 ? "300px" : "130px", display: (Setting.isMobile()) ? "inline" : "inline-block"}}>
             {
               linkedValue === "" ? (
                 "(empty)"
@@ -161,19 +161,19 @@ class OAuthWidget extends React.Component {
           {
             linkedValue === "" ? (
               <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "link")}>
-                <Button style={{marginLeft: '20px', width: '80px'}} type="primary">{i18next.t("user:Link")}</Button>
+                <Button style={{marginLeft: "20px", width: "80px"}} type="primary">{i18next.t("user:Link")}</Button>
               </a>
             ) : (
-              <Button disabled={!providerItem.canUnlink} style={{marginLeft: '20px', width: '80px'}} onClick={() => this.unlinkUser(provider.type)}>{i18next.t("user:Unlink")}</Button>
+              <Button disabled={!providerItem.canUnlink} style={{marginLeft: "20px", width: "80px"}} onClick={() => this.unlinkUser(provider.type)}>{i18next.t("user:Unlink")}</Button>
             )
           }
         </Col>
       </Row>
-    )
+    );
   }
 
   render() {
-    return this.renderIdp(this.props.user, this.props.application, this.props.providerItem)
+    return this.renderIdp(this.props.user, this.props.application, this.props.providerItem);
   }
 }
 

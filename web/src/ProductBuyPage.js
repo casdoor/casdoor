@@ -94,7 +94,7 @@ class ProductBuyPage extends React.Component {
     let providerMap = {};
     this.state.providers.forEach(provider => {
       providerMap[provider.name] = provider;
-    })
+    });
 
     return product.providers.map(providerName => providerMap[providerName]);
   }
@@ -153,7 +153,7 @@ class ProductBuyPage extends React.Component {
           text
         }
       </Button>
-    )
+    );
   }
 
   renderProviderButton(provider, product) {
@@ -165,7 +165,7 @@ class ProductBuyPage extends React.Component {
           }
         </span>
       </span>
-    )
+    );
   }
 
   renderPay(product) {
@@ -183,7 +183,7 @@ class ProductBuyPage extends React.Component {
     const providers = this.getProviders(product);
     return providers.map(provider => {
       return this.renderProviderButton(provider, product);
-    })
+    });
   }
 
   render() {
@@ -198,22 +198,22 @@ class ProductBuyPage extends React.Component {
         <Spin spinning={this.state.isPlacingOrder} size="large" tip={i18next.t("product:Placing order...")} style={{paddingTop: "10%"}} >
           <Descriptions title={i18next.t("product:Buy Product")} bordered>
             <Descriptions.Item label={i18next.t("general:Name")} span={3}>
-            <span style={{fontSize: 28}}>
-              {product?.displayName}
-            </span>
+              <span style={{fontSize: 28}}>
+                {product?.displayName}
+              </span>
             </Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{product?.detail}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Tag")}><span style={{fontSize: 16}}>{product?.tag}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:SKU")}><span style={{fontSize: 16}}>{product?.name}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Image")} span={3}>
-              <img src={product?.image} alt={product?.name} height={90} style={{marginBottom: '20px'}}/>
+              <img src={product?.image} alt={product?.name} height={90} style={{marginBottom: "20px"}} />
             </Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Price")}>
-            <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
-              {
-                this.getPrice(product)
-              }
-            </span>
+              <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
+                {
+                  this.getPrice(product)
+                }
+              </span>
             </Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Sold")}><span style={{fontSize: 16}}>{product?.sold}</span></Descriptions.Item>
@@ -225,7 +225,7 @@ class ProductBuyPage extends React.Component {
           </Descriptions>
         </Spin>
       </div>
-    )
+    );
   }
 }
 

@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Switch, Table} from 'antd';
+import {Switch, Table} from "antd";
 import * as Setting from "./Setting";
 import * as RecordBackend from "./backend/RecordBackend";
 import i18next from "i18next";
@@ -24,8 +24,8 @@ import BaseListPage from "./BaseListPage";
 class RecordListPage extends BaseListPage {
   UNSAFE_componentWillMount() {
     this.state.pagination.pageSize = 20;
-    const { pagination } = this.state;
-    this.fetch({ pagination });
+    const {pagination} = this.state;
+    this.fetch({pagination});
   }
 
   newRecord() {
@@ -40,47 +40,47 @@ class RecordListPage extends BaseListPage {
       requestUri: "/api/get-account",
       action: "login",
       isTriggered: false,
-    }
+    };
   }
 
   renderTable(records) {
     const columns = [
       {
         title: i18next.t("general:Name"),
-        dataIndex: 'name',
-        key: 'name',
-        width: '320px',
+        dataIndex: "name",
+        key: "name",
+        width: "320px",
         sorter: true,
-        ...this.getColumnSearchProps('name'),
+        ...this.getColumnSearchProps("name"),
       },
       {
         title: i18next.t("general:ID"),
-        dataIndex: 'id',
-        key: 'id',
-        width: '90px',
+        dataIndex: "id",
+        key: "id",
+        width: "90px",
         sorter: true,
-        ...this.getColumnSearchProps('id'),
+        ...this.getColumnSearchProps("id"),
       },
       {
         title: i18next.t("general:Client IP"),
-        dataIndex: 'clientIp',
-        key: 'clientIp',
-        width: '150px',
+        dataIndex: "clientIp",
+        key: "clientIp",
+        width: "150px",
         sorter: true,
-        ...this.getColumnSearchProps('clientIp'),
+        ...this.getColumnSearchProps("clientIp"),
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={`https://db-ip.com/${text}`}>
               {text}
             </a>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Timestamp"),
-        dataIndex: 'createdTime',
-        key: 'createdTime',
-        width: '180px',
+        dataIndex: "createdTime",
+        key: "createdTime",
+        width: "180px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -88,68 +88,68 @@ class RecordListPage extends BaseListPage {
       },
       {
         title: i18next.t("general:Organization"),
-        dataIndex: 'organization',
-        key: 'organization',
-        width: '110px',
+        dataIndex: "organization",
+        key: "organization",
+        width: "110px",
         sorter: true,
-        ...this.getColumnSearchProps('organization'),
+        ...this.getColumnSearchProps("organization"),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:User"),
-        dataIndex: 'user',
-        key: 'user',
-        width: '120px',
+        dataIndex: "user",
+        key: "user",
+        width: "120px",
         sorter: true,
-        ...this.getColumnSearchProps('user'),
+        ...this.getColumnSearchProps("user"),
         render: (text, record, index) => {
           return (
             <Link to={`/users/${record.organization}/${record.user}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Method"),
-        dataIndex: 'method',
-        key: 'method',
-        width: '110px',
+        dataIndex: "method",
+        key: "method",
+        width: "110px",
         sorter: true,
         filterMultiple: false,
         filters: [
-          {text: 'GET', value: 'GET'},
-          {text: 'HEAD', value: 'HEAD'},
-          {text: 'POST', value: 'POST'},
-          {text: 'PUT', value: 'PUT'},
-          {text: 'DELETE', value: 'DELETE'},
-          {text: 'CONNECT', value: 'CONNECT'},
-          {text: 'OPTIONS', value: 'OPTIONS'},
-          {text: 'TRACE', value: 'TRACE'},
-          {text: 'PATCH', value: 'PATCH'},
+          {text: "GET", value: "GET"},
+          {text: "HEAD", value: "HEAD"},
+          {text: "POST", value: "POST"},
+          {text: "PUT", value: "PUT"},
+          {text: "DELETE", value: "DELETE"},
+          {text: "CONNECT", value: "CONNECT"},
+          {text: "OPTIONS", value: "OPTIONS"},
+          {text: "TRACE", value: "TRACE"},
+          {text: "PATCH", value: "PATCH"},
         ],
       },
       {
         title: i18next.t("general:Request URI"),
-        dataIndex: 'requestUri',
-        key: 'requestUri',
+        dataIndex: "requestUri",
+        key: "requestUri",
         // width: '300px',
         sorter: true,
-        ...this.getColumnSearchProps('requestUri'),
+        ...this.getColumnSearchProps("requestUri"),
       },
       {
         title: i18next.t("general:Action"),
-        dataIndex: 'action',
-        key: 'action',
-        width: '200px',
+        dataIndex: "action",
+        key: "action",
+        width: "200px",
         sorter: true,
-        ...this.getColumnSearchProps('action'),
+        ...this.getColumnSearchProps("action"),
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return text;
@@ -157,9 +157,9 @@ class RecordListPage extends BaseListPage {
       },
       {
         title: i18next.t("record:Is Triggered"),
-        dataIndex: 'isTriggered',
-        key: 'isTriggered',
-        width: '140px',
+        dataIndex: "isTriggered",
+        key: "isTriggered",
+        width: "140px",
         sorter: true,
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
@@ -169,7 +169,7 @@ class RecordListPage extends BaseListPage {
 
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
-          )
+          );
         }
       },
     ];
@@ -184,14 +184,14 @@ class RecordListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={paginationProps}
-               title={() => (
-                 <div>
-                   {i18next.t("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;
-                 </div>
-               )}
-               loading={this.state.loading}
-               onChange={this.handleTableChange}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={paginationProps}
+          title={() => (
+            <div>
+              {i18next.t("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+          )}
+          loading={this.state.loading}
+          onChange={this.handleTableChange}
         />
       </div>
     );
@@ -204,7 +204,7 @@ class RecordListPage extends BaseListPage {
       field = "method";
       value = params.method;
     }
-    this.setState({ loading: true });
+    this.setState({loading: true});
     RecordBackend.getRecords(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
