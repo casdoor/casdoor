@@ -56,6 +56,7 @@ func main() {
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AuthzFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
 
+	beego.BConfig.WebConfig.Session.SessionOn = true
 	beego.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
 	if conf.GetConfigString("redisEndpoint") == "" {
 		beego.BConfig.WebConfig.Session.SessionProvider = "file"

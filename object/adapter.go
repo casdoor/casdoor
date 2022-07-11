@@ -32,6 +32,7 @@ var adapter *Adapter
 
 func InitConfig() {
 	err := beego.LoadAppConfig("ini", "../conf/app.conf")
+	beego.BConfig.WebConfig.Session.SessionOn = true
 	if err != nil {
 		panic(err)
 	}
