@@ -50,6 +50,17 @@ func tokenToResponse(token *object.Token) *Response {
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) (resp *Response) {
 	userId := user.GetId()
+
+	allowed, err := object.CheckPermission(userId, application)
+	if err != nil {
+		c.ResponseError(err.Error(), nil)
+		return
+	}
+	if !allowed {
+		c.ResponseError("Unauthorized operation")
+		return
+	}
+
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
