@@ -556,7 +556,7 @@ class UserEditPage extends React.Component {
       </Card>
     );
   }
-  
+
   submitUserEdit(willExist) {
     let user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.organizationName, this.state.userName, user)
