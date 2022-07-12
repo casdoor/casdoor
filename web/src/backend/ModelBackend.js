@@ -31,8 +31,8 @@ export function getModel(owner, name) {
 export function updateModel(owner, name, model) {
   let newModel = Setting.deepCopy(model);
   return fetch(`${Setting.ServerUrl}/api/update-model?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newModel),
   }).then(res => res.json());
 }
@@ -40,8 +40,8 @@ export function updateModel(owner, name, model) {
 export function addModel(model) {
   let newModel = Setting.deepCopy(model);
   return fetch(`${Setting.ServerUrl}/api/add-model`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newModel),
   }).then(res => res.json());
 }
@@ -49,8 +49,8 @@ export function addModel(model) {
 export function deleteModel(model) {
   let newModel = Setting.deepCopy(model);
   return fetch(`${Setting.ServerUrl}/api/delete-model`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newModel),
   }).then(res => res.json());
 }

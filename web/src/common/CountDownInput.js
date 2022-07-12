@@ -14,14 +14,13 @@
 
 import {Button, Col, Input, Modal, Row} from "antd";
 import React from "react";
-import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import {SafetyOutlined} from "@ant-design/icons";
 import {authConfig} from "../auth/Auth";
-import { CaptchaWidget } from "./CaptchaWidget";
+import {CaptchaWidget} from "./CaptchaWidget";
 
-const { Search } = Input;
+const {Search} = Input;
 
 export const CountDownInput = (props) => {
   const {disabled, textBefore, onChange, onButtonClickArgs} = props;
@@ -34,57 +33,65 @@ export const CountDownInput = (props) => {
   const [buttonLoading, setButtonLoading] = React.useState(false);
   const [buttonDisabled, setButtonDisabled] = React.useState(true);
   const [clientId, setClientId] = React.useState("");
+  const [subType, setSubType] = React.useState("");
+  const [clientId2, setClientId2] = React.useState("");
+  const [clientSecret2, setClientSecret2] = React.useState("");
 
   const handleCountDown = (leftTime = 60) => {
-    let leftTimeSecond = leftTime
-    setButtonLeftTime(leftTimeSecond)
+    let leftTimeSecond = leftTime;
+    setButtonLeftTime(leftTimeSecond);
     const countDown = () => {
       leftTimeSecond--;
-      setButtonLeftTime(leftTimeSecond)
+      setButtonLeftTime(leftTimeSecond);
       if (leftTimeSecond === 0) {
         return;
       }
       setTimeout(countDown, 1000);
-    }
+    };
     setTimeout(countDown, 1000);
-  }
+  };
 
   const handleOk = () => {
     setVisible(false);
-    setButtonLoading(true)
+    setButtonLoading(true);
     UserBackend.sendCode(checkType, checkId, key, ...onButtonClickArgs).then(res => {
       setKey("");
-      setButtonLoading(false)
+      setButtonLoading(false);
       if (res) {
         handleCountDown(60);
       }
-    })
-  }
+    });
+  };
 
   const handleCancel = () => {
     setVisible(false);
     setKey("");
-  }
+  };
 
   const loadCaptcha = () => {
     UserBackend.getCaptcha("admin", authConfig.appName, false).then(res => {
       if (res.type === "none") {
-        UserBackend.sendCode("none", "", "", ...onButtonClickArgs);
+        UserBackend.sendCode("none", "", "", ...onButtonClickArgs).then(res => {
+          if (res) {
+            handleCountDown(60);
+          }
+        });
       } else if (res.type === "Default") {
         setCheckId(res.captchaId);
         setCaptchaImg(res.captchaImage);
         setCheckType("Default");
         setVisible(true);
-      } else if (res.type === "reCAPTCHA" || res.type === "hCaptcha") {
+      } else {
         setCheckType(res.type);
         setClientId(res.clientId);
         setCheckId(res.clientSecret);
         setVisible(true);
-      } else {
-        Setting.showMessage("error", i18next.t("signup:Unknown Check Type"));
+        setSubType(res.subType);
+        setClientId2(res.clientId2);
+        setClientSecret2(res.clientSecret2);
       }
-    })
-  }
+    });
+  };
 
   const renderCaptcha = () => {
     return (
@@ -101,16 +108,16 @@ export const CountDownInput = (props) => {
           }}
         />
         <Row>
-          <Input autoFocus value={key} prefix={<SafetyOutlined/>} placeholder={i18next.t("general:Captcha")} onPressEnter={handleOk} onChange={e => setKey(e.target.value)}/>
+          <Input autoFocus value={key} prefix={<SafetyOutlined />} placeholder={i18next.t("general:Captcha")} onPressEnter={handleOk} onChange={e => setKey(e.target.value)} />
         </Row>
       </Col>
-    )
-  }
+    );
+  };
 
   const onSubmit = (token) => {
     setButtonDisabled(false);
     setKey(token);
-  }
+  };
 
   const renderCheck = () => {
     if (checkType === "Default") {
@@ -119,19 +126,23 @@ export const CountDownInput = (props) => {
       return (
         <CaptchaWidget
           captchaType={checkType}
+          subType={subType}
           siteKey={clientId}
+          clientSecret={checkId}
           onChange={onSubmit}
+          clientId2={clientId2}
+          clientSecret2={clientSecret2}
         />
       );
     }
-  }
+  };
 
   return (
     <React.Fragment>
       <Search
         addonBefore={textBefore}
         disabled={disabled}
-        prefix={<SafetyOutlined/>}
+        prefix={<SafetyOutlined />}
         placeholder={i18next.t("code:Enter your code")}
         onChange={e => onChange(e.target.value)}
         enterButton={
@@ -160,4 +171,4 @@ export const CountDownInput = (props) => {
       </Modal>
     </React.Fragment>
   );
-}
+};

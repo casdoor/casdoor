@@ -31,8 +31,8 @@ export function getResource(owner, name) {
 export function updateResource(owner, name, resource) {
   let newResource = Setting.deepCopy(resource);
   return fetch(`${Setting.ServerUrl}/api/update-resource?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newResource),
   }).then(res => res.json());
 }
@@ -40,8 +40,8 @@ export function updateResource(owner, name, resource) {
 export function addResource(resource) {
   let newResource = Setting.deepCopy(resource);
   return fetch(`${Setting.ServerUrl}/api/add-resource`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newResource),
   }).then(res => res.json());
 }
@@ -49,8 +49,8 @@ export function addResource(resource) {
 export function deleteResource(resource, provider="") {
   let newResource = Setting.deepCopy(resource);
   return fetch(`${Setting.ServerUrl}/api/delete-resource?provider=${provider}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newResource),
   }).then(res => res.json());
 }
@@ -61,7 +61,7 @@ export function uploadResource(owner, user, tag, parent, fullFilePath, file, pro
   formData.append("file", file);
   return fetch(`${Setting.ServerUrl}/api/upload-resource?owner=${owner}&user=${user}&application=${application}&tag=${tag}&parent=${parent}&fullFilePath=${encodeURIComponent(fullFilePath)}&provider=${provider}`, {
     body: formData,
-    method: 'POST',
-    credentials: 'include',
-  }).then(res => res.json())
+    method: "POST",
+    credentials: "include",
+  }).then(res => res.json());
 }

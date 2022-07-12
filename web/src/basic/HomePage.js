@@ -61,14 +61,14 @@ class HomePage extends React.Component {
       }
     } else {
       this.state.applications.forEach(application => {
-        console.log(application)
+        console.log(application);
         items.push({
           link: application.homepageUrl, name: application.displayName, organizer: application.description, logo: application.logo, createdTime: "",
         });
       });
     }
 
-    return items
+    return items;
   }
 
   renderCards() {
@@ -85,25 +85,25 @@ class HomePage extends React.Component {
             items.map(item => {
               return (
                 <SingleCard logo={item.logo} link={item.link} title={item.name} desc={item.organizer} isSingle={items.length === 1} />
-              )
+              );
             })
           }
         </Card>
-      )
+      );
     } else {
       return (
         <div style={{marginRight: "15px", marginLeft: "15px"}}>
-              <Row style={{marginLeft: "-20px", marginRight: "-20px", marginTop: "20px"}} gutter={24}>
-                {
-                  items.map(item => {
-                    return (
-                      <SingleCard logo={item.logo} link={item.link} title={item.name} desc={item.organizer} time={item.createdTime} isSingle={items.length === 1} key={item.name} />
-                    )
-                  })
-                }
-              </Row>
+          <Row style={{marginLeft: "-20px", marginRight: "-20px", marginTop: "20px"}} gutter={24}>
+            {
+              items.map(item => {
+                return (
+                  <SingleCard logo={item.logo} link={item.link} title={item.name} desc={item.organizer} time={item.createdTime} isSingle={items.length === 1} key={item.name} />
+                );
+              })
+            }
+          </Row>
         </div>
-      )
+      );
     }
   }
 
@@ -118,7 +118,7 @@ class HomePage extends React.Component {
           </Col>
         </Row>
       </div>
-    )
+    );
   }
 }
 

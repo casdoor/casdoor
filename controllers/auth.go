@@ -144,7 +144,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 // @Param   redirectUri    query    string  true        "redirect uri"
 // @Param   scope    query    string  true        "scope"
 // @Param   state    query    string  true        "state"
-// @Success 200 {object} controllers.api_controller.Response The Response object
+// @Success 200 {object}  Response The Response object
 // @router /get-app-login [get]
 func (c *ApiController) GetApplicationLogin() {
 	clientId := c.Input().Get("clientId")
@@ -174,9 +174,16 @@ func setHttpClient(idProvider idp.IdProvider, providerType string) {
 // @Title Login
 // @Tag Login API
 // @Description login
-// @Param   oAuthParams     query    string  true        "oAuth parameters"
-// @Param   body    body   RequestForm  true        "Login information"
-// @Success 200 {object} controllers.api_controller.Response The Response object
+// @Param clientId        query    string  true clientId
+// @Param responseType    query    string  true responseType
+// @Param redirectUri     query    string  true redirectUri
+// @Param scope     query    string  false  scope
+// @Param state     query    string  false  state
+// @Param nonce     query    string  false nonce
+// @Param code_challenge_method   query    string  false code_challenge_method
+// @Param code_challenge          query    string  false code_challenge
+// @Param   form   body   controllers.RequestForm  true        "Login information"
+// @Success 200 {object} Response The Response object
 // @router /login [post]
 func (c *ApiController) Login() {
 	resp := &Response{}

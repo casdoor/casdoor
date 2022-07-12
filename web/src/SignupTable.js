@@ -13,12 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import {DownOutlined, DeleteOutlined, UpOutlined} from '@ant-design/icons';
-import {Button, Col, Row, Select, Switch, Table, Tooltip} from 'antd';
+import {DownOutlined, DeleteOutlined, UpOutlined} from "@ant-design/icons";
+import {Button, Col, Row, Select, Switch, Table, Tooltip} from "antd";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class SignupTable extends React.Component {
   constructor(props) {
@@ -65,8 +65,8 @@ class SignupTable extends React.Component {
     const columns = [
       {
         title: i18next.t("provider:Name"),
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: "name",
+        key: "name",
         render: (text, record, index) => {
           const items = [
             {name: "Username", displayName: i18next.t("signup:Username")},
@@ -91,23 +91,23 @@ class SignupTable extends React.Component {
           };
 
           return (
-            <Select virtual={false} style={{width: '100%'}}
-                    value={getItemDisplayName(text)}
-                    onChange={value => {
-                      this.updateField(table, index, 'name', value);
-                    }} >
+            <Select virtual={false} style={{width: "100%"}}
+              value={getItemDisplayName(text)}
+              onChange={value => {
+                this.updateField(table, index, "name", value);
+              }} >
               {
                 Setting.getDeduplicatedArray(items, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.displayName}</Option>)
               }
             </Select>
-          )
+          );
         }
       },
       {
         title: i18next.t("provider:visible"),
-        dataIndex: 'visible',
-        key: 'visible',
-        width: '120px',
+        dataIndex: "visible",
+        key: "visible",
+        width: "120px",
         render: (text, record, index) => {
           if (record.name === "ID") {
             return null;
@@ -115,21 +115,21 @@ class SignupTable extends React.Component {
 
           return (
             <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, 'visible', checked);
+              this.updateField(table, index, "visible", checked);
               if (!checked) {
-                this.updateField(table, index, 'required', false);
+                this.updateField(table, index, "required", false);
               } else {
-                this.updateField(table, index, 'required', true);
+                this.updateField(table, index, "required", true);
               }
             }} />
-          )
+          );
         }
       },
       {
         title: i18next.t("provider:required"),
-        dataIndex: 'required',
-        key: 'required',
-        width: '120px',
+        dataIndex: "required",
+        key: "required",
+        width: "120px",
         render: (text, record, index) => {
           if (!record.visible) {
             return null;
@@ -137,16 +137,16 @@ class SignupTable extends React.Component {
 
           return (
             <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, 'required', checked);
+              this.updateField(table, index, "required", checked);
             }} />
-          )
+          );
         }
       },
       {
         title: i18next.t("provider:prompted"),
-        dataIndex: 'prompted',
-        key: 'prompted',
-        width: '120px',
+        dataIndex: "prompted",
+        key: "prompted",
+        width: "120px",
         render: (text, record, index) => {
           if (record.name === "ID") {
             return null;
@@ -158,33 +158,33 @@ class SignupTable extends React.Component {
 
           return (
             <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, 'prompted', checked);
+              this.updateField(table, index, "prompted", checked);
             }} />
-          )
+          );
         }
       },
       {
         title: i18next.t("application:rule"),
-        dataIndex: 'rule',
-        key: 'rule',
-        width: '155px',
+        dataIndex: "rule",
+        key: "rule",
+        width: "155px",
         render: (text, record, index) => {
           let options = [];
           if (record.name === "ID") {
             options = [
-              {id: 'Random', name: 'Random'},
-              {id: 'Incremental', name: 'Incremental'},
+              {id: "Random", name: "Random"},
+              {id: "Incremental", name: "Incremental"},
             ];
           } else if (record.name === "Display name") {
             options = [
-              {id: 'None', name: 'None'},
-              {id: 'Real name', name: 'Real name'},
-              {id: 'First, last', name: 'First, last'},
+              {id: "None", name: "None"},
+              {id: "Real name", name: "Real name"},
+              {id: "First, last", name: "First, last"},
             ];
           } else if (record.name === "Email") {
             options = [
-              {id: 'Normal', name: 'Normal'},
-              {id: 'No verification', name: 'No verification'},
+              {id: "Normal", name: "Normal"},
+              {id: "No verification", name: "No verification"},
             ];
           }
 
@@ -193,20 +193,20 @@ class SignupTable extends React.Component {
           }
 
           return (
-            <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {
-              this.updateField(table, index, 'rule', value);
+            <Select virtual={false} style={{width: "100%"}} value={text} onChange={(value => {
+              this.updateField(table, index, "rule", value);
             })}>
               {
                 options.map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Action"),
-        key: 'action',
-        width: '100px',
+        key: "action",
+        width: "100px",
         render: (text, record, index) => {
           return (
             <div>
@@ -226,13 +226,13 @@ class SignupTable extends React.Component {
     ];
 
     return (
-      <Table scroll={{x: 'max-content'}} rowKey="name" columns={columns} dataSource={table} size="middle" bordered pagination={false}
-             title={() => (
-               <div>
-                 {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-                 <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
-               </div>
-             )}
+      <Table scroll={{x: "max-content"}} rowKey="name" columns={columns} dataSource={table} size="middle" bordered pagination={false}
+        title={() => (
+          <div>
+            {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+          </div>
+        )}
       />
     );
   }
@@ -240,7 +240,7 @@ class SignupTable extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{marginTop: '20px'}} >
+        <Row style={{marginTop: "20px"}} >
           <Col span={24}>
             {
               this.renderTable(this.props.table)
@@ -248,7 +248,7 @@ class SignupTable extends React.Component {
           </Col>
         </Row>
       </div>
-    )
+    );
   }
 }
 

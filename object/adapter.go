@@ -22,7 +22,7 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	//_ "github.com/denisenkom/go-mssqldb" // db = mssql
-	_ "github.com/go-sql-driver/mysql" // db = mysql
+	_ "github.com/go-sql-driver/mysql"     // db = mysql
 	//_ "github.com/lib/pq"                // db = postgres
 	"xorm.io/core"
 	"xorm.io/xorm"
@@ -36,11 +36,12 @@ func InitConfig() {
 		panic(err)
 	}
 
+	beego.BConfig.WebConfig.Session.SessionOn = true
+
 	InitAdapter(true)
 }
 
 func InitAdapter(createDatabase bool) {
-
 	adapter = NewAdapter(conf.GetConfigString("driverName"), conf.GetBeegoConfDataSourceName(), conf.GetConfigString("dbName"))
 	if createDatabase {
 		adapter.CreateDatabase()

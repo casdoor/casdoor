@@ -42,42 +42,40 @@ func (c *ApiController) getCurrentUser() *object.User {
 func (c *ApiController) SendVerificationCode() {
 	destType := c.Ctx.Request.Form.Get("type")
 	dest := c.Ctx.Request.Form.Get("dest")
-	orgId := c.Ctx.Request.Form.Get("organizationId")
 	checkType := c.Ctx.Request.Form.Get("checkType")
 	checkId := c.Ctx.Request.Form.Get("checkId")
 	checkKey := c.Ctx.Request.Form.Get("checkKey")
 	checkUser := c.Ctx.Request.Form.Get("checkUser")
+	applicationId := c.Ctx.Request.Form.Get("applicationId")
 	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
 
-	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || !strings.Contains(orgId, "/") || len(checkType) == 0 {
+	if destType == "" || dest == "" || applicationId == "" || !strings.Contains(applicationId, "/") || checkType == "" {
 		c.ResponseError("Missing parameter.")
 		return
 	}
 
-	provider := captcha.GetCaptchaProvider(checkType)
-	if provider == nil {
-		c.ResponseError("Invalid captcha provider.")
-		return
-	}
+	captchaProvider := captcha.GetCaptchaProvider(checkType)
 
-	if checkKey == "" {
-		c.ResponseError("Missing parameter: checkKey.")
-		return
-	}
-	isHuman, err := provider.VerifyCaptcha(checkKey, checkId)
-	if err != nil {
-		c.ResponseError("Failed to verify captcha: %v", err)
-		return
-	}
+	if captchaProvider != nil {
+		if checkKey == "" {
+			c.ResponseError("Missing parameter: checkKey.")
+			return
+		}
+		isHuman, err := captchaProvider.VerifyCaptcha(checkKey, checkId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 
-	if !isHuman {
-		c.ResponseError("Turing test failed.")
-		return
+		if !isHuman {
+			c.ResponseError("Turing test failed.")
+			return
+		}
 	}
 
 	user := c.getCurrentUser()
-	organization := object.GetOrganization(orgId)
-	application := object.GetApplicationByOrganizationName(organization.Name)
+	application := object.GetApplication(applicationId)
+	organization := object.GetOrganization(fmt.Sprintf("%s/%s", application.Owner, application.Organization))
 
 	if checkUser == "true" && user == nil && object.GetUserByFields(organization.Name, dest) == nil {
 		c.ResponseError("Please login first")
@@ -87,7 +85,7 @@ func (c *ApiController) SendVerificationCode() {
 	sendResp := errors.New("Invalid dest type")
 
 	if user == nil && checkUser != "" && checkUser != "true" {
-		_, name := util.GetOwnerAndNameFromId(orgId)
+		name := application.Organization
 		user = object.GetUser(fmt.Sprintf("%s/%s", name, checkUser))
 	}
 	switch destType {
@@ -110,13 +108,12 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError("Invalid phone number")
 			return
 		}
-		org := object.GetOrganization(orgId)
-		if org == nil {
-			c.ResponseError("Missing parameter.")
+		if organization == nil {
+			c.ResponseError("The organization doesn't exist.")
 			return
 		}
 
-		dest = fmt.Sprintf("+%s%s", org.PhonePrefix, dest)
+		dest = fmt.Sprintf("+%s%s", organization.PhonePrefix, dest)
 		provider := application.GetSmsProvider()
 		sendResp = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, dest)
 	}
@@ -211,7 +208,7 @@ func (c *ApiController) VerifyCaptcha() {
 
 	isValid, err := provider.VerifyCaptcha(captchaToken, clientSecret)
 	if err != nil {
-		c.ResponseError("Failed to verify captcha: %v", err)
+		c.ResponseError(err.Error())
 		return
 	}
 

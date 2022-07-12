@@ -109,6 +109,10 @@ func getUrlPath(urlPath string) string {
 		return "/api/login/oauth"
 	}
 
+	if strings.HasPrefix(urlPath, "/api/webauthn") {
+		return "/api/webauthn"
+	}
+
 	return urlPath
 }
 

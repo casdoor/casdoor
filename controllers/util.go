@@ -51,6 +51,23 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	c.ServeJSON()
 }
 
+// SetTokenErrorHttpStatus ...
+func (c *ApiController) SetTokenErrorHttpStatus() {
+	_, ok := c.Data["json"].(*object.TokenError)
+	if ok {
+		if c.Data["json"].(*object.TokenError).Error == object.INVALID_CLIENT {
+			c.Ctx.Output.SetStatus(401)
+			c.Ctx.Output.Header("WWW-Authenticate", "Basic realm=\"OAuth2\"")
+		} else {
+			c.Ctx.Output.SetStatus(400)
+		}
+	}
+	_, ok = c.Data["json"].(*object.TokenWrapper)
+	if ok {
+		c.Ctx.Output.SetStatus(200)
+	}
+}
+
 // RequireSignedIn ...
 func (c *ApiController) RequireSignedIn() (string, bool) {
 	userId := c.GetSessionUsername()

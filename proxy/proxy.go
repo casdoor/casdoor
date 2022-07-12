@@ -54,17 +54,17 @@ func isAddressOpen(address string) bool {
 }
 
 func getProxyHttpClient() *http.Client {
-	sock5Proxy := conf.GetConfigString("sock5Proxy")
-	if sock5Proxy == "" {
+	socks5Proxy := conf.GetConfigString("socks5Proxy")
+	if socks5Proxy == "" {
 		return &http.Client{}
 	}
 
-	if !isAddressOpen(sock5Proxy) {
+	if !isAddressOpen(socks5Proxy) {
 		return &http.Client{}
 	}
 
 	// https://stackoverflow.com/questions/33585587/creating-a-go-socks5-client
-	dialer, err := proxy.SOCKS5("tcp", sock5Proxy, nil, proxy.Direct)
+	dialer, err := proxy.SOCKS5("tcp", socks5Proxy, nil, proxy.Direct)
 	if err != nil {
 		panic(err)
 	}
@@ -76,7 +76,7 @@ func getProxyHttpClient() *http.Client {
 }
 
 func GetHttpClient(url string) *http.Client {
-	if strings.Contains(url, "githubusercontent.com") {
+	if strings.Contains(url, "githubusercontent.com") || strings.Contains(url, "googleusercontent.com") {
 		return ProxyHttpClient
 	} else {
 		return DefaultHttpClient

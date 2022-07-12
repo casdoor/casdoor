@@ -15,7 +15,15 @@
                 "tags": [
                     "OIDC API"
                 ],
-                "operationId": "RootController.GetJwks"
+                "operationId": "RootController.GetJwks",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/jose.JSONWebKey"
+                        }
+                    }
+                }
             }
         },
         "/.well-known/openid-configuration": {
@@ -23,7 +31,16 @@
                 "tags": [
                     "OIDC API"
                 ],
-                "operationId": "RootController.GetOidcDiscovery"
+                "description": "Get Oidc Discovery",
+                "operationId": "RootController.GetOidcDiscovery",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/object.OidcDiscovery"
+                        }
+                    }
+                }
             }
         },
         "/api/add-application": {
@@ -88,6 +105,34 @@
                     "Account API"
                 ],
                 "operationId": "ApiController.AddLdap"
+            }
+        },
+        "/api/add-model": {
+            "post": {
+                "tags": [
+                    "Model API"
+                ],
+                "description": "add model",
+                "operationId": "ApiController.AddModel",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the model",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Model"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/add-organization": {
@@ -418,11 +463,11 @@
                     },
                     {
                         "in": "body",
-                        "name": "body",
+                        "name": "from",
                         "description": "Details of the email request",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/emailForm"
+                            "$ref": "#/definitions/controllers.EmailForm"
                         }
                     }
                 ],
@@ -460,11 +505,11 @@
                     },
                     {
                         "in": "body",
-                        "name": "body",
+                        "name": "from",
                         "description": "Details of the sms request",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/smsForm"
+                            "$ref": "#/definitions/controllers.SmsForm"
                         }
                     }
                 ],
@@ -589,6 +634,34 @@
                     "Account API"
                 ],
                 "operationId": "ApiController.DeleteLdap"
+            }
+        },
+        "/api/delete-model": {
+            "post": {
+                "tags": [
+                    "Model API"
+                ],
+                "description": "delete model",
+                "operationId": "ApiController.DeleteModel",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the model",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Model"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/delete-organization": {
@@ -896,6 +969,60 @@
                 }
             }
         },
+        "/api/get-app-login": {
+            "get": {
+                "tags": [
+                    "Login API"
+                ],
+                "description": "get application login",
+                "operationId": "ApiController.GetApplicationLogin",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "clientId",
+                        "description": "client id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "responseType",
+                        "description": "response type",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "redirectUri",
+                        "description": "redirect uri",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "scope",
+                        "description": "scope",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "state",
+                        "description": "state",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/get-application": {
             "get": {
                 "tags": [
@@ -1081,6 +1208,61 @@
                     "Account API"
                 ],
                 "operationId": "ApiController.GetLdaps"
+            }
+        },
+        "/api/get-model": {
+            "get": {
+                "tags": [
+                    "Model API"
+                ],
+                "description": "get model",
+                "operationId": "ApiController.GetModel",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the model",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Model"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-models": {
+            "get": {
+                "tags": [
+                    "Model API"
+                ],
+                "description": "get models",
+                "operationId": "ApiController.GetModels",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of models",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Model"
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/get-organization": {
@@ -1385,10 +1567,7 @@
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/object.Records"
-                            }
+                            "$ref": "#/definitions/object.Record"
                         }
                     }
                 }
@@ -1404,22 +1583,20 @@
                 "parameters": [
                     {
                         "in": "body",
-                        "name": "body",
+                        "name": "filter",
                         "description": "filter Record message",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.Records"
-                        }
+                            "type": "string"
+                        },
+                        "type": "string"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/object.Records"
-                            }
+                            "$ref": "#/definitions/object.Record"
                         }
                     }
                 }
@@ -1869,6 +2046,32 @@
                 }
             }
         },
+        "/api/invoice-payment": {
+            "post": {
+                "tags": [
+                    "Payment API"
+                ],
+                "description": "invoice payment",
+                "operationId": "ApiController.InvoicePayment",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the payment",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/login": {
             "post": {
                 "tags": [
@@ -1879,18 +2082,62 @@
                 "parameters": [
                     {
                         "in": "query",
-                        "name": "oAuthParams",
-                        "description": "oAuth parameters",
+                        "name": "clientId",
+                        "description": "clientId",
                         "required": true,
                         "type": "string"
                     },
                     {
+                        "in": "query",
+                        "name": "responseType",
+                        "description": "responseType",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "redirectUri",
+                        "description": "redirectUri",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "scope",
+                        "description": "scope",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "state",
+                        "description": "state",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "nonce",
+                        "description": "nonce",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "code_challenge_method",
+                        "description": "code_challenge_method",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "code_challenge",
+                        "description": "code_challenge",
+                        "type": "string"
+                    },
+                    {
                         "in": "body",
-                        "name": "body",
+                        "name": "form",
                         "description": "Login information",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/RequestForm"
+                            "$ref": "#/definitions/controllers.RequestForm"
                         }
                     }
                 ],
@@ -1898,7 +2145,7 @@
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/controllers.api_controller.Response"
+                            "$ref": "#/definitions/Response"
                         }
                     }
                 }
@@ -1946,6 +2193,18 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/object.TokenWrapper"
+                        }
+                    },
+                    "400": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenError"
+                        }
+                    },
+                    "401": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenError"
                         }
                     }
                 }
@@ -2037,6 +2296,18 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/object.IntrospectionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenError"
+                        }
+                    },
+                    "401": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenError"
                         }
                     }
                 }
@@ -2130,6 +2401,18 @@
                         "schema": {
                             "$ref": "#/definitions/object.TokenWrapper"
                         }
+                    },
+                    "400": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenError"
+                        }
+                    },
+                    "401": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.TokenError"
+                        }
                     }
                 }
             }
@@ -2166,6 +2449,34 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/object.Payment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/run-syncer": {
+            "get": {
+                "tags": [
+                    "Syncer API"
+                ],
+                "description": "run syncer",
+                "operationId": "ApiController.RunSyncer",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the syncer",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Syncer"
                         }
                     }
                 ],
@@ -2283,58 +2594,6 @@
             }
         },
         "/api/update-application": {
-            "get": {
-                "tags": [
-                    "Login API"
-                ],
-                "description": "get application login",
-                "operationId": "ApiController.GetApplicationLogin",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "clientId",
-                        "description": "client id",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "responseType",
-                        "description": "response type",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "redirectUri",
-                        "description": "redirect uri",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "scope",
-                        "description": "scope",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "state",
-                        "description": "state",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.api_controller.Response"
-                        }
-                    }
-                }
-            },
             "post": {
                 "tags": [
                     "Application API"
@@ -2410,6 +2669,41 @@
                     "Account API"
                 ],
                 "operationId": "ApiController.UpdateLdap"
+            }
+        },
+        "/api/update-model": {
+            "post": {
+                "tags": [
+                    "Model API"
+                ],
+                "description": "update model",
+                "operationId": "ApiController.UpdateModel",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the model",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the model",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Model"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/update-organization": {
@@ -2794,34 +3088,143 @@
                     }
                 }
             }
+        },
+        "/api/verify-captcha": {
+            "post": {
+                "tags": [
+                    "Verification API"
+                ],
+                "operationId": "ApiController.VerifyCaptcha"
+            }
         }
     },
     "definitions": {
-        "2127.0xc00036c600.false": {
+        "2127.0xc000398090.false": {
             "title": "false",
             "type": "object"
         },
-        "2161.0xc00036c630.false": {
+        "2161.0xc0003980c0.false": {
             "title": "false",
-            "type": "object"
-        },
-        "RequestForm": {
-            "title": "RequestForm",
             "type": "object"
         },
         "Response": {
             "title": "Response",
             "type": "object"
         },
+        "controllers.EmailForm": {
+            "title": "EmailForm",
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "receivers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sender": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.RequestForm": {
+            "title": "RequestForm",
+            "type": "object",
+            "properties": {
+                "affiliation": {
+                    "type": "string"
+                },
+                "application": {
+                    "type": "string"
+                },
+                "autoSignin": {
+                    "type": "boolean"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "emailCode": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "idCard": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "organization": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "phoneCode": {
+                    "type": "string"
+                },
+                "phonePrefix": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "redirectUri": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "relayState": {
+                    "type": "string"
+                },
+                "samlRequest": {
+                    "type": "string"
+                },
+                "samlResponse": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.Response": {
             "title": "Response",
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2127.0xc00036c600.false"
+                    "$ref": "#/definitions/2127.0xc000398090.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2161.0xc00036c630.false"
+                    "$ref": "#/definitions/2161.0xc0003980c0.false"
                 },
                 "msg": {
                     "type": "string"
@@ -2837,33 +3240,45 @@
                 }
             }
         },
-        "controllers.api_controller.Response": {
-            "title": "Response",
+        "controllers.SmsForm": {
+            "title": "SmsForm",
             "type": "object",
             "properties": {
-                "data": {
-                    "$ref": "#/definitions/2127.0xc00036c600.false"
+                "content": {
+                    "type": "string"
                 },
-                "data2": {
-                    "$ref": "#/definitions/2161.0xc00036c630.false"
+                "organizationId": {
+                    "type": "string"
                 },
-                "msg": {
+                "receivers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "jose.JSONWebKey": {
+            "title": "JSONWebKey",
+            "type": "object"
+        },
+        "object.AccountItem": {
+            "title": "AccountItem",
+            "type": "object",
+            "properties": {
+                "modifyRule": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
                 },
-                "status": {
+                "viewRule": {
                     "type": "string"
                 },
-                "sub": {
-                    "type": "string"
+                "visible": {
+                    "type": "boolean"
                 }
             }
-        },
-        "emailForm": {
-            "title": "emailForm",
-            "type": "object"
         },
         "object.Adapter": {
             "title": "Adapter",
@@ -3100,10 +3515,115 @@
                 }
             }
         },
+        "object.Model": {
+            "title": "Model",
+            "type": "object",
+            "properties": {
+                "createdTime": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "modelText": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.OidcDiscovery": {
+            "title": "OidcDiscovery",
+            "type": "object",
+            "properties": {
+                "authorization_endpoint": {
+                    "type": "string"
+                },
+                "claims_supported": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "grant_types_supported": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id_token_signing_alg_values_supported": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "introspection_endpoint": {
+                    "type": "string"
+                },
+                "issuer": {
+                    "type": "string"
+                },
+                "jwks_uri": {
+                    "type": "string"
+                },
+                "request_object_signing_alg_values_supported": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "request_parameter_supported": {
+                    "type": "boolean"
+                },
+                "response_modes_supported": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "response_types_supported": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "scopes_supported": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "subject_types_supported": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "token_endpoint": {
+                    "type": "string"
+                },
+                "userinfo_endpoint": {
+                    "type": "string"
+                }
+            }
+        },
         "object.Organization": {
             "title": "Organization",
             "type": "object",
             "properties": {
+                "accountItems": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.AccountItem"
+                    }
+                },
                 "createdTime": {
                     "type": "string"
                 },
@@ -3118,6 +3638,9 @@
                 },
                 "favicon": {
                     "type": "string"
+                },
+                "isProfilePublic": {
+                    "type": "boolean"
                 },
                 "masterPassword": {
                     "type": "string"
@@ -3164,6 +3687,21 @@
                 "displayName": {
                     "type": "string"
                 },
+                "invoiceRemark": {
+                    "type": "string"
+                },
+                "invoiceTaxId": {
+                    "type": "string"
+                },
+                "invoiceTitle": {
+                    "type": "string"
+                },
+                "invoiceType": {
+                    "type": "string"
+                },
+                "invoiceUrl": {
+                    "type": "string"
+                },
                 "message": {
                     "type": "string"
                 },
@@ -3177,6 +3715,18 @@
                     "type": "string"
                 },
                 "payUrl": {
+                    "type": "string"
+                },
+                "personEmail": {
+                    "type": "string"
+                },
+                "personIdCard": {
+                    "type": "string"
+                },
+                "personName": {
+                    "type": "string"
+                },
+                "personPhone": {
                     "type": "string"
                 },
                 "price": {
@@ -3230,6 +3780,9 @@
                 },
                 "isEnabled": {
                     "type": "boolean"
+                },
+                "model": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -3348,6 +3901,21 @@
                 "createdTime": {
                     "type": "string"
                 },
+                "customAuthUrl": {
+                    "type": "string"
+                },
+                "customLogo": {
+                    "type": "string"
+                },
+                "customScope": {
+                    "type": "string"
+                },
+                "customTokenUrl": {
+                    "type": "string"
+                },
+                "customUserInfoUrl": {
+                    "type": "string"
+                },
                 "displayName": {
                     "type": "string"
                 },
@@ -3438,9 +4006,48 @@
                 }
             }
         },
-        "object.Records": {
-            "title": "Records",
-            "type": "object"
+        "object.Record": {
+            "title": "Record",
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "clientIp": {
+                    "type": "string"
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "extendedUser": {
+                    "$ref": "#/definitions/object.User"
+                },
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "isTriggered": {
+                    "type": "boolean"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "organization": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "requestUri": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
         },
         "object.Role": {
             "title": "Role",
@@ -3641,14 +4248,23 @@
                 }
             }
         },
+        "object.TokenError": {
+            "title": "TokenError",
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "error_description": {
+                    "type": "string"
+                }
+            }
+        },
         "object.TokenWrapper": {
             "title": "TokenWrapper",
             "type": "object",
             "properties": {
                 "access_token": {
-                    "type": "string"
-                },
-                "error": {
                     "type": "string"
                 },
                 "expires_in": {
@@ -3700,6 +4316,9 @@
                 "baidu": {
                     "type": "string"
                 },
+                "bilibili": {
+                    "type": "string"
+                },
                 "bio": {
                     "type": "string"
                 },
@@ -3715,10 +4334,16 @@
                 "createdTime": {
                     "type": "string"
                 },
+                "custom": {
+                    "type": "string"
+                },
                 "dingtalk": {
                     "type": "string"
                 },
                 "displayName": {
+                    "type": "string"
+                },
+                "douyin": {
                     "type": "string"
                 },
                 "education": {
@@ -3818,6 +4443,9 @@
                 "name": {
                     "type": "string"
                 },
+                "okta": {
+                    "type": "string"
+                },
                 "owner": {
                     "type": "string"
                 },
@@ -3871,6 +4499,9 @@
                     "type": "string"
                 },
                 "type": {
+                    "type": "string"
+                },
+                "unionId": {
                     "type": "string"
                 },
                 "updatedTime": {
@@ -3964,10 +4595,6 @@
                     "type": "string"
                 }
             }
-        },
-        "smsForm": {
-            "title": "smsForm",
-            "type": "object"
         },
         "xorm.Engine": {
             "title": "Engine",

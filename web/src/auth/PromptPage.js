@@ -100,8 +100,8 @@ class PromptPage extends React.Component {
     }
 
     return (
-      <AffiliationSelect labelSpan={6} application={application} user={this.state.user} onUpdateUserField={(key, value) => { return this.updateUserField(key, value)}} />
-    )
+      <AffiliationSelect labelSpan={6} application={application} user={this.state.user} onUpdateUserField={(key, value) => {return this.updateUserField(key, value);}} />
+    );
   }
 
   unlinked() {
@@ -110,19 +110,19 @@ class PromptPage extends React.Component {
 
   renderContent(application) {
     return (
-      <div style={{width: '400px'}}>
+      <div style={{width: "400px"}}>
         {
           this.renderAffiliation(application)
         }
         <div>
           {
             (application === null || this.state.user === null) ? null : (
-              application?.providers.filter(providerItem => Setting.isProviderPrompted(providerItem)).map((providerItem, index) => <OAuthWidget key={providerItem.name} labelSpan={6} user={this.state.user} application={application} providerItem={providerItem} onUnlinked={() => { return this.unlinked()}} />)
+              application?.providers.filter(providerItem => Setting.isProviderPrompted(providerItem)).map((providerItem, index) => <OAuthWidget key={providerItem.name} labelSpan={6} user={this.state.user} application={application} providerItem={providerItem} onUnlinked={() => {return this.unlinked();}} />)
             )
           }
         </div>
       </div>
-    )
+    );
   }
 
   onUpdateAccount(account) {
@@ -144,12 +144,12 @@ class PromptPage extends React.Component {
   logout() {
     AuthBackend.logout()
       .then((res) => {
-        if (res.status === 'ok') {
+        if (res.status === "ok") {
           this.onUpdateAccount(null);
 
           let redirectUrl = this.getRedirectUrl();
           if (redirectUrl === "") {
-            redirectUrl = res.data2
+            redirectUrl = res.data2;
           }
           if (redirectUrl !== "") {
             Setting.goToLink(redirectUrl);
@@ -168,7 +168,7 @@ class PromptPage extends React.Component {
       .then((res) => {
         if (res.msg === "") {
           if (isFinal) {
-            Setting.showMessage("success", `Successfully saved`);
+            Setting.showMessage("success", "Successfully saved");
 
             this.logout();
           }
@@ -206,7 +206,7 @@ class PromptPage extends React.Component {
           ]}
         >
         </Result>
-      )
+      );
     }
 
     return (
@@ -227,12 +227,12 @@ class PromptPage extends React.Component {
               </Col>
             </Row>
             <div style={{marginTop: "50px"}}>
-              <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true)}}>{i18next.t("code:Submit and complete")}</Button>
+              <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
             </div>
           </div>
         </Col>
       </Row>
-    )
+    );
   }
 }
 

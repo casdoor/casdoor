@@ -17,6 +17,7 @@ package object
 import (
 	"bytes"
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
@@ -42,8 +43,19 @@ func getProviderEndpoint(provider *Provider) string {
 	return endpoint
 }
 
+func escapePath(path string) string {
+	tokens := strings.Split(path, "/")
+	if len(tokens) > 0 {
+		tokens[len(tokens)-1] = url.QueryEscape(tokens[len(tokens)-1])
+	}
+
+	res := strings.Join(tokens, "/")
+	return res
+}
+
 func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool) (string, string) {
-	objectKey := util.UrlJoin(util.GetUrlPath(provider.Domain), fullFilePath)
+	escapedPath := escapePath(fullFilePath)
+	objectKey := util.UrlJoin(util.GetUrlPath(provider.Domain), escapedPath)
 
 	host := ""
 	if provider.Type != "Local File System" {
@@ -55,6 +67,9 @@ func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 	} else {
 		// provider.Domain = "http://localhost:8000" or "https://door.casdoor.com"
 		host = util.UrlJoin(provider.Domain, "/files")
+	}
+	if provider.Type == "Azure Blob" {
+		host = fmt.Sprintf("%s/%s", host, provider.Bucket)
 	}
 
 	fileUrl := util.UrlJoin(host, objectKey)

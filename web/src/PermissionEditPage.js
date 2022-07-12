@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
+import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
 import * as PermissionBackend from "./backend/PermissionBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as UserBackend from "./backend/UserBackend";
@@ -23,7 +23,7 @@ import * as RoleBackend from "./backend/RoleBackend";
 import * as ModelBackend from "./backend/ModelBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class PermissionEditPage extends React.Component {
   constructor(props) {
@@ -129,17 +129,17 @@ class PermissionEditPage extends React.Component {
         <div>
           {this.state.mode === "add" ? i18next.t("permission:New Permission") : i18next.t("permission:Edit Permission")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitPermissionEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitPermissionEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deletePermission()}>{i18next.t("general:Cancel")}</Button> : null}
+          <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitPermissionEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deletePermission()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
-      } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
-        <Row style={{marginTop: '10px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+      } style={(Setting.isMobile())? {margin: "5px"}:{}} type="inner">
+        <Row style={{marginTop: "10px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.permission.owner} onChange={(owner => {
-              this.updatePermissionField('owner', owner);
+            <Select virtual={false} style={{width: "100%"}} value={this.state.permission.owner} onChange={(owner => {
+              this.updatePermissionField("owner", owner);
 
               this.getUsers(owner);
               this.getRoles(owner);
@@ -150,33 +150,33 @@ class PermissionEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.permission.name} onChange={e => {
-              this.updatePermissionField('name', e.target.value);
+              this.updatePermissionField("name", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.permission.displayName} onChange={e => {
-              this.updatePermissionField('displayName', e.target.value);
+              this.updatePermissionField("displayName", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Model"), i18next.t("general:Model - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.permission.model} onChange={(model => {
-              this.updatePermissionField('model', model);
+            <Select virtual={false} style={{width: "100%"}} value={this.state.permission.model} onChange={(model => {
+              this.updatePermissionField("model", model);
             })}>
               {
                 this.state.models.map((model, index) => <Option key={index} value={model.name}>{model.name}</Option>)
@@ -184,105 +184,105 @@ class PermissionEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("role:Sub users"), i18next.t("role:Sub users - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: '100%'}} value={this.state.permission.users} onChange={(value => {this.updatePermissionField('users', value);})}>
+            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.permission.users} onChange={(value => {this.updatePermissionField("users", value);})}>
               {
                 this.state.users.map((user, index) => <Option key={index} value={`${user.owner}/${user.name}`}>{`${user.owner}/${user.name}`}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("role:Sub roles"), i18next.t("role:Sub roles - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: '100%'}} value={this.state.permission.roles} onChange={(value => {this.updatePermissionField('roles', value);})}>
+            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.permission.roles} onChange={(value => {this.updatePermissionField("roles", value);})}>
               {
                 this.state.roles.filter(roles => (roles.owner !== this.state.roles.owner || roles.name !== this.state.roles.name)).map((permission, index) => <Option key={index} value={`${permission.owner}/${permission.name}`}>{`${permission.owner}/${permission.name}`}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("permission:Resource type"), i18next.t("permission:Resource type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.permission.resourceType} onChange={(value => {
-              this.updatePermissionField('resourceType', value);
+            <Select virtual={false} style={{width: "100%"}} value={this.state.permission.resourceType} onChange={(value => {
+              this.updatePermissionField("resourceType", value);
             })}>
               {
                 [
-                  {id: 'Application', name: 'Application'},
+                  {id: "Application", name: "Application"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("permission:Resources"), i18next.t("permission:Resources - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: '100%'}} value={this.state.permission.resources} onChange={(value => {this.updatePermissionField('resources', value);})}>
+            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.permission.resources} onChange={(value => {this.updatePermissionField("resources", value);})}>
               {
                 this.state.resources.map((resource, index) => <Option key={index} value={`${resource.name}`}>{`${resource.name}`}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("permission:Actions"), i18next.t("permission:Actions - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: '100%'}} value={this.state.permission.actions} onChange={(value => {
-              this.updatePermissionField('actions', value);
+            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.permission.actions} onChange={(value => {
+              this.updatePermissionField("actions", value);
             })}>
               {
                 [
-                  {id: 'Read', name: 'Read'},
-                  {id: 'Write', name: 'Write'},
-                  {id: 'Admin', name: 'Admin'},
+                  {id: "Read", name: "Read"},
+                  {id: "Write", name: "Write"},
+                  {id: "Admin", name: "Admin"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("permission:Effect"), i18next.t("permission:Effect - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.permission.effect} onChange={(value => {
-              this.updatePermissionField('effect', value);
+            <Select virtual={false} style={{width: "100%"}} value={this.state.permission.effect} onChange={(value => {
+              this.updatePermissionField("effect", value);
             })}>
               {
                 [
-                  {id: 'Allow', name: 'Allow'},
-                  {id: 'Deny', name: 'Deny'},
+                  {id: "Allow", name: "Allow"},
+                  {id: "Deny", name: "Deny"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.permission.isEnabled} onChange={checked => {
-              this.updatePermissionField('isEnabled', checked);
+              this.updatePermissionField("isEnabled", checked);
             }} />
           </Col>
         </Row>
       </Card>
-    )
+    );
   }
 
   submitPermissionEdit(willExist) {
@@ -290,19 +290,19 @@ class PermissionEditPage extends React.Component {
     PermissionBackend.updatePermission(this.state.organizationName, this.state.permissionName, permission)
       .then((res) => {
         if (res.msg === "") {
-          Setting.showMessage("success", `Successfully saved`);
+          Setting.showMessage("success", "Successfully saved");
           this.setState({
             permissionName: this.state.permission.name,
           });
 
           if (willExist) {
-            this.props.history.push(`/permissions`);
+            this.props.history.push("/permissions");
           } else {
             this.props.history.push(`/permissions/${this.state.permission.owner}/${this.state.permission.name}`);
           }
         } else {
           Setting.showMessage("error", res.msg);
-          this.updatePermissionField('name', this.state.permissionName);
+          this.updatePermissionField("name", this.state.permissionName);
         }
       })
       .catch(error => {
@@ -313,7 +313,7 @@ class PermissionEditPage extends React.Component {
   deletePermission() {
     PermissionBackend.deletePermission(this.state.permission)
       .then(() => {
-        this.props.history.push(`/permissions`);
+        this.props.history.push("/permissions");
       })
       .catch(error => {
         Setting.showMessage("error", `Permission failed to delete: ${error}`);
@@ -326,10 +326,10 @@ class PermissionEditPage extends React.Component {
         {
           this.state.permission !== null ? this.renderPermission() : null
         }
-        <div style={{marginTop: '20px', marginLeft: '40px'}}>
+        <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitPermissionEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitPermissionEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deletePermission()}>{i18next.t("general:Cancel")}</Button> : null}
+          <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitPermissionEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deletePermission()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );

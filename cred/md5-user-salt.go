@@ -38,8 +38,10 @@ func NewMd5UserSaltCredManager() *Md5UserSaltCredManager {
 }
 
 func (cm *Md5UserSaltCredManager) GetHashedPassword(password string, userSalt string, organizationSalt string) string {
-	hash := getMd5HexDigest(password)
-	res := getMd5HexDigest(hash + userSalt)
+	res := getMd5HexDigest(password)
+	if userSalt != "" {
+		res = getMd5HexDigest(res + userSalt)
+	}
 	return res
 }
 
