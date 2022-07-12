@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Table} from 'antd';
+import {Button, Table} from "antd";
 import i18next from "i18next";
 import * as UserWebauthnBackend from "./backend/UserWebauthnBackend";
 import * as Setting from "./Setting";
@@ -23,30 +23,34 @@ class WebAuthnCredentialTable extends React.Component {
     const columns = [
       {
         title: i18next.t("user:WebAuthn credentials"),
-        dataIndex: 'ID',
-        key: 'ID',
+        dataIndex: "ID",
+        key: "ID",
       },
       {
         title: i18next.t("general:Action"),
-        key: 'action',
+        key: "action",
         render: (text, record, index) => {
           return (
-            <Button style={{marginTop: '5px', marginBottom: '5px', marginRight: '5px'}} type="danger" onClick={() => {this.deleteRow(this.props.table, index)}}>
+            <Button style={{marginTop: "5px", marginBottom: "5px", marginRight: "5px"}} type="danger" onClick={() => {this.deleteRow(this.props.table, index);}}>
               {i18next.t("general:Delete")}
             </Button>
-          )
+          );
         }
       }
-    ]
+    ];
+
     return (
-      <Table scroll={{x: 'max-content'}} rowKey={"ID"} columns={columns} dataSource={this.props.table} size="middle" bordered pagination={false}
+      <Table scroll={{x: "max-content"}} rowKey={"ID"} columns={columns} dataSource={this.props.table} size="middle" bordered pagination={false}
         title={() => (
           <div>
             {i18next.t("user:WebAuthn credentials")}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => {this.registerWebAuthn()}}>{i18next.t("general:Add")}</Button>
+            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => {this.registerWebAuthn();}}>
+              {i18next.t("general:Add")}
+            </Button>
           </div>
         )}
-      />)
+      />
+    );
   }
 
   deleteRow(table, i) {
@@ -57,7 +61,7 @@ class WebAuthnCredentialTable extends React.Component {
   registerWebAuthn() {
     UserWebauthnBackend.registerWebauthnCredential().then((res) => {
       if (res.msg === "") {
-        Setting.showMessage("success", `Successfully added webauthn credentials`);
+        Setting.showMessage("success", "Successfully added webauthn credentials");
       } else {
         Setting.showMessage("error", res.msg);
       }

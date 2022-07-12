@@ -517,15 +517,15 @@ class UserEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-      )
+      );
     } else if(accountItem.name === "WebAuthn credentials") {
       return (
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("user:WebAuthn credentials"), i18next.t("user:WebAuthn credentials"))} :
           </Col>
           <Col span={22} >
-            <WebAuthnCredentialTable table={this.state.user.webauthnCredentials} updateTable={(table)=>{this.updateUserField('webauthnCredentials',table)}} refresh={this.getUser.bind(this)}/>
+            <WebAuthnCredentialTable table={this.state.user.webauthnCredentials} updateTable={(table) => {this.updateUserField("webauthnCredentials", table);}} refresh={this.getUser.bind(this)} />
           </Col>
         </Row>
       );

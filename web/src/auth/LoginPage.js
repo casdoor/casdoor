@@ -50,7 +50,7 @@ import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import BilibiliLoginButton from "./BilibiliLoginButton";
 
-const { TabPane } = Tabs;
+const {TabPane} = Tabs;
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -475,14 +475,14 @@ class LoginPage extends React.Component {
                   <Button
                     type="primary"
                     htmlType="submit"
-                    style={{width: "100%", marginBottom: '5px'}}
+                    style={{width: "100%", marginBottom: "5px"}}
                     disabled={!application.enablePassword}
                   >
                     {i18next.t("login:Sign In")}
                   </Button>
                 ) :
                 (
-                  <Button type="primary" style={{width: "100%", marginBottom: '5px'}} onClick={() => this.signInWithWebAuthn()}>
+                  <Button type="primary" style={{width: "100%", marginBottom: "5px"}} onClick={() => this.signInWithWebAuthn()}>
                     {i18next.t("login:Sign in with WebAuthn")}
                   </Button>
                 )
@@ -639,13 +639,13 @@ class LoginPage extends React.Component {
         }
 
         credentialRequestOptions.publicKey.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.publicKey.challenge);
-        credentialRequestOptions.publicKey.allowCredentials.forEach(function (listItem) {
+        credentialRequestOptions.publicKey.allowCredentials.forEach(function(listItem) {
           listItem.id = UserWebauthnBackend.webAuthnBufferDecode(listItem.id);
         });
 
         return navigator.credentials.get({
           publicKey: credentialRequestOptions.publicKey
-        })
+        });
       })
       .then((assertion) => {
         let authData = assertion.response.authenticatorData;
@@ -670,7 +670,7 @@ class LoginPage extends React.Component {
         })
           .then(res => res.json()).then((res) => {
             if (res.msg === "") {
-              Setting.showMessage("success", `Successfully logged in with webauthn credentials`);
+              Setting.showMessage("success", "Successfully logged in with webauthn credentials");
               Setting.goToLink("/");
             } else {
               Setting.showMessage("error", res.msg);
@@ -679,7 +679,7 @@ class LoginPage extends React.Component {
           .catch(error => {
             Setting.showMessage("error", `Failed to connect to server: ${error}`);
           });
-      })
+      });
   }
 
   renderPasswordOrCodeInput() {
@@ -707,23 +707,21 @@ class LoginPage extends React.Component {
             disabled={!application.enablePassword}
           />
         </Form.Item>
-      )
+      );
     }
   }
 
-  renderMethodChoiceBox(){
+  renderMethodChoiceBox() {
     let application = this.getApplicationObj();
     if (application.enableWebAuthn) {
       return (
         <div>
-          <Tabs defaultActiveKey="password" onChange={(key)=>{this.setState({loginMethod: key})}} centered>
-            <TabPane tab={i18next.t("login:Password")} key="password">
-            </TabPane>
-            <TabPane tab={"WebAuthn"} key="webAuthn">
-            </TabPane>
+          <Tabs defaultActiveKey="password" onChange={(key) => {this.setState({loginMethod: key});}} centered>
+            <TabPane tab={i18next.t("login:Password")} key="password" />
+            <TabPane tab={"WebAuthn"} key="webAuthn" />
           </Tabs>
         </div>
-      )
+      );
     }
   }
 

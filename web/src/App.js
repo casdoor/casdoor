@@ -287,10 +287,12 @@ class App extends Component {
       <Menu onClick={this.handleRightDropdownClick.bind(this)}>
         <Menu.Item key="/account">
           <SettingOutlined />
+          &nbsp;
           {i18next.t("account:My Account")}
         </Menu.Item>
         <Menu.Item key="/logout">
           <LogoutOutlined />
+          &nbsp;
           {i18next.t("account:Logout")}
         </Menu.Item>
       </Menu>

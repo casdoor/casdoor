@@ -30,7 +30,7 @@ export function registerWebauthnCredential() {
       }
       return navigator.credentials.create({
         publicKey: credentialCreationOptions.publicKey
-      })
+      });
     })
     .then((credential) => {
       let attestationObject = credential.response.attestationObject;
@@ -50,18 +50,19 @@ export function registerWebauthnCredential() {
         })
       })
         .then(res => res.json());
-    })
+    });
 }
 
 export function deleteUserWebAuthnCredential(credentialID) {
-  let form = new FormData()
-  form.append("credentialID", credentialID)
+  let form = new FormData();
+  form.append("credentialID", credentialID);
+
   return fetch(`${Setting.ServerUrl}/api/webauthn/delete-credential`, {
     method: "POST",
     credentials: "include",
     body: form,
     dataType: "text"
-  }).then(res => res.json())
+  }).then(res => res.json());
 }
 
 // Base64 to ArrayBuffer
@@ -74,5 +75,5 @@ export function webAuthnBufferEncode(value) {
   return btoa(String.fromCharCode.apply(null, new Uint8Array(value)))
     .replace(/\+/g, "-")
     .replace(/\//g, "_")
-    .replace(/=/g, "");;
+    .replace(/=/g, "");
 }
