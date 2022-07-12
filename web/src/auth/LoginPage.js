@@ -49,6 +49,7 @@ import DouyinLoginButton from "./DouyinLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import BilibiliLoginButton from "./BilibiliLoginButton";
+
 const { TabPane } = Tabs;
 
 class LoginPage extends React.Component {
@@ -69,6 +70,7 @@ class LoginPage extends React.Component {
       validPhone: false,
       loginMethod: "password"
     };
+
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
       this.state.owner = props.match?.params.owner;
       this.state.applicationName = props.match?.params.casApplicationName;
@@ -617,12 +619,14 @@ class LoginPage extends React.Component {
       </div>
     );
   }
+
   signInWithWebAuthn() {
     if (this.state.username === null || this.state.username === "") {
       Setting.showMessage("error", "username is required for webauthn login");
-      return
+      return;
     }
-    let application = this.getApplicationObj()
+
+    let application = this.getApplicationObj();
     return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}&name=${this.state.username}`, {
       method: "GET",
       credentials: "include"
@@ -631,11 +635,12 @@ class LoginPage extends React.Component {
       .then((credentialRequestOptions) => {
         if ("status" in credentialRequestOptions) {
           Setting.showMessage("error", credentialRequestOptions.msg);
-          throw credentialRequestOptions.status.msg
+          throw credentialRequestOptions.status.msg;
         }
+
         credentialRequestOptions.publicKey.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.publicKey.challenge);
         credentialRequestOptions.publicKey.allowCredentials.forEach(function (listItem) {
-          listItem.id = UserWebauthnBackend.webAuthnBufferDecode(listItem.id)
+          listItem.id = UserWebauthnBackend.webAuthnBufferDecode(listItem.id);
         });
 
         return navigator.credentials.get({
@@ -676,8 +681,9 @@ class LoginPage extends React.Component {
           });
       })
   }
+
   renderPasswordOrCodeInput() {
-    let application = this.getApplicationObj()
+    let application = this.getApplicationObj();
     if (this.state.loginMethod === "password") {
       return this.state.isCodeSignin ? (
         <Form.Item
@@ -704,9 +710,10 @@ class LoginPage extends React.Component {
       )
     }
   }
+
   renderMethodChoiceBox(){
-    let application = this.getApplicationObj()
-    if(application.enableWebAuthn){
+    let application = this.getApplicationObj();
+    if (application.enableWebAuthn) {
       return (
         <div>
           <Tabs defaultActiveKey="password" onChange={(key)=>{this.setState({loginMethod: key})}} centered>
@@ -715,7 +722,6 @@ class LoginPage extends React.Component {
             <TabPane tab={"WebAuthn"} key="webAuthn">
             </TabPane>
           </Tabs>
-
         </div>
       )
     }
