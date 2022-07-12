@@ -14,8 +14,9 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Checkbox, Col, Form, Input, Result, Row, Spin} from "antd";
+import {Button, Checkbox, Col, Form, Input, Result, Row, Spin, Tabs} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
+import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Provider from "./Provider";
@@ -49,6 +50,8 @@ import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import BilibiliLoginButton from "./BilibiliLoginButton";
 
+const { TabPane } = Tabs;
+
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
@@ -65,7 +68,9 @@ class LoginPage extends React.Component {
       validEmailOrPhone: false,
       validEmail: false,
       validPhone: false,
+      loginMethod: "password"
     };
+
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
       this.state.owner = props.match?.params.owner;
       this.state.applicationName = props.match?.params.casApplicationName;
@@ -407,6 +412,7 @@ class LoginPage extends React.Component {
             ]}
           >
           </Form.Item>
+          {this.renderMethodChoiceBox()}
           <Form.Item
             name="username"
             rules={[
@@ -421,13 +427,15 @@ class LoginPage extends React.Component {
                       this.setState({validEmailOrPhone: false});
                       return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
                     }
+
+                    if (Setting.isValidPhone(this.state.username)) {
+                      this.setState({validPhone: true});
+                    }
+                    if (Setting.isValidEmail(this.state.username)) {
+                      this.setState({validEmail: true});
+                    }
                   }
-                  if (Setting.isValidPhone(this.state.username)) {
-                    this.setState({validPhone: true});
-                  }
-                  if (Setting.isValidEmail(this.state.username)) {
-                    this.setState({validEmail: true});
-                  }
+
                   this.setState({validEmailOrPhone: true});
                   return Promise.resolve();
                 }
@@ -446,29 +454,7 @@ class LoginPage extends React.Component {
             />
           </Form.Item>
           {
-            this.state.isCodeSignin ? (
-              <Form.Item
-                name="code"
-                rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
-              >
-                <CountDownInput
-                  disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
-                  onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
-                />
-              </Form.Item>
-            ) : (
-              <Form.Item
-                name="password"
-                rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
-              >
-                <Input
-                  prefix={<LockOutlined className="site-form-item-icon" />}
-                  type="password"
-                  placeholder={i18next.t("login:Password")}
-                  disabled={!application.enablePassword}
-                />
-              </Form.Item>
-            )
+            this.renderPasswordOrCodeInput()
           }
           <Form.Item>
             <Form.Item name="autoSignin" valuePropName="checked" noStyle>
@@ -483,14 +469,24 @@ class LoginPage extends React.Component {
             </a>
           </Form.Item>
           <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              style={{width: "100%", marginBottom: "5px"}}
-              disabled={!application.enablePassword}
-            >
-              {i18next.t("login:Sign In")}
-            </Button>
+            {
+              this.state.loginMethod === "password" ?
+                (
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{width: "100%", marginBottom: '5px'}}
+                    disabled={!application.enablePassword}
+                  >
+                    {i18next.t("login:Sign In")}
+                  </Button>
+                ) :
+                (
+                  <Button type="primary" style={{width: "100%", marginBottom: '5px'}} onClick={() => this.signInWithWebAuthn()}>
+                    {i18next.t("login:Sign in with WebAuthn")}
+                  </Button>
+                )
+            }
             {
               !application.enableSignUp ? null : this.renderFooter(application)
             }
@@ -622,6 +618,113 @@ class LoginPage extends React.Component {
         </div>
       </div>
     );
+  }
+
+  signInWithWebAuthn() {
+    if (this.state.username === null || this.state.username === "") {
+      Setting.showMessage("error", "username is required for webauthn login");
+      return;
+    }
+
+    let application = this.getApplicationObj();
+    return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}&name=${this.state.username}`, {
+      method: "GET",
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then((credentialRequestOptions) => {
+        if ("status" in credentialRequestOptions) {
+          Setting.showMessage("error", credentialRequestOptions.msg);
+          throw credentialRequestOptions.status.msg;
+        }
+
+        credentialRequestOptions.publicKey.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.publicKey.challenge);
+        credentialRequestOptions.publicKey.allowCredentials.forEach(function (listItem) {
+          listItem.id = UserWebauthnBackend.webAuthnBufferDecode(listItem.id);
+        });
+
+        return navigator.credentials.get({
+          publicKey: credentialRequestOptions.publicKey
+        })
+      })
+      .then((assertion) => {
+        let authData = assertion.response.authenticatorData;
+        let clientDataJSON = assertion.response.clientDataJSON;
+        let rawId = assertion.rawId;
+        let sig = assertion.response.signature;
+        let userHandle = assertion.response.userHandle;
+        return fetch(`${Setting.ServerUrl}/api/webauthn/signin/finish`, {
+          method: "POST",
+          credentials: "include",
+          body: JSON.stringify({
+            id: assertion.id,
+            rawId: UserWebauthnBackend.webAuthnBufferEncode(rawId),
+            type: assertion.type,
+            response: {
+              authenticatorData: UserWebauthnBackend.webAuthnBufferEncode(authData),
+              clientDataJSON: UserWebauthnBackend.webAuthnBufferEncode(clientDataJSON),
+              signature: UserWebauthnBackend.webAuthnBufferEncode(sig),
+              userHandle: UserWebauthnBackend.webAuthnBufferEncode(userHandle),
+            },
+          })
+        })
+          .then(res => res.json()).then((res) => {
+            if (res.msg === "") {
+              Setting.showMessage("success", `Successfully logged in with webauthn credentials`);
+              Setting.goToLink("/");
+            } else {
+              Setting.showMessage("error", res.msg);
+            }
+          })
+          .catch(error => {
+            Setting.showMessage("error", `Failed to connect to server: ${error}`);
+          });
+      })
+  }
+
+  renderPasswordOrCodeInput() {
+    let application = this.getApplicationObj();
+    if (this.state.loginMethod === "password") {
+      return this.state.isCodeSignin ? (
+        <Form.Item
+          name="code"
+          rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
+        >
+          <CountDownInput
+            disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
+            onButtonClickArgs={[this.state.username, "", Setting.getApplicationOrgName(application), true]}
+          />
+        </Form.Item>
+      ) : (
+        <Form.Item
+          name="password"
+          rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
+        >
+          <Input
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            type="password"
+            placeholder={i18next.t("login:Password")}
+            disabled={!application.enablePassword}
+          />
+        </Form.Item>
+      )
+    }
+  }
+
+  renderMethodChoiceBox(){
+    let application = this.getApplicationObj();
+    if (application.enableWebAuthn) {
+      return (
+        <div>
+          <Tabs defaultActiveKey="password" onChange={(key)=>{this.setState({loginMethod: key})}} centered>
+            <TabPane tab={i18next.t("login:Password")} key="password">
+            </TabPane>
+            <TabPane tab={"WebAuthn"} key="webAuthn">
+            </TabPane>
+          </Tabs>
+        </div>
+      )
+    }
   }
 
   render() {

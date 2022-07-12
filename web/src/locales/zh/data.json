@@ -13,6 +13,8 @@
     "Edit Application": "编辑应用",
     "Enable SAML compress": "压缩SAML响应",
     "Enable SAML compress - Tooltip": "Casdoor作为SAML idp时，是否压缩SAML响应信息",
+    "Enable WebAuthn signin": "Enable WebAuthn signin",
+    "Enable WebAuthn signin - Tooltip": "Enable WebAuthn signin - Tooltip",
     "Enable code signin": "启用验证码登录",
     "Enable code signin - Tooltip": "是否允许用手机或邮箱验证码登录",
     "Enable signin session - Tooltip": "从应用登录Casdoor后，Casdoor是否保持会话",
@@ -248,6 +250,7 @@
     "Please input your password, at least 6 characters!": "请输入您的密码，不少于6位",
     "Please input your username, Email or phone!": "请输入您的用户名、Email或手机号！",
     "Sign In": "登录",
+    "Sign in with WebAuthn": "Sign in with WebAuthn",
     "Sign in with code": "验证码登录",
     "Sign in with password": "密码登录",
     "Sign in with {type}": "{type}登录",
@@ -639,6 +642,7 @@
     "Unlink": "解绑",
     "Upload (.xlsx)": "上传（.xlsx）",
     "Upload a photo": "上传头像",
+    "WebAuthn credentials": "WebAuthn credentials",
     "input password": "输入密码"
   },
   "webhook": {

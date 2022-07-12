@@ -13,6 +13,8 @@
     "Edit Application": "アプリケーションを編集",
     "Enable SAML compress": "Enable SAML compress",
     "Enable SAML compress - Tooltip": "Enable SAML compress - Tooltip",
+    "Enable WebAuthn signin": "Enable WebAuthn signin",
+    "Enable WebAuthn signin - Tooltip": "Enable WebAuthn signin - Tooltip",
     "Enable code signin": "コードサインインを有効にする",
     "Enable code signin - Tooltip": "Enable code signin - Tooltip",
     "Enable signin session - Tooltip": "Enable signin session - Tooltip",
@@ -248,6 +250,7 @@
     "Please input your password, at least 6 characters!": "6文字以上でパスワードを入力してください！",
     "Please input your username, Email or phone!": "ユーザー名、メールアドレスまたは電話番号を入力してください。",
     "Sign In": "サインイン",
+    "Sign in with WebAuthn": "Sign in with WebAuthn",
     "Sign in with code": "コードでサインイン",
     "Sign in with password": "パスワードでサインイン",
     "Sign in with {type}": "{type} でサインイン",
@@ -639,6 +642,7 @@
     "Unlink": "リンクを解除",
     "Upload (.xlsx)": "アップロード (.xlsx)",
     "Upload a photo": "写真をアップロード",
+    "WebAuthn credentials": "WebAuthn credentials",
     "input password": "パスワードを入力"
   },
   "webhook": {

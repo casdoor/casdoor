@@ -191,4 +191,9 @@ func initAPI() {
 	beego.Router("/cas/:organization/:application/p3/proxyValidate", &controllers.RootController{}, "GET:CasP3ServiceAndProxyValidate")
 	beego.Router("/cas/:organization/:application/samlValidate", &controllers.RootController{}, "POST:SamlValidate")
 
+	beego.Router("/api/webauthn/signup/begin", &controllers.ApiController{}, "Get:WebAuthnSignupBegin")
+	beego.Router("/api/webauthn/signup/finish", &controllers.ApiController{}, "Post:WebAuthnSignupFinish")
+	beego.Router("/api/webauthn/signin/begin", &controllers.ApiController{}, "Get:WebAuthnSigninBegin")
+	beego.Router("/api/webauthn/signin/finish", &controllers.ApiController{}, "Post:WebAuthnSigninFinish")
+
 }

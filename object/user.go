@@ -20,6 +20,7 @@ import (
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
+	"github.com/duo-labs/webauthn/webauthn"
 	"xorm.io/core"
 )
 
@@ -98,6 +99,8 @@ type User struct {
 	Okta          string `xorm:"okta varchar(100)" json:"okta"`
 	Douyin        string `xorm:"douyin vachar(100)" json:"douyin"`
 	Custom        string `xorm:"custom varchar(100)" json:"custom"`
+
+	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
@@ -328,7 +331,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 	if len(columns) == 0 {
 		columns = []string{"owner", "display_name", "avatar",
 			"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "signup_application",
-			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties"}
+			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials"}
 	}
 	if isGlobalAdmin {
 		columns = append(columns, "name", "email", "phone")

@@ -15,6 +15,7 @@
 import React from "react";
 import {Button, Card, Col, Input, Result, Row, Select, Spin, Switch} from "antd";
 import * as UserBackend from "./backend/UserBackend";
+import * as UserWebauthnBackend from "./backend/UserWebauthnBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import {LinkOutlined} from "@ant-design/icons";
@@ -27,6 +28,7 @@ import AffiliationSelect from "./common/AffiliationSelect";
 import OAuthWidget from "./common/OAuthWidget";
 import SamlWidget from "./common/SamlWidget";
 import SelectRegionBox from "./SelectRegionBox";
+import WebAuthnCredentialTable from "./WebauthnCredentialTable";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
@@ -513,6 +515,17 @@ class UserEditPage extends React.Component {
             <Switch checked={this.state.user.isDeleted} onChange={checked => {
               this.updateUserField("isDeleted", checked);
             }} />
+          </Col>
+        </Row>
+      )
+    } else if(accountItem.name === "WebAuthn credentials") {
+      return (
+        <Row style={{marginTop: '20px'}} >
+          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:WebAuthn credentials"), i18next.t("user:WebAuthn credentials"))} :
+          </Col>
+          <Col span={22} >
+            <WebAuthnCredentialTable table={this.state.user.webauthnCredentials} updateTable={(table)=>{this.updateUserField('webauthnCredentials',table)}} refresh={this.getUser.bind(this)}/>
           </Col>
         </Row>
       );

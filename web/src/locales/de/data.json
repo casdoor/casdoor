@@ -13,6 +13,8 @@
     "Edit Application": "Anwendung bearbeiten",
     "Enable SAML compress": "Enable SAML compress",
     "Enable SAML compress - Tooltip": "Enable SAML compress - Tooltip",
+    "Enable WebAuthn signin": "Enable WebAuthn signin",
+    "Enable WebAuthn signin - Tooltip": "Enable WebAuthn signin - Tooltip",
     "Enable code signin": "Code-Anmeldung aktivieren",
     "Enable code signin - Tooltip": "Aktiviere Codeanmeldung - Tooltip",
     "Enable signin session - Tooltip": "Aktiviere Anmeldesession - Tooltip",
@@ -248,6 +250,7 @@
     "Please input your password, at least 6 characters!": "Bitte geben Sie Ihr Passwort ein, mindestens 6 Zeichen!",
     "Please input your username, Email or phone!": "Bitte geben Sie Ihren Benutzernamen, E-Mail oder Telefon ein!",
     "Sign In": "Anmelden",
+    "Sign in with WebAuthn": "Sign in with WebAuthn",
     "Sign in with code": "Mit Code anmelden",
     "Sign in with password": "Mit Passwort anmelden",
     "Sign in with {type}": "Mit {type} anmelden",
@@ -639,6 +642,7 @@
     "Unlink": "Link aufheben",
     "Upload (.xlsx)": "Upload (.xlsx)",
     "Upload a photo": "Foto hochladen",
+    "WebAuthn credentials": "WebAuthn credentials",
     "input password": "Passwort eingeben"
   },
   "webhook": {
