@@ -51,7 +51,7 @@ func tokenToResponse(token *object.Token) *Response {
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) (resp *Response) {
 	userId := user.GetId()
 
-	allowed, err := object.CheckPermission(userId, application)
+	allowed, err := object.CheckAccessPermission(userId, application)
 	if err != nil {
 		c.ResponseError(err.Error(), nil)
 		return
