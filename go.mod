@@ -11,7 +11,7 @@ require (
 	github.com/casbin/casbin/v2 v2.30.1
 	github.com/casbin/xorm-adapter/v2 v2.5.1
 	github.com/casdoor/go-sms-sender v0.2.0
-	github.com/casdoor/goth v1.69.0-FIX1
+	github.com/casdoor/goth v1.69.0-FIX2
 	github.com/casdoor/oss v1.2.0
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/duo-labs/webauthn v0.0.0-20211221191814-a22482edaa3b

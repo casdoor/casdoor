@@ -31,8 +31,8 @@ export function getSyncer(owner, name) {
 export function updateSyncer(owner, name, syncer) {
   let newSyncer = Setting.deepCopy(syncer);
   return fetch(`${Setting.ServerUrl}/api/update-syncer?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newSyncer),
   }).then(res => res.json());
 }
@@ -40,8 +40,8 @@ export function updateSyncer(owner, name, syncer) {
 export function addSyncer(syncer) {
   let newSyncer = Setting.deepCopy(syncer);
   return fetch(`${Setting.ServerUrl}/api/add-syncer`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newSyncer),
   }).then(res => res.json());
 }
@@ -49,15 +49,15 @@ export function addSyncer(syncer) {
 export function deleteSyncer(syncer) {
   let newSyncer = Setting.deepCopy(syncer);
   return fetch(`${Setting.ServerUrl}/api/delete-syncer`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newSyncer),
   }).then(res => res.json());
 }
 
 export function runSyncer(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/run-syncer?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'GET',
-    credentials: 'include',
+    method: "GET",
+    credentials: "include",
   }).then(res => res.json());
 }

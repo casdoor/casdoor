@@ -13,12 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import {Cascader, Col, Input, Row, Select} from 'antd';
+import {Cascader, Col, Input, Row, Select} from "antd";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import * as Setting from "../Setting";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class AffiliationSelect extends React.Component {
   constructor(props) {
@@ -73,38 +73,38 @@ class AffiliationSelect extends React.Component {
       <React.Fragment>
         {
           this.props.application?.affiliationUrl === "" ? null : (
-            <Row style={{marginTop: '20px'}} >
-              <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={this.props.labelSpan}>
                 {Setting.getLabel(i18next.t("user:Address"), i18next.t("user:Address - Tooltip"))} :
               </Col>
               <Col span={24 - this.props.labelSpan} >
-                <Cascader style={{width: '100%', maxWidth: '400px'}} value={this.props.user.address} options={this.state.addressOptions} onChange={value => {
-                  this.updateUserField('address', value);
-                  this.updateUserField('affiliation', '');
-                  this.updateUserField('score', 0);
+                <Cascader style={{width: "100%", maxWidth: "400px"}} value={this.props.user.address} options={this.state.addressOptions} onChange={value => {
+                  this.updateUserField("address", value);
+                  this.updateUserField("affiliation", "");
+                  this.updateUserField("score", 0);
                   this.getAffiliationOptions(this.props.application, this.props.user);
                 }} placeholder={i18next.t("signup:Please input your address!")} />
               </Col>
             </Row>
           )
         }
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={this.props.labelSpan}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={this.props.labelSpan}>
             {Setting.getLabel(i18next.t("user:Affiliation"), i18next.t("user:Affiliation - Tooltip"))} :
           </Col>
           <Col span={22} >
             {
               this.props.application?.affiliationUrl === "" ? (
                 <Input value={this.props.user.affiliation} onChange={e => {
-                  this.updateUserField('affiliation', e.target.value);
+                  this.updateUserField("affiliation", e.target.value);
                 }} />
               ) : (
-                <Select virtual={false} style={{width: '100%'}} value={this.props.user.affiliation} onChange={(value => {
+                <Select virtual={false} style={{width: "100%"}} value={this.props.user.affiliation} onChange={(value => {
                   const name = value;
                   const affiliationOption = Setting.getArrayItem(this.state.affiliationOptions, "name", name);
                   const id = affiliationOption.id;
-                  this.updateUserField('affiliation', name);
-                  this.updateUserField('score', id);
+                  this.updateUserField("affiliation", name);
+                  this.updateUserField("score", id);
                 })}>
                   {
                     <Option key={0} value={""}>(empty)</Option>
@@ -118,7 +118,7 @@ class AffiliationSelect extends React.Component {
           </Col>
         </Row>
       </React.Fragment>
-    )
+    );
   }
 }
 

@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Switch, Table, Upload} from 'antd';
+import {Button, Popconfirm, Switch, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as Setting from "./Setting";
@@ -34,8 +34,8 @@ class UserListPage extends BaseListPage {
         pageSize: 10,
       },
       loading: false,
-      searchText: '',
-      searchedColumn: '',
+      searchText: "",
+      searchedColumn: "",
     };
   }
 
@@ -62,15 +62,15 @@ class UserListPage extends BaseListPage {
       isDeleted: false,
       properties: {},
       signupApplication: "app-built-in",
-    }
+    };
   }
 
   addUser() {
     const newUser = this.newUser();
     UserBackend.addUser(newUser)
       .then((res) => {
-          this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add"});
-        }
+        this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add"});
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `User failed to add: ${error}`);
@@ -80,12 +80,12 @@ class UserListPage extends BaseListPage {
   deleteUser(i) {
     UserBackend.deleteUser(this.state.data[i])
       .then((res) => {
-          Setting.showMessage("success", `User deleted successfully`);
-          this.setState({
-            data: Setting.deleteRow(this.state.data, i),
-            pagination: {total: this.state.pagination.total - 1},
-          });
-        }
+        Setting.showMessage("success", "User deleted successfully");
+        this.setState({
+          data: Setting.deleteRow(this.state.data, i),
+          pagination: {total: this.state.pagination.total - 1},
+        });
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `User failed to delete: ${error}`);
@@ -93,26 +93,26 @@ class UserListPage extends BaseListPage {
   }
 
   uploadFile(info) {
-    const { status, response: res } = info.file;
-    if (status === 'done') {
-      if (res.status === 'ok') {
-        Setting.showMessage("success", `Users uploaded successfully, refreshing the page`);
+    const {status, response: res} = info.file;
+    if (status === "done") {
+      if (res.status === "ok") {
+        Setting.showMessage("success", "Users uploaded successfully, refreshing the page");
 
-        const { pagination } = this.state;
-        this.fetch({ pagination });
+        const {pagination} = this.state;
+        this.fetch({pagination});
       } else {
         Setting.showMessage("error", `Users failed to upload: ${res.msg}`);
       }
-    } else if (status === 'error') {
-      Setting.showMessage("error", `File failed to upload`);
+    } else if (status === "error") {
+      Setting.showMessage("error", "File failed to upload");
     }
   }
 
   renderUpload() {
     const props = {
-      name: 'file',
-      accept: '.xlsx',
-      method: 'post',
+      name: "file",
+      accept: ".xlsx",
+      method: "post",
       action: `${Setting.ServerUrl}/api/upload-users`,
       withCredentials: true,
       onChange: (info) => {
@@ -126,7 +126,7 @@ class UserListPage extends BaseListPage {
           <UploadOutlined /> {i18next.t("user:Upload (.xlsx)")}
         </Button>
       </Upload>
-    )
+    );
   }
 
   renderTable(users) {
@@ -134,63 +134,63 @@ class UserListPage extends BaseListPage {
     var countries = require("i18n-iso-countries");
     countries.registerLocale(require("i18n-iso-countries/langs/" + i18next.language + ".json"));
     for (var index in users) {
-      users[index].region = countries.getName(users[index].region, i18next.language, {select: "official"})
+      users[index].region = countries.getName(users[index].region, i18next.language, {select: "official"});
     }
 
     const columns = [
       {
         title: i18next.t("general:Organization"),
-        dataIndex: 'owner',
-        key: 'owner',
+        dataIndex: "owner",
+        key: "owner",
         width: (Setting.isMobile()) ? "100px" : "120px",
-        fixed: 'left',
+        fixed: "left",
         sorter: true,
-        ...this.getColumnSearchProps('owner'),
+        ...this.getColumnSearchProps("owner"),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Application"),
-        dataIndex: 'signupApplication',
-        key: 'signupApplication',
+        dataIndex: "signupApplication",
+        key: "signupApplication",
         width: (Setting.isMobile()) ? "100px" : "120px",
-        fixed: 'left',
+        fixed: "left",
         sorter: true,
-        ...this.getColumnSearchProps('signupApplication'),
+        ...this.getColumnSearchProps("signupApplication"),
         render: (text, record, index) => {
           return (
             <Link to={`/applications/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Name"),
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: "name",
+        key: "name",
         width: (Setting.isMobile()) ? "80px" : "110px",
-        fixed: 'left',
+        fixed: "left",
         sorter: true,
-        ...this.getColumnSearchProps('name'),
+        ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
             <Link to={`/users/${record.owner}/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Created time"),
-        dataIndex: 'createdTime',
-        key: 'createdTime',
-        width: '160px',
+        dataIndex: "createdTime",
+        key: "createdTime",
+        width: "160px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -198,47 +198,47 @@ class UserListPage extends BaseListPage {
       },
       {
         title: i18next.t("general:Display name"),
-        dataIndex: 'displayName',
-        key: 'displayName',
+        dataIndex: "displayName",
+        key: "displayName",
         // width: '100px',
         sorter: true,
-        ...this.getColumnSearchProps('displayName'),
+        ...this.getColumnSearchProps("displayName"),
       },
       {
         title: i18next.t("general:Avatar"),
-        dataIndex: 'avatar',
-        key: 'avatar',
-        width: '80px',
+        dataIndex: "avatar",
+        key: "avatar",
+        width: "80px",
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
               <img src={text} alt={text} width={50} />
             </a>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Email"),
-        dataIndex: 'email',
-        key: 'email',
-        width: '160px',
+        dataIndex: "email",
+        key: "email",
+        width: "160px",
         sorter: true,
-        ...this.getColumnSearchProps('email'),
+        ...this.getColumnSearchProps("email"),
         render: (text, record, index) => {
           return (
             <a href={`mailto:${text}`}>
               {text}
             </a>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Phone"),
-        dataIndex: 'phone',
-        key: 'phone',
-        width: '120px',
+        dataIndex: "phone",
+        key: "phone",
+        width: "120px",
         sorter: true,
-        ...this.getColumnSearchProps('phone'),
+        ...this.getColumnSearchProps("phone"),
       },
       // {
       //   title: 'Phone',
@@ -249,94 +249,94 @@ class UserListPage extends BaseListPage {
       // },
       {
         title: i18next.t("user:Affiliation"),
-        dataIndex: 'affiliation',
-        key: 'affiliation',
-        width: '140px',
+        dataIndex: "affiliation",
+        key: "affiliation",
+        width: "140px",
         sorter: true,
-        ...this.getColumnSearchProps('affiliation'),
+        ...this.getColumnSearchProps("affiliation"),
       },
       {
         title: i18next.t("user:Country/Region"),
-        dataIndex: 'region',
-        key: 'region',
-        width: '140px',
+        dataIndex: "region",
+        key: "region",
+        width: "140px",
         sorter: true,
-        ...this.getColumnSearchProps('region'),
+        ...this.getColumnSearchProps("region"),
       },
       {
         title: i18next.t("user:Tag"),
-        dataIndex: 'tag',
-        key: 'tag',
-        width: '110px',
+        dataIndex: "tag",
+        key: "tag",
+        width: "110px",
         sorter: true,
-        ...this.getColumnSearchProps('tag'),
+        ...this.getColumnSearchProps("tag"),
       },
       {
         title: i18next.t("user:Is admin"),
-        dataIndex: 'isAdmin',
-        key: 'isAdmin',
-        width: '110px',
+        dataIndex: "isAdmin",
+        key: "isAdmin",
+        width: "110px",
         sorter: true,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
-          )
+          );
         }
       },
       {
         title: i18next.t("user:Is global admin"),
-        dataIndex: 'isGlobalAdmin',
-        key: 'isGlobalAdmin',
-        width: '140px',
+        dataIndex: "isGlobalAdmin",
+        key: "isGlobalAdmin",
+        width: "140px",
         sorter: true,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
-          )
+          );
         }
       },
       {
         title: i18next.t("user:Is forbidden"),
-        dataIndex: 'isForbidden',
-        key: 'isForbidden',
-        width: '110px',
+        dataIndex: "isForbidden",
+        key: "isForbidden",
+        width: "110px",
         sorter: true,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
-          )
+          );
         }
       },
       {
         title: i18next.t("user:Is deleted"),
-        dataIndex: 'isDeleted',
-        key: 'isDeleted',
-        width: '110px',
+        dataIndex: "isDeleted",
+        key: "isDeleted",
+        width: "110px",
         sorter: true,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Action"),
-        dataIndex: '',
-        key: 'op',
-        width: '190px',
+        dataIndex: "",
+        key: "op",
+        width: "190px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/users/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/users/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete user: ${record.name} ?`}
                 onConfirm={() => this.deleteUser(index)}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
-          )
+          );
         }
       },
     ];
@@ -350,18 +350,18 @@ class UserListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={users} rowKey="name" size="middle" bordered pagination={paginationProps}
-               title={() => (
-                 <div>
-                   {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
-                   <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")}</Button>
-                   {
-                     this.renderUpload()
-                   }
-                 </div>
-               )}
-               loading={this.state.loading}
-               onChange={this.handleTableChange}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={users} rowKey="name" size="middle" bordered pagination={paginationProps}
+          title={() => (
+            <div>
+              {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")}</Button>
+              {
+                this.renderUpload()
+              }
+            </div>
+          )}
+          loading={this.state.loading}
+          onChange={this.handleTableChange}
         />
       </div>
     );
@@ -370,7 +370,7 @@ class UserListPage extends BaseListPage {
   fetch = (params = {}) => {
     let field = params.searchedColumn, value = params.searchText;
     let sortField = params.sortField, sortOrder = params.sortOrder;
-    this.setState({ loading: true });
+    this.setState({loading: true});
     if (this.state.organizationName === undefined) {
       UserBackend.getGlobalUsers(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
         .then((res) => {

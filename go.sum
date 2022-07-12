@@ -100,8 +100,8 @@ github.com/casbin/xorm-adapter/v2 v2.5.1 h1:BkpIxRHKa0s3bSMx173PpuU7oTs+Zw7XmD0B
 github.com/casbin/xorm-adapter/v2 v2.5.1/go.mod h1:AeH4dBKHC9/zYxzdPVHhPDzF8LYLqjDdb767CWJoV54=
 github.com/casdoor/go-sms-sender v0.2.0 h1:52bin4EBOPzOee64s9UK7jxd22FODvT9/+Y/Z+PSHpg=
 github.com/casdoor/go-sms-sender v0.2.0/go.mod h1:fsZsNnALvFIo+HFcE1U/oCQv4ZT42FdglXKMsEm3WSk=
-github.com/casdoor/goth v1.69.0-FIX1 h1:24Y3tfaJxWGJbxickGe3F9y2c8X1PgsQynhxGXV1f9Q=
-github.com/casdoor/goth v1.69.0-FIX1/go.mod h1:Om55nRo8CkeDkPSNBbzXW4G5uI28ZUkSk5S69dPek3s=
+github.com/casdoor/goth v1.69.0-FIX2 h1:RgfIMkL9kekylgxHHK2ZY8ASAwOGns2HVlaBwLu7Bcs=
+github.com/casdoor/goth v1.69.0-FIX2/go.mod h1:Om55nRo8CkeDkPSNBbzXW4G5uI28ZUkSk5S69dPek3s=
 github.com/casdoor/oss v1.2.0 h1:ozLAE+nnNdFQBWbzH8U9spzaO8h8NrB57lBcdyMUUQ8=
 github.com/casdoor/oss v1.2.0/go.mod h1:qii35VBuxnR/uEuYSKpS0aJ8htQFOcCVsZ4FHgHLuss=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=

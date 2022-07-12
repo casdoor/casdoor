@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Result, Button} from 'antd';
+import {Result, Button} from "antd";
 import i18next from "i18next";
 import {authConfig} from "./Auth";
 import * as Util from "./Util";
@@ -65,11 +65,11 @@ class ResultPage extends React.Component {
           subTitle={i18next.t("signup:Please click the below button to sign in")}
           extra={[
             <Button type="primary" key="login" onClick={() => {
-              let linkInStorage = sessionStorage.getItem("loginURL")
+              let linkInStorage = sessionStorage.getItem("signinUrl");
               if (linkInStorage !== null && linkInStorage !== "") {
-                  Setting.goToLink(linkInStorage)
+                Setting.goToLink(linkInStorage);
               } else {
-                  Setting.goToLogin(this, application)
+                Setting.goToLogin(this, application);
               }
             }}>
               {i18next.t("login:Sign In")}

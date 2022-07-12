@@ -13,14 +13,14 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch} from 'antd';
+import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
 import * as ModelBackend from "./backend/ModelBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import TextArea from "antd/es/input/TextArea";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class ModelEditPage extends React.Component {
   constructor(props) {
@@ -94,64 +94,64 @@ class ModelEditPage extends React.Component {
         <div>
           {this.state.mode === "add" ? i18next.t("model:New Model") : i18next.t("model:Edit Model")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitModelEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: '20px'}} type="primary" onClick={() => this.submitModelEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} onClick={() => this.deleteModel()}>{i18next.t("general:Cancel")}</Button> : null}
+          <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitModelEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteModel()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
-      } style={(Setting.isMobile())? {margin: '5px'}:{}} type="inner">
-        <Row style={{marginTop: '10px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+      } style={(Setting.isMobile())? {margin: "5px"}:{}} type="inner">
+        <Row style={{marginTop: "10px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: '100%'}} value={this.state.model.owner} onChange={(value => {this.updateModelField('owner', value);})}>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.model.owner} onChange={(value => {this.updateModelField("owner", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.model.name} onChange={e => {
-              this.updateModelField('name', e.target.value);
+              this.updateModelField("name", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.model.displayName} onChange={e => {
-              this.updateModelField('displayName', e.target.value);
+              this.updateModelField("displayName", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("model:Model text"), i18next.t("model:Model text - Tooltip"))} :
           </Col>
           <Col span={22}>
             <TextArea rows={10} value={this.state.model.modelText} onChange={e => {
-              this.updateModelField('modelText', e.target.value);
+              this.updateModelField("modelText", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: '20px'}} >
-          <Col style={{marginTop: '5px'}} span={(Setting.isMobile()) ? 19 : 2}>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.model.isEnabled} onChange={checked => {
-              this.updateModelField('isEnabled', checked);
+              this.updateModelField("isEnabled", checked);
             }} />
           </Col>
         </Row>
       </Card>
-    )
+    );
   }
 
   submitModelEdit(willExist) {
@@ -159,19 +159,19 @@ class ModelEditPage extends React.Component {
     ModelBackend.updateModel(this.state.organizationName, this.state.modelName, model)
       .then((res) => {
         if (res.msg === "") {
-          Setting.showMessage("success", `Successfully saved`);
+          Setting.showMessage("success", "Successfully saved");
           this.setState({
             modelName: this.state.model.name,
           });
 
           if (willExist) {
-            this.props.history.push(`/models`);
+            this.props.history.push("/models");
           } else {
             this.props.history.push(`/models/${this.state.model.owner}/${this.state.model.name}`);
           }
         } else {
           Setting.showMessage("error", res.msg);
-          this.updateModelField('name', this.state.modelName);
+          this.updateModelField("name", this.state.modelName);
         }
       })
       .catch(error => {
@@ -182,7 +182,7 @@ class ModelEditPage extends React.Component {
   deleteModel() {
     ModelBackend.deleteModel(this.state.model)
       .then(() => {
-        this.props.history.push(`/models`);
+        this.props.history.push("/models");
       })
       .catch(error => {
         Setting.showMessage("error", `Model failed to delete: ${error}`);
@@ -195,10 +195,10 @@ class ModelEditPage extends React.Component {
         {
           this.state.model !== null ? this.renderModel() : null
         }
-        <div style={{marginTop: '20px', marginLeft: '40px'}}>
+        <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitModelEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: '20px'}} type="primary" size="large" onClick={() => this.submitModelEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: '20px'}} size="large" onClick={() => this.deleteModel()}>{i18next.t("general:Cancel")}</Button> : null}
+          <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitModelEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteModel()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
     );

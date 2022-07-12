@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table} from 'antd';
+import {Button, Popconfirm, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
@@ -39,15 +39,15 @@ class ProviderListPage extends BaseListPage {
       host: "",
       port: 0,
       providerUrl: "https://github.com/organizations/xxx/settings/applications/1234567",
-    }
+    };
   }
 
   addProvider() {
     const newProvider = this.newProvider();
     ProviderBackend.addProvider(newProvider)
       .then((res) => {
-          this.props.history.push({pathname: `/providers/${newProvider.name}`, mode: "add"});
-        }
+        this.props.history.push({pathname: `/providers/${newProvider.name}`, mode: "add"});
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Provider failed to add: ${error}`);
@@ -57,12 +57,12 @@ class ProviderListPage extends BaseListPage {
   deleteProvider(i) {
     ProviderBackend.deleteProvider(this.state.data[i])
       .then((res) => {
-          Setting.showMessage("success", `Provider deleted successfully`);
-          this.setState({
-            data: Setting.deleteRow(this.state.data, i),
-            pagination: {total: this.state.pagination.total - 1},
-          });
-        }
+        Setting.showMessage("success", "Provider deleted successfully");
+        this.setState({
+          data: Setting.deleteRow(this.state.data, i),
+          pagination: {total: this.state.pagination.total - 1},
+        });
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Provider failed to delete: ${error}`);
@@ -73,25 +73,25 @@ class ProviderListPage extends BaseListPage {
     const columns = [
       {
         title: i18next.t("general:Name"),
-        dataIndex: 'name',
-        key: 'name',
-        width: '120px',
-        fixed: 'left',
+        dataIndex: "name",
+        key: "name",
+        width: "120px",
+        fixed: "left",
         sorter: true,
-        ...this.getColumnSearchProps('name'),
+        ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
             <Link to={`/providers/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Created time"),
-        dataIndex: 'createdTime',
-        key: 'createdTime',
-        width: '180px',
+        dataIndex: "createdTime",
+        key: "createdTime",
+        width: "180px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -99,41 +99,41 @@ class ProviderListPage extends BaseListPage {
       },
       {
         title: i18next.t("general:Display name"),
-        dataIndex: 'displayName',
-        key: 'displayName',
+        dataIndex: "displayName",
+        key: "displayName",
         // width: '100px',
         sorter: true,
-        ...this.getColumnSearchProps('displayName'),
+        ...this.getColumnSearchProps("displayName"),
       },
       {
         title: i18next.t("provider:Category"),
-        dataIndex: 'category',
-        key: 'category',
+        dataIndex: "category",
+        key: "category",
         filterMultiple: false,
         filters: [
-          {text: 'OAuth', value: 'OAuth'},
-          {text: 'Email', value: 'Email'},
-          {text: 'SMS', value: 'SMS'},
-          {text: 'Storage', value: 'Storage'},
-          {text: 'SAML', value: 'SAML'},
+          {text: "OAuth", value: "OAuth"},
+          {text: "Email", value: "Email"},
+          {text: "SMS", value: "SMS"},
+          {text: "Storage", value: "Storage"},
+          {text: "SAML", value: "SAML"},
         ],
-        width: '110px',
+        width: "110px",
         sorter: true,
       },
       {
         title: i18next.t("provider:Type"),
-        dataIndex: 'type',
-        key: 'type',
-        width: '110px',
-        align: 'center',
+        dataIndex: "type",
+        key: "type",
+        width: "110px",
+        align: "center",
         filterMultiple: false,
         filters: [
-          {text: 'OAuth', value: 'OAuth', children: Setting.getProviderTypeOptions('OAuth').map((o) => {return {text:o.id, value:o.name}})},
-          {text: 'Email', value: 'Email', children: Setting.getProviderTypeOptions('Email').map((o) => {return {text:o.id, value:o.name}})},
-          {text: 'SMS', value: 'SMS', children: Setting.getProviderTypeOptions('SMS').map((o) => {return {text:o.id, value:o.name}})},
-          {text: 'Storage', value: 'Storage', children: Setting.getProviderTypeOptions('Storage').map((o) => {return {text:o.id, value:o.name}})},
-          {text: 'SAML', value: 'SAML', children: Setting.getProviderTypeOptions('SAML').map((o) => {return {text:o.id, value:o.name}})},
-          {text: 'Captcha', value: 'Captcha', children: Setting.getProviderTypeOptions('Captcha').map((o) => {return {text:o.id, value:o.name}})},
+          {text: "OAuth", value: "OAuth", children: Setting.getProviderTypeOptions("OAuth").map((o) => {return {text:o.id, value:o.name};})},
+          {text: "Email", value: "Email", children: Setting.getProviderTypeOptions("Email").map((o) => {return {text:o.id, value:o.name};})},
+          {text: "SMS", value: "SMS", children: Setting.getProviderTypeOptions("SMS").map((o) => {return {text:o.id, value:o.name};})},
+          {text: "Storage", value: "Storage", children: Setting.getProviderTypeOptions("Storage").map((o) => {return {text:o.id, value:o.name};})},
+          {text: "SAML", value: "SAML", children: Setting.getProviderTypeOptions("SAML").map((o) => {return {text:o.id, value:o.name};})},
+          {text: "Captcha", value: "Captcha", children: Setting.getProviderTypeOptions("Captcha").map((o) => {return {text:o.id, value:o.name};})},
         ],
         sorter: true,
         render: (text, record, index) => {
@@ -142,22 +142,22 @@ class ProviderListPage extends BaseListPage {
       },
       {
         title: i18next.t("provider:Client ID"),
-        dataIndex: 'clientId',
-        key: 'clientId',
-        width: '100px',
+        dataIndex: "clientId",
+        key: "clientId",
+        width: "100px",
         sorter: true,
-        ...this.getColumnSearchProps('clientId'),
+        ...this.getColumnSearchProps("clientId"),
         render: (text, record, index) => {
           return Setting.getShortText(text);
         }
       },
       {
         title: i18next.t("provider:Provider URL"),
-        dataIndex: 'providerUrl',
-        key: 'providerUrl',
-        width: '150px',
+        dataIndex: "providerUrl",
+        key: "providerUrl",
+        width: "150px",
         sorter: true,
-        ...this.getColumnSearchProps('providerUrl'),
+        ...this.getColumnSearchProps("providerUrl"),
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
@@ -165,27 +165,27 @@ class ProviderListPage extends BaseListPage {
                 Setting.getShortText(text)
               }
             </a>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Action"),
-        dataIndex: '',
-        key: 'op',
-        width: '170px',
+        dataIndex: "",
+        key: "op",
+        width: "170px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/providers/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/providers/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete provider: ${record.name} ?`}
                 onConfirm={() => this.deleteProvider(index)}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
-          )
+          );
         }
       },
     ];
@@ -199,15 +199,15 @@ class ProviderListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={providers} rowKey="name" size="middle" bordered pagination={paginationProps}
-               title={() => (
-                 <div>
-                   {i18next.t("general:Providers")}&nbsp;&nbsp;&nbsp;&nbsp;
-                   <Button type="primary" size="small" onClick={this.addProvider.bind(this)}>{i18next.t("general:Add")}</Button>
-                 </div>
-               )}
-               loading={this.state.loading}
-               onChange={this.handleTableChange}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={providers} rowKey="name" size="middle" bordered pagination={paginationProps}
+          title={() => (
+            <div>
+              {i18next.t("general:Providers")}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button type="primary" size="small" onClick={this.addProvider.bind(this)}>{i18next.t("general:Add")}</Button>
+            </div>
+          )}
+          loading={this.state.loading}
+          onChange={this.handleTableChange}
         />
       </div>
     );
@@ -223,7 +223,7 @@ class ProviderListPage extends BaseListPage {
       field = "type";
       value = params.type;
     }
-    this.setState({ loading: true });
+    this.setState({loading: true});
     ProviderBackend.getProviders("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {

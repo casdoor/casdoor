@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table} from 'antd';
+import {Button, Popconfirm, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as CertBackend from "./backend/CertBackend";
@@ -36,15 +36,15 @@ class CertListPage extends BaseListPage {
       expireInYears: 20,
       publicKey: "",
       privateKey: "",
-    }
+    };
   }
 
   addCert() {
     const newCert = this.newCert();
     CertBackend.addCert(newCert)
       .then((res) => {
-          this.props.history.push({pathname: `/certs/${newCert.name}`, mode: "add"});
-        }
+        this.props.history.push({pathname: `/certs/${newCert.name}`, mode: "add"});
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Cert failed to add: ${error}`);
@@ -54,12 +54,12 @@ class CertListPage extends BaseListPage {
   deleteCert(i) {
     CertBackend.deleteCert(this.state.data[i])
       .then((res) => {
-          Setting.showMessage("success", `Cert deleted successfully`);
-          this.setState({
-            data: Setting.deleteRow(this.state.data, i),
-            pagination: {total: this.state.pagination.total - 1},
-          });
-        }
+        Setting.showMessage("success", "Cert deleted successfully");
+        this.setState({
+          data: Setting.deleteRow(this.state.data, i),
+          pagination: {total: this.state.pagination.total - 1},
+        });
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Cert failed to delete: ${error}`);
@@ -70,25 +70,25 @@ class CertListPage extends BaseListPage {
     const columns = [
       {
         title: i18next.t("general:Name"),
-        dataIndex: 'name',
-        key: 'name',
-        width: '120px',
-        fixed: 'left',
+        dataIndex: "name",
+        key: "name",
+        width: "120px",
+        fixed: "left",
         sorter: true,
-        ...this.getColumnSearchProps('name'),
+        ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
             <Link to={`/certs/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Created time"),
-        dataIndex: 'createdTime',
-        key: 'createdTime',
-        width: '180px',
+        dataIndex: "createdTime",
+        key: "createdTime",
+        width: "180px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -96,79 +96,79 @@ class CertListPage extends BaseListPage {
       },
       {
         title: i18next.t("general:Display name"),
-        dataIndex: 'displayName',
-        key: 'displayName',
+        dataIndex: "displayName",
+        key: "displayName",
         // width: '100px',
         sorter: true,
-        ...this.getColumnSearchProps('displayName'),
+        ...this.getColumnSearchProps("displayName"),
       },
       {
         title: i18next.t("cert:Scope"),
-        dataIndex: 'scope',
-        key: 'scope',
+        dataIndex: "scope",
+        key: "scope",
         filterMultiple: false,
         filters: [
-          {text: 'JWT', value: 'JWT'},
+          {text: "JWT", value: "JWT"},
         ],
-        width: '110px',
+        width: "110px",
         sorter: true,
       },
       {
         title: i18next.t("cert:Type"),
-        dataIndex: 'type',
-        key: 'type',
+        dataIndex: "type",
+        key: "type",
         filterMultiple: false,
         filters: [
-          {text: 'x509', value: 'x509'},
+          {text: "x509", value: "x509"},
         ],
-        width: '110px',
+        width: "110px",
         sorter: true,
       },
       {
         title: i18next.t("cert:Crypto algorithm"),
-        dataIndex: 'cryptoAlgorithm',
-        key: 'cryptoAlgorithm',
+        dataIndex: "cryptoAlgorithm",
+        key: "cryptoAlgorithm",
         filterMultiple: false,
         filters: [
-          {text: 'RS256', value: 'RS256'},
+          {text: "RS256", value: "RS256"},
         ],
-        width: '190px',
+        width: "190px",
         sorter: true,
       },
       {
         title: i18next.t("cert:Bit size"),
-        dataIndex: 'bitSize',
-        key: 'bitSize',
-        width: '130px',
+        dataIndex: "bitSize",
+        key: "bitSize",
+        width: "130px",
         sorter: true,
-        ...this.getColumnSearchProps('bitSize'),
+        ...this.getColumnSearchProps("bitSize"),
       },
       {
         title: i18next.t("cert:Expire in years"),
-        dataIndex: 'expireInYears',
-        key: 'expireInYears',
-        width: '170px',
+        dataIndex: "expireInYears",
+        key: "expireInYears",
+        width: "170px",
         sorter: true,
-        ...this.getColumnSearchProps('expireInYears'),
+        ...this.getColumnSearchProps("expireInYears"),
       },
       {
         title: i18next.t("general:Action"),
-        dataIndex: '',
-        key: 'op',
-        width: '170px',
+        dataIndex: "",
+        key: "op",
+        width: "170px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/certs/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/certs/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete cert: ${record.name} ?`}
                 onConfirm={() => this.deleteCert(index)}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
-          )
+          );
         }
       },
     ];
@@ -182,15 +182,15 @@ class CertListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={certs} rowKey="name" size="middle" bordered pagination={paginationProps}
-               title={() => (
-                 <div>
-                   {i18next.t("general:Certs")}&nbsp;&nbsp;&nbsp;&nbsp;
-                   <Button type="primary" size="small" onClick={this.addCert.bind(this)}>{i18next.t("general:Add")}</Button>
-                 </div>
-               )}
-               loading={this.state.loading}
-               onChange={this.handleTableChange}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={certs} rowKey="name" size="middle" bordered pagination={paginationProps}
+          title={() => (
+            <div>
+              {i18next.t("general:Certs")}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button type="primary" size="small" onClick={this.addCert.bind(this)}>{i18next.t("general:Add")}</Button>
+            </div>
+          )}
+          loading={this.state.loading}
+          onChange={this.handleTableChange}
         />
       </div>
     );
@@ -206,7 +206,7 @@ class CertListPage extends BaseListPage {
       field = "type";
       value = params.type;
     }
-    this.setState({ loading: true });
+    this.setState({loading: true});
     CertBackend.getCerts("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {

@@ -27,8 +27,8 @@ class CasLogout extends React.Component {
       msg: null,
     };
     if (props.match?.params.casApplicationName !== undefined) {
-      this.state.owner = props.match?.params.owner
-      this.state.applicationName = props.match?.params.casApplicationName
+      this.state.owner = props.match?.params.owner;
+      this.state.applicationName = props.match?.params.casApplicationName;
     }
   }
 
@@ -37,14 +37,14 @@ class CasLogout extends React.Component {
 
     AuthBackend.logout()
       .then((res) => {
-        if (res.status === 'ok') {
-          Setting.showMessage("success", `Logged out successfully`);
-          this.props.clearAccount()
+        if (res.status === "ok") {
+          Setting.showMessage("success", "Logged out successfully");
+          this.props.clearAccount();
           let redirectUri = res.data2;
           if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
             Setting.goToLink(redirectUri);
           } else if (params.has("service")) {
-            Setting.goToLink(params.get("service"))
+            Setting.goToLink(params.get("service"));
           } else {
             Setting.goToLinkSoft(this, `/cas/${this.state.owner}/${this.state.applicationName}/login`);
           }
@@ -62,7 +62,7 @@ class CasLogout extends React.Component {
           <Spin size="large" tip={i18next.t("login:Logging out...")} style={{paddingTop: "10%"}} />
         }
       </div>
-    )
+    );
   }
 }
 export default withRouter(CasLogout);

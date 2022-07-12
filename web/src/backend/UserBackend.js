@@ -39,8 +39,8 @@ export function getUser(owner, name) {
 export function updateUser(owner, name, user) {
   let newUser = Setting.deepCopy(user);
   return fetch(`${Setting.ServerUrl}/api/update-user?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newUser),
   }).then(res => res.json());
 }
@@ -48,8 +48,8 @@ export function updateUser(owner, name, user) {
 export function addUser(user) {
   let newUser = Setting.deepCopy(user);
   return fetch(`${Setting.ServerUrl}/api/add-user`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newUser),
   }).then(res => res.json());
 }
@@ -57,8 +57,8 @@ export function addUser(user) {
 export function deleteUser(user) {
   let newUser = Setting.deepCopy(user);
   return fetch(`${Setting.ServerUrl}/api/delete-user`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newUser),
   }).then(res => res.json());
 }
@@ -88,14 +88,14 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
   }).then(res => res.json());
 }
 
-export function sendCode(checkType, checkId, checkKey, dest, type, orgId, checkUser) {
+export function sendCode(checkType, checkId, checkKey, dest, type, applicationId, checkUser) {
   let formData = new FormData();
   formData.append("checkType", checkType);
   formData.append("checkId", checkId);
   formData.append("checkKey", checkKey);
   formData.append("dest", dest);
   formData.append("type", type);
-  formData.append("organizationId", orgId);
+  formData.append("applicationId", applicationId);
   formData.append("checkUser", checkUser);
   return fetch(`${Setting.ServerUrl}/api/send-verification-code`, {
     method: "POST",

@@ -16,7 +16,7 @@ data:
     defaultStorageProvider = 
     isCloudIntranet = false
     authState = "casdoor"
-    sock5Proxy = "127.0.0.1:10808"
+    socks5Proxy = "127.0.0.1:10808"
     verificationCodeTimeout = 10
     initScore = 2000
     logPostOnly = true

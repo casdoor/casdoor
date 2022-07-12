@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Result, Spin} from 'antd';
+import {Button, Result, Spin} from "antd";
 import * as PaymentBackend from "./backend/PaymentBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
@@ -71,7 +71,7 @@ class PaymentResultPage extends React.Component {
             ]}
           />
         </div>
-      )
+      );
     } else if (payment.state === "Created") {
       return (
         <div>
@@ -87,7 +87,7 @@ class PaymentResultPage extends React.Component {
             ]}
           />
         </div>
-      )
+      );
     } else {
       return (
         <div>
@@ -107,7 +107,7 @@ class PaymentResultPage extends React.Component {
             ]}
           />
         </div>
-      )
+      );
     }
   }
 }
