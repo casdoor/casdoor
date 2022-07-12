@@ -31,6 +31,7 @@ func InitDb() {
 		initBuiltInCert()
 		initBuiltInLdap()
 	}
+
 	initWebAuthn()
 }
 
@@ -225,6 +226,7 @@ func initBuiltInProvider() {
 	}
 	AddProvider(provider)
 }
+
 func initWebAuthn() {
 	gob.Register(webauthn.SessionData{})
 }
