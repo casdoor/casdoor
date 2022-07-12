@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package object
 
 import (
@@ -40,15 +41,16 @@ func GetWebAuthnObject(host string) *webauthn.WebAuthn {
 		RPDisplayName: beego.AppConfig.String("appname"),    // Display Name for your site
 		RPID:          strings.Split(localUrl.Host, ":")[0], // Generally the domain name for your site, it's ok because splits cannot return empty array
 		RPOrigin:      origin,                               // The origin URL for WebAuthn requests
-		// RPIcon: "https://duo.com/logo.png", // Optional icon URL for your site
+		// RPIcon:     "https://duo.com/logo.png",           // Optional icon URL for your site
 	})
 	if err != nil {
 		panic(err)
 	}
+
 	return webAuthn
 }
 
-//implementation of webauthn.User interface
+// implementation of webauthn.User interface
 func (u *User) WebAuthnID() []byte {
 	return []byte(u.GetId())
 }
@@ -69,8 +71,7 @@ func (u *User) WebAuthnIcon() string {
 	return u.Avatar
 }
 
-// CredentialExcludeList returns a CredentialDescriptor array filled
-// with all the user's credentials
+// CredentialExcludeList returns a CredentialDescriptor array filled with all the user's credentials
 func (u *User) CredentialExcludeList() []protocol.CredentialDescriptor {
 	credentials := u.WebAuthnCredentials()
 	credentialExcludeList := []protocol.CredentialDescriptor{}
