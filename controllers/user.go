@@ -85,11 +85,14 @@ func (c *ApiController) GetUsers() {
 // @router /get-user [get]
 func (c *ApiController) GetUser() {
 	id := c.Input().Get("id")
-	owner := c.Input().Get("owner")
 	email := c.Input().Get("email")
-	userOwner, _ := util.GetOwnerAndNameFromId(id)
-	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", userOwner))
 
+	owner := c.Input().Get("owner")
+	if owner == "" {
+		owner, _ = util.GetOwnerAndNameFromId(id)
+	}
+
+	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", owner))
 	if !organization.IsProfilePublic {
 		requestUserId := c.GetSessionUsername()
 		hasPermission, err := object.CheckUserPermission(requestUserId, id, false)
