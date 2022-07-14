@@ -104,12 +104,12 @@ func (c *ApiController) GetUser() {
 	}
 
 	var user *object.User
-	if email == "" && userId == "" {
-		user = object.GetUser(id)
-	} else if email != "" {
+	if email != "" {
 		user = object.GetUserByEmail(owner, email)
 	} else if userId != "" {
 		user = object.GetUserByUserId(owner, userId)
+	} else {
+		user = object.GetUser(id)
 	}
 
 	c.Data["json"] = object.GetMaskedUser(user)
