@@ -86,6 +86,7 @@ func (c *ApiController) GetUsers() {
 func (c *ApiController) GetUser() {
 	id := c.Input().Get("id")
 	email := c.Input().Get("email")
+	userId := c.Input().Get("userId")
 
 	owner := c.Input().Get("owner")
 	if owner == "" {
@@ -103,10 +104,12 @@ func (c *ApiController) GetUser() {
 	}
 
 	var user *object.User
-	if email == "" {
-		user = object.GetUser(id)
-	} else {
+	if email != "" {
 		user = object.GetUserByEmail(owner, email)
+	} else if userId != "" {
+		user = object.GetUserByUserId(owner, userId)
+	} else {
+		user = object.GetUser(id)
 	}
 
 	c.Data["json"] = object.GetMaskedUser(user)
