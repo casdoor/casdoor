@@ -97,7 +97,7 @@ type User struct {
 	Steam         string `xorm:"steam varchar(100)" json:"steam"`
 	Bilibili      string `xorm:"bilibili varchar(100)" json:"bilibili"`
 	Okta          string `xorm:"okta varchar(100)" json:"okta"`
-	Douyin        string `xorm:"douyin vachar(100)" json:"douyin"`
+	Douyin        string `xorm:"douyin varchar(100)" json:"douyin"`
 	Custom        string `xorm:"custom varchar(100)" json:"custom"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
