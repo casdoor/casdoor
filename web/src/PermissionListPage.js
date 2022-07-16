@@ -33,7 +33,7 @@ class PermissionListPage extends BaseListPage {
       roles: [],
       resourceType: "Application",
       resources: ["app-built-in"],
-      action: "Read",
+      actions: ["Read"],
       effect: "Allow",
       isEnabled: true,
     };
