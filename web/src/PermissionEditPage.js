@@ -143,6 +143,8 @@ class PermissionEditPage extends React.Component {
 
               this.getUsers(owner);
               this.getRoles(owner);
+              this.getModels(owner);
+              this.getResources(owner);
             })}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
