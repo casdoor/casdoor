@@ -52,8 +52,10 @@ func ParseFloat(s string) float64 {
 }
 
 func ParseBool(s string) bool {
-	if s == "\x01" {
+	if s == "\x01" || s == "true" {
 		return true
+	} else if s == "false" {
+		return false
 	}
 
 	i := ParseInt(s)
