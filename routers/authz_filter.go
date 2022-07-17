@@ -122,6 +122,10 @@ func AuthzFilter(ctx *context.Context) {
 	urlPath := getUrlPath(ctx.Request.URL.Path)
 	objOwner, objName := getObject(ctx)
 
+	if strings.HasPrefix(urlPath, "/api/notify-payment") {
+		urlPath = "/api/notify-payment"
+	}
+
 	isAllowed := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName)
 
 	result := "deny"

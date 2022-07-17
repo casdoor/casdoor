@@ -55,6 +55,7 @@ func escapePath(path string) string {
 
 func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool) (string, string) {
 	escapedPath := escapePath(fullFilePath)
+	escapedPath = escapePath(escapedPath)
 	objectKey := util.UrlJoin(util.GetUrlPath(provider.Domain), escapedPath)
 
 	host := ""

@@ -92,6 +92,7 @@ p, *, *, GET, /api/get-payment, *, *
 p, *, *, POST, /api/update-payment, *, *
 p, *, *, POST, /api/invoice-payment, *, *
 p, *, *, GET, /api/get-providers, *, *
+p, *, *, POST, /api/notify-payment, *, *
 p, *, *, POST, /api/unlink, *, *
 p, *, *, POST, /api/set-password, *, *
 p, *, *, POST, /api/send-verification-code, *, *
