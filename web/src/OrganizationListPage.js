@@ -63,7 +63,7 @@ class OrganizationListPage extends BaseListPage {
         {name: "Is global admin", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Is forbidden", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Is deleted", visible: true, viewRule: "Admin", modifyRule: "Admin"},
-      ]
+      ],
     };
   }
 
@@ -235,9 +235,7 @@ class OrganizationListPage extends BaseListPage {
       showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
-    return (
-      <div>
-        {this.state.isAuthenticated ?
+    let renderView =
           <Table scroll={{x: "max-content"}} columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={paginationProps}
             title={() => (
               <div>
@@ -247,10 +245,16 @@ class OrganizationListPage extends BaseListPage {
             )}
             loading={this.state.loading}
             onChange={this.handleTableChange}
-          /> :
-          <Result status="403" title="403 Unauthorized" subTitle={i18next.t("general:Sorry, you do not have permission to access this page.")}
-            extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />
-        }
+          />;
+
+    if (!this.state.isAuthorized) {
+      renderView = <Result status="403" title="403 Unauthorized" subTitle={i18next.t("general:Sorry, you do not have permission to access this page.")}
+            extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />;
+    }
+
+    return (
+      <div>
+        {renderView}
       </div>
     );
   }
@@ -275,11 +279,11 @@ class OrganizationListPage extends BaseListPage {
             },
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
-            isAuthenticated: true,
+            isAuthorized: true,
           });
         } else {
           if (String(res.msg).includes("Unauthorized") !== -1) {
-            this.setState({loading: false, isAuthenticated: false});
+            this.setState({loading: false, isAuthorized: false});
           }
           // some other error
         }

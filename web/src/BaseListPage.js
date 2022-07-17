@@ -30,7 +30,7 @@ class BaseListPage extends React.Component {
       loading: false,
       searchText: "",
       searchedColumn: "",
-      isAuthenticated: false,
+      isAuthorized: false,
     };
   }
 
