@@ -2263,7 +2263,7 @@ definitions:
         type: string
       privateKey:
         type: string
-      publicKey:
+      certificat:
         type: string
       scope:
         type: string

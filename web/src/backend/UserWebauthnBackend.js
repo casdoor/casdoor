@@ -21,15 +21,15 @@ export function registerWebauthnCredential() {
   })
     .then(res => res.json())
     .then((credentialCreationOptions) => {
-      credentialCreationOptions.publicKey.challenge = webAuthnBufferDecode(credentialCreationOptions.publicKey.challenge);
-      credentialCreationOptions.publicKey.user.id = webAuthnBufferDecode(credentialCreationOptions.publicKey.user.id);
-      if (credentialCreationOptions.publicKey.excludeCredentials) {
-        for (var i = 0; i < credentialCreationOptions.publicKey.excludeCredentials.length; i++) {
-          credentialCreationOptions.publicKey.excludeCredentials[i].id = webAuthnBufferDecode(credentialCreationOptions.publicKey.excludeCredentials[i].id);
+      credentialCreationOptions.certificat.challenge = webAuthnBufferDecode(credentialCreationOptions.certificat.challenge);
+      credentialCreationOptions.certificat.user.id = webAuthnBufferDecode(credentialCreationOptions.certificat.user.id);
+      if (credentialCreationOptions.certificat.excludeCredentials) {
+        for (var i = 0; i < credentialCreationOptions.certificat.excludeCredentials.length; i++) {
+          credentialCreationOptions.certificat.excludeCredentials[i].id = webAuthnBufferDecode(credentialCreationOptions.certificat.excludeCredentials[i].id);
         }
       }
       return navigator.credentials.create({
-        publicKey: credentialCreationOptions.publicKey
+        certificat: credentialCreationOptions.certificat
       });
     })
     .then((credential) => {

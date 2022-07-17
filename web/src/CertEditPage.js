@@ -164,25 +164,25 @@ class CertEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("cert:Public key"), i18next.t("cert:Public key - Tooltip"))} :
+            {Setting.getLabel(i18next.t("cert:Certificate"), i18next.t("cert:Certificate - Tooltip"))} :
           </Col>
           <Col span={9} >
             <Button style={{marginRight: "10px", marginBottom: "10px"}} onClick={() => {
-              copy(this.state.cert.publicKey);
-              Setting.showMessage("success", i18next.t("cert:Public key copied to clipboard successfully"));
+              copy(this.state.cert.certificat);
+              Setting.showMessage("success", i18next.t("cert:Certificate copied to clipboard successfully"));
             }}
             >
-              {i18next.t("cert:Copy public key")}
+              {i18next.t("cert:Copy certificate")}
             </Button>
             <Button type="primary" onClick={() => {
-              const blob = new Blob([this.state.cert.publicKey], {type: "text/plain;charset=utf-8"});
+              const blob = new Blob([this.state.cert.certificat], {type: "text/plain;charset=utf-8"});
               FileSaver.saveAs(blob, "token_jwt_key.pem");
             }}
             >
-              {i18next.t("cert:Download public key")}
+              {i18next.t("cert:Download certificate")}
             </Button>
-            <TextArea autoSize={{minRows: 30, maxRows: 30}} value={this.state.cert.publicKey} onChange={e => {
-              this.updateCertField("publicKey", e.target.value);
+            <TextArea autoSize={{minRows: 30, maxRows: 30}} value={this.state.cert.certificat} onChange={e => {
+              this.updateCertField("certificat", e.target.value);
             }} />
           </Col>
           <Col span={1} />

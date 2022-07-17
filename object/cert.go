@@ -33,7 +33,7 @@ type Cert struct {
 	BitSize         int    `json:"bitSize"`
 	ExpireInYears   int    `json:"expireInYears"`
 
-	PublicKey              string `xorm:"mediumtext" json:"publicKey"`
+	Certificat             string `xorm:"mediumtext" json:"certificat"`
 	PrivateKey             string `xorm:"mediumtext" json:"privateKey"`
 	AuthorityPublicKey     string `xorm:"mediumtext" json:"authorityPublicKey"`
 	AuthorityRootPublicKey string `xorm:"mediumtext" json:"authorityRootPublicKey"`
@@ -123,9 +123,9 @@ func UpdateCert(id string, cert *Cert) bool {
 }
 
 func AddCert(cert *Cert) bool {
-	if cert.PublicKey == "" || cert.PrivateKey == "" {
-		publicKey, privateKey := generateRsaKeys(cert.BitSize, cert.ExpireInYears, cert.Name, cert.Owner)
-		cert.PublicKey = publicKey
+	if cert.Certificat == "" || cert.PrivateKey == "" {
+		certificat, privateKey := generateRsaKeys(cert.BitSize, cert.ExpireInYears, cert.Name, cert.Owner)
+		cert.Certificat = certificat
 		cert.PrivateKey = privateKey
 	}
 
