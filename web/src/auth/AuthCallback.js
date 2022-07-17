@@ -33,9 +33,7 @@ class AuthCallback extends React.Component {
   getInnerParams() {
     // For example, for Casbin-OA, realRedirectUri = "http://localhost:9000/login"
     // realRedirectUrl = "http://localhost:9000"
-    const params = new URLSearchParams(this.props.location.search);
-    const state = params.get("state");
-    const queryString = Util.stateToGetQueryParams(state);
+    const queryString = Util.getGetQueryParamsFromSessionStorage();
     return new URLSearchParams(queryString);
   }
 
@@ -77,6 +75,7 @@ class AuthCallback extends React.Component {
 
   UNSAFE_componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
+    const state = params.get("state");
     let isSteam = params.get("openid.mode");
     let code = params.get("code");
     // WeCom returns "auth_code=xxx" instead of "code=xxx"
@@ -106,8 +105,7 @@ class AuthCallback extends React.Component {
       provider: providerName,
       code: code,
       samlRequest: samlRequest,
-      // state: innerParams.get("state"),
-      state: applicationName,
+      state: state,
       redirectUri: redirectUri,
       method: method,
     };

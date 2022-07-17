@@ -23,7 +23,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
@@ -314,10 +313,11 @@ func (c *ApiController) Login() {
 
 			setHttpClient(idProvider, provider.Type)
 
-			if form.State != conf.GetConfigString("authState") && form.State != application.Name {
-				c.ResponseError(fmt.Sprintf("state expected: \"%s\", but got: \"%s\"", conf.GetConfigString("authState"), form.State))
+			if form.State != c.Ctx.GetCookie("oauth_state") {
+				c.ResponseError("Invalid state")
 				return
 			}
+			c.Ctx.SetCookie("oauth_state", "")
 
 			// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
 			token, err := idProvider.GetToken(form.Code)
@@ -505,4 +505,14 @@ func (c *ApiController) HandleSamlLogin() {
 	targetUrl := fmt.Sprintf("%s?relayState=%s&samlResponse=%s",
 		slice[4], relayState, samlResponse)
 	c.Redirect(targetUrl, 303)
+}
+
+func (c *ApiController) GetOAuthState() {
+	state := strings.ReplaceAll(util.GenerateUuid(), "-", "")
+	c.Ctx.SetCookie("oauth_state", state)
+	c.Data["json"] = map[string]string{
+		"state": state,
+	}
+	c.ServeJSON()
+	return
 }

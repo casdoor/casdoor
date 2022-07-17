@@ -124,15 +124,15 @@ export function getOAuthGetParameters(params) {
   }
 }
 
-export function getQueryParamsToState(applicationName, providerName, method) {
+export function getQueryParamsToSessionStorage(applicationName, providerName, method) {
   let query = window.location.search;
   query = `${query}&application=${applicationName}&provider=${providerName}&method=${method}`;
   if (method === "link") {
     query = `${query}&from=${window.location.pathname}`;
   }
-  return btoa(query);
+  sessionStorage.setItem("query", query);
 }
 
-export function stateToGetQueryParams(state) {
-  return atob(state);
+export function getGetQueryParamsFromSessionStorage() {
+  return sessionStorage.getItem("query");
 }

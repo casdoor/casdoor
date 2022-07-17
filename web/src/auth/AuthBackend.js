@@ -99,3 +99,10 @@ export function loginWithSaml(values, param) {
     body: JSON.stringify(values),
   }).then(res => res.json());
 }
+
+export function getOAuthState() {
+  return fetch(`${authConfig.serverUrl}/api/get-oauth-state`, {
+    method: "GET",
+    credentials: "include",
+  }).then(res => res.json());
+}

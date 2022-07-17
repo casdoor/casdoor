@@ -68,7 +68,8 @@ class LoginPage extends React.Component {
       validEmailOrPhone: false,
       validEmail: false,
       validPhone: false,
-      loginMethod: "password"
+      loginMethod: "password",
+      oAuthState: ""
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -78,6 +79,7 @@ class LoginPage extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
+    this.getOAuthState();
     if (this.state.type === "login" || this.state.type === "cas") {
       this.getApplication();
     } else if (this.state.type === "code") {
@@ -139,6 +141,14 @@ class LoginPage extends React.Component {
     } else {
       return this.state.application;
     }
+  }
+
+  getOAuthState() {
+    AuthBackend.getOAuthState().then((res) => {
+      this.setState({
+        oAuthState: res.state,
+      });
+    });
   }
 
   onUpdateAccount(account) {
@@ -319,7 +329,7 @@ class LoginPage extends React.Component {
     if (size === "small") {
       if (provider.category === "OAuth") {
         return (
-          <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
+          <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup", this.state.oAuthState)}>
             <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
           </a>
         );
@@ -334,7 +344,7 @@ class LoginPage extends React.Component {
     } else {
       return (
         <div key={provider.displayName} style={{marginBottom: "10px"}}>
-          <a href={Provider.getAuthUrl(application, provider, "signup")}>
+          <a href={Provider.getAuthUrl(application, provider, "signup", this.state.oAuthState)}>
             {
               this.getSigninButton(provider.type)
             }
@@ -739,7 +749,7 @@ class LoginPage extends React.Component {
 
     const visibleOAuthProviderItems = application.providers.filter(providerItem => this.isProviderVisible(providerItem));
     if (this.props.application === undefined && !application.enablePassword && visibleOAuthProviderItems.length === 1) {
-      Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signup"));
+      Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signup", this.state.oAuthState));
       return (
         <div style={{textAlign: "center"}}>
           <Spin size="large" tip={i18next.t("login:Signing in...")} style={{paddingTop: "10%"}} />

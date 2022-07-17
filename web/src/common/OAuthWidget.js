@@ -27,12 +27,14 @@ class OAuthWidget extends React.Component {
       classes: props,
       addressOptions: [],
       affiliationOptions: [],
+      oAuthState: "",
     };
   }
 
   componentWillMount() {
     this.getAddressOptions(this.props.application);
     this.getAffiliationOptions(this.props.application, this.props.user);
+    this.getOAuthState();
   }
 
   getAddressOptions(application) {
@@ -63,6 +65,14 @@ class OAuthWidget extends React.Component {
         });
       });
   }
+
+  getOAuthState() {
+    AuthBackend.getOAuthState().then((res) => {
+      this.setState({
+        oAuthState: res.state,
+      });
+    });
+}
 
   updateUserField(key, value) {
     this.props.onUpdateUserField(key, value);
@@ -160,7 +170,7 @@ class OAuthWidget extends React.Component {
           </span>
           {
             linkedValue === "" ? (
-              <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "link")}>
+              <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "link", this.state.oAuthState)}>
                 <Button style={{marginLeft: "20px", width: "80px"}} type="primary">{i18next.t("user:Link")}</Button>
               </a>
             ) : (

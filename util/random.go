@@ -14,7 +14,10 @@
 
 package util
 
-import "github.com/thanhpk/randstr"
+import (
+	"github.com/google/uuid"
+	"github.com/thanhpk/randstr"
+)
 
 func GenerateClientId() string {
 	return randstr.Hex(10)
@@ -22,4 +25,8 @@ func GenerateClientId() string {
 
 func GenerateClientSecret() string {
 	return randstr.Hex(20)
+}
+
+func GenerateUuid() string {
+	return uuid.New().String()
 }
