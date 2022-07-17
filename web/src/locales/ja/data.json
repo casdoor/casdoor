@@ -188,6 +188,7 @@
     "Signup application - Tooltip": "Signup application - Tooltip",
     "Sorry, the page you visited does not exist.": "申し訳ありませんが、訪問したページは存在しません。",
     "Sorry, the user you visited does not exist or you are not authorized to access this user.": "Sorry, the user you visited does not exist or you are not authorized to access this user.",
+    "Sorry, you do not have permission to access this page.": "申し訳ありませんが、このページにアクセスする権限がありません。",
     "State": "State",
     "State - Tooltip": "State - Tooltip",
     "Swagger": "Swagger",

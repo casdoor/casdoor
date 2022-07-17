@@ -188,6 +188,7 @@
     "Signup application - Tooltip": "表示用户注册时通过哪个应用注册的",
     "Sorry, the page you visited does not exist.": "抱歉，您访问的页面不存在",
     "Sorry, the user you visited does not exist or you are not authorized to access this user.": "抱歉，您访问的用户不存在或您无权访问该用户",
+    "Sorry, you do not have permission to access this page.": "抱歉，您无权访问该页面",
     "State": "状态",
     "State - Tooltip": "状态",
     "Swagger": "API文档",

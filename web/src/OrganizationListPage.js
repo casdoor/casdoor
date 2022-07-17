@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Switch, Table} from "antd";
+import {Button, Popconfirm, Switch, Table, Result} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -63,7 +63,7 @@ class OrganizationListPage extends BaseListPage {
         {name: "Is global admin", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Is forbidden", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Is deleted", visible: true, viewRule: "Admin", modifyRule: "Admin"},
-      ],
+      ]
     };
   }
 
@@ -237,16 +237,20 @@ class OrganizationListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={paginationProps}
-          title={() => (
-            <div>
-              {i18next.t("general:Organizations")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button type="primary" size="small" onClick={this.addOrganization.bind(this)}>{i18next.t("general:Add")}</Button>
-            </div>
-          )}
-          loading={this.state.loading}
-          onChange={this.handleTableChange}
-        />
+        {this.state.isAuthenticated ?
+          <Table scroll={{x: "max-content"}} columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={paginationProps}
+            title={() => (
+              <div>
+                {i18next.t("general:Organizations")}&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button type="primary" size="small" onClick={this.addOrganization.bind(this)}>{i18next.t("general:Add")}</Button>
+              </div>
+            )}
+            loading={this.state.loading}
+            onChange={this.handleTableChange}
+          /> :
+          <Result status="403" title="403 Unauthorized" subTitle={i18next.t("general:Sorry, you do not have permission to access this page.")}
+            extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />
+        }
       </div>
     );
   }
@@ -271,7 +275,13 @@ class OrganizationListPage extends BaseListPage {
             },
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
+            isAuthenticated: true,
           });
+        } else {
+          if (String(res.msg).includes("Unauthorized") !== -1) {
+            this.setState({loading: false, isAuthenticated: false});
+          }
+          // some other error
         }
       });
   };
