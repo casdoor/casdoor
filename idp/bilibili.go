@@ -144,7 +144,7 @@ func (idp *BilibiliIdProvider) GetToken(code string) (*oauth2.Token, error) {
 type BilibiliUserInfo struct {
 	Name   string `json:"name"`
 	Face   string `json:"face"`
-	OpenId string `json:"openid`
+	OpenId string `json:"openid"`
 }
 
 type BilibiliUserInfoResponse struct {
