@@ -235,26 +235,23 @@ class OrganizationListPage extends BaseListPage {
       showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
-    let renderView =
-          <Table scroll={{x: "max-content"}} columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={paginationProps}
-            title={() => (
-              <div>
-                {i18next.t("general:Organizations")}&nbsp;&nbsp;&nbsp;&nbsp;
-                <Button type="primary" size="small" onClick={this.addOrganization.bind(this)}>{i18next.t("general:Add")}</Button>
-              </div>
-            )}
-            loading={this.state.loading}
-            onChange={this.handleTableChange}
-          />;
-
     if (!this.state.isAuthorized) {
-      renderView = <Result status="403" title="403 Unauthorized" subTitle={i18next.t("general:Sorry, you do not have permission to access this page.")}
+      return <Result status="403" title="403 Unauthorized" subTitle={i18next.t("general:Sorry, you do not have permission to access this page.")}
             extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />;
     }
 
     return (
       <div>
-        {renderView}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={paginationProps}
+          title={() => (
+            <div>
+              {i18next.t("general:Organizations")}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button type="primary" size="small" onClick={this.addOrganization.bind(this)}>{i18next.t("general:Add")}</Button>
+            </div>
+          )}
+          loading={this.state.loading}
+          onChange={this.handleTableChange}
+        />
       </div>
     );
   }
