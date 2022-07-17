@@ -93,6 +93,7 @@
     "Please input your username!": "请输入您的用户名！",
     "Reset": "重置",
     "Retrieve password": "找回密码",
+    "Unknown forget type": "未知的忘记密码类型",
     "Verify": "验证"
   },
   "general": {
@@ -345,7 +346,8 @@
     "New Permission": "添加权限",
     "Resource type": "资源类型",
     "Resource type - Tooltip": "授权资源的类型",
-    "Resources": "资源"
+    "Resources": "资源",
+    "Resources - Tooltip": "被授权的资源"
   },
   "product": {
     "Alipay": "支付宝",

@@ -93,6 +93,7 @@
     "Please input your username!": "Пожалуйста, введите ваше имя пользователя!",
     "Reset": "Reset",
     "Retrieve password": "Получить пароль",
+    "Unknown forget type": "Unknown forget type",
     "Verify": "Подтвердить"
   },
   "general": {
@@ -345,7 +346,8 @@
     "New Permission": "New Permission",
     "Resource type": "Тип ресурса",
     "Resource type - Tooltip": "Тип ресурса - Подсказка",
-    "Resources": "Ресурсы"
+    "Resources": "Ресурсы",
+    "Resources - Tooltip": "Resources - Tooltip"
   },
   "product": {
     "Alipay": "Alipay",

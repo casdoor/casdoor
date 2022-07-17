@@ -93,6 +93,7 @@
     "Please input your username!": "ユーザー名を入力してください！",
     "Reset": "Reset",
     "Retrieve password": "パスワードの取得",
+    "Unknown forget type": "Unknown forget type",
     "Verify": "確認する"
   },
   "general": {
@@ -345,7 +346,8 @@
     "New Permission": "New Permission",
     "Resource type": "リソースタイプ",
     "Resource type - Tooltip": "リソースタイプ - ツールチップ",
-    "Resources": "リソース"
+    "Resources": "リソース",
+    "Resources - Tooltip": "Resources - Tooltip"
   },
   "product": {
     "Alipay": "Alipay",
