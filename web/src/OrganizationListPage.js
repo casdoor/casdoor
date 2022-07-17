@@ -282,7 +282,7 @@ class OrganizationListPage extends BaseListPage {
             isAuthorized: true,
           });
         } else {
-          if (String(res.msg).includes("Unauthorized") !== -1) {
+          if (String(res.msg).includes("Unauthorized")) {
             this.setState({loading: false, isAuthorized: false});
           }
           // some other error
