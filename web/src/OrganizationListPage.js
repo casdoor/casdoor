@@ -236,8 +236,14 @@ class OrganizationListPage extends BaseListPage {
     };
 
     if (!this.state.isAuthorized) {
-      return <Result status="403" title="403 Unauthorized" subTitle={i18next.t("general:Sorry, you do not have permission to access this page.")}
-            extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />;
+      return (
+        <Result
+          status="403"
+          title="403 Unauthorized"
+          subTitle={i18next.t("general:Sorry, you do not have permission to access this page.")}
+          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
+        />
+      );
     }
 
     return (
@@ -276,13 +282,14 @@ class OrganizationListPage extends BaseListPage {
             },
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
-            isAuthorized: true,
           });
         } else {
-          if (String(res.msg).includes("Unauthorized")) {
-            this.setState({loading: false, isAuthorized: false});
+          if (res.msg.includes("Unauthorized")) {
+            this.setState({
+              loading: false,
+              isAuthorized: false,
+            });
           }
-          // some other error
         }
       });
   };
