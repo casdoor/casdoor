@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Result, Button} from "antd";
+import {Button, Result} from "antd";
 import i18next from "i18next";
 import {authConfig} from "./Auth";
 import * as Util from "./Util";

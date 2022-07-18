@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Alert, Button, message, Result} from "antd";
+import {Alert, Button, Result, message} from "antd";
 
 export function showMessage(type, text) {
   if (type === "success") {

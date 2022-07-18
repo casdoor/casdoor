@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {message, Tag, Tooltip} from "antd";
+import {Tag, Tooltip, message} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
