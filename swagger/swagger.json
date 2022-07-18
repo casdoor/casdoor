@@ -3444,7 +3444,7 @@
                 "privateKey": {
                     "type": "string"
                 },
-                "certificat": {
+                "certificate": {
                     "type": "string"
                 },
                 "scope": {

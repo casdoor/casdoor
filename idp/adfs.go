@@ -121,8 +121,8 @@ func (idp *AdfsIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		return nil, err
 	}
 	tokenSrc := []byte(token.AccessToken)
-	certificat, _ := keyset.Keys[0].Materialize()
-	id_token, _ := jwt.Parse(bytes.NewReader(tokenSrc), jwt.WithVerify(jwa.RS256, certificat))
+	certificate, _ := keyset.Keys[0].Materialize()
+	id_token, _ := jwt.Parse(bytes.NewReader(tokenSrc), jwt.WithVerify(jwa.RS256, certificate))
 	sid, _ := id_token.Get("sid")
 	upn, _ := id_token.Get("upn")
 	name, _ := id_token.Get("unique_name")

@@ -168,21 +168,21 @@ class CertEditPage extends React.Component {
           </Col>
           <Col span={9} >
             <Button style={{marginRight: "10px", marginBottom: "10px"}} onClick={() => {
-              copy(this.state.cert.certificat);
+              copy(this.state.cert.certificate);
               Setting.showMessage("success", i18next.t("cert:Certificate copied to clipboard successfully"));
             }}
             >
               {i18next.t("cert:Copy certificate")}
             </Button>
             <Button type="primary" onClick={() => {
-              const blob = new Blob([this.state.cert.certificat], {type: "text/plain;charset=utf-8"});
+              const blob = new Blob([this.state.cert.certificate], {type: "text/plain;charset=utf-8"});
               FileSaver.saveAs(blob, "token_jwt_key.pem");
             }}
             >
               {i18next.t("cert:Download certificate")}
             </Button>
-            <TextArea autoSize={{minRows: 30, maxRows: 30}} value={this.state.cert.certificat} onChange={e => {
-              this.updateCertField("certificat", e.target.value);
+            <TextArea autoSize={{minRows: 30, maxRows: 30}} value={this.state.cert.certificate} onChange={e => {
+              this.updateCertField("certificate", e.target.value);
             }} />
           </Col>
           <Col span={1} />

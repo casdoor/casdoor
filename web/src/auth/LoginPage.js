@@ -638,13 +638,13 @@ class LoginPage extends React.Component {
           throw credentialRequestOptions.status.msg;
         }
 
-        credentialRequestOptions.certificat.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.certificat.challenge);
-        credentialRequestOptions.certificat.allowCredentials.forEach(function(listItem) {
+        credentialRequestOptions.certificate.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.certificate.challenge);
+        credentialRequestOptions.certificate.allowCredentials.forEach(function(listItem) {
           listItem.id = UserWebauthnBackend.webAuthnBufferDecode(listItem.id);
         });
 
         return navigator.credentials.get({
-          certificat: credentialRequestOptions.certificat
+          certificate: credentialRequestOptions.certificate
         });
       })
       .then((assertion) => {

@@ -183,7 +183,7 @@ func initBuiltInCert() {
 		CryptoAlgorithm: "RS256",
 		BitSize:         4096,
 		ExpireInYears:   20,
-		Certificat:      tokenJwtPublicKey,
+		Certificate:     tokenJwtPublicKey,
 		PrivateKey:      tokenJwtPrivateKey,
 	}
 	AddCert(cert)

@@ -34,7 +34,7 @@ class CertListPage extends BaseListPage {
       cryptoAlgorithm: "RS256",
       bitSize: 4096,
       expireInYears: 20,
-      certificat: "",
+      certificate: "",
       privateKey: "",
     };
   }

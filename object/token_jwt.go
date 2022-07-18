@@ -130,12 +130,12 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 		}
 
 		// RSA certificate
-		certificat, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cert.Certificat))
+		certificate, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cert.Certificate))
 		if err != nil {
 			return nil, err
 		}
 
-		return certificat, nil
+		return certificate, nil
 	})
 
 	if t != nil {

@@ -241,11 +241,11 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 	samlResponse := NewSamlResponse11(user, request.RequestID, host)
 
 	cert := getCertByApplication(application)
-	block, _ := pem.Decode([]byte(cert.Certificat))
-	certificat := base64.StdEncoding.EncodeToString(block.Bytes)
+	block, _ := pem.Decode([]byte(cert.Certificate))
+	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 	randomKeyStore := &X509Key{
 		PrivateKey:      cert.PrivateKey,
-		X509Certificate: certificat,
+		X509Certificate: certificate,
 	}
 
 	ctx := dsig.NewDefaultSigningContext(randomKeyStore)
