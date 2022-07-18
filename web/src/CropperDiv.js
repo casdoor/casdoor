@@ -16,7 +16,7 @@ import React, {useState} from "react";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import * as Setting from "./Setting";
-import {Button, Row, Col, Modal} from "antd";
+import {Button, Col, Modal, Row} from "antd";
 import i18next from "i18next";
 import * as ResourceBackend from "./backend/ResourceBackend";
 

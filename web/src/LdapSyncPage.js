@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Row, Table, Popconfirm} from "antd";
+import {Button, Col, Popconfirm, Row, Table} from "antd";
 import * as Setting from "./Setting";
 import * as LdapBackend from "./backend/LdapBackend";
 import i18next from "i18next";

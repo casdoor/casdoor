@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Form, Input, Checkbox, Button, Row, Col, Result, Modal} from "antd";
+import {Button, Checkbox, Col, Form, Input, Modal, Result, Row} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import i18next from "i18next";

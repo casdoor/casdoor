@@ -17,7 +17,7 @@ import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
 import {DownOutlined, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
-import {Avatar, BackTop, Dropdown, Layout, Menu, Card, Result, Button} from "antd";
+import {Avatar, BackTop, Button, Card, Dropdown, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";

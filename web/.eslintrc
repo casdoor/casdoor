@@ -45,6 +45,10 @@
     "curly": ["error", "all"],
     "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
     "no-mixed-spaces-and-tabs": "error",
+    "sort-imports": ["error", {
+      "ignoreDeclarationSort": true
+    }],
+
 
     "react/prop-types": "off",
     "react/display-name": "off",
