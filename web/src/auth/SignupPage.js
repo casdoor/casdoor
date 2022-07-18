@@ -79,19 +79,28 @@ class SignupPage extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
-    if (this.state.applicationName !== undefined) {
-      this.getApplication();
+    let applicationName = this.state.applicationName;
+    const oAuthParams = Util.getOAuthGetParameters();
+    if (oAuthParams !== null) {
+      applicationName = oAuthParams.state;
+      this.setState({applicationName: oAuthParams.state});
+      const signinUrl = window.location.href.replace("/signup/oauth/authorize", "/login/oauth/authorize");
+      sessionStorage.setItem("signinUrl", signinUrl);
+    }
+
+    if (applicationName !== undefined) {
+      this.getApplication(applicationName);
     } else {
-      Util.showMessage("error", `Unknown application name: ${this.state.applicationName}`);
+      Util.showMessage("error", `Unknown application name: ${applicationName}`);
     }
   }
 
-  getApplication() {
-    if (this.state.applicationName === undefined) {
+  getApplication(applicationName) {
+    if (applicationName === undefined) {
       return;
     }
 
-    ApplicationBackend.getApplication("admin", this.state.applicationName)
+    ApplicationBackend.getApplication("admin", applicationName)
       .then((application) => {
         this.setState({
           application: application,
