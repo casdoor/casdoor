@@ -167,7 +167,7 @@ func readTokenFromFile() (string, string) {
 }
 
 func initBuiltInCert() {
-	tokenJwtPublicKey, tokenJwtPrivateKey := readTokenFromFile()
+	tokenJwtCertificate, tokenJwtPrivateKey := readTokenFromFile()
 	cert := getCert("admin", "cert-built-in")
 	if cert != nil {
 		return
@@ -183,7 +183,7 @@ func initBuiltInCert() {
 		CryptoAlgorithm: "RS256",
 		BitSize:         4096,
 		ExpireInYears:   20,
-		Certificate:     tokenJwtPublicKey,
+		Certificate:     tokenJwtCertificate,
 		PrivateKey:      tokenJwtPrivateKey,
 	}
 	AddCert(cert)
