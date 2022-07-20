@@ -22,9 +22,9 @@ type PaymentProvider interface {
 	GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error)
 }
 
-func GetPaymentProvider(typ string, appId string, clientSecret string, host string, certificate string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string) PaymentProvider {
+func GetPaymentProvider(typ string, appId string, clientSecret string, host string, appCertificate string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string) PaymentProvider {
 	if typ == "Alipay" {
-		return NewAlipayPaymentProvider(appId, certificate, appPrivateKey, authorityPublicKey, authorityRootPublicKey)
+		return NewAlipayPaymentProvider(appId, appCertificate, appPrivateKey, authorityPublicKey, authorityRootPublicKey)
 	} else if typ == "GC" {
 		return NewGcPaymentProvider(appId, clientSecret, host)
 	}
