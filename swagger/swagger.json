@@ -2418,6 +2418,21 @@
             }
         },
         "/api/logout": {
+            "get": {
+                "tags": [
+                    "Login API"
+                ],
+                "description": "logout the current user",
+                "operationId": "ApiController.Logout",
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "Login API"
@@ -3096,14 +3111,120 @@
                 ],
                 "operationId": "ApiController.VerifyCaptcha"
             }
+        },
+        "/api/webauthn/signin/begin": {
+            "get": {
+                "tags": [
+                    "Login API"
+                ],
+                "description": "WebAuthn Login Flow 1st stage",
+                "operationId": "ApiController.WebAuthnSigninBegin",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "owner",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "name",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The CredentialAssertion object",
+                        "schema": {
+                            "$ref": "#/definitions/protocol.CredentialAssertion"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/webauthn/signin/finish": {
+            "post": {
+                "tags": [
+                    "Login API"
+                ],
+                "description": "WebAuthn Login Flow 2nd stage",
+                "operationId": "ApiController.WebAuthnSigninBegin",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "authenticator assertion Response",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/protocol.CredentialAssertionResponse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "\"The Response object\"",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/webauthn/signup/begin": {
+            "get": {
+                "tags": [
+                    "User API"
+                ],
+                "description": "WebAuthn Registration Flow 1st stage",
+                "operationId": "ApiController.WebAuthnSignupBegin",
+                "responses": {
+                    "200": {
+                        "description": "The CredentialCreationOptions object",
+                        "schema": {
+                            "$ref": "#/definitions/protocol.CredentialCreation"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/webauthn/signup/finish": {
+            "post": {
+                "tags": [
+                    "User API"
+                ],
+                "description": "WebAuthn Registration Flow 2nd stage",
+                "operationId": "ApiController.WebAuthnSignupFinish",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "authenticator attestation Response",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/protocol.CredentialCreationResponse"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "\"The Response object\"",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "2127.0xc000398090.false": {
+        "2127.0xc000427560.false": {
             "title": "false",
             "type": "object"
         },
-        "2161.0xc0003980c0.false": {
+        "2161.0xc000427590.false": {
             "title": "false",
             "type": "object"
         },
@@ -3221,10 +3342,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2127.0xc000398090.false"
+                    "$ref": "#/definitions/2127.0xc000427560.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2161.0xc0003980c0.false"
+                    "$ref": "#/definitions/2161.0xc000427590.false"
                 },
                 "msg": {
                     "type": "string"
@@ -3329,10 +3450,16 @@
                 "enablePassword": {
                     "type": "boolean"
                 },
+                "enableSamlCompress": {
+                    "type": "boolean"
+                },
                 "enableSignUp": {
                     "type": "boolean"
                 },
                 "enableSigninSession": {
+                    "type": "boolean"
+                },
+                "enableWebAuthn": {
                     "type": "boolean"
                 },
                 "expireInHours": {
@@ -4507,6 +4634,12 @@
                 "updatedTime": {
                     "type": "string"
                 },
+                "webauthnCredentials": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/webauthn.Credential"
+                    }
+                },
                 "wechat": {
                     "type": "string"
                 },
@@ -4595,6 +4728,26 @@
                     "type": "string"
                 }
             }
+        },
+        "protocol.CredentialAssertion": {
+            "title": "CredentialAssertion",
+            "type": "object"
+        },
+        "protocol.CredentialAssertionResponse": {
+            "title": "CredentialAssertionResponse",
+            "type": "object"
+        },
+        "protocol.CredentialCreation": {
+            "title": "CredentialCreation",
+            "type": "object"
+        },
+        "protocol.CredentialCreationResponse": {
+            "title": "CredentialCreationResponse",
+            "type": "object"
+        },
+        "webauthn.Credential": {
+            "title": "Credential",
+            "type": "object"
         },
         "xorm.Engine": {
             "title": "Engine",
