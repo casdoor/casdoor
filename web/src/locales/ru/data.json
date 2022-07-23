@@ -93,6 +93,7 @@
     "Please input your username!": "Пожалуйста, введите ваше имя пользователя!",
     "Reset": "Reset",
     "Retrieve password": "Получить пароль",
+    "Unknown forget type": "Unknown forget type",
     "Verify": "Подтвердить"
   },
   "general": {
@@ -187,6 +188,7 @@
     "Signup application - Tooltip": "Signup application - Tooltip",
     "Sorry, the page you visited does not exist.": "Извините, посещенная вами страница не существует.",
     "Sorry, the user you visited does not exist or you are not authorized to access this user.": "Sorry, the user you visited does not exist or you are not authorized to access this user.",
+    "Sorry, you do not have permission to access this page.": "Извините, вы не имеете права доступа к этой странице.",
     "State": "State",
     "State - Tooltip": "State - Tooltip",
     "Swagger": "Swagger",
@@ -345,7 +347,8 @@
     "New Permission": "New Permission",
     "Resource type": "Тип ресурса",
     "Resource type - Tooltip": "Тип ресурса - Подсказка",
-    "Resources": "Ресурсы"
+    "Resources": "Ресурсы",
+    "Resources - Tooltip": "Resources - Tooltip"
   },
   "product": {
     "Alipay": "Alipay",

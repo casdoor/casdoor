@@ -93,6 +93,7 @@
     "Please input your username!": "Veuillez entrer votre nom d'utilisateur !",
     "Reset": "Reset",
     "Retrieve password": "Récupérer le mot de passe",
+    "Unknown forget type": "Unknown forget type",
     "Verify": "Vérifier"
   },
   "general": {
@@ -187,6 +188,7 @@
     "Signup application - Tooltip": "Signup application - Tooltip",
     "Sorry, the page you visited does not exist.": "Désolé, la page que vous avez visitée n'existe pas.",
     "Sorry, the user you visited does not exist or you are not authorized to access this user.": "Sorry, the user you visited does not exist or you are not authorized to access this user.",
+    "Sorry, you do not have permission to access this page.": "Désolé, vous n'avez pas la permission d'accéder à cette page.",
     "State": "State",
     "State - Tooltip": "State - Tooltip",
     "Swagger": "Swagger",
@@ -345,7 +347,8 @@
     "New Permission": "New Permission",
     "Resource type": "Type de ressource",
     "Resource type - Tooltip": "Type de ressource - infobulle",
-    "Resources": "Ressource"
+    "Resources": "Ressource",
+    "Resources - Tooltip": "Resources - Tooltip"
   },
   "product": {
     "Alipay": "Alipay",

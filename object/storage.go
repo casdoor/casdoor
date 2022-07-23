@@ -72,9 +72,9 @@ func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 		host = fmt.Sprintf("%s/%s", host, provider.Bucket)
 	}
 
-	fileUrl := util.UrlJoin(host, objectKey)
+	fileUrl := util.UrlJoin(host, escapePath(objectKey))
 	if hasTimestamp {
-		fileUrl = fmt.Sprintf("%s?t=%s", util.UrlJoin(host, objectKey), util.GetCurrentUnixTime())
+		fileUrl = fmt.Sprintf("%s?t=%s", fileUrl, util.GetCurrentUnixTime())
 	}
 
 	return fileUrl, objectKey

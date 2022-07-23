@@ -78,6 +78,7 @@ p, *, *, POST, /api/get-email-and-phone, *, *
 p, *, *, POST, /api/login, *, *
 p, *, *, GET, /api/get-app-login, *, *
 p, *, *, POST, /api/logout, *, *
+p, *, *, GET, /api/logout, *, *
 p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
 p, *, *, *, /api/login/oauth, *, *
@@ -92,6 +93,7 @@ p, *, *, GET, /api/get-payment, *, *
 p, *, *, POST, /api/update-payment, *, *
 p, *, *, POST, /api/invoice-payment, *, *
 p, *, *, GET, /api/get-providers, *, *
+p, *, *, POST, /api/notify-payment, *, *
 p, *, *, POST, /api/unlink, *, *
 p, *, *, POST, /api/set-password, *, *
 p, *, *, POST, /api/send-verification-code, *, *

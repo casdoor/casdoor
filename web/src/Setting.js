@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {message, Tag, Tooltip} from "antd";
+import {Tag, Tooltip, message} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
@@ -662,8 +662,8 @@ export function goToLogin(ths, application) {
     return;
   }
 
-  if (!application.enablePassword && window.location.pathname.includes("/signup/oauth/authorize")) {
-    const link = window.location.href.replace("/signup/oauth/authorize", "/login/oauth/authorize");
+  if (!application.enablePassword && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
+    const link = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
     goToLink(link);
     return;
   }
@@ -685,7 +685,7 @@ export function goToSignup(ths, application) {
   }
 
   if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
-    const link = window.location.href.replace("/login/oauth/authorize", "/signup/oauth/authorize");
+    const link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
     goToLink(link);
     return;
   }
