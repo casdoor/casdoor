@@ -3571,7 +3571,7 @@
                 "privateKey": {
                     "type": "string"
                 },
-                "publicKey": {
+                "certificate": {
                     "type": "string"
                 },
                 "scope": {

@@ -23,10 +23,10 @@ import (
 
 func TestGenerateRsaKeys(t *testing.T) {
 	fileId := "token_jwt_key"
-	publicKey, privateKey := generateRsaKeys(4096, 20, "Casdoor Cert", "Casdoor Organization")
+	certificate, privateKey := generateRsaKeys(4096, 20, "Casdoor Cert", "Casdoor Organization")
 
-	// Write certificate (aka public key) to file.
-	util.WriteStringToPath(publicKey, fmt.Sprintf("%s.pem", fileId))
+	// Write certificate (aka certificate) to file.
+	util.WriteStringToPath(certificate, fmt.Sprintf("%s.pem", fileId))
 
 	// Write private key to file.
 	util.WriteStringToPath(privateKey, fmt.Sprintf("%s.key", fileId))

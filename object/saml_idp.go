@@ -36,7 +36,7 @@ import (
 )
 
 //returns a saml2 response
-func NewSamlResponse(user *User, host string, publicKey string, destination string, iss string, requestId string, redirectUri []string) (*etree.Element, error) {
+func NewSamlResponse(user *User, host string, certificate string, destination string, iss string, requestId string, redirectUri []string) (*etree.Element, error) {
 	samlResponse := &etree.Element{
 		Space: "samlp",
 		Tag:   "Response",
@@ -177,8 +177,8 @@ type Attribute struct {
 func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, error) {
 	//_, originBackend := getOriginFromHost(host)
 	cert := getCertByApplication(application)
-	block, _ := pem.Decode([]byte(cert.PublicKey))
-	publicKey := base64.StdEncoding.EncodeToString(block.Bytes)
+	block, _ := pem.Decode([]byte(cert.Certificate))
+	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 
 	origin := beego.AppConfig.String("origin")
 	originFrontend, originBackend := getOriginFromHost(host)
@@ -199,7 +199,7 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 				KeyInfo: KeyInfo{
 					X509Data: X509Data{
 						X509Certificate: X509Certificate{
-							Cert: publicKey,
+							Cert: certificate,
 						},
 					},
 				},
@@ -248,18 +248,18 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 		return "", "", fmt.Errorf("err: invalid issuer url")
 	}
 
-	// get public key string
+	// get certificate string
 	cert := getCertByApplication(application)
-	block, _ := pem.Decode([]byte(cert.PublicKey))
-	publicKey := base64.StdEncoding.EncodeToString(block.Bytes)
+	block, _ := pem.Decode([]byte(cert.Certificate))
+	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 
 	_, originBackend := getOriginFromHost(host)
 
 	// build signedResponse
-	samlResponse, _ := NewSamlResponse(user, originBackend, publicKey, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer.Url, authnRequest.ID, application.RedirectUris)
+	samlResponse, _ := NewSamlResponse(user, originBackend, certificate, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer.Url, authnRequest.ID, application.RedirectUris)
 	randomKeyStore := &X509Key{
 		PrivateKey:      cert.PrivateKey,
-		X509Certificate: publicKey,
+		X509Certificate: certificate,
 	}
 	ctx := dsig.NewDefaultSigningContext(randomKeyStore)
 	ctx.Hash = crypto.SHA1

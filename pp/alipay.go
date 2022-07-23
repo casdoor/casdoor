@@ -28,7 +28,7 @@ type AlipayPaymentProvider struct {
 	Client *alipay.Client
 }
 
-func NewAlipayPaymentProvider(appId string, appPublicKey string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string) *AlipayPaymentProvider {
+func NewAlipayPaymentProvider(appId string, appCertificate string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string) *AlipayPaymentProvider {
 	pp := &AlipayPaymentProvider{}
 
 	client, err := alipay.NewClient(appId, appPrivateKey, true)
@@ -36,7 +36,7 @@ func NewAlipayPaymentProvider(appId string, appPublicKey string, appPrivateKey s
 		panic(err)
 	}
 
-	err = client.SetCertSnByContent([]byte(appPublicKey), []byte(authorityRootPublicKey), []byte(authorityPublicKey))
+	err = client.SetCertSnByContent([]byte(appCertificate), []byte(authorityRootPublicKey), []byte(authorityPublicKey))
 	if err != nil {
 		panic(err)
 	}

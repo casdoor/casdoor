@@ -129,13 +129,13 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
-		// RSA public key
-		publicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cert.PublicKey))
+		// RSA certificate
+		certificate, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cert.Certificate))
 		if err != nil {
 			return nil, err
 		}
 
-		return publicKey, nil
+		return certificate, nil
 	})
 
 	if t != nil {
