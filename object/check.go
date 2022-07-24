@@ -236,7 +236,7 @@ func CheckAccessPermission(userId string, application *Application) (bool, error
 	allowed := true
 	var err error
 	for _, permission := range permissions {
-		if !permission.IsEnabled {
+		if !permission.IsEnabled || len(permission.Users) == 0 {
 			continue
 		}
 

@@ -25,6 +25,7 @@ import (
 func InitDb() {
 	existed := initBuiltInOrganization()
 	if !existed {
+		initBuiltInPermission()
 		initBuiltInProvider()
 		initBuiltInUser()
 		initBuiltInApplication()
@@ -229,4 +230,26 @@ func initBuiltInProvider() {
 
 func initWebAuthn() {
 	gob.Register(webauthn.SessionData{})
+}
+
+func initBuiltInPermission() {
+	permission := GetPermission("built-in/permission-built-in")
+	if permission != nil {
+		return
+	}
+
+	permission = &Permission{
+		Owner:        "built-in",
+		Name:         "permission-built-in",
+		CreatedTime:  util.GetCurrentTime(),
+		DisplayName:  "Built-in Permission",
+		Users:        []string{"built-in/admin"},
+		Roles:        []string{},
+		ResourceType: "Application",
+		Resources:    []string{"app-built-in"},
+		Actions:      []string{"Read", "Write", "Admin"},
+		Effect:       "Allow",
+		IsEnabled:    true,
+	}
+	AddPermission(permission)
 }
