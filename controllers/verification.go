@@ -49,8 +49,24 @@ func (c *ApiController) SendVerificationCode() {
 	applicationId := c.Ctx.Request.Form.Get("applicationId")
 	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
 
-	if destType == "" || dest == "" || applicationId == "" || !strings.Contains(applicationId, "/") || checkType == "" {
-		c.ResponseError("Missing parameter.")
+	if destType == "" {
+		c.ResponseError("Missing parameter: type.")
+		return
+	}
+	if dest == "" {
+		c.ResponseError("Missing parameter: dest.")
+		return
+	}
+	if applicationId == "" {
+		c.ResponseError("Missing parameter: applicationId.")
+		return
+	}
+	if !strings.Contains(applicationId, "/") {
+		c.ResponseError("Wrong parameter: applicationId.")
+		return
+	}
+	if checkType == "" {
+		c.ResponseError("Missing parameter: checkType.")
 		return
 	}
 
