@@ -191,6 +191,10 @@ class LoginPage extends React.Component {
         values["type"] = "saml";
       }
 
+      if (this.state.owner != null) {
+        values["organization"] = this.state.owner;
+      }
+
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
           if (res.status === "ok") {
