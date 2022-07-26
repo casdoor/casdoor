@@ -103,6 +103,7 @@ export function getOAuthGetParameters(params) {
   const codeChallenge = getRefinedValue(queries.get("code_challenge"));
   const samlRequest = getRefinedValue(queries.get("SAMLRequest"));
   const relayState = getRefinedValue(queries.get("RelayState"));
+  const noRedirect = getRefinedValue(queries.get("noRedirect"));
 
   if ((clientId === undefined || clientId === null || clientId === "") && (samlRequest === "" || samlRequest === undefined)) {
     // login
@@ -120,6 +121,7 @@ export function getOAuthGetParameters(params) {
       codeChallenge: codeChallenge,
       samlRequest: samlRequest,
       relayState: relayState,
+      noRedirect: noRedirect,
     };
   }
 }
