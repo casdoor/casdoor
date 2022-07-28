@@ -505,7 +505,7 @@ class LoginPage extends React.Component {
                 )
             }
             {
-              !application.enableSignUp ? null : this.renderFooter(application)
+              this.renderFooter(application)
             }
           </Form.Item>
           <Form.Item>
@@ -535,16 +535,12 @@ class LoginPage extends React.Component {
               return this.renderProviderLogo(providerItem.provider, application, 40, 10, "big");
             })
           }
-          {
-            !application.enableSignUp ? null : (
-              <div>
-                <br />
-                {
-                  this.renderFooter(application)
-                }
-              </div>
-            )
-          }
+          <div>
+            <br />
+            {
+              this.renderFooter(application)
+            }
+          </div>
         </div>
       );
     }
@@ -579,13 +575,19 @@ class LoginPage extends React.Component {
             }
           </span>
           <span style={{float: "right"}}>
-            {i18next.t("login:No account?")}&nbsp;
-            <a onClick={() => {
-              sessionStorage.setItem("signinUrl", window.location.href);
-              Setting.goToSignup(this, application);
-            }}>
-              {i18next.t("login:sign up now")}
-            </a>
+            {
+              !application.enableSignUp ? null : (
+                <>
+                  {i18next.t("login:No account?")}&nbsp;
+                  <a onClick={() => {
+                    sessionStorage.setItem("signinUrl", window.location.href);
+                    Setting.goToSignup(this, application);
+                  }}>
+                    {i18next.t("login:sign up now")}
+                  </a>
+                </>
+              )
+            }
           </span>
         </React.Fragment>
       );
