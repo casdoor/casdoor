@@ -201,6 +201,10 @@ class LoginPage extends React.Component {
         values["type"] = "saml";
       }
 
+      if (this.state.owner != null) {
+        values["organization"] = this.state.owner;
+      }
+
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
           if (res.status === "ok") {
@@ -213,6 +217,7 @@ class LoginPage extends React.Component {
             } else if (responseType === "code") {
               const code = res.data;
               const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
+              const noRedirect = oAuthParams.noRedirect;
 
               if (Setting.hasPromptPage(application)) {
                 AuthBackend.getAccount("")
@@ -234,7 +239,19 @@ class LoginPage extends React.Component {
                     }
                   });
               } else {
-                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+                if (noRedirect === "true") {
+                  window.close();
+                  const newWindow = window.open(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+                  if (newWindow) {
+                    setInterval(() => {
+                      if (!newWindow.closed) {
+                        newWindow.close();
+                      }
+                    }, 1000);
+                  }
+                } else {
+                  Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+                }
               }
 
               // Util.showMessage("success", `Authorization code: ${res.data}`);
@@ -498,7 +515,7 @@ class LoginPage extends React.Component {
                 )
             }
             {
-              !application.enableSignUp ? null : this.renderFooter(application)
+              this.renderFooter(application)
             }
           </Form.Item>
           <Form.Item>
@@ -528,16 +545,12 @@ class LoginPage extends React.Component {
               return this.renderProviderLogo(providerItem.provider, application, 40, 10, "big");
             })
           }
-          {
-            !application.enableSignUp ? null : (
-              <div>
-                <br />
-                {
-                  this.renderFooter(application)
-                }
-              </div>
-            )
-          }
+          <div>
+            <br />
+            {
+              this.renderFooter(application)
+            }
+          </div>
         </div>
       );
     }
@@ -572,13 +585,19 @@ class LoginPage extends React.Component {
             }
           </span>
           <span style={{float: "right"}}>
-            {i18next.t("login:No account?")}&nbsp;
-            <a onClick={() => {
-              sessionStorage.setItem("signinUrl", window.location.href);
-              Setting.goToSignup(this, application);
-            }}>
-              {i18next.t("login:sign up now")}
-            </a>
+            {
+              !application.enableSignUp ? null : (
+                <>
+                  {i18next.t("login:No account?")}&nbsp;
+                  <a onClick={() => {
+                    sessionStorage.setItem("signinUrl", window.location.href);
+                    Setting.goToSignup(this, application);
+                  }}>
+                    {i18next.t("login:sign up now")}
+                  </a>
+                </>
+              )
+            }
           </span>
         </React.Fragment>
       );
@@ -648,13 +667,13 @@ class LoginPage extends React.Component {
           throw credentialRequestOptions.status.msg;
         }
 
-        credentialRequestOptions.publicKey.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.publicKey.challenge);
-        credentialRequestOptions.publicKey.allowCredentials.forEach(function(listItem) {
+        credentialRequestOptions.certificate.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.certificate.challenge);
+        credentialRequestOptions.certificate.allowCredentials.forEach(function(listItem) {
           listItem.id = UserWebauthnBackend.webAuthnBufferDecode(listItem.id);
         });
 
         return navigator.credentials.get({
-          publicKey: credentialRequestOptions.publicKey
+          certificate: credentialRequestOptions.certificate
         });
       })
       .then((assertion) => {
@@ -702,7 +721,7 @@ class LoginPage extends React.Component {
         >
           <CountDownInput
             disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
-            onButtonClickArgs={[this.state.username, "", Setting.getApplicationOrgName(application), true]}
+            onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
           />
         </Form.Item>
       ) : (

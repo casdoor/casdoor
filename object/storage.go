@@ -55,7 +55,6 @@ func escapePath(path string) string {
 
 func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool) (string, string) {
 	escapedPath := escapePath(fullFilePath)
-	escapedPath = escapePath(escapedPath)
 	objectKey := util.UrlJoin(util.GetUrlPath(provider.Domain), escapedPath)
 
 	host := ""
@@ -73,9 +72,9 @@ func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 		host = fmt.Sprintf("%s/%s", host, provider.Bucket)
 	}
 
-	fileUrl := util.UrlJoin(host, objectKey)
+	fileUrl := util.UrlJoin(host, escapePath(objectKey))
 	if hasTimestamp {
-		fileUrl = fmt.Sprintf("%s?t=%s", util.UrlJoin(host, objectKey), util.GetCurrentUnixTime())
+		fileUrl = fmt.Sprintf("%s?t=%s", fileUrl, util.GetCurrentUnixTime())
 	}
 
 	return fileUrl, objectKey
