@@ -15,7 +15,6 @@ data:
     redisEndpoint =
     defaultStorageProvider = 
     isCloudIntranet = false
-    authState = "casdoor"
     socks5Proxy = "127.0.0.1:10808"
     verificationCodeTimeout = 10
     initScore = 2000
