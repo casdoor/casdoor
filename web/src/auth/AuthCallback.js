@@ -117,7 +117,6 @@ class AuthCallback extends React.Component {
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
     AuthBackend.login(body, oAuthParams)
       .then((res) => {
-        if (res.status === "ok") {
         const callback = () => {
           const responseType = this.getResponseType();
           if (responseType === "login") {
