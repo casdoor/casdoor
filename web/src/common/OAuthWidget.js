@@ -69,7 +69,7 @@ class OAuthWidget extends React.Component {
   getOAuthState() {
     AuthBackend.getOAuthState().then((res) => {
       this.setState({
-        oAuthState: res.state,
+        oAuthState: res.data.state,
       });
     });
 }

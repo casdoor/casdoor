@@ -508,11 +508,11 @@ func (c *ApiController) HandleSamlLogin() {
 }
 
 func (c *ApiController) GetOAuthState() {
-	state := strings.ReplaceAll(util.GenerateUuid(), "-", "")
+	state := util.GenerateClientSecret()
 	c.Ctx.SetCookie("oauth_state", state)
-	c.Data["json"] = map[string]string{
+	data := map[string]string{
 		"state": state,
 	}
-	c.ServeJSON()
+	c.ResponseOk(data)
 	return
 }
