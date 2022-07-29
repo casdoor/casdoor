@@ -140,19 +140,19 @@ class AuthCallback extends React.Component {
             const redirectUri = res.data2;
             Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
           }
-        }
-        if (res.status === 'ok') {
-          callback()
+        };
+        if (res.status === "ok") {
+          callback();
         } else if (res.status === NextTwoFactor) {
           this.setState({
-            getVerityTotp: function () {
+            getVerityTotp: function() {
               return <VerityTotp onSuccess={() => {
-                callback()
+                callback();
               }} onFail={() => {
-                Setting.showMessage("error",i18next.t('two-factor:Verification failed'));
-              }}/>
+                Setting.showMessage("error", i18next.t("two-factor:Verification failed"));
+              }} />;
             }
-          })
+          });
         } else {
           this.setState({
             msg: res.msg,

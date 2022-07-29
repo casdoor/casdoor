@@ -50,7 +50,7 @@ function CheckPassword({user, onSuccess, onFail}) {
 		<form style={{width: "300px"}} onSubmit={formik.handleSubmit}>
 			<Input
 				onChange={formik.handleChange("password")}
-				prefix={<UserOutlined/>}
+				prefix={<UserOutlined />}
 				placeholder={i18next.t("two-factor:Password")}
 				type="password"
 			/>
@@ -84,7 +84,7 @@ function VerityTotp({totp, onSuccess, onFail}) {
 		});
 	return (
 		<form style={{width: "300px"}} onSubmit={formik.handleSubmit}>
-			<QRCode value={totp.url} size={200}/>
+			<QRCode value={totp.url} size={200} />
 			<Row type="flex" justify="center" align="middle" >
 				<Col>{Setting.getLabel(i18next.t("two-factor:Two-factor secret"), i18next.t("two-factor:Two-factor secret - Tooltip"))} :</Col>
 			</Row>
@@ -98,7 +98,7 @@ function VerityTotp({totp, onSuccess, onFail}) {
 			<Input
 				style={{marginTop: 24}}
 				onChange={formik.handleChange("passcode")}
-				prefix={<UserOutlined/>}
+				prefix={<UserOutlined />}
 				placeholder={i18next.t("two-factor:Passcode")}
 				type="text"
 			/>
@@ -136,8 +136,8 @@ function EnableTotp({user, totp, onSuccess, onFail}) {
 		<div style={{width: "400px"}}>
 			<p>{i18next.t(
 				"two-factor:Please save this recovery code. Once your device cannot provide an authentication code, you can reset two-factor authentication by this recovery code")}</p>
-			<br/>
-			<code style={{fontStyle: 'solid'}}>{totp.recoveryCode}</code>
+			<br />
+			<code style={{fontStyle: "solid"}}>{totp.recoveryCode}</code>
 			<Button style={{marginTop: 24}} loading={loading} onClick={() => {
 				requestEnableTotp();
 			}} block type="primary">
@@ -228,14 +228,13 @@ class TotpPage extends React.Component {
 				/>;
 			case 2:
 				return <EnableTotp user={this.getUser()} totp={this.state?.totp}
-					 onSuccess={() => {
-						 Setting.showMessage("success", i18next.t('two-factor:Enabled successfully'));
-						 Setting.goToLinkSoft(this, "/account");
-					 }}
-					 onFail={(res) => {
-						 Setting.showMessage("error",
-							 i18next.t(`signup:${res.msg}`));
-					 }}/>;
+					onSuccess={() => {
+						Setting.showMessage("success", i18next.t("two-factor:Enabled successfully"));
+						Setting.goToLinkSoft(this, "/account");
+					}}
+					onFail={(res) => {
+						Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+					}} />;
 				default:
 					return null;
 		}
@@ -244,7 +243,7 @@ class TotpPage extends React.Component {
 	render() {
 		const application = this.state.application;
 		if (!application) {
-			return <Spin/>;
+			return <Spin />;
 		}
 
 		return (
@@ -254,7 +253,7 @@ class TotpPage extends React.Component {
 						<Col span={24}>
 							<div style={{marginTop: "80px", marginBottom: "10px", textAlign: "center"}}>
 								{Setting.renderHelmet(application)}
-								<CustomGithubCorner/>
+								<CustomGithubCorner />
 								{Setting.renderLogo(application)}</div>
 						</Col>
 					</Row>
@@ -273,15 +272,15 @@ class TotpPage extends React.Component {
 									margin: "auto",
 									marginTop: "80px"
 								}} >
-								<Step title={i18next.t("two-factor:Verify Password")} icon={<UserOutlined/>} />
-								<Step title={i18next.t("two-factor:Verify Code")} icon={<KeyOutlined/>} />
-								<Step title={i18next.t("two-factor:Enable")} icon={<CheckOutlined/>} />
+								<Step title={i18next.t("two-factor:Verify Password")} icon={<UserOutlined />} />
+								<Step title={i18next.t("two-factor:Verify Code")} icon={<KeyOutlined />} />
+								<Step title={i18next.t("two-factor:Enable")} icon={<CheckOutlined />} />
 							</Steps>
 						</Col>
 					</Row>
 				</Col>
-				<Col span={24} style={{ display: "flex", justifyContent: "center" }}>
-					<div style={{ marginTop: "10px", textAlign: "center" }}>{this.renderStep()}</div>
+				<Col span={24} style={{display: "flex", justifyContent: "center"}}>
+					<div style={{marginTop: "10px", textAlign: "center"}}>{this.renderStep()}</div>
 				</Col>
 			</Row>
 		);

@@ -62,7 +62,7 @@ export function VerityTotp({onSuccess, onFail}) {
     }).finally(() => {
       setLoading(false);
     });
-  }
+  };
 
   switch (currentStep) {
     case 0:
@@ -74,7 +74,7 @@ export function VerityTotp({onSuccess, onFail}) {
             "two-factor:Two-factor authentication description")}</div>
           <Input placeholder={i18next.t("two-factor:Passcode")}
                  style={{marginBottom: 24}} type={"passcode"} size={"large"}
-                 onChange={event => setPasscode(event.target.value)}/>
+                 onChange={event => setPasscode(event.target.value)} />
           <Button style={{width: "100%"}} size={"large"} loading={loading}
                   type={"primary"} onClick={() => {
             verity();
@@ -88,7 +88,7 @@ export function VerityTotp({onSuccess, onFail}) {
             </a>
           </span>
         </div>
-      )
+      );
     case 1:
       return (
         <div style={{width: 300}}>
@@ -98,13 +98,13 @@ export function VerityTotp({onSuccess, onFail}) {
             "two-factor:Two-factor recover description")}</div>
           <Input placeholder={i18next.t("two-factor:Recovery code")}
                  style={{marginBottom: 24}} type={"passcode"} size={"large"}
-                 onChange={event => setRecoveryCode(event.target.value)}/>
+                 onChange={event => setRecoveryCode(event.target.value)} />
           <Button style={{width: "100%"}} size={"large"} loading={loading}
                   type={"primary"} onClick={() => {
             recover();
           }}>{i18next.t("two-factor:Verity")}</Button>
         </div>
-      )
+      );
     default:
       return null;
   }

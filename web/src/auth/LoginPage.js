@@ -255,9 +255,9 @@ class LoginPage extends React.Component {
               const redirectUri = res.data2;
               Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
             }
-          }
-          if (res.status === 'ok') {
-            callback()
+          };
+          if (res.status === "ok") {
+            callback();
           } else if (res.status === NextTwoFactor) {
             this.setState({
               getVerityTotp: () => {
@@ -266,7 +266,7 @@ class LoginPage extends React.Component {
                     onFail={() => {
                       Setting.showMessage("error", i18next.t("two-factor:Verification failed"));
                     }}
-                    onSuccess={() => callback()}/>);
+                    onSuccess={() => callback()} />);
               }
             });
           } else {
