@@ -135,6 +135,6 @@ export function getQueryParamsToSessionStorage(applicationName, providerName, me
   sessionStorage.setItem("query", query);
 }
 
-export function getGetQueryParamsFromSessionStorage() {
+export function getQueryParamsFromSessionStorage() {
   return sessionStorage.getItem("query");
 }
