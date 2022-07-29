@@ -151,6 +151,8 @@ func (syncer *Syncer) initAdapter() {
 		var dataSourceName string
 		if syncer.DatabaseType == "mssql" {
 			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", syncer.User, syncer.Password, syncer.Host, syncer.Port, syncer.Database)
+		} else if syncer.DatabaseType == "postgres" {
+			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", syncer.User, syncer.Password, syncer.Host, syncer.Port, syncer.Database)
 		} else {
 			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/", syncer.User, syncer.Password, syncer.Host, syncer.Port)
 		}

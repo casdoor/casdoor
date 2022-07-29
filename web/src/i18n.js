@@ -42,35 +42,35 @@ function initLanguage() {
       let userLanguage;
       userLanguage = navigator.language;
       switch (userLanguage) {
-        case "zh-CN":
-          language = "zh";
-          break;
-        case "zh":
-          language = "zh";
-          break;
-        case "en":
-          language = "en";
-          break;
-        case "en-US":
-          language = "en";
-          break;
-        case "fr":
-          language = "fr";
-          break;
-        case "de":
-          language = "de";
-          break;
-        case "ko":
-          language = "ko";
-          break;
-        case "ru":
-          language = "ru";
-          break;
-        case "ja":
-          language = "ja";
-          break;
-        default:
-          language = Conf.DefaultLanguage;
+      case "zh-CN":
+        language = "zh";
+        break;
+      case "zh":
+        language = "zh";
+        break;
+      case "en":
+        language = "en";
+        break;
+      case "en-US":
+        language = "en";
+        break;
+      case "fr":
+        language = "fr";
+        break;
+      case "de":
+        language = "de";
+        break;
+      case "ko":
+        language = "ko";
+        break;
+      case "ru":
+        language = "ru";
+        break;
+      case "ja":
+        language = "ja";
+        break;
+      default:
+        language = Conf.DefaultLanguage;
       }
     }
   }
@@ -89,7 +89,7 @@ i18n.init({
   interpolation: {
     escapeValue: false,
   },
-  //debug: true,
+  // debug: true,
   saveMissing: true,
 });
 

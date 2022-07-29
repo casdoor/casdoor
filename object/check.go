@@ -230,3 +230,29 @@ func CheckUserPermission(requestUserId, userId string, strict bool) (bool, error
 
 	return hasPermission, fmt.Errorf("you don't have the permission to do this")
 }
+
+func CheckAccessPermission(userId string, application *Application) (bool, error) {
+	permissions := GetPermissions(application.Organization)
+	allowed := true
+	var err error
+	for _, permission := range permissions {
+		if !permission.IsEnabled || len(permission.Users) == 0 {
+			continue
+		}
+
+		isHit := false
+		for _, resource := range permission.Resources {
+			if application.Name == resource {
+				isHit = true
+				break
+			}
+		}
+
+		if isHit {
+			enforcer := getEnforcer(permission)
+			allowed, err = enforcer.Enforce(userId, application.Name, "read")
+			break
+		}
+	}
+	return allowed, err
+}

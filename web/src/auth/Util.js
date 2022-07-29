@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Alert, Button, message, Result} from "antd";
+import {Alert, Button, Result, message} from "antd";
 
 export function showMessage(type, text) {
   if (type === "success") {
@@ -39,7 +39,7 @@ export function renderMessage(msg) {
           }
         />
       </div>
-    )
+    );
   } else {
     return null;
   }
@@ -69,26 +69,26 @@ export function renderMessageLarge(ths, msg) {
         >
         </Result>
       </div>
-    )
+    );
   } else {
     return null;
   }
 }
 
-function getRefinedValue(value){
-  return (value === null)? "" : value
+function getRefinedValue(value) {
+  return (value === null)? "" : value;
 }
 
-export function getCasParameters(params){
+export function getCasParameters(params) {
   const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
-  const service = getRefinedValue(queries.get("service"))
-  const renew = getRefinedValue(queries.get("renew"))
-  const gateway = getRefinedValue(queries.get("gateway"))
+  const service = getRefinedValue(queries.get("service"));
+  const renew = getRefinedValue(queries.get("renew"));
+  const gateway = getRefinedValue(queries.get("gateway"));
   return {
     service: service,
     renew: renew,
     gateway: gateway,
-  }
+  };
 }
 
 export function getOAuthGetParameters(params) {
@@ -103,6 +103,7 @@ export function getOAuthGetParameters(params) {
   const codeChallenge = getRefinedValue(queries.get("code_challenge"));
   const samlRequest = getRefinedValue(queries.get("SAMLRequest"));
   const relayState = getRefinedValue(queries.get("RelayState"));
+  const noRedirect = getRefinedValue(queries.get("noRedirect"));
 
   if ((clientId === undefined || clientId === null || clientId === "") && (samlRequest === "" || samlRequest === undefined)) {
     // login
@@ -120,6 +121,7 @@ export function getOAuthGetParameters(params) {
       codeChallenge: codeChallenge,
       samlRequest: samlRequest,
       relayState: relayState,
+      noRedirect: noRedirect,
     };
   }
 }

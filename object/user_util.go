@@ -106,6 +106,10 @@ func setUserProperty(user *User, field string, value string) {
 	if value == "" {
 		delete(user.Properties, field)
 	} else {
+		if user.Properties == nil {
+			user.Properties = make(map[string]string)
+		}
+
 		user.Properties[field] = value
 	}
 }

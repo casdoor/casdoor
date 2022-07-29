@@ -75,6 +75,17 @@ func (c *ApiController) getTotpSessionData() *object.TwoFactorSessionData {
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) (resp *Response) {
 	userId := user.GetId()
+
+	allowed, err := object.CheckAccessPermission(userId, application)
+	if err != nil {
+		c.ResponseError(err.Error(), nil)
+		return
+	}
+	if !allowed {
+		c.ResponseError("Unauthorized operation")
+		return
+	}
+
 	if form.Type == ResponseTypeLogin {
 		if user.IsEnableTwoFactor() {
 			c.setFactorSessionData(&object.TwoFactorSessionData{UserId: userId, EnableSession: true, AutoSignIn: form.AutoSignin})

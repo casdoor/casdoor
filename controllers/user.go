@@ -85,11 +85,15 @@ func (c *ApiController) GetUsers() {
 // @router /get-user [get]
 func (c *ApiController) GetUser() {
 	id := c.Input().Get("id")
-	owner := c.Input().Get("owner")
 	email := c.Input().Get("email")
-	userOwner, _ := util.GetOwnerAndNameFromId(id)
-	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", userOwner))
+	userId := c.Input().Get("userId")
 
+	owner := c.Input().Get("owner")
+	if owner == "" {
+		owner, _ = util.GetOwnerAndNameFromId(id)
+	}
+
+	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", owner))
 	if !organization.IsProfilePublic {
 		requestUserId := c.GetSessionUsername()
 		hasPermission, err := object.CheckUserPermission(requestUserId, id, false)
@@ -100,10 +104,12 @@ func (c *ApiController) GetUser() {
 	}
 
 	var user *object.User
-	if email == "" {
-		user = object.GetUser(id)
-	} else {
+	if email != "" {
 		user = object.GetUserByEmail(owner, email)
+	} else if userId != "" {
+		user = object.GetUserByUserId(owner, userId)
+	} else {
+		user = object.GetUser(id)
 	}
 
 	c.Data["json"] = object.GetMaskedUser(user)

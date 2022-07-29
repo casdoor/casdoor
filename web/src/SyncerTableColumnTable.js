@@ -13,12 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import {DownOutlined, DeleteOutlined, UpOutlined} from '@ant-design/icons';
-import {Button, Col, Input, Row, Select, Switch, Table, Tooltip} from 'antd';
+import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
+import {Button, Col, Input, Row, Select, Switch, Table, Tooltip} from "antd";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class SyncerTableColumnTable extends React.Component {
   constructor(props) {
@@ -65,64 +65,64 @@ class SyncerTableColumnTable extends React.Component {
     const columns = [
       {
         title: i18next.t("syncer:Column name"),
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: "name",
+        key: "name",
         render: (text, record, index) => {
           return (
             <Input value={text} onChange={e => {
-              this.updateField(table, index, 'name', e.target.value);
+              this.updateField(table, index, "name", e.target.value);
             }} />
-          )
+          );
         }
       },
       {
         title: i18next.t("syncer:Column type"),
-        dataIndex: 'type',
-        key: 'type',
+        dataIndex: "type",
+        key: "type",
         render: (text, record, index) => {
           return (
-            <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {this.updateField(table, index, 'type', value);})}>
+            <Select virtual={false} style={{width: "100%"}} value={text} onChange={(value => {this.updateField(table, index, "type", value);})}>
               {
-                ['string', 'integer', 'boolean']
+                ["string", "integer", "boolean"]
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
-          )
+          );
         }
       },
       {
         title: i18next.t("syncer:Casdoor column"),
-        dataIndex: 'casdoorName',
-        key: 'casdoorName',
+        dataIndex: "casdoorName",
+        key: "casdoorName",
         render: (text, record, index) => {
           return (
-            <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {this.updateField(table, index, 'casdoorName', value);})}>
+            <Select virtual={false} style={{width: "100%"}} value={text} onChange={(value => {this.updateField(table, index, "casdoorName", value);})}>
               {
-                ['Name', 'CreatedTime', 'UpdatedTime', 'Id', 'Type', 'Password', 'PasswordSalt', 'DisplayName', 'FirstName', 'LastName', 'Avatar', 'PermanentAvatar',
-                  'Email', 'EmailVerified', 'Phone', 'Location', 'Address', 'Affiliation', 'Title', 'IdCardType', 'IdCard', 'Homepage', 'Bio', 'Tag', 'Region',
-                  'Language', 'Gender', 'Birthday', 'Education', 'Score', 'Ranking', 'IsDefaultAvatar', 'IsOnline', 'IsAdmin', 'IsGlobalAdmin', 'IsForbidden', 'IsDeleted', 'CreatedIp']
+                ["Name", "CreatedTime", "UpdatedTime", "Id", "Type", "Password", "PasswordSalt", "DisplayName", "FirstName", "LastName", "Avatar", "PermanentAvatar",
+                  "Email", "EmailVerified", "Phone", "Location", "Address", "Affiliation", "Title", "IdCardType", "IdCard", "Homepage", "Bio", "Tag", "Region",
+                  "Language", "Gender", "Birthday", "Education", "Score", "Ranking", "IsDefaultAvatar", "IsOnline", "IsAdmin", "IsGlobalAdmin", "IsForbidden", "IsDeleted", "CreatedIp"]
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
-          )
+          );
         }
       },
       {
         title: i18next.t("syncer:Is hashed"),
-        dataIndex: 'isHashed',
-        key: 'isHashed',
+        dataIndex: "isHashed",
+        key: "isHashed",
         render: (text, record, index) => {
           return (
             <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, 'isHashed', checked);
+              this.updateField(table, index, "isHashed", checked);
             }} />
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Action"),
-        key: 'action',
-        width: '100px',
+        key: "action",
+        width: "100px",
         render: (text, record, index) => {
           return (
             <div>
@@ -143,12 +143,12 @@ class SyncerTableColumnTable extends React.Component {
 
     return (
       <Table rowKey="index" columns={columns} dataSource={table} size="middle" bordered pagination={false}
-             title={() => (
-               <div>
-                 {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-                 <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
-               </div>
-             )}
+        title={() => (
+          <div>
+            {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+          </div>
+        )}
       />
     );
   }
@@ -156,7 +156,7 @@ class SyncerTableColumnTable extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{marginTop: '20px'}} >
+        <Row style={{marginTop: "20px"}} >
           <Col span={24}>
             {
               this.renderTable(this.props.table)
@@ -164,7 +164,7 @@ class SyncerTableColumnTable extends React.Component {
           </Col>
         </Row>
       </div>
-    )
+    );
   }
 }
 

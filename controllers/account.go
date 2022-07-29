@@ -228,7 +228,7 @@ func (c *ApiController) Signup() {
 // @Tag Login API
 // @Description logout the current user
 // @Success 200 {object} controllers.Response The Response object
-// @router /logout [post]
+// @router /logout [get,post]
 func (c *ApiController) Logout() {
 	user := c.GetSessionUsername()
 	util.LogInfo(c.Ctx, "API: [%s] logged out", user)

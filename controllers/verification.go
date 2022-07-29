@@ -42,15 +42,31 @@ func (c *ApiController) getCurrentUser() *object.User {
 func (c *ApiController) SendVerificationCode() {
 	destType := c.Ctx.Request.Form.Get("type")
 	dest := c.Ctx.Request.Form.Get("dest")
-	orgId := c.Ctx.Request.Form.Get("organizationId")
 	checkType := c.Ctx.Request.Form.Get("checkType")
 	checkId := c.Ctx.Request.Form.Get("checkId")
 	checkKey := c.Ctx.Request.Form.Get("checkKey")
 	checkUser := c.Ctx.Request.Form.Get("checkUser")
+	applicationId := c.Ctx.Request.Form.Get("applicationId")
 	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
 
-	if len(destType) == 0 || len(dest) == 0 || len(orgId) == 0 || !strings.Contains(orgId, "/") || len(checkType) == 0 {
-		c.ResponseError("Missing parameter.")
+	if destType == "" {
+		c.ResponseError("Missing parameter: type.")
+		return
+	}
+	if dest == "" {
+		c.ResponseError("Missing parameter: dest.")
+		return
+	}
+	if applicationId == "" {
+		c.ResponseError("Missing parameter: applicationId.")
+		return
+	}
+	if !strings.Contains(applicationId, "/") {
+		c.ResponseError("Wrong parameter: applicationId.")
+		return
+	}
+	if checkType == "" {
+		c.ResponseError("Missing parameter: checkType.")
 		return
 	}
 
@@ -74,8 +90,8 @@ func (c *ApiController) SendVerificationCode() {
 	}
 
 	user := c.getCurrentUser()
-	organization := object.GetOrganization(orgId)
-	application := object.GetApplicationByOrganizationName(organization.Name)
+	application := object.GetApplication(applicationId)
+	organization := object.GetOrganization(fmt.Sprintf("%s/%s", application.Owner, application.Organization))
 
 	if checkUser == "true" && user == nil && object.GetUserByFields(organization.Name, dest) == nil {
 		c.ResponseError("Please login first")
@@ -85,7 +101,7 @@ func (c *ApiController) SendVerificationCode() {
 	sendResp := errors.New("Invalid dest type")
 
 	if user == nil && checkUser != "" && checkUser != "true" {
-		_, name := util.GetOwnerAndNameFromId(orgId)
+		name := application.Organization
 		user = object.GetUser(fmt.Sprintf("%s/%s", name, checkUser))
 	}
 	switch destType {
@@ -108,13 +124,12 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError("Invalid phone number")
 			return
 		}
-		org := object.GetOrganization(orgId)
-		if org == nil {
-			c.ResponseError("Missing parameter.")
+		if organization == nil {
+			c.ResponseError("The organization doesn't exist.")
 			return
 		}
 
-		dest = fmt.Sprintf("+%s%s", org.PhonePrefix, dest)
+		dest = fmt.Sprintf("+%s%s", organization.PhonePrefix, dest)
 		provider := application.GetSmsProvider()
 		sendResp = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, dest)
 	}

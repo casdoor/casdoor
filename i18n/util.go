@@ -39,6 +39,7 @@ func readI18nFile(language string) *I18nData {
 func writeI18nFile(language string, data *I18nData) {
 	s := util.StructToJsonFormatted(data)
 	s = strings.ReplaceAll(s, "\\u0026", "&")
+	s += "\n"
 	println(s)
 
 	util.WriteStringToPath(s, getI18nFilePath(language))

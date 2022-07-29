@@ -31,8 +31,8 @@ export function getWebhook(owner, name) {
 export function updateWebhook(owner, name, webhook) {
   let newWebhook = Setting.deepCopy(webhook);
   return fetch(`${Setting.ServerUrl}/api/update-webhook?id=${owner}/${encodeURIComponent(name)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newWebhook),
   }).then(res => res.json());
 }
@@ -40,8 +40,8 @@ export function updateWebhook(owner, name, webhook) {
 export function addWebhook(webhook) {
   let newWebhook = Setting.deepCopy(webhook);
   return fetch(`${Setting.ServerUrl}/api/add-webhook`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newWebhook),
   }).then(res => res.json());
 }
@@ -49,8 +49,8 @@ export function addWebhook(webhook) {
 export function deleteWebhook(webhook) {
   let newWebhook = Setting.deepCopy(webhook);
   return fetch(`${Setting.ServerUrl}/api/delete-webhook`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
     body: JSON.stringify(newWebhook),
   }).then(res => res.json());
 }

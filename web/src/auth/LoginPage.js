@@ -14,8 +14,9 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Checkbox, Col, Form, Input, Result, Row, Spin} from "antd";
+import {Button, Checkbox, Col, Form, Input, Result, Row, Spin, Tabs} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
+import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Provider from "./Provider";
@@ -39,7 +40,7 @@ import BaiduLoginButton from "./BaiduLoginButton";
 import AlipayLoginButton from "./AlipayLoginButton";
 import CasdoorLoginButton from "./CasdoorLoginButton";
 import InfoflowLoginButton from "./InfoflowLoginButton";
-import AppleLoginButton from "./AppleLoginButton"
+import AppleLoginButton from "./AppleLoginButton";
 import AzureADLoginButton from "./AzureADLoginButton";
 import SlackLoginButton from "./SlackLoginButton";
 import SteamLoginButton from "./SteamLoginButton";
@@ -50,8 +51,7 @@ import {CountDownInput} from "../common/CountDownInput";
 import BilibiliLoginButton from "./BilibiliLoginButton";
 import {NextTwoFactor, VerityTotp} from "./TwoFactor";
 
-/* eslint-disable jsx-a11y/anchor-is-valid */
-
+const {TabPane} = Tabs;
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -69,11 +69,13 @@ class LoginPage extends React.Component {
       validEmailOrPhone: false,
       validEmail: false,
       validPhone: false,
+      loginMethod: "password",
       getVerityTotp: null
     };
+
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
-      this.state.owner = props.match?.params.owner
-      this.state.applicationName = props.match?.params.casApplicationName
+      this.state.owner = props.match?.params.owner;
+      this.state.applicationName = props.match?.params.casApplicationName;
     }
   }
 
@@ -82,7 +84,7 @@ class LoginPage extends React.Component {
       this.getApplication();
     } else if (this.state.type === "code") {
       this.getApplicationLogin();
-    } else if (this.state.type === "saml"){
+    } else if (this.state.type === "saml") {
       this.getSamlApplication();
     } else {
       Util.showMessage("error", `Unknown authentication type: ${this.state.type}`);
@@ -120,8 +122,8 @@ class LoginPage extends React.Component {
       });
   }
 
-  getSamlApplication(){
-    if (this.state.applicationName === null){
+  getSamlApplication() {
+    if (this.state.applicationName === null) {
       return;
     }
     ApplicationBackend.getApplication(this.state.owner, this.state.applicationName)
@@ -130,7 +132,7 @@ class LoginPage extends React.Component {
           application: application,
         });
       }
-    );
+      );
   }
 
   getApplicationObj() {
@@ -155,7 +157,7 @@ class LoginPage extends React.Component {
       const casParams = Util.getCasParameters();
       values["type"] = this.state.type;
       AuthBackend.loginCas(values, casParams).then((res) => {
-        if (res.status === 'ok') {
+        if (res.status === "ok") {
           let msg = "Logged in successfully. ";
           if (casParams.service === "") {
             // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
@@ -172,7 +174,7 @@ class LoginPage extends React.Component {
         } else {
           Util.showMessage("error", `Failed to log in: ${res.msg}`);
         }
-      })
+      });
     } else {
       // OAuth
       const oAuthParams = Util.getOAuthGetParameters();
@@ -188,7 +190,11 @@ class LoginPage extends React.Component {
       }
 
       if (values["samlRequest"] != null && values["samlRequest"] !== "") {
-          values["type"] = "saml";
+        values["type"] = "saml";
+      }
+
+      if (this.state.owner != null) {
+        values["organization"] = this.state.owner;
       }
 
       AuthBackend.login(values, oAuthParams)
@@ -196,13 +202,14 @@ class LoginPage extends React.Component {
           const callback = () => {
             const responseType = values["type"];
             if (responseType === "login") {
-              Util.showMessage("success", `Logged in successfully`);
+              Util.showMessage("success", "Logged in successfully");
 
               const link = Setting.getFromLink();
               Setting.goToLink(link);
             } else if (responseType === "code") {
               const code = res.data;
-              const concatChar = oAuthParams?.redirectUri?.includes('?') ? '&' : '?';
+              const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
+              const noRedirect = oAuthParams.noRedirect;
 
               if (Setting.hasPromptPage(application)) {
                 AuthBackend.getAccount("")
@@ -224,7 +231,19 @@ class LoginPage extends React.Component {
                     }
                   });
               } else {
-                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+                if (noRedirect === "true") {
+                  window.close();
+                  const newWindow = window.open(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+                  if (newWindow) {
+                    setInterval(() => {
+                      if (!newWindow.closed) {
+                        newWindow.close();
+                      }
+                    }, 1000);
+                  }
+                } else {
+                  Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+                }
               }
 
               // Util.showMessage("success", `Authorization code: ${res.data}`);
@@ -254,59 +273,59 @@ class LoginPage extends React.Component {
             Util.showMessage("error", `Failed to log in: ${res.msg}`);
           }
         });
-      }
-  };
+    }
+  }
 
   getSigninButton(type) {
     const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
     if (type === "GitHub") {
-      return <GithubLoginButton text={text} align={"center"} />
+      return <GithubLoginButton text={text} align={"center"} />;
     } else if (type === "Google") {
-      return <GoogleLoginButton text={text} align={"center"} />
+      return <GoogleLoginButton text={text} align={"center"} />;
     } else if (type === "QQ") {
-      return <QqLoginButton text={text} align={"center"} />
+      return <QqLoginButton text={text} align={"center"} />;
     } else if (type === "Facebook") {
-      return <FacebookLoginButton text={text} align={"center"} />
+      return <FacebookLoginButton text={text} align={"center"} />;
     } else if (type === "Weibo") {
-      return <WeiboLoginButton text={text} align={"center"} />
+      return <WeiboLoginButton text={text} align={"center"} />;
     } else if (type === "Gitee") {
-      return <GiteeLoginButton text={text} align={"center"} />
+      return <GiteeLoginButton text={text} align={"center"} />;
     } else if (type === "WeChat") {
-      return <WechatLoginButton text={text} align={"center"} />
+      return <WechatLoginButton text={text} align={"center"} />;
     } else if (type === "DingTalk") {
-      return <DingTalkLoginButton text={text} align={"center"} />
-    } else if (type === "LinkedIn"){
-      return <LinkedInLoginButton text={text} align={"center"} />
+      return <DingTalkLoginButton text={text} align={"center"} />;
+    } else if (type === "LinkedIn") {
+      return <LinkedInLoginButton text={text} align={"center"} />;
     } else if (type === "WeCom") {
-      return <WeComLoginButton text={text} align={"center"} />
+      return <WeComLoginButton text={text} align={"center"} />;
     } else if (type === "Lark") {
-      return <LarkLoginButton text={text} align={"center"} />
+      return <LarkLoginButton text={text} align={"center"} />;
     } else if (type === "GitLab") {
-      return <GitLabLoginButton text={text} align={"center"} />
+      return <GitLabLoginButton text={text} align={"center"} />;
     } else if (type === "Adfs") {
-      return <AdfsLoginButton text={text} align={"center"} />
+      return <AdfsLoginButton text={text} align={"center"} />;
     } else if (type === "Casdoor") {
-      return <CasdoorLoginButton text={text} align={"center"} />
+      return <CasdoorLoginButton text={text} align={"center"} />;
     } else if (type === "Baidu") {
-      return <BaiduLoginButton text={text} align={"center"} />
+      return <BaiduLoginButton text={text} align={"center"} />;
     } else if (type === "Alipay") {
-      return <AlipayLoginButton text={text} align={"center"} />
+      return <AlipayLoginButton text={text} align={"center"} />;
     } else if (type === "Infoflow") {
-      return <InfoflowLoginButton text={text} align={"center"} />
+      return <InfoflowLoginButton text={text} align={"center"} />;
     } else if (type === "Apple") {
-      return <AppleLoginButton text={text} align={"center"} />
+      return <AppleLoginButton text={text} align={"center"} />;
     } else if (type === "AzureAD") {
-      return <AzureADLoginButton text={text} align={"center"} />
+      return <AzureADLoginButton text={text} align={"center"} />;
     } else if (type === "Slack") {
-      return <SlackLoginButton text={text} align={"center"} />
+      return <SlackLoginButton text={text} align={"center"} />;
     } else if (type === "Steam") {
-      return <SteamLoginButton text={text} align={"center"} />
+      return <SteamLoginButton text={text} align={"center"} />;
     } else if (type === "Bilibili") {
-      return <BilibiliLoginButton text={text} align={"center"} />
+      return <BilibiliLoginButton text={text} align={"center"} />;
     } else if (type === "Okta") {
-      return <OktaLoginButton text={text} align={"center"} />
+      return <OktaLoginButton text={text} align={"center"} />;
     } else if (type === "Douyin") {
-      return <DouyinLoginButton text={text} align={"center"} />
+      return <DouyinLoginButton text={text} align={"center"} />;
     }
 
     return text;
@@ -322,9 +341,9 @@ class LoginPage extends React.Component {
     let relayState = `${clientId}&${application}&${providerName}&${realRedirectUri}&${redirectUri}`;
     AuthBackend.getSamlLogin(`${provider.owner}/${providerName}`, btoa(relayState)).then((res) => {
       if (res.data2 === "POST") {
-        document.write(res.data)
+        document.write(res.data);
       } else {
-        window.location.href = res.data
+        window.location.href = res.data;
       }
     });
   }
@@ -336,13 +355,13 @@ class LoginPage extends React.Component {
           <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
             <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
           </a>
-        )
+        );
       } else if (provider.category === "SAML") {
         return (
           <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
             <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
           </a>
-        )
+        );
       }
 
     } else {
@@ -354,7 +373,7 @@ class LoginPage extends React.Component {
             }
           </a>
         </div>
-      )
+      );
     }
   }
 
@@ -368,7 +387,7 @@ class LoginPage extends React.Component {
 
   renderForm(application) {
     if (this.state.msg !== null) {
-      return Util.renderMessage(this.state.msg)
+      return Util.renderMessage(this.state.msg);
     }
 
     if (this.state.mode === "signup" && !application.enableSignUp) {
@@ -388,7 +407,7 @@ class LoginPage extends React.Component {
           ]}
         >
         </Result>
-      )
+      );
     }
 
     if (application.enablePassword) {
@@ -400,7 +419,7 @@ class LoginPage extends React.Component {
             application: application.name,
             autoSignin: true,
           }}
-          onFinish={(values) => {this.onFinish(values)}}
+          onFinish={(values) => {this.onFinish(values);}}
           style={{width: "300px"}}
           size="large"
         >
@@ -410,7 +429,7 @@ class LoginPage extends React.Component {
             rules={[
               {
                 required: true,
-                message: 'Please input your application!',
+                message: "Please input your application!",
               },
             ]}
           >
@@ -421,41 +440,44 @@ class LoginPage extends React.Component {
             rules={[
               {
                 required: true,
-                message: 'Please input your organization!',
+                message: "Please input your organization!",
               },
             ]}
           >
           </Form.Item>
+          {this.renderMethodChoiceBox()}
           <Form.Item
             name="username"
             rules={[
-                {
-                  required: true,
-                  message: i18next.t("login:Please input your username, Email or phone!")
-                },
-                {
-                  validator: (_, value) => {
-                    if (this.state.isCodeSignin) {
-                      if (this.state.email !== "" && !Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
-                        this.setState({validEmailOrPhone: false});
-                        return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
-                      }
+              {
+                required: true,
+                message: i18next.t("login:Please input your username, Email or phone!")
+              },
+              {
+                validator: (_, value) => {
+                  if (this.state.isCodeSignin) {
+                    if (this.state.email !== "" && !Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
+                      this.setState({validEmailOrPhone: false});
+                      return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
                     }
+
                     if (Setting.isValidPhone(this.state.username)) {
-                      this.setState({validPhone: true})
+                      this.setState({validPhone: true});
                     }
                     if (Setting.isValidEmail(this.state.username)) {
-                      this.setState({validEmail: true})
+                      this.setState({validEmail: true});
                     }
-                    this.setState({validEmailOrPhone: true});
-                    return Promise.resolve();
                   }
+
+                  this.setState({validEmailOrPhone: true});
+                  return Promise.resolve();
                 }
-              ]}
+              }
+            ]}
           >
             <Input
               prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder={ this.state.isCodeSignin ? i18next.t("login:Email or phone") : i18next.t("login:username, Email or phone") }
+              placeholder={this.state.isCodeSignin ? i18next.t("login:Email or phone") : i18next.t("login:username, Email or phone")}
               disabled={!application.enablePassword}
               onChange={e => {
                 this.setState({
@@ -465,29 +487,7 @@ class LoginPage extends React.Component {
             />
           </Form.Item>
           {
-            this.state.isCodeSignin ? (
-              <Form.Item
-                name="code"
-                rules={[{ required: true, message: i18next.t("login:Please input your code!") }]}
-              >
-                <CountDownInput
-                  disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
-                  onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationOrgName(application)]}
-                />
-              </Form.Item>
-            ) : (
-              <Form.Item
-                name="password"
-                rules={[{ required: true, message: i18next.t("login:Please input your password!") }]}
-              >
-                <Input
-                  prefix={<LockOutlined className="site-form-item-icon" />}
-                  type="password"
-                  placeholder={i18next.t("login:Password")}
-                  disabled={!application.enablePassword}
-                />
-              </Form.Item>
-            )
+            this.renderPasswordOrCodeInput()
           }
           <Form.Item>
             <Form.Item name="autoSignin" valuePropName="checked" noStyle>
@@ -502,16 +502,26 @@ class LoginPage extends React.Component {
             </a>
           </Form.Item>
           <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              style={{width: "100%", marginBottom: '5px'}}
-              disabled={!application.enablePassword}
-            >
-              {i18next.t("login:Sign In")}
-            </Button>
             {
-              !application.enableSignUp ? null : this.renderFooter(application)
+              this.state.loginMethod === "password" ?
+                (
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{width: "100%", marginBottom: "5px"}}
+                    disabled={!application.enablePassword}
+                  >
+                    {i18next.t("login:Sign In")}
+                  </Button>
+                ) :
+                (
+                  <Button type="primary" style={{width: "100%", marginBottom: "5px"}} onClick={() => this.signInWithWebAuthn()}>
+                    {i18next.t("login:Sign in with WebAuthn")}
+                  </Button>
+                )
+            }
+            {
+              this.renderFooter(application)
             }
           </Form.Item>
           <Form.Item>
@@ -535,24 +545,20 @@ class LoginPage extends React.Component {
             </a>
             :
           </div>
-          <br/>
+          <br />
           {
             application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
               return this.renderProviderLogo(providerItem.provider, application, 40, 10, "big");
             })
           }
-          {
-            !application.enableSignUp ? null : (
-              <div>
-                <br/>
-                {
-                  this.renderFooter(application)
-                }
-              </div>
-            )
-          }
+          <div>
+            <br />
+            {
+              this.renderFooter(application)
+            }
+          </div>
         </div>
-      )
+      );
     }
   }
 
@@ -567,7 +573,7 @@ class LoginPage extends React.Component {
             {i18next.t("signup:sign in now")}
           </Link>
         </div>
-      )
+      );
     } else {
       return (
         <React.Fragment>
@@ -585,16 +591,22 @@ class LoginPage extends React.Component {
             }
           </span>
           <span style={{float: "right"}}>
-            {i18next.t("login:No account?")}&nbsp;
-            <a onClick={() => {
-              sessionStorage.setItem("loginURL", window.location.href)
-              Setting.goToSignup(this, application);
-            }}>
-              {i18next.t("login:sign up now")}
-            </a>
+            {
+              !application.enableSignUp ? null : (
+                <>
+                  {i18next.t("login:No account?")}&nbsp;
+                  <a onClick={() => {
+                    sessionStorage.setItem("signinUrl", window.location.href);
+                    Setting.goToSignup(this, application);
+                  }}>
+                    {i18next.t("login:sign up now")}
+                  </a>
+                </>
+              )
+            }
           </span>
         </React.Fragment>
-      )
+      );
     }
   }
 
@@ -602,7 +614,7 @@ class LoginPage extends React.Component {
     if (this.props.account === undefined || this.props.account === null) {
       return null;
     }
-    let application = this.getApplicationObj()
+    let application = this.getApplicationObj();
     if (this.props.account.owner !== application.organization) {
       return null;
     }
@@ -622,25 +634,130 @@ class LoginPage extends React.Component {
 
     return (
       <div>
-        {/*{*/}
+        {/* {*/}
         {/*  JSON.stringify(silentSignin)*/}
-        {/*}*/}
+        {/* }*/}
         <div style={{fontSize: 16, textAlign: "left"}}>
           {i18next.t("login:Continue with")}&nbsp;:
         </div>
-        <br/>
+        <br />
         <SelfLoginButton account={this.props.account} onClick={() => {
           let values = {};
           values["application"] = this.state.application.name;
           this.onFinish(values);
         }} />
-        <br/>
-        <br/>
+        <br />
+        <br />
         <div style={{fontSize: 16, textAlign: "left"}}>
           {i18next.t("login:Or sign in with another account")}&nbsp;:
         </div>
       </div>
-    )
+    );
+  }
+
+  signInWithWebAuthn() {
+    if (this.state.username === null || this.state.username === "") {
+      Setting.showMessage("error", "username is required for webauthn login");
+      return;
+    }
+
+    let application = this.getApplicationObj();
+    return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}&name=${this.state.username}`, {
+      method: "GET",
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then((credentialRequestOptions) => {
+        if ("status" in credentialRequestOptions) {
+          Setting.showMessage("error", credentialRequestOptions.msg);
+          throw credentialRequestOptions.status.msg;
+        }
+
+        credentialRequestOptions.certificate.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.certificate.challenge);
+        credentialRequestOptions.certificate.allowCredentials.forEach(function(listItem) {
+          listItem.id = UserWebauthnBackend.webAuthnBufferDecode(listItem.id);
+        });
+
+        return navigator.credentials.get({
+          certificate: credentialRequestOptions.certificate
+        });
+      })
+      .then((assertion) => {
+        let authData = assertion.response.authenticatorData;
+        let clientDataJSON = assertion.response.clientDataJSON;
+        let rawId = assertion.rawId;
+        let sig = assertion.response.signature;
+        let userHandle = assertion.response.userHandle;
+        return fetch(`${Setting.ServerUrl}/api/webauthn/signin/finish`, {
+          method: "POST",
+          credentials: "include",
+          body: JSON.stringify({
+            id: assertion.id,
+            rawId: UserWebauthnBackend.webAuthnBufferEncode(rawId),
+            type: assertion.type,
+            response: {
+              authenticatorData: UserWebauthnBackend.webAuthnBufferEncode(authData),
+              clientDataJSON: UserWebauthnBackend.webAuthnBufferEncode(clientDataJSON),
+              signature: UserWebauthnBackend.webAuthnBufferEncode(sig),
+              userHandle: UserWebauthnBackend.webAuthnBufferEncode(userHandle),
+            },
+          })
+        })
+          .then(res => res.json()).then((res) => {
+            if (res.msg === "") {
+              Setting.showMessage("success", "Successfully logged in with webauthn credentials");
+              Setting.goToLink("/");
+            } else {
+              Setting.showMessage("error", res.msg);
+            }
+          })
+          .catch(error => {
+            Setting.showMessage("error", `Failed to connect to server: ${error}`);
+          });
+      });
+  }
+
+  renderPasswordOrCodeInput() {
+    let application = this.getApplicationObj();
+    if (this.state.loginMethod === "password") {
+      return this.state.isCodeSignin ? (
+        <Form.Item
+          name="code"
+          rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
+        >
+          <CountDownInput
+            disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
+            onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
+          />
+        </Form.Item>
+      ) : (
+        <Form.Item
+          name="password"
+          rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
+        >
+          <Input
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            type="password"
+            placeholder={i18next.t("login:Password")}
+            disabled={!application.enablePassword}
+          />
+        </Form.Item>
+      );
+    }
+  }
+
+  renderMethodChoiceBox() {
+    let application = this.getApplicationObj();
+    if (application.enableWebAuthn) {
+      return (
+        <div>
+          <Tabs defaultActiveKey="password" onChange={(key) => {this.setState({loginMethod: key});}} centered>
+            <TabPane tab={i18next.t("login:Password")} key="password" />
+            <TabPane tab={"WebAuthn"} key="webAuthn" />
+          </Tabs>
+        </div>
+      );
+    }
   }
 
   render() {
@@ -651,8 +768,8 @@ class LoginPage extends React.Component {
 
     if (application.signinHtml !== "") {
       return (
-        <div dangerouslySetInnerHTML={{ __html: application.signinHtml}} />
-      )
+        <div dangerouslySetInnerHTML={{__html: application.signinHtml}} />
+      );
     }
 
     const visibleOAuthProviderItems = application.providers.filter(providerItem => this.isProviderVisible(providerItem));
@@ -662,7 +779,7 @@ class LoginPage extends React.Component {
         <div style={{textAlign: "center"}}>
           <Spin size="large" tip={i18next.t("login:Signing in...")} style={{paddingTop: "10%"}} />
         </div>
-      )
+      );
     }
 
     return (
@@ -676,9 +793,9 @@ class LoginPage extends React.Component {
             {
               Setting.renderLogo(application)
             }
-            {/*{*/}
+            {/* {*/}
             {/*  this.state.clientId !== null ? "Redirect" : null*/}
-            {/*}*/}
+            {/* }*/}
             {
               this.state.getVerityTotp == null && this.renderSignedInBox()
             }
@@ -691,7 +808,7 @@ class LoginPage extends React.Component {
           </div>
         </Col>
       </Row>
-    )
+    );
   }
 }
 

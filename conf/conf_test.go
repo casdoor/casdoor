@@ -79,12 +79,8 @@ func TestGetConfBool(t *testing.T) {
 		input       string
 		expected    interface{}
 	}{
-		{"Should be return false", "SessionOn", false},
 		{"Should be return false", "copyrequestbody", true},
 	}
-
-	//do some set up job
-	os.Setenv("SessionOn", "false")
 
 	err := beego.LoadAppConfig("ini", "app.conf")
 	assert.Nil(t, err)

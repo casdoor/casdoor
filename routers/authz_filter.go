@@ -109,6 +109,10 @@ func getUrlPath(urlPath string) string {
 		return "/api/login/oauth"
 	}
 
+	if strings.HasPrefix(urlPath, "/api/webauthn") {
+		return "/api/webauthn"
+	}
+
 	return urlPath
 }
 
@@ -117,6 +121,10 @@ func AuthzFilter(ctx *context.Context) {
 	method := ctx.Request.Method
 	urlPath := getUrlPath(ctx.Request.URL.Path)
 	objOwner, objName := getObject(ctx)
+
+	if strings.HasPrefix(urlPath, "/api/notify-payment") {
+		urlPath = "/api/notify-payment"
+	}
 
 	isAllowed := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName)
 

@@ -14,13 +14,16 @@ RUN ./build.sh
 FROM alpine:latest AS STANDARD
 LABEL MAINTAINER="https://casdoor.org/"
 
-WORKDIR /app
+RUN sed -i 's/https/http/' /etc/apk/repositories
+RUN apk add curl
+RUN apk add ca-certificates && update-ca-certificates
+
+WORKDIR /
 COPY --from=BACK /go/src/casdoor/server ./server
 COPY --from=BACK /go/src/casdoor/swagger ./swagger
 COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
 COPY --from=FRONT /web/build ./web/build
-VOLUME /app/files /app/logs
-ENTRYPOINT ["/app/server"]
+ENTRYPOINT ["/server"]
 
 
 FROM debian:latest AS db
@@ -34,9 +37,10 @@ RUN apt update \
 FROM db AS ALLINONE
 LABEL MAINTAINER="https://casdoor.org/"
 
-ENV MYSQL_ROOT_PASSWORD=123456
+RUN apt update
+RUN apt install -y ca-certificates && update-ca-certificates
 
-WORKDIR /app
+WORKDIR /
 COPY --from=BACK /go/src/casdoor/server ./server
 COPY --from=BACK /go/src/casdoor/swagger ./swagger
 COPY --from=BACK /go/src/casdoor/docker-entrypoint.sh /docker-entrypoint.sh

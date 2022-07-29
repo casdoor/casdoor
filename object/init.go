@@ -15,20 +15,25 @@
 package object
 
 import (
+	"encoding/gob"
 	"io/ioutil"
 
 	"github.com/casdoor/casdoor/util"
+	"github.com/duo-labs/webauthn/webauthn"
 )
 
 func InitDb() {
 	existed := initBuiltInOrganization()
 	if !existed {
+		initBuiltInPermission()
 		initBuiltInProvider()
 		initBuiltInUser()
 		initBuiltInApplication()
 		initBuiltInCert()
 		initBuiltInLdap()
 	}
+
+	initWebAuthn()
 }
 
 func initBuiltInOrganization() bool {
@@ -73,6 +78,7 @@ func initBuiltInOrganization() bool {
 			{Name: "Is global admin", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 			{Name: "Is forbidden", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 			{Name: "Is deleted", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
+			{Name: "WebAuthn credentials", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		},
 	}
 	AddOrganization(organization)
@@ -163,7 +169,7 @@ func readTokenFromFile() (string, string) {
 }
 
 func initBuiltInCert() {
-	tokenJwtPublicKey, tokenJwtPrivateKey := readTokenFromFile()
+	tokenJwtCertificate, tokenJwtPrivateKey := readTokenFromFile()
 	cert := getCert("admin", "cert-built-in")
 	if cert != nil {
 		return
@@ -179,7 +185,7 @@ func initBuiltInCert() {
 		CryptoAlgorithm: "RS256",
 		BitSize:         4096,
 		ExpireInYears:   20,
-		PublicKey:       tokenJwtPublicKey,
+		Certificate:     tokenJwtCertificate,
 		PrivateKey:      tokenJwtPrivateKey,
 	}
 	AddCert(cert)
@@ -221,4 +227,30 @@ func initBuiltInProvider() {
 		Type:        "Default",
 	}
 	AddProvider(provider)
+}
+
+func initWebAuthn() {
+	gob.Register(webauthn.SessionData{})
+}
+
+func initBuiltInPermission() {
+	permission := GetPermission("built-in/permission-built-in")
+	if permission != nil {
+		return
+	}
+
+	permission = &Permission{
+		Owner:        "built-in",
+		Name:         "permission-built-in",
+		CreatedTime:  util.GetCurrentTime(),
+		DisplayName:  "Built-in Permission",
+		Users:        []string{"built-in/admin"},
+		Roles:        []string{},
+		ResourceType: "Application",
+		Resources:    []string{"app-built-in"},
+		Actions:      []string{"Read", "Write", "Admin"},
+		Effect:       "Allow",
+		IsEnabled:    true,
+	}
+	AddPermission(permission)
 }

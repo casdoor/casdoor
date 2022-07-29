@@ -16,14 +16,14 @@ import {authConfig} from "./Auth";
 
 export function getAccount(query) {
   return fetch(`${authConfig.serverUrl}/api/get-account${query}`, {
-    method: 'GET',
-    credentials: 'include'
+    method: "GET",
+    credentials: "include"
   }).then(res => res.json());
 }
 
 export function signup(values) {
   return fetch(`${authConfig.serverUrl}/api/signup`, {
-    method: 'POST',
+    method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
   }).then(res => res.json());
@@ -49,14 +49,14 @@ function oAuthParamsToQuery(oAuthParams) {
 
 export function getApplicationLogin(oAuthParams) {
   return fetch(`${authConfig.serverUrl}/api/get-app-login${oAuthParamsToQuery(oAuthParams)}`, {
-    method: 'GET',
-    credentials: 'include',
+    method: "GET",
+    credentials: "include",
   }).then(res => res.json());
 }
 
 export function login(values, oAuthParams) {
   return fetch(`${authConfig.serverUrl}/api/login${oAuthParamsToQuery(oAuthParams)}`, {
-    method: 'POST',
+    method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
   }).then(res => res.json());
@@ -64,7 +64,7 @@ export function login(values, oAuthParams) {
 
 export function loginCas(values, params) {
   return fetch(`${authConfig.serverUrl}/api/login?service=${params.service}`, {
-    method: 'POST',
+    method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
   }).then(res => res.json());
@@ -72,14 +72,14 @@ export function loginCas(values, params) {
 
 export function logout() {
   return fetch(`${authConfig.serverUrl}/api/logout`, {
-    method: 'POST',
+    method: "POST",
     credentials: "include",
   }).then(res => res.json());
 }
 
 export function unlink(values) {
   return fetch(`${authConfig.serverUrl}/api/unlink`, {
-    method: 'POST',
+    method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
   }).then(res => res.json());
@@ -87,14 +87,14 @@ export function unlink(values) {
 
 export function getSamlLogin(providerId, relayState) {
   return fetch(`${authConfig.serverUrl}/api/get-saml-login?id=${providerId}&relayState=${relayState}`, {
-    method: 'GET',
-    credentials: 'include',
+    method: "GET",
+    credentials: "include",
   }).then(res => res.json());
 }
 
 export function loginWithSaml(values, param) {
   return fetch(`${authConfig.serverUrl}/api/login${param}`, {
-    method: 'POST',
+    method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
   }).then(res => res.json());

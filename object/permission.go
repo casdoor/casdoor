@@ -16,7 +16,12 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/model"
+	xormadapter "github.com/casbin/xorm-adapter/v2"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -37,6 +42,16 @@ type Permission struct {
 	Effect       string   `xorm:"varchar(100)" json:"effect"`
 
 	IsEnabled bool `json:"isEnabled"`
+}
+
+type PermissionRule struct {
+	PType string `xorm:"varchar(100) index not null default ''"`
+	V0    string `xorm:"varchar(100) index not null default ''"`
+	V1    string `xorm:"varchar(100) index not null default ''"`
+	V2    string `xorm:"varchar(100) index not null default ''"`
+	V3    string `xorm:"varchar(100) index not null default ''"`
+	V4    string `xorm:"varchar(100) index not null default ''"`
+	V5    string `xorm:"varchar(100) index not null default ''"`
 }
 
 func GetPermissionCount(owner, field, value string) int {
@@ -95,13 +110,19 @@ func GetPermission(id string) *Permission {
 
 func UpdatePermission(id string, permission *Permission) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getPermission(owner, name) == nil {
+	oldPermission := getPermission(owner, name)
+	if oldPermission == nil {
 		return false
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(permission)
 	if err != nil {
 		panic(err)
+	}
+
+	if affected != 0 {
+		removePolicies(oldPermission)
+		addPolicies(permission)
 	}
 
 	return affected != 0
@@ -113,6 +134,10 @@ func AddPermission(permission *Permission) bool {
 		panic(err)
 	}
 
+	if affected != 0 {
+		addPolicies(permission)
+	}
+
 	return affected != 0
 }
 
@@ -122,9 +147,85 @@ func DeletePermission(permission *Permission) bool {
 		panic(err)
 	}
 
+	if affected != 0 {
+		removePolicies(permission)
+	}
+
 	return affected != 0
 }
 
 func (permission *Permission) GetId() string {
 	return fmt.Sprintf("%s/%s", permission.Owner, permission.Name)
+}
+
+func getEnforcer(permission *Permission) *casbin.Enforcer {
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	adapter, err := xormadapter.NewAdapterWithTableName(conf.GetConfigString("driverName"), conf.GetBeegoConfDataSourceName()+conf.GetConfigString("dbName"), "permission_rule", tableNamePrefix, true)
+	if err != nil {
+		panic(err)
+	}
+
+	modelText := `
+[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = permission, sub, obj, act
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = r.sub == p.sub && r.obj == p.obj && r.act == p.act`
+	permissionModel := getModel(permission.Owner, permission.Model)
+	if permissionModel != nil {
+		modelText = permissionModel.ModelText
+	}
+	m, err := model.NewModelFromString(modelText)
+	if err != nil {
+		panic(err)
+	}
+
+	enforcer, err := casbin.NewEnforcer(m, adapter)
+	if err != nil {
+		panic(err)
+	}
+
+	err = enforcer.LoadFilteredPolicy(xormadapter.Filter{V0: []string{permission.GetId()}})
+	if err != nil {
+		panic(err)
+	}
+
+	return enforcer
+}
+
+func getPolicies(permission *Permission) [][]string {
+	var policies [][]string
+	for _, user := range permission.Users {
+		for _, resource := range permission.Resources {
+			for _, action := range permission.Actions {
+				policies = append(policies, []string{permission.GetId(), user, resource, strings.ToLower(action)})
+			}
+		}
+	}
+	return policies
+}
+
+func addPolicies(permission *Permission) {
+	enforcer := getEnforcer(permission)
+	policies := getPolicies(permission)
+
+	_, err := enforcer.AddPolicies(policies)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func removePolicies(permission *Permission) {
+	enforcer := getEnforcer(permission)
+
+	_, err := enforcer.RemoveFilteredPolicy(0, permission.GetId())
+	if err != nil {
+		panic(err)
+	}
 }

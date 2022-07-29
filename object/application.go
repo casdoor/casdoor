@@ -47,6 +47,7 @@ type Application struct {
 	EnableSigninSession bool            `json:"enableSigninSession"`
 	EnableCodeSignin    bool            `json:"enableCodeSignin"`
 	EnableSamlCompress  bool            `json:"enableSamlCompress"`
+	EnableWebAuthn      bool            `json:"enableWebAuthn"`
 	Providers           []*ProviderItem `xorm:"mediumtext" json:"providers"`
 	SignupItems         []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
 	GrantTypes          []string        `xorm:"varchar(1000)" json:"grantTypes"`
@@ -280,8 +281,12 @@ func UpdateApplication(id string, application *Application) bool {
 }
 
 func AddApplication(application *Application) bool {
-	application.ClientId = util.GenerateClientId()
-	application.ClientSecret = util.GenerateClientSecret()
+	if application.ClientId == "" {
+		application.ClientId = util.GenerateClientId()
+	}
+	if application.ClientSecret == "" {
+		application.ClientSecret = util.GenerateClientSecret()
+	}
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}

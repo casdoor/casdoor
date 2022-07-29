@@ -20,6 +20,7 @@ import (
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
+	"github.com/duo-labs/webauthn/webauthn"
 	"xorm.io/core"
 )
 
@@ -98,8 +99,10 @@ type User struct {
 	Steam         string `xorm:"steam varchar(100)" json:"steam"`
 	Bilibili      string `xorm:"bilibili varchar(100)" json:"bilibili"`
 	Okta          string `xorm:"okta varchar(100)" json:"okta"`
-	Douyin        string `xorm:"douyin vachar(100)" json:"douyin"`
+	Douyin        string `xorm:"douyin varchar(100)" json:"douyin"`
 	Custom        string `xorm:"custom varchar(100)" json:"custom"`
+
+	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
@@ -269,6 +272,24 @@ func GetUserByEmail(owner string, email string) *User {
 	}
 }
 
+func GetUserByUserId(owner string, userId string) *User {
+	if owner == "" || userId == "" {
+		return nil
+	}
+
+	user := User{Owner: owner, Id: userId}
+	existed, err := adapter.Engine.Get(&user)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &user
+	} else {
+		return nil
+	}
+}
+
 func GetUser(id string) *User {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getUser(owner, name)
@@ -328,9 +349,11 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 	}
 
 	if len(columns) == 0 {
-		columns = []string{"owner", "display_name", "avatar",
+		columns = []string{
+			"owner", "display_name", "avatar",
 			"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "signup_application",
-			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties"}
+			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials",
+		}
 	}
 	if isGlobalAdmin {
 		columns = append(columns, "name", "email", "phone")
@@ -397,10 +420,10 @@ func AddUsers(users []*User) bool {
 		return false
 	}
 
-	//organization := GetOrganizationByUser(users[0])
+	// organization := GetOrganizationByUser(users[0])
 	for _, user := range users {
 		// this function is only used for syncer or batch upload, so no need to encrypt the password
-		//user.UpdateUserPassword(organization)
+		// user.UpdateUserPassword(organization)
 
 		user.UpdateUserHash()
 		user.PreHash = user.Hash

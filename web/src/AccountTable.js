@@ -13,12 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import {DownOutlined, DeleteOutlined, UpOutlined} from '@ant-design/icons';
-import {Button, Col, Row, Select, Switch, Table, Tooltip} from 'antd';
+import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
+import {Button, Col, Row, Select, Switch, Table, Tooltip} from "antd";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
-const { Option } = Select;
+const {Option} = Select;
 
 class AccountTable extends React.Component {
   constructor(props) {
@@ -65,8 +65,8 @@ class AccountTable extends React.Component {
     const columns = [
       {
         title: i18next.t("provider:Name"),
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: "name",
+        key: "name",
         render: (text, record, index) => {
           const items = [
             {name: "Organization", displayName: i18next.t("general:Organization")},
@@ -93,6 +93,7 @@ class AccountTable extends React.Component {
             {name: "Is global admin", displayName: i18next.t("user:Is global admin")},
             {name: "Is forbidden", displayName: i18next.t("user:Is forbidden")},
             {name: "Is deleted", displayName: i18next.t("user:Is deleted")},
+            {name: "WebAuthn credentials", displayName: i18next.t("user:WebAuthn credentials")},
           ];
 
           const getItemDisplayName = (text) => {
@@ -104,63 +105,63 @@ class AccountTable extends React.Component {
           };
 
           return (
-            <Select virtual={false} style={{width: '100%'}}
-                    value={getItemDisplayName(text)}
-                    onChange={value => {
-                      this.updateField(table, index, 'name', value);
-                    }} >
+            <Select virtual={false} style={{width: "100%"}}
+              value={getItemDisplayName(text)}
+              onChange={value => {
+                this.updateField(table, index, "name", value);
+              }} >
               {
                 Setting.getDeduplicatedArray(items, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.displayName}</Option>)
               }
             </Select>
-          )
+          );
         }
       },
       {
         title: i18next.t("provider:visible"),
-        dataIndex: 'visible',
-        key: 'visible',
-        width: '120px',
+        dataIndex: "visible",
+        key: "visible",
+        width: "120px",
         render: (text, record, index) => {
           return (
             <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, 'visible', checked);
+              this.updateField(table, index, "visible", checked);
             }} />
-          )
+          );
         }
       },
       {
         title: i18next.t("organization:viewRule"),
-        dataIndex: 'viewRule',
-        key: 'viewRule',
-        width: '155px',
+        dataIndex: "viewRule",
+        key: "viewRule",
+        width: "155px",
         render: (text, record, index) => {
           if (!record.visible) {
             return null;
           }
 
           let options = [
-            {id: 'Public', name: 'Public'},
-            {id: 'Self', name: 'Self'},
-            {id: 'Admin', name: 'Admin'},
+            {id: "Public", name: "Public"},
+            {id: "Self", name: "Self"},
+            {id: "Admin", name: "Admin"},
           ];
 
           return (
-            <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {
-              this.updateField(table, index, 'viewRule', value);
+            <Select virtual={false} style={{width: "100%"}} value={text} onChange={(value => {
+              this.updateField(table, index, "viewRule", value);
             })}>
               {
                 options.map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
-          )
+          );
         }
       },
       {
         title: i18next.t("organization:modifyRule"),
-        dataIndex: 'modifyRule',
-        key: 'modifyRule',
-        width: '155px',
+        dataIndex: "modifyRule",
+        key: "modifyRule",
+        width: "155px",
         render: (text, record, index) => {
           if (!record.visible) {
             return null;
@@ -169,32 +170,32 @@ class AccountTable extends React.Component {
           let options;
           if (record.viewRule === "Admin") {
             options = [
-              {id: 'Admin', name: 'Admin'},
-              {id: 'Immutable', name: 'Immutable'},
+              {id: "Admin", name: "Admin"},
+              {id: "Immutable", name: "Immutable"},
             ];
           } else {
             options = [
-              {id: 'Self', name: 'Self'},
-              {id: 'Admin', name: 'Admin'},
-              {id: 'Immutable', name: 'Immutable'},
+              {id: "Self", name: "Self"},
+              {id: "Admin", name: "Admin"},
+              {id: "Immutable", name: "Immutable"},
             ];
           }
 
           return (
-            <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {
-              this.updateField(table, index, 'modifyRule', value);
+            <Select virtual={false} style={{width: "100%"}} value={text} onChange={(value => {
+              this.updateField(table, index, "modifyRule", value);
             })}>
               {
                 options.map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Action"),
-        key: 'action',
-        width: '100px',
+        key: "action",
+        width: "100px",
         render: (text, record, index) => {
           return (
             <div>
@@ -214,13 +215,13 @@ class AccountTable extends React.Component {
     ];
 
     return (
-      <Table scroll={{x: 'max-content'}} rowKey="name" columns={columns} dataSource={table} size="middle" bordered pagination={false}
-             title={() => (
-               <div>
-                 {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-                 <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
-               </div>
-             )}
+      <Table scroll={{x: "max-content"}} rowKey="name" columns={columns} dataSource={table} size="middle" bordered pagination={false}
+        title={() => (
+          <div>
+            {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+          </div>
+        )}
       />
     );
   }
@@ -228,7 +229,7 @@ class AccountTable extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{marginTop: '20px'}} >
+        <Row style={{marginTop: "20px"}} >
           <Col span={24}>
             {
               this.renderTable(this.props.table)
@@ -236,7 +237,7 @@ class AccountTable extends React.Component {
           </Col>
         </Row>
       </div>
-    )
+    );
   }
 }
 

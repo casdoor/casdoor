@@ -1,38 +1,38 @@
-const CracoLessPlugin = require('craco-less');
+const CracoLessPlugin = require("craco-less");
 
 module.exports = {
   devServer: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:8000',
+      "/api": {
+        target: "http://localhost:8000",
         changeOrigin: true,
       },
-      '/swagger': {
-        target: 'http://localhost:8000',
+      "/swagger": {
+        target: "http://localhost:8000",
         changeOrigin: true,
       },
-      '/files': {
-        target: 'http://localhost:8000',
+      "/files": {
+        target: "http://localhost:8000",
         changeOrigin: true,
       },
-      '/.well-known/openid-configuration': {
-        target: 'http://localhost:8000',
+      "/.well-known/openid-configuration": {
+        target: "http://localhost:8000",
         changeOrigin: true,
       },
-      '/cas/serviceValidate': {
-        target: 'http://localhost:8000',
+      "/cas/serviceValidate": {
+        target: "http://localhost:8000",
         changeOrigin: true,
       },
-      '/cas/proxyValidate': {
-        target: 'http://localhost:8000',
+      "/cas/proxyValidate": {
+        target: "http://localhost:8000",
         changeOrigin: true,
       },
-      '/cas/proxy': {
-        target: 'http://localhost:8000',
+      "/cas/proxy": {
+        target: "http://localhost:8000",
         changeOrigin: true,
       },
-      '/cas/validate': {
-        target: 'http://localhost:8000',
+      "/cas/validate": {
+        target: "http://localhost:8000",
         changeOrigin: true,
       }
     },
@@ -43,7 +43,7 @@ module.exports = {
       options: {
         lessLoaderOptions: {
           lessOptions: {
-            modifyVars: {'@primary-color': 'rgb(45,120,213)'},
+            modifyVars: {"@primary-color": "rgb(45,120,213)"},
             javascriptEnabled: true,
           },
         },

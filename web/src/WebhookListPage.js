@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Switch, Table} from 'antd';
+import {Button, Popconfirm, Switch, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as WebhookBackend from "./backend/WebhookBackend";
@@ -35,15 +35,15 @@ class WebhookListPage extends BaseListPage {
       headers: [],
       events: ["signup", "login", "logout", "update-user"],
       isEnabled: true,
-    }
+    };
   }
 
   addWebhook() {
     const newWebhook = this.newWebhook();
     WebhookBackend.addWebhook(newWebhook)
       .then((res) => {
-          this.props.history.push({pathname: `/webhooks/${newWebhook.name}`, mode: "add"});
-        }
+        this.props.history.push({pathname: `/webhooks/${newWebhook.name}`, mode: "add"});
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Webhook failed to add: ${error}`);
@@ -53,12 +53,12 @@ class WebhookListPage extends BaseListPage {
   deleteWebhook(i) {
     WebhookBackend.deleteWebhook(this.state.data[i])
       .then((res) => {
-          Setting.showMessage("success", `Webhook deleted successfully`);
-          this.setState({
-            data: Setting.deleteRow(this.state.data, i),
-            pagination: {total: this.state.pagination.total - 1},
-          });
-        }
+        Setting.showMessage("success", "Webhook deleted successfully");
+        this.setState({
+          data: Setting.deleteRow(this.state.data, i),
+          pagination: {total: this.state.pagination.total - 1},
+        });
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Webhook failed to delete: ${error}`);
@@ -69,40 +69,40 @@ class WebhookListPage extends BaseListPage {
     const columns = [
       {
         title: i18next.t("general:Organization"),
-        dataIndex: 'organization',
-        key: 'organization',
-        width: '110px',
+        dataIndex: "organization",
+        key: "organization",
+        width: "110px",
         sorter: true,
-        ...this.getColumnSearchProps('organization'),
+        ...this.getColumnSearchProps("organization"),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Name"),
-        dataIndex: 'name',
-        key: 'name',
-        width: '150px',
-        fixed: 'left',
+        dataIndex: "name",
+        key: "name",
+        width: "150px",
+        fixed: "left",
         sorter: true,
-        ...this.getColumnSearchProps('name'),
+        ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
             <Link to={`/webhooks/${text}`}>
               {text}
             </Link>
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Created time"),
-        dataIndex: 'createdTime',
-        key: 'createdTime',
-        width: '180px',
+        dataIndex: "createdTime",
+        key: "createdTime",
+        width: "180px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -110,11 +110,11 @@ class WebhookListPage extends BaseListPage {
       },
       {
         title: i18next.t("webhook:URL"),
-        dataIndex: 'url',
-        key: 'url',
-        width: '300px',
+        dataIndex: "url",
+        key: "url",
+        width: "300px",
         sorter: true,
-        ...this.getColumnSearchProps('url'),
+        ...this.getColumnSearchProps("url"),
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
@@ -122,82 +122,82 @@ class WebhookListPage extends BaseListPage {
                 Setting.getShortText(text)
               }
             </a>
-          )
+          );
         }
       },
       {
         title: i18next.t("webhook:Method"),
-        dataIndex: 'method',
-        key: 'method',
-        width: '120px',
+        dataIndex: "method",
+        key: "method",
+        width: "120px",
         sorter: true,
-        ...this.getColumnSearchProps('method'),
+        ...this.getColumnSearchProps("method"),
       },
       {
         title: i18next.t("webhook:Content type"),
-        dataIndex: 'contentType',
-        key: 'contentType',
-        width: '200px',
+        dataIndex: "contentType",
+        key: "contentType",
+        width: "200px",
         sorter: true,
         filterMultiple: false,
         filters: [
-          {text: 'application/json', value: 'application/json'},
-          {text: 'application/x-www-form-urlencoded', value: 'application/x-www-form-urlencoded'},
+          {text: "application/json", value: "application/json"},
+          {text: "application/x-www-form-urlencoded", value: "application/x-www-form-urlencoded"},
         ]
       },
       {
         title: i18next.t("webhook:Events"),
-        dataIndex: 'events',
-        key: 'events',
+        dataIndex: "events",
+        key: "events",
         // width: '100px',
         sorter: true,
-        ...this.getColumnSearchProps('events'),
+        ...this.getColumnSearchProps("events"),
         render: (text, record, index) => {
           return Setting.getTags(text);
         }
       },
       {
         title: i18next.t("webhook:Is user extended"),
-        dataIndex: 'isUserExtended',
-        key: 'isUserExtended',
-        width: '160px',
+        dataIndex: "isUserExtended",
+        key: "isUserExtended",
+        width: "160px",
         sorter: true,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Is enabled"),
-        dataIndex: 'isEnabled',
-        key: 'isEnabled',
-        width: '120px',
+        dataIndex: "isEnabled",
+        key: "isEnabled",
+        width: "120px",
         sorter: true,
         render: (text, record, index) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
-          )
+          );
         }
       },
       {
         title: i18next.t("general:Action"),
-        dataIndex: '',
-        key: 'op',
-        width: '170px',
+        dataIndex: "",
+        key: "op",
+        width: "170px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/webhooks/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/webhooks/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete webhook: ${record.name} ?`}
                 onConfirm={() => this.deleteWebhook(index)}
               >
-                <Button style={{marginBottom: '10px'}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
-          )
+          );
         }
       },
     ];
@@ -211,15 +211,15 @@ class WebhookListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: 'max-content'}} columns={columns} dataSource={webhooks} rowKey="name" size="middle" bordered pagination={paginationProps}
-               title={() => (
-                 <div>
-                   {i18next.t("general:Webhooks")}&nbsp;&nbsp;&nbsp;&nbsp;
-                   <Button type="primary" size="small" onClick={this.addWebhook.bind(this)}>{i18next.t("general:Add")}</Button>
-                 </div>
-               )}
-               loading={this.state.loading}
-               onChange={this.handleTableChange}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={webhooks} rowKey="name" size="middle" bordered pagination={paginationProps}
+          title={() => (
+            <div>
+              {i18next.t("general:Webhooks")}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button type="primary" size="small" onClick={this.addWebhook.bind(this)}>{i18next.t("general:Add")}</Button>
+            </div>
+          )}
+          loading={this.state.loading}
+          onChange={this.handleTableChange}
         />
       </div>
     );
@@ -232,7 +232,7 @@ class WebhookListPage extends BaseListPage {
       field = "contentType";
       value = params.contentType;
     }
-    this.setState({ loading: true });
+    this.setState({loading: true});
     WebhookBackend.getWebhooks("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
