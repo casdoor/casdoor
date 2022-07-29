@@ -168,13 +168,35 @@ func (c *ApiController) ResetEmailOrPhone() {
 	}
 
 	checkDest := dest
+	org := object.GetOrganizationByUser(user)
 	if destType == "phone" {
-		org := object.GetOrganizationByUser(user)
+		phoneItem := object.GetAccountItemByName("Phone", org)
+		if phoneItem == nil {
+			c.ResponseError("Unable to get the phone modification rules.")
+			return
+		}
+
+		if pass, errMsg := object.CheckAccountItemModifyRule(phoneItem, user); !pass {
+			c.ResponseError(errMsg)
+			return
+		}
+
 		phonePrefix := "86"
 		if org != nil && org.PhonePrefix != "" {
 			phonePrefix = org.PhonePrefix
 		}
 		checkDest = fmt.Sprintf("+%s%s", phonePrefix, dest)
+	} else if destType == "email" {
+		emailItem := object.GetAccountItemByName("Email", org)
+		if emailItem == nil {
+			c.ResponseError("Unable to get the email modification rules.")
+			return
+		}
+
+		if pass, errMsg := object.CheckAccountItemModifyRule(emailItem, user); !pass {
+			c.ResponseError(errMsg)
+			return
+		}
 	}
 	if ret := object.CheckVerificationCode(checkDest, code); len(ret) != 0 {
 		c.ResponseError(ret)

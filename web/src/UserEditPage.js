@@ -291,7 +291,7 @@ class UserEditPage extends React.Component {
               }} />
           </Col>
           <Col span={11} >
-            {this.state.user.id === this.props.account?.id ? (<ResetModal application={this.state.application} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />) : null}
+            {this.state.user.id === this.props.account?.id ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />) : null}
           </Col>
         </Row>
       );
@@ -309,7 +309,7 @@ class UserEditPage extends React.Component {
               }} />
           </Col>
           <Col span={11} >
-            {this.state.user.id === this.props.account?.id ? (<ResetModal application={this.state.application} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
+            {this.state.user.id === this.props.account?.id ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
           </Col>
         </Row>
       );
