@@ -172,7 +172,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 	if destType == "phone" {
 		phoneItem := object.GetAccountItemByName("Phone", org)
 		if phoneItem == nil {
-			c.ResponseError("Unable to get the phone modification rules.")
+			c.ResponseError("Unable to get the phone modify rule.")
 			return
 		}
 
@@ -189,7 +189,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 	} else if destType == "email" {
 		emailItem := object.GetAccountItemByName("Email", org)
 		if emailItem == nil {
-			c.ResponseError("Unable to get the email modification rules.")
+			c.ResponseError("Unable to get the email modify rule.")
 			return
 		}
 
