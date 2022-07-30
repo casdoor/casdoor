@@ -1,0 +1,66 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@ant-design/icons": "^4.6.2",
+    "@craco/craco": "^6.1.1",
+    "@crowdin/cli": "^3.6.4",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "antd": "^4.15.5",
+    "codemirror": "^5.61.1",
+    "copy-to-clipboard": "^3.3.1",
+    "craco-less": "^1.17.1",
+    "file-saver": "^2.0.5",
+    "i18n-iso-countries": "^7.0.0",
+    "i18next": "^19.8.9",
+    "moment": "^2.29.1",
+    "qs": "^6.10.2",
+    "react": "^17.0.2",
+    "react-codemirror2": "^7.2.1",
+    "react-cropper": "^2.1.7",
+    "react-device-detect": "^1.14.0",
+    "react-dom": "^17.0.2",
+    "react-github-corner": "^2.5.0",
+    "react-helmet": "^6.1.0",
+    "react-highlight-words": "^0.17.0",
+    "react-i18next": "^11.8.7",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "react-social-login-buttons": "^3.4.0",
+    "react-app-polyfill": "^3.0.0",
+    "core-js": "^3.21.1"
+  },
+  "scripts": {
+    "start": "cross-env PORT=7001 craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "craco eject",
+    "crowdin:sync": "crowdin upload && crowdin download",
+    "preinstall": "node -e \"if (process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('Use yarn for installing: https://yarnpkg.com/en/docs/install')\""
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all",
+      "ie > 8"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version",
+      "ie > 8"
+    ]
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "eslint": "^7.11.0",
+    "eslint-plugin-react": "^7.30.1"
+  }
+}

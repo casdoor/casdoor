@@ -1,0 +1,12 @@
+# Always validate the PR title AND all the commits
+titleAndCommits: true
+# Require at least one commit to be valid
+# this is only relevant when using commitsOnly: true or titleAndCommits: true,
+# which validate all commits by default
+anyCommit: true
+# Allow use of Merge commits (eg on github: "Merge branch 'master' into feature/ride-unicorns")
+# this is only relevant when using commitsOnly: true (or titleAndCommits: true)
+allowMergeCommits: false
+# Allow use of Revert commits (eg on github: "Revert "feat: ride unicorns"")
+# this is only relevant when using commitsOnly: true (or titleAndCommits: true)
+allowRevertCommits: false
