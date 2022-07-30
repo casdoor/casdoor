@@ -19,12 +19,15 @@ func (syncer *Syncer) getUsers() []*User {
 	return users
 }
 
-func (syncer *Syncer) getUserMap() ([]*User, map[string]*User) {
+func (syncer *Syncer) getUserMap() ([]*User, map[string]*User, map[string]*User) {
 	users := syncer.getUsers()
 
-	m := map[string]*User{}
+	m1 := map[string]*User{}
+	m2 := map[string]*User{}
 	for _, user := range users {
-		m[user.Id] = user
+		m1[user.Id] = user
+		m2[user.Name] = user
 	}
-	return users, m
+
+	return users, m1, m2
 }
