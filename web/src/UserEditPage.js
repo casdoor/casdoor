@@ -427,6 +427,32 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
+    } else if (accountItem.name === "Roles") {
+      return (
+        <Row style={{marginTop: "20px", alignItems: "center"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Roles"), i18next.t("general:Roles - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            {
+              Setting.getTags(this.state.user.roles.map(role => role.name))
+            }
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Permissions") {
+      return (
+        <Row style={{marginTop: "20px", alignItems: "center"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Permissions"), i18next.t("general:Permissions - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            {
+              Setting.getTags(this.state.user.permissions.map(permission => permission.name))
+            }
+          </Col>
+        </Row>
+      );
     } else if (accountItem.name === "3rd-party logins") {
       return (
         !this.isSelfOrAdmin() ? null : (
