@@ -217,7 +217,7 @@ func (c *ApiController) Signup() {
 	record.User = user.Name
 	util.SafeGoroutine(func() { object.AddRecord(record) })
 
-	userId := fmt.Sprintf("%s/%s", user.Owner, user.Name)
+	userId := user.GetId()
 	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
 
 	c.ResponseOk(userId)
