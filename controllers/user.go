@@ -80,12 +80,16 @@ func (c *ApiController) GetUsers() {
 // @Title GetUser
 // @Tag User API
 // @Description get user
-// @Param   id     query    string  true        "The id of the user"
+// @Param   id     query    string  true         "The id of the user"
+// @Param   owner  query    string  false        "The owner of the user"
+// @Param   email  query    string  false 	     "The email of the user"
+// @Param   phone  query    string  false 	     "The phone of the user"
 // @Success 200 {object} object.User The Response object
 // @router /get-user [get]
 func (c *ApiController) GetUser() {
 	id := c.Input().Get("id")
 	email := c.Input().Get("email")
+	phone := c.Input().Get("phone")
 	userId := c.Input().Get("userId")
 
 	owner := c.Input().Get("owner")
@@ -104,11 +108,14 @@ func (c *ApiController) GetUser() {
 	}
 
 	var user *object.User
-	if email != "" {
+	switch {
+	case email != "":
 		user = object.GetUserByEmail(owner, email)
-	} else if userId != "" {
+	case phone != "":
+		user = object.GetUserByPhone(owner, phone)
+	case userId != "":
 		user = object.GetUserByUserId(owner, userId)
-	} else {
+	default:
 		user = object.GetUser(id)
 	}
 
