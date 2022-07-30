@@ -15,6 +15,8 @@
 package object
 
 import (
+	"fmt"
+
 	"github.com/casdoor/casdoor/cred"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -185,4 +187,32 @@ func DeleteOrganization(organization *Organization) bool {
 
 func GetOrganizationByUser(user *User) *Organization {
 	return getOrganization("admin", user.Owner)
+}
+
+func GetAccountItemByName(name string, organization *Organization) *AccountItem {
+	if organization == nil {
+		return nil
+	}
+	for _, accountItem := range organization.AccountItems {
+		if accountItem.Name == name {
+			return accountItem
+		}
+	}
+	return nil
+}
+
+func CheckAccountItemModifyRule(accountItem *AccountItem, user *User) (bool, string) {
+	switch accountItem.ModifyRule {
+	case "Admin":
+		if !(user.IsAdmin || user.IsGlobalAdmin) {
+			return false, fmt.Sprintf("Only admin can modify the %s.", accountItem.Name)
+		}
+	case "Immutable":
+		return false, fmt.Sprintf("The %s is immutable.", accountItem.Name)
+	case "Self":
+		break
+	default:
+		return false, fmt.Sprintf("Unknown modify rule %s.", accountItem.ModifyRule)
+	}
+	return true, ""
 }
