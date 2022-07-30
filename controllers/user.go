@@ -96,7 +96,7 @@ func (c *ApiController) GetUser() {
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", owner))
 	if !organization.IsProfilePublic {
 		requestUserId := c.GetSessionUsername()
-		hasPermission, err := object.CheckUserPermission(requestUserId, id, false)
+		hasPermission, err := object.CheckUserPermission(requestUserId, id, owner, false)
 		if !hasPermission {
 			c.ResponseError(err.Error())
 			return
@@ -257,7 +257,7 @@ func (c *ApiController) SetPassword() {
 	requestUserId := c.GetSessionUsername()
 	userId := fmt.Sprintf("%s/%s", userOwner, userName)
 
-	hasPermission, err := object.CheckUserPermission(requestUserId, userId, true)
+	hasPermission, err := object.CheckUserPermission(requestUserId, userId, userOwner, true)
 	if !hasPermission {
 		c.ResponseError(err.Error())
 		return
