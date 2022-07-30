@@ -104,6 +104,9 @@ type User struct {
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
+
+	Roles       []*Role       `json:"roles"`
+	Permissions []*Permission `json:"permissions"`
 }
 
 type Userinfo struct {

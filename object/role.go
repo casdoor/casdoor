@@ -121,3 +121,13 @@ func DeleteRole(role *Role) bool {
 func (role *Role) GetId() string {
 	return fmt.Sprintf("%s/%s", role.Owner, role.Name)
 }
+
+func GetRolesByUser(userId string) []*Role {
+	roles := []*Role{}
+	err := adapter.Engine.Where("users like ?", "%"+userId+"%").Find(&roles)
+	if err != nil {
+		panic(err)
+	}
+
+	return roles
+}

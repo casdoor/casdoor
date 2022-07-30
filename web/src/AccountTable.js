@@ -86,6 +86,8 @@ class AccountTable extends React.Component {
             {name: "Bio", displayName: i18next.t("user:Bio")},
             {name: "Tag", displayName: i18next.t("user:Tag")},
             {name: "Signup application", displayName: i18next.t("general:Signup application")},
+            {name: "Roles", displayName: i18next.t("general:Roles")},
+            {name: "Permissions", displayName: i18next.t("general:Permissions")},
             {name: "3rd-party logins", displayName: i18next.t("user:3rd-party logins")},
             {name: "Properties", displayName: i18next.t("user:Properties")},
             {name: "Is admin", displayName: i18next.t("user:Is admin")},

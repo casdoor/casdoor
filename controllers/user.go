@@ -112,6 +112,11 @@ func (c *ApiController) GetUser() {
 		user = object.GetUser(id)
 	}
 
+	roles := object.GetRolesByUser(user.GetId())
+	user.Roles = roles
+	permissions := object.GetPermissionsByUser(user.GetId())
+	user.Permissions = permissions
+
 	c.Data["json"] = object.GetMaskedUser(user)
 	c.ServeJSON()
 }
