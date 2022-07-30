@@ -229,3 +229,13 @@ func removePolicies(permission *Permission) {
 		panic(err)
 	}
 }
+
+func GetPermissionsByUser(userId string) []*Permission {
+	permissions := []*Permission{}
+	err := adapter.Engine.Where("users like ?", "%"+userId+"%").Find(&permissions)
+	if err != nil {
+		panic(err)
+	}
+
+	return permissions
+}
