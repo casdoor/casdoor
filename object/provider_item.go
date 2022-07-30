@@ -33,6 +33,15 @@ func (application *Application) GetProviderItem(providerName string) *ProviderIt
 	return nil
 }
 
+func (application *Application) GetProviderItemByType(providerType string) *ProviderItem {
+	for _, item := range application.Providers {
+		if item.Provider.Type == providerType {
+			return item
+		}
+	}
+	return nil
+}
+
 func (pi *ProviderItem) IsProviderVisible() bool {
 	if pi.Provider == nil {
 		return false

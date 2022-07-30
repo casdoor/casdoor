@@ -91,9 +91,7 @@ class OAuthWidget extends React.Component {
   unlinkUser(providerType) {
     const body = {
       providerType: providerType,
-      // should add the unlink user's info
-      // cause the user may not be logged in
-      // but a admin want to unlink the user
+      // should add the unlink user's info, cause the user may not be logged in, but a admin want to unlink the user.
       user: this.props.user,
     };
     AuthBackend.unlink(body)
