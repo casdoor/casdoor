@@ -273,6 +273,24 @@ func GetUserByEmail(owner string, email string) *User {
 	}
 }
 
+func GetUserByPhone(owner string, phone string) *User {
+	if owner == "" || phone == "" {
+		return nil
+	}
+
+	user := User{Owner: owner, Phone: phone}
+	existed, err := adapter.Engine.Get(&user)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &user
+	} else {
+		return nil
+	}
+}
+
 func GetUserByUserId(owner string, userId string) *User {
 	if owner == "" || userId == "" {
 		return nil
