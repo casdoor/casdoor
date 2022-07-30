@@ -37,11 +37,11 @@ func TestSyncAvatarsFromGitHub(t *testing.T) {
 
 	users := GetGlobalUsers()
 	for _, user := range users {
-		if user.Github == "" {
+		if user.GitHub == "" {
 			continue
 		}
 
-		user.Avatar = fmt.Sprintf("https://avatars.githubusercontent.com/%s", user.Github)
+		user.Avatar = fmt.Sprintf("https://avatars.githubusercontent.com/%s", user.GitHub)
 		updateUserColumn("avatar", user)
 	}
 }
