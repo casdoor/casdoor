@@ -2,7 +2,7 @@ FROM node:16.13.0 AS FRONT
 WORKDIR /web
 COPY ./web .
 RUN yarn config set registry https://registry.npmmirror.com
-RUN yarn install && yarn run build
+RUN yarn install --network-timeout 200000 && yarn run build
 
 
 FROM golang:1.17.5 AS BACK
