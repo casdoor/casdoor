@@ -197,14 +197,18 @@ func filterField(field string) bool {
 	return reFieldWhiteList.MatchString(field)
 }
 
-func CheckUserPermission(requestUserId, userId string, strict bool) (bool, error) {
+func CheckUserPermission(requestUserId, userId, userOwner string, strict bool) (bool, error) {
 	if requestUserId == "" {
 		return false, fmt.Errorf("please login first")
 	}
 
-	targetUser := GetUser(userId)
-	if targetUser == nil {
-		return false, fmt.Errorf("the user: %s doesn't exist", userId)
+	if userId != "" {
+		targetUser := GetUser(userId)
+		if targetUser == nil {
+			return false, fmt.Errorf("the user: %s doesn't exist", userId)
+		}
+
+		userOwner = targetUser.Owner
 	}
 
 	hasPermission := false
@@ -219,7 +223,7 @@ func CheckUserPermission(requestUserId, userId string, strict bool) (bool, error
 			hasPermission = true
 		} else if requestUserId == userId {
 			hasPermission = true
-		} else if targetUser.Owner == requestUser.Owner {
+		} else if userOwner == requestUser.Owner {
 			if strict {
 				hasPermission = requestUser.IsAdmin
 			} else {
