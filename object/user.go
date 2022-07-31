@@ -73,7 +73,7 @@ type User struct {
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
 	LastSigninIp   string `xorm:"varchar(100)" json:"lastSigninIp"`
 
-	Github        string `xorm:"varchar(100)" json:"github"`
+	GitHub        string `xorm:"github varchar(100)" json:"github"`
 	Google        string `xorm:"varchar(100)" json:"google"`
 	QQ            string `xorm:"qq varchar(100)" json:"qq"`
 	WeChat        string `xorm:"wechat varchar(100)" json:"wechat"`
@@ -261,6 +261,24 @@ func GetUserByEmail(owner string, email string) *User {
 	}
 
 	user := User{Owner: owner, Email: email}
+	existed, err := adapter.Engine.Get(&user)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &user
+	} else {
+		return nil
+	}
+}
+
+func GetUserByPhone(owner string, phone string) *User {
+	if owner == "" || phone == "" {
+		return nil
+	}
+
+	user := User{Owner: owner, Phone: phone}
 	existed, err := adapter.Engine.Get(&user)
 	if err != nil {
 		panic(err)

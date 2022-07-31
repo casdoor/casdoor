@@ -22,7 +22,7 @@ import (
 func (syncer *Syncer) syncUsers() {
 	fmt.Printf("Running syncUsers()..\n")
 
-	users, userMap := syncer.getUserMap()
+	users, userMap, userNameMap := syncer.getUserMap()
 	oUsers, oUserMap, err := syncer.getOriginalUserMap()
 	if err != nil {
 		fmt.Printf(err.Error())
@@ -44,9 +44,11 @@ func (syncer *Syncer) syncUsers() {
 	for _, oUser := range oUsers {
 		id := oUser.Id
 		if _, ok := userMap[id]; !ok {
-			newUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
-			fmt.Printf("New user: %v\n", newUser)
-			newUsers = append(newUsers, newUser)
+			if _, ok := userNameMap[oUser.Name]; !ok {
+				newUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
+				fmt.Printf("New user: %v\n", newUser)
+				newUsers = append(newUsers, newUser)
+			}
 		} else {
 			user := userMap[id]
 			oHash := syncer.calculateHash(oUser)
