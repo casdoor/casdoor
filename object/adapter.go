@@ -21,10 +21,10 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
-	//_ "github.com/denisenkom/go-mssqldb" // db = mssql
-	_ "github.com/go-sql-driver/mysql" // db = mysql
-	//_ "github.com/lib/pq"                // db = postgres
-	//_ "github.com/mattn/go-sqlite3"      // db = sqlite3
+	_ "github.com/denisenkom/go-mssqldb" // db = mssql
+	_ "github.com/go-sql-driver/mysql"   // db = mysql
+	_ "github.com/lib/pq"                // db = postgres
+	_ "github.com/mattn/go-sqlite3"      // db = sqlite3
 	"xorm.io/core"
 	"xorm.io/xorm"
 )
