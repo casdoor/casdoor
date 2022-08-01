@@ -117,7 +117,7 @@ class PromptPage extends React.Component {
         <div>
           {
             (application === null || this.state.user === null) ? null : (
-              application?.providers.filter(providerItem => Setting.isProviderPrompted(providerItem)).map((providerItem, index) => <OAuthWidget key={providerItem.name} labelSpan={6} user={this.state.user} application={application} providerItem={providerItem} onUnlinked={() => {return this.unlinked();}} />)
+              application?.providers.filter(providerItem => Setting.isProviderPrompted(providerItem)).map((providerItem, index) => <OAuthWidget key={providerItem.name} labelSpan={6} user={this.state.user} application={application} providerItem={providerItem} account={this.props.account} onUnlinked={() => {return this.unlinked();}} />)
             )
           }
         </div>
