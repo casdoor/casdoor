@@ -45,13 +45,13 @@ type Permission struct {
 }
 
 type PermissionRule struct {
-	PType string `xorm:"varchar(100) index not null default ''"`
-	V0    string `xorm:"varchar(100) index not null default ''"`
-	V1    string `xorm:"varchar(100) index not null default ''"`
-	V2    string `xorm:"varchar(100) index not null default ''"`
-	V3    string `xorm:"varchar(100) index not null default ''"`
-	V4    string `xorm:"varchar(100) index not null default ''"`
-	V5    string `xorm:"varchar(100) index not null default ''"`
+	PType string `xorm:"varchar(100) index not null default ''" json:"pType"`
+	V0    string `xorm:"varchar(100) index not null default ''" json:"v0"`
+	V1    string `xorm:"varchar(100) index not null default ''" json:"v1"`
+	V2    string `xorm:"varchar(100) index not null default ''" json:"v2"`
+	V3    string `xorm:"varchar(100) index not null default ''" json:"v3"`
+	V4    string `xorm:"varchar(100) index not null default ''" json:"v4"`
+	V5    string `xorm:"varchar(100) index not null default ''" json:"v5"`
 }
 
 func GetPermissionCount(owner, field, value string) int {
@@ -208,6 +208,13 @@ func getPolicies(permission *Permission) [][]string {
 			}
 		}
 	}
+	for _, role := range permission.Roles {
+		for _, resource := range permission.Resources {
+			for _, action := range permission.Actions {
+				policies = append(policies, []string{permission.GetId(), role, resource, strings.ToLower(action)})
+			}
+		}
+	}
 	return policies
 }
 
@@ -238,4 +245,49 @@ func GetPermissionsByUser(userId string) []*Permission {
 	}
 
 	return permissions
+}
+
+func Enforce(userId string, permissionRule *PermissionRule) bool {
+	permission := GetPermission(permissionRule.V0)
+	enforcer := getEnforcer(permission)
+	allow, err := enforcer.Enforce(userId, permissionRule.V2, permissionRule.V3)
+	if err != nil {
+		panic(err)
+	}
+	return allow
+}
+
+func getAllValues(userId string, sec string, fieldIndex int) []string {
+	permissions := GetPermissionsByUser(userId)
+	var values []string
+	for _, permission := range permissions {
+		enforcer := getEnforcer(permission)
+		enforcer.ClearPolicy()
+		err := enforcer.LoadFilteredPolicy(xormadapter.Filter{V0: []string{permission.GetId()}, V1: []string{userId}})
+		if err != nil {
+			return nil
+		}
+
+		for _, value := range enforcer.GetModel().GetValuesForFieldInPolicyAllTypes(sec, fieldIndex) {
+			values = append(values, value)
+		}
+	}
+	return values
+}
+
+func GetAllObjects(userId string) []string {
+	return getAllValues(userId, "p", 2)
+}
+
+func GetAllActions(userId string) []string {
+	return getAllValues(userId, "p", 3)
+}
+
+func GetAllRoles(userId string) []string {
+	roles := GetRolesByUser(userId)
+	var res []string
+	for _, role := range roles {
+		res = append(res, role.Name)
+	}
+	return res
 }

@@ -114,3 +114,49 @@ func (c *ApiController) DeletePermission() {
 	c.Data["json"] = wrapActionResponse(object.DeletePermission(&permission))
 	c.ServeJSON()
 }
+
+func (c *ApiController) Enforce() {
+	userId := c.GetSessionUsername()
+	if userId == "" {
+		c.ResponseError("Please sign in first")
+	}
+
+	var permissionRule object.PermissionRule
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissionRule)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Data["json"] = object.Enforce(userId, &permissionRule)
+	c.ServeJSON()
+}
+
+func (c *ApiController) GetAllObjects() {
+	userId := c.GetSessionUsername()
+	if userId == "" {
+		c.ResponseError("Please sign in first")
+	}
+
+	c.Data["json"] = object.GetAllObjects(userId)
+	c.ServeJSON()
+}
+
+func (c *ApiController) GetAllActions() {
+	userId := c.GetSessionUsername()
+	if userId == "" {
+		c.ResponseError("Please sign in first")
+	}
+
+	c.Data["json"] = object.GetAllActions(userId)
+	c.ServeJSON()
+}
+
+func (c *ApiController) GetAllRoles() {
+	userId := c.GetSessionUsername()
+	if userId == "" {
+		c.ResponseError("Please sign in first")
+	}
+
+	c.Data["json"] = object.GetAllRoles(userId)
+	c.ServeJSON()
+}
