@@ -25,7 +25,7 @@ export const CaptchaWidget = ({captchaType, subType, siteKey, clientSecret, onCh
 
   useEffect(() => {
     switch (captchaType) {
-    case "reCAPTCHA":
+    case "reCAPTCHA": {
       const reTimer = setInterval(() => {
         if (!window.grecaptcha) {
           loadScript("https://recaptcha.net/recaptcha/api.js");
@@ -39,7 +39,8 @@ export const CaptchaWidget = ({captchaType, subType, siteKey, clientSecret, onCh
         }
       }, 300);
       break;
-    case "hCaptcha":
+    }
+    case "hCaptcha": {
       const hTimer = setInterval(() => {
         if (!window.hcaptcha) {
           loadScript("https://js.hcaptcha.com/1/api.js");
@@ -53,7 +54,8 @@ export const CaptchaWidget = ({captchaType, subType, siteKey, clientSecret, onCh
         }
       }, 300);
       break;
-    case "Aliyun Captcha":
+    }
+    case "Aliyun Captcha": {
       const AWSCTimer = setInterval(() => {
         if (!window.AWSC) {
           loadScript("https://g.alicdn.com/AWSC/AWSC/awsc.js");
@@ -76,6 +78,33 @@ export const CaptchaWidget = ({captchaType, subType, siteKey, clientSecret, onCh
         }
       }, 300);
       break;
+    }
+    case "GEETEST": {
+      let getLock = false;
+      const gTimer = setInterval(() => {
+        if (!window.initGeetest4) {
+          loadScript("https://static.geetest.com/v4/gt4.js");
+        }
+        if (window.initGeetest4 && siteKey && !getLock) {
+          const captchaId = String(siteKey);
+          window.initGeetest4({
+              captchaId,
+              product: "float",
+          }, function(captchaObj) {
+            if (!getLock) {
+              captchaObj.appendTo("#captcha");
+              getLock = true;
+            }
+            captchaObj.onSuccess(function() {
+              const result = captchaObj.getValidate();
+              onChange(`lot_number=${result.lot_number}&captcha_output=${result.captcha_output}&pass_token=${result.pass_token}&gen_time=${result.gen_time}&captcha_id=${siteKey}`);
+            });
+          });
+          clearInterval(gTimer);
+        }
+      }, 500);
+      break;
+    }
     default:
       break;
     }
