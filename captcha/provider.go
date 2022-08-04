@@ -27,6 +27,8 @@ func GetCaptchaProvider(captchaType string) CaptchaProvider {
 		return NewHCaptchaProvider()
 	} else if captchaType == "Aliyun Captcha" {
 		return NewAliyunCaptchaProvider()
+	} else if captchaType == "GEETEST" {
+		return NewGEETESTCaptchaProvider()
 	}
 	return nil
 }

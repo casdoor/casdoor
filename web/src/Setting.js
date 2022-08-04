@@ -122,6 +122,10 @@ export const OtherProviderInfo = {
     "Aliyun Captcha": {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://help.aliyun.com/product/28308.html",
+    },
+    "GEETEST": {
+      logo: `${StaticBaseUrl}/img/social_geetest.png`,
+      url: "https://www.geetest.com",
     }
   }
 };
@@ -615,6 +619,7 @@ export function getProviderTypeOptions(category) {
       {id: "reCAPTCHA", name: "reCAPTCHA"},
       {id: "hCaptcha", name: "hCaptcha"},
       {id: "Aliyun Captcha", name: "Aliyun Captcha"},
+      {id: "GEETEST", name: "GEETEST"},
     ]);
   } else {
     return [];
