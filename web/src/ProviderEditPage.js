@@ -208,6 +208,8 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("domain", Setting.getFullServerUrl());
               } else if (value === "SAML") {
                 this.updateProviderField("type", "Aliyun IDaaS");
+              } else if (value === "Payment") {
+                this.updateProviderField("type", "Alipay");
               } else if (value === "Captcha") {
                 this.updateProviderField("type", "Default");
               }
