@@ -683,21 +683,13 @@ class LoginPage extends React.Component {
     };
     return (
       <div style={{backgroundColor:"#f0f0f0",
-      background: "url(https://desk-fd.zol-img.com.cn/t_s960x600c5/g5/M00/0A/0C/ChMkJlwbaPmIfjr8AAHXNlQ9tyQAAt5PAMXql0AAddO522.jpg)",
+      // background: "url(https://desk-fd.zol-img.com.cn/t_s960x600c5/g5/M00/0A/0C/ChMkJlwbaPmIfjr8AAHXNlQ9tyQAAt5PAMXql0AAddO522.jpg)",
       backgroundRepeat:"no-repeat",
       backgroundSize: "100% 100%"
       }}>
       <Row>
         <Col span={24} style={{display: "flex", justifyContent: "center"}}>
           <div style={{marginTop: "80px", marginBottom: "90px", textAlign: "center"}}>
-            {/* <img
-            src="https://yili979.oss-cn-beijing.aliyuncs.com/img/%E7%95%8C%E9%9D%A2%E8%A1%A8%E5%8D%95.png"
-            style={{width: "350px", position: "fixed", bottom: "40px", left: "70px", zIndex: "-1"}}
-            ></img>
-            <img
-            src="https://yili979.oss-cn-beijing.aliyuncs.com/img/%E7%BD%91%E7%AB%99%E4%BF%9D%E6%8A%A4.png"
-            style={{width: "320px", position: "fixed", bottom: "60px", right: "70px", zIndex: "-1"}}
-            ></img> */}
             <div style={{...FormStyle}}>
             {
               Setting.renderHelmet(application)
