@@ -8,6 +8,7 @@ RUN yarn install && yarn run build
 FROM golang:1.17.5 AS BACK
 WORKDIR /go/src/casdoor
 COPY . .
+RUN sed -i '/import/,/)/ s/^[[:space:]]*\/\///g' object/adapter.go
 RUN ./build.sh
 
 
