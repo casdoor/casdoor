@@ -146,11 +146,12 @@ class LoginPage extends React.Component {
   }
 
   onFinish(values) {
-    if (this.state.loginMethod=="webAuthn") {
+    if (this.state.loginMethod === "webAuthn") {
       let username = this.state.username;
       if (username === null || username === "") {
         username = values["username"];
       }
+
       this.signInWithWebAuthn(username);
       return;
     }
