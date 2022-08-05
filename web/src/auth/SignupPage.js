@@ -57,6 +57,17 @@ const tailFormItemLayout = {
   },
 };
 
+const FormStyle = {
+  padding: "30px 70px 20px 40px",
+  border: "2px solid #ffffff",
+  borderRadius: "7px",
+  backgroundColor:"#ffffff",
+  boxShadow:"rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px",
+  textAlign: "center",
+  marginBottom: "50px",
+  marginTop: "50px"
+};
+
 class SignupPage extends React.Component {
   constructor(props) {
     super(props);
@@ -599,12 +610,11 @@ class SignupPage extends React.Component {
     }
 
     return (
-      <div>
+      <div style={{backgroundColor:"#f0f0f0"}}>
         <CustomGithubCorner />
-        &nbsp;
         <Row>
           <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
-            <div style={{marginTop: "10px", textAlign: "center"}}>
+            <div style={{...FormStyle}}>
               {
                 Setting.renderHelmet(application)
               }
