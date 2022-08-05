@@ -485,7 +485,7 @@ class ForgetPage extends React.Component {
 
     return (
       <Row>
-        <Col span={24} style={{justifyContent: "center"}}>
+        <Col span={24} style={{justifyContent: "center", marginBottom:"160px"}}>
           <Row>
             <Col span={24}>
               <div style={{marginTop: "80px", marginBottom: "10px", textAlign: "center"}}>
@@ -531,12 +531,12 @@ class ForgetPage extends React.Component {
                 />
               </Steps>
             </Col>
+            <Col span={24} style={{display: "flex", justifyContent: "center"}}>
+              <div style={{marginTop: "10px", textAlign: "center"}}>
+                {this.renderForm(application)}
+              </div>
+            </Col>
           </Row>
-        </Col>
-        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-          <div style={{marginTop: "10px", textAlign: "center"}}>
-            {this.renderForm(application)}
-          </div>
         </Col>
       </Row>
     );

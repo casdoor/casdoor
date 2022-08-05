@@ -639,7 +639,7 @@ class App extends Component {
     }
   }
 
-  renderFooter() {
+  renderFooter(bot) {
     // How to keep your footer where it belongs ?
     // https://www.freecodecamp.org/neyarnws/how-to-keep-your-footer-where-it-belongs-59c6aa05c59c/
 
@@ -649,6 +649,7 @@ class App extends Component {
           borderTop: "1px solid #e8e8e8",
           backgroundColor: "white",
           textAlign: "center",
+          bottom: bot,
         }
       }>
         Made with <span style={{color: "rgb(255, 255, 255)"}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casdoor.org" rel="noreferrer">Casdoor</a>
@@ -706,7 +707,7 @@ class App extends Component {
           }
         </div>
         {
-          this.renderFooter()
+          this.renderFooter("0")
         }
       </div>
     );
