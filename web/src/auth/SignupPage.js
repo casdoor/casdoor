@@ -17,6 +17,7 @@ import {Link} from "react-router-dom";
 import {Button, Checkbox, Col, Form, Input, Modal, Result, Row} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
+import * as ProviderButton from "./ProviderButton";
 import i18next from "i18next";
 import * as Util from "./Util";
 import {authConfig} from "./Auth";
@@ -188,6 +189,14 @@ class SignupPage extends React.Component {
 
   onFinishFailed(values, errorFields, outOfDate) {
     this.form.current.scrollToField(errorFields[0].name);
+  }
+
+  isProviderVisible(providerItem) {
+    if (this.state.mode === "signup") {
+      return Setting.isProviderVisibleForSignUp(providerItem);
+    } else {
+      return Setting.isProviderVisibleForSignIn(providerItem);
+    }
   }
 
   renderFormItem(application, signupItem) {
@@ -593,6 +602,11 @@ class SignupPage extends React.Component {
             {i18next.t("signup:sign in now")}
           </a>
         </Form.Item>
+        {
+          application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
+            return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small");
+          })
+        }
       </Form>
     );
   }

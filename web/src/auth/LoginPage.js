@@ -20,35 +20,13 @@ import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Provider from "./Provider";
+import * as ProviderButton from "./ProviderButton";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
 import SelfLoginButton from "./SelfLoginButton";
-import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
-import FacebookLoginButton from "./FacebookLoginButton";
-import QqLoginButton from "./QqLoginButton";
-import DingTalkLoginButton from "./DingTalkLoginButton";
-import GiteeLoginButton from "./GiteeLoginButton";
-import WechatLoginButton from "./WechatLoginButton";
-import WeiboLoginButton from "./WeiboLoginButton";
 import i18next from "i18next";
-import LinkedInLoginButton from "./LinkedInLoginButton";
-import WeComLoginButton from "./WeComLoginButton";
-import LarkLoginButton from "./LarkLoginButton";
-import GitLabLoginButton from "./GitLabLoginButton";
-import AdfsLoginButton from "./AdfsLoginButton";
-import BaiduLoginButton from "./BaiduLoginButton";
-import AlipayLoginButton from "./AlipayLoginButton";
-import CasdoorLoginButton from "./CasdoorLoginButton";
-import InfoflowLoginButton from "./InfoflowLoginButton";
-import AppleLoginButton from "./AppleLoginButton";
-import AzureADLoginButton from "./AzureADLoginButton";
-import SlackLoginButton from "./SlackLoginButton";
-import SteamLoginButton from "./SteamLoginButton";
-import OktaLoginButton from "./OktaLoginButton";
-import DouyinLoginButton from "./DouyinLoginButton";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
-import BilibiliLoginButton from "./BilibiliLoginButton";
 
 const {TabPane} = Tabs;
 
@@ -146,6 +124,16 @@ class LoginPage extends React.Component {
   }
 
   onFinish(values) {
+    if (this.state.loginMethod === "webAuthn") {
+      let username = this.state.username;
+      if (username === null || username === "") {
+        username = values["username"];
+      }
+
+      this.signInWithWebAuthn(username);
+      return;
+    }
+
     const application = this.getApplicationObj();
     const ths = this;
 
@@ -260,61 +248,6 @@ class LoginPage extends React.Component {
     }
   }
 
-  getSigninButton(type) {
-    const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
-    if (type === "GitHub") {
-      return <GithubLoginButton text={text} align={"center"} />;
-    } else if (type === "Google") {
-      return <GoogleLoginButton text={text} align={"center"} />;
-    } else if (type === "QQ") {
-      return <QqLoginButton text={text} align={"center"} />;
-    } else if (type === "Facebook") {
-      return <FacebookLoginButton text={text} align={"center"} />;
-    } else if (type === "Weibo") {
-      return <WeiboLoginButton text={text} align={"center"} />;
-    } else if (type === "Gitee") {
-      return <GiteeLoginButton text={text} align={"center"} />;
-    } else if (type === "WeChat") {
-      return <WechatLoginButton text={text} align={"center"} />;
-    } else if (type === "DingTalk") {
-      return <DingTalkLoginButton text={text} align={"center"} />;
-    } else if (type === "LinkedIn") {
-      return <LinkedInLoginButton text={text} align={"center"} />;
-    } else if (type === "WeCom") {
-      return <WeComLoginButton text={text} align={"center"} />;
-    } else if (type === "Lark") {
-      return <LarkLoginButton text={text} align={"center"} />;
-    } else if (type === "GitLab") {
-      return <GitLabLoginButton text={text} align={"center"} />;
-    } else if (type === "Adfs") {
-      return <AdfsLoginButton text={text} align={"center"} />;
-    } else if (type === "Casdoor") {
-      return <CasdoorLoginButton text={text} align={"center"} />;
-    } else if (type === "Baidu") {
-      return <BaiduLoginButton text={text} align={"center"} />;
-    } else if (type === "Alipay") {
-      return <AlipayLoginButton text={text} align={"center"} />;
-    } else if (type === "Infoflow") {
-      return <InfoflowLoginButton text={text} align={"center"} />;
-    } else if (type === "Apple") {
-      return <AppleLoginButton text={text} align={"center"} />;
-    } else if (type === "AzureAD") {
-      return <AzureADLoginButton text={text} align={"center"} />;
-    } else if (type === "Slack") {
-      return <SlackLoginButton text={text} align={"center"} />;
-    } else if (type === "Steam") {
-      return <SteamLoginButton text={text} align={"center"} />;
-    } else if (type === "Bilibili") {
-      return <BilibiliLoginButton text={text} align={"center"} />;
-    } else if (type === "Okta") {
-      return <OktaLoginButton text={text} align={"center"} />;
-    } else if (type === "Douyin") {
-      return <DouyinLoginButton text={text} align={"center"} />;
-    }
-
-    return text;
-  }
-
   getSamlUrl(provider) {
     const params = new URLSearchParams(this.props.location.search);
     let clientId = params.get("client_id");
@@ -330,35 +263,6 @@ class LoginPage extends React.Component {
         window.location.href = res.data;
       }
     });
-  }
-
-  renderProviderLogo(provider, application, width, margin, size) {
-    if (size === "small") {
-      if (provider.category === "OAuth") {
-        return (
-          <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-            <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
-          </a>
-        );
-      } else if (provider.category === "SAML") {
-        return (
-          <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
-            <img width={width} height={width} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
-          </a>
-        );
-      }
-
-    } else {
-      return (
-        <div key={provider.displayName} style={{marginBottom: "10px"}}>
-          <a href={Provider.getAuthUrl(application, provider, "signup")}>
-            {
-              this.getSigninButton(provider.type)
-            }
-          </a>
-        </div>
-      );
-    }
   }
 
   isProviderVisible(providerItem) {
@@ -499,9 +403,14 @@ class LoginPage extends React.Component {
                   </Button>
                 ) :
                 (
-                  <Button type="primary" style={{width: "100%", marginBottom: "5px"}} onClick={() => this.signInWithWebAuthn()}>
-                    {i18next.t("login:Sign in with WebAuthn")}
-                  </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{width: "100%", marginBottom: "5px"}}
+                  disabled={!application.enablePassword}
+                >
+                  {i18next.t("login:Sign in with WebAuthn")}
+                </Button>
                 )
             }
             {
@@ -511,7 +420,7 @@ class LoginPage extends React.Component {
           <Form.Item>
             {
               application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-                return this.renderProviderLogo(providerItem.provider, application, 30, 5, "small");
+                return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small");
               })
             }
           </Form.Item>
@@ -532,7 +441,7 @@ class LoginPage extends React.Component {
           <br />
           {
             application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-              return this.renderProviderLogo(providerItem.provider, application, 40, 10, "big");
+              return ProviderButton.renderProviderLogo(providerItem.provider, application, 40, 10, "big");
             })
           }
           <div>
@@ -639,14 +548,14 @@ class LoginPage extends React.Component {
     );
   }
 
-  signInWithWebAuthn() {
-    if (this.state.username === null || this.state.username === "") {
+  signInWithWebAuthn(username) {
+    if (username === null || username === "") {
       Setting.showMessage("error", "username is required for webauthn login");
       return;
     }
 
     let application = this.getApplicationObj();
-    return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}&name=${this.state.username}`, {
+    return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}&name=${username}`, {
       method: "GET",
       credentials: "include"
     })
@@ -657,13 +566,13 @@ class LoginPage extends React.Component {
           throw credentialRequestOptions.status.msg;
         }
 
-        credentialRequestOptions.certificate.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.certificate.challenge);
-        credentialRequestOptions.certificate.allowCredentials.forEach(function(listItem) {
+        credentialRequestOptions.publicKey.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.publicKey.challenge);
+        credentialRequestOptions.publicKey.allowCredentials.forEach(function(listItem) {
           listItem.id = UserWebauthnBackend.webAuthnBufferDecode(listItem.id);
         });
 
         return navigator.credentials.get({
-          certificate: credentialRequestOptions.certificate
+          publicKey: credentialRequestOptions.publicKey
         });
       })
       .then((assertion) => {

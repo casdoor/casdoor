@@ -38,7 +38,7 @@ class AccountTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: Setting.getNewRowNameForTable(table, "Please select an account item"), visible: true};
+    let row = {name: Setting.getNewRowNameForTable(table, "Please select an account item"), visible: true, viewRule: "Public", modifyRule: "Self"};
     if (table === undefined) {
       table = [];
     }
