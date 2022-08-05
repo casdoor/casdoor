@@ -146,6 +146,15 @@ class LoginPage extends React.Component {
   }
 
   onFinish(values) {
+    if (this.state.loginMethod=="webAuthn") {
+      let username = this.state.username;
+      if (username === null || username === "") {
+        username = values["username"];
+      }
+      this.signInWithWebAuthn(username);
+      return;
+    }
+
     const application = this.getApplicationObj();
     const ths = this;
 
@@ -499,9 +508,14 @@ class LoginPage extends React.Component {
                   </Button>
                 ) :
                 (
-                  <Button type="primary" style={{width: "100%", marginBottom: "5px"}} onClick={() => this.signInWithWebAuthn()}>
-                    {i18next.t("login:Sign in with WebAuthn")}
-                  </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{width: "100%", marginBottom: "5px"}}
+                  disabled={!application.enablePassword}
+                >
+                  {i18next.t("login:Sign in with WebAuthn")}
+                </Button>
                 )
             }
             {
@@ -639,14 +653,14 @@ class LoginPage extends React.Component {
     );
   }
 
-  signInWithWebAuthn() {
-    if (this.state.username === null || this.state.username === "") {
+  signInWithWebAuthn(username) {
+    if (username === null || username === "") {
       Setting.showMessage("error", "username is required for webauthn login");
       return;
     }
 
     let application = this.getApplicationObj();
-    return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}&name=${this.state.username}`, {
+    return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}&name=${username}`, {
       method: "GET",
       credentials: "include"
     })
@@ -657,13 +671,13 @@ class LoginPage extends React.Component {
           throw credentialRequestOptions.status.msg;
         }
 
-        credentialRequestOptions.certificate.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.certificate.challenge);
-        credentialRequestOptions.certificate.allowCredentials.forEach(function(listItem) {
+        credentialRequestOptions.publicKey.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.publicKey.challenge);
+        credentialRequestOptions.publicKey.allowCredentials.forEach(function(listItem) {
           listItem.id = UserWebauthnBackend.webAuthnBufferDecode(listItem.id);
         });
 
         return navigator.credentials.get({
-          certificate: credentialRequestOptions.certificate
+          publicKey: credentialRequestOptions.publicKey
         });
       })
       .then((assertion) => {
