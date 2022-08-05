@@ -257,6 +257,20 @@ func Enforce(userId string, permissionRule *PermissionRule) bool {
 	return allow
 }
 
+func BatchEnforce(userId string, permissionRules []PermissionRule) []bool {
+	var requests [][]interface{}
+	for _, permissionRule := range permissionRules {
+		requests = append(requests, []interface{}{userId, permissionRule.V2, permissionRule.V3})
+	}
+	permission := GetPermission(permissionRules[0].V0)
+	enforcer := getEnforcer(permission)
+	allow, err := enforcer.BatchEnforce(requests)
+	if err != nil {
+		panic(err)
+	}
+	return allow
+}
+
 func getAllValues(userId string, sec string, fieldIndex int) []string {
 	permissions := GetPermissionsByUser(userId)
 	var values []string

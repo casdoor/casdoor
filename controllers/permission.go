@@ -131,6 +131,22 @@ func (c *ApiController) Enforce() {
 	c.ServeJSON()
 }
 
+func (c *ApiController) BatchEnforce() {
+	userId := c.GetSessionUsername()
+	if userId == "" {
+		c.ResponseError("Please sign in first")
+	}
+
+	var permissionRules []object.PermissionRule
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissionRules)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Data["json"] = object.BatchEnforce(userId, permissionRules)
+	c.ServeJSON()
+}
+
 func (c *ApiController) GetAllObjects() {
 	userId := c.GetSessionUsername()
 	if userId == "" {
