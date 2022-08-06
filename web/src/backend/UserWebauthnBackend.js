@@ -17,7 +17,7 @@ import * as Setting from "../Setting";
 export function registerWebauthnCredential() {
   return fetch(`${Setting.ServerUrl}/api/webauthn/signup/begin`, {
     method: "GET",
-    credentials: "include"
+    credentials: "include",
   })
     .then(res => res.json())
     .then((credentialCreationOptions) => {
@@ -29,7 +29,7 @@ export function registerWebauthnCredential() {
         }
       }
       return navigator.credentials.create({
-        publicKey: credentialCreationOptions.publicKey
+        publicKey: credentialCreationOptions.publicKey,
       });
     })
     .then((credential) => {
@@ -47,7 +47,7 @@ export function registerWebauthnCredential() {
             attestationObject: webAuthnBufferEncode(attestationObject),
             clientDataJSON: webAuthnBufferEncode(clientDataJSON),
           },
-        })
+        }),
       })
         .then(res => res.json());
     });
@@ -61,7 +61,7 @@ export function deleteUserWebAuthnCredential(credentialID) {
     method: "POST",
     credentials: "include",
     body: form,
-    dataType: "text"
+    dataType: "text",
   }).then(res => res.json());
 }
 

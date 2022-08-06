@@ -84,7 +84,7 @@ class ProductListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -94,7 +94,7 @@ class ProductListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Display name"),
@@ -115,7 +115,7 @@ class ProductListPage extends BaseListPage {
               <img src={text} alt={text} width={150} />
             </a>
           );
-        }
+        },
       },
       {
         title: i18next.t("product:Tag"),
@@ -240,7 +240,7 @@ class ProductListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

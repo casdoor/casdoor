@@ -112,7 +112,7 @@ class OrganizationListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -122,7 +122,7 @@ class OrganizationListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Display name"),
@@ -143,7 +143,7 @@ class OrganizationListPage extends BaseListPage {
               <img src={text} alt={text} width={40} />
             </a>
           );
-        }
+        },
       },
       {
         title: i18next.t("organization:Website URL"),
@@ -158,7 +158,7 @@ class OrganizationListPage extends BaseListPage {
               {text}
             </a>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Password type"),
@@ -192,7 +192,7 @@ class OrganizationListPage extends BaseListPage {
               <img src={text} alt={text} width={40} />
             </a>
           );
-        }
+        },
       },
       {
         title: i18next.t("organization:Soft deletion"),
@@ -204,7 +204,7 @@ class OrganizationListPage extends BaseListPage {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -226,7 +226,7 @@ class OrganizationListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

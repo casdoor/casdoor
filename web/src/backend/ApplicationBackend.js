@@ -17,28 +17,28 @@ import * as Setting from "../Setting";
 export function getApplications(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
   return fetch(`${Setting.ServerUrl}/api/get-applications?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
-    credentials: "include"
+    credentials: "include",
   }).then(res => res.json());
 }
 
 export function getApplicationsByOrganization(owner, organization) {
   return fetch(`${Setting.ServerUrl}/api/get-applications?owner=${owner}&organization=${organization}`, {
     method: "GET",
-    credentials: "include"
+    credentials: "include",
   }).then(res => res.json());
 }
 
 export function getApplication(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-application?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
-    credentials: "include"
+    credentials: "include",
   }).then(res => res.json());
 }
 
 export function getUserApplication(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-user-application?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
-    credentials: "include"
+    credentials: "include",
   }).then(res => res.json());
 }
 
@@ -73,6 +73,6 @@ export function deleteApplication(application) {
 export function getSamlMetadata(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/saml/metadata?application=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
-    credentials: "include"
+    credentials: "include",
   }).then(res => res.text());
 }

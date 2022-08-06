@@ -89,7 +89,7 @@ class PaymentListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:User"),
@@ -104,7 +104,7 @@ class PaymentListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Name"),
@@ -120,7 +120,7 @@ class PaymentListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -130,7 +130,7 @@ class PaymentListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       // {
       //   title: i18next.t("general:Display name"),
@@ -154,7 +154,7 @@ class PaymentListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("payment:Type"),
@@ -163,12 +163,12 @@ class PaymentListPage extends BaseListPage {
         width: "140px",
         align: "center",
         filterMultiple: false,
-        filters: Setting.getProviderTypeOptions("Payment").map((o) => {return {text:o.id, value:o.name};}),
+        filters: Setting.getProviderTypeOptions("Payment").map((o) => {return {text: o.id, value: o.name};}),
         sorter: true,
         render: (text, record, index) => {
           record.category = "Payment";
           return Provider.getProviderLogoWidget(record);
-        }
+        },
       },
       {
         title: i18next.t("payment:Product"),
@@ -221,7 +221,7 @@ class PaymentListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

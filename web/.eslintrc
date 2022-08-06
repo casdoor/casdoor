@@ -21,7 +21,7 @@
   "rules": {
     // "eqeqeq": "error",
     "semi": ["error", "always"],
-    // "indent": ["error", 2],
+    "indent": ["error", 2],
     // follow antd's style guide
     "quotes": ["error", "double"],
     "jsx-quotes": ["error", "prefer-double"],
@@ -48,6 +48,19 @@
     "sort-imports": ["error", {
       "ignoreDeclarationSort": true
     }],
+    "no-multiple-empty-lines": ["error", { "max": 1, "maxBOF": 0, "maxEOF": 0 }],
+    "space-unary-ops": ["error", { "words": true, "nonwords": false }],
+    "space-infix-ops": "error",
+    "key-spacing": ["error", { "beforeColon": false, "afterColon": true }],
+    "comma-style": ["error", "last"],
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "never",
+      "exports": "never",
+      "functions": "never"
+    }],
+    "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
 
 
     "react/prop-types": "off",

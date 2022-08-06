@@ -202,7 +202,7 @@ class PromptPage extends React.Component {
               Setting.goToLogin(this, application);
             }}>
               Sign In
-            </Button>
+            </Button>,
           ]}
         >
         </Result>

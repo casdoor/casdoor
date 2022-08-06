@@ -48,7 +48,7 @@ class LdapTable extends React.Component {
       passwd: "123",
       baseDn: "ou=People,dc=example,dc=com",
       autosync: 0,
-      lastSync: ""
+      lastSync: "",
     };
   }
 
@@ -104,7 +104,7 @@ class LdapTable extends React.Component {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("ldap:Server"),
@@ -114,7 +114,7 @@ class LdapTable extends React.Component {
         sorter: (a, b) => a.host.localeCompare(b.host),
         render: (text, record, index) => {
           return `${text}:${record.port}`;
-        }
+        },
       },
       {
         title: i18next.t("ldap:Base DN"),
@@ -132,7 +132,7 @@ class LdapTable extends React.Component {
         render: (text, record, index) => {
           return text === 0 ? (<span style={{color: "#faad14"}}>Disable</span>) : (
             <span style={{color: "#52c41a"}}>{text + " mins"}</span>);
-        }
+        },
       },
       {
         title: i18next.t("ldap:Last Sync"),
@@ -142,7 +142,7 @@ class LdapTable extends React.Component {
         sorter: (a, b) => a.lastSync.localeCompare(b.lastSync),
         render: (text, record, index) => {
           return text;
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -166,7 +166,7 @@ class LdapTable extends React.Component {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

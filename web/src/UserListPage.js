@@ -152,7 +152,7 @@ class UserListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Application"),
@@ -168,7 +168,7 @@ class UserListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Name"),
@@ -184,7 +184,7 @@ class UserListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -194,7 +194,7 @@ class UserListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Display name"),
@@ -215,7 +215,7 @@ class UserListPage extends BaseListPage {
               <img src={text} alt={text} width={50} />
             </a>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Email"),
@@ -230,7 +230,7 @@ class UserListPage extends BaseListPage {
               {text}
             </a>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Phone"),
@@ -281,7 +281,7 @@ class UserListPage extends BaseListPage {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
-        }
+        },
       },
       {
         title: i18next.t("user:Is global admin"),
@@ -293,7 +293,7 @@ class UserListPage extends BaseListPage {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
-        }
+        },
       },
       {
         title: i18next.t("user:Is forbidden"),
@@ -305,7 +305,7 @@ class UserListPage extends BaseListPage {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
-        }
+        },
       },
       {
         title: i18next.t("user:Is deleted"),
@@ -317,7 +317,7 @@ class UserListPage extends BaseListPage {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -337,7 +337,7 @@ class UserListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

@@ -73,7 +73,7 @@ class ResultPage extends React.Component {
               }
             }}>
               {i18next.t("login:Sign In")}
-            </Button>
+            </Button>,
           ]}
         />
       </div>

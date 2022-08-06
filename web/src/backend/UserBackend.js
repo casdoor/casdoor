@@ -18,21 +18,21 @@ import i18next from "i18next";
 export function getGlobalUsers(page, pageSize, field = "", value = "", sortField = "", sortOrder = "") {
   return fetch(`${Setting.ServerUrl}/api/get-global-users?p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
-    credentials: "include"
+    credentials: "include",
   }).then(res => res.json());
 }
 
 export function getUsers(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
   return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
-    credentials: "include"
+    credentials: "include",
   }).then(res => res.json());
 }
 
 export function getUser(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-user?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
-    credentials: "include"
+    credentials: "include",
   }).then(res => res.json());
 }
 
@@ -84,7 +84,7 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
   return fetch(`${Setting.ServerUrl}/api/set-password`, {
     method: "POST",
     credentials: "include",
-    body: formData
+    body: formData,
   }).then(res => res.json());
 }
 
@@ -100,7 +100,7 @@ export function sendCode(checkType, checkId, checkKey, dest, type, applicationId
   return fetch(`${Setting.ServerUrl}/api/send-verification-code`, {
     method: "POST",
     credentials: "include",
-    body: formData
+    body: formData,
   }).then(res => res.json()).then(res => {
     if (res.status === "ok") {
       Setting.showMessage("success", i18next.t("user:Code Sent"));
@@ -120,7 +120,7 @@ export function verifyCaptcha(captchaType, captchaToken, clientSecret) {
   return fetch(`${Setting.ServerUrl}/api/verify-captcha`, {
     method: "POST",
     credentials: "include",
-    body: formData
+    body: formData,
   }).then(res => res.json()).then(res => {
     if (res.status === "ok") {
       if (res.data) {
@@ -144,12 +144,12 @@ export function resetEmailOrPhone(dest, type, code) {
   return fetch(`${Setting.ServerUrl}/api/reset-email-or-phone`, {
     method: "POST",
     credentials: "include",
-    body: formData
+    body: formData,
   }).then(res => res.json());
 }
 
 export function getCaptcha(owner, name, isCurrentProvider) {
   return fetch(`${Setting.ServerUrl}/api/get-captcha?applicationId=${owner}/${encodeURIComponent(name)}&isCurrentProvider=${isCurrentProvider}`, {
-    method: "GET"
+    method: "GET",
   }).then(res => res.json()).then(res => res.data);
 }

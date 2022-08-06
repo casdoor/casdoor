@@ -99,7 +99,7 @@ class ApplicationListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -109,7 +109,7 @@ class ApplicationListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Display name"),
@@ -130,7 +130,7 @@ class ApplicationListPage extends BaseListPage {
               <img src={text} alt={text} width={150} />
             </a>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Organization"),
@@ -145,7 +145,7 @@ class ApplicationListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Providers"),
@@ -222,7 +222,7 @@ class ApplicationListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

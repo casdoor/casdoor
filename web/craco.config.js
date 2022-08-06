@@ -34,7 +34,7 @@ module.exports = {
       "/cas/validate": {
         target: "http://localhost:8000",
         changeOrigin: true,
-      }
+      },
     },
   },
   plugins: [

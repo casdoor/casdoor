@@ -72,7 +72,7 @@ class WebhookHeaderTable extends React.Component {
               this.updateField(table, index, "name", e.target.value);
             }} />
           );
-        }
+        },
       },
       {
         title: i18next.t("webhook:Value"),
@@ -84,7 +84,7 @@ class WebhookHeaderTable extends React.Component {
               this.updateField(table, index, "value", e.target.value);
             }} />
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -104,7 +104,7 @@ class WebhookHeaderTable extends React.Component {
               </Tooltip>
             </div>
           );
-        }
+        },
       },
     ];
 
