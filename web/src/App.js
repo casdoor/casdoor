@@ -566,7 +566,7 @@ class App extends Component {
   renderContent() {
     if (!Setting.isMobile()) {
       return (
-        <div style={{display: "flex", flex: "auto", width:"100%", flexDirection: "column"}}>
+        <div style={{display: "flex", flex: "auto", width: "100%", flexDirection: "column"}}>
           <Layout style={{display: "flex", alignItems: "stretch"}}>
             <Header style={{padding: "0", marginBottom: "3px"}}>
               {

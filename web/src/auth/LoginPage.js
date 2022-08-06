@@ -37,7 +37,7 @@ class LoginPage extends React.Component {
       classes: props,
       type: props.type,
       applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
-      owner : props.owner !== undefined ? props.owner : (props.match === undefined ? null : props.match.params.owner),
+      owner: props.owner !== undefined ? props.owner : (props.match === undefined ? null : props.match.params.owner),
       application: null,
       mode: props.mode !== undefined ? props.mode : (props.match === undefined ? null : props.match.params.mode), // "signup" or "signin"
       isCodeSignin: false,

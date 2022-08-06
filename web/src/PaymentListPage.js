@@ -163,7 +163,7 @@ class PaymentListPage extends BaseListPage {
         width: "140px",
         align: "center",
         filterMultiple: false,
-        filters: Setting.getProviderTypeOptions("Payment").map((o) => {return {text:o.id, value:o.name};}),
+        filters: Setting.getProviderTypeOptions("Payment").map((o) => {return {text: o.id, value: o.name};}),
         sorter: true,
         render: (text, record, index) => {
           record.category = "Payment";

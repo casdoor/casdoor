@@ -32,7 +32,7 @@ class RecordListPage extends BaseListPage {
     return {
       owner: "built-in",
       name: "1234",
-      id : "1234",
+      id: "1234",
       clientIp: "::1",
       timestamp: moment().format(),
       organization: "built-in",

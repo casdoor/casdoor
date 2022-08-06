@@ -111,7 +111,7 @@ class HomePage extends React.Component {
     return (
       <div>
         <Row style={{width: "100%"}}>
-          <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
+          <Col span={24} style={{display: "flex", justifyContent: "center"}} >
             {
               this.renderCards()
             }
