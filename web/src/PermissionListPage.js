@@ -44,7 +44,7 @@ class PermissionListPage extends BaseListPage {
     PermissionBackend.addPermission(newPermission)
       .then((res) => {
         this.props.history.push({pathname: `/permissions/${newPermission.owner}/${newPermission.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Permission failed to add: ${error}`);
@@ -59,7 +59,7 @@ class PermissionListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Permission failed to delete: ${error}`);

@@ -40,7 +40,7 @@ class RoleListPage extends BaseListPage {
     RoleBackend.addRole(newRole)
       .then((res) => {
         this.props.history.push({pathname: `/roles/${newRole.owner}/${newRole.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Role failed to add: ${error}`);
@@ -55,7 +55,7 @@ class RoleListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Role failed to delete: ${error}`);

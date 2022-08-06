@@ -53,7 +53,13 @@
     "space-infix-ops": "error",
     "key-spacing": ["error", { "beforeColon": false, "afterColon": true }],
     "comma-style": ["error", "last"],
-    "comma-dangle": ["error", "always-multiline"],
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "never",
+      "exports": "never",
+      "functions": "never"
+    }],
     "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
 
 

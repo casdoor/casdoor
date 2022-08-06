@@ -44,7 +44,7 @@ class CertListPage extends BaseListPage {
     CertBackend.addCert(newCert)
       .then((res) => {
         this.props.history.push({pathname: `/certs/${newCert.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Cert failed to add: ${error}`);
@@ -59,7 +59,7 @@ class CertListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Cert failed to delete: ${error}`);

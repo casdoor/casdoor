@@ -61,7 +61,7 @@ class ApplicationListPage extends BaseListPage {
     ApplicationBackend.addApplication(newApplication)
       .then((res) => {
         this.props.history.push({pathname: `/applications/${newApplication.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Application failed to add: ${error}`);
@@ -76,7 +76,7 @@ class ApplicationListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Application failed to delete: ${error}`);

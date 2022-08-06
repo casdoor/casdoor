@@ -62,7 +62,7 @@ class ForgetPage extends React.Component {
     } else {
       Util.showMessage(
         "error",
-        i18next.t("forget:Unknown forget type: ") + this.state.type,
+        i18next.t("forget:Unknown forget type: ") + this.state.type
       );
     }
   }
@@ -77,7 +77,7 @@ class ForgetPage extends React.Component {
         this.setState({
           application: application,
         });
-      },
+      }
     );
   }
 
@@ -182,7 +182,7 @@ class ForgetPage extends React.Component {
       options.push(
         <Option key={"phone"} value={"phone"}>
           &nbsp;&nbsp;{this.state.phone}
-        </Option>,
+        </Option>
       );
     }
 
@@ -190,7 +190,7 @@ class ForgetPage extends React.Component {
       options.push(
         <Option key={"email"} value={"email"}>
           &nbsp;&nbsp;{this.state.email}
-        </Option>,
+        </Option>
       );
     }
 
@@ -222,7 +222,7 @@ class ForgetPage extends React.Component {
               {
                 required: true,
                 message: i18next.t(
-                  "forget:Please input your application!",
+                  "forget:Please input your application!"
                 ),
               },
             ]}
@@ -234,7 +234,7 @@ class ForgetPage extends React.Component {
               {
                 required: true,
                 message: i18next.t(
-                  "forget:Please input your organization!",
+                  "forget:Please input your organization!"
                 ),
               },
             ]}
@@ -245,7 +245,7 @@ class ForgetPage extends React.Component {
               {
                 required: true,
                 message: i18next.t(
-                  "forget:Please input your username!",
+                  "forget:Please input your username!"
                 ),
                 whitespace: true,
               },
@@ -278,7 +278,7 @@ class ForgetPage extends React.Component {
             this.onFinishFailed(
               errorInfo.values,
               errorInfo.errorFields,
-              errorInfo.outOfDate,
+              errorInfo.outOfDate
             )
           }
           initialValues={{
@@ -295,7 +295,7 @@ class ForgetPage extends React.Component {
               {
                 required: true,
                 message: i18next.t(
-                  "forget:Please input your application!",
+                  "forget:Please input your application!"
                 ),
               },
             ]}
@@ -307,7 +307,7 @@ class ForgetPage extends React.Component {
               {
                 required: true,
                 message: i18next.t(
-                  "forget:Please input your organization!",
+                  "forget:Please input your organization!"
                 ),
               },
             ]}
@@ -343,7 +343,7 @@ class ForgetPage extends React.Component {
               {
                 required: true,
                 message: i18next.t(
-                  "code:Please input your verification code!",
+                  "code:Please input your verification code!"
                 ),
               },
             ]}
@@ -382,7 +382,7 @@ class ForgetPage extends React.Component {
             this.onFinishFailed(
               errorInfo.values,
               errorInfo.errorFields,
-              errorInfo.outOfDate,
+              errorInfo.outOfDate
             )
           }
           initialValues={{
@@ -399,7 +399,7 @@ class ForgetPage extends React.Component {
               {
                 required: true,
                 message: i18next.t(
-                  "forget:Please input your application!",
+                  "forget:Please input your application!"
                 ),
               },
             ]}
@@ -411,7 +411,7 @@ class ForgetPage extends React.Component {
               {
                 required: true,
                 message: i18next.t(
-                  "forget:Please input your organization!",
+                  "forget:Please input your organization!"
                 ),
               },
             ]}
@@ -423,7 +423,7 @@ class ForgetPage extends React.Component {
               {
                 required: true,
                 message: i18next.t(
-                  "forget:Please input your password!",
+                  "forget:Please input your password!"
                 ),
               },
             ]}
@@ -443,7 +443,7 @@ class ForgetPage extends React.Component {
               {
                 required: true,
                 message: i18next.t(
-                  "forget:Please confirm your password!",
+                  "forget:Please confirm your password!"
                 ),
               },
               ({getFieldValue}) => ({
@@ -453,8 +453,8 @@ class ForgetPage extends React.Component {
                   }
                   return Promise.reject(
                     i18next.t(
-                      "forget:Your confirmed password is inconsistent with the password!",
-                    ),
+                      "forget:Your confirmed password is inconsistent with the password!"
+                    )
                   );
                 },
               }),

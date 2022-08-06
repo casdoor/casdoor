@@ -48,7 +48,7 @@ class ResourceListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Resource failed to delete: ${error}`);

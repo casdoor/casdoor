@@ -360,7 +360,7 @@ class App extends Component {
         <Link to="/">
           {i18next.t("general:Home")}
         </Link>
-      </Menu.Item>,
+      </Menu.Item>
     );
 
     if (Setting.isAdminUser(this.state.account)) {
@@ -369,49 +369,49 @@ class App extends Component {
           <Link to="/organizations">
             {i18next.t("general:Organizations")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
       res.push(
         <Menu.Item key="/users">
           <Link to="/users">
             {i18next.t("general:Users")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
       res.push(
         <Menu.Item key="/roles">
           <Link to="/roles">
             {i18next.t("general:Roles")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
       res.push(
         <Menu.Item key="/permissions">
           <Link to="/permissions">
             {i18next.t("general:Permissions")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
       res.push(
         <Menu.Item key="/models">
           <Link to="/models">
             {i18next.t("general:Models")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
       res.push(
         <Menu.Item key="/providers">
           <Link to="/providers">
             {i18next.t("general:Providers")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
       res.push(
         <Menu.Item key="/applications">
           <Link to="/applications">
             {i18next.t("general:Applications")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
     }
 
@@ -421,42 +421,42 @@ class App extends Component {
           <Link to="/resources">
             {i18next.t("general:Resources")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
       res.push(
         <Menu.Item key="/tokens">
           <Link to="/tokens">
             {i18next.t("general:Tokens")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
       res.push(
         <Menu.Item key="/records">
           <Link to="/records">
             {i18next.t("general:Records")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
       res.push(
         <Menu.Item key="/webhooks">
           <Link to="/webhooks">
             {i18next.t("general:Webhooks")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
       res.push(
         <Menu.Item key="/syncers">
           <Link to="/syncers">
             {i18next.t("general:Syncers")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
       res.push(
         <Menu.Item key="/certs">
           <Link to="/certs">
             {i18next.t("general:Certs")}
           </Link>
-        </Menu.Item>,
+        </Menu.Item>
       );
 
       if (Conf.EnableExtraPages) {
@@ -465,14 +465,14 @@ class App extends Component {
             <Link to="/products">
               {i18next.t("general:Products")}
             </Link>
-          </Menu.Item>,
+          </Menu.Item>
         );
         res.push(
           <Menu.Item key="/payments">
             <Link to="/payments">
               {i18next.t("general:Payments")}
             </Link>
-          </Menu.Item>,
+          </Menu.Item>
         );
       }
 
@@ -481,7 +481,7 @@ class App extends Component {
           <a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
             {i18next.t("general:Swagger")}
           </a>
-        </Menu.Item>,
+        </Menu.Item>
       );
     }
 

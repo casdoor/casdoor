@@ -70,7 +70,7 @@ class UserListPage extends BaseListPage {
     UserBackend.addUser(newUser)
       .then((res) => {
         this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `User failed to add: ${error}`);
@@ -85,7 +85,7 @@ class UserListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `User failed to delete: ${error}`);

@@ -43,7 +43,7 @@ class TokenListPage extends BaseListPage {
     TokenBackend.addToken(newToken)
       .then((res) => {
         this.props.history.push({pathname: `/tokens/${newToken.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Token failed to add: ${error}`);
@@ -58,7 +58,7 @@ class TokenListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Token failed to delete: ${error}`);

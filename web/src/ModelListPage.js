@@ -39,7 +39,7 @@ class ModelListPage extends BaseListPage {
     ModelBackend.addModel(newModel)
       .then((res) => {
         this.props.history.push({pathname: `/models/${newModel.owner}/${newModel.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Model failed to add: ${error}`);
@@ -54,7 +54,7 @@ class ModelListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Model failed to delete: ${error}`);

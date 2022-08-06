@@ -52,7 +52,7 @@ class PaymentListPage extends BaseListPage {
     PaymentBackend.addPayment(newPayment)
       .then((res) => {
         this.props.history.push({pathname: `/payments/${newPayment.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Payment failed to add: ${error}`);
@@ -67,7 +67,7 @@ class PaymentListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Payment failed to delete: ${error}`);

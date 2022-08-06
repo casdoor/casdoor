@@ -74,7 +74,7 @@ class OrganizationListPage extends BaseListPage {
     OrganizationBackend.addOrganization(newOrganization)
       .then((res) => {
         this.props.history.push({pathname: `/organizations/${newOrganization.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Organization failed to add: ${error}`);
@@ -89,7 +89,7 @@ class OrganizationListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Organization failed to delete: ${error}`);

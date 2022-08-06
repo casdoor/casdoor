@@ -47,7 +47,7 @@ class ProviderListPage extends BaseListPage {
     ProviderBackend.addProvider(newProvider)
       .then((res) => {
         this.props.history.push({pathname: `/providers/${newProvider.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Provider failed to add: ${error}`);
@@ -62,7 +62,7 @@ class ProviderListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Provider failed to delete: ${error}`);

@@ -43,7 +43,7 @@ class WebhookListPage extends BaseListPage {
     WebhookBackend.addWebhook(newWebhook)
       .then((res) => {
         this.props.history.push({pathname: `/webhooks/${newWebhook.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Webhook failed to add: ${error}`);
@@ -58,7 +58,7 @@ class WebhookListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Webhook failed to delete: ${error}`);

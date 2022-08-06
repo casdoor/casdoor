@@ -50,7 +50,7 @@ class SyncerListPage extends BaseListPage {
     SyncerBackend.addSyncer(newSyncer)
       .then((res) => {
         this.props.history.push({pathname: `/syncers/${newSyncer.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Syncer failed to add: ${error}`);
@@ -65,7 +65,7 @@ class SyncerListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Syncer failed to delete: ${error}`);
@@ -78,7 +78,7 @@ class SyncerListPage extends BaseListPage {
       .then((res) => {
         this.setState({loading: false});
         Setting.showMessage("success", "Syncer sync users successfully");
-      },
+      }
       )
       .catch(error => {
         this.setState({loading: false});

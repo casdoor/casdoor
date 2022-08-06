@@ -107,7 +107,7 @@ class LoginPage extends React.Component {
         this.setState({
           application: application,
         });
-      },
+      }
       );
   }
 

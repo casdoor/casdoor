@@ -808,7 +808,7 @@ export function getTags(tags) {
     res.push(
       <Tag color={getTagColor(tag)}>
         {tag}
-      </Tag>,
+      </Tag>
     );
   });
   return res;

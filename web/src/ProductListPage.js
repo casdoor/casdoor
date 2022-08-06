@@ -46,7 +46,7 @@ class ProductListPage extends BaseListPage {
     ProductBackend.addProduct(newProduct)
       .then((res) => {
         this.props.history.push({pathname: `/products/${newProduct.name}`, mode: "add"});
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Product failed to add: ${error}`);
@@ -61,7 +61,7 @@ class ProductListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      },
+      }
       )
       .catch(error => {
         Setting.showMessage("error", `Product failed to delete: ${error}`);
