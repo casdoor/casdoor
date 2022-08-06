@@ -87,7 +87,6 @@ class LdapSyncPage extends React.Component {
       });
   }
 
-
   getLdapUser(ldap) {
     LdapBackend.getLdapUser(ldap)
       .then((res) => {

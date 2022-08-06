@@ -48,6 +48,7 @@
     "sort-imports": ["error", {
       "ignoreDeclarationSort": true
     }],
+    "no-multiple-empty-lines": ["error", { "max": 1, "maxBOF": 0, "maxEOF": 0 }],
 
 
     "react/prop-types": "off",
