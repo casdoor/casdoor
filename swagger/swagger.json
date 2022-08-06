@@ -1291,6 +1291,35 @@
                 }
             }
         },
+        "/api/get-organization-applications": {
+            "get": {
+                "tags": [
+                    "Application API"
+                ],
+                "description": "get the detail of the organization's application",
+                "operationId": "ApiController.GetOrganizationApplications",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "organization",
+                        "description": "The organization name",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Application"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/get-organizations": {
             "get": {
                 "tags": [
@@ -1852,6 +1881,24 @@
                         "name": "id",
                         "description": "The id of the user",
                         "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of the user",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "email",
+                        "description": "The email of the user",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "phone",
+                        "description": "The phone of the user",
                         "type": "string"
                     }
                 ],
@@ -3220,11 +3267,11 @@
         }
     },
     "definitions": {
-        "2127.0xc000427560.false": {
+        "2200.0xc0003f8480.false": {
             "title": "false",
             "type": "object"
         },
-        "2161.0xc000427590.false": {
+        "2235.0xc0003f84b0.false": {
             "title": "false",
             "type": "object"
         },
@@ -3342,10 +3389,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2127.0xc000427560.false"
+                    "$ref": "#/definitions/2200.0xc0003f8480.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2161.0xc000427590.false"
+                    "$ref": "#/definitions/2235.0xc0003f84b0.false"
                 },
                 "msg": {
                     "type": "string"
@@ -3549,6 +3596,9 @@
                     "type": "integer",
                     "format": "int64"
                 },
+                "certificate": {
+                    "type": "string"
+                },
                 "createdTime": {
                     "type": "string"
                 },
@@ -3569,9 +3619,6 @@
                     "type": "string"
                 },
                 "privateKey": {
-                    "type": "string"
-                },
-                "certificate": {
                     "type": "string"
                 },
                 "scope": {
@@ -4585,6 +4632,12 @@
                 "permanentAvatar": {
                     "type": "string"
                 },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.Permission"
+                    }
+                },
                 "phone": {
                     "type": "string"
                 },
@@ -4605,6 +4658,12 @@
                 },
                 "region": {
                     "type": "string"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.Role"
+                    }
                 },
                 "score": {
                     "type": "integer",

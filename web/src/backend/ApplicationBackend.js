@@ -22,7 +22,7 @@ export function getApplications(owner, page = "", pageSize = "", field = "", val
 }
 
 export function getApplicationsByOrganization(owner, organization) {
-  return fetch(`${Setting.ServerUrl}/api/get-applications?owner=${owner}&organization=${organization}`, {
+  return fetch(`${Setting.ServerUrl}/api/get-organization-applications?owner=${owner}&organization=${organization}`, {
     method: "GET",
     credentials: "include"
   }).then(res => res.json());

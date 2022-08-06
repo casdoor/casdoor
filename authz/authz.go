@@ -83,7 +83,7 @@ p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
 p, *, *, *, /api/login/oauth, *, *
 p, *, *, GET, /api/get-application, *, *
-p, *, *, GET, /api/get-applications, *, *
+p, *, *, GET, /api/get-organization-applications, *, *
 p, *, *, GET, /api/get-user, *, *
 p, *, *, GET, /api/get-user-application, *, *
 p, *, *, GET, /api/get-resources, *, *
@@ -92,7 +92,6 @@ p, *, *, POST, /api/buy-product, *, *
 p, *, *, GET, /api/get-payment, *, *
 p, *, *, POST, /api/update-payment, *, *
 p, *, *, POST, /api/invoice-payment, *, *
-p, *, *, GET, /api/get-providers, *, *
 p, *, *, POST, /api/notify-payment, *, *
 p, *, *, POST, /api/unlink, *, *
 p, *, *, POST, /api/set-password, *, *
