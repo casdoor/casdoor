@@ -71,7 +71,7 @@ class UrlTable extends React.Component {
               this.updateField(table, index, e.target.value);
             }} />
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -91,7 +91,7 @@ class UrlTable extends React.Component {
               </Tooltip>
             </div>
           );
-        }
+        },
       },
     ];
 

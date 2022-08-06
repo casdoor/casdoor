@@ -17,14 +17,14 @@ import * as Setting from "../Setting";
 export function getModels(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
   return fetch(`${Setting.ServerUrl}/api/get-models?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
-    credentials: "include"
+    credentials: "include",
   }).then(res => res.json());
 }
 
 export function getModel(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-model?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
-    credentials: "include"
+    credentials: "include",
   }).then(res => res.json());
 }
 

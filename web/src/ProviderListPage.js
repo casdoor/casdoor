@@ -47,7 +47,7 @@ class ProviderListPage extends BaseListPage {
     ProviderBackend.addProvider(newProvider)
       .then((res) => {
         this.props.history.push({pathname: `/providers/${newProvider.name}`, mode: "add"});
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Provider failed to add: ${error}`);
@@ -62,7 +62,7 @@ class ProviderListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Provider failed to delete: ${error}`);
@@ -85,7 +85,7 @@ class ProviderListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -95,7 +95,7 @@ class ProviderListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Display name"),
@@ -138,7 +138,7 @@ class ProviderListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Provider.getProviderLogoWidget(record);
-        }
+        },
       },
       {
         title: i18next.t("provider:Client ID"),
@@ -149,7 +149,7 @@ class ProviderListPage extends BaseListPage {
         ...this.getColumnSearchProps("clientId"),
         render: (text, record, index) => {
           return Setting.getShortText(text);
-        }
+        },
       },
       {
         title: i18next.t("provider:Provider URL"),
@@ -166,7 +166,7 @@ class ProviderListPage extends BaseListPage {
               }
             </a>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -186,7 +186,7 @@ class ProviderListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

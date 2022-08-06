@@ -75,35 +75,35 @@ export const OtherProviderInfo = {
     },
     "Azure Blob": {
       logo: `${StaticBaseUrl}/img/social_azure.jpg`,
-      url: "https://azure.microsoft.com/en-us/services/storage/blobs/"
-    }
+      url: "https://azure.microsoft.com/en-us/services/storage/blobs/",
+    },
   },
   SAML: {
     "Aliyun IDaaS": {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
-      url: "https://aliyun.com/product/idaas"
+      url: "https://aliyun.com/product/idaas",
     },
     "Keycloak": {
       logo: `${StaticBaseUrl}/img/social_keycloak.png`,
-      url: "https://www.keycloak.org/"
+      url: "https://www.keycloak.org/",
     },
   },
   Payment: {
     "Alipay": {
       logo: `${StaticBaseUrl}/img/payment_alipay.png`,
-      url: "https://www.alipay.com/"
+      url: "https://www.alipay.com/",
     },
     "WeChat Pay": {
       logo: `${StaticBaseUrl}/img/payment_wechat_pay.png`,
-      url: "https://pay.weixin.qq.com/"
+      url: "https://pay.weixin.qq.com/",
     },
     "PayPal": {
       logo: `${StaticBaseUrl}/img/payment_paypal.png`,
-      url: "https://www.paypal.com/"
+      url: "https://www.paypal.com/",
     },
     "GC": {
       logo: `${StaticBaseUrl}/img/payment_gc.png`,
-      url: "https://gc.org"
+      url: "https://gc.org",
     },
   },
   Captcha: {
@@ -126,8 +126,8 @@ export const OtherProviderInfo = {
     "GEETEST": {
       logo: `${StaticBaseUrl}/img/social_geetest.png`,
       url: "https://www.geetest.com",
-    }
-  }
+    },
+  },
 };
 
 export function getCountryRegionData() {
@@ -598,7 +598,7 @@ export function getProviderTypeOptions(category) {
         {id: "AWS S3", name: "AWS S3"},
         {id: "Aliyun OSS", name: "Aliyun OSS"},
         {id: "Tencent Cloud COS", name: "Tencent Cloud COS"},
-        {id: "Azure Blob", name: "Azure Blob"}
+        {id: "Azure Blob", name: "Azure Blob"},
       ]
     );
   } else if (category === "SAML") {
@@ -808,7 +808,7 @@ export function getTags(tags) {
     res.push(
       <Tag color={getTagColor(tag)}>
         {tag}
-      </Tag>
+      </Tag>,
     );
   });
   return res;
@@ -858,7 +858,7 @@ export function getSyncerTableColumns(syncer) {
         "isHashed": true,
         "values": [
 
-        ]
+        ],
       },
       {
         "name": "USERNAME",
@@ -867,7 +867,7 @@ export function getSyncerTableColumns(syncer) {
         "isHashed": true,
         "values": [
 
-        ]
+        ],
       },
       {
         "name": "LAST_NAME+FIRST_NAME",
@@ -876,7 +876,7 @@ export function getSyncerTableColumns(syncer) {
         "isHashed": true,
         "values": [
 
-        ]
+        ],
       },
       {
         "name": "EMAIL",
@@ -885,7 +885,7 @@ export function getSyncerTableColumns(syncer) {
         "isHashed": true,
         "values": [
 
-        ]
+        ],
       },
       {
         "name": "EMAIL_VERIFIED",
@@ -894,7 +894,7 @@ export function getSyncerTableColumns(syncer) {
         "isHashed": true,
         "values": [
 
-        ]
+        ],
       },
       {
         "name": "FIRST_NAME",
@@ -903,7 +903,7 @@ export function getSyncerTableColumns(syncer) {
         "isHashed": true,
         "values": [
 
-        ]
+        ],
       },
       {
         "name": "LAST_NAME",
@@ -912,7 +912,7 @@ export function getSyncerTableColumns(syncer) {
         "isHashed": true,
         "values": [
 
-        ]
+        ],
       },
       {
         "name": "CREATED_TIMESTAMP",
@@ -921,7 +921,7 @@ export function getSyncerTableColumns(syncer) {
         "isHashed": true,
         "values": [
 
-        ]
+        ],
       },
       {
         "name": "ENABLED",
@@ -930,8 +930,8 @@ export function getSyncerTableColumns(syncer) {
         "isHashed": true,
         "values": [
 
-        ]
-      }
+        ],
+      },
     ];
   default:
     return [];

@@ -17,7 +17,7 @@ import {authConfig} from "./Auth";
 export function getAccount(query) {
   return fetch(`${authConfig.serverUrl}/api/get-account${query}`, {
     method: "GET",
-    credentials: "include"
+    credentials: "include",
   }).then(res => res.json());
 }
 

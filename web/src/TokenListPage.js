@@ -43,7 +43,7 @@ class TokenListPage extends BaseListPage {
     TokenBackend.addToken(newToken)
       .then((res) => {
         this.props.history.push({pathname: `/tokens/${newToken.name}`, mode: "add"});
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Token failed to add: ${error}`);
@@ -58,7 +58,7 @@ class TokenListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Token failed to delete: ${error}`);
@@ -81,7 +81,7 @@ class TokenListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -91,7 +91,7 @@ class TokenListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Application"),
@@ -106,7 +106,7 @@ class TokenListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Organization"),
@@ -121,7 +121,7 @@ class TokenListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:User"),
@@ -136,7 +136,7 @@ class TokenListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("token:Authorization code"),
@@ -147,7 +147,7 @@ class TokenListPage extends BaseListPage {
         ...this.getColumnSearchProps("code"),
         render: (text, record, index) => {
           return Setting.getClickable(text);
-        }
+        },
       },
       {
         title: i18next.t("token:Access token"),
@@ -159,7 +159,7 @@ class TokenListPage extends BaseListPage {
         ...this.getColumnSearchProps("accessToken"),
         render: (text, record, index) => {
           return Setting.getClickable(text);
-        }
+        },
       },
       {
         title: i18next.t("token:Expires in"),
@@ -202,7 +202,7 @@ class TokenListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

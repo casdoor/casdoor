@@ -52,6 +52,8 @@
     "space-unary-ops": ["error", { "words": true, "nonwords": false }],
     "space-infix-ops": "error",
     "key-spacing": ["error", { "beforeColon": false, "afterColon": true }],
+    "comma-style": ["error", "last"],
+    "comma-dangle": ["error", "always-multiline"],
 
 
     "react/prop-types": "off",

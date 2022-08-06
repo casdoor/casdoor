@@ -48,7 +48,7 @@ class ResourceListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Resource failed to delete: ${error}`);
@@ -99,7 +99,7 @@ class ResourceListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("resource:Application"),
@@ -114,7 +114,7 @@ class ResourceListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("resource:User"),
@@ -129,7 +129,7 @@ class ResourceListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("resource:Parent"),
@@ -155,7 +155,7 @@ class ResourceListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("resource:Tag"),
@@ -196,7 +196,7 @@ class ResourceListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFriendlyFileSize(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Preview"),
@@ -219,7 +219,7 @@ class ResourceListPage extends BaseListPage {
               </div>
             );
           }
-        }
+        },
       },
       {
         title: i18next.t("general:URL"),
@@ -238,7 +238,7 @@ class ResourceListPage extends BaseListPage {
               </Button>
             </div>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -260,7 +260,7 @@ class ResourceListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

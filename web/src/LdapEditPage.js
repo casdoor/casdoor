@@ -42,7 +42,7 @@ class LdapEditPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
-            ldap: res.data
+            ldap: res.data,
           });
         } else {
           Setting.showMessage("error", res.msg);
@@ -71,7 +71,7 @@ class LdapEditPage extends React.Component {
       return (
         <span style={{
           color: "#faad14",
-          marginLeft: "20px"
+          marginLeft: "20px",
         }}>{i18next.t("ldap:The Auto Sync option will sync all users to specify organization")}</span>
       );
     }

@@ -116,7 +116,7 @@ class AccountTable extends React.Component {
               }
             </Select>
           );
-        }
+        },
       },
       {
         title: i18next.t("provider:visible"),
@@ -129,7 +129,7 @@ class AccountTable extends React.Component {
               this.updateField(table, index, "visible", checked);
             }} />
           );
-        }
+        },
       },
       {
         title: i18next.t("organization:viewRule"),
@@ -156,7 +156,7 @@ class AccountTable extends React.Component {
               }
             </Select>
           );
-        }
+        },
       },
       {
         title: i18next.t("organization:modifyRule"),
@@ -191,7 +191,7 @@ class AccountTable extends React.Component {
               }
             </Select>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -211,7 +211,7 @@ class AccountTable extends React.Component {
               </Tooltip>
             </div>
           );
-        }
+        },
       },
     ];
 

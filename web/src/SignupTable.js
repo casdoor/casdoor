@@ -101,7 +101,7 @@ class SignupTable extends React.Component {
               }
             </Select>
           );
-        }
+        },
       },
       {
         title: i18next.t("provider:visible"),
@@ -123,7 +123,7 @@ class SignupTable extends React.Component {
               }
             }} />
           );
-        }
+        },
       },
       {
         title: i18next.t("provider:required"),
@@ -140,7 +140,7 @@ class SignupTable extends React.Component {
               this.updateField(table, index, "required", checked);
             }} />
           );
-        }
+        },
       },
       {
         title: i18next.t("provider:prompted"),
@@ -161,7 +161,7 @@ class SignupTable extends React.Component {
               this.updateField(table, index, "prompted", checked);
             }} />
           );
-        }
+        },
       },
       {
         title: i18next.t("application:rule"),
@@ -201,7 +201,7 @@ class SignupTable extends React.Component {
               }
             </Select>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -221,7 +221,7 @@ class SignupTable extends React.Component {
               </Tooltip>
             </div>
           );
-        }
+        },
       },
     ];
 

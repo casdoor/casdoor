@@ -46,7 +46,7 @@ class ProductListPage extends BaseListPage {
     ProductBackend.addProduct(newProduct)
       .then((res) => {
         this.props.history.push({pathname: `/products/${newProduct.name}`, mode: "add"});
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Product failed to add: ${error}`);
@@ -61,7 +61,7 @@ class ProductListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Product failed to delete: ${error}`);
@@ -84,7 +84,7 @@ class ProductListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -94,7 +94,7 @@ class ProductListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Display name"),
@@ -115,7 +115,7 @@ class ProductListPage extends BaseListPage {
               <img src={text} alt={text} width={150} />
             </a>
           );
-        }
+        },
       },
       {
         title: i18next.t("product:Tag"),
@@ -240,7 +240,7 @@ class ProductListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

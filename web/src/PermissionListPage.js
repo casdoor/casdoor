@@ -44,7 +44,7 @@ class PermissionListPage extends BaseListPage {
     PermissionBackend.addPermission(newPermission)
       .then((res) => {
         this.props.history.push({pathname: `/permissions/${newPermission.owner}/${newPermission.name}`, mode: "add"});
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Permission failed to add: ${error}`);
@@ -59,7 +59,7 @@ class PermissionListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Permission failed to delete: ${error}`);
@@ -81,7 +81,7 @@ class PermissionListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Name"),
@@ -97,7 +97,7 @@ class PermissionListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -107,7 +107,7 @@ class PermissionListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Display name"),
@@ -126,7 +126,7 @@ class PermissionListPage extends BaseListPage {
         ...this.getColumnSearchProps("users"),
         render: (text, record, index) => {
           return Setting.getTags(text);
-        }
+        },
       },
       {
         title: i18next.t("role:Sub roles"),
@@ -137,7 +137,7 @@ class PermissionListPage extends BaseListPage {
         ...this.getColumnSearchProps("roles"),
         render: (text, record, index) => {
           return Setting.getTags(text);
-        }
+        },
       },
       {
         title: i18next.t("permission:Resource type"),
@@ -159,7 +159,7 @@ class PermissionListPage extends BaseListPage {
         ...this.getColumnSearchProps("resources"),
         render: (text, record, index) => {
           return Setting.getTags(text);
-        }
+        },
       },
       {
         title: i18next.t("permission:Actions"),
@@ -170,7 +170,7 @@ class PermissionListPage extends BaseListPage {
         ...this.getColumnSearchProps("actions"),
         render: (text, record, index) => {
           return Setting.getTags(text);
-        }
+        },
       },
       {
         title: i18next.t("permission:Effect"),
@@ -194,7 +194,7 @@ class PermissionListPage extends BaseListPage {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -214,7 +214,7 @@ class PermissionListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

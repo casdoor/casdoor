@@ -84,8 +84,8 @@ const userTemplate = {
     "phoneVerifiedTime": "",
     "renameQuota": "3",
     "tagline": "",
-    "website": ""
-  }
+    "website": "",
+  },
 };
 
 class WebhookEditPage extends React.Component {

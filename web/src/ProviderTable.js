@@ -82,7 +82,7 @@ class ProviderTable extends React.Component {
               }
             </Select>
           );
-        }
+        },
       },
       {
         title: i18next.t("provider:Category"),
@@ -92,7 +92,7 @@ class ProviderTable extends React.Component {
         render: (text, record, index) => {
           const provider = Setting.getArrayItem(this.props.providers, "name", record.name);
           return provider?.category;
-        }
+        },
       },
       {
         title: i18next.t("provider:Type"),
@@ -102,7 +102,7 @@ class ProviderTable extends React.Component {
         render: (text, record, index) => {
           const provider = Setting.getArrayItem(this.props.providers, "name", record.name);
           return Provider.getProviderLogoWidget(provider);
-        }
+        },
       },
       {
         title: i18next.t("provider:canSignUp"),
@@ -119,7 +119,7 @@ class ProviderTable extends React.Component {
               this.updateField(table, index, "canSignUp", checked);
             }} />
           );
-        }
+        },
       },
       {
         title: i18next.t("provider:canSignIn"),
@@ -136,7 +136,7 @@ class ProviderTable extends React.Component {
               this.updateField(table, index, "canSignIn", checked);
             }} />
           );
-        }
+        },
       },
       {
         title: i18next.t("provider:canUnlink"),
@@ -153,7 +153,7 @@ class ProviderTable extends React.Component {
               this.updateField(table, index, "canUnlink", checked);
             }} />
           );
-        }
+        },
       },
       {
         title: i18next.t("provider:prompted"),
@@ -170,7 +170,7 @@ class ProviderTable extends React.Component {
               this.updateField(table, index, "prompted", checked);
             }} />
           );
-        }
+        },
       },
       // {
       //   title: i18next.t("provider:alertType"),
@@ -211,7 +211,7 @@ class ProviderTable extends React.Component {
               </Tooltip>
             </div>
           );
-        }
+        },
       },
     ];
 

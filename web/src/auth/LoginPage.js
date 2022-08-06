@@ -46,7 +46,7 @@ class LoginPage extends React.Component {
       validEmailOrPhone: false,
       validEmail: false,
       validPhone: false,
-      loginMethod: "password"
+      loginMethod: "password",
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -107,7 +107,7 @@ class LoginPage extends React.Component {
         this.setState({
           application: application,
         });
-      }
+      },
       );
   }
 
@@ -291,7 +291,7 @@ class LoginPage extends React.Component {
               <Button type="primary" key="signin">
                 Sign In
               </Button>
-            </Link>
+            </Link>,
           ]}
         >
         </Result>
@@ -339,7 +339,7 @@ class LoginPage extends React.Component {
             rules={[
               {
                 required: true,
-                message: i18next.t("login:Please input your username, Email or phone!")
+                message: i18next.t("login:Please input your username, Email or phone!"),
               },
               {
                 validator: (_, value) => {
@@ -359,8 +359,8 @@ class LoginPage extends React.Component {
 
                   this.setState({validEmailOrPhone: true});
                   return Promise.resolve();
-                }
-              }
+                },
+              },
             ]}
           >
             <Input
@@ -557,7 +557,7 @@ class LoginPage extends React.Component {
     let application = this.getApplicationObj();
     return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}&name=${username}`, {
       method: "GET",
-      credentials: "include"
+      credentials: "include",
     })
       .then(res => res.json())
       .then((credentialRequestOptions) => {
@@ -572,7 +572,7 @@ class LoginPage extends React.Component {
         });
 
         return navigator.credentials.get({
-          publicKey: credentialRequestOptions.publicKey
+          publicKey: credentialRequestOptions.publicKey,
         });
       })
       .then((assertion) => {
@@ -594,7 +594,7 @@ class LoginPage extends React.Component {
               signature: UserWebauthnBackend.webAuthnBufferEncode(sig),
               userHandle: UserWebauthnBackend.webAuthnBufferEncode(userHandle),
             },
-          })
+          }),
         })
           .then(res => res.json()).then((res) => {
             if (res.msg === "") {

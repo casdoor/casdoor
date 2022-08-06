@@ -469,7 +469,7 @@ class UserEditPage extends React.Component {
                         <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} account={this.props.account} onUnlinked={() => {return this.unlinked();}} />
                       ) : (
                         <SamlWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => {return this.unlinked();}} />
-                      )
+                      ),
                     )
                   )
                 }

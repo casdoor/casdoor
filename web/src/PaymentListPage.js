@@ -52,7 +52,7 @@ class PaymentListPage extends BaseListPage {
     PaymentBackend.addPayment(newPayment)
       .then((res) => {
         this.props.history.push({pathname: `/payments/${newPayment.name}`, mode: "add"});
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Payment failed to add: ${error}`);
@@ -67,7 +67,7 @@ class PaymentListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Payment failed to delete: ${error}`);
@@ -89,7 +89,7 @@ class PaymentListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:User"),
@@ -104,7 +104,7 @@ class PaymentListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Name"),
@@ -120,7 +120,7 @@ class PaymentListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -130,7 +130,7 @@ class PaymentListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       // {
       //   title: i18next.t("general:Display name"),
@@ -154,7 +154,7 @@ class PaymentListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("payment:Type"),
@@ -168,7 +168,7 @@ class PaymentListPage extends BaseListPage {
         render: (text, record, index) => {
           record.category = "Payment";
           return Provider.getProviderLogoWidget(record);
-        }
+        },
       },
       {
         title: i18next.t("payment:Product"),
@@ -221,7 +221,7 @@ class PaymentListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

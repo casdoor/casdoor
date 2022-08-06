@@ -60,7 +60,7 @@ class OrganizationEditPage extends React.Component {
           }
         }
         this.setState({
-          ldaps: resdata
+          ldaps: resdata,
         });
       });
   }

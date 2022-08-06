@@ -61,7 +61,7 @@ class ApplicationListPage extends BaseListPage {
     ApplicationBackend.addApplication(newApplication)
       .then((res) => {
         this.props.history.push({pathname: `/applications/${newApplication.name}`, mode: "add"});
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Application failed to add: ${error}`);
@@ -76,7 +76,7 @@ class ApplicationListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Application failed to delete: ${error}`);
@@ -99,7 +99,7 @@ class ApplicationListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -109,7 +109,7 @@ class ApplicationListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Display name"),
@@ -130,7 +130,7 @@ class ApplicationListPage extends BaseListPage {
               <img src={text} alt={text} width={150} />
             </a>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Organization"),
@@ -145,7 +145,7 @@ class ApplicationListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Providers"),
@@ -222,7 +222,7 @@ class ApplicationListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

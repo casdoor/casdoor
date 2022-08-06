@@ -39,7 +39,7 @@ class ModelListPage extends BaseListPage {
     ModelBackend.addModel(newModel)
       .then((res) => {
         this.props.history.push({pathname: `/models/${newModel.owner}/${newModel.name}`, mode: "add"});
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Model failed to add: ${error}`);
@@ -54,7 +54,7 @@ class ModelListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Model failed to delete: ${error}`);
@@ -76,7 +76,7 @@ class ModelListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Name"),
@@ -92,7 +92,7 @@ class ModelListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -102,7 +102,7 @@ class ModelListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Display name"),
@@ -122,7 +122,7 @@ class ModelListPage extends BaseListPage {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -143,7 +143,7 @@ class ModelListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

@@ -43,7 +43,7 @@ class WebhookListPage extends BaseListPage {
     WebhookBackend.addWebhook(newWebhook)
       .then((res) => {
         this.props.history.push({pathname: `/webhooks/${newWebhook.name}`, mode: "add"});
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Webhook failed to add: ${error}`);
@@ -58,7 +58,7 @@ class WebhookListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Webhook failed to delete: ${error}`);
@@ -80,7 +80,7 @@ class WebhookListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Name"),
@@ -96,7 +96,7 @@ class WebhookListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -106,7 +106,7 @@ class WebhookListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("webhook:URL"),
@@ -123,7 +123,7 @@ class WebhookListPage extends BaseListPage {
               }
             </a>
           );
-        }
+        },
       },
       {
         title: i18next.t("webhook:Method"),
@@ -143,7 +143,7 @@ class WebhookListPage extends BaseListPage {
         filters: [
           {text: "application/json", value: "application/json"},
           {text: "application/x-www-form-urlencoded", value: "application/x-www-form-urlencoded"},
-        ]
+        ],
       },
       {
         title: i18next.t("webhook:Events"),
@@ -154,7 +154,7 @@ class WebhookListPage extends BaseListPage {
         ...this.getColumnSearchProps("events"),
         render: (text, record, index) => {
           return Setting.getTags(text);
-        }
+        },
       },
       {
         title: i18next.t("webhook:Is user extended"),
@@ -166,7 +166,7 @@ class WebhookListPage extends BaseListPage {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Is enabled"),
@@ -178,7 +178,7 @@ class WebhookListPage extends BaseListPage {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -198,7 +198,7 @@ class WebhookListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

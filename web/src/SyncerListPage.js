@@ -50,7 +50,7 @@ class SyncerListPage extends BaseListPage {
     SyncerBackend.addSyncer(newSyncer)
       .then((res) => {
         this.props.history.push({pathname: `/syncers/${newSyncer.name}`, mode: "add"});
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Syncer failed to add: ${error}`);
@@ -65,7 +65,7 @@ class SyncerListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Syncer failed to delete: ${error}`);
@@ -78,7 +78,7 @@ class SyncerListPage extends BaseListPage {
       .then((res) => {
         this.setState({loading: false});
         Setting.showMessage("success", "Syncer sync users successfully");
-      }
+      },
       )
       .catch(error => {
         this.setState({loading: false});
@@ -101,7 +101,7 @@ class SyncerListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Name"),
@@ -117,7 +117,7 @@ class SyncerListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -127,7 +127,7 @@ class SyncerListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("provider:Type"),
@@ -212,7 +212,7 @@ class SyncerListPage extends BaseListPage {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -233,7 +233,7 @@ class SyncerListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

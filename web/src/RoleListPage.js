@@ -40,7 +40,7 @@ class RoleListPage extends BaseListPage {
     RoleBackend.addRole(newRole)
       .then((res) => {
         this.props.history.push({pathname: `/roles/${newRole.owner}/${newRole.name}`, mode: "add"});
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Role failed to add: ${error}`);
@@ -55,7 +55,7 @@ class RoleListPage extends BaseListPage {
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      }
+      },
       )
       .catch(error => {
         Setting.showMessage("error", `Role failed to delete: ${error}`);
@@ -77,7 +77,7 @@ class RoleListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Name"),
@@ -93,7 +93,7 @@ class RoleListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -103,7 +103,7 @@ class RoleListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Display name"),
@@ -122,7 +122,7 @@ class RoleListPage extends BaseListPage {
         ...this.getColumnSearchProps("users"),
         render: (text, record, index) => {
           return Setting.getTags(text);
-        }
+        },
       },
       {
         title: i18next.t("role:Sub roles"),
@@ -133,7 +133,7 @@ class RoleListPage extends BaseListPage {
         ...this.getColumnSearchProps("roles"),
         render: (text, record, index) => {
           return Setting.getTags(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Is enabled"),
@@ -145,7 +145,7 @@ class RoleListPage extends BaseListPage {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -165,7 +165,7 @@ class RoleListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

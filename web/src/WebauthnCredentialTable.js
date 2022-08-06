@@ -35,8 +35,8 @@ class WebAuthnCredentialTable extends React.Component {
               {i18next.t("general:Delete")}
             </Button>
           );
-        }
-      }
+        },
+      },
     ];
 
     return (
