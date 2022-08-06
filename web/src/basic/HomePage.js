@@ -51,7 +51,7 @@ class HomePage extends React.Component {
         {link: "/applications", name: i18next.t("general:Applications"), organizer: i18next.t("general:Applications that require authentication")},
       ];
 
-      for (let i = 0; i < items.length; i ++) {
+      for (let i = 0; i < items.length; i++) {
         let filename = items[i].link;
         if (filename === "/account") {
           filename = "/users";

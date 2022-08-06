@@ -305,7 +305,7 @@ export function isPromptAnswered(user, application) {
   }
 
   const providerItems = getAllPromptedProviderItems(application);
-  for (let i = 0; i < providerItems.length; i ++) {
+  for (let i = 0; i < providerItems.length; i++) {
     if (!isProviderItemAnswered(user, application, providerItems[i])) {
       return false;
     }
@@ -432,7 +432,7 @@ export function getShortName(s) {
   return s.split("/").slice(-1)[0];
 }
 
-export function getShortText(s, maxLength=35) {
+export function getShortText(s, maxLength = 35) {
   if (s.length > maxLength) {
     return `${s.slice(0, maxLength)}...`;
   } else {
@@ -449,13 +449,13 @@ export function getFriendlyFileSize(size) {
   let num = (size / Math.pow(1024, i));
   let round = Math.round(num);
   num = round < 10 ? num.toFixed(2) : round < 100 ? num.toFixed(1) : round;
-  return `${num} ${"KMGTPEZY"[i-1]}B`;
+  return `${num} ${"KMGTPEZY"[i - 1]}B`;
 }
 
 function getRandomInt(s) {
   let hash = 0;
   if (s.length !== 0) {
-    for (let i = 0; i < s.length; i ++) {
+    for (let i = 0; i < s.length; i++) {
       let char = s.charCodeAt(i);
       hash = ((hash << 5) - hash) + char;
       hash = hash & hash;
@@ -723,7 +723,7 @@ export function goToForget(ths, application) {
 }
 
 export function renderHelmet(application) {
-  if (application === undefined || application === null || application.organizationObj === undefined || application.organizationObj === null ||application.organizationObj === "") {
+  if (application === undefined || application === null || application.organizationObj === undefined || application.organizationObj === null || application.organizationObj === "") {
     return null;
   }
 
@@ -791,7 +791,7 @@ export function getDeduplicatedArray(array, filterArray, key) {
 export function getNewRowNameForTable(table, rowName) {
   const emptyCount = table.filter(row => row.name.includes(rowName)).length;
   let res = rowName;
-  for (let i = 0; i < emptyCount; i ++) {
+  for (let i = 0; i < emptyCount; i++) {
     res = res + " ";
   }
   return res;

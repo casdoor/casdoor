@@ -49,6 +49,8 @@
       "ignoreDeclarationSort": true
     }],
     "no-multiple-empty-lines": ["error", { "max": 1, "maxBOF": 0, "maxEOF": 0 }],
+    "space-unary-ops": ["error", { "words": true, "nonwords": false }],
+    "space-infix-ops": "error",
 
 
     "react/prop-types": "off",

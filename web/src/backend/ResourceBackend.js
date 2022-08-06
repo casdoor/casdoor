@@ -46,7 +46,7 @@ export function addResource(resource) {
   }).then(res => res.json());
 }
 
-export function deleteResource(resource, provider="") {
+export function deleteResource(resource, provider = "") {
   let newResource = Setting.deepCopy(resource);
   return fetch(`${Setting.ServerUrl}/api/delete-resource?provider=${provider}`, {
     method: "POST",
@@ -55,7 +55,7 @@ export function deleteResource(resource, provider="") {
   }).then(res => res.json());
 }
 
-export function uploadResource(owner, user, tag, parent, fullFilePath, file, provider="") {
+export function uploadResource(owner, user, tag, parent, fullFilePath, file, provider = "") {
   const application = "app-built-in";
   let formData = new FormData();
   formData.append("file", file);
