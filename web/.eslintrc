@@ -54,6 +54,7 @@
     "key-spacing": ["error", { "beforeColon": false, "afterColon": true }],
     "comma-style": ["error", "last"],
     "comma-dangle": ["error", "always-multiline"],
+    "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
 
 
     "react/prop-types": "off",

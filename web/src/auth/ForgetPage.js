@@ -468,7 +468,7 @@ class ForgetPage extends React.Component {
           </Form.Item>
           <br />
           <Form.Item hidden={this.state.current !== 2}>
-            <Button block type="primary"  htmlType="submit" disabled={this.state.userId === ""}>
+            <Button block type="primary" htmlType="submit" disabled={this.state.userId === ""}>
               {i18next.t("forget:Change Password")}
             </Button>
           </Form.Item>
