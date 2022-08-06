@@ -36,7 +36,7 @@ func NewCustomIdProvider(clientId string, clientSecret string, redirectUrl strin
 	idp := &CustomIdProvider{}
 	idp.UserInfoUrl = userInfoUrl
 
-	var config = &oauth2.Config{
+	config := &oauth2.Config{
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
 		RedirectURL:  redirectUrl,
@@ -76,7 +76,7 @@ func (idp *CustomIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	if err != nil {
 		return nil, err
 	}
-	//add accessToken to request header
+	// add accessToken to request header
 	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 	resp, err := idp.Client.Do(request)
 	if err != nil {

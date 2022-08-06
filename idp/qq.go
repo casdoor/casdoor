@@ -48,11 +48,11 @@ func (idp *QqIdProvider) SetHttpClient(client *http.Client) {
 }
 
 func (idp *QqIdProvider) getConfig() *oauth2.Config {
-	var endpoint = oauth2.Endpoint{
+	endpoint := oauth2.Endpoint{
 		TokenURL: "https://graph.qq.com/oauth2.0/token",
 	}
 
-	var config = &oauth2.Config{
+	config := &oauth2.Config{
 		Scopes:   []string{"get_user_info"},
 		Endpoint: endpoint,
 	}

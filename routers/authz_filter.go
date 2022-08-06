@@ -78,7 +78,7 @@ func getObject(ctx *context.Context) (string, string) {
 		var obj Object
 		err := json.Unmarshal(body, &obj)
 		if err != nil {
-			//panic(err)
+			// panic(err)
 			return "", ""
 		}
 

@@ -16,8 +16,7 @@ package captcha
 
 import "github.com/casdoor/casdoor/object"
 
-type DefaultCaptchaProvider struct {
-}
+type DefaultCaptchaProvider struct{}
 
 func NewDefaultCaptchaProvider() *DefaultCaptchaProvider {
 	captcha := &DefaultCaptchaProvider{}

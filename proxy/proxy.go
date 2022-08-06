@@ -25,8 +25,10 @@ import (
 	"golang.org/x/net/proxy"
 )
 
-var DefaultHttpClient *http.Client
-var ProxyHttpClient *http.Client
+var (
+	DefaultHttpClient *http.Client
+	ProxyHttpClient   *http.Client
+)
 
 func InitHttpClient() {
 	// not use proxy

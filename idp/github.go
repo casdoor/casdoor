@@ -49,12 +49,12 @@ func (idp *GithubIdProvider) SetHttpClient(client *http.Client) {
 }
 
 func (idp *GithubIdProvider) getConfig() *oauth2.Config {
-	var endpoint = oauth2.Endpoint{
+	endpoint := oauth2.Endpoint{
 		AuthURL:  "https://github.com/login/oauth/authorize",
 		TokenURL: "https://github.com/login/oauth/access_token",
 	}
 
-	var config = &oauth2.Config{
+	config := &oauth2.Config{
 		Scopes:   []string{"user:email", "read:user"},
 		Endpoint: endpoint,
 	}
@@ -93,7 +93,6 @@ func (idp *GithubIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	}
 
 	return token, nil
-
 }
 
 //{

@@ -72,7 +72,6 @@ func (idp *CasdoorIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +81,7 @@ func (idp *CasdoorIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		return nil, err
 	}
 
-	//check if token is expired
+	// check if token is expired
 	if pToken.ExpiresIn <= 0 {
 		return nil, fmt.Errorf("%s", pToken.AccessToken)
 	}
@@ -91,7 +90,6 @@ func (idp *CasdoorIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		Expiry:      time.Unix(time.Now().Unix()+int64(pToken.ExpiresIn), 0),
 	}
 	return token, nil
-
 }
 
 /*
@@ -125,7 +123,7 @@ func (idp *CasdoorIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error
 	if err != nil {
 		return nil, err
 	}
-	//add accesstoken to bearer token
+	// add accesstoken to bearer token
 	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 	resp, err := idp.Client.Do(request)
 	if err != nil {
@@ -155,5 +153,4 @@ func (idp *CasdoorIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error
 		AvatarUrl:   cdUserinfo.AvatarUrl,
 	}
 	return userInfo, nil
-
 }

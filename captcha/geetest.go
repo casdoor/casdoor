@@ -28,8 +28,7 @@ import (
 
 const GEETESTCaptchaVerifyUrl = "http://gcaptcha4.geetest.com/validate"
 
-type GEETESTCaptchaProvider struct {
-}
+type GEETESTCaptchaProvider struct{}
 
 func NewGEETESTCaptchaProvider() *GEETESTCaptchaProvider {
 	captcha := &GEETESTCaptchaProvider{}

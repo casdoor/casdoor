@@ -69,7 +69,7 @@ func BoolToString(b bool) string {
 	return "0"
 }
 
-//CamelToSnakeCase This function transform camelcase in snakecase LoremIpsum in lorem_ipsum
+// CamelToSnakeCase This function transform camelcase in snakecase LoremIpsum in lorem_ipsum
 func CamelToSnakeCase(camel string) string {
 	var buf bytes.Buffer
 	for _, c := range camel {
@@ -177,7 +177,7 @@ func ReadStringFromPath(path string) string {
 }
 
 func WriteStringToPath(s string, path string) {
-	err := ioutil.WriteFile(path, []byte(s), 0644)
+	err := ioutil.WriteFile(path, []byte(s), 0o644)
 	if err != nil {
 		panic(err)
 	}

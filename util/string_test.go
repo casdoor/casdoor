@@ -15,9 +15,10 @@
 package util
 
 import (
+	"testing"
+
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestParseInt(t *testing.T) {
@@ -245,4 +246,3 @@ func TestSnakeString(t *testing.T) {
 		})
 	}
 }
-

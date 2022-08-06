@@ -30,19 +30,18 @@ func init() {
 }
 
 func initAPI() {
-	ns :=
-		beego.NewNamespace("/",
-			beego.NSNamespace("/api",
-				beego.NSInclude(
-					&controllers.ApiController{},
-				),
+	ns := beego.NewNamespace("/",
+		beego.NSNamespace("/api",
+			beego.NSInclude(
+				&controllers.ApiController{},
 			),
-			beego.NSNamespace("",
-				beego.NSInclude(
-					&controllers.RootController{},
-				),
+		),
+		beego.NSNamespace("",
+			beego.NSInclude(
+				&controllers.RootController{},
 			),
-		)
+		),
+	)
 	beego.AddNamespace(ns)
 
 	beego.Router("/api/signup", &controllers.ApiController{}, "POST:Signup")
@@ -195,5 +194,4 @@ func initAPI() {
 	beego.Router("/api/webauthn/signup/finish", &controllers.ApiController{}, "Post:WebAuthnSignupFinish")
 	beego.Router("/api/webauthn/signin/begin", &controllers.ApiController{}, "Get:WebAuthnSigninBegin")
 	beego.Router("/api/webauthn/signin/finish", &controllers.ApiController{}, "Post:WebAuthnSigninFinish")
-
 }

@@ -31,7 +31,7 @@ func init() {
 	var err error
 	isCloudIntranet, err = conf.GetConfigBool("isCloudIntranet")
 	if err != nil {
-		//panic(err)
+		// panic(err)
 	}
 }
 
