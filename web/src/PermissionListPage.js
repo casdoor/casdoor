@@ -42,7 +42,7 @@ class PermissionListPage extends BaseListPage {
   addPermission() {
     const newPermission = this.newPermission();
     PermissionBackend.addPermission(newPermission)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/permissions/${newPermission.owner}/${newPermission.name}`, mode: "add"});
       }
       )
@@ -53,7 +53,7 @@ class PermissionListPage extends BaseListPage {
 
   deletePermission(i) {
     PermissionBackend.deletePermission(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Permission deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -75,7 +75,7 @@ class PermissionListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("owner"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -91,7 +91,7 @@ class PermissionListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text, record) => {
           return (
             <Link to={`/permissions/${record.owner}/${text}`}>
               {text}
@@ -105,7 +105,7 @@ class PermissionListPage extends BaseListPage {
         key: "createdTime",
         width: "160px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         }
       },
@@ -124,7 +124,7 @@ class PermissionListPage extends BaseListPage {
         // width: '100px',
         sorter: true,
         ...this.getColumnSearchProps("users"),
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getTags(text);
         }
       },
@@ -135,7 +135,7 @@ class PermissionListPage extends BaseListPage {
         // width: '100px',
         sorter: true,
         ...this.getColumnSearchProps("roles"),
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getTags(text);
         }
       },
@@ -157,7 +157,7 @@ class PermissionListPage extends BaseListPage {
         // width: '100px',
         sorter: true,
         ...this.getColumnSearchProps("resources"),
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getTags(text);
         }
       },
@@ -168,7 +168,7 @@ class PermissionListPage extends BaseListPage {
         // width: '100px',
         sorter: true,
         ...this.getColumnSearchProps("actions"),
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getTags(text);
         }
       },
@@ -190,7 +190,7 @@ class PermissionListPage extends BaseListPage {
         key: "isEnabled",
         width: "120px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
@@ -202,7 +202,7 @@ class PermissionListPage extends BaseListPage {
         key: "op",
         width: "170px",
         fixed: (Setting.isMobile()) ? "false" : "right",
-        render: (text, record, index) => {
+        render: (record, index) => {
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/permissions/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>

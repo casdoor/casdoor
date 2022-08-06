@@ -110,7 +110,7 @@ class AffiliationSelect extends React.Component {
                     <Option key={0} value={""}>(empty)</Option>
                   }
                   {
-                    this.state.affiliationOptions.map((affiliationOption, index) => <Option key={affiliationOption.id} value={affiliationOption.name}>{affiliationOption.name}</Option>)
+                    this.state.affiliationOptions.map((affiliationOption) => <Option key={affiliationOption.id} value={affiliationOption.name}>{affiliationOption.name}</Option>)
                   }
                 </Select>
               )

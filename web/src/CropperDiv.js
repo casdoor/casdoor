@@ -103,7 +103,7 @@ export const CropperDiv = (props) => {
         onCancel={handleCancel}
         width={600}
         footer={
-          [<Button block type="primary" onClick={handleOk}>{i18next.t("user:Set new profile picture")}</Button>]
+          [<Button block type="primary" key="" onClick={handleOk}>{i18next.t("user:Set new profile picture")}</Button>]
         }
       >
         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>

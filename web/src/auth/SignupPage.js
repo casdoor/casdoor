@@ -176,7 +176,7 @@ class SignupPage extends React.Component {
       });
   }
 
-  onFinishFailed(values, errorFields, outOfDate) {
+  onFinishFailed(errorFields) {
     this.form.current.scrollToField(errorFields[0].name);
   }
 
@@ -332,7 +332,7 @@ class SignupPage extends React.Component {
                 message: i18next.t("signup:Please input your Email!"),
               },
               {
-                validator: (_, value) => {
+                validator: () => {
                   if (this.state.email !== "" && !Setting.isValidEmail(this.state.email)) {
                     this.setState({validEmail: false});
                     return Promise.reject(i18next.t("signup:The input is not valid Email!"));
@@ -378,7 +378,7 @@ class SignupPage extends React.Component {
                 message: i18next.t("signup:Please input your phone number!"),
               },
               {
-                validator: (_, value) => {
+                validator: () => {
                   if (this.state.phone !== "" && !Setting.isValidPhone(this.state.phone)) {
                     this.setState({validPhone: false});
                     return Promise.reject(i18next.t("signup:The input is not valid Phone!"));

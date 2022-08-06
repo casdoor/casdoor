@@ -285,7 +285,7 @@ class LoginPage extends React.Component {
           title="Sign Up Error"
           subTitle={"The application does not allow to sign up new account"}
           extra={[
-            <Link onClick={() => {
+            <Link key="" onClick={() => {
               Setting.goToLogin(this, application);
             }}>
               <Button type="primary" key="signin">
@@ -342,7 +342,7 @@ class LoginPage extends React.Component {
                 message: i18next.t("login:Please input your username, Email or phone!")
               },
               {
-                validator: (_, value) => {
+                validator: () => {
                   if (this.state.isCodeSignin) {
                     if (this.state.email !== "" && !Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
                       this.setState({validEmailOrPhone: false});

@@ -412,7 +412,7 @@ class ApplicationEditPage extends React.Component {
               this.updateApplicationField("termsOfUse", e.target.value);
             }} />
             <Upload maxCount={1} accept=".html" showUploadList={false}
-              beforeUpload={file => {return false;}} onChange={info => {this.handleUpload(info);}}>
+              beforeUpload={() => {return false;}} onChange={info => {this.handleUpload(info);}}>
               <Button icon={<UploadOutlined />} loading={this.state.uploading}>{i18next.t("general:Click to Upload")}</Button>
             </Upload>
           </Col>
@@ -502,7 +502,7 @@ class ApplicationEditPage extends React.Component {
             <CodeMirror
               value={this.state.samlMetadata}
               options={{mode: "xml", theme: "default"}}
-              onBeforeChange={(editor, data, value) => {}}
+              onBeforeChange={() => {}}
             />
             <br />
             <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {

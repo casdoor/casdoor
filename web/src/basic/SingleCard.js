@@ -27,7 +27,7 @@ class SingleCard extends React.Component {
     };
   }
 
-  renderCardMobile(logo, link, title, desc, time, isSingle) {
+  renderCardMobile(logo, link, title, desc) {
     const gridStyle = {
       width: "100vw",
       textAlign: "center",

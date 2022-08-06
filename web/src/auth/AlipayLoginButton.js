@@ -15,7 +15,7 @@
 import {createButton} from "react-social-login-buttons";
 import {StaticBaseUrl} from "../Setting";
 
-function Icon({width = 24, height = 24, color}) {
+function Icon() {
   return <img src={`${StaticBaseUrl}/buttons/alipay.svg`} alt="Sign in with Alipay" style={{width: 24, height: 24}} />;
 }
 

@@ -244,7 +244,7 @@ class WebhookEditPage extends React.Component {
               }} >
               {
                 (
-                  ["signup", "login", "logout", "update-user"].map((option, index) => {
+                  ["signup", "login", "logout", "update-user"].map((option) => {
                     return (
                       <Option key={option} value={option}>{option}</Option>
                     );
@@ -273,7 +273,7 @@ class WebhookEditPage extends React.Component {
               <CodeMirror
                 value={previewText}
                 options={{mode: "javascript", theme: "material-darker"}}
-                onBeforeChange={(editor, data, value) => {}}
+                onBeforeChange={() => {}}
               />
             </div>
           </Col>

@@ -50,7 +50,7 @@ class PaymentListPage extends BaseListPage {
   addPayment() {
     const newPayment = this.newPayment();
     PaymentBackend.addPayment(newPayment)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/payments/${newPayment.name}`, mode: "add"});
       }
       )
@@ -61,7 +61,7 @@ class PaymentListPage extends BaseListPage {
 
   deletePayment(i) {
     PaymentBackend.deletePayment(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Payment deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -83,7 +83,7 @@ class PaymentListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("organization"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -98,7 +98,7 @@ class PaymentListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("user"),
-        render: (text, record, index) => {
+        render: (text, record) => {
           return (
             <Link to={`/users/${record.organization}/${text}`}>
               {text}
@@ -114,7 +114,7 @@ class PaymentListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/payments/${text}`}>
               {text}
@@ -128,7 +128,7 @@ class PaymentListPage extends BaseListPage {
         key: "createdTime",
         width: "160px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         }
       },
@@ -148,7 +148,7 @@ class PaymentListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("provider"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/providers/${text}`}>
               {text}
@@ -165,7 +165,7 @@ class PaymentListPage extends BaseListPage {
         filterMultiple: false,
         filters: Setting.getProviderTypeOptions("Payment").map((o) => {return {text:o.id, value:o.name};}),
         sorter: true,
-        render: (text, record, index) => {
+        render: (record) => {
           record.category = "Payment";
           return Provider.getProviderLogoWidget(record);
         }

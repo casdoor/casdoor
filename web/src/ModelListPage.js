@@ -37,7 +37,7 @@ class ModelListPage extends BaseListPage {
   addModel() {
     const newModel = this.newModel();
     ModelBackend.addModel(newModel)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/models/${newModel.owner}/${newModel.name}`, mode: "add"});
       }
       )
@@ -48,7 +48,7 @@ class ModelListPage extends BaseListPage {
 
   deleteModel(i) {
     ModelBackend.deleteModel(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Model deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -70,7 +70,7 @@ class ModelListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("owner"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -86,7 +86,7 @@ class ModelListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/models/${text}`}>
               {text}
@@ -100,7 +100,7 @@ class ModelListPage extends BaseListPage {
         key: "createdTime",
         width: "160px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         }
       },
@@ -118,7 +118,7 @@ class ModelListPage extends BaseListPage {
         key: "isEnabled",
         width: "120px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
@@ -130,7 +130,7 @@ class ModelListPage extends BaseListPage {
         key: "op",
         width: "170px",
         fixed: (Setting.isMobile()) ? "false" : "right",
-        render: (text, record, index) => {
+        render: (record, index) => {
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary"

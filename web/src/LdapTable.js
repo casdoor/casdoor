@@ -98,7 +98,7 @@ class LdapTable extends React.Component {
         key: "serverName",
         width: "160px",
         sorter: (a, b) => a.serverName.localeCompare(b.serverName),
-        render: (text, record, index) => {
+        render: (text, record) => {
           return (
             <Link to={`/ldaps/${record.id}`}>
               {text}
@@ -112,7 +112,7 @@ class LdapTable extends React.Component {
         key: "host",
         ellipsis: true,
         sorter: (a, b) => a.host.localeCompare(b.host),
-        render: (text, record, index) => {
+        render: (text, record) => {
           return `${text}:${record.port}`;
         }
       },
@@ -129,7 +129,7 @@ class LdapTable extends React.Component {
         key: "autoSync",
         width: "120px",
         sorter: (a, b) => a.autoSync.localeCompare(b.autoSync),
-        render: (text, record, index) => {
+        render: (text) => {
           return text === 0 ? (<span style={{color: "#faad14"}}>Disable</span>) : (
             <span style={{color: "#52c41a"}}>{text + " mins"}</span>);
         }
@@ -140,7 +140,7 @@ class LdapTable extends React.Component {
         key: "lastSync",
         ellipsis: true,
         sorter: (a, b) => a.lastSync.localeCompare(b.lastSync),
-        render: (text, record, index) => {
+        render: (text) => {
           return text;
         }
       },
@@ -149,7 +149,7 @@ class LdapTable extends React.Component {
         dataIndex: "",
         key: "op",
         width: "240px",
-        render: (text, record, index) => {
+        render: (record, index) => {
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}

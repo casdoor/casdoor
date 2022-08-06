@@ -162,7 +162,7 @@ class LdapSyncPage extends React.Component {
         key: "uidNumber",
         width: "200px",
         sorter: (a, b) => a.uidNumber.localeCompare(b.uidNumber),
-        render: (text, record, index) => {
+        render: (text, record) => {
           return `${text} / ${record.uid}`;
         },
       },

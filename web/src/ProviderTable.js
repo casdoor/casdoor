@@ -89,7 +89,7 @@ class ProviderTable extends React.Component {
         dataIndex: "category",
         key: "category",
         width: "100px",
-        render: (text, record, index) => {
+        render: (record) => {
           const provider = Setting.getArrayItem(this.props.providers, "name", record.name);
           return provider?.category;
         }
@@ -99,7 +99,7 @@ class ProviderTable extends React.Component {
         dataIndex: "type",
         key: "type",
         width: "80px",
-        render: (text, record, index) => {
+        render: (record) => {
           const provider = Setting.getArrayItem(this.props.providers, "name", record.name);
           return Provider.getProviderLogoWidget(provider);
         }

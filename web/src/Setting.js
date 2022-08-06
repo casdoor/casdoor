@@ -797,14 +797,14 @@ export function getNewRowNameForTable(table, rowName) {
   return res;
 }
 
-export function getTagColor(s) {
+export function getTagColor() {
   return "processing";
 }
 
 export function getTags(tags) {
   let res = [];
   if (!tags) {return res;}
-  tags.forEach((tag, i) => {
+  tags.forEach((tag) => {
     res.push(
       <Tag color={getTagColor(tag)}>
         {tag}

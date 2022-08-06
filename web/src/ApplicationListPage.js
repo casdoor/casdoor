@@ -59,7 +59,7 @@ class ApplicationListPage extends BaseListPage {
   addApplication() {
     const newApplication = this.newApplication();
     ApplicationBackend.addApplication(newApplication)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/applications/${newApplication.name}`, mode: "add"});
       }
       )
@@ -70,7 +70,7 @@ class ApplicationListPage extends BaseListPage {
 
   deleteApplication(i) {
     ApplicationBackend.deleteApplication(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Application deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -93,7 +93,7 @@ class ApplicationListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/applications/${text}`}>
               {text}
@@ -107,7 +107,7 @@ class ApplicationListPage extends BaseListPage {
         key: "createdTime",
         width: "160px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         }
       },
@@ -124,7 +124,7 @@ class ApplicationListPage extends BaseListPage {
         dataIndex: "logo",
         key: "logo",
         width: "200px",
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
               <img src={text} alt={text} width={150} />
@@ -139,7 +139,7 @@ class ApplicationListPage extends BaseListPage {
         width: "150px",
         sorter: true,
         ...this.getColumnSearchProps("organization"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -153,7 +153,7 @@ class ApplicationListPage extends BaseListPage {
         key: "providers",
         ...this.getColumnSearchProps("providers"),
         // width: '600px',
-        render: (text, record, index) => {
+        render: (text) => {
           const providers = text;
           if (providers.length === 0) {
             return "(empty)";
@@ -167,7 +167,7 @@ class ApplicationListPage extends BaseListPage {
                 size="small"
                 locale={{emptyText: " "}}
                 dataSource={providers}
-                renderItem={(providerItem, i) => {
+                renderItem={(providerItem) => {
                   return (
                     <List.Item>
                       <div style={{display: "inline"}}>

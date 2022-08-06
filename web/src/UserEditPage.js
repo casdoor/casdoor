@@ -15,7 +15,6 @@
 import React from "react";
 import {Button, Card, Col, Input, Result, Row, Select, Spin, Switch} from "antd";
 import * as UserBackend from "./backend/UserBackend";
-import * as UserWebauthnBackend from "./backend/UserWebauthnBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import {LinkOutlined} from "@ant-design/icons";
@@ -464,7 +463,7 @@ class UserEditPage extends React.Component {
               <div style={{marginBottom: 20}}>
                 {
                   (this.state.application === null || this.state.user === null) ? null : (
-                    this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) =>
+                    this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem) =>
                       (providerItem.provider.category === "OAuth") ? (
                         <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} account={this.props.account} onUnlinked={() => {return this.unlinked();}} />
                       ) : (
