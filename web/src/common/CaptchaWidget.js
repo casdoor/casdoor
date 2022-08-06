@@ -88,8 +88,8 @@ export const CaptchaWidget = ({captchaType, subType, siteKey, clientSecret, onCh
         if (window.initGeetest4 && siteKey && !getLock) {
           const captchaId = String(siteKey);
           window.initGeetest4({
-              captchaId,
-              product: "float",
+            captchaId,
+            product: "float",
           }, function(captchaObj) {
             if (!getLock) {
               captchaObj.appendTo("#captcha");

@@ -403,14 +403,14 @@ class LoginPage extends React.Component {
                   </Button>
                 ) :
                 (
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{width: "100%", marginBottom: "5px"}}
-                  disabled={!application.enablePassword}
-                >
-                  {i18next.t("login:Sign in with WebAuthn")}
-                </Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{width: "100%", marginBottom: "5px"}}
+                    disabled={!application.enablePassword}
+                  >
+                    {i18next.t("login:Sign in with WebAuthn")}
+                  </Button>
                 )
             }
             {
