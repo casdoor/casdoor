@@ -84,7 +84,7 @@ class HomePage extends React.Component {
           {
             items.map(item => {
               return (
-                <SingleCard logo={item.logo} link={item.link} title={item.name} desc={item.organizer} isSingle={items.length === 1} />
+                <SingleCard key="placeholderKey" logo={item.logo} link={item.link} title={item.name} desc={item.organizer} isSingle={items.length === 1} />
               );
             })
           }
