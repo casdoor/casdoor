@@ -83,6 +83,12 @@ func initAPI() {
 	beego.Router("/api/add-permission", &controllers.ApiController{}, "POST:AddPermission")
 	beego.Router("/api/delete-permission", &controllers.ApiController{}, "POST:DeletePermission")
 
+	beego.Router("/api/enforce", &controllers.ApiController{}, "POST:Enforce")
+	beego.Router("/api/batch-enforce", &controllers.ApiController{}, "POST:BatchEnforce")
+	beego.Router("/api/get-all-objects", &controllers.ApiController{}, "GET:GetAllObjects")
+	beego.Router("/api/get-all-actions", &controllers.ApiController{}, "GET:GetAllActions")
+	beego.Router("/api/get-all-roles", &controllers.ApiController{}, "GET:GetAllRoles")
+
 	beego.Router("/api/get-models", &controllers.ApiController{}, "GET:GetModels")
 	beego.Router("/api/get-model", &controllers.ApiController{}, "GET:GetModel")
 	beego.Router("/api/update-model", &controllers.ApiController{}, "POST:UpdateModel")
