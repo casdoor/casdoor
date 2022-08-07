@@ -94,6 +94,29 @@ func (c *ApiController) GetUserApplication() {
 	c.ServeJSON()
 }
 
+// GetOrganizationApplications
+// @Title GetOrganizationApplications
+// @Tag Application API
+// @Description get the detail of the organization's application
+// @Param   organization     query    string  true        "The organization name"
+// @Success 200 {array} object.Application The Response object
+// @router /get-organization-applications [get]
+func (c *ApiController) GetOrganizationApplications() {
+	userId := c.GetSessionUsername()
+	owner := c.Input().Get("owner")
+	organization := c.Input().Get("organization")
+
+	if organization == "" {
+		c.ResponseError("Parameter organization is missing")
+		return
+	}
+
+	var applications []*object.Application
+	applications = object.GetApplicationsByOrganizationName(owner, organization)
+	c.Data["json"] = object.GetMaskedApplications(applications, userId)
+	c.ServeJSON()
+}
+
 // UpdateApplication
 // @Title UpdateApplication
 // @Tag Application API
