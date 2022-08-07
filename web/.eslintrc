@@ -17,6 +17,7 @@
       "version": "detect"
     }
   },
+  "plugins": ["unused-imports"],
   "extends": ["eslint:recommended", "plugin:react/recommended"],
   "rules": {
     // "eqeqeq": "error",
@@ -61,14 +62,18 @@
       "functions": "never"
     }],
     "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
-
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+			"error",
+			{ "vars": "all", "varsIgnorePattern": "^_", "args": "none", "argsIgnorePattern": "^_" }
+		],
 
     "react/prop-types": "off",
     "react/display-name": "off",
     "react/react-in-jsx-scope": "off",
 
     // don't use strict mod now, otherwise there are a lot of errors in the codebase
-    "no-unused-vars": "warn",
+    "no-unused-vars": "off",
     "react/no-deprecated": "warn",
     "no-case-declarations": "warn",
     "react/jsx-key": "warn"
