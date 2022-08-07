@@ -58,7 +58,10 @@ func (c *ApiController) GetProducts() {
 func (c *ApiController) GetProduct() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetProduct(id)
+	product := object.GetProduct(id)
+	object.ExtendProductWithProviders(product)
+
+	c.Data["json"] = product
 	c.ServeJSON()
 }
 

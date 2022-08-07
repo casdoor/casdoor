@@ -38,6 +38,8 @@ type Product struct {
 	ReturnUrl string   `xorm:"varchar(1000)" json:"returnUrl"`
 
 	State string `xorm:"varchar(100)" json:"state"`
+
+	ProviderObjs []*Provider `xorm:"-" json:"providerObjs"`
 }
 
 func GetProductCount(owner, field, value string) int {
@@ -208,4 +210,15 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	}
 
 	return payUrl, err
+}
+
+func ExtendProductWithProviders(product *Product) {
+	product.ProviderObjs = []*Provider{}
+
+	m := getProviderMap(product.Owner)
+	for _, providerItem := range product.Providers {
+		if provider, ok := m[providerItem]; ok {
+			product.ProviderObjs = append(product.ProviderObjs, provider)
+		}
+	}
 }
