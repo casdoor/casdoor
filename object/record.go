@@ -29,7 +29,7 @@ func init() {
 	var err error
 	logPostOnly, err = conf.GetConfigBool("logPostOnly")
 	if err != nil {
-		//panic(err)
+		// panic(err)
 	}
 }
 

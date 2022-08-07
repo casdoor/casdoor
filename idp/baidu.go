@@ -46,12 +46,12 @@ func (idp *BaiduIdProvider) SetHttpClient(client *http.Client) {
 }
 
 func (idp *BaiduIdProvider) getConfig() *oauth2.Config {
-	var endpoint = oauth2.Endpoint{
+	endpoint := oauth2.Endpoint{
 		AuthURL:  "https://openapi.baidu.com/oauth/2.0/authorize",
 		TokenURL: "https://openapi.baidu.com/oauth/2.0/token",
 	}
 
-	var config = &oauth2.Config{
+	config := &oauth2.Config{
 		Scopes:   []string{"email"},
 		Endpoint: endpoint,
 	}

@@ -42,9 +42,9 @@ func main() {
 	proxy.InitHttpClient()
 	authz.InitAuthz()
 
-	util.SafeGoroutine(func() {object.RunSyncUsersJob()})
+	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 
-	//beego.DelStaticPath("/static")
+	// beego.DelStaticPath("/static")
 	beego.SetStaticPath("/static", "web/build/static")
 	beego.BConfig.WebConfig.DirectoryIndex = true
 	beego.SetStaticPath("/swagger", "swagger")
@@ -66,14 +66,14 @@ func main() {
 		beego.BConfig.WebConfig.Session.SessionProviderConfig = conf.GetConfigString("redisEndpoint")
 	}
 	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
-	//beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
+	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
 	err := logs.SetLogger("file", `{"filename":"logs/casdoor.log","maxdays":99999,"perm":"0770"}`)
 	if err != nil {
 		panic(err)
 	}
 	port := beego.AppConfig.DefaultInt("httpport", 8000)
-	//logs.SetLevel(logs.LevelInformational)
+	// logs.SetLevel(logs.LevelInformational)
 	logs.SetLogFuncCall(false)
 	beego.Run(fmt.Sprintf(":%v", port))
 }

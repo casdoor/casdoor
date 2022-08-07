@@ -47,12 +47,12 @@ func (idp *BilibiliIdProvider) SetHttpClient(client *http.Client) {
 
 // getConfig return a point of Config, which describes a typical 3-legged OAuth2 flow
 func (idp *BilibiliIdProvider) getConfig(clientId string, clientSecret string, redirectUrl string) *oauth2.Config {
-	var endpoint = oauth2.Endpoint{
+	endpoint := oauth2.Endpoint{
 		TokenURL: "https://api.bilibili.com/x/account-oauth2/v1/token",
 		AuthURL:  "http://member.bilibili.com/arcopen/fn/user/account/info",
 	}
 
-	var config = &oauth2.Config{
+	config := &oauth2.Config{
 		Scopes:       []string{"", ""},
 		Endpoint:     endpoint,
 		ClientID:     clientId,
@@ -104,7 +104,6 @@ func (idp *BilibiliIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	}
 
 	data, err := idp.postWithBody(pTokenParams, idp.Config.Endpoint.TokenURL)
-
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +166,6 @@ func (idp *BilibiliIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	userInfoUrl := fmt.Sprintf("%s?%s", idp.Config.Endpoint.AuthURL, params.Encode())
 
 	resp, err := idp.Client.Get(userInfoUrl)
-
 	if err != nil {
 		return nil, err
 	}

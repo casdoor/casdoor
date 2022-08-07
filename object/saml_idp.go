@@ -35,7 +35,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-//returns a saml2 response
+// returns a saml2 response
 func NewSamlResponse(user *User, host string, certificate string, destination string, iss string, requestId string, redirectUri []string) (*etree.Element, error) {
 	samlResponse := &etree.Element{
 		Space: "samlp",
@@ -100,7 +100,6 @@ func NewSamlResponse(user *User, host string, certificate string, destination st
 	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
 
 	return samlResponse, nil
-
 }
 
 type X509Key struct {
@@ -114,7 +113,7 @@ func (x X509Key) GetKeyPair() (privateKey *rsa.PrivateKey, cert []byte, err erro
 	return privateKey, cert, err
 }
 
-//SAML METADATA
+// SAML METADATA
 type IdpEntityDescriptor struct {
 	XMLName  xml.Name `xml:"EntityDescriptor"`
 	DS       string   `xml:"xmlns:ds,attr"`
@@ -299,7 +298,7 @@ func NewSamlResponse11(user *User, requestID string, host string) *etree.Element
 		Space: "samlp",
 		Tag:   "Response",
 	}
-	//create samlresponse
+	// create samlresponse
 	samlResponse.CreateAttr("xmlns:samlp", "urn:oasis:names:tc:SAML:1.0:protocol")
 	samlResponse.CreateAttr("MajorVersion", "1")
 	samlResponse.CreateAttr("MinorVersion", "1")
@@ -315,7 +314,7 @@ func NewSamlResponse11(user *User, requestID string, host string) *etree.Element
 
 	samlResponse.CreateElement("samlp:Status").CreateElement("samlp:StatusCode").CreateAttr("Value", "samlp:Success")
 
-	//create assertion which is inside the response
+	// create assertion which is inside the response
 	assertion := samlResponse.CreateElement("saml:Assertion")
 	assertion.CreateAttr("xmlns:saml", "urn:oasis:names:tc:SAML:1.0:assertion")
 	assertion.CreateAttr("MajorVersion", "1")
@@ -328,19 +327,19 @@ func NewSamlResponse11(user *User, requestID string, host string) *etree.Element
 	condition.CreateAttr("NotBefore", now)
 	condition.CreateAttr("NotOnOrAfter", expireTime)
 
-	//AuthenticationStatement inside assertion
+	// AuthenticationStatement inside assertion
 	authenticationStatement := assertion.CreateElement("saml:AuthenticationStatement")
 	authenticationStatement.CreateAttr("AuthenticationMethod", "urn:oasis:names:tc:SAML:1.0:am:password")
 	authenticationStatement.CreateAttr("AuthenticationInstant", now)
 
-	//subject inside AuthenticationStatement
+	// subject inside AuthenticationStatement
 	subject := assertion.CreateElement("saml:Subject")
-	//nameIdentifier inside subject
+	// nameIdentifier inside subject
 	nameIdentifier := subject.CreateElement("saml:NameIdentifier")
-	//nameIdentifier.CreateAttr("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress")
+	// nameIdentifier.CreateAttr("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress")
 	nameIdentifier.SetText(user.Name)
 
-	//subjectConfirmation inside subject
+	// subjectConfirmation inside subject
 	subjectConfirmation := subject.CreateElement("saml:SubjectConfirmation")
 	subjectConfirmation.CreateElement("saml:ConfirmationMethod").SetText("urn:oasis:names:tc:SAML:1.0:cm:artifact")
 

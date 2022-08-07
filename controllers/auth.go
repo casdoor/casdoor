@@ -44,7 +44,6 @@ func tokenToResponse(token *object.Token) *Response {
 		return &Response{Status: "error", Msg: "fail to get accessToken", Data: token.AccessToken}
 	}
 	return &Response{Status: "ok", Msg: "", Data: token.AccessToken}
-
 }
 
 // HandleLoggedIn ...
@@ -86,7 +85,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
 		}
-	} else if form.Type == ResponseTypeToken || form.Type == ResponseTypeIdToken { //implicit flow
+	} else if form.Type == ResponseTypeToken || form.Type == ResponseTypeIdToken { // implicit flow
 		if !object.IsGrantTypeValid(form.Type, application.GrantTypes) {
 			resp = &Response{Status: "error", Msg: fmt.Sprintf("error: grant_type: %s is not supported in this application", form.Type), Data: ""}
 		} else {
@@ -94,7 +93,6 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			token, _ := object.GetTokenByUser(application, user, scope, c.Ctx.Request.Host)
 			resp = tokenToResponse(token)
 		}
-
 	} else if form.Type == ResponseTypeSaml { // saml flow
 		res, redirectUrl, err := object.GetSamlResponse(application, user, form.SamlRequest, c.Ctx.Request.Host)
 		if err != nil {
@@ -103,7 +101,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		}
 		resp = &Response{Status: "ok", Msg: "", Data: res, Data2: redirectUrl}
 	} else if form.Type == ResponseTypeCas {
-		//not oauth but CAS SSO protocol
+		// not oauth but CAS SSO protocol
 		service := c.Input().Get("service")
 		resp = wrapErrorResponse(nil)
 		if service != "" {
@@ -430,7 +428,7 @@ func (c *ApiController) Login() {
 			} else if provider.Category == "SAML" {
 				resp = &Response{Status: "error", Msg: "The account does not exist"}
 			}
-			//resp = &Response{Status: "ok", Msg: "", Data: res}
+			// resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"
 			userId := c.GetSessionUsername()
 			if userId == "" {

@@ -56,7 +56,7 @@ type ldapUser struct {
 	Uid       string
 	Cn        string
 	GidNumber string
-	//Gcn                   string
+	// Gcn                   string
 	Uuid                  string
 	Mail                  string
 	Email                 string
@@ -73,7 +73,7 @@ type LdapRespUser struct {
 	Uid       string `json:"uid"`
 	Cn        string `json:"cn"`
 	GroupId   string `json:"groupId"`
-	//GroupName string `json:"groupName"`
+	// GroupName string `json:"groupName"`
 	Uuid    string `json:"uuid"`
 	Email   string `json:"email"`
 	Phone   string `json:"phone"`
@@ -208,11 +208,15 @@ func GetLdapConn(host string, port int, adminUser string, adminPasswd string) (*
 
 func (l *ldapConn) GetLdapUsers(baseDn string) ([]ldapUser, error) {
 	SearchFilter := "(objectClass=posixAccount)"
-	SearchAttributes := []string{"uidNumber", "uid", "cn", "gidNumber", "entryUUID", "mail", "email",
-		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress"}
+	SearchAttributes := []string{
+		"uidNumber", "uid", "cn", "gidNumber", "entryUUID", "mail", "email",
+		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
+	}
 	SearchFilterMsAD := "(objectClass=user)"
-	SearchAttributesMsAD := []string{"uidNumber", "sAMAccountName", "cn", "gidNumber", "entryUUID", "mail", "email",
-		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress"}
+	SearchAttributesMsAD := []string{
+		"uidNumber", "sAMAccountName", "cn", "gidNumber", "entryUUID", "mail", "email",
+		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
+	}
 	var searchReq *goldap.SearchRequest
 	if l.IsAD {
 		searchReq = goldap.NewSearchRequest(baseDn,
@@ -459,7 +463,7 @@ func CheckLdapUuidExist(owner string, uuids []string) []string {
 		}
 	}
 
-	for uuid, _ := range existUuidSet {
+	for uuid := range existUuidSet {
 		existUuids = append(existUuids, uuid)
 	}
 	return existUuids

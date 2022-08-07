@@ -27,8 +27,8 @@ type Model struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
-	ModelText 	string `xorm:"mediumtext" json:"modelText"`
-	IsEnabled 	bool   `json:"isEnabled"`
+	ModelText string `xorm:"mediumtext" json:"modelText"`
+	IsEnabled bool   `json:"isEnabled"`
 }
 
 func GetModelCount(owner, field, value string) int {

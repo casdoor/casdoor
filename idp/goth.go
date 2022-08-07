@@ -207,7 +207,7 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 	return &idp
 }
 
-//Goth's idp all implement the Client method, but since the goth.Provider interface does not provide to modify idp's client method, reflection is required
+// Goth's idp all implement the Client method, but since the goth.Provider interface does not provide to modify idp's client method, reflection is required
 func (idp *GothIdProvider) SetHttpClient(client *http.Client) {
 	idpClient := reflect.ValueOf(idp.Provider).Elem().FieldByName("HTTPClient")
 	idpClient.Set(reflect.ValueOf(client))
@@ -225,8 +225,8 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 			return nil, err
 		}
 	} else {
-		//Need to construct variables supported by goth
-		//to call the function to obtain accessToken
+		// Need to construct variables supported by goth
+		// to call the function to obtain accessToken
 		value = url.Values{}
 		value.Add("code", code)
 	}
@@ -235,7 +235,7 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		return nil, err
 	}
 
-	//Get ExpiresAt's value
+	// Get ExpiresAt's value
 	valueOfExpire := reflect.ValueOf(idp.Session).Elem().FieldByName("ExpiresAt")
 	if valueOfExpire.IsValid() {
 		expireAt = valueOfExpire.Interface().(time.Time)
@@ -264,8 +264,8 @@ func getUser(gothUser goth.User, provider string) *UserInfo {
 		Email:       gothUser.Email,
 		AvatarUrl:   gothUser.AvatarURL,
 	}
-	//Some idp return an empty Name
-	//so construct the Name with firstname and lastname or nickname
+	// Some idp return an empty Name
+	// so construct the Name with firstname and lastname or nickname
 	if user.Username == "" {
 		if gothUser.FirstName != "" && gothUser.LastName != "" {
 			user.Username = getName(gothUser.FirstName, gothUser.LastName)

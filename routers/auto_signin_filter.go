@@ -71,5 +71,4 @@ func AutoSigninFilter(ctx *context.Context) {
 		setSessionUser(ctx, userId)
 		return
 	}
-
 }

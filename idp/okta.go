@@ -48,12 +48,12 @@ func (idp *OktaIdProvider) SetHttpClient(client *http.Client) {
 }
 
 func (idp *OktaIdProvider) getConfig(hostUrl string, clientId string, clientSecret string, redirectUrl string) *oauth2.Config {
-	var endpoint = oauth2.Endpoint{
+	endpoint := oauth2.Endpoint{
 		TokenURL: fmt.Sprintf("%s/v1/token", hostUrl),
 		AuthURL:  fmt.Sprintf("%s/v1/authorize", hostUrl),
 	}
 
-	var config = &oauth2.Config{
+	config := &oauth2.Config{
 		// openid is required for authentication requests
 		// get more details via: https://developer.okta.com/docs/reference/api/oidc/#reserved-scopes
 		Scopes:       []string{"openid", "profile", "email"},

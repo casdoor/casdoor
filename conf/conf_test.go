@@ -32,7 +32,7 @@ func TestGetConfString(t *testing.T) {
 		{"Should be return  value", "key", "value"},
 	}
 
-	//do some set up job
+	// do some set up job
 
 	os.Setenv("appname", "casbin")
 	os.Setenv("key", "value")
@@ -58,7 +58,7 @@ func TestGetConfInt(t *testing.T) {
 		{"Should be return 8000", "verificationCodeTimeout", 10},
 	}
 
-	//do some set up job
+	// do some set up job
 	os.Setenv("httpport", "8001")
 
 	err := beego.LoadAppConfig("ini", "app.conf")
