@@ -67,7 +67,7 @@ class PaymentResultPage extends React.Component {
                 Setting.goToLink(payment.returnUrl);
               }}>
                 {i18next.t("payment:Return to Website")}
-              </Button>
+              </Button>,
             ]}
           />
         </div>
@@ -103,7 +103,7 @@ class PaymentResultPage extends React.Component {
                 Setting.goToLink(payment.returnUrl);
               }}>
                 {i18next.t("payment:Return to Website")}
-              </Button>
+              </Button>,
             ]}
           />
         </div>

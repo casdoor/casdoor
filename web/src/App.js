@@ -238,7 +238,7 @@ class App extends Component {
           const owner = this.state.account.owner;
 
           this.setState({
-            account: null
+            account: null,
           });
 
           Setting.showMessage("success", "Logged out successfully");
@@ -258,7 +258,7 @@ class App extends Component {
 
   onUpdateAccount(account) {
     this.setState({
-      account: account
+      account: account,
     });
   }
 
@@ -566,7 +566,7 @@ class App extends Component {
   renderContent() {
     if (!Setting.isMobile()) {
       return (
-        <div style={{display: "flex", flex: "auto", width:"100%", flexDirection: "column"}}>
+        <div style={{display: "flex", flex: "auto", width: "100%", flexDirection: "column"}}>
           <Layout style={{display: "flex", alignItems: "stretch"}}>
             <Header style={{padding: "0", marginBottom: "3px"}}>
               {

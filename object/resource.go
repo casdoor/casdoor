@@ -110,7 +110,7 @@ func UpdateResource(id string, resource *Resource) bool {
 		panic(err)
 	}
 
-	//return affected != 0
+	// return affected != 0
 	return true
 }
 

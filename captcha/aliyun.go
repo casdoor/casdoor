@@ -31,8 +31,7 @@ import (
 
 const AliyunCaptchaVerifyUrl = "http://afs.aliyuncs.com"
 
-type AliyunCaptchaProvider struct {
-}
+type AliyunCaptchaProvider struct{}
 
 func NewAliyunCaptchaProvider() *AliyunCaptchaProvider {
 	captcha := &AliyunCaptchaProvider{}

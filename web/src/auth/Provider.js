@@ -34,7 +34,7 @@ const authInfo = {
     scope: "snsapi_login",
     endpoint: "https://open.weixin.qq.com/connect/qrconnect",
     mpScope: "snsapi_userinfo",
-    mpEndpoint: "https://open.weixin.qq.com/connect/oauth2/authorize"
+    mpEndpoint: "https://open.weixin.qq.com/connect/oauth2/authorize",
   },
   WeChatMiniProgram: {
     endpoint: "https://mp.weixin.qq.com/",
@@ -119,8 +119,8 @@ const authInfo = {
     endpoint: "https://example.com/",
   },
   Bilibili: {
-    endpoint: "https://passport.bilibili.com/register/pc_oauth2.html"
-  }
+    endpoint: "https://passport.bilibili.com/register/pc_oauth2.html",
+  },
 };
 
 export function getProviderUrl(provider) {

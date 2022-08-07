@@ -31,7 +31,6 @@ func Test_GetCurrentTime(t *testing.T) {
 
 	types := reflect.TypeOf(test).Kind()
 	assert.Equal(t, types, reflect.String, "GetCurrentUnixTime should be return string")
-
 }
 
 func Test_GetCurrentUnixTime_Shoud_Return_String(t *testing.T) {
@@ -41,7 +40,6 @@ func Test_GetCurrentUnixTime_Shoud_Return_String(t *testing.T) {
 }
 
 func Test_IsTokenExpired(t *testing.T) {
-
 	type input struct {
 		createdTime string
 		expiresIn   int

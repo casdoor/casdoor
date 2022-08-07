@@ -93,9 +93,9 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
 	certs := GetCerts("admin")
 	jwks := jose.JSONWebKeySet{}
-	//follows the protocol rfc 7517(draft)
-	//link here: https://self-issued.info/docs/draft-ietf-jose-json-web-key.html
-	//or https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key
+	// follows the protocol rfc 7517(draft)
+	// link here: https://self-issued.info/docs/draft-ietf-jose-json-web-key.html
+	// or https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key
 	for _, cert := range certs {
 		certPemBlock := []byte(cert.Certificate)
 		certDerBlock, _ := pem.Decode(certPemBlock)

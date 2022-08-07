@@ -23,7 +23,7 @@ class LdapListPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      ldaps: null
+      ldaps: null,
     };
   }
 
@@ -65,7 +65,7 @@ class LdapListPage extends React.Component {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Organization"),
@@ -79,7 +79,7 @@ class LdapListPage extends React.Component {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("ldap:Server"),
@@ -89,7 +89,7 @@ class LdapListPage extends React.Component {
         sorter: (a, b) => a.host.localeCompare(b.host),
         render: (text, record, index) => {
           return `${text}:${record.port}`;
-        }
+        },
       },
       {
         title: i18next.t("ldap:Base DN"),
@@ -114,7 +114,7 @@ class LdapListPage extends React.Component {
         render: (text, record, index) => {
           return text === 0 ? (<span style={{color: "#faad14"}}>Disable</span>) : (
             <span style={{color: "#52c41a"}}>{text + " mins"}</span>);
-        }
+        },
       },
       {
         title: i18next.t("ldap:Last Sync"),
@@ -124,7 +124,7 @@ class LdapListPage extends React.Component {
         sorter: (a, b) => a.lastSync.localeCompare(b.lastSync),
         render: (text, record, index) => {
           return text;
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -148,7 +148,7 @@ class LdapListPage extends React.Component {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

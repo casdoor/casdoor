@@ -30,7 +30,7 @@ type LdapServer struct {
 }
 
 type LdapResp struct {
-	//Groups []LdapRespGroup `json:"groups"`
+	// Groups []LdapRespGroup `json:"groups"`
 	Users []object.LdapRespUser `json:"users"`
 }
 
@@ -88,7 +88,7 @@ func (c *ApiController) GetLdapUser() {
 			Uid:       user.Uid,
 			Cn:        user.Cn,
 			GroupId:   user.GidNumber,
-			//GroupName: groupsMap[user.GidNumber].Cn,
+			// GroupName: groupsMap[user.GidNumber].Cn,
 			Uuid:    user.Uuid,
 			Email:   util.GetMaxLenStr(user.Mail, user.Email, user.EmailAddress),
 			Phone:   util.GetMaxLenStr(user.TelephoneNumber, user.Mobile, user.MobileTelephoneNumber),

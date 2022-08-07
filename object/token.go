@@ -220,7 +220,7 @@ func DeleteTokenByAceessToken(accessToken string) (bool, *Application) {
 }
 
 func GetTokenByAccessToken(accessToken string) *Token {
-	//Check if the accessToken is in the database
+	// Check if the accessToken is in the database
 	token := Token{AccessToken: accessToken}
 	existed, err := adapter.Engine.Get(&token)
 	if err != nil || !existed {
@@ -330,7 +330,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		}
 	}
 
-	//Check if grantType is allowed in the current application
+	// Check if grantType is allowed in the current application
 
 	if !IsGrantTypeValid(grantType, application.GrantTypes) && tag == "" {
 		return &TokenError{
@@ -688,7 +688,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 				ErrorDescription: "the application does not allow to sign up new account",
 			}
 		}
-		//Add new user
+		// Add new user
 		var name string
 		if username != "" {
 			name = username
@@ -729,7 +729,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		Application:  application.Name,
 		Organization: user.Owner,
 		User:         user.Name,
-		Code:         session.SessionKey, //a trick, because miniprogram does not use the code, so use the code field to save the session_key
+		Code:         session.SessionKey, // a trick, because miniprogram does not use the code, so use the code field to save the session_key
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		ExpiresIn:    application.ExpireInHours * 60,

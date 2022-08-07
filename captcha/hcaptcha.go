@@ -25,8 +25,7 @@ import (
 
 const HCaptchaVerifyUrl = "https://hcaptcha.com/siteverify"
 
-type HCaptchaProvider struct {
-}
+type HCaptchaProvider struct{}
 
 func NewHCaptchaProvider() *HCaptchaProvider {
 	captcha := &HCaptchaProvider{}

@@ -15,7 +15,6 @@
 import React from "react";
 import {Button, Card, Col, Input, Result, Row, Select, Spin, Switch} from "antd";
 import * as UserBackend from "./backend/UserBackend";
-import * as UserWebauthnBackend from "./backend/UserWebauthnBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import {LinkOutlined} from "@ant-design/icons";
@@ -567,7 +566,7 @@ class UserEditPage extends React.Component {
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
-      } style={(Setting.isMobile())? {margin: "5px"}:{}} type="inner">
+      } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
         {
           this.state.application?.organizationObj.accountItems?.map(accountItem => {
             return (

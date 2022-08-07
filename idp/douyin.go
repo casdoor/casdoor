@@ -42,12 +42,12 @@ func (idp *DouyinIdProvider) SetHttpClient(client *http.Client) {
 }
 
 func (idp *DouyinIdProvider) getConfig(clientId string, clientSecret string, redirectUrl string) *oauth2.Config {
-	var endpoint = oauth2.Endpoint{
+	endpoint := oauth2.Endpoint{
 		TokenURL: "https://open.douyin.com/oauth/access_token",
 		AuthURL:  "https://open.douyin.com/platform/oauth/connect",
 	}
 
-	var config = &oauth2.Config{
+	config := &oauth2.Config{
 		Scopes:       []string{"user_info"},
 		Endpoint:     endpoint,
 		ClientID:     clientId,

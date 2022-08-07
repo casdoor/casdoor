@@ -47,11 +47,11 @@ func (idp *WeChatIdProvider) SetHttpClient(client *http.Client) {
 
 // getConfig return a point of Config, which describes a typical 3-legged OAuth2 flow
 func (idp *WeChatIdProvider) getConfig(clientId string, clientSecret string, redirectUrl string) *oauth2.Config {
-	var endpoint = oauth2.Endpoint{
+	endpoint := oauth2.Endpoint{
 		TokenURL: "https://graph.qq.com/oauth2.0/token",
 	}
 
-	var config = &oauth2.Config{
+	config := &oauth2.Config{
 		Scopes:       []string{"snsapi_login"},
 		Endpoint:     endpoint,
 		ClientID:     clientId,
@@ -63,12 +63,12 @@ func (idp *WeChatIdProvider) getConfig(clientId string, clientSecret string, red
 }
 
 type WechatAccessToken struct {
-	AccessToken  string `json:"access_token"`  //Interface call credentials
-	ExpiresIn    int64  `json:"expires_in"`    //access_token interface call credential timeout time, unit (seconds)
-	RefreshToken string `json:"refresh_token"` //User refresh access_token
-	Openid       string `json:"openid"`        //Unique ID of authorized user
-	Scope        string `json:"scope"`         //The scope of user authorization, separated by commas. (,)
-	Unionid      string `json:"unionid"`       //This field will appear if and only if the website application has been authorized by the user's UserInfo.
+	AccessToken  string `json:"access_token"`  // Interface call credentials
+	ExpiresIn    int64  `json:"expires_in"`    // access_token interface call credential timeout time, unit (seconds)
+	RefreshToken string `json:"refresh_token"` // User refresh access_token
+	Openid       string `json:"openid"`        // Unique ID of authorized user
+	Scope        string `json:"scope"`         // The scope of user authorization, separated by commas. (,)
+	Unionid      string `json:"unionid"`       // This field will appear if and only if the website application has been authorized by the user's UserInfo.
 }
 
 // GetToken use code get access_token (*operation of getting code ought to be done in front)

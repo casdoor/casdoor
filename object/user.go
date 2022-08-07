@@ -417,6 +417,10 @@ func AddUser(user *User) bool {
 	}
 
 	organization := GetOrganizationByUser(user)
+	if organization == nil {
+		return false
+	}
+
 	user.UpdateUserPassword(organization)
 
 	user.UpdateUserHash()

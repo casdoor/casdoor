@@ -351,8 +351,8 @@ class SignupPage extends React.Component {
 
                   this.setState({validEmail: true});
                   return Promise.resolve();
-                }
-              }
+                },
+              },
             ]}
           >
             <Input onChange={e => this.setState({email: e.target.value})} />
@@ -397,8 +397,8 @@ class SignupPage extends React.Component {
 
                   this.setState({validPhone: true});
                   return Promise.resolve();
-                }
-              }
+                },
+              },
             ]}
           >
             <Input
@@ -541,7 +541,7 @@ class SignupPage extends React.Component {
               Setting.goToLogin(this, application);
             }}>
               Sign In
-            </Button>
+            </Button>,
           ]}
         >
         </Result>
@@ -627,7 +627,7 @@ class SignupPage extends React.Component {
       <div style={{backgroundColor:"#f0f0f0"}}>
         <CustomGithubCorner />
         <Row>
-          <Col span={24} style={{display: "flex", justifyContent:  "center"}} >
+          <Col span={24} style={{display: "flex", justifyContent: "center"}} >
             <div style={{...FormStyle}}>
               {
                 Setting.renderHelmet(application)

@@ -182,7 +182,7 @@ func CheckUserPassword(organization string, username string, password string) (*
 	}
 
 	if user.Ldap != "" {
-		//ONLY for ldap users
+		// ONLY for ldap users
 		return checkLdapUserPassword(user, password)
 	} else {
 		msg := CheckPassword(user, password)

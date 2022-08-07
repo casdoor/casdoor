@@ -68,7 +68,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 
 	Enforcer.ClearPolicy()
 
-	//if len(Enforcer.GetPolicy()) == 0 {
+	// if len(Enforcer.GetPolicy()) == 0 {
 	if true {
 		ruleText := `
 p, built-in, *, *, *, *, *

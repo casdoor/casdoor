@@ -32,7 +32,7 @@ class RecordListPage extends BaseListPage {
     return {
       owner: "built-in",
       name: "1234",
-      id : "1234",
+      id: "1234",
       clientIp: "::1",
       timestamp: moment().format(),
       organization: "built-in",
@@ -74,7 +74,7 @@ class RecordListPage extends BaseListPage {
               {text}
             </a>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Timestamp"),
@@ -84,7 +84,7 @@ class RecordListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Organization"),
@@ -99,7 +99,7 @@ class RecordListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:User"),
@@ -114,7 +114,7 @@ class RecordListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Method"),
@@ -153,7 +153,7 @@ class RecordListPage extends BaseListPage {
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return text;
-        }
+        },
       },
       {
         title: i18next.t("record:Is Triggered"),
@@ -170,7 +170,7 @@ class RecordListPage extends BaseListPage {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
-        }
+        },
       },
     ];
 

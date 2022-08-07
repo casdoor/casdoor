@@ -48,12 +48,12 @@ func (idp *DingTalkIdProvider) SetHttpClient(client *http.Client) {
 
 // getConfig return a point of Config, which describes a typical 3-legged OAuth2 flow
 func (idp *DingTalkIdProvider) getConfig(clientId string, clientSecret string, redirectUrl string) *oauth2.Config {
-	var endpoint = oauth2.Endpoint{
+	endpoint := oauth2.Endpoint{
 		AuthURL:  "https://api.dingtalk.com/v1.0/contact/users/me",
 		TokenURL: "https://api.dingtalk.com/v1.0/oauth2/userAccessToken",
 	}
 
-	var config = &oauth2.Config{
+	config := &oauth2.Config{
 		// DingTalk not allow to set scopes,here it is just a placeholder,
 		// convenient to use later
 		Scopes: []string{"", ""},

@@ -46,11 +46,11 @@ func (idp *FacebookIdProvider) SetHttpClient(client *http.Client) {
 
 // getConfig return a point of Config, which describes a typical 3-legged OAuth2 flow
 func (idp *FacebookIdProvider) getConfig(clientId string, clientSecret string, redirectUrl string) *oauth2.Config {
-	var endpoint = oauth2.Endpoint{
+	endpoint := oauth2.Endpoint{
 		TokenURL: "https://graph.facebook.com/oauth/access_token",
 	}
 
-	var config = &oauth2.Config{
+	config := &oauth2.Config{
 		Scopes:       []string{"email,public_profile"},
 		Endpoint:     endpoint,
 		ClientID:     clientId,
@@ -62,9 +62,9 @@ func (idp *FacebookIdProvider) getConfig(clientId string, clientSecret string, r
 }
 
 type FacebookAccessToken struct {
-	AccessToken string `json:"access_token"` //Interface call credentials
-	TokenType   string `json:"token_type"`   //Access token type
-	ExpiresIn   int64  `json:"expires_in"`   //access_token interface call credential timeout time, unit (seconds)
+	AccessToken string `json:"access_token"` // Interface call credentials
+	TokenType   string `json:"token_type"`   // Access token type
+	ExpiresIn   int64  `json:"expires_in"`   // access_token interface call credential timeout time, unit (seconds)
 }
 
 type FacebookCheckToken struct {

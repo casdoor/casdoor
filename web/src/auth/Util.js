@@ -76,7 +76,7 @@ export function renderMessageLarge(ths, msg) {
 }
 
 function getRefinedValue(value) {
-  return (value === null)? "" : value;
+  return (value === null) ? "" : value;
 }
 
 export function getCasParameters(params) {

@@ -25,8 +25,7 @@ import (
 
 const ReCaptchaVerifyUrl = "https://recaptcha.net/recaptcha/api/siteverify"
 
-type ReCaptchaProvider struct {
-}
+type ReCaptchaProvider struct{}
 
 func NewReCaptchaProvider() *ReCaptchaProvider {
 	captcha := &ReCaptchaProvider{}

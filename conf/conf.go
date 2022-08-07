@@ -48,8 +48,8 @@ func GetConfigInt64(key string) (int64, error) {
 }
 
 func init() {
-	//this array contains the beego configuration items that may be modified via env
-	var presetConfigItems = []string{"httpport", "appname"}
+	// this array contains the beego configuration items that may be modified via env
+	presetConfigItems := []string{"httpport", "appname"}
 	for _, key := range presetConfigItems {
 		if value, ok := os.LookupEnv(key); ok {
 			beego.AppConfig.Set(key, value)

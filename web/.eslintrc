@@ -17,11 +17,12 @@
       "version": "detect"
     }
   },
+  "plugins": ["unused-imports"],
   "extends": ["eslint:recommended", "plugin:react/recommended"],
   "rules": {
     // "eqeqeq": "error",
     "semi": ["error", "always"],
-    // "indent": ["error", 2],
+    "indent": ["error", 2],
     // follow antd's style guide
     "quotes": ["error", "double"],
     "jsx-quotes": ["error", "prefer-double"],
@@ -45,17 +46,48 @@
     "curly": ["error", "all"],
     "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
     "no-mixed-spaces-and-tabs": "error",
-    "sort-imports": ["error", {
-      "ignoreDeclarationSort": true
-    }],
-
+    "sort-imports": [
+      "error",
+      {
+        "ignoreDeclarationSort": true
+      }
+    ],
+    "no-multiple-empty-lines": [
+      "error",
+      { "max": 1, "maxBOF": 0, "maxEOF": 0 }
+    ],
+    "space-unary-ops": ["error", { "words": true, "nonwords": false }],
+    "space-infix-ops": "error",
+    "key-spacing": ["error", { "beforeColon": false, "afterColon": true }],
+    "comma-style": ["error", "last"],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline",
+        "imports": "never",
+        "exports": "never",
+        "functions": "never"
+      }
+    ],
+    "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "none",
+        "argsIgnorePattern": "^_"
+      }
+    ],
 
     "react/prop-types": "off",
     "react/display-name": "off",
     "react/react-in-jsx-scope": "off",
 
     // don't use strict mod now, otherwise there are a lot of errors in the codebase
-    "no-unused-vars": "warn",
+    "no-unused-vars": "off",
     "react/no-deprecated": "warn",
     "no-case-declarations": "warn",
     "react/jsx-key": "warn"

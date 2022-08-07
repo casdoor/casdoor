@@ -59,12 +59,12 @@ func (idp *AdfsIdProvider) SetHttpClient(client *http.Client) {
 }
 
 func (idp *AdfsIdProvider) getConfig(hostUrl string) *oauth2.Config {
-	var endpoint = oauth2.Endpoint{
+	endpoint := oauth2.Endpoint{
 		AuthURL:  fmt.Sprintf("%s/adfs/oauth2/authorize", hostUrl),
 		TokenURL: fmt.Sprintf("%s/adfs/oauth2/token", hostUrl),
 	}
 
-	var config = &oauth2.Config{
+	config := &oauth2.Config{
 		Endpoint: endpoint,
 	}
 

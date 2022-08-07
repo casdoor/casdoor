@@ -37,7 +37,7 @@ class LoginPage extends React.Component {
       classes: props,
       type: props.type,
       applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
-      owner : props.owner !== undefined ? props.owner : (props.match === undefined ? null : props.match.params.owner),
+      owner: props.owner !== undefined ? props.owner : (props.match === undefined ? null : props.match.params.owner),
       application: null,
       mode: props.mode !== undefined ? props.mode : (props.match === undefined ? null : props.match.params.mode), // "signup" or "signin"
       isCodeSignin: false,
@@ -46,7 +46,7 @@ class LoginPage extends React.Component {
       validEmailOrPhone: false,
       validEmail: false,
       validPhone: false,
-      loginMethod: "password"
+      loginMethod: "password",
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -291,7 +291,7 @@ class LoginPage extends React.Component {
               <Button type="primary" key="signin">
                 Sign In
               </Button>
-            </Link>
+            </Link>,
           ]}
         >
         </Result>
@@ -339,7 +339,7 @@ class LoginPage extends React.Component {
             rules={[
               {
                 required: true,
-                message: i18next.t("login:Please input your username, Email or phone!")
+                message: i18next.t("login:Please input your username, Email or phone!"),
               },
               {
                 validator: (_, value) => {
@@ -359,8 +359,8 @@ class LoginPage extends React.Component {
 
                   this.setState({validEmailOrPhone: true});
                   return Promise.resolve();
-                }
-              }
+                },
+              },
             ]}
           >
             <Input
@@ -403,14 +403,14 @@ class LoginPage extends React.Component {
                   </Button>
                 ) :
                 (
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{width: "100%", marginBottom: "5px"}}
-                  disabled={!application.enablePassword}
-                >
-                  {i18next.t("login:Sign in with WebAuthn")}
-                </Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{width: "100%", marginBottom: "5px"}}
+                    disabled={!application.enablePassword}
+                  >
+                    {i18next.t("login:Sign in with WebAuthn")}
+                  </Button>
                 )
             }
             {
@@ -557,7 +557,7 @@ class LoginPage extends React.Component {
     let application = this.getApplicationObj();
     return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}&name=${username}`, {
       method: "GET",
-      credentials: "include"
+      credentials: "include",
     })
       .then(res => res.json())
       .then((credentialRequestOptions) => {
@@ -572,7 +572,7 @@ class LoginPage extends React.Component {
         });
 
         return navigator.credentials.get({
-          publicKey: credentialRequestOptions.publicKey
+          publicKey: credentialRequestOptions.publicKey,
         });
       })
       .then((assertion) => {
@@ -594,7 +594,7 @@ class LoginPage extends React.Component {
               signature: UserWebauthnBackend.webAuthnBufferEncode(sig),
               userHandle: UserWebauthnBackend.webAuthnBufferEncode(userHandle),
             },
-          })
+          }),
         })
           .then(res => res.json()).then((res) => {
             if (res.msg === "") {

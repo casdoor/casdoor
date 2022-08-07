@@ -75,35 +75,35 @@ export const OtherProviderInfo = {
     },
     "Azure Blob": {
       logo: `${StaticBaseUrl}/img/social_azure.jpg`,
-      url: "https://azure.microsoft.com/en-us/services/storage/blobs/"
-    }
+      url: "https://azure.microsoft.com/en-us/services/storage/blobs/",
+    },
   },
   SAML: {
     "Aliyun IDaaS": {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
-      url: "https://aliyun.com/product/idaas"
+      url: "https://aliyun.com/product/idaas",
     },
     "Keycloak": {
       logo: `${StaticBaseUrl}/img/social_keycloak.png`,
-      url: "https://www.keycloak.org/"
+      url: "https://www.keycloak.org/",
     },
   },
   Payment: {
     "Alipay": {
       logo: `${StaticBaseUrl}/img/payment_alipay.png`,
-      url: "https://www.alipay.com/"
+      url: "https://www.alipay.com/",
     },
     "WeChat Pay": {
       logo: `${StaticBaseUrl}/img/payment_wechat_pay.png`,
-      url: "https://pay.weixin.qq.com/"
+      url: "https://pay.weixin.qq.com/",
     },
     "PayPal": {
       logo: `${StaticBaseUrl}/img/payment_paypal.png`,
-      url: "https://www.paypal.com/"
+      url: "https://www.paypal.com/",
     },
     "GC": {
       logo: `${StaticBaseUrl}/img/payment_gc.png`,
-      url: "https://gc.org"
+      url: "https://gc.org",
     },
   },
   Captcha: {
@@ -126,8 +126,8 @@ export const OtherProviderInfo = {
     "GEETEST": {
       logo: `${StaticBaseUrl}/img/social_geetest.png`,
       url: "https://www.geetest.com",
-    }
-  }
+    },
+  },
 };
 
 export function getCountryRegionData() {
@@ -140,7 +140,7 @@ export function getCountryRegionData() {
   countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
   var data = countries.getNames(language, {select: "official"});
   var result = [];
-  for (var i in data) {result.push({code:i, name:data[i]});}
+  for (var i in data) {result.push({code: i, name: data[i]});}
   return result;
 }
 
@@ -305,7 +305,7 @@ export function isPromptAnswered(user, application) {
   }
 
   const providerItems = getAllPromptedProviderItems(application);
-  for (let i = 0; i < providerItems.length; i ++) {
+  for (let i = 0; i < providerItems.length; i++) {
     if (!isProviderItemAnswered(user, application, providerItems[i])) {
       return false;
     }
@@ -432,7 +432,7 @@ export function getShortName(s) {
   return s.split("/").slice(-1)[0];
 }
 
-export function getShortText(s, maxLength=35) {
+export function getShortText(s, maxLength = 35) {
   if (s.length > maxLength) {
     return `${s.slice(0, maxLength)}...`;
   } else {
@@ -449,13 +449,13 @@ export function getFriendlyFileSize(size) {
   let num = (size / Math.pow(1024, i));
   let round = Math.round(num);
   num = round < 10 ? num.toFixed(2) : round < 100 ? num.toFixed(1) : round;
-  return `${num} ${"KMGTPEZY"[i-1]}B`;
+  return `${num} ${"KMGTPEZY"[i - 1]}B`;
 }
 
 function getRandomInt(s) {
   let hash = 0;
   if (s.length !== 0) {
-    for (let i = 0; i < s.length; i ++) {
+    for (let i = 0; i < s.length; i++) {
       let char = s.charCodeAt(i);
       hash = ((hash << 5) - hash) + char;
       hash = hash & hash;
@@ -598,7 +598,7 @@ export function getProviderTypeOptions(category) {
         {id: "AWS S3", name: "AWS S3"},
         {id: "Aliyun OSS", name: "Aliyun OSS"},
         {id: "Tencent Cloud COS", name: "Tencent Cloud COS"},
-        {id: "Azure Blob", name: "Azure Blob"}
+        {id: "Azure Blob", name: "Azure Blob"},
       ]
     );
   } else if (category === "SAML") {
@@ -723,7 +723,7 @@ export function goToForget(ths, application) {
 }
 
 export function renderHelmet(application) {
-  if (application === undefined || application === null || application.organizationObj === undefined || application.organizationObj === null ||application.organizationObj === "") {
+  if (application === undefined || application === null || application.organizationObj === undefined || application.organizationObj === null || application.organizationObj === "") {
     return null;
   }
 
@@ -791,7 +791,7 @@ export function getDeduplicatedArray(array, filterArray, key) {
 export function getNewRowNameForTable(table, rowName) {
   const emptyCount = table.filter(row => row.name.includes(rowName)).length;
   let res = rowName;
-  for (let i = 0; i < emptyCount; i ++) {
+  for (let i = 0; i < emptyCount; i++) {
     res = res + " ";
   }
   return res;
@@ -852,86 +852,86 @@ export function getSyncerTableColumns(syncer) {
   case "Keycloak":
     return [
       {
-        "name":"ID",
-        "type":"string",
-        "casdoorName":"Id",
-        "isHashed":true,
-        "values":[
+        "name": "ID",
+        "type": "string",
+        "casdoorName": "Id",
+        "isHashed": true,
+        "values": [
 
-        ]
+        ],
       },
       {
-        "name":"USERNAME",
-        "type":"string",
-        "casdoorName":"Name",
-        "isHashed":true,
-        "values":[
+        "name": "USERNAME",
+        "type": "string",
+        "casdoorName": "Name",
+        "isHashed": true,
+        "values": [
 
-        ]
+        ],
       },
       {
-        "name":"LAST_NAME+FIRST_NAME",
-        "type":"string",
-        "casdoorName":"DisplayName",
-        "isHashed":true,
-        "values":[
+        "name": "LAST_NAME+FIRST_NAME",
+        "type": "string",
+        "casdoorName": "DisplayName",
+        "isHashed": true,
+        "values": [
 
-        ]
+        ],
       },
       {
-        "name":"EMAIL",
-        "type":"string",
-        "casdoorName":"Email",
-        "isHashed":true,
-        "values":[
+        "name": "EMAIL",
+        "type": "string",
+        "casdoorName": "Email",
+        "isHashed": true,
+        "values": [
 
-        ]
+        ],
       },
       {
-        "name":"EMAIL_VERIFIED",
-        "type":"boolean",
-        "casdoorName":"EmailVerified",
-        "isHashed":true,
-        "values":[
+        "name": "EMAIL_VERIFIED",
+        "type": "boolean",
+        "casdoorName": "EmailVerified",
+        "isHashed": true,
+        "values": [
 
-        ]
+        ],
       },
       {
-        "name":"FIRST_NAME",
-        "type":"string",
-        "casdoorName":"FirstName",
-        "isHashed":true,
-        "values":[
+        "name": "FIRST_NAME",
+        "type": "string",
+        "casdoorName": "FirstName",
+        "isHashed": true,
+        "values": [
 
-        ]
+        ],
       },
       {
-        "name":"LAST_NAME",
-        "type":"string",
-        "casdoorName":"LastName",
-        "isHashed":true,
-        "values":[
+        "name": "LAST_NAME",
+        "type": "string",
+        "casdoorName": "LastName",
+        "isHashed": true,
+        "values": [
 
-        ]
+        ],
       },
       {
-        "name":"CREATED_TIMESTAMP",
-        "type":"string",
-        "casdoorName":"CreatedTime",
-        "isHashed":true,
-        "values":[
+        "name": "CREATED_TIMESTAMP",
+        "type": "string",
+        "casdoorName": "CreatedTime",
+        "isHashed": true,
+        "values": [
 
-        ]
+        ],
       },
       {
-        "name":"ENABLED",
-        "type":"boolean",
-        "casdoorName":"IsForbidden",
-        "isHashed":true,
-        "values":[
+        "name": "ENABLED",
+        "type": "boolean",
+        "casdoorName": "IsForbidden",
+        "isHashed": true,
+        "values": [
 
-        ]
-      }
+        ],
+      },
     ];
   default:
     return [];

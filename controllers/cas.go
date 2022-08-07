@@ -44,14 +44,13 @@ func (c *RootController) CasValidate() {
 		return
 	}
 	if ok, response, issuedService, _ := object.GetCasTokenByTicket(ticket); ok {
-		//check whether service is the one for which we previously issued token
+		// check whether service is the one for which we previously issued token
 		if issuedService == service {
 			c.Ctx.Output.Body([]byte(fmt.Sprintf("yes\n%s\n", response.User)))
 			return
 		}
-
 	}
-	//token not found
+	// token not found
 	c.Ctx.Output.Body([]byte("no\n"))
 }
 
@@ -83,39 +82,39 @@ func (c *RootController) CasP3ServiceAndProxyValidate() {
 		Xmlns: "http://www.yale.edu/tp/cas",
 	}
 
-	//check whether all required parameters are met
+	// check whether all required parameters are met
 	if service == "" || ticket == "" {
 		c.sendCasAuthenticationResponseErr(InvalidRequest, "service and ticket must exist", format)
 		return
 	}
 	ok, response, issuedService, userId := object.GetCasTokenByTicket(ticket)
-	//find the token
+	// find the token
 	if ok {
-		//check whether service is the one for which we previously issued token
+		// check whether service is the one for which we previously issued token
 		if strings.HasPrefix(service, issuedService) {
 			serviceResponse.Success = response
 		} else {
-			//service not match
+			// service not match
 			c.sendCasAuthenticationResponseErr(InvalidService, fmt.Sprintf("service %s and %s does not match", service, issuedService), format)
 			return
 		}
 	} else {
-		//token not found
+		// token not found
 		c.sendCasAuthenticationResponseErr(InvalidTicket, fmt.Sprintf("Ticket %s not recognized", ticket), format)
 		return
 	}
 
 	if pgtUrl != "" && serviceResponse.Failure == nil {
-		//that means we are in proxy web flow
+		// that means we are in proxy web flow
 		pgt := object.StoreCasTokenForPgt(serviceResponse.Success, service, userId)
 		pgtiou := serviceResponse.Success.ProxyGrantingTicket
-		//todo: check whether it is https
+		// todo: check whether it is https
 		pgtUrlObj, err := url.Parse(pgtUrl)
 		if pgtUrlObj.Scheme != "https" {
 			c.sendCasAuthenticationResponseErr(InvalidProxyCallback, "callback is not https", format)
 			return
 		}
-		//make a request to pgturl passing pgt and pgtiou
+		// make a request to pgturl passing pgt and pgtiou
 		if err != nil {
 			c.sendCasAuthenticationResponseErr(InteralError, err.Error(), format)
 			return
@@ -133,7 +132,7 @@ func (c *RootController) CasP3ServiceAndProxyValidate() {
 
 		resp, err := http.DefaultClient.Do(request)
 		if err != nil || !(resp.StatusCode >= 200 && resp.StatusCode < 400) {
-			//failed to send request
+			// failed to send request
 			c.sendCasAuthenticationResponseErr(InvalidProxyCallback, err.Error(), format)
 			return
 		}
@@ -184,7 +183,6 @@ func (c *RootController) CasProxy() {
 		c.Data["xml"] = serviceResponse
 		c.ServeXML()
 	}
-
 }
 
 func (c *RootController) SamlValidate() {

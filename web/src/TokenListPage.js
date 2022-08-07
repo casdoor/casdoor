@@ -81,7 +81,7 @@ class TokenListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -91,7 +91,7 @@ class TokenListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
-        }
+        },
       },
       {
         title: i18next.t("general:Application"),
@@ -106,7 +106,7 @@ class TokenListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Organization"),
@@ -121,7 +121,7 @@ class TokenListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("general:User"),
@@ -136,7 +136,7 @@ class TokenListPage extends BaseListPage {
               {text}
             </Link>
           );
-        }
+        },
       },
       {
         title: i18next.t("token:Authorization code"),
@@ -147,7 +147,7 @@ class TokenListPage extends BaseListPage {
         ...this.getColumnSearchProps("code"),
         render: (text, record, index) => {
           return Setting.getClickable(text);
-        }
+        },
       },
       {
         title: i18next.t("token:Access token"),
@@ -159,7 +159,7 @@ class TokenListPage extends BaseListPage {
         ...this.getColumnSearchProps("accessToken"),
         render: (text, record, index) => {
           return Setting.getClickable(text);
-        }
+        },
       },
       {
         title: i18next.t("token:Expires in"),
@@ -202,7 +202,7 @@ class TokenListPage extends BaseListPage {
               </Popconfirm>
             </div>
           );
-        }
+        },
       },
     ];
 

@@ -73,7 +73,7 @@ class SyncerTableColumnTable extends React.Component {
               this.updateField(table, index, "name", e.target.value);
             }} />
           );
-        }
+        },
       },
       {
         title: i18next.t("syncer:Column type"),
@@ -88,7 +88,7 @@ class SyncerTableColumnTable extends React.Component {
               }
             </Select>
           );
-        }
+        },
       },
       {
         title: i18next.t("syncer:Casdoor column"),
@@ -105,7 +105,7 @@ class SyncerTableColumnTable extends React.Component {
               }
             </Select>
           );
-        }
+        },
       },
       {
         title: i18next.t("syncer:Is hashed"),
@@ -117,7 +117,7 @@ class SyncerTableColumnTable extends React.Component {
               this.updateField(table, index, "isHashed", checked);
             }} />
           );
-        }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -137,7 +137,7 @@ class SyncerTableColumnTable extends React.Component {
               </Tooltip>
             </div>
           );
-        }
+        },
       },
     ];
 

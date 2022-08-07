@@ -19,8 +19,10 @@ import (
 	"regexp"
 )
 
-var rePhoneCn *regexp.Regexp
-var rePhone *regexp.Regexp
+var (
+	rePhoneCn *regexp.Regexp
+	rePhone   *regexp.Regexp
+)
 
 func init() {
 	// https://learnku.com/articles/31543

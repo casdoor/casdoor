@@ -96,7 +96,7 @@ class ForgetPage extends React.Component {
       AuthBackend.getEmailAndPhone({
         application: forms.step1.getFieldValue("application"),
         organization: forms.step1.getFieldValue("organization"),
-        username: username
+        username: username,
       }).then((res) => {
         if (res.status === "ok") {
           const phone = res.data.phone;
@@ -147,7 +147,7 @@ class ForgetPage extends React.Component {
         name: this.state.name,
         code: forms.step2.getFieldValue("emailCode"),
         phonePrefix: this.state.application?.organizationObj.phonePrefix,
-        type: "login"
+        type: "login",
       }, oAuthParams).then(res => {
         if (res.status === "ok") {
           this.setState({current: 2, userId: res.data, username: res.data.split("/")[1]});
@@ -468,7 +468,7 @@ class ForgetPage extends React.Component {
           </Form.Item>
           <br />
           <Form.Item hidden={this.state.current !== 2}>
-            <Button block type="primary"  htmlType="submit" disabled={this.state.userId === ""}>
+            <Button block type="primary" htmlType="submit" disabled={this.state.userId === ""}>
               {i18next.t("forget:Change Password")}
             </Button>
           </Form.Item>
