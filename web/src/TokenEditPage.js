@@ -52,7 +52,7 @@ class TokenEditPage extends React.Component {
   updateTokenField(key, value) {
     value = this.parseTokenField(key, value);
 
-    let token = this.state.token;
+    const token = this.state.token;
     token[key] = value;
     this.setState({
       token: token,
@@ -164,7 +164,7 @@ class TokenEditPage extends React.Component {
   }
 
   submitTokenEdit(willExist) {
-    let token = Setting.deepCopy(this.state.token);
+    const token = Setting.deepCopy(this.state.token);
     TokenBackend.updateToken(this.state.token.owner, this.state.tokenName, token)
       .then((res) => {
         if (res.msg === "") {

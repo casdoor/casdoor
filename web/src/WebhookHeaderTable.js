@@ -36,7 +36,7 @@ class WebhookHeaderTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: `header-${table.length}`, value: `value-${table.length}`};
+    const row = {name: `header-${table.length}`, value: `value-${table.length}`};
     if (table === undefined) {
       table = [];
     }

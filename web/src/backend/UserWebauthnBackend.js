@@ -24,7 +24,7 @@ export function registerWebauthnCredential() {
       credentialCreationOptions.publicKey.challenge = webAuthnBufferDecode(credentialCreationOptions.publicKey.challenge);
       credentialCreationOptions.publicKey.user.id = webAuthnBufferDecode(credentialCreationOptions.publicKey.user.id);
       if (credentialCreationOptions.publicKey.excludeCredentials) {
-        for (var i = 0; i < credentialCreationOptions.publicKey.excludeCredentials.length; i++) {
+        for (let i = 0; i < credentialCreationOptions.publicKey.excludeCredentials.length; i++) {
           credentialCreationOptions.publicKey.excludeCredentials[i].id = webAuthnBufferDecode(credentialCreationOptions.publicKey.excludeCredentials[i].id);
         }
       }
@@ -33,9 +33,9 @@ export function registerWebauthnCredential() {
       });
     })
     .then((credential) => {
-      let attestationObject = credential.response.attestationObject;
-      let clientDataJSON = credential.response.clientDataJSON;
-      let rawId = credential.rawId;
+      const attestationObject = credential.response.attestationObject;
+      const clientDataJSON = credential.response.clientDataJSON;
+      const rawId = credential.rawId;
       return fetch(`${Setting.ServerUrl}/api/webauthn/signup/finish`, {
         method: "POST",
         credentials: "include",
@@ -54,7 +54,7 @@ export function registerWebauthnCredential() {
 }
 
 export function deleteUserWebAuthnCredential(credentialID) {
-  let form = new FormData();
+  const form = new FormData();
   form.append("credentialID", credentialID);
 
   return fetch(`${Setting.ServerUrl}/api/webauthn/delete-credential`, {

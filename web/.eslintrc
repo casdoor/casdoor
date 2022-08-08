@@ -42,7 +42,13 @@
     "space-before-function-paren": ["error", "never"],
     "no-trailing-spaces": ["error", { "ignoreComments": true }],
     "eol-last": ["error", "always"],
-    // "no-var": ["error"],
+    "no-var": ["error"],
+    "prefer-const": [
+      "error",
+      {
+        "destructuring": "all"
+      }
+    ],
     "curly": ["error", "all"],
     "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
     "no-mixed-spaces-and-tabs": "error",

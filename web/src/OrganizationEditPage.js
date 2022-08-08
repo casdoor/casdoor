@@ -75,7 +75,7 @@ class OrganizationEditPage extends React.Component {
   updateOrganizationField(key, value) {
     value = this.parseOrganizationField(key, value);
 
-    let organization = this.state.organization;
+    const organization = this.state.organization;
     organization[key] = value;
     this.setState({
       organization: organization,
@@ -283,7 +283,7 @@ class OrganizationEditPage extends React.Component {
   }
 
   submitOrganizationEdit(willExist) {
-    let organization = Setting.deepCopy(this.state.organization);
+    const organization = Setting.deepCopy(this.state.organization);
     OrganizationBackend.updateOrganization(this.state.organization.owner, this.state.organizationName, organization)
       .then((res) => {
         if (res.msg === "") {

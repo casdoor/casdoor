@@ -37,7 +37,7 @@ export function getUser(owner, name) {
 }
 
 export function updateUser(owner, name, user) {
-  let newUser = Setting.deepCopy(user);
+  const newUser = Setting.deepCopy(user);
   return fetch(`${Setting.ServerUrl}/api/update-user?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
@@ -46,7 +46,7 @@ export function updateUser(owner, name, user) {
 }
 
 export function addUser(user) {
-  let newUser = Setting.deepCopy(user);
+  const newUser = Setting.deepCopy(user);
   return fetch(`${Setting.ServerUrl}/api/add-user`, {
     method: "POST",
     credentials: "include",
@@ -55,7 +55,7 @@ export function addUser(user) {
 }
 
 export function deleteUser(user) {
-  let newUser = Setting.deepCopy(user);
+  const newUser = Setting.deepCopy(user);
   return fetch(`${Setting.ServerUrl}/api/delete-user`, {
     method: "POST",
     credentials: "include",
@@ -76,7 +76,7 @@ export function getAffiliationOptions(url, code) {
 }
 
 export function setPassword(userOwner, userName, oldPassword, newPassword) {
-  let formData = new FormData();
+  const formData = new FormData();
   formData.append("userOwner", userOwner);
   formData.append("userName", userName);
   formData.append("oldPassword", oldPassword);
@@ -89,7 +89,7 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
 }
 
 export function sendCode(checkType, checkId, checkKey, dest, type, applicationId, checkUser) {
-  let formData = new FormData();
+  const formData = new FormData();
   formData.append("checkType", checkType);
   formData.append("checkId", checkId);
   formData.append("checkKey", checkKey);
@@ -113,7 +113,7 @@ export function sendCode(checkType, checkId, checkKey, dest, type, applicationId
 }
 
 export function verifyCaptcha(captchaType, captchaToken, clientSecret) {
-  let formData = new FormData();
+  const formData = new FormData();
   formData.append("captchaType", captchaType);
   formData.append("captchaToken", captchaToken);
   formData.append("clientSecret", clientSecret);
@@ -137,7 +137,7 @@ export function verifyCaptcha(captchaType, captchaToken, clientSecret) {
 }
 
 export function resetEmailOrPhone(dest, type, code) {
-  let formData = new FormData();
+  const formData = new FormData();
   formData.append("dest", dest);
   formData.append("type", type);
   formData.append("code", code);

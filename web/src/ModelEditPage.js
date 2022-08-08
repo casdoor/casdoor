@@ -81,7 +81,7 @@ class ModelEditPage extends React.Component {
   updateModelField(key, value) {
     value = this.parseModelField(key, value);
 
-    let model = this.state.model;
+    const model = this.state.model;
     model[key] = value;
     this.setState({
       model: model,
@@ -155,7 +155,7 @@ class ModelEditPage extends React.Component {
   }
 
   submitModelEdit(willExist) {
-    let model = Setting.deepCopy(this.state.model);
+    const model = Setting.deepCopy(this.state.model);
     ModelBackend.updateModel(this.state.organizationName, this.state.modelName, model)
       .then((res) => {
         if (res.msg === "") {

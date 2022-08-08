@@ -40,7 +40,7 @@ class CasLogout extends React.Component {
         if (res.status === "ok") {
           Setting.showMessage("success", "Logged out successfully");
           this.props.clearAccount();
-          let redirectUri = res.data2;
+          const redirectUri = res.data2;
           if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
             Setting.goToLink(redirectUri);
           } else if (params.has("service")) {

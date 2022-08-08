@@ -182,7 +182,7 @@ class App extends Component {
   }
 
   setLanguage(account) {
-    let language = account?.language;
+    const language = account?.language;
     if (language !== "" && language !== i18next.language) {
       Setting.setLanguage(language);
     }
@@ -242,7 +242,7 @@ class App extends Component {
           });
 
           Setting.showMessage("success", "Logged out successfully");
-          let redirectUri = res.data2;
+          const redirectUri = res.data2;
           if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
             Setting.goToLink(redirectUri);
           } else if (owner !== "built-in") {
@@ -322,7 +322,7 @@ class App extends Component {
   }
 
   renderAccount() {
-    let res = [];
+    const res = [];
 
     if (this.state.account === undefined) {
       return null;
@@ -349,7 +349,7 @@ class App extends Component {
   }
 
   renderMenu() {
-    let res = [];
+    const res = [];
 
     if (this.state.account === null || this.state.account === undefined) {
       return [];

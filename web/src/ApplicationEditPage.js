@@ -120,7 +120,7 @@ class ApplicationEditPage extends React.Component {
   updateApplicationField(key, value) {
     value = this.parseApplicationField(key, value);
 
-    let application = this.state.application;
+    const application = this.state.application;
     application[key] = value;
     this.setState({
       application: application,
@@ -566,8 +566,8 @@ class ApplicationEditPage extends React.Component {
 
   renderSignupSigninPreview() {
     let signUpUrl = `/signup/${this.state.application.name}`;
-    let signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
-    let maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
+    const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
+    const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
     if (!this.state.application.enablePassword) {
       signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");
     }
@@ -613,8 +613,8 @@ class ApplicationEditPage extends React.Component {
   }
 
   renderPromptPreview() {
-    let promptUrl = `/prompt/${this.state.application.name}`;
-    let maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
+    const promptUrl = `/prompt/${this.state.application.name}`;
+    const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
     return (
       <Col span={11}>
         <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
@@ -634,7 +634,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   submitApplicationEdit(willExist) {
-    let application = Setting.deepCopy(this.state.application);
+    const application = Setting.deepCopy(this.state.application);
     ApplicationBackend.updateApplication(this.state.application.owner, this.state.applicationName, application)
       .then((res) => {
         if (res.msg === "") {

@@ -23,7 +23,7 @@ import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 
-export let ServerUrl = "";
+export const ServerUrl = "";
 
 // export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
 export const StaticBaseUrl = "https://cdn.casbin.org";
@@ -136,11 +136,11 @@ export function getCountryRegionData() {
     language = Conf.DefaultLanguage;
   }
 
-  var countries = require("i18n-iso-countries");
+  const countries = require("i18n-iso-countries");
   countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
-  var data = countries.getNames(language, {select: "official"});
-  var result = [];
-  for (var i in data) {result.push({code: i, name: data[i]});}
+  const data = countries.getNames(language, {select: "official"});
+  const result = [];
+  for (const i in data) {result.push({code: i, name: data[i]});}
   return result;
 }
 
@@ -335,7 +335,7 @@ export function openLink(link) {
 export function openLinkSafe(link) {
   // Javascript window.open issue in safari
   // https://stackoverflow.com/questions/45569893/javascript-window-open-issue-in-safari
-  let a = document.createElement("a");
+  const a = document.createElement("a");
   a.href = link;
   a.setAttribute("target", "_blank");
   a.click();
@@ -445,9 +445,9 @@ export function getFriendlyFileSize(size) {
     return size + " B";
   }
 
-  let i = Math.floor(Math.log(size) / Math.log(1024));
+  const i = Math.floor(Math.log(size) / Math.log(1024));
   let num = (size / Math.pow(1024, i));
-  let round = Math.round(num);
+  const round = Math.round(num);
   num = round < 10 ? num.toFixed(2) : round < 100 ? num.toFixed(1) : round;
   return `${num} ${"KMGTPEZY"[i - 1]}B`;
 }
@@ -456,7 +456,7 @@ function getRandomInt(s) {
   let hash = 0;
   if (s.length !== 0) {
     for (let i = 0; i < s.length; i++) {
-      let char = s.charCodeAt(i);
+      const char = s.charCodeAt(i);
       hash = ((hash << 5) - hash) + char;
       hash = hash & hash;
     }
@@ -772,7 +772,7 @@ export function getMaskedEmail(email) {
   username = maskString(username);
 
   const domain = tokens[1];
-  let domainTokens = domain.split(".");
+  const domainTokens = domain.split(".");
   domainTokens[domainTokens.length - 2] = maskString(domainTokens[domainTokens.length - 2]);
 
   return `${username}@${domainTokens.join(".")}`;
@@ -802,7 +802,7 @@ export function getTagColor(s) {
 }
 
 export function getTags(tags) {
-  let res = [];
+  const res = [];
   if (!tags) {return res;}
   tags.forEach((tag, i) => {
     res.push(
@@ -840,7 +840,7 @@ export function getFromLink() {
 
 export function scrollToDiv(divId) {
   if (divId) {
-    let ele = document.getElementById(divId);
+    const ele = document.getElementById(divId);
     if (ele) {
       ele.scrollIntoView({behavior: "smooth"});
     }

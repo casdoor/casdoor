@@ -47,8 +47,8 @@ class SamlCallback extends React.Component {
 
   UNSAFE_componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
-    let relayState = params.get("relayState");
-    let samlResponse = params.get("samlResponse");
+    const relayState = params.get("relayState");
+    const samlResponse = params.get("samlResponse");
     const messages = atob(relayState).split("&");
     const clientId = messages[0];
     const applicationName = messages[1] === "null" ? "app-built-in" : messages[1];

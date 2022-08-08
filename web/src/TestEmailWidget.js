@@ -43,7 +43,7 @@ export function connectSmtpServer(provider) {
 }
 
 function testEmailProvider(provider, email = "") {
-  let emailForm = {
+  const emailForm = {
     title: provider.title,
     content: provider.content,
     sender: provider.displayName,
