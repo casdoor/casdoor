@@ -50,30 +50,31 @@ func GetWebAuthnObject(host string) *webauthn.WebAuthn {
 	return webAuthn
 }
 
+// WebAuthnID
 // implementation of webauthn.User interface
-func (u *User) WebAuthnID() []byte {
-	return []byte(u.GetId())
+func (user *User) WebAuthnID() []byte {
+	return []byte(user.GetId())
 }
 
-func (u *User) WebAuthnName() string {
-	return u.Name
+func (user *User) WebAuthnName() string {
+	return user.Name
 }
 
-func (u *User) WebAuthnDisplayName() string {
-	return u.DisplayName
+func (user *User) WebAuthnDisplayName() string {
+	return user.DisplayName
 }
 
-func (u *User) WebAuthnCredentials() []webauthn.Credential {
-	return u.WebauthnCredentials
+func (user *User) WebAuthnCredentials() []webauthn.Credential {
+	return user.WebauthnCredentials
 }
 
-func (u *User) WebAuthnIcon() string {
-	return u.Avatar
+func (user *User) WebAuthnIcon() string {
+	return user.Avatar
 }
 
 // CredentialExcludeList returns a CredentialDescriptor array filled with all the user's credentials
-func (u *User) CredentialExcludeList() []protocol.CredentialDescriptor {
-	credentials := u.WebAuthnCredentials()
+func (user *User) CredentialExcludeList() []protocol.CredentialDescriptor {
+	credentials := user.WebAuthnCredentials()
 	credentialExcludeList := []protocol.CredentialDescriptor{}
 	for _, cred := range credentials {
 		descriptor := protocol.CredentialDescriptor{
@@ -86,16 +87,16 @@ func (u *User) CredentialExcludeList() []protocol.CredentialDescriptor {
 	return credentialExcludeList
 }
 
-func (u *User) AddCredentials(credential webauthn.Credential, isGlobalAdmin bool) bool {
-	u.WebauthnCredentials = append(u.WebauthnCredentials, credential)
-	return UpdateUser(u.GetId(), u, []string{"webauthnCredentials"}, isGlobalAdmin)
+func (user *User) AddCredentials(credential webauthn.Credential, isGlobalAdmin bool) bool {
+	user.WebauthnCredentials = append(user.WebauthnCredentials, credential)
+	return UpdateUser(user.GetId(), user, []string{"webauthnCredentials"}, isGlobalAdmin)
 }
 
-func (u *User) DeleteCredentials(credentialIdBase64 string) bool {
-	for i, credential := range u.WebauthnCredentials {
+func (user *User) DeleteCredentials(credentialIdBase64 string) bool {
+	for i, credential := range user.WebauthnCredentials {
 		if base64.StdEncoding.EncodeToString(credential.ID) == credentialIdBase64 {
-			u.WebauthnCredentials = append(u.WebauthnCredentials[0:i], u.WebauthnCredentials[i+1:]...)
-			return UpdateUserForAllFields(u.GetId(), u)
+			user.WebauthnCredentials = append(user.WebauthnCredentials[0:i], user.WebauthnCredentials[i+1:]...)
+			return UpdateUserForAllFields(user.GetId(), user)
 		}
 	}
 	return false

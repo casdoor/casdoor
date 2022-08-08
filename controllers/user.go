@@ -298,6 +298,7 @@ func (c *ApiController) SetPassword() {
 	c.ServeJSON()
 }
 
+// CheckUserPassword
 // @Title CheckUserPassword
 // @router /check-user-password [post]
 // @Tag User API

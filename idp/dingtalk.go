@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -101,7 +100,7 @@ func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 
 	token := &oauth2.Token{
 		AccessToken: pToken.AccessToken,
-		Expiry:      time.Unix(time.Now().Unix()+int64(pToken.ExpiresIn), 0),
+		Expiry:      time.Unix(time.Now().Unix()+pToken.ExpiresIn, 0),
 	}
 	return token, nil
 }
@@ -145,7 +144,7 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	}
 	defer resp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +179,7 @@ func (idp *DingTalkIdProvider) postWithBody(body interface{}, url string) ([]byt
 	if err != nil {
 		return nil, err
 	}
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

@@ -118,7 +118,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		}
 
 	} else {
-		resp = wrapErrorResponse(fmt.Errorf("Unknown response type: %s", form.Type))
+		resp = wrapErrorResponse(fmt.Errorf("unknown response type: %s", form.Type))
 	}
 
 	// if user did not check auto signin

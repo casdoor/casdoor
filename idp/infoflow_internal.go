@@ -17,7 +17,7 @@ package idp
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"golang.org/x/oauth2"
@@ -58,6 +58,7 @@ type InfoflowInterToken struct {
 	AccessToken string `json:"access_token"`
 }
 
+// GetToken
 // get more detail via: https://qy.baidu.com/doc/index.html#/inner_quickstart/flow?id=%E8%8E%B7%E5%8F%96accesstoken
 func (idp *InfoflowInternalIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	pTokenParams := &struct {
@@ -69,7 +70,7 @@ func (idp *InfoflowInternalIdProvider) GetToken(code string) (*oauth2.Token, err
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -137,6 +138,7 @@ type InfoflowInternalUserInfo struct {
 	Email   string `json:"email"`
 }
 
+// GetUserInfo
 // get more detail via: https://qy.baidu.com/doc/index.html#/inner_serverapi/contacts?id=%e8%8e%b7%e5%8f%96%e6%88%90%e5%91%98
 func (idp *InfoflowInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	// Get userid first
@@ -147,7 +149,7 @@ func (idp *InfoflowInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserIn
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +167,7 @@ func (idp *InfoflowInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserIn
 		return nil, err
 	}
 
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

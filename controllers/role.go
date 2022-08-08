@@ -48,6 +48,7 @@ func (c *ApiController) GetRoles() {
 	}
 }
 
+// GetRole
 // @Title GetRole
 // @Tag Role API
 // @Description get role
@@ -61,6 +62,7 @@ func (c *ApiController) GetRole() {
 	c.ServeJSON()
 }
 
+// UpdateRole
 // @Title UpdateRole
 // @Tag Role API
 // @Description update role
@@ -81,6 +83,7 @@ func (c *ApiController) UpdateRole() {
 	c.ServeJSON()
 }
 
+// AddRole
 // @Title AddRole
 // @Tag Role API
 // @Description add role
@@ -98,6 +101,7 @@ func (c *ApiController) AddRole() {
 	c.ServeJSON()
 }
 
+// DeleteRole
 // @Title DeleteRole
 // @Tag Role API
 // @Description delete role

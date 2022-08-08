@@ -255,7 +255,7 @@ func (c *ApiController) RefreshToken() {
 // @router /login/oauth/logout [get]
 func (c *ApiController) TokenLogout() {
 	token := c.Input().Get("id_token_hint")
-	flag, application := object.DeleteTokenByAceessToken(token)
+	flag, application := object.DeleteTokenByAccessToken(token)
 	redirectUri := c.Input().Get("post_logout_redirect_uri")
 	state := c.Input().Get("state")
 	if application != nil && object.CheckRedirectUriValid(application, redirectUri) {
@@ -288,7 +288,7 @@ func (c *ApiController) IntrospectToken() {
 		if clientId == "" || clientSecret == "" {
 			c.ResponseError("empty clientId or clientSecret")
 			c.Data["json"] = &object.TokenError{
-				Error: object.INVALID_REQUEST,
+				Error: object.InvalidRequest,
 			}
 			c.SetTokenErrorHttpStatus()
 			c.ServeJSON()
@@ -299,7 +299,7 @@ func (c *ApiController) IntrospectToken() {
 	if application == nil || application.ClientSecret != clientSecret {
 		c.ResponseError("invalid application or wrong clientSecret")
 		c.Data["json"] = &object.TokenError{
-			Error: object.INVALID_CLIENT,
+			Error: object.InvalidClient,
 		}
 		c.SetTokenErrorHttpStatus()
 		return

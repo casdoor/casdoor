@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -63,6 +62,7 @@ type InfoflowToken struct {
 	ExpiresIn   int    `json:"expires_in"`
 }
 
+// GetToken
 // get more detail via: https://qy.baidu.com/doc/index.html#/third_serverapi/authority
 func (idp *InfoflowIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	pTokenParams := &struct {
@@ -134,6 +134,7 @@ type InfoflowUserInfo struct {
 	Email   string `json:"email"`
 }
 
+// GetUserInfo
 // get more detail via: https://qy.baidu.com/doc/index.html#/third_serverapi/contacts?id=%e8%8e%b7%e5%8f%96%e6%88%90%e5%91%98
 func (idp *InfoflowIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	// Get userid first
@@ -144,7 +145,7 @@ func (idp *InfoflowIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +163,7 @@ func (idp *InfoflowIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		return nil, err
 	}
 
-	data, err = ioutil.ReadAll(resp.Body)
+	data, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -197,7 +198,7 @@ func (idp *InfoflowIdProvider) postWithBody(body interface{}, url string) ([]byt
 	if err != nil {
 		return nil, err
 	}
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

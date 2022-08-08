@@ -67,6 +67,7 @@ func (c *ApiController) GetUserPayments() {
 	c.ResponseOk(payments)
 }
 
+// GetPayment
 // @Title GetPayment
 // @Tag Payment API
 // @Description get payment
@@ -80,6 +81,7 @@ func (c *ApiController) GetPayment() {
 	c.ServeJSON()
 }
 
+// UpdatePayment
 // @Title UpdatePayment
 // @Tag Payment API
 // @Description update payment
@@ -100,6 +102,7 @@ func (c *ApiController) UpdatePayment() {
 	c.ServeJSON()
 }
 
+// AddPayment
 // @Title AddPayment
 // @Tag Payment API
 // @Description add payment
@@ -117,6 +120,7 @@ func (c *ApiController) AddPayment() {
 	c.ServeJSON()
 }
 
+// DeletePayment
 // @Title DeletePayment
 // @Tag Payment API
 // @Description delete payment
@@ -134,6 +138,7 @@ func (c *ApiController) DeletePayment() {
 	c.ServeJSON()
 }
 
+// NotifyPayment
 // @Title NotifyPayment
 // @Tag Payment API
 // @Description notify payment
@@ -159,6 +164,7 @@ func (c *ApiController) NotifyPayment() {
 	}
 }
 
+// InvoicePayment
 // @Title InvoicePayment
 // @Tag Payment API
 // @Description invoice payment

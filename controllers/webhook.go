@@ -48,6 +48,7 @@ func (c *ApiController) GetWebhooks() {
 	}
 }
 
+// GetWebhook
 // @Title GetWebhook
 // @Tag Webhook API
 // @Description get webhook
@@ -61,6 +62,7 @@ func (c *ApiController) GetWebhook() {
 	c.ServeJSON()
 }
 
+// UpdateWebhook
 // @Title UpdateWebhook
 // @Tag Webhook API
 // @Description update webhook
@@ -81,6 +83,7 @@ func (c *ApiController) UpdateWebhook() {
 	c.ServeJSON()
 }
 
+// AddWebhook
 // @Title AddWebhook
 // @Tag Webhook API
 // @Description add webhook
@@ -98,6 +101,7 @@ func (c *ApiController) AddWebhook() {
 	c.ServeJSON()
 }
 
+// DeleteWebhook
 // @Title DeleteWebhook
 // @Tag Webhook API
 // @Description delete webhook

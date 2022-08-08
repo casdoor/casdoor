@@ -31,7 +31,7 @@ const (
 	InvalidProxyCallback     string = "INVALID_PROXY_CALLBACK"
 	InvalidTicket            string = "INVALID_TICKET"
 	InvalidService           string = "INVALID_SERVICE"
-	InteralError             string = "INTERNAL_ERROR"
+	InternalError            string = "INTERNAL_ERROR"
 	UnauthorizedService      string = "UNAUTHORIZED_SERVICE"
 )
 
@@ -116,7 +116,7 @@ func (c *RootController) CasP3ServiceAndProxyValidate() {
 		}
 		// make a request to pgturl passing pgt and pgtiou
 		if err != nil {
-			c.sendCasAuthenticationResponseErr(InteralError, err.Error(), format)
+			c.sendCasAuthenticationResponseErr(InternalError, err.Error(), format)
 			return
 		}
 		param := pgtUrlObj.Query()
@@ -126,7 +126,7 @@ func (c *RootController) CasP3ServiceAndProxyValidate() {
 
 		request, err := http.NewRequest("GET", pgtUrlObj.String(), nil)
 		if err != nil {
-			c.sendCasAuthenticationResponseErr(InteralError, err.Error(), format)
+			c.sendCasAuthenticationResponseErr(InternalError, err.Error(), format)
 			return
 		}
 
@@ -214,7 +214,7 @@ func (c *RootController) SamlValidate() {
 		return
 	}
 
-	envelopReponse := struct {
+	envelopResponse := struct {
 		XMLName xml.Name `xml:"SOAP-ENV:Envelope"`
 		Xmlns   string   `xml:"xmlns:SOAP-ENV"`
 		Body    struct {
@@ -222,15 +222,15 @@ func (c *RootController) SamlValidate() {
 			Content string   `xml:",innerxml"`
 		}
 	}{}
-	envelopReponse.Xmlns = "http://schemas.xmlsoap.org/soap/envelope/"
-	envelopReponse.Body.Content = response
+	envelopResponse.Xmlns = "http://schemas.xmlsoap.org/soap/envelope/"
+	envelopResponse.Body.Content = response
 
-	data, err := xml.Marshal(envelopReponse)
+	data, err := xml.Marshal(envelopResponse)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.Ctx.Output.Body([]byte(data))
+	c.Ctx.Output.Body(data)
 }
 
 func (c *RootController) sendCasProxyResponseErr(code, msg, format string) {

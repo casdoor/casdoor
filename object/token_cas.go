@@ -136,6 +136,7 @@ func GenerateId() {
 	panic("unimplemented")
 }
 
+// GetCasTokenByPgt
 /**
 @ret1: whether a token is found
 @ret2: token, nil if not found
@@ -150,6 +151,7 @@ func GetCasTokenByPgt(pgt string) (bool, *CasAuthenticationSuccess, string, stri
 	return false, nil, "", ""
 }
 
+// GetCasTokenByTicket
 /**
 @ret1: whether a token is found
 @ret2: token, nil if not found
@@ -207,6 +209,7 @@ func GenerateCasToken(userId string, service string) (string, error) {
 	}
 }
 
+// GetValidationBySaml
 /**
 @ret1: saml response
 @ret2: the service URL who requested to issue this token

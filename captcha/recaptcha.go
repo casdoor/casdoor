@@ -17,7 +17,7 @@ package captcha
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -43,7 +43,7 @@ func (captcha *ReCaptchaProvider) VerifyCaptcha(token, clientSecret string) (boo
 	}
 
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return false, err
 	}

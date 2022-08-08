@@ -48,6 +48,7 @@ func (c *ApiController) GetProviders() {
 	}
 }
 
+// GetProvider
 // @Title GetProvider
 // @Tag Provider API
 // @Description get provider
@@ -61,6 +62,7 @@ func (c *ApiController) GetProvider() {
 	c.ServeJSON()
 }
 
+// UpdateProvider
 // @Title UpdateProvider
 // @Tag Provider API
 // @Description update provider
@@ -81,6 +83,7 @@ func (c *ApiController) UpdateProvider() {
 	c.ServeJSON()
 }
 
+// AddProvider
 // @Title AddProvider
 // @Tag Provider API
 // @Description add provider
@@ -98,6 +101,7 @@ func (c *ApiController) AddProvider() {
 	c.ServeJSON()
 }
 
+// DeleteProvider
 // @Title DeleteProvider
 // @Tag Provider API
 // @Description delete provider

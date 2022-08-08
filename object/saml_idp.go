@@ -35,6 +35,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+// NewSamlResponse
 // returns a saml2 response
 func NewSamlResponse(user *User, host string, certificate string, destination string, iss string, requestId string, redirectUri []string) (*etree.Element, error) {
 	samlResponse := &etree.Element{
@@ -113,6 +114,7 @@ func (x X509Key) GetKeyPair() (privateKey *rsa.PrivateKey, cert []byte, err erro
 	return privateKey, cert, err
 }
 
+// IdpEntityDescriptor
 // SAML METADATA
 type IdpEntityDescriptor struct {
 	XMLName  xml.Name `xml:"EntityDescriptor"`

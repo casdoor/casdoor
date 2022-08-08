@@ -207,6 +207,7 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 	return &idp
 }
 
+// SetHttpClient
 // Goth's idp all implement the Client method, but since the goth.Provider interface does not provide to modify idp's client method, reflection is required
 func (idp *GothIdProvider) SetHttpClient(client *http.Client) {
 	idpClient := reflect.ValueOf(idp.Provider).Elem().FieldByName("HTTPClient")

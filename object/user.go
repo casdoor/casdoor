@@ -25,8 +25,8 @@ import (
 )
 
 const (
-	USER_PROPERTIES_WECHAT_UNION_ID = "wechatUnionId"
-	USER_PROPERTIES_WECHAT_OPEN_ID  = "wechatOpenId"
+	UserPropertiesWechatUnionId = "wechatUnionId"
+	UserPropertiesWechatOpenId  = "wechatOpenId"
 )
 
 type User struct {

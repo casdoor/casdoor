@@ -16,6 +16,7 @@ package controllers
 
 import "github.com/casdoor/casdoor/object"
 
+// GetOidcDiscovery
 // @Title GetOidcDiscovery
 // @Tag OIDC API
 // @Description Get Oidc Discovery
@@ -27,6 +28,7 @@ func (c *RootController) GetOidcDiscovery() {
 	c.ServeJSON()
 }
 
+// GetJwks
 // @Title GetJwks
 // @Tag OIDC API
 // @Success 200 {object} jose.JSONWebKey

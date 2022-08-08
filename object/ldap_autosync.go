@@ -31,6 +31,7 @@ func GetLdapAutoSynchronizer() *LdapAutoSynchronizer {
 	return globalLdapAutoSynchronizer
 }
 
+// StartAutoSync
 // start autosync for specified ldap, old existing autosync goroutine will be ceased
 func (l *LdapAutoSynchronizer) StartAutoSync(ldapId string) error {
 	l.Lock()
@@ -95,6 +96,7 @@ func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) {
 	}
 }
 
+// LdapAutoSynchronizerStartUpAll
 // start all autosync goroutine for existing ldap servers in each organizations
 func (l *LdapAutoSynchronizer) LdapAutoSynchronizerStartUpAll() {
 	organizations := []*Organization{}

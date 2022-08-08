@@ -44,6 +44,7 @@ type LdapSyncResp struct {
 	Failed []object.LdapRespUser `json:"failed"`
 }
 
+// GetLdapUser
 // @Tag Account API
 // @Title GetLdapser
 // @router /get-ldap-user [post]
@@ -100,6 +101,7 @@ func (c *ApiController) GetLdapUser() {
 	c.ServeJSON()
 }
 
+// GetLdaps
 // @Tag Account API
 // @Title GetLdaps
 // @router /get-ldaps [post]
@@ -110,6 +112,7 @@ func (c *ApiController) GetLdaps() {
 	c.ServeJSON()
 }
 
+// GetLdap
 // @Tag Account API
 // @Title GetLdap
 // @router /get-ldap [post]
@@ -125,6 +128,7 @@ func (c *ApiController) GetLdap() {
 	c.ServeJSON()
 }
 
+// AddLdap
 // @Tag Account API
 // @Title AddLdap
 // @router /add-ldap [post]
@@ -159,6 +163,7 @@ func (c *ApiController) AddLdap() {
 	c.ServeJSON()
 }
 
+// UpdateLdap
 // @Tag Account API
 // @Title UpdateLdap
 // @router /update-ldap [post]
@@ -186,6 +191,7 @@ func (c *ApiController) UpdateLdap() {
 	c.ServeJSON()
 }
 
+// DeleteLdap
 // @Tag Account API
 // @Title DeleteLdap
 // @router /delete-ldap [post]
@@ -201,6 +207,7 @@ func (c *ApiController) DeleteLdap() {
 	c.ServeJSON()
 }
 
+// SyncLdapUsers
 // @Tag Account API
 // @Title SyncLdapUsers
 // @router /sync-ldap-users [post]
@@ -223,6 +230,7 @@ func (c *ApiController) SyncLdapUsers() {
 	c.ServeJSON()
 }
 
+// CheckLdapUsersExist
 // @Tag Account API
 // @Title CheckLdapUserExist
 // @router /check-ldap-users-exist [post]

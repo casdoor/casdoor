@@ -49,6 +49,7 @@ func (c *ApiController) GetProducts() {
 	}
 }
 
+// GetProduct
 // @Title GetProduct
 // @Tag Product API
 // @Description get product
@@ -65,6 +66,7 @@ func (c *ApiController) GetProduct() {
 	c.ServeJSON()
 }
 
+// UpdateProduct
 // @Title UpdateProduct
 // @Tag Product API
 // @Description update product
@@ -85,6 +87,7 @@ func (c *ApiController) UpdateProduct() {
 	c.ServeJSON()
 }
 
+// AddProduct
 // @Title AddProduct
 // @Tag Product API
 // @Description add product
@@ -102,6 +105,7 @@ func (c *ApiController) AddProduct() {
 	c.ServeJSON()
 }
 
+// DeleteProduct
 // @Title DeleteProduct
 // @Tag Product API
 // @Description delete product
@@ -119,6 +123,7 @@ func (c *ApiController) DeleteProduct() {
 	c.ServeJSON()
 }
 
+// BuyProduct
 // @Title BuyProduct
 // @Tag Product API
 // @Description buy product
