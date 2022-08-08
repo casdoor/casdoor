@@ -285,7 +285,7 @@ class LoginPage extends React.Component {
           title="Sign Up Error"
           subTitle={"The application does not allow to sign up new account"}
           extra={[
-            <Link key="" onClick={() => {
+            <Link key="login" onClick={() => {
               Setting.goToLogin(this, application);
             }}>
               <Button type="primary" key="signin">
