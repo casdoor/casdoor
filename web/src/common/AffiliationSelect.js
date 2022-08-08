@@ -30,7 +30,7 @@ class AffiliationSelect extends React.Component {
     };
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.getAddressOptions(this.props.application);
     this.getAffiliationOptions(this.props.application, this.props.user);
   }

@@ -90,9 +90,11 @@ class ForgetPage extends React.Component {
   }
 
   onFormFinish(name, info, forms) {
+    var username = null;
+    var oAuthParams = null;
     switch (name) {
     case "step1":
-      const username = forms.step1.getFieldValue("username");
+      username = forms.step1.getFieldValue("username");
       AuthBackend.getEmailAndPhone({
         application: forms.step1.getFieldValue("application"),
         organization: forms.step1.getFieldValue("organization"),
@@ -134,7 +136,7 @@ class ForgetPage extends React.Component {
       });
       break;
     case "step2":
-      const oAuthParams = Util.getOAuthGetParameters();
+      oAuthParams = Util.getOAuthGetParameters();
       if (this.state.verifyType === "email") {
         this.setState({username: this.state.email});
       } else if (this.state.verifyType === "phone") {
