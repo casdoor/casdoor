@@ -20,6 +20,7 @@ import * as Setting from "./Setting";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
+import {StaticBaseUrl} from "./Setting";
 
 class OrganizationListPage extends BaseListPage {
   newOrganization() {
@@ -30,11 +31,11 @@ class OrganizationListPage extends BaseListPage {
       createdTime: moment().format(),
       displayName: `New Organization - ${randomName}`,
       websiteUrl: "https://door.casdoor.com",
-      favicon: "https://cdn.casdoor.com/static/favicon.png",
+      favicon: `${StaticBaseUrl}/static/favicon.png`,
       passwordType: "plain",
       PasswordSalt: "",
       phonePrefix: "86",
-      defaultAvatar: "https://casbin.org/img/casbin.svg",
+      defaultAvatar: `${StaticBaseUrl}/img/casbin.svg`,
       tags: [],
       masterPassword: "",
       enableSoftDeletion: false,

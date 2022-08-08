@@ -21,6 +21,7 @@ import * as ProductBackend from "./backend/ProductBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import {EditOutlined} from "@ant-design/icons";
+import {StaticBaseUrl} from "./Setting";
 
 class ProductListPage extends BaseListPage {
   newProduct() {
@@ -30,7 +31,7 @@ class ProductListPage extends BaseListPage {
       name: `product_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Product - ${randomName}`,
-      image: "https://cdn.casdoor.com/logo/casdoor-logo_1185x256.png",
+      image: `${StaticBaseUrl}/logo/casdoor-logo_1185x256.png`,
       tag: "Casdoor Summit 2022",
       currency: "USD",
       price: 300,

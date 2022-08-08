@@ -21,6 +21,7 @@ import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
+import {StaticBaseUrl} from "./Setting";
 
 class UserListPage extends BaseListPage {
   constructor(props) {
@@ -49,7 +50,7 @@ class UserListPage extends BaseListPage {
       password: "123",
       passwordSalt: "",
       displayName: `New User - ${randomName}`,
-      avatar: "https://casbin.org/img/casbin.svg",
+      avatar: `${StaticBaseUrl}/img/casbin.svg`,
       email: `${randomName}@example.com`,
       phone: Setting.getRandomNumber(),
       address: [],

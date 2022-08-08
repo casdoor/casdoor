@@ -21,6 +21,7 @@ import * as Setting from "./Setting";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
+import {StaticBaseUrl} from "./Setting";
 
 class ApplicationListPage extends BaseListPage {
   newApplication() {
@@ -30,7 +31,7 @@ class ApplicationListPage extends BaseListPage {
       name: `application_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Application - ${randomName}`,
-      logo: "https://cdn.casdoor.com/logo/casdoor-logo_1185x256.png",
+      logo: `${StaticBaseUrl}/logo/casdoor-logo_1185x256.png`,
       enablePassword: true,
       enableSignUp: true,
       enableSigninSession: false,

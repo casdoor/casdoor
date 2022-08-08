@@ -18,6 +18,7 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Setting from "../Setting";
 import SingleCard from "./SingleCard";
 import i18next from "i18next";
+import {StaticBaseUrl} from "../Setting";
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -56,7 +57,7 @@ class HomePage extends React.Component {
         if (filename === "/account") {
           filename = "/users";
         }
-        items[i].logo = `https://cdn.casbin.com/static/img${filename}.png`;
+        items[i].logo = `${StaticBaseUrl}/static/img${filename}.png`;
         items[i].createdTime = "";
       }
     } else {

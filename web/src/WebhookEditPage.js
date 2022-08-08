@@ -20,6 +20,7 @@ import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import WebhookHeaderTable from "./WebhookHeaderTable";
+import {StaticBaseUrl} from "./Setting";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
@@ -52,8 +53,8 @@ const userTemplate = {
   "password": "123",
   "passwordSalt": "",
   "displayName": "Admin",
-  "avatar": "https://cdn.casbin.com/usercontent/admin/avatar/1596241359.png",
-  "permanentAvatar": "https://cdn.casbin.com/casdoor/avatar/casbin/admin.png",
+  "avatar": `${StaticBaseUrl}/usercontent/admin/avatar/1596241359.png`,
+  "permanentAvatar": `${StaticBaseUrl}/casdoor/avatar/casbin/admin.png`,
   "email": "admin@example.com",
   "phone": "",
   "location": "",
