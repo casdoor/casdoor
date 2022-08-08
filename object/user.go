@@ -24,6 +24,11 @@ import (
 	"xorm.io/core"
 )
 
+const (
+	USER_PROPERTIES_WECHAT_UNION_ID = "wechatUnionId"
+	USER_PROPERTIES_WECHAT_OPEN_ID  = "wechatOpenId"
+)
+
 type User struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -73,32 +78,31 @@ type User struct {
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
 	LastSigninIp   string `xorm:"varchar(100)" json:"lastSigninIp"`
 
-	GitHub        string `xorm:"github varchar(100)" json:"github"`
-	Google        string `xorm:"varchar(100)" json:"google"`
-	QQ            string `xorm:"qq varchar(100)" json:"qq"`
-	WeChat        string `xorm:"wechat varchar(100)" json:"wechat"`
-	WeChatUnionId string `xorm:"varchar(100)" json:"unionId"`
-	Facebook      string `xorm:"facebook varchar(100)" json:"facebook"`
-	DingTalk      string `xorm:"dingtalk varchar(100)" json:"dingtalk"`
-	Weibo         string `xorm:"weibo varchar(100)" json:"weibo"`
-	Gitee         string `xorm:"gitee varchar(100)" json:"gitee"`
-	LinkedIn      string `xorm:"linkedin varchar(100)" json:"linkedin"`
-	Wecom         string `xorm:"wecom varchar(100)" json:"wecom"`
-	Lark          string `xorm:"lark varchar(100)" json:"lark"`
-	Gitlab        string `xorm:"gitlab varchar(100)" json:"gitlab"`
-	Adfs          string `xorm:"adfs varchar(100)" json:"adfs"`
-	Baidu         string `xorm:"baidu varchar(100)" json:"baidu"`
-	Alipay        string `xorm:"alipay varchar(100)" json:"alipay"`
-	Casdoor       string `xorm:"casdoor varchar(100)" json:"casdoor"`
-	Infoflow      string `xorm:"infoflow varchar(100)" json:"infoflow"`
-	Apple         string `xorm:"apple varchar(100)" json:"apple"`
-	AzureAD       string `xorm:"azuread varchar(100)" json:"azuread"`
-	Slack         string `xorm:"slack varchar(100)" json:"slack"`
-	Steam         string `xorm:"steam varchar(100)" json:"steam"`
-	Bilibili      string `xorm:"bilibili varchar(100)" json:"bilibili"`
-	Okta          string `xorm:"okta varchar(100)" json:"okta"`
-	Douyin        string `xorm:"douyin varchar(100)" json:"douyin"`
-	Custom        string `xorm:"custom varchar(100)" json:"custom"`
+	GitHub   string `xorm:"github varchar(100)" json:"github"`
+	Google   string `xorm:"varchar(100)" json:"google"`
+	QQ       string `xorm:"qq varchar(100)" json:"qq"`
+	WeChat   string `xorm:"wechat varchar(100)" json:"wechat"`
+	Facebook string `xorm:"facebook varchar(100)" json:"facebook"`
+	DingTalk string `xorm:"dingtalk varchar(100)" json:"dingtalk"`
+	Weibo    string `xorm:"weibo varchar(100)" json:"weibo"`
+	Gitee    string `xorm:"gitee varchar(100)" json:"gitee"`
+	LinkedIn string `xorm:"linkedin varchar(100)" json:"linkedin"`
+	Wecom    string `xorm:"wecom varchar(100)" json:"wecom"`
+	Lark     string `xorm:"lark varchar(100)" json:"lark"`
+	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab"`
+	Adfs     string `xorm:"adfs varchar(100)" json:"adfs"`
+	Baidu    string `xorm:"baidu varchar(100)" json:"baidu"`
+	Alipay   string `xorm:"alipay varchar(100)" json:"alipay"`
+	Casdoor  string `xorm:"casdoor varchar(100)" json:"casdoor"`
+	Infoflow string `xorm:"infoflow varchar(100)" json:"infoflow"`
+	Apple    string `xorm:"apple varchar(100)" json:"apple"`
+	AzureAD  string `xorm:"azuread varchar(100)" json:"azuread"`
+	Slack    string `xorm:"slack varchar(100)" json:"slack"`
+	Steam    string `xorm:"steam varchar(100)" json:"steam"`
+	Bilibili string `xorm:"bilibili varchar(100)" json:"bilibili"`
+	Okta     string `xorm:"okta varchar(100)" json:"okta"`
+	Douyin   string `xorm:"douyin varchar(100)" json:"douyin"`
+	Custom   string `xorm:"custom varchar(100)" json:"custom"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
 
@@ -243,7 +247,7 @@ func getUserByWechatId(wechatOpenId string, wechatUnionId string) *User {
 		wechatUnionId = wechatOpenId
 	}
 	user := &User{}
-	existed, err := adapter.Engine.Where("wechat = ? OR wechat = ? OR unionid = ?", wechatOpenId, wechatUnionId, wechatUnionId).Get(user)
+	existed, err := adapter.Engine.Where("wechat = ? OR wechat = ?", wechatOpenId, wechatUnionId).Get(user)
 	if err != nil {
 		panic(err)
 	}
