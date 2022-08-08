@@ -57,7 +57,7 @@ class CertEditPage extends React.Component {
   updateCertField(key, value) {
     value = this.parseCertField(key, value);
 
-    let cert = this.state.cert;
+    const cert = this.state.cert;
     cert[key] = value;
     this.setState({
       cert: cert,
@@ -214,7 +214,7 @@ class CertEditPage extends React.Component {
   }
 
   submitCertEdit(willExist) {
-    let cert = Setting.deepCopy(this.state.cert);
+    const cert = Setting.deepCopy(this.state.cert);
     CertBackend.updateCert(this.state.cert.owner, this.state.certName, cert)
       .then((res) => {
         if (res.msg === "") {

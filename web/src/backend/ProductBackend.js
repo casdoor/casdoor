@@ -29,7 +29,7 @@ export function getProduct(owner, name) {
 }
 
 export function updateProduct(owner, name, product) {
-  let newProduct = Setting.deepCopy(product);
+  const newProduct = Setting.deepCopy(product);
   return fetch(`${Setting.ServerUrl}/api/update-product?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
@@ -38,7 +38,7 @@ export function updateProduct(owner, name, product) {
 }
 
 export function addProduct(product) {
-  let newProduct = Setting.deepCopy(product);
+  const newProduct = Setting.deepCopy(product);
   return fetch(`${Setting.ServerUrl}/api/add-product`, {
     method: "POST",
     credentials: "include",
@@ -47,7 +47,7 @@ export function addProduct(product) {
 }
 
 export function deleteProduct(product) {
-  let newProduct = Setting.deepCopy(product);
+  const newProduct = Setting.deepCopy(product);
   return fetch(`${Setting.ServerUrl}/api/delete-product`, {
     method: "POST",
     credentials: "include",

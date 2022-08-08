@@ -29,7 +29,7 @@ export function getCert(owner, name) {
 }
 
 export function updateCert(owner, name, cert) {
-  let newCert = Setting.deepCopy(cert);
+  const newCert = Setting.deepCopy(cert);
   return fetch(`${Setting.ServerUrl}/api/update-cert?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
@@ -38,7 +38,7 @@ export function updateCert(owner, name, cert) {
 }
 
 export function addCert(cert) {
-  let newCert = Setting.deepCopy(cert);
+  const newCert = Setting.deepCopy(cert);
   return fetch(`${Setting.ServerUrl}/api/add-cert`, {
     method: "POST",
     credentials: "include",
@@ -47,7 +47,7 @@ export function addCert(cert) {
 }
 
 export function deleteCert(cert) {
-  let newCert = Setting.deepCopy(cert);
+  const newCert = Setting.deepCopy(cert);
   return fetch(`${Setting.ServerUrl}/api/delete-cert`, {
     method: "POST",
     credentials: "include",

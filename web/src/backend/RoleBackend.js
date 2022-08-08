@@ -29,7 +29,7 @@ export function getRole(owner, name) {
 }
 
 export function updateRole(owner, name, role) {
-  let newRole = Setting.deepCopy(role);
+  const newRole = Setting.deepCopy(role);
   return fetch(`${Setting.ServerUrl}/api/update-role?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
@@ -38,7 +38,7 @@ export function updateRole(owner, name, role) {
 }
 
 export function addRole(role) {
-  let newRole = Setting.deepCopy(role);
+  const newRole = Setting.deepCopy(role);
   return fetch(`${Setting.ServerUrl}/api/add-role`, {
     method: "POST",
     credentials: "include",
@@ -47,7 +47,7 @@ export function addRole(role) {
 }
 
 export function deleteRole(role) {
-  let newRole = Setting.deepCopy(role);
+  const newRole = Setting.deepCopy(role);
   return fetch(`${Setting.ServerUrl}/api/delete-role`, {
     method: "POST",
     credentials: "include",

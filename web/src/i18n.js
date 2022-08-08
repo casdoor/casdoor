@@ -39,8 +39,7 @@ function initLanguage() {
     if (Conf.ForceLanguage !== "") {
       language = Conf.ForceLanguage;
     } else {
-      let userLanguage;
-      userLanguage = navigator.language;
+      const userLanguage = navigator.language;
       switch (userLanguage) {
       case "zh-CN":
         language = "zh";

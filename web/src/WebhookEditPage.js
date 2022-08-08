@@ -133,7 +133,7 @@ class WebhookEditPage extends React.Component {
   updateWebhookField(key, value) {
     value = this.parseWebhookField(key, value);
 
-    let webhook = this.state.webhook;
+    const webhook = this.state.webhook;
     webhook[key] = value;
     this.setState({
       webhook: webhook,
@@ -141,7 +141,7 @@ class WebhookEditPage extends React.Component {
   }
 
   renderWebhook() {
-    let preview = Setting.deepCopy(previewTemplate);
+    const preview = Setting.deepCopy(previewTemplate);
     if (this.state.webhook.isUserExtended) {
       preview["extendedUser"] = userTemplate;
     }
@@ -293,7 +293,7 @@ class WebhookEditPage extends React.Component {
   }
 
   submitWebhookEdit(willExist) {
-    let webhook = Setting.deepCopy(this.state.webhook);
+    const webhook = Setting.deepCopy(this.state.webhook);
     WebhookBackend.updateWebhook(this.state.webhook.owner, this.state.webhookName, webhook)
       .then((res) => {
         if (res.msg === "") {

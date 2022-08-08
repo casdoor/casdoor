@@ -176,7 +176,7 @@ class ForgetPage extends React.Component {
   onFinishFailed(values, errorFields) {}
 
   renderOptions() {
-    let options = [];
+    const options = [];
 
     if (this.state.phone !== "") {
       options.push(

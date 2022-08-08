@@ -73,7 +73,7 @@ class SyncerEditPage extends React.Component {
   updateSyncerField(key, value) {
     value = this.parseSyncerField(key, value);
 
-    let syncer = this.state.syncer;
+    const syncer = this.state.syncer;
     syncer[key] = value;
     this.setState({
       syncer: syncer,
@@ -119,7 +119,7 @@ class SyncerEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.syncer.type} onChange={(value => {
               this.updateSyncerField("type", value);
-              let syncer = this.state.syncer;
+              const syncer = this.state.syncer;
               syncer["tableColumns"] = Setting.getSyncerTableColumns(this.state.syncer);
               syncer.table = (value === "Keycloak") ? "user_entity" : this.state.syncer.table;
               this.setState({
@@ -295,7 +295,7 @@ class SyncerEditPage extends React.Component {
   }
 
   submitSyncerEdit(willExist) {
-    let syncer = Setting.deepCopy(this.state.syncer);
+    const syncer = Setting.deepCopy(this.state.syncer);
     SyncerBackend.updateSyncer(this.state.syncer.owner, this.state.syncerName, syncer)
       .then((res) => {
         if (res.msg === "") {

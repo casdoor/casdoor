@@ -198,7 +198,7 @@ class CertListPage extends BaseListPage {
 
   fetch = (params = {}) => {
     let field = params.searchedColumn, value = params.searchText;
-    let sortField = params.sortField, sortOrder = params.sortOrder;
+    const sortField = params.sortField, sortOrder = params.sortOrder;
     if (params.category !== undefined && params.category !== null) {
       field = "category";
       value = params.category;

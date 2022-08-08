@@ -36,7 +36,7 @@ class UrlTable extends React.Component {
   }
 
   addRow(table) {
-    let row = "";
+    const row = "";
     if (table === undefined) {
       table = [];
     }
