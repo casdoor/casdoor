@@ -60,7 +60,7 @@ func getShortClaims(claims Claims) ClaimsShort {
 	return res
 }
 
-func generateJwtToken(application *Application, user *User, nonce string, scope string, host string) (string, string, error) {
+func generateJwtToken(application *Application, user *User, nonce string, scope string, host string, jti string) (string, string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours) * time.Hour)
@@ -85,7 +85,7 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 			ExpiresAt: jwt.NewNumericDate(expireTime),
 			NotBefore: jwt.NewNumericDate(nowTime),
 			IssuedAt:  jwt.NewNumericDate(nowTime),
-			ID:        "",
+			ID:        jti,
 		},
 	}
 

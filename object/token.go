@@ -287,7 +287,9 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		}
 	}
 
-	accessToken, refreshToken, err := generateJwtToken(application, user, nonce, scope, host)
+	name := util.GenerateId()
+	jti := fmt.Sprintf("%s/%s", application.Owner, name)
+	accessToken, refreshToken, err := generateJwtToken(application, user, nonce, scope, host, jti)
 	if err != nil {
 		panic(err)
 	}
@@ -298,7 +300,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 
 	token := &Token{
 		Owner:         application.Owner,
-		Name:          util.GenerateId(),
+		Name:          name,
 		CreatedTime:   util.GetCurrentTime(),
 		Application:   application.Name,
 		Organization:  user.Owner,
@@ -420,7 +422,10 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
 		}
 	}
-	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "", scope, host)
+
+	name := util.GenerateId()
+	jti := fmt.Sprintf("%s/%s", application.Owner, name)
+	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "", scope, host, jti)
 	if err != nil {
 		return &TokenError{
 			Error:            ENDPOINT_ERROR,
@@ -430,7 +435,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 
 	newToken := &Token{
 		Owner:        application.Owner,
-		Name:         util.GenerateId(),
+		Name:         name,
 		CreatedTime:  util.GetCurrentTime(),
 		Application:  application.Name,
 		Organization: user.Owner,
@@ -566,7 +571,10 @@ func GetPasswordToken(application *Application, username string, password string
 			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
 		}
 	}
-	accessToken, refreshToken, err := generateJwtToken(application, user, "", scope, host)
+
+	name := util.GenerateId()
+	jti := fmt.Sprintf("%s/%s", application.Owner, name)
+	accessToken, refreshToken, err := generateJwtToken(application, user, "", scope, host, jti)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            ENDPOINT_ERROR,
@@ -575,7 +583,7 @@ func GetPasswordToken(application *Application, username string, password string
 	}
 	token := &Token{
 		Owner:        application.Owner,
-		Name:         util.GenerateId(),
+		Name:         name,
 		CreatedTime:  util.GetCurrentTime(),
 		Application:  application.Name,
 		Organization: user.Owner,
@@ -605,7 +613,10 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		Id:    application.GetId(),
 		Name:  fmt.Sprintf("app/%s", application.Name),
 	}
-	accessToken, _, err := generateJwtToken(application, nullUser, "", scope, host)
+
+	name := util.GenerateId()
+	jti := fmt.Sprintf("%s/%s", application.Owner, name)
+	accessToken, _, err := generateJwtToken(application, nullUser, "", scope, host, jti)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            ENDPOINT_ERROR,
@@ -614,7 +625,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 	}
 	token := &Token{
 		Owner:        application.Owner,
-		Name:         util.GenerateId(),
+		Name:         name,
 		CreatedTime:  util.GetCurrentTime(),
 		Application:  application.Name,
 		Organization: application.Organization,
@@ -632,13 +643,15 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 
 // Implicit flow
 func GetTokenByUser(application *Application, user *User, scope string, host string) (*Token, error) {
-	accessToken, refreshToken, err := generateJwtToken(application, user, "", scope, host)
+	name := util.GenerateId()
+	jti := fmt.Sprintf("%s/%s", application.Owner, name)
+	accessToken, refreshToken, err := generateJwtToken(application, user, "", scope, host, jti)
 	if err != nil {
 		return nil, err
 	}
 	token := &Token{
 		Owner:        application.Owner,
-		Name:         util.GenerateId(),
+		Name:         name,
 		CreatedTime:  util.GetCurrentTime(),
 		Application:  application.Name,
 		Organization: user.Owner,
@@ -717,7 +730,9 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		AddUser(user)
 	}
 
-	accessToken, refreshToken, err := generateJwtToken(application, user, "", "", host)
+	name := util.GenerateId()
+	jti := fmt.Sprintf("%s/%s", application.Owner, name)
+	accessToken, refreshToken, err := generateJwtToken(application, user, "", "", host, jti)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            ENDPOINT_ERROR,
@@ -727,7 +742,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 
 	token := &Token{
 		Owner:        application.Owner,
-		Name:         util.GenerateId(),
+		Name:         name,
 		CreatedTime:  util.GetCurrentTime(),
 		Application:  application.Name,
 		Organization: user.Owner,
