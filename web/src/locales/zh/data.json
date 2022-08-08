@@ -423,6 +423,8 @@
     "Email Content - Tooltip": "邮件内容",
     "Email Title": "邮件标题",
     "Email Title - Tooltip": "邮件标题",
+    "Enable SSL": "启用SSL",
+    "Enable SSL - Tooltip": "启用SSL - Tooltip",
     "Endpoint": "地域节点 (外网)",
     "Endpoint (Intranet)": "地域节点 (内网)",
     "Host": "主机",

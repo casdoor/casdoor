@@ -34,6 +34,7 @@ func SendEmail(provider *Provider, title string, content string, dest string, se
 func DailSmtpServer(provider *Provider) error {
 	dialer := gomail.NewDialer(provider.Host, provider.Port, provider.ClientId, provider.ClientSecret)
 
+	dialer.SSL = provider.EnableSsl
 	sender, err := dialer.Dial()
 	if err != nil {
 		return err

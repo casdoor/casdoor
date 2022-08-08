@@ -64,6 +64,7 @@ type Provider struct {
 	EnableSignAuthnRequest bool   `json:"enableSignAuthnRequest"`
 
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
+	EnableSsl   bool   `json:"enableSsl"`
 }
 
 func GetMaskedProvider(provider *Provider) *Provider {

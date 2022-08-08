@@ -423,6 +423,8 @@
     "Email Content - Tooltip": "Unique string-style identifier",
     "Email Title": "メールタイトル",
     "Email Title - Tooltip": "Unique string-style identifier",
+    "Enable SSL": "Enable SSL",
+    "Enable SSL - Tooltip": "Enable SSL - Tooltip",
     "Endpoint": "Endpoint",
     "Endpoint (Intranet)": "エンドポイント (イントラネット)",
     "Host": "ホスト",

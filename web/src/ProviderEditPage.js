@@ -556,6 +556,16 @@ class ProviderEditPage extends React.Component {
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Enable SSL"), i18next.t("provider:Enable SSL - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Switch checked={this.state.provider.enableSsl} onChange={checked => {
+                    this.updateProviderField("enableSsl", checked);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Sign Name"), i18next.t("provider:Sign Name - Tooltip"))} :
                 </Col>
                 <Col span={22} >

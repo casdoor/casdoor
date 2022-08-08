@@ -423,6 +423,8 @@
     "Email Content - Tooltip": "Unique string-style identifier",
     "Email Title": "E-Mail-Titel",
     "Email Title - Tooltip": "Unique string-style identifier",
+    "Enable SSL": "Enable SSL",
+    "Enable SSL - Tooltip": "Enable SSL - Tooltip",
     "Endpoint": "Endpoint",
     "Endpoint (Intranet)": "Endpunkt (Intranet)",
     "Host": "Host",
