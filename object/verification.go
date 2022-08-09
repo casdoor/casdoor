@@ -42,7 +42,7 @@ type VerificationRecord struct {
 
 func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
 	if provider == nil {
-		return fmt.Errorf("Please set an Email provider first")
+		return fmt.Errorf("please set an Email provider first")
 	}
 
 	sender := organization.DisplayName
@@ -60,7 +60,7 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 
 func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
 	if provider == nil {
-		return errors.New("Please set a SMS provider first")
+		return errors.New("please set a SMS provider first")
 	}
 
 	code := getRandomCode(5)
@@ -85,7 +85,7 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 
 	now := time.Now().Unix()
 	if has && now-record.Time < 60 {
-		return errors.New("You can only send one code in 60s.")
+		return errors.New("you can only send one code in 60s")
 	}
 
 	record.Owner = provider.Owner

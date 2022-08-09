@@ -55,7 +55,7 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 func (c *ApiController) SetTokenErrorHttpStatus() {
 	_, ok := c.Data["json"].(*object.TokenError)
 	if ok {
-		if c.Data["json"].(*object.TokenError).Error == object.INVALID_CLIENT {
+		if c.Data["json"].(*object.TokenError).Error == object.InvalidClient {
 			c.Ctx.Output.SetStatus(401)
 			c.Ctx.Output.Header("WWW-Authenticate", "Basic realm=\"OAuth2\"")
 		} else {

@@ -274,6 +274,7 @@ func (c *ApiController) GetAccount() {
 	c.ServeJSON()
 }
 
+// GetUserinfo
 // UserInfo
 // @Title UserInfo
 // @Tag Account API

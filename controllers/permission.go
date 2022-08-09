@@ -48,6 +48,7 @@ func (c *ApiController) GetPermissions() {
 	}
 }
 
+// GetPermission
 // @Title GetPermission
 // @Tag Permission API
 // @Description get permission
@@ -61,6 +62,7 @@ func (c *ApiController) GetPermission() {
 	c.ServeJSON()
 }
 
+// UpdatePermission
 // @Title UpdatePermission
 // @Tag Permission API
 // @Description update permission
@@ -81,6 +83,7 @@ func (c *ApiController) UpdatePermission() {
 	c.ServeJSON()
 }
 
+// AddPermission
 // @Title AddPermission
 // @Tag Permission API
 // @Description add permission
@@ -98,6 +101,7 @@ func (c *ApiController) AddPermission() {
 	c.ServeJSON()
 }
 
+// DeletePermission
 // @Title DeletePermission
 // @Tag Permission API
 // @Description delete permission

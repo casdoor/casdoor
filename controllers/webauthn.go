@@ -16,7 +16,7 @@ package controllers
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -24,6 +24,7 @@ import (
 	"github.com/duo-labs/webauthn/webauthn"
 )
 
+// WebAuthnSignupBegin
 // @Title WebAuthnSignupBegin
 // @Tag User API
 // @Description WebAuthn Registration Flow 1st stage
@@ -53,6 +54,7 @@ func (c *ApiController) WebAuthnSignupBegin() {
 	c.ServeJSON()
 }
 
+// WebAuthnSignupFinish
 // @Title WebAuthnSignupFinish
 // @Tag User API
 // @Description WebAuthn Registration Flow 2nd stage
@@ -72,7 +74,7 @@ func (c *ApiController) WebAuthnSignupFinish() {
 		c.ResponseError("Please call WebAuthnSignupBegin first")
 		return
 	}
-	c.Ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
+	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
 
 	credential, err := webauthnObj.FinishRegistration(user, sessionData, c.Ctx.Request)
 	if err != nil {
@@ -84,6 +86,7 @@ func (c *ApiController) WebAuthnSignupFinish() {
 	c.ResponseOk()
 }
 
+// WebAuthnSigninBegin
 // @Title WebAuthnSigninBegin
 // @Tag Login API
 // @Description WebAuthn Login Flow 1st stage
@@ -110,6 +113,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 	c.ServeJSON()
 }
 
+// WebAuthnSigninFinish
 // @Title WebAuthnSigninBegin
 // @Tag Login API
 // @Description WebAuthn Login Flow 2nd stage
@@ -124,7 +128,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 		c.ResponseError("Please call WebAuthnSigninBegin first")
 		return
 	}
-	c.Ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
+	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
 	userId := string(sessionData.UserID)
 	user := object.GetUser(userId)
 	_, err := webauthnObj.FinishLogin(user, sessionData, c.Ctx.Request)

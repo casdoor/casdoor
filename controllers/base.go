@@ -23,11 +23,13 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+// ApiController
 // controller for handlers under /api uri
 type ApiController struct {
 	beego.Controller
 }
 
+// RootController
 // controller for handlers directly under / (root)
 type RootController struct {
 	ApiController

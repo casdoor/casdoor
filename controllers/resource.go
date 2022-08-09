@@ -27,6 +27,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+// GetResources
 // @router /get-resources [get]
 // @Tag Resource API
 // @Title GetResources
@@ -50,6 +51,7 @@ func (c *ApiController) GetResources() {
 	}
 }
 
+// GetResource
 // @Tag Resource API
 // @Title GetResource
 // @router /get-resource [get]
@@ -60,6 +62,7 @@ func (c *ApiController) GetResource() {
 	c.ServeJSON()
 }
 
+// UpdateResource
 // @Tag Resource API
 // @Title UpdateResource
 // @router /update-resource [post]
@@ -76,6 +79,7 @@ func (c *ApiController) UpdateResource() {
 	c.ServeJSON()
 }
 
+// AddResource
 // @Tag Resource API
 // @Title AddResource
 // @router /add-resource [post]
@@ -90,6 +94,7 @@ func (c *ApiController) AddResource() {
 	c.ServeJSON()
 }
 
+// DeleteResource
 // @Tag Resource API
 // @Title DeleteResource
 // @router /delete-resource [post]
@@ -115,6 +120,7 @@ func (c *ApiController) DeleteResource() {
 	c.ServeJSON()
 }
 
+// UploadResource
 // @Tag Resource API
 // @Title UploadResource
 // @router /upload-resource [post]

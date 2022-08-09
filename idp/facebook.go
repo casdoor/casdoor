@@ -71,6 +71,7 @@ type FacebookCheckToken struct {
 	Data string `json:"data"`
 }
 
+// FacebookCheckTokenData
 // Get more detail via: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#checktoken
 type FacebookCheckTokenData struct {
 	UserId string `json:"user_id"`

@@ -48,6 +48,7 @@ func (c *ApiController) GetSyncers() {
 	}
 }
 
+// GetSyncer
 // @Title GetSyncer
 // @Tag Syncer API
 // @Description get syncer
@@ -61,6 +62,7 @@ func (c *ApiController) GetSyncer() {
 	c.ServeJSON()
 }
 
+// UpdateSyncer
 // @Title UpdateSyncer
 // @Tag Syncer API
 // @Description update syncer
@@ -81,6 +83,7 @@ func (c *ApiController) UpdateSyncer() {
 	c.ServeJSON()
 }
 
+// AddSyncer
 // @Title AddSyncer
 // @Tag Syncer API
 // @Description add syncer
@@ -98,6 +101,7 @@ func (c *ApiController) AddSyncer() {
 	c.ServeJSON()
 }
 
+// DeleteSyncer
 // @Title DeleteSyncer
 // @Tag Syncer API
 // @Description delete syncer
@@ -115,6 +119,7 @@ func (c *ApiController) DeleteSyncer() {
 	c.ServeJSON()
 }
 
+// RunSyncer
 // @Title RunSyncer
 // @Tag Syncer API
 // @Description run syncer

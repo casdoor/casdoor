@@ -16,7 +16,7 @@ package object
 
 import (
 	"encoding/gob"
-	"io/ioutil"
+	"os"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/duo-labs/webauthn/webauthn"
@@ -158,11 +158,11 @@ func initBuiltInApplication() {
 func readTokenFromFile() (string, string) {
 	pemPath := "./object/token_jwt_key.pem"
 	keyPath := "./object/token_jwt_key.key"
-	pem, err := ioutil.ReadFile(pemPath)
+	pem, err := os.ReadFile(pemPath)
 	if err != nil {
 		return "", ""
 	}
-	key, err := ioutil.ReadFile(keyPath)
+	key, err := os.ReadFile(keyPath)
 	if err != nil {
 		return "", ""
 	}

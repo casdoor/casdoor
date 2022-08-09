@@ -48,6 +48,7 @@ func (c *ApiController) GetCerts() {
 	}
 }
 
+// GetCert
 // @Title GetCert
 // @Tag Cert API
 // @Description get cert
@@ -61,6 +62,7 @@ func (c *ApiController) GetCert() {
 	c.ServeJSON()
 }
 
+// UpdateCert
 // @Title UpdateCert
 // @Tag Cert API
 // @Description update cert
@@ -81,6 +83,7 @@ func (c *ApiController) UpdateCert() {
 	c.ServeJSON()
 }
 
+// AddCert
 // @Title AddCert
 // @Tag Cert API
 // @Description add cert
@@ -98,6 +101,7 @@ func (c *ApiController) AddCert() {
 	c.ServeJSON()
 }
 
+// DeleteCert
 // @Title DeleteCert
 // @Tag Cert API
 // @Description delete cert

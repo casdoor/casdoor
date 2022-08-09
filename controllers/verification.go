@@ -98,7 +98,7 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
-	sendResp := errors.New("Invalid dest type")
+	sendResp := errors.New("invalid dest type")
 
 	if user == nil && checkUser != "" && checkUser != "true" {
 		name := application.Organization

@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -85,7 +84,7 @@ func (idp *LinkedInIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	rbs, err := ioutil.ReadAll(resp.Body)
+	rbs, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -323,7 +322,7 @@ func (idp *LinkedInIdProvider) GetUrlRespWithAuthorization(url, token string) ([
 		}
 	}(resp.Body)
 
-	bs, err := ioutil.ReadAll(resp.Body)
+	bs, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
