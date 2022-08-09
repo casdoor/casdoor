@@ -91,7 +91,7 @@ class RoleEditPage extends React.Component {
   updateRoleField(key, value) {
     value = this.parseRoleField(key, value);
 
-    let role = this.state.role;
+    const role = this.state.role;
     role[key] = value;
     this.setState({
       role: role,
@@ -179,7 +179,7 @@ class RoleEditPage extends React.Component {
   }
 
   submitRoleEdit(willExist) {
-    let role = Setting.deepCopy(this.state.role);
+    const role = Setting.deepCopy(this.state.role);
     RoleBackend.updateRole(this.state.organizationName, this.state.roleName, role)
       .then((res) => {
         if (res.msg === "") {

@@ -131,9 +131,9 @@ class UserListPage extends BaseListPage {
 
   renderTable(users) {
     // transfer country code to name based on selected language
-    var countries = require("i18n-iso-countries");
+    const countries = require("i18n-iso-countries");
     countries.registerLocale(require("i18n-iso-countries/langs/" + i18next.language + ".json"));
-    for (var index in users) {
+    for (const index in users) {
       users[index].region = countries.getName(users[index].region, i18next.language, {select: "official"});
     }
 
@@ -368,8 +368,8 @@ class UserListPage extends BaseListPage {
   }
 
   fetch = (params = {}) => {
-    let field = params.searchedColumn, value = params.searchText;
-    let sortField = params.sortField, sortOrder = params.sortOrder;
+    const field = params.searchedColumn, value = params.searchText;
+    const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
     if (this.state.organizationName === undefined) {
       UserBackend.getGlobalUsers(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)

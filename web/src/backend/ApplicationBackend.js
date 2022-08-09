@@ -43,7 +43,7 @@ export function getUserApplication(owner, name) {
 }
 
 export function updateApplication(owner, name, application) {
-  let newApplication = Setting.deepCopy(application);
+  const newApplication = Setting.deepCopy(application);
   return fetch(`${Setting.ServerUrl}/api/update-application?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
@@ -52,7 +52,7 @@ export function updateApplication(owner, name, application) {
 }
 
 export function addApplication(application) {
-  let newApplication = Setting.deepCopy(application);
+  const newApplication = Setting.deepCopy(application);
   newApplication.organization = "built-in";
   return fetch(`${Setting.ServerUrl}/api/add-application`, {
     method: "POST",
@@ -62,7 +62,7 @@ export function addApplication(application) {
 }
 
 export function deleteApplication(application) {
-  let newApplication = Setting.deepCopy(application);
+  const newApplication = Setting.deepCopy(application);
   return fetch(`${Setting.ServerUrl}/api/delete-application`, {
     method: "POST",
     credentials: "include",

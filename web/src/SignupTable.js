@@ -38,7 +38,7 @@ class SignupTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: Setting.getNewRowNameForTable(table, "Please select a signup item"), visible: true, required: true, rule: "None"};
+    const row = {name: Setting.getNewRowNameForTable(table, "Please select a signup item"), visible: true, required: true, rule: "None"};
     if (table === undefined) {
       table = [];
     }

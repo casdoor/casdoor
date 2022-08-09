@@ -110,7 +110,7 @@ class UserEditPage extends React.Component {
   updateUserField(key, value) {
     value = this.parseUserField(key, value);
 
-    let user = this.state.user;
+    const user = this.state.user;
     user[key] = value;
     this.setState({
       user: user,
@@ -583,7 +583,7 @@ class UserEditPage extends React.Component {
   }
 
   submitUserEdit(willExist) {
-    let user = Setting.deepCopy(this.state.user);
+    const user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.organizationName, this.state.userName, user)
       .then((res) => {
         if (res.msg === "") {

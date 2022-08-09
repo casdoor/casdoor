@@ -38,7 +38,7 @@ class SyncerTableColumnTable extends React.Component {
   }
 
   addRow(table) {
-    let row = {name: `column${table.length}`, type: "string", values: []};
+    const row = {name: `column${table.length}`, type: "string", values: []};
     if (table === undefined) {
       table = [];
     }
