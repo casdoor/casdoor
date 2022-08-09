@@ -138,9 +138,9 @@ func (c *ApiController) SetSessionData(s *SessionData) {
 
 func wrapActionResponse(affected bool) *Response {
 	if affected {
-		return &Response{Status: "ok", Msg: "", Data: "Affected"}
+		return &Response{Status: "ok", Msg: ""}
 	} else {
-		return &Response{Status: "ok", Msg: "", Data: "Unaffected"}
+		return &Response{Status: "error", Msg: "this operation has no effect"}
 	}
 }
 
