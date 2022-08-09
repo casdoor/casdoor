@@ -90,8 +90,8 @@ class ForgetPage extends React.Component {
   }
 
   onFormFinish(name, info, forms) {
-    var username = null;
-    var oAuthParams = null;
+    let username = null;
+    let oAuthParams = null;
     switch (name) {
     case "step1":
       username = forms.step1.getFieldValue("username");
