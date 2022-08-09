@@ -40,7 +40,7 @@ type Permission struct {
 }
 
 type PermissionRule struct {
-	Ptype string `xorm:"varchar(100) index not null default ''" json:"ptype"`
+	PType string `xorm:"varchar(100) index not null default ''" json:"p_type"`
 	V0    string `xorm:"varchar(100) index not null default ''" json:"v0"`
 	V1    string `xorm:"varchar(100) index not null default ''" json:"v1"`
 	V2    string `xorm:"varchar(100) index not null default ''" json:"v2"`
