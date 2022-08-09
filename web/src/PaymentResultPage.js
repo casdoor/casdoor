@@ -83,7 +83,7 @@ class PaymentResultPage extends React.Component {
             title={`${i18next.t("payment:The payment is still under processing")}: ${payment.productDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}, ${i18next.t("payment:please wait for a few seconds...")}`}
             subTitle={i18next.t("payment:Please click the below button to return to the original website")}
             extra={[
-              <Spin size="large" tip={i18next.t("payment:Processing...")} />,
+              <Spin key="returnUrl" size="large" tip={i18next.t("payment:Processing...")} />,
             ]}
           />
         </div>
