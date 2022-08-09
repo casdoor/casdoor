@@ -57,6 +57,31 @@ jobs:
           go build -race -ldflags "-extldflags '-static'"
         working-directory: ./
 
+  format-go-code:
+    name: Format go code
+    runs-on: ubuntu-latest
+    # should only trigger by pull request, so the commit change will show in pr
+    # which can be used to check if the code is formatted correctly
+    if: github.repository == 'casdoor/casdoor' && github.event_name == 'pull_request'
+    needs: [ frontend, backend ]
+    steps:
+      - uses: actions/checkout@v2
+      
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.18'
+
+      - name: Install gofumpt
+        run: go install mvdan.cc/gofumpt@latest
+
+      - name: Format
+        run: gofumpt -l -w .
+
+      - name: Auto commit
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'chore(style): format code'
+
   release-and-push:
     name: Release And Push
     runs-on: ubuntu-latest
