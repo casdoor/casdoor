@@ -416,6 +416,8 @@
     "Client secret 2": "Client secret 2",
     "Client secret 2 - Tooltip": "Client secret 2 - Tooltip",
     "Copy": "Copy",
+    "Disable SSL": "Disable SSL",
+    "Disable SSL - Tooltip": "Disable SSL - Tooltip",
     "Domain": "Domain",
     "Domain - Tooltip": "Storage endpoint custom domain",
     "Edit Provider": "Edit Provider",

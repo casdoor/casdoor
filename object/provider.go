@@ -43,10 +43,11 @@ type Provider struct {
 	CustomUserInfoUrl string `xorm:"varchar(200)" json:"customUserInfoUrl"`
 	CustomLogo        string `xorm:"varchar(200)" json:"customLogo"`
 
-	Host    string `xorm:"varchar(100)" json:"host"`
-	Port    int    `json:"port"`
-	Title   string `xorm:"varchar(100)" json:"title"`
-	Content string `xorm:"varchar(1000)" json:"content"`
+	Host       string `xorm:"varchar(100)" json:"host"`
+	Port       int    `json:"port"`
+	DisableSsl bool   `json:"disableSsl"`
+	Title      string `xorm:"varchar(100)" json:"title"`
+	Content    string `xorm:"varchar(1000)" json:"content"`
 
 	RegionId     string `xorm:"varchar(100)" json:"regionId"`
 	SignName     string `xorm:"varchar(100)" json:"signName"`

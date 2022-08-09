@@ -199,6 +199,7 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "GitHub");
               } else if (value === "Email") {
                 this.updateProviderField("type", "Default");
+                this.updateProviderField("disableSsl", false);
                 this.updateProviderField("title", "Casdoor Verification Code");
                 this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.");
               } else if (value === "SMS") {
@@ -507,6 +508,16 @@ class ProviderEditPage extends React.Component {
                 <Col span={22} >
                   <InputNumber value={this.state.provider.port} onChange={value => {
                     this.updateProviderField("port", value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Disable SSL"), i18next.t("provider:Disable SSL - Tooltip"))} :
+                </Col>
+                <Col span={1} >
+                  <Switch checked={this.state.provider.disableSsl} onChange={checked => {
+                    this.updateProviderField("disableSsl", checked);
                   }} />
                 </Col>
               </Row>

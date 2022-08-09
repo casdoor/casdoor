@@ -416,6 +416,8 @@
     "Client secret 2": "Client secret 2",
     "Client secret 2 - Tooltip": "Secret client 2 - Infobulle",
     "Copy": "Copie",
+    "Disable SSL": "Disable SSL",
+    "Disable SSL - Tooltip": "Disable SSL - Tooltip",
     "Domain": "Domaine",
     "Domain - Tooltip": "Storage endpoint custom domain",
     "Edit Provider": "Modifier le fournisseur",
