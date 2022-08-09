@@ -250,8 +250,8 @@ class ApplicationListPage extends BaseListPage {
   }
 
   fetch = (params = {}) => {
-    let field = params.searchedColumn, value = params.searchText;
-    let sortField = params.sortField, sortOrder = params.sortOrder;
+    const field = params.searchedColumn, value = params.searchText;
+    const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
     ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {

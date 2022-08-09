@@ -60,7 +60,7 @@ class PaymentEditPage extends React.Component {
   updatePaymentField(key, value) {
     value = this.parsePaymentField(key, value);
 
-    let payment = this.state.payment;
+    const payment = this.state.payment;
     payment[key] = value;
     this.setState({
       payment: payment,
@@ -440,7 +440,7 @@ class PaymentEditPage extends React.Component {
       return;
     }
 
-    let payment = Setting.deepCopy(this.state.payment);
+    const payment = Setting.deepCopy(this.state.payment);
     PaymentBackend.updatePayment(this.state.payment.owner, this.state.paymentName, payment)
       .then((res) => {
         if (res.msg === "") {

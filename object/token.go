@@ -703,13 +703,16 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 			Avatar:            avatar,
 			SignupApplication: application.Name,
 			WeChat:            openId,
-			WeChatUnionId:     unionId,
 			Type:              "normal-user",
 			CreatedTime:       util.GetCurrentTime(),
 			IsAdmin:           false,
 			IsGlobalAdmin:     false,
 			IsForbidden:       false,
 			IsDeleted:         false,
+			Properties: map[string]string{
+				USER_PROPERTIES_WECHAT_OPEN_ID:  openId,
+				USER_PROPERTIES_WECHAT_UNION_ID: unionId,
+			},
 		}
 		AddUser(user)
 	}

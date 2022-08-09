@@ -54,7 +54,7 @@ export const PasswordModal = (props) => {
     });
   };
 
-  let hasOldPassword = user.password !== "";
+  const hasOldPassword = user.password !== "";
 
   return (
     <Row>

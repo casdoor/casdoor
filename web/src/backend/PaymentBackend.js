@@ -29,7 +29,7 @@ export function getPayment(owner, name) {
 }
 
 export function updatePayment(owner, name, payment) {
-  let newPayment = Setting.deepCopy(payment);
+  const newPayment = Setting.deepCopy(payment);
   return fetch(`${Setting.ServerUrl}/api/update-payment?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
@@ -38,7 +38,7 @@ export function updatePayment(owner, name, payment) {
 }
 
 export function addPayment(payment) {
-  let newPayment = Setting.deepCopy(payment);
+  const newPayment = Setting.deepCopy(payment);
   return fetch(`${Setting.ServerUrl}/api/add-payment`, {
     method: "POST",
     credentials: "include",
@@ -47,7 +47,7 @@ export function addPayment(payment) {
 }
 
 export function deletePayment(payment) {
-  let newPayment = Setting.deepCopy(payment);
+  const newPayment = Setting.deepCopy(payment);
   return fetch(`${Setting.ServerUrl}/api/delete-payment`, {
     method: "POST",
     credentials: "include",

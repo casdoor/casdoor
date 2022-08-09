@@ -116,7 +116,7 @@ class PermissionEditPage extends React.Component {
   updatePermissionField(key, value) {
     value = this.parsePermissionField(key, value);
 
-    let permission = this.state.permission;
+    const permission = this.state.permission;
     permission[key] = value;
     this.setState({
       permission: permission,
@@ -288,7 +288,7 @@ class PermissionEditPage extends React.Component {
   }
 
   submitPermissionEdit(willExist) {
-    let permission = Setting.deepCopy(this.state.permission);
+    const permission = Setting.deepCopy(this.state.permission);
     PermissionBackend.updatePermission(this.state.organizationName, this.state.permissionName, permission)
       .then((res) => {
         if (res.msg === "") {

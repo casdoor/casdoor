@@ -199,7 +199,7 @@ class RecordListPage extends BaseListPage {
 
   fetch = (params = {}) => {
     let field = params.searchedColumn, value = params.searchText;
-    let sortField = params.sortField, sortOrder = params.sortOrder;
+    const sortField = params.sortField, sortOrder = params.sortOrder;
     if (params.method !== undefined && params.method !== null) {
       field = "method";
       value = params.method;

@@ -77,7 +77,7 @@ class AuthCallback extends React.Component {
 
   UNSAFE_componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
-    let isSteam = params.get("openid.mode");
+    const isSteam = params.get("openid.mode");
     let code = params.get("code");
     // WeCom returns "auth_code=xxx" instead of "code=xxx"
     if (code === null) {
@@ -98,7 +98,7 @@ class AuthCallback extends React.Component {
     const method = innerParams.get("method");
     const samlRequest = innerParams.get("SAMLRequest");
 
-    let redirectUri = `${window.location.origin}/callback`;
+    const redirectUri = `${window.location.origin}/callback`;
 
     const body = {
       type: this.getResponseType(),

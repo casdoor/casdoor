@@ -152,8 +152,8 @@ class LoginPage extends React.Component {
           Util.showMessage("success", msg);
 
           if (casParams.service !== "") {
-            let st = res.data;
-            let newUrl = new URL(casParams.service);
+            const st = res.data;
+            const newUrl = new URL(casParams.service);
             newUrl.searchParams.append("ticket", st);
             window.location.href = newUrl.toString();
           }
@@ -250,12 +250,12 @@ class LoginPage extends React.Component {
 
   getSamlUrl(provider) {
     const params = new URLSearchParams(this.props.location.search);
-    let clientId = params.get("client_id");
-    let application = params.get("state");
-    let realRedirectUri = params.get("redirect_uri");
-    let redirectUri = `${window.location.origin}/callback/saml`;
-    let providerName = provider.name;
-    let relayState = `${clientId}&${application}&${providerName}&${realRedirectUri}&${redirectUri}`;
+    const clientId = params.get("client_id");
+    const application = params.get("state");
+    const realRedirectUri = params.get("redirect_uri");
+    const redirectUri = `${window.location.origin}/callback/saml`;
+    const providerName = provider.name;
+    const relayState = `${clientId}&${application}&${providerName}&${realRedirectUri}&${redirectUri}`;
     AuthBackend.getSamlLogin(`${provider.owner}/${providerName}`, btoa(relayState)).then((res) => {
       if (res.data2 === "POST") {
         document.write(res.data);
@@ -507,20 +507,20 @@ class LoginPage extends React.Component {
     if (this.props.account === undefined || this.props.account === null) {
       return null;
     }
-    let application = this.getApplicationObj();
+    const application = this.getApplicationObj();
     if (this.props.account.owner !== application.organization) {
       return null;
     }
 
     const params = new URLSearchParams(this.props.location.search);
-    let silentSignin = params.get("silentSignin");
+    const silentSignin = params.get("silentSignin");
     if (silentSignin !== null) {
       if (window !== window.parent) {
         const message = {tag: "Casdoor", type: "SilentSignin", data: "signing-in"};
         window.parent.postMessage(message, "*");
       }
 
-      let values = {};
+      const values = {};
       values["application"] = this.state.application.name;
       this.onFinish(values);
     }
@@ -535,7 +535,7 @@ class LoginPage extends React.Component {
         </div>
         <br />
         <SelfLoginButton account={this.props.account} onClick={() => {
-          let values = {};
+          const values = {};
           values["application"] = this.state.application.name;
           this.onFinish(values);
         }} />
@@ -554,7 +554,7 @@ class LoginPage extends React.Component {
       return;
     }
 
-    let application = this.getApplicationObj();
+    const application = this.getApplicationObj();
     return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}&name=${username}`, {
       method: "GET",
       credentials: "include",
@@ -576,11 +576,11 @@ class LoginPage extends React.Component {
         });
       })
       .then((assertion) => {
-        let authData = assertion.response.authenticatorData;
-        let clientDataJSON = assertion.response.clientDataJSON;
-        let rawId = assertion.rawId;
-        let sig = assertion.response.signature;
-        let userHandle = assertion.response.userHandle;
+        const authData = assertion.response.authenticatorData;
+        const clientDataJSON = assertion.response.clientDataJSON;
+        const rawId = assertion.rawId;
+        const sig = assertion.response.signature;
+        const userHandle = assertion.response.userHandle;
         return fetch(`${Setting.ServerUrl}/api/webauthn/signin/finish`, {
           method: "POST",
           credentials: "include",
@@ -611,7 +611,7 @@ class LoginPage extends React.Component {
   }
 
   renderPasswordOrCodeInput() {
-    let application = this.getApplicationObj();
+    const application = this.getApplicationObj();
     if (this.state.loginMethod === "password") {
       return this.state.isCodeSignin ? (
         <Form.Item
@@ -640,7 +640,7 @@ class LoginPage extends React.Component {
   }
 
   renderMethodChoiceBox() {
-    let application = this.getApplicationObj();
+    const application = this.getApplicationObj();
     if (application.enableWebAuthn) {
       return (
         <div>

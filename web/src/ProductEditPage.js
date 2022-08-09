@@ -69,7 +69,7 @@ class ProductEditPage extends React.Component {
   updateProductField(key, value) {
     value = this.parseProductField(key, value);
 
-    let product = this.state.product;
+    const product = this.state.product;
     product[key] = value;
     this.setState({
       product: product,
@@ -252,7 +252,7 @@ class ProductEditPage extends React.Component {
   }
 
   renderPreview() {
-    let buyUrl = `/products/${this.state.product.name}/buy`;
+    const buyUrl = `/products/${this.state.product.name}/buy`;
     return (
       <Col span={22} style={{display: "flex", flexDirection: "column"}}>
         <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={buyUrl}>
@@ -268,7 +268,7 @@ class ProductEditPage extends React.Component {
   }
 
   submitProductEdit(willExist) {
-    let product = Setting.deepCopy(this.state.product);
+    const product = Setting.deepCopy(this.state.product);
     ProductBackend.updateProduct(this.state.product.owner, this.state.productName, product)
       .then((res) => {
         if (res.msg === "") {

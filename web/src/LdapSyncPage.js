@@ -35,7 +35,7 @@ class LdapSyncPage extends React.Component {
   }
 
   syncUsers() {
-    let selectedUsers = this.state.selectedUsers;
+    const selectedUsers = this.state.selectedUsers;
     if (selectedUsers === null || selectedUsers.length === 0) {
       Setting.showMessage("error", "Please select al least 1 user first");
       return;
@@ -44,10 +44,10 @@ class LdapSyncPage extends React.Component {
     LdapBackend.syncUsers(this.state.ldap.owner, this.state.ldap.id, selectedUsers)
       .then((res => {
         if (res.status === "ok") {
-          let exist = res.data.exist;
-          let failed = res.data.failed;
-          let existUser = [];
-          let failedUser = [];
+          const exist = res.data.exist;
+          const failed = res.data.failed;
+          const existUser = [];
+          const failedUser = [];
 
           if ((!exist || exist.length === 0) && (!failed || failed.length === 0)) {
             Setting.goToLink(`/organizations/${this.state.ldap.owner}/users`);
@@ -103,7 +103,7 @@ class LdapSyncPage extends React.Component {
   }
 
   getExistUsers(owner, users) {
-    let uuidArray = [];
+    const uuidArray = [];
     users.forEach(elem => {
       uuidArray.push(elem.uuid);
     });
@@ -119,11 +119,11 @@ class LdapSyncPage extends React.Component {
   }
 
   buildValArray(data, key) {
-    let valTypesArray = [];
+    const valTypesArray = [];
 
     if (data !== null && data.length > 0) {
       data.forEach(elem => {
-        let val = elem[key];
+        const val = elem[key];
         if (!valTypesArray.includes(val)) {
           valTypesArray.push(val);
         }
@@ -133,10 +133,10 @@ class LdapSyncPage extends React.Component {
   }
 
   buildFilter(data, key) {
-    let filterArray = [];
+    const filterArray = [];
 
     if (data !== null && data.length > 0) {
-      let valArray = this.buildValArray(data, key);
+      const valArray = this.buildValArray(data, key);
       valArray.forEach(elem => {
         filterArray.push({
           text: elem,

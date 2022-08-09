@@ -266,7 +266,7 @@ class OrganizationListPage extends BaseListPage {
 
   fetch = (params = {}) => {
     let field = params.searchedColumn, value = params.searchText;
-    let sortField = params.sortField, sortOrder = params.sortOrder;
+    const sortField = params.sortField, sortOrder = params.sortOrder;
     if (params.passwordType !== undefined && params.passwordType !== null) {
       field = "passwordType";
       value = params.passwordType;
