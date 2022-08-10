@@ -35,6 +35,9 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14.17.0'
+      - uses: c-hive/gha-yarn-cache@v2
+        with:
+          directory: ./web
       - run: yarn install && CI=false yarn run build
         working-directory: ./web
 
