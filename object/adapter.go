@@ -19,12 +19,14 @@ import (
 	"runtime"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql"   // db = mysql
 	_ "github.com/lib/pq"                // db = postgres
-	//_ "github.com/mattn/go-sqlite3"    // db = sqlite3
+
+	// _ "github.com/mattn/go-sqlite3"    // db = sqlite3
 	"xorm.io/core"
 	"xorm.io/xorm"
 )
@@ -43,10 +45,19 @@ func InitConfig() {
 }
 
 func InitAdapter(createDatabase bool) {
-	adapter = NewAdapter(conf.GetConfigString("driverName"), conf.GetBeegoConfDataSourceName(), conf.GetConfigString("dbName"))
+	var err error
+	driverName := conf.GetConfigString("driverName")
+	dataSourceName := conf.GetBeegoConfDataSourceName()
+	dbName := conf.GetConfigString("dbName")
 	if createDatabase {
-		adapter.CreateDatabase()
+		dataSourceName, err = CreateDatabase(driverName, dataSourceName, dbName)
+		if err != nil {
+			panic(err)
+		}
 	}
+	conf.SetBeegoConfDataSourceName(dataSourceName)
+	adapter = NewAdapter(driverName, dataSourceName)
+	logs.Debug("dataSourceName：%s", dataSourceName)
 	adapter.createTable()
 }
 
@@ -54,7 +65,6 @@ func InitAdapter(createDatabase bool) {
 type Adapter struct {
 	driverName     string
 	dataSourceName string
-	dbName         string
 	Engine         *xorm.Engine
 }
 
@@ -67,11 +77,10 @@ func finalizer(a *Adapter) {
 }
 
 // NewAdapter is the constructor for Adapter.
-func NewAdapter(driverName string, dataSourceName string, dbName string) *Adapter {
+func NewAdapter(driverName string, dataSourceName string) *Adapter {
 	a := &Adapter{}
 	a.driverName = driverName
 	a.dataSourceName = dataSourceName
-	a.dbName = dbName
 
 	// Open the DB, create it if not existed.
 	a.open()
@@ -82,24 +91,8 @@ func NewAdapter(driverName string, dataSourceName string, dbName string) *Adapte
 	return a
 }
 
-func (a *Adapter) CreateDatabase() error {
-	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName)
-	if err != nil {
-		return err
-	}
-	defer engine.Close()
-
-	_, err = engine.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default charset utf8mb4 COLLATE utf8mb4_general_ci", a.dbName))
-	return err
-}
-
 func (a *Adapter) open() {
-	dataSourceName := a.dataSourceName + a.dbName
-	if a.driverName != "mysql" {
-		dataSourceName = a.dataSourceName
-	}
-
-	engine, err := xorm.NewEngine(a.driverName, dataSourceName)
+	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName)
 	if err != nil {
 		panic(err)
 	}

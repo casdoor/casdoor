@@ -154,14 +154,14 @@ func (syncer *Syncer) initAdapter() {
 		} else if syncer.DatabaseType == "postgres" {
 			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", syncer.User, syncer.Password, syncer.Host, syncer.Port, syncer.Database)
 		} else {
-			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/", syncer.User, syncer.Password, syncer.Host, syncer.Port)
+			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", syncer.User, syncer.Password, syncer.Host, syncer.Port, syncer.Database)
 		}
 
 		if !isCloudIntranet {
 			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
 		}
 
-		syncer.Adapter = NewAdapter(syncer.DatabaseType, dataSourceName, syncer.Database)
+		syncer.Adapter = NewAdapter(syncer.DatabaseType, dataSourceName)
 	}
 }
 

@@ -25,7 +25,7 @@ import (
 
 func getEnforcer(permission *Permission) *casbin.Enforcer {
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	adapter, err := xormadapter.NewAdapterWithTableName(conf.GetConfigString("driverName"), conf.GetBeegoConfDataSourceName()+conf.GetConfigString("dbName"), "permission_rule", tableNamePrefix, true)
+	adapter, err := xormadapter.NewAdapterWithTableName(conf.GetConfigString("driverName"), conf.GetBeegoConfDataSourceName(), "permission_rule", tableNamePrefix, true)
 	if err != nil {
 		panic(err)
 	}

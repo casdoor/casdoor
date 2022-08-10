@@ -31,6 +31,14 @@ func GetConfigString(key string) string {
 	return beego.AppConfig.String(key)
 }
 
+func SetConfigString(k, v string) error {
+	return beego.AppConfig.Set(k, v)
+}
+
+func SetBeegoConfDataSourceName(dataSourceName string) error {
+	return SetConfigString("dataSourceName", dataSourceName)
+}
+
 func GetConfigBool(key string) (bool, error) {
 	value := GetConfigString(key)
 	if value == "true" {
