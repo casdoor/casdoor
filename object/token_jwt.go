@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/util"
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
@@ -60,7 +61,7 @@ func getShortClaims(claims Claims) ClaimsShort {
 	return res
 }
 
-func generateJwtToken(application *Application, user *User, nonce string, scope string, host string, jti string) (string, string, error) {
+func generateJwtToken(application *Application, user *User, nonce string, scope string, host string) (string, string, string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours) * time.Hour)
@@ -71,6 +72,9 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 	if origin != "" {
 		originBackend = origin
 	}
+
+	name := util.GenerateId()
+	jti := fmt.Sprintf("%s/%s", application.Owner, name)
 
 	claims := Claims{
 		User:  user,
@@ -110,17 +114,17 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 	// RSA private key
 	key, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(cert.PrivateKey))
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
 	token.Header["kid"] = cert.Name
 	tokenString, err := token.SignedString(key)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 	refreshTokenString, err := refreshToken.SignedString(key)
 
-	return tokenString, refreshTokenString, err
+	return tokenString, refreshTokenString, name, err
 }
 
 func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
