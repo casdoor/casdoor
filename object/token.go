@@ -287,7 +287,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		}
 	}
 
-	accessToken, refreshToken, err := generateJwtToken(application, user, nonce, scope, host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, nonce, scope, host)
 	if err != nil {
 		panic(err)
 	}
@@ -298,7 +298,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 
 	token := &Token{
 		Owner:         application.Owner,
-		Name:          util.GenerateId(),
+		Name:          tokenName,
 		CreatedTime:   util.GetCurrentTime(),
 		Application:   application.Name,
 		Organization:  user.Owner,
@@ -420,7 +420,8 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
 		}
 	}
-	newAccessToken, newRefreshToken, err := generateJwtToken(application, user, "", scope, host)
+
+	newAccessToken, newRefreshToken, tokenName, err := generateJwtToken(application, user, "", scope, host)
 	if err != nil {
 		return &TokenError{
 			Error:            EndpointError,
@@ -430,7 +431,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 
 	newToken := &Token{
 		Owner:        application.Owner,
-		Name:         util.GenerateId(),
+		Name:         tokenName,
 		CreatedTime:  util.GetCurrentTime(),
 		Application:  application.Name,
 		Organization: user.Owner,
@@ -569,7 +570,8 @@ func GetPasswordToken(application *Application, username string, password string
 			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
 		}
 	}
-	accessToken, refreshToken, err := generateJwtToken(application, user, "", scope, host)
+
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", scope, host)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
@@ -578,7 +580,7 @@ func GetPasswordToken(application *Application, username string, password string
 	}
 	token := &Token{
 		Owner:        application.Owner,
-		Name:         util.GenerateId(),
+		Name:         tokenName,
 		CreatedTime:  util.GetCurrentTime(),
 		Application:  application.Name,
 		Organization: user.Owner,
@@ -609,7 +611,8 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		Id:    application.GetId(),
 		Name:  fmt.Sprintf("app/%s", application.Name),
 	}
-	accessToken, _, err := generateJwtToken(application, nullUser, "", scope, host)
+
+	accessToken, _, tokenName, err := generateJwtToken(application, nullUser, "", scope, host)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
@@ -618,7 +621,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 	}
 	token := &Token{
 		Owner:        application.Owner,
-		Name:         util.GenerateId(),
+		Name:         tokenName,
 		CreatedTime:  util.GetCurrentTime(),
 		Application:  application.Name,
 		Organization: application.Organization,
@@ -637,13 +640,13 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 // GetTokenByUser
 // Implicit flow
 func GetTokenByUser(application *Application, user *User, scope string, host string) (*Token, error) {
-	accessToken, refreshToken, err := generateJwtToken(application, user, "", scope, host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", scope, host)
 	if err != nil {
 		return nil, err
 	}
 	token := &Token{
 		Owner:        application.Owner,
-		Name:         util.GenerateId(),
+		Name:         tokenName,
 		CreatedTime:  util.GetCurrentTime(),
 		Application:  application.Name,
 		Organization: user.Owner,
@@ -723,7 +726,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		AddUser(user)
 	}
 
-	accessToken, refreshToken, err := generateJwtToken(application, user, "", "", host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", host)
 	if err != nil {
 		return nil, &TokenError{
 			Error:            EndpointError,
@@ -733,7 +736,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 
 	token := &Token{
 		Owner:        application.Owner,
-		Name:         util.GenerateId(),
+		Name:         tokenName,
 		CreatedTime:  util.GetCurrentTime(),
 		Application:  application.Name,
 		Organization: user.Owner,
