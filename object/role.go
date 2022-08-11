@@ -29,6 +29,7 @@ type Role struct {
 
 	Users     []string `xorm:"mediumtext" json:"users"`
 	Roles     []string `xorm:"mediumtext" json:"roles"`
+	Domains   []string `xorm:"mediumtext" json:"domains"`
 	IsEnabled bool     `json:"isEnabled"`
 }
 
@@ -88,13 +89,19 @@ func GetRole(id string) *Role {
 
 func UpdateRole(id string, role *Role) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getRole(owner, name) == nil {
+	oldRole := getRole(owner, name)
+	if oldRole == nil {
 		return false
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
 	if err != nil {
 		panic(err)
+	}
+
+	if affected != 0 {
+		removeGroupingPolicies(oldRole)
+		addGroupingPolicies(role)
 	}
 
 	return affected != 0
@@ -106,6 +113,10 @@ func AddRole(role *Role) bool {
 		panic(err)
 	}
 
+	if affected != 0 {
+		addGroupingPolicies(role)
+	}
+
 	return affected != 0
 }
 
@@ -113,6 +124,10 @@ func DeleteRole(role *Role) bool {
 	affected, err := adapter.Engine.ID(core.PK{role.Owner, role.Name}).Delete(&Role{})
 	if err != nil {
 		panic(err)
+	}
+
+	if affected != 0 {
+		removeGroupingPolicies(role)
 	}
 
 	return affected != 0

@@ -37,11 +37,14 @@ r = sub, obj, act
 [policy_definition]
 p = permission, sub, obj, act
 
+[role_definition]
+g = _, _
+
 [policy_effect]
 e = some(where (p.eft == allow))
 
 [matchers]
-m = r.sub == p.sub && r.obj == p.obj && r.act == p.act`
+m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`
 	permissionModel := getModel(permission.Owner, permission.Model)
 	if permissionModel != nil {
 		modelText = permissionModel.ModelText
@@ -52,11 +55,6 @@ m = r.sub == p.sub && r.obj == p.obj && r.act == p.act`
 	}
 
 	enforcer, err := casbin.NewEnforcer(m, adapter)
-	if err != nil {
-		panic(err)
-	}
-
-	err = enforcer.LoadFilteredPolicy(xormadapter.Filter{V0: []string{permission.GetId()}})
 	if err != nil {
 		panic(err)
 	}
@@ -97,6 +95,37 @@ func removePolicies(permission *Permission) {
 	enforcer := getEnforcer(permission)
 
 	_, err := enforcer.RemoveFilteredPolicy(0, permission.GetId())
+	if err != nil {
+		panic(err)
+	}
+}
+
+func getGroupingPolicies(role *Role) [][]string {
+	var groupingPolicies [][]string
+	for _, subUser := range role.Users {
+		groupingPolicies = append(groupingPolicies, []string{subUser, role.GetId()})
+	}
+	for _, subRole := range role.Roles {
+		groupingPolicies = append(groupingPolicies, []string{subRole, role.GetId()})
+	}
+	return groupingPolicies
+}
+
+func addGroupingPolicies(role *Role) {
+	enforcer := getEnforcer(&Permission{})
+	groupingPolicies := getGroupingPolicies(role)
+
+	_, err := enforcer.AddGroupingPolicies(groupingPolicies)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func removeGroupingPolicies(role *Role) {
+	enforcer := getEnforcer(&Permission{})
+	groupingPolicies := getGroupingPolicies(role)
+
+	_, err := enforcer.RemoveGroupingPolicies(groupingPolicies)
 	if err != nil {
 		panic(err)
 	}
