@@ -94,8 +94,8 @@
 
     // don't use strict mod now, otherwise there are a lot of errors in the codebase
     "no-unused-vars": "off",
-    "react/no-deprecated": "warn",
+    "react/no-deprecated": "error",
     "no-case-declarations": "off",
-    "react/jsx-key": "warn"
+    "react/jsx-key": "error"
   }
 }
