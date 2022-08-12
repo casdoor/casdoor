@@ -207,6 +207,7 @@ class ForgetPage extends React.Component {
           hidden={this.state.current !== 0}
           ref={this.form}
           name="step1"
+          // eslint-disable-next-line no-console
           onFinishFailed={(errorInfo) => console.log(errorInfo)}
           initialValues={{
             application: application.name,

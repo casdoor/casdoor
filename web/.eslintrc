@@ -20,7 +20,6 @@
   "plugins": ["unused-imports"],
   "extends": ["eslint:recommended", "plugin:react/recommended"],
   "rules": {
-    // "eqeqeq": "error",
     "semi": ["error", "always"],
     "indent": ["error", 2],
     // follow antd's style guide
@@ -87,15 +86,16 @@
         "argsIgnorePattern": "^_"
       }
     ],
+    "no-unused-vars": "off",
+    "react/no-deprecated": "error",
+    "react/jsx-key": "error",
+    // TODO(qianxi): should be error
+    "no-console": "error",
+    "eqeqeq": "warn",
 
     "react/prop-types": "off",
     "react/display-name": "off",
     "react/react-in-jsx-scope": "off",
-
-    // don't use strict mod now, otherwise there are a lot of errors in the codebase
-    "no-unused-vars": "off",
-    "react/no-deprecated": "warn",
-    "no-case-declarations": "off",
-    "react/jsx-key": "warn"
+    "no-case-declarations": "off"
   }
 }
