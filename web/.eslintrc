@@ -90,7 +90,7 @@
     "react/no-deprecated": "error",
     "react/jsx-key": "error",
     // TODO(qianxi): should be error
-    "no-console": "warn",
+    "no-console": "error",
     "eqeqeq": "warn",
 
     "react/prop-types": "off",

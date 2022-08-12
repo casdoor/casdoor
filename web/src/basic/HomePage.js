@@ -61,7 +61,7 @@ class HomePage extends React.Component {
       }
     } else {
       this.state.applications.forEach(application => {
-        console.log(application);
+        // console.log(application);
         items.push({
           link: application.homepageUrl, name: application.displayName, organizer: application.description, logo: application.logo, createdTime: "",
         });
