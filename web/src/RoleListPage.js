@@ -38,7 +38,7 @@ class RoleListPage extends BaseListPage {
   addRole() {
     const newRole = this.newRole();
     RoleBackend.addRole(newRole)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/roles/${newRole.owner}/${newRole.name}`, mode: "add"});
       }
       )
@@ -49,7 +49,7 @@ class RoleListPage extends BaseListPage {
 
   deleteRole(i) {
     RoleBackend.deleteRole(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Role deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -71,7 +71,7 @@ class RoleListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("owner"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -87,7 +87,7 @@ class RoleListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/roles/${text}`}>
               {text}
@@ -101,7 +101,7 @@ class RoleListPage extends BaseListPage {
         key: "createdTime",
         width: "160px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
       },
@@ -120,7 +120,7 @@ class RoleListPage extends BaseListPage {
         // width: '100px',
         sorter: true,
         ...this.getColumnSearchProps("users"),
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getTags(text);
         },
       },
@@ -131,7 +131,7 @@ class RoleListPage extends BaseListPage {
         // width: '100px',
         sorter: true,
         ...this.getColumnSearchProps("roles"),
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getTags(text);
         },
       },
@@ -141,7 +141,7 @@ class RoleListPage extends BaseListPage {
         key: "isEnabled",
         width: "120px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );

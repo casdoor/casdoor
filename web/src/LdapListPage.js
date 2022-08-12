@@ -59,7 +59,7 @@ class LdapListPage extends React.Component {
         key: "serverName",
         width: "200px",
         sorter: (a, b) => a.serverName.localeCompare(b.serverName),
-        render: (text, record, index) => {
+        render: (text, record) => {
           return (
             <Link to={`/ldaps/${record.id}`}>
               {text}
@@ -73,7 +73,7 @@ class LdapListPage extends React.Component {
         key: "owner",
         width: "140px",
         sorter: (a, b) => a.owner.localeCompare(b.owner),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -87,7 +87,7 @@ class LdapListPage extends React.Component {
         key: "host",
         ellipsis: true,
         sorter: (a, b) => a.host.localeCompare(b.host),
-        render: (text, record, index) => {
+        render: (text, record) => {
           return `${text}:${record.port}`;
         },
       },
@@ -111,7 +111,7 @@ class LdapListPage extends React.Component {
         key: "autoSync",
         width: "100px",
         sorter: (a, b) => a.autoSync.localeCompare(b.autoSync),
-        render: (text, record, index) => {
+        render: (text) => {
           return text === 0 ? (<span style={{color: "#faad14"}}>Disable</span>) : (
             <span style={{color: "#52c41a"}}>{text + " mins"}</span>);
         },
@@ -122,7 +122,7 @@ class LdapListPage extends React.Component {
         key: "lastSync",
         ellipsis: true,
         sorter: (a, b) => a.lastSync.localeCompare(b.lastSync),
-        render: (text, record, index) => {
+        render: (text) => {
           return text;
         },
       },

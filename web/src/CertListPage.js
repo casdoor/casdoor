@@ -42,7 +42,7 @@ class CertListPage extends BaseListPage {
   addCert() {
     const newCert = this.newCert();
     CertBackend.addCert(newCert)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/certs/${newCert.name}`, mode: "add"});
       }
       )
@@ -53,7 +53,7 @@ class CertListPage extends BaseListPage {
 
   deleteCert(i) {
     CertBackend.deleteCert(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Cert deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -76,7 +76,7 @@ class CertListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/certs/${text}`}>
               {text}
@@ -90,7 +90,7 @@ class CertListPage extends BaseListPage {
         key: "createdTime",
         width: "180px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
       },

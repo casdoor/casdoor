@@ -48,7 +48,7 @@ class SyncerListPage extends BaseListPage {
   addSyncer() {
     const newSyncer = this.newSyncer();
     SyncerBackend.addSyncer(newSyncer)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/syncers/${newSyncer.name}`, mode: "add"});
       }
       )
@@ -59,7 +59,7 @@ class SyncerListPage extends BaseListPage {
 
   deleteSyncer(i) {
     SyncerBackend.deleteSyncer(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Syncer deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -75,7 +75,7 @@ class SyncerListPage extends BaseListPage {
   runSyncer(i) {
     this.setState({loading: true});
     SyncerBackend.runSyncer("admin", this.state.data[i].name)
-      .then((res) => {
+      .then(() => {
         this.setState({loading: false});
         Setting.showMessage("success", "Syncer sync users successfully");
       }
@@ -95,7 +95,7 @@ class SyncerListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("organization"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -111,7 +111,7 @@ class SyncerListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/syncers/${text}`}>
               {text}
@@ -125,7 +125,7 @@ class SyncerListPage extends BaseListPage {
         key: "createdTime",
         width: "160px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
       },
@@ -208,7 +208,7 @@ class SyncerListPage extends BaseListPage {
         key: "isEnabled",
         width: "120px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );

@@ -72,7 +72,7 @@ class OrganizationListPage extends BaseListPage {
   addOrganization() {
     const newOrganization = this.newOrganization();
     OrganizationBackend.addOrganization(newOrganization)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/organizations/${newOrganization.name}`, mode: "add"});
       }
       )
@@ -83,7 +83,7 @@ class OrganizationListPage extends BaseListPage {
 
   deleteOrganization(i) {
     OrganizationBackend.deleteOrganization(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Organization deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -106,7 +106,7 @@ class OrganizationListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -120,7 +120,7 @@ class OrganizationListPage extends BaseListPage {
         key: "createdTime",
         width: "160px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
       },
@@ -137,7 +137,7 @@ class OrganizationListPage extends BaseListPage {
         dataIndex: "favicon",
         key: "favicon",
         width: "50px",
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
               <img src={text} alt={text} width={40} />
@@ -152,7 +152,7 @@ class OrganizationListPage extends BaseListPage {
         width: "300px",
         sorter: true,
         ...this.getColumnSearchProps("websiteUrl"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
               {text}
@@ -186,7 +186,7 @@ class OrganizationListPage extends BaseListPage {
         dataIndex: "defaultAvatar",
         key: "defaultAvatar",
         width: "120px",
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
               <img src={text} alt={text} width={40} />
@@ -200,7 +200,7 @@ class OrganizationListPage extends BaseListPage {
         key: "enableSoftDeletion",
         width: "140px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );

@@ -107,7 +107,7 @@ class ApplicationListPage extends BaseListPage {
         key: "createdTime",
         width: "160px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
       },
@@ -139,7 +139,7 @@ class ApplicationListPage extends BaseListPage {
         width: "150px",
         sorter: true,
         ...this.getColumnSearchProps("organization"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -153,7 +153,7 @@ class ApplicationListPage extends BaseListPage {
         key: "providers",
         ...this.getColumnSearchProps("providers"),
         // width: '600px',
-        render: (text, record, index) => {
+        render: (text) => {
           const providers = text;
           if (providers.length === 0) {
             return "(empty)";

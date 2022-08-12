@@ -68,7 +68,7 @@ class RecordListPage extends BaseListPage {
         width: "150px",
         sorter: true,
         ...this.getColumnSearchProps("clientIp"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <a target="_blank" rel="noreferrer" href={`https://db-ip.com/${text}`}>
               {text}
@@ -82,7 +82,7 @@ class RecordListPage extends BaseListPage {
         key: "createdTime",
         width: "180px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
       },
@@ -93,7 +93,7 @@ class RecordListPage extends BaseListPage {
         width: "110px",
         sorter: true,
         ...this.getColumnSearchProps("organization"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -108,7 +108,7 @@ class RecordListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("user"),
-        render: (text, record, index) => {
+        render: (text, record) => {
           return (
             <Link to={`/users/${record.organization}/${record.user}`}>
               {text}
@@ -151,7 +151,7 @@ class RecordListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("action"),
         fixed: (Setting.isMobile()) ? "false" : "right",
-        render: (text, record, index) => {
+        render: (text) => {
           return text;
         },
       },
@@ -162,7 +162,7 @@ class RecordListPage extends BaseListPage {
         width: "140px",
         sorter: true,
         fixed: (Setting.isMobile()) ? "false" : "right",
-        render: (text, record, index) => {
+        render: (text, record) => {
           if (!["signup", "login", "logout", "update-user"].includes(record.action)) {
             return null;
           }

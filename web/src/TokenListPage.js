@@ -41,7 +41,7 @@ class TokenListPage extends BaseListPage {
   addToken() {
     const newToken = this.newToken();
     TokenBackend.addToken(newToken)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/tokens/${newToken.name}`, mode: "add"});
       }
       )
@@ -52,7 +52,7 @@ class TokenListPage extends BaseListPage {
 
   deleteToken(i) {
     TokenBackend.deleteToken(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Token deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -75,7 +75,7 @@ class TokenListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/tokens/${text}`}>
               {text}
@@ -89,7 +89,7 @@ class TokenListPage extends BaseListPage {
         key: "createdTime",
         width: "160px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
       },
@@ -100,7 +100,7 @@ class TokenListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("application"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/applications/${text}`}>
               {text}
@@ -115,7 +115,7 @@ class TokenListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("organization"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -130,7 +130,7 @@ class TokenListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("user"),
-        render: (text, record, index) => {
+        render: (text, record) => {
           return (
             <Link to={`/users/${record.organization}/${text}`}>
               {text}
@@ -145,7 +145,7 @@ class TokenListPage extends BaseListPage {
         // width: '150px',
         sorter: true,
         ...this.getColumnSearchProps("code"),
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getClickable(text);
         },
       },
@@ -157,7 +157,7 @@ class TokenListPage extends BaseListPage {
         sorter: true,
         ellipsis: true,
         ...this.getColumnSearchProps("accessToken"),
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getClickable(text);
         },
       },

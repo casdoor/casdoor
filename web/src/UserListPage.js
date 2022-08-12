@@ -68,7 +68,7 @@ class UserListPage extends BaseListPage {
   addUser() {
     const newUser = this.newUser();
     UserBackend.addUser(newUser)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add"});
       }
       )
@@ -79,7 +79,7 @@ class UserListPage extends BaseListPage {
 
   deleteUser(i) {
     UserBackend.deleteUser(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "User deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -146,7 +146,7 @@ class UserListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("owner"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -162,7 +162,7 @@ class UserListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("signupApplication"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/applications/${text}`}>
               {text}
@@ -178,7 +178,7 @@ class UserListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text, record) => {
           return (
             <Link to={`/users/${record.owner}/${text}`}>
               {text}
@@ -192,7 +192,7 @@ class UserListPage extends BaseListPage {
         key: "createdTime",
         width: "160px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
       },
@@ -209,7 +209,7 @@ class UserListPage extends BaseListPage {
         dataIndex: "avatar",
         key: "avatar",
         width: "80px",
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
               <img src={text} alt={text} width={50} />
@@ -224,7 +224,7 @@ class UserListPage extends BaseListPage {
         width: "160px",
         sorter: true,
         ...this.getColumnSearchProps("email"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <a href={`mailto:${text}`}>
               {text}
@@ -277,7 +277,7 @@ class UserListPage extends BaseListPage {
         key: "isAdmin",
         width: "110px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
@@ -289,7 +289,7 @@ class UserListPage extends BaseListPage {
         key: "isGlobalAdmin",
         width: "140px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
@@ -301,7 +301,7 @@ class UserListPage extends BaseListPage {
         key: "isForbidden",
         width: "110px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
@@ -313,7 +313,7 @@ class UserListPage extends BaseListPage {
         key: "isDeleted",
         width: "110px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );

@@ -273,7 +273,7 @@ class WebhookEditPage extends React.Component {
               <CodeMirror
                 value={previewText}
                 options={{mode: "javascript", theme: "material-darker"}}
-                onBeforeChange={(editor, data, value) => {}}
+                onBeforeChange={() => {}}
               />
             </div>
           </Col>

@@ -41,7 +41,7 @@ class WebhookListPage extends BaseListPage {
   addWebhook() {
     const newWebhook = this.newWebhook();
     WebhookBackend.addWebhook(newWebhook)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/webhooks/${newWebhook.name}`, mode: "add"});
       }
       )
@@ -52,7 +52,7 @@ class WebhookListPage extends BaseListPage {
 
   deleteWebhook(i) {
     WebhookBackend.deleteWebhook(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Webhook deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -74,7 +74,7 @@ class WebhookListPage extends BaseListPage {
         width: "110px",
         sorter: true,
         ...this.getColumnSearchProps("organization"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/organizations/${text}`}>
               {text}
@@ -90,7 +90,7 @@ class WebhookListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/webhooks/${text}`}>
               {text}
@@ -104,7 +104,7 @@ class WebhookListPage extends BaseListPage {
         key: "createdTime",
         width: "180px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
       },
@@ -115,7 +115,7 @@ class WebhookListPage extends BaseListPage {
         width: "300px",
         sorter: true,
         ...this.getColumnSearchProps("url"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
               {
@@ -152,7 +152,7 @@ class WebhookListPage extends BaseListPage {
         // width: '100px',
         sorter: true,
         ...this.getColumnSearchProps("events"),
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getTags(text);
         },
       },
@@ -162,7 +162,7 @@ class WebhookListPage extends BaseListPage {
         key: "isUserExtended",
         width: "160px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
@@ -174,7 +174,7 @@ class WebhookListPage extends BaseListPage {
         key: "isEnabled",
         width: "120px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );

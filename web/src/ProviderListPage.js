@@ -45,7 +45,7 @@ class ProviderListPage extends BaseListPage {
   addProvider() {
     const newProvider = this.newProvider();
     ProviderBackend.addProvider(newProvider)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/providers/${newProvider.name}`, mode: "add"});
       }
       )
@@ -56,7 +56,7 @@ class ProviderListPage extends BaseListPage {
 
   deleteProvider(i) {
     ProviderBackend.deleteProvider(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Provider deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -79,7 +79,7 @@ class ProviderListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/providers/${text}`}>
               {text}
@@ -93,7 +93,7 @@ class ProviderListPage extends BaseListPage {
         key: "createdTime",
         width: "180px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
       },
@@ -136,7 +136,7 @@ class ProviderListPage extends BaseListPage {
           {text: "Captcha", value: "Captcha", children: Setting.getProviderTypeOptions("Captcha").map((o) => {return {text: o.id, value: o.name};})},
         ],
         sorter: true,
-        render: (text, record, index) => {
+        render: (text, record) => {
           return Provider.getProviderLogoWidget(record);
         },
       },
@@ -147,7 +147,7 @@ class ProviderListPage extends BaseListPage {
         width: "100px",
         sorter: true,
         ...this.getColumnSearchProps("clientId"),
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getShortText(text);
         },
       },
@@ -158,7 +158,7 @@ class ProviderListPage extends BaseListPage {
         width: "150px",
         sorter: true,
         ...this.getColumnSearchProps("providerUrl"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
               {

@@ -42,7 +42,7 @@ class ResourceListPage extends BaseListPage {
 
   deleteResource(i) {
     ResourceBackend.deleteResource(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Resource deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -75,7 +75,7 @@ class ResourceListPage extends BaseListPage {
   renderUpload() {
     return (
       <Upload maxCount={1} accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.csv,.xls,.xlsx" showUploadList={false}
-        beforeUpload={file => {return false;}} onChange={info => {this.handleUpload(info);}}>
+        beforeUpload={() => {return false;}} onChange={info => {this.handleUpload(info);}}>
         <Button icon={<UploadOutlined />} loading={this.state.uploading} type="primary" size="small">
           {i18next.t("resource:Upload a file...")}
         </Button>
@@ -93,7 +93,7 @@ class ResourceListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("provider"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/providers/${text}`}>
               {text}
@@ -108,7 +108,7 @@ class ResourceListPage extends BaseListPage {
         width: "80px",
         sorter: true,
         ...this.getColumnSearchProps("application"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/applications/${text}`}>
               {text}
@@ -123,7 +123,7 @@ class ResourceListPage extends BaseListPage {
         width: "80px",
         sorter: true,
         ...this.getColumnSearchProps("user"),
-        render: (text, record, index) => {
+        render: (text, record) => {
           return (
             <Link to={`/users/${record.owner}/${record.user}`}>
               {text}
@@ -153,7 +153,7 @@ class ResourceListPage extends BaseListPage {
         key: "createdTime",
         width: "150px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
       },
@@ -194,7 +194,7 @@ class ResourceListPage extends BaseListPage {
         key: "fileSize",
         width: "100px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFriendlyFileSize(text);
         },
       },
@@ -203,7 +203,7 @@ class ResourceListPage extends BaseListPage {
         dataIndex: "preview",
         key: "preview",
         width: "100px",
-        render: (text, record, index) => {
+        render: (text, record) => {
           if (record.fileType === "image") {
             return (
               <a target="_blank" rel="noreferrer" href={record.url}>
@@ -226,7 +226,7 @@ class ResourceListPage extends BaseListPage {
         dataIndex: "url",
         key: "url",
         width: "120px",
-        render: (text, record, index) => {
+        render: (text, record) => {
           return (
             <div>
               <Button type="normal" onClick={() => {

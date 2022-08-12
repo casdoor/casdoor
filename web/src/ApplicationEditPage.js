@@ -502,6 +502,7 @@ class ApplicationEditPage extends React.Component {
             <CodeMirror
               value={this.state.samlMetadata}
               options={{mode: "xml", theme: "default"}}
+              onBeforeChange={() => {}}
             />
             <br />
             <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {

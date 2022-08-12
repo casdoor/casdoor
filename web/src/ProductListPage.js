@@ -44,7 +44,7 @@ class ProductListPage extends BaseListPage {
   addProduct() {
     const newProduct = this.newProduct();
     ProductBackend.addProduct(newProduct)
-      .then((res) => {
+      .then(() => {
         this.props.history.push({pathname: `/products/${newProduct.name}`, mode: "add"});
       }
       )
@@ -55,7 +55,7 @@ class ProductListPage extends BaseListPage {
 
   deleteProduct(i) {
     ProductBackend.deleteProduct(this.state.data[i])
-      .then((res) => {
+      .then(() => {
         Setting.showMessage("success", "Product deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
@@ -78,7 +78,7 @@ class ProductListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <Link to={`/products/${text}`}>
               {text}
@@ -92,7 +92,7 @@ class ProductListPage extends BaseListPage {
         key: "createdTime",
         width: "160px",
         sorter: true,
-        render: (text, record, index) => {
+        render: (text) => {
           return Setting.getFormattedDate(text);
         },
       },
@@ -109,7 +109,7 @@ class ProductListPage extends BaseListPage {
         dataIndex: "image",
         key: "image",
         width: "170px",
-        render: (text, record, index) => {
+        render: (text) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
               <img src={text} alt={text} width={150} />
@@ -171,7 +171,7 @@ class ProductListPage extends BaseListPage {
         key: "providers",
         width: "500px",
         ...this.getColumnSearchProps("providers"),
-        render: (text, record, index) => {
+        render: (text) => {
           const providers = text;
           if (providers.length === 0) {
             return "(empty)";
