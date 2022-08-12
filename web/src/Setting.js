@@ -49,6 +49,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_huawei.png`,
       url: "https://www.huaweicloud.com/product/msgsms.html",
     },
+    "Mock SMS": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "",
+    },
   },
   Email: {
     "Default": {
@@ -532,7 +536,12 @@ export function getProviderLogoURL(provider) {
     }
     return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
   } else {
-    return OtherProviderInfo[provider.category][provider.type].logo;
+    const info = OtherProviderInfo[provider.category][provider.type];
+    // avoid crash when provider is not found
+    if (info) {
+      return info.logo;
+    }
+    return "";
   }
 }
 
