@@ -87,15 +87,13 @@
         "argsIgnorePattern": "^_"
       }
     ],
+    "no-unused-vars": "off",
+    "react/no-deprecated": "error",
+    "react/jsx-key": "error",
 
     "react/prop-types": "off",
     "react/display-name": "off",
     "react/react-in-jsx-scope": "off",
-
-    // don't use strict mod now, otherwise there are a lot of errors in the codebase
-    "no-unused-vars": "off",
-    "react/no-deprecated": "error",
-    "no-case-declarations": "off",
-    "react/jsx-key": "error"
+    "no-case-declarations": "off"
   }
 }
