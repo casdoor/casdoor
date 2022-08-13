@@ -164,7 +164,7 @@ class LoginPage extends React.Component {
     } else {
       // OAuth
       const oAuthParams = Util.getOAuthGetParameters();
-      if (oAuthParams !== null && oAuthParams.responseType != null && oAuthParams.responseType !== "") {
+      if (oAuthParams !== null && oAuthParams.responseType !== null && oAuthParams.responseType !== "") {
         values["type"] = oAuthParams.responseType;
       } else {
         values["type"] = this.state.type;
@@ -175,11 +175,11 @@ class LoginPage extends React.Component {
         values["samlRequest"] = oAuthParams.samlRequest;
       }
 
-      if (values["samlRequest"] != null && values["samlRequest"] !== "") {
+      if (values["samlRequest"] !== null && values["samlRequest"] !== "" && values["samlRequest"] !== undefined) {
         values["type"] = "saml";
       }
 
-      if (this.state.owner != null) {
+      if (this.state.owner !== null) {
         values["organization"] = this.state.owner;
       }
 

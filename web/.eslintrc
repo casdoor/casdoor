@@ -89,9 +89,8 @@
     "no-unused-vars": "off",
     "react/no-deprecated": "error",
     "react/jsx-key": "error",
-    // TODO(qianxi): should be error
     "no-console": "error",
-    "eqeqeq": "warn",
+    "eqeqeq": "error",
 
     "react/prop-types": "off",
     "react/display-name": "off",
