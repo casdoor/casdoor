@@ -31,7 +31,7 @@ run:
     - api
   # skip-files:
   #   - ".*_test\\.go$"
-  modules-download-mode: vendor
+  modules-download-mode: mod
 # all available settings of specific linters
 linters-settings:
   lll:

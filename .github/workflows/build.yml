@@ -57,11 +57,30 @@ jobs:
           go build -race -ldflags "-extldflags '-static'"
         working-directory: ./
 
+  linter:
+    name: Go-Linter
+    runs-on: ubuntu-latest
+    needs: [ go-tests ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '^1.16.5'
+
+      # gen a dummy config file
+      - run: touch dummy.yml
+      
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --disable-all -c dummy.yml -E=gofumpt --max-same-issues=0 --timeout 5m --modules-download-mode=mod
+
   release-and-push:
     name: Release And Push
     runs-on: ubuntu-latest
     if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
-    needs: [ frontend, backend ]
+    needs: [ frontend, backend, linter ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2

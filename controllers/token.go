@@ -269,10 +269,11 @@ func (c *ApiController) TokenLogout() {
 // IntrospectToken
 // @Title IntrospectToken
 // @Description The introspection endpoint is an OAuth 2.0 endpoint that takes a
-//  parameter representing an OAuth 2.0 token and returns a JSON document
-//  representing the meta information surrounding the
-//  token, including whether this token is currently active.
-//  This endpoint only support Basic Authorization.
+// parameter representing an OAuth 2.0 token and returns a JSON document
+// representing the meta information surrounding the
+// token, including whether this token is currently active.
+// This endpoint only support Basic Authorization.
+//
 // @Param token formData string true "access_token's value or refresh_token's value"
 // @Param token_type_hint formData string true "the token type access_token or refresh_token"
 // @Success 200 {object} object.IntrospectionResponse The Response object
