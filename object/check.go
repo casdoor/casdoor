@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/casdoor/casdoor/cred"
 	"github.com/casdoor/casdoor/util"
@@ -42,10 +43,24 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 	if application.IsSignupItemVisible("Username") {
 		if len(username) <= 1 {
 			return "username must have at least 2 characters"
-		} else if reWhiteSpace.MatchString(username) {
+		}
+		if unicode.IsDigit(rune(username[0])) {
+			return "username cannot start with a digital"
+		}
+		if util.IsEmailValid(username) {
+			return "username cannot be an email address"
+		}
+		if reWhiteSpace.MatchString(username) {
 			return "username cannot contain white spaces"
-		} else if HasUserByField(organization.Name, "name", username) {
+		}
+		if HasUserByField(organization.Name, "name", username) {
 			return "username already exists"
+		}
+		if HasUserByField(organization.Name, "email", username) {
+			return "email already exists"
+		}
+		if HasUserByField(organization.Name, "phone", username) {
+			return "phone already exists"
 		}
 	}
 
