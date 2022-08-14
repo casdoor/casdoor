@@ -16,8 +16,10 @@ package object
 
 import (
 	"encoding/gob"
+	"fmt"
 	"os"
 
+	"github.com/astaxie/beego"
 	"github.com/casdoor/casdoor/util"
 	"github.com/duo-labs/webauthn/webauthn"
 )
@@ -36,6 +38,8 @@ func InitDb() {
 	initWebAuthn()
 }
 
+var staticBaseUrl = beego.AppConfig.String("staticBaseUrl")
+
 func initBuiltInOrganization() bool {
 	organization := getOrganization("admin", "built-in")
 	if organization != nil {
@@ -48,10 +52,10 @@ func initBuiltInOrganization() bool {
 		CreatedTime:   util.GetCurrentTime(),
 		DisplayName:   "Built-in Organization",
 		WebsiteUrl:    "https://example.com",
-		Favicon:       "https://cdn.casbin.com/static/favicon.ico",
+		Favicon:       fmt.Sprintf("%s/img/casbin/favicon.ico", staticBaseUrl),
 		PasswordType:  "plain",
 		PhonePrefix:   "86",
-		DefaultAvatar: "https://casbin.org/img/casbin.svg",
+		DefaultAvatar: fmt.Sprintf("%s/img/casbin.svg", staticBaseUrl),
 		Tags:          []string{},
 		AccountItems: []*AccountItem{
 			{Name: "Organization", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
@@ -100,7 +104,7 @@ func initBuiltInUser() {
 		Type:              "normal-user",
 		Password:          "123",
 		DisplayName:       "Admin",
-		Avatar:            "https://casbin.org/img/casbin.svg",
+		Avatar:            fmt.Sprintf("%s/img/casbin.svg", staticBaseUrl),
 		Email:             "admin@example.com",
 		Phone:             "12345678910",
 		Address:           []string{},
@@ -130,7 +134,7 @@ func initBuiltInApplication() {
 		Name:           "app-built-in",
 		CreatedTime:    util.GetCurrentTime(),
 		DisplayName:    "Casdoor",
-		Logo:           "https://cdn.casbin.com/logo/logo_1024x256.png",
+		Logo:           fmt.Sprintf("%s/img/casdoor-logo_1185x256.png", staticBaseUrl),
 		HomepageUrl:    "https://casdoor.org",
 		Organization:   "built-in",
 		Cert:           "cert-built-in",

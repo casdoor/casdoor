@@ -49,7 +49,7 @@ class UserListPage extends BaseListPage {
       password: "123",
       passwordSalt: "",
       displayName: `New User - ${randomName}`,
-      avatar: "https://casbin.org/img/casbin.svg",
+      avatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       email: `${randomName}@example.com`,
       phone: Setting.getRandomNumber(),
       address: [],

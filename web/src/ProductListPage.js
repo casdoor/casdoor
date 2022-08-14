@@ -30,7 +30,7 @@ class ProductListPage extends BaseListPage {
       name: `product_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Product - ${randomName}`,
-      image: "https://cdn.casdoor.com/logo/casdoor-logo_1185x256.png",
+      image: `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`,
       tag: "Casdoor Summit 2022",
       currency: "USD",
       price: 300,
