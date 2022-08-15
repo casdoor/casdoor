@@ -27,8 +27,9 @@ type Permission struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
-	Users []string `xorm:"mediumtext" json:"users"`
-	Roles []string `xorm:"mediumtext" json:"roles"`
+	Users   []string `xorm:"mediumtext" json:"users"`
+	Roles   []string `xorm:"mediumtext" json:"roles"`
+	Domains []string `xorm:"mediumtext" json:"domains"`
 
 	Model        string   `xorm:"varchar(100)" json:"model"`
 	ResourceType string   `xorm:"varchar(100)" json:"resourceType"`

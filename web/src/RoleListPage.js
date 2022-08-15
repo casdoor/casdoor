@@ -31,6 +31,7 @@ class RoleListPage extends BaseListPage {
       displayName: `New Role - ${randomName}`,
       users: [],
       roles: [],
+      domains: [],
       isEnabled: true,
     };
   }
@@ -131,6 +132,16 @@ class RoleListPage extends BaseListPage {
         // width: '100px',
         sorter: true,
         ...this.getColumnSearchProps("roles"),
+        render: (text, record, index) => {
+          return Setting.getTags(text);
+        },
+      },
+      {
+        title: i18next.t("role:Sub domains"),
+        dataIndex: "domains",
+        key: "domains",
+        sorter: true,
+        ...this.getColumnSearchProps("domains"),
         render: (text, record, index) => {
           return Setting.getTags(text);
         },
