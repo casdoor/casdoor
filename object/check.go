@@ -45,7 +45,7 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 			return "username must have at least 2 characters"
 		}
 		if unicode.IsDigit(rune(username[0])) {
-			return "username cannot start with a digital"
+			return "username cannot start with a digit"
 		}
 		if util.IsEmailValid(username) {
 			return "username cannot be an email address"
