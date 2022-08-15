@@ -227,7 +227,7 @@ class PermissionEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.permission.domains} onChange={(value => {
-              this.updateRoleField("domains", value);
+              this.updatePermissionField("domains", value);
             })}>
               {
                 this.state.permission.domains.map((domain, index) => <Option key={index} value={domain}>{domain}</Option>)

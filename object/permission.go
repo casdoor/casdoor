@@ -123,17 +123,19 @@ func UpdatePermission(id string, permission *Permission) bool {
 	}
 
 	if affected != 0 {
-		removePolicies(oldPermission)
-		addPolicies(permission)
-		if oldPermission.Adapter != "" && oldPermission.Adapter != permission.Adapter {
-			isEmpty, _ := adapter.Engine.IsTableEmpty(oldPermission.Adapter)
-			if isEmpty {
-				err = adapter.Engine.DropTables(oldPermission.Adapter)
-				if err != nil {
-					panic(err)
+		if oldPermission.Adapter != "" {
+			removePolicies(oldPermission)
+			if oldPermission.Adapter != permission.Adapter {
+				isEmpty, _ := adapter.Engine.IsTableEmpty(oldPermission.Adapter)
+				if isEmpty {
+					err = adapter.Engine.DropTables(oldPermission.Adapter)
+					if err != nil {
+						panic(err)
+					}
 				}
 			}
 		}
+		addPolicies(permission)
 	}
 
 	return affected != 0
@@ -154,9 +156,9 @@ func DeletePermission(permission *Permission) bool {
 		panic(err)
 	}
 
-	if affected != 0 {
+	if affected != 0 && permission.Adapter != "" {
 		removePolicies(permission)
-		if permission.Adapter != "" && permission.Adapter != "permission_rule" {
+		if permission.Adapter != "permission_rule" {
 			isEmpty, _ := adapter.Engine.IsTableEmpty(permission.Adapter)
 			if isEmpty {
 				err = adapter.Engine.DropTables(permission.Adapter)
