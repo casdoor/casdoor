@@ -48,6 +48,24 @@ func (c *ApiController) GetPermissions() {
 	}
 }
 
+// GetPermissionsBySubmitter
+// @Title GetPermissionsBySubmitter
+// @Tag Permission API
+// @Description get permissions by submitter
+// @Success 200 {array} object.Permission The Response object
+// @router /get-permissions-by-submitter [get]
+func (c *ApiController) GetPermissionsBySubmitter() {
+	userId, ok := c.RequireSignedIn()
+	if !ok {
+		return
+	}
+
+	owner, username := util.GetOwnerAndNameFromId(userId)
+	permissions := object.GetPermissionsBySubmitter(owner, username)
+	c.ResponseOk(permissions, len(permissions))
+	return
+}
+
 // GetPermission
 // @Title GetPermission
 // @Tag Permission API

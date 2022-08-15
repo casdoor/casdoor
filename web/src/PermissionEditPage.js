@@ -22,6 +22,7 @@ import i18next from "i18next";
 import * as RoleBackend from "./backend/RoleBackend";
 import * as ModelBackend from "./backend/ModelBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
+import moment from "moment/moment";
 
 const {Option} = Select;
 
@@ -295,6 +296,63 @@ class PermissionEditPage extends React.Component {
             <Switch checked={this.state.permission.isEnabled} onChange={checked => {
               this.updatePermissionField("isEnabled", checked);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("permission:Submitter"), i18next.t("permission:Submitter - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input disabled={true} value={this.state.permission.submitter} onChange={e => {
+              this.updatePermissionField("submitter", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("permission:Approver"), i18next.t("permission:Approver - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input disabled={true} value={this.state.permission.approver} onChange={e => {
+              this.updatePermissionField("approver", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("permission:Approve time"), i18next.t("permission:Approve time - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input disabled={true} value={Setting.getFormattedDate(this.state.permission.approveTime)} onChange={e => {
+              this.updatePermissionField("approveTime", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("permission:State"), i18next.t("permission:State - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select disabled={!Setting.isLocalAdminUser(this.props.account)} virtual={false} style={{width: "100%"}} value={this.state.permission.state} onChange={(value => {
+              if (this.state.permission.state !== value) {
+                if (value === "Approved") {
+                  this.updatePermissionField("approver", this.props.account.name);
+                  this.updatePermissionField("approveTime", moment().format());
+                } else {
+                  this.updatePermissionField("approver", "");
+                  this.updatePermissionField("approveTime", "");
+                }
+              }
+
+              this.updatePermissionField("state", value);
+            })}>
+              {
+                [
+                  {id: "Approved", name: "Approved"},
+                  {id: "Pending", name: "Pending"},
+                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
       </Card>

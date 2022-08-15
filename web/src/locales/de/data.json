@@ -343,6 +343,10 @@
   "permission": {
     "Actions": "Aktionen",
     "Actions - Tooltip": "Aktionen - Tooltip",
+    "Approve time": "Approve time",
+    "Approve time - Tooltip": "Approve time - Tooltip",
+    "Approver": "Approver",
+    "Approver - Tooltip": "Approver - Tooltip",
     "Edit Permission": "Berechtigung bearbeiten",
     "Effect": "Effekt",
     "Effect - Tooltip": "Effekt - Tooltip",
@@ -350,7 +354,11 @@
     "Resource type": "Ressourcentyp",
     "Resource type - Tooltip": "Ressourcentyp - Tooltip",
     "Resources": "Ressourcen",
-    "Resources - Tooltip": "Resources - Tooltip"
+    "Resources - Tooltip": "Resources - Tooltip",
+    "State": "State",
+    "State - Tooltip": "State - Tooltip",
+    "Submitter": "Submitter",
+    "Submitter - Tooltip": "Submitter - Tooltip"
   },
   "product": {
     "Alipay": "Alipay",
@@ -519,6 +527,8 @@
   "role": {
     "Edit Role": "Rolle bearbeiten",
     "New Role": "New Role",
+    "Sub domains": "Sub domains",
+    "Sub domains - Tooltip": "Sub domains - Tooltip",
     "Sub roles": "Unterrollen",
     "Sub roles - Tooltip": "Unterrollen - Tooltip",
     "Sub users": "Unternutzer",

@@ -343,6 +343,10 @@
   "permission": {
     "Actions": "Действия",
     "Actions - Tooltip": "Действия - Подсказка",
+    "Approve time": "Approve time",
+    "Approve time - Tooltip": "Approve time - Tooltip",
+    "Approver": "Approver",
+    "Approver - Tooltip": "Approver - Tooltip",
     "Edit Permission": "Изменить права доступа",
     "Effect": "Эффект",
     "Effect - Tooltip": "Эффект - Подсказка",
@@ -350,7 +354,11 @@
     "Resource type": "Тип ресурса",
     "Resource type - Tooltip": "Тип ресурса - Подсказка",
     "Resources": "Ресурсы",
-    "Resources - Tooltip": "Resources - Tooltip"
+    "Resources - Tooltip": "Resources - Tooltip",
+    "State": "State",
+    "State - Tooltip": "State - Tooltip",
+    "Submitter": "Submitter",
+    "Submitter - Tooltip": "Submitter - Tooltip"
   },
   "product": {
     "Alipay": "Alipay",
@@ -519,6 +527,8 @@
   "role": {
     "Edit Role": "Изменить роль",
     "New Role": "New Role",
+    "Sub domains": "Sub domains",
+    "Sub domains - Tooltip": "Sub domains - Tooltip",
     "Sub roles": "Суб роли",
     "Sub roles - Tooltip": "Суб роли - Tooltip",
     "Sub users": "Субпользователи",

@@ -25,11 +25,11 @@ class PermissionListPage extends BaseListPage {
   newPermission() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "built-in",
+      owner: this.props.account.owner,
       name: `permission_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Permission - ${randomName}`,
-      users: [],
+      users: [this.props.account.name],
       roles: [],
       domains: [],
       resourceType: "Application",
@@ -37,6 +37,10 @@ class PermissionListPage extends BaseListPage {
       actions: ["Read"],
       effect: "Allow",
       isEnabled: true,
+      submitter: this.props.account.name,
+      approver: "",
+      approveTime: "",
+      state: "Pending",
     };
   }
 
@@ -44,6 +48,10 @@ class PermissionListPage extends BaseListPage {
     const newPermission = this.newPermission();
     PermissionBackend.addPermission(newPermission)
       .then((res) => {
+        if (res.msg !== "") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.props.history.push({pathname: `/permissions/${newPermission.owner}/${newPermission.name}`, mode: "add"});
       }
       )
@@ -260,7 +268,9 @@ class PermissionListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    PermissionBackend.getPermissions("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+
+    const getPermissions = Setting.isAdminUser(this.props.account) ? PermissionBackend.getPermissions : PermissionBackend.getPermissionsBySubmitter;
+    getPermissions("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

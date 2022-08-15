@@ -343,6 +343,10 @@
   "permission": {
     "Actions": "アクション",
     "Actions - Tooltip": "アクション → ツールチップ",
+    "Approve time": "Approve time",
+    "Approve time - Tooltip": "Approve time - Tooltip",
+    "Approver": "Approver",
+    "Approver - Tooltip": "Approver - Tooltip",
     "Edit Permission": "権限を編集",
     "Effect": "効果",
     "Effect - Tooltip": "エフェクト - ツールチップ",
@@ -350,7 +354,11 @@
     "Resource type": "リソースタイプ",
     "Resource type - Tooltip": "リソースタイプ - ツールチップ",
     "Resources": "リソース",
-    "Resources - Tooltip": "Resources - Tooltip"
+    "Resources - Tooltip": "Resources - Tooltip",
+    "State": "State",
+    "State - Tooltip": "State - Tooltip",
+    "Submitter": "Submitter",
+    "Submitter - Tooltip": "Submitter - Tooltip"
   },
   "product": {
     "Alipay": "Alipay",
@@ -519,6 +527,8 @@
   "role": {
     "Edit Role": "役割を編集",
     "New Role": "New Role",
+    "Sub domains": "Sub domains",
+    "Sub domains - Tooltip": "Sub domains - Tooltip",
     "Sub roles": "サブロール",
     "Sub roles - Tooltip": "Sub roles - Tooltip",
     "Sub users": "サブユーザー",

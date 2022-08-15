@@ -385,13 +385,17 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
-      res.push(
-        <Menu.Item key="/permissions">
-          <Link to="/permissions">
-            {i18next.t("general:Permissions")}
-          </Link>
-        </Menu.Item>
-      );
+    }
+
+    res.push(
+      <Menu.Item key="/permissions">
+        <Link to="/permissions">
+          {i18next.t("general:Permissions")}
+        </Link>
+      </Menu.Item>
+    );
+
+    if (Setting.isAdminUser(this.state.account)) {
       res.push(
         <Menu.Item key="/models">
           <Link to="/models">

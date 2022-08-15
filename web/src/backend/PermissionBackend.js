@@ -21,6 +21,13 @@ export function getPermissions(owner, page = "", pageSize = "", field = "", valu
   }).then(res => res.json());
 }
 
+export function getPermissionsBySubmitter() {
+  return fetch(`${Setting.ServerUrl}/api/get-permissions-by-submitter`, {
+    method: "GET",
+    credentials: "include",
+  }).then(res => res.json());
+}
+
 export function getPermission(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-permission?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",

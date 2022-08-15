@@ -373,6 +373,13 @@ export function isAdminUser(account) {
   return account.owner === "built-in" || account.isGlobalAdmin === true;
 }
 
+export function isLocalAdminUser(account) {
+  if (account === undefined || account === null) {
+    return false;
+  }
+  return account.isAdmin === true || isAdminUser(account);
+}
+
 export function deepCopy(obj) {
   return Object.assign({}, obj);
 }

@@ -343,6 +343,10 @@
   "permission": {
     "Actions": "动作",
     "Actions - Tooltip": "授权的动作",
+    "Approve time": "审批时间",
+    "Approve time - Tooltip": "该授权被审批通过的时间",
+    "Approver": "审批者",
+    "Approver - Tooltip": "审批通过该授权的人",
     "Edit Permission": "编辑权限",
     "Effect": "效果",
     "Effect - Tooltip": "允许还是拒绝",
@@ -350,7 +354,11 @@
     "Resource type": "资源类型",
     "Resource type - Tooltip": "授权资源的类型",
     "Resources": "资源",
-    "Resources - Tooltip": "被授权的资源"
+    "Resources - Tooltip": "被授权的资源",
+    "State": "审批状态",
+    "State - Tooltip": "该授权现在的状态",
+    "Submitter": "申请者",
+    "Submitter - Tooltip": "申请该授权的人"
   },
   "product": {
     "Alipay": "支付宝",
@@ -519,6 +527,8 @@
   "role": {
     "Edit Role": "编辑角色",
     "New Role": "添加角色",
+    "Sub domains": "包含域",
+    "Sub domains - Tooltip": "当前角色所包含的子域",
     "Sub roles": "包含角色",
     "Sub roles - Tooltip": "当前角色所包含的子角色",
     "Sub users": "包含用户",
