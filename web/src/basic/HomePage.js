@@ -56,7 +56,7 @@ class HomePage extends React.Component {
         if (filename === "/account") {
           filename = "/users";
         }
-        items[i].logo = `https://cdn.casbin.com/static/img${filename}.png`;
+        items[i].logo = `${Setting.StaticBaseUrl}/img${filename}.png`;
         items[i].createdTime = "";
       }
     } else {
