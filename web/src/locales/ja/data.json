@@ -98,6 +98,8 @@
   },
   "general": {
     "Action": "アクション",
+    "Adapter": "Adapter",
+    "Adapter - Tooltip": "Adapter - Tooltip",
     "Add": "追加",
     "Affiliation URL": "アフィリエイトURL",
     "Affiliation URL - Tooltip": "Unique string-style identifier",
