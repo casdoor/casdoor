@@ -31,6 +31,11 @@ var (
 	reFieldWhiteList *regexp.Regexp
 )
 
+const (
+	SigninWrongTimesLimit     = 5
+	LastSignWrongTimeDuration = time.Minute * 15
+)
+
 func init() {
 	reWhiteSpace, _ = regexp.Compile(`\s`)
 	reFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
@@ -128,15 +133,11 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 	return ""
 }
 
-func CheckPassword(user *User, password string) string {
-	const SigninWrongTimesLimit = 5
-	const LastSignWrongTimeDuration = time.Minute * 15
-
-	// check the login error times
+func checkSigninErrorTimes(user *User) string {
 	if user.SigninWrongTimes >= SigninWrongTimesLimit {
 		lastSignWrongTime, _ := time.Parse(time.RFC3339, user.LastSigninWrongTime)
-		leftTimes := time.Now().UTC().Sub(lastSignWrongTime)
-		seconds := int(LastSignWrongTimeDuration.Seconds() - leftTimes.Seconds())
+		passedTime := time.Now().UTC().Sub(lastSignWrongTime)
+		seconds := int(LastSignWrongTimeDuration.Seconds() - passedTime.Seconds())
 
 		// deny the login if the error times is greater than the limit and the last login time is less than the duration
 		if seconds > 0 {
@@ -149,6 +150,15 @@ func CheckPassword(user *User, password string) string {
 		UpdateUser(user.GetId(), user, []string{"signin_wrong_times"}, user.IsGlobalAdmin)
 	}
 
+	return ""
+}
+
+func CheckPassword(user *User, password string) string {
+	// check the login error times
+	if msg := checkSigninErrorTimes(user); msg != "" {
+		return msg
+	}
+
 	organization := GetOrganizationByUser(user)
 	if organization == nil {
 		return "organization does not exist"
@@ -158,41 +168,17 @@ func CheckPassword(user *User, password string) string {
 	if credManager != nil {
 		if organization.MasterPassword != "" {
 			if credManager.IsPasswordCorrect(password, organization.MasterPassword, "", organization.PasswordSalt) {
-				// if the password is correct and wrong times is not zero, reset the error times
-				if user.SigninWrongTimes > 0 {
-					user.SigninWrongTimes = 0
-					UpdateUser(user.GetId(), user, []string{"signin_wrong_times"}, user.IsGlobalAdmin)
-				}
+				resetUserSigninErrorTimes(user)
 				return ""
 			}
 		}
 
 		if credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt, organization.PasswordSalt) {
-			// if the password is correct and wrong times is not zero, reset the error times
-			if user.SigninWrongTimes > 0 {
-				user.SigninWrongTimes = 0
-				UpdateUser(user.GetId(), user, []string{"signin_wrong_times"}, user.IsGlobalAdmin)
-			}
+			resetUserSigninErrorTimes(user)
 			return ""
 		}
 
-		// increase failed login count
-		user.SigninWrongTimes++
-
-		if user.SigninWrongTimes >= SigninWrongTimesLimit {
-			// record the latest failed login time
-			user.LastSigninWrongTime = time.Now().UTC().Format(time.RFC3339)
-		}
-
-		// update user
-		UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, user.IsGlobalAdmin)
-		leftChances := SigninWrongTimesLimit - user.SigninWrongTimes
-		if leftChances > 0 {
-			return fmt.Sprintf("password is incorrect, you have %d remaining chances", leftChances)
-		} else {
-			// don't show the chance error message if the user has no chance left
-			return fmt.Sprintf("You have entered the wrong password too many times, please wait for %d minutes and try again", int(LastSignWrongTimeDuration.Minutes()))
-		}
+		return recordSigninErrorInfo(user)
 	} else {
 		return fmt.Sprintf("unsupported password type: %s", organization.PasswordType)
 	}
