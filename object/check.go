@@ -130,11 +130,12 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 
 func CheckPassword(user *User, password string) string {
 	const SigninWrongTimesLimit = 5
-	const LastSignWrongTimeDuration = time.Minute * 15
+	const LastSignWrongTimeDuration = time.Minute * 1
 
 	// check the login error times
 	if user.SigninWrongTimes >= SigninWrongTimesLimit {
-		leftTimes := time.Since(time.Unix(user.LastSigninWrongTime, 0))
+		lastSignWrongTime, _ := time.Parse(time.RFC3339, user.LastSigninWrongTime)
+		leftTimes := time.Since(lastSignWrongTime)
 		seconds := int(LastSignWrongTimeDuration.Seconds() - leftTimes.Seconds())
 
 		// deny the login if the error times is greater than the limit and the last login time is less than the duration
@@ -170,7 +171,7 @@ func CheckPassword(user *User, password string) string {
 
 		if user.SigninWrongTimes >= SigninWrongTimesLimit {
 			// record the latest failed login time
-			user.LastSigninWrongTime = time.Now().Unix()
+			user.LastSigninWrongTime = time.Now().UTC().Format(time.RFC3339)
 		}
 
 		// update user

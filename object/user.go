@@ -112,8 +112,8 @@ type User struct {
 	Roles       []*Role       `json:"roles"`
 	Permissions []*Permission `json:"permissions"`
 
-	LastSigninWrongTime int64 `json:"lastSigninWrongTime"`
-	SigninWrongTimes    int   `json:"signinWrongTimes"`
+	LastSigninWrongTime string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
+	SigninWrongTimes    int    `json:"signinWrongTimes"`
 }
 
 type Userinfo struct {
