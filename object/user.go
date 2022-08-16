@@ -112,8 +112,8 @@ type User struct {
 	Roles       []*Role       `json:"roles"`
 	Permissions []*Permission `json:"permissions"`
 
-	LastLoginErrTime int64 `json:"lastLoginErrTime"`
-	LoginErrTimes    int   `json:"loginErrTimes"`
+	LastSigninWrongTime int64 `json:"lastSigninWrongTime"`
+	SigninWrongTimes    int   `json:"signinWrongTimes"`
 }
 
 type Userinfo struct {
@@ -379,7 +379,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 			"owner", "display_name", "avatar",
 			"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "signup_application",
 			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials",
-			"login_err_times", "last_login_error_time",
+			"signin_wrong_times", "last_signin_wrong_time",
 		}
 	}
 	if isGlobalAdmin {

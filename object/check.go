@@ -129,13 +129,13 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 }
 
 func CheckPassword(user *User, password string) string {
-	const LoginErrTimesLimit = 5
-	const LoginErrTimesDuration = time.Minute * 15
+	const SigninWrongTimesLimit = 5
+	const LastSignWrongTimeDuration = time.Minute * 15
 
 	// check the login error times
-	if user.LoginErrTimes >= LoginErrTimesLimit {
-		leftTimes := time.Since(time.Unix(user.LastLoginErrTime, 0))
-		seconds := int(LoginErrTimesDuration.Seconds() - leftTimes.Seconds())
+	if user.SigninWrongTimes >= SigninWrongTimesLimit {
+		leftTimes := time.Since(time.Unix(user.LastSigninWrongTime, 0))
+		seconds := int(LastSignWrongTimeDuration.Seconds() - leftTimes.Seconds())
 
 		// deny the login if the error times is greater than the limit and the last login time is less than the duration
 		if seconds > 0 {
@@ -143,9 +143,9 @@ func CheckPassword(user *User, password string) string {
 		}
 
 		// reset the error times
-		user.LoginErrTimes = 0
+		user.SigninWrongTimes = 0
 
-		UpdateUser(user.GetId(), user, []string{"login_err_times"}, user.IsGlobalAdmin)
+		UpdateUser(user.GetId(), user, []string{"signin_wrong_times"}, user.IsGlobalAdmin)
 	}
 
 	organization := GetOrganizationByUser(user)
@@ -166,21 +166,21 @@ func CheckPassword(user *User, password string) string {
 		}
 
 		// increase failed login count
-		user.LoginErrTimes++
+		user.SigninWrongTimes++
 
-		if user.LoginErrTimes >= LoginErrTimesLimit {
+		if user.SigninWrongTimes >= SigninWrongTimesLimit {
 			// record the latest failed login time
-			user.LastLoginErrTime = time.Now().Unix()
+			user.LastSigninWrongTime = time.Now().Unix()
 		}
 
 		// update user
-		UpdateUser(user.GetId(), user, []string{"login_err_times", "last_login_err_time"}, user.IsGlobalAdmin)
-		leftChances := LoginErrTimesLimit - user.LoginErrTimes
+		UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, user.IsGlobalAdmin)
+		leftChances := SigninWrongTimesLimit - user.SigninWrongTimes
 		if leftChances > 0 {
 			return fmt.Sprintf("password is incorrect, you have %d remaining chances", leftChances)
 		} else {
 			// don't show the chance error message if the user has no chance left
-			return fmt.Sprintf("You have entered the wrong password too many times, please wait for %d minutes and try again", int(LoginErrTimesDuration.Minutes()))
+			return fmt.Sprintf("You have entered the wrong password too many times, please wait for %d minutes and try again", int(LastSignWrongTimeDuration.Minutes()))
 		}
 	} else {
 		return fmt.Sprintf("unsupported password type: %s", organization.PasswordType)
