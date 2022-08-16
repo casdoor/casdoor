@@ -21,6 +21,7 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 import AffiliationSelect from "../common/AffiliationSelect";
 import OAuthWidget from "../common/OAuthWidget";
+import SelectRegionBox from "../SelectRegionBox";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -90,6 +91,16 @@ class PromptPage extends React.Component {
     this.submitUserEdit(false);
   }
 
+  updateUserFieldWithoutSubmit(key, value) {
+    value = this.parseUserField(key, value);
+
+    const user = this.state.user;
+    user[key] = value;
+    this.setState({
+      user: user,
+    });
+  }
+
   renderAffiliation(application) {
     if (!Setting.isAffiliationPrompted(application)) {
       return null;
@@ -118,6 +129,31 @@ class PromptPage extends React.Component {
           {
             (application === null || this.state.user === null) ? null : (
               application?.providers.filter(providerItem => Setting.isProviderPrompted(providerItem)).map((providerItem, index) => <OAuthWidget key={providerItem.name} labelSpan={6} user={this.state.user} application={application} providerItem={providerItem} account={this.props.account} onUnlinked={() => {return this.unlinked();}} />)
+            )
+          }
+          {
+            (application === null || this.state.user === null) ? null : (
+              application?.signupItems.filter(signupItem => Setting.isSignupItemPrompted(signupItem)).map((signupItem, index) => {
+                if (signupItem.name !== "Country/Region") {
+                  return null;
+                }
+                return (
+                  <Row key={signupItem.name} style={{marginTop: "20px", justifyContent: "space-between"}} >
+                    <Col style={{marginTop: "5px"}} >
+                      <span style={{marginLeft: "5px"}}>
+                        {
+                          i18next.t("user:Country/Region")
+                        }:
+                      </span>
+                    </Col>
+                    <Col >
+                      <SelectRegionBox defaultValue={this.state.user.region} onChange={(value) => {
+                        this.updateUserFieldWithoutSubmit("region", value);
+                      }} />
+                    </Col>
+                  </Row>
+                );
+              })
             )
           }
         </div>
@@ -151,7 +187,7 @@ class PromptPage extends React.Component {
           if (redirectUrl === "") {
             redirectUrl = res.data2;
           }
-          if (redirectUrl !== "") {
+          if (redirectUrl !== "" && redirectUrl !== null) {
             Setting.goToLink(redirectUrl);
           } else {
             Setting.goToLogin(this, this.getApplicationObj());
