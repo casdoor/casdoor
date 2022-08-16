@@ -130,12 +130,12 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 
 func CheckPassword(user *User, password string) string {
 	const SigninWrongTimesLimit = 5
-	const LastSignWrongTimeDuration = time.Minute * 1
+	const LastSignWrongTimeDuration = time.Minute * 15
 
 	// check the login error times
 	if user.SigninWrongTimes >= SigninWrongTimesLimit {
 		lastSignWrongTime, _ := time.Parse(time.RFC3339, user.LastSigninWrongTime)
-		leftTimes := time.Since(lastSignWrongTime)
+		leftTimes := time.Now().UTC().Sub(lastSignWrongTime)
 		seconds := int(LastSignWrongTimeDuration.Seconds() - leftTimes.Seconds())
 
 		// deny the login if the error times is greater than the limit and the last login time is less than the duration
@@ -158,11 +158,21 @@ func CheckPassword(user *User, password string) string {
 	if credManager != nil {
 		if organization.MasterPassword != "" {
 			if credManager.IsPasswordCorrect(password, organization.MasterPassword, "", organization.PasswordSalt) {
+				// if the password is correct and wrong times is not zero, reset the error times
+				if user.SigninWrongTimes > 0 {
+					user.SigninWrongTimes = 0
+					UpdateUser(user.GetId(), user, []string{"signin_wrong_times"}, user.IsGlobalAdmin)
+				}
 				return ""
 			}
 		}
 
 		if credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt, organization.PasswordSalt) {
+			// if the password is correct and wrong times is not zero, reset the error times
+			if user.SigninWrongTimes > 0 {
+				user.SigninWrongTimes = 0
+				UpdateUser(user.GetId(), user, []string{"signin_wrong_times"}, user.IsGlobalAdmin)
+			}
 			return ""
 		}
 
