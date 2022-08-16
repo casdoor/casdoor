@@ -111,6 +111,9 @@ type User struct {
 
 	Roles       []*Role       `json:"roles"`
 	Permissions []*Permission `json:"permissions"`
+
+	LastSigninWrongTime string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
+	SigninWrongTimes    int    `json:"signinWrongTimes"`
 }
 
 type Userinfo struct {
@@ -376,6 +379,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 			"owner", "display_name", "avatar",
 			"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "signup_application",
 			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials",
+			"signin_wrong_times", "last_signin_wrong_time",
 		}
 	}
 	if isGlobalAdmin {
