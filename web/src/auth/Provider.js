@@ -137,7 +137,12 @@ export function getProviderUrl(provider) {
 
     return `${urlObj.protocol}//${host}`;
   } else {
-    return Setting.OtherProviderInfo[provider.category][provider.type].url;
+    const info = Setting.OtherProviderInfo[provider.category][provider.type];
+    // avoid crash when provider is not found
+    if (info) {
+      return info.url;
+    }
+    return "";
   }
 }
 
