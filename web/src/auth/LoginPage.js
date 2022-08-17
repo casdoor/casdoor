@@ -179,7 +179,7 @@ class LoginPage extends React.Component {
         values["type"] = "saml";
       }
 
-      if (this.state.owner !== null) {
+      if (this.state.owner !== null && this.state.owner !== undefined) {
         values["organization"] = this.state.owner;
       }
 
