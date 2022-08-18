@@ -134,7 +134,7 @@ type ManageAccount struct {
 	Application string `json:"application"`
 	Username    string `json:"username"`
 	Password    string `json:"password"`
-	ClientId	string `json:"clientId"`
+	ClientId    string `json:"clientId"`
 }
 
 func GetGlobalUserCount(field, value string) int {
@@ -344,7 +344,7 @@ func GetMaskedUser(user *User) *User {
 		user.Password = "***"
 	}
 
-	if user.ManageAccounts != nil{
+	if user.ManageAccounts != nil {
 		for _, manageAccount := range user.ManageAccounts {
 			manageAccount.Password = "***"
 		}
