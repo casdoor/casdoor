@@ -98,6 +98,8 @@
   },
   "general": {
     "Action": "Action",
+    "Adapter": "Adapter",
+    "Adapter - Tooltip": "Adapter - Tooltip",
     "Add": "Add",
     "Affiliation URL": "Affiliation URL",
     "Affiliation URL - Tooltip": "Affiliation URL - Tooltip",

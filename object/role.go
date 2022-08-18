@@ -99,11 +99,6 @@ func UpdateRole(id string, role *Role) bool {
 		panic(err)
 	}
 
-	if affected != 0 {
-		removeGroupingPolicies(oldRole)
-		addGroupingPolicies(role)
-	}
-
 	return affected != 0
 }
 
@@ -113,10 +108,6 @@ func AddRole(role *Role) bool {
 		panic(err)
 	}
 
-	if affected != 0 {
-		addGroupingPolicies(role)
-	}
-
 	return affected != 0
 }
 
@@ -124,10 +115,6 @@ func DeleteRole(role *Role) bool {
 	affected, err := adapter.Engine.ID(core.PK{role.Owner, role.Name}).Delete(&Role{})
 	if err != nil {
 		panic(err)
-	}
-
-	if affected != 0 {
-		removeGroupingPolicies(role)
 	}
 
 	return affected != 0

@@ -98,6 +98,8 @@
   },
   "general": {
     "Action": "Действие",
+    "Adapter": "Adapter",
+    "Adapter - Tooltip": "Adapter - Tooltip",
     "Add": "Добавить",
     "Affiliation URL": "URL-адрес партнёра",
     "Affiliation URL - Tooltip": "Unique string-style identifier",

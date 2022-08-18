@@ -32,6 +32,7 @@ type Permission struct {
 	Domains []string `xorm:"mediumtext" json:"domains"`
 
 	Model        string   `xorm:"varchar(100)" json:"model"`
+	Adapter      string   `xorm:"varchar(100)" json:"adapter"`
 	ResourceType string   `xorm:"varchar(100)" json:"resourceType"`
 	Resources    []string `xorm:"mediumtext" json:"resources"`
 	Actions      []string `xorm:"mediumtext" json:"actions"`
@@ -52,6 +53,7 @@ type PermissionRule struct {
 	V3    string `xorm:"varchar(100) index not null default ''" json:"v3"`
 	V4    string `xorm:"varchar(100) index not null default ''" json:"v4"`
 	V5    string `xorm:"varchar(100) index not null default ''" json:"v5"`
+	Id    string `xorm:"varchar(100) index not null default ''" json:"id"`
 }
 
 func GetPermissionCount(owner, field, value string) int {
@@ -121,7 +123,18 @@ func UpdatePermission(id string, permission *Permission) bool {
 	}
 
 	if affected != 0 {
-		removePolicies(oldPermission)
+		if oldPermission.Adapter != "" {
+			removePolicies(oldPermission)
+			if oldPermission.Adapter != permission.Adapter {
+				isEmpty, _ := adapter.Engine.IsTableEmpty(oldPermission.Adapter)
+				if isEmpty {
+					err = adapter.Engine.DropTables(oldPermission.Adapter)
+					if err != nil {
+						panic(err)
+					}
+				}
+			}
+		}
 		addPolicies(permission)
 	}
 
@@ -134,10 +147,6 @@ func AddPermission(permission *Permission) bool {
 		panic(err)
 	}
 
-	if affected != 0 {
-		addPolicies(permission)
-	}
-
 	return affected != 0
 }
 
@@ -147,8 +156,17 @@ func DeletePermission(permission *Permission) bool {
 		panic(err)
 	}
 
-	if affected != 0 {
+	if affected != 0 && permission.Adapter != "" {
 		removePolicies(permission)
+		if permission.Adapter != "permission_rule" {
+			isEmpty, _ := adapter.Engine.IsTableEmpty(permission.Adapter)
+			if isEmpty {
+				err = adapter.Engine.DropTables(permission.Adapter)
+				if err != nil {
+					panic(err)
+				}
+			}
+		}
 	}
 
 	return affected != 0
@@ -161,6 +179,16 @@ func (permission *Permission) GetId() string {
 func GetPermissionsByUser(userId string) []*Permission {
 	permissions := []*Permission{}
 	err := adapter.Engine.Where("users like ?", "%"+userId+"%").Find(&permissions)
+	if err != nil {
+		panic(err)
+	}
+
+	return permissions
+}
+
+func GetPermissionsByRole(roleId string) []*Permission {
+	permissions := []*Permission{}
+	err := adapter.Engine.Where("roles like ?", "%"+roleId+"%").Find(&permissions)
 	if err != nil {
 		panic(err)
 	}
