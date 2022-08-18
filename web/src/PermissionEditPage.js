@@ -370,6 +370,27 @@ class PermissionEditPage extends React.Component {
   }
 
   submitPermissionEdit(willExist) {
+    if (this.state.permission.users.length === 0 && this.state.permission.roles.length === 0) {
+      Setting.showMessage("error", "The users and roles cannot be empty at the same time");
+      return;
+    }
+    if (this.state.permission.domains.length === 0) {
+      Setting.showMessage("error", "The domains cannot be empty");
+      return;
+    }
+    if (this.state.permission.resources.length === 0) {
+      Setting.showMessage("error", "The resources cannot be empty");
+      return;
+    }
+    if (this.state.permission.actions.length === 0) {
+      Setting.showMessage("error", "The actions cannot be empty");
+      return;
+    }
+    if (!Setting.isLocalAdminUser(this.props.account) && this.state.permission.submitter !== this.props.account.name) {
+      Setting.showMessage("error", "A normal user can only modify the permission submitted by itself");
+      return;
+    }
+
     const permission = Setting.deepCopy(this.state.permission);
     PermissionBackend.updatePermission(this.state.organizationName, this.state.permissionName, permission)
       .then((res) => {

@@ -216,6 +216,45 @@ class PermissionListPage extends BaseListPage {
         },
       },
       {
+        title: i18next.t("permission:Submitter"),
+        dataIndex: "submitter",
+        key: "submitter",
+        filterMultiple: false,
+        width: "120px",
+        sorter: true,
+      },
+      {
+        title: i18next.t("permission:Approver"),
+        dataIndex: "approver",
+        key: "approver",
+        filterMultiple: false,
+        width: "120px",
+        sorter: true,
+      },
+      {
+        title: i18next.t("permission:Approve time"),
+        dataIndex: "approveTime",
+        key: "approveTime",
+        filterMultiple: false,
+        width: "120px",
+        sorter: true,
+        render: (text, record, index) => {
+          return Setting.getFormattedDate(text);
+        },
+      },
+      {
+        title: i18next.t("permission:State"),
+        dataIndex: "state",
+        key: "state",
+        filterMultiple: false,
+        filters: [
+          {text: "Approved", value: "Approved"},
+          {text: "Pending", value: "Pending"},
+        ],
+        width: "120px",
+        sorter: true,
+      },
+      {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
@@ -269,7 +308,7 @@ class PermissionListPage extends BaseListPage {
     }
     this.setState({loading: true});
 
-    const getPermissions = Setting.isAdminUser(this.props.account) ? PermissionBackend.getPermissions : PermissionBackend.getPermissionsBySubmitter;
+    const getPermissions = Setting.isLocalAdminUser(this.props.account) ? PermissionBackend.getPermissions : PermissionBackend.getPermissionsBySubmitter;
     getPermissions("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
