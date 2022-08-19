@@ -251,6 +251,7 @@ func initBuiltInPermission() {
 		DisplayName:  "Built-in Permission",
 		Users:        []string{"built-in/admin"},
 		Roles:        []string{},
+		Domains:      []string{},
 		ResourceType: "Application",
 		Resources:    []string{"app-built-in"},
 		Actions:      []string{"Read", "Write", "Admin"},
