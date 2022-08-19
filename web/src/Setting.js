@@ -69,7 +69,7 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_aws.png`,
       url: "https://aws.amazon.com/s3",
     },
-    "MINIO": {
+    "MinIO": {
       logo: "https://min.io/resources/img/logo.svg",
       url: "https://min.io/",
     },
@@ -616,7 +616,7 @@ export function getProviderTypeOptions(category) {
       [
         {id: "Local File System", name: "Local File System"},
         {id: "AWS S3", name: "AWS S3"},
-        {id: "MINIO", name: "MINIO"},
+        {id: "MinIO", name: "MinIO"},
         {id: "Aliyun OSS", name: "Aliyun OSS"},
         {id: "Tencent Cloud COS", name: "Tencent Cloud COS"},
         {id: "Azure Blob", name: "Azure Blob"},

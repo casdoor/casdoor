@@ -20,7 +20,7 @@ import (
 	"github.com/casdoor/oss/s3"
 )
 
-func NewMINIOS3StorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
+func NewMinIOS3StorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
 	sp := s3.New(&s3.Config{
 		AccessID:         clientId,
 		AccessKey:        clientSecret,
