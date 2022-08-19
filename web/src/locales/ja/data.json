@@ -198,6 +198,7 @@
     "Swagger": "Swagger",
     "Sync": "Sync",
     "Syncers": "Syncers",
+    "SysInfo": "システム情報",
     "Timestamp": "タイムスタンプ",
     "Tokens": "トークン",
     "URL": "URL",
@@ -592,6 +593,13 @@
     "Table columns - Tooltip": "テーブル列 - ツールチップ",
     "Table primary key": "テーブルのプライマリキー",
     "Table primary key - Tooltip": "テーブルのプライマリキー - ツールチップ"
+  },
+  "system": {
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS, QQ group 645200447": "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS, QQ group 645200447",
+    "Cpu Usage": "Cpu Usage",
+    "Latest Release Version": "Latest Release Version",
+    "Memory Usage": "Memory Usage",
+    "Official Website": "Official Website"
   },
   "token": {
     "Access token": "アクセストークン",

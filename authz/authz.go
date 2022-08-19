@@ -107,6 +107,7 @@ p, *, *, POST, /api/acs, *, *
 p, *, *, GET, /api/saml/metadata, *, *
 p, *, *, *, /cas, *, *
 p, *, *, *, /api/webauthn, *, *
+p, *, *, GET, /api/get-release, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)
