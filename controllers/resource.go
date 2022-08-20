@@ -72,7 +72,8 @@ func (c *ApiController) UpdateResource() {
 	var resource object.Resource
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.UpdateResource(id, &resource))
@@ -87,7 +88,8 @@ func (c *ApiController) AddResource() {
 	var resource object.Resource
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddResource(&resource))
@@ -102,7 +104,8 @@ func (c *ApiController) DeleteResource() {
 	var resource object.Resource
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &resource)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	provider, _, ok := c.GetProviderFromContext("Storage")

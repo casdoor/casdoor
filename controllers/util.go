@@ -23,9 +23,8 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-// ResponseOk ...
-func (c *ApiController) ResponseOk(data ...interface{}) {
-	resp := Response{Status: "ok"}
+// ResponseJsonData ...
+func (c *ApiController) ResponseJsonData(resp *Response, data ...interface{}) {
 	switch len(data) {
 	case 2:
 		resp.Data2 = data[1]
@@ -37,18 +36,16 @@ func (c *ApiController) ResponseOk(data ...interface{}) {
 	c.ServeJSON()
 }
 
+// ResponseOk ...
+func (c *ApiController) ResponseOk(data ...interface{}) {
+	resp := &Response{Status: "ok"}
+	c.ResponseJsonData(resp, data...)
+}
+
 // ResponseError ...
 func (c *ApiController) ResponseError(error string, data ...interface{}) {
-	resp := Response{Status: "error", Msg: error}
-	switch len(data) {
-	case 2:
-		resp.Data2 = data[1]
-		fallthrough
-	case 1:
-		resp.Data = data[0]
-	}
-	c.Data["json"] = resp
-	c.ServeJSON()
+	resp := &Response{Status: "error", Msg: error}
+	c.ResponseJsonData(resp, data...)
 }
 
 // SetTokenErrorHttpStatus ...
@@ -78,13 +75,8 @@ func (c *ApiController) RequireSignedIn() (string, bool) {
 	return userId, true
 }
 
-func getInitScore() int {
-	score, err := strconv.Atoi(conf.GetConfigString("initScore"))
-	if err != nil {
-		panic(err)
-	}
-
-	return score
+func getInitScore() (int, error) {
+	return strconv.Atoi(conf.GetConfigString("initScore"))
 }
 
 func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, *object.User, bool) {
