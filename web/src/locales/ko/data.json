@@ -198,6 +198,7 @@
     "Swagger": "Swagger",
     "Sync": "Sync",
     "Syncers": "Syncers",
+    "SysInfo": "SysInfo",
     "Timestamp": "Timestamp",
     "Tokens": "Tokens",
     "URL": "URL",
@@ -592,6 +593,14 @@
     "Table columns - Tooltip": "Table columns - Tooltip",
     "Table primary key": "Table primary key",
     "Table primary key - Tooltip": "Table primary key - Tooltip"
+  },
+  "system": {
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS",
+    "CPU Usage": "CPU Usage",
+    "Community": "Community",
+    "Memory Usage": "Memory Usage",
+    "Official Website": "Official Website",
+    "Version": "Version"
   },
   "token": {
     "Access token": "Access token",

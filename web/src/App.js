@@ -71,6 +71,7 @@ import SamlCallback from "./auth/SamlCallback";
 import CasLogout from "./auth/CasLogout";
 import ModelListPage from "./ModelListPage";
 import ModelEditPage from "./ModelEditPage";
+import SystemInfo from "./SystemInfo";
 
 const {Header, Footer} = Layout;
 
@@ -148,6 +149,8 @@ class App extends Component {
       this.setState({selectedMenuKey: "/login"});
     } else if (uri.includes("/result")) {
       this.setState({selectedMenuKey: "/result"});
+    } else if (uri.includes("/sysinfo")) {
+      this.setState({selectedMenuKey: "/sysinfo"});
     } else {
       this.setState({selectedMenuKey: -1});
     }
@@ -478,8 +481,14 @@ class App extends Component {
             </Link>
           </Menu.Item>
         );
+        res.push(
+          <Menu.Item key="/sysinfo">
+            <Link to="/sysinfo">
+              {i18next.t("general:SysInfo")}
+            </Link>
+          </Menu.Item>
+        );
       }
-
       res.push(
         <Menu.Item key="/swagger">
           <a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
@@ -560,6 +569,7 @@ class App extends Component {
           <Route exact path="/payments/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)} />
           <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)} />
           <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
+          <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
           <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
             extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
         </Switch>
@@ -691,6 +701,7 @@ class App extends Component {
               <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)} />
               <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)} />
               <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} {...props} />)} />
+              <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo {...props} />)} />
               <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
                 extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
             </Switch>

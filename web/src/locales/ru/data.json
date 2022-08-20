@@ -198,6 +198,7 @@
     "Swagger": "Swagger",
     "Sync": "Sync",
     "Syncers": "Синхронизаторы",
+    "SysInfo": "Информация о системе",
     "Timestamp": "Отметка времени",
     "Tokens": "Жетоны",
     "URL": "URL",
@@ -592,6 +593,14 @@
     "Table columns - Tooltip": "Столбцы таблиц - Подсказка",
     "Table primary key": "Основной ключ таблицы",
     "Table primary key - Tooltip": "Основная таблица - Подсказка"
+  },
+  "system": {
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS",
+    "CPU Usage": "CPU Usage",
+    "Community": "Community",
+    "Memory Usage": "Memory Usage",
+    "Official Website": "Official Website",
+    "Version": "Version"
   },
   "token": {
     "Access token": "Маркер доступа",

@@ -198,6 +198,7 @@
     "Swagger": "API文档",
     "Sync": "同步",
     "Syncers": "同步器",
+    "SysInfo": "系统信息",
     "Timestamp": "时间戳",
     "Tokens": "令牌",
     "URL": "链接",
@@ -592,6 +593,14 @@
     "Table columns - Tooltip": "参与数据同步的表格列，不参与同步的列不需要添加",
     "Table primary key": "表主键",
     "Table primary key - Tooltip": "表主键，如id"
+  },
+  "system": {
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "一个支持 OAuth 2.0、OIDC、SAML 和 CAS 的 Web UI 的身份和访问管理 (IAM)/单点登录 (SSO) 平台",
+    "CPU Usage": "CPU Usage",
+    "Community": "社区",
+    "Memory Usage": "内存使用率",
+    "Official Website": "官方网站",
+    "Version": "版本"
   },
   "token": {
     "Access token": "访问令牌",
