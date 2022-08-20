@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {Card, Col, Divider, Progress, Row} from "antd";
-import {getGitHubLatestReleaseVersion, getSystemInfo} from "./backend/SystemInfo";
+import * as SystemBackend from "./backend/SystemInfo";
 import React from "react";
 import * as Setting from "./Setting";
 import i18next from "i18next";
@@ -31,11 +31,8 @@ class SystemInfo extends React.Component {
     };
   }
 
-  componentDidMount() {
-    // eslint-disable-next-line no-console
-    getSystemInfo(this.props.account?.owner, this.props.account?.name).then(res => {
-      // eslint-disable-next-line no-console
-      console.log(res);
+  UNSAFE_componentWillMount() {
+    SystemBackend.getSystemInfo(this.props.account?.owner, this.props.account?.name).then(res => {
       this.setState({
         cpuUsage: res.cpu_usage,
         memUsed: res.memory_used,
@@ -43,7 +40,7 @@ class SystemInfo extends React.Component {
       });
 
       const id = setInterval(() => {
-        getSystemInfo(this.props.account?.owner, this.props.account?.name).then(res => {
+        SystemBackend.getSystemInfo(this.props.account?.owner, this.props.account?.name).then(res => {
           this.setState({
             cpuUsage: res.cpu_usage,
             memUsed: res.memory_used,
@@ -56,7 +53,7 @@ class SystemInfo extends React.Component {
       Setting.showMessage("error", `System info failed to get: ${error}`);
     });
 
-    getGitHubLatestReleaseVersion().then(res => {
+    SystemBackend.getGitHubLatestReleaseVersion().then(res => {
       this.setState({latestVersion: res});
     }).catch(err => {
       Setting.showMessage("error", `get latest commit version failed: ${err}`);
@@ -74,7 +71,7 @@ class SystemInfo extends React.Component {
         <Col span={12}>
           <Row gutter={[10, 10]}>
             <Col span={12}>
-              <Card title={i18next.t("system:Cpu Usage")} bordered={true} style={{textAlign: "center"}}>
+              <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center"}}>
                 {
                   this.state.cpuUsage.length !== 0 &&
                   this.state.cpuUsage.map((usage, i) => {

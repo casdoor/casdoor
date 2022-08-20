@@ -596,8 +596,8 @@
   },
   "system": {
     "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS",
+    "CPU Usage": "CPU Usage",
     "Community": "Community",
-    "Cpu Usage": "Cpu Usage",
     "Memory Usage": "Memory Usage",
     "Official Website": "Official Website",
     "Version": "Version"
