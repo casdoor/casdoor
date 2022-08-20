@@ -91,7 +91,7 @@ class SystemInfo extends React.Component {
             </Col>
           </Row>
           <Divider />
-          <Card title="About Casdoor" bordered={true} style={{textAlign: "center"}}>
+          <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
             <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
             GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
             <br />
