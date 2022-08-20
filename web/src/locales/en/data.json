@@ -595,6 +595,7 @@
     "Table primary key - Tooltip": "Table primary key - Tooltip"
   },
   "system": {
+    "About Casdoor": "About Casdoor",
     "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS",
     "CPU Usage": "CPU Usage",
     "Community": "Community",
