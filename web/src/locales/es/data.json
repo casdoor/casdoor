@@ -8,8 +8,8 @@
   "application": {
     "Copy SAML metadata URL": "Copiar SAML metadata URL",
     "Copy prompt page URL": "Copy prompt page URL",
-    "Copy signin page URL": "Copy signin page URL",
-    "Copy signup page URL": "Copy signup page URL",
+    "Copy signin page URL": "Copiar URL de inicio de sesión",
+    "Copy signup page URL": "Copiar URL de registro de usuarios",
     "Edit Application": "Editar Aplicación",
     "Enable SAML compress": "Habilitar compresión SAML",
     "Enable SAML compress - Tooltip": "Habilitar compresión SAML - Tooltip",
