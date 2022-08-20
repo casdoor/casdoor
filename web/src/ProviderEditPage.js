@@ -474,7 +474,7 @@ class ProviderEditPage extends React.Component {
                 }} />
               </Col>
             </Row>
-            {this.state.provider.type === "AWS S3" || this.state.provider.type === "Tencent Cloud COS" ? (
+            {["AWS S3", "MinIO", "Tencent Cloud COS"].includes(this.state.provider.type) ? (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Region ID"), i18next.t("provider:Region ID - Tooltip"))} :
