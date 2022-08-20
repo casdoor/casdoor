@@ -76,7 +76,8 @@ func (c *ApiController) UpdateModel() {
 	var model object.Model
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &model)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.UpdateModel(id, &model))
@@ -94,7 +95,8 @@ func (c *ApiController) AddModel() {
 	var model object.Model
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &model)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddModel(&model))
@@ -112,7 +114,8 @@ func (c *ApiController) DeleteModel() {
 	var model object.Model
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &model)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteModel(&model))

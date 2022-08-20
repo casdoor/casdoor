@@ -79,7 +79,8 @@ func (c *ApiController) UpdateToken() {
 	var token object.Token
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &token)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.UpdateToken(id, &token))
@@ -97,7 +98,8 @@ func (c *ApiController) AddToken() {
 	var token object.Token
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &token)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddToken(&token))
@@ -115,7 +117,8 @@ func (c *ApiController) DeleteToken() {
 	var token object.Token
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &token)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteToken(&token))

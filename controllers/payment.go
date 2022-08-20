@@ -95,7 +95,8 @@ func (c *ApiController) UpdatePayment() {
 	var payment object.Payment
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.UpdatePayment(id, &payment))
@@ -113,7 +114,8 @@ func (c *ApiController) AddPayment() {
 	var payment object.Payment
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddPayment(&payment))
@@ -131,7 +133,8 @@ func (c *ApiController) DeletePayment() {
 	var payment object.Payment
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeletePayment(&payment))
@@ -157,7 +160,8 @@ func (c *ApiController) NotifyPayment() {
 	if ok {
 		_, err := c.Ctx.ResponseWriter.Write([]byte("success"))
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 	} else {
 		panic(fmt.Errorf("NotifyPayment() failed: %v", ok))

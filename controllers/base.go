@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -58,6 +59,7 @@ func (c *ApiController) IsGlobalAdmin() bool {
 func (c *ApiController) GetSessionUsername() string {
 	// check if user session expired
 	sessionData := c.GetSessionData()
+
 	if sessionData != nil &&
 		sessionData.ExpireTime != 0 &&
 		sessionData.ExpireTime < time.Now().Unix() {
@@ -120,7 +122,8 @@ func (c *ApiController) GetSessionData() *SessionData {
 	sessionData := &SessionData{}
 	err := util.JsonToStruct(session.(string), sessionData)
 	if err != nil {
-		panic(err)
+		logs.Error("GetSessionData failed, error: %s", err)
+		return nil
 	}
 
 	return sessionData

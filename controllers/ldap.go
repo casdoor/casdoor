@@ -199,7 +199,8 @@ func (c *ApiController) DeleteLdap() {
 	var ldap object.Ldap
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	object.GetLdapAutoSynchronizer().StopAutoSync(ldap.Id)
@@ -217,7 +218,8 @@ func (c *ApiController) SyncLdapUsers() {
 	var users []object.LdapRespUser
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &users)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	object.UpdateLdapSyncTime(ldapId)
@@ -239,7 +241,8 @@ func (c *ApiController) CheckLdapUsersExist() {
 	var uuids []string
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &uuids)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	exist := object.CheckLdapUuidExist(owner, uuids)

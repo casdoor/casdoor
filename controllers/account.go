@@ -105,7 +105,8 @@ func (c *ApiController) Signup() {
 	var form RequestForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
@@ -156,6 +157,12 @@ func (c *ApiController) Signup() {
 		username = id
 	}
 
+	initScore, err := getInitScore()
+	if err != nil {
+		c.ResponseError(fmt.Errorf("get init score failed, error: %w", err).Error())
+		return
+	}
+
 	user := &object.User{
 		Owner:             form.Organization,
 		Name:              username,
@@ -171,7 +178,7 @@ func (c *ApiController) Signup() {
 		Affiliation:       form.Affiliation,
 		IdCard:            form.IdCard,
 		Region:            form.Region,
-		Score:             getInitScore(),
+		Score:             initScore,
 		IsAdmin:           false,
 		IsGlobalAdmin:     false,
 		IsForbidden:       false,

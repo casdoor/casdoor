@@ -30,7 +30,8 @@ func (c *ApiController) Enforce() {
 	var permissionRule object.PermissionRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissionRule)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = object.Enforce(userId, &permissionRule)
@@ -47,7 +48,8 @@ func (c *ApiController) BatchEnforce() {
 	var permissionRules []object.PermissionRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissionRules)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = object.BatchEnforce(userId, permissionRules)

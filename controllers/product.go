@@ -80,7 +80,8 @@ func (c *ApiController) UpdateProduct() {
 	var product object.Product
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &product)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.UpdateProduct(id, &product))
@@ -98,7 +99,8 @@ func (c *ApiController) AddProduct() {
 	var product object.Product
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &product)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddProduct(&product))
@@ -116,7 +118,8 @@ func (c *ApiController) DeleteProduct() {
 	var product object.Product
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &product)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteProduct(&product))

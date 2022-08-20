@@ -149,7 +149,8 @@ func (c *ApiController) UpdateUser() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	if user.DisplayName == "" {
@@ -183,7 +184,8 @@ func (c *ApiController) AddUser() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddUser(&user))
@@ -201,7 +203,8 @@ func (c *ApiController) DeleteUser() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteUser(&user))
@@ -220,7 +223,8 @@ func (c *ApiController) GetEmailAndPhone() {
 	var form RequestForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	user := object.GetUserByFields(form.Organization, form.Username)
@@ -306,7 +310,8 @@ func (c *ApiController) CheckUserPassword() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	_, msg := object.CheckUserPassword(user.Owner, user.Name, user.Password)

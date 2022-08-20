@@ -111,8 +111,7 @@ func (c *ApiController) GetOrganizationApplications() {
 		return
 	}
 
-	var applications []*object.Application
-	applications = object.GetApplicationsByOrganizationName(owner, organization)
+	applications := object.GetApplicationsByOrganizationName(owner, organization)
 	c.Data["json"] = object.GetMaskedApplications(applications, userId)
 	c.ServeJSON()
 }
@@ -131,7 +130,8 @@ func (c *ApiController) UpdateApplication() {
 	var application object.Application
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.UpdateApplication(id, &application))
@@ -149,7 +149,8 @@ func (c *ApiController) AddApplication() {
 	var application object.Application
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddApplication(&application))
@@ -167,7 +168,8 @@ func (c *ApiController) DeleteApplication() {
 	var application object.Application
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteApplication(&application))

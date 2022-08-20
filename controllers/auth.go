@@ -344,7 +344,7 @@ func (c *ApiController) Login() {
 				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
 			}
 
-			if user != nil && user.IsDeleted == false {
+			if user != nil && !user.IsDeleted {
 				// Sign in via OAuth (want to sign up but already have account)
 
 				if user.IsForbidden {
@@ -384,6 +384,12 @@ func (c *ApiController) Login() {
 
 				properties := map[string]string{}
 				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
+				initScore, err := getInitScore()
+				if err != nil {
+					c.ResponseError(fmt.Errorf("get init score failed, error: %w", err).Error())
+					return
+				}
+
 				user = &object.User{
 					Owner:             application.Organization,
 					Name:              userInfo.Username,
@@ -394,7 +400,7 @@ func (c *ApiController) Login() {
 					Avatar:            userInfo.AvatarUrl,
 					Address:           []string{},
 					Email:             userInfo.Email,
-					Score:             getInitScore(),
+					Score:             initScore,
 					IsAdmin:           false,
 					IsGlobalAdmin:     false,
 					IsForbidden:       false,

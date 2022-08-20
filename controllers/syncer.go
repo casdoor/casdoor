@@ -76,7 +76,8 @@ func (c *ApiController) UpdateSyncer() {
 	var syncer object.Syncer
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.UpdateSyncer(id, &syncer))
@@ -94,7 +95,8 @@ func (c *ApiController) AddSyncer() {
 	var syncer object.Syncer
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddSyncer(&syncer))
@@ -112,7 +114,8 @@ func (c *ApiController) DeleteSyncer() {
 	var syncer object.Syncer
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteSyncer(&syncer))

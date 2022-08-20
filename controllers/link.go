@@ -37,7 +37,8 @@ func (c *ApiController) Unlink() {
 	var form LinkForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 	providerType := form.ProviderType
 
