@@ -36,6 +36,7 @@ class SelectLanguageBox extends React.Component {
         Setting.changeLanguage(e.key);
       }}>
         <Menu.Item key="en" icon={<IconFont type="icon-en" />}>English</Menu.Item>
+        <Menu.Item key="es" icon={<IconFont type="icon-es" />}>Español</Menu.Item>
         <Menu.Item key="zh" icon={<IconFont type="icon-zh" />}>简体中文</Menu.Item>
         <Menu.Item key="fr" icon={<IconFont type="icon-fr" />}>Français</Menu.Item>
         <Menu.Item key="de" icon={<IconFont type="icon-de" />}>Deutsch</Menu.Item>
