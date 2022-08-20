@@ -21,8 +21,8 @@ export function getSystemInfo(owner, name) {
   }).then(res => res.json());
 }
 
-export function getGitHubLatestReleaseVersion(repo) {
-  return fetch(`${Setting.ServerUrl}/api/get-release?repo=${repo}`, {
+export function getGitHubLatestReleaseVersion() {
+  return fetch(`${Setting.ServerUrl}/api/get-release`, {
     method: "GET",
     credentials: "include",
   }).then(res => res.json());

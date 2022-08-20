@@ -23,9 +23,10 @@ class SystemInfo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      cpuUsage: 0,
-      memUsage: 0,
-      latestReleaseVersion: "v1.0.0",
+      cpuUsage: [],
+      memUsed: 0,
+      memTotal: 0,
+      latestVersion: "v1.0.0",
       intervalId: null,
     };
   }
@@ -33,16 +34,20 @@ class SystemInfo extends React.Component {
   componentDidMount() {
     // eslint-disable-next-line no-console
     getSystemInfo(this.props.account?.owner, this.props.account?.name).then(res => {
+      // eslint-disable-next-line no-console
+      console.log(res);
       this.setState({
-        cpuUsage: Math.floor(res.cpuUsage),
-        memUsage: Math.floor(res.memoryUsage),
+        cpuUsage: res.cpu_usage,
+        memUsed: res.memory_used,
+        memTotal: res.memory_total,
       });
 
       const id = setInterval(() => {
         getSystemInfo(this.props.account?.owner, this.props.account?.name).then(res => {
           this.setState({
-            cpuUsage: Math.floor(res.cpuUsage),
-            memUsage: Math.floor(res.memoryUsage),
+            cpuUsage: res.cpu_usage,
+            memUsed: res.memory_used,
+            memTotal: res.memory_total,
           });
         });
       }, 1000 * 3);
@@ -51,10 +56,10 @@ class SystemInfo extends React.Component {
       Setting.showMessage("error", `System info failed to get: ${error}`);
     });
 
-    getGitHubLatestReleaseVersion("casdoor/casdoor").then(res => {
-      this.setState({latestReleaseVersion: res});
+    getGitHubLatestReleaseVersion().then(res => {
+      this.setState({latestVersion: res});
     }).catch(err => {
-      Setting.showMessage("error", `get latest release version failed: ${err}`);
+      Setting.showMessage("error", `get latest commit version failed: ${err}`);
     });
   }
 
@@ -70,23 +75,34 @@ class SystemInfo extends React.Component {
           <Row gutter={[10, 10]}>
             <Col span={12}>
               <Card title={i18next.t("system:Cpu Usage")} bordered={true} style={{textAlign: "center"}}>
-                <Progress type="circle" percent={this.state.cpuUsage} />
+                {
+                  this.state.cpuUsage.length !== 0 &&
+                  this.state.cpuUsage.map((usage, i) => {
+                    return (
+                      <Progress key={i} percent={Number(usage.toFixed(1))} />
+                    );
+                  })
+                }
               </Card>
             </Col>
             <Col span={12}>
               <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center"}}>
-                <Progress type="circle" percent={this.state.memUsage} />
+                {(Number(this.state.memUsed) / 1024 / 1024).toFixed(2)} MB / {(Number(this.state.memTotal) / 1024 / 1024 / 1024).toFixed(2)} GB
+                <br /> <br />
+                <Progress type="circle" percent={Number((Number(this.state.memUsed) / Number(this.state.memTotal) * 100).toFixed(2))} />
               </Card>
             </Col>
           </Row>
           <Divider />
           <Card title="About Casdoor" bordered={true} style={{textAlign: "center"}}>
-            <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS, QQ group 645200447")}</div>
+            <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
             GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
             <br />
-            {i18next.t("system:Latest Release Version")}: <a href={`https://github.com/casdoor/casdoor/releases/tag/${this.state.latestReleaseVersion}`}>{this.state.latestReleaseVersion}</a>
+            {i18next.t("system:Version")}: <a href={`https://github.com/casdoor/casdoor/commit/${this.state.latestVersion}`}>{this.state.latestVersion.substring(0, 8)}</a>
             <br />
             {i18next.t("system:Official Website")}: <a href="https://casdoor.org/">casdoor.org</a>
+            <br />
+            {i18next.t("system:Community")}: <a href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">contact us</a>
           </Card>
         </Col>
         <Col span={6}></Col>

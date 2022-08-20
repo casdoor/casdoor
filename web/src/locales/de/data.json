@@ -595,11 +595,12 @@
     "Table primary key - Tooltip": "Primärschlüssel der Tabelle - Tooltip"
   },
   "system": {
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS, QQ group 645200447": "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS, QQ group 645200447",
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS",
+    "Community": "Community",
     "Cpu Usage": "Cpu Usage",
-    "Latest Release Version": "Latest Release Version",
     "Memory Usage": "Memory Usage",
-    "Official Website": "Official Website"
+    "Official Website": "Official Website",
+    "Version": "Version"
   },
   "token": {
     "Access token": "Zugangs-Token",

@@ -13,13 +13,7 @@ func TestGetCpuUsage(t *testing.T) {
 }
 
 func TestGetMemoryUsage(t *testing.T) {
-	usage, err := GetMemoryUsage()
+	used, total, err := GetMemoryUsage()
 	assert.Nil(t, err)
-	t.Log(usage)
-}
-
-func TestGetGithubRepoReleaseVersion(t *testing.T) {
-	version, err := GetGithubRepoReleaseVersion("casdoor/casdoor")
-	assert.Nil(t, err)
-	t.Log(version)
+	t.Log(used, total)
 }

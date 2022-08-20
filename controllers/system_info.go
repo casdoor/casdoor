@@ -6,8 +6,9 @@ import (
 )
 
 type SystemInfo struct {
-	CpuUsage    float64 `json:"cpuUsage"`
-	MemoryUsage float64 `json:"memoryUsage"`
+	MemoryUsed  uint64    `json:"memory_used"`
+	MemoryTotal uint64    `json:"memory_total"`
+	CpuUsage    []float64 `json:"cpu_usage"`
 }
 
 // GetSystemInfo
@@ -33,28 +34,28 @@ func (c *ApiController) GetSystemInfo() {
 		c.ResponseError(err.Error())
 	}
 
-	memoryUsage, err := util.GetMemoryUsage()
+	memoryUsed, memoryTotal, err := util.GetMemoryUsage()
 	if err != nil {
 		c.ResponseError(err.Error())
 	}
 
 	c.Data["json"] = SystemInfo{
 		CpuUsage:    cpuUsage,
-		MemoryUsage: memoryUsage,
+		MemoryUsed:  memoryUsed,
+		MemoryTotal: memoryTotal,
 	}
 	c.ServeJSON()
 }
 
-// GithubLatestReleaseVersion
-// @Title GithubLatestReleaseVersion
+// GithubLatestVersion
+// @Title GithubLatestVersion
 // @Tag System API
 // @Description get github repo's latest release version info
 // @Param   repo    query    string  true        "The GitHub repo"
 // @Success 200 {string} latest version of casdoor
 // @router /get-release [get]
-func (c *ApiController) GithubLatestReleaseVersion() {
-	repo := c.GetString("repo")
-	version, err := util.GetGithubRepoReleaseVersion(repo)
+func (c *ApiController) GithubLatestVersion() {
+	version, err := util.GetGithubRepoVersion()
 	if err != nil {
 		c.ResponseError(err.Error())
 	}

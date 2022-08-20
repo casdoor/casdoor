@@ -1,8 +1,10 @@
 package util
 
 import (
-	"encoding/json"
-	"net/http"
+	"io/ioutil"
+	"os"
+	"runtime"
+	"strings"
 	"time"
 
 	"github.com/shirou/gopsutil/cpu"
@@ -10,36 +12,53 @@ import (
 )
 
 // get cpu usage
-func GetCpuUsage() (float64, error) {
-	usage, err := cpu.Percent(time.Second, false)
-	return usage[0], err
+func GetCpuUsage() ([]float64, error) {
+	usage, err := cpu.Percent(time.Second, true)
+	return usage, err
 }
 
+var fileDate, version string
+
 // get memory usage
-func GetMemoryUsage() (float64, error) {
-	usage, err := mem.VirtualMemory()
-	return usage.UsedPercent, err
+func GetMemoryUsage() (uint64, uint64, error) {
+	virtualMem, err := mem.VirtualMemory()
+	if err != nil {
+		return 0, 0, err
+	}
+
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+
+	return m.TotalAlloc, virtualMem.Total, nil
 }
 
 // get github repo release version
-func GetGithubRepoReleaseVersion(repo string) (string, error) {
-	// get github repo release version
-	resp, err := http.Get("https://api.github.com/repos/" + repo + "/releases/latest")
+func GetGithubRepoVersion() (string, error) {
+	pwd, err := os.Getwd()
 	if err != nil {
 		return "", err
 	}
 
-	// close response body
-	defer resp.Body.Close()
+	fileInfos, err := ioutil.ReadDir(pwd + "/.git/refs/heads")
+	for _, v := range fileInfos {
+		if v.Name() == "master" {
+			if v.ModTime().String() == fileDate {
+				return version, nil
+			} else {
+				fileDate = v.ModTime().String()
+				break
+			}
+		}
+	}
 
-	// get github repo release version
-	release := struct {
-		TagName string `json:"tag_name"`
-	}{}
-	err = json.NewDecoder(resp.Body).Decode(&release)
+	content, err := ioutil.ReadFile(pwd + "/.git/refs/heads/master")
 	if err != nil {
 		return "", err
 	}
 
-	return release.TagName, nil
+	// Convert to full length
+	temp := string(content)
+	version = strings.ReplaceAll(temp, "\n", "")
+
+	return version, nil
 }

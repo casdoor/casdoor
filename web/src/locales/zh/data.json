@@ -595,11 +595,12 @@
     "Table primary key - Tooltip": "表主键，如id"
   },
   "system": {
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS, QQ group 645200447": "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS, QQ group 645200447",
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS",
+    "Community": "社区",
     "Cpu Usage": "Cpu使用率",
-    "Latest Release Version": "最新版本",
     "Memory Usage": "内存使用率",
-    "Official Website": "官方网站"
+    "Official Website": "官方网站",
+    "Version": "版本"
   },
   "token": {
     "Access token": "访问令牌",
