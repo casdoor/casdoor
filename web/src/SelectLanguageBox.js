@@ -19,7 +19,7 @@ import "./App.less";
 
 function flagIcon(country, alt) {
   return (
-    <img width={24} alt={alt} src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${country}.svg`} />
+    <img width={24} alt={alt} src={`//purecatamphetamine.github.io/country-flag-icons/3x2/${country}.svg`} />
   );
 }
 
