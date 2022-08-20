@@ -62,10 +62,10 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 		if HasUserByField(organization.Name, "name", username) {
 			return "username already exists"
 		}
-		if HasUserByField(organization.Name, "email", username) {
+		if HasUserByField(organization.Name, "email", email) {
 			return "email already exists"
 		}
-		if HasUserByField(organization.Name, "phone", username) {
+		if HasUserByField(organization.Name, "phone", phone) {
 			return "phone already exists"
 		}
 	}
