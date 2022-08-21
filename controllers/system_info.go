@@ -41,16 +41,19 @@ func (c *ApiController) GetSystemInfo() {
 	user := object.GetUser(id)
 	if user == nil || !user.IsGlobalAdmin {
 		c.ResponseError("You are not authorized to access this resource")
+		return
 	}
 
 	cpuUsage, err := util.GetCpuUsage()
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
 
 	memoryUsed, memoryTotal, err := util.GetMemoryUsage()
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = SystemInfo{
@@ -71,6 +74,7 @@ func (c *ApiController) GitRepoVersion() {
 	version, err := util.GetGitRepoVersion()
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = version
