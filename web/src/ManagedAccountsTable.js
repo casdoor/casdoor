@@ -116,7 +116,7 @@ class ManagedAccountsTable extends React.Component {
       {
         title: i18next.t("general:Action"),
         key: "action",
-        width: "50px",
+        width: "100px",
         render: (text, record, index) => {
           return (
             <div>
