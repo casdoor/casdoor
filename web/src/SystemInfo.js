@@ -74,7 +74,7 @@ class SystemInfo extends React.Component {
   }
 
   render() {
-    const CPUInfo = this.state.cpuUsage && this.state.cpuUsage.length > 0 ?
+    const CPUInfo = this.state.cpuUsage?.length > 0 ?
       this.state.cpuUsage.map((usage, i) => {
         return (
           <Progress key={i} percent={Number(usage.toFixed(1))} />
@@ -84,7 +84,7 @@ class SystemInfo extends React.Component {
     const MemInfo = (
       this.state.memUsed && this.state.memTotal && this.state.memTotal !== 0 ?
         <div>
-          {(Number(this.state.memUsed) / 1024 / 1024).toFixed(2)} MB / {(Number(this.state.memTotal) / 1024 / 1024 / 1024).toFixed(2)} GB
+          {Setting.getFriendlyFileSize(this.state.memUsed)} / {Setting.getFriendlyFileSize(this.state.memTotal)}
           <br /> <br />
           <Progress type="circle" percent={Number((Number(this.state.memUsed) / Number(this.state.memTotal) * 100).toFixed(2))} />
         </div> : i18next.t("system:Get Memory Usage Failed")
