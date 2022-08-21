@@ -188,7 +188,19 @@ class PermissionListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("actions"),
         render: (text, record, index) => {
-          return Setting.getTags(text);
+          const tags = text.map((tag, i) => {
+            switch (tag) {
+            case "Read":
+              return i18next.t("permission:Read");
+            case "Write":
+              return i18next.t("permission:Write");
+            case "Admin":
+              return i18next.t("permission:Admin");
+            default:
+              return null;
+            }
+          });
+          return Setting.getTags(tags);
         },
       },
       {
@@ -197,11 +209,21 @@ class PermissionListPage extends BaseListPage {
         key: "effect",
         filterMultiple: false,
         filters: [
-          {text: "Allow", value: "Allow"},
-          {text: "Deny", value: "Deny"},
+          {text: i18next.t("permission:Allow"), value: "Allow"},
+          {text: i18next.t("permission:Deny"), value: "Deny"},
         ],
         width: "120px",
         sorter: true,
+        render: (text, record, index) => {
+          switch (text) {
+          case "Allow":
+            return Setting.getTag("success", i18next.t("permission:Allow"));
+          case "Deny":
+            return Setting.getTag("error", i18next.t("permission:Deny"));
+          default:
+            return null;
+          }
+        },
       },
       {
         title: i18next.t("general:Is enabled"),
@@ -248,11 +270,21 @@ class PermissionListPage extends BaseListPage {
         key: "state",
         filterMultiple: false,
         filters: [
-          {text: "Approved", value: "Approved"},
-          {text: "Pending", value: "Pending"},
+          {text: i18next.t("permission:Approved"), value: "Approved"},
+          {text: i18next.t("permission:Pending"), value: "Pending"},
         ],
         width: "120px",
         sorter: true,
+        render: (text, record, index) => {
+          switch (text) {
+          case "Approved":
+            return Setting.getTag("success", i18next.t("permission:Approved"));
+          case "Pending":
+            return Setting.getTag("error", i18next.t("permission:Pending"));
+          default:
+            return null;
+          }
+        },
       },
       {
         title: i18next.t("general:Action"),

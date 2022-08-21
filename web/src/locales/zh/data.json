@@ -346,14 +346,20 @@
   "permission": {
     "Actions": "动作",
     "Actions - Tooltip": "授权的动作",
+    "Admin": "管理员权限",
+    "Allow": "允许",
     "Approve time": "审批时间",
     "Approve time - Tooltip": "该授权被审批通过的时间",
+    "Approved": "审批通过",
     "Approver": "审批者",
     "Approver - Tooltip": "审批通过该授权的人",
+    "Deny": "拒绝",
     "Edit Permission": "编辑权限",
     "Effect": "效果",
     "Effect - Tooltip": "允许还是拒绝",
     "New Permission": "添加权限",
+    "Pending": "待审批",
+    "Read": "读权限",
     "Resource type": "资源类型",
     "Resource type - Tooltip": "授权资源的类型",
     "Resources": "资源",
@@ -361,7 +367,9 @@
     "State": "审批状态",
     "State - Tooltip": "该授权现在的状态",
     "Submitter": "申请者",
-    "Submitter - Tooltip": "申请该授权的人"
+    "Submitter - Tooltip": "申请该授权的人",
+    "TreeNode": "树节点",
+    "Write": "写权限"
   },
   "product": {
     "Alipay": "支付宝",

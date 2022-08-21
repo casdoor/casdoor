@@ -857,7 +857,10 @@ export function getTagColor(s) {
 
 export function getTags(tags) {
   const res = [];
-  if (!tags) {return res;}
+  if (!tags) {
+    return res;
+  }
+
   tags.forEach((tag, i) => {
     res.push(
       <Tag color={getTagColor(tag)}>
@@ -866,6 +869,14 @@ export function getTags(tags) {
     );
   });
   return res;
+}
+
+export function getTag(color, text) {
+  return (
+    <Tag color={color}>
+      {text}
+    </Tag>
+  );
 }
 
 export function getApplicationOrgName(application) {

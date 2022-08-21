@@ -346,14 +346,20 @@
   "permission": {
     "Actions": "アクション",
     "Actions - Tooltip": "アクション → ツールチップ",
+    "Admin": "Admin",
+    "Allow": "Allow",
     "Approve time": "Approve time",
     "Approve time - Tooltip": "Approve time - Tooltip",
+    "Approved": "Approved",
     "Approver": "Approver",
     "Approver - Tooltip": "Approver - Tooltip",
+    "Deny": "Deny",
     "Edit Permission": "権限を編集",
     "Effect": "効果",
     "Effect - Tooltip": "エフェクト - ツールチップ",
     "New Permission": "New Permission",
+    "Pending": "Pending",
+    "Read": "Read",
     "Resource type": "リソースタイプ",
     "Resource type - Tooltip": "リソースタイプ - ツールチップ",
     "Resources": "リソース",
@@ -361,7 +367,9 @@
     "State": "State",
     "State - Tooltip": "State - Tooltip",
     "Submitter": "Submitter",
-    "Submitter - Tooltip": "Submitter - Tooltip"
+    "Submitter - Tooltip": "Submitter - Tooltip",
+    "TreeNode": "TreeNode",
+    "Write": "Write"
   },
   "product": {
     "Alipay": "Alipay",

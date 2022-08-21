@@ -245,7 +245,8 @@ class PermissionEditPage extends React.Component {
             })}>
               {
                 [
-                  {id: "Application", name: "Application"},
+                  {id: "Application", name: i18next.t("general:Application")},
+                  {id: "TreeNode", name: i18next.t("permission:TreeNode")},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
@@ -273,9 +274,9 @@ class PermissionEditPage extends React.Component {
             })}>
               {
                 [
-                  {id: "Read", name: "Read"},
-                  {id: "Write", name: "Write"},
-                  {id: "Admin", name: "Admin"},
+                  {id: "Read", name: i18next.t("permission:Read")},
+                  {id: "Write", name: i18next.t("permission:Write")},
+                  {id: "Admin", name: i18next.t("permission:Admin")},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
@@ -291,8 +292,8 @@ class PermissionEditPage extends React.Component {
             })}>
               {
                 [
-                  {id: "Allow", name: "Allow"},
-                  {id: "Deny", name: "Deny"},
+                  {id: "Allow", name: i18next.t("permission:Allow")},
+                  {id: "Deny", name: i18next.t("permission:Deny")},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
@@ -358,8 +359,8 @@ class PermissionEditPage extends React.Component {
             })}>
               {
                 [
-                  {id: "Approved", name: "Approved"},
-                  {id: "Pending", name: "Pending"},
+                  {id: "Approved", name: i18next.t("permission:Approved")},
+                  {id: "Pending", name: i18next.t("permission:Pending")},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>

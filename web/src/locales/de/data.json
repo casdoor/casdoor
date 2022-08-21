@@ -346,14 +346,20 @@
   "permission": {
     "Actions": "Aktionen",
     "Actions - Tooltip": "Aktionen - Tooltip",
+    "Admin": "Admin",
+    "Allow": "Allow",
     "Approve time": "Approve time",
     "Approve time - Tooltip": "Approve time - Tooltip",
+    "Approved": "Approved",
     "Approver": "Approver",
     "Approver - Tooltip": "Approver - Tooltip",
+    "Deny": "Deny",
     "Edit Permission": "Berechtigung bearbeiten",
     "Effect": "Effekt",
     "Effect - Tooltip": "Effekt - Tooltip",
     "New Permission": "New Permission",
+    "Pending": "Pending",
+    "Read": "Read",
     "Resource type": "Ressourcentyp",
     "Resource type - Tooltip": "Ressourcentyp - Tooltip",
     "Resources": "Ressourcen",
@@ -361,7 +367,9 @@
     "State": "State",
     "State - Tooltip": "State - Tooltip",
     "Submitter": "Submitter",
-    "Submitter - Tooltip": "Submitter - Tooltip"
+    "Submitter - Tooltip": "Submitter - Tooltip",
+    "TreeNode": "TreeNode",
+    "Write": "Write"
   },
   "product": {
     "Alipay": "Alipay",

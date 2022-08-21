@@ -346,14 +346,20 @@
   "permission": {
     "Actions": "Действия",
     "Actions - Tooltip": "Действия - Подсказка",
+    "Admin": "Admin",
+    "Allow": "Allow",
     "Approve time": "Approve time",
     "Approve time - Tooltip": "Approve time - Tooltip",
+    "Approved": "Approved",
     "Approver": "Approver",
     "Approver - Tooltip": "Approver - Tooltip",
+    "Deny": "Deny",
     "Edit Permission": "Изменить права доступа",
     "Effect": "Эффект",
     "Effect - Tooltip": "Эффект - Подсказка",
     "New Permission": "New Permission",
+    "Pending": "Pending",
+    "Read": "Read",
     "Resource type": "Тип ресурса",
     "Resource type - Tooltip": "Тип ресурса - Подсказка",
     "Resources": "Ресурсы",
@@ -361,7 +367,9 @@
     "State": "State",
     "State - Tooltip": "State - Tooltip",
     "Submitter": "Submitter",
-    "Submitter - Tooltip": "Submitter - Tooltip"
+    "Submitter - Tooltip": "Submitter - Tooltip",
+    "TreeNode": "TreeNode",
+    "Write": "Write"
   },
   "product": {
     "Alipay": "Alipay",
