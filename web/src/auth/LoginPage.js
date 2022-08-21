@@ -504,7 +504,13 @@ class LoginPage extends React.Component {
   }
 
   renderSignedInBox() {
+    const params = new URLSearchParams(this.props.location.search);
+    const silentSignin = params.get("silentSignin");
     if (this.props.account === undefined || this.props.account === null) {
+      if (window !== window.parent) {
+        const message = {tag: "Casdoor", type: "SilentSignin", data: "user-not-logged-in"};
+        window.parent.postMessage(message, "*");
+      }
       return null;
     }
     const application = this.getApplicationObj();
@@ -512,8 +518,6 @@ class LoginPage extends React.Component {
       return null;
     }
 
-    const params = new URLSearchParams(this.props.location.search);
-    const silentSignin = params.get("silentSignin");
     if (silentSignin !== null) {
       if (window !== window.parent) {
         const message = {tag: "Casdoor", type: "SilentSignin", data: "signing-in"};
