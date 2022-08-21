@@ -84,7 +84,7 @@ func initBuiltInOrganization() bool {
 			{Name: "Is forbidden", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 			{Name: "Is deleted", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 			{Name: "WebAuthn credentials", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
-			{Name: "Manage accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
+			{Name: "Managed accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		},
 	}
 	AddOrganization(organization)

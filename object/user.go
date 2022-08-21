@@ -115,7 +115,7 @@ type User struct {
 	LastSigninWrongTime string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
 	SigninWrongTimes    int    `json:"signinWrongTimes"`
 
-	ManageAccounts []ManageAccount `xorm:"manageAccounts blob" json:"manageAccounts"`
+	ManagedAccounts []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
 }
 
 type Userinfo struct {
@@ -130,11 +130,11 @@ type Userinfo struct {
 	Phone       string `json:"phone,omitempty"`
 }
 
-type ManageAccount struct {
-	Application string `json:"application"`
-	Username    string `json:"username"`
-	Password    string `json:"password"`
-	ClientId    string `json:"clientId"`
+type ManagedAccount struct {
+	Application string `xorm:"varchar(100)" json:"application"`
+	Username    string `xorm:"varchar(100)" json:"username"`
+	Password    string `xorm:"varchar(100)" json:"password"`
+	SigninUrl   string `xorm:"varchar(200)" json:"signinUrl"`
 }
 
 func GetGlobalUserCount(field, value string) int {
@@ -344,8 +344,8 @@ func GetMaskedUser(user *User) *User {
 		user.Password = "***"
 	}
 
-	if user.ManageAccounts != nil {
-		for _, manageAccount := range user.ManageAccounts {
+	if user.ManagedAccounts != nil {
+		for _, manageAccount := range user.ManagedAccounts {
 			manageAccount.Password = "***"
 		}
 	}
@@ -393,7 +393,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 		columns = []string{
 			"owner", "display_name", "avatar",
 			"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "signup_application",
-			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "manageAccounts",
+			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
 			"signin_wrong_times", "last_signin_wrong_time",
 		}
 	}

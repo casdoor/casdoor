@@ -13,14 +13,14 @@
 // limitations under the License.
 
 import React from "react";
-import {DeleteOutlined} from "@ant-design/icons";
+import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
 import {Button, Col, Input, Row, Select, Table, Tooltip} from "antd";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
 const {Option} = Select;
 
-class ManageAccountTable extends React.Component {
+class ManagedAccountsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,7 +38,7 @@ class ManageAccountTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {application: "", username: "", password: "", clientId: ""};
+    const row = {application: "", username: "", password: "", signinUrl: ""};
     if (table === undefined || table === null) {
       table = [];
     }
@@ -51,6 +51,16 @@ class ManageAccountTable extends React.Component {
     this.updateTable(table);
   }
 
+  upRow(table, i) {
+    table = Setting.swapRow(table, i - 1, i);
+    this.updateTable(table);
+  }
+
+  downRow(table, i) {
+    table = Setting.swapRow(table, i, i + 1);
+    this.updateTable(table);
+  }
+
   renderTable(table) {
     const columns = [
       {
@@ -59,16 +69,16 @@ class ManageAccountTable extends React.Component {
         key: "application",
         render: (text, record, index) => {
           const items = this.props.applications;
-          const clientIdMap = new Map();
+          const signinUrlMap = new Map();
           for (const application of items) {
-            clientIdMap.set(application.name, application.clientId);
+            signinUrlMap.set(application.name, application.signinUrl);
           }
           return (
             <Select virtual={false} style={{width: "100%"}}
               value={text}
               onChange={value => {
                 this.updateField(table, index, "application", value);
-                this.updateField(table, index, "clientId", clientIdMap.get(value));
+                this.updateField(table, index, "signinUrl", signinUrlMap.get(value));
               }} >
               {
                 items.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
@@ -110,6 +120,12 @@ class ManageAccountTable extends React.Component {
         render: (text, record, index) => {
           return (
             <div>
+              <Tooltip placement="bottomLeft" title={i18next.t("general:Up")}>
+                <Button style={{marginRight: "5px"}} disabled={index === 0} icon={<UpOutlined />} size="small" onClick={() => this.upRow(table, index)} />
+              </Tooltip>
+              <Tooltip placement="topLeft" title={i18next.t("general:Down")}>
+                <Button style={{marginRight: "5px"}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
+              </Tooltip>
               <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
                 <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
               </Tooltip>
@@ -146,4 +162,4 @@ class ManageAccountTable extends React.Component {
   }
 }
 
-export default ManageAccountTable;
+export default ManagedAccountsTable;

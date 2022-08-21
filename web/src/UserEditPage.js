@@ -31,7 +31,7 @@ import WebAuthnCredentialTable from "./WebauthnCredentialTable";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
-import ManageAccountTable from "./ManageAccountTable";
+import ManagedAccountsTable from "./ManagedAccountsTable";
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/javascript/javascript");
 
@@ -555,17 +555,17 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
-    } else if(accountItem.name === "Manage accounts") {
+    } else if(accountItem.name === "Managed accounts") {
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Manage accounts"), i18next.t("user:Manage accounts"))} :
+            {Setting.getLabel(i18next.t("user:Managed accounts"), i18next.t("user:Managed accounts"))} :
           </Col>
           <Col span={22} >
-            <ManageAccountTable
-              title={i18next.t("user:Manage accounts")}
-              table={this.state.user.manageAccounts ?? []}
-              onUpdateTable={(table) => {this.updateUserField("manageAccounts", table);}}
+            <ManagedAccountsTable
+              title={i18next.t("user:Managed accounts")}
+              table={this.state.user.managedAccounts ?? []}
+              onUpdateTable={(table) => {this.updateUserField("managedAccounts", table);}}
               applications={this.state.applications}
             />
           </Col>
