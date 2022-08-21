@@ -599,8 +599,11 @@
     "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "一个支持 OAuth 2.0、OIDC、SAML 和 CAS 的 Web UI 的身份和访问管理 (IAM)/单点登录 (SSO) 平台",
     "CPU Usage": "CPU使用率",
     "Community": "社区",
+    "Get CPU Usage Failed": "获取CPU使用率失败",
+    "Get Memory Usage Failed": "获取内存使用率失败",
     "Memory Usage": "内存使用率",
     "Official Website": "官方网站",
+    "Unknown Version": "未知版本",
     "Version": "版本"
   },
   "token": {
