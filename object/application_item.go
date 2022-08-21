@@ -73,6 +73,10 @@ func (application *Application) IsSignupItemRequired(itemName string) bool {
 	return signupItem.Required
 }
 
+func (si *SignupItem) isSignupItemPrompted() bool {
+	return si.Visible && si.Prompted
+}
+
 func (application *Application) GetSignupItemRule(itemName string) string {
 	signupItem := application.getSignupItem(itemName)
 	if signupItem == nil {
@@ -92,6 +96,16 @@ func (application *Application) getAllPromptedProviderItems() []*ProviderItem {
 	return res
 }
 
+func (application *Application) getAllPromptedSignupItems() []*SignupItem {
+	res := []*SignupItem{}
+	for _, signupItem := range application.SignupItems {
+		if signupItem.isSignupItemPrompted() {
+			res = append(res, signupItem)
+		}
+	}
+	return res
+}
+
 func (application *Application) isAffiliationPrompted() bool {
 	signupItem := application.getSignupItem("Affiliation")
 	if signupItem == nil {
@@ -104,6 +118,11 @@ func (application *Application) isAffiliationPrompted() bool {
 func (application *Application) HasPromptPage() bool {
 	providerItems := application.getAllPromptedProviderItems()
 	if len(providerItems) != 0 {
+		return true
+	}
+
+	signupItems := application.getAllPromptedSignupItems()
+	if len(signupItems) != 0 {
 		return true
 	}
 
