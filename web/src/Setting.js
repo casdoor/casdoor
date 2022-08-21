@@ -320,6 +320,19 @@ function isProviderItemAnswered(user, application, providerItem) {
   return linkedValue !== undefined && linkedValue !== "";
 }
 
+function isSignupItemAnswered(user, signupItem) {
+  if (user === null) {
+    return false;
+  }
+
+  if (signupItem.name !== "Country/Region") {
+    return true;
+  }
+
+  const value = user["region"];
+  return value !== undefined && value !== "";
+}
+
 export function isPromptAnswered(user, application) {
   if (!isAffiliationAnswered(user, application)) {
     return false;
@@ -328,6 +341,13 @@ export function isPromptAnswered(user, application) {
   const providerItems = getAllPromptedProviderItems(application);
   for (let i = 0; i < providerItems.length; i++) {
     if (!isProviderItemAnswered(user, application, providerItems[i])) {
+      return false;
+    }
+  }
+
+  const signupItems = getAllPromptedSignupItems(application);
+  for (let i = 0; i < signupItems.length; i++) {
+    if (!isSignupItemAnswered(user, signupItems[i])) {
       return false;
     }
   }
