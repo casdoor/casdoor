@@ -374,10 +374,10 @@ class PermissionEditPage extends React.Component {
       Setting.showMessage("error", "The users and roles cannot be empty at the same time");
       return;
     }
-    if (this.state.permission.domains.length === 0) {
-      Setting.showMessage("error", "The domains cannot be empty");
-      return;
-    }
+    // if (this.state.permission.domains.length === 0) {
+    //   Setting.showMessage("error", "The domains cannot be empty");
+    //   return;
+    // }
     if (this.state.permission.resources.length === 0) {
       Setting.showMessage("error", "The resources cannot be empty");
       return;
