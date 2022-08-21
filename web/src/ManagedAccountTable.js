@@ -20,7 +20,7 @@ import i18next from "i18next";
 
 const {Option} = Select;
 
-class ManagedAccountsTable extends React.Component {
+class ManagedAccountTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -162,4 +162,4 @@ class ManagedAccountsTable extends React.Component {
   }
 }
 
-export default ManagedAccountsTable;
+export default ManagedAccountTable;
