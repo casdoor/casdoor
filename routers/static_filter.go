@@ -16,10 +16,17 @@ package routers
 
 import (
 	"net/http"
+	"os"
 	"strings"
 
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/casdoor/casdoor/util"
+)
+
+var (
+	oldStaticBaseUrl = "https://cdn.casbin.org"
+	newStaticBaseUrl = beego.AppConfig.String("staticBaseUrl")
 )
 
 func StaticFilter(ctx *context.Context) {
@@ -38,9 +45,35 @@ func StaticFilter(ctx *context.Context) {
 		path += urlPath
 	}
 
-	if util.FileExist(path) {
+	if !util.FileExist(path) {
+		path = "web/build/index.html"
+	}
+
+	if oldStaticBaseUrl == newStaticBaseUrl {
 		http.ServeFile(ctx.ResponseWriter, ctx.Request, path)
 	} else {
-		http.ServeFile(ctx.ResponseWriter, ctx.Request, "web/build/index.html")
+		serveFileWithReplace(ctx.ResponseWriter, ctx.Request, path, oldStaticBaseUrl, newStaticBaseUrl)
+	}
+}
+
+func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, old string, new string) {
+	f, err := os.Open(name)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	d, err := f.Stat()
+	if err != nil {
+		panic(err)
+	}
+
+	oldContent := util.ReadStringFromPath(name)
+	newContent := strings.ReplaceAll(oldContent, old, new)
+
+	http.ServeContent(w, r, d.Name(), d.ModTime(), strings.NewReader(newContent))
+	_, err = w.Write([]byte(newContent))
+	if err != nil {
+		panic(err)
 	}
 }
