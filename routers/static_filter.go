@@ -45,22 +45,18 @@ func StaticFilter(ctx *context.Context) {
 		path += urlPath
 	}
 
-	if util.FileExist(path) {
-		if oldStaticBaseUrl == newStaticBaseUrl {
-			http.ServeFile(ctx.ResponseWriter, ctx.Request, path)
-		} else {
-			ServeFileWithReplace(ctx.ResponseWriter, ctx.Request, path, oldStaticBaseUrl, newStaticBaseUrl)
-		}
+	if !util.FileExist(path) {
+		path = "web/build/index.html"
+	}
+
+	if oldStaticBaseUrl == newStaticBaseUrl {
+		http.ServeFile(ctx.ResponseWriter, ctx.Request, path)
 	} else {
-		if oldStaticBaseUrl == newStaticBaseUrl {
-			http.ServeFile(ctx.ResponseWriter, ctx.Request, "web/build/index.html")
-		} else {
-			ServeFileWithReplace(ctx.ResponseWriter, ctx.Request, "web/build/index.html", oldStaticBaseUrl, newStaticBaseUrl)
-		}
+		serveFileWithReplace(ctx.ResponseWriter, ctx.Request, path, oldStaticBaseUrl, newStaticBaseUrl)
 	}
 }
 
-func ServeFileWithReplace(w http.ResponseWriter, r *http.Request, name string, old string, new string) {
+func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, old string, new string) {
 	f, err := os.Open(name)
 	if err != nil {
 		panic(err)
@@ -72,9 +68,12 @@ func ServeFileWithReplace(w http.ResponseWriter, r *http.Request, name string, o
 		panic(err)
 	}
 
-	file := util.ReadStringFromPath(name)
+	oldContent := util.ReadStringFromPath(name)
+	newContent := strings.ReplaceAll(oldContent, old, new)
 
-	result := strings.ReplaceAll(file, old, new)
-	http.ServeContent(w, r, d.Name(), d.ModTime(), strings.NewReader(result))
-	w.Write([]byte(result))
+	http.ServeContent(w, r, d.Name(), d.ModTime(), strings.NewReader(newContent))
+	_, err = w.Write([]byte(newContent))
+	if err != nil {
+		panic(err)
+	}
 }
