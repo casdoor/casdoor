@@ -208,8 +208,16 @@ export function isProviderPrompted(providerItem) {
   return isProviderVisible(providerItem) && providerItem.prompted;
 }
 
+export function isSignupItemPrompted(signupItem) {
+  return signupItem.visible && signupItem.prompted;
+}
+
 export function getAllPromptedProviderItems(application) {
   return application.providers.filter(providerItem => isProviderPrompted(providerItem));
+}
+
+export function getAllPromptedSignupItems(application) {
+  return application.signupItems.filter(signupItem => isSignupItemPrompted(signupItem));
 }
 
 export function getSignupItem(application, itemName) {
@@ -280,6 +288,11 @@ export function isAffiliationPrompted(application) {
 export function hasPromptPage(application) {
   const providerItems = getAllPromptedProviderItems(application);
   if (providerItems.length !== 0) {
+    return true;
+  }
+
+  const signupItems = getAllPromptedSignupItems(application);
+  if (signupItems.length !== 0) {
     return true;
   }
 

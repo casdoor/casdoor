@@ -152,7 +152,7 @@ class SignupTable extends React.Component {
             return null;
           }
 
-          if (record.visible) {
+          if (record.visible && record.name !== "Country/Region") {
             return null;
           }
 
