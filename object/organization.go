@@ -46,7 +46,7 @@ type Organization struct {
 	EnableSoftDeletion bool     `json:"enableSoftDeletion"`
 	IsProfilePublic    bool     `json:"isProfilePublic"`
 
-	AccountItems []*AccountItem `xorm:"varchar(2000)" json:"accountItems"`
+	AccountItems []*AccountItem `xorm:"varchar(3000)" json:"accountItems"`
 }
 
 func GetOrganizationCount(owner, field, value string) int {

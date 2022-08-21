@@ -28,6 +28,7 @@ import OAuthWidget from "./common/OAuthWidget";
 import SamlWidget from "./common/SamlWidget";
 import SelectRegionBox from "./SelectRegionBox";
 import WebAuthnCredentialTable from "./WebauthnCredentialTable";
+import ManagedAccountTable from "./ManagedAccountTable";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
@@ -543,7 +544,7 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
-    } else if(accountItem.name === "WebAuthn credentials") {
+    } else if (accountItem.name === "WebAuthn credentials") {
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -551,6 +552,22 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <WebAuthnCredentialTable table={this.state.user.webauthnCredentials} updateTable={(table) => {this.updateUserField("webauthnCredentials", table);}} refresh={this.getUser.bind(this)} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Managed accounts") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Managed accounts"), i18next.t("user:Managed accounts"))} :
+          </Col>
+          <Col span={22} >
+            <ManagedAccountTable
+              title={i18next.t("user:Managed accounts")}
+              table={this.state.user.managedAccounts ?? []}
+              onUpdateTable={(table) => {this.updateUserField("managedAccounts", table);}}
+              applications={this.state.applications}
+            />
           </Col>
         </Row>
       );

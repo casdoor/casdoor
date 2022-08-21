@@ -95,6 +95,7 @@ class AccountTable extends React.Component {
             {name: "Is forbidden", displayName: i18next.t("user:Is forbidden")},
             {name: "Is deleted", displayName: i18next.t("user:Is deleted")},
             {name: "WebAuthn credentials", displayName: i18next.t("user:WebAuthn credentials")},
+            {name: "Managed accounts", displayName: i18next.t("user:Managed accounts")},
           ];
 
           const getItemDisplayName = (text) => {
