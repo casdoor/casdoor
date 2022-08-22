@@ -20,11 +20,13 @@ import de from "./locales/de/data.json";
 import ko from "./locales/ko/data.json";
 import ru from "./locales/ru/data.json";
 import ja from "./locales/ja/data.json";
+import es from "./locales/es/data.json";
 import * as Conf from "./Conf";
 import * as Setting from "./Setting";
 
 const resources = {
   en: en,
+  es: es,
   zh: zh,
   fr: fr,
   de: de,

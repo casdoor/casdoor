@@ -15,12 +15,13 @@
 import React from "react";
 import * as Setting from "./Setting";
 import {Dropdown, Menu} from "antd";
-import {createFromIconfontCN} from "@ant-design/icons";
 import "./App.less";
 
-const IconFont = createFromIconfontCN({
-  scriptUrl: "//at.alicdn.com/t/font_2680620_ffij16fkwdg.js",
-});
+function flagIcon(country, alt) {
+  return (
+    <img width={24} alt={alt} src={`${Setting.StaticBaseUrl}/flag-icons/${country}.svg`} />
+  );
+}
 
 class SelectLanguageBox extends React.Component {
   constructor(props) {
@@ -35,13 +36,14 @@ class SelectLanguageBox extends React.Component {
       <Menu onClick={(e) => {
         Setting.changeLanguage(e.key);
       }}>
-        <Menu.Item key="en" icon={<IconFont type="icon-en" />}>English</Menu.Item>
-        <Menu.Item key="zh" icon={<IconFont type="icon-zh" />}>简体中文</Menu.Item>
-        <Menu.Item key="fr" icon={<IconFont type="icon-fr" />}>Français</Menu.Item>
-        <Menu.Item key="de" icon={<IconFont type="icon-de" />}>Deutsch</Menu.Item>
-        <Menu.Item key="ja" icon={<IconFont type="icon-ja" />}>日本語</Menu.Item>
-        <Menu.Item key="ko" icon={<IconFont type="icon-ko" />}>한국어</Menu.Item>
-        <Menu.Item key="ru" icon={<IconFont type="icon-ru" />}>Русский</Menu.Item>
+        <Menu.Item key="en" icon={flagIcon("US", "English")}>English</Menu.Item>
+        <Menu.Item key="es" icon={flagIcon("ES", "Español")}>Español</Menu.Item>
+        <Menu.Item key="zh" icon={flagIcon("CN", "简体中文")}>简体中文</Menu.Item>
+        <Menu.Item key="fr" icon={flagIcon("FR", "Français")}>Français</Menu.Item>
+        <Menu.Item key="de" icon={flagIcon("DE", "Deutsch")}>Deutsch</Menu.Item>
+        <Menu.Item key="ja" icon={flagIcon("JP", "日本語")}>日本語</Menu.Item>
+        <Menu.Item key="ko" icon={flagIcon("KR", "한국어")}>한국어</Menu.Item>
+        <Menu.Item key="ru" icon={flagIcon("RU", "Русский")}>Русский</Menu.Item>
       </Menu>
     );
 
