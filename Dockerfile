@@ -19,7 +19,6 @@ RUN apk add curl
 RUN apk add ca-certificates && update-ca-certificates
 
 WORKDIR /
-COPY --from=BACK /go/src/casdoor/.git/refs/heads .git/refs/heads
 COPY --from=BACK /go/src/casdoor/server ./server
 COPY --from=BACK /go/src/casdoor/swagger ./swagger
 COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
@@ -42,7 +41,6 @@ RUN apt update
 RUN apt install -y ca-certificates && update-ca-certificates
 
 WORKDIR /
-COPY --from=BACK /go/src/casdoor/.git/refs/heads .git/refs/heads
 COPY --from=BACK /go/src/casdoor/server ./server
 COPY --from=BACK /go/src/casdoor/swagger ./swagger
 COPY --from=BACK /go/src/casdoor/docker-entrypoint.sh /docker-entrypoint.sh
