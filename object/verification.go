@@ -51,11 +51,11 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
 	content := fmt.Sprintf(provider.Content, code)
 
-	if err := AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code); err != nil {
+	if err := SendEmail(provider, title, content, dest, sender); err != nil {
 		return err
 	}
 
-	return SendEmail(provider, title, content, dest, sender)
+	return AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code)
 }
 
 func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
@@ -64,11 +64,11 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 	}
 
 	code := getRandomCode(5)
-	if err := AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code); err != nil {
+	if err := SendSms(provider, code, dest); err != nil {
 		return err
 	}
 
-	return SendSms(provider, code, dest)
+	return AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code)
 }
 
 func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordType, dest, code string) error {
