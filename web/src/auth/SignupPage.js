@@ -360,6 +360,7 @@ class SignupPage extends React.Component {
               <CountDownInput
                 disabled={!this.state.validEmail}
                 onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(application)]}
+                application={application}
               />
             </Form.Item>
           }
@@ -412,6 +413,7 @@ class SignupPage extends React.Component {
             <CountDownInput
               disabled={!this.state.validPhone}
               onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
+              application={application}
             />
           </Form.Item>
         </React.Fragment>

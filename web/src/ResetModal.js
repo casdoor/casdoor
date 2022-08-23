@@ -89,6 +89,7 @@ export const ResetModal = (props) => {
               textBefore={i18next.t("code:Code You Received")}
               onChange={setCode}
               onButtonClickArgs={[dest, destType, Setting.getApplicationName(application)]}
+              application={application}
             />
           </Row>
         </Col>

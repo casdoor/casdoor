@@ -17,13 +17,12 @@ import React from "react";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import {SafetyOutlined} from "@ant-design/icons";
-import {authConfig} from "../auth/Auth";
 import {CaptchaWidget} from "./CaptchaWidget";
 
 const {Search} = Input;
 
 export const CountDownInput = (props) => {
-  const {disabled, textBefore, onChange, onButtonClickArgs} = props;
+  const {disabled, textBefore, onChange, onButtonClickArgs, application} = props;
   const [visible, setVisible] = React.useState(false);
   const [key, setKey] = React.useState("");
   const [captchaImg, setCaptchaImg] = React.useState("");
@@ -69,7 +68,7 @@ export const CountDownInput = (props) => {
   };
 
   const loadCaptcha = () => {
-    UserBackend.getCaptcha("admin", authConfig.appName, false).then(res => {
+    UserBackend.getCaptcha(application.owner, application.name, false).then(res => {
       if (res.type === "none") {
         UserBackend.sendCode("none", "", "", ...onButtonClickArgs).then(res => {
           if (res) {
