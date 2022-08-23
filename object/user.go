@@ -566,3 +566,12 @@ func (user *User) GetId() string {
 func isUserIdGlobalAdmin(userId string) bool {
 	return strings.HasPrefix(userId, "built-in/")
 }
+
+func ExtendUserWithRolesAndPermissions(user *User) {
+	if user == nil {
+		return
+	}
+
+	user.Roles = GetRolesByUser(user.GetId())
+	user.Permissions = GetPermissionsByUser(user.GetId())
+}
