@@ -16,6 +16,7 @@ package util
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -41,6 +42,23 @@ func EnsureFileFolderExists(path string) {
 			panic(err)
 		}
 	}
+}
+
+func ListFiles(path string) []string {
+	res := []string{}
+
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, f := range files {
+		if !f.IsDir() {
+			res = append(res, f.Name())
+		}
+	}
+
+	return res
 }
 
 func RemoveExt(filename string) string {
