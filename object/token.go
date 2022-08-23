@@ -278,6 +278,9 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 			Code:    "",
 		}
 	}
+	if user != nil {
+		GetUserWithRolesAndPermissions(user)
+	}
 
 	msg, application := CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
 	if msg != "" {
@@ -419,6 +422,9 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			Error:            InvalidGrant,
 			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
 		}
+	}
+	if user != nil {
+		GetUserWithRolesAndPermissions(user)
 	}
 
 	newAccessToken, newRefreshToken, tokenName, err := generateJwtToken(application, user, "", scope, host)
@@ -570,6 +576,9 @@ func GetPasswordToken(application *Application, username string, password string
 			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
 		}
 	}
+	if user != nil {
+		GetUserWithRolesAndPermissions(user)
+	}
 
 	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", scope, host)
 	if err != nil {
@@ -640,6 +649,9 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 // GetTokenByUser
 // Implicit flow
 func GetTokenByUser(application *Application, user *User, scope string, host string) (*Token, error) {
+	if user != nil {
+		GetUserWithRolesAndPermissions(user)
+	}
 	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", scope, host)
 	if err != nil {
 		return nil, err
@@ -724,6 +736,8 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 			},
 		}
 		AddUser(user)
+	} else {
+		GetUserWithRolesAndPermissions(user)
 	}
 
 	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", host)

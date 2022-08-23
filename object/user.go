@@ -325,6 +325,14 @@ func GetUserByUserId(owner string, userId string) *User {
 	}
 }
 
+// GetUserWithRolesAndPermissions can supplement user roles and permissions info./**
+func GetUserWithRolesAndPermissions(user *User) {
+	roles := GetRolesByUser(user.GetId())
+	user.Roles = roles
+	permissions := GetPermissionsByUser(user.GetId())
+	user.Permissions = permissions
+}
+
 func GetUser(id string) *User {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getUser(owner, name)
