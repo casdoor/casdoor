@@ -119,9 +119,7 @@ func (c *ApiController) GetUser() {
 		user = object.GetUser(id)
 	}
 
-	if user != nil {
-		object.GetUserWithRolesAndPermissions(user)
-	}
+	object.ExtendUserWithRolesAndPermissions(user)
 
 	c.Data["json"] = object.GetMaskedUser(user)
 	c.ServeJSON()
