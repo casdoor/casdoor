@@ -8,7 +8,7 @@
     <img alt="docker pull casbin/casdoor" src="https://img.shields.io/docker/pulls/casbin/casdoor.svg">
   </a>
   <a href="https://github.com/casdoor/casdoor/actions/workflows/build.yml">
-    <img alt="GitHub Workflow Status (branch)" src="https://github.com/casbin/jcasbin/workflows/build/badge.svg?style=flat-square">
+    <img alt="GitHub Workflow Status (branch)" src="https://github.com/casdoor/casdoor/workflows/Build/badge.svg?style=flat-square">
   </a>
   <a href="https://github.com/casdoor/casdoor/releases/latest">
     <img alt="GitHub Release" src="https://img.shields.io/github/v/release/casbin/casdoor.svg">
@@ -42,47 +42,34 @@
   </a>
 </p>
 
-
-
 ## Online demo
 
 - International: https://door.casdoor.org (read-only)
 - Asian mirror: https://door.casdoor.com (read-only)
 - Asian mirror: https://demo.casdoor.com (read-write, will restore for every 5 minutes)
 
-
-
 ## Documentation
 
 - International: https://casdoor.org
 - Asian mirror: https://docs.casdoor.cn
-
-
 
 ## Install
 
 - By source code: https://casdoor.org/docs/basic/server-installation
 - By Docker: https://casdoor.org/docs/basic/try-with-docker
 
-
-
 ## How to connect to Casdoor?
 
 https://casdoor.org/docs/how-to-connect/overview
-
-
 
 ## Casdoor Public API
 
 - Docs: https://casdoor.org/docs/basic/public-api
 - Swagger: https://door.casdoor.com/swagger
 
-
-
 ## Integrations
 
 https://casdoor.org/docs/integration/apisix
-
 
 ## How to contact?
 
@@ -90,17 +77,13 @@ https://casdoor.org/docs/integration/apisix
 - Forum: https://forum.casbin.com
 - Contact: https://tawk.to/chat/623352fea34c2456412b8c51/1fuc7od6e
 
-
-
 ## Contribute
 
 For casdoor, if you have any questions, you can give Issues, or you can also directly start Pull Requests(but we recommend giving issues first to communicate with the community).
 
 ### I18n translation
 
-If you are contributing to casdoor, please note that we use [Crowdin](https://crowdin.com/project/casdoor-site) as translating platform and i18next as translating tool. When you add some words using i18next in the ```web/``` directory, please remember to add what you have added to the ```web/src/locales/en/data.json``` file.
-
-
+If you are contributing to casdoor, please note that we use [Crowdin](https://crowdin.com/project/casdoor-site) as translating platform and i18next as translating tool. When you add some words using i18next in the `web/` directory, please remember to add what you have added to the `web/src/locales/en/data.json` file.
 
 ## License
 
