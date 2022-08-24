@@ -171,7 +171,7 @@ func (c *ApiController) UploadResource() {
 		fileType, _ = util.GetOwnerAndNameFromId(mimeType)
 	}
 
-	fileUrl, objectKey, err := object.UploadFileSafe(provider, fullFilePath, fileBuffer)
+	fileUrl, objectKey, err := object.UploadFileSafe(tag, provider, fullFilePath, fileBuffer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

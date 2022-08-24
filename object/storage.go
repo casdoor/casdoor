@@ -102,7 +102,25 @@ func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 	return fileUrl, objectKey, nil
 }
 
-func UploadFileSafe(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, string, error) {
+func UploadFileSafe(tag string, provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, string, error) {
+	// check fullFilePath is there security issue
+	if strings.Contains(fullFilePath, "..") {
+		return "", "", fmt.Errorf("the fullFilePath: %s is not allowed", fullFilePath)
+	}
+
+	switch tag {
+	case "avatar", "termOfUse":
+		if !strings.HasPrefix(fullFilePath, tag) {
+			return "", "", fmt.Errorf("the fullFilePath: %s is not allowed", fullFilePath)
+		}
+	case "custom":
+		if !strings.HasPrefix(fullFilePath, "resource") {
+			return "", "", fmt.Errorf("the fullFilePath: %s is not allowed", fullFilePath)
+		}
+	default:
+		return "", "", fmt.Errorf("the tag: %s is not allowed", tag)
+	}
+
 	var fileUrl string
 	var objectKey string
 	var err error
