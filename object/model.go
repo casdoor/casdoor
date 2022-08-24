@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 
+	"github.com/casbin/casbin/v2/model"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -85,13 +86,19 @@ func GetModel(id string) *Model {
 	return getModel(owner, name)
 }
 
-func UpdateModel(id string, model *Model) bool {
+func UpdateModel(id string, modelObj *Model) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if getModel(owner, name) == nil {
 		return false
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(model)
+	// check model grammar
+	_, err := model.NewModelFromString(modelObj.ModelText)
+	if err != nil {
+		panic(err)
+	}
+
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(modelObj)
 	if err != nil {
 		panic(err)
 	}
