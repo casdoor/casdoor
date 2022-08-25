@@ -103,6 +103,11 @@ func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 }
 
 func UploadFileSafe(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, string, error) {
+	// check fullFilePath is there security issue
+	if strings.Contains(fullFilePath, "..") {
+		return "", "", fmt.Errorf("the fullFilePath: %s is not allowed", fullFilePath)
+	}
+
 	var fileUrl string
 	var objectKey string
 	var err error
