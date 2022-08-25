@@ -67,7 +67,7 @@ func getPermanentAvatarUrl(organization string, username string, url string) str
 		panic(err)
 	}
 
-	_, _, err = UploadFileSafe("avatar", defaultStorageProvider, fullFilePath, fileBuffer)
+	_, _, err = UploadFileSafe(defaultStorageProvider, fullFilePath, fileBuffer)
 	if err != nil {
 		panic(err)
 	}
