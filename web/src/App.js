@@ -660,9 +660,11 @@ class App extends Component {
     return (
       <Footer id="footer" style={
         {
+          height: "70px",
           borderTop: "1px solid #e8e8e8",
           backgroundColor: "white",
           textAlign: "center",
+          position: "fixed",
         }
       }>
         Made with <span style={{color: "rgb(255, 255, 255)"}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casdoor.org" rel="noreferrer">Casdoor</a>

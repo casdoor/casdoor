@@ -682,24 +682,28 @@ class LoginPage extends React.Component {
 
     return (
       <Row>
-        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-          <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center"}}>
-            {
-              Setting.renderHelmet(application)
-            }
-            <CustomGithubCorner />
-            {
-              Setting.renderLogo(application)
-            }
-            {/* {*/}
-            {/*  this.state.clientId !== null ? "Redirect" : null*/}
-            {/* }*/}
-            {
-              this.renderSignedInBox()
-            }
-            {
-              this.renderForm(application)
-            }
+        <Col span={24}>
+          <div style={{height: "95vh", display: "flex", background: "url(https://s1.plumeta.com/i/2022/08/25/login_2.jpg) no-repeat center center fixed", opacity: "1", backgroundSize: "cover"}}>
+            <div style={{width: "400px", paddingTop: "40px", position: "fixed", left: "65%", top: "12%", display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "#fff", borderRadius: "5px", boxShadow: "1px 2px 20px #D6EBFC"}}>
+              <div>
+                {
+                  Setting.renderHelmet(application)
+                }
+                <CustomGithubCorner />
+                {
+                  Setting.renderLogo(application)
+                }
+                {/* {*/}
+                {/*  this.state.clientId !== null ? "Redirect" : null*/}
+                {/* }*/}
+                {
+                  this.renderSignedInBox()
+                }
+                {
+                  this.renderForm(application)
+                }
+              </div>
+            </div>
           </div>
         </Col>
       </Row>
