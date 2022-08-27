@@ -362,3 +362,21 @@ func IsAllowOrigin(origin string) bool {
 
 	return allowOrigin
 }
+
+func ExtendManagedAccountsWithUser(user *User) *User {
+	if user.ManagedAccounts == nil || len(user.ManagedAccounts) == 0 {
+		return user
+	}
+
+	var managedAccounts []ManagedAccount
+	for _, managedAccount := range user.ManagedAccounts {
+		application := getApplication(managedAccount.Owner, managedAccount.Application)
+		if application != nil {
+			managedAccount.SigninUrl = application.SigninUrl
+			managedAccounts = append(managedAccounts, managedAccount)
+		}
+	}
+	user.ManagedAccounts = managedAccounts
+
+	return user
+}

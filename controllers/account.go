@@ -281,6 +281,38 @@ func (c *ApiController) GetAccount() {
 	c.ServeJSON()
 }
 
+// GetExtendAccount
+// @Title GetExtendAccount
+// @Tag Account API
+// @Description get the details of the current account
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-extend-account [get]
+func (c *ApiController) GetExtendAccount() {
+	userId, ok := c.RequireSignedIn()
+	if !ok {
+		return
+	}
+
+	user := object.GetUser(userId)
+	if user == nil {
+		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
+		return
+	}
+
+	user = object.ExtendManagedAccountsWithUser(user)
+
+	organization := object.GetMaskedOrganization(object.GetOrganizationByUser(user))
+	resp := Response{
+		Status: "ok",
+		Sub:    user.Id,
+		Name:   user.Name,
+		Data:   user,
+		Data2:  organization,
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
 // GetUserinfo
 // UserInfo
 // @Title UserInfo
