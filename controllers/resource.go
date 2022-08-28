@@ -20,7 +20,9 @@ import (
 	"fmt"
 	"io"
 	"mime"
+	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -220,4 +222,131 @@ func (c *ApiController) UploadResource() {
 	}
 
 	c.ResponseOk(fileUrl, objectKey)
+}
+
+const CHUNK_FILE_DIR = "chunks"
+
+// UploadLargeResource
+// @Tag Resource API
+// @Title UploadLargeResource
+// @router /upload-large-resource [post]
+func (c *ApiController) UploadLargeResource() {
+	provider, _, ok := c.GetProviderFromContext("Storage")
+	if !ok {
+		return
+	}
+
+	file, _, err := c.GetFile("chunk")
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	defer file.Close()
+
+	hash := c.Ctx.Request.Form.Get("hash")
+
+	fileBuffer := bytes.NewBuffer(nil)
+
+	if _, err = io.Copy(fileBuffer, file); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	fullFilePath := fmt.Sprintf("%s/%s/%s", CHUNK_FILE_DIR, strings.Split(hash, "-")[0], hash)
+
+	fileUrl, objectKey, err := object.UploadFileSafe(provider, fullFilePath, fileBuffer)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(fileUrl, objectKey)
+}
+
+// MergeLargeResource
+// @Tag Resource API
+// @Title MergeLargeResource
+// @router /merge-large-resource [get]
+func (c *ApiController) MergeLargeResource() {
+	owner := c.Input().Get("owner")
+	username := c.Input().Get("user")
+	application := c.Input().Get("application")
+	tag := c.Input().Get("tag")
+	parent := c.Input().Get("parent")
+	fullFilePath := c.Input().Get("fullFilePath")
+	createdTime := c.Input().Get("createdTime")
+	description := c.Input().Get("description")
+	contentType := c.Input().Get("contentType")
+	objectKeys := c.Input().Get("objectKeys")
+
+	objectKeyList := strings.Split(objectKeys, ",")
+
+	if username == "" || fullFilePath == "" {
+		c.ResponseError(fmt.Sprintf("username or fullFilePath is empty: username = %s, fullFilePath = %s", username, fullFilePath))
+		return
+	}
+
+	filename := filepath.Base(fullFilePath)
+	folder := fmt.Sprintf("files/%s/%s", CHUNK_FILE_DIR, filename)
+	fileBuffer, err := util.MergeFolderFiles(folder)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	fileSize := fileBuffer.Len()
+	provider, _, ok := c.GetProviderFromContext("Storage")
+	if !ok {
+		return
+	}
+
+	fileType, _ := util.GetOwnerAndNameFromId(contentType)
+
+	if fileType != "image" && fileType != "video" {
+		ext := filepath.Ext(filename)
+		mimeType := mime.TypeByExtension(ext)
+		fileType, _ = util.GetOwnerAndNameFromId(mimeType)
+	}
+
+	fileUrl, objectKey, err := object.UploadFileSafe(provider, fullFilePath, fileBuffer)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if createdTime == "" {
+		createdTime = util.GetCurrentTime()
+	}
+	fileFormat := filepath.Ext(fullFilePath)
+
+	resource := &object.Resource{
+		Owner:       owner,
+		Name:        objectKey,
+		CreatedTime: createdTime,
+		User:        username,
+		Provider:    provider.Name,
+		Application: application,
+		Tag:         tag,
+		Parent:      parent,
+		FileName:    filename,
+		FileType:    fileType,
+		FileFormat:  fileFormat,
+		FileSize:    fileSize,
+		Url:         fileUrl,
+		Description: description,
+	}
+	object.AddOrUpdateResource(resource)
+
+	// delete tem folder
+	err = os.RemoveAll(folder)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	for _, objectKey := range objectKeyList {
+		object.DeleteFile(provider, objectKey)
+	}
+
+	c.ResponseOk()
 }

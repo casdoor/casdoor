@@ -1002,3 +1002,19 @@ export function getSyncerTableColumns(syncer) {
     return [];
   }
 }
+
+export const SPLIT_FILE_SIZE = 1024 * 1024 * 512; // 512MB
+
+export const CHUNK_SIZE = 1024 * 1024 * 100; // 100MB
+
+export function createFileChunks(file) {
+  const chunks = [];
+
+  for(let cur = 0; cur < file.size; cur += CHUNK_SIZE) {
+    chunks.push({
+      file: file.slice(cur, cur + CHUNK_SIZE),
+    });
+  }
+
+  return chunks;
+}

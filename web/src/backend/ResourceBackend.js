@@ -55,8 +55,39 @@ export function deleteResource(resource, provider = "") {
   }).then(res => res.json());
 }
 
-export function uploadResource(owner, user, tag, parent, fullFilePath, file, provider = "") {
+export async function uploadResource(owner, user, tag, parent, fullFilePath, file, provider = "") {
   const application = "app-built-in";
+  const fileName = file.name;
+
+  if (file.size > Setting.SPLIT_FILE_SIZE) {
+    // split file
+    const chunks = Setting.createFileChunks(file);
+    const reqList = chunks.map(({file}, index) => ({
+      chunk: file,
+      hash: fileName + "-" + index,
+    })).map(({chunk, hash}) => {
+      const formData = new FormData();
+      formData.append("chunk", chunk);
+      formData.append("hash", hash);
+      return {formData};
+    }).map(({formData}) => {
+      return fetch(`${Setting.ServerUrl}/api/upload-large-resource?owner=${owner}&user=${user}&application=${application}&tag=${tag}&parent=${parent}&fullFilePath=${encodeURIComponent(fullFilePath)}&provider=${provider}`, {
+        body: formData,
+        method: "POST",
+        credentials: "include",
+      }).then(res => res.json());
+    });
+
+    const arr = await Promise.all(reqList);
+
+    const objectKeys = arr.map(e => e.data2);
+
+    return fetch(`${Setting.ServerUrl}/api/merge-large-resource?owner=${owner}&user=${user}&application=${application}&tag=${tag}&parent=${parent}&fullFilePath=${encodeURIComponent(fullFilePath)}&provider=${provider}&contentType=${file.type}&objectKeys=${objectKeys}`, {
+      method: "GET",
+      credentials: "include",
+    }).then(res => res.json());
+  }
+
   const formData = new FormData();
   formData.append("file", file);
   return fetch(`${Setting.ServerUrl}/api/upload-resource?owner=${owner}&user=${user}&application=${application}&tag=${tag}&parent=${parent}&fullFilePath=${encodeURIComponent(fullFilePath)}&provider=${provider}`, {

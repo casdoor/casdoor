@@ -205,4 +205,7 @@ func initAPI() {
 
 	beego.Router("/api/get-system-info", &controllers.ApiController{}, "GET:GetSystemInfo")
 	beego.Router("/api/get-release", &controllers.ApiController{}, "GET:GitRepoVersion")
+
+	beego.Router("/api/upload-large-resource", &controllers.ApiController{}, "POST:UploadLargeResource")
+	beego.Router("/api/merge-large-resource", &controllers.ApiController{}, "GET:MergeLargeResource")
 }
