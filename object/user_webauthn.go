@@ -19,7 +19,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/astaxie/beego"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/duo-labs/webauthn/protocol"
 	"github.com/duo-labs/webauthn/webauthn"
 )
@@ -27,7 +27,7 @@ import (
 func GetWebAuthnObject(host string) *webauthn.WebAuthn {
 	var err error
 
-	origin := beego.AppConfig.String("origin")
+	origin := conf.GetConfigString("origin")
 	if origin == "" {
 		_, origin = getOriginFromHost(host)
 	}
@@ -38,7 +38,7 @@ func GetWebAuthnObject(host string) *webauthn.WebAuthn {
 	}
 
 	webAuthn, err := webauthn.New(&webauthn.Config{
-		RPDisplayName: beego.AppConfig.String("appname"),    // Display Name for your site
+		RPDisplayName: conf.GetConfigString("appname"),      // Display Name for your site
 		RPID:          strings.Split(localUrl.Host, ":")[0], // Generally the domain name for your site, it's ok because splits cannot return empty array
 		RPOrigin:      origin,                               // The origin URL for WebAuthn requests
 		// RPIcon:     "https://duo.com/logo.png",           // Optional icon URL for your site

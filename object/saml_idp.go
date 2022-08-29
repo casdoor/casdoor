@@ -28,8 +28,8 @@ import (
 	"time"
 
 	"github.com/RobotsAndPencils/go-saml"
-	"github.com/astaxie/beego"
 	"github.com/beevik/etree"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/golang-jwt/jwt/v4"
 	dsig "github.com/russellhaering/goxmldsig"
 	uuid "github.com/satori/go.uuid"
@@ -181,7 +181,7 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 	block, _ := pem.Decode([]byte(cert.Certificate))
 	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 
-	origin := beego.AppConfig.String("origin")
+	origin := conf.GetConfigString("origin")
 	originFrontend, originBackend := getOriginFromHost(host)
 	if origin != "" {
 		originBackend = origin
