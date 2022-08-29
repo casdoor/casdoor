@@ -363,18 +363,8 @@ func IsAllowOrigin(origin string) bool {
 	return allowOrigin
 }
 
-func GetApplicationsByOrganization(organization string) []*Application {
-	applications := []*Application{}
-	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Organization: organization})
-	if err != nil {
-		panic(err)
-	}
-
-	return applications
-}
-
 func getApplicationMap(organization string) map[string]*Application {
-	applications := GetApplicationsByOrganization(organization)
+	applications := GetApplicationsByOrganizationName("admin", organization)
 
 	applicationMap := make(map[string]*Application)
 	for _, application := range applications {
