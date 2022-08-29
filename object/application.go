@@ -373,7 +373,6 @@ func GetApplicationsByOrganization(organization string) []*Application {
 	return applications
 }
 
-
 func getApplicationMap(organization string) map[string]*Application {
 	applications := GetApplicationsByOrganization(organization)
 
