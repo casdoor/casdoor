@@ -49,7 +49,7 @@ func StaticFilter(ctx *context.Context) {
 		path = "web/build/index.html"
 	}
 
-	if oldStaticBaseUrl == newStaticBaseUrl {
+	if oldStaticBaseUrl == newStaticBaseUrl || newStaticBaseUrl == "" {
 		http.ServeFile(ctx.ResponseWriter, ctx.Request, path)
 	} else {
 		serveFileWithReplace(ctx.ResponseWriter, ctx.Request, path, oldStaticBaseUrl, newStaticBaseUrl)

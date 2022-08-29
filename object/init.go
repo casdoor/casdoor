@@ -42,6 +42,9 @@ func InitDb() {
 var staticBaseUrl = beego.AppConfig.String("staticBaseUrl")
 
 func initBuiltInOrganization() bool {
+	if staticBaseUrl == "" {
+		staticBaseUrl = "https://cdn.casbin.org"
+	}
 	organization := getOrganization("admin", "built-in")
 	if organization != nil {
 		return true
