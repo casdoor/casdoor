@@ -131,7 +131,6 @@ type Userinfo struct {
 }
 
 type ManagedAccount struct {
-	Owner       string `xorm:"varchar(100)" json:"owner"`
 	Application string `xorm:"varchar(100)" json:"application"`
 	Username    string `xorm:"varchar(100)" json:"username"`
 	Password    string `xorm:"varchar(100)" json:"password"`

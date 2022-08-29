@@ -49,7 +49,6 @@ func initAPI() {
 	beego.Router("/api/get-app-login", &controllers.ApiController{}, "GET:GetApplicationLogin")
 	beego.Router("/api/logout", &controllers.ApiController{}, "GET,POST:Logout")
 	beego.Router("/api/get-account", &controllers.ApiController{}, "GET:GetAccount")
-	beego.Router("/api/get-extend-account", &controllers.ApiController{}, "GET:GetExtendAccount")
 	beego.Router("/api/userinfo", &controllers.ApiController{}, "GET:GetUserinfo")
 	beego.Router("/api/unlink", &controllers.ApiController{}, "POST:Unlink")
 	beego.Router("/api/get-saml-login", &controllers.ApiController{}, "GET:GetSamlLogin")

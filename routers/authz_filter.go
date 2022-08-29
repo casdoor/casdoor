@@ -94,7 +94,7 @@ func getObject(ctx *context.Context) (string, string) {
 }
 
 func willLog(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
-	if subOwner == "anonymous" && subName == "anonymous" && method == "GET" && (urlPath == "/api/get-account" || urlPath == "/api/get-extend-account" || urlPath == "/api/get-app-login") && objOwner == "" && objName == "" {
+	if subOwner == "anonymous" && subName == "anonymous" && method == "GET" && (urlPath == "/api/get-account" || urlPath == "/api/get-app-login") && objOwner == "" && objName == "" {
 		return false
 	}
 	return true

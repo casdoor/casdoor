@@ -363,14 +363,38 @@ func IsAllowOrigin(origin string) bool {
 	return allowOrigin
 }
 
+func GetApplicationsByOrganization(organization string) []*Application {
+	applications := []*Application{}
+	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Organization: organization})
+	if err != nil {
+		panic(err)
+	}
+
+	return applications
+}
+
+
+func getApplicationMap(organization string) map[string]*Application {
+	applications := GetApplicationsByOrganization(organization)
+
+	applicationMap := make(map[string]*Application)
+	for _, application := range applications {
+		applicationMap[application.Name] = application
+	}
+
+	return applicationMap
+}
+
 func ExtendManagedAccountsWithUser(user *User) *User {
 	if user.ManagedAccounts == nil || len(user.ManagedAccounts) == 0 {
 		return user
 	}
 
+	applicationMap := getApplicationMap(user.Owner)
+
 	var managedAccounts []ManagedAccount
 	for _, managedAccount := range user.ManagedAccounts {
-		application := getApplication(managedAccount.Owner, managedAccount.Application)
+		application := applicationMap[managedAccount.Application]
 		if application != nil {
 			managedAccount.SigninUrl = application.SigninUrl
 			managedAccounts = append(managedAccounts, managedAccount)
