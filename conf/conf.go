@@ -28,7 +28,15 @@ func GetConfigString(key string) string {
 	if value, ok := os.LookupEnv(key); ok {
 		return value
 	}
-	return beego.AppConfig.String(key)
+
+	res := beego.AppConfig.String(key)
+	if res == "" {
+		if key == "staticBaseUrl" {
+			res = "https://cdn.casbin.org"
+		}
+	}
+
+	return res
 }
 
 func GetConfigBool(key string) (bool, error) {
