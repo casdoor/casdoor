@@ -289,7 +289,6 @@ func CheckAccessPermission(userId string, application *Application) (bool, error
 	allowed := true
 	isHit := false
 
-	//The default permission refers to the user with *
 	isDefaultPermission := false
 	var err error
 	for _, permission := range permissions {
@@ -313,7 +312,6 @@ func CheckAccessPermission(userId string, application *Application) (bool, error
 			}
 
 			if !isDefaultPermission {
-				//If user contains *, means allow all users to access
 				for _, user := range permission.Users {
 					userSplit := strings.Split(user, "/")
 					if userSplit[1] == "*" && userSplit[0] == strings.Split(userId, "/")[0] {
@@ -325,7 +323,6 @@ func CheckAccessPermission(userId string, application *Application) (bool, error
 		}
 	}
 
-	//Default permissions have a higher priority
 	if isDefaultPermission {
 		allowed = true
 	}
