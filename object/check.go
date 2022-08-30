@@ -313,7 +313,7 @@ func CheckAccessPermission(userId string, application *Application) (bool, error
 			}
 
 			if !isDefaultPermission {
-				//If user contains *, means allow all users access
+				//If user contains *, means allow all users to access
 				for _, user := range permission.Users {
 					userSplit := strings.Split(user, "/")
 					if userSplit[1] == "*" && userSplit[0] == strings.Split(userId, "/")[0] {
