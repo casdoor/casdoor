@@ -19,14 +19,14 @@ import (
 	"os"
 	"strings"
 
-	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 )
 
 var (
 	oldStaticBaseUrl = "https://cdn.casbin.org"
-	newStaticBaseUrl = beego.AppConfig.String("staticBaseUrl")
+	newStaticBaseUrl = conf.GetConfigString("staticBaseUrl")
 )
 
 func StaticFilter(ctx *context.Context) {

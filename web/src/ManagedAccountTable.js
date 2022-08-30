@@ -38,7 +38,7 @@ class ManagedAccountTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {application: "", username: "", password: "", signinUrl: ""};
+    const row = {application: "", username: "", password: ""};
     if (table === undefined || table === null) {
       table = [];
     }
@@ -69,16 +69,11 @@ class ManagedAccountTable extends React.Component {
         key: "application",
         render: (text, record, index) => {
           const items = this.props.applications;
-          const signinUrlMap = new Map();
-          for (const application of items) {
-            signinUrlMap.set(application.name, application.signinUrl);
-          }
           return (
             <Select virtual={false} style={{width: "100%"}}
               value={text}
               onChange={value => {
                 this.updateField(table, index, "application", value);
-                this.updateField(table, index, "signinUrl", signinUrlMap.get(value));
               }} >
               {
                 items.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
