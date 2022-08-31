@@ -287,44 +287,25 @@ func CheckUserPermission(requestUserId, userId, userOwner string, strict bool) (
 func CheckAccessPermission(userId string, application *Application) (bool, error) {
 	permissions := GetPermissions(application.Organization)
 	allowed := true
-	isHit := false
-
-	isDefaultPermission := false
 	var err error
 	for _, permission := range permissions {
 		if !permission.IsEnabled || len(permission.Users) == 0 {
 			continue
 		}
 
-		if !isHit {
-			for _, resource := range permission.Resources {
-				if application.Name == resource {
-					isHit = true
-					break
-				}
+		isHit := false
+		for _, resource := range permission.Resources {
+			if application.Name == resource {
+				isHit = true
+				break
 			}
 		}
 
 		if isHit {
-			if allowed {
-				enforcer := getEnforcer(permission)
-				allowed, err = enforcer.Enforce(userId, application.Name, "read")
-			}
-
-			if !isDefaultPermission {
-				for _, user := range permission.Users {
-					userSplit := strings.Split(user, "/")
-					if userSplit[1] == "*" && userSplit[0] == strings.Split(userId, "/")[0] {
-						isDefaultPermission = true
-						break
-					}
-				}
-			}
+			enforcer := getEnforcer(permission)
+			allowed, err = enforcer.Enforce(userId, application.Name, "read")
+			break
 		}
-	}
-
-	if isDefaultPermission {
-		allowed = true
 	}
 	return allowed, err
 }

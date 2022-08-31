@@ -266,12 +266,8 @@ m = r.sub == p.sub && r.obj == p.obj && r.act == p.act`,
 }
 
 func initBuiltInPermission() {
-	//Return if either of them exists
-	defaultPermission := GetPermission("built-in/permission-default")
-
 	permission := GetPermission("built-in/permission-built-in")
-
-	if permission != nil || defaultPermission != nil {
+	if permission != nil {
 		return
 	}
 
@@ -290,23 +286,5 @@ func initBuiltInPermission() {
 		Effect:       "Allow",
 		IsEnabled:    true,
 	}
-
-	defaultPermission = &Permission{
-		Owner:        "built-in",
-		Name:         "permission-default",
-		CreatedTime:  util.GetCurrentTime(),
-		DisplayName:  "Default Permission",
-		Users:        []string{"built-in/*"},
-		Roles:        []string{},
-		Domains:      []string{},
-		Model:        "model-built-in",
-		ResourceType: "Application",
-		Resources:    []string{"app-built-in"},
-		Actions:      []string{"Read"},
-		Effect:       "Allow",
-		IsEnabled:    true,
-	}
-
-	AddPermission(defaultPermission)
 	AddPermission(permission)
 }
