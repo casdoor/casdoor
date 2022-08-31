@@ -595,7 +595,7 @@ class App extends Component {
                   // theme="dark"
                   mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
                   selectedKeys={[`${this.state.selectedMenuKey}`]}
-                  style={{lineHeight: "64px", width: "80%", position: "absolute"}}
+                  style={{lineHeight: "64px", width: "80%", position: "absolute", left: "145px"}}
                 >
                   {
                     this.renderMenu()
