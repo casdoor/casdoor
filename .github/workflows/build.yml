@@ -1,0 +1,150 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+
+  go-tests:
+    name: Running Go tests
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+          image: mysql:5.7
+          env:
+            MYSQL_DATABASE: casdoor
+            MYSQL_ROOT_PASSWORD: 123456
+          ports:
+              - 3306:3306
+          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16.5'
+      - name: Tests
+        run: |
+          go test -v $(go list ./...) -tags skipCi
+        working-directory: ./
+
+  frontend:
+    name: Front-end
+    runs-on: ubuntu-latest
+    needs: [ go-tests ]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.17.0'
+      # cache
+      - uses: c-hive/gha-yarn-cache@v2
+        with:
+          directory: ./web
+      - run: yarn install && CI=false yarn run build
+        working-directory: ./web
+
+  backend:
+    name: Back-end
+    runs-on: ubuntu-latest
+    needs: [ go-tests ]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16.5'
+      - run: go version
+      - name: Build
+        run: |
+          go build -race -ldflags "-extldflags '-static'"
+        working-directory: ./
+
+  linter:
+    name: Go-Linter
+    runs-on: ubuntu-latest
+    needs: [ go-tests ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '^1.16.5'
+
+      # gen a dummy config file
+      - run: touch dummy.yml
+      
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --disable-all -c dummy.yml -E=gofumpt --max-same-issues=0 --timeout 5m --modules-download-mode=mod
+
+  release-and-push:
+    name: Release And Push
+    runs-on: ubuntu-latest
+    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
+    needs: [ frontend, backend, linter ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12
+
+      - name: Fetch Previous version
+        id: get-previous-tag
+        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
+
+      - name: Release
+        run: yarn global add semantic-release@17.4.4 && semantic-release
+        env:
+          GH_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+
+      - name: Fetch Current version
+        id: get-current-tag
+        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
+
+      - name: Decide Should_Push Or Not
+        id: should_push
+        run: |
+          old_version=${{steps.get-previous-tag.outputs.tag}}
+          new_version=${{steps.get-current-tag.outputs.tag }}
+
+          old_array=(${old_version//\./ })
+          new_array=(${new_version//\./ })
+
+          if [ ${old_array[0]} != ${new_array[0]} ]
+          then 
+              echo ::set-output name=push::'true'
+          elif [ ${old_array[1]} != ${new_array[1]} ]
+          then 
+              echo ::set-output name=push::'true'
+              
+          else
+              echo ::set-output name=push::'false'
+              
+          fi
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' &&steps.should_push.outputs.push=='true'
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
+        with:
+          target: STANDARD
+          push: true
+          tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
+
+      - name: Push All In One Version to Docker Hub
+        uses: docker/build-push-action@v2
+        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
+        with:
+          target: ALLINONE
+          push: true
+          tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
