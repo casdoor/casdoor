@@ -276,7 +276,7 @@ func initBuiltInPermission() {
 		Name:         "permission-built-in",
 		CreatedTime:  util.GetCurrentTime(),
 		DisplayName:  "Built-in Permission",
-		Users:        []string{"built-in/admin"},
+		Users:        []string{"built-in/*"},
 		Roles:        []string{},
 		Domains:      []string{},
 		Model:        "model-built-in",
