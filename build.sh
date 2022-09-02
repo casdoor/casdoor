@@ -6,6 +6,6 @@ then
     echo "Successfully connected to Google, no need to use Go proxy"
 else
     echo "Google is blocked, Go proxy is enabled: GOPROXY=https://goproxy.cn,direct"
-    GO_PROXY_SETTING=GOPROXY=https://goproxy.cn,direct
+    GO_PROXY_SETTING=$(GOPROXY=https://goproxy.cn,direct)
 fi
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $GO_PROXY_SETTING go build -ldflags="-w -s" -o server .
