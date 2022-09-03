@@ -64,6 +64,7 @@ import ForgetPage from "./auth/ForgetPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from "./SelectLanguageBox";
+import SelectThemeBox from "./SelectThemeBox";
 import i18next from "i18next";
 import PromptPage from "./auth/PromptPage";
 import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
@@ -582,7 +583,7 @@ class App extends Component {
       return (
         <div style={{display: "flex", flex: "auto", width: "100%", flexDirection: "column"}}>
           <Layout style={{display: "flex", alignItems: "stretch"}}>
-            <Header style={{padding: "0", marginBottom: "3px"}}>
+            <Header className="head-warp-card" style={{padding: "0", marginBottom: "3px"}}>
               {
                 Setting.isMobile() ? null : (
                   <Link to={"/"}>
@@ -605,9 +606,10 @@ class App extends Component {
                   this.renderAccount()
                 }
                 <SelectLanguageBox />
+                <SelectThemeBox />
               </div>
             </Header>
-            <Layout style={{backgroundColor: "#f5f5f5", alignItems: "stretch"}}>
+            <Layout style={{alignItems: "stretch"}}>
               <Card className="content-warp-card">
                 {
                   this.renderRouter()
@@ -642,6 +644,7 @@ class App extends Component {
                   this.renderAccount()
                 }
                 <SelectLanguageBox />
+                <SelectThemeBox />
               </div>
             </Menu>
           </Header>
@@ -660,12 +663,10 @@ class App extends Component {
     return (
       <Footer id="footer" style={
         {
-          borderTop: "1px solid #e8e8e8",
-          backgroundColor: "white",
           textAlign: "center",
         }
       }>
-        Made with <span style={{color: "rgb(255, 255, 255)"}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casdoor.org" rel="noreferrer">Casdoor</a>
+        Made with <span style={{color: "rgb(255, 255, 255)"}}>❤️</span> by <a style={{fontWeight: "bold"}} target="_blank" href="https://casdoor.org" rel="noreferrer">Casdoor</a>
       </Footer>
     );
   }
