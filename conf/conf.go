@@ -80,3 +80,12 @@ func GetBeegoConfDataSourceName() string {
 
 	return dataSourceName
 }
+
+func DemoModeAuth() bool {
+	runMode := GetConfigString("runmode")
+	if runMode == "demo" {
+		return true
+	}
+
+	return false
+}
