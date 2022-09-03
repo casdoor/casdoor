@@ -43,6 +43,11 @@ type OidcDiscovery struct {
 }
 
 func getOriginFromHost(host string) (string, string) {
+	origin := conf.GetConfigString("origin")
+	if origin != "" {
+		return origin, origin
+	}
+
 	protocol := "https://"
 	if strings.HasPrefix(host, "localhost") {
 		protocol = "http://"
@@ -57,12 +62,6 @@ func getOriginFromHost(host string) (string, string) {
 
 func GetOidcDiscovery(host string) OidcDiscovery {
 	originFrontend, originBackend := getOriginFromHost(host)
-
-	origin := conf.GetConfigString("origin")
-	if origin != "" {
-		originFrontend = origin
-		originBackend = origin
-	}
 
 	// Examples:
 	// https://login.okta.com/.well-known/openid-configuration

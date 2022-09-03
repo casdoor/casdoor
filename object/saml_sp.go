@@ -70,10 +70,12 @@ func GenerateSamlLoginUrl(id, relayState string) (string, string, error) {
 }
 
 func buildSp(provider *Provider, samlResponse string) (*saml2.SAMLServiceProvider, error) {
+	origin := conf.GetConfigString("origin")
+
 	certStore := dsig.MemoryX509CertificateStore{
 		Roots: []*x509.Certificate{},
 	}
-	origin := conf.GetConfigString("origin")
+
 	certEncodedData := ""
 	if samlResponse != "" {
 		certEncodedData = parseSamlResponse(samlResponse, provider.Type)
