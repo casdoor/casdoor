@@ -41,7 +41,8 @@
     "eject": "craco eject",
     "crowdin:sync": "crowdin upload && crowdin download",
     "preinstall": "node -e \"if (process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('Use yarn for installing: https://yarnpkg.com/en/docs/install')\"",
-    "fix": "eslint --fix ."
+    "fix": "eslint --fix src/**/*.{js,jsx,ts,tsx}",
+    "lint:css": "stylelint src/**/*.{css,less} --fix"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -68,11 +69,17 @@
     "eslint": "8.22.0",
     "eslint-plugin-react": "^7.31.1",
     "husky": "^4.3.8",
-    "lint-staged": "^13.0.3"
+    "lint-staged": "^13.0.3",
+    "stylelint": "^14.11.0",
+    "stylelint-config-recommended-less": "^1.0.4",
+    "stylelint-config-standard": "^28.0.0"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,css,sass,ts,tsx}": [
-      "yarn fix"
+    "src/**/*.{css,less}": [
+      "stylelint --fix"
+    ],
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
     ]
   },
   "husky": {

@@ -235,3 +235,17 @@ func MigratePermissionRule() {
 		}
 	}
 }
+
+func ContainsAsterisk(userId string, users []string) bool {
+	containsAsterisk := false
+	group, _ := util.GetOwnerAndNameFromId(userId)
+	for _, user := range users {
+		permissionGroup, permissionUserName := util.GetOwnerAndNameFromId(user)
+		if permissionGroup == group && permissionUserName == "*" {
+			containsAsterisk = true
+			break
+		}
+	}
+
+	return containsAsterisk
+}
