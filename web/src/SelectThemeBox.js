@@ -23,6 +23,7 @@ class SelectThemeBox extends Component {
     super(props);
     this.state = {theme: getTheme()};
     setThemeColor(this.state.theme);
+    this.updateLogo();
   }
 
   get icon() {
@@ -33,20 +34,26 @@ class SelectThemeBox extends Component {
 
   changeTheme() {
     let theme = getTheme();
-    this.setState((state, props) => ({
-      theme: theme,
-    }));
     if(theme === "light") {
       theme = "dark";
-    }else{
+    } else {
       theme = "light";
     }
-    return theme;
+    this.setState({theme}, () => {
+      this.updateLogo();
+    });
+    setThemeColor(theme);
+  }
+
+  updateLogo() {
+    const logo = this.state.theme === "light" ? "https://cdn.casbin.org/img/casdoor-logo_1185x256.png" :
+      "https://cdn.casbin.org/img/casdoor-logo_1185x256_dark.png";
+    this.props.getLogo(logo);
   }
 
   render() {
     return (
-      <Button className="theme_btn" onClick={() => setThemeColor(this.changeTheme())} icon={this.icon}> </Button>
+      <Button className="theme_btn" onClick={() => this.changeTheme()} icon={this.icon}> </Button>
     );
   }
 }

@@ -84,6 +84,7 @@ class App extends Component {
       selectedMenuKey: 0,
       account: undefined,
       uri: null,
+      logo: null,
     };
 
     Setting.initServerUrl();
@@ -91,6 +92,10 @@ class App extends Component {
       serverUrl: Setting.ServerUrl,
       appName: "app-built-in", // the application name of Casdoor itself, do not change it
     });
+  }
+
+  updateLogo(logo) {
+    this.setState({logo});
   }
 
   UNSAFE_componentWillMount() {
@@ -587,7 +592,7 @@ class App extends Component {
               {
                 Setting.isMobile() ? null : (
                   <Link to={"/"}>
-                    <div className="logo" />
+                    <div className="logo" style= {{background: `url(${this.state.logo})`}} />
                   </Link>
                 )
               }
@@ -606,7 +611,7 @@ class App extends Component {
                   this.renderAccount()
                 }
                 <SelectLanguageBox />
-                <SelectThemeBox />
+                <SelectThemeBox getLogo={(logo) => {this.updateLogo(logo);}} />
               </div>
             </Header>
             <Layout style={{alignItems: "stretch"}}>
@@ -644,7 +649,7 @@ class App extends Component {
                   this.renderAccount()
                 }
                 <SelectLanguageBox />
-                <SelectThemeBox />
+                <SelectThemeBox getLogo={(logo) => {this.updateLogo(logo);}} />
               </div>
             </Menu>
           </Header>
