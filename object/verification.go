@@ -47,7 +47,7 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 
 	sender := organization.DisplayName
 	title := provider.Title
-	code := getRandomCode(5)
+	code := getRandomCode(6)
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
 	content := fmt.Sprintf(provider.Content, code)
 
@@ -63,7 +63,7 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 		return errors.New("please set a SMS provider first")
 	}
 
-	code := getRandomCode(5)
+	code := getRandomCode(6)
 	if err := SendSms(provider, code, dest); err != nil {
 		return err
 	}

@@ -48,6 +48,7 @@ type Provider struct {
 	DisableSsl bool   `json:"disableSsl"`
 	Title      string `xorm:"varchar(100)" json:"title"`
 	Content    string `xorm:"varchar(1000)" json:"content"`
+	Receiver   string `xorm:"varchar(100)" json:"receiver"`
 
 	RegionId     string `xorm:"varchar(100)" json:"regionId"`
 	SignName     string `xorm:"varchar(100)" json:"signName"`

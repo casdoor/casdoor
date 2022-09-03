@@ -56,8 +56,12 @@ export const ResetModal = (props) => {
     });
   };
 
-  let placeHolder = "";
-  if (destType === "email") {placeHolder = i18next.t("user:Input your email");} else if (destType === "phone") {placeHolder = i18next.t("user:Input your phone number");}
+  let placeholder = "";
+  if (destType === "email") {
+    placeholder = i18next.t("user:Input your email");
+  } else if (destType === "phone") {
+    placeholder = i18next.t("user:Input your phone number");
+  }
 
   return (
     <Row>
@@ -80,7 +84,7 @@ export const ResetModal = (props) => {
             <Input
               addonBefore={destType === "email" ? i18next.t("user:New Email") : i18next.t("user:New phone")}
               prefix={destType === "email" ? <MailOutlined /> : <PhoneOutlined />}
-              placeholder={placeHolder}
+              placeholder={placeholder}
               onChange={e => setDest(e.target.value)}
             />
           </Row>

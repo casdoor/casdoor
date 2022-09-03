@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/duo-labs/webauthn/webauthn"
 	"xorm.io/core"
@@ -527,11 +526,8 @@ func GetUserInfo(userId string, scope string, aud string, host string) (*Userinf
 	if user == nil {
 		return nil, fmt.Errorf("the user: %s doesn't exist", userId)
 	}
-	origin := conf.GetConfigString("origin")
+
 	_, originBackend := getOriginFromHost(host)
-	if origin != "" {
-		originBackend = origin
-	}
 
 	resp := Userinfo{
 		Sub: user.Id,

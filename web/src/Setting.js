@@ -633,6 +633,7 @@ export function getProviderTypeOptions(category) {
     return (
       [
         {id: "Default", name: "Default"},
+        {id: "SUBMAIL", name: "SUBMAIL"},
       ]
     );
   } else if (category === "SMS") {

@@ -34,7 +34,6 @@ class ProviderEditPage extends React.Component {
       providerName: props.match.params.providerName,
       provider: null,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
-      testEmail: this.props.account["email"] !== undefined ? this.props.account["email"] : "",
     };
   }
 
@@ -131,6 +130,9 @@ class ProviderEditPage extends React.Component {
     } else if (this.state.provider.category === "SMS" && this.state.provider.type === "Huawei Cloud SMS") {
       text = i18next.t("provider:Channel No.");
       tooltip = i18next.t("provider:Channel No. - Tooltip");
+    } else if (this.state.provider.category === "Email" && this.state.provider.type === "SUBMAIL") {
+      text = i18next.t("provider:App ID");
+      tooltip = i18next.t("provider:App ID - Tooltip");
     } else {
       return null;
     }
@@ -199,9 +201,12 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "GitHub");
               } else if (value === "Email") {
                 this.updateProviderField("type", "Default");
+                this.updateProviderField("host", "smtp.example.com");
+                this.updateProviderField("port", 465);
                 this.updateProviderField("disableSsl", false);
                 this.updateProviderField("title", "Casdoor Verification Code");
                 this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.");
+                this.updateProviderField("receiver", this.props.account.email);
               } else if (value === "SMS") {
                 this.updateProviderField("type", "Aliyun SMS");
               } else if (value === "Storage") {
@@ -536,7 +541,7 @@ class ProviderEditPage extends React.Component {
                   {Setting.getLabel(i18next.t("provider:Email Content"), i18next.t("provider:Email Content - Tooltip"))} :
                 </Col>
                 <Col span={22} >
-                  <TextArea autoSize={{minRows: 1, maxRows: 100}} value={this.state.provider.content} onChange={e => {
+                  <TextArea autoSize={{minRows: 3, maxRows: 100}} value={this.state.provider.content} onChange={e => {
                     this.updateProviderField("content", e.target.value);
                   }} />
                 </Col>
@@ -546,19 +551,30 @@ class ProviderEditPage extends React.Component {
                   {Setting.getLabel(i18next.t("provider:Test Email"), i18next.t("provider:Test Email - Tooltip"))} :
                 </Col>
                 <Col span={4} >
+<<<<<<< HEAD
+<<<<<<< HEAD
+                  <Input value={this.state.provider.receiver} placeholder = {i18next.t("user:Input your email")} onChange={e => {
+                    this.updateProviderField("receiver", e.target.value);
+                  }} />
+=======
                   <Input value={this.state.testEmail}
-                    placeHolder = {i18next.t("user:Input your email")}
+                    placeholder = {i18next.t("user:Input your email")}
                     onChange={e => {
                       this.setState({testEmail: e.target.value});
                     }} />
+>>>>>>> 409be85 (Fix placeholder typo)
+=======
+                  <Input value={this.state.provider.receiver} placeholder = {i18next.t("user:Input your email")} onChange={e => {
+                    this.updateProviderField("receiver", e.target.value);
+                  }} />
+>>>>>>> d278bc9 (Add receiver for Email provider)
                 </Col>
-                <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
-                  onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
+                <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
                   {i18next.t("provider:Test Connection")}
                 </Button>
                 <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
-                  disabled={!Setting.isValidEmail(this.state.testEmail)}
-                  onClick={() => ProviderEditTestEmail.sendTestEmail(this.state.provider, this.state.testEmail)} >
+                  disabled={!Setting.isValidEmail(this.state.provider.receiver)}
+                  onClick={() => ProviderEditTestEmail.sendTestEmail(this.state.provider, this.state.provider.receiver)} >
                   {i18next.t("provider:Send Test Email")}
                 </Button>
               </Row>
