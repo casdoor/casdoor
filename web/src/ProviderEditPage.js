@@ -547,7 +547,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
                 <Col span={4} >
                   <Input value={this.state.testEmail}
-                    placeHolder = {i18next.t("user:Input your email")}
+                    placeholder = {i18next.t("user:Input your email")}
                     onChange={e => {
                       this.setState({testEmail: e.target.value});
                     }} />
