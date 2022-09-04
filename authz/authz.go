@@ -128,10 +128,35 @@ p, *, *, GET, /api/get-release, *, *
 }
 
 func IsAllowed(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
+	if conf.IsDemoMode() {
+		if !isAllowedInDemoMode(subOwner, subName, method, urlPath, objOwner, objName) {
+			return false
+		}
+	}
+
 	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
 	if err != nil {
 		panic(err)
 	}
 
 	return res
+}
+
+func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
+	if method == "POST" {
+		if urlPath == "/api/login" || urlPath == "/api/logout" || urlPath == "/api/signup" || urlPath == "/api/send-verification-code" {
+			return true
+		} else if urlPath == "/api/update-user" {
+			// Allow ordinary users to update their own information
+			if subOwner == objOwner && subName == objName && !(subOwner == "built-in" && subName == "admin") {
+				return true
+			}
+			return false
+		} else {
+			return false
+		}
+	}
+
+	// If method equals GET
+	return true
 }
