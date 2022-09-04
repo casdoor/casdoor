@@ -541,7 +541,7 @@ class ProviderEditPage extends React.Component {
                   {Setting.getLabel(i18next.t("provider:Email Content"), i18next.t("provider:Email Content - Tooltip"))} :
                 </Col>
                 <Col span={22} >
-                  <TextArea autoSize={{minRows: 1, maxRows: 100}} value={this.state.provider.content} onChange={e => {
+                  <TextArea autoSize={{minRows: 3, maxRows: 100}} value={this.state.provider.content} onChange={e => {
                     this.updateProviderField("content", e.target.value);
                   }} />
                 </Col>
