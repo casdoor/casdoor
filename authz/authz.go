@@ -135,7 +135,6 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 	}
 
 	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
-
 	if err != nil {
 		panic(err)
 	}
