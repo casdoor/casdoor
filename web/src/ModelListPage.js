@@ -88,7 +88,7 @@ class ModelListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/models/${text}`}>
+            <Link to={`/models/${record.owner}/${text}`}>
               {text}
             </Link>
           );

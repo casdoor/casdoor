@@ -6,6 +6,8 @@
     "Sign Up": "Регистрация"
   },
   "application": {
+    "Background URL": "Background URL",
+    "Background URL - Tooltip": "Background URL - Tooltip",
     "Copy SAML metadata URL": "Копировать адрес метаданных SAML",
     "Copy prompt page URL": "Скопировать URL-адрес страницы запроса",
     "Copy signin page URL": "Скопировать URL-адрес страницы входа",
@@ -21,6 +23,11 @@
     "Enable signup": "Включить регистрацию",
     "Enable signup - Tooltip": "Whether to allow users to sign up",
     "File uploaded successfully": "Файл успешно загружен",
+    "Form CSS": "Form CSS",
+    "Form CSS - Edit": "Form CSS - Edit",
+    "Form CSS - Tooltip": "Form CSS - Tooltip",
+    "From position": "From position",
+    "From position - Tooltip": "From position - Tooltip",
     "Grant types": "Виды грантов",
     "Grant types - Tooltip": "Виды грантов - Подсказка",
     "New Application": "Новое приложение",

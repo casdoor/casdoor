@@ -6,6 +6,8 @@
     "Sign Up": "注册"
   },
   "application": {
+    "Background URL": "背景图URL",
+    "Background URL - Tooltip": "登录页背景图的链接",
     "Copy SAML metadata URL": "复制SAML元数据URL",
     "Copy prompt page URL": "复制提醒页面URL",
     "Copy signin page URL": "复制登录页面URL",
@@ -21,6 +23,11 @@
     "Enable signup": "启用注册",
     "Enable signup - Tooltip": "是否允许用户注册",
     "File uploaded successfully": "文件上传成功",
+    "Form CSS": "表单CSS",
+    "Form CSS - Edit": "编辑表单CSS",
+    "Form CSS - Tooltip": "表单的CSS样式(增加边框和阴影)",
+    "From position": "面板的位置",
+    "From position - Tooltip": "登录和注册面板的位置",
     "Grant types": "OAuth授权类型",
     "Grant types - Tooltip": "选择允许哪些OAuth协议中的Grant types",
     "New Application": "添加应用",

@@ -16,10 +16,11 @@ package object
 
 import (
 	"fmt"
-	"net/url"
-	"strings"
-
 	"github.com/casdoor/casdoor/util"
+
+	"net/url"
+	"regexp"
+	"strings"
 	"xorm.io/core"
 )
 
@@ -66,6 +67,9 @@ type Application struct {
 	TermsOfUse           string   `xorm:"varchar(100)" json:"termsOfUse"`
 	SignupHtml           string   `xorm:"mediumtext" json:"signupHtml"`
 	SigninHtml           string   `xorm:"mediumtext" json:"signinHtml"`
+	FormCss              string   `xorm:"text" json:"formCss"`
+	FormOffset           int      `json:"formOffset"`
+	FormBackgroundUrl    string   `xorm:"varchar(200)" json:"formBackgroundUrl"`
 }
 
 func GetApplicationCount(owner, field, value string) int {
@@ -319,7 +323,8 @@ func (application *Application) GetId() string {
 func CheckRedirectUriValid(application *Application, redirectUri string) bool {
 	validUri := false
 	for _, tmpUri := range application.RedirectUris {
-		if strings.Contains(redirectUri, tmpUri) {
+		regUrl := regexp.MustCompile(tmpUri)
+		if regUrl.MatchString(redirectUri) || strings.Contains(redirectUri, tmpUri) {
 			validUri = true
 			break
 		}

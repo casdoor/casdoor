@@ -527,7 +527,7 @@ class App extends Component {
   }
 
   renderRouter() {
-    return(
+    return (
       <div>
         <Switch>
           <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)} />
@@ -618,7 +618,7 @@ class App extends Component {
         </div>
       );
     } else {
-      return(
+      return (
         <div>
           <Header style={{padding: "0", marginBottom: "3px"}}>
             {
@@ -746,6 +746,7 @@ class App extends Component {
     const organization = this.state.account.organization;
     return (
       <React.Fragment>
+        <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />
         <Helmet>
           <title>{organization.displayName}</title>
           <link rel="icon" href={organization.favicon} />

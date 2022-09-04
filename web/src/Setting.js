@@ -82,7 +82,7 @@ export const OtherProviderInfo = {
       url: "https://cloud.tencent.com/product/cos",
     },
     "Azure Blob": {
-      logo: `${StaticBaseUrl}/img/social_azure.jpg`,
+      logo: `${StaticBaseUrl}/img/social_azure.png`,
       url: "https://azure.microsoft.com/en-us/services/storage/blobs/",
     },
   },
@@ -354,6 +354,14 @@ export function isPromptAnswered(user, application) {
   return true;
 }
 
+export function parseObject(s) {
+  try {
+    return eval("(" + s + ")");
+  } catch (e) {
+    return null;
+  }
+}
+
 export function parseJson(s) {
   if (s === "") {
     return null;
@@ -450,9 +458,9 @@ export function trim(str, ch) {
   let start = 0;
   let end = str.length;
 
-  while(start < end && str[start] === ch) {++start;}
+  while (start < end && str[start] === ch) {++start;}
 
-  while(end > start && str[end - 1] === ch) {--end;}
+  while (end > start && str[end - 1] === ch) {--end;}
 
   return (start > 0 || end < str.length) ? str.substring(start, end) : str;
 }
@@ -500,7 +508,7 @@ export function getFriendlyFileSize(size) {
   return `${num} ${"KMGTPEZY"[i - 1]}B`;
 }
 
-function getRandomInt(s) {
+function getHashInt(s) {
   let hash = 0;
   if (s.length !== 0) {
     for (let i = 0; i < s.length; i++) {
@@ -510,16 +518,16 @@ function getRandomInt(s) {
     }
   }
 
+  if (hash < 0) {
+    hash = -hash;
+  }
   return hash;
 }
 
 export function getAvatarColor(s) {
   const colorList = ["#f56a00", "#7265e6", "#ffbf00", "#00a2ae"];
-  let random = getRandomInt(s);
-  if (random < 0) {
-    random = -random;
-  }
-  return colorList[random % 4];
+  const hash = getHashInt(s);
+  return colorList[hash % 4];
 }
 
 export function getLanguage() {
@@ -707,12 +715,12 @@ export function renderLogo(application) {
   if (application.homepageUrl !== "") {
     return (
       <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
-        <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "30px"}} />
+        <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "10px"}} />
       </a>
     );
   } else {
     return (
-      <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "30px"}} />
+      <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "10px"}} />
     );
   }
 }
