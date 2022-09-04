@@ -131,6 +131,9 @@ class ProviderEditPage extends React.Component {
     } else if (this.state.provider.category === "SMS" && this.state.provider.type === "Huawei Cloud SMS") {
       text = i18next.t("provider:Channel No.");
       tooltip = i18next.t("provider:Channel No. - Tooltip");
+    } else if (this.state.provider.category === "Email" && this.state.provider.type === "SUBMAIL") {
+      text = i18next.t("provider:App ID");
+      tooltip = i18next.t("provider:App ID - Tooltip");
     } else {
       return null;
     }
@@ -199,6 +202,8 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "GitHub");
               } else if (value === "Email") {
                 this.updateProviderField("type", "Default");
+                this.updateProviderField("host", "smtp.example.com");
+                this.updateProviderField("port", 465);
                 this.updateProviderField("disableSsl", false);
                 this.updateProviderField("title", "Casdoor Verification Code");
                 this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.");
