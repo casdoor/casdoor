@@ -46,13 +46,6 @@ code {
   padding: 2px !important;
 }
 
-.theme_btn {
-  width: 45px;
-  height: 64px !important;
-  float: right;
-  border: none !important;
-}
-
 .ant-menu-horizontal {
   border-bottom: none !important;
 }

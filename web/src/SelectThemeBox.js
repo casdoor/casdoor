@@ -15,7 +15,6 @@
 import React, {Component} from "react";
 import * as Setting from "./Setting";
 import "./index.css";
-import {Button} from "antd";
 import {getTheme, setThemeColor} from "./theme.js";
 
 class SelectThemeBox extends Component {
@@ -28,7 +27,7 @@ class SelectThemeBox extends Component {
 
   get icon() {
     return (
-      <img width={24} alt={this.state.theme} src={`${Setting.StaticBaseUrl}/img/${this.state.theme}.svg`} />
+      `${Setting.StaticBaseUrl}/img/${this.state.theme}.svg`
     );
   }
 
@@ -48,12 +47,12 @@ class SelectThemeBox extends Component {
   updateLogo() {
     const logo = this.state.theme === "light" ? "https://cdn.casbin.org/img/casdoor-logo_1185x256.png" :
       "https://cdn.casbin.org/img/casdoor-logo_1185x256_dark.png";
-    this.props.getLogo(logo);
+    this.props.updateLogo(logo);
   }
 
   render() {
     return (
-      <Button className="theme_btn" onClick={() => this.changeTheme()} icon={this.icon}> </Button>
+      <div className="theme_btn" onClick={() => this.changeTheme()} style={{background: `url(${this.icon})`}}> </div>
     );
   }
 }

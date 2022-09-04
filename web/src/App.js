@@ -588,11 +588,11 @@ class App extends Component {
       return (
         <div style={{display: "flex", flex: "auto", width: "100%", flexDirection: "column"}}>
           <Layout style={{display: "flex", alignItems: "stretch"}}>
-            <Header className="head-warp-card" style={{padding: "0", marginBottom: "3px"}}>
+            <Header className="head-wrap-card" style={{padding: "0", marginBottom: "3px"}}>
               {
                 Setting.isMobile() ? null : (
                   <Link to={"/"}>
-                    <div className="logo" style= {{background: `url(${this.state.logo})`}} />
+                    <div className="logo" style={{background: `url(${this.state.logo})`}} />
                   </Link>
                 )
               }
@@ -601,7 +601,8 @@ class App extends Component {
                   // theme="dark"
                   mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
                   selectedKeys={[`${this.state.selectedMenuKey}`]}
-                  style={{lineHeight: "64px", width: "75%", position: "absolute", left: "145px"}}
+                  // width = 100% - float width
+                  style={{lineHeight: "64px", width: "calc(100vw - 369px)", position: "absolute", left: "145px"}}
                 >
                   {
                     this.renderMenu()
@@ -611,7 +612,7 @@ class App extends Component {
                   this.renderAccount()
                 }
                 <SelectLanguageBox />
-                <SelectThemeBox getLogo={(logo) => {this.updateLogo(logo);}} />
+                <SelectThemeBox updateLogo={(logo) => {this.updateLogo(logo);}} />
               </div>
             </Header>
             <Layout style={{alignItems: "stretch"}}>
@@ -649,7 +650,7 @@ class App extends Component {
                   this.renderAccount()
                 }
                 <SelectLanguageBox />
-                <SelectThemeBox getLogo={(logo) => {this.updateLogo(logo);}} />
+                <SelectThemeBox updateLogo={(logo) => {this.updateLogo(logo);}} />
               </div>
             </Menu>
           </Header>
