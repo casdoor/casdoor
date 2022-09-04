@@ -97,6 +97,7 @@
     "react/jsx-key": "error",
     "no-console": "error",
     "eqeqeq": "error",
+    "keyword-spacing": "error",
 
     "react/prop-types": "off",
     "react/display-name": "off",
