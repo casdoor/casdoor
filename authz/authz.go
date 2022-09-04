@@ -128,16 +128,13 @@ p, *, *, GET, /api/get-release, *, *
 }
 
 func IsAllowed(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
-	isDemoMode := conf.IsDemoMode()
-	var res bool
-	var err error
-	if isDemoMode {
-		res = demoMode(subOwner, subName, method, urlPath, objOwner, objName)
-		if !res {
+	if conf.IsDemoMode() {
+		if !isAllowedInDemoMode(subOwner, subName, method, urlPath, objOwner, objName) {
 			return false
 		}
 	}
-	res, err = Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
+
+	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
 
 	if err != nil {
 		panic(err)
@@ -146,22 +143,16 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 	return res
 }
 
-func demoMode(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
+func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
 	if method == "POST" {
-		// Allow ordinary users to update their own information
-		if urlPath == "/api/update-user" && subOwner == objOwner &&
-			subName == objName && !(subOwner == "built-in" && subName == "admin") {
+		if urlPath == "/api/login" || urlPath == "/api/logout" || urlPath == "/api/signup" || urlPath == "/api/send-verification-code" {
 			return true
-		}
-
-		if urlPath == "/api/login" {
-			return true
-		} else if urlPath == "/api/logout" {
-			return true
-		} else if urlPath == "/api/signup" {
-			return true
-		} else if urlPath == "/api/send-verification-code" {
-			return true
+		} else if urlPath == "/api/update-user" {
+			// Allow ordinary users to update their own information
+			if subOwner == objOwner && subName == objName && !(subOwner == "built-in" && subName == "admin") {
+				return true
+			}
+			return false
 		} else {
 			return false
 		}
