@@ -602,7 +602,7 @@ class App extends Component {
                   mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
                   selectedKeys={[`${this.state.selectedMenuKey}`]}
                   // width = 100% - float width
-                  style={{lineHeight: "64px", width: "calc(100vw - 369px)", position: "absolute", left: "145px"}}
+                  style={{lineHeight: "64px", width: "calc(100% - 370px)", position: "absolute", left: "145px"}}
                 >
                   {
                     this.renderMenu()
