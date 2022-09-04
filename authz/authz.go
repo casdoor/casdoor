@@ -128,10 +128,43 @@ p, *, *, GET, /api/get-release, *, *
 }
 
 func IsAllowed(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
-	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
+	isDemoMode := conf.IsDemoMode()
+	var res bool
+	var err error
+	if isDemoMode {
+		res = demoMode(subOwner, subName, method, urlPath, objOwner, objName)
+	} else {
+		res, err = Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
+	}
+
 	if err != nil {
 		panic(err)
 	}
 
 	return res
+}
+
+func demoMode(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
+	whiteList := []string{
+		"/api/login",
+		"/api/logout",
+		"/api/signup",
+		"/api/send-verification-code",
+	}
+
+	if method == "POST" {
+		// Allow ordinary users to update their own information
+		if urlPath == "/api/update-user" && subOwner == objOwner &&
+			subName == objName && !(subOwner == "built-in" && subName == "admin") {
+			return true
+		}
+		for _, whiteURL := range whiteList {
+			if whiteURL == urlPath {
+				return true
+			}
+		}
+		return false
+	}
+
+	return true
 }

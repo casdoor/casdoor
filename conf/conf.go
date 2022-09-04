@@ -80,3 +80,7 @@ func GetBeegoConfDataSourceName() string {
 
 	return dataSourceName
 }
+
+func IsDemoMode() bool {
+	return strings.ToLower(GetConfigString("isDemoMode")) == "true"
+}
