@@ -588,7 +588,7 @@ class App extends Component {
       return (
         <div style={{display: "flex", flex: "auto", width: "100%", flexDirection: "column"}}>
           <Layout style={{display: "flex", alignItems: "stretch"}}>
-            <Header className="head-wrap-card" style={{padding: "0", marginBottom: "3px"}}>
+            <Header style={{padding: "0", marginBottom: "3px", boxShadow: "0 1px 5px 0 rgb(51 51 51 / 14%)"}}>
               {
                 Setting.isMobile() ? null : (
                   <Link to={"/"}>

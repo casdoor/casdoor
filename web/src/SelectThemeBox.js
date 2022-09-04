@@ -15,7 +15,7 @@
 import React, {Component} from "react";
 import * as Setting from "./Setting";
 import "./index.css";
-import {getTheme, setThemeColor} from "./theme.js";
+import {getTheme, setThemeColor} from "./Theme";
 
 class SelectThemeBox extends Component {
   constructor(props) {
@@ -33,11 +33,7 @@ class SelectThemeBox extends Component {
 
   changeTheme() {
     let theme = getTheme();
-    if(theme === "light") {
-      theme = "dark";
-    } else {
-      theme = "light";
-    }
+    theme = (theme === "light") ? "dark" : "light";
     this.setState({theme}, () => {
       this.updateLogo();
     });
@@ -45,14 +41,14 @@ class SelectThemeBox extends Component {
   }
 
   updateLogo() {
-    const logo = this.state.theme === "light" ? "https://cdn.casbin.org/img/casdoor-logo_1185x256.png" :
-      "https://cdn.casbin.org/img/casdoor-logo_1185x256_dark.png";
+    const logo = this.state.theme === "light" ? `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png` :
+      `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
     this.props.updateLogo(logo);
   }
 
   render() {
     return (
-      <div className="theme_btn" onClick={() => this.changeTheme()} style={{background: `url(${this.icon})`}}> </div>
+      <div className="themeBox" onClick={() => this.changeTheme()} style={{background: `url(${this.icon})`}}> </div>
     );
   }
 }
