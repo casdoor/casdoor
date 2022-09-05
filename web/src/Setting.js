@@ -26,7 +26,7 @@ import * as Conf from "./Conf";
 export const ServerUrl = "";
 
 // export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
-export const StaticBaseUrl = "https://cdn.casbin.org";
+export const StaticBaseUrl = process.env.REACT_APP_STATIC_BASE_URL;
 
 // https://catamphetamine.gitlab.io/country-flag-icons/3x2/index.html
 export const CountryRegionData = getCountryRegionData();
@@ -450,9 +450,9 @@ export function trim(str, ch) {
   let start = 0;
   let end = str.length;
 
-  while(start < end && str[start] === ch) {++start;}
+  while (start < end && str[start] === ch) {++start;}
 
-  while(end > start && str[end - 1] === ch) {--end;}
+  while (end > start && str[end - 1] === ch) {--end;}
 
   return (start > 0 || end < str.length) ? str.substring(start, end) : str;
 }

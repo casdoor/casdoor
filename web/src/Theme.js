@@ -73,7 +73,7 @@ export const setThemeColor = (theme) => {
 
 export function getTheme() {
   const theme = localStorage.getItem("theme");
-  if(theme === null) {
+  if (theme === null) {
     setTheme("light");
     return "light";
   }

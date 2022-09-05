@@ -584,9 +584,9 @@ class SignupPage extends React.Component {
           &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
           <a onClick={() => {
             const linkInStorage = sessionStorage.getItem("signinUrl");
-            if(linkInStorage !== null && linkInStorage !== "") {
+            if (linkInStorage !== null && linkInStorage !== "") {
               Setting.goToLink(linkInStorage);
-            }else{
+            } else {
               Setting.goToLogin(this, application);
             }
           }}>
