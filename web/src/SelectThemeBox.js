@@ -25,7 +25,7 @@ class SelectThemeBox extends Component {
     this.updateLogo();
   }
 
-  get icon() {
+  getIcon() {
     return (
       `${Setting.StaticBaseUrl}/img/${this.state.theme}.svg`
     );
@@ -48,7 +48,7 @@ class SelectThemeBox extends Component {
 
   render() {
     return (
-      <div className="themeBox" onClick={() => this.changeTheme()} style={{background: `url(${this.icon})`}}> </div>
+      <div className="themeBox" onClick={() => this.changeTheme()} style={{background: `url(${this.getIcon()})`}}> </div>
     );
   }
 }
