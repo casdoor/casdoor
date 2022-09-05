@@ -37,7 +37,6 @@ class AdapterListPage extends BaseListPage {
       databaseType: "mysql",
       database: "dbName",
       table: "tableName",
-      tableColumns: [],
       isEnabled: false,
     };
   }
@@ -67,20 +66,6 @@ class AdapterListPage extends BaseListPage {
       .catch(error => {
         Setting.showMessage("error", `Adapter failed to delete: ${error}`);
       });
-  }
-
-  runAdapter(i) {
-    // this.setState({loading: true});
-    // SyncerBackend.runSyncer("admin", this.state.data[i].name)
-    //   .then((res) => {
-    //     this.setState({loading: false});
-    //     Setting.showMessage("success", "Syncer sync users successfully");
-    //   }
-    //   )
-    //   .catch(error => {
-    //     this.setState({loading: false});
-    //     Setting.showMessage("error", `Syncer failed to sync users: ${error}`);
-    //   });
   }
 
   renderTable(adapters) {
