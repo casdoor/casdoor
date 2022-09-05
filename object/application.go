@@ -66,6 +66,8 @@ type Application struct {
 	TermsOfUse           string   `xorm:"varchar(100)" json:"termsOfUse"`
 	SignupHtml           string   `xorm:"mediumtext" json:"signupHtml"`
 	SigninHtml           string   `xorm:"mediumtext" json:"signinHtml"`
+	Offset               int      `json:"offset"`
+	BackgroundUrl        string   `xorm:"varchar(200)" json:"backgroundUrl"`
 }
 
 func GetApplicationCount(owner, field, value string) int {

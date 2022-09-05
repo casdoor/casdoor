@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Popover, Row, Select, Switch, Upload} from "antd";
+import {Button, Card, Col, Input, Popover, Radio, Row, Select, Switch, Upload} from "antd";
 import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -111,7 +111,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   parseApplicationField(key, value) {
-    if (["expireInHours", "refreshExpireInHours"].includes(key)) {
+    if (["expireInHours", "refreshExpireInHours", "offset"].includes(key)) {
       value = Setting.myParseInt(value);
     }
     return value;
@@ -536,6 +536,38 @@ class ApplicationEditPage extends React.Component {
             this.renderSignupSigninPreview()
           }
         </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Background URL"), i18next.t("application:Background URL - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input prefix={<LinkOutlined />} value={this.state.application.backgroundUrl} onChange={e => {
+              this.updateApplicationField("backgroundUrl", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Preview")}:
+          </Col>
+          <Col span={22} >
+            <a target="_blank" rel="noreferrer" href={this.state.application.backgroundUrl}>
+              <img src={this.state.application.backgroundUrl} alt={this.state.application.backgroundUrl} height={90} style={{marginBottom: "20px"}} />
+            </a>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:From position"), i18next.t("application:From position - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Radio.Group onChange={e => {this.updateApplicationField("offset", e.target.value);}} defaultValue={this.state.application.offset}>
+              <Radio.Button value="2">left</Radio.Button>
+              <Radio.Button value="8">center</Radio.Button>
+              <Radio.Button value="14">right</Radio.Button>
+            </Radio.Group>
+          </Col>
+        </Row>
         {
           !this.state.application.enableSignUp ? null : (
             <Row style={{marginTop: "20px"}} >
@@ -591,7 +623,7 @@ class ApplicationEditPage extends React.Component {
                 <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
               )
             }
-            <div style={maskStyle}></div>
+            <div style={maskStyle} />
           </div>
         </Col>
         <Col span={11}>
@@ -605,7 +637,7 @@ class ApplicationEditPage extends React.Component {
           <br />
           <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
-            <div style={maskStyle}></div>
+            <div style={maskStyle} />
           </div>
         </Col>
       </React.Fragment>

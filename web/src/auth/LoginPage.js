@@ -681,28 +681,32 @@ class LoginPage extends React.Component {
     }
 
     return (
-      <Row>
-        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-          <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center"}}>
-            {
-              Setting.renderHelmet(application)
-            }
-            <CustomGithubCorner />
-            {
-              Setting.renderLogo(application)
-            }
-            {/* {*/}
-            {/*  this.state.clientId !== null ? "Redirect" : null*/}
-            {/* }*/}
-            {
-              this.renderSignedInBox()
-            }
-            {
-              this.renderForm(application)
-            }
-          </div>
-        </Col>
-      </Row>
+      <div className="loginBackground" style=
+        {{backgroundImage: "url(" + application.backgroundUrl + ")"}}
+      >
+        <Row>
+          <Col span={8} offset={application.offset === 0 ? 8 : application.offset} style={{display: "flex", justifyContent: "center"}}>
+            <div className="loginFrom" style={{marginTop: "80px", marginBottom: "50px", textAlign: "center"}}>
+              {
+                Setting.renderHelmet(application)
+              }
+              <CustomGithubCorner />
+              {
+                Setting.renderLogo(application)
+              }
+              {/* {*/}
+              {/*  this.state.clientId !== null ? "Redirect" : null*/}
+              {/* }*/}
+              {
+                this.renderSignedInBox()
+              }
+              {
+                this.renderForm(application)
+              }
+            </div>
+          </Col>
+        </Row>
+      </div>
     );
   }
 }

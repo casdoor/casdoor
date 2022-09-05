@@ -615,12 +615,14 @@ class SignupPage extends React.Component {
     }
 
     return (
-      <div>
+      <div className="loginBackground" style={{
+        backgroundImage: "url(" + application.backgroundUrl + ")"}}
+      >
         <CustomGithubCorner />
         &nbsp;
         <Row>
-          <Col span={24} style={{display: "flex", justifyContent: "center"}} >
-            <div style={{marginTop: "10px", textAlign: "center"}}>
+          <Col span={8} offset={application.offset === 0 ? 8 : application.offset} style={{display: "flex", justifyContent: "center"}} >
+            <div className="loginFrom" style={{marginTop: "10px", marginBottom: "30px", textAlign: "center"}}>
               {
                 Setting.renderHelmet(application)
               }
