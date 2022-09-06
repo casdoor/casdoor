@@ -683,6 +683,7 @@ class LoginPage extends React.Component {
     return (
       <Row>
         <Col span={24} style={{display: "flex", justifyContent: "center"}}>
+          <div type="hiden" id="CasdoorApplicationName" value={this.props.applicationName} />
           <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center"}}>
             {
               Setting.renderHelmet(application)
