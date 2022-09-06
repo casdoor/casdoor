@@ -733,9 +733,6 @@ class App extends Component {
     if (this.state.account === undefined || this.state.account === null) {
       return (
         <React.Fragment>
-          {
-            !this.state.account ? null : <div style={{display: "none", visibility: "hidden"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />
-          }
           <Helmet>
             <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
           </Helmet>
