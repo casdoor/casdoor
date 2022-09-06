@@ -223,8 +223,6 @@ class App extends Component {
           }
         }
 
-        // console.log("account", account);
-
         this.setState({
           account: account,
         });
