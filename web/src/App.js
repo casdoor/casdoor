@@ -223,6 +223,8 @@ class App extends Component {
           }
         }
 
+        // console.log("account", account);
+
         this.setState({
           account: account,
         });
@@ -733,6 +735,9 @@ class App extends Component {
     if (this.state.account === undefined || this.state.account === null) {
       return (
         <React.Fragment>
+          {
+            !this.state.account ? null : <div style={{display: "none", visibility: "hidden"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />
+          }
           <Helmet>
             <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
           </Helmet>
@@ -746,6 +751,9 @@ class App extends Component {
     const organization = this.state.account.organization;
     return (
       <React.Fragment>
+        {
+          !this.state.account ? null : <div style={{display: "none", visibility: "hidden"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />
+        }
         <Helmet>
           <title>{organization.displayName}</title>
           <link rel="icon" href={organization.favicon} />
