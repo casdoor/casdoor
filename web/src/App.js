@@ -746,6 +746,7 @@ class App extends Component {
     const organization = this.state.account.organization;
     return (
       <React.Fragment>
+        <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />
         <Helmet>
           <title>{organization.displayName}</title>
           <link rel="icon" href={organization.favicon} />
