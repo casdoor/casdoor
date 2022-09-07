@@ -32,12 +32,19 @@ import copy from "copy-to-clipboard";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
+
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/htmlmixed/htmlmixed");
 require("codemirror/mode/xml/xml");
 
 const {Option} = Select;
-
+const templete = {
+  padding: "30px",
+  border: "2px solid #ffffff",
+  borderRadius: "7px",
+  backgroundColor: "#ffffff",
+  boxShadow: " 0px 0px 20px rgba(0, 0, 0, 0.20)",
+};
 class ApplicationEditPage extends React.Component {
   constructor(props) {
     super(props);
@@ -148,6 +155,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   renderApplication() {
+    const preview = JSON.stringify(templete, null, 2);
     return (
       <Card size="small" title={
         <div>
@@ -540,20 +548,48 @@ class ApplicationEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:Background URL"), i18next.t("application:Background URL - Tooltip"))} :
           </Col>
-          <Col span={22} >
-            <Input prefix={<LinkOutlined />} value={this.state.application.backgroundUrl} onChange={e => {
-              this.updateApplicationField("backgroundUrl", e.target.value);
-            }} />
+          <Col span={22} style={(Setting.isMobile()) ? {maxWidth: "100%"} : {}}>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+                {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
+              </Col>
+              <Col span={23} >
+                <Input prefix={<LinkOutlined />} value={this.state.application.backgroundUrl} onChange={e => {
+                  this.updateApplicationField("backgroundUrl", e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+                {i18next.t("general:Preview")}:
+              </Col>
+              <Col span={23} >
+                <a target="_blank" rel="noreferrer" href={this.state.application.backgroundUrl}>
+                  <img src={this.state.application.backgroundUrl} alt={this.state.application.backgroundUrl} height={90} style={{marginBottom: "20px"}} />
+                </a>
+              </Col>
+            </Row>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
+        <Row>
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Preview")}:
+            {Setting.getLabel(i18next.t("provider:Form CSS"), i18next.t("provider:Form CSS - Tooltip"))} :
           </Col>
-          <Col span={22} >
-            <a target="_blank" rel="noreferrer" href={this.state.application.backgroundUrl}>
-              <img src={this.state.application.backgroundUrl} alt={this.state.application.backgroundUrl} height={90} style={{marginBottom: "20px"}} />
-            </a>
+          <Col span={22}>
+            <Popover placement="right" content={
+              <div style={{width: "900px", height: "300px"}} >
+                <CodeMirror value={this.state.application.formCss === "" ? preview : this.state.application.formCss}
+                  options={{mode: "htmlmixed", theme: "material-darker"}}
+                  onBeforeChange={(editor, data, value) => {
+                    this.updateApplicationField("formCss", value);
+                  }}
+                />
+              </div>
+            } title={i18next.t("provider:Form CSS - Edit")} trigger="click">
+              <Input value={this.state.application.formCss} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("formCss", e.target.value);
+              }} />
+            </Popover>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -561,10 +597,10 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:From position"), i18next.t("application:From position - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Radio.Group onChange={e => {this.updateApplicationField("offset", e.target.value);}} defaultValue={this.state.application.offset}>
-              <Radio.Button value="2">left</Radio.Button>
-              <Radio.Button value="8">center</Radio.Button>
-              <Radio.Button value="14">right</Radio.Button>
+            <Radio.Group onChange={e => {this.updateApplicationField("formOffset", e.target.value);}} value={this.state.application.formOffset !== 0 ? this.state.application.formOffset : 8}>
+              <Radio.Button value={2}>left</Radio.Button>
+              <Radio.Button value={8}>center</Radio.Button>
+              <Radio.Button value={14}>right</Radio.Button>
             </Radio.Group>
           </Col>
         </Row>
