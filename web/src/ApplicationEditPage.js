@@ -573,7 +573,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row>
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Form CSS"), i18next.t("provider:Form CSS - Tooltip"))} :
+            {Setting.getLabel(i18next.t("application:Form CSS"), i18next.t("application:Form CSS - Tooltip"))} :
           </Col>
           <Col span={22}>
             <Popover placement="right" content={
@@ -585,7 +585,7 @@ class ApplicationEditPage extends React.Component {
                   }}
                 />
               </div>
-            } title={i18next.t("provider:Form CSS - Edit")} trigger="click">
+            } title={i18next.t("application:Form CSS - Edit")} trigger="click">
               <Input value={this.state.application.formCss} style={{marginBottom: "10px"}} onChange={e => {
                 this.updateApplicationField("formCss", e.target.value);
               }} />
