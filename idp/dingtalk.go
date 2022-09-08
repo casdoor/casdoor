@@ -121,6 +121,7 @@ func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 type DingTalkUserResponse struct {
 	Nick      string `json:"nick"`
 	OpenId    string `json:"openId"`
+	UnionId   string `json:"unionId"`
 	AvatarUrl string `json:"avatarUrl"`
 	Email     string `json:"email"`
 	Errmsg    string `json:"message"`
@@ -162,6 +163,7 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		Id:          dtUserInfo.OpenId,
 		Username:    dtUserInfo.Nick,
 		DisplayName: dtUserInfo.Nick,
+		UnionId:     dtUserInfo.UnionId,
 		Email:       dtUserInfo.Email,
 		AvatarUrl:   dtUserInfo.AvatarUrl,
 	}

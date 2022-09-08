@@ -137,6 +137,15 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 			user.Email = userInfo.Email
 		}
 	}
+
+	if userInfo.UnionId != "" {
+		propertyName := fmt.Sprintf("oauth_%s_unionId", providerType)
+		setUserProperty(user, propertyName, userInfo.UnionId)
+		if providerType == "DingTalk" && user.DingTalk == "" {
+			user.DingTalk = userInfo.UnionId
+		}
+	}
+
 	if userInfo.AvatarUrl != "" {
 		propertyName := fmt.Sprintf("oauth_%s_avatarUrl", providerType)
 		setUserProperty(user, propertyName, userInfo.AvatarUrl)
