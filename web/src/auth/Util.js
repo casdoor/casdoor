@@ -126,7 +126,7 @@ export function getOAuthGetParameters(params) {
   }
 }
 
-export function getQueryParamsToState(applicationName, providerName, method) {
+export function getStateFromQueryParams(applicationName, providerName, method) {
   let query = window.location.search;
   query = `${query}&application=${applicationName}&provider=${providerName}&method=${method}`;
   if (method === "link") {
@@ -135,6 +135,6 @@ export function getQueryParamsToState(applicationName, providerName, method) {
   return btoa(query);
 }
 
-export function stateToGetQueryParams(state) {
+export function getQueryParamsFromState(state) {
   return atob(state);
 }

@@ -177,7 +177,7 @@ export function getAuthUrl(application, provider, method) {
   let endpoint = authInfo[provider.type].endpoint;
   const redirectUri = `${window.location.origin}/callback`;
   const scope = authInfo[provider.type].scope;
-  const state = Util.getQueryParamsToState(application.name, provider.name, method);
+  const state = Util.getStateFromQueryParams(application.name, provider.name, method);
 
   if (provider.type === "Google") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
