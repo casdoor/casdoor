@@ -41,6 +41,7 @@ type Organization struct {
 	PasswordSalt       string   `xorm:"varchar(100)" json:"passwordSalt"`
 	PhonePrefix        string   `xorm:"varchar(10)"  json:"phonePrefix"`
 	DefaultAvatar      string   `xorm:"varchar(100)" json:"defaultAvatar"`
+	DefaultApplication string   `xorm:"varchar(100)" json:"defaultApplication"`
 	Tags               []string `xorm:"mediumtext" json:"tags"`
 	MasterPassword     string   `xorm:"varchar(100)" json:"masterPassword"`
 	EnableSoftDeletion bool     `json:"enableSoftDeletion"`
@@ -215,4 +216,14 @@ func CheckAccountItemModifyRule(accountItem *AccountItem, user *User) (bool, str
 		return false, fmt.Sprintf("Unknown modify rule %s.", accountItem.ModifyRule)
 	}
 	return true, ""
+}
+
+func GetDefaultApplication(id string) string {
+	organization := GetOrganization(id)
+
+	if organization == nil {
+		return ""
+	}
+
+	return organization.DefaultApplication
 }
