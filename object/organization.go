@@ -218,12 +218,12 @@ func CheckAccountItemModifyRule(accountItem *AccountItem, user *User) (bool, str
 	return true, ""
 }
 
-func GetDefaultApplication(id string) string {
+func GetDefaultApplication(id string) *Application {
 	organization := GetOrganization(id)
 
-	if organization == nil {
-		return ""
+	if organization == nil || organization.DefaultApplication == "" {
+		return getApplication("admin", "app-built-in")
 	}
 
-	return organization.DefaultApplication
+	return getApplication("admin", organization.DefaultApplication)
 }

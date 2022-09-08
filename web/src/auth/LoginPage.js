@@ -92,22 +92,11 @@ class LoginPage extends React.Component {
     }
 
     OrganizationBackend.getDefaultApplication("admin", this.state.owner)
-      .then((res) => {
-        let defaultApplication = res.data;
-        if (defaultApplication !== null && defaultApplication !== "") {
-          this.setState({
-            applicationName: defaultApplication,
-          });
-        } else {
-          defaultApplication = this.state.applicationName;
-        }
-
-        ApplicationBackend.getApplication("admin", defaultApplication)
-          .then((application) => {
-            this.setState({
-              application: application,
-            });
-          });
+      .then((application) => {
+        this.setState({
+          application: application,
+          applicationName: application.name,
+        });
       });
   }
 

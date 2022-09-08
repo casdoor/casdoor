@@ -130,7 +130,9 @@ func (c *ApiController) DeleteOrganization() {
 // @Success 200 {object}  Response The Response object
 // @router /get-default-application [get]
 func (c *ApiController) GetDefaultApplication() {
+	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
 
-	c.ResponseOk(object.GetDefaultApplication(id))
+	c.Data["json"] = object.GetMaskedApplication(object.GetDefaultApplication(id), userId)
+	c.ServeJSON()
 }
