@@ -32,12 +32,12 @@ import copy from "copy-to-clipboard";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
-
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/htmlmixed/htmlmixed");
 require("codemirror/mode/xml/xml");
 
 const {Option} = Select;
+
 const templete = {
   padding: "30px",
   border: "2px solid #ffffff",
@@ -45,6 +45,7 @@ const templete = {
   backgroundColor: "#ffffff",
   boxShadow: " 0px 0px 20px rgba(0, 0, 0, 0.20)",
 };
+
 class ApplicationEditPage extends React.Component {
   constructor(props) {
     super(props);
