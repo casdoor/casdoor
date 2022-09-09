@@ -556,8 +556,8 @@ class ApplicationEditPage extends React.Component {
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
               <Col span={23} >
-                <Input prefix={<LinkOutlined />} value={this.state.application.backgroundUrl} onChange={e => {
-                  this.updateApplicationField("backgroundUrl", e.target.value);
+                <Input prefix={<LinkOutlined />} value={this.state.application.formBackgroundUrl} onChange={e => {
+                  this.updateApplicationField("formBackgroundUrl", e.target.value);
                 }} />
               </Col>
             </Row>
@@ -566,8 +566,8 @@ class ApplicationEditPage extends React.Component {
                 {i18next.t("general:Preview")}:
               </Col>
               <Col span={23} >
-                <a target="_blank" rel="noreferrer" href={this.state.application.backgroundUrl}>
-                  <img src={this.state.application.backgroundUrl} alt={this.state.application.backgroundUrl} height={90} style={{marginBottom: "20px"}} />
+                <a target="_blank" rel="noreferrer" href={this.state.application.formBackgroundUrl}>
+                  <img src={this.state.application.formBackgroundUrl} alt={this.state.application.formBackgroundUrl} height={90} style={{marginBottom: "20px"}} />
                 </a>
               </Col>
             </Row>

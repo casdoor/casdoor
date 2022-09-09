@@ -715,12 +715,12 @@ export function renderLogo(application) {
   if (application.homepageUrl !== "") {
     return (
       <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
-        <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "30px"}} />
+        <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "10px"}} />
       </a>
     );
   } else {
     return (
-      <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "30px"}} />
+      <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "10px"}} />
     );
   }
 }
