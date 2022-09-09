@@ -615,9 +615,9 @@ class SignupPage extends React.Component {
     }
 
     const formStyle = Setting.parseObject(application.formCss);
+
     return (
-      <div className="loginBackground" style={{
-        backgroundImage: "url(" + application.formBackgroundUrl + ")"}}>
+      <div className="loginBackground" style={{backgroundImage: `url(${application.formBackgroundUrl})`}}>
         <CustomGithubCorner />
         &nbsp;
         <Row>
