@@ -126,15 +126,27 @@ export function getOAuthGetParameters(params) {
   }
 }
 
-export function getQueryParamsToState(applicationName, providerName, method) {
+export function getStateFromQueryParams(applicationName, providerName, method, isShortState) {
   let query = window.location.search;
   query = `${query}&application=${applicationName}&provider=${providerName}&method=${method}`;
   if (method === "link") {
     query = `${query}&from=${window.location.pathname}`;
   }
-  return btoa(query);
+
+  if (!isShortState) {
+    return btoa(query);
+  } else {
+    const state = providerName;
+    sessionStorage.setItem(state, query);
+    return state;
+  }
 }
 
-export function stateToGetQueryParams(state) {
-  return atob(state);
+export function getQueryParamsFromState(state) {
+  const query = sessionStorage.getItem(state);
+  if (query === null) {
+    return atob(state);
+  } else {
+    return query;
+  }
 }

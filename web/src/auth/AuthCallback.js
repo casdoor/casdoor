@@ -35,7 +35,7 @@ class AuthCallback extends React.Component {
     // realRedirectUrl = "http://localhost:9000"
     const params = new URLSearchParams(this.props.location.search);
     const state = params.get("state");
-    const queryString = Util.stateToGetQueryParams(state);
+    const queryString = Util.getQueryParamsFromState(state);
     return new URLSearchParams(queryString);
   }
 

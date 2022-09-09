@@ -500,7 +500,7 @@ export function getFriendlyFileSize(size) {
   return `${num} ${"KMGTPEZY"[i - 1]}B`;
 }
 
-function getRandomInt(s) {
+function getHashInt(s) {
   let hash = 0;
   if (s.length !== 0) {
     for (let i = 0; i < s.length; i++) {
@@ -510,16 +510,16 @@ function getRandomInt(s) {
     }
   }
 
+  if (hash < 0) {
+    hash = -hash;
+  }
   return hash;
 }
 
 export function getAvatarColor(s) {
   const colorList = ["#f56a00", "#7265e6", "#ffbf00", "#00a2ae"];
-  let random = getRandomInt(s);
-  if (random < 0) {
-    random = -random;
-  }
-  return colorList[random % 4];
+  const hash = getHashInt(s);
+  return colorList[hash % 4];
 }
 
 export function getLanguage() {
