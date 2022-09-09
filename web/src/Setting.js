@@ -82,7 +82,7 @@ export const OtherProviderInfo = {
       url: "https://cloud.tencent.com/product/cos",
     },
     "Azure Blob": {
-      logo: `${StaticBaseUrl}/img/social_azure.jpg`,
+      logo: `${StaticBaseUrl}/img/social_azure.png`,
       url: "https://azure.microsoft.com/en-us/services/storage/blobs/",
     },
   },
@@ -352,6 +352,14 @@ export function isPromptAnswered(user, application) {
     }
   }
   return true;
+}
+
+export function parseObject(s) {
+  try {
+    return eval("(" + s + ")");
+  } catch (e) {
+    return null;
+  }
 }
 
 export function parseJson(s) {

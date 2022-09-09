@@ -614,13 +614,15 @@ class SignupPage extends React.Component {
       );
     }
 
+    const formStyle = Setting.parseObject(application.formCss);
+
     return (
-      <div>
+      <div className="loginBackground" style={{backgroundImage: `url(${application.formBackgroundUrl})`}}>
         <CustomGithubCorner />
         &nbsp;
         <Row>
-          <Col span={24} style={{display: "flex", justifyContent: "center"}} >
-            <div style={{marginTop: "10px", textAlign: "center"}}>
+          <Col span={8} offset={application.formOffset === 0 ? 8 : application.formOffset} style={{display: "flex", justifyContent: "center"}} >
+            <div style={{marginTop: "10px", marginBottom: "30px", textAlign: "center", ...formStyle}}>
               {
                 Setting.renderHelmet(application)
               }

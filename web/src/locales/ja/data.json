@@ -6,6 +6,8 @@
     "Sign Up": "新規登録"
   },
   "application": {
+    "Background URL": "Background URL",
+    "Background URL - Tooltip": "Background URL - Tooltip",
     "Copy SAML metadata URL": "Copy SAML metadata URL",
     "Copy prompt page URL": "Copy prompt page URL",
     "Copy signin page URL": "Copy signin page URL",
@@ -21,6 +23,11 @@
     "Enable signup": "サインアップを有効にする",
     "Enable signup - Tooltip": "Whether to allow users to sign up",
     "File uploaded successfully": "ファイルが正常にアップロードされました",
+    "Form CSS": "Form CSS",
+    "Form CSS - Edit": "Form CSS - Edit",
+    "Form CSS - Tooltip": "Form CSS - Tooltip",
+    "From position": "From position",
+    "From position - Tooltip": "From position - Tooltip",
     "Grant types": "Grant types",
     "Grant types - Tooltip": "Grant types - Tooltip",
     "New Application": "New Application",
