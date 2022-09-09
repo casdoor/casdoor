@@ -683,7 +683,7 @@ class LoginPage extends React.Component {
     const formStyle = Setting.parseObject(application.formCss);
 
     return (
-      <div className="loginBackground" style={{backgroundImage: "url(" + application.formBackgroundUrl + ")"}}>
+      <div className="loginBackground" style={{backgroundImage: `url(${application.formBackgroundUrl})`}}>
         <Row>
           <Col span={8} offset={application.formOffset === 0 ? 8 : application.formOffset} style={{display: "flex", justifyContent: "center"}}>
             <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center", ...formStyle}}>
