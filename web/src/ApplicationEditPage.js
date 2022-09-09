@@ -35,6 +35,7 @@ import "codemirror/lib/codemirror.css";
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/htmlmixed/htmlmixed");
 require("codemirror/mode/xml/xml");
+require("codemirror/mode/css/css");
 
 const {Option} = Select;
 
@@ -580,7 +581,7 @@ class ApplicationEditPage extends React.Component {
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
                 <CodeMirror value={this.state.application.formCss === "" ? preview : this.state.application.formCss}
-                  options={{mode: "htmlmixed", theme: "material-darker"}}
+                  options={{mode: "css", theme: "material-darker"}}
                   onBeforeChange={(editor, data, value) => {
                     this.updateApplicationField("formCss", value);
                   }}
