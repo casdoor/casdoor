@@ -220,7 +220,6 @@ func CheckAccountItemModifyRule(accountItem *AccountItem, user *User) (bool, str
 
 func GetDefaultApplication(id string) *Application {
 	organization := GetOrganization(id)
-
 	if organization == nil {
 		return nil
 	}
