@@ -221,9 +221,29 @@ func CheckAccountItemModifyRule(accountItem *AccountItem, user *User) (bool, str
 func GetDefaultApplication(id string) *Application {
 	organization := GetOrganization(id)
 
-	if organization == nil || organization.DefaultApplication == "" {
-		return getApplication("admin", "app-built-in")
+	if organization == nil {
+		return nil
 	}
 
-	return getApplication("admin", organization.DefaultApplication)
+	if organization.DefaultApplication != "" {
+		return getApplication("admin", organization.DefaultApplication)
+	}
+
+	applications := []*Application{}
+	err := adapter.Engine.Asc("created_time").Find(&applications, &Application{})
+	if err != nil {
+		panic(err)
+	}
+
+	if len(applications) == 0 {
+		return nil
+	}
+
+	for _, application := range applications {
+		if application.EnableSignUp {
+			return application
+		}
+	}
+
+	return applications[0]
 }

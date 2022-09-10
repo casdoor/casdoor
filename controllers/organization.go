@@ -133,6 +133,11 @@ func (c *ApiController) GetDefaultApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetMaskedApplication(object.GetDefaultApplication(id), userId)
-	c.ServeJSON()
+	application := object.GetMaskedApplication(object.GetDefaultApplication(id), userId)
+
+	if application != nil {
+		c.ResponseOk(application)
+	} else {
+		c.ResponseError("Please set a default application for this organization")
+	}
 }

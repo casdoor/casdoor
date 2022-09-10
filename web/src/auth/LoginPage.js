@@ -91,13 +91,26 @@ class LoginPage extends React.Component {
       return;
     }
 
-    OrganizationBackend.getDefaultApplication("admin", this.state.owner)
-      .then((application) => {
-        this.setState({
-          application: application,
-          applicationName: application.name,
+    if (this.state.owner === null || this.state.owner === undefined || this.state.owner === "") {
+      ApplicationBackend.getApplication("admin", this.state.applicationName)
+        .then((application) => {
+          this.setState({
+            application: application,
+          });
         });
-      });
+    } else {
+      OrganizationBackend.getDefaultApplication("admin", this.state.owner)
+        .then((res) => {
+          if (res.status === "ok") {
+            this.setState({
+              application: res.data,
+              applicationName: res.data.name,
+            });
+          } else {
+            Util.showMessage("error", res.msg);
+          }
+        });
+    }
   }
 
   getSamlApplication() {
