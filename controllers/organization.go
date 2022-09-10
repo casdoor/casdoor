@@ -134,10 +134,10 @@ func (c *ApiController) GetDefaultApplication() {
 	id := c.Input().Get("id")
 
 	application := object.GetMaskedApplication(object.GetDefaultApplication(id), userId)
-
-	if application != nil {
-		c.ResponseOk(application)
-	} else {
+	if application == nil {
 		c.ResponseError("Please set a default application for this organization")
+		return
 	}
+
+	c.ResponseOk(application)
 }
