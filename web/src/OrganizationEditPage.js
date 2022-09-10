@@ -15,6 +15,7 @@
 import React from "react";
 import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
@@ -31,6 +32,7 @@ class OrganizationEditPage extends React.Component {
       classes: props,
       organizationName: props.match.params.organizationName,
       organization: null,
+      applications: [],
       ldaps: null,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
@@ -38,6 +40,7 @@ class OrganizationEditPage extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.getOrganization();
+    this.getApplications();
     this.getLdaps();
   }
 
@@ -46,6 +49,15 @@ class OrganizationEditPage extends React.Component {
       .then((organization) => {
         this.setState({
           organization: organization,
+        });
+      });
+  }
+
+  getApplications() {
+    ApplicationBackend.getApplicationsByOrganization("admin", this.state.organizationName)
+      .then((applications) => {
+        this.setState({
+          applications: applications,
         });
       });
   }
@@ -207,6 +219,18 @@ class OrganizationEditPage extends React.Component {
                 </a>
               </Col>
             </Row>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Default application"), i18next.t("general:Default application - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} value={this.state.organization.defaultApplication} onChange={(value => {this.updateOrganizationField("defaultApplication", value);})}>
+              {
+                this.state.applications?.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

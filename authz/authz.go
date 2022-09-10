@@ -110,6 +110,7 @@ p, *, *, GET, /api/saml/metadata, *, *
 p, *, *, *, /cas, *, *
 p, *, *, *, /api/webauthn, *, *
 p, *, *, GET, /api/get-release, *, *
+p, *, *, GET, /api/get-default-application, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

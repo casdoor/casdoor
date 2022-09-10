@@ -54,3 +54,10 @@ export function deleteOrganization(organization) {
     body: JSON.stringify(newOrganization),
   }).then(res => res.json());
 }
+
+export function getDefaultApplication(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/get-default-application?id=${owner}/${encodeURIComponent(name)}`, {
+    method: "GET",
+    credentials: "include",
+  }).then(res => res.json());
+}

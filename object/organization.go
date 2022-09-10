@@ -41,6 +41,7 @@ type Organization struct {
 	PasswordSalt       string   `xorm:"varchar(100)" json:"passwordSalt"`
 	PhonePrefix        string   `xorm:"varchar(10)"  json:"phonePrefix"`
 	DefaultAvatar      string   `xorm:"varchar(100)" json:"defaultAvatar"`
+	DefaultApplication string   `xorm:"varchar(100)" json:"defaultApplication"`
 	Tags               []string `xorm:"mediumtext" json:"tags"`
 	MasterPassword     string   `xorm:"varchar(100)" json:"masterPassword"`
 	EnableSoftDeletion bool     `json:"enableSoftDeletion"`
@@ -215,4 +216,33 @@ func CheckAccountItemModifyRule(accountItem *AccountItem, user *User) (bool, str
 		return false, fmt.Sprintf("Unknown modify rule %s.", accountItem.ModifyRule)
 	}
 	return true, ""
+}
+
+func GetDefaultApplication(id string) *Application {
+	organization := GetOrganization(id)
+	if organization == nil {
+		return nil
+	}
+
+	if organization.DefaultApplication != "" {
+		return getApplication("admin", organization.DefaultApplication)
+	}
+
+	applications := []*Application{}
+	err := adapter.Engine.Asc("created_time").Find(&applications, &Application{Organization: organization.Name})
+	if err != nil {
+		panic(err)
+	}
+
+	if len(applications) == 0 {
+		return nil
+	}
+
+	for _, application := range applications {
+		if application.EnableSignUp {
+			return application
+		}
+	}
+
+	return applications[0]
 }

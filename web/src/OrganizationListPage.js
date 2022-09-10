@@ -35,6 +35,7 @@ class OrganizationListPage extends BaseListPage {
       PasswordSalt: "",
       phonePrefix: "86",
       defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
+      defaultApplication: "",
       tags: [],
       masterPassword: "",
       enableSoftDeletion: false,

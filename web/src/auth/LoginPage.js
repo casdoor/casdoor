@@ -18,6 +18,7 @@ import {Button, Checkbox, Col, Form, Input, Result, Row, Spin, Tabs} from "antd"
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
 import * as AuthBackend from "./AuthBackend";
+import * as OrganizationBackend from "../backend/OrganizationBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Provider from "./Provider";
 import * as ProviderButton from "./ProviderButton";
@@ -90,12 +91,26 @@ class LoginPage extends React.Component {
       return;
     }
 
-    ApplicationBackend.getApplication("admin", this.state.applicationName)
-      .then((application) => {
-        this.setState({
-          application: application,
+    if (this.state.owner === null || this.state.owner === undefined || this.state.owner === "") {
+      ApplicationBackend.getApplication("admin", this.state.applicationName)
+        .then((application) => {
+          this.setState({
+            application: application,
+          });
         });
-      });
+    } else {
+      OrganizationBackend.getDefaultApplication("admin", this.state.owner)
+        .then((res) => {
+          if (res.status === "ok") {
+            this.setState({
+              application: res.data,
+              applicationName: res.data.name,
+            });
+          } else {
+            Util.showMessage("error", res.msg);
+          }
+        });
+    }
   }
 
   getSamlApplication() {

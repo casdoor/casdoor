@@ -121,3 +121,23 @@ func (c *ApiController) DeleteOrganization() {
 	c.Data["json"] = wrapActionResponse(object.DeleteOrganization(&organization))
 	c.ServeJSON()
 }
+
+// GetDefaultApplication ...
+// @Title GetDefaultApplication
+// @Tag Organization API
+// @Description get default application
+// @Param   id     query    string  true        "organization id"
+// @Success 200 {object}  Response The Response object
+// @router /get-default-application [get]
+func (c *ApiController) GetDefaultApplication() {
+	userId := c.GetSessionUsername()
+	id := c.Input().Get("id")
+
+	application := object.GetMaskedApplication(object.GetDefaultApplication(id), userId)
+	if application == nil {
+		c.ResponseError("Please set a default application for this organization")
+		return
+	}
+
+	c.ResponseOk(application)
+}
