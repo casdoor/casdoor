@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/casdoor/casdoor/util"
@@ -322,7 +323,8 @@ func (application *Application) GetId() string {
 func CheckRedirectUriValid(application *Application, redirectUri string) bool {
 	validUri := false
 	for _, tmpUri := range application.RedirectUris {
-		if strings.Contains(redirectUri, tmpUri) {
+		tmpUriRegex := regexp.MustCompile(tmpUri)
+		if tmpUriRegex.MatchString(redirectUri) || strings.Contains(redirectUri, tmpUri) {
 			validUri = true
 			break
 		}
