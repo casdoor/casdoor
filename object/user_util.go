@@ -80,7 +80,7 @@ func SetUserField(user *User, field string, value string) bool {
 		value = user.Password
 	}
 
-	affected, err := adapter.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(map[string]interface{}{field: value})
+	affected, err := adapter.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(map[string]interface{}{strings.ToLower(field): value})
 	if err != nil {
 		panic(err)
 	}
@@ -141,9 +141,6 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 	if userInfo.UnionId != "" {
 		propertyName := fmt.Sprintf("oauth_%s_unionId", providerType)
 		setUserProperty(user, propertyName, userInfo.UnionId)
-		if providerType == "DingTalk" && user.DingTalk == "" {
-			user.DingTalk = userInfo.UnionId
-		}
 	}
 
 	if userInfo.AvatarUrl != "" {
