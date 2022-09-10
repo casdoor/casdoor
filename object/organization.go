@@ -230,7 +230,7 @@ func GetDefaultApplication(id string) *Application {
 	}
 
 	applications := []*Application{}
-	err := adapter.Engine.Asc("created_time").Find(&applications, &Application{})
+	err := adapter.Engine.Asc("created_time").Find(&applications, &Application{Organization: organization.Name})
 	if err != nil {
 		panic(err)
 	}
