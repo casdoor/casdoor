@@ -39,7 +39,7 @@ require("codemirror/mode/css/css");
 
 const {Option} = Select;
 
-const templete = {
+const template = {
   padding: "30px",
   border: "2px solid #ffffff",
   borderRadius: "7px",
@@ -157,7 +157,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   renderApplication() {
-    const preview = JSON.stringify(templete, null, 2);
+    const preview = JSON.stringify(template, null, 2);
     return (
       <Card size="small" title={
         <div>
@@ -562,10 +562,10 @@ class ApplicationEditPage extends React.Component {
               </Col>
             </Row>
             <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {i18next.t("general:Preview")}:
               </Col>
-              <Col span={23} >
+              <Col span={22} >
                 <a target="_blank" rel="noreferrer" href={this.state.application.formBackgroundUrl}>
                   <img src={this.state.application.formBackgroundUrl} alt={this.state.application.formBackgroundUrl} height={90} style={{marginBottom: "20px"}} />
                 </a>
