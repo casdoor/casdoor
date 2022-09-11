@@ -349,49 +349,54 @@ class LoginPage extends React.Component {
           >
           </Form.Item>
           {this.renderMethodChoiceBox()}
-          <Form.Item
-            name="username"
-            rules={[
-              {
-                required: true,
-                message: i18next.t("login:Please input your username, Email or phone!"),
-              },
-              {
-                validator: (_, value) => {
-                  if (this.state.isCodeSignin) {
-                    if (this.state.email !== "" && !Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
-                      this.setState({validEmailOrPhone: false});
-                      return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
-                    }
+          <Row style={{minHeight: 130, alignItems: "center"}}>
+            <Col span={24}>
+              <Form.Item
+                name="username"
+                rules={[
+                  {
+                    required: true,
+                    message: i18next.t("login:Please input your username, Email or phone!"),
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (this.state.isCodeSignin) {
+                        if (this.state.email !== "" && !Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
+                          this.setState({validEmailOrPhone: false});
+                          return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
+                        }
 
-                    if (Setting.isValidPhone(this.state.username)) {
-                      this.setState({validPhone: true});
-                    }
-                    if (Setting.isValidEmail(this.state.username)) {
-                      this.setState({validEmail: true});
-                    }
-                  }
+                        if (Setting.isValidPhone(this.state.username)) {
+                          this.setState({validPhone: true});
+                        }
+                        if (Setting.isValidEmail(this.state.username)) {
+                          this.setState({validEmail: true});
+                        }
+                      }
 
-                  this.setState({validEmailOrPhone: true});
-                  return Promise.resolve();
-                },
-              },
-            ]}
-          >
-            <Input
-              prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder={this.state.isCodeSignin ? i18next.t("login:Email or phone") : i18next.t("login:username, Email or phone")}
-              disabled={!application.enablePassword}
-              onChange={e => {
-                this.setState({
-                  username: e.target.value,
-                });
-              }}
-            />
-          </Form.Item>
-          {
-            this.renderPasswordOrCodeInput()
-          }
+                      this.setState({validEmailOrPhone: true});
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <Input
+                  id = "input"
+                  prefix={<UserOutlined className="site-form-item-icon" />}
+                  placeholder={this.state.isCodeSignin ? i18next.t("login:Email or phone") : i18next.t("login:username, Email or phone")}
+                  disabled={!application.enablePassword}
+                  onChange={e => {
+                    this.setState({
+                      username: e.target.value,
+                    });
+                  }}
+                />
+              </Form.Item>
+            </Col>
+            {
+              this.renderPasswordOrCodeInput()
+            }
+          </Row>
           <Form.Item>
             <Form.Item name="autoSignin" valuePropName="checked" noStyle>
               <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
@@ -633,28 +638,32 @@ class LoginPage extends React.Component {
     const application = this.getApplicationObj();
     if (this.state.loginMethod === "password") {
       return this.state.isCodeSignin ? (
-        <Form.Item
-          name="code"
-          rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
-        >
-          <CountDownInput
-            disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
-            onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
-            application={application}
-          />
-        </Form.Item>
+        <Col span={24}>
+          <Form.Item
+            name="code"
+            rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
+          >
+            <CountDownInput
+              disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
+              onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
+              application={application}
+            />
+          </Form.Item>
+        </Col>
       ) : (
-        <Form.Item
-          name="password"
-          rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
-        >
-          <Input
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            type="password"
-            placeholder={i18next.t("login:Password")}
-            disabled={!application.enablePassword}
-          />
-        </Form.Item>
+        <Col span={24}>
+          <Form.Item
+            name="password"
+            rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
+          >
+            <Input
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              type="password"
+              placeholder={i18next.t("login:Password")}
+              disabled={!application.enablePassword}
+            />
+          </Form.Item>
+        </Col>
       );
     }
   }
@@ -695,29 +704,32 @@ class LoginPage extends React.Component {
       );
     }
 
-    const formStyle = Setting.parseObject(application.formCss);
+    const formStyle = Setting.inIframe() ? null : Setting.parseObject(application.formCss);
 
     return (
-      <div className="loginBackground" style={{backgroundImage: `url(${application.formBackgroundUrl})`}}>
+      <div className="loginBackground" style={{backgroundImage: Setting.inIframe() ? null : `url(${application.formBackgroundUrl})`}}>
+        <CustomGithubCorner />
         <Row>
-          <Col span={8} offset={application.formOffset === 0 ? 8 : application.formOffset} style={{display: "flex", justifyContent: "center"}}>
+          <Col span={8} offset={application.formOffset === 0 || Setting.inIframe() ? 8 : application.formOffset} style={{display: "flex", justifyContent: "center"}}>
             <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center", ...formStyle}}>
-              {
-                Setting.renderHelmet(application)
-              }
-              <CustomGithubCorner />
-              {
-                Setting.renderLogo(application)
-              }
-              {/* {*/}
-              {/*  this.state.clientId !== null ? "Redirect" : null*/}
-              {/* }*/}
-              {
-                this.renderSignedInBox()
-              }
-              {
-                this.renderForm(application)
-              }
+              <div>
+                {
+                  Setting.renderHelmet(application)
+                }
+                {
+                  Setting.renderLogo(application)
+                }
+                {/* {*/}
+                {/*  this.state.clientId !== null ? "Redirect" : null*/}
+                {/* }*/}
+                {
+                  this.renderSignedInBox()
+                }
+                {
+                  this.renderForm(application)
+                }
+              </div>
+
             </div>
           </Col>
         </Row>

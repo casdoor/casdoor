@@ -921,6 +921,14 @@ export function scrollToDiv(divId) {
   }
 }
 
+export function inIframe() {
+  try {
+    return window !== window.parent;
+  } catch (e) {
+    return true;
+  }
+}
+
 export function getSyncerTableColumns(syncer) {
   switch (syncer.type) {
   case "Keycloak":

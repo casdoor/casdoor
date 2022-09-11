@@ -53,6 +53,7 @@ class ApplicationListPage extends BaseListPage {
       redirectUris: ["http://localhost:9000/callback"],
       tokenFormat: "JWT",
       expireInHours: 24 * 7,
+      formOffset: 8,
     };
   }
 
