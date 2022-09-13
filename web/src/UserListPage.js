@@ -41,8 +41,9 @@ class UserListPage extends BaseListPage {
 
   newUser() {
     const randomName = Setting.getRandomName();
+    const owner = (this.state.organizationName !== undefined) ? this.state.organizationName : this.props.account.owner;
     return {
-      owner: "built-in", // this.props.account.username,
+      owner: owner,
       name: `user_${randomName}`,
       createdTime: moment().format(),
       type: "normal-user",
@@ -56,8 +57,8 @@ class UserListPage extends BaseListPage {
       affiliation: "Example Inc.",
       tag: "staff",
       region: "",
-      isAdmin: false,
-      isGlobalAdmin: false,
+      isAdmin: (owner === "built-in"),
+      isGlobalAdmin: (owner === "built-in"),
       IsForbidden: false,
       isDeleted: false,
       properties: {},
@@ -326,6 +327,7 @@ class UserListPage extends BaseListPage {
         width: "190px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
+          const disabled = (record.owner === this.props.account.owner && record.name === this.props.account.name);
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/users/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
@@ -333,7 +335,7 @@ class UserListPage extends BaseListPage {
                 title={`Sure to delete user: ${record.name} ?`}
                 onConfirm={() => this.deleteUser(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button disabled={disabled} style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );
