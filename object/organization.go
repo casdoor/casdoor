@@ -238,11 +238,16 @@ func GetDefaultApplication(id string) *Application {
 		return nil
 	}
 
+	defaultApplication := applications[0]
 	for _, application := range applications {
 		if application.EnableSignUp {
-			return application
+			defaultApplication = application
+			break
 		}
 	}
 
-	return applications[0]
+	extendApplicationWithProviders(defaultApplication)
+	extendApplicationWithOrg(defaultApplication)
+
+	return defaultApplication
 }
