@@ -5,6 +5,21 @@
     "My Account": "Мой аккаунт",
     "Sign Up": "Регистрация"
   },
+  "adapter": {
+    "Database": "Database",
+    "Database - Tooltip": "Database - Tooltip",
+    "Database type": "Database type",
+    "Database type - Tooltip": "Database type - Tooltip",
+    "Edit Adapter": "Edit Adapter",
+    "Model": "Model",
+    "Model - Tooltip": "Model - Tooltip",
+    "New Adapter": "New Adapter",
+    "Policies": "Policies",
+    "Policies - Tooltip": "Policies - Tooltip",
+    "Sync": "Sync",
+    "Table": "Table",
+    "Table - Tooltip": "Table - Tooltip"
+  },
   "application": {
     "Background URL": "Background URL",
     "Background URL - Tooltip": "Background URL - Tooltip",
@@ -107,6 +122,7 @@
     "Action": "Действие",
     "Adapter": "Adapter",
     "Adapter - Tooltip": "Adapter - Tooltip",
+    "Adapters": "Adapters",
     "Add": "Добавить",
     "Affiliation URL": "URL-адрес партнёра",
     "Affiliation URL - Tooltip": "Unique string-style identifier",
