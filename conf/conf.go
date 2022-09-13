@@ -24,6 +24,19 @@ import (
 	"github.com/astaxie/beego"
 )
 
+func init() {
+	// this array contains the beego configuration items that may be modified via env
+	presetConfigItems := []string{"httpport", "appname"}
+	for _, key := range presetConfigItems {
+		if value, ok := os.LookupEnv(key); ok {
+			err := beego.AppConfig.Set(key, value)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+}
+
 func GetConfigString(key string) string {
 	if value, ok := os.LookupEnv(key); ok {
 		return value
@@ -55,17 +68,7 @@ func GetConfigInt64(key string) (int64, error) {
 	return num, err
 }
 
-func init() {
-	// this array contains the beego configuration items that may be modified via env
-	presetConfigItems := []string{"httpport", "appname"}
-	for _, key := range presetConfigItems {
-		if value, ok := os.LookupEnv(key); ok {
-			beego.AppConfig.Set(key, value)
-		}
-	}
-}
-
-func GetBeegoConfDataSourceName() string {
+func GetConfigDataSourceName() string {
 	dataSourceName := GetConfigString("dataSourceName")
 
 	runningInDocker := os.Getenv("RUNNING_IN_DOCKER")
@@ -83,4 +86,12 @@ func GetBeegoConfDataSourceName() string {
 
 func IsDemoMode() bool {
 	return strings.ToLower(GetConfigString("isDemoMode")) == "true"
+}
+
+func GetConfigBatchSize() int {
+	res, err := strconv.Atoi(GetConfigString("batchSize"))
+	if err != nil {
+		res = 100
+	}
+	return res
 }

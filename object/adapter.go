@@ -43,7 +43,7 @@ func InitConfig() {
 }
 
 func InitAdapter(createDatabase bool) {
-	adapter = NewAdapter(conf.GetConfigString("driverName"), conf.GetBeegoConfDataSourceName(), conf.GetConfigString("dbName"))
+	adapter = NewAdapter(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
 	if createDatabase {
 		adapter.CreateDatabase()
 	}
