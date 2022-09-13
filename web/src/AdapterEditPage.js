@@ -152,7 +152,7 @@ class AdapterEditPage extends React.Component {
       {
         title: "Option",
         key: "option",
-        width: "160px",
+        width: "100px",
         render: (text, record, index) => {
           return (
             <div>
@@ -327,7 +327,7 @@ class AdapterEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("adapter:Table columns"), i18next.t("adapter:Table columns - Tooltip"))} :
+            {Setting.getLabel(i18next.t("adapter:Policies"), i18next.t("adapter:Policies - Tooltip"))} :
           </Col>
           <Col span={2}>
             <Button type="primary" onClick={() => {this.synPolicies();}}>

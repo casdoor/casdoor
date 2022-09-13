@@ -101,18 +101,6 @@ func GetCasbinAdapter(id string) *CasbinAdapter {
 	return getCasbinAdapter(owner, name)
 }
 
-func GetMasterCasbinAdapter(casbinAdapter *CasbinAdapter) *CasbinAdapter {
-	if casbinAdapter == nil {
-		return nil
-	}
-
-	if casbinAdapter.Password != "" {
-		casbinAdapter.Password = "***"
-	}
-
-	return casbinAdapter
-}
-
 func UpdateCasbinAdapter(id string, casbinAdapter *CasbinAdapter) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if getCasbinAdapter(owner, name) == nil {
@@ -220,5 +208,10 @@ func SyncPolicies(casbinAdapter *CasbinAdapter) []*xormadapter.CasbinRule {
 		panic(err)
 	}
 
-	return matrixToCasbinRules("p", enforcer.GetPolicy())
+	policies := matrixToCasbinRules("p", enforcer.GetPolicy())
+	if strings.Contains(modelObj.ModelText, "[role_definition]") {
+		policies = append(policies, matrixToCasbinRules("g", enforcer.GetGroupingPolicy())...)
+	}
+
+	return policies
 }
