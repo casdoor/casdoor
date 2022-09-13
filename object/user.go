@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/duo-labs/webauthn/webauthn"
 	"xorm.io/core"
@@ -487,7 +488,7 @@ func AddUsers(users []*User) bool {
 }
 
 func AddUsersInBatch(users []*User) bool {
-	batchSize := 1000
+	batchSize := conf.GetConfigBatchSize()
 
 	if len(users) == 0 {
 		return false
