@@ -5,6 +5,13 @@
     "My Account": "マイアカウント",
     "Sign Up": "新規登録"
   },
+  "adapter": {
+    "Edit Adapter": "Edit Adapter",
+    "New Adapter": "New Adapter",
+    "Policies": "Policies",
+    "Policies - Tooltip": "Policies - Tooltip",
+    "Sync": "Sync"
+  },
   "application": {
     "Background URL": "Background URL",
     "Background URL - Tooltip": "Background URL - Tooltip",
@@ -107,6 +114,7 @@
     "Action": "アクション",
     "Adapter": "Adapter",
     "Adapter - Tooltip": "Adapter - Tooltip",
+    "Adapters": "Adapters",
     "Add": "追加",
     "Affiliation URL": "アフィリエイトURL",
     "Affiliation URL - Tooltip": "Unique string-style identifier",

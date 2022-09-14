@@ -5,6 +5,13 @@
     "My Account": "Мой аккаунт",
     "Sign Up": "Регистрация"
   },
+  "adapter": {
+    "Edit Adapter": "Edit Adapter",
+    "New Adapter": "New Adapter",
+    "Policies": "Policies",
+    "Policies - Tooltip": "Policies - Tooltip",
+    "Sync": "Sync"
+  },
   "application": {
     "Background URL": "Background URL",
     "Background URL - Tooltip": "Background URL - Tooltip",
@@ -107,6 +114,7 @@
     "Action": "Действие",
     "Adapter": "Adapter",
     "Adapter - Tooltip": "Adapter - Tooltip",
+    "Adapters": "Adapters",
     "Add": "Добавить",
     "Affiliation URL": "URL-адрес партнёра",
     "Affiliation URL - Tooltip": "Unique string-style identifier",

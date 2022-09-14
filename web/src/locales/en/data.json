@@ -5,6 +5,13 @@
     "My Account": "My Account",
     "Sign Up": "Sign Up"
   },
+  "adapter": {
+    "Edit Adapter": "Edit Adapter",
+    "New Adapter": "New Adapter",
+    "Policies": "Policies",
+    "Policies - Tooltip": "Policies - Tooltip",
+    "Sync": "Sync"
+  },
   "application": {
     "Background URL": "Background URL",
     "Background URL - Tooltip": "Background URL - Tooltip",
@@ -107,6 +114,7 @@
     "Action": "Action",
     "Adapter": "Adapter",
     "Adapter - Tooltip": "Adapter - Tooltip",
+    "Adapters": "Adapters",
     "Add": "Add",
     "Affiliation URL": "Affiliation URL",
     "Affiliation URL - Tooltip": "Affiliation URL - Tooltip",

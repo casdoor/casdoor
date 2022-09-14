@@ -5,6 +5,13 @@
     "My Account": "我的账户",
     "Sign Up": "注册"
   },
+  "adapter": {
+    "Edit Adapter": "编辑适配器",
+    "New Adapter": "添加适配器",
+    "Policies": "策略",
+    "Policies - Tooltip": "策略",
+    "Sync": "同步"
+  },
   "application": {
     "Background URL": "背景图URL",
     "Background URL - Tooltip": "登录页背景图的链接",
@@ -107,6 +114,7 @@
     "Action": "操作",
     "Adapter": "适配器",
     "Adapter - Tooltip": "策略存储的表名",
+    "Adapters": "适配器",
     "Add": "添加",
     "Affiliation URL": "工作单位URL",
     "Affiliation URL - Tooltip": "工作单位URL",
