@@ -6,19 +6,11 @@
     "Sign Up": "注册"
   },
   "adapter": {
-    "Database": "数据库",
-    "Database - Tooltip": "数据库",
-    "Database type": "数据库类型",
-    "Database type - Tooltip": "数据库类型",
     "Edit Adapter": "编辑适配器",
-    "Model": "模型",
-    "Model - Tooltip": "模型",
     "New Adapter": "添加适配器",
     "Policies": "策略",
     "Policies - Tooltip": "策略",
-    "Sync": "同步",
-    "Table": "表名",
-    "Table - Tooltip": "表名"
+    "Sync": "同步"
   },
   "application": {
     "Background URL": "背景图URL",

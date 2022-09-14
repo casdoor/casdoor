@@ -6,19 +6,11 @@
     "Sign Up": "新規登録"
   },
   "adapter": {
-    "Database": "Database",
-    "Database - Tooltip": "Database - Tooltip",
-    "Database type": "Database type",
-    "Database type - Tooltip": "Database type - Tooltip",
     "Edit Adapter": "Edit Adapter",
-    "Model": "Model",
-    "Model - Tooltip": "Model - Tooltip",
     "New Adapter": "New Adapter",
     "Policies": "Policies",
     "Policies - Tooltip": "Policies - Tooltip",
-    "Sync": "Sync",
-    "Table": "Table",
-    "Table - Tooltip": "Table - Tooltip"
+    "Sync": "Sync"
   },
   "application": {
     "Background URL": "Background URL",
