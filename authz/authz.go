@@ -15,8 +15,9 @@
 package authz
 
 import (
-	"github.com/casdoor/casdoor/object"
 	"strings"
+
+	"github.com/casdoor/casdoor/object"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"

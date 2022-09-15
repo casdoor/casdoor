@@ -257,7 +257,6 @@ func GetOrgApplications(applications []*Application, orgName string) []*Applicat
 		panic(err)
 	}
 	return applications
-
 }
 
 func GetMaskedApplications(applications []*Application, userId string) []*Application {
