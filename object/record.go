@@ -159,7 +159,7 @@ func SendWebhooks(record *Record) error {
 
 		if matched {
 			if webhook.IsUserExtended {
-				user := getUser(record.Organization, record.User)
+				user := GetUserByNameAndOwner(record.Organization, record.User)
 				record.ExtendedUser = user
 			}
 

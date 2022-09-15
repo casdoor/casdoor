@@ -93,7 +93,7 @@ func initBuiltInOrganization() bool {
 }
 
 func initBuiltInUser() {
-	user := getUser("built-in", "admin")
+	user := GetUserByNameAndOwner("built-in", "admin")
 	if user != nil {
 		return
 	}

@@ -62,7 +62,7 @@ class UserListPage extends BaseListPage {
       IsForbidden: false,
       isDeleted: false,
       properties: {},
-      signupApplication: "app-built-in",
+      signupApplication: this.props.account.signupApplication,
     };
   }
 
@@ -373,7 +373,7 @@ class UserListPage extends BaseListPage {
     const field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
-    if (this.state.organizationName === undefined) {
+    if (this.state.organizationName === undefined && Setting.isAdminUser(this.props.account)) {
       UserBackend.getGlobalUsers(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
         .then((res) => {
           if (res.status === "ok") {
@@ -390,6 +390,9 @@ class UserListPage extends BaseListPage {
           }
         });
     } else {
+      if (this.props.account.owner !== "built-in") {
+        this.state.organizationName = this.props.account.owner;
+      }
       UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
         .then((res) => {
           if (res.status === "ok") {

@@ -112,7 +112,7 @@ func initDefinedApplication(application *Application) {
 }
 
 func initDefinedUser(user *User) {
-	existed := getUser(user.Owner, user.Name)
+	existed := GetUserByNameAndOwner(user.Owner, user.Name)
 	if existed != nil {
 		return
 	}

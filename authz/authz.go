@@ -15,6 +15,7 @@
 package authz
 
 import (
+	"github.com/casdoor/casdoor/object"
 	"strings"
 
 	"github.com/casbin/casbin/v2"
@@ -136,7 +137,9 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 			return false
 		}
 	}
-
+	if isAllowedInOrganization(subOwner, subName) {
+		return true
+	}
 	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
 	if err != nil {
 		panic(err)
@@ -162,4 +165,15 @@ func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath
 
 	// If method equals GET
 	return true
+}
+
+func isAllowedInOrganization(subOwner string, subName string) bool {
+	if subOwner == "built-in" || subOwner == "anonymous" || subName == "anonymous" {
+		return true
+	}
+	user := object.GetUserByNameAndOwner(subOwner, subName)
+	if user.IsAdmin {
+		return true
+	}
+	return false
 }

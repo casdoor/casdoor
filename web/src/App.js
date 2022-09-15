@@ -508,6 +508,24 @@ class App extends Component {
       );
     }
 
+    if (Setting.isOrgAdminUser(this.state.account)) {
+      res.push(
+        <Menu.Item key="/users">
+          <Link to="/users">
+            {i18next.t("general:Users")}
+          </Link>
+        </Menu.Item>
+      );
+      res.push(
+        <Menu.Item key="/applications">
+          <Link to="/applications">
+            {i18next.t("general:Applications")}
+          </Link>
+        </Menu.Item>
+      );
+
+    }
+
     return res;
   }
 

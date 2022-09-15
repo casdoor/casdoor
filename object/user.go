@@ -218,7 +218,7 @@ func GetPaginationUsers(owner string, offset, limit int, field, value, sortField
 	return users
 }
 
-func getUser(owner string, name string) *User {
+func GetUserByNameAndOwner(owner string, name string) *User {
 	if owner == "" || name == "" {
 		return nil
 	}
@@ -327,12 +327,12 @@ func GetUserByUserId(owner string, userId string) *User {
 
 func GetUser(id string) *User {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	return getUser(owner, name)
+	return GetUserByNameAndOwner(owner, name)
 }
 
 func GetUserNoCheck(id string) *User {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
-	return getUser(owner, name)
+	return GetUserByNameAndOwner(owner, name)
 }
 
 func GetMaskedUser(user *User) *User {
@@ -373,9 +373,9 @@ func GetLastUser(owner string) *User {
 	return nil
 }
 
-func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) bool {
+func UpdateUser(id string, user *User, columns []string, isAdmin bool) bool {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
-	oldUser := getUser(owner, name)
+	oldUser := GetUserByNameAndOwner(owner, name)
 	if oldUser == nil {
 		return false
 	}
@@ -397,7 +397,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 			"signin_wrong_times", "last_signin_wrong_time",
 		}
 	}
-	if isGlobalAdmin {
+	if isAdmin {
 		columns = append(columns, "name", "email", "phone")
 	}
 
@@ -411,7 +411,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 
 func UpdateUserForAllFields(id string, user *User) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	oldUser := getUser(owner, name)
+	oldUser := GetUserByNameAndOwner(owner, name)
 	if oldUser == nil {
 		return false
 	}
