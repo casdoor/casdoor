@@ -32,13 +32,11 @@ jobs:
     needs: [ go-tests ]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
+        working-directory: ./web
         with:
-          node-version: '14.17.0'
-      # cache
-      - uses: c-hive/gha-yarn-cache@v2
-        with:
-          directory: ./web
+          node-version: 16
+          cache: yarn
       - run: yarn install && CI=false yarn run build
         working-directory: ./web
 
@@ -87,9 +85,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: 12
+          node-version: 16
 
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
