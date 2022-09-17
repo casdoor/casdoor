@@ -91,6 +91,14 @@ jobs:
         with:
           node-version: 12
 
+      # https://github.com/docker/setup-qemu-action
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      # https://github.com/docker/setup-buildx-action
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Fetch Previous version
         id: get-previous-tag
         uses: actions-ecosystem/action-get-latest-tag@v1.6.0
@@ -134,17 +142,19 @@ jobs:
 
 
       - name: Push to Docker Hub
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
+          platforms: linux/amd64,linux/arm64
           target: STANDARD
           push: true
           tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
 
       - name: Push All In One Version to Docker Hub
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
+          platforms: linux/amd64,linux/arm64
           target: ALLINONE
           push: true
           tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
