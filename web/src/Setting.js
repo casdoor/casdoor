@@ -426,7 +426,7 @@ export function isOrgAdminUser(account) {
   if (account === undefined || account === null) {
     return false;
   }
-  return account.isAdmin === true ;
+  return account.isAdmin === true && account.owner !== "built-in";
 }
 
 export function isLocalAdminUser(account) {
