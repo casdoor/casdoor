@@ -90,6 +90,19 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 	return user, true
 }
 
+// RequireAdmin ...
+func (c *ApiController) RequireAdmin() (string, bool) {
+	user, ok := c.RequireSignedInUser()
+	if !ok {
+		return "", false
+	}
+
+	if user.Owner == "built-in" {
+		return "", true
+	}
+	return user.Owner, true
+}
+
 func getInitScore() (int, error) {
 	return strconv.Atoi(conf.GetConfigString("initScore"))
 }

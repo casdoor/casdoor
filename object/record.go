@@ -101,9 +101,9 @@ func AddRecord(record *Record) bool {
 	return affected != 0
 }
 
-func GetRecordCount(field, value string) int {
+func GetRecordCount(field, value string, filterRecord *Record) int {
 	session := GetSession("", -1, -1, field, value, "", "")
-	count, err := session.Count(&Record{})
+	count, err := session.Count(filterRecord)
 	if err != nil {
 		panic(err)
 	}
@@ -121,10 +121,10 @@ func GetRecords() []*Record {
 	return records
 }
 
-func GetPaginationRecords(offset, limit int, field, value, sortField, sortOrder string) []*Record {
+func GetPaginationRecords(offset, limit int, field, value, sortField, sortOrder string, filterRecord *Record) []*Record {
 	records := []*Record{}
 	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&records)
+	err := session.Find(&records, filterRecord)
 	if err != nil {
 		panic(err)
 	}

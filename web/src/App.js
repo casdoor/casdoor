@@ -432,7 +432,7 @@ class App extends Component {
       );
     }
 
-    if (Setting.isAdminUser(this.state.account)) {
+    if (Setting.isLocalAdminUser(this.state.account)) {
       res.push(
         <Menu.Item key="/resources">
           <Link to="/resources">
@@ -441,16 +441,19 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="/tokens">
-          <Link to="/tokens">
-            {i18next.t("general:Tokens")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
         <Menu.Item key="/records">
           <Link to="/records">
             {i18next.t("general:Records")}
+          </Link>
+        </Menu.Item>
+      );
+    }
+
+    if (Setting.isAdminUser(this.state.account)) {
+      res.push(
+        <Menu.Item key="/tokens">
+          <Link to="/tokens">
+            {i18next.t("general:Tokens")}
           </Link>
         </Menu.Item>
       );

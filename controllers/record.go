@@ -29,6 +29,11 @@ import (
 // @Success 200 {object} object.Record The Response object
 // @router /get-records [get]
 func (c *ApiController) GetRecords() {
+	organization, ok := c.RequireAdmin()
+	if !ok {
+		return
+	}
+
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
 	field := c.Input().Get("field")
@@ -40,8 +45,9 @@ func (c *ApiController) GetRecords() {
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetRecordCount(field, value)))
-		records := object.GetPaginationRecords(paginator.Offset(), limit, field, value, sortField, sortOrder)
+		filterRecord := &object.Record{Organization: organization}
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetRecordCount(field, value, filterRecord)))
+		records := object.GetPaginationRecords(paginator.Offset(), limit, field, value, sortField, sortOrder, filterRecord)
 		c.ResponseOk(records, paginator.Nums())
 	}
 }
