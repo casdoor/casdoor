@@ -44,7 +44,7 @@ class RecordListPage extends BaseListPage {
   }
 
   renderTable(records) {
-    const columns = [
+    let columns = [
       {
         title: i18next.t("general:Name"),
         dataIndex: "name",
@@ -173,6 +173,10 @@ class RecordListPage extends BaseListPage {
         },
       },
     ];
+
+    if (Setting.isLocalAdminUser(this.props.account)) {
+      columns = columns.filter(column => column.key !== "name" && column.key !== "organization");
+    }
 
     const paginationProps = {
       total: this.state.pagination.total,
