@@ -522,12 +522,7 @@ func DeleteUser(user *User) bool {
 	return affected != 0
 }
 
-func GetUserInfo(userId string, scope string, aud string, host string) (*Userinfo, error) {
-	user := GetUser(userId)
-	if user == nil {
-		return nil, fmt.Errorf("the user: %s doesn't exist", userId)
-	}
-
+func GetUserInfo(user *User, scope string, aud string, host string) *Userinfo {
 	_, originBackend := getOriginFromHost(host)
 
 	resp := Userinfo{
@@ -549,7 +544,7 @@ func GetUserInfo(userId string, scope string, aud string, host string) (*Userinf
 	if strings.Contains(scope, "phone") {
 		resp.Phone = user.Phone
 	}
-	return &resp, nil
+	return &resp
 }
 
 func LinkUserAccount(user *User, field string, value string) bool {

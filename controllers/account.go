@@ -258,14 +258,8 @@ func (c *ApiController) Logout() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-account [get]
 func (c *ApiController) GetAccount() {
-	userId, ok := c.RequireSignedIn()
+	user, ok := c.RequireSignedInUser()
 	if !ok {
-		return
-	}
-
-	user := object.GetUser(userId)
-	if user == nil {
-		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
 		return
 	}
 
@@ -294,18 +288,16 @@ func (c *ApiController) GetAccount() {
 // @Success 200 {object} object.Userinfo The Response object
 // @router /userinfo [get]
 func (c *ApiController) GetUserinfo() {
-	userId, ok := c.RequireSignedIn()
+	user, ok := c.RequireSignedInUser()
 	if !ok {
 		return
 	}
+
 	scope, aud := c.GetSessionOidc()
 	host := c.Ctx.Request.Host
-	resp, err := object.GetUserInfo(userId, scope, aud, host)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	c.Data["json"] = resp
+	userInfo := object.GetUserInfo(user, scope, aud, host)
+
+	c.Data["json"] = userInfo
 	c.ServeJSON()
 }
 

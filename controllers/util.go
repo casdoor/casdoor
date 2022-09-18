@@ -75,6 +75,21 @@ func (c *ApiController) RequireSignedIn() (string, bool) {
 	return userId, true
 }
 
+// RequireSignedInUser ...
+func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
+	userId, ok := c.RequireSignedIn()
+	if !ok {
+		return nil, false
+	}
+
+	user := object.GetUser(userId)
+	if user == nil {
+		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
+		return nil, false
+	}
+	return user, true
+}
+
 func getInitScore() (int, error) {
 	return strconv.Atoi(conf.GetConfigString("initScore"))
 }

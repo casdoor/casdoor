@@ -29,7 +29,7 @@ type LinkForm struct {
 // @router /unlink [post]
 // @Tag Login API
 func (c *ApiController) Unlink() {
-	userId, ok := c.RequireSignedIn()
+	user, ok := c.RequireSignedInUser()
 	if !ok {
 		return
 	}
@@ -44,7 +44,6 @@ func (c *ApiController) Unlink() {
 
 	// the user will be unlinked from the provider
 	unlinkedUser := form.User
-	user := object.GetUser(userId)
 
 	if user.Id != unlinkedUser.Id && !user.IsGlobalAdmin {
 		// if the user is not the same as the one we are unlinking, we need to make sure the user is the global admin.

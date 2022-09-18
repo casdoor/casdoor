@@ -148,14 +148,8 @@ func (c *ApiController) SendVerificationCode() {
 // @Title ResetEmailOrPhone
 // @router /api/reset-email-or-phone [post]
 func (c *ApiController) ResetEmailOrPhone() {
-	userId, ok := c.RequireSignedIn()
+	user, ok := c.RequireSignedInUser()
 	if !ok {
-		return
-	}
-
-	user := object.GetUser(userId)
-	if user == nil {
-		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
 		return
 	}
 

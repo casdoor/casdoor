@@ -55,13 +55,12 @@ func (c *ApiController) GetPermissions() {
 // @Success 200 {array} object.Permission The Response object
 // @router /get-permissions-by-submitter [get]
 func (c *ApiController) GetPermissionsBySubmitter() {
-	userId, ok := c.RequireSignedIn()
+	user, ok := c.RequireSignedInUser()
 	if !ok {
 		return
 	}
 
-	owner, username := util.GetOwnerAndNameFromId(userId)
-	permissions := object.GetPermissionsBySubmitter(owner, username)
+	permissions := object.GetPermissionsBySubmitter(user.Owner, user.Name)
 	c.ResponseOk(permissions, len(permissions))
 	return
 }
