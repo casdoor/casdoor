@@ -15,6 +15,8 @@
 package controllers
 
 import (
+	"encoding/json"
+
 	"github.com/astaxie/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -70,5 +72,24 @@ func (c *ApiController) GetRecordsByFilter() {
 	}
 
 	c.Data["json"] = object.GetRecordsByField(record)
+	c.ServeJSON()
+}
+
+// AddRecord
+// @Title AddRecord
+// @Tag Record API
+// @Description add a record
+// @Param   body    body   object.Record  true        "The details of the record"
+// @Success 200 {object} controllers.Response The Response object
+// @router /add-record [post]
+func (c *ApiController) AddRecord() {
+	var record object.Record
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &record)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.AddRecord(&record))
 	c.ServeJSON()
 }

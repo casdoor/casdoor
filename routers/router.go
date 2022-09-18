@@ -155,6 +155,7 @@ func initAPI() {
 
 	beego.Router("/api/get-records", &controllers.ApiController{}, "GET:GetRecords")
 	beego.Router("/api/get-records-filter", &controllers.ApiController{}, "POST:GetRecordsByFilter")
+	beego.Router("/api/add-record", &controllers.ApiController{}, "POST:AddRecord")
 
 	beego.Router("/api/get-webhooks", &controllers.ApiController{}, "GET:GetWebhooks")
 	beego.Router("/api/get-webhook", &controllers.ApiController{}, "GET:GetWebhook")
