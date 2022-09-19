@@ -617,11 +617,11 @@ class SignupPage extends React.Component {
     const formStyle = Setting.inIframe() ? null : Setting.parseObject(application.formCss);
 
     return (
-      <div className="loginBackground" style={{backgroundImage: Setting.inIframe() ? null : `url(${application.formBackgroundUrl})`}}>
+      <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
         <CustomGithubCorner />
         &nbsp;
         <Row>
-          <Col span={8} offset={application.formOffset === 0 || Setting.inIframe() ? 8 : application.formOffset} style={{display: "flex", justifyContent: "center"}} >
+          <Col span={8} offset={application.formOffset === 0 || Setting.inIframe() || Setting.isMobile() ? 8 : application.formOffset} style={{display: "flex", justifyContent: "center"}} >
             <div style={{marginBottom: "10px", textAlign: "center", ...formStyle}}>
               {
                 Setting.renderHelmet(application)

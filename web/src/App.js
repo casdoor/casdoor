@@ -697,8 +697,8 @@ class App extends Component {
   renderPage() {
     if (this.isDoorPages()) {
       return (
-        <div style={{position: "relative", minHeight: "100vh"}}>
-          <div id="content-wrap" style={{flexDirection: "column"}}>
+        <div style={{display: "flex", flexDirection: "column", height: "100%"}}>
+          <div id="login-content-wrap" style={{flexDirection: "column"}}>
             <Switch>
               <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} />)} />
               <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />)} />
