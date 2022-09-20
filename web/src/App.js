@@ -673,15 +673,18 @@ class App extends Component {
     // https://www.freecodecamp.org/neyarnws/how-to-keep-your-footer-where-it-belongs-59c6aa05c59c/
 
     return (
-      <Footer id="footer" style={
-        {
-          borderTop: "1px solid #e8e8e8",
-          backgroundColor: "white",
-          textAlign: "center",
-        }
-      }>
-        Made with <span style={{color: "rgb(255, 255, 255)"}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casdoor.org" rel="noreferrer">Casdoor</a>
-      </Footer>
+      <>
+        {!this.state.account ? null : <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />}
+        <Footer id="footer" style={
+          {
+            borderTop: "1px solid #e8e8e8",
+            backgroundColor: "white",
+            textAlign: "center",
+          }
+        }>
+          Made with <span style={{color: "rgb(255, 255, 255)"}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casdoor.org" rel="noreferrer">Casdoor</a>
+        </Footer>
+      </>
     );
   }
 
@@ -761,7 +764,6 @@ class App extends Component {
     const organization = this.state.account.organization;
     return (
       <React.Fragment>
-        <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />
         <Helmet>
           <title>{organization.displayName}</title>
           <link rel="icon" href={organization.favicon} />
