@@ -229,9 +229,11 @@ export function getSignupItem(application, itemName) {
 }
 
 export function isValidPersonName(personName) {
-  // https://blog.css8.cn/post/14210975.html
-  const personNameRegex = /^[\u4e00-\u9fa5]{2,6}$/;
-  return personNameRegex.test(personName);
+  return personName !== "";
+
+  // // https://blog.css8.cn/post/14210975.html
+  // const personNameRegex = /^[\u4e00-\u9fa5]{2,6}$/;
+  // return personNameRegex.test(personName);
 }
 
 export function isValidIdCard(idCard) {
