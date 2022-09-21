@@ -85,7 +85,7 @@ func SetUserField(user *User, field string, value string) bool {
 		panic(err)
 	}
 
-	user = getUser(user.Owner, user.Name)
+	user = GetUserByNameAndOwner(user.Owner, user.Name)
 	user.UpdateUserHash()
 	_, err = adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("hash").Update(user)
 	if err != nil {

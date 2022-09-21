@@ -39,7 +39,8 @@ func (c *ApiController) GetApplications() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
-	organization := c.Input().Get("organization")
+	user := object.GetUser(userId)
+	organization := user.Owner
 
 	if limit == "" || page == "" {
 		var applications []*object.Application
@@ -55,6 +56,7 @@ func (c *ApiController) GetApplications() {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetApplicationCount(owner, field, value)))
 		applications := object.GetMaskedApplications(object.GetPaginationApplications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder), userId)
+		applications = object.GetOrgApplications(applications, organization)
 		c.ResponseOk(applications, paginator.Nums())
 	}
 }

@@ -247,6 +247,18 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	return application
 }
 
+func GetOrgApplications(applications []*Application, orgName string) []*Application {
+	if orgName == "built-in" {
+		return applications
+	}
+	applications = []*Application{}
+	err := adapter.Engine.Find(&applications, &Application{Organization: orgName})
+	if err != nil {
+		panic(err)
+	}
+	return applications
+}
+
 func GetMaskedApplications(applications []*Application, userId string) []*Application {
 	if isUserIdGlobalAdmin(userId) {
 		return applications

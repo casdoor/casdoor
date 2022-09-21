@@ -40,7 +40,7 @@ type SessionData struct {
 	ExpireTime int64
 }
 
-func (c *ApiController) IsGlobalAdmin() bool {
+func (c *ApiController) IsAdmin() bool {
 	username := c.GetSessionUsername()
 	if strings.HasPrefix(username, "app/") {
 		// e.g., "app/app-casnode"
@@ -52,7 +52,7 @@ func (c *ApiController) IsGlobalAdmin() bool {
 		return false
 	}
 
-	return user.Owner == "built-in" || user.IsGlobalAdmin
+	return user.Owner == "built-in" || user.IsAdmin
 }
 
 // GetSessionUsername ...

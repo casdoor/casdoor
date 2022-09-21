@@ -414,7 +414,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		}
 	}
 	// generate a new token
-	user := getUser(application.Organization, token.User)
+	user := GetUserByNameAndOwner(application.Organization, token.User)
 	if user.IsForbidden {
 		return &TokenError{
 			Error:            InvalidGrant,
@@ -552,7 +552,7 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 // GetPasswordToken
 // Resource Owner Password Credentials flow
 func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, *TokenError) {
-	user := getUser(application.Organization, username)
+	user := GetUserByNameAndOwner(application.Organization, username)
 	if user == nil {
 		return nil, &TokenError{
 			Error:            InvalidGrant,
