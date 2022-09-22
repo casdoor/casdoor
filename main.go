@@ -18,6 +18,8 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/casdoor/casdoor/controllers"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 	_ "github.com/astaxie/beego/session/redis"
@@ -77,4 +79,7 @@ func main() {
 	// logs.SetLevel(logs.LevelInformational)
 	logs.SetLogFuncCall(false)
 	beego.Run(fmt.Sprintf(":%v", port))
+
+	// Execute main.go again to run the ladpserver
+	controllers.StartLdapServer()
 }
