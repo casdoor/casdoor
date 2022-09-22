@@ -124,6 +124,7 @@ func UpdatePermission(id string, permission *Permission) bool {
 	}
 
 	if affected != 0 {
+		removeGroupingPolicies(oldPermission)
 		removePolicies(oldPermission)
 		if oldPermission.Adapter != "" && oldPermission.Adapter != permission.Adapter {
 			isEmpty, _ := adapter.Engine.IsTableEmpty(oldPermission.Adapter)
@@ -134,6 +135,7 @@ func UpdatePermission(id string, permission *Permission) bool {
 				}
 			}
 		}
+		addGroupingPolicies(permission)
 		addPolicies(permission)
 	}
 
@@ -147,6 +149,7 @@ func AddPermission(permission *Permission) bool {
 	}
 
 	if affected != 0 {
+		addGroupingPolicies(permission)
 		addPolicies(permission)
 	}
 
@@ -160,6 +163,7 @@ func DeletePermission(permission *Permission) bool {
 	}
 
 	if affected != 0 {
+		removeGroupingPolicies(permission)
 		removePolicies(permission)
 		if permission.Adapter != "" && permission.Adapter != "permission_rule" {
 			isEmpty, _ := adapter.Engine.IsTableEmpty(permission.Adapter)

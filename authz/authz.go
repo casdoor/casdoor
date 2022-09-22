@@ -112,6 +112,11 @@ p, *, *, *, /cas, *, *
 p, *, *, *, /api/webauthn, *, *
 p, *, *, GET, /api/get-release, *, *
 p, *, *, GET, /api/get-default-application, *, *
+p, *, *, POST, /api/enforce, *, *
+p, *, *, POST, /api/batch-enforce, *, *
+p, *, *, GET, /api/get-all-objects, *, *
+p, *, *, GET, /api/get-all-actions, *, *
+p, *, *, GET, /api/get-all-roles, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

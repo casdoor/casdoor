@@ -94,9 +94,29 @@ func UpdateRole(id string, role *Role) bool {
 		return false
 	}
 
+	permissions := GetPermissionsByRole(id)
+	for _, permission := range permissions {
+		removeGroupingPolicies(permission)
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
 	if err != nil {
 		panic(err)
+	}
+
+	new_id := role.GetId()
+	if id == new_id {
+		permissions := GetPermissionsByRole(id)
+		for _, permission := range permissions {
+			addGroupingPolicies(permission)
+		}
+	}
+
+	if id != new_id {
+		permissions := GetPermissionsByRole(new_id)
+		for _, permission := range permissions {
+			addGroupingPolicies(permission)
+		}
 	}
 
 	return affected != 0
@@ -112,9 +132,19 @@ func AddRole(role *Role) bool {
 }
 
 func DeleteRole(role *Role) bool {
+	permissions := GetPermissionsByRole(role.GetId())
+
+	for _, permission := range permissions {
+		removeGroupingPolicies(permission)
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{role.Owner, role.Name}).Delete(&Role{})
 	if err != nil {
 		panic(err)
+	}
+
+	for _, permission := range permissions {
+		addGroupingPolicies(permission)
 	}
 
 	return affected != 0
