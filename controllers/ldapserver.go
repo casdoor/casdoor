@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2022 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import (
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
-	ldap "github.com/forestmgy/ldapserver"
+	"github.com/forestmgy/ldapserver"
 	"github.com/lor00x/goldap/message"
 )
 
 func StartLdapServer() {
-	server := ldap.NewServer()
-	routes := ldap.NewRouteMux()
+	server := ldapserver.NewServer()
+	routes := ldapserver.NewRouteMux()
 
 	routes.Bind(handleBind)
 	routes.Search(handleSearch).Label(" SEARCH****")
@@ -48,15 +48,15 @@ func StartLdapServer() {
 	server.Stop()
 }
 
-func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
+func handleBind(w ldapserver.ResponseWriter, m *ldapserver.Message) {
 	r := m.GetBindRequest()
-	res := ldap.NewBindResponse(ldap.LDAPResultSuccess)
+	res := ldapserver.NewBindResponse(ldapserver.LDAPResultSuccess)
 
 	if r.AuthenticationChoice() == "simple" {
 		bindusername, bindorg, err := object.GetNameAndOrgFromDN(string(r.Name()))
 		if err != "" {
 			log.Printf("Bind failed ,ErrMsg=%s", err)
-			res.SetResultCode(ldap.LDAPResultInvalidDNSyntax)
+			res.SetResultCode(ldapserver.LDAPResultInvalidDNSyntax)
 			res.SetDiagnosticMessage("bind failed ErrMsg: " + err)
 			w.Write(res)
 			return
@@ -65,7 +65,7 @@ func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 		binduser, err := object.CheckUserPassword(bindorg, bindusername, bindpassword)
 		if err != "" {
 			log.Printf("Bind failed User=%s, Pass=%#v, ErrMsg=%s", string(r.Name()), r.Authentication(), err)
-			res.SetResultCode(ldap.LDAPResultInvalidCredentials)
+			res.SetResultCode(ldapserver.LDAPResultInvalidCredentials)
 			res.SetDiagnosticMessage("invalid credentials ErrMsg: " + err)
 			w.Write(res)
 			return
@@ -79,27 +79,26 @@ func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 		m.Client.UserName = bindusername
 		m.Client.OrgName = bindorg
 	} else {
-		res.SetResultCode(ldap.LDAPResultAuthMethodNotSupported)
+		res.SetResultCode(ldapserver.LDAPResultAuthMethodNotSupported)
 		res.SetDiagnosticMessage("Authentication method not supported,Please use Simple Authentication")
 	}
 	w.Write(res)
 }
 
-func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
-	res := ldap.NewSearchResultDoneResponse(ldap.LDAPResultSuccess)
+func handleSearch(w ldapserver.ResponseWriter, m *ldapserver.Message) {
+	res := ldapserver.NewSearchResultDoneResponse(ldapserver.LDAPResultSuccess)
 	if !m.Client.IsAuthenticated {
-		res.SetResultCode(ldap.LDAPResultUnwillingToPerform)
+		res.SetResultCode(ldapserver.LDAPResultUnwillingToPerform)
 		w.Write(res)
 		return
 	}
 	r := m.GetSearchRequest()
-	object.PrintSearchInfo(r)
 	if r.FilterString() == "(objectClass=*)" {
 		w.Write(res)
 		return
 	}
 	name, org, errCode := object.GetUserNameAndOrgFromBaseDnAndFilter(string(r.BaseObject()), r.FilterString())
-	if errCode != ldap.LDAPResultSuccess {
+	if errCode != ldapserver.LDAPResultSuccess {
 		res.SetResultCode(errCode)
 		w.Write(res)
 		return
@@ -112,7 +111,7 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	default:
 	}
 	users, errCode := object.GetFilteredUsers(m, name, org)
-	if errCode != ldap.LDAPResultSuccess {
+	if errCode != ldapserver.LDAPResultSuccess {
 		res.SetResultCode(errCode)
 		w.Write(res)
 		return
@@ -120,7 +119,7 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	for i := 0; i < len(users); i++ {
 		user := users[i]
 		dn := fmt.Sprintf("cn=%s,%s", user.DisplayName, string(r.BaseObject()))
-		e := ldap.NewSearchResultEntry(dn)
+		e := ldapserver.NewSearchResultEntry(dn)
 		e.AddAttribute("cn", message.AttributeValue(user.Name))
 		e.AddAttribute("uid", message.AttributeValue(user.Name))
 		e.AddAttribute("email", message.AttributeValue(user.Email))

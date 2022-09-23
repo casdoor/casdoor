@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2022 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,67 +19,56 @@ import (
 	"log"
 	"strings"
 
-	ldap "github.com/forestmgy/ldapserver"
-	"github.com/lor00x/goldap/message"
+	"github.com/forestmgy/ldapserver"
 )
 
-func GetNameAndOrgFromDN(DN string) (name, org, err string) {
-	DNvalue := strings.Split(DN, ",")
-	if len(DNvalue) == 1 || strings.ToLower(DNvalue[0])[0] != 'c' || strings.ToLower(DNvalue[1])[0] != 'o' {
+func GetNameAndOrgFromDN(DN string) (string, string, string) {
+	DNValue := strings.Split(DN, ",")
+	if len(DNValue) == 1 || strings.ToLower(DNValue[0])[0] != 'c' || strings.ToLower(DNValue[1])[0] != 'o' {
 		return "", "", "please use correct Admin Name format like cn=xxx,ou=xxx,dc=example,dc=com"
 	}
-	return DNvalue[0][3:], DNvalue[1][3:], ""
+	return DNValue[0][3:], DNValue[1][3:], ""
 }
 
-func GetUserNameAndOrgFromBaseDnAndFilter(BaseDN, Filter string) (name, org string, errCode int) {
-	if !strings.Contains(BaseDN, "ou=") || !strings.Contains(Filter, "cn=") {
-		name, org = "", ""
-		errCode = ldap.LDAPResultInvalidDNSyntax
-		return
+func GetUserNameAndOrgFromBaseDnAndFilter(baseDN, filter string) (string, string, int) {
+	if !strings.Contains(baseDN, "ou=") || !strings.Contains(filter, "cn=") {
+		return "", "", ldapserver.LDAPResultInvalidDNSyntax
 	}
-	name = getUserNameFromFilter(Filter)
-	_, org, _ = GetNameAndOrgFromDN(fmt.Sprintf("cn=%s,", name) + BaseDN)
-	errCode = ldap.LDAPResultSuccess
-	return
+	name := getUserNameFromFilter(filter)
+	_, org, _ := GetNameAndOrgFromDN(fmt.Sprintf("cn=%s,", name) + baseDN)
+	errCode := ldapserver.LDAPResultSuccess
+	return name, org, errCode
 }
 
-func getUserNameFromFilter(Filter string) string {
-	nameIndex := strings.Index(Filter, "cn=")
+func getUserNameFromFilter(filter string) string {
+	nameIndex := strings.Index(filter, "cn=")
 	var name string
-	for i := nameIndex + 3; Filter[i] != ')'; i++ {
-		name = name + string(Filter[i])
+	for i := nameIndex + 3; filter[i] != ')'; i++ {
+		name = name + string(filter[i])
 	}
 	return name
 }
 
-func PrintSearchInfo(r message.SearchRequest) {
-	log.Printf("Request BaseDn=%s", r.BaseObject())
-	log.Printf("Request Filter=%s", r.Filter())
-	log.Printf("Request FilterString=%s", r.FilterString())
-	log.Printf("Request Attributes=%s", r.Attributes())
-	log.Printf("Request TimeLimit=%d", r.TimeLimit().Int())
-}
-
-func GetFilteredUsers(m *ldap.Message, name, org string) ([]*User, int) {
+func GetFilteredUsers(m *ldapserver.Message, name, org string) ([]*User, int) {
 	var filteredUsers []*User
 	if name == "*" && m.Client.IsOrgAdmin { // get all users from organization 'org'
 		if m.Client.OrgName == "built-in" && org == "*" {
 			filteredUsers = GetGlobalUsers()
-			return filteredUsers, ldap.LDAPResultSuccess
+			return filteredUsers, ldapserver.LDAPResultSuccess
 		} else if m.Client.OrgName == "built-in" || org == m.Client.OrgName {
 			filteredUsers = GetUsers(org)
-			return filteredUsers, ldap.LDAPResultSuccess
+			return filteredUsers, ldapserver.LDAPResultSuccess
 		} else {
-			return nil, ldap.LDAPResultInsufficientAccessRights
+			return nil, ldapserver.LDAPResultInsufficientAccessRights
 		}
 	} else {
 		hasPermission, err := CheckUserPermission(fmt.Sprintf("%s/%s", m.Client.OrgName, m.Client.UserName), fmt.Sprintf("%s/%s", org, name), org, true)
 		if !hasPermission {
 			log.Printf("ErrMsg = %v", err.Error())
-			return nil, ldap.LDAPResultInsufficientAccessRights
+			return nil, ldapserver.LDAPResultInsufficientAccessRights
 		}
 		user := getUser(org, name)
 		filteredUsers = append(filteredUsers, user)
-		return filteredUsers, ldap.LDAPResultSuccess
+		return filteredUsers, ldapserver.LDAPResultSuccess
 	}
 }
