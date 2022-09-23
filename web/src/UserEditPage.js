@@ -101,9 +101,9 @@ class UserEditPage extends React.Component {
       });
   }
 
-  getRedirectUrl() {
+  getReturnUrl() {
     const searchParams = new URLSearchParams(this.props.location.search);
-    return searchParams.get("redirect");
+    return searchParams.get("returnUrl");
   }
 
   parseUserField(key, value) {
@@ -623,9 +623,9 @@ class UserEditPage extends React.Component {
             }
           } else {
             if (willExist) {
-              const redirectUrl = this.getRedirectUrl();
-              if (redirectUrl) {
-                window.location.href = redirectUrl;
+              const returnUrl = this.getReturnUrl();
+              if (returnUrl) {
+                window.location.href = returnUrl;
               }
             }
           }
