@@ -101,6 +101,11 @@ class UserEditPage extends React.Component {
       });
   }
 
+  getReturnUrl() {
+    const searchParams = new URLSearchParams(this.props.location.search);
+    return searchParams.get("returnUrl");
+  }
+
   parseUserField(key, value) {
     // if ([].includes(key)) {
     //   value = Setting.myParseInt(value);
@@ -615,6 +620,13 @@ class UserEditPage extends React.Component {
               this.props.history.push("/users");
             } else {
               this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
+            }
+          } else {
+            if (willExist) {
+              const returnUrl = this.getReturnUrl();
+              if (returnUrl) {
+                window.location.href = returnUrl;
+              }
             }
           }
         } else {
