@@ -36,7 +36,7 @@ func StartLdapServer() {
 
 	server.Handle(routes)
 
-	go server.ListenAndServe("127.0.0.1:" + conf.GetConfigString("ldapServerPort"))
+	go server.ListenAndServe("0.0.0.0:" + conf.GetConfigString("ldapServerPort"))
 
 	// When CTRL+C, SIGINT and SIGTERM signal occurs
 	// Then stop server gracefully
