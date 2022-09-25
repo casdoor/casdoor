@@ -138,6 +138,70 @@ class LoginPage extends React.Component {
     this.props.onUpdateAccount(account);
   }
 
+  populateOauthValues(values) {
+    const oAuthParams = Util.getOAuthGetParameters();
+    if (oAuthParams !== null && oAuthParams.responseType !== null && oAuthParams.responseType !== "") {
+      values["type"] = oAuthParams.responseType;
+    } else {
+      values["type"] = this.state.type;
+    }
+    values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix;
+
+    if (oAuthParams !== null) {
+      values["samlRequest"] = oAuthParams.samlRequest;
+    }
+
+    if (values["samlRequest"] !== null && values["samlRequest"] !== "" && values["samlRequest"] !== undefined) {
+      values["type"] = "saml";
+    }
+
+    if (this.state.owner !== null && this.state.owner !== undefined) {
+      values["organization"] = this.state.owner;
+    }
+  }
+  postCodeLoginAction(res) {
+    const application = this.getApplicationObj();
+    const ths = this;
+    const oAuthParams = Util.getOAuthGetParameters();
+    const code = res.data;
+    const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
+    const noRedirect = oAuthParams.noRedirect;
+    if (Setting.hasPromptPage(application)) {
+      AuthBackend.getAccount("")
+        .then((res) => {
+          let account = null;
+          if (res.status === "ok") {
+            account = res.data;
+            account.organization = res.data2;
+
+            this.onUpdateAccount(account);
+
+            if (Setting.isPromptAnswered(account, application)) {
+              Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+            } else {
+              Setting.goToLinkSoft(ths, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
+            }
+          } else {
+            Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
+          }
+        });
+    } else {
+      if (noRedirect === "true") {
+        window.close();
+        const newWindow = window.open(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+        if (newWindow) {
+          setInterval(() => {
+            if (!newWindow.closed) {
+              newWindow.close();
+            }
+          }, 1000);
+        }
+      } else {
+        Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+      }
+    }
+  }
+
   onFinish(values) {
     if (this.state.loginMethod === "webAuthn") {
       let username = this.state.username;
@@ -145,12 +209,9 @@ class LoginPage extends React.Component {
         username = values["username"];
       }
 
-      this.signInWithWebAuthn(username);
+      this.signInWithWebAuthn(username, values);
       return;
     }
-
-    const application = this.getApplicationObj();
-    const ths = this;
 
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     if (this.state.type === "cas") {
@@ -179,24 +240,7 @@ class LoginPage extends React.Component {
     } else {
       // OAuth
       const oAuthParams = Util.getOAuthGetParameters();
-      if (oAuthParams !== null && oAuthParams.responseType !== null && oAuthParams.responseType !== "") {
-        values["type"] = oAuthParams.responseType;
-      } else {
-        values["type"] = this.state.type;
-      }
-      values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix;
-
-      if (oAuthParams !== null) {
-        values["samlRequest"] = oAuthParams.samlRequest;
-      }
-
-      if (values["samlRequest"] !== null && values["samlRequest"] !== "" && values["samlRequest"] !== undefined) {
-        values["type"] = "saml";
-      }
-
-      if (this.state.owner !== null && this.state.owner !== undefined) {
-        values["organization"] = this.state.owner;
-      }
+      this.populateOauthValues(values);
 
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
@@ -208,45 +252,7 @@ class LoginPage extends React.Component {
               const link = Setting.getFromLink();
               Setting.goToLink(link);
             } else if (responseType === "code") {
-              const code = res.data;
-              const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
-              const noRedirect = oAuthParams.noRedirect;
-
-              if (Setting.hasPromptPage(application)) {
-                AuthBackend.getAccount("")
-                  .then((res) => {
-                    let account = null;
-                    if (res.status === "ok") {
-                      account = res.data;
-                      account.organization = res.data2;
-
-                      this.onUpdateAccount(account);
-
-                      if (Setting.isPromptAnswered(account, application)) {
-                        Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
-                      } else {
-                        Setting.goToLinkSoft(ths, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
-                      }
-                    } else {
-                      Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
-                    }
-                  });
-              } else {
-                if (noRedirect === "true") {
-                  window.close();
-                  const newWindow = window.open(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
-                  if (newWindow) {
-                    setInterval(() => {
-                      if (!newWindow.closed) {
-                        newWindow.close();
-                      }
-                    }, 1000);
-                  }
-                } else {
-                  Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
-                }
-              }
-
+              this.postCodeLoginAction(res);
               // Util.showMessage("success", `Authorization code: ${res.data}`);
             } else if (responseType === "token" || responseType === "id_token") {
               const accessToken = res.data;
@@ -572,12 +578,9 @@ class LoginPage extends React.Component {
     );
   }
 
-  signInWithWebAuthn(username) {
-    if (username === null || username === "") {
-      Setting.showMessage("error", "username is required for webauthn login");
-      return;
-    }
-
+  signInWithWebAuthn(username, values) {
+    const oAuthParams = Util.getOAuthGetParameters();
+    this.populateOauthValues(values);
     const application = this.getApplicationObj();
     return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}&name=${username}`, {
       method: "GET",
@@ -622,8 +625,16 @@ class LoginPage extends React.Component {
         })
           .then(res => res.json()).then((res) => {
             if (res.msg === "") {
-              Setting.showMessage("success", "Successfully logged in with webauthn credentials");
-              Setting.goToLink("/");
+              const responseType = values["type"];
+              if (responseType === "code") {
+                this.postCodeLoginAction(res);
+              } else if (responseType === "token" || responseType === "id_token") {
+                const accessToken = res.data;
+                Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
+              } else {
+                Setting.showMessage("success", "Successfully logged in with webauthn credentials");
+                Setting.goToLink("/");
+              }
             } else {
               Setting.showMessage("error", res.msg);
             }
