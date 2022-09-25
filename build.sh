@@ -1,6 +1,6 @@
 #!/bin/bash
 #try to connect to google to determine whether user need to use proxy
-curl www.google.com -o /dev/null --connect-timeout 5 2 > /dev/null
+curl www.google.com -o /dev/null --connect-timeout 5 2> /dev/null
 if [ $? == 0 ]
 then
     echo "Successfully connected to Google, no need to use Go proxy"
