@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -25,15 +24,10 @@ import (
 
 type Claims struct {
 	*User
-	Address Address `json:"address"`
-	Nonce   string  `json:"nonce,omitempty"`
-	Tag     string  `json:"tag,omitempty"`
-	Scope   string  `json:"scope,omitempty"`
+	Nonce string `json:"nonce,omitempty"`
+	Tag   string `json:"tag,omitempty"`
+	Scope string `json:"scope,omitempty"`
 	jwt.RegisteredClaims
-}
-
-type Address struct {
-	Formatted string `json:"formatted"`
 }
 
 type UserShort struct {
@@ -78,9 +72,8 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 	jti := fmt.Sprintf("%s/%s", application.Owner, name)
 
 	claims := Claims{
-		User:    user,
-		Address: Address{Formatted: strings.Join(user.Address, ",")},
-		Nonce:   nonce,
+		User:  user,
+		Nonce: nonce,
 		// FIXME: A workaround for custom claim by reusing `tag` in user info
 		Tag:   user.Tag,
 		Scope: scope,
