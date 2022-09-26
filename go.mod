@@ -16,7 +16,7 @@ require (
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/denisenkom/go-mssqldb v0.0.0-20200428022330-06a60b6afbbc
 	github.com/duo-labs/webauthn v0.0.0-20211221191814-a22482edaa3b
-	github.com/forestmgy/ldapserver v1.0.9
+	github.com/forestmgy/ldapserver v1.1.0
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
 	github.com/go-ldap/ldap/v3 v3.3.0
 	github.com/go-pay/gopay v1.5.72
