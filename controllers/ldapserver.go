@@ -104,6 +104,8 @@ func handleSearch(w ldapserver.ResponseWriter, m *ldapserver.Message) {
 		return
 	}
 	// Handle Stop Signal (server stop / client disconnected / Abandoned request....)
+	fmt.Println(r.BaseObject(), "11111111111")
+	fmt.Println(r.Filter(), "11111111111")
 	select {
 	case <-m.Done:
 		log.Print("Leaving handleSearch...")
