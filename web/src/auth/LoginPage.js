@@ -555,6 +555,12 @@ class LoginPage extends React.Component {
       this.onFinish(values);
     }
 
+    if (application.enableAutoSignin) {
+      const values = {};
+      values["application"] = this.state.application.name;
+      this.onFinish(values);
+    }
+
     return (
       <div>
         {/* {*/}

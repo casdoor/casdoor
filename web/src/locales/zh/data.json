@@ -13,6 +13,8 @@
     "Sync": "同步"
   },
   "application": {
+    "Auto signin": "启用自动登录",
+    "Auto signin - Tooltip": "当Casdoor存在已登录会话时，自动采用该会话进行应用端的登录",
     "Background URL": "背景图URL",
     "Background URL - Tooltip": "登录页背景图的链接",
     "Copy SAML metadata URL": "复制SAML元数据URL",

@@ -53,6 +53,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_twilio.png`,
       url: "https://www.twilio.com/messaging",
     },
+    "SmsBao SMS": {
+      logo: `${StaticBaseUrl}/img/social_smsbao.png`,
+      url: "https://www.smsbao.com/",
+    },
     "Mock SMS": {
       logo: `${StaticBaseUrl}/img/social_default.png`,
       url: "",
@@ -658,6 +662,7 @@ export function getProviderTypeOptions(category) {
         {id: "Volc Engine SMS", name: "Volc Engine SMS"},
         {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
         {id: "Twilio SMS", name: "Twilio SMS"},
+        {id: "SmsBao SMS", name: "SmsBao SMS"},
       ]
     );
   } else if (category === "Storage") {

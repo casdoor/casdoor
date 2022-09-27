@@ -98,8 +98,8 @@ github.com/casbin/casbin/v2 v2.30.1 h1:P5HWadDL7olwUXNdcuKUBk+x75Y2eitFxYTcLNKeK
 github.com/casbin/casbin/v2 v2.30.1/go.mod h1:vByNa/Fchek0KZUgG5wEsl7iFsiviAYKRtgrQfcJqHg=
 github.com/casbin/xorm-adapter/v3 v3.0.1 h1:0l0zkYxo6cNuIdrBZgFxlje1TRvmheYa/zIp+sGPK58=
 github.com/casbin/xorm-adapter/v3 v3.0.1/go.mod h1:1BL7rHEDXrxO+vQdSo/ZaWKRivXl7YTos67GdMYcd20=
-github.com/casdoor/go-sms-sender v0.4.0 h1:gqlSWq0Z6cymOGOqSGfKDi/C1ZmDy+91JdCaUHUN9qo=
-github.com/casdoor/go-sms-sender v0.4.0/go.mod h1:kBykbqwgRDXbXdMAIxmZKinVM1WjdqEbej5LAbUbcfI=
+github.com/casdoor/go-sms-sender v0.5.1 h1:1/Wp1OLkVAVY4lEGQhekSNetSAWhnPcxYPV7xpCZgC0=
+github.com/casdoor/go-sms-sender v0.5.1/go.mod h1:kBykbqwgRDXbXdMAIxmZKinVM1WjdqEbej5LAbUbcfI=
 github.com/casdoor/goth v1.69.0-FIX2 h1:RgfIMkL9kekylgxHHK2ZY8ASAwOGns2HVlaBwLu7Bcs=
 github.com/casdoor/goth v1.69.0-FIX2/go.mod h1:Om55nRo8CkeDkPSNBbzXW4G5uI28ZUkSk5S69dPek3s=
 github.com/casdoor/oss v1.2.0 h1:ozLAE+nnNdFQBWbzH8U9spzaO8h8NrB57lBcdyMUUQ8=
