@@ -13,6 +13,8 @@
     "Sync": "Sync"
   },
   "application": {
+    "Auto signin": "Auto signin",
+    "Auto signin - Tooltip": "Auto signin - Tooltip",
     "Background URL": "Background URL",
     "Background URL - Tooltip": "Background URL - Tooltip",
     "Copy SAML metadata URL": "Копировать адрес метаданных SAML",

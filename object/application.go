@@ -46,6 +46,7 @@ type Application struct {
 	EnablePassword      bool            `json:"enablePassword"`
 	EnableSignUp        bool            `json:"enableSignUp"`
 	EnableSigninSession bool            `json:"enableSigninSession"`
+	EnableAutoSignin    bool            `json:"enableAutoSignin"`
 	EnableCodeSignin    bool            `json:"enableCodeSignin"`
 	EnableSamlCompress  bool            `json:"enableSamlCompress"`
 	EnableWebAuthn      bool            `json:"enableWebAuthn"`
