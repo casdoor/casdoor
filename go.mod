@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go v1.44.4
 	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin/v2 v2.30.1
-	github.com/casbin/xorm-adapter/v2 v2.5.1
+	github.com/casbin/xorm-adapter/v3 v3.0.1
 	github.com/casdoor/go-sms-sender v0.5.1
 	github.com/casdoor/goth v1.69.0-FIX2
 	github.com/casdoor/oss v1.2.0

@@ -20,7 +20,7 @@ import (
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
-	xormadapter "github.com/casbin/xorm-adapter/v2"
+	xormadapter "github.com/casbin/xorm-adapter/v3"
 	"github.com/casdoor/casdoor/util"
 
 	"xorm.io/core"
@@ -162,7 +162,7 @@ func matrixToCasbinRules(pType string, policies [][]string) []*xormadapter.Casbi
 
 	for _, policy := range policies {
 		line := xormadapter.CasbinRule{
-			PType: pType,
+			Ptype: pType,
 			V0:    safeReturn(policy, 0),
 			V1:    safeReturn(policy, 1),
 			V2:    safeReturn(policy, 2),
