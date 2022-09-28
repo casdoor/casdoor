@@ -595,7 +595,7 @@ class SignupPage extends React.Component {
         </Form.Item>
         {
           application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-            return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small");
+            return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small", this.props.location);
           })
         }
       </Form>

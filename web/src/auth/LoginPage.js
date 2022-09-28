@@ -269,23 +269,6 @@ class LoginPage extends React.Component {
     }
   }
 
-  getSamlUrl(provider) {
-    const params = new URLSearchParams(this.props.location.search);
-    const clientId = params.get("client_id");
-    const application = params.get("state");
-    const realRedirectUri = params.get("redirect_uri");
-    const redirectUri = `${window.location.origin}/callback/saml`;
-    const providerName = provider.name;
-    const relayState = `${clientId}&${application}&${providerName}&${realRedirectUri}&${redirectUri}`;
-    AuthBackend.getSamlLogin(`${provider.owner}/${providerName}`, btoa(relayState)).then((res) => {
-      if (res.data2 === "POST") {
-        document.write(res.data);
-      } else {
-        window.location.href = res.data;
-      }
-    });
-  }
-
   isProviderVisible(providerItem) {
     if (this.state.mode === "signup") {
       return Setting.isProviderVisibleForSignUp(providerItem);
@@ -446,7 +429,7 @@ class LoginPage extends React.Component {
           <Form.Item>
             {
               application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-                return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small");
+                return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small", this.props.location);
               })
             }
           </Form.Item>
@@ -467,7 +450,7 @@ class LoginPage extends React.Component {
           <br />
           {
             application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-              return ProviderButton.renderProviderLogo(providerItem.provider, application, 40, 10, "big");
+              return ProviderButton.renderProviderLogo(providerItem.provider, application, 40, 10, "big", this.props.location);
             })
           }
           <div>

@@ -51,7 +51,7 @@ class SamlCallback extends React.Component {
     const samlResponse = params.get("samlResponse");
     const messages = atob(relayState).split("&");
     const clientId = messages[0];
-    const applicationName = messages[1] === "null" ? "app-built-in" : messages[1];
+    const applicationName = (messages[1] === "null" || messages[1] === "undefined") ? "app-built-in" : messages[1];
     const providerName = messages[2];
     const redirectUri = messages[3];
     const responseType = this.getResponseType(redirectUri);
