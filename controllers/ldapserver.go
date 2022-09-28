@@ -16,11 +16,12 @@ package controllers
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/forestmgy/ldapserver"
 	"github.com/lor00x/goldap/message"
-	"log"
 )
 
 func StartLdapServer() {
@@ -32,7 +33,6 @@ func StartLdapServer() {
 
 	server.Handle(routes)
 	server.ListenAndServe("0.0.0.0:" + conf.GetConfigString("ldapServerPort"))
-
 }
 
 func handleBind(w ldapserver.ResponseWriter, m *ldapserver.Message) {
