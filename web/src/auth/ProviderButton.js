@@ -97,7 +97,7 @@ function getSigninButton(type) {
 }
 
 function getSamlUrl(provider, location) {
-  const params = new URLSearchParams(location);
+  const params = new URLSearchParams(location.search);
   const clientId = params.get("client_id");
   const application = params.get("state");
   const realRedirectUri = params.get("redirect_uri");
