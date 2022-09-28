@@ -16,15 +16,11 @@ package controllers
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"os/signal"
-	"syscall"
-
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/forestmgy/ldapserver"
 	"github.com/lor00x/goldap/message"
+	"log"
 )
 
 func StartLdapServer() {
@@ -35,17 +31,8 @@ func StartLdapServer() {
 	routes.Search(handleSearch).Label(" SEARCH****")
 
 	server.Handle(routes)
+	server.ListenAndServe("0.0.0.0:" + conf.GetConfigString("ldapServerPort"))
 
-	go server.ListenAndServe("0.0.0.0:" + conf.GetConfigString("ldapServerPort"))
-
-	// When CTRL+C, SIGINT and SIGTERM signal occurs
-	// Then stop server gracefully
-	ch := make(chan os.Signal)
-	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
-	<-ch
-	close(ch)
-
-	server.Stop()
 }
 
 func handleBind(w ldapserver.ResponseWriter, m *ldapserver.Message) {
