@@ -44,7 +44,7 @@ class WebAuthnCredentialTable extends React.Component {
         title={() => (
           <div>
             {i18next.t("user:WebAuthn credentials")}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => {this.registerWebAuthn();}}>
+            <Button disabled={!this.props.isSelf} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => {this.registerWebAuthn();}}>
               {i18next.t("general:Add")}
             </Button>
           </div>

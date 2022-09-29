@@ -127,8 +127,12 @@ class UserEditPage extends React.Component {
     this.getUser();
   }
 
+  isSelf() {
+    return (this.state.user.id === this.props.account?.id);
+  }
+
   isSelfOrAdmin() {
-    return (this.state.user.id === this.props.account?.id) || Setting.isAdminUser(this.props.account);
+    return this.isSelf() || Setting.isAdminUser(this.props.account);
   }
 
   renderAccountItem(accountItem) {
@@ -136,7 +140,6 @@ class UserEditPage extends React.Component {
       return null;
     }
 
-    const isSelf = this.state.user.id === this.props.account?.id;
     const isAdmin = Setting.isAdminUser(this.props.account);
 
     // return (
@@ -148,7 +151,7 @@ class UserEditPage extends React.Component {
     // )
 
     if (accountItem.viewRule === "Self") {
-      if (!isSelf && !isAdmin) {
+      if (!this.isSelfOrAdmin()) {
         return null;
       }
     } else if (accountItem.viewRule === "Admin") {
@@ -159,7 +162,7 @@ class UserEditPage extends React.Component {
 
     let disabled = false;
     if (accountItem.modifyRule === "Self") {
-      if (!isSelf && !isAdmin) {
+      if (!this.isSelfOrAdmin()) {
         disabled = true;
       }
     } else if (accountItem.modifyRule === "Admin") {
@@ -296,7 +299,11 @@ class UserEditPage extends React.Component {
               }} />
           </Col>
           <Col span={11} >
-            {this.state.user.id === this.props.account?.id ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />) : null}
+            {
+              !this.isSelf() ? null : (
+                <ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />
+              )
+            }
           </Col>
         </Row>
       );
@@ -556,7 +563,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:WebAuthn credentials"), i18next.t("user:WebAuthn credentials"))} :
           </Col>
           <Col span={22} >
-            <WebAuthnCredentialTable table={this.state.user.webauthnCredentials} updateTable={(table) => {this.updateUserField("webauthnCredentials", table);}} refresh={this.getUser.bind(this)} />
+            <WebAuthnCredentialTable isSelf={this.isSelf()} table={this.state.user.webauthnCredentials} updateTable={(table) => {this.updateUserField("webauthnCredentials", table);}} refresh={this.getUser.bind(this)} />
           </Col>
         </Row>
       );
