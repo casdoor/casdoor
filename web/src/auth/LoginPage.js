@@ -512,14 +512,19 @@ class LoginPage extends React.Component {
     }
   }
 
+  sendSilentSigninData(data) {
+    if (Setting.inIframe()) {
+      const message = {tag: "Casdoor", type: "SilentSignin", data: data};
+      window.parent.postMessage(message, "*");
+    }
+  }
+
   renderSignedInBox() {
     if (this.props.account === undefined || this.props.account === null) {
-      if (window !== window.parent) {
-        const message = {tag: "Casdoor", type: "SilentSignin", data: "user-not-logged-in"};
-        window.parent.postMessage(message, "*");
-      }
+      this.sendSilentSigninData("user-not-logged-in");
       return null;
     }
+
     const application = this.getApplicationObj();
     if (this.props.account.owner !== application.organization) {
       return null;
@@ -528,10 +533,7 @@ class LoginPage extends React.Component {
     const params = new URLSearchParams(this.props.location.search);
     const silentSignin = params.get("silentSignin");
     if (silentSignin !== null) {
-      if (window !== window.parent) {
-        const message = {tag: "Casdoor", type: "SilentSignin", data: "signing-in"};
-        window.parent.postMessage(message, "*");
-      }
+      this.sendSilentSigninData("signing-in");
 
       const values = {};
       values["application"] = this.state.application.name;
