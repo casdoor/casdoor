@@ -22,7 +22,7 @@ import (
 	"mime"
 	"path/filepath"
 
-	"github.com/astaxie/beego/utils/pagination"
+	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )

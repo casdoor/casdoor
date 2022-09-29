@@ -18,7 +18,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/astaxie/beego"
+	"github.com/beego/beego"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -19,8 +19,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/astaxie/beego/context"
-	"github.com/astaxie/beego/logs"
+	"github.com/beego/beego/context"
+	"github.com/beego/beego/logs"
 )
 
 func GetIPInfo(clientIP string) string {

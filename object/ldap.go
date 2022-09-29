@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/astaxie/beego"
+	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 	"github.com/thanhpk/randstr"
