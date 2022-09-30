@@ -78,31 +78,31 @@ type User struct {
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
 	LastSigninIp   string `xorm:"varchar(100)" json:"lastSigninIp"`
 
-	GitHub   string `xorm:"github varchar(100)" json:"github"`
-	Google   string `xorm:"varchar(100)" json:"google"`
-	QQ       string `xorm:"qq varchar(100)" json:"qq"`
-	WeChat   string `xorm:"wechat varchar(100)" json:"wechat"`
-	Facebook string `xorm:"facebook varchar(100)" json:"facebook"`
-	DingTalk string `xorm:"dingtalk varchar(100)" json:"dingtalk"`
-	Weibo    string `xorm:"weibo varchar(100)" json:"weibo"`
-	Gitee    string `xorm:"gitee varchar(100)" json:"gitee"`
-	LinkedIn string `xorm:"linkedin varchar(100)" json:"linkedin"`
-	Wecom    string `xorm:"wecom varchar(100)" json:"wecom"`
-	Lark     string `xorm:"lark varchar(100)" json:"lark"`
-	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab"`
-	Adfs     string `xorm:"adfs varchar(100)" json:"adfs"`
-	Baidu    string `xorm:"baidu varchar(100)" json:"baidu"`
-	Alipay   string `xorm:"alipay varchar(100)" json:"alipay"`
-	Casdoor  string `xorm:"casdoor varchar(100)" json:"casdoor"`
-	Infoflow string `xorm:"infoflow varchar(100)" json:"infoflow"`
-	Apple    string `xorm:"apple varchar(100)" json:"apple"`
-	AzureAD  string `xorm:"azuread varchar(100)" json:"azuread"`
-	Slack    string `xorm:"slack varchar(100)" json:"slack"`
-	Steam    string `xorm:"steam varchar(100)" json:"steam"`
-	Bilibili string `xorm:"bilibili varchar(100)" json:"bilibili"`
-	Okta     string `xorm:"okta varchar(100)" json:"okta"`
-	Douyin   string `xorm:"douyin varchar(100)" json:"douyin"`
-	Custom   string `xorm:"custom varchar(100)" json:"custom"`
+	GitHub   string `xorm:"github varchar(100)" json:"github,omitempty"`
+	Google   string `xorm:"varchar(100)" json:"google,omitempty"`
+	QQ       string `xorm:"qq varchar(100)" json:"qq,omitempty"`
+	WeChat   string `xorm:"wechat varchar(100)" json:"wechat,omitempty"`
+	Facebook string `xorm:"facebook varchar(100)" json:"facebook,omitempty"`
+	DingTalk string `xorm:"dingtalk varchar(100)" json:"dingtalk,omitempty"`
+	Weibo    string `xorm:"weibo varchar(100)" json:"weibo,omitempty"`
+	Gitee    string `xorm:"gitee varchar(100)" json:"gitee,omitempty"`
+	LinkedIn string `xorm:"linkedin varchar(100)" json:"linkedin,omitempty"`
+	Wecom    string `xorm:"wecom varchar(100)" json:"wecom,omitempty"`
+	Lark     string `xorm:"lark varchar(100)" json:"lark,omitempty"`
+	Gitlab   string `xorm:"gitlab varchar(100)" json:"gitlab,omitempty"`
+	Adfs     string `xorm:"adfs varchar(100)" json:"adfs,omitempty"`
+	Baidu    string `xorm:"baidu varchar(100)" json:"baidu,omitempty"`
+	Alipay   string `xorm:"alipay varchar(100)" json:"alipay,omitempty"`
+	Casdoor  string `xorm:"casdoor varchar(100)" json:"casdoor,omitempty"`
+	Infoflow string `xorm:"infoflow varchar(100)" json:"infoflow,omitempty"`
+	Apple    string `xorm:"apple varchar(100)" json:"apple,omitempty"`
+	AzureAD  string `xorm:"azuread varchar(100)" json:"azuread,omitempty"`
+	Slack    string `xorm:"slack varchar(100)" json:"slack,omitempty"`
+	Steam    string `xorm:"steam varchar(100)" json:"steam,omitempty"`
+	Bilibili string `xorm:"bilibili varchar(100)" json:"bilibili,omitempty"`
+	Okta     string `xorm:"okta varchar(100)" json:"okta,omitempty"`
+	Douyin   string `xorm:"douyin varchar(100)" json:"douyin,omitempty"`
+	Custom   string `xorm:"custom varchar(100)" json:"custom,omitempty"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
 
