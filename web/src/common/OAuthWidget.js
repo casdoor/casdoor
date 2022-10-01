@@ -149,7 +149,7 @@ class OAuthWidget extends React.Component {
           <img style={{marginRight: "10px"}} width={30} height={30} src={avatarUrl} alt={name} referrerPolicy="no-referrer" />
           <span style={{width: this.props.labelSpan === 3 ? "300px" : "130px", display: (Setting.isMobile()) ? "inline" : "inline-block"}}>
             {
-              linkedValue === "" ? (
+              linkedValue === "" || linkedValue === undefined ? (
                 "(empty)"
               ) : (
                 profileUrl === "" ? name : (
@@ -163,7 +163,7 @@ class OAuthWidget extends React.Component {
             }
           </span>
           {
-            linkedValue === "" ? (
+            linkedValue === "" || linkedValue === undefined ? (
               <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "link")}>
                 <Button style={{marginLeft: "20px", width: "80px"}} type="primary" disabled={user.id !== account.id}>{i18next.t("user:Link")}</Button>
               </a>
