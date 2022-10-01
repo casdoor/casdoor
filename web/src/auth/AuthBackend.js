@@ -37,7 +37,7 @@ export function getEmailAndPhone(values) {
   }).then((res) => res.json());
 }
 
-function oAuthParamsToQuery(oAuthParams) {
+export function oAuthParamsToQuery(oAuthParams) {
   // login
   if (oAuthParams === null) {
     return "";

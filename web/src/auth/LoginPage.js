@@ -599,7 +599,7 @@ class LoginPage extends React.Component {
         const rawId = assertion.rawId;
         const sig = assertion.response.signature;
         const userHandle = assertion.response.userHandle;
-        return fetch(`${Setting.ServerUrl}/api/webauthn/signin/finish`, {
+        return fetch(`${Setting.ServerUrl}/api/webauthn/signin/finish${AuthBackend.oAuthParamsToQuery(oAuthParams)}`, {
           method: "POST",
           credentials: "include",
           body: JSON.stringify({
