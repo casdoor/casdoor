@@ -37,30 +37,30 @@ type User struct {
 
 	Id                string   `xorm:"varchar(100) index" json:"id"`
 	Type              string   `xorm:"varchar(100)" json:"type"`
-	Password          string   `xorm:"varchar(100)" json:"password"`
-	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
-	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
-	FirstName         string   `xorm:"varchar(100)" json:"firstName"`
-	LastName          string   `xorm:"varchar(100)" json:"lastName"`
-	Avatar            string   `xorm:"varchar(500)" json:"avatar"`
-	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
+	Password          string   `xorm:"varchar(100)" json:"password,omitempty"`
+	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt,omitempty"`
+	DisplayName       string   `xorm:"varchar(100)" json:"displayName,omitempty"`
+	FirstName         string   `xorm:"varchar(100)" json:"firstName,omitempty"`
+	LastName          string   `xorm:"varchar(100)" json:"lastName,omitempty"`
+	Avatar            string   `xorm:"varchar(500)" json:"avatar,omitempty"`
+	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar,omitempty"`
 	Email             string   `xorm:"varchar(100) index" json:"email"`
 	EmailVerified     bool     `json:"emailVerified"`
-	Phone             string   `xorm:"varchar(100) index" json:"phone"`
-	Location          string   `xorm:"varchar(100)" json:"location"`
+	Phone             string   `xorm:"varchar(100) index" json:"phone,omitempty"`
+	Location          string   `xorm:"varchar(100)" json:"location,omitempty"`
 	Address           []string `json:"address"`
-	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
-	Title             string   `xorm:"varchar(100)" json:"title"`
-	IdCardType        string   `xorm:"varchar(100)" json:"idCardType"`
-	IdCard            string   `xorm:"varchar(100) index" json:"idCard"`
-	Homepage          string   `xorm:"varchar(100)" json:"homepage"`
-	Bio               string   `xorm:"varchar(100)" json:"bio"`
-	Tag               string   `xorm:"varchar(100)" json:"tag"`
-	Region            string   `xorm:"varchar(100)" json:"region"`
+	Affiliation       string   `xorm:"varchar(100)" json:"affiliation,omitempty"`
+	Title             string   `xorm:"varchar(100)" json:"title,omitempty"`
+	IdCardType        string   `xorm:"varchar(100)" json:"idCardType,omitempty"`
+	IdCard            string   `xorm:"varchar(100) index" json:"idCard,omitempty"`
+	Homepage          string   `xorm:"varchar(100)" json:"homepage,omitempty"`
+	Bio               string   `xorm:"varchar(100)" json:"bio,omitempty"`
+	Tag               string   `xorm:"varchar(100)" json:"tag,omitempty"`
+	Region            string   `xorm:"varchar(100)" json:"region,omitempty"`
 	Language          string   `xorm:"varchar(100)" json:"language"`
-	Gender            string   `xorm:"varchar(100)" json:"gender"`
-	Birthday          string   `xorm:"varchar(100)" json:"birthday"`
-	Education         string   `xorm:"varchar(100)" json:"education"`
+	Gender            string   `xorm:"varchar(100)" json:"gender,omitempty"`
+	Birthday          string   `xorm:"varchar(100)" json:"birthday,omitempty"`
+	Education         string   `xorm:"varchar(100)" json:"education,omitempty"`
 	Score             int      `json:"score"`
 	Karma             int      `json:"karma"`
 	Ranking           int      `json:"ranking"`
@@ -71,12 +71,12 @@ type User struct {
 	IsForbidden       bool     `json:"isForbidden"`
 	IsDeleted         bool     `json:"isDeleted"`
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
-	Hash              string   `xorm:"varchar(100)" json:"hash"`
-	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
+	Hash              string   `xorm:"varchar(100)" json:"hash,omitempty"`
+	PreHash           string   `xorm:"varchar(100)" json:"preHash,omitempty"`
 
-	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
-	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
-	LastSigninIp   string `xorm:"varchar(100)" json:"lastSigninIp"`
+	CreatedIp      string `xorm:"varchar(100)" json:"createdIp,omitempty"`
+	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime,omitempty"`
+	LastSigninIp   string `xorm:"varchar(100)" json:"lastSigninIp,omitempty"`
 
 	GitHub   string `xorm:"github varchar(100)" json:"github,omitempty"`
 	Google   string `xorm:"varchar(100)" json:"google,omitempty"`
@@ -106,7 +106,7 @@ type User struct {
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
 
-	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
+	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap,omitempty"`
 	Properties map[string]string `json:"properties"`
 
 	Roles       []*Role       `json:"roles"`
