@@ -49,7 +49,7 @@ class SelectLanguageBox extends React.Component {
 
     return (
       <Dropdown overlay={menu} >
-        <div className="language_box" />
+        <div className="language_box" id={this.props.id} style={this.props.style} />
       </Dropdown>
     );
   }
