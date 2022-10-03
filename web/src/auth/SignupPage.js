@@ -25,6 +25,7 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import {CountDownInput} from "../common/CountDownInput";
 import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
+import SelectLanguageBox from "../SelectLanguageBox";
 
 const formItemLayout = {
   labelCol: {
@@ -622,16 +623,19 @@ class SignupPage extends React.Component {
         &nbsp;
         <Row>
           <Col span={8} offset={application.formOffset === 0 || Setting.inIframe() || Setting.isMobile() ? 8 : application.formOffset} style={{display: "flex", justifyContent: "center"}} >
-            <div style={{marginBottom: "10px", textAlign: "center", ...formStyle}}>
-              {
-                Setting.renderHelmet(application)
-              }
-              {
-                Setting.renderLogo(application)
-              }
-              {
-                this.renderForm(application)
-              }
+            <div className="login-content">
+              <div style={{marginBottom: "10px", textAlign: "center", ...formStyle}}>
+                <SelectLanguageBox id="language-box-corner" style={{top: "3px", right: "5px"}} />
+                {
+                  Setting.renderHelmet(application)
+                }
+                {
+                  Setting.renderLogo(application)
+                }
+                {
+                  this.renderForm(application)
+                }
+              </div>
             </div>
           </Col>
         </Row>

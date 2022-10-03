@@ -28,6 +28,7 @@ import SelfLoginButton from "./SelfLoginButton";
 import i18next from "i18next";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
+import SelectLanguageBox from "../SelectLanguageBox";
 
 const {TabPane} = Tabs;
 
@@ -700,23 +701,26 @@ class LoginPage extends React.Component {
         <CustomGithubCorner />
         <Row>
           <Col span={8} offset={application.formOffset === 0 || Setting.inIframe() || Setting.isMobile() ? 8 : application.formOffset} style={{display: "flex", justifyContent: "center"}}>
-            <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center", ...formStyle}}>
-              <div>
-                {
-                  Setting.renderHelmet(application)
-                }
-                {
-                  Setting.renderLogo(application)
-                }
-                {/* {*/}
-                {/*  this.state.clientId !== null ? "Redirect" : null*/}
-                {/* }*/}
-                {
-                  this.renderSignedInBox()
-                }
-                {
-                  this.renderForm(application)
-                }
+            <div className="login-content">
+              <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center", ...formStyle}}>
+                <SelectLanguageBox id="language-box-corner" style={{top: "80px", right: "5px"}} />
+                <div>
+                  {
+                    Setting.renderHelmet(application)
+                  }
+                  {
+                    Setting.renderLogo(application)
+                  }
+                  {/* {*/}
+                  {/*  this.state.clientId !== null ? "Redirect" : null*/}
+                  {/* }*/}
+                  {
+                    this.renderSignedInBox()
+                  }
+                  {
+                    this.renderForm(application)
+                  }
+                </div>
               </div>
             </div>
           </Col>
