@@ -41,7 +41,6 @@ class LoginPage extends React.Component {
       owner: props.owner !== undefined ? props.owner : (props.match === undefined ? null : props.match.params.owner),
       application: null,
       mode: props.mode !== undefined ? props.mode : (props.match === undefined ? null : props.match.params.mode), // "signup" or "signin"
-      isCodeSignin: false,
       msg: null,
       username: null,
       validEmailOrPhone: false,
@@ -349,7 +348,7 @@ class LoginPage extends React.Component {
                   },
                   {
                     validator: (_, value) => {
-                      if (this.state.isCodeSignin) {
+                      if (this.state.loginMethod === "verificationCode") {
                         if (this.state.email !== "" && !Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
                           this.setState({validEmailOrPhone: false});
                           return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
@@ -372,7 +371,7 @@ class LoginPage extends React.Component {
                 <Input
                   id = "input"
                   prefix={<UserOutlined className="site-form-item-icon" />}
-                  placeholder={this.state.isCodeSignin ? i18next.t("login:Email or phone") : i18next.t("login:username, Email or phone")}
+                  placeholder={(this.state.loginMethod === "verificationCode") ? i18next.t("login:Email or phone") : i18next.t("login:username, Email or phone")}
                   disabled={!application.enablePassword}
                   onChange={e => {
                     this.setState({
@@ -399,29 +398,17 @@ class LoginPage extends React.Component {
             </a>
           </Form.Item>
           <Form.Item>
-            {
-              this.state.loginMethod === "password" ?
-                (
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{width: "100%", marginBottom: "5px"}}
-                    disabled={!application.enablePassword}
-                  >
-                    {i18next.t("login:Sign In")}
-                  </Button>
-                ) :
-                (
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{width: "100%", marginBottom: "5px"}}
-                    disabled={!application.enablePassword}
-                  >
-                    {i18next.t("login:Sign in with WebAuthn")}
-                  </Button>
-                )
-            }
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{width: "100%", marginBottom: "5px"}}
+              disabled={!application.enablePassword}
+            >
+              {
+                this.state.loginMethod === "webAuthn" ? i18next.t("login:Sign in with WebAuthn") :
+                  i18next.t("login:Sign In")
+              }
+            </Button>
             {
               this.renderFooter(application)
             }
@@ -479,19 +466,6 @@ class LoginPage extends React.Component {
     } else {
       return (
         <React.Fragment>
-          <span style={{float: "left"}}>
-            {
-              !application.enableCodeSignin ? null : (
-                <a onClick={() => {
-                  this.setState({
-                    isCodeSignin: !this.state.isCodeSignin,
-                  });
-                }}>
-                  {this.state.isCodeSignin ? i18next.t("login:Sign in with password") : i18next.t("login:Sign in with code")}
-                </a>
-              )
-            }
-          </span>
           <span style={{float: "right"}}>
             {
               !application.enableSignUp ? null : (
@@ -639,7 +613,23 @@ class LoginPage extends React.Component {
   renderPasswordOrCodeInput() {
     const application = this.getApplicationObj();
     if (this.state.loginMethod === "password") {
-      return this.state.isCodeSignin ? (
+      return (
+        <Col span={24}>
+          <Form.Item
+            name="password"
+            rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
+          >
+            <Input.Password
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              type="password"
+              placeholder={i18next.t("login:Password")}
+              disabled={!application.enablePassword}
+            />
+          </Form.Item>
+        </Col>
+      );
+    } else if (this.state.loginMethod === "verificationCode") {
+      return (
         <Col span={24}>
           <Form.Item
             name="code"
@@ -652,32 +642,29 @@ class LoginPage extends React.Component {
             />
           </Form.Item>
         </Col>
-      ) : (
-        <Col span={24}>
-          <Form.Item
-            name="password"
-            rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
-          >
-            <Input
-              prefix={<LockOutlined className="site-form-item-icon" />}
-              type="password"
-              placeholder={i18next.t("login:Password")}
-              disabled={!application.enablePassword}
-            />
-          </Form.Item>
-        </Col>
       );
+    } else {
+      return null;
     }
   }
 
   renderMethodChoiceBox() {
     const application = this.getApplicationObj();
-    if (application.enableWebAuthn) {
+    if (application.enableCodeSignin || application.enableWebAuthn) {
       return (
         <div>
-          <Tabs defaultActiveKey="password" onChange={(key) => {this.setState({loginMethod: key});}} centered>
+          <Tabs size={"small"} defaultActiveKey="password" onChange={(key) => {this.setState({loginMethod: key});}} centered>
             <TabPane tab={i18next.t("login:Password")} key="password" />
-            <TabPane tab={"WebAuthn"} key="webAuthn" />
+            {
+              !application.enableCodeSignin ? null : (
+                <TabPane tab={i18next.t("login:Verification Code")} key="verificationCode" />
+              )
+            }
+            {
+              !application.enableWebAuthn ? null : (
+                <TabPane tab={i18next.t("login:WebAuthn")} key="webAuthn" />
+              )
+            }
           </Tabs>
         </div>
       );

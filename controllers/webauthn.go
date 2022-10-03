@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 
 	"github.com/casdoor/casdoor/object"
@@ -100,7 +101,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 	userName := c.Input().Get("name")
 	user := object.GetUserByFields(userOwner, userName)
 	if user == nil {
-		c.ResponseError("Please Giveout Owner and Username.")
+		c.ResponseError(fmt.Sprintf("The user: %s/%s doesn't exist", userOwner, userName))
 		return
 	}
 	options, sessionData, err := webauthnObj.BeginLogin(user)
