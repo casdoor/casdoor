@@ -698,7 +698,7 @@ class LoginPage extends React.Component {
     return (
       <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
         <CustomGithubCorner />
-        <Row >
+        <Row>
           <Col span={8} offset={application.formOffset === 0 || Setting.inIframe() || Setting.isMobile() ? 8 : application.formOffset} style={{display: "flex", justifyContent: "center"}}>
             <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center", ...formStyle}}>
               <div>
@@ -718,7 +718,6 @@ class LoginPage extends React.Component {
                   this.renderForm(application)
                 }
               </div>
-
             </div>
           </Col>
         </Row>

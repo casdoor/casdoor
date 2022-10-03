@@ -19,40 +19,6 @@ import * as UserWebauthnBackend from "./backend/UserWebauthnBackend";
 import * as Setting from "./Setting";
 
 class WebAuthnCredentialTable extends React.Component {
-  render() {
-    const columns = [
-      {
-        title: i18next.t("user:WebAuthn credentials"),
-        dataIndex: "ID",
-        key: "ID",
-      },
-      {
-        title: i18next.t("general:Action"),
-        key: "action",
-        render: (text, record, index) => {
-          return (
-            <Button style={{marginTop: "5px", marginBottom: "5px", marginRight: "5px"}} type="danger" onClick={() => {this.deleteRow(this.props.table, index);}}>
-              {i18next.t("general:Delete")}
-            </Button>
-          );
-        },
-      },
-    ];
-
-    return (
-      <Table scroll={{x: "max-content"}} rowKey={"ID"} columns={columns} dataSource={this.props.table} size="middle" bordered pagination={false}
-        title={() => (
-          <div>
-            {i18next.t("user:WebAuthn credentials")}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button disabled={!this.props.isSelf} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => {this.registerWebAuthn();}}>
-              {i18next.t("general:Add")}
-            </Button>
-          </div>
-        )}
-      />
-    );
-  }
-
   deleteRow(table, i) {
     table = Setting.deleteRow(table, i);
     this.props.updateTable(table);
@@ -70,6 +36,41 @@ class WebAuthnCredentialTable extends React.Component {
     }).catch(error => {
       Setting.showMessage("error", `Failed to connect to server: ${error}`);
     });
+  }
+
+  render() {
+    const columns = [
+      {
+        title: i18next.t("general:Name"),
+        dataIndex: "ID",
+        key: "ID",
+      },
+      {
+        title: i18next.t("general:Action"),
+        key: "action",
+        width: "170px",
+        render: (text, record, index) => {
+          return (
+            <Button style={{marginTop: "5px", marginBottom: "5px", marginRight: "5px"}} type="danger" onClick={() => {this.deleteRow(this.props.table, index);}}>
+              {i18next.t("general:Delete")}
+            </Button>
+          );
+        },
+      },
+    ];
+
+    return (
+      <Table rowKey={"ID"} columns={columns} dataSource={this.props.table} size="middle" bordered pagination={false}
+        title={() => (
+          <div>
+            {i18next.t("user:WebAuthn credentials")}&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button disabled={!this.props.isSelf} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => {this.registerWebAuthn();}}>
+              {i18next.t("general:Add")}
+            </Button>
+          </div>
+        )}
+      />
+    );
   }
 }
 
