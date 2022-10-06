@@ -40,7 +40,6 @@ import BilibiliLoginButton from "./BilibiliLoginButton";
 import OktaLoginButton from "./OktaLoginButton";
 import DouyinLoginButton from "./DouyinLoginButton";
 import * as AuthBackend from "./AuthBackend";
-import {Col, Row} from "antd";
 
 function getSigninButton(type) {
   const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
@@ -130,23 +129,26 @@ export function renderProviderLogo(provider, application, width, margin, size, l
       );
     }
 
-  } else if (size === "big") {
+  } else if (provider.type === "Custom") {
+    // style definition
+    const customAStyle = {display: "block", width: "265px", height: "55px", color: "#000"};
+    const customButtonStyle = {display: "flex", width: "calc(100% - 10px)", height: "50px", margin: "5px", padding: "0 10px", backgroundColor: "transparent", boxShadow: "0px 1px 3px rgba(0,0,0,0.5)", border: "0px", borderRadius: "3px", cursor: "pointer"};
+    const customImgStyle = {flex: "4"};
+    const customSpanStyle = {flex: "20", textAlign: "center", lineHeight: "50px", fontSize: "19px"};
     if (provider.category === "OAuth") {
       return (
-        <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-          <Row style={{"margin-top": "5px", borderRadius: "5px", color: "#000", boxShadow: "1px 1px 4px rgba(0,0,0,0.3)"}}>
-            <Col span={4}><img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} /></Col>
-            <Col span={20} style={{textAlign: "center", lineHeight: "60px", "font-size": "1.2rem"}}>{provider.displayName}</Col>
-          </Row>
+        <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")} style={customAStyle}>
+          <button style={customButtonStyle}>
+            <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={customImgStyle} />
+            <span style={customSpanStyle}>{provider.displayName}</span>
+          </button>
         </a>
       );
     } else if (provider.category === "SAML") {
       return (
-        <a key={provider.displayName} onClick={() => getSamlUrl(provider, location)}>
-          <Row style={{"margin-top": "5px", borderRadius: "5px", color: "#000", boxShadow: "1px 1px 4px rgba(0,0,0,0.3)"}}>
-            <Col span={4}><img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} /></Col>
-            <Col span={20} style={{textAlign: "center", lineHeight: "60px", "font-size": "1rem"}}>{provider.displayName}</Col>
-          </Row>
+        <a key={provider.displayName} onClick={() => getSamlUrl(provider, location)} style={customAStyle}>
+          <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} />
+          <span span={20} style={{textAlign: "center", lineHeight: "40px", fontSize: "19px"}}>{provider.displayName}</span>
         </a>
       );
     }
