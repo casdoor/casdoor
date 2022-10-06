@@ -51,7 +51,7 @@
 ## Documentation
 
 - International: https://casdoor.org
-- Asian mirror: https://docs.casdoor.cn
+- Asian mirror: https://casdoor.cn
 
 ## Install
 
