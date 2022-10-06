@@ -148,8 +148,10 @@ export function renderProviderLogo(provider, application, width, margin, size, l
     } else if (provider.category === "SAML") {
       return (
         <a key={provider.displayName} onClick={() => getSamlUrl(provider, location)} style={customAStyle}>
-          <img width={width} src={getProviderLogoURL(provider)} alt={provider.displayName} />
-          <span span={20} style={{textAlign: "center", lineHeight: "40px", fontSize: "19px"}}>{provider.displayName}</span>
+          <button style={customButtonStyle}>
+            <img width={26} src={getProviderLogoURL(provider)} alt={provider.displayName} style={customImgStyle} />
+            <span style={customSpanStyle}>{text}</span>
+          </button>
         </a>
       );
     }
