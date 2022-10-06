@@ -625,7 +625,7 @@ class SignupPage extends React.Component {
           <Col span={8} offset={application.formOffset === 0 || Setting.inIframe() || Setting.isMobile() ? 8 : application.formOffset} style={{display: "flex", justifyContent: "center"}} >
             <div className="login-content">
               <div style={{marginBottom: "10px", textAlign: "center", ...formStyle}}>
-                <SelectLanguageBox id="language-box-corner" style={{top: "3px", right: "5px"}} />
+                <SelectLanguageBox id="language-box-corner" style={{top: formStyle !== null ? "3px" : "-20px", right: formStyle !== null ? "5px" : "-45px"}} />
                 {
                   Setting.renderHelmet(application)
                 }
