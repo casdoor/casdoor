@@ -101,7 +101,7 @@ export const CountDownInput = (props) => {
             backgroundRepeat: "no-repeat",
             height: "80px",
             width: "200px",
-            borderRadius: "3px",
+            borderRadius: "5px",
             border: "1px solid #ccc",
             marginBottom: 10,
           }}

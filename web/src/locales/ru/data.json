@@ -13,6 +13,8 @@
     "Sync": "Sync"
   },
   "application": {
+    "Auto signin": "Auto signin",
+    "Auto signin - Tooltip": "Auto signin - Tooltip",
     "Background URL": "Background URL",
     "Background URL - Tooltip": "Background URL - Tooltip",
     "Copy SAML metadata URL": "Копировать адрес метаданных SAML",
@@ -275,12 +277,12 @@
     "Please input your username, Email or phone!": "Пожалуйста, введите ваше имя пользователя, адрес электронной почты или телефон!",
     "Sign In": "Войти",
     "Sign in with WebAuthn": "Sign in with WebAuthn",
-    "Sign in with code": "Войти с помощью кода",
-    "Sign in with password": "Войти с помощью пароля",
     "Sign in with {type}": "Войти с помощью {type}",
     "Signing in...": "Вход...",
     "The input is not valid Email or Phone!": "Введен неверный адрес электронной почты или телефон!",
     "To access": "На доступ",
+    "Verification Code": "Verification Code",
+    "WebAuthn": "WebAuthn",
     "sign up now": "зарегистрироваться",
     "username, Email or phone": "имя пользователя, адрес электронной почты или телефон"
   },

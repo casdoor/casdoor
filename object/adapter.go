@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/astaxie/beego"
+	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	_ "github.com/denisenkom/go-mssqldb" // db = mssql

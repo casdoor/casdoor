@@ -127,6 +127,11 @@ func UploadFileSafe(provider *Provider, fullFilePath string, fileBuffer *bytes.B
 }
 
 func DeleteFile(provider *Provider, objectKey string) error {
+	// check fullFilePath is there security issue
+	if strings.Contains(objectKey, "..") {
+		return fmt.Errorf("the objectKey: %s is not allowed", objectKey)
+	}
+
 	endpoint := getProviderEndpoint(provider)
 	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint)
 	if storageProvider == nil {

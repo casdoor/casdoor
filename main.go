@@ -18,9 +18,9 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
-	_ "github.com/astaxie/beego/session/redis"
+	"github.com/beego/beego"
+	"github.com/beego/beego/logs"
+	_ "github.com/beego/beego/session/redis"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/controllers"

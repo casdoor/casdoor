@@ -5,12 +5,12 @@ go 1.16
 require (
 	github.com/RobotsAndPencils/go-saml v0.0.0-20170520135329-fb13cb52a46b
 	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
-	github.com/astaxie/beego v1.12.3
 	github.com/aws/aws-sdk-go v1.44.4
+	github.com/beego/beego v1.12.11
 	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin/v2 v2.30.1
-	github.com/casbin/xorm-adapter/v2 v2.5.1
-	github.com/casdoor/go-sms-sender v0.3.0
+	github.com/casbin/xorm-adapter/v3 v3.0.1
+	github.com/casdoor/go-sms-sender v0.5.1
 	github.com/casdoor/goth v1.69.0-FIX2
 	github.com/casdoor/oss v1.2.0
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f

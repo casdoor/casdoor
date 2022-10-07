@@ -378,6 +378,9 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
+    }
+
+    if (Setting.isLocalAdminUser(this.state.account)) {
       res.push(
         <Menu.Item key="/users">
           <Link to="/users">
@@ -385,6 +388,9 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
+    }
+
+    if (Setting.isAdminUser(this.state.account)) {
       res.push(
         <Menu.Item key="/roles">
           <Link to="/roles">
@@ -610,7 +616,7 @@ class App extends Component {
                   // theme="dark"
                   mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
                   selectedKeys={[`${this.state.selectedMenuKey}`]}
-                  style={{lineHeight: "64px", width: "80%", position: "absolute", left: "145px"}}
+                  style={{lineHeight: "64px", width: "78%", position: "absolute", left: "145px"}}
                 >
                   {
                     this.renderMenu()
@@ -682,7 +688,7 @@ class App extends Component {
             textAlign: "center",
           }
         }>
-          Made with <span style={{color: "rgb(255, 255, 255)"}}>❤️</span> by <a style={{fontWeight: "bold", color: "black"}} target="_blank" href="https://casdoor.org" rel="noreferrer">Casdoor</a>
+          Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={`${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`} /></a>
         </Footer>
       </>
     );

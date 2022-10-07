@@ -13,6 +13,8 @@
     "Sync": "Sync"
   },
   "application": {
+    "Auto signin": "Auto signin",
+    "Auto signin - Tooltip": "Auto signin - Tooltip",
     "Background URL": "Background URL",
     "Background URL - Tooltip": "Background URL - Tooltip",
     "Copy SAML metadata URL": "Copy SAML metadata URL",
@@ -275,12 +277,12 @@
     "Please input your username, Email or phone!": "Veuillez entrer votre nom d'utilisateur, votre e-mail ou votre téléphone!",
     "Sign In": "Se connecter",
     "Sign in with WebAuthn": "Sign in with WebAuthn",
-    "Sign in with code": "Se connecter avec le code",
-    "Sign in with password": "Se connecter avec le mot de passe",
     "Sign in with {type}": "Se connecter avec {type}",
     "Signing in...": "Connexion en cours...",
     "The input is not valid Email or Phone!": "L'entrée n'est pas valide Email ou Téléphone !",
     "To access": "Pour accéder à",
+    "Verification Code": "Verification Code",
+    "WebAuthn": "WebAuthn",
     "sign up now": "inscrivez-vous maintenant",
     "username, Email or phone": "nom d'utilisateur, e-mail ou téléphone"
   },

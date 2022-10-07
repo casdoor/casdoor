@@ -28,7 +28,7 @@
   color: #61dafb;
 }
 
-#root{
+#root {
   height: 100%;
 }
 
@@ -59,11 +59,18 @@
   height: 70px; /* Footer height */
 }
 
-.language_box {
+#language-box-corner {
+  position: absolute;
+  top: 75px;
+  right: 0;
+}
+
+.language-box {
   background: url("@{StaticBaseUrl}/img/muti_language.svg");
   background-size: 25px, 25px;
   background-position: center;
   background-repeat: no-repeat;
+  border-radius: 5px;
   width: 45px;
   height: 65px;
   float: right;
@@ -87,9 +94,19 @@
   align-items: stretch;
 }
 
+.login-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  margin: 0 auto;
+  position: relative;
+}
+
 .loginBackground {
   height: 100%;
-  background: #ffffff no-repeat;
+  background: #fff no-repeat;
   background-size: 100% 100%;
   background-attachment: fixed;
 }

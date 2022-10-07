@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 
 	"github.com/casdoor/casdoor/object"
@@ -100,7 +101,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 	userName := c.Input().Get("name")
 	user := object.GetUserByFields(userOwner, userName)
 	if user == nil {
-		c.ResponseError("Please Giveout Owner and Username.")
+		c.ResponseError(fmt.Sprintf("The user: %s/%s doesn't exist", userOwner, userName))
 		return
 	}
 	options, sessionData, err := webauthnObj.BeginLogin(user)
@@ -121,6 +122,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 // @Success 200 {object} Response "The Response object"
 // @router /webauthn/signin/finish [post]
 func (c *ApiController) WebAuthnSigninFinish() {
+	responseType := c.Input().Get("responseType")
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	sessionObj := c.GetSession("authentication")
 	sessionData, ok := sessionObj.(webauthn.SessionData)
@@ -138,5 +140,11 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	}
 	c.SetSessionUsername(userId)
 	util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-	c.ResponseOk(userId)
+
+	application := object.GetApplicationByUser(user)
+	var form RequestForm
+	form.Type = responseType
+	resp := c.HandleLoggedIn(application, user, &form)
+	c.Data["json"] = resp
+	c.ServeJSON()
 }

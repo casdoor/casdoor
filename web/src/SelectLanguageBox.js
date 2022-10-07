@@ -37,8 +37,8 @@ class SelectLanguageBox extends React.Component {
         Setting.changeLanguage(e.key);
       }}>
         <Menu.Item key="en" icon={flagIcon("US", "English")}>English</Menu.Item>
-        <Menu.Item key="es" icon={flagIcon("ES", "Español")}>Español</Menu.Item>
         <Menu.Item key="zh" icon={flagIcon("CN", "简体中文")}>简体中文</Menu.Item>
+        <Menu.Item key="es" icon={flagIcon("ES", "Español")}>Español</Menu.Item>
         <Menu.Item key="fr" icon={flagIcon("FR", "Français")}>Français</Menu.Item>
         <Menu.Item key="de" icon={flagIcon("DE", "Deutsch")}>Deutsch</Menu.Item>
         <Menu.Item key="ja" icon={flagIcon("JP", "日本語")}>日本語</Menu.Item>
@@ -49,7 +49,7 @@ class SelectLanguageBox extends React.Component {
 
     return (
       <Dropdown overlay={menu} >
-        <div className="language_box" />
+        <div className="language-box" id={this.props.id} style={this.props.style} />
       </Dropdown>
     );
   }

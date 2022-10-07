@@ -567,16 +567,20 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           ) : this.state.provider.category === "SMS" ? (
             <React.Fragment>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Sign Name"), i18next.t("provider:Sign Name - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.signName} onChange={e => {
-                    this.updateProviderField("signName", e.target.value);
-                  }} />
-                </Col>
-              </Row>
+              {this.state.provider.type === "Twilio SMS" ?
+                null :
+                (<Row style={{marginTop: "20px"}} >
+                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {Setting.getLabel(i18next.t("provider:Sign Name"), i18next.t("provider:Sign Name - Tooltip"))} :
+                  </Col>
+                  <Col span={22} >
+                    <Input value={this.state.provider.signName} onChange={e => {
+                      this.updateProviderField("signName", e.target.value);
+                    }} />
+                  </Col>
+                </Row>
+                )
+              }
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Template Code"), i18next.t("provider:Template Code - Tooltip"))} :
@@ -611,7 +615,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
               <Row style={{marginTop: "20px"}}>
-                <Col style={{marginTop: "5px"}} span={2}></Col>
+                <Col style={{marginTop: "5px"}} span={2} />
                 <Col span={2}>
                   <Button type="primary" onClick={() => {
                     try {

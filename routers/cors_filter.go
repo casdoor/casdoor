@@ -17,7 +17,7 @@ package routers
 import (
 	"net/http"
 
-	"github.com/astaxie/beego/context"
+	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 )

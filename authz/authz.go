@@ -15,12 +15,14 @@
 package authz
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
-	xormadapter "github.com/casbin/xorm-adapter/v2"
+	xormadapter "github.com/casbin/xorm-adapter/v3"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/object"
 	stringadapter "github.com/qiangmzsx/string-adapter/v2"
 )
 
@@ -136,6 +138,12 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		if !isAllowedInDemoMode(subOwner, subName, method, urlPath, objOwner, objName) {
 			return false
 		}
+	}
+
+	userId := fmt.Sprintf("%s/%s", subOwner, subName)
+	user := object.GetUser(userId)
+	if user != nil && user.IsAdmin && subOwner == objOwner {
+		return true
 	}
 
 	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
