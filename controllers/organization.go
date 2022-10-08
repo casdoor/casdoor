@@ -133,8 +133,12 @@ func (c *ApiController) GetDefaultApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
 
-	application := object.GetMaskedApplication(object.GetDefaultApplication(id), userId)
-	if application == nil {
+	defaultApplication, org := object.GetDefaultApplication(id)
+	application := object.GetMaskedApplication(defaultApplication, userId)
+	if org == "" {
+		c.ResponseError("The organization does not exist")
+		return
+	} else if application == nil {
 		c.ResponseError("Please set a default application for this organization")
 		return
 	}

@@ -218,14 +218,14 @@ func CheckAccountItemModifyRule(accountItem *AccountItem, user *User) (bool, str
 	return true, ""
 }
 
-func GetDefaultApplication(id string) *Application {
+func GetDefaultApplication(id string) (*Application, string) {
 	organization := GetOrganization(id)
 	if organization == nil {
-		return nil
+		return nil, ""
 	}
 
 	if organization.DefaultApplication != "" {
-		return getApplication("admin", organization.DefaultApplication)
+		return getApplication("admin", organization.DefaultApplication), "organization is exist"
 	}
 
 	applications := []*Application{}
@@ -235,7 +235,7 @@ func GetDefaultApplication(id string) *Application {
 	}
 
 	if len(applications) == 0 {
-		return nil
+		return nil, "organization is exist"
 	}
 
 	defaultApplication := applications[0]
@@ -249,5 +249,5 @@ func GetDefaultApplication(id string) *Application {
 	extendApplicationWithProviders(defaultApplication)
 	extendApplicationWithOrg(defaultApplication)
 
-	return defaultApplication
+	return defaultApplication, "organization is exist"
 }
