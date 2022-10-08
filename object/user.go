@@ -386,7 +386,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 	user.UpdateUserHash()
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" && user.PermanentAvatar != "*" {
-		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, false)
 	}
 
 	if len(columns) == 0 {
@@ -419,7 +419,7 @@ func UpdateUserForAllFields(id string, user *User) bool {
 	user.UpdateUserHash()
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
-		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, false)
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
@@ -449,7 +449,7 @@ func AddUser(user *User) bool {
 	user.UpdateUserHash()
 	user.PreHash = user.Hash
 
-	user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+	user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, false)
 
 	user.Ranking = GetUserCount(user.Owner, "", "") + 1
 
@@ -474,7 +474,7 @@ func AddUsers(users []*User) bool {
 		user.UpdateUserHash()
 		user.PreHash = user.Hash
 
-		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
 	}
 
 	affected, err := adapter.Engine.Insert(users)
