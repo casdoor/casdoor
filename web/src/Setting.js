@@ -22,6 +22,7 @@ import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
+import {getModel} from "./backend/ModelBackend";
 
 export const ServerUrl = "";
 
@@ -437,6 +438,15 @@ export function isLocalAdminUser(account) {
     return false;
   }
   return account.isAdmin === true || isAdminUser(account);
+}
+
+let res = true;
+export function hasRoleDefinition(owner, modelName) {
+  getModel(owner, modelName)
+    .then((model) =>
+      model.modelText.includes("role_definition")
+    ).then((result) => res = result);
+  return res;
 }
 
 export function deepCopy(obj) {
