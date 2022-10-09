@@ -441,7 +441,7 @@ export function isLocalAdminUser(account) {
 
 export function hasRoleDefinition(model) {
   if (model !== null) {
-    return model.modelText.includes("role_definition");
+    return !model.modelText.includes("role_definition");
   }
   return true;
 }
