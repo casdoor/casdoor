@@ -129,6 +129,7 @@ class PermissionEditPage extends React.Component {
     if (key === "model") {
       this.getModel(this.state.permission.owner, value);
     }
+
     value = this.parsePermissionField(key, value);
 
     const permission = this.state.permission;
@@ -137,7 +138,7 @@ class PermissionEditPage extends React.Component {
       permission: permission,
     });
   }
-  
+
   hasRoleDefinition(model) {
     if (model !== null) {
       return model.modelText.includes("role_definition");
