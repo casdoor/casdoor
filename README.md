@@ -69,7 +69,7 @@ https://casdoor.org/docs/how-to-connect/overview
 
 ## Integrations
 
-https://casdoor.org/docs/integration/apisix
+https://casdoor.org/docs/category/integrations
 
 ## How to contact?
 
