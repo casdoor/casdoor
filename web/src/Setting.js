@@ -439,13 +439,6 @@ export function isLocalAdminUser(account) {
   return account.isAdmin === true || isAdminUser(account);
 }
 
-export function hasRoleDefinition(model) {
-  if (model !== null) {
-    return !model.modelText.includes("role_definition");
-  }
-  return true;
-}
-
 export function deepCopy(obj) {
   return Object.assign({}, obj);
 }
