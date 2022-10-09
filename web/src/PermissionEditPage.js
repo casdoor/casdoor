@@ -35,6 +35,7 @@ class PermissionEditPage extends React.Component {
       permissionName: props.match.params.permissionName,
       permission: null,
       organizations: [],
+      model: null,
       users: [],
       roles: [],
       models: [],
@@ -59,6 +60,9 @@ class PermissionEditPage extends React.Component {
         this.getRoles(permission.owner);
         this.getModels(permission.owner);
         this.getResources(permission.owner);
+        this.getModel(permission.owner, permission.model);
+        // eslint-disable-next-line no-console
+        console.log(permission);
       });
   }
 
@@ -98,6 +102,15 @@ class PermissionEditPage extends React.Component {
       });
   }
 
+  getModel(organizationName, modelName) {
+    ModelBackend.getModel(organizationName, modelName)
+      .then((res) => {
+        this.setState({
+          model: res,
+        });
+      });
+  }
+
   getResources(organizationName) {
     ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
       .then((res) => {
@@ -115,6 +128,9 @@ class PermissionEditPage extends React.Component {
   }
 
   updatePermissionField(key, value) {
+    if (key === "model") {
+      this.getModel(this.state.permission.owner, value);
+    }
     value = this.parsePermissionField(key, value);
 
     const permission = this.state.permission;
@@ -214,7 +230,7 @@ class PermissionEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub roles"), i18next.t("role:Sub roles - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} disabled={Setting.hasRoleDefinition(this.state.permission.owner, this.state.permission.model)} mode="tags" style={{width: "100%"}} value={this.state.permission.roles} onChange={(value => {this.updatePermissionField("roles", value);})}>
+            <Select virtual={false} disabled={Setting.hasRoleDefinition(this.state.model)} mode="tags" style={{width: "100%"}} value={this.state.permission.roles} onChange={(value => {this.updatePermissionField("roles", value);})}>
               {
                 this.state.roles.filter(roles => (roles.owner !== this.state.roles.owner || roles.name !== this.state.roles.name)).map((permission, index) => <Option key={index} value={`${permission.owner}/${permission.name}`}>{`${permission.owner}/${permission.name}`}</Option>)
               }
