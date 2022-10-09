@@ -61,8 +61,6 @@ class PermissionEditPage extends React.Component {
         this.getModels(permission.owner);
         this.getResources(permission.owner);
         this.getModel(permission.owner, permission.model);
-        // eslint-disable-next-line no-console
-        console.log(permission);
       });
   }
 
