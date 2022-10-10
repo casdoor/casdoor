@@ -703,7 +703,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		}
 		// Add new user
 		var name string
-		if username != "" {
+		if CheckUsername(username) == "" {
 			name = username
 		} else {
 			name = fmt.Sprintf("wechat-%s", openId)
