@@ -662,7 +662,7 @@ class App extends Component {
                 </Link>
               )
             }
-            <Drawer title="Close" placement="left" visible={this.state.menuVisible} onClose={this.onClose}>
+            <Drawer title={i18next.t("general:Close")} placement="left" visible={this.state.menuVisible} onClose={this.onClose}>
               <Menu
                 // theme="dark"
                 mode={(Setting.isMobile()) ? "inline" : "horizontal"}
@@ -676,7 +676,7 @@ class App extends Component {
               </Menu>
             </Drawer>
             <Button icon={<BarsOutlined />} onClick={this.showMenu} type="text">
-              Menu
+              {i18next.t("general:Menu")}
             </Button>
             <div style = {{float: "right"}}>
               {
