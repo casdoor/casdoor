@@ -16,8 +16,8 @@ import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
-import {DownOutlined, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
-import {Avatar, BackTop, Button, Card, Dropdown, Layout, Menu, Result} from "antd";
+import {BarsOutlined, DownOutlined, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
+import {Avatar, BackTop, Button, Card, Drawer, Dropdown, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -85,6 +85,7 @@ class App extends Component {
       selectedMenuKey: 0,
       account: undefined,
       uri: null,
+      menuVisible: false,
     };
 
     Setting.initServerUrl();
@@ -595,6 +596,18 @@ class App extends Component {
     );
   }
 
+  onClose = () => {
+    this.setState({
+      menuVisible: false,
+    });
+  };
+
+  showMenu = () => {
+    this.setState({
+      menuVisible: true,
+    });
+  };
+
   renderContent() {
     if (!Setting.isMobile()) {
       return (
@@ -613,7 +626,7 @@ class App extends Component {
                   // theme="dark"
                   mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
                   selectedKeys={[`${this.state.selectedMenuKey}`]}
-                  style={{lineHeight: "64px", width: "78%", position: "absolute", left: "145px"}}
+                  style={{lineHeight: "64px", position: "absolute", left: "145px", right: "200px"}}
                 >
                   {
                     this.renderMenu()
@@ -646,22 +659,28 @@ class App extends Component {
                 </Link>
               )
             }
-            <Menu
-            // theme="dark"
-              mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
-              selectedKeys={[`${this.state.selectedMenuKey}`]}
-              style={{lineHeight: "64px"}}
-            >
-              {
-                this.renderMenu()
-              }
-              <div style = {{float: "right"}}>
+            <Drawer title={i18next.t("general:Close")} placement="left" visible={this.state.menuVisible} onClose={this.onClose}>
+              <Menu
+                // theme="dark"
+                mode={(Setting.isMobile()) ? "inline" : "horizontal"}
+                selectedKeys={[`${this.state.selectedMenuKey}`]}
+                style={{lineHeight: "64px"}}
+                onClick={this.onClose}
+              >
                 {
-                  this.renderAccount()
+                  this.renderMenu()
                 }
-                <SelectLanguageBox />
-              </div>
-            </Menu>
+              </Menu>
+            </Drawer>
+            <Button icon={<BarsOutlined />} onClick={this.showMenu} type="text">
+              {i18next.t("general:Menu")}
+            </Button>
+            <div style = {{float: "right"}}>
+              {
+                this.renderAccount()
+              }
+              <SelectLanguageBox />
+            </div>
           </Header>
           {
             this.renderRouter()
