@@ -661,7 +661,7 @@ class UserEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.loading ? <Spin size="large" /> : (
+          this.state.loading ? <Spin size="large" style={{marginLeft: "50%", marginTop: "10%"}} /> : (
             this.state.user !== null ? this.renderUser() :
               <Result
                 status="404"
