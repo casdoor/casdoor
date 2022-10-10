@@ -25,7 +25,7 @@ class RoleListPage extends BaseListPage {
   newRole() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "built-in",
+      owner: this.props.account.owner,
       name: `role_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Role - ${randomName}`,
@@ -211,7 +211,7 @@ class RoleListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    RoleBackend.getRoles("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    RoleBackend.getRoles(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

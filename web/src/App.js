@@ -388,9 +388,6 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
-    }
-
-    if (Setting.isAdminUser(this.state.account)) {
       res.push(
         <Menu.Item key="/roles">
           <Link to="/roles">
