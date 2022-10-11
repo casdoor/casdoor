@@ -257,7 +257,7 @@ class LoginPage extends React.Component {
       const oAuthParams = Util.getOAuthGetParameters();
       this.populateOauthValues(values);
 
-      if (this.captchaModal.current) {
+      if (this.getLoginFailureCount() > 0 && this.captchaModal.current) {
         this.captchaModal.current.showCaptcha(() => {
           this.oauthLogin(values, oAuthParams);
         });
@@ -272,6 +272,9 @@ class LoginPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           const responseType = values["type"];
+
+          this.resetLoginFailureCount();
+
           if (responseType === "login") {
             Util.showMessage("success", "Logged in successfully");
 
@@ -289,9 +292,43 @@ class LoginPage extends React.Component {
             Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
           }
         } else {
+          this.incrementLoginFailureCount();
           Util.showMessage("error", `Failed to log in: ${res.msg}`);
         }
       });
+  }
+
+  incrementLoginFailureCount() {
+    if (localStorage) {
+      localStorage.setItem("loginFailureCount", (this.getLoginFailureCount() + 1).toString());
+    } else {
+      this.setState((state) => {
+        return {loginFailureCount: state.loginFailureCount + 1};
+      });
+    }
+  }
+
+  resetLoginFailureCount() {
+    if (localStorage) {
+      localStorage.setItem("loginFailureCount", "0");
+    } else {
+      this.setState(() => {
+        return {loginFailureCount: 0};
+      });
+    }
+  }
+
+  getLoginFailureCount() {
+    let loginFailureCount;
+    if (localStorage) {
+      loginFailureCount = Number.parseInt(localStorage.getItem("loginFailureCount"));
+    } else {
+      loginFailureCount = this.state.loginFailureCount ? this.state.loginFailureCount : 0;
+    }
+    if (loginFailureCount === null || loginFailureCount === undefined || isNaN(loginFailureCount)) {
+      loginFailureCount = 0;
+    }
+    return loginFailureCount;
   }
 
   isProviderVisible(providerItem) {
