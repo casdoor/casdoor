@@ -27,6 +27,8 @@
     "Enable SAML compress - Tooltip": "Enable SAML compress - Tooltip",
     "Enable WebAuthn signin": "Enable WebAuthn signin",
     "Enable WebAuthn signin - Tooltip": "Enable WebAuthn signin - Tooltip",
+    "Enable Captcha": "Enable Captcha",
+    "Enable Captcha - Tooltip": "Whether to enable captcha when the user logs in",
     "Enable code signin": "Activer la connexion au code",
     "Enable code signin - Tooltip": "Activer la connexion au code - infobulle",
     "Enable side panel": "Enable side panel",

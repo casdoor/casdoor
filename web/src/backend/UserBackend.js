@@ -152,10 +152,11 @@ export function verifyCaptcha(captchaType, captchaToken, clientSecret) {
     if (res.status === "ok") {
       if (res.data) {
         Setting.showMessage("success", i18next.t("user:Captcha Verify Success"));
+        return true;
       } else {
         Setting.showMessage("error", i18next.t("user:Captcha Verify Failed"));
+        return false;
       }
-      return true;
     } else {
       Setting.showMessage("error", i18next.t("user:" + res.msg));
       return false;

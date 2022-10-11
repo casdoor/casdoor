@@ -27,6 +27,8 @@
     "Enable SAML compress - Tooltip": "Casdoor作为SAML idp时，是否压缩SAML响应信息",
     "Enable WebAuthn signin": "启用WebAuthn登录",
     "Enable WebAuthn signin - Tooltip": "是否支持用户在登录页面通过WebAuthn方式登录",
+    "Enable Captcha": "启用人机验证码",
+    "Enable Captcha - Tooltip": "是否在用户登录时开启人机验证码",
     "Enable code signin": "启用验证码登录",
     "Enable code signin - Tooltip": "是否允许用手机或邮箱验证码登录",
     "Enable side panel": "启用侧面板",

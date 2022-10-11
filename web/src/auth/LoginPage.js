@@ -30,6 +30,7 @@ import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {withTranslation} from "react-i18next";
+import {CaptchaModal} from "../common/CaptchaModal";
 
 const {TabPane} = Tabs;
 
@@ -50,6 +51,7 @@ class LoginPage extends React.Component {
       validPhone: false,
       loginMethod: "password",
     };
+    this.captchaModal = React.createRef();
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
       this.state.owner = props.match?.params.owner;
@@ -255,31 +257,41 @@ class LoginPage extends React.Component {
       const oAuthParams = Util.getOAuthGetParameters();
       this.populateOauthValues(values);
 
-      AuthBackend.login(values, oAuthParams)
-        .then((res) => {
-          if (res.status === "ok") {
-            const responseType = values["type"];
-            if (responseType === "login") {
-              Util.showMessage("success", "Logged in successfully");
-
-              const link = Setting.getFromLink();
-              Setting.goToLink(link);
-            } else if (responseType === "code") {
-              this.postCodeLoginAction(res);
-              // Util.showMessage("success", `Authorization code: ${res.data}`);
-            } else if (responseType === "token" || responseType === "id_token") {
-              const accessToken = res.data;
-              Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
-            } else if (responseType === "saml") {
-              const SAMLResponse = res.data;
-              const redirectUri = res.data2;
-              Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
-            }
-          } else {
-            Util.showMessage("error", `Failed to log in: ${res.msg}`);
-          }
+      if (this.captchaModal.current) {
+        this.captchaModal.current.showCaptcha(() => {
+          this.oauthLogin(values, oAuthParams);
         });
+      } else {
+        this.oauthLogin(values, oAuthParams);
+      }
     }
+  }
+
+  oauthLogin(values, oAuthParams) {
+    AuthBackend.login(values, oAuthParams)
+      .then((res) => {
+        if (res.status === "ok") {
+          const responseType = values["type"];
+          if (responseType === "login") {
+            Util.showMessage("success", "Logged in successfully");
+
+            const link = Setting.getFromLink();
+            Setting.goToLink(link);
+          } else if (responseType === "code") {
+            this.postCodeLoginAction(res);
+            // Util.showMessage("success", `Authorization code: ${res.data}`);
+          } else if (responseType === "token" || responseType === "id_token") {
+            const accessToken = res.data;
+            Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
+          } else if (responseType === "saml") {
+            const SAMLResponse = res.data;
+            const redirectUri = res.data2;
+            Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
+          }
+        } else {
+          Util.showMessage("error", `Failed to log in: ${res.msg}`);
+        }
+      });
   }
 
   isProviderVisible(providerItem) {
@@ -422,6 +434,9 @@ class LoginPage extends React.Component {
               }
             </Button>
             {
+              this.renderCaptchaModal(application)
+            }
+            {
               this.renderFooter(application)
             }
           </Form.Item>
@@ -461,6 +476,34 @@ class LoginPage extends React.Component {
         </div>
       );
     }
+  }
+
+  renderCaptchaModal(application) {
+    if (application && application.enableCaptcha && application.providers) {
+      for (const idx in application.providers) {
+        const provider = application.providers[idx].provider;
+        if (provider && provider.category === "Captcha" && provider.type === "Default") {
+          return (
+            <CaptchaModal
+              provider={provider}
+              providerName={provider.name}
+              clientSecret={provider.clientSecret}
+              captchaType={provider.type}
+              subType={provider.subType}
+              owner={provider.owner}
+              clientId={provider.clientId}
+              name={provider.name}
+              providerUrl={provider.providerUrl}
+              clientId2={provider.clientId2}
+              clientSecret2={provider.clientSecret2}
+              preview={false}
+              ref={this.captchaModal}
+            />
+          );
+        }
+      }
+    }
+    return null;
   }
 
   renderFooter(application) {
