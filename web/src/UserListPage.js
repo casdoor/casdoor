@@ -44,7 +44,7 @@ class UserListPage extends BaseListPage {
     const owner = (this.state.organizationName !== undefined) ? this.state.organizationName : this.props.account.owner;
     return {
       owner: owner,
-      name: `user_${randomName}`,
+      name: `user-${randomName}`,
       createdTime: moment().format(),
       type: "normal-user",
       password: "123",
