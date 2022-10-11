@@ -322,11 +322,11 @@ func CheckUsername(name string) string {
 	}
 
 	// https://stackoverflow.com/questions/58726546/github-username-convention-using-regex
-	re, _ := regexp.Compile("^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*$")
+	re, _ := regexp.Compile("^[a-zA-Z0-9]+((?:-[a-zA-Z0-9]+)|(?:_[a-zA-Z0-9]+))*$")
 	if !re.MatchString(name) {
-		return fmt.Sprintf("The name '%s' may only contain alphanumeric characters or hyphens, "+
+		return fmt.Sprintf("The name '%s' may only contain alphanumeric characters, underline or hyphens, "+
 			"cannot have multiple consecutive hyphens, "+
-			"and cannot begin or end with a hyphen.", name)
+			"and cannot begin or end with a hyphen or underline.", name)
 	}
 
 	return ""
