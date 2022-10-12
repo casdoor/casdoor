@@ -29,6 +29,7 @@ import i18next from "i18next";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
+import {withTranslation} from "react-i18next";
 
 const {TabPane} = Tabs;
 
@@ -730,4 +731,4 @@ class LoginPage extends React.Component {
   }
 }
 
-export default LoginPage;
+export default withTranslation()(LoginPage);
