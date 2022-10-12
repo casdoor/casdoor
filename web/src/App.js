@@ -74,6 +74,7 @@ import ModelEditPage from "./ModelEditPage";
 import SystemInfo from "./SystemInfo";
 import AdapterListPage from "./AdapterListPage";
 import AdapterEditPage from "./AdapterEditPage";
+import {withTranslation} from "react-i18next";
 
 const {Header, Footer} = Layout;
 
@@ -798,4 +799,4 @@ class App extends Component {
   }
 }
 
-export default withRouter(App);
+export default withRouter(withTranslation()(App));
