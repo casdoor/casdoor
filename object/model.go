@@ -83,6 +83,7 @@ func getModel(owner string, name string) *Model {
 
 func GetModel(id string) *Model {
 	owner, name := util.GetOwnerAndNameFromId(id)
+
 	return getModel(owner, name)
 }
 
