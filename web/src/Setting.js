@@ -554,7 +554,7 @@ export function changeLanguage(language) {
   localStorage.setItem("language", language);
   changeMomentLanguage(language);
   i18next.changeLanguage(language);
-  window.location.reload(true);
+  // window.location.reload(true);
 }
 
 export function changeMomentLanguage(language) {
