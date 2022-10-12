@@ -159,7 +159,7 @@ func DisableVerificationCode(dest string) {
 	}
 }
 
-// from Casnode/object/validateCode.go line 116
+// From Casnode/object/validateCode.go line 116
 var stdNums = []byte("0123456789")
 
 func getRandomCode(length int) string {
