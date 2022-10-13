@@ -27,8 +27,6 @@
     "Enable SAML compress - Tooltip": "Casdoor作为SAML idp时，是否压缩SAML响应信息",
     "Enable WebAuthn signin": "启用WebAuthn登录",
     "Enable WebAuthn signin - Tooltip": "是否支持用户在登录页面通过WebAuthn方式登录",
-    "Enable Captcha": "启用人机验证码",
-    "Enable Captcha - Tooltip": "是否在用户登录时开启人机验证码",
     "Enable code signin": "启用验证码登录",
     "Enable code signin - Tooltip": "是否允许用手机或邮箱验证码登录",
     "Enable side panel": "启用侧面板",
@@ -69,8 +67,7 @@
     "Token expire": "Access Token过期",
     "Token expire - Tooltip": "Access Token过期时间",
     "Token format": "Access Token格式",
-    "Token format - Tooltip": "Access Token格式",
-    "rule": "规则"
+    "Token format - Tooltip": "Access Token格式"
   },
   "cert": {
     "Bit size": "位大小",
@@ -242,7 +239,9 @@
     "Users": "用户",
     "Users under all organizations": "所有组织里的用户",
     "Webhooks": "Webhooks",
-    "{total} in total": "{total} 总计"
+    "{total} in total": "{total} 总计",
+    "Never": "从不",
+    "Everytime": "每次"
   },
   "ldap": {
     "Address": "地址",

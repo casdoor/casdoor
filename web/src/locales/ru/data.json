@@ -27,8 +27,6 @@
     "Enable SAML compress - Tooltip": "Включить SAML сжатие - Подсказка",
     "Enable WebAuthn signin": "Включить вход через WebAuthn",
     "Enable WebAuthn signin - Tooltip": "Включить вход с WebAuthn - Подсказка",
-    "Enable Captcha": "Enable Captcha",
-    "Enable Captcha - Tooltip": "Whether to enable captcha when the user logs in",
     "Enable code signin": "Включить кодовый вход",
     "Enable code signin - Tooltip": "Включить вход с кодом - Tooltip",
     "Enable side panel": "Enable side panel",
@@ -242,7 +240,9 @@
     "Users": "Пользователи",
     "Users under all organizations": "Пользователи из всех организаций",
     "Webhooks": "Вебхуки",
-    "{total} in total": "{total} всего"
+    "{total} in total": "{total} всего",
+    "Never": "Never",
+    "Everytime": "Everytime"
   },
   "ldap": {
     "Address": "Адрес",

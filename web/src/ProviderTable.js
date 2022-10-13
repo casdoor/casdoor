@@ -194,6 +194,26 @@ class ProviderTable extends React.Component {
       //   }
       // },
       {
+        title: i18next.t("application:rule"),
+        key: "rule",
+        width: "100px",
+        render: (text, record, index) => {
+          if (record.provider?.category !== "Captcha") {
+            return null;
+          }
+          return (
+            <Select virtual={false} style={{width: "100%"}}
+              value={record?.rule}
+              onChange={value => {
+                this.updateField(table, index, "rule", value);
+              }} >
+              <Option key="None" value="None">None</Option>
+              <Option key="Always" value="Always">Always</Option>
+            </Select>
+          );
+        },
+      },
+      {
         title: i18next.t("general:Action"),
         key: "action",
         width: "100px",

@@ -39,23 +39,23 @@ export const CaptchaModal = React.forwardRef(({
   const [captchaToken, setCaptchaToken] = React.useState("");
   const [secret, setSecret] = React.useState(clientSecret);
   const [secret2, setSecret2] = React.useState(clientSecret2);
-  const [verificationSuccessCallback, setVerificationSuccessCallback] = React.useState(null);
+  const [onOkButtonClickHandler, setOnOkButtonClickHandler] = React.useState(null);
 
   React.useImperativeHandle(ref, () => ({
     showCaptcha,
   }));
 
   // Decide when to show with `showCaptcha`
-  const showCaptcha = (callback) => {
+  const showCaptcha = (onOkButtonClickCallback) => {
     setVisible(true);
     provider.name = name;
     provider.clientId = clientId;
     provider.type = captchaType;
     provider.providerUrl = providerUrl;
-    if (callback) {
-      // Callback when human-machine verification is successful
-      setVerificationSuccessCallback({
-        run: callback,
+    if (!preview && onOkButtonClickCallback) {
+      // In non-preview mode, when the user clicks the ok button, the corresponding callback is executed
+      setOnOkButtonClickHandler({
+        call: onOkButtonClickCallback,
       });
     }
     if (preview && clientSecret !== "***") {
@@ -69,16 +69,17 @@ export const CaptchaModal = React.forwardRef(({
   };
 
   const handleOk = () => {
-    UserBackend.verifyCaptcha(captchaType, captchaToken, secret).then(verificationResult => {
-      setCaptchaToken("");
-      // In non-preview mode, make sure the verification is successful before closing the modal
-      if (preview || verificationResult) {
+    if (preview || !onOkButtonClickHandler) {
+      UserBackend.verifyCaptcha(captchaType, captchaToken, secret).then(() => {
+        setCaptchaToken("");
         setVisible(false);
-        if (verificationSuccessCallback) {
-          verificationSuccessCallback.run();
-        }
-      }
-    });
+      });
+    } else {
+      onOkButtonClickHandler.call(captchaType, captchaToken, secret, () => {
+        setCaptchaToken("");
+        setVisible(false);
+      });
+    }
   };
 
   const handleCancel = () => {

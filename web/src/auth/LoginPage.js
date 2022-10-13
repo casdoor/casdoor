@@ -257,23 +257,27 @@ class LoginPage extends React.Component {
       const oAuthParams = Util.getOAuthGetParameters();
       this.populateOauthValues(values);
 
-      if (this.getLoginFailureCount() > 0 && this.captchaModal.current) {
-        this.captchaModal.current.showCaptcha(() => {
-          this.oauthLogin(values, oAuthParams);
+      if (this.captchaModal) {
+        this.captchaModal.current.showCaptcha((captchaType, captchaToken, secret, hideCaptchaModal) => {
+          values["captchaType"] = captchaType;
+          values["captchaToken"] = captchaToken;
+          values["clientSecret"] = secret;
+
+          this.oauthLogin(values, oAuthParams, () => {
+            hideCaptchaModal();
+          });
         });
       } else {
-        this.oauthLogin(values, oAuthParams);
+        this.oauthLogin(values, oAuthParams, null);
       }
     }
   }
 
-  oauthLogin(values, oAuthParams) {
+  oauthLogin(values, oAuthParams, loginFailureCallback) {
     AuthBackend.login(values, oAuthParams)
       .then((res) => {
         if (res.status === "ok") {
           const responseType = values["type"];
-
-          this.resetLoginFailureCount();
 
           if (responseType === "login") {
             Util.showMessage("success", "Logged in successfully");
@@ -292,43 +296,12 @@ class LoginPage extends React.Component {
             Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
           }
         } else {
-          this.incrementLoginFailureCount();
+          if (loginFailureCallback) {
+            loginFailureCallback();
+          }
           Util.showMessage("error", `Failed to log in: ${res.msg}`);
         }
       });
-  }
-
-  incrementLoginFailureCount() {
-    if (localStorage) {
-      localStorage.setItem("loginFailureCount", (this.getLoginFailureCount() + 1).toString());
-    } else {
-      this.setState((state) => {
-        return {loginFailureCount: state.loginFailureCount + 1};
-      });
-    }
-  }
-
-  resetLoginFailureCount() {
-    if (localStorage) {
-      localStorage.setItem("loginFailureCount", "0");
-    } else {
-      this.setState(() => {
-        return {loginFailureCount: 0};
-      });
-    }
-  }
-
-  getLoginFailureCount() {
-    let loginFailureCount;
-    if (localStorage) {
-      loginFailureCount = Number.parseInt(localStorage.getItem("loginFailureCount"));
-    } else {
-      loginFailureCount = this.state.loginFailureCount ? this.state.loginFailureCount : 0;
-    }
-    if (loginFailureCount === null || loginFailureCount === undefined || isNaN(loginFailureCount)) {
-      loginFailureCount = 0;
-    }
-    return loginFailureCount;
   }
 
   isProviderVisible(providerItem) {
@@ -516,28 +489,27 @@ class LoginPage extends React.Component {
   }
 
   renderCaptchaModal(application) {
-    if (application && application.enableCaptcha && application.providers) {
-      for (const idx in application.providers) {
-        const provider = application.providers[idx].provider;
-        if (provider && provider.category === "Captcha" && provider.type === "Default") {
-          return (
-            <CaptchaModal
-              provider={provider}
-              providerName={provider.name}
-              clientSecret={provider.clientSecret}
-              captchaType={provider.type}
-              subType={provider.subType}
-              owner={provider.owner}
-              clientId={provider.clientId}
-              name={provider.name}
-              providerUrl={provider.providerUrl}
-              clientId2={provider.clientId2}
-              clientSecret2={provider.clientSecret2}
-              preview={false}
-              ref={this.captchaModal}
-            />
-          );
-        }
+    if (this.state.application && application?.providers?.length > 0) {
+      const provider = application.providers.filter(provider => {
+        return provider.provider?.category === "Captcha" && provider.provider?.type === "Default";
+      })[0];
+      // eslint-disable-next-line no-console
+      if (provider && provider.provider && provider?.rule === "Always") {
+        return <CaptchaModal
+          provider={provider.provider}
+          providerName={provider.provider.name}
+          clientSecret={provider.provider.clientSecret}
+          captchaType={provider.provider.type}
+          subType={provider.provider.subType}
+          clientId={provider.provider.clientId}
+          providerUrl={provider.provider.providerUrl}
+          clientId2={provider.provider.clientId2}
+          clientSecret2={provider.provider.clientSecret2}
+          preview={false}
+          owner={provider.provider.owner}
+          name={provider.provider.name}
+          ref={this.captchaModal}
+        />;
       }
     }
     return null;

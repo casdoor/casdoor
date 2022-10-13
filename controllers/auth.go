@@ -23,6 +23,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/captcha"
+
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
@@ -251,6 +253,25 @@ func (c *ApiController) Login() {
 				return
 			}
 		} else {
+			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+			if application == nil {
+				c.ResponseError(fmt.Sprintf("The application: %s does not exist", form.Application))
+				return
+			}
+
+			if object.CheckToEnableCaptcha(application) {
+				isHuman, err := captcha.VerifyCaptchaByCaptchaType(form.CaptchaType, form.CaptchaToken, form.ClientSecret)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+
+				if !isHuman {
+					c.ResponseError("Turing test failed.")
+					return
+				}
+			}
+
 			password := form.Password
 			user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage())
 		}

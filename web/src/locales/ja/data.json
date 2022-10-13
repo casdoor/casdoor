@@ -27,8 +27,6 @@
     "Enable SAML compress - Tooltip": "Enable SAML compress - Tooltip",
     "Enable WebAuthn signin": "Enable WebAuthn signin",
     "Enable WebAuthn signin - Tooltip": "Enable WebAuthn signin - Tooltip",
-    "Enable Captcha": "Enable Captcha",
-    "Enable Captcha - Tooltip": "Whether to enable captcha when the user logs in",
     "Enable code signin": "コードサインインを有効にする",
     "Enable code signin - Tooltip": "Enable code signin - Tooltip",
     "Enable side panel": "Enable side panel",
@@ -242,7 +240,9 @@
     "Users": "ユーザー",
     "Users under all organizations": "すべての組織のユーザー",
     "Webhooks": "Webhooks",
-    "{total} in total": "合計 {total}"
+    "{total} in total": "合計 {total}",
+    "Never": "Never",
+    "Everytime": "Everytime"
   },
   "ldap": {
     "Address": "住所",

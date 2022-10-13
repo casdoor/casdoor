@@ -27,8 +27,6 @@
     "Enable SAML compress - Tooltip": "Enable SAML compress - Tooltip",
     "Enable WebAuthn signin": "Enable WebAuthn signin",
     "Enable WebAuthn signin - Tooltip": "Enable WebAuthn signin - Tooltip",
-    "Enable Captcha": "Enable Captcha",
-    "Enable Captcha - Tooltip": "Whether to enable captcha when the user logs in",
     "Enable code signin": "Code-Anmeldung aktivieren",
     "Enable code signin - Tooltip": "Aktiviere Codeanmeldung - Tooltip",
     "Enable side panel": "Enable side panel",
@@ -242,7 +240,9 @@
     "Users": "Benutzer",
     "Users under all organizations": "Benutzer unter allen Organisationen",
     "Webhooks": "Webhooks",
-    "{total} in total": "{total} insgesamt"
+    "{total} in total": "{total} insgesamt",
+    "Never": "Never",
+    "Everytime": "Everytime"
   },
   "ldap": {
     "Address": "Adresse",
