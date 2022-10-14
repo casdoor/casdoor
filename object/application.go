@@ -15,6 +15,7 @@
 package object
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -85,7 +86,10 @@ func GetApplicationCount(owner, field, value string) int {
 
 func GetApplications(owner string) []*Application {
 	applications := []*Application{}
-	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner})
+
+	session := adapter.GetSession(&Conditions{Owner: owner, SortField: "created_time", SortOrder: "desc"})
+
+	err := session.Find(context.TODO(), &applications)
 	if err != nil {
 		panic(err)
 	}
@@ -95,8 +99,8 @@ func GetApplications(owner string) []*Application {
 
 func GetPaginationApplications(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
 	applications := []*Application{}
-	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&applications)
+	session := adapter.GetSession(&Conditions{Owner: owner, Offset: offset, Limit: limit, Field: field, Value: value, SortField: sortField, SortOrder: sortOrder})
+	err := session.Find(context.TODO(), &applications)
 	if err != nil {
 		panic(err)
 	}
