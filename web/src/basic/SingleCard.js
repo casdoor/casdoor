@@ -16,6 +16,7 @@ import React from "react";
 import {Card, Col} from "antd";
 import * as Setting from "../Setting";
 import {withRouter} from "react-router-dom";
+import "./SingleCard.less";
 
 const {Meta} = Card;
 
@@ -56,16 +57,15 @@ class SingleCard extends React.Component {
 
   renderCard(logo, link, title, desc, time, isSingle) {
     const silentSigninLink = this.wrappedAsSilentSigninLink(link);
-
     return (
       <Col style={{paddingLeft: "20px", paddingRight: "20px", paddingBottom: "20px", marginBottom: "20px"}} span={6}>
         <Card
           hoverable
           cover={
-            <img alt="logo" src={logo} style={{width: "100%", objectFit: "scale-down"}} />
+            <img alt="logo" src={logo} style={{height: "200px", objectFit: "contain"}} />
           }
           onClick={() => Setting.goToLinkSoft(this, silentSigninLink)}
-          style={isSingle ? {width: "320px"} : {width: "100%"}}
+          style={isSingle ? {width: "320px"} : {width: "100%", height: "100%", padding: "5px"}}
         >
           <Meta title={title} description={desc} />
           <br />
