@@ -33,6 +33,7 @@ func InitAuthz() {
 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	a, err := xormadapter.NewAdapterWithTableName(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName()+conf.GetConfigString("dbName"), "casbin_rule", tableNamePrefix, true)
+	object.HandleSchemaUpdate()
 	if err != nil {
 		panic(err)
 	}

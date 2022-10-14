@@ -18,6 +18,8 @@ import (
 	"fmt"
 	"runtime"
 
+	xormadapter "github.com/casbin/xorm-adapter/v3"
+
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
@@ -48,6 +50,18 @@ func InitAdapter(createDatabase bool) {
 		adapter.CreateDatabase()
 	}
 	adapter.createTable()
+}
+
+func HandleSchemaUpdate() {
+	var ptype []string
+	err := adapter.Engine.Table("casbin_rule").Cols("p_type").Find(&ptype)
+	if err != nil {
+		return
+	} else {
+		adapter.Engine.Cols("ptype").Update(&xormadapter.CasbinRule{
+			Ptype: "p",
+		})
+	}
 }
 
 // Adapter represents the MySQL adapter for policy storage.
