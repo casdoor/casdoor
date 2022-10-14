@@ -25,6 +25,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.2.0
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/google/uuid v1.2.0
+	github.com/kamva/mgm/v3 v3.4.1 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/lestrrat-go/jwx v0.9.0
 	github.com/lib/pq v1.8.0
@@ -42,7 +43,8 @@ require (
 	github.com/thanhpk/randstr v1.0.4
 	github.com/tklauser/go-sysconf v0.3.10 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
-	golang.org/x/crypto v0.0.0-20220208233918-bba287dce954
+	go.mongodb.org/mongo-driver v1.10.3 // indirect
+	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
 	golang.org/x/oauth2 v0.0.0-20210628180205-a41e5a781914
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect

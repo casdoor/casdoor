@@ -15,13 +15,13 @@
 package object
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"regexp"
 	"strings"
 
 	"github.com/casdoor/casdoor/util"
-	"xorm.io/core"
 )
 
 type SignupItem struct {
@@ -75,7 +75,8 @@ type Application struct {
 }
 
 func GetApplicationCount(owner, field, value string) int {
-	session := GetSession(owner, -1, -1, field, value, "", "")
+	conditions := ConditionsBuilder().SetOwner(owner).SetLikeFields(LikeFields{field: value})
+	session := adapter.CreateSession(context.TODO(), conditions)
 	count, err := session.Count(&Application{})
 	if err != nil {
 		panic(err)
@@ -86,7 +87,9 @@ func GetApplicationCount(owner, field, value string) int {
 
 func GetApplications(owner string) []*Application {
 	applications := []*Application{}
-	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner})
+	conditions := ConditionsBuilder().SetOwner(owner).SetSortField("created_time").SetSortOrderDESC()
+	session := adapter.CreateSession(context.TODO(), conditions)
+	err := session.Find(&applications)
 	if err != nil {
 		panic(err)
 	}
@@ -96,7 +99,8 @@ func GetApplications(owner string) []*Application {
 
 func GetPaginationApplications(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
 	applications := []*Application{}
-	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	conditions := ConditionsBuilder().SetOwner(owner).SetOffset(offset).SetLimit(limit).SetLikeFields(LikeFields{field: value}).SetSortOrder(sortOrder).SetSortField(sortField)
+	session := adapter.CreateSession(context.TODO(), conditions)
 	err := session.Find(&applications)
 	if err != nil {
 		panic(err)
@@ -107,7 +111,8 @@ func GetPaginationApplications(owner string, offset, limit int, field, value, so
 
 func GetApplicationsByOrganizationName(owner string, organization string) []*Application {
 	applications := []*Application{}
-	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner, Organization: organization})
+	c := ConditionsBuilder().SetSortField("create_time").SetSortOrderDESC().SetOwner(owner).SetEqualFields(map[string]interface{}{"organization": organization})
+	err := adapter.CreateSession(context.TODO(), c).Find(&applications)
 	if err != nil {
 		panic(err)
 	}
@@ -147,8 +152,8 @@ func getApplication(owner string, name string) *Application {
 		return nil
 	}
 
-	application := Application{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&application)
+	application := Application{}
+	existed, err := adapter.CreateSession(context.TODO(), ConditionsBuilder().SetEqualFields(EqualFields{"owner": owner, "name": name})).Get(&application)
 	if err != nil {
 		panic(err)
 	}
@@ -164,7 +169,7 @@ func getApplication(owner string, name string) *Application {
 
 func GetApplicationByOrganizationName(organization string) *Application {
 	application := Application{}
-	existed, err := adapter.Engine.Where("organization=?", organization).Get(&application)
+	existed, err := adapter.CreateSession(context.TODO(), ConditionsBuilder().SetEqualFields(EqualFields{"organization": organization})).Get(&application)
 	if err != nil {
 		panic(err)
 	}
@@ -203,7 +208,7 @@ func GetApplicationByUserId(userId string) (*Application, *User) {
 
 func GetApplicationByClientId(clientId string) *Application {
 	application := Application{}
-	existed, err := adapter.Engine.Where("client_id=?", clientId).Get(&application)
+	existed, err := adapter.CreateSession(context.TODO(), ConditionsBuilder().SetEqualFields(EqualFields{"client_id": clientId})).Get(&application)
 	if err != nil {
 		panic(err)
 	}
@@ -274,11 +279,13 @@ func UpdateApplication(id string, application *Application) bool {
 		providerItem.Provider = nil
 	}
 
-	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
+	var affected int64
+	var err error
 	if application.ClientSecret == "***" {
-		session.Omit("client_secret")
+		affected, err = adapter.CreateSession(context.TODO(), ConditionsBuilder()).UpdateByID(&application, owner, name, "client_secret")
+	} else {
+		affected, err = adapter.CreateSession(context.TODO(), ConditionsBuilder()).UpdateByID(&application, owner, name)
 	}
-	affected, err := session.Update(application)
 	if err != nil {
 		panic(err)
 	}
@@ -297,7 +304,7 @@ func AddApplication(application *Application) bool {
 		providerItem.Provider = nil
 	}
 
-	affected, err := adapter.Engine.Insert(application)
+	affected, err := adapter.CreateSession(context.TODO(), ConditionsBuilder()).Insert(application)
 	if err != nil {
 		panic(err)
 	}
@@ -310,7 +317,7 @@ func DeleteApplication(application *Application) bool {
 		return false
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{application.Owner, application.Name}).Delete(&Application{})
+	affected, err := adapter.CreateSession(context.TODO(), ConditionsBuilder()).DeleteByID(&Application{}, application.Owner, application.Name)
 	if err != nil {
 		panic(err)
 	}
