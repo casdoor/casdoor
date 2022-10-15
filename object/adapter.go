@@ -252,19 +252,6 @@ func GetSession(owner string, offset, limit int, field, value, sortField, sortOr
 func initMigrate() {
 	migrations := []*migrate.Migration{
 		{
-			ID: "20221015PermissionRule--fill ptype field with p",
-			Migrate: func(tx *xorm.Engine) error {
-				_, err := tx.Cols("ptype").Update(&PermissionRule{
-					Ptype: "p",
-				})
-				return err
-			},
-			Rollback: func(tx *xorm.Engine) error {
-				return tx.DropTables(&PermissionRule{})
-			},
-		},
-
-		{
 			ID: "20221015CasbinRule--fill ptype field with p",
 			Migrate: func(tx *xorm.Engine) error {
 				_, err := tx.Cols("ptype").Update(&xormadapter.CasbinRule{
