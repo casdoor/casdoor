@@ -25,7 +25,6 @@ import (
 	_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql"   // db = mysql
 	_ "github.com/lib/pq"                // db = postgres
-
 	"xorm.io/xorm/migrate"
 	//_ "github.com/mattn/go-sqlite3"    // db = sqlite3
 	"xorm.io/core"
@@ -43,6 +42,7 @@ func InitConfig() {
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
 	InitAdapter(true)
+	initMigrations()
 }
 
 func InitAdapter(createDatabase bool) {
@@ -51,7 +51,6 @@ func InitAdapter(createDatabase bool) {
 		adapter.CreateDatabase()
 	}
 	adapter.createTable()
-	initMigrate()
 }
 
 // Adapter represents the MySQL adapter for policy storage.
@@ -249,7 +248,7 @@ func GetSession(owner string, offset, limit int, field, value, sortField, sortOr
 	return session
 }
 
-func initMigrate() {
+func initMigrations() {
 	migrations := []*migrate.Migration{
 		{
 			ID: "20221015CasbinRule--fill ptype field with p",
