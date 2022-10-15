@@ -19,11 +19,14 @@ import (
 	"runtime"
 
 	"github.com/beego/beego"
+	xormadapter "github.com/casbin/xorm-adapter/v3"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql"   // db = mysql
-	_ "github.com/lib/pq"                // db = postgres
+	_ "github.com/lib/pq"                // db = postgresclear
+
+	"xorm.io/xorm/migrate"
 	//_ "github.com/mattn/go-sqlite3"    // db = sqlite3
 	"xorm.io/core"
 	"xorm.io/xorm"
@@ -48,6 +51,7 @@ func InitAdapter(createDatabase bool) {
 		adapter.CreateDatabase()
 	}
 	adapter.createTable()
+	initMigrate()
 }
 
 // Adapter represents the MySQL adapter for policy storage.
@@ -214,6 +218,11 @@ func (a *Adapter) createTable() {
 	if err != nil {
 		panic(err)
 	}
+
+	err = a.Engine.Sync2(new(xormadapter.CasbinRule))
+	if err != nil {
+		panic(err)
+	}
 }
 
 func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
@@ -238,4 +247,36 @@ func GetSession(owner string, offset, limit int, field, value, sortField, sortOr
 		session = session.Desc(util.SnakeString(sortField))
 	}
 	return session
+}
+
+func initMigrate() {
+	migrations := []*migrate.Migration{
+		{
+			ID: "20221015PermissionRule--fill ptype field with p",
+			Migrate: func(tx *xorm.Engine) error {
+				_, err := tx.Cols("ptype").Update(&PermissionRule{
+					Ptype: "p",
+				})
+				return err
+			},
+			Rollback: func(tx *xorm.Engine) error {
+				return tx.DropTables(&PermissionRule{})
+			},
+		},
+
+		{
+			ID: "20221015CasbinRule--fill ptype field with p",
+			Migrate: func(tx *xorm.Engine) error {
+				_, err := tx.Cols("ptype").Update(&xormadapter.CasbinRule{
+					Ptype: "p",
+				})
+				return err
+			},
+			Rollback: func(tx *xorm.Engine) error {
+				return tx.DropTables(&xormadapter.CasbinRule{})
+			},
+		},
+	}
+	m := migrate.New(adapter.Engine, migrate.DefaultOptions, migrations)
+	m.Migrate()
 }
