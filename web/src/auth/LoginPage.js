@@ -393,11 +393,11 @@ class LoginPage extends React.Component {
                 {i18next.t("login:Auto sign in")}
               </Checkbox>
             </Form.Item>
-            <a style={{float: "right"}} onClick={() => {
+            <Link style={{float: "right"}} onClick={() => {
               Setting.goToForget(this, application);
             }}>
               {i18next.t("login:Forgot password?")}
-            </a>
+            </Link>
           </Form.Item>
           <Form.Item>
             <Button
@@ -429,11 +429,11 @@ class LoginPage extends React.Component {
         <div style={{marginTop: "20px"}}>
           <div style={{fontSize: 16, textAlign: "left"}}>
             {i18next.t("login:To access")}&nbsp;
-            <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
+            <Link target="_blank" rel="noreferrer" href={application.homepageUrl}>
               <span style={{fontWeight: "bold"}}>
                 {application.displayName}
               </span>
-            </a>
+            </Link>
             :
           </div>
           <br />
@@ -473,12 +473,12 @@ class LoginPage extends React.Component {
               !application.enableSignUp ? null : (
                 <>
                   {i18next.t("login:No account?")}&nbsp;
-                  <a onClick={() => {
+                  <Link onClick={() => {
                     sessionStorage.setItem("signinUrl", window.location.href);
                     Setting.goToSignup(this, application);
                   }}>
                     {i18next.t("login:sign up now")}
-                  </a>
+                  </Link>
                 </>
               )
             }
