@@ -139,6 +139,18 @@ class LoginPage extends React.Component {
     this.props.onUpdateAccount(account);
   }
 
+  parseOffset(offset) {
+    if (offset === 2 || offset === 4 || Setting.inIframe() || Setting.isMobile()) {
+      return "0 auto";
+    }
+    if (offset === 1) {
+      return "0 10%";
+    }
+    if (offset === 3) {
+      return "0 60%";
+    }
+  }
+
   populateOauthValues(values) {
     const oAuthParams = Util.getOAuthGetParameters();
     if (oAuthParams !== null && oAuthParams.responseType !== null && oAuthParams.responseType !== "") {
@@ -695,16 +707,18 @@ class LoginPage extends React.Component {
       );
     }
 
-    const formStyle = Setting.inIframe() ? null : Setting.parseObject(application.formCss);
-
     return (
       <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
         <CustomGithubCorner />
-        <Row>
-          <Col span={8} offset={application.formOffset === 0 || Setting.inIframe() || Setting.isMobile() ? 8 : application.formOffset} style={{display: "flex", justifyContent: "center"}}>
-            <div className="login-content">
-              <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center", ...formStyle}}>
-                <SelectLanguageBox id="language-box-corner" style={{top: formStyle !== null ? "80px" : "45px", right: formStyle !== null ? "5px" : "-45px"}} />
+        <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
+          {Setting.inIframe() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
+          <div className="login-panel">
+            <SelectLanguageBox id="language-box-corner" style={{top: "50px"}} />
+            <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
+              <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
+            </div>
+            <div className="login-form">
+              <div >
                 <div>
                   {
                     Setting.renderHelmet(application)
@@ -724,8 +738,8 @@ class LoginPage extends React.Component {
                 </div>
               </div>
             </div>
-          </Col>
-        </Row>
+          </div>
+        </div>
       </div>
     );
   }

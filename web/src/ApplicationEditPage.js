@@ -32,6 +32,7 @@ import copy from "copy-to-clipboard";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
+
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/htmlmixed/htmlmixed");
 require("codemirror/mode/xml/xml");
@@ -39,13 +40,52 @@ require("codemirror/mode/css/css");
 
 const {Option} = Select;
 
-const template = {
-  padding: "30px",
-  border: "2px solid #ffffff",
-  borderRadius: "7px",
-  backgroundColor: "#ffffff",
-  boxShadow: " 0px 0px 20px rgba(0, 0, 0, 0.20)",
-};
+const template = `<!--template: please copy and paste-->
+<style>
+   .login-panel{
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.20);
+}
+</style>
+`;
+const sideTemplate = `<!--template: please copy and paste-->
+<style>
+  .left-model{
+    text-align: center;
+    padding: 30px;
+    background-color: #8ca0ed;
+    position: absolute;
+    transform: none;
+    width: 100%;
+    height: 100%;
+  }
+  .side-logo{
+    display: flex;
+    align-items: center;
+  }
+  .side-logo span {
+    font-family: Montserrat, sans-serif;
+    font-weight: 900;
+    font-size: 2.4rem;
+    line-height: 1.3;
+    margin-left: 16px;
+    color: #404040;
+  }
+  .img{
+    max-width: none;
+    margin: 41px 0 13px;
+  }
+</style>
+<div class="left-model">
+  <span class="side-logo"> <img src="https://cdn.casbin.org/img/casdoor-logo_1185x256.png" alt="Casdoor" style="width: 120px"> 
+    <span>SSO</span> 
+  </span>
+  <div class="img">
+    <img src="https://cdn.casbin.org/img/casbin.svg" alt="Casdoor"/>
+  </div>
+</div>
+`;
 
 class ApplicationEditPage extends React.Component {
   constructor(props) {
@@ -157,7 +197,6 @@ class ApplicationEditPage extends React.Component {
   }
 
   renderApplication() {
-    const preview = JSON.stringify(template, null, 2);
     return (
       <Card size="small" title={
         <div>
@@ -562,10 +601,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={22} style={(Setting.isMobile()) ? {maxWidth: "100%"} : {}}>
             <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
-              <Col span={23} >
+              <Col span={22} >
                 <Input prefix={<LinkOutlined />} value={this.state.application.formBackgroundUrl} onChange={e => {
                   this.updateApplicationField("formBackgroundUrl", e.target.value);
                 }} />
@@ -590,8 +629,8 @@ class ApplicationEditPage extends React.Component {
           <Col span={22}>
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror value={this.state.application.formCss === "" ? preview : this.state.application.formCss}
-                  options={{mode: "css", theme: "material-darker"}}
+                <CodeMirror value={this.state.application.formCss === "" ? template : this.state.application.formCss}
+                  options={{mode: "htmlmixed", theme: "material-darker"}}
                   onBeforeChange={(editor, data, value) => {
                     this.updateApplicationField("formCss", value);
                   }}
@@ -609,11 +648,39 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:From position"), i18next.t("application:From position - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Radio.Group onChange={e => {this.updateApplicationField("formOffset", e.target.value);}} value={this.state.application.formOffset !== 0 ? this.state.application.formOffset : 8}>
-              <Radio.Button value={2}>left</Radio.Button>
-              <Radio.Button value={8}>center</Radio.Button>
-              <Radio.Button value={14}>right</Radio.Button>
-            </Radio.Group>
+            <Row style={{marginTop: "20px"}} >
+              <Radio.Group onChange={e => {this.updateApplicationField("formOffset", e.target.value);}} value={this.state.application.formOffset}>
+                <Radio.Button value={1}>{i18next.t("application:Left")}</Radio.Button>
+                <Radio.Button value={2}>{i18next.t("application:Center")}</Radio.Button>
+                <Radio.Button value={3}>{i18next.t("application:Right")}</Radio.Button>
+                <Radio.Button value={4}>
+                  {i18next.t("application:Enable side panel")}
+                </Radio.Button>
+              </Radio.Group>
+            </Row>
+            {this.state.application.formOffset === 4 ?
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+                  {Setting.getLabel(i18next.t("application:Side panel HTML"), i18next.t("application:Side panel HTML - Tooltip"))} :
+                </Col>
+                <Col span={21} >
+                  <Popover placement="right" content={
+                    <div style={{width: "900px", height: "300px"}} >
+                      <CodeMirror value={this.state.application.formSideHtml === "" ? sideTemplate : this.state.application.formSideHtml}
+                        options={{mode: "htmlmixed", theme: "material-darker"}}
+                        onBeforeChange={(editor, data, value) => {
+                          this.updateApplicationField("formSideHtml", value);
+                        }}
+                      />
+                    </div>
+                  } title={i18next.t("application:Side panel HTML - Edit")} trigger="click">
+                    <Input value={this.state.application.formSideHtml} style={{marginBottom: "10px"}} onChange={e => {
+                      this.updateApplicationField("formSideHtml", e.target.value);
+                    }} />
+                  </Popover>
+                </Col>
+              </Row>
+              : null}
           </Col>
         </Row>
         {
@@ -707,7 +774,7 @@ class ApplicationEditPage extends React.Component {
         <br />
         <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
           <PromptPage application={this.state.application} account={this.props.account} />
-          <div style={maskStyle}></div>
+          <div style={maskStyle} />
         </div>
       </Col>
     );
