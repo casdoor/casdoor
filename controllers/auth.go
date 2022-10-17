@@ -411,12 +411,6 @@ func (c *ApiController) Login() {
 				// sync info from 3rd-party if possible
 				object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
 
-				msg := object.CheckUsername(user.Name)
-				if msg != "" {
-					c.ResponseError(msg)
-					return
-				}
-
 				affected := object.AddUser(user)
 				if !affected {
 					c.ResponseError(fmt.Sprintf("Failed to create user, user information is invalid: %s", util.StructToJson(user)))

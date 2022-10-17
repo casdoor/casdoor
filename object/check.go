@@ -59,6 +59,11 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 		if reWhiteSpace.MatchString(username) {
 			return "username cannot contain white spaces"
 		}
+		msg := CheckUsername(username)
+		if msg != "" {
+			return msg
+		}
+
 		if HasUserByField(organization.Name, "name", username) {
 			return "username already exists"
 		}
@@ -314,16 +319,16 @@ func CheckAccessPermission(userId string, application *Application) (bool, error
 	return allowed, err
 }
 
-func CheckUsername(name string) string {
-	if name == "" {
+func CheckUsername(username string) string {
+	if username == "" {
 		return "Empty username."
-	} else if len(name) > 39 {
+	} else if len(username) > 39 {
 		return "Username is too long (maximum is 39 characters)."
 	}
 
 	// https://stackoverflow.com/questions/58726546/github-username-convention-using-regex
 	re, _ := regexp.Compile("^[a-zA-Z0-9]+((?:-[a-zA-Z0-9]+)|(?:_[a-zA-Z0-9]+))*$")
-	if !re.MatchString(name) {
+	if !re.MatchString(username) {
 		return "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline."
 	}
 
