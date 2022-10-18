@@ -792,7 +792,7 @@ export function signupLink(application) {
   }
 
   if (authConfig.appName === application.name) {
-    return "signup";
+    return "/signup";
   } else {
     if (application.signupUrl === "") {
       return `/signup/${application.name}`;
