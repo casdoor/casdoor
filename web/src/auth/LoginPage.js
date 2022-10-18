@@ -473,7 +473,7 @@ class LoginPage extends React.Component {
                   {i18next.t("login:No account?")}&nbsp;
                   <Link onClick={() => {
                     sessionStorage.setItem("signinUrl", window.location.href);
-                  }} to={"/signup"}>
+                  }} to={() => Setting.signupLink(application)}>
                     {i18next.t("login:sign up now")}
                   </Link>
                 </>
