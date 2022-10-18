@@ -781,6 +781,27 @@ export function goToSignup(ths, application) {
   }
 }
 
+export function signupLink(application) {
+  if (application === null) {
+    return "/";
+  }
+
+  if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
+    const link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
+    return link;
+  }
+
+  if (authConfig.appName === application.name) {
+    return "signup";
+  } else {
+    if (application.signupUrl === "") {
+      return `/signup/${application.name}`;
+    } else {
+      return application.signupUrl;
+    }
+  }
+}
+
 export function goToForget(ths, application) {
   if (application === null) {
     return;
@@ -793,6 +814,22 @@ export function goToForget(ths, application) {
       goToLinkSoft(ths, `/forget/${application.name}`);
     } else {
       goToLink(application.forgetUrl);
+    }
+  }
+}
+
+export function forgetLink(application) {
+  if (application === null) {
+    return "/";
+  }
+
+  if (authConfig.appName === application.name) {
+    return "/forget";
+  } else {
+    if (application.forgetUrl === "") {
+      return `/forget/${application.name}`;
+    } else {
+      return "application.forgetUrl";
     }
   }
 }

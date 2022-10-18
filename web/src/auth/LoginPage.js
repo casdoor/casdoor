@@ -393,7 +393,7 @@ class LoginPage extends React.Component {
                 {i18next.t("login:Auto sign in")}
               </Checkbox>
             </Form.Item>
-            <Link style={{float: "right"}} to={"/forget"}>
+            <Link style={{float: "right"}} to={() => Setting.forgetLink(application)}>
               {i18next.t("login:Forgot password?")}
             </Link>
           </Form.Item>
