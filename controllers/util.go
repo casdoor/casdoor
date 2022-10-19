@@ -16,10 +16,11 @@ package controllers
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-	"strconv"
 )
 
 // ResponseJsonData ...

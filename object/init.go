@@ -17,10 +17,11 @@ package object
 import (
 	"encoding/gob"
 	"fmt"
-	"github.com/beego/i18n"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/beego/i18n"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
