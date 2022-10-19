@@ -40,6 +40,7 @@ func main() {
 	object.InitFromFile()
 	object.InitDefaultStorageProvider()
 	object.InitLdapAutoSynchronizer()
+	object.InitLanguage()
 	proxy.InitHttpClient()
 	authz.InitAuthz()
 

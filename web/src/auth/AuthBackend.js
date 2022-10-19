@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import {authConfig} from "./Auth";
+import * as Setting from "../Setting";
 
 export function getAccount(query) {
   return fetch(`${authConfig.serverUrl}/api/get-account${query}`, {
@@ -59,6 +60,9 @@ export function login(values, oAuthParams) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 

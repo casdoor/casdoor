@@ -35,7 +35,7 @@ func (c *ApiController) WebAuthnSignupBegin() {
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	user := c.getCurrentUser()
 	if user == nil {
-		c.ResponseError("Please login first.")
+		c.ResponseError(c.Translate("LoginErr.LoginFirst"))
 		return
 	}
 
@@ -66,13 +66,13 @@ func (c *ApiController) WebAuthnSignupFinish() {
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	user := c.getCurrentUser()
 	if user == nil {
-		c.ResponseError("Please login first.")
+		c.ResponseError(c.Translate("LoginErr.LoginFirst"))
 		return
 	}
 	sessionObj := c.GetSession("registration")
 	sessionData, ok := sessionObj.(webauthn.SessionData)
 	if !ok {
-		c.ResponseError("Please call WebAuthnSignupBegin first")
+		c.ResponseError(c.Translate("AuthErr.CallWebAuthnSigninBegin"))
 		return
 	}
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
@@ -101,7 +101,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 	userName := c.Input().Get("name")
 	user := object.GetUserByFields(userOwner, userName)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf("The user: %s/%s doesn't exist", userOwner, userName))
+		c.ResponseError(fmt.Sprintf(c.Translate("UserErr.DoNotExistInOrg"), userOwner, userName))
 		return
 	}
 	options, sessionData, err := webauthnObj.BeginLogin(user)
@@ -127,7 +127,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	sessionObj := c.GetSession("authentication")
 	sessionData, ok := sessionObj.(webauthn.SessionData)
 	if !ok {
-		c.ResponseError("Please call WebAuthnSigninBegin first")
+		c.ResponseError(c.Translate("AuthErr.CallWebAuthnSigninBegin"))
 		return
 	}
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))

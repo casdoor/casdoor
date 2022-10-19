@@ -40,7 +40,7 @@ func (c *ApiController) GetSystemInfo() {
 
 	user := object.GetUser(id)
 	if user == nil || !user.IsGlobalAdmin {
-		c.ResponseError("You are not authorized to access this resource")
+		c.ResponseError(c.Translate("ResourceErr.NotAuthorized"))
 		return
 	}
 

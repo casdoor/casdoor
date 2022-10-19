@@ -43,21 +43,21 @@ func init() {
 
 func CheckUserSignup(application *Application, organization *Organization, username string, password string, displayName string, firstName string, lastName string, email string, phone string, affiliation string) string {
 	if organization == nil {
-		return "organization does not exist"
+		return "OrgErr.DoNotExist"
 	}
 
 	if application.IsSignupItemVisible("Username") {
 		if len(username) <= 1 {
-			return "username must have at least 2 characters"
+			return "UserErr.NameLessThanTwoCharacters"
 		}
 		if unicode.IsDigit(rune(username[0])) {
-			return "username cannot start with a digit"
+			return "UserErr.NameStartWithADigitErr"
 		}
 		if util.IsEmailValid(username) {
-			return "username cannot be an email address"
+			return "UserErr.NameIsEmailErr"
 		}
 		if reWhiteSpace.MatchString(username) {
-			return "username cannot contain white spaces"
+			return "UserErr.NameCantainWhitSpaceErr"
 		}
 		msg := CheckUsername(username)
 		if msg != "" {
@@ -65,65 +65,65 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 		}
 
 		if HasUserByField(organization.Name, "name", username) {
-			return "username already exists"
+			return "UserErr.NameExistedErr"
 		}
 		if HasUserByField(organization.Name, "email", email) {
-			return "email already exists"
+			return "EmailErr.ExistedErr"
 		}
 		if HasUserByField(organization.Name, "phone", phone) {
-			return "phone already exists"
+			return "PhoneErr.ExistedErr"
 		}
 	}
 
 	if len(password) <= 5 {
-		return "password must have at least 6 characters"
+		return "UserErr.PasswordLessThanSixCharacters"
 	}
 
 	if application.IsSignupItemVisible("Email") {
 		if email == "" {
 			if application.IsSignupItemRequired("Email") {
-				return "email cannot be empty"
+				return "EmailErr.EmptyErr"
 			} else {
 				return ""
 			}
 		}
 
 		if HasUserByField(organization.Name, "email", email) {
-			return "email already exists"
+			return "EmailErr.ExistedErr"
 		} else if !util.IsEmailValid(email) {
-			return "email is invalid"
+			return "EmailErr.EmailInvalid"
 		}
 	}
 
 	if application.IsSignupItemVisible("Phone") {
 		if phone == "" {
 			if application.IsSignupItemRequired("Phone") {
-				return "phone cannot be empty"
+				return "PhoneErr.EmptyErr"
 			} else {
 				return ""
 			}
 		}
 
 		if HasUserByField(organization.Name, "phone", phone) {
-			return "phone already exists"
+			return "PhoneErr.ExistedErr"
 		} else if organization.PhonePrefix == "86" && !util.IsPhoneCnValid(phone) {
-			return "phone number is invalid"
+			return "PhoneErr.NumberInvalid"
 		}
 	}
 
 	if application.IsSignupItemVisible("Display name") {
 		if application.GetSignupItemRule("Display name") == "First, last" && (firstName != "" || lastName != "") {
 			if firstName == "" {
-				return "firstName cannot be blank"
+				return "UserErr.FirstNameBlankErr"
 			} else if lastName == "" {
-				return "lastName cannot be blank"
+				return "UserErr.LastNameBlankErr"
 			}
 		} else {
 			if displayName == "" {
-				return "displayName cannot be blank"
+				return "UserErr.DisplayNameBlankErr"
 			} else if application.GetSignupItemRule("Display name") == "Real name" {
 				if !isValidRealName(displayName) {
-					return "displayName is not valid real name"
+					return "UserErr.DisplayNameInvalid"
 				}
 			}
 		}
@@ -131,7 +131,7 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 
 	if application.IsSignupItemVisible("Affiliation") {
 		if affiliation == "" {
-			return "affiliation cannot be blank"
+			return "UserErr.AffiliationBlankErr"
 		}
 	}
 
@@ -321,15 +321,15 @@ func CheckAccessPermission(userId string, application *Application) (bool, error
 
 func CheckUsername(username string) string {
 	if username == "" {
-		return "Empty username."
+		return "UserErr.NameEmptyErr"
 	} else if len(username) > 39 {
-		return "Username is too long (maximum is 39 characters)."
+		return "UserErr.NameTooLang"
 	}
 
 	// https://stackoverflow.com/questions/58726546/github-username-convention-using-regex
 	re, _ := regexp.Compile("^[a-zA-Z0-9]+((?:-[a-zA-Z0-9]+)|(?:_[a-zA-Z0-9]+))*$")
 	if !re.MatchString(username) {
-		return "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline."
+		return "UserErr.NameFormatErr"
 	}
 
 	return ""

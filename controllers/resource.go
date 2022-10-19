@@ -145,7 +145,7 @@ func (c *ApiController) UploadResource() {
 	defer file.Close()
 
 	if username == "" || fullFilePath == "" {
-		c.ResponseError(fmt.Sprintf("username or fullFilePath is empty: username = %s, fullFilePath = %s", username, fullFilePath))
+		c.ResponseError(fmt.Sprintf(c.Translate("ResourceErr.UsernameOrFilePathEmpty"), username, fullFilePath))
 		return
 	}
 
@@ -205,7 +205,7 @@ func (c *ApiController) UploadResource() {
 		if user == nil {
 			user = object.GetUserNoCheck(username)
 			if user == nil {
-				c.ResponseError("user is nil for tag: \"avatar\"")
+				c.ResponseError(c.Translate("ResourceErr.UserIsNil"))
 				return
 			}
 		}

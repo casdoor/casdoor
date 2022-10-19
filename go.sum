@@ -61,6 +61,8 @@ github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go
 github.com/PuerkitoBio/goquery v1.5.1/go.mod h1:GsLWisAFVj4WgDibEWF4pvYnkVQBpKBKeU+7zCJoLcc=
 github.com/RobotsAndPencils/go-saml v0.0.0-20170520135329-fb13cb52a46b h1:EgJ6N2S0h1WfFIjU5/VVHWbMSVYXAluop97Qxpr/lfQ=
 github.com/RobotsAndPencils/go-saml v0.0.0-20170520135329-fb13cb52a46b/go.mod h1:3SAoF0F5EbcOuBD5WT9nYkbIJieBS84cUQXADbXeBsU=
+github.com/Unknwon/goconfig v1.0.0 h1:9IAu/BYbSLQi8puFjUQApZTxIHqSwrj5d8vpP8vTq4A=
+github.com/Unknwon/goconfig v1.0.0/go.mod h1:wngxua9XCNjvHjDiTiV26DaKDT+0c63QR6H5hjVUUxw=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
@@ -82,6 +84,8 @@ github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f/go.mod 
 github.com/beego/beego v1.12.11 h1:MWKcnpavb7iAIS0m6uuEq6pHKkYvGNw/5umIUKqL7jM=
 github.com/beego/beego v1.12.11/go.mod h1:QURFL1HldOcCZAxnc1cZ7wrplsYR5dKPHFjmk6WkLAs=
 github.com/beego/goyaml2 v0.0.0-20130207012346-5545475820dd/go.mod h1:1b+Y/CofkYwXMUU0OhQqGvsY2Bvgr4j6jfT699wyZKQ=
+github.com/beego/i18n v0.0.0-20161101132742-e9308947f407 h1:WtJfx5HqASTQp7HfiZldnin8KQV2futplF3duGp5PGc=
+github.com/beego/i18n v0.0.0-20161101132742-e9308947f407/go.mod h1:KLeFCpAMq2+50NkXC8iiJxLLiiTfTqrGtKEVm+2fk7s=
 github.com/beego/x2j v0.0.0-20131220205130-a0352aadc542/go.mod h1:kSeGC/p1AbBiEp5kat81+DSQrZenVBZXklMLaELspWU=
 github.com/beevik/etree v1.1.0 h1:T0xke/WvNtMoCqgzPhkX2r4rjY3GDZFi+FjpRZY2Jbs=
 github.com/beevik/etree v1.1.0/go.mod h1:r8Aw8JqVegEf0w2fDnATrX9VpkMcyFeM0FhwO62wh+A=

@@ -249,7 +249,7 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider string) (*
 	}
 	application := GetApplication(applicationId)
 	if application == nil || len(application.Providers) == 0 {
-		return nil, fmt.Errorf("invalid application id")
+		return nil, fmt.Errorf("ApplicationErr.InvalidID")
 	}
 	for _, provider := range application.Providers {
 		if provider.Provider == nil {

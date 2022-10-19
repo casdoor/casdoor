@@ -20,6 +20,7 @@ import (
 
 	"github.com/beego/beego"
 	"github.com/beego/beego/logs"
+	"github.com/beego/i18n"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -28,6 +29,7 @@ import (
 // controller for handlers under /api uri
 type ApiController struct {
 	beego.Controller
+	i18n.Locale
 }
 
 // RootController

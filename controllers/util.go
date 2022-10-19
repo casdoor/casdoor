@@ -16,11 +16,10 @@ package controllers
 
 import (
 	"fmt"
-	"strconv"
-
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
+	"strconv"
 )
 
 // ResponseJsonData ...
@@ -48,6 +47,12 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	c.ResponseJsonData(resp, data...)
 }
 
+func (c *ApiController) Translate(error string) string {
+	lang := c.Ctx.Request.Header.Get("Accept-Language")
+	c.Lang = lang[0:2]
+	return c.Tr(error)
+}
+
 // SetTokenErrorHttpStatus ...
 func (c *ApiController) SetTokenErrorHttpStatus() {
 	_, ok := c.Data["json"].(*object.TokenError)
@@ -69,7 +74,7 @@ func (c *ApiController) SetTokenErrorHttpStatus() {
 func (c *ApiController) RequireSignedIn() (string, bool) {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError("Please sign in first")
+		c.ResponseError(c.Translate("LoginErr.SignInFirst"))
 		return "", false
 	}
 	return userId, true
@@ -84,7 +89,7 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 
 	user := object.GetUser(userId)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
+		c.ResponseError(fmt.Sprintf(c.Translate("UserErr.DoNotExist"), userId))
 		return nil, false
 	}
 	return user, true
@@ -112,7 +117,7 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 	if providerName != "" {
 		provider := object.GetProvider(util.GetId(providerName))
 		if provider == nil {
-			c.ResponseError(fmt.Sprintf("The provider: %s is not found", providerName))
+			c.ResponseError(fmt.Sprintf(c.Translate("ProviderErr.ProviderNotFound"), providerName))
 			return nil, nil, false
 		}
 		return provider, nil, true
@@ -125,13 +130,13 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 
 	application, user := object.GetApplicationByUserId(userId)
 	if application == nil {
-		c.ResponseError(fmt.Sprintf("No application is found for userId: \"%s\"", userId))
+		c.ResponseError(fmt.Sprintf(c.Translate("ApplicationErr.AppNotFoundForUserID"), userId))
 		return nil, nil, false
 	}
 
 	provider := application.GetProviderByCategory(category)
 	if provider == nil {
-		c.ResponseError(fmt.Sprintf("No provider for category: \"%s\" is found for application: %s", category, application.Name))
+		c.ResponseError(fmt.Sprintf(c.Translate("ProviderErr.ProviderNotFoundForCategory"), category, application.Name))
 		return nil, nil, false
 	}
 
