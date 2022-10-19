@@ -156,8 +156,8 @@ class LoginPage extends React.Component {
       values["type"] = "saml";
     }
 
-    if (this.state.organization !== null && this.state.organization !== undefined) {
-      values["organization"] = this.state.organization;
+    if (this.state.application.organization !== null && this.state.application.organization !== undefined) {
+      values["organization"] = this.state.application.organization;
     }
   }
   postCodeLoginAction(res) {
