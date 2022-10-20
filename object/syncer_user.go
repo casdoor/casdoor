@@ -120,7 +120,7 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User) (bool, error) {
 	}
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
-		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
 	}
 
 	columns := syncer.getCasdoorColumns()

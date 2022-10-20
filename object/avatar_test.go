@@ -32,7 +32,7 @@ func TestSyncPermanentAvatars(t *testing.T) {
 			continue
 		}
 
-		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
 		updateUserColumn("permanent_avatar", user)
 		fmt.Printf("[%d/%d]: Update user: [%s]'s permanent avatar: %s\n", i, len(users), user.GetId(), user.PermanentAvatar)
 	}
