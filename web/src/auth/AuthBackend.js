@@ -19,6 +19,9 @@ export function getAccount(query) {
   return fetch(`${authConfig.serverUrl}/api/get-account${query}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -27,6 +30,9 @@ export function signup(values) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -35,6 +41,9 @@ export function getEmailAndPhone(values) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then((res) => res.json());
 }
 
@@ -52,6 +61,9 @@ export function getApplicationLogin(oAuthParams) {
   return fetch(`${authConfig.serverUrl}/api/get-app-login${oAuthParamsToQuery(oAuthParams)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -71,6 +83,9 @@ export function loginCas(values, params) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -78,6 +93,9 @@ export function logout() {
   return fetch(`${authConfig.serverUrl}/api/logout`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -86,6 +104,9 @@ export function unlink(values) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -93,6 +114,9 @@ export function getSamlLogin(providerId, relayState) {
   return fetch(`${authConfig.serverUrl}/api/get-saml-login?id=${providerId}&relayState=${relayState}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -101,5 +125,8 @@ export function loginWithSaml(values, param) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }

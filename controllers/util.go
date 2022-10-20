@@ -16,7 +16,11 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"strconv"
+	"strings"
+
+	"github.com/Unknwon/goconfig"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
@@ -51,6 +55,25 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 func (c *ApiController) Translate(error string) string {
 	lang := c.Ctx.Request.Header.Get("Accept-Language")
 	c.Lang = lang[0:2]
+	languages := conf.GetConfigString("languages")
+	if !strings.Contains(languages, c.Lang) {
+		c.Lang = "en"
+	}
+	parts := strings.Split(error, ".")
+	if !strings.Contains(error, ".") || len(parts) != 2 {
+		log.Println("Invalid Error Name")
+		return ""
+	}
+	if c.Tr(error) == parts[1] {
+		languageArr := strings.Split(languages, ",")
+		var c [10]*goconfig.ConfigFile
+		for i, lang := range languageArr {
+			c[i], _ = goconfig.LoadConfigFile("conf/languages/" + "locale_" + lang + ".ini")
+			c[i].SetValue(parts[0], parts[1], "")
+			c[i].SetPrettyFormat(true)
+			goconfig.SaveConfigFile(c[i], "conf/languages/"+"locale_"+lang+".ini")
+		}
+	}
 	return c.Tr(error)
 }
 
