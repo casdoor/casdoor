@@ -22,6 +22,7 @@ import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
+import {Link} from "react-router-dom";
 
 export const ServerUrl = "";
 
@@ -781,23 +782,23 @@ export function goToSignup(ths, application) {
   }
 }
 
-export function signupLink(application) {
+export function renderDynamicSignUpLink(application, children) {
   if (application === null) {
-    return "/";
+    return <Link style={{float: "right"}}>{children}</Link>;
   }
 
   if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
     const link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
-    return link;
+    return <a style={{float: "right"}} href={link} target="_blank" rel="noopener noreferrer">{children}</a>;
   }
 
   if (authConfig.appName === application.name) {
-    return "/signup";
+    return <Link to={"/signup"}>{children}</Link>;
   } else {
     if (application.signupUrl === "") {
-      return `/signup/${application.name}`;
+      return <Link to={`/signup/${application.name}`}>{children}</Link>;
     } else {
-      return application.signupUrl;
+      return <a style={{float: "right"}} href={application.signupUrl} target="_blank" rel="noopener noreferrer">{children}</a>;
     }
   }
 }
@@ -818,18 +819,18 @@ export function goToForget(ths, application) {
   }
 }
 
-export function forgetLink(application) {
+export function renderDynamicForgetLink(application, children) {
   if (application === null) {
-    return "/";
+    return <Link style={{float: "right"}}>{children}</Link>;
   }
 
   if (authConfig.appName === application.name) {
-    return "/forget";
+    return <Link style={{float: "right"}} to={"/forget"}>{children}</Link>;
   } else {
     if (application.forgetUrl === "") {
-      return `/forget/${application.name}`;
+      return <Link style={{float: "right"}} to={`/forget/${application.name}`}>{children}</Link>;
     } else {
-      return "application.forgetUrl";
+      return <a style={{float: "right"}} href={application.forgetUrl} target="_blank" rel="noopener noreferrer">{children}</a>;
     }
   }
 }

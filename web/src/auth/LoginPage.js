@@ -156,8 +156,8 @@ class LoginPage extends React.Component {
       values["type"] = "saml";
     }
 
-    if (this.state.owner !== null && this.state.owner !== undefined) {
-      values["organization"] = this.state.owner;
+    if (this.state.application.organization !== null && this.state.application.organization !== undefined) {
+      values["organization"] = this.state.application.organization;
     }
   }
   postCodeLoginAction(res) {
@@ -393,9 +393,9 @@ class LoginPage extends React.Component {
                 {i18next.t("login:Auto sign in")}
               </Checkbox>
             </Form.Item>
-            <Link style={{float: "right"}} to={() => Setting.forgetLink(application)}>
-              {i18next.t("login:Forgot password?")}
-            </Link>
+            {
+              Setting.renderDynamicForgetLink(application, i18next.t("login:Forgot password?"))
+            }
           </Form.Item>
           <Form.Item>
             <Button
@@ -471,11 +471,13 @@ class LoginPage extends React.Component {
               !application.enableSignUp ? null : (
                 <>
                   {i18next.t("login:No account?")}&nbsp;
-                  <Link onClick={() => {
+                  {/* <a onClick={() => {
                     sessionStorage.setItem("signinUrl", window.location.href);
                   }} to={() => Setting.signupLink(application)}>
                     {i18next.t("login:sign up now")}
-                  </Link>
+                  </a> */
+                    Setting.renderDynamicSignUpLink(application, i18next.t("login:sign up now"))
+                  }
                 </>
               )
             }
