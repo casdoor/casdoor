@@ -471,11 +471,7 @@ class LoginPage extends React.Component {
               !application.enableSignUp ? null : (
                 <>
                   {i18next.t("login:No account?")}&nbsp;
-                  {/* <a onClick={() => {
-                    sessionStorage.setItem("signinUrl", window.location.href);
-                  }} to={() => Setting.signupLink(application)}>
-                    {i18next.t("login:sign up now")}
-                  </a> */
+                  {
                     Setting.renderDynamicSignUpLink(application, i18next.t("login:sign up now"))
                   }
                 </>
