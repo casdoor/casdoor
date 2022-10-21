@@ -427,11 +427,11 @@ class LoginPage extends React.Component {
         <div style={{marginTop: "20px"}}>
           <div style={{fontSize: 16, textAlign: "left"}}>
             {i18next.t("login:To access")}&nbsp;
-            <Link target="_blank" rel="noreferrer" to={application.homepageUrl}>
+            <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
               <span style={{fontWeight: "bold"}}>
                 {application.displayName}
               </span>
-            </Link>
+            </a>
             :
           </div>
           <br />
