@@ -782,7 +782,7 @@ export function goToSignup(ths, application) {
   }
 }
 
-function Jump({url, children}) {
+function JumpLink({url, children}) {
   if (url === null) {
     return <Link style={{float: "right"}}>{children}</Link>;
   }
@@ -797,21 +797,21 @@ function Jump({url, children}) {
 
 export function renderSignupLink(application, text) {
   if (application === null) {
-    return <Jump url={null}>{text}</Jump>;
+    return <JumpLink url={null}>{text}</JumpLink>;
   }
 
   if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
     const link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
-    return <Jump url={link}>{text}</Jump>;
+    return <JumpLink url={link}>{text}</JumpLink>;
   }
 
   if (authConfig.appName === application.name) {
-    return <Jump url={"/signup"}>{text}</Jump>;
+    return <JumpLink url={"/signup"}>{text}</JumpLink>;
   } else {
     if (application.signupUrl === "") {
-      return <Jump url={`/signup/${application.name}`}>{text}</Jump>;
+      return <JumpLink url={`/signup/${application.name}`}>{text}</JumpLink>;
     } else {
-      return <Jump url={application.signupUrl}>{text}</Jump>;
+      return <JumpLink url={application.signupUrl}>{text}</JumpLink>;
     }
   }
 }
@@ -834,16 +834,16 @@ export function goToForget(ths, application) {
 
 export function renderForgetLink(application, text) {
   if (application === null) {
-    return <Jump url={null}>{text}</Jump>;
+    return <JumpLink url={null}>{text}</JumpLink>;
   }
 
   if (authConfig.appName === application.name) {
-    return <Jump url={"/forget"}>{text}</Jump>;
+    return <JumpLink url={"/forget"}>{text}</JumpLink>;
   } else {
     if (application.forgetUrl === "") {
-      return <Jump url={`/forget/${application.name}`}>{text}</Jump>;
+      return <JumpLink url={`/forget/${application.name}`}>{text}</JumpLink>;
     } else {
-      return <Jump url={application.forgetUrl}>{text}</Jump>;
+      return <JumpLink url={application.forgetUrl}>{text}</JumpLink>;
     }
   }
 }
