@@ -761,28 +761,6 @@ export function goToLogin(ths, application) {
   }
 }
 
-export function goToSignup(ths, application) {
-  if (application === null) {
-    return;
-  }
-
-  if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
-    const link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
-    goToLink(link);
-    return;
-  }
-
-  if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/signup");
-  } else {
-    if (application.signupUrl === "") {
-      goToLinkSoft(ths, `/signup/${application.name}`);
-    } else {
-      goToLink(application.signupUrl);
-    }
-  }
-}
-
 function JumpLink({url, children, onClick}) {
   if (url === null) {
     return <Link style={{float: "right"}} onClick={onClick} to={""}>{children}</Link>;
@@ -818,22 +796,6 @@ export function renderSignupLink(application, text) {
   }
 
   return <JumpLink url={link} onClick={storeSigninUrl}>{text}</JumpLink>;
-}
-
-export function goToForget(ths, application) {
-  if (application === null) {
-    return;
-  }
-
-  if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/forget");
-  } else {
-    if (application.forgetUrl === "") {
-      goToLinkSoft(ths, `/forget/${application.name}`);
-    } else {
-      goToLink(application.forgetUrl);
-    }
-  }
 }
 
 export function renderForgetLink(application, text) {
