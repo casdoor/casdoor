@@ -23,6 +23,7 @@ import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import {Link} from "react-router-dom";
+import * as path from "path-browserify";
 
 export const ServerUrl = "";
 
@@ -753,11 +754,7 @@ export function goToLogin(ths, application) {
     goToLinkSoft(ths, "/login");
   } else {
     if (application.signinUrl === "") {
-      if (application.homepageUrl.endsWith("/")) {
-        goToLink(`${application.homepageUrl}login`);
-      } else {
-        goToLink(`${application.homepageUrl}/login`);
-      }
+      goToLink(path.join(application.homepageUrl, "login"));
     } else {
       goToLink(application.signinUrl);
     }

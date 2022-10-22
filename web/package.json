@@ -70,6 +70,7 @@
     "eslint-plugin-react": "^7.31.1",
     "husky": "^4.3.8",
     "lint-staged": "^13.0.3",
+    "path-browserify": "^1.0.1",
     "stylelint": "^14.11.0",
     "stylelint-config-recommended-less": "^1.0.4",
     "stylelint-config-standard": "^28.0.0"
