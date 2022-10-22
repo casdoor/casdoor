@@ -786,16 +786,16 @@ export function goToSignup(ths, application) {
   }
 }
 
-function JumpLink({url, children}) {
+function JumpLink({url, children, onClick}) {
   if (url === null) {
-    return <Link style={{float: "right"}}>{children}</Link>;
+    return <Link style={{float: "right"}} onClick={onClick} to={""}>{children}</Link>;
   }
   if (url.startsWith("/")) {
-    return <Link to={url} style={{float: "right"}}>{children}</Link>;
+    return <Link to={url} style={{float: "right"}} onClick={onClick}>{children}</Link>;
   } else if (url.startsWith("http")) {
-    return <a href={url} target="_blank" rel="noopener noreferrer" style={{float: "right"}}>{children}</a>;
+    return <a href={url} target="_blank" rel="noopener noreferrer" style={{float: "right"}} onClick={onClick}>{children}</a>;
   } else {
-    return <Link style={{float: "right"}}>{children}</Link>;
+    return <Link style={{float: "right"}} onClick={onClick} to={""}>{children}</Link>;
   }
 }
 
