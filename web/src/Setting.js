@@ -782,23 +782,36 @@ export function goToSignup(ths, application) {
   }
 }
 
-export function renderDynamicSignUpLink(application, children) {
-  if (application === null) {
+function Jump({url, children}) {
+  if (url === null) {
     return <Link style={{float: "right"}}>{children}</Link>;
+  }
+  if (url.startsWith("/")) {
+    return <Link to={url} style={{float: "right"}}>{children}</Link>;
+  } else if (url.startsWith("http")) {
+    return <a href={url} target="_blank" rel="noopener noreferrer" style={{float: "right"}}>{children}</a>;
+  } else {
+    return <Link style={{float: "right"}}>{children}</Link>;
+  }
+}
+
+export function renderSignupLink(application, text) {
+  if (application === null) {
+    return <Jump url={null}>{text}</Jump>;
   }
 
   if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
     const link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
-    return <a style={{float: "right"}} href={link} target="_blank" rel="noopener noreferrer">{children}</a>;
+    return <Jump url={link}>{text}</Jump>;
   }
 
   if (authConfig.appName === application.name) {
-    return <Link to={"/signup"}>{children}</Link>;
+    return <Jump url={"/signup"}>{text}</Jump>;
   } else {
     if (application.signupUrl === "") {
-      return <Link to={`/signup/${application.name}`}>{children}</Link>;
+      return <Jump url={`/signup/${application.name}`}>{text}</Jump>;
     } else {
-      return <a style={{float: "right"}} href={application.signupUrl} target="_blank" rel="noopener noreferrer">{children}</a>;
+      return <Jump url={application.signupUrl}>{text}</Jump>;
     }
   }
 }
@@ -819,18 +832,18 @@ export function goToForget(ths, application) {
   }
 }
 
-export function renderDynamicForgetLink(application, children) {
+export function renderForgetLink(application, text) {
   if (application === null) {
-    return <Link style={{float: "right"}}>{children}</Link>;
+    return <Jump url={null}>{text}</Jump>;
   }
 
   if (authConfig.appName === application.name) {
-    return <Link style={{float: "right"}} to={"/forget"}>{children}</Link>;
+    return <Jump url={"/forget"}>{text}</Jump>;
   } else {
     if (application.forgetUrl === "") {
-      return <Link style={{float: "right"}} to={`/forget/${application.name}`}>{children}</Link>;
+      return <Jump url={`/forget/${application.name}`}>{text}</Jump>;
     } else {
-      return <a style={{float: "right"}} href={application.forgetUrl} target="_blank" rel="noopener noreferrer">{children}</a>;
+      return <Jump url={application.forgetUrl}>{text}</Jump>;
     }
   }
 }

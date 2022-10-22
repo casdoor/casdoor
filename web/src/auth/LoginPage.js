@@ -394,7 +394,7 @@ class LoginPage extends React.Component {
               </Checkbox>
             </Form.Item>
             {
-              Setting.renderDynamicForgetLink(application, i18next.t("login:Forgot password?"))
+              Setting.renderForgetLink(application, i18next.t("login:Forgot password?"))
             }
           </Form.Item>
           <Form.Item>
@@ -472,7 +472,7 @@ class LoginPage extends React.Component {
                 <>
                   {i18next.t("login:No account?")}&nbsp;
                   {
-                    Setting.renderDynamicSignUpLink(application, i18next.t("login:sign up now"))
+                    Setting.renderSignupLink(application, i18next.t("login:sign up now"))
                   }
                 </>
               )
