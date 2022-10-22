@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -86,7 +87,7 @@ func (c *ApiController) GetUserApplication() {
 	id := c.Input().Get("id")
 	user := object.GetUser(id)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.Translate("UserErr.DoNotExist"), id))
+		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "UserErr.DoNotExist"), id))
 		return
 	}
 
@@ -107,7 +108,7 @@ func (c *ApiController) GetOrganizationApplications() {
 	organization := c.Input().Get("organization")
 
 	if organization == "" {
-		c.ResponseError(c.Translate("ParameterErr.OrgMissingErr"))
+		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.OrgMissingErr"))
 		return
 	}
 

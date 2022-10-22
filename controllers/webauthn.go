@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/casdoor/casdoor/conf"
+
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 	"github.com/duo-labs/webauthn/protocol"
@@ -35,7 +37,7 @@ func (c *ApiController) WebAuthnSignupBegin() {
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	user := c.getCurrentUser()
 	if user == nil {
-		c.ResponseError(c.Translate("LoginErr.LoginFirst"))
+		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "LoginErr.LoginFirst"))
 		return
 	}
 
@@ -66,13 +68,13 @@ func (c *ApiController) WebAuthnSignupFinish() {
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	user := c.getCurrentUser()
 	if user == nil {
-		c.ResponseError(c.Translate("LoginErr.LoginFirst"))
+		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "LoginErr.LoginFirst"))
 		return
 	}
 	sessionObj := c.GetSession("registration")
 	sessionData, ok := sessionObj.(webauthn.SessionData)
 	if !ok {
-		c.ResponseError(c.Translate("AuthErr.CallWebAuthnSigninBegin"))
+		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "AuthErr.CallWebAuthnSigninBegin"))
 		return
 	}
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
@@ -101,7 +103,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 	userName := c.Input().Get("name")
 	user := object.GetUserByFields(userOwner, userName)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.Translate("UserErr.DoNotExistInOrg"), userOwner, userName))
+		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "UserErr.DoNotExistInOrg"), userOwner, userName))
 		return
 	}
 	options, sessionData, err := webauthnObj.BeginLogin(user)
@@ -127,7 +129,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	sessionObj := c.GetSession("authentication")
 	sessionData, ok := sessionObj.(webauthn.SessionData)
 	if !ok {
-		c.ResponseError(c.Translate("AuthErr.CallWebAuthnSigninBegin"))
+		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "AuthErr.CallWebAuthnSigninBegin"))
 		return
 	}
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))

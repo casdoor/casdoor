@@ -17,6 +17,8 @@ package controllers
 import (
 	"fmt"
 
+	"github.com/casdoor/casdoor/conf"
+
 	"github.com/casdoor/casdoor/object"
 )
 
@@ -25,7 +27,7 @@ func (c *ApiController) GetSamlMeta() {
 	paramApp := c.Input().Get("application")
 	application := object.GetApplication(paramApp)
 	if application == nil {
-		c.ResponseError(fmt.Sprintf(c.Translate("ApplicationErr.AppNotFound"), paramApp))
+		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "ApplicationErr.AppNotFound"), paramApp))
 		return
 	}
 	metadata, _ := object.GetSamlMeta(application, host)

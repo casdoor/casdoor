@@ -21,6 +21,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/conf"
+
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -238,14 +240,14 @@ func GetTokenByTokenAndApplication(token string, application string) *Token {
 	return &tokenResult
 }
 
-func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string) (string, *Application) {
+func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string, lang string) (string, *Application) {
 	if responseType != "code" && responseType != "token" && responseType != "id_token" {
-		return fmt.Sprintf("error: grant_type: %s is not supported in this application", responseType), nil
+		return fmt.Sprintf(conf.Translate(lang, "ApplicationErr.GrantTypeNotSupport"), responseType), nil
 	}
 
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
-		return "Invalid client_id", nil
+		return conf.Translate(lang, "TokenErr.InvalidClientId"), nil
 	}
 
 	validUri := false
@@ -256,7 +258,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		}
 	}
 	if !validUri {
-		return fmt.Sprintf("Redirect URI: \"%s\" doesn't exist in the allowed Redirect URI list", redirectUri), application
+		return fmt.Sprintf(conf.Translate(lang, "TokenErr.RedirectURIDoNotExist"), redirectUri), application
 	}
 
 	// Mask application for /api/get-app-login
@@ -264,7 +266,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 	return "", application
 }
 
-func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, host string) *Code {
+func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, host string, lang string) *Code {
 	user := GetUser(userId)
 	if user == nil {
 		return &Code{
@@ -279,7 +281,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		}
 	}
 
-	msg, application := CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
+	msg, application := CheckOAuthLogin(clientId, responseType, redirectUri, scope, state, lang)
 	if msg != "" {
 		return &Code{
 			Message: msg,
@@ -322,7 +324,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string, tag string, avatar string) interface{} {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string, tag string, avatar string, lang string) interface{} {
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
 		return &TokenError{
@@ -353,7 +355,7 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	if tag == "wechat_miniprogram" {
 		// Wechat Mini Program
-		token, tokenError = GetWechatMiniProgramToken(application, code, host, username, avatar)
+		token, tokenError = GetWechatMiniProgramToken(application, code, host, username, avatar, lang)
 	}
 
 	if tokenError != nil {
@@ -559,7 +561,7 @@ func GetPasswordToken(application *Application, username string, password string
 			ErrorDescription: "the user does not exist",
 		}
 	}
-	msg := CheckPassword(user, password)
+	msg := CheckPassword(user, password, "en")
 	if msg != "" {
 		return nil, &TokenError{
 			Error:            InvalidGrant,
@@ -669,7 +671,7 @@ func GetTokenByUser(application *Application, user *User, scope string, host str
 
 // GetWechatMiniProgramToken
 // Wechat Mini Program flow
-func GetWechatMiniProgramToken(application *Application, code string, host string, username string, avatar string) (*Token, *TokenError) {
+func GetWechatMiniProgramToken(application *Application, code string, host string, username string, avatar string, lang string) (*Token, *TokenError) {
 	mpProvider := GetWechatMiniProgramProvider(application)
 	if mpProvider == nil {
 		return nil, &TokenError{
@@ -703,7 +705,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		}
 		// Add new user
 		var name string
-		if CheckUsername(username) == "" {
+		if CheckUsername(username, lang) == "" {
 			name = username
 		} else {
 			name = fmt.Sprintf("wechat-%s", openId)

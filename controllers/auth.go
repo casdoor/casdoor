@@ -56,7 +56,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		return
 	}
 	if !allowed {
-		c.ResponseError(c.Translate("AuthErr.Unauthorized"))
+		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "AuthErr.Unauthorized"))
 		return
 	}
 
@@ -75,10 +75,10 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		codeChallenge := c.Input().Get("code_challenge")
 
 		if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
-			c.ResponseError(c.Translate("AuthErr.ChallengeMethodErr"))
+			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "AuthErr.ChallengeMethodErr"))
 			return
 		}
-		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, c.Ctx.Request.Host)
+		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, c.Ctx.Request.Host, c.GetAcceptLanguage())
 		resp = codeToResponse(code)
 
 		if application.EnableSigninSession || application.HasPromptPage() {
@@ -151,7 +151,7 @@ func (c *ApiController) GetApplicationLogin() {
 	scope := c.Input().Get("scope")
 	state := c.Input().Get("state")
 
-	msg, application := object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state)
+	msg, application := object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state, c.GetAcceptLanguage())
 	application = object.GetMaskedApplication(application, "")
 	if msg != "" {
 		c.ResponseError(msg, application)
@@ -196,7 +196,7 @@ func (c *ApiController) Login() {
 	if form.Username != "" {
 		if form.Type == ResponseTypeLogin {
 			if c.GetSessionUsername() != "" {
-				c.ResponseError(c.Translate("LoginErr.SignOutFirst"), c.GetSessionUsername())
+				c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "LoginErr.SignOutFirst"), c.GetSessionUsername())
 				return
 			}
 		}
@@ -218,11 +218,11 @@ func (c *ApiController) Login() {
 				if user != nil && util.GetMaskedEmail(user.Email) == form.Username {
 					form.Username = user.Email
 				}
-				checkResult = object.CheckVerificationCode(form.Username, form.Code)
+				checkResult = object.CheckVerificationCode(form.Username, form.Code, c.GetAcceptLanguage())
 			} else {
 				verificationCodeType = "phone"
 				if len(form.PhonePrefix) == 0 {
-					responseText := fmt.Sprintf("%s%s", verificationCodeType, "No phone prefix")
+					responseText := fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "PhoneErr.NoPrefix"), verificationCodeType)
 					c.ResponseError(responseText)
 					return
 				}
@@ -230,7 +230,7 @@ func (c *ApiController) Login() {
 					form.Username = user.Phone
 				}
 				checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username)
-				checkResult = object.CheckVerificationCode(checkPhone, form.Code)
+				checkResult = object.CheckVerificationCode(checkPhone, form.Code, c.GetAcceptLanguage())
 			}
 			if len(checkResult) != 0 {
 				responseText := fmt.Sprintf("%s%s", verificationCodeType, checkResult)
@@ -247,12 +247,12 @@ func (c *ApiController) Login() {
 
 			user = object.GetUserByFields(form.Organization, form.Username)
 			if user == nil {
-				c.ResponseError(fmt.Sprintf(c.Translate("LoginErr.UserDoNotExist"), form.Organization, form.Username))
+				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.UserDoNotExist"), form.Organization, form.Username))
 				return
 			}
 		} else {
 			password := form.Password
-			user, msg = object.CheckUserPassword(form.Organization, form.Username, password)
+			user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage())
 		}
 
 		if msg != "" {
@@ -260,7 +260,7 @@ func (c *ApiController) Login() {
 		} else {
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 			if application == nil {
-				c.ResponseError(fmt.Sprintf(c.Translate("LoginErr.AppDoNotExist"), form.Application))
+				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.AppDoNotExist"), form.Application))
 				return
 			}
 
@@ -274,7 +274,7 @@ func (c *ApiController) Login() {
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 		if application == nil {
-			c.ResponseError(fmt.Sprintf(c.Translate("LoginErr.AppDoNotExist"), form.Application))
+			c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.AppDoNotExist"), form.Application))
 			return
 		}
 
@@ -282,7 +282,7 @@ func (c *ApiController) Login() {
 		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
 		providerItem := application.GetProviderItem(provider.Name)
 		if !providerItem.IsProviderVisible() {
-			c.ResponseError(fmt.Sprintf(c.Translate("ProviderErr.ProviderNotEnabled"), provider.Name))
+			c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "ProviderErr.ProviderNotEnabled"), provider.Name))
 			return
 		}
 
@@ -306,14 +306,14 @@ func (c *ApiController) Login() {
 
 			idProvider := idp.GetIdProvider(provider.Type, provider.SubType, clientId, clientSecret, provider.AppId, form.RedirectUri, provider.Domain, provider.CustomAuthUrl, provider.CustomTokenUrl, provider.CustomUserInfoUrl)
 			if idProvider == nil {
-				c.ResponseError(fmt.Sprintf(c.Translate("ProviderErr.ProviderNotSupported"), provider.Type))
+				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "ProviderErr.ProviderNotSupported"), provider.Type))
 				return
 			}
 
 			setHttpClient(idProvider, provider.Type)
 
 			if form.State != conf.GetConfigString("authState") && form.State != application.Name {
-				c.ResponseError(fmt.Sprintf(c.Translate("AuthErr.AuthStateWrong"), conf.GetConfigString("authState"), form.State))
+				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "AuthErr.AuthStateWrong"), conf.GetConfigString("authState"), form.State))
 				return
 			}
 
@@ -325,13 +325,13 @@ func (c *ApiController) Login() {
 			}
 
 			if !token.Valid() {
-				c.ResponseError(c.Translate("TokenErr.InvalidToken"))
+				c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "TokenErr.InvalidToken"))
 				return
 			}
 
 			userInfo, err = idProvider.GetUserInfo(token)
 			if err != nil {
-				c.ResponseError(fmt.Sprintf(c.Translate("LoginErr.LoginFail"), err.Error()))
+				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.LoginFail"), err.Error()))
 				return
 			}
 		}
@@ -348,7 +348,7 @@ func (c *ApiController) Login() {
 				// Sign in via OAuth (want to sign up but already have account)
 
 				if user.IsForbidden {
-					c.ResponseError(c.Translate("LoginErr.UserIsForbidden"))
+					c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "LoginErr.UserIsForbidden"))
 				}
 
 				resp = c.HandleLoggedIn(application, user, &form)
@@ -360,12 +360,12 @@ func (c *ApiController) Login() {
 			} else if provider.Category == "OAuth" {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
-					c.ResponseError(fmt.Sprintf(c.Translate("LoginErr.AppNotEnableSignUp"), provider.Type, userInfo.Username, userInfo.DisplayName))
+					c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.AppNotEnableSignUp"), provider.Type, userInfo.Username, userInfo.DisplayName))
 					return
 				}
 
 				if !providerItem.CanSignUp {
-					c.ResponseError(fmt.Sprintf(c.Translate("LoginErr.ProviderCanNotSignUp"), provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
+					c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.ProviderCanNotSignUp"), provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
 					return
 				}
 
@@ -386,7 +386,7 @@ func (c *ApiController) Login() {
 				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
 				initScore, err := getInitScore()
 				if err != nil {
-					c.ResponseError(fmt.Errorf(c.Translate("InitErr.InitScoreFailed"), err).Error())
+					c.ResponseError(fmt.Errorf(conf.Translate(c.GetAcceptLanguage(), "InitErr.InitScoreFailed"), err).Error())
 					return
 				}
 
@@ -413,7 +413,7 @@ func (c *ApiController) Login() {
 
 				affected := object.AddUser(user)
 				if !affected {
-					c.ResponseError(fmt.Sprintf(c.Translate("LoginErr.InvalidUserInformation"), util.StructToJson(user)))
+					c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.InvalidUserInformation"), util.StructToJson(user)))
 					return
 				}
 
@@ -438,13 +438,13 @@ func (c *ApiController) Login() {
 		} else { // form.Method != "signup"
 			userId := c.GetSessionUsername()
 			if userId == "" {
-				c.ResponseError(c.Translate("LoginErr.AccountDoNotExist"), userInfo)
+				c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "LoginErr.AccountDoNotExist"), userInfo)
 				return
 			}
 
 			oldUser := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
 			if oldUser != nil {
-				c.ResponseError(fmt.Sprintf(c.Translate("LoginErr.OldUser"), provider.Type, userInfo.Username, userInfo.DisplayName, oldUser.Name, oldUser.DisplayName))
+				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.OldUser"), provider.Type, userInfo.Username, userInfo.DisplayName, oldUser.Name, oldUser.DisplayName))
 				return
 			}
 
@@ -465,7 +465,7 @@ func (c *ApiController) Login() {
 			// user already signed in to Casdoor, so let the user click the avatar button to do the quick sign-in
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 			if application == nil {
-				c.ResponseError(fmt.Sprintf(c.Translate("LoginErr.AppDoNotExist"), form.Application))
+				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.AppDoNotExist"), form.Application))
 				return
 			}
 
@@ -477,7 +477,7 @@ func (c *ApiController) Login() {
 			record.User = user.Name
 			util.SafeGoroutine(func() { object.AddRecord(record) })
 		} else {
-			c.ResponseError(fmt.Sprintf(c.Translate("LoginErr.UnknownAuthentication"), util.StructToJson(form)))
+			c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.UnknownAuthentication"), util.StructToJson(form)))
 			return
 		}
 	}
@@ -489,7 +489,7 @@ func (c *ApiController) Login() {
 func (c *ApiController) GetSamlLogin() {
 	providerId := c.Input().Get("id")
 	relayState := c.Input().Get("relayState")
-	authURL, method, err := object.GenerateSamlLoginUrl(providerId, relayState)
+	authURL, method, err := object.GenerateSamlLoginUrl(providerId, relayState, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 	}

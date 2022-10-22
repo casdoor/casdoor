@@ -17,6 +17,8 @@ package controllers
 import (
 	"encoding/json"
 
+	"github.com/casdoor/casdoor/conf"
+
 	"github.com/casdoor/casdoor/object"
 )
 
@@ -47,7 +49,7 @@ func (c *ApiController) Unlink() {
 
 	if user.Id != unlinkedUser.Id && !user.IsGlobalAdmin {
 		// if the user is not the same as the one we are unlinking, we need to make sure the user is the global admin.
-		c.ResponseError(c.Translate("AuthErr.CanNotUnlinkUsers"))
+		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "AuthErr.CanNotUnlinkUsers"))
 		return
 	}
 
@@ -55,23 +57,23 @@ func (c *ApiController) Unlink() {
 		// if the user is unlinking themselves, should check the provider can be unlinked, if not, we should return an error.
 		application := object.GetApplicationByUser(user)
 		if application == nil {
-			c.ResponseError(c.Translate("AuthErr.CanNotLinkMySelf"))
+			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "AuthErr.CanNotLinkMySelf"))
 			return
 		}
 
 		if len(application.Providers) == 0 {
-			c.ResponseError(c.Translate("ApplicationErr.HasNoProviders"))
+			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ApplicationErr.HasNoProviders"))
 			return
 		}
 
 		provider := application.GetProviderItemByType(providerType)
 		if provider == nil {
-			c.ResponseError(c.Translate("ApplicationErr.HasNoProvidersOfType") + providerType)
+			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ApplicationErr.HasNoProvidersOfType") + providerType)
 			return
 		}
 
 		if !provider.CanUnlink {
-			c.ResponseError(c.Translate("ProviderErr.CanNotBeUnlinked"))
+			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ProviderErr.CanNotBeUnlinked"))
 			return
 		}
 
@@ -84,7 +86,7 @@ func (c *ApiController) Unlink() {
 	value := object.GetUserField(&unlinkedUser, providerType)
 
 	if value == "" {
-		c.ResponseError(c.Translate("ProviderErr.LinkFirstErr"), value)
+		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ProviderErr.LinkFirstErr"), value)
 		return
 	}
 

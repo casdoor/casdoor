@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -228,7 +229,7 @@ func (p *Provider) GetId() string {
 	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
 }
 
-func GetCaptchaProviderByOwnerName(applicationId string) (*Provider, error) {
+func GetCaptchaProviderByOwnerName(applicationId, lang string) (*Provider, error) {
 	owner, name := util.GetOwnerAndNameFromId(applicationId)
 	provider := Provider{Owner: owner, Name: name, Category: "Captcha"}
 	existed, err := adapter.Engine.Get(&provider)
@@ -237,26 +238,26 @@ func GetCaptchaProviderByOwnerName(applicationId string) (*Provider, error) {
 	}
 
 	if !existed {
-		return nil, fmt.Errorf("the provider: %s does not exist", applicationId)
+		return nil, fmt.Errorf(conf.Translate(lang, "ProviderErr.DoNotExist"), applicationId)
 	}
 
 	return &provider, nil
 }
 
-func GetCaptchaProviderByApplication(applicationId, isCurrentProvider string) (*Provider, error) {
+func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang string) (*Provider, error) {
 	if isCurrentProvider == "true" {
-		return GetCaptchaProviderByOwnerName(applicationId)
+		return GetCaptchaProviderByOwnerName(applicationId, lang)
 	}
 	application := GetApplication(applicationId)
 	if application == nil || len(application.Providers) == 0 {
-		return nil, fmt.Errorf("ApplicationErr.InvalidID")
+		return nil, fmt.Errorf(conf.Translate(lang, "ApplicationErr.InvalidID"))
 	}
 	for _, provider := range application.Providers {
 		if provider.Provider == nil {
 			continue
 		}
 		if provider.Provider.Category == "Captcha" {
-			return GetCaptchaProviderByOwnerName(fmt.Sprintf("%s/%s", provider.Provider.Owner, provider.Provider.Name))
+			return GetCaptchaProviderByOwnerName(fmt.Sprintf("%s/%s", provider.Provider.Owner, provider.Provider.Name), lang)
 		}
 	}
 	return nil, nil

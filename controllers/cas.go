@@ -21,6 +21,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 )
 
@@ -210,7 +211,7 @@ func (c *RootController) SamlValidate() {
 	}
 
 	if !strings.HasPrefix(target, service) {
-		c.ResponseError(fmt.Sprintf(c.Translate("CasErr.ServiceDoNotMatch"), target, service))
+		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "CasErr.ServiceDoNotMatch"), target, service))
 		return
 	}
 

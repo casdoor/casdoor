@@ -92,6 +92,6 @@ func parseToData() *I18nData {
 		}
 		data[namespace][key] = key
 	}
-
+	fmt.Printf("%v\n", util.StructToJsonFormatted(data))
 	return &data
 }

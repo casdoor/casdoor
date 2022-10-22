@@ -16,11 +16,7 @@ package controllers
 
 import (
 	"fmt"
-	"log"
 	"strconv"
-	"strings"
-
-	"github.com/Unknwon/goconfig"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
@@ -52,29 +48,10 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	c.ResponseJsonData(resp, data...)
 }
 
-func (c *ApiController) Translate(error string) string {
+// GetAcceptLanguage ...
+func (c *ApiController) GetAcceptLanguage() string {
 	lang := c.Ctx.Request.Header.Get("Accept-Language")
-	c.Lang = lang[0:2]
-	languages := conf.GetConfigString("languages")
-	if !strings.Contains(languages, c.Lang) {
-		c.Lang = "en"
-	}
-	parts := strings.Split(error, ".")
-	if !strings.Contains(error, ".") || len(parts) != 2 {
-		log.Println("Invalid Error Name")
-		return ""
-	}
-	if c.Tr(error) == parts[1] {
-		languageArr := strings.Split(languages, ",")
-		var c [10]*goconfig.ConfigFile
-		for i, lang := range languageArr {
-			c[i], _ = goconfig.LoadConfigFile("conf/languages/" + "locale_" + lang + ".ini")
-			c[i].SetValue(parts[0], parts[1], "")
-			c[i].SetPrettyFormat(true)
-			goconfig.SaveConfigFile(c[i], "conf/languages/"+"locale_"+lang+".ini")
-		}
-	}
-	return c.Tr(error)
+	return lang[0:2]
 }
 
 // SetTokenErrorHttpStatus ...
@@ -98,7 +75,7 @@ func (c *ApiController) SetTokenErrorHttpStatus() {
 func (c *ApiController) RequireSignedIn() (string, bool) {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(c.Translate("LoginErr.SignInFirst"))
+		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "LoginErr.SignInFirst"))
 		return "", false
 	}
 	return userId, true
@@ -113,7 +90,7 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 
 	user := object.GetUser(userId)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.Translate("UserErr.DoNotExist"), userId))
+		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "UserErr.DoNotExist"), userId))
 		return nil, false
 	}
 	return user, true
@@ -141,7 +118,7 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 	if providerName != "" {
 		provider := object.GetProvider(util.GetId(providerName))
 		if provider == nil {
-			c.ResponseError(fmt.Sprintf(c.Translate("ProviderErr.ProviderNotFound"), providerName))
+			c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "ProviderErr.ProviderNotFound"), providerName))
 			return nil, nil, false
 		}
 		return provider, nil, true
@@ -154,13 +131,13 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 
 	application, user := object.GetApplicationByUserId(userId)
 	if application == nil {
-		c.ResponseError(fmt.Sprintf(c.Translate("ApplicationErr.AppNotFoundForUserID"), userId))
+		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "ApplicationErr.AppNotFoundForUserID"), userId))
 		return nil, nil, false
 	}
 
 	provider := application.GetProviderByCategory(category)
 	if provider == nil {
-		c.ResponseError(fmt.Sprintf(c.Translate("ProviderErr.ProviderNotFoundForCategory"), category, application.Name))
+		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "ProviderErr.ProviderNotFoundForCategory"), category, application.Name))
 		return nil, nil, false
 	}
 

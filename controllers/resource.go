@@ -22,6 +22,8 @@ import (
 	"mime"
 	"path/filepath"
 
+	"github.com/casdoor/casdoor/conf"
+
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -113,7 +115,7 @@ func (c *ApiController) DeleteResource() {
 		return
 	}
 
-	err = object.DeleteFile(provider, resource.Name)
+	err = object.DeleteFile(provider, resource.Name, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -145,7 +147,7 @@ func (c *ApiController) UploadResource() {
 	defer file.Close()
 
 	if username == "" || fullFilePath == "" {
-		c.ResponseError(fmt.Sprintf(c.Translate("ResourceErr.UsernameOrFilePathEmpty"), username, fullFilePath))
+		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "ResourceErr.UsernameOrFilePathEmpty"), username, fullFilePath))
 		return
 	}
 
@@ -205,7 +207,7 @@ func (c *ApiController) UploadResource() {
 		if user == nil {
 			user = object.GetUserNoCheck(username)
 			if user == nil {
-				c.ResponseError(c.Translate("ResourceErr.UserIsNil"))
+				c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ResourceErr.UserIsNil"))
 				return
 			}
 		}
