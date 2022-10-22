@@ -40,17 +40,16 @@ require("codemirror/mode/css/css");
 
 const {Option} = Select;
 
-const template = `<!--template: please copy and paste-->
-<style>
-   .login-panel{
+const template = `<style>
+  .login-panel{
+    padding: 40px 70px 0 70px;
     border-radius: 10px;
     background-color: #ffffff;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.20);
+    box-shadow: 0 0 30px 20px rgba(0, 0, 0, 0.20);
 }
-</style>
-`;
-const sideTemplate = `<!--template: please copy and paste-->
-<style>
+</style>`;
+
+const sideTemplate = `<style>
   .left-model{
     text-align: center;
     padding: 30px;
@@ -630,7 +629,7 @@ class ApplicationEditPage extends React.Component {
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
                 <CodeMirror value={this.state.application.formCss === "" ? template : this.state.application.formCss}
-                  options={{mode: "htmlmixed", theme: "material-darker"}}
+                  options={{mode: "css", theme: "material-darker"}}
                   onBeforeChange={(editor, data, value) => {
                     this.updateApplicationField("formCss", value);
                   }}
