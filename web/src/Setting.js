@@ -753,7 +753,11 @@ export function goToLogin(ths, application) {
     goToLinkSoft(ths, "/login");
   } else {
     if (application.signinUrl === "") {
-      goToLink(`${application.homepageUrl}/login`);
+      if (application.homepageUrl.endsWith("/")) {
+        goToLink(`${application.homepageUrl}login`);
+      } else {
+        goToLink(`${application.homepageUrl}/login`);
+      }
     } else {
       goToLink(application.signinUrl);
     }
@@ -796,6 +800,8 @@ function JumpLink({url, children}) {
 }
 
 export function renderSignupLink(application, text) {
+  sessionStorage.setItem("signinUrl", window.location.href);
+
   if (application === null) {
     return <JumpLink url={null}>{text}</JumpLink>;
   }
