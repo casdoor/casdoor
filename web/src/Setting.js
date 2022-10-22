@@ -799,25 +799,27 @@ function JumpLink({url, children}) {
   }
 }
 
-export function renderSignupLink(application, text) {
+function storeSigninUrl() {
   sessionStorage.setItem("signinUrl", window.location.href);
+}
 
+export function renderSignupLink(application, text) {
   if (application === null) {
-    return <JumpLink url={null}>{text}</JumpLink>;
+    return <JumpLink url={null} onClick={storeSigninUrl}>{text}</JumpLink>;
   }
 
   if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
     const link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
-    return <JumpLink url={link}>{text}</JumpLink>;
+    return <JumpLink url={link} onClick={storeSigninUrl}>{text}</JumpLink>;
   }
 
   if (authConfig.appName === application.name) {
-    return <JumpLink url={"/signup"}>{text}</JumpLink>;
+    return <JumpLink url={"/signup"} onClick={storeSigninUrl}>{text}</JumpLink>;
   } else {
     if (application.signupUrl === "") {
-      return <JumpLink url={`/signup/${application.name}`}>{text}</JumpLink>;
+      return <JumpLink url={`/signup/${application.name}`} onClick={storeSigninUrl}>{text}</JumpLink>;
     } else {
-      return <JumpLink url={application.signupUrl}>{text}</JumpLink>;
+      return <JumpLink url={application.signupUrl} onClick={storeSigninUrl}>{text}</JumpLink>;
     }
   }
 }
