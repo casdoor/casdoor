@@ -22,6 +22,8 @@ import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
+import {Link} from "react-router-dom";
+import * as path from "path-browserify";
 
 export const ServerUrl = "";
 
@@ -752,49 +754,64 @@ export function goToLogin(ths, application) {
     goToLinkSoft(ths, "/login");
   } else {
     if (application.signinUrl === "") {
-      goToLink(`${application.homepageUrl}/login`);
+      goToLink(path.join(application.homepageUrl, "login"));
     } else {
       goToLink(application.signinUrl);
     }
   }
 }
 
-export function goToSignup(ths, application) {
-  if (application === null) {
-    return;
+function JumpLink({url, children, onClick}) {
+  if (url === null) {
+    return <Link style={{float: "right"}} onClick={onClick} to={""}>{children}</Link>;
   }
-
-  if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
-    const link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
-    goToLink(link);
-    return;
-  }
-
-  if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/signup");
+  if (url.startsWith("/")) {
+    return <Link to={url} style={{float: "right"}} onClick={onClick}>{children}</Link>;
+  } else if (url.startsWith("http")) {
+    return <a href={url} target="_blank" rel="noopener noreferrer" style={{float: "right"}} onClick={onClick}>{children}</a>;
   } else {
-    if (application.signupUrl === "") {
-      goToLinkSoft(ths, `/signup/${application.name}`);
-    } else {
-      goToLink(application.signupUrl);
-    }
+    return <Link style={{float: "right"}} onClick={onClick} to={""}>{children}</Link>;
   }
 }
 
-export function goToForget(ths, application) {
-  if (application === null) {
-    return;
-  }
+function storeSigninUrl() {
+  sessionStorage.setItem("signinUrl", window.location.href);
+}
 
-  if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/forget");
+export function renderSignupLink(application, text) {
+  let link;
+
+  if (application === null) {
+    link = null;
+  } else if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
+    link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
+  } else if (authConfig.appName === application.name) {
+    link = "/signup";
   } else {
-    if (application.forgetUrl === "") {
-      goToLinkSoft(ths, `/forget/${application.name}`);
+    if (application.signupUrl === "") {
+      link = `/signup/${application.name}`;
     } else {
-      goToLink(application.forgetUrl);
+      link = application.signupUrl;
     }
   }
+
+  return <JumpLink url={link} onClick={storeSigninUrl}>{text}</JumpLink>;
+}
+
+export function renderForgetLink(application, text) {
+  let link;
+  if (application === null) {
+    link = null;
+  } else if (authConfig.appName === application.name) {
+    link = "/forget";
+  } else {
+    if (application.forgetUrl === "") {
+      link = `/forget/${application.name}`;
+    } else {
+      link = application.forgetUrl;
+    }
+  }
+  return <JumpLink url={link}>{text}</JumpLink>;
 }
 
 export function renderHelmet(application) {

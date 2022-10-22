@@ -405,11 +405,9 @@ class LoginPage extends React.Component {
                 {i18next.t("login:Auto sign in")}
               </Checkbox>
             </Form.Item>
-            <a style={{float: "right"}} onClick={() => {
-              Setting.goToForget(this, application);
-            }}>
-              {i18next.t("login:Forgot password?")}
-            </a>
+            {
+              Setting.renderForgetLink(application, i18next.t("login:Forgot password?"))
+            }
           </Form.Item>
           <Form.Item>
             <Button
@@ -485,12 +483,9 @@ class LoginPage extends React.Component {
               !application.enableSignUp ? null : (
                 <>
                   {i18next.t("login:No account?")}&nbsp;
-                  <a onClick={() => {
-                    sessionStorage.setItem("signinUrl", window.location.href);
-                    Setting.goToSignup(this, application);
-                  }}>
-                    {i18next.t("login:sign up now")}
-                  </a>
+                  {
+                    Setting.renderSignupLink(application, i18next.t("login:sign up now"))
+                  }
                 </>
               )
             }
