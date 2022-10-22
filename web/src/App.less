@@ -94,6 +94,37 @@
   align-items: stretch;
 }
 
+.side-image {
+  display: none;
+  @media screen and (min-width: 1100px){
+    display: block;
+    position: relative;
+    width: 500px;
+    border-right: 0.5px solid rgb(196, 203, 215);
+  }
+}
+
+.forget-content{
+  padding: 10px 100px 20px;
+  border: 2px solid #ffffff;
+  border-radius: 7px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.20);
+}
+
+.login-panel{
+  margin-top: 50px;
+  margin-bottom: 50px;
+  display: flex;
+  background-color: rgb(255, 255, 255);
+  overflow: hidden;
+}
+
+.login-form{
+  text-align: center;
+  padding: 30px;
+}
+
 .login-content {
   display: flex;
   flex-direction: row;
@@ -105,7 +136,9 @@
 }
 
 .loginBackground {
-  height: 100%;
+  display: flex;
+  align-items: center;
+  flex: 1 1 0;
   background: #fff no-repeat;
   background-size: 100% 100%;
   background-attachment: fixed;

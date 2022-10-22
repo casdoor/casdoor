@@ -487,61 +487,65 @@ class ForgetPage extends React.Component {
     }
 
     return (
-      <Row>
-        <Col span={24} style={{justifyContent: "center"}}>
+      <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
+        <CustomGithubCorner />
+        <div className="login-content forget-content">
           <Row>
-            <Col span={24}>
-              <div style={{marginTop: "80px", marginBottom: "10px", textAlign: "center"}}>
-                {
-                  Setting.renderHelmet(application)
-                }
-                <CustomGithubCorner />
-                {
-                  Setting.renderLogo(application)
-                }
+            <Col span={24} style={{justifyContent: "center"}}>
+              <Row>
+                <Col span={24}>
+                  <div style={{marginTop: "80px", marginBottom: "10px", textAlign: "center"}}>
+                    {
+                      Setting.renderHelmet(application)
+                    }
+                    {
+                      Setting.renderLogo(application)
+                    }
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={24}>
+                  <div style={{textAlign: "center", fontSize: "28px"}}>
+                    {i18next.t("forget:Retrieve password")}
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={24}>
+                  <Steps
+                    current={this.state.current}
+                    style={{
+                      width: "90%",
+                      maxWidth: "500px",
+                      margin: "auto",
+                      marginTop: "80px",
+                    }}
+                  >
+                    <Step
+                      title={i18next.t("forget:Account")}
+                      icon={<UserOutlined />}
+                    />
+                    <Step
+                      title={i18next.t("forget:Verify")}
+                      icon={<SolutionOutlined />}
+                    />
+                    <Step
+                      title={i18next.t("forget:Reset")}
+                      icon={<KeyOutlined />}
+                    />
+                  </Steps>
+                </Col>
+              </Row>
+            </Col>
+            <Col span={24} style={{display: "flex", justifyContent: "center"}}>
+              <div style={{marginTop: "10px", textAlign: "center"}}>
+                {this.renderForm(application)}
               </div>
             </Col>
           </Row>
-          <Row>
-            <Col span={24}>
-              <div style={{textAlign: "center", fontSize: "28px"}}>
-                {i18next.t("forget:Retrieve password")}
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={24}>
-              <Steps
-                current={this.state.current}
-                style={{
-                  width: "90%",
-                  maxWidth: "500px",
-                  margin: "auto",
-                  marginTop: "80px",
-                }}
-              >
-                <Step
-                  title={i18next.t("forget:Account")}
-                  icon={<UserOutlined />}
-                />
-                <Step
-                  title={i18next.t("forget:Verify")}
-                  icon={<SolutionOutlined />}
-                />
-                <Step
-                  title={i18next.t("forget:Reset")}
-                  icon={<KeyOutlined />}
-                />
-              </Steps>
-            </Col>
-          </Row>
-        </Col>
-        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-          <div style={{marginTop: "10px", textAlign: "center"}}>
-            {this.renderForm(application)}
-          </div>
-        </Col>
-      </Row>
+        </div>
+      </div>
     );
   }
 }
