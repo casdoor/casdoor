@@ -342,12 +342,16 @@ func CheckUsername(username string, lang string) string {
 }
 
 func CheckToEnableCaptcha(application *Application) bool {
-	providerItem := application.GetProviderItem("Captcha")
-	if providerItem != nil {
-		if providerItem.Rule == "None" {
-			return false
-		} else if providerItem.Rule == "Always" {
-			return true
+	if len(application.Providers) == 0 {
+		return false
+	}
+
+	for _, providerItem := range application.Providers {
+		if providerItem.Provider == nil {
+			continue
+		}
+		if providerItem.Provider.Category == "Captcha" && providerItem.Provider.Type == "Default" {
+			return providerItem.Rule == "Always"
 		}
 	}
 

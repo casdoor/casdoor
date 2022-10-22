@@ -240,9 +240,7 @@
     "Users": "ユーザー",
     "Users under all organizations": "すべての組織のユーザー",
     "Webhooks": "Webhooks",
-    "{total} in total": "合計 {total}",
-    "Never": "Never",
-    "Everytime": "Everytime"
+    "{total} in total": "合計 {total}"
   },
   "ldap": {
     "Address": "住所",

@@ -50,8 +50,10 @@ class LoginPage extends React.Component {
       validEmail: false,
       validPhone: false,
       loginMethod: "password",
+      enableCaptchaModal: false,
+      openCaptchaModal: false,
+      verifyCaptcha: undefined,
     };
-    this.captchaModal = React.createRef();
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
       this.state.owner = props.match?.params.owner;
@@ -68,6 +70,18 @@ class LoginPage extends React.Component {
       this.getSamlApplication();
     } else {
       Util.showMessage("error", `Unknown authentication type: ${this.state.type}`);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.application && !prevState.application) {
+      const defaultCaptchaProviderItems = this.getDefaultCaptchaProviderItems(this.state.application);
+
+      if (!defaultCaptchaProviderItems) {
+        return;
+      }
+
+      this.setState({enableCaptchaModal: defaultCaptchaProviderItems.some(providerItem => providerItem.rule === "Always")});
     }
   }
 
@@ -228,6 +242,23 @@ class LoginPage extends React.Component {
       return;
     }
 
+    if (this.state.loginMethod === "password" && this.state.enableCaptchaModal) {
+      this.setState({
+        openCaptchaModal: true,
+        verifyCaptcha: (captchaType, captchaToken, secret) => {
+          values["captchaType"] = captchaType;
+          values["captchaToken"] = captchaToken;
+          values["clientSecret"] = secret;
+
+          this.login(values);
+        },
+      });
+    } else {
+      this.login(values);
+    }
+  }
+
+  login(values) {
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     if (this.state.type === "cas") {
       // CAS
@@ -242,6 +273,8 @@ class LoginPage extends React.Component {
           }
           Util.showMessage("success", msg);
 
+          this.setState({openCaptchaModal: false});
+
           if (casParams.service !== "") {
             const st = res.data;
             const newUrl = new URL(casParams.service);
@@ -249,6 +282,7 @@ class LoginPage extends React.Component {
             window.location.href = newUrl.toString();
           }
         } else {
+          this.setState({openCaptchaModal: false});
           Util.showMessage("error", `Failed to log in: ${res.msg}`);
         }
       });
@@ -257,51 +291,33 @@ class LoginPage extends React.Component {
       const oAuthParams = Util.getOAuthGetParameters();
       this.populateOauthValues(values);
 
-      if (this.captchaModal) {
-        this.captchaModal.current.showCaptcha((captchaType, captchaToken, secret, hideCaptchaModal) => {
-          values["captchaType"] = captchaType;
-          values["captchaToken"] = captchaToken;
-          values["clientSecret"] = secret;
+      AuthBackend.login(values, oAuthParams)
+        .then((res) => {
+          if (res.status === "ok") {
+            const responseType = values["type"];
 
-          this.oauthLogin(values, oAuthParams, () => {
-            hideCaptchaModal();
-          });
+            if (responseType === "login") {
+              Util.showMessage("success", "Logged in successfully");
+
+              const link = Setting.getFromLink();
+              Setting.goToLink(link);
+            } else if (responseType === "code") {
+              this.postCodeLoginAction(res);
+              // Util.showMessage("success", `Authorization code: ${res.data}`);
+            } else if (responseType === "token" || responseType === "id_token") {
+              const accessToken = res.data;
+              Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
+            } else if (responseType === "saml") {
+              const SAMLResponse = res.data;
+              const redirectUri = res.data2;
+              Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
+            }
+          } else {
+            this.setState({openCaptchaModal: false});
+            Util.showMessage("error", `Failed to log in: ${res.msg}`);
+          }
         });
-      } else {
-        this.oauthLogin(values, oAuthParams, null);
-      }
     }
-  }
-
-  oauthLogin(values, oAuthParams, loginFailureCallback) {
-    AuthBackend.login(values, oAuthParams)
-      .then((res) => {
-        if (res.status === "ok") {
-          const responseType = values["type"];
-
-          if (responseType === "login") {
-            Util.showMessage("success", "Logged in successfully");
-
-            const link = Setting.getFromLink();
-            Setting.goToLink(link);
-          } else if (responseType === "code") {
-            this.postCodeLoginAction(res);
-            // Util.showMessage("success", `Authorization code: ${res.data}`);
-          } else if (responseType === "token" || responseType === "id_token") {
-            const accessToken = res.data;
-            Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
-          } else if (responseType === "saml") {
-            const SAMLResponse = res.data;
-            const redirectUri = res.data2;
-            Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
-          }
-        } else {
-          if (loginFailureCallback) {
-            loginFailureCallback();
-          }
-          Util.showMessage("error", `Failed to log in: ${res.msg}`);
-        }
-      });
   }
 
   isProviderVisible(providerItem) {
@@ -488,31 +504,44 @@ class LoginPage extends React.Component {
     }
   }
 
-  renderCaptchaModal(application) {
-    if (this.state.application && application?.providers?.length > 0) {
-      const provider = application.providers.filter(provider => {
-        return provider.provider?.category === "Captcha" && provider.provider?.type === "Default";
-      })[0];
-      // eslint-disable-next-line no-console
-      if (provider && provider.provider && provider?.rule === "Always") {
-        return <CaptchaModal
-          provider={provider.provider}
-          providerName={provider.provider.name}
-          clientSecret={provider.provider.clientSecret}
-          captchaType={provider.provider.type}
-          subType={provider.provider.subType}
-          clientId={provider.provider.clientId}
-          providerUrl={provider.provider.providerUrl}
-          clientId2={provider.provider.clientId2}
-          clientSecret2={provider.provider.clientSecret2}
-          preview={false}
-          owner={provider.provider.owner}
-          name={provider.provider.name}
-          ref={this.captchaModal}
-        />;
-      }
+  getDefaultCaptchaProviderItems(application) {
+    const providers = application?.providers;
+
+    if (providers === undefined || providers === null) {
+      return null;
     }
-    return null;
+
+    return providers.filter(providerItem => {
+      if (providerItem.provider === undefined || providerItem.provider === null) {
+        return false;
+      }
+
+      return providerItem.provider.category === "Captcha" && providerItem.provider.type === "Default";
+    });
+  }
+
+  renderCaptchaModal(application) {
+    if (!this.state.enableCaptchaModal) {
+      return null;
+    }
+
+    const provider = this.getDefaultCaptchaProviderItems(application)
+      .filter(providerItem => providerItem.rule === "Always")
+      .map(providerItem => providerItem.provider)[0];
+
+    return <CaptchaModal
+      owner={provider.owner}
+      name={provider.name}
+      captchaType={provider.type}
+      subType={provider.subType}
+      clientId={provider.clientId}
+      clientId2={provider.clientId2}
+      clientSecret={provider.clientSecret}
+      clientSecret2={provider.clientSecret2}
+      open={this.state.openCaptchaModal}
+      onOk={(captchaType, captchaToken, secret) => this.state.verifyCaptcha?.(captchaType, captchaToken, secret)}
+      canCancel={false}
+    />;
   }
 
   renderFooter(application) {

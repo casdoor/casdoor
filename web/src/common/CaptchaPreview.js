@@ -16,6 +16,8 @@ import {Button} from "antd";
 import React from "react";
 import i18next from "i18next";
 import {CaptchaModal} from "./CaptchaModal";
+import * as ProviderBackend from "../backend/ProviderBackend";
+import * as UserBackend from "../backend/UserBackend";
 
 export const CaptchaPreview = ({
   provider,
@@ -30,10 +32,21 @@ export const CaptchaPreview = ({
   clientId2,
   clientSecret2,
 }) => {
-  const captchaModal = React.useRef(null);
+  const [open, setOpen] = React.useState(false);
 
   const clickPreview = () => {
-    captchaModal.current.showCaptcha();
+    provider.name = name;
+    provider.clientId = clientId;
+    provider.type = captchaType;
+    provider.providerUrl = providerUrl;
+    if (clientSecret !== "***") {
+      provider.clientSecret = clientSecret;
+      ProviderBackend.updateProvider(owner, providerName, provider).then(() => {
+        setOpen(true);
+      });
+    } else {
+      setOpen(true);
+    }
   };
 
   const getButtonDisabled = () => {
@@ -50,6 +63,16 @@ export const CaptchaPreview = ({
     return false;
   };
 
+  const onOk = (captchaType, captchaToken, secret) => {
+    UserBackend.verifyCaptcha(captchaType, captchaToken, secret).then(() => {
+      setOpen(false);
+    });
+  };
+
+  const onCancel = () => {
+    setOpen(false);
+  };
+
   return (
     <React.Fragment>
       <Button
@@ -60,23 +83,20 @@ export const CaptchaPreview = ({
       >
         {i18next.t("general:Preview")}
       </Button>
-      {
-        <CaptchaModal
-          provider={provider}
-          providerName={providerName}
-          clientSecret={clientSecret}
-          captchaType={captchaType}
-          subType={subType}
-          owner={owner}
-          clientId={clientId}
-          name={name}
-          providerUrl={providerUrl}
-          clientId2={clientId2}
-          clientSecret2={clientSecret2}
-          preview={true}
-          ref={captchaModal}
-        />
-      }
+      <CaptchaModal
+        owner={owner}
+        name={name}
+        captchaType={captchaType}
+        subType={subType}
+        clientId={clientId}
+        clientId2={clientId2}
+        clientSecret={clientSecret}
+        clientSecret2={clientSecret2}
+        open={open}
+        onOk={onOk}
+        onCancel={onCancel}
+        canCancel={true}
+      />
     </React.Fragment>
   );
 };

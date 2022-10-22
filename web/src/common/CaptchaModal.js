@@ -13,77 +13,53 @@
 // limitations under the License.
 
 import {Button, Col, Input, Modal, Row} from "antd";
-import React from "react";
 import i18next from "i18next";
+import React, {useEffect} from "react";
 import * as UserBackend from "../backend/UserBackend";
-import * as ProviderBackend from "../backend/ProviderBackend";
-import {SafetyOutlined} from "@ant-design/icons";
 import {CaptchaWidget} from "./CaptchaWidget";
+import {SafetyOutlined} from "@ant-design/icons";
 
-export const CaptchaModal = React.forwardRef(({
-  provider,
-  providerName,
-  clientSecret,
+export const CaptchaModal = ({
+  owner,
+  name,
   captchaType,
   subType,
-  owner,
   clientId,
-  name,
-  providerUrl,
   clientId2,
+  clientSecret,
   clientSecret2,
-  preview,
-}, ref) => {
+  open,
+  onOk,
+  onCancel,
+  canCancel,
+}) => {
   const [visible, setVisible] = React.useState(false);
   const [captchaImg, setCaptchaImg] = React.useState("");
   const [captchaToken, setCaptchaToken] = React.useState("");
   const [secret, setSecret] = React.useState(clientSecret);
   const [secret2, setSecret2] = React.useState(clientSecret2);
-  const [onOkButtonClickHandler, setOnOkButtonClickHandler] = React.useState(null);
 
-  React.useImperativeHandle(ref, () => ({
-    showCaptcha,
-  }));
-
-  // Decide when to show with `showCaptcha`
-  const showCaptcha = (onOkButtonClickCallback) => {
-    setVisible(true);
-    provider.name = name;
-    provider.clientId = clientId;
-    provider.type = captchaType;
-    provider.providerUrl = providerUrl;
-    if (!preview && onOkButtonClickCallback) {
-      // In non-preview mode, when the user clicks the ok button, the corresponding callback is executed
-      setOnOkButtonClickHandler({
-        call: onOkButtonClickCallback,
-      });
-    }
-    if (preview && clientSecret !== "***") {
-      provider.clientSecret = clientSecret;
-      ProviderBackend.updateProvider(owner, providerName, provider).then(() => {
+  useEffect(() => {
+    setVisible(() => {
+      if (open) {
         getCaptchaFromBackend();
-      });
-    } else {
-      getCaptchaFromBackend();
-    }
-  };
+      } else {
+        cleanUp();
+      }
+      return open;
+    });
+  }, [open]);
 
   const handleOk = () => {
-    if (preview || !onOkButtonClickHandler) {
-      UserBackend.verifyCaptcha(captchaType, captchaToken, secret).then(() => {
-        setCaptchaToken("");
-        setVisible(false);
-      });
-    } else {
-      onOkButtonClickHandler.call(captchaType, captchaToken, secret, () => {
-        setCaptchaToken("");
-        setVisible(false);
-      });
-    }
+    onOk?.(captchaType, captchaToken, secret);
   };
 
   const handleCancel = () => {
-    setVisible(false);
+    onCancel?.();
+  };
+
+  const cleanUp = () => {
+    setCaptchaToken("");
   };
 
   const getCaptchaFromBackend = () => {
@@ -153,7 +129,7 @@ export const CaptchaModal = React.forwardRef(({
   };
 
   const renderFooter = () => {
-    if (preview) {
+    if (canCancel) {
       return [
         <Button key="cancel" onClick={handleCancel}>{i18next.t("user:Cancel")}</Button>,
         <Button key="ok" type="primary" onClick={handleOk}>{i18next.t("user:OK")}</Button>,
@@ -180,4 +156,4 @@ export const CaptchaModal = React.forwardRef(({
       </Modal>
     </React.Fragment>
   );
-});
+};

@@ -211,9 +211,7 @@
     "Users": "Usuarios",
     "Users under all organizations": "Usuarios de todas las organizaciones",
     "Webhooks": "Webhooks",
-    "{total} in total": "{total} en total",
-    "Never": "Never",
-    "Everytime": "Everytime"
+    "{total} in total": "{total} en total"
   },
   "ldap": {
     "Address": "Dirección",

@@ -39,7 +39,7 @@ class ProviderTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {name: Setting.getNewRowNameForTable(table, "Please select a provider"), canSignUp: true, canSignIn: true, canUnlink: true, alertType: "None"};
+    const row = {name: Setting.getNewRowNameForTable(table, "Please select a provider"), canSignUp: true, canSignIn: true, canUnlink: true, alertType: "None", rule: "None"};
     if (table === undefined) {
       table = [];
     }
@@ -195,6 +195,7 @@ class ProviderTable extends React.Component {
       // },
       {
         title: i18next.t("application:rule"),
+        dataIndex: "rule",
         key: "rule",
         width: "100px",
         render: (text, record, index) => {
@@ -203,7 +204,8 @@ class ProviderTable extends React.Component {
           }
           return (
             <Select virtual={false} style={{width: "100%"}}
-              value={record?.rule}
+              value={text}
+              defaultValue="None"
               onChange={value => {
                 this.updateField(table, index, "rule", value);
               }} >

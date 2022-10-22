@@ -240,9 +240,7 @@
     "Users": "Пользователи",
     "Users under all organizations": "Пользователи из всех организаций",
     "Webhooks": "Вебхуки",
-    "{total} in total": "{total} всего",
-    "Never": "Never",
-    "Everytime": "Everytime"
+    "{total} in total": "{total} всего"
   },
   "ldap": {
     "Address": "Адрес",
