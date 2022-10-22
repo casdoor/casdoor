@@ -644,7 +644,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:From position"), i18next.t("application:From position - Tooltip"))} :
+            {Setting.getLabel(i18next.t("application:Form position"), i18next.t("application:Form position - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Row style={{marginTop: "20px"}} >
