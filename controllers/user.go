@@ -158,12 +158,6 @@ func (c *ApiController) UpdateUser() {
 		columns = strings.Split(columnsStr, ",")
 	}
 
-	msg := object.CheckUsername(user.Name)
-	if msg != "" {
-		c.ResponseError(msg)
-		return
-	}
-
 	isGlobalAdmin := c.IsGlobalAdmin()
 	affected := object.UpdateUser(id, &user, columns, isGlobalAdmin)
 	if affected {
