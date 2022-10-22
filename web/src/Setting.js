@@ -761,57 +761,70 @@ export function goToLogin(ths, application) {
   }
 }
 
-function JumpLink({url, children, onClick}) {
+function renderLink(url, text, onClick) {
   if (url === null) {
-    return <Link style={{float: "right"}} onClick={onClick} to={""}>{children}</Link>;
+    return null;
   }
-  if (url.startsWith("/")) {
-    return <Link to={url} style={{float: "right"}} onClick={onClick}>{children}</Link>;
-  } else if (url.startsWith("http")) {
-    return <a href={url} target="_blank" rel="noopener noreferrer" style={{float: "right"}} onClick={onClick}>{children}</a>;
-  } else {
-    return <Link style={{float: "right"}} onClick={onClick} to={""}>{children}</Link>;
-  }
-}
 
-function storeSigninUrl() {
-  sessionStorage.setItem("signinUrl", window.location.href);
+  if (url.startsWith("/")) {
+    return (
+      <Link style={{float: "right"}} to={url} onClick={() => {
+        if (onClick !== null) {
+          onClick();
+        }
+      }}>{text}</Link>
+    );
+  } else if (url.startsWith("http")) {
+    return (
+      <a target="_blank" rel="noopener noreferrer" style={{float: "right"}} href={url} onClick={() => {
+        if (onClick !== null) {
+          onClick();
+        }
+      }}>{text}</a>
+    );
+  } else {
+    return null;
+  }
 }
 
 export function renderSignupLink(application, text) {
-  let link;
-
+  let url;
   if (application === null) {
-    link = null;
+    url = null;
   } else if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
-    link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
+    url = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
   } else if (authConfig.appName === application.name) {
-    link = "/signup";
+    url = "/signup";
   } else {
     if (application.signupUrl === "") {
-      link = `/signup/${application.name}`;
+      url = `/signup/${application.name}`;
     } else {
-      link = application.signupUrl;
+      url = application.signupUrl;
     }
   }
 
-  return <JumpLink url={link} onClick={storeSigninUrl}>{text}</JumpLink>;
+  const storeSigninUrl = () => {
+    sessionStorage.setItem("signinUrl", window.location.href);
+  };
+
+  return renderLink(url, text, storeSigninUrl);
 }
 
 export function renderForgetLink(application, text) {
-  let link;
+  let url;
   if (application === null) {
-    link = null;
+    url = null;
   } else if (authConfig.appName === application.name) {
-    link = "/forget";
+    url = "/forget";
   } else {
     if (application.forgetUrl === "") {
-      link = `/forget/${application.name}`;
+      url = `/forget/${application.name}`;
     } else {
-      link = application.forgetUrl;
+      url = application.forgetUrl;
     }
   }
-  return <JumpLink url={link}>{text}</JumpLink>;
+
+  return renderLink(url, text, null);
 }
 
 export function renderHelmet(application) {
