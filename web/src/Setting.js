@@ -804,24 +804,23 @@ function storeSigninUrl() {
 }
 
 export function renderSignupLink(application, text) {
+  let link;
+
   if (application === null) {
-    return <JumpLink url={null} onClick={storeSigninUrl}>{text}</JumpLink>;
-  }
-
-  if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
-    const link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
-    return <JumpLink url={link} onClick={storeSigninUrl}>{text}</JumpLink>;
-  }
-
-  if (authConfig.appName === application.name) {
-    return <JumpLink url={"/signup"} onClick={storeSigninUrl}>{text}</JumpLink>;
+    link = null;
+  } else if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
+    link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
+  } else if (authConfig.appName === application.name) {
+    link = "/signup";
   } else {
     if (application.signupUrl === "") {
-      return <JumpLink url={`/signup/${application.name}`} onClick={storeSigninUrl}>{text}</JumpLink>;
+      link = `/signup/${application.name}`;
     } else {
-      return <JumpLink url={application.signupUrl} onClick={storeSigninUrl}>{text}</JumpLink>;
+      link = application.signupUrl;
     }
   }
+
+  return <JumpLink url={link} onClick={storeSigninUrl}>{text}</JumpLink>;
 }
 
 export function goToForget(ths, application) {
@@ -841,19 +840,19 @@ export function goToForget(ths, application) {
 }
 
 export function renderForgetLink(application, text) {
+  let link;
   if (application === null) {
-    return <JumpLink url={null}>{text}</JumpLink>;
-  }
-
-  if (authConfig.appName === application.name) {
-    return <JumpLink url={"/forget"}>{text}</JumpLink>;
+    link = null;
+  } else if (authConfig.appName === application.name) {
+    link = "/forget";
   } else {
     if (application.forgetUrl === "") {
-      return <JumpLink url={`/forget/${application.name}`}>{text}</JumpLink>;
+      link = `/forget/${application.name}`;
     } else {
-      return <JumpLink url={application.forgetUrl}>{text}</JumpLink>;
+      link = application.forgetUrl;
     }
   }
+  return <JumpLink url={link}>{text}</JumpLink>;
 }
 
 export function renderHelmet(application) {
