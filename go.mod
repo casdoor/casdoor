@@ -4,11 +4,10 @@ go 1.16
 
 require (
 	github.com/RobotsAndPencils/go-saml v0.0.0-20170520135329-fb13cb52a46b
-	github.com/Unknwon/goconfig v1.0.0 // indirect
+	github.com/Unknwon/goconfig v1.0.0
 	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
 	github.com/aws/aws-sdk-go v1.44.4
 	github.com/beego/beego v1.12.11
-	github.com/beego/i18n v0.0.0-20161101132742-e9308947f407
 	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin/v2 v2.30.1
 	github.com/casbin/xorm-adapter/v3 v3.0.1
@@ -49,7 +48,7 @@ require (
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
-	gopkg.in/ini.v1 v1.67.0 // indirect
+	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	xorm.io/core v0.7.2
