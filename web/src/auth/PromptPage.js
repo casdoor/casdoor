@@ -22,6 +22,7 @@ import i18next from "i18next";
 import AffiliationSelect from "../common/AffiliationSelect";
 import OAuthWidget from "../common/OAuthWidget";
 import SelectRegionBox from "../SelectRegionBox";
+import {useHistory} from "react-router-dom";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -190,7 +191,10 @@ class PromptPage extends React.Component {
           if (redirectUrl !== "" && redirectUrl !== null) {
             Setting.goToLink(redirectUrl);
           } else {
-            Setting.goToLogin(this, this.getApplicationObj());
+            // Setting.goToLogin(this, this.getApplicationObj());
+            const loginLink = Setting.getLoginLink(this.getApplicationObj());
+            const history = useHistory();
+            history.push(loginLink);
           }
         } else {
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);

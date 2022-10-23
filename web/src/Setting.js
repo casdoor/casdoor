@@ -24,6 +24,7 @@ import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import {Link} from "react-router-dom";
 import * as path from "path-browserify";
+import {useHistory} from "react-router-dom";
 
 export const ServerUrl = "";
 
@@ -759,6 +760,33 @@ export function goToLogin(ths, application) {
       goToLink(application.signinUrl);
     }
   }
+}
+
+export function getLoginLink(application) {
+  let url;
+  if (application === null) {
+    url = null;
+  } else if (!application.enablePassword && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
+    url = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
+  } else if (authConfig.appName === application.name) {
+    url = "/login";
+  } else if (application.signinUrl === "") {
+    url = path.join(application.homepageUrl, "login");
+  } else {
+    url = application.signinUrl;
+  }
+  return url;
+}
+
+export function renderLoginLink(application, text) {
+  const url = getLoginLink(application);
+  return renderLink(url, text, null);
+}
+
+export function redirectToLoginPage(application) {
+  const loginLink = getLoginLink(application);
+  const history = useHistory();
+  history.push(loginLink);
 }
 
 function renderLink(url, text, onClick) {

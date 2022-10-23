@@ -23,6 +23,7 @@ import {CountDownInput} from "../common/CountDownInput";
 import * as UserBackend from "../backend/UserBackend";
 import {CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../CustomGithubCorner";
+import {useHistory} from "react-router-dom";
 
 const {Step} = Steps;
 const {Option} = Select;
@@ -166,7 +167,10 @@ class ForgetPage extends React.Component {
     values.userOwner = this.state.application?.organizationObj.name;
     UserBackend.setPassword(values.userOwner, values.username, "", values?.newPassword).then(res => {
       if (res.status === "ok") {
-        Setting.goToLogin(this, this.state.application);
+        // Setting.goToLogin(this, this.state.application);
+        const loginLink = Setting.getLoginLink(this.state.application);
+        const history = useHistory();
+        history.push(loginLink);
       } else {
         Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
       }
