@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -122,11 +123,11 @@ func getVerificationRecord(dest string) *VerificationRecord {
 	return &record
 }
 
-func CheckVerificationCode(dest, code string) string {
+func CheckVerificationCode(dest, code, lang string) string {
 	record := getVerificationRecord(dest)
 
 	if record == nil {
-		return "Code has not been sent yet!"
+		return i18n.Translate(lang, "PhoneErr.CodeNotSent")
 	}
 
 	timeout, err := conf.GetConfigInt64("verificationCodeTimeout")
@@ -136,7 +137,7 @@ func CheckVerificationCode(dest, code string) string {
 
 	now := time.Now().Unix()
 	if now-record.Time > timeout*60 {
-		return fmt.Sprintf("You should verify your code in %d min!", timeout)
+		return fmt.Sprintf(i18n.Translate(lang, "PhoneErr.CodeTimeOut"), timeout)
 	}
 
 	if record.Code != code {

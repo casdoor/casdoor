@@ -18,6 +18,9 @@ export function registerWebauthnCredential() {
   return fetch(`${Setting.ServerUrl}/api/webauthn/signup/begin`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   })
     .then(res => res.json())
     .then((credentialCreationOptions) => {
@@ -62,6 +65,9 @@ export function deleteUserWebAuthnCredential(credentialID) {
     credentials: "include",
     body: form,
     dataType: "text",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 

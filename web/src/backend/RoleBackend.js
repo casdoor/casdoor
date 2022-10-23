@@ -18,6 +18,9 @@ export function getRoles(owner, page = "", pageSize = "", field = "", value = ""
   return fetch(`${Setting.ServerUrl}/api/get-roles?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -25,6 +28,9 @@ export function getRole(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-role?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -34,6 +40,9 @@ export function updateRole(owner, name, role) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newRole),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -43,6 +52,9 @@ export function addRole(role) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newRole),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -52,5 +64,8 @@ export function deleteRole(role) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newRole),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }

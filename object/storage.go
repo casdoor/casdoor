@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/storage"
 	"github.com/casdoor/casdoor/util"
 )
@@ -126,16 +127,16 @@ func UploadFileSafe(provider *Provider, fullFilePath string, fileBuffer *bytes.B
 	return fileUrl, objectKey, nil
 }
 
-func DeleteFile(provider *Provider, objectKey string) error {
+func DeleteFile(provider *Provider, objectKey string, lang string) error {
 	// check fullFilePath is there security issue
 	if strings.Contains(objectKey, "..") {
-		return fmt.Errorf("the objectKey: %s is not allowed", objectKey)
+		return fmt.Errorf(i18n.Translate(lang, "StorageErr.ObjectKeyNotAllowed"), objectKey)
 	}
 
 	endpoint := getProviderEndpoint(provider)
 	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint)
 	if storageProvider == nil {
-		return fmt.Errorf("the provider type: %s is not supported", provider.Type)
+		return fmt.Errorf(i18n.Translate(lang, "ProviderErr.ProviderNotSupported"), provider.Type)
 	}
 
 	if provider.Domain == "" {

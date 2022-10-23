@@ -22,7 +22,6 @@ import (
 	"github.com/casbin/casbin/v2/model"
 	xormadapter "github.com/casbin/xorm-adapter/v3"
 	"github.com/casdoor/casdoor/util"
-
 	"xorm.io/core"
 )
 

@@ -49,7 +49,7 @@ func handleBind(w ldapserver.ResponseWriter, m *ldapserver.Message) {
 			return
 		}
 		bindpassword := string(r.AuthenticationSimple())
-		binduser, err := object.CheckUserPassword(bindorg, bindusername, bindpassword)
+		binduser, err := object.CheckUserPassword(bindorg, bindusername, bindpassword, "en")
 		if err != "" {
 			log.Printf("Bind failed User=%s, Pass=%#v, ErrMsg=%s", string(r.Name()), r.Authentication(), err)
 			res.SetResultCode(ldapserver.LDAPResultInvalidCredentials)

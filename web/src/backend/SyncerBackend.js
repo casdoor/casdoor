@@ -18,6 +18,9 @@ export function getSyncers(owner, page = "", pageSize = "", field = "", value = 
   return fetch(`${Setting.ServerUrl}/api/get-syncers?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -25,6 +28,9 @@ export function getSyncer(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-syncer?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -34,6 +40,9 @@ export function updateSyncer(owner, name, syncer) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newSyncer),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -43,6 +52,9 @@ export function addSyncer(syncer) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newSyncer),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -52,6 +64,9 @@ export function deleteSyncer(syncer) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newSyncer),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -59,5 +74,8 @@ export function runSyncer(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/run-syncer?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }

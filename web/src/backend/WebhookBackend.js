@@ -18,6 +18,9 @@ export function getWebhooks(owner, page = "", pageSize = "", field = "", value =
   return fetch(`${Setting.ServerUrl}/api/get-webhooks?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -25,6 +28,9 @@ export function getWebhook(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-webhook?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -34,6 +40,9 @@ export function updateWebhook(owner, name, webhook) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newWebhook),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -43,6 +52,9 @@ export function addWebhook(webhook) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newWebhook),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -52,5 +64,8 @@ export function deleteWebhook(webhook) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newWebhook),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
