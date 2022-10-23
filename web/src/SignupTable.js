@@ -164,7 +164,7 @@ class SignupTable extends React.Component {
         },
       },
       {
-        title: i18next.t("application:rule"),
+        title: i18next.t("application:Rule"),
         dataIndex: "rule",
         key: "rule",
         width: "155px",

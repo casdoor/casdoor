@@ -68,7 +68,9 @@
     "Token expire - Tooltip": "トークンの有効期限 - ツールチップ",
     "Token format": "トークンのフォーマット",
     "Token format - Tooltip": "トークンフォーマット - ツールチップ",
-    "rule": "rule"
+    "Rule": "Rule",
+    "None": "None",
+    "Always": "Always"
   },
   "cert": {
     "Bit size": "ビットサイズ",

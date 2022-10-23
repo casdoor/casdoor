@@ -68,7 +68,9 @@
     "Token expire - Tooltip": "Token läuft ab - Tooltip",
     "Token format": "Token-Format",
     "Token format - Tooltip": "Token-Format - Tooltip",
-    "rule": "rule"
+    "Rule": "Rule",
+    "None": "None",
+    "Always": "Always"
   },
   "cert": {
     "Bit size": "Bitgröße",

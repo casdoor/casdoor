@@ -194,7 +194,7 @@ class ProviderTable extends React.Component {
       //   }
       // },
       {
-        title: i18next.t("application:rule"),
+        title: i18next.t("application:Rule"),
         dataIndex: "rule",
         key: "rule",
         width: "100px",
@@ -209,8 +209,8 @@ class ProviderTable extends React.Component {
               onChange={value => {
                 this.updateField(table, index, "rule", value);
               }} >
-              <Option key="None" value="None">None</Option>
-              <Option key="Always" value="Always">Always</Option>
+              <Option key="None" value="None">{i18next.t("application:None")}</Option>
+              <Option key="Always" value="Always">{i18next.t("application:Always")}</Option>
             </Select>
           );
         },

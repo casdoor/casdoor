@@ -68,7 +68,9 @@
     "Token expire - Tooltip": "Истек токен - Подсказка",
     "Token format": "Формат токена",
     "Token format - Tooltip": "Формат токена - Подсказка",
-    "rule": "правило"
+    "Rule": "правило",
+    "None": "None",
+    "Always": "Always"
   },
   "cert": {
     "Bit size": "Размер бита",

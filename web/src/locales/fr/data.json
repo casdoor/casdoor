@@ -68,7 +68,9 @@
     "Token expire - Tooltip": "Expiration du jeton - Info-bulle",
     "Token format": "Format du jeton",
     "Token format - Tooltip": "Format du jeton - infobulle",
-    "rule": "rule"
+    "Rule": "Rule",
+    "None": "None",
+    "Always": "Always"
   },
   "cert": {
     "Bit size": "Taille du bit",

@@ -68,7 +68,9 @@
     "Token expire - Tooltip": "Token expire - Tooltip",
     "Token format": "Token format",
     "Token format - Tooltip": "Token format - Tooltip",
-    "rule": "rule"
+    "Rule": "Rule",
+    "None": "None",
+    "Always": "Always"
   },
   "cert": {
     "Bit size": "Bit size",
@@ -695,6 +697,7 @@
     "Old Password": "Old Password",
     "Password": "Password",
     "Password Set": "Password Set",
+    "Please select avatar from resources": "Please select avatar from resources",
     "Properties": "Properties",
     "Re-enter New": "Re-enter New",
     "Reset Email...": "Reset Email...",
