@@ -19,12 +19,12 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"fmt"
-	"github.com/casdoor/casdoor/i18n"
 	"net/url"
 	"regexp"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	saml2 "github.com/russellhaering/gosaml2"
 	dsig "github.com/russellhaering/goxmldsig"
 )

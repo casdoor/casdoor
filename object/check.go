@@ -16,13 +16,13 @@ package object
 
 import (
 	"fmt"
-	"github.com/casdoor/casdoor/i18n"
 	"regexp"
 	"strings"
 	"time"
 	"unicode"
 
 	"github.com/casdoor/casdoor/cred"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 )

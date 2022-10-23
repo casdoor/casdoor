@@ -17,18 +17,20 @@ package i18n
 import (
 	"embed"
 	"fmt"
-	"gopkg.in/ini.v1"
 	"log"
 	"strings"
 
 	"github.com/casdoor/casdoor/util"
+	"gopkg.in/ini.v1"
 )
 
 //go:embed languages/*.ini
 var f embed.FS
 
-var langMapConfig = make(map[string]*ini.File)
-var isNotFirstLoad = make(map[string]bool)
+var (
+	langMapConfig  = make(map[string]*ini.File)
+	isNotFirstLoad = make(map[string]bool)
+)
 
 func getI18nFilePath(language string) string {
 	return fmt.Sprintf("../web/src/locales/%s/data.json", language)

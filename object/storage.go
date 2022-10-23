@@ -17,11 +17,11 @@ package object
 import (
 	"bytes"
 	"fmt"
-	"github.com/casdoor/casdoor/i18n"
 	"net/url"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/storage"
 	"github.com/casdoor/casdoor/util"
 )

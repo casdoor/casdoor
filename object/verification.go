@@ -17,11 +17,11 @@ package object
 import (
 	"errors"
 	"fmt"
-	"github.com/casdoor/casdoor/i18n"
 	"math/rand"
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
