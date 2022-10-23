@@ -18,8 +18,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/casdoor/casdoor/conf"
-
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -152,7 +150,7 @@ func (c *ApiController) GetOAuthCode() {
 	codeChallenge := c.Input().Get("code_challenge")
 
 	if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "AuthErr.ChallengeMethodErr"))
+		c.ResponseError(c.T("AuthErr.ChallengeMethodErr"))
 		return
 	}
 	host := c.Ctx.Request.Host
@@ -292,7 +290,7 @@ func (c *ApiController) IntrospectToken() {
 		clientId = c.Input().Get("client_id")
 		clientSecret = c.Input().Get("client_secret")
 		if clientId == "" || clientSecret == "" {
-			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "TokenErr.EmptyClientID"))
+			c.ResponseError(c.T("TokenErr.EmptyClientID"))
 			c.Data["json"] = &object.TokenError{
 				Error: object.InvalidRequest,
 			}
@@ -303,7 +301,7 @@ func (c *ApiController) IntrospectToken() {
 	}
 	application := object.GetApplicationByClientId(clientId)
 	if application == nil || application.ClientSecret != clientSecret {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "TokenErr.InvalidAppOrWrongClientSecret"))
+		c.ResponseError(c.T("TokenErr.InvalidAppOrWrongClientSecret"))
 		c.Data["json"] = &object.TokenError{
 			Error: object.InvalidClient,
 		}

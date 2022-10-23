@@ -19,8 +19,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casdoor/casdoor/conf"
-
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -151,7 +149,7 @@ func (c *ApiController) UpdateUser() {
 	}
 
 	if user.DisplayName == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "UserErr.DisplayNameCanNotBeEmpty"))
+		c.ResponseError(c.T("UserErr.DisplayNameCanNotBeEmpty"))
 		return
 	}
 
@@ -232,7 +230,7 @@ func (c *ApiController) GetEmailAndPhone() {
 
 	user := object.GetUserByFields(form.Organization, form.Username)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "UserErr.DoNotExistInOrg"), form.Organization, form.Username))
+		c.ResponseError(fmt.Sprintf(c.T("UserErr.DoNotExistInOrg"), form.Organization, form.Username))
 		return
 	}
 
@@ -290,12 +288,12 @@ func (c *ApiController) SetPassword() {
 	}
 
 	if strings.Contains(newPassword, " ") {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "SetPasswordErr.CanNotContainBlank"))
+		c.ResponseError(c.T("SetPasswordErr.CanNotContainBlank"))
 		return
 	}
 
 	if len(newPassword) <= 5 {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "SetPasswordErr.LessThanSixCharacters"))
+		c.ResponseError(c.T("SetPasswordErr.LessThanSixCharacters"))
 		return
 	}
 

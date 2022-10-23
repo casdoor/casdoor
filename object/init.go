@@ -17,11 +17,7 @@ package object
 import (
 	"encoding/gob"
 	"fmt"
-	"log"
 	"os"
-	"strings"
-
-	"github.com/beego/i18n"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
@@ -294,14 +290,4 @@ func initBuiltInPermission() {
 		IsEnabled:    true,
 	}
 	AddPermission(permission)
-}
-
-func InitLanguage() {
-	languages := strings.Split(conf.GetConfigString("languages"), ",")
-	for _, lang := range languages {
-		if err := i18n.SetMessage(lang, "conf/languages/"+"locale_"+lang+".ini"); err != nil {
-			log.Print(err)
-			return
-		}
-	}
 }

@@ -19,6 +19,7 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"fmt"
+	"github.com/casdoor/casdoor/i18n"
 	"net/url"
 	"regexp"
 	"strings"
@@ -44,7 +45,7 @@ func ParseSamlResponse(samlResponse string, providerType string) (string, error)
 func GenerateSamlLoginUrl(id, relayState, lang string) (string, string, error) {
 	provider := GetProvider(id)
 	if provider.Category != "SAML" {
-		return "", "", fmt.Errorf(conf.Translate(lang, "ProviderErr.CategoryNotSAML"), provider.Name)
+		return "", "", fmt.Errorf(i18n.Translate(lang, "ProviderErr.CategoryNotSAML"), provider.Name)
 	}
 	sp, err := buildSp(provider, "")
 	if err != nil {

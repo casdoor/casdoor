@@ -15,21 +15,14 @@
 package conf
 
 import (
-	"embed"
 	"fmt"
-	"log"
 	"os"
 	"runtime"
 	"strconv"
 	"strings"
 
-	"gopkg.in/ini.v1"
-
 	"github.com/beego/beego"
 )
-
-//go:embed languages/*.ini
-var f embed.FS
 
 func init() {
 	// this array contains the beego configuration items that may be modified via env
@@ -89,17 +82,6 @@ func GetConfigDataSourceName() string {
 	}
 
 	return dataSourceName
-}
-
-func Translate(lang string, error string) string {
-	file, _ := f.ReadFile("languages/locale_" + lang + ".ini")
-	cfg, _ := ini.Load(file)
-	parts := strings.Split(error, ".")
-	if !strings.Contains(error, ".") || len(parts) != 2 {
-		log.Println("Invalid Error Name")
-		return ""
-	}
-	return cfg.Section(parts[0]).Key(parts[1]).String()
 }
 
 func IsDemoMode() bool {

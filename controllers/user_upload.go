@@ -20,8 +20,6 @@ import (
 	"mime/multipart"
 	"os"
 
-	"github.com/casdoor/casdoor/conf"
-
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -63,6 +61,6 @@ func (c *ApiController) UploadUsers() {
 	if affected {
 		c.ResponseOk()
 	} else {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "UserErr.FailToImportUsers"))
+		c.ResponseError(c.T("UserErr.FailToImportUsers"))
 	}
 }

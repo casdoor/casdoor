@@ -15,11 +15,20 @@
 package i18n
 
 import (
+	"embed"
 	"fmt"
+	"gopkg.in/ini.v1"
+	"log"
 	"strings"
 
 	"github.com/casdoor/casdoor/util"
 )
+
+//go:embed languages/*.ini
+var f embed.FS
+
+var langMapConfig = make(map[string]*ini.File)
+var isNotFirstLoad = make(map[string]bool)
 
 func getI18nFilePath(language string) string {
 	return fmt.Sprintf("../web/src/locales/%s/data.json", language)
@@ -60,5 +69,22 @@ func applyData(data1 *I18nData, data2 *I18nData) {
 
 			pairs1[key] = value
 		}
+	}
+}
+
+func Translate(lang string, error string) string {
+	parts := strings.Split(error, ".")
+	if !strings.Contains(error, ".") || len(parts) != 2 {
+		log.Println("Invalid Error Name")
+		return ""
+	}
+
+	if isNotFirstLoad[lang] {
+		return langMapConfig[lang].Section(parts[0]).Key(parts[1]).String()
+	} else {
+		file, _ := f.ReadFile("languages/locale_" + lang + ".ini")
+		langMapConfig[lang], _ = ini.Load(file)
+		isNotFirstLoad[lang] = true
+		return langMapConfig[lang].Section(parts[0]).Key(parts[1]).String()
 	}
 }

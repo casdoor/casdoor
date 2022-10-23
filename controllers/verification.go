@@ -19,8 +19,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casdoor/casdoor/conf"
-
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -52,23 +50,23 @@ func (c *ApiController) SendVerificationCode() {
 	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
 
 	if destType == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing") + ": type.")
+		c.ResponseError(c.T("ParameterErr.Missing") + ": type.")
 		return
 	}
 	if dest == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing") + ": dest.")
+		c.ResponseError(c.T("ParameterErr.Missing") + ": dest.")
 		return
 	}
 	if applicationId == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing") + ": applicationId.")
+		c.ResponseError(c.T("ParameterErr.Missing") + ": applicationId.")
 		return
 	}
 	if !strings.Contains(applicationId, "/") {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Wrong") + ": applicationId.")
+		c.ResponseError(c.T("ParameterErr.Wrong") + ": applicationId.")
 		return
 	}
 	if checkType == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing") + ": checkType.")
+		c.ResponseError(c.T("ParameterErr.Missing") + ": checkType.")
 		return
 	}
 
@@ -76,7 +74,7 @@ func (c *ApiController) SendVerificationCode() {
 
 	if captchaProvider != nil {
 		if checkKey == "" {
-			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing") + ": checkKey.")
+			c.ResponseError(c.T("ParameterErr.Missing") + ": checkKey.")
 			return
 		}
 		isHuman, err := captchaProvider.VerifyCaptcha(checkKey, checkId)
@@ -86,7 +84,7 @@ func (c *ApiController) SendVerificationCode() {
 		}
 
 		if !isHuman {
-			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "AuthErr.NotHuman"))
+			c.ResponseError(c.T("AuthErr.NotHuman"))
 			return
 		}
 	}
@@ -96,7 +94,7 @@ func (c *ApiController) SendVerificationCode() {
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", application.Owner, application.Organization))
 
 	if checkUser == "true" && user == nil && object.GetUserByFields(organization.Name, dest) == nil {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "LoginErr.LoginFirst"))
+		c.ResponseError(c.T("LoginErr.LoginFirst"))
 		return
 	}
 
@@ -112,7 +110,7 @@ func (c *ApiController) SendVerificationCode() {
 			dest = user.Email
 		}
 		if !util.IsEmailValid(dest) {
-			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "EmailErr.EmailInvalid"))
+			c.ResponseError(c.T("EmailErr.EmailInvalid"))
 			return
 		}
 
@@ -123,11 +121,11 @@ func (c *ApiController) SendVerificationCode() {
 			dest = user.Phone
 		}
 		if !util.IsPhoneCnValid(dest) {
-			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "PhoneErr.NumberInvalid"))
+			c.ResponseError(c.T("PhoneErr.NumberInvalid"))
 			return
 		}
 		if organization == nil {
-			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "OrgErr.DoNotExist"))
+			c.ResponseError(c.T("OrgErr.DoNotExist"))
 			return
 		}
 
@@ -159,7 +157,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 	dest := c.Ctx.Request.Form.Get("dest")
 	code := c.Ctx.Request.Form.Get("code")
 	if len(dest) == 0 || len(code) == 0 || len(destType) == 0 {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing"))
+		c.ResponseError(c.T("ParameterErr.Missing"))
 		return
 	}
 
@@ -168,7 +166,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 	if destType == "phone" {
 		phoneItem := object.GetAccountItemByName("Phone", org)
 		if phoneItem == nil {
-			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "PhoneErr.UnableGetModifyRule"))
+			c.ResponseError(c.T("PhoneErr.UnableGetModifyRule"))
 			return
 		}
 
@@ -185,7 +183,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 	} else if destType == "email" {
 		emailItem := object.GetAccountItemByName("Email", org)
 		if emailItem == nil {
-			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "EmailErr.UnableGetModifyRule"))
+			c.ResponseError(c.T("EmailErr.UnableGetModifyRule"))
 			return
 		}
 
@@ -207,7 +205,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 		user.Phone = dest
 		object.SetUserField(user, "phone", user.Phone)
 	default:
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.UnknownType"))
+		c.ResponseError(c.T("ParameterErr.UnknownType"))
 		return
 	}
 
@@ -226,17 +224,17 @@ func (c *ApiController) VerifyCaptcha() {
 	captchaToken := c.Ctx.Request.Form.Get("captchaToken")
 	clientSecret := c.Ctx.Request.Form.Get("clientSecret")
 	if captchaToken == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing") + ": captchaToken.")
+		c.ResponseError(c.T("ParameterErr.Missing") + ": captchaToken.")
 		return
 	}
 	if clientSecret == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing") + ": clientSecret.")
+		c.ResponseError(c.T("ParameterErr.Missing") + ": clientSecret.")
 		return
 	}
 
 	provider := captcha.GetCaptchaProvider(captchaType)
 	if provider == nil {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ProviderErr.InvalidProvider"))
+		c.ResponseError(c.T("ProviderErr.InvalidProvider"))
 		return
 	}
 

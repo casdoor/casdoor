@@ -16,8 +16,8 @@ package object
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/i18n"
 
-	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -238,7 +238,7 @@ func GetCaptchaProviderByOwnerName(applicationId, lang string) (*Provider, error
 	}
 
 	if !existed {
-		return nil, fmt.Errorf(conf.Translate(lang, "ProviderErr.DoNotExist"), applicationId)
+		return nil, fmt.Errorf(i18n.Translate(lang, "ProviderErr.DoNotExist"), applicationId)
 	}
 
 	return &provider, nil
@@ -250,7 +250,7 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 	}
 	application := GetApplication(applicationId)
 	if application == nil || len(application.Providers) == 0 {
-		return nil, fmt.Errorf(conf.Translate(lang, "ApplicationErr.InvalidID"))
+		return nil, fmt.Errorf(i18n.Translate(lang, "ApplicationErr.InvalidID"))
 	}
 	for _, provider := range application.Providers {
 		if provider.Provider == nil {

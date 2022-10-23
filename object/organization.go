@@ -16,8 +16,7 @@ package object
 
 import (
 	"fmt"
-
-	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 
 	"github.com/casdoor/casdoor/cred"
 	"github.com/casdoor/casdoor/util"
@@ -208,14 +207,14 @@ func CheckAccountItemModifyRule(accountItem *AccountItem, user *User, lang strin
 	switch accountItem.ModifyRule {
 	case "Admin":
 		if !(user.IsAdmin || user.IsGlobalAdmin) {
-			return false, fmt.Sprintf(conf.Translate(lang, "OrgErr.OnlyAdmin"), accountItem.Name)
+			return false, fmt.Sprintf(i18n.Translate(lang, "OrgErr.OnlyAdmin"), accountItem.Name)
 		}
 	case "Immutable":
-		return false, fmt.Sprintf(conf.Translate(lang, "OrgErr.Immutable"), accountItem.Name)
+		return false, fmt.Sprintf(i18n.Translate(lang, "OrgErr.Immutable"), accountItem.Name)
 	case "Self":
 		break
 	default:
-		return false, fmt.Sprintf(conf.Translate(lang, "OrgErr.UnknownModifyRule"), accountItem.ModifyRule)
+		return false, fmt.Sprintf(i18n.Translate(lang, "OrgErr.UnknownModifyRule"), accountItem.ModifyRule)
 	}
 	return true, ""
 }

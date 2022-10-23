@@ -92,5 +92,6 @@ func parseToData() *I18nData {
 		}
 		data[namespace][key] = key
 	}
+
 	return &data
 }

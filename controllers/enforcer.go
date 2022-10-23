@@ -17,15 +17,13 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/casdoor/casdoor/conf"
-
 	"github.com/casdoor/casdoor/object"
 )
 
 func (c *ApiController) Enforce() {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "EnforcerErr.SignInFirst"))
+		c.ResponseError(c.T("EnforcerErr.SignInFirst"))
 		return
 	}
 
@@ -43,7 +41,7 @@ func (c *ApiController) Enforce() {
 func (c *ApiController) BatchEnforce() {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "EnforcerErr.SignInFirst"))
+		c.ResponseError(c.T("EnforcerErr.SignInFirst"))
 		return
 	}
 
@@ -61,7 +59,7 @@ func (c *ApiController) BatchEnforce() {
 func (c *ApiController) GetAllObjects() {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "EnforcerErr.SignInFirst"))
+		c.ResponseError(c.T("EnforcerErr.SignInFirst"))
 		return
 	}
 
@@ -72,7 +70,7 @@ func (c *ApiController) GetAllObjects() {
 func (c *ApiController) GetAllActions() {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "EnforcerErr.SignInFirst"))
+		c.ResponseError(c.T("EnforcerErr.SignInFirst"))
 		return
 	}
 
@@ -83,7 +81,7 @@ func (c *ApiController) GetAllActions() {
 func (c *ApiController) GetAllRoles() {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "EnforcerErr.SignInFirst"))
+		c.ResponseError(c.T("EnforcerErr.SignInFirst"))
 		return
 	}
 

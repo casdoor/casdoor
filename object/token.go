@@ -18,10 +18,9 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"github.com/casdoor/casdoor/i18n"
 	"strings"
 	"time"
-
-	"github.com/casdoor/casdoor/conf"
 
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
@@ -242,12 +241,12 @@ func GetTokenByTokenAndApplication(token string, application string) *Token {
 
 func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string, lang string) (string, *Application) {
 	if responseType != "code" && responseType != "token" && responseType != "id_token" {
-		return fmt.Sprintf(conf.Translate(lang, "ApplicationErr.GrantTypeNotSupport"), responseType), nil
+		return fmt.Sprintf(i18n.Translate(lang, "ApplicationErr.GrantTypeNotSupport"), responseType), nil
 	}
 
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
-		return conf.Translate(lang, "TokenErr.InvalidClientId"), nil
+		return i18n.Translate(lang, "TokenErr.InvalidClientId"), nil
 	}
 
 	validUri := false
@@ -258,7 +257,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		}
 	}
 	if !validUri {
-		return fmt.Sprintf(conf.Translate(lang, "TokenErr.RedirectURIDoNotExist"), redirectUri), application
+		return fmt.Sprintf(i18n.Translate(lang, "TokenErr.RedirectURIDoNotExist"), redirectUri), application
 	}
 
 	// Mask application for /api/get-app-login

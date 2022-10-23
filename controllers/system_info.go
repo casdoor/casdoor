@@ -15,7 +15,6 @@
 package controllers
 
 import (
-	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -41,7 +40,7 @@ func (c *ApiController) GetSystemInfo() {
 
 	user := object.GetUser(id)
 	if user == nil || !user.IsGlobalAdmin {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ResourceErr.NotAuthorized"))
+		c.ResponseError(c.T("ResourceErr.NotAuthorized"))
 		return
 	}
 

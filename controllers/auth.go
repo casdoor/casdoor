@@ -56,7 +56,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		return
 	}
 	if !allowed {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "AuthErr.Unauthorized"))
+		c.ResponseError(c.T("AuthErr.Unauthorized"))
 		return
 	}
 
@@ -75,7 +75,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		codeChallenge := c.Input().Get("code_challenge")
 
 		if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
-			c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "AuthErr.ChallengeMethodErr"))
+			c.ResponseError(c.T("AuthErr.ChallengeMethodErr"))
 			return
 		}
 		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, c.Ctx.Request.Host, c.GetAcceptLanguage())
@@ -196,7 +196,7 @@ func (c *ApiController) Login() {
 	if form.Username != "" {
 		if form.Type == ResponseTypeLogin {
 			if c.GetSessionUsername() != "" {
-				c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "LoginErr.SignOutFirst"), c.GetSessionUsername())
+				c.ResponseError(c.T("LoginErr.SignOutFirst"), c.GetSessionUsername())
 				return
 			}
 		}
@@ -222,7 +222,7 @@ func (c *ApiController) Login() {
 			} else {
 				verificationCodeType = "phone"
 				if len(form.PhonePrefix) == 0 {
-					responseText := fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "PhoneErr.NoPrefix"), verificationCodeType)
+					responseText := fmt.Sprintf(c.T("PhoneErr.NoPrefix"), verificationCodeType)
 					c.ResponseError(responseText)
 					return
 				}
@@ -247,7 +247,7 @@ func (c *ApiController) Login() {
 
 			user = object.GetUserByFields(form.Organization, form.Username)
 			if user == nil {
-				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.UserDoNotExist"), form.Organization, form.Username))
+				c.ResponseError(fmt.Sprintf(c.T("LoginErr.UserDoNotExist"), form.Organization, form.Username))
 				return
 			}
 		} else {
@@ -260,7 +260,7 @@ func (c *ApiController) Login() {
 		} else {
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 			if application == nil {
-				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.AppDoNotExist"), form.Application))
+				c.ResponseError(fmt.Sprintf(c.T("LoginErr.AppDoNotExist"), form.Application))
 				return
 			}
 
@@ -274,7 +274,7 @@ func (c *ApiController) Login() {
 	} else if form.Provider != "" {
 		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 		if application == nil {
-			c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.AppDoNotExist"), form.Application))
+			c.ResponseError(fmt.Sprintf(c.T("LoginErr.AppDoNotExist"), form.Application))
 			return
 		}
 
@@ -282,7 +282,7 @@ func (c *ApiController) Login() {
 		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
 		providerItem := application.GetProviderItem(provider.Name)
 		if !providerItem.IsProviderVisible() {
-			c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "ProviderErr.ProviderNotEnabled"), provider.Name))
+			c.ResponseError(fmt.Sprintf(c.T("ProviderErr.ProviderNotEnabled"), provider.Name))
 			return
 		}
 
@@ -306,14 +306,14 @@ func (c *ApiController) Login() {
 
 			idProvider := idp.GetIdProvider(provider.Type, provider.SubType, clientId, clientSecret, provider.AppId, form.RedirectUri, provider.Domain, provider.CustomAuthUrl, provider.CustomTokenUrl, provider.CustomUserInfoUrl)
 			if idProvider == nil {
-				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "ProviderErr.ProviderNotSupported"), provider.Type))
+				c.ResponseError(fmt.Sprintf(c.T("ProviderErr.ProviderNotSupported"), provider.Type))
 				return
 			}
 
 			setHttpClient(idProvider, provider.Type)
 
 			if form.State != conf.GetConfigString("authState") && form.State != application.Name {
-				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "AuthErr.AuthStateWrong"), conf.GetConfigString("authState"), form.State))
+				c.ResponseError(fmt.Sprintf(c.T("AuthErr.AuthStateWrong"), conf.GetConfigString("authState"), form.State))
 				return
 			}
 
@@ -325,13 +325,13 @@ func (c *ApiController) Login() {
 			}
 
 			if !token.Valid() {
-				c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "TokenErr.InvalidToken"))
+				c.ResponseError(c.T("TokenErr.InvalidToken"))
 				return
 			}
 
 			userInfo, err = idProvider.GetUserInfo(token)
 			if err != nil {
-				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.LoginFail"), err.Error()))
+				c.ResponseError(fmt.Sprintf(c.T("LoginErr.LoginFail"), err.Error()))
 				return
 			}
 		}
@@ -348,7 +348,7 @@ func (c *ApiController) Login() {
 				// Sign in via OAuth (want to sign up but already have account)
 
 				if user.IsForbidden {
-					c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "LoginErr.UserIsForbidden"))
+					c.ResponseError(c.T("LoginErr.UserIsForbidden"))
 				}
 
 				resp = c.HandleLoggedIn(application, user, &form)
@@ -360,12 +360,12 @@ func (c *ApiController) Login() {
 			} else if provider.Category == "OAuth" {
 				// Sign up via OAuth
 				if !application.EnableSignUp {
-					c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.AppNotEnableSignUp"), provider.Type, userInfo.Username, userInfo.DisplayName))
+					c.ResponseError(fmt.Sprintf(c.T("LoginErr.AppNotEnableSignUp"), provider.Type, userInfo.Username, userInfo.DisplayName))
 					return
 				}
 
 				if !providerItem.CanSignUp {
-					c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.ProviderCanNotSignUp"), provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
+					c.ResponseError(fmt.Sprintf(c.T("LoginErr.ProviderCanNotSignUp"), provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
 					return
 				}
 
@@ -386,7 +386,7 @@ func (c *ApiController) Login() {
 				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
 				initScore, err := getInitScore()
 				if err != nil {
-					c.ResponseError(fmt.Errorf(conf.Translate(c.GetAcceptLanguage(), "InitErr.InitScoreFailed"), err).Error())
+					c.ResponseError(fmt.Errorf(c.T("InitErr.InitScoreFailed"), err).Error())
 					return
 				}
 
@@ -413,7 +413,7 @@ func (c *ApiController) Login() {
 
 				affected := object.AddUser(user)
 				if !affected {
-					c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.InvalidUserInformation"), util.StructToJson(user)))
+					c.ResponseError(fmt.Sprintf(c.T("LoginErr.InvalidUserInformation"), util.StructToJson(user)))
 					return
 				}
 
@@ -438,13 +438,13 @@ func (c *ApiController) Login() {
 		} else { // form.Method != "signup"
 			userId := c.GetSessionUsername()
 			if userId == "" {
-				c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "LoginErr.AccountDoNotExist"), userInfo)
+				c.ResponseError(c.T("LoginErr.AccountDoNotExist"), userInfo)
 				return
 			}
 
 			oldUser := object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
 			if oldUser != nil {
-				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.OldUser"), provider.Type, userInfo.Username, userInfo.DisplayName, oldUser.Name, oldUser.DisplayName))
+				c.ResponseError(fmt.Sprintf(c.T("LoginErr.OldUser"), provider.Type, userInfo.Username, userInfo.DisplayName, oldUser.Name, oldUser.DisplayName))
 				return
 			}
 
@@ -465,7 +465,7 @@ func (c *ApiController) Login() {
 			// user already signed in to Casdoor, so let the user click the avatar button to do the quick sign-in
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 			if application == nil {
-				c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.AppDoNotExist"), form.Application))
+				c.ResponseError(fmt.Sprintf(c.T("LoginErr.AppDoNotExist"), form.Application))
 				return
 			}
 
@@ -477,7 +477,7 @@ func (c *ApiController) Login() {
 			record.User = user.Name
 			util.SafeGoroutine(func() { object.AddRecord(record) })
 		} else {
-			c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "LoginErr.UnknownAuthentication"), util.StructToJson(form)))
+			c.ResponseError(fmt.Sprintf(c.T("LoginErr.UnknownAuthentication"), util.StructToJson(form)))
 			return
 		}
 	}

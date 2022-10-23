@@ -17,6 +17,7 @@ package object
 import (
 	"errors"
 	"fmt"
+	"github.com/casdoor/casdoor/i18n"
 	"math/rand"
 	"time"
 
@@ -126,7 +127,7 @@ func CheckVerificationCode(dest, code, lang string) string {
 	record := getVerificationRecord(dest)
 
 	if record == nil {
-		return conf.Translate(lang, "PhoneErr.CodeNotSent")
+		return i18n.Translate(lang, "PhoneErr.CodeNotSent")
 	}
 
 	timeout, err := conf.GetConfigInt64("verificationCodeTimeout")
@@ -136,7 +137,7 @@ func CheckVerificationCode(dest, code, lang string) string {
 
 	now := time.Now().Unix()
 	if now-record.Time > timeout*60 {
-		return fmt.Sprintf(conf.Translate(lang, "PhoneErr.CodeTimeOut"), timeout)
+		return fmt.Sprintf(i18n.Translate(lang, "PhoneErr.CodeTimeOut"), timeout)
 	}
 
 	if record.Code != code {

@@ -17,8 +17,6 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/casdoor/casdoor/conf"
-
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -54,7 +52,7 @@ func (c *ApiController) GetLdapUser() {
 	ldapServer := LdapServer{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldapServer)
 	if err != nil || util.IsStrsEmpty(ldapServer.Host, ldapServer.Admin, ldapServer.Passwd, ldapServer.BaseDn) {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing"))
+		c.ResponseError(c.T("ParameterErr.Missing"))
 		return
 	}
 
@@ -122,7 +120,7 @@ func (c *ApiController) GetLdap() {
 	id := c.Input().Get("id")
 
 	if util.IsStrsEmpty(id) {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing"))
+		c.ResponseError(c.T("ParameterErr.Missing"))
 		return
 	}
 
@@ -138,17 +136,17 @@ func (c *ApiController) AddLdap() {
 	var ldap object.Ldap
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
 	if err != nil {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing"))
+		c.ResponseError(c.T("ParameterErr.Missing"))
 		return
 	}
 
 	if util.IsStrsEmpty(ldap.Owner, ldap.ServerName, ldap.Host, ldap.Admin, ldap.Passwd, ldap.BaseDn) {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing"))
+		c.ResponseError(c.T("ParameterErr.Missing"))
 		return
 	}
 
 	if object.CheckLdapExist(&ldap) {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "LdapErr.ServerExisted"))
+		c.ResponseError(c.T("LdapErr.ServerExisted"))
 		return
 	}
 
@@ -173,7 +171,7 @@ func (c *ApiController) UpdateLdap() {
 	var ldap object.Ldap
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
 	if err != nil || util.IsStrsEmpty(ldap.Owner, ldap.ServerName, ldap.Host, ldap.Admin, ldap.Passwd, ldap.BaseDn) {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "ParameterErr.Missing"))
+		c.ResponseError(c.T("ParameterErr.Missing"))
 		return
 	}
 

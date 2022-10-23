@@ -18,8 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/casdoor/casdoor/conf"
-
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -143,13 +141,13 @@ func (c *ApiController) BuyProduct() {
 
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(conf.Translate(c.GetAcceptLanguage(), "LoginErr.LoginFirst"))
+		c.ResponseError(c.T("LoginErr.LoginFirst"))
 		return
 	}
 
 	user := object.GetUser(userId)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "UserErr.DoNotExist"), userId))
+		c.ResponseError(fmt.Sprintf(c.T("UserErr.DoNotExist"), userId))
 		return
 	}
 

@@ -21,8 +21,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/casdoor/casdoor/conf"
-
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -83,7 +81,7 @@ func (c *ApiController) SendEmail() {
 	}
 
 	if util.IsStrsEmpty(emailForm.Title, emailForm.Content, emailForm.Sender) {
-		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "EmailErr.EmptyParam"), emailForm))
+		c.ResponseError(fmt.Sprintf(c.T("EmailErr.EmptyParam"), emailForm))
 		return
 	}
 
@@ -95,7 +93,7 @@ func (c *ApiController) SendEmail() {
 	}
 
 	if len(invalidReceivers) != 0 {
-		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "EmailErr.InvalidReceivers"), invalidReceivers))
+		c.ResponseError(fmt.Sprintf(c.T("EmailErr.InvalidReceivers"), invalidReceivers))
 		return
 	}
 
@@ -143,7 +141,7 @@ func (c *ApiController) SendSms() {
 	}
 
 	if len(invalidReceivers) != 0 {
-		c.ResponseError(fmt.Sprintf(conf.Translate(c.GetAcceptLanguage(), "PhoneErr.InvalidReceivers"), invalidReceivers))
+		c.ResponseError(fmt.Sprintf(c.T("PhoneErr.InvalidReceivers"), invalidReceivers))
 		return
 	}
 
