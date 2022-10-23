@@ -56,6 +56,9 @@ func (c *ApiController) T(error string) string {
 // GetAcceptLanguage ...
 func (c *ApiController) GetAcceptLanguage() string {
 	lang := c.Ctx.Request.Header.Get("Accept-Language")
+	if lang == "" {
+		lang = "en"
+	}
 	return lang[0:2]
 }
 
