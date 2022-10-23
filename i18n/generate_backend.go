@@ -25,8 +25,10 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-var reI18nBackendObject *regexp.Regexp
-var re18nBackendController *regexp.Regexp
+var (
+	reI18nBackendObject    *regexp.Regexp
+	re18nBackendController *regexp.Regexp
+)
 
 func init() {
 	reI18nBackendObject, _ = regexp.Compile("i18n.Translate\\((.*?)\"\\)")
