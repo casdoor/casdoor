@@ -62,7 +62,7 @@ class SingleCard extends React.Component {
         <Card
           hoverable
           cover={
-            <img alt="logo" src={logo} style={{width: "100%", height: "200px", objectFit: "scale-down"}} />
+            <img alt="logo" src={logo} style={{width: "100%", height: "200px", padding: "10px", objectFit: "scale-down"}} />
           }
           onClick={() => Setting.goToLinkSoft(this, silentSigninLink)}
           style={isSingle ? {width: "320px", height: "100%"} : {width: "100%", height: "100%"}}
