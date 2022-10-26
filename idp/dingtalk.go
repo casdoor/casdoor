@@ -15,9 +15,12 @@
 package idp
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -159,15 +162,16 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		return nil, fmt.Errorf("userIdResp.Errcode = %s, userIdResp.Errmsg = %s", dtUserInfo.Errcode, dtUserInfo.Errmsg)
 	}
 
+	appName := idp.getAppName(dtUserInfo.UnionId)
+
 	userInfo := UserInfo{
 		Id:          dtUserInfo.OpenId,
-		Username:    dtUserInfo.Nick,
+		Username:    appName + "|" + dtUserInfo.Nick,
 		DisplayName: dtUserInfo.Nick,
 		UnionId:     dtUserInfo.UnionId,
 		Email:       dtUserInfo.Email,
 		AvatarUrl:   dtUserInfo.AvatarUrl,
 	}
-
 	return &userInfo, nil
 }
 
@@ -193,4 +197,50 @@ func (idp *DingTalkIdProvider) postWithBody(body interface{}, url string) ([]byt
 	}(resp.Body)
 
 	return data, nil
+}
+
+func (idp *DingTalkIdProvider) getAppName(unionId string) string {
+	accessToken := idp.getInnerAppAccessToken()
+	request, _ := http.NewRequest("POST", "https://api.dingtalk.com/v1.0/storage/currentApps/query?unionId="+unionId, nil)
+	request.Header.Set("Content-Type", "application/json;charset=UTF-8")
+	request.Header.Add("x-acs-dingtalk-access-token", accessToken)
+	resp, _ := idp.Client.Do(request)
+
+	defer resp.Body.Close()
+
+	data, _ := io.ReadAll(resp.Body)
+	var v interface{}
+	json.Unmarshal(data, &v)
+	jsonData := v.(map[string]interface{})
+	result := jsonData["app"].(map[string]interface{})
+	return result["name"].(string)
+}
+
+func (idp *DingTalkIdProvider) getInnerAppAccessToken() string {
+	appKey := idp.Config.ClientID
+	appSecret := idp.Config.ClientSecret
+	body := make(map[string]string)
+	body["appKey"] = appKey
+	body["appSecret"] = appSecret
+	bodyData, err := json.Marshal(body)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	reader := bytes.NewReader(bodyData)
+	request, err := http.NewRequest("POST", "https://api.dingtalk.com/v1.0/oauth2/accessToken", reader)
+	request.Header.Set("Content-Type", "application/json;charset=UTF-8")
+	resp, err := idp.Client.Do(request)
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	var data struct {
+		ExpireIn    int    `json:"expireIn"`
+		AccessToken string `json:"accessToken"`
+	}
+	err = json.Unmarshal(respBytes, &data)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	return data.AccessToken
 }
