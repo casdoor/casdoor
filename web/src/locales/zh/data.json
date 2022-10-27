@@ -69,8 +69,8 @@
     "Token format": "Access Token格式",
     "Token format - Tooltip": "Access Token格式",
     "Rule": "规则",
-    "None": "None",
-    "Always": "Always"
+    "None": "关闭",
+    "Always": "始终开启"
   },
   "cert": {
     "Bit size": "位大小",
