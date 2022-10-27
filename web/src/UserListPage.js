@@ -352,7 +352,7 @@ class UserListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={users} rowKey="id" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={users} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
