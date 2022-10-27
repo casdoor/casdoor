@@ -62,7 +62,7 @@ func GetFilteredUsers(m *ldapserver.Message, name, org string) ([]*User, int) {
 			return nil, ldapserver.LDAPResultInsufficientAccessRights
 		}
 	} else {
-		hasPermission, err := CheckUserPermission(fmt.Sprintf("%s/%s", m.Client.OrgName, m.Client.UserName), fmt.Sprintf("%s/%s", org, name), org, true)
+		hasPermission, err := CheckUserPermission(fmt.Sprintf("%s/%s", m.Client.OrgName, m.Client.UserName), fmt.Sprintf("%s/%s", org, name), org, true, "en")
 		if !hasPermission {
 			log.Printf("ErrMsg = %v", err.Error())
 			return nil, ldapserver.LDAPResultInsufficientAccessRights

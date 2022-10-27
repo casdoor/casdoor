@@ -18,6 +18,9 @@ export function getOrganizations(owner, page = "", pageSize = "", field = "", va
   return fetch(`${Setting.ServerUrl}/api/get-organizations?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -25,6 +28,9 @@ export function getOrganization(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-organization?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -34,6 +40,9 @@ export function updateOrganization(owner, name, organization) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newOrganization),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -43,6 +52,9 @@ export function addOrganization(organization) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newOrganization),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -52,6 +64,9 @@ export function deleteOrganization(organization) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newOrganization),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -59,5 +74,8 @@ export function getDefaultApplication(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-default-application?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }

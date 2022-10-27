@@ -18,6 +18,9 @@ export function getProviders(owner, page = "", pageSize = "", field = "", value 
   return fetch(`${Setting.ServerUrl}/api/get-providers?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -25,6 +28,9 @@ export function getProvider(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-provider?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -34,6 +40,9 @@ export function updateProvider(owner, name, provider) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newProvider),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -43,6 +52,9 @@ export function addProvider(provider) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newProvider),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -52,5 +64,8 @@ export function deleteProvider(provider) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newProvider),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }

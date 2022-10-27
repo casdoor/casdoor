@@ -18,6 +18,9 @@ export function getTokens(owner, page = "", pageSize = "", field = "", value = "
   return fetch(`${Setting.ServerUrl}/api/get-tokens?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -25,6 +28,9 @@ export function getToken(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-token?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -34,6 +40,9 @@ export function updateToken(owner, name, token) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newToken),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -43,6 +52,9 @@ export function addToken(token) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newToken),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -52,5 +64,8 @@ export function deleteToken(token) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newToken),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }

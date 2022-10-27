@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"github.com/casdoor/casdoor/cred"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -202,18 +203,18 @@ func GetAccountItemByName(name string, organization *Organization) *AccountItem 
 	return nil
 }
 
-func CheckAccountItemModifyRule(accountItem *AccountItem, user *User) (bool, string) {
+func CheckAccountItemModifyRule(accountItem *AccountItem, user *User, lang string) (bool, string) {
 	switch accountItem.ModifyRule {
 	case "Admin":
 		if !(user.IsAdmin || user.IsGlobalAdmin) {
-			return false, fmt.Sprintf("Only admin can modify the %s.", accountItem.Name)
+			return false, fmt.Sprintf(i18n.Translate(lang, "OrgErr.OnlyAdmin"), accountItem.Name)
 		}
 	case "Immutable":
-		return false, fmt.Sprintf("The %s is immutable.", accountItem.Name)
+		return false, fmt.Sprintf(i18n.Translate(lang, "OrgErr.Immutable"), accountItem.Name)
 	case "Self":
 		break
 	default:
-		return false, fmt.Sprintf("Unknown modify rule %s.", accountItem.ModifyRule)
+		return false, fmt.Sprintf(i18n.Translate(lang, "OrgErr.UnknownModifyRule"), accountItem.ModifyRule)
 	}
 	return true, ""
 }

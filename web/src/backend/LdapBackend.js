@@ -18,6 +18,9 @@ export function getLdaps(owner) {
   return fetch(`${Setting.ServerUrl}/api/get-ldaps?owner=${owner}`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -25,6 +28,9 @@ export function getLdap(id) {
   return fetch(`${Setting.ServerUrl}/api/get-ldap?id=${id}`, {
     method: "POST",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -33,6 +39,9 @@ export function addLdap(body) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(body),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -41,6 +50,9 @@ export function deleteLdap(body) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(body),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -49,6 +61,9 @@ export function updateLdap(body) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(body),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -57,6 +72,9 @@ export function getLdapUser(body) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(body),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -65,6 +83,9 @@ export function syncUsers(owner, ldapId, body) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(body),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -73,5 +94,8 @@ export function checkLdapUsersExist(owner, body) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(body),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }

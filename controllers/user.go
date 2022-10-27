@@ -100,7 +100,7 @@ func (c *ApiController) GetUser() {
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", owner))
 	if !organization.IsProfilePublic {
 		requestUserId := c.GetSessionUsername()
-		hasPermission, err := object.CheckUserPermission(requestUserId, id, owner, false)
+		hasPermission, err := object.CheckUserPermission(requestUserId, id, owner, false, c.GetAcceptLanguage())
 		if !hasPermission {
 			c.ResponseError(err.Error())
 			return
@@ -149,7 +149,7 @@ func (c *ApiController) UpdateUser() {
 	}
 
 	if user.DisplayName == "" {
-		c.ResponseError("Display name cannot be empty")
+		c.ResponseError(c.T("UserErr.DisplayNameCanNotBeEmpty"))
 		return
 	}
 
@@ -183,7 +183,7 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
-	msg := object.CheckUsername(user.Name)
+	msg := object.CheckUsername(user.Name, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
 		return
@@ -230,7 +230,7 @@ func (c *ApiController) GetEmailAndPhone() {
 
 	user := object.GetUserByFields(form.Organization, form.Username)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf("The user: %s/%s doesn't exist", form.Organization, form.Username))
+		c.ResponseError(fmt.Sprintf(c.T("UserErr.DoNotExistInOrg"), form.Organization, form.Username))
 		return
 	}
 
@@ -271,7 +271,7 @@ func (c *ApiController) SetPassword() {
 	requestUserId := c.GetSessionUsername()
 	userId := fmt.Sprintf("%s/%s", userOwner, userName)
 
-	hasPermission, err := object.CheckUserPermission(requestUserId, userId, userOwner, true)
+	hasPermission, err := object.CheckUserPermission(requestUserId, userId, userOwner, true, c.GetAcceptLanguage())
 	if !hasPermission {
 		c.ResponseError(err.Error())
 		return
@@ -280,7 +280,7 @@ func (c *ApiController) SetPassword() {
 	targetUser := object.GetUser(userId)
 
 	if oldPassword != "" {
-		msg := object.CheckPassword(targetUser, oldPassword)
+		msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
 		if msg != "" {
 			c.ResponseError(msg)
 			return
@@ -288,12 +288,12 @@ func (c *ApiController) SetPassword() {
 	}
 
 	if strings.Contains(newPassword, " ") {
-		c.ResponseError("New password cannot contain blank space.")
+		c.ResponseError(c.T("SetPasswordErr.CanNotContainBlank"))
 		return
 	}
 
 	if len(newPassword) <= 5 {
-		c.ResponseError("New password must have at least 6 characters")
+		c.ResponseError(c.T("SetPasswordErr.LessThanSixCharacters"))
 		return
 	}
 
@@ -315,7 +315,7 @@ func (c *ApiController) CheckUserPassword() {
 		return
 	}
 
-	_, msg := object.CheckUserPassword(user.Owner, user.Name, user.Password)
+	_, msg := object.CheckUserPassword(user.Owner, user.Name, user.Password, c.GetAcceptLanguage())
 	if msg == "" {
 		c.ResponseOk()
 	} else {

@@ -14,7 +14,10 @@
 
 package i18n
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func applyToOtherLanguage(dataEn *I18nData, lang string) {
 	dataOther := readI18nFile(lang)
@@ -24,7 +27,7 @@ func applyToOtherLanguage(dataEn *I18nData, lang string) {
 	writeI18nFile(lang, dataEn)
 }
 
-func TestGenerateI18nStrings(t *testing.T) {
+func TestGenerateI18nStringsForFrontend(t *testing.T) {
 	dataEn := parseToData()
 	writeI18nFile("en", dataEn)
 
@@ -34,4 +37,18 @@ func TestGenerateI18nStrings(t *testing.T) {
 	applyToOtherLanguage(dataEn, "ko")
 	applyToOtherLanguage(dataEn, "ru")
 	applyToOtherLanguage(dataEn, "zh")
+}
+
+func TestGenerateI18nStringsForBackend(t *testing.T) {
+	paths := getAllGoFilePaths()
+
+	errName := getErrName(paths)
+
+	writeToAllLanguageFiles(errName)
+
+	fmt.Println("Total Err Words:", len(errName))
+
+	for i := range errName {
+		fmt.Println(i)
+	}
 }

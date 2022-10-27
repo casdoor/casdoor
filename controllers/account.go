@@ -98,7 +98,7 @@ type Captcha struct {
 // @router /signup [post]
 func (c *ApiController) Signup() {
 	if c.GetSessionUsername() != "" {
-		c.ResponseError("Please sign out first before signing up", c.GetSessionUsername())
+		c.ResponseError(c.T("SignUpErr.SignOutFirst"), c.GetSessionUsername())
 		return
 	}
 
@@ -111,21 +111,21 @@ func (c *ApiController) Signup() {
 
 	application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 	if !application.EnableSignUp {
-		c.ResponseError("The application does not allow to sign up new account")
+		c.ResponseError(c.T("SignUpErr.DoNotAllowSignUp"))
 		return
 	}
 
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", form.Organization))
-	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.FirstName, form.LastName, form.Email, form.Phone, form.Affiliation)
+	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.FirstName, form.LastName, form.Email, form.Phone, form.Affiliation, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
 		return
 	}
 
 	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && form.Email != "" {
-		checkResult := object.CheckVerificationCode(form.Email, form.EmailCode)
+		checkResult := object.CheckVerificationCode(form.Email, form.EmailCode, c.GetAcceptLanguage())
 		if len(checkResult) != 0 {
-			c.ResponseError(fmt.Sprintf("Email: %s", checkResult))
+			c.ResponseError(c.T("EmailErr.EmailCheckResult"), checkResult)
 			return
 		}
 	}
@@ -133,9 +133,9 @@ func (c *ApiController) Signup() {
 	var checkPhone string
 	if application.IsSignupItemVisible("Phone") && form.Phone != "" {
 		checkPhone = fmt.Sprintf("+%s%s", form.PhonePrefix, form.Phone)
-		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode)
+		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode, c.GetAcceptLanguage())
 		if len(checkResult) != 0 {
-			c.ResponseError(fmt.Sprintf("Phone: %s", checkResult))
+			c.ResponseError(c.T("PhoneErr.PhoneCheckResult"), checkResult)
 			return
 		}
 	}
@@ -159,7 +159,7 @@ func (c *ApiController) Signup() {
 
 	initScore, err := getInitScore()
 	if err != nil {
-		c.ResponseError(fmt.Errorf("get init score failed, error: %w", err).Error())
+		c.ResponseError(fmt.Errorf(c.T("InitErr.InitScoreFailed"), err).Error())
 		return
 	}
 
@@ -205,7 +205,7 @@ func (c *ApiController) Signup() {
 
 	affected := object.AddUser(user)
 	if !affected {
-		c.ResponseError(fmt.Sprintf("Failed to create user, user information is invalid: %s", util.StructToJson(user)))
+		c.ResponseError(c.T("UserErr.InvalidInformation"), util.StructToJson(user))
 		return
 	}
 
@@ -309,7 +309,7 @@ func (c *ApiController) GetCaptcha() {
 	applicationId := c.Input().Get("applicationId")
 	isCurrentProvider := c.Input().Get("isCurrentProvider")
 
-	captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider)
+	captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

@@ -560,6 +560,10 @@ export function changeLanguage(language) {
   // window.location.reload(true);
 }
 
+export function getAcceptLanguage() {
+  return i18next.language + ";q=0.9,en;q=0.8";
+}
+
 export function changeMomentLanguage(language) {
   // if (language === "zh") {
   //   moment.locale("zh", {

@@ -113,7 +113,7 @@ func (c *ApiController) DeleteResource() {
 		return
 	}
 
-	err = object.DeleteFile(provider, resource.Name)
+	err = object.DeleteFile(provider, resource.Name, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -145,7 +145,7 @@ func (c *ApiController) UploadResource() {
 	defer file.Close()
 
 	if username == "" || fullFilePath == "" {
-		c.ResponseError(fmt.Sprintf("username or fullFilePath is empty: username = %s, fullFilePath = %s", username, fullFilePath))
+		c.ResponseError(fmt.Sprintf(c.T("ResourceErr.UsernameOrFilePathEmpty"), username, fullFilePath))
 		return
 	}
 
@@ -205,7 +205,7 @@ func (c *ApiController) UploadResource() {
 		if user == nil {
 			user = object.GetUserNoCheck(username)
 			if user == nil {
-				c.ResponseError("user is nil for tag: \"avatar\"")
+				c.ResponseError(c.T("ResourceErr.UserIsNil"))
 				return
 			}
 		}

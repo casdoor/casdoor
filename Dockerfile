@@ -14,6 +14,9 @@ RUN ./build.sh
 FROM alpine:latest AS STANDARD
 LABEL MAINTAINER="https://casdoor.org/"
 ARG USER=casdoor
+ARG TARGETOS
+ARG TARGETARCH
+ENV BUILDX_ARCH="${TARGETOS:-linux}_${TARGETARCH:-amd64}"
 
 RUN sed -i 's/https/http/' /etc/apk/repositories
 RUN apk add --update sudo
@@ -28,7 +31,7 @@ RUN adduser -D $USER -u 1000 \
 
 USER 1000
 WORKDIR /
-COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/server ./server
+COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/server_${BUILDX_ARCH} ./server
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/swagger ./swagger
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/conf/app.conf ./conf/app.conf
 COPY --from=FRONT --chown=$USER:$USER /web/build ./web/build
@@ -46,12 +49,15 @@ RUN apt update \
 
 FROM db AS ALLINONE
 LABEL MAINTAINER="https://casdoor.org/"
+ARG TARGETOS
+ARG TARGETARCH
+ENV BUILDX_ARCH="${TARGETOS:-linux}_${TARGETARCH:-amd64}"
 
 RUN apt update
 RUN apt install -y ca-certificates && update-ca-certificates
 
 WORKDIR /
-COPY --from=BACK /go/src/casdoor/server ./server
+COPY --from=BACK /go/src/casdoor/server_${BUILDX_ARCH} ./server
 COPY --from=BACK /go/src/casdoor/swagger ./swagger
 COPY --from=BACK /go/src/casdoor/docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
