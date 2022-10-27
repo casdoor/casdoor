@@ -29,7 +29,6 @@ import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {withTranslation} from "react-i18next";
-import {renderLoginLink} from "../Setting";
 
 const {TabPane} = Tabs;
 
@@ -302,8 +301,10 @@ class LoginPage extends React.Component {
           title="Sign Up Error"
           subTitle={"The application does not allow to sign up new account"}
           extra={[
-            <Button type="primary" key="signin">
-              {renderLoginLink(application, i18next.t("login:Sign In"))}
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application)}>
+              {
+                i18next.t("login:Sign In")
+              }
             </Button>,
           ]}
         >
@@ -464,7 +465,9 @@ class LoginPage extends React.Component {
       return (
         <div style={{float: "right"}}>
           {i18next.t("signup:Have account?")}&nbsp;
-          {renderLoginLink(application, i18next.t("signup:sign in now"))}
+          {
+            Setting.renderLoginLink(application, i18next.t("signup:sign in now"))
+          }
         </div>
       );
     } else {

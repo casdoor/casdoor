@@ -22,7 +22,6 @@ import i18next from "i18next";
 import AffiliationSelect from "../common/AffiliationSelect";
 import OAuthWidget from "../common/OAuthWidget";
 import SelectRegionBox from "../SelectRegionBox";
-import {redirectToLoginPage, renderLoginLink} from "../Setting";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -191,7 +190,7 @@ class PromptPage extends React.Component {
           if (redirectUrl !== "" && redirectUrl !== null) {
             Setting.goToLink(redirectUrl);
           } else {
-            redirectToLoginPage(this.getApplicationObj());
+            Setting.redirectToLoginPage(this.getApplicationObj());
           }
         } else {
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);
@@ -236,7 +235,9 @@ class PromptPage extends React.Component {
           subTitle={"You are unexpected to see this prompt page"}
           extra={[
             <Button type="primary" key="signin">
-              {renderLoginLink(application, i18next.t("login:Sign In"))}
+              {
+                Setting.renderLoginLink(application, i18next.t("login:Sign In"))
+              }
             </Button>,
           ]}
         >
