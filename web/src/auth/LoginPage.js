@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import React from "react";
-import {Link} from "react-router-dom";
 import {Button, Checkbox, Col, Form, Input, Result, Row, Spin, Tabs} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
@@ -302,13 +301,11 @@ class LoginPage extends React.Component {
           title="Sign Up Error"
           subTitle={"The application does not allow to sign up new account"}
           extra={[
-            <Link key="login" onClick={() => {
-              Setting.goToLogin(this, application);
-            }}>
-              <Button type="primary" key="signin">
-                Sign In
-              </Button>
-            </Link>,
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application)}>
+              {
+                i18next.t("login:Sign In")
+              }
+            </Button>,
           ]}
         >
         </Result>
@@ -468,11 +465,9 @@ class LoginPage extends React.Component {
       return (
         <div style={{float: "right"}}>
           {i18next.t("signup:Have account?")}&nbsp;
-          <Link onClick={() => {
-            Setting.goToLogin(this, application);
-          }}>
-            {i18next.t("signup:sign in now")}
-          </Link>
+          {
+            Setting.renderLoginLink(application, i18next.t("signup:sign in now"))
+          }
         </div>
       );
     } else {

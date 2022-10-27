@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import React from "react";
+import {Link, useHistory} from "react-router-dom";
 import {Tag, Tooltip, message} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
-import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
 import i18next from "i18next";
@@ -22,7 +23,6 @@ import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
-import {Link} from "react-router-dom";
 import * as path from "path-browserify";
 
 export const ServerUrl = "";
@@ -743,26 +743,31 @@ export function renderLogo(application) {
   }
 }
 
-export function goToLogin(ths, application) {
+export function getLoginLink(application) {
+  let url;
   if (application === null) {
-    return;
-  }
-
-  if (!application.enablePassword && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
-    const link = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
-    goToLink(link);
-    return;
-  }
-
-  if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/login");
+    url = null;
+  } else if (!application.enablePassword && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
+    url = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
+  } else if (authConfig.appName === application.name) {
+    url = "/login";
+  } else if (application.signinUrl === "") {
+    url = path.join(application.homepageUrl, "login");
   } else {
-    if (application.signinUrl === "") {
-      goToLink(path.join(application.homepageUrl, "login"));
-    } else {
-      goToLink(application.signinUrl);
-    }
+    url = application.signinUrl;
   }
+  return url;
+}
+
+export function renderLoginLink(application, text) {
+  const url = getLoginLink(application);
+  return renderLink(url, text, null);
+}
+
+export function redirectToLoginPage(application) {
+  const loginLink = getLoginLink(application);
+  const history = useHistory();
+  history.push(loginLink);
 }
 
 function renderLink(url, text, onClick) {

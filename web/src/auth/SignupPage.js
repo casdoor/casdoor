@@ -541,10 +541,10 @@ class SignupPage extends React.Component {
           title="Sign Up Error"
           subTitle={"The application does not allow to sign up new account"}
           extra={[
-            <Button type="primary" key="signin" onClick={() => {
-              Setting.goToLogin(this, application);
-            }}>
-              Sign In
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application)}>
+              {
+                i18next.t("login:Sign In")
+              }
             </Button>,
           ]}
         >
@@ -600,7 +600,7 @@ class SignupPage extends React.Component {
             if (linkInStorage !== null && linkInStorage !== "") {
               Setting.goToLink(linkInStorage);
             } else {
-              Setting.goToLogin(this, application);
+              Setting.redirectToLoginPage(application);
             }
           }}>
             {i18next.t("signup:sign in now")}

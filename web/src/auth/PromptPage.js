@@ -190,7 +190,7 @@ class PromptPage extends React.Component {
           if (redirectUrl !== "" && redirectUrl !== null) {
             Setting.goToLink(redirectUrl);
           } else {
-            Setting.goToLogin(this, this.getApplicationObj());
+            Setting.redirectToLoginPage(this.getApplicationObj());
           }
         } else {
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);
@@ -234,10 +234,10 @@ class PromptPage extends React.Component {
           title="Sign Up Error"
           subTitle={"You are unexpected to see this prompt page"}
           extra={[
-            <Button type="primary" key="signin" onClick={() => {
-              Setting.goToLogin(this, application);
-            }}>
-              Sign In
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application)}>
+              {
+                i18next.t("login:Sign In")
+              }
             </Button>,
           ]}
         >
