@@ -599,7 +599,6 @@ class SignupPage extends React.Component {
             if (linkInStorage !== null && linkInStorage !== "") {
               Setting.goToLink(linkInStorage);
             } else {
-              // Setting.goToLogin(this, application);
               Setting.redirectToLoginPage(application);
             }
           }}>
