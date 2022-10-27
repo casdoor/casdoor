@@ -23,6 +23,7 @@ import AffiliationSelect from "../common/AffiliationSelect";
 import OAuthWidget from "../common/OAuthWidget";
 import SelectRegionBox from "../SelectRegionBox";
 import {useHistory} from "react-router-dom";
+import {renderLoginLink} from "../Setting";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -238,10 +239,8 @@ class PromptPage extends React.Component {
           title="Sign Up Error"
           subTitle={"You are unexpected to see this prompt page"}
           extra={[
-            <Button type="primary" key="signin" onClick={() => {
-              Setting.goToLogin(this, application);
-            }}>
-              Sign In
+            <Button type="primary" key="signin">
+              {renderLoginLink(application, i18next.t("login:Sign In"))}
             </Button>,
           ]}
         >

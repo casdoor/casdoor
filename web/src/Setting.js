@@ -744,28 +744,6 @@ export function renderLogo(application) {
   }
 }
 
-export function goToLogin(ths, application) {
-  if (application === null) {
-    return;
-  }
-
-  if (!application.enablePassword && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
-    const link = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
-    goToLink(link);
-    return;
-  }
-
-  if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/login");
-  } else {
-    if (application.signinUrl === "") {
-      goToLink(path.join(application.homepageUrl, "login"));
-    } else {
-      goToLink(application.signinUrl);
-    }
-  }
-}
-
 export function getLoginLink(application) {
   let url;
   if (application === null) {

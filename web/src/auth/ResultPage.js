@@ -19,6 +19,7 @@ import {authConfig} from "./Auth";
 import * as Util from "./Util";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Setting from "../Setting";
+import {redirectToLoginPage} from "../Setting";
 
 class ResultPage extends React.Component {
   constructor(props) {
@@ -69,7 +70,7 @@ class ResultPage extends React.Component {
               if (linkInStorage !== null && linkInStorage !== "") {
                 Setting.goToLink(linkInStorage);
               } else {
-                Setting.goToLogin(this, application);
+                redirectToLoginPage(application);
               }
             }}>
               {i18next.t("login:Sign In")}
