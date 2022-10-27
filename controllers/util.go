@@ -83,7 +83,7 @@ func (c *ApiController) SetTokenErrorHttpStatus() {
 func (c *ApiController) RequireSignedIn() (string, bool) {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(c.T("LoginErr.SignInFirst"))
+		c.ResponseError(c.T("LoginErr.LoginFirst"), "Please login first")
 		return "", false
 	}
 	return userId, true

@@ -221,10 +221,9 @@ class App extends Component {
         if (res.status === "ok") {
           account = res.data;
           account.organization = res.data2;
-
           this.setLanguage(account);
         } else {
-          if (res.msg !== "Please sign in first") {
+          if (res.data !== "Please login first") {
             Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
           }
         }
