@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import React from "react";
+import {Link, useHistory} from "react-router-dom";
 import {Tag, Tooltip, message} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
-import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
 import i18next from "i18next";
@@ -22,9 +23,7 @@ import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
-import {Link} from "react-router-dom";
 import * as path from "path-browserify";
-import {useHistory} from "react-router-dom";
 
 export const ServerUrl = "";
 
