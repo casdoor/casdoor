@@ -234,9 +234,9 @@ class PromptPage extends React.Component {
           title="Sign Up Error"
           subTitle={"You are unexpected to see this prompt page"}
           extra={[
-            <Button type="primary" key="signin">
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application)}>
               {
-                Setting.renderLoginLink(application, i18next.t("login:Sign In"))
+                i18next.t("login:Sign In")
               }
             </Button>,
           ]}

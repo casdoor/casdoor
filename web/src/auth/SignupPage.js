@@ -26,7 +26,6 @@ import {CountDownInput} from "../common/CountDownInput";
 import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
 import SelectLanguageBox from "../SelectLanguageBox";
-import {renderLoginLink} from "../Setting";
 
 const formItemLayout = {
   labelCol: {
@@ -542,8 +541,10 @@ class SignupPage extends React.Component {
           title="Sign Up Error"
           subTitle={"The application does not allow to sign up new account"}
           extra={[
-            <Button type="primary" key="signin">
-              {renderLoginLink(application, i18next.t("login:Sign In"))}
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application)}>
+              {
+                i18next.t("login:Sign In")
+              }
             </Button>,
           ]}
         >
