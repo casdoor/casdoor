@@ -85,10 +85,12 @@ func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		Code         string `json:"code"`
 		GrantType    string `json:"grantType"`
 	}{idp.Config.ClientID, idp.Config.ClientSecret, code, "authorization_code"}
+
 	data, err := idp.postWithBody(pTokenParams, idp.Config.Endpoint.TokenURL)
 	if err != nil {
 		return nil, err
 	}
+
 	pToken := &DingTalkAccessToken{}
 	err = json.Unmarshal(data, pToken)
 	if err != nil {
@@ -162,7 +164,7 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 
 	userInfo := UserInfo{
 		Id:          dtUserInfo.OpenId,
-		Username:    "|" + dtUserInfo.Nick,
+		Username:    dtUserInfo.Nick,
 		DisplayName: dtUserInfo.Nick,
 		UnionId:     dtUserInfo.UnionId,
 		Email:       dtUserInfo.Email,
