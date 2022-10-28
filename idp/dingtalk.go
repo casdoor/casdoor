@@ -85,12 +85,10 @@ func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		Code         string `json:"code"`
 		GrantType    string `json:"grantType"`
 	}{idp.Config.ClientID, idp.Config.ClientSecret, code, "authorization_code"}
-	fmt.Println("idp.Config.ClientID----", idp.Config.ClientID, "idp.Config.ClientSecret----", idp.Config.ClientSecret, "code----", code)
 	data, err := idp.postWithBody(pTokenParams, idp.Config.Endpoint.TokenURL)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(data), "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 	pToken := &DingTalkAccessToken{}
 	err = json.Unmarshal(data, pToken)
 	if err != nil {
