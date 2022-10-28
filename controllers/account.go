@@ -64,6 +64,10 @@ type RequestForm struct {
 	RelayState   string `json:"relayState"`
 	SamlRequest  string `json:"samlRequest"`
 	SamlResponse string `json:"samlResponse"`
+
+	CaptchaType  string `json:"captchaType"`
+	CaptchaToken string `json:"captchaToken"`
+	ClientSecret string `json:"clientSecret"`
 }
 
 type Response struct {

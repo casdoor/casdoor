@@ -68,7 +68,9 @@
     "Token expire - Tooltip": "Access Token过期时间",
     "Token format": "Access Token格式",
     "Token format - Tooltip": "Access Token格式",
-    "rule": "规则"
+    "Rule": "规则",
+    "None": "关闭",
+    "Always": "始终开启"
   },
   "cert": {
     "Bit size": "位大小",

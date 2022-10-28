@@ -340,3 +340,20 @@ func CheckUsername(username string, lang string) string {
 
 	return ""
 }
+
+func CheckToEnableCaptcha(application *Application) bool {
+	if len(application.Providers) == 0 {
+		return false
+	}
+
+	for _, providerItem := range application.Providers {
+		if providerItem.Provider == nil {
+			continue
+		}
+		if providerItem.Provider.Category == "Captcha" && providerItem.Provider.Type == "Default" {
+			return providerItem.Rule == "Always"
+		}
+	}
+
+	return false
+}

@@ -29,6 +29,7 @@ import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {withTranslation} from "react-i18next";
+import {CaptchaModal} from "../common/CaptchaModal";
 
 const {TabPane} = Tabs;
 
@@ -48,6 +49,9 @@ class LoginPage extends React.Component {
       validEmail: false,
       validPhone: false,
       loginMethod: "password",
+      enableCaptchaModal: false,
+      openCaptchaModal: false,
+      verifyCaptcha: undefined,
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -65,6 +69,18 @@ class LoginPage extends React.Component {
       this.getSamlApplication();
     } else {
       Util.showMessage("error", `Unknown authentication type: ${this.state.type}`);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.application && !prevState.application) {
+      const defaultCaptchaProviderItems = this.getDefaultCaptchaProviderItems(this.state.application);
+
+      if (!defaultCaptchaProviderItems) {
+        return;
+      }
+
+      this.setState({enableCaptchaModal: defaultCaptchaProviderItems.some(providerItem => providerItem.rule === "Always")});
     }
   }
 
@@ -225,6 +241,23 @@ class LoginPage extends React.Component {
       return;
     }
 
+    if (this.state.loginMethod === "password" && this.state.enableCaptchaModal) {
+      this.setState({
+        openCaptchaModal: true,
+        verifyCaptcha: (captchaType, captchaToken, secret) => {
+          values["captchaType"] = captchaType;
+          values["captchaToken"] = captchaToken;
+          values["clientSecret"] = secret;
+
+          this.login(values);
+        },
+      });
+    } else {
+      this.login(values);
+    }
+  }
+
+  login(values) {
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     if (this.state.type === "cas") {
       // CAS
@@ -239,6 +272,8 @@ class LoginPage extends React.Component {
           }
           Util.showMessage("success", msg);
 
+          this.setState({openCaptchaModal: false});
+
           if (casParams.service !== "") {
             const st = res.data;
             const newUrl = new URL(casParams.service);
@@ -246,6 +281,7 @@ class LoginPage extends React.Component {
             window.location.href = newUrl.toString();
           }
         } else {
+          this.setState({openCaptchaModal: false});
           Util.showMessage("error", `Failed to log in: ${res.msg}`);
         }
       });
@@ -258,6 +294,7 @@ class LoginPage extends React.Component {
         .then((res) => {
           if (res.status === "ok") {
             const responseType = values["type"];
+
             if (responseType === "login") {
               Util.showMessage("success", "Logged in successfully");
 
@@ -275,6 +312,7 @@ class LoginPage extends React.Component {
               Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
             }
           } else {
+            this.setState({openCaptchaModal: false});
             Util.showMessage("error", `Failed to log in: ${res.msg}`);
           }
         });
@@ -419,6 +457,9 @@ class LoginPage extends React.Component {
               }
             </Button>
             {
+              this.renderCaptchaModal(application)
+            }
+            {
               this.renderFooter(application)
             }
           </Form.Item>
@@ -458,6 +499,46 @@ class LoginPage extends React.Component {
         </div>
       );
     }
+  }
+
+  getDefaultCaptchaProviderItems(application) {
+    const providers = application?.providers;
+
+    if (providers === undefined || providers === null) {
+      return null;
+    }
+
+    return providers.filter(providerItem => {
+      if (providerItem.provider === undefined || providerItem.provider === null) {
+        return false;
+      }
+
+      return providerItem.provider.category === "Captcha" && providerItem.provider.type === "Default";
+    });
+  }
+
+  renderCaptchaModal(application) {
+    if (!this.state.enableCaptchaModal) {
+      return null;
+    }
+
+    const provider = this.getDefaultCaptchaProviderItems(application)
+      .filter(providerItem => providerItem.rule === "Always")
+      .map(providerItem => providerItem.provider)[0];
+
+    return <CaptchaModal
+      owner={provider.owner}
+      name={provider.name}
+      captchaType={provider.type}
+      subType={provider.subType}
+      clientId={provider.clientId}
+      clientId2={provider.clientId2}
+      clientSecret={provider.clientSecret}
+      clientSecret2={provider.clientSecret2}
+      open={this.state.openCaptchaModal}
+      onOk={(captchaType, captchaToken, secret) => this.state.verifyCaptcha?.(captchaType, captchaToken, secret)}
+      canCancel={false}
+    />;
   }
 
   renderFooter(application) {

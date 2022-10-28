@@ -14,6 +14,8 @@
 
 package captcha
 
+import "fmt"
+
 type CaptchaProvider interface {
 	VerifyCaptcha(token, clientSecret string) (bool, error)
 }
@@ -31,4 +33,13 @@ func GetCaptchaProvider(captchaType string) CaptchaProvider {
 		return NewGEETESTCaptchaProvider()
 	}
 	return nil
+}
+
+func VerifyCaptchaByCaptchaType(captchaType, token, clientSecret string) (bool, error) {
+	provider := GetCaptchaProvider(captchaType)
+	if provider == nil {
+		return false, fmt.Errorf("invalid captcha provider: %s", captchaType)
+	}
+
+	return provider.VerifyCaptcha(token, clientSecret)
 }
