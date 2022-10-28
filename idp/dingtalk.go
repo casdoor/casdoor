@@ -85,12 +85,12 @@ func (idp *DingTalkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		Code         string `json:"code"`
 		GrantType    string `json:"grantType"`
 	}{idp.Config.ClientID, idp.Config.ClientSecret, code, "authorization_code"}
-
+	fmt.Println("idp.Config.ClientID----", idp.Config.ClientID, "idp.Config.ClientSecret----", idp.Config.ClientSecret, "code----", code)
 	data, err := idp.postWithBody(pTokenParams, idp.Config.Endpoint.TokenURL)
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println(string(data), "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 	pToken := &DingTalkAccessToken{}
 	err = json.Unmarshal(data, pToken)
 	if err != nil {
@@ -152,7 +152,6 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	if err != nil {
 		return nil, err
 	}
-
 	err = json.Unmarshal(data, dtUserInfo)
 	if err != nil {
 		return nil, err
@@ -162,15 +161,19 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		return nil, fmt.Errorf("userIdResp.Errcode = %s, userIdResp.Errmsg = %s", dtUserInfo.Errcode, dtUserInfo.Errmsg)
 	}
 
-	appName := idp.getAppName(dtUserInfo.UnionId)
+	//appName := idp.getAppName(dtUserInfo.UnionId)
 
 	userInfo := UserInfo{
 		Id:          dtUserInfo.OpenId,
-		Username:    appName + "|" + dtUserInfo.Nick,
+		Username:    "|" + dtUserInfo.Nick,
 		DisplayName: dtUserInfo.Nick,
 		UnionId:     dtUserInfo.UnionId,
 		Email:       dtUserInfo.Email,
 		AvatarUrl:   dtUserInfo.AvatarUrl,
+	}
+	isUserInOrg, err := idp.isUserInOrg(userInfo.UnionId)
+	if !isUserInOrg {
+		return nil, err
 	}
 	return &userInfo, nil
 }
@@ -197,23 +200,6 @@ func (idp *DingTalkIdProvider) postWithBody(body interface{}, url string) ([]byt
 	}(resp.Body)
 
 	return data, nil
-}
-
-func (idp *DingTalkIdProvider) getAppName(unionId string) string {
-	accessToken := idp.getInnerAppAccessToken()
-	request, _ := http.NewRequest("POST", "https://api.dingtalk.com/v1.0/storage/currentApps/query?unionId="+unionId, nil)
-	request.Header.Set("Content-Type", "application/json;charset=UTF-8")
-	request.Header.Add("x-acs-dingtalk-access-token", accessToken)
-	resp, _ := idp.Client.Do(request)
-
-	defer resp.Body.Close()
-
-	data, _ := io.ReadAll(resp.Body)
-	var v interface{}
-	json.Unmarshal(data, &v)
-	jsonData := v.(map[string]interface{})
-	result := jsonData["app"].(map[string]interface{})
-	return result["name"].(string)
 }
 
 func (idp *DingTalkIdProvider) getInnerAppAccessToken() string {
@@ -243,4 +229,34 @@ func (idp *DingTalkIdProvider) getInnerAppAccessToken() string {
 		log.Println(err.Error())
 	}
 	return data.AccessToken
+}
+
+func (idp *DingTalkIdProvider) isUserInOrg(unionId string) (bool, error) {
+	body := make(map[string]string)
+	body["unionid"] = unionId
+	bodyData, err := json.Marshal(body)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	reader := bytes.NewReader(bodyData)
+	accessToken := idp.getInnerAppAccessToken()
+	request, _ := http.NewRequest("POST", "https://oapi.dingtalk.com/topapi/user/getbyunionid?access_token="+accessToken, reader)
+	request.Header.Set("Content-Type", "application/json;charset=UTF-8")
+	resp, err := idp.Client.Do(request)
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	var data struct {
+		ErrCode    int    `json:"errcode"`
+		ErrMessage string `json:"errmsg"`
+	}
+	err = json.Unmarshal(respBytes, &data)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	if data.ErrCode == 60121 {
+		return false, fmt.Errorf("the user is not found in the organization where clientId and clientSecret belong")
+	}
+	return true, nil
 }
