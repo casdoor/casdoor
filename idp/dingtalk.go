@@ -152,6 +152,7 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	if err != nil {
 		return nil, err
 	}
+
 	err = json.Unmarshal(data, dtUserInfo)
 	if err != nil {
 		return nil, err
@@ -160,8 +161,6 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	if dtUserInfo.Errmsg != "" {
 		return nil, fmt.Errorf("userIdResp.Errcode = %s, userIdResp.Errmsg = %s", dtUserInfo.Errcode, dtUserInfo.Errmsg)
 	}
-
-	//appName := idp.getAppName(dtUserInfo.UnionId)
 
 	userInfo := UserInfo{
 		Id:          dtUserInfo.OpenId,
