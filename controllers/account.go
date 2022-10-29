@@ -245,8 +245,7 @@ func (c *ApiController) Logout() {
 	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 	application := c.GetSessionApplication()
-	c.SetSessionUsername("")
-	c.SetSessionData(nil)
+	c.ClearUserSession()
 
 	if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
 		c.ResponseOk(user)
