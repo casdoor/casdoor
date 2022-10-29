@@ -98,6 +98,7 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 
 	user := object.GetUser(userId)
 	if user == nil {
+		c.ClearUserSession()
 		c.ResponseError(fmt.Sprintf(c.T("UserErr.DoNotExist"), userId))
 		return nil, false
 	}
