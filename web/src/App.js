@@ -403,6 +403,13 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
+      res.push(
+        <Menu.Item key="/providers">
+          <Link to="/providers">
+            {i18next.t("general:Providers")}
+          </Link>
+        </Menu.Item>
+      );
     }
 
     if (Setting.isAdminUser(this.state.account)) {

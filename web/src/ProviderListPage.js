@@ -26,7 +26,7 @@ class ProviderListPage extends BaseListPage {
   newProvider() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "admin", // this.props.account.providername,
+      owner: this.state.owner,
       name: `provider_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Provider - ${randomName}`,
@@ -70,6 +70,8 @@ class ProviderListPage extends BaseListPage {
   }
 
   renderTable(providers) {
+    // eslint-disable-next-line no-console
+    console.log();
     const columns = [
       {
         title: i18next.t("general:Name"),
@@ -224,7 +226,7 @@ class ProviderListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    ProviderBackend.getProviders("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    ProviderBackend.getProviders(this.state.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

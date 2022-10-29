@@ -16,12 +16,14 @@ import React from "react";
 import {Button, Input, Space} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
+import * as Setting from "./Setting";
 
 class BaseListPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
+      owner: Setting.isAdminUser(props.account) ? props.account.organization.owner : props.account.organization.name,
       data: [],
       pagination: {
         current: 1,

@@ -32,6 +32,7 @@ class ProviderEditPage extends React.Component {
     this.state = {
       classes: props,
       providerName: props.match.params.providerName,
+      owner: Setting.isAdminUser(props.account) ? props.account.organization.owner : props.account.organization.name,
       provider: null,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
@@ -42,7 +43,7 @@ class ProviderEditPage extends React.Component {
   }
 
   getProvider() {
-    ProviderBackend.getProvider("admin", this.state.providerName)
+    ProviderBackend.getProvider(this.state.owner, this.state.providerName)
       .then((provider) => {
         this.setState({
           provider: provider,
