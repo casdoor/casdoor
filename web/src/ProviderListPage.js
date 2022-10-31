@@ -70,8 +70,6 @@ class ProviderListPage extends BaseListPage {
   }
 
   renderTable(providers) {
-    // eslint-disable-next-line no-console
-    console.log();
     const columns = [
       {
         title: i18next.t("general:Name"),
