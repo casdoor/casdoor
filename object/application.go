@@ -270,6 +270,13 @@ func UpdateApplication(id string, application *Application) bool {
 		application.Name = name
 	}
 
+	if name != application.Name {
+		err := applicationChangeTrigger(name, application.Name)
+		if err != nil {
+			return false
+		}
+	}
+
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}
@@ -399,4 +406,56 @@ func ExtendManagedAccountsWithUser(user *User) *User {
 	user.ManagedAccounts = managedAccounts
 
 	return user
+}
+
+func applicationChangeTrigger(oldName string, newName string) error {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
+
+	organization := new(Organization)
+	organization.DefaultApplication = newName
+	_, err = session.Where("default_application=?", oldName).Update(organization)
+	if err != nil {
+		return err
+	}
+
+	user := new(User)
+	user.SignupApplication = newName
+	_, err = session.Where("signup_application=?", oldName).Update(user)
+	if err != nil {
+		return err
+	}
+
+	resource := new(Resource)
+	resource.Application = newName
+	_, err = session.Where("application=?", oldName).Update(resource)
+	if err != nil {
+		return err
+	}
+
+	var permissions []*Permission
+	err = adapter.Engine.Find(&permissions)
+	if err != nil {
+		return err
+	}
+	for i := 0; i < len(permissions); i++ {
+		permissionResoureces := permissions[i].Resources
+		for j := 0; j < len(permissionResoureces); j++ {
+			if permissionResoureces[j] == oldName {
+				permissionResoureces[j] = newName
+			}
+		}
+		permissions[i].Resources = permissionResoureces
+		_, err = session.Where("name=?", permissions[i].Name).Update(permissions[i])
+		if err != nil {
+			return err
+		}
+	}
+
+	return session.Commit()
 }
