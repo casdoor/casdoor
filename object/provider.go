@@ -175,6 +175,13 @@ func UpdateProvider(id string, provider *Provider) bool {
 		return false
 	}
 
+	if name != provider.Name {
+		err := providerChangeTrigger(name, provider.Name)
+		if err != nil {
+			return false
+		}
+	}
+
 	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
 	if provider.ClientSecret == "***" {
 		session = session.Omit("client_secret")
@@ -261,4 +268,42 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 		}
 	}
 	return nil, nil
+}
+
+func providerChangeTrigger(oldName string, newName string) error {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
+
+	var applications []*Application
+	err = adapter.Engine.Find(&applications)
+	if err != nil {
+		return err
+	}
+	for i := 0; i < len(applications); i++ {
+		providers := applications[i].Providers
+		for j := 0; j < len(providers); j++ {
+			if providers[j].Name == oldName {
+				providers[j].Name = newName
+			}
+		}
+		applications[i].Providers = providers
+		_, err = session.Where("name=?", applications[i].Name).Update(applications[i])
+		if err != nil {
+			return err
+		}
+	}
+
+	resource := new(Resource)
+	resource.Provider = newName
+	_, err = session.Where("provider=?", oldName).Update(resource)
+	if err != nil {
+		return err
+	}
+
+	return session.Commit()
 }
