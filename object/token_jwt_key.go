@@ -37,7 +37,7 @@ func generateRsaKeys(bitSize int, expireInYears int, commonName string, organiza
 	// Encode private key to PKCS#1 ASN.1 PEM.
 	privateKeyPem := pem.EncodeToMemory(
 		&pem.Block{
-			Type:  "PRIVATE KEY",
+			Type:  "RSA PRIVATE KEY",
 			Bytes: x509.MarshalPKCS1PrivateKey(key),
 		},
 	)
