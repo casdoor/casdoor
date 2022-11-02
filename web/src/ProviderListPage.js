@@ -21,14 +21,13 @@ import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Provider from "./auth/Provider";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import {isAdminUser} from "./Setting";
 
 class ProviderListPage extends BaseListPage {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
-      owner: props.account.organization.name,
+      owner: Setting.isAdminUser(props.account) ? "admin" : props.account.organization.name,
       data: [],
       pagination: {
         current: 1,
@@ -240,7 +239,7 @@ class ProviderListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    (isAdminUser(this.props.account) ? ProviderBackend.getGlobalProviders(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    (Setting.isAdminUser(this.props.account) ? ProviderBackend.getGlobalProviders(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       : ProviderBackend.getProviders(this.state.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         if (res.status === "ok") {

@@ -91,6 +91,7 @@ class ApplicationEditPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      owner: props.account.owner,
       applicationName: props.match.params.applicationName,
       application: null,
       organizations: [],
@@ -141,12 +142,21 @@ class ApplicationEditPage extends React.Component {
   }
 
   getProviders() {
-    ProviderBackend.getProviders("admin")
-      .then((res) => {
-        this.setState({
-          providers: res,
+    if (Setting.isAdminUser(this.props.account)) {
+      ProviderBackend.getGlobalProviders()
+        .then((res) => {
+          this.setState({
+            providers: res,
+          });
         });
-      });
+    } else {
+      ProviderBackend.getProviders(this.state.owner)
+        .then((res) => {
+          this.setState({
+            providers: res,
+          });
+        });
+    }
   }
 
   getSamlMetadata() {

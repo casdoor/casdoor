@@ -736,8 +736,6 @@ class ProviderEditPage extends React.Component {
 
   submitProviderEdit(willExist) {
     const provider = Setting.deepCopy(this.state.provider);
-    // eslint-disable-next-line no-console
-    console.log(this.state);
     ProviderBackend.updateProvider(this.state.provider.owner, this.state.providerName, provider)
       .then((res) => {
         if (res.msg === "") {
