@@ -24,6 +24,21 @@ import BaseListPage from "./BaseListPage";
 import {isAdminUser} from "./Setting";
 
 class ProviderListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      classes: props,
+      owner: props.account.organization.name,
+      data: [],
+      pagination: {
+        current: 1,
+        pageSize: 10,
+      },
+      loading: false,
+      searchText: "",
+      searchedColumn: "",
+    };
+  }
   newProvider() {
     const randomName = Setting.getRandomName();
     return {
@@ -47,7 +62,7 @@ class ProviderListPage extends BaseListPage {
     const newProvider = this.newProvider();
     ProviderBackend.addProvider(newProvider)
       .then((res) => {
-        this.props.history.push({pathname: `/providers/${newProvider.name}`, mode: "add"});
+        this.props.history.push({pathname: `/providers/${newProvider.owner}/${newProvider.name}`, mode: "add"});
       }
       )
       .catch(error => {
@@ -178,7 +193,7 @@ class ProviderListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/providers/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/providers/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete provider: ${record.name} ?`}
                 onConfirm={() => this.deleteProvider(index)}

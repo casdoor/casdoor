@@ -32,7 +32,7 @@ class ProviderEditPage extends React.Component {
     this.state = {
       classes: props,
       providerName: props.match.params.providerName,
-      owner: Setting.isAdminUser(props.account) ? props.account.organization.owner : props.account.organization.name,
+      owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       provider: null,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
@@ -736,6 +736,8 @@ class ProviderEditPage extends React.Component {
 
   submitProviderEdit(willExist) {
     const provider = Setting.deepCopy(this.state.provider);
+    // eslint-disable-next-line no-console
+    console.log(this.state);
     ProviderBackend.updateProvider(this.state.provider.owner, this.state.providerName, provider)
       .then((res) => {
         if (res.msg === "") {
