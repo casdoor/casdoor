@@ -403,13 +403,6 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
-      res.push(
-        <Menu.Item key="/providers">
-          <Link to="/providers">
-            {i18next.t("general:Providers")}
-          </Link>
-        </Menu.Item>
-      );
     }
 
     if (Setting.isAdminUser(this.state.account)) {
@@ -428,13 +421,6 @@ class App extends Component {
         </Menu.Item>
       );
       res.push(
-        <Menu.Item key="/providers">
-          <Link to="/providers">
-            {i18next.t("general:Providers")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
         <Menu.Item key="/applications">
           <Link to="/applications">
             {i18next.t("general:Applications")}
@@ -444,6 +430,13 @@ class App extends Component {
     }
 
     if (Setting.isLocalAdminUser(this.state.account)) {
+      res.push(
+        <Menu.Item key="/providers">
+          <Link to="/providers">
+            {i18next.t("general:Providers")}
+          </Link>
+        </Menu.Item>
+      );
       res.push(
         <Menu.Item key="/resources">
           <Link to="/resources">
