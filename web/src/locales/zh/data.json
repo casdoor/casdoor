@@ -13,6 +13,7 @@
     "Sync": "同步"
   },
   "application": {
+    "Always": "始终开启",
     "Auto signin": "启用自动登录",
     "Auto signin - Tooltip": "当Casdoor存在已登录会话时，自动采用该会话进行应用端的登录",
     "Background URL": "背景图URL",
@@ -43,6 +44,7 @@
     "Grant types - Tooltip": "选择允许哪些OAuth协议中的Grant types",
     "Left": "居左",
     "New Application": "添加应用",
+    "None": "关闭",
     "Password ON": "开启密码",
     "Password ON - Tooltip": "是否允许密码登录",
     "Please select a HTML file": "请选择一个HTML文件",
@@ -53,6 +55,7 @@
     "Refresh token expire": "Refresh Token过期",
     "Refresh token expire - Tooltip": "Refresh Token过期时间",
     "Right": "居右",
+    "Rule": "规则",
     "SAML metadata": "SAML元数据",
     "SAML metadata - Tooltip": "SAML协议的元数据（Metadata）信息",
     "SAML metadata URL copied to clipboard successfully": "SAML元数据URL已成功复制到剪贴板",
@@ -67,10 +70,7 @@
     "Token expire": "Access Token过期",
     "Token expire - Tooltip": "Access Token过期时间",
     "Token format": "Access Token格式",
-    "Token format - Tooltip": "Access Token格式",
-    "Rule": "规则",
-    "None": "关闭",
-    "Always": "始终开启"
+    "Token format - Tooltip": "Access Token格式"
   },
   "cert": {
     "Bit size": "位大小",
@@ -491,6 +491,7 @@
     "New Provider": "添加提供商",
     "Parse": "Parse",
     "Parse Metadata successfully": "解析元数据成功",
+    "Path prefix": "路径前缀",
     "Port": "端口",
     "Port - Tooltip": "端口号",
     "Provider URL": "提供商URL",
@@ -535,6 +536,7 @@
     "Test Connection": "测试SMTP连接",
     "Test Email": "测试Email配置",
     "Test Email - Tooltip": "邮箱地址",
+    "The prefix path of the file - Tooltip": "文件的路径前缀 - 工具提示",
     "Token URL": "Token URL",
     "Token URL - Tooltip": "Token URL - 工具提示",
     "Type": "类型",

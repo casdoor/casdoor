@@ -13,6 +13,7 @@
     "Sync": "Sync"
   },
   "application": {
+    "Always": "Always",
     "Auto signin": "Auto signin",
     "Auto signin - Tooltip": "Auto signin - Tooltip",
     "Background URL": "Background URL",
@@ -43,6 +44,7 @@
     "Grant types - Tooltip": "Grant types - Tooltip",
     "Left": "Left",
     "New Application": "New Application",
+    "None": "None",
     "Password ON": "Password ON",
     "Password ON - Tooltip": "Password ON - Tooltip",
     "Please select a HTML file": "Please select a HTML file",
@@ -53,6 +55,7 @@
     "Refresh token expire": "Refresh token expire",
     "Refresh token expire - Tooltip": "Refresh token expire - Tooltip",
     "Right": "Right",
+    "Rule": "Rule",
     "SAML metadata": "SAML metadata",
     "SAML metadata - Tooltip": "SAML metadata - Tooltip",
     "SAML metadata URL copied to clipboard successfully": "SAML metadata URL copied to clipboard successfully",
@@ -67,10 +70,7 @@
     "Token expire": "Token expire",
     "Token expire - Tooltip": "Token expire - Tooltip",
     "Token format": "Token format",
-    "Token format - Tooltip": "Token format - Tooltip",
-    "Rule": "Rule",
-    "None": "None",
-    "Always": "Always"
+    "Token format - Tooltip": "Token format - Tooltip"
   },
   "cert": {
     "Bit size": "Bit size",
@@ -491,6 +491,7 @@
     "New Provider": "New Provider",
     "Parse": "Parse",
     "Parse Metadata successfully": "Parse Metadata successfully",
+    "Path prefix": "Path prefix",
     "Port": "Port",
     "Port - Tooltip": "Port - Tooltip",
     "Provider URL": "Provider URL",
@@ -535,6 +536,7 @@
     "Test Connection": "Test Connection",
     "Test Email": "Test Email",
     "Test Email - Tooltip": "Test Email - Tooltip",
+    "The prefix path of the file - Tooltip": "The prefix path of the file - Tooltip",
     "Token URL": "Token URL",
     "Token URL - Tooltip": "Token URL - Tooltip",
     "Type": "Type",

@@ -13,6 +13,7 @@
     "Sync": "Sync"
   },
   "application": {
+    "Always": "Always",
     "Auto signin": "Auto signin",
     "Auto signin - Tooltip": "Auto signin - Tooltip",
     "Background URL": "Background URL",
@@ -43,6 +44,7 @@
     "Grant types - Tooltip": "Grant types - Tooltip",
     "Left": "Left",
     "New Application": "New Application",
+    "None": "None",
     "Password ON": "Passwort AN",
     "Password ON - Tooltip": "Whether to allow password login",
     "Please select a HTML file": "Bitte wählen Sie eine HTML-Datei",
@@ -53,6 +55,7 @@
     "Refresh token expire": "Aktualisierungs-Token läuft ab",
     "Refresh token expire - Tooltip": "Aktualisierungs-Token läuft ab - Tooltip",
     "Right": "Right",
+    "Rule": "Rule",
     "SAML metadata": "SAML metadata",
     "SAML metadata - Tooltip": "SAML metadata - Tooltip",
     "SAML metadata URL copied to clipboard successfully": "SAML metadata URL copied to clipboard successfully",
@@ -67,10 +70,7 @@
     "Token expire": "Token läuft ab",
     "Token expire - Tooltip": "Token läuft ab - Tooltip",
     "Token format": "Token-Format",
-    "Token format - Tooltip": "Token-Format - Tooltip",
-    "Rule": "Rule",
-    "None": "None",
-    "Always": "Always"
+    "Token format - Tooltip": "Token-Format - Tooltip"
   },
   "cert": {
     "Bit size": "Bitgröße",
@@ -491,6 +491,7 @@
     "New Provider": "New Provider",
     "Parse": "Parse",
     "Parse Metadata successfully": "Metadaten erfolgreich analysieren",
+    "Path prefix": "Path prefix",
     "Port": "Port",
     "Port - Tooltip": "Unique string-style identifier",
     "Provider URL": "Provider-URL",
@@ -535,6 +536,7 @@
     "Test Connection": "Test Smtp Connection",
     "Test Email": "Test email config",
     "Test Email - Tooltip": "Email Address",
+    "The prefix path of the file - Tooltip": "The prefix path of the file - Tooltip",
     "Token URL": "Token URL",
     "Token URL - Tooltip": "Token URL - Tooltip",
     "Type": "Typ",

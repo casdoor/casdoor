@@ -60,6 +60,7 @@ type Provider struct {
 	IntranetEndpoint string `xorm:"varchar(100)" json:"intranetEndpoint"`
 	Domain           string `xorm:"varchar(100)" json:"domain"`
 	Bucket           string `xorm:"varchar(100)" json:"bucket"`
+	PathPrefix       string `xorm:"varchar(100)" json:"pathPrefix"`
 
 	Metadata               string `xorm:"mediumtext" json:"metadata"`
 	IdP                    string `xorm:"mediumtext" json:"idP"`
