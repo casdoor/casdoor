@@ -89,21 +89,6 @@ class SyncerListPage extends BaseListPage {
   renderTable(syncers) {
     const columns = [
       {
-        title: i18next.t("general:Organization"),
-        dataIndex: "organization",
-        key: "organization",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("organization"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/organizations/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
@@ -114,6 +99,21 @@ class SyncerListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <Link to={`/syncers/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "organization",
+        key: "organization",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("organization"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
               {text}
             </Link>
           );

@@ -102,6 +102,16 @@ func GetProviderCount(owner, field, value string) int {
 	return int(count)
 }
 
+func GetGlobalProviderCount(field, value string) int {
+	session := GetSession("", -1, -1, field, value, "", "")
+	count, err := session.Count(&Provider{})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
 func GetProviders(owner string) []*Provider {
 	providers := []*Provider{}
 	err := adapter.Engine.Desc("created_time").Find(&providers, &Provider{Owner: owner})
@@ -112,9 +122,30 @@ func GetProviders(owner string) []*Provider {
 	return providers
 }
 
-func GetPaginationProviders(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Provider {
+func GetGlobalProviders() []*Provider {
 	providers := []*Provider{}
+	err := adapter.Engine.Desc("created_time").Find(&providers)
+	if err != nil {
+		panic(err)
+	}
+
+	return providers
+}
+
+func GetPaginationProviders(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Provider {
+	var providers []*Provider
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&providers)
+	if err != nil {
+		panic(err)
+	}
+
+	return providers
+}
+
+func GetPaginationGlobalProviders(offset, limit int, field, value, sortField, sortOrder string) []*Provider {
+	var providers []*Provider
+	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&providers)
 	if err != nil {
 		panic(err)

@@ -48,6 +48,30 @@ func (c *ApiController) GetProviders() {
 	}
 }
 
+// GetGlobalProviders
+// @Title GetGlobalProviders
+// @Tag Provider API
+// @Description get Global providers
+// @Success 200 {array} object.Provider The Response object
+// @router /get-global-providers [get]
+func (c *ApiController) GetGlobalProviders() {
+	limit := c.Input().Get("pageSize")
+	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
+	if limit == "" || page == "" {
+		c.Data["json"] = object.GetMaskedProviders(object.GetGlobalProviders())
+		c.ServeJSON()
+	} else {
+		limit := util.ParseInt(limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGlobalProviderCount(field, value)))
+		providers := object.GetMaskedProviders(object.GetPaginationGlobalProviders(paginator.Offset(), limit, field, value, sortField, sortOrder))
+		c.ResponseOk(providers, paginator.Nums())
+	}
+}
+
 // GetProvider
 // @Title GetProvider
 // @Tag Provider API

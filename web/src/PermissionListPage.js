@@ -77,21 +77,7 @@ class PermissionListPage extends BaseListPage {
 
   renderTable(permissions) {
     const columns = [
-      {
-        title: i18next.t("general:Organization"),
-        dataIndex: "owner",
-        key: "owner",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("owner"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/organizations/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
+      // https://github.com/ant-design/ant-design/issues/22184
       {
         title: i18next.t("general:Name"),
         dataIndex: "name",
@@ -103,6 +89,21 @@ class PermissionListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <Link to={`/permissions/${record.owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "owner",
+        key: "owner",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("owner"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
               {text}
             </Link>
           );
