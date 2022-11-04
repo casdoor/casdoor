@@ -37,7 +37,16 @@ func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
 		return nil, err
 	}
 
-	return syncer.getOriginalUsersFromMap(results), nil
+	// Memory leak problem handling
+	// https://github.com/casdoor/casdoor/issues/1256
+	users := syncer.getOriginalUsersFromMap(results)
+	for _, m := range results {
+		for k := range m {
+			delete(m, k)
+		}
+	}
+
+	return users, nil
 }
 
 func (syncer *Syncer) getOriginalUserMap() ([]*OriginalUser, map[string]*OriginalUser, error) {
