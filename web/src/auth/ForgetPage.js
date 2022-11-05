@@ -489,7 +489,7 @@ class ForgetPage extends React.Component {
     return (
       <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
         <CustomGithubCorner />
-        <div className="login-content forget-content">
+        <div className="login-content forget-content" style={{padding: Setting.isMobile() ? "0" : null, boxShadow: Setting.isMobile() ? "none" : null}}>
           <Row>
             <Col span={24} style={{justifyContent: "center"}}>
               <Row>
