@@ -104,7 +104,7 @@ class SignupTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:visible"),
+        title: i18next.t("provider:Visible"),
         dataIndex: "visible",
         key: "visible",
         width: "120px",
@@ -126,7 +126,7 @@ class SignupTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:required"),
+        title: i18next.t("provider:Required"),
         dataIndex: "required",
         key: "required",
         width: "120px",
@@ -143,7 +143,7 @@ class SignupTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:prompted"),
+        title: i18next.t("provider:Prompted"),
         dataIndex: "prompted",
         key: "prompted",
         width: "120px",

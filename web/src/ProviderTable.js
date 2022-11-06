@@ -105,7 +105,7 @@ class ProviderTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:canSignUp"),
+        title: i18next.t("provider:Can signup"),
         dataIndex: "canSignUp",
         key: "canSignUp",
         width: "120px",
@@ -122,7 +122,7 @@ class ProviderTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:canSignIn"),
+        title: i18next.t("provider:Can signin"),
         dataIndex: "canSignIn",
         key: "canSignIn",
         width: "120px",
@@ -139,7 +139,7 @@ class ProviderTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:canUnlink"),
+        title: i18next.t("provider:Can unlink"),
         dataIndex: "canUnlink",
         key: "canUnlink",
         width: "120px",
@@ -156,7 +156,7 @@ class ProviderTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:prompted"),
+        title: i18next.t("provider:Prompted"),
         dataIndex: "prompted",
         key: "prompted",
         width: "120px",
