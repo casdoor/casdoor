@@ -17,6 +17,7 @@ import {Link} from "react-router-dom";
 import {Button, Popconfirm, Switch, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import moment from "moment";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
@@ -28,6 +29,7 @@ class UserListPage extends BaseListPage {
     this.state = {
       classes: props,
       organizationName: props.match.params.organizationName,
+      organization: null,
       data: [],
       pagination: {
         current: 1,
@@ -271,6 +273,15 @@ class UserListPage extends BaseListPage {
         width: "110px",
         sorter: true,
         ...this.getColumnSearchProps("tag"),
+        render: (text, record, index) => {
+          const tagMap = {};
+          this.state.organization?.tags?.map((tag, index) => {
+            const tokens = tag.split("|");
+            const displayValue = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1];
+            tagMap[tokens[0]] = displayValue;
+          });
+          return tagMap[text];
+        },
       },
       {
         title: i18next.t("user:Is admin"),
@@ -387,6 +398,11 @@ class UserListPage extends BaseListPage {
               searchText: params.searchText,
               searchedColumn: params.searchedColumn,
             });
+
+            const users = res.data;
+            if (users.length > 0) {
+              this.getOrganization(users[0].owner);
+            }
           }
         });
     } else {
@@ -403,10 +419,24 @@ class UserListPage extends BaseListPage {
               searchText: params.searchText,
               searchedColumn: params.searchedColumn,
             });
+
+            const users = res.data;
+            if (users.length > 0) {
+              this.getOrganization(users[0].owner);
+            }
           }
         });
     }
   };
+
+  getOrganization(organizationName) {
+    OrganizationBackend.getOrganization("admin", organizationName)
+      .then((organization) => {
+        this.setState({
+          organization: organization,
+        });
+      });
+  }
 }
 
 export default UserListPage;

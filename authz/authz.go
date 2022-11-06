@@ -142,7 +142,7 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 
 	userId := fmt.Sprintf("%s/%s", subOwner, subName)
 	user := object.GetUser(userId)
-	if user != nil && user.IsAdmin && subOwner == objOwner {
+	if user != nil && user.IsAdmin && (subOwner == objOwner || (objOwner == "admin" && subOwner == objName)) {
 		return true
 	}
 
