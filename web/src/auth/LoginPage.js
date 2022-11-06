@@ -781,7 +781,7 @@ class LoginPage extends React.Component {
     return (
       <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
         <CustomGithubCorner />
-        <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
+        <div className="login-content" style={{margin: this.parseOffset(application.formOffset), padding: Setting.isMobile() ? "0" : null, boxShadow: Setting.isMobile() ? "none" : null}}>
           {Setting.inIframe() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
           <div className="login-panel">
             <SelectLanguageBox id="language-box-corner" style={{top: "50px"}} />
