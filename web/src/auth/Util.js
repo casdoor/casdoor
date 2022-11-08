@@ -14,7 +14,6 @@
 
 import React from "react";
 import {Alert, Button, Result, message} from "antd";
-import {getOfficialAccountQRCode} from "./AuthBackend";
 
 export function showMessage(type, text) {
   if (type === "success") {
@@ -150,13 +149,4 @@ export function getQueryParamsFromState(state) {
   } else {
     return query;
   }
-}
-
-export function getBase64QRCode(clientId, clientSecret) {
-  getOfficialAccountQRCode(clientId, clientSecret)
-    .then(res => {
-      // eslint-disable-next-line no-console
-      console.log(res.data);
-      localStorage.setItem("qrCodeImage", "data:image/png;base64," + res.data);
-    });
 }

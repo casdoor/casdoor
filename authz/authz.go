@@ -85,7 +85,7 @@ p, *, *, POST, /api/logout, *, *
 p, *, *, GET, /api/logout, *, *
 p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
-p, *, *, POST, /api/GetOfficialAccountEvent, *, *
+p, *, *, POST, /api/wechat, *, *
 p, *, *, GET, /api/get-qr-code, *, *
 p, *, *, *, /api/login/oauth, *, *
 p, *, *, GET, /api/get-application, *, *
