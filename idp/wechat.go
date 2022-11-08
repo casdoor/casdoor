@@ -16,14 +16,18 @@ package idp
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
+	"github.com/skip2/go-qrcode"
 	"golang.org/x/oauth2"
 )
 
@@ -190,4 +194,55 @@ func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		AvatarUrl:   wechatUserInfo.Headimgurl,
 	}
 	return &userInfo, nil
+}
+
+func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) string {
+	request, err := http.NewRequest("GET", "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+clientId+"&secret="+clientSecret, nil)
+	client := new(http.Client)
+	resp, err := client.Do(request)
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	var data struct {
+		ExpireIn    int    `json:"expires_in"`
+		AccessToken string `json:"access_token"`
+	}
+	err = json.Unmarshal(respBytes, &data)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	fmt.Println("AccessToken", data.AccessToken)
+	return data.AccessToken
+}
+
+func GetWechatOfficialAccountQRCode(accessToken string) string {
+	client := new(http.Client)
+	params := "{\"expire_seconds\": 604800, \"action_name\": \"QR_STR_SCENE\", \"action_info\": {\"scene\": {\"scene_str\": \"test\"}}}"
+	bodyData := bytes.NewReader([]byte(params))
+	requeset, err := http.NewRequest("POST", "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token="+accessToken, bodyData)
+	resp, err := client.Do(requeset)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	var data struct {
+		Ticket        string `json:"ticket"`
+		ExpireSeconds int    `json:"expire_seconds"`
+		URL           string `json:"url"`
+	}
+	err = json.Unmarshal(respBytes, &data)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	fmt.Println("ticket", data.Ticket)
+	fmt.Println("url", data.URL)
+	var png []byte
+	png, err = qrcode.Encode(data.URL, qrcode.Medium, 256)
+	base64Image := base64.StdEncoding.EncodeToString(png)
+	fmt.Println(base64Image)
+	return base64Image
 }

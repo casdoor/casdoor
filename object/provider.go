@@ -37,6 +37,8 @@ type Provider struct {
 	ClientSecret      string `xorm:"varchar(2000)" json:"clientSecret"`
 	ClientId2         string `xorm:"varchar(100)" json:"clientId2"`
 	ClientSecret2     string `xorm:"varchar(100)" json:"clientSecret2"`
+	ClientId3         string `xorm:"varchar(100)" json:"clientId3"` //Wechat Official Account ClientID And Secret
+	ClientSecret3     string `xorm:"varchar(100)" json:"clientSecret3"`
 	Cert              string `xorm:"varchar(100)" json:"cert"`
 	CustomAuthUrl     string `xorm:"varchar(200)" json:"customAuthUrl"`
 	CustomScope       string `xorm:"varchar(200)" json:"customScope"`

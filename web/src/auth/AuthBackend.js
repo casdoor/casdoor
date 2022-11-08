@@ -130,3 +130,13 @@ export function loginWithSaml(values, param) {
     },
   }).then(res => res.json());
 }
+
+export function getOfficialAccountQRCode(clientId3, clientSecret3) {
+  return fetch(`${Setting.ServerUrl}/api/get-qr-code?clientId=${clientId3}&clientSecret=${clientSecret3}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

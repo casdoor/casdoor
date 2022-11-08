@@ -40,6 +40,8 @@ import BilibiliLoginButton from "./BilibiliLoginButton";
 import OktaLoginButton from "./OktaLoginButton";
 import DouyinLoginButton from "./DouyinLoginButton";
 import * as AuthBackend from "./AuthBackend";
+import {Modal} from "antd";
+import {getBase64QRCode} from "./Util";
 
 function getSigninButton(type) {
   const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
@@ -116,11 +118,33 @@ function getSamlUrl(provider, location) {
 export function renderProviderLogo(provider, application, width, margin, size, location) {
   if (size === "small") {
     if (provider.category === "OAuth") {
-      return (
-        <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-          <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
-        </a>
-      );
+      // eslint-disable-next-line no-console
+      console.log(provider);
+      if (provider.type === "WeChat" && provider.clientId3 !== "" && provider.clientSecret3 !== "") {
+        const info = () => {
+          getBase64QRCode(provider.clientId3, provider.clientSecret3);
+          const url = localStorage.getItem("qrCodeImage");
+          Modal.info({
+            title: i18next.t("Please use your mobile phone scan this QR code and then follow the Official Account"),
+            content: (
+              <div>
+                <img width={256} height={256} src = {url} alt={provider.displayName} style={{margin: margin}} />
+              </div>
+            ),
+          });
+        };
+        return (
+          <a key={provider.displayName} >
+            <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} onClick={info} />
+          </a>
+        );
+      } else {
+        return (
+          <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
+            <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
+          </a>
+        );
+      }
     } else if (provider.category === "SAML") {
       return (
         <a key={provider.displayName} onClick={() => getSamlUrl(provider, location)}>

@@ -17,7 +17,10 @@ package controllers
 import (
 	"encoding/base64"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/url"
 	"strconv"
 	"strings"
@@ -530,4 +533,47 @@ func (c *ApiController) HandleSamlLogin() {
 	targetUrl := fmt.Sprintf("%s?relayState=%s&samlResponse=%s",
 		slice[4], relayState, samlResponse)
 	c.Redirect(targetUrl, 303)
+}
+
+// GetOfficialAccountEvent ...
+// @Tag GetOfficialAccountEvent API
+// @Title GetOfficialAccountEvent
+// @router /api/wechat [POST]
+func (c *ApiController) GetOfficialAccountEvent() {
+	fmt.Println("Start receive information from WeChat")
+	//token := "1234"
+	fmt.Println(c.Ctx.Request.Body)
+	respBytes, err := ioutil.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	var data struct {
+		MsgType string `xml:"MsgType"`
+		Event   string `xml:"Event"`
+	}
+	err = xml.Unmarshal(respBytes, &data)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return
+	}
+	fmt.Println("MsgType", data.MsgType)
+	fmt.Println("Event", data.Event)
+}
+
+// GetWechatOfficialAccountQRCode ...
+// @Tag GetWechatOfficialAccountQRCode API
+// @Title GetWechatOfficialAccountQRCode
+// @router /api/get-qr-code [GET]
+func (c *ApiController) GetWechatOfficialAccountQRCode() {
+	clientId := c.Input().Get("clientId")
+	clientSecret := c.Input().Get("clientSecret")
+	accessToken := idp.GetWechatOfficialAccountAccessToken(clientId, clientSecret)
+	base64Image := idp.GetWechatOfficialAccountQRCode(accessToken)
+	resp := &Response{
+		Status: "ok",
+		Msg:    "",
+		Data:   base64Image,
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
 }

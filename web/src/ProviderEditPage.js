@@ -32,7 +32,6 @@ class ProviderEditPage extends React.Component {
     this.state = {
       classes: props,
       providerName: props.match.params.providerName,
-      owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       provider: null,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
@@ -43,7 +42,7 @@ class ProviderEditPage extends React.Component {
   }
 
   getProvider() {
-    ProviderBackend.getProvider(this.state.owner, this.state.providerName)
+    ProviderBackend.getProvider("admin", this.state.providerName)
       .then((provider) => {
         this.setState({
           provider: provider,
@@ -395,13 +394,11 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "WeChat" && this.state.provider.type !== "Aliyun Captcha" ? null : (
+          this.state.provider.type !== "WeChat" ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {this.state.provider.type === "Aliyun Captcha"
-                    ? Setting.getLabel(i18next.t("provider:Scene"), i18next.t("provider:Scene - Tooltip"))
-                    : Setting.getLabel(i18next.t("provider:Client ID 2"), i18next.t("provider:Client ID 2 - Tooltip"))}
+                  {Setting.getLabel(i18next.t("provider:Client ID 2"), i18next.t("provider:Client ID 2 - Tooltip"))}
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.clientId2} onChange={e => {
@@ -411,9 +408,53 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {this.state.provider.type === "Aliyun Captcha"
-                    ? Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"))
-                    : Setting.getLabel(i18next.t("provider:Client secret 2"), i18next.t("provider:Client secret 2 - Tooltip"))}
+                  {Setting.getLabel(i18next.t("provider:Client secret 2"), i18next.t("provider:Client secret 2 - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.clientSecret2} onChange={e => {
+                    this.updateProviderField("clientSecret2", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Client ID 3"), i18next.t("provider:Client ID 3 - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.clientId3} onChange={e => {
+                    this.updateProviderField("clientId3", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Client secret 3"), i18next.t("provider:Client secret 3 - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.clientSecret3} onChange={e => {
+                    this.updateProviderField("clientSecret3", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            </React.Fragment>
+          )
+        }
+        {
+          this.state.provider.type !== "Aliyun Captcha" ? null : (
+            <React.Fragment>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Scene"), i18next.t("provider:Scene - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.clientId2} onChange={e => {
+                    this.updateProviderField("clientId2", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"))}
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.clientSecret2} onChange={e => {
@@ -467,16 +508,6 @@ class ProviderEditPage extends React.Component {
               <Col span={22} >
                 <Input value={this.state.provider.bucket} onChange={e => {
                   this.updateProviderField("bucket", e.target.value);
-                }} />
-              </Col>
-            </Row>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Path prefix"), i18next.t("provider:The prefix path of the file - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.provider.pathPrefix} onChange={e => {
-                  this.updateProviderField("pathPrefix", e.target.value);
                 }} />
               </Col>
             </Row>
