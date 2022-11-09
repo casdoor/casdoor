@@ -84,6 +84,10 @@ func GetMaskedProvider(provider *Provider) *Provider {
 		provider.ClientSecret2 = "***"
 	}
 
+	if provider.ClientSecret3 != "" {
+		provider.ClientSecret3 = "***"
+	}
+
 	return provider
 }
 

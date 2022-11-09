@@ -122,7 +122,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         const info = async() => {
           await getBase64QRCode(provider.clientId3, provider.clientSecret3);
           const url = localStorage.getItem("qrCodeImage");
-          setInterval(await getEvent, 1000, application, provider);
+          setInterval(await getEvent, 5000, application, provider);
           {Modal.info({
             title: i18next.t("Please use your mobile phone scan this QR code and then follow the Official Account"),
             content: (
