@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Alert, Button, Result, message} from "antd";
-import {getOfficialAccountQRCode, getWechatMessageEvent} from "./AuthBackend";
+import {getOfficialAccountQRCode} from "./AuthBackend";
 
 export function showMessage(type, text) {
   if (type === "success") {
@@ -159,19 +159,4 @@ export function getBase64QRCode(clientId, clientSecret) {
       console.log(res.data);
       localStorage.setItem("qrCodeImage", "data:image/png;base64," + res.data);
     });
-}
-
-let eventType;
-export function setWechatEvent() {
-  getWechatMessageEvent()
-    .then(res => {
-      // eslint-disable-next-line no-console
-      console.log(res.data);
-      eventType = res.data;
-    });
-  return eventType;
-}
-
-export function getEventType() {
-  return eventType;
 }

@@ -42,8 +42,8 @@ import DouyinLoginButton from "./DouyinLoginButton";
 import * as AuthBackend from "./AuthBackend";
 import {getBase64QRCode} from "./Util";
 import {Modal} from "antd";
-import * as Util from "./Util";
 import * as Setting from "../Setting";
+import {getWechatMessageEvent} from "./AuthBackend";
 
 function getSigninButton(type) {
   const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
@@ -120,20 +120,17 @@ function getSamlUrl(provider, location) {
 export function renderProviderLogo(provider, application, width, margin, size, location) {
   if (size === "small") {
     if (provider.category === "OAuth") {
-      // eslint-disable-next-line no-console
-      console.log(provider);
       if (provider.type === "WeChat" && provider.clientId3 !== "" && provider.clientSecret3 !== "") {
         const info = () => {
           getBase64QRCode(provider.clientId3, provider.clientSecret3);
           const url = localStorage.getItem("qrCodeImage");
-          const t1 = setInterval(Util.setWechatEvent, 5000);
-          const t2 = setInterval(Util.getEventType, 3000);
-          // eslint-disable-next-line no-empty
-          if (Util.getEventType() === "SCAN" || Util.getEventType() === "subscribe") {
-            Setting.goToLink(Provider.getAuthUrl(application, provider, "signup"));
-            window.clearInterval(t1);
-            window.clearInterval(t2);
-          }
+          const t1 = setInterval(getWechatMessageEvent()
+            .then(res => {
+              if (res.data === "SCAN" || res.data === "subscribe") {
+                Setting.goToLink(Provider.getAuthUrl(application, provider, "signup"));
+              }
+            }), 5000);
+          window.clearInterval(t1);
           Modal.info({
             title: i18next.t("Please use your mobile phone scan this QR code and then follow the Official Account"),
             content: (
