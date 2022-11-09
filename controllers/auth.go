@@ -543,7 +543,6 @@ func (c *ApiController) HandleSamlLogin() {
 // @router /api/wechat [POST]
 func (c *ApiController) GetOfficialAccountEvent() {
 	fmt.Println("Start receive information from WeChat")
-	//token := "1234"
 	fmt.Println(c.Ctx.Request.Body)
 	respBytes, err := ioutil.ReadAll(c.Ctx.Request.Body)
 	if err != nil {
@@ -558,9 +557,7 @@ func (c *ApiController) GetOfficialAccountEvent() {
 		fmt.Printf("error: %v", err)
 		return
 	}
-	fmt.Println("MsgType", data.MsgType)
 	wechatScanType["event"] = data.Event
-	fmt.Println("Event", data.Event)
 }
 
 // GetWechatOfficialAccountQRCode ...
@@ -593,4 +590,5 @@ func (c *ApiController) GetWechatScanType() {
 	}
 	c.Data["json"] = resp
 	c.ServeJSON()
+	wechatScanType["event"] = ""
 }
