@@ -140,3 +140,13 @@ export function getOfficialAccountQRCode(clientId3, clientSecret3) {
     },
   }).then(res => res.json());
 }
+
+export function getWechatMessageEvent() {
+  return fetch(`${Setting.ServerUrl}/api/get-wechat-event`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

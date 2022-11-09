@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {useEffect, useState} from "react";
+import React from "react";
 import i18next from "i18next";
 import * as Provider from "./Provider";
 import {getProviderLogoURL} from "../Setting";
@@ -40,8 +40,10 @@ import BilibiliLoginButton from "./BilibiliLoginButton";
 import OktaLoginButton from "./OktaLoginButton";
 import DouyinLoginButton from "./DouyinLoginButton";
 import * as AuthBackend from "./AuthBackend";
+import {getBase64QRCode} from "./Util";
 import {Modal} from "antd";
-import {getOfficialAccountQRCode} from "./AuthBackend";
+import * as Util from "./Util";
+import * as Setting from "../Setting";
 
 function getSigninButton(type) {
   const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
@@ -122,18 +124,19 @@ export function renderProviderLogo(provider, application, width, margin, size, l
       console.log(provider);
       if (provider.type === "WeChat" && provider.clientId3 !== "" && provider.clientSecret3 !== "") {
         const info = () => {
-          const [data, setData] = useState({hits: []});
-          useEffect(async() => {
-            await getOfficialAccountQRCode(provider.clientId3, provider.clientSecret3)
-              .then(res => {
-                setData("data:image/png;base64," + res.data);
-              });
-          }, []);
+          getBase64QRCode(provider.clientId3, provider.clientSecret3);
+          const url = localStorage.getItem("qrCodeImage");
+          const t1 = setInterval(Util.setWechatEvent, 1000);
+          // eslint-disable-next-line no-empty
+          if (Util.getEventType() === "SCAN" || Util.getEventType() === "subscribe") {
+            Setting.goToLink(Provider.getAuthUrl(application, provider, "signup"));
+            window.clearInterval(t1);
+          }
           Modal.info({
             title: i18next.t("Please use your mobile phone scan this QR code and then follow the Official Account"),
             content: (
               <div>
-                <img width={256} height={256} src = {data} alt={provider.displayName} style={{margin: margin}} />
+                <img width={256} height={256} src = {url} alt="Wechat QR code" style={{margin: margin}} />
               </div>
             ),
           });

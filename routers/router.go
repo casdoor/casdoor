@@ -56,6 +56,7 @@ func initAPI() {
 	beego.Router("/api/saml/metadata", &controllers.ApiController{}, "GET:GetSamlMeta")
 	beego.Router("/api/wechat", &controllers.ApiController{}, "POST:GetOfficialAccountEvent")
 	beego.Router("/api/get-qr-code", &controllers.ApiController{}, "GET:GetWechatOfficialAccountQRCode")
+	beego.Router("/api/get-wechat-event", &controllers.ApiController{}, "GET:GetWechatScanType")
 
 	beego.Router("/api/get-organizations", &controllers.ApiController{}, "GET:GetOrganizations")
 	beego.Router("/api/get-organization", &controllers.ApiController{}, "GET:GetOrganization")

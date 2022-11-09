@@ -36,6 +36,8 @@ import (
 	"github.com/google/uuid"
 )
 
+var wechatScanType = make(map[string]string)
+
 func codeToResponse(code *object.Code) *Response {
 	if code.Code == "" {
 		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
@@ -557,6 +559,7 @@ func (c *ApiController) GetOfficialAccountEvent() {
 		return
 	}
 	fmt.Println("MsgType", data.MsgType)
+	wechatScanType["event"] = data.Event
 	fmt.Println("Event", data.Event)
 }
 
@@ -573,6 +576,20 @@ func (c *ApiController) GetWechatOfficialAccountQRCode() {
 		Status: "ok",
 		Msg:    "",
 		Data:   base64Image,
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
+// GetWechatScanType ...
+// @Tag GetWechatScanType API
+// @Title GetWechatScanType
+// @router /api/get-wechat-event [GET]
+func (c *ApiController) GetWechatScanType() {
+	resp := &Response{
+		Status: "ok",
+		Msg:    "",
+		Data:   wechatScanType["event"],
 	}
 	c.Data["json"] = resp
 	c.ServeJSON()
