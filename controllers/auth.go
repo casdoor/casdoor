@@ -542,8 +542,6 @@ func (c *ApiController) HandleSamlLogin() {
 // @Title GetOfficialAccountEvent
 // @router /api/wechat [POST]
 func (c *ApiController) GetOfficialAccountEvent() {
-	fmt.Println("Start receive information from WeChat")
-	fmt.Println(c.Ctx.Request.Body)
 	respBytes, err := ioutil.ReadAll(c.Ctx.Request.Body)
 	if err != nil {
 		log.Println(err.Error())
