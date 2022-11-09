@@ -42,7 +42,7 @@ class ProviderEditPage extends React.Component {
   }
 
   getProvider() {
-    ProviderBackend.getProvider("admin", this.state.providerName)
+    ProviderBackend.getProvider(this.state.owner, this.state.providerName)
       .then((provider) => {
         this.setState({
           provider: provider,
@@ -508,6 +508,16 @@ class ProviderEditPage extends React.Component {
               <Col span={22} >
                 <Input value={this.state.provider.bucket} onChange={e => {
                   this.updateProviderField("bucket", e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={2}>
+                {Setting.getLabel(i18next.t("provider:Path prefix"), i18next.t("provider:The prefix path of the file - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.provider.pathPrefix} onChange={e => {
+                  this.updateProviderField("pathPrefix", e.target.value);
                 }} />
               </Col>
             </Row>
