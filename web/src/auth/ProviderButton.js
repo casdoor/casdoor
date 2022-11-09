@@ -126,11 +126,13 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         const info = () => {
           getBase64QRCode(provider.clientId3, provider.clientSecret3);
           const url = localStorage.getItem("qrCodeImage");
-          const t1 = setInterval(Util.setWechatEvent, 1000);
+          const t1 = setInterval(Util.setWechatEvent, 5000);
+          const t2 = setInterval(Util.getEventType, 3000);
           // eslint-disable-next-line no-empty
           if (Util.getEventType() === "SCAN" || Util.getEventType() === "subscribe") {
             Setting.goToLink(Provider.getAuthUrl(application, provider, "signup"));
             window.clearInterval(t1);
+            window.clearInterval(t2);
           }
           Modal.info({
             title: i18next.t("Please use your mobile phone scan this QR code and then follow the Official Account"),
