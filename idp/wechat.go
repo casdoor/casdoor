@@ -237,6 +237,7 @@ func GetWechatOfficialAccountQRCode(accessToken string) string {
 	if err != nil {
 		log.Println(err.Error())
 	}
+
 	var png []byte
 	png, err = qrcode.Encode(data.URL, qrcode.Medium, 256)
 	base64Image := base64.StdEncoding.EncodeToString(png)
