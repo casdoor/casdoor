@@ -87,7 +87,7 @@ func (application *Application) GetSignupItemRule(itemName string) string {
 }
 
 func (application *Application) getAllPromptedProviderItems() []*ProviderItem {
-	res := []*ProviderItem{}
+	var res []*ProviderItem
 	for _, providerItem := range application.Providers {
 		if providerItem.isProviderPrompted() {
 			res = append(res, providerItem)
@@ -97,7 +97,7 @@ func (application *Application) getAllPromptedProviderItems() []*ProviderItem {
 }
 
 func (application *Application) getAllPromptedSignupItems() []*SignupItem {
-	res := []*SignupItem{}
+	var res []*SignupItem
 	for _, signupItem := range application.SignupItems {
 		if signupItem.isSignupItemPrompted() {
 			res = append(res, signupItem)

@@ -29,6 +29,7 @@ type Provider struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	DisplayName       string `xorm:"varchar(100)" json:"displayName"`
+	Organization      string `xorm:"varchar(100)" json:"organization"`
 	Category          string `xorm:"varchar(100)" json:"category"`
 	Type              string `xorm:"varchar(100)" json:"type"`
 	SubType           string `xorm:"varchar(100)" json:"subType"`

@@ -16,6 +16,7 @@ package object
 
 type ProviderItem struct {
 	Name      string    `json:"name"`
+	Owner     string    `json:"owner"`
 	CanSignUp bool      `json:"canSignUp"`
 	CanSignIn bool      `json:"canSignIn"`
 	CanUnlink bool      `json:"canUnlink"`

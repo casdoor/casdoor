@@ -43,6 +43,7 @@ class ProviderListPage extends BaseListPage {
     return {
       owner: this.state.owner,
       name: `provider_${randomName}`,
+      organization: this.props.account.owner,
       createdTime: moment().format(),
       displayName: `New Provider - ${randomName}`,
       category: "OAuth",
@@ -97,6 +98,21 @@ class ProviderListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <Link to={`/providers/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "organization",
+        key: "organization",
+        width: "150px",
+        sorter: true,
+        ...this.getColumnSearchProps("organization"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
               {text}
             </Link>
           );

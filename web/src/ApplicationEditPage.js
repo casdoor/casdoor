@@ -91,7 +91,7 @@ class ApplicationEditPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      owner: props.account.owner,
+      owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       applicationName: props.match.params.applicationName,
       application: null,
       organizations: [],
@@ -112,7 +112,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   getApplication() {
-    ApplicationBackend.getApplication("admin", this.state.applicationName)
+    ApplicationBackend.getApplication(this.state.owner, this.state.applicationName)
       .then((application) => {
         if (application.grantTypes === null || application.grantTypes === undefined || application.grantTypes.length === 0) {
           application.grantTypes = ["authorization_code"];
@@ -797,12 +797,13 @@ class ApplicationEditPage extends React.Component {
           Setting.showMessage("success", "Successfully saved");
           this.setState({
             applicationName: this.state.application.name,
+            owner: this.state.application.owner,
           });
 
           if (willExist) {
             this.props.history.push("/applications");
           } else {
-            this.props.history.push(`/applications/${this.state.application.name}`);
+            this.props.history.push(`/applications/${this.state.application.owner}/${this.state.application.name}`);
           }
         } else {
           Setting.showMessage("error", res.msg);
