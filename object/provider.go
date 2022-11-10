@@ -37,8 +37,6 @@ type Provider struct {
 	ClientSecret      string `xorm:"varchar(2000)" json:"clientSecret"`
 	ClientId2         string `xorm:"varchar(100)" json:"clientId2"`
 	ClientSecret2     string `xorm:"varchar(100)" json:"clientSecret2"`
-	ClientId3         string `xorm:"varchar(100)" json:"clientId3"` // Wechat Official Account ClientID And Secret
-	ClientSecret3     string `xorm:"varchar(100)" json:"clientSecret3"`
 	WeChatQRCode      string `xorm:"varchar(500)" json:"weChatQRCode"`
 	Cert              string `xorm:"varchar(100)" json:"cert"`
 	CustomAuthUrl     string `xorm:"varchar(200)" json:"customAuthUrl"`
@@ -85,9 +83,6 @@ func GetMaskedProvider(provider *Provider) *Provider {
 		provider.ClientSecret2 = "***"
 	}
 
-	if provider.ClientSecret3 != "" {
-		provider.ClientSecret3 = "***"
-	}
 	return provider
 }
 
@@ -227,10 +222,7 @@ func UpdateProvider(id string, provider *Provider) bool {
 	if provider.ClientSecret2 == "***" {
 		session = session.Omit("client_secret2")
 	}
-
-	if provider.ClientSecret3 == "***" {
-		session = session.Omit("client_secret3")
-	}
+	
 	affected, err := session.Update(provider)
 	if err != nil {
 		panic(err)

@@ -121,7 +121,7 @@ func getProviderMap(owner string) map[string]*Provider {
 	m := map[string]*Provider{}
 	for _, provider := range providers {
 		if provider.Type == "WeChat" {
-			provider.WeChatQRCode = idp.GetWechatOfficialAccountQRCode(provider.ClientId3, provider.ClientSecret3)
+			provider.WeChatQRCode = idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2)
 		}
 
 		m[provider.Name] = GetMaskedProvider(provider)
