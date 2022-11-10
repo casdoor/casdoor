@@ -227,6 +227,10 @@ func UpdateProvider(id string, provider *Provider) bool {
 	if provider.ClientSecret2 == "***" {
 		session = session.Omit("client_secret2")
 	}
+
+	if provider.ClientSecret3 == "***" {
+		session = session.Omit("client_secret3")
+	}
 	affected, err := session.Update(provider)
 	if err != nil {
 		panic(err)

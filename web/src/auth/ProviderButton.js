@@ -120,7 +120,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
     if (provider.category === "OAuth") {
       if (provider.type === "WeChat" && provider.clientId3 !== "" && provider.clientSecret3 !== "" && provider.weChatQRCode !== "") {
         const info = async() => {
-          setInterval(await getEvent, 3000, application, provider);
+          const t1 = setInterval(await getEvent, 3000, application, provider);
           {Modal.info({
             title: i18next.t("Please use your mobile phone scan this QR code and then follow the Official Account"),
             content: (
@@ -128,6 +128,9 @@ export function renderProviderLogo(provider, application, width, margin, size, l
                 <img width={256} height={256} src = {"data:image/png;base64," + provider.weChatQRCode} alt="Wechat QR code" style={{margin: margin}} />
               </div>
             ),
+            onOk() {
+              window.clearInterval(t1);
+            },
           });}
         };
         return (
