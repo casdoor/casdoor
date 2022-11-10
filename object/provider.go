@@ -45,12 +45,13 @@ type Provider struct {
 	CustomUserInfoUrl string `xorm:"varchar(200)" json:"customUserInfoUrl"`
 	CustomLogo        string `xorm:"varchar(200)" json:"customLogo"`
 
-	Host       string `xorm:"varchar(100)" json:"host"`
-	Port       int    `json:"port"`
-	DisableSsl bool   `json:"disableSsl"`
-	Title      string `xorm:"varchar(100)" json:"title"`
-	Content    string `xorm:"varchar(1000)" json:"content"`
-	Receiver   string `xorm:"varchar(100)" json:"receiver"`
+	Host                            string `xorm:"varchar(100)" json:"host"`
+	Port                            int    `json:"port"`
+	DisableSsl                      bool   `json:"disableSsl"`
+	Title                           string `xorm:"varchar(100)" json:"title"`
+	Content                         string `xorm:"varchar(1000)" json:"content"`
+	Receiver                        string `xorm:"varchar(100)" json:"receiver"`
+	MustFollowWechatOfficialAccount bool   `json:"mustFollowWechatOfficialAccount"`
 
 	RegionId     string `xorm:"varchar(100)" json:"regionId"`
 	SignName     string `xorm:"varchar(100)" json:"signName"`
@@ -222,7 +223,7 @@ func UpdateProvider(id string, provider *Provider) bool {
 	if provider.ClientSecret2 == "***" {
 		session = session.Omit("client_secret2")
 	}
-	
+
 	affected, err := session.Update(provider)
 	if err != nil {
 		panic(err)

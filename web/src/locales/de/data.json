@@ -491,6 +491,7 @@
     "Metadata - Tooltip": "Metadaten - Tooltip",
     "Method": "Methode",
     "Method - Tooltip": "Login behaviors, QR code or silent authorization",
+    "Must follow wechat official account - Tooltip": "Must follow wechat official account - Tooltip",
     "Name": "Name",
     "New Provider": "New Provider",
     "Parse": "Parse",
@@ -550,7 +551,8 @@
     "UserInfo URL": "UserInfo URL",
     "UserInfo URL - Tooltip": "UserInfo URL - Tooltip",
     "Visible": "Visible",
-    "alertType": "alarmtyp"
+    "alertType": "alarmtyp",
+    "must follow wechat official account": "must follow wechat official account"
   },
   "record": {
     "Is Triggered": "Wird ausgelöst"

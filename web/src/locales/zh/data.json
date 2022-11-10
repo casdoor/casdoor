@@ -491,6 +491,7 @@
     "Metadata - Tooltip": "元数据 - 工具提示",
     "Method": "方法",
     "Method - Tooltip": "登录行为，二维码或者静默授权登录",
+    "Must follow wechat official account - Tooltip": "强制关注公众号 - 工具提示",
     "Name": "名称",
     "New Provider": "添加提供商",
     "Parse": "Parse",
@@ -550,7 +551,8 @@
     "UserInfo URL": "UserInfo URL",
     "UserInfo URL - Tooltip": "UserInfo URL - 工具提示",
     "Visible": "是否可见",
-    "alertType": "警报类型"
+    "alertType": "警报类型",
+    "must follow wechat official account": "强制关注公众号"
   },
   "record": {
     "Is Triggered": "已触发"
