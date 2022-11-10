@@ -40,7 +40,7 @@ import BilibiliLoginButton from "./BilibiliLoginButton";
 import OktaLoginButton from "./OktaLoginButton";
 import DouyinLoginButton from "./DouyinLoginButton";
 import * as AuthBackend from "./AuthBackend";
-import {getBase64QRCode, getEvent} from "./Util";
+import {getEvent} from "./Util";
 import {Modal} from "antd";
 
 function getSigninButton(type) {
@@ -118,16 +118,14 @@ function getSamlUrl(provider, location) {
 export function renderProviderLogo(provider, application, width, margin, size, location) {
   if (size === "small") {
     if (provider.category === "OAuth") {
-      if (provider.type === "WeChat" && provider.clientId3 !== "" && provider.clientSecret3 !== "") {
+      if (provider.type === "WeChat" && provider.clientId3 !== "" && provider.clientSecret3 !== "" && provider.weChatQRCode !== "") {
         const info = async() => {
-          await getBase64QRCode(provider.clientId3, provider.clientSecret3);
-          const url = localStorage.getItem("qrCodeImage");
-          setInterval(await getEvent, 5000, application, provider);
+          setInterval(await getEvent, 3000, application, provider);
           {Modal.info({
             title: i18next.t("Please use your mobile phone scan this QR code and then follow the Official Account"),
             content: (
               <div>
-                <img width={256} height={256} src={url} alt="Wechat QR code" style={{margin: margin}} />
+                <img width={256} height={256} src = {"data:image/png;base64," + provider.weChatQRCode} alt="Wechat QR code" style={{margin: margin}} />
               </div>
             ),
           });}

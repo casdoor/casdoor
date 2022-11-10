@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Alert, Button, Result, message} from "antd";
-import {getOfficialAccountQRCode, getWechatMessageEvent} from "./AuthBackend";
+import {getWechatMessageEvent} from "./AuthBackend";
 import * as Setting from "../Setting";
 import * as Provider from "./Provider";
 
@@ -152,13 +152,6 @@ export function getQueryParamsFromState(state) {
   } else {
     return query;
   }
-}
-
-export function getBase64QRCode(clientId, clientSecret) {
-  getOfficialAccountQRCode(clientId, clientSecret)
-    .then(res => {
-      localStorage.setItem("qrCodeImage", "data:image/png;base64," + res.data);
-    });
 }
 
 export function getEvent(application, provider) {

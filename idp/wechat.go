@@ -215,7 +215,8 @@ func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) s
 	return data.AccessToken
 }
 
-func GetWechatOfficialAccountQRCode(accessToken string) string {
+func GetWechatOfficialAccountQRCode(clientId string, clientSecret string) string {
+	accessToken := GetWechatOfficialAccountAccessToken(clientId, clientSecret)
 	client := new(http.Client)
 	params := "{\"expire_seconds\": 604800, \"action_name\": \"QR_STR_SCENE\", \"action_info\": {\"scene\": {\"scene_str\": \"test\"}}}"
 	bodyData := bytes.NewReader([]byte(params))

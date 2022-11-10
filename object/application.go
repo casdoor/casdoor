@@ -20,6 +20,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -119,9 +120,9 @@ func getProviderMap(owner string) map[string]*Provider {
 	providers := GetProviders(owner)
 	m := map[string]*Provider{}
 	for _, provider := range providers {
-		//if provider.Category != "OAuth" {
-		//	continue
-		//}
+		if provider.Type == "WeChat" {
+			provider.WeChatQRCode = idp.GetWechatOfficialAccountQRCode(provider.ClientId3, provider.ClientSecret3)
+		}
 
 		m[provider.Name] = GetMaskedProvider(provider)
 	}

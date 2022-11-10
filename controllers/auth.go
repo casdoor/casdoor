@@ -558,24 +558,6 @@ func (c *ApiController) GetOfficialAccountEvent() {
 	wechatScanType["event"] = data.Event
 }
 
-// GetWechatOfficialAccountQRCode ...
-// @Tag GetWechatOfficialAccountQRCode API
-// @Title GetWechatOfficialAccountQRCode
-// @router /api/get-qr-code [GET]
-func (c *ApiController) GetWechatOfficialAccountQRCode() {
-	clientId := c.Input().Get("clientId")
-	clientSecret := c.Input().Get("clientSecret")
-	accessToken := idp.GetWechatOfficialAccountAccessToken(clientId, clientSecret)
-	base64Image := idp.GetWechatOfficialAccountQRCode(accessToken)
-	resp := &Response{
-		Status: "ok",
-		Msg:    "",
-		Data:   base64Image,
-	}
-	c.Data["json"] = resp
-	c.ServeJSON()
-}
-
 // GetWechatScanType ...
 // @Tag GetWechatScanType API
 // @Title GetWechatScanType
