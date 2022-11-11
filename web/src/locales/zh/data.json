@@ -478,6 +478,8 @@
     "Email Content - Tooltip": "邮件内容",
     "Email Title": "邮件标题",
     "Email Title - Tooltip": "邮件标题",
+    "Enable QR code": "扫码登陆",
+    "Enable QR code - Tooltip": "扫码登陆 - 工具提示",
     "Endpoint": "地域节点 (外网)",
     "Endpoint (Intranet)": "地域节点 (内网)",
     "Host": "主机",
@@ -491,12 +493,12 @@
     "Metadata - Tooltip": "元数据 - 工具提示",
     "Method": "方法",
     "Method - Tooltip": "登录行为，二维码或者静默授权登录",
-    "Must follow wechat official account - Tooltip": "强制关注公众号 - 工具提示",
     "Name": "名称",
     "New Provider": "添加提供商",
     "Parse": "Parse",
     "Parse Metadata successfully": "解析元数据成功",
     "Path prefix": "路径前缀",
+    "Please use WeChat and scan the QR code to sign in": "请使用微信扫描二维码登录",
     "Port": "端口",
     "Port - Tooltip": "端口号",
     "Prompted": "注册后提醒绑定",
@@ -551,8 +553,7 @@
     "UserInfo URL": "UserInfo URL",
     "UserInfo URL - Tooltip": "UserInfo URL - 工具提示",
     "Visible": "是否可见",
-    "alertType": "警报类型",
-    "must follow wechat official account": "强制关注公众号"
+    "alertType": "警报类型"
   },
   "record": {
     "Is Triggered": "已触发"

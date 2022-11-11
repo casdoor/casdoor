@@ -132,7 +132,7 @@ export function loginWithSaml(values, param) {
 }
 
 export function getWechatMessageEvent() {
-  return fetch(`${Setting.ServerUrl}/api/get-wechat-event`, {
+  return fetch(`${Setting.ServerUrl}/api/get-webhook-event`, {
     method: "GET",
     credentials: "include",
     headers: {

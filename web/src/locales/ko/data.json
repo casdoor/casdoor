@@ -478,6 +478,8 @@
     "Email Content - Tooltip": "Unique string-style identifier",
     "Email Title": "Email title",
     "Email Title - Tooltip": "Unique string-style identifier",
+    "Enable QR code": "Enable QR code",
+    "Enable QR code - Tooltip": "Enable QR code - Tooltip",
     "Endpoint": "Endpoint",
     "Endpoint (Intranet)": "Endpoint (Intranet)",
     "Host": "Host",
@@ -491,12 +493,12 @@
     "Metadata - Tooltip": "Metadata - Tooltip",
     "Method": "Method",
     "Method - Tooltip": "Login behaviors, QR code or silent authorization",
-    "Must follow wechat official account - Tooltip": "Must follow wechat official account - Tooltip",
     "Name": "Name",
     "New Provider": "New Provider",
     "Parse": "Parse",
     "Parse Metadata successfully": "Parse Metadata successfully",
     "Path prefix": "Path prefix",
+    "Please use WeChat and scan the QR code to sign in": "Please use WeChat and scan the QR code to sign in",
     "Port": "Port",
     "Port - Tooltip": "Unique string-style identifier",
     "Prompted": "Prompted",
@@ -551,8 +553,7 @@
     "UserInfo URL": "UserInfo URL",
     "UserInfo URL - Tooltip": "UserInfo URL - Tooltip",
     "Visible": "Visible",
-    "alertType": "alertType",
-    "must follow wechat official account": "must follow wechat official account"
+    "alertType": "alertType"
   },
   "record": {
     "Is Triggered": "Is Triggered"

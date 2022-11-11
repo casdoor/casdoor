@@ -20,14 +20,13 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/casdoor/casdoor/captcha"
-
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
@@ -36,7 +35,10 @@ import (
 	"github.com/google/uuid"
 )
 
-var wechatScanType = make(map[string]string)
+var (
+	wechatScanType string
+	lock           sync.RWMutex
+)
 
 func codeToResponse(code *object.Code) *Response {
 	if code.Code == "" {
@@ -537,14 +539,14 @@ func (c *ApiController) HandleSamlLogin() {
 	c.Redirect(targetUrl, 303)
 }
 
-// GetOfficialAccountEvent ...
-// @Tag GetOfficialAccountEvent API
-// @Title GetOfficialAccountEvent
-// @router /api/wechat [POST]
-func (c *ApiController) GetOfficialAccountEvent() {
+// HandleOfficialAccountEvent ...
+// @Tag HandleOfficialAccountEvent API
+// @Title HandleOfficialAccountEvent
+// @router /api/webhook [POST]
+func (c *ApiController) HandleOfficialAccountEvent() {
 	respBytes, err := ioutil.ReadAll(c.Ctx.Request.Body)
 	if err != nil {
-		log.Println(err.Error())
+		c.ResponseError(err.Error())
 	}
 	var data struct {
 		MsgType string `xml:"MsgType"`
@@ -552,23 +554,25 @@ func (c *ApiController) GetOfficialAccountEvent() {
 	}
 	err = xml.Unmarshal(respBytes, &data)
 	if err != nil {
-		fmt.Printf("error: %v", err)
-		return
+		c.ResponseError(err.Error())
 	}
-	wechatScanType["event"] = data.Event
+	lock.Lock()
+	defer lock.Unlock()
+	wechatScanType = data.Event
 }
 
-// GetWechatScanType ...
-// @Tag GetWechatScanType API
-// @Title GetWechatScanType
-// @router /api/get-wechat-event [GET]
-func (c *ApiController) GetWechatScanType() {
+// GetWebhookEventType ...
+// @Tag GetWebhookEventType API
+// @Title GetWebhookEventType
+// @router /api/get-webhook-event [GET]
+func (c *ApiController) GetWebhookEventType() {
+	lock.RLock()
+	defer lock.RUnlock()
 	resp := &Response{
 		Status: "ok",
 		Msg:    "",
-		Data:   wechatScanType["event"],
+		Data:   wechatScanType,
 	}
 	c.Data["json"] = resp
 	c.ServeJSON()
-	wechatScanType["event"] = ""
 }

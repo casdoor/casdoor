@@ -428,11 +428,11 @@ class ProviderEditPage extends React.Component {
           this.state.provider.type !== "WeChat" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("provider:must follow wechat official account"), i18next.t("provider:Must follow wechat official account - Tooltip"))} :
+                {Setting.getLabel(i18next.t("provider:Enable QR code"), i18next.t("provider:Enable QR code - Tooltip"))} :
               </Col>
               <Col span={1} >
-                <Switch checked={this.state.provider.mustFollowWechatOfficialAccount} onChange={checked => {
-                  this.updateProviderField("mustFollowWechatOfficialAccount", checked);
+                <Switch checked={this.state.provider.disableSsl} onChange={checked => {
+                  this.updateProviderField("disableSsl", checked);
                 }} />
               </Col>
             </Row>

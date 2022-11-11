@@ -37,7 +37,6 @@ type Provider struct {
 	ClientSecret      string `xorm:"varchar(2000)" json:"clientSecret"`
 	ClientId2         string `xorm:"varchar(100)" json:"clientId2"`
 	ClientSecret2     string `xorm:"varchar(100)" json:"clientSecret2"`
-	WeChatQRCode      string `xorm:"varchar(500)" json:"weChatQRCode"`
 	Cert              string `xorm:"varchar(100)" json:"cert"`
 	CustomAuthUrl     string `xorm:"varchar(200)" json:"customAuthUrl"`
 	CustomScope       string `xorm:"varchar(200)" json:"customScope"`
@@ -45,13 +44,12 @@ type Provider struct {
 	CustomUserInfoUrl string `xorm:"varchar(200)" json:"customUserInfoUrl"`
 	CustomLogo        string `xorm:"varchar(200)" json:"customLogo"`
 
-	Host                            string `xorm:"varchar(100)" json:"host"`
-	Port                            int    `json:"port"`
-	DisableSsl                      bool   `json:"disableSsl"`
-	Title                           string `xorm:"varchar(100)" json:"title"`
-	Content                         string `xorm:"varchar(1000)" json:"content"`
-	Receiver                        string `xorm:"varchar(100)" json:"receiver"`
-	MustFollowWechatOfficialAccount bool   `json:"mustFollowWechatOfficialAccount"`
+	Host       string `xorm:"varchar(100)" json:"host"`
+	Port       int    `json:"port"`
+	DisableSsl bool   `json:"disableSsl"` // If the provider type is WeChat, DisableSsl means EnableQRCode
+	Title      string `xorm:"varchar(100)" json:"title"`
+	Content    string `xorm:"varchar(1000)" json:"content"` // If provider type is WeChat, Content means QRCode string by Base64 encoding
+	Receiver   string `xorm:"varchar(100)" json:"receiver"`
 
 	RegionId     string `xorm:"varchar(100)" json:"regionId"`
 	SignName     string `xorm:"varchar(100)" json:"signName"`
@@ -223,7 +221,6 @@ func UpdateProvider(id string, provider *Provider) bool {
 	if provider.ClientSecret2 == "***" {
 		session = session.Omit("client_secret2")
 	}
-
 	affected, err := session.Update(provider)
 	if err != nil {
 		panic(err)

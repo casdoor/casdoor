@@ -85,8 +85,8 @@ p, *, *, POST, /api/logout, *, *
 p, *, *, GET, /api/logout, *, *
 p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
-p, *, *, POST, /api/wechat, *, *
-p, *, *, GET, /api/get-wechat-event, *, *
+p, *, *, POST, /api/webhook, *, *
+p, *, *, GET, /api/get-webhook-event, *, *
 p, *, *, *, /api/login/oauth, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-organization-applications, *, *

@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -196,13 +195,14 @@ func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	return &userInfo, nil
 }
 
-func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) string {
-	request, err := http.NewRequest("GET", "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+clientId+"&secret="+clientSecret, nil)
+func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) (string, error) {
+	accessTokenUrl := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", clientId, clientSecret)
+	request, err := http.NewRequest("GET", accessTokenUrl, nil)
 	client := new(http.Client)
 	resp, err := client.Do(request)
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println(err.Error())
+		return "", err
 	}
 	var data struct {
 		ExpireIn    int    `json:"expires_in"`
@@ -210,24 +210,25 @@ func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) s
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-		log.Println(err.Error())
+		return "", err
 	}
-	return data.AccessToken
+	return data.AccessToken, nil
 }
 
-func GetWechatOfficialAccountQRCode(clientId string, clientSecret string) string {
-	accessToken := GetWechatOfficialAccountAccessToken(clientId, clientSecret)
+func GetWechatOfficialAccountQRCode(clientId string, clientSecret string) (string, error) {
+	accessToken, err := GetWechatOfficialAccountAccessToken(clientId, clientSecret)
 	client := new(http.Client)
-	params := "{\"expire_seconds\": 604800, \"action_name\": \"QR_STR_SCENE\", \"action_info\": {\"scene\": {\"scene_str\": \"test\"}}}"
+	params := "{\"action_name\": \"QR_LIMIT_STR_SCENE\", \"action_info\": {\"scene\": {\"scene_str\": \"test\"}}}"
 	bodyData := bytes.NewReader([]byte(params))
-	requeset, err := http.NewRequest("POST", "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token="+accessToken, bodyData)
+	qrCodeUrl := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=%s", accessToken)
+	requeset, err := http.NewRequest("POST", qrCodeUrl, bodyData)
 	resp, err := client.Do(requeset)
 	if err != nil {
-		log.Println(err.Error())
+		return "", err
 	}
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println(err.Error())
+		return "", err
 	}
 	var data struct {
 		Ticket        string `json:"ticket"`
@@ -236,11 +237,11 @@ func GetWechatOfficialAccountQRCode(clientId string, clientSecret string) string
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-		log.Println(err.Error())
+		return "", err
 	}
 
 	var png []byte
 	png, err = qrcode.Encode(data.URL, qrcode.Medium, 256)
 	base64Image := base64.StdEncoding.EncodeToString(png)
-	return base64Image
+	return base64Image, nil
 }

@@ -118,14 +118,14 @@ function getSamlUrl(provider, location) {
 export function renderProviderLogo(provider, application, width, margin, size, location) {
   if (size === "small") {
     if (provider.category === "OAuth") {
-      if (provider.type === "WeChat" && provider.clientId2 !== "" && provider.clientSecret2 !== "" && provider.weChatQRCode !== "" && provider.mustFollowWechatOfficialAccount === true) {
+      if (provider.type === "WeChat" && provider.clientId2 !== "" && provider.clientSecret2 !== "" && provider.content !== "" && provider.disableSsl === true) {
         const info = async() => {
-          const t1 = setInterval(await getEvent, 3000, application, provider);
+          const t1 = setInterval(await getEvent, 1000, application, provider);
           {Modal.info({
-            title: "Please use your mobile phone scan this QR code and then follow the Official Account",
+            title: i18next.t("provider:Please use WeChat and scan the QR code to sign in"),
             content: (
               <div>
-                <img width={256} height={256} src = {"data:image/png;base64," + provider.weChatQRCode} alt="Wechat QR code" style={{margin: margin}} />
+                <img width={256} height={256} src = {"data:image/png;base64," + provider.content} alt="Wechat QR code" style={{margin: margin}} />
               </div>
             ),
             onOk() {
