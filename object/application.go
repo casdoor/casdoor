@@ -120,7 +120,7 @@ func getProviderMap(owner string) map[string]*Provider {
 	providers := GetProviders(owner)
 	m := map[string]*Provider{}
 	for _, provider := range providers {
-		//Get QRCode only once
+		// Get QRCode only once
 		if provider.Type == "WeChat" && provider.DisableSsl == true && provider.Content == "" {
 			provider.Content, _ = idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2)
 			UpdateProvider(provider.Owner+"/"+provider.Name, provider)
