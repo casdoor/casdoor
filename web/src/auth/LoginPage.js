@@ -784,7 +784,6 @@ class LoginPage extends React.Component {
         <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
           {Setting.inIframe() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
           <div className="login-panel">
-            <SelectLanguageBox id="language-box-corner" style={{top: "50px"}} />
             <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
               <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
             </div>
@@ -800,6 +799,7 @@ class LoginPage extends React.Component {
                   {/* {*/}
                   {/*  this.state.clientId !== null ? "Redirect" : null*/}
                   {/* }*/}
+                  <SelectLanguageBox id="language-box-corner" style={{top: "50px", position: "static"}} />
                   {
                     this.renderSignedInBox()
                   }
