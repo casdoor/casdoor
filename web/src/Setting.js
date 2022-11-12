@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Link, useHistory} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {Tag, Tooltip, message} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
@@ -752,7 +752,7 @@ export function getLoginLink(application) {
   } else if (authConfig.appName === application.name) {
     url = "/login";
   } else if (application.signinUrl === "") {
-    url = path.join(application.homepageUrl, "login");
+    url = path.join(application.homepageUrl, "/login");
   } else {
     url = application.signinUrl;
   }
@@ -766,8 +766,7 @@ export function renderLoginLink(application, text) {
 
 export function redirectToLoginPage(application) {
   const loginLink = getLoginLink(application);
-  const history = useHistory();
-  history.push(loginLink);
+  window.location.replace(loginLink);
 }
 
 function renderLink(url, text, onClick) {
