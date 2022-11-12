@@ -33,7 +33,7 @@ class ProviderEditPage extends React.Component {
     this.state = {
       classes: props,
       providerName: props.match.params.providerName,
-      owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
+      owner: props.owner !== undefined ? props.owner : props.match.params.owner,
       provider: null,
       organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
@@ -55,12 +55,14 @@ class ProviderEditPage extends React.Component {
   }
 
   getOrganizations() {
-    OrganizationBackend.getOrganizations("admin")
-      .then((res) => {
-        this.setState({
-          organizations: res.msg === undefined ? res : [],
+    if (Setting.isAdminUser(this.props.account)) {
+      OrganizationBackend.getOrganizations("admin")
+        .then((res) => {
+          this.setState({
+            organizations: res.msg === undefined ? res : [],
+          });
         });
-      });
+    }
   }
 
   parseProviderField(key, value) {
@@ -208,10 +210,8 @@ class ProviderEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.provider.organization} onChange={(value => {
-              this.updateProviderField("organization", value);
-              this.updateProviderField("owner", value === "built-in" ? "admin" : value);
-            })}>
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.provider.owner} onChange={(value => {this.updateProviderField("owner", value);})}>
+              {Setting.isAdminUser(this.props.account) ? <Option key={"admin"} value={"admin"}>{i18next.t("provider:admin (share)")}</Option> : null}
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }

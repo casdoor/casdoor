@@ -24,8 +24,8 @@ export function getApplications(owner, page = "", pageSize = "", field = "", val
   }).then(res => res.json());
 }
 
-export function getApplicationsByOrganization(owner, organization) {
-  return fetch(`${Setting.ServerUrl}/api/get-organization-applications?owner=${owner}&organization=${organization}`, {
+export function getApplicationsByOrganization(owner, organization, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-organization-applications?owner=${owner}&organization=${organization}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -68,7 +68,6 @@ export function updateApplication(owner, name, application) {
 
 export function addApplication(application) {
   const newApplication = Setting.deepCopy(application);
-  newApplication.organization = "built-in";
   return fetch(`${Setting.ServerUrl}/api/add-application`, {
     method: "POST",
     credentials: "include",

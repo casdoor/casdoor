@@ -173,8 +173,6 @@ class LoginPage extends React.Component {
     } else {
       values["type"] = this.state.type;
     }
-    // eslint-disable-next-line no-console
-    console.log(this.getApplicationObj());
     values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix;
 
     if (oAuthParams !== null) {

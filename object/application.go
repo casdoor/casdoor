@@ -84,8 +84,18 @@ func GetApplicationCount(owner, field, value string) int {
 	return int(count)
 }
 
+func GetOrganizationApplicationCount(owner, Organization, field, value string) int {
+	session := GetSession(owner, -1, -1, field, value, "", "")
+	count, err := session.Count(&Application{Organization: Organization})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
 func GetApplications(owner string) []*Application {
-	applications := []*Application{}
+	var applications []*Application
 	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner})
 	if err != nil {
 		panic(err)
@@ -94,8 +104,18 @@ func GetApplications(owner string) []*Application {
 	return applications
 }
 
+func GetOrganizationApplications(owner string, organization string) []*Application {
+	var applications []*Application
+	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner, Organization: organization})
+	if err != nil {
+		panic(err)
+	}
+
+	return applications
+}
+
 func GetPaginationApplications(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
-	applications := []*Application{}
+	var applications []*Application
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&applications)
 	if err != nil {
@@ -105,9 +125,10 @@ func GetPaginationApplications(owner string, offset, limit int, field, value, so
 	return applications
 }
 
-func GetApplicationsByOrganizationName(owner string, organization string) []*Application {
-	applications := []*Application{}
-	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner, Organization: organization})
+func GetPaginationOrganizationApplications(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
+	var applications []*Application
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&applications, &Application{Owner: owner, Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -116,7 +137,7 @@ func GetApplicationsByOrganizationName(owner string, organization string) []*App
 }
 
 func getProviderMap(owner string) map[string]*Provider {
-	providers := GetProviders(owner)
+	providers := getAdminAndOrgProviders(owner)
 	m := map[string]*Provider{}
 	for _, provider := range providers {
 		//if provider.Category != "OAuth" {
@@ -129,7 +150,7 @@ func getProviderMap(owner string) map[string]*Provider {
 }
 
 func extendApplicationWithProviders(application *Application) {
-	m := getProviderMap(application.Owner)
+	m := getProviderMap(application.Organization)
 	for _, providerItem := range application.Providers {
 		if provider, ok := m[providerItem.Name]; ok {
 			providerItem.Provider = provider
@@ -378,7 +399,7 @@ func IsAllowOrigin(origin string) bool {
 }
 
 func getApplicationMap(organization string) map[string]*Application {
-	applications := GetApplicationsByOrganizationName("admin", organization)
+	applications := GetOrganizationApplications("admin", organization)
 
 	applicationMap := make(map[string]*Application)
 	for _, application := range applications {

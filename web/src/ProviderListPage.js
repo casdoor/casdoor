@@ -27,7 +27,7 @@ class ProviderListPage extends BaseListPage {
     super(props);
     this.state = {
       classes: props,
-      owner: Setting.isAdminUser(props.account) ? "admin" : props.account.organization.name,
+      owner: Setting.isAdminUser(props.account) ? "admin" : props.account.owner,
       data: [],
       pagination: {
         current: 1,
@@ -43,7 +43,6 @@ class ProviderListPage extends BaseListPage {
     return {
       owner: this.state.owner,
       name: `provider_${randomName}`,
-      organization: this.props.account.owner,
       createdTime: moment().format(),
       displayName: `New Provider - ${randomName}`,
       category: "OAuth",
@@ -97,7 +96,7 @@ class ProviderListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/providers/${text}`}>
+            <Link to={`/providers/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -105,18 +104,11 @@ class ProviderListPage extends BaseListPage {
       },
       {
         title: i18next.t("general:Organization"),
-        dataIndex: "organization",
-        key: "organization",
+        dataIndex: "owner",
+        key: "owner",
         width: "150px",
         sorter: true,
-        ...this.getColumnSearchProps("organization"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/organizations/${text}`}>
-              {text}
-            </Link>
-          );
-        },
+        ...this.getColumnSearchProps("owner"),
       },
       {
         title: i18next.t("general:Created time"),

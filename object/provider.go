@@ -25,11 +25,10 @@ import (
 
 type Provider struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	Name        string `xorm:"varchar(100) notnull pk unique" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	DisplayName       string `xorm:"varchar(100)" json:"displayName"`
-	Organization      string `xorm:"varchar(100)" json:"organization"`
 	Category          string `xorm:"varchar(100)" json:"category"`
 	Type              string `xorm:"varchar(100)" json:"type"`
 	SubType           string `xorm:"varchar(100)" json:"subType"`
@@ -114,7 +113,7 @@ func GetGlobalProviderCount(field, value string) int {
 }
 
 func GetProviders(owner string) []*Provider {
-	providers := []*Provider{}
+	var providers []*Provider
 	err := adapter.Engine.Desc("created_time").Find(&providers, &Provider{Owner: owner})
 	if err != nil {
 		panic(err)
@@ -123,8 +122,18 @@ func GetProviders(owner string) []*Provider {
 	return providers
 }
 
+func getAdminAndOrgProviders(organization string) []*Provider {
+	var providers []*Provider
+	err := adapter.Engine.Where("owner = ? or owner = ? ", "admin", organization).Desc("created_time").Find(&providers, &Provider{})
+	if err != nil {
+		panic(err)
+	}
+
+	return providers
+}
+
 func GetGlobalProviders() []*Provider {
-	providers := []*Provider{}
+	var providers []*Provider
 	err := adapter.Engine.Desc("created_time").Find(&providers)
 	if err != nil {
 		panic(err)
@@ -176,6 +185,24 @@ func getProvider(owner string, name string) *Provider {
 func GetProvider(id string) *Provider {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getProvider(owner, name)
+}
+
+func GetProviderByName(name string) *Provider {
+	if name == "" {
+		return nil
+	}
+
+	provider := Provider{Name: name}
+	existed, err := adapter.Engine.Get(&provider)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &provider
+	} else {
+		return nil
+	}
 }
 
 func GetDefaultCaptchaProvider() *Provider {

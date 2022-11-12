@@ -112,7 +112,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   getApplication() {
-    ApplicationBackend.getApplication(this.state.owner, this.state.applicationName)
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
         if (application.grantTypes === null || application.grantTypes === undefined || application.grantTypes.length === 0) {
           application.grantTypes = ["authorization_code"];
@@ -142,21 +142,11 @@ class ApplicationEditPage extends React.Component {
   }
 
   getProviders() {
-    if (Setting.isAdminUser(this.props.account)) {
-      ProviderBackend.getGlobalProviders()
-        .then((res) => {
-          this.setState({
-            providers: res,
-          });
-        });
-    } else {
-      ProviderBackend.getProviders(this.state.owner)
-        .then((res) => {
-          this.setState({
-            providers: res,
-          });
-        });
-    }
+    Promise.all([ProviderBackend.getProviders(this.state.owner), ProviderBackend.getProviders("admin")]).then((value => {
+      this.setState({
+        providers: value[1].concat(value[0]),
+      });
+    }));
   }
 
   getSamlMetadata() {
@@ -287,7 +277,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.application.organization} onChange={(value => {this.updateApplicationField("organization", value);})}>
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.application.organization} onChange={(value => {this.updateApplicationField("organization", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -791,19 +781,18 @@ class ApplicationEditPage extends React.Component {
 
   submitApplicationEdit(willExist) {
     const application = Setting.deepCopy(this.state.application);
-    ApplicationBackend.updateApplication(this.state.application.owner, this.state.applicationName, application)
+    ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
       .then((res) => {
         if (res.msg === "") {
           Setting.showMessage("success", "Successfully saved");
           this.setState({
             applicationName: this.state.application.name,
-            owner: this.state.application.owner,
           });
 
           if (willExist) {
             this.props.history.push("/applications");
           } else {
-            this.props.history.push(`/applications/${this.state.application.owner}/${this.state.application.name}`);
+            this.props.history.push(`/applications/${this.state.application.organization}/${this.state.application.name}`);
           }
         } else {
           Setting.showMessage("error", res.msg);
