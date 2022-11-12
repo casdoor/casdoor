@@ -549,8 +549,9 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 		c.ResponseError(err.Error())
 	}
 	var data struct {
-		MsgType string `xml:"MsgType"`
-		Event   string `xml:"Event"`
+		MsgType  string `xml:"MsgType"`
+		Event    string `xml:"Event"`
+		EventKey string `xml:"EventKey"`
 	}
 	err = xml.Unmarshal(respBytes, &data)
 	if err != nil {
@@ -558,7 +559,9 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 	}
 	lock.Lock()
 	defer lock.Unlock()
-	wechatScanType = data.Event
+	if data.EventKey != "" {
+		wechatScanType = data.Event
+	}
 }
 
 // GetWebhookEventType ...
@@ -566,13 +569,14 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 // @Title GetWebhookEventType
 // @router /api/get-webhook-event [GET]
 func (c *ApiController) GetWebhookEventType() {
-	lock.RLock()
-	defer lock.RUnlock()
+	lock.Lock()
+	defer lock.Unlock()
 	resp := &Response{
 		Status: "ok",
 		Msg:    "",
 		Data:   wechatScanType,
 	}
 	c.Data["json"] = resp
+	wechatScanType = ""
 	c.ServeJSON()
 }
