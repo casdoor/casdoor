@@ -562,7 +562,7 @@ class SignupPage extends React.Component {
           application: application.name,
           organization: application.organization,
         }}
-        style={{width: !Setting.isMobile() ? "400px" : "250px"}}
+        style={{width: !Setting.isMobile() ? "400px" : "300px"}}
         size="large"
       >
         <Form.Item
@@ -633,7 +633,6 @@ class SignupPage extends React.Component {
         <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
           {Setting.inIframe() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
           <div className="login-panel" >
-            <SelectLanguageBox id="language-box-corner" style={{top: "50px"}} />
             <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
               <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
             </div>
@@ -645,6 +644,7 @@ class SignupPage extends React.Component {
                 {
                   Setting.renderLogo(application)
                 }
+                <SelectLanguageBox id="language-box-corner" style={{top: "55px", right: "5px", position: "absolute"}} />
                 {
                   this.renderForm(application)
                 }
