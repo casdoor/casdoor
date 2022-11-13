@@ -118,7 +118,7 @@ function getSamlUrl(provider, location) {
 export function renderProviderLogo(provider, application, width, margin, size, location) {
   if (size === "small") {
     if (provider.category === "OAuth") {
-      if (provider.type === "WeChat" && provider.clientId2 !== "" && provider.clientSecret2 !== "" && provider.content !== "" && provider.disableSsl === true) {
+      if (provider.type === "WeChat" && provider.clientId2 !== "" && provider.clientSecret2 !== "" && provider.content !== "" && provider.disableSsl === true && !navigator.userAgent.includes("MicroMessenger")) {
         const info = async() => {
           const t1 = setInterval(await getEvent, 1000, application, provider);
           {Modal.info({
