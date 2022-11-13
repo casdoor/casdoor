@@ -167,7 +167,7 @@ class ForgetPage extends React.Component {
     values.userOwner = this.state.application?.organizationObj.name;
     UserBackend.setPassword(values.userOwner, values.username, "", values?.newPassword).then(res => {
       if (res.status === "ok") {
-        Setting.redirectToLoginPage(this.state.application, this.state.history);
+        Setting.redirectToLoginPage(this.state.application, this.props.history);
       } else {
         Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
       }
