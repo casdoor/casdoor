@@ -28,7 +28,7 @@ var defaultStorageProvider *Provider = nil
 func InitDefaultStorageProvider() {
 	defaultStorageProviderStr := conf.GetConfigString("defaultStorageProvider")
 	if defaultStorageProviderStr != "" {
-		defaultStorageProvider = getProvider(defaultStorageProviderStr)
+		defaultStorageProvider = getProvider("admin", defaultStorageProviderStr)
 	}
 }
 

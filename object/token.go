@@ -678,7 +678,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 			ErrorDescription: "the application does not support wechat mini program",
 		}
 	}
-	provider := GetProvider(mpProvider.Name)
+	provider := GetProvider(util.GetId(mpProvider.Name))
 	mpIdp := idp.NewWeChatMiniProgramIdProvider(provider.ClientId, provider.ClientSecret)
 	session, err := mpIdp.GetSessionByCode(code)
 	if err != nil {

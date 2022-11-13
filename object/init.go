@@ -221,7 +221,7 @@ func initBuiltInLdap() {
 }
 
 func initBuiltInProvider() {
-	provider := GetProvider("provider_captcha_default")
+	provider := GetProvider(util.GetId("provider_captcha_default"))
 	if provider != nil {
 		return
 	}

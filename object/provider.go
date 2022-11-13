@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
@@ -153,8 +154,8 @@ func GetPaginationGlobalProviders(offset, limit int, field, value, sortField, so
 	return providers
 }
 
-func getProvider(name string) *Provider {
-	if name == "" {
+func getProvider(owner string, name string) *Provider {
+	if owner == "" || name == "" {
 		return nil
 	}
 
@@ -171,8 +172,9 @@ func getProvider(name string) *Provider {
 	}
 }
 
-func GetProvider(name string) *Provider {
-	return getProvider(name)
+func GetProvider(id string) *Provider {
+	owner, name := util.GetOwnerAndNameFromId(id)
+	return getProvider(owner, name)
 }
 
 func GetDefaultCaptchaProvider() *Provider {
@@ -201,7 +203,7 @@ func GetWechatMiniProgramProvider(application *Application) *Provider {
 
 func UpdateProvider(id string, provider *Provider) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getProvider(name) == nil {
+	if getProvider(owner, name) == nil {
 		return false
 	}
 

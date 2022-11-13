@@ -21,6 +21,7 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // ResponseJsonData ...
@@ -124,7 +125,7 @@ func getInitScore() (int, error) {
 func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, *object.User, bool) {
 	providerName := c.Input().Get("provider")
 	if providerName != "" {
-		provider := object.GetProvider(providerName)
+		provider := object.GetProvider(util.GetId(providerName))
 		if provider == nil {
 			c.ResponseError(c.T("ProviderErr.ProviderNotFound"), providerName)
 			return nil, nil, false

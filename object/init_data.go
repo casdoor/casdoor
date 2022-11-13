@@ -168,7 +168,7 @@ func initDefinedLdap(ldap *Ldap) {
 }
 
 func initDefinedProvider(provider *Provider) {
-	existed := GetProvider(provider.Name)
+	existed := GetProvider(util.GetId(provider.Name))
 	if existed != nil {
 		return
 	}
