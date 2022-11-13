@@ -173,7 +173,7 @@ class RoleEditPage extends React.Component {
               this.updateRoleField("domains", value);
             })}>
               {
-                this.state.role.domains.map((domain, index) => <Option key={index} value={domain}>{domain}</Option>)
+                this.state.role.domains?.map((domain, index) => <Option key={index} value={domain}>{domain}</Option>)
               }
             </Select>
           </Col>
