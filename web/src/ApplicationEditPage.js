@@ -142,9 +142,9 @@ class ApplicationEditPage extends React.Component {
   }
 
   getProviders() {
-    Promise.all([ProviderBackend.getProviders(this.state.owner), ProviderBackend.getProviders("admin")]).then((value => {
+    ProviderBackend.getProviders(this.state.owner).then((res => {
       this.setState({
-        providers: value[1].concat(value[0]),
+        providers: res,
       });
     }));
   }

@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
@@ -93,8 +92,8 @@ func GetMaskedProviders(providers []*Provider) []*Provider {
 }
 
 func GetProviderCount(owner, field, value string) int {
-	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Provider{})
+	session := GetSession("", -1, -1, field, value, "", "")
+	count, err := session.Where("owner = ? or owner = ? ", "admin", owner).Count(&Provider{})
 	if err != nil {
 		panic(err)
 	}
@@ -113,18 +112,8 @@ func GetGlobalProviderCount(field, value string) int {
 }
 
 func GetProviders(owner string) []*Provider {
-	var providers []*Provider
-	err := adapter.Engine.Desc("created_time").Find(&providers, &Provider{Owner: owner})
-	if err != nil {
-		panic(err)
-	}
-
-	return providers
-}
-
-func getAdminAndOrgProviders(organization string) []*Provider {
-	var providers []*Provider
-	err := adapter.Engine.Where("owner = ? or owner = ? ", "admin", organization).Desc("created_time").Find(&providers, &Provider{})
+	providers := []*Provider{}
+	err := adapter.Engine.Where("owner = ? or owner = ? ", "admin", owner).Desc("created_time").Find(&providers, &Provider{})
 	if err != nil {
 		panic(err)
 	}
@@ -133,7 +122,7 @@ func getAdminAndOrgProviders(organization string) []*Provider {
 }
 
 func GetGlobalProviders() []*Provider {
-	var providers []*Provider
+	providers := []*Provider{}
 	err := adapter.Engine.Desc("created_time").Find(&providers)
 	if err != nil {
 		panic(err)
@@ -143,9 +132,9 @@ func GetGlobalProviders() []*Provider {
 }
 
 func GetPaginationProviders(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Provider {
-	var providers []*Provider
-	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&providers)
+	providers := []*Provider{}
+	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
+	err := session.Where("owner = ? or owner = ? ", "admin", owner).Find(&providers)
 	if err != nil {
 		panic(err)
 	}
@@ -154,7 +143,7 @@ func GetPaginationProviders(owner string, offset, limit int, field, value, sortF
 }
 
 func GetPaginationGlobalProviders(offset, limit int, field, value, sortField, sortOrder string) []*Provider {
-	var providers []*Provider
+	providers := []*Provider{}
 	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&providers)
 	if err != nil {
@@ -164,30 +153,7 @@ func GetPaginationGlobalProviders(offset, limit int, field, value, sortField, so
 	return providers
 }
 
-func getProvider(owner string, name string) *Provider {
-	if owner == "" || name == "" {
-		return nil
-	}
-
-	provider := Provider{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&provider)
-	if err != nil {
-		panic(err)
-	}
-
-	if existed {
-		return &provider
-	} else {
-		return nil
-	}
-}
-
-func GetProvider(id string) *Provider {
-	owner, name := util.GetOwnerAndNameFromId(id)
-	return getProvider(owner, name)
-}
-
-func GetProviderByName(name string) *Provider {
+func getProvider(name string) *Provider {
 	if name == "" {
 		return nil
 	}
@@ -203,6 +169,10 @@ func GetProviderByName(name string) *Provider {
 	} else {
 		return nil
 	}
+}
+
+func GetProvider(name string) *Provider {
+	return getProvider(name)
 }
 
 func GetDefaultCaptchaProvider() *Provider {
@@ -231,7 +201,7 @@ func GetWechatMiniProgramProvider(application *Application) *Provider {
 
 func UpdateProvider(id string, provider *Provider) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getProvider(owner, name) == nil {
+	if getProvider(name) == nil {
 		return false
 	}
 

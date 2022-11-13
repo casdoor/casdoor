@@ -208,7 +208,7 @@ func NotifyPayment(request *http.Request, body []byte, owner string, providerNam
 }
 
 func invoicePayment(payment *Payment) (string, error) {
-	provider := getProvider(payment.Owner, payment.Provider)
+	provider := getProvider(payment.Provider)
 	if provider == nil {
 		return "", fmt.Errorf("the payment provider: %s does not exist", payment.Provider)
 	}

@@ -33,7 +33,7 @@ class ProviderEditPage extends React.Component {
     this.state = {
       classes: props,
       providerName: props.match.params.providerName,
-      owner: props.owner !== undefined ? props.owner : props.match.params.owner,
+      owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       provider: null,
       organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",

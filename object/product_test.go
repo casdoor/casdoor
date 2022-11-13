@@ -28,7 +28,7 @@ func TestProduct(t *testing.T) {
 	InitConfig()
 
 	product := GetProduct("admin/product_123")
-	provider := getProvider(product.Owner, "provider_pay_alipay")
+	provider := getProvider("provider_pay_alipay")
 	cert := getCert(product.Owner, "cert-pay-alipay")
 	pProvider := pp.GetPaymentProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, cert.Certificate, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey)
 

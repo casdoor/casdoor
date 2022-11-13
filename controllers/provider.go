@@ -81,8 +81,8 @@ func (c *ApiController) GetGlobalProviders() {
 // @router /get-provider [get]
 func (c *ApiController) GetProvider() {
 	id := c.Input().Get("id")
-
-	c.Data["json"] = object.GetMaskedProvider(object.GetProvider(id))
+	_, name := util.GetOwnerAndNameFromId(id)
+	c.Data["json"] = object.GetMaskedProvider(object.GetProvider(name))
 	c.ServeJSON()
 }
 

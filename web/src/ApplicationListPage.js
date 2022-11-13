@@ -38,6 +38,7 @@ class ApplicationListPage extends BaseListPage {
       searchedColumn: "",
     };
   }
+
   newApplication() {
     const randomName = Setting.getRandomName();
     return {
@@ -69,7 +70,7 @@ class ApplicationListPage extends BaseListPage {
       redirectUris: ["http://localhost:9000/callback"],
       tokenFormat: "JWT",
       expireInHours: 24 * 7,
-      formOffset: 2,
+      formOffset: 8,
     };
   }
 

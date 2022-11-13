@@ -95,7 +95,7 @@ func GetOrganizationApplicationCount(owner, Organization, field, value string) i
 }
 
 func GetApplications(owner string) []*Application {
-	var applications []*Application
+	applications := []*Application{}
 	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner})
 	if err != nil {
 		panic(err)
@@ -105,7 +105,7 @@ func GetApplications(owner string) []*Application {
 }
 
 func GetOrganizationApplications(owner string, organization string) []*Application {
-	var applications []*Application
+	applications := []*Application{}
 	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner, Organization: organization})
 	if err != nil {
 		panic(err)
@@ -126,7 +126,7 @@ func GetPaginationApplications(owner string, offset, limit int, field, value, so
 }
 
 func GetPaginationOrganizationApplications(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
-	var applications []*Application
+	applications := []*Application{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&applications, &Application{Owner: owner, Organization: organization})
 	if err != nil {
@@ -137,7 +137,7 @@ func GetPaginationOrganizationApplications(owner, organization string, offset, l
 }
 
 func getProviderMap(owner string) map[string]*Provider {
-	providers := getAdminAndOrgProviders(owner)
+	providers := GetProviders(owner)
 	m := map[string]*Provider{}
 	for _, provider := range providers {
 		//if provider.Category != "OAuth" {

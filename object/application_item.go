@@ -15,7 +15,7 @@
 package object
 
 func (application *Application) GetProviderByCategory(category string) *Provider {
-	providers := GetProviders(application.Owner)
+	providers := GetProviders(application.Organization)
 	m := map[string]*Provider{}
 	for _, provider := range providers {
 		if provider.Category != category {
@@ -87,7 +87,7 @@ func (application *Application) GetSignupItemRule(itemName string) string {
 }
 
 func (application *Application) getAllPromptedProviderItems() []*ProviderItem {
-	var res []*ProviderItem
+	res := []*ProviderItem{}
 	for _, providerItem := range application.Providers {
 		if providerItem.isProviderPrompted() {
 			res = append(res, providerItem)
@@ -97,7 +97,7 @@ func (application *Application) getAllPromptedProviderItems() []*ProviderItem {
 }
 
 func (application *Application) getAllPromptedSignupItems() []*SignupItem {
-	var res []*SignupItem
+	res := []*SignupItem{}
 	for _, signupItem := range application.SignupItems {
 		if signupItem.isSignupItemPrompted() {
 			res = append(res, signupItem)

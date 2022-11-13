@@ -142,7 +142,7 @@ func (product *Product) isValidProvider(provider *Provider) bool {
 }
 
 func (product *Product) getProvider(providerId string) (*Provider, error) {
-	provider := getProvider(product.Owner, providerId)
+	provider := getProvider(providerId)
 	if provider == nil {
 		return nil, fmt.Errorf("the payment provider: %s does not exist", providerId)
 	}
