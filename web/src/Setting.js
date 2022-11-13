@@ -764,9 +764,9 @@ export function renderLoginLink(application, text) {
   return renderLink(url, text, null);
 }
 
-export function redirectToLoginPage(application) {
+export function redirectToLoginPage(application, history) {
   const loginLink = getLoginLink(application);
-  window.location.replace(loginLink);
+  history.push(loginLink);
 }
 
 function renderLink(url, text, onClick) {
