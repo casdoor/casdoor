@@ -652,7 +652,7 @@ class App extends Component {
     } else {
       return (
         <div>
-          <Header style={{padding: "0", marginBottom: "3px"}}>
+          <Header style={{padding: "0", marginBottom: "3px"}}>s11111
             {
               Setting.isMobile() ? null : (
                 <Link to={"/"}>
@@ -701,11 +701,42 @@ class App extends Component {
         <Footer id="footer" style={
           {
             borderTop: "1px solid #e8e8e8",
-            backgroundColor: "white",
+            backgroundColor: "#06636a",
             textAlign: "center",
+            color: "white",
+            height: "80px",
           }
         }>
-          Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={`${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`} /></a>
+          Copyright@2022   Weechip Technology Co. Ltd All Right Reserved
+        </Footer>
+      </>
+    );
+  }
+
+  renderHeader() {
+    // How to keep your footer where it belongs ?
+    // https://www.freecodecamp.org/neyarnws/how-to-keep-your-footer-where-it-belongs-59c6aa05c59c/
+
+    return (
+      <>
+        {!this.state.account ? null : <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />}
+        <Footer id="footer" style={
+          {
+            display: "flex",
+            borderTop: "1px solid #e8e8e8",
+            backgroundColor: "#06636a",
+            textAlign: "center",
+            color: "white",
+            height: "80px",
+            justifyContent: "center",
+            alignItems: "center",
+          }
+        }>
+          <div style={{display: "flex", width: "1200px", justifyContent: "space-between"}}>
+            <img width={180} src="https://www.weechip.com/logo.png" />
+            <div style={{display: "flex"}}>
+            </div>
+          </div>
         </Footer>
       </>
     );
@@ -724,6 +755,9 @@ class App extends Component {
     if (this.isDoorPages()) {
       return (
         <div style={{display: "flex", flexDirection: "column", height: "100%"}}>
+          {
+            this.renderHeader()
+          }
           <div id="login-content-wrap" style={{flexDirection: "column"}}>
             <Switch>
               <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} />)} />
@@ -775,7 +809,7 @@ class App extends Component {
       return (
         <React.Fragment>
           <Helmet>
-            <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
+            <link rel="icon" href={"https://www.weechip.com/favicon.ico"} />
           </Helmet>
           {
             this.renderPage()
