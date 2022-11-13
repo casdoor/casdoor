@@ -14,6 +14,9 @@
 
 import React from "react";
 import {Alert, Button, Result, message} from "antd";
+import {getWechatMessageEvent} from "./AuthBackend";
+import * as Setting from "../Setting";
+import * as Provider from "./Provider";
 
 export function showMessage(type, text) {
   if (type === "success") {
@@ -149,4 +152,13 @@ export function getQueryParamsFromState(state) {
   } else {
     return query;
   }
+}
+
+export function getEvent(application, provider) {
+  getWechatMessageEvent()
+    .then(res => {
+      if (res.data === "SCAN" || res.data === "subscribe") {
+        Setting.goToLink(Provider.getAuthUrl(application, provider, "signup"));
+      }
+    });
 }

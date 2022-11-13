@@ -425,6 +425,20 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
+          this.state.provider.type !== "WeChat" ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("provider:Enable QR code"), i18next.t("provider:Enable QR code - Tooltip"))} :
+              </Col>
+              <Col span={1} >
+                <Switch checked={this.state.provider.disableSsl} onChange={checked => {
+                  this.updateProviderField("disableSsl", checked);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
+        {
           this.state.provider.type !== "Adfs" && this.state.provider.type !== "Casdoor" && this.state.provider.type !== "Okta" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>

@@ -17,20 +17,27 @@ package controllers
 import (
 	"encoding/base64"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"io/ioutil"
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/casdoor/casdoor/captcha"
-
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 	"github.com/google/uuid"
+)
+
+var (
+	wechatScanType string
+	lock           sync.RWMutex
 )
 
 func codeToResponse(code *object.Code) *Response {
@@ -530,4 +537,47 @@ func (c *ApiController) HandleSamlLogin() {
 	targetUrl := fmt.Sprintf("%s?relayState=%s&samlResponse=%s",
 		slice[4], relayState, samlResponse)
 	c.Redirect(targetUrl, 303)
+}
+
+// HandleOfficialAccountEvent ...
+// @Tag HandleOfficialAccountEvent API
+// @Title HandleOfficialAccountEvent
+// @router /api/webhook [POST]
+func (c *ApiController) HandleOfficialAccountEvent() {
+	respBytes, err := ioutil.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+	var data struct {
+		MsgType  string `xml:"MsgType"`
+		Event    string `xml:"Event"`
+		EventKey string `xml:"EventKey"`
+	}
+	err = xml.Unmarshal(respBytes, &data)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+	lock.Lock()
+	defer lock.Unlock()
+	if data.EventKey != "" {
+		wechatScanType = data.Event
+		c.Ctx.WriteString("")
+	}
+}
+
+// GetWebhookEventType ...
+// @Tag GetWebhookEventType API
+// @Title GetWebhookEventType
+// @router /api/get-webhook-event [GET]
+func (c *ApiController) GetWebhookEventType() {
+	lock.Lock()
+	defer lock.Unlock()
+	resp := &Response{
+		Status: "ok",
+		Msg:    "",
+		Data:   wechatScanType,
+	}
+	c.Data["json"] = resp
+	wechatScanType = ""
+	c.ServeJSON()
 }
