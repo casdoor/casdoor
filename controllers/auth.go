@@ -563,7 +563,6 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 		wechatScanType = data.Event
 		c.Ctx.WriteString("")
 	}
-
 }
 
 // GetWebhookEventType ...
