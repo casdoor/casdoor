@@ -41,38 +41,7 @@ type VerificationRecord struct {
 	IsUsed     bool
 }
 
-func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
-	if provider == nil {
-		return fmt.Errorf("please set an Email provider first")
-	}
-
-	sender := organization.DisplayName
-	title := provider.Title
-	code := getRandomCode(6)
-	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
-	content := fmt.Sprintf(provider.Content, code)
-
-	if err := SendEmail(provider, title, content, dest, sender); err != nil {
-		return err
-	}
-
-	return AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code)
-}
-
-func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
-	if provider == nil {
-		return errors.New("please set a SMS provider first")
-	}
-
-	code := getRandomCode(6)
-	if err := SendSms(provider, code, dest); err != nil {
-		return err
-	}
-
-	return AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code)
-}
-
-func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordType, dest, code string) error {
+func IsAllowSend(user *User, remoteAddr, recordType string) error {
 	var record VerificationRecord
 	record.RemoteAddr = remoteAddr
 	record.Type = recordType
@@ -89,6 +58,63 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 		return errors.New("you can only send one code in 60s")
 	}
 
+	return nil
+}
+
+func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
+	if provider == nil {
+		return fmt.Errorf("please set an Email provider first")
+	}
+
+	sender := organization.DisplayName
+	title := provider.Title
+	code := getRandomCode(6)
+	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
+	content := fmt.Sprintf(provider.Content, code)
+
+	if err := IsAllowSend(user, remoteAddr, provider.Category); err != nil {
+		return err
+	}
+
+	if err := SendEmail(provider, title, content, dest, sender); err != nil {
+		return err
+	}
+
+	if err := AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
+	if provider == nil {
+		return errors.New("please set a SMS provider first")
+	}
+
+	if err := IsAllowSend(user, remoteAddr, provider.Category); err != nil {
+		return err
+	}
+
+	code := getRandomCode(6)
+	if err := SendSms(provider, code, dest); err != nil {
+		return err
+	}
+
+	if err := AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordType, dest, code string) error {
+	var record VerificationRecord
+	record.RemoteAddr = remoteAddr
+	record.Type = recordType
+	if user != nil {
+		record.User = user.GetId()
+	}
 	record.Owner = provider.Owner
 	record.Name = util.GenerateId()
 	record.CreatedTime = util.GetCurrentTime()
@@ -99,10 +125,10 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 
 	record.Receiver = dest
 	record.Code = code
-	record.Time = now
+	record.Time = time.Now().Unix()
 	record.IsUsed = false
 
-	_, err = adapter.Engine.Insert(record)
+	_, err := adapter.Engine.Insert(record)
 	if err != nil {
 		return err
 	}
