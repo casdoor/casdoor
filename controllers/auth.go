@@ -561,7 +561,9 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 	defer lock.Unlock()
 	if data.EventKey != "" {
 		wechatScanType = data.Event
+		c.Ctx.WriteString("")
 	}
+
 }
 
 // GetWebhookEventType ...
