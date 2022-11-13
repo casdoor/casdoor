@@ -26,6 +26,7 @@ import {CountDownInput} from "../common/CountDownInput";
 import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
 import SelectLanguageBox from "../SelectLanguageBox";
+import {withRouter} from "react-router-dom";
 
 const formItemLayout = {
   labelCol: {
@@ -541,7 +542,7 @@ class SignupPage extends React.Component {
           title="Sign Up Error"
           subTitle={"The application does not allow to sign up new account"}
           extra={[
-            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application)}>
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application, this.props.history)}>
               {
                 i18next.t("login:Sign In")
               }
@@ -600,7 +601,7 @@ class SignupPage extends React.Component {
             if (linkInStorage !== null && linkInStorage !== "") {
               Setting.goToLink(linkInStorage);
             } else {
-              Setting.redirectToLoginPage(application);
+              Setting.redirectToLoginPage(application, this.props.history);
             }
           }}>
             {i18next.t("signup:sign in now")}
@@ -660,4 +661,4 @@ class SignupPage extends React.Component {
   }
 }
 
-export default SignupPage;
+export default withRouter(SignupPage);

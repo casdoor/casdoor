@@ -30,6 +30,7 @@ import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {withTranslation} from "react-i18next";
 import {CaptchaModal} from "../common/CaptchaModal";
+import {withRouter} from "react-router-dom";
 
 const {TabPane} = Tabs;
 
@@ -339,7 +340,7 @@ class LoginPage extends React.Component {
           title="Sign Up Error"
           subTitle={"The application does not allow to sign up new account"}
           extra={[
-            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application)}>
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application, this.props.history)}>
               {
                 i18next.t("login:Sign In")
               }
@@ -816,4 +817,4 @@ class LoginPage extends React.Component {
   }
 }
 
-export default withTranslation()(LoginPage);
+export default withTranslation()(withRouter(LoginPage));
