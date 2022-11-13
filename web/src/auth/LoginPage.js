@@ -799,7 +799,7 @@ class LoginPage extends React.Component {
                   {/* {*/}
                   {/*  this.state.clientId !== null ? "Redirect" : null*/}
                   {/* }*/}
-                  <SelectLanguageBox id="language-box-corner" style={{top: "50px", position: "static"}} />
+                  <SelectLanguageBox id="language-box-corner" style={{top: "0px", right: "0px", position: "absolute"}} />
                   {
                     this.renderSignedInBox()
                   }
