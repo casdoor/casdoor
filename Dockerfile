@@ -1,17 +1,17 @@
-FROM node:16.13.0 AS FRONT
+FROM public.ecr.aws/docker/library/node:16.13.0 AS FRONT
 WORKDIR /web
 COPY ./web .
 RUN yarn config set registry https://registry.npmmirror.com
 RUN yarn install --frozen-lockfile --network-timeout 1000000 && yarn run build
 
 
-FROM golang:1.17.5 AS BACK
+FROM  public.ecr.aws/docker/library/golang:1.17.5 AS BACK
 WORKDIR /go/src/casdoor
 COPY . .
 RUN ./build.sh
 
 
-FROM alpine:latest AS STANDARD
+FROM public.ecr.aws/docker/library/alpine:latest AS STANDARD
 LABEL MAINTAINER="https://casdoor.org/"
 ARG USER=casdoor
 ARG TARGETOS
@@ -39,7 +39,7 @@ COPY --from=FRONT --chown=$USER:$USER /web/build ./web/build
 ENTRYPOINT ["/server"]
 
 
-FROM debian:latest AS db
+FROM public.ecr.aws/docker/library/debian:latest AS db
 RUN apt update \
     && apt install -y \
         mariadb-server \
