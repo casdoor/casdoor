@@ -733,7 +733,7 @@ class App extends Component {
           }
         }>
           <div style={{display: "flex", width: "1200px", justifyContent: "space-between"}}>
-            <img width={180} src="https://www.weechip.com/logo.png" />
+            <a href="https://www.weechip.com"><img width={180} src="https://www.weechip.com/logo.png" /></a>
             <div style={{display: "flex"}}>
             </div>
           </div>

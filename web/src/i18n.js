@@ -37,7 +37,7 @@ const resources = {
 };
 
 function initLanguage() {
-  let language = localStorage.getItem("language");
+  let language = "en"; // localStorage.getItem("language");
   if (language === undefined || language === null || language === "") {
     if (Conf.ForceLanguage !== "") {
       language = Conf.ForceLanguage;

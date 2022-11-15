@@ -594,7 +594,7 @@ class SignupPage extends React.Component {
           <Button type="primary" htmlType="submit">
             {i18next.t("account:Sign Up")}
           </Button>
-          &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
+          &nbsp;{i18next.t("signup:Have account?")}&nbsp;
           <a onClick={() => {
             const linkInStorage = sessionStorage.getItem("signinUrl");
             if (linkInStorage !== null && linkInStorage !== "") {
@@ -630,7 +630,7 @@ class SignupPage extends React.Component {
     return (
       <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
         <CustomGithubCorner />
-        <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
+        <div className="login-content" style={{margin: this.parseOffset(application.formOffset), width: "500px", border: Setting.isMobile() ? null : "1px solid rgb(227, 229, 231)", borderRadius: "10px", boxShadow: Setting.isMobile() ? null : "rgb(0 0 0 / 8%) 0px 4.48rem 5.27rem, rgb(0 0 0 / 6%) 0px 1.87rem 2.2rem, rgb(0 0 0 / 5%) 0px 1rem 1.17rem, rgb(0 0 0 / 4%) 0px 0.56rem 0.66rem, rgb(0 0 0 / 3%) 0px 0.29rem 0.35rem, rgb(0 0 0 / 10%) 0px 0px 0.8rem"}}>
           {Setting.inIframe() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
           <div className="login-panel" >
             <SelectLanguageBox id="language-box-corner" style={{top: "50px"}} />
