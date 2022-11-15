@@ -29,7 +29,7 @@ class PermissionListPage extends BaseListPage {
       name: `permission_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Permission - ${randomName}`,
-      users: [this.props.account.name],
+      users: [`${this.props.account.owner}/${this.props.account.name}`],
       roles: [],
       domains: [],
       resourceType: "Application",
