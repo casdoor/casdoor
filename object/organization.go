@@ -222,7 +222,12 @@ func GetDefaultApplication(id string) (*Application, error) {
 	}
 
 	if organization.DefaultApplication != "" {
-		return getApplication("admin", organization.DefaultApplication), fmt.Errorf("The default application: %s does not exist", organization.DefaultApplication)
+		defaultApplication := getApplication("admin", organization.DefaultApplication)
+		if defaultApplication == nil {
+			return nil, fmt.Errorf("The default application: %s does not exist", organization.DefaultApplication)
+		} else {
+			return defaultApplication, nil
+		}
 	}
 
 	applications := []*Application{}
