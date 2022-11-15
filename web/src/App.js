@@ -617,10 +617,10 @@ class App extends Component {
             <Header style={{padding: "0", marginBottom: "3px"}}>
               {
                 Setting.isMobile() ? null : (
-                  // <Link to={"/"}>
-                  //   <div className="logo" />
-                  // </Link>
-                  this.renderHeader()
+                  <Link to={"/"}>
+                    <div className="logo" />
+                  </Link>
+                  // this.renderHeader()
                 )
               }
               <div>
@@ -656,10 +656,10 @@ class App extends Component {
           <Header style={{padding: "0", marginBottom: "3px"}}>
             {
               !Setting.isMobile() ? null : (
-                // <Link to={"/"}>
-                //   <div className="logo" />
-                // </Link>
-                this.renderHeader()
+                <Link to={"/"}>
+                  <div className="logo" />
+                </Link>
+                // this.renderHeader()
               )
             }
             {/* <Drawer title={i18next.t("general:Close")} placement="left" visible={this.state.menuVisible} onClose={this.onClose}>
