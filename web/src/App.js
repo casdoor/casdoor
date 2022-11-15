@@ -16,8 +16,8 @@ import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
-import {BarsOutlined, DownOutlined, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
-import {Avatar, BackTop, Button, Card, Drawer, Dropdown, Layout, Menu, Result} from "antd";
+import {DownOutlined, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
+import {Avatar, BackTop, Button, Card, Dropdown, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -617,9 +617,10 @@ class App extends Component {
             <Header style={{padding: "0", marginBottom: "3px"}}>
               {
                 Setting.isMobile() ? null : (
-                  <Link to={"/"}>
-                    <div className="logo" />
-                  </Link>
+                  // <Link to={"/"}>
+                  //   <div className="logo" />
+                  // </Link>
+                  this.renderHeader()
                 )
               }
               <div>
@@ -652,15 +653,16 @@ class App extends Component {
     } else {
       return (
         <div>
-          <Header style={{padding: "0", marginBottom: "3px"}}>s11111
+          <Header style={{padding: "0", marginBottom: "3px"}}>
             {
-              Setting.isMobile() ? null : (
-                <Link to={"/"}>
-                  <div className="logo" />
-                </Link>
+              !Setting.isMobile() ? null : (
+                // <Link to={"/"}>
+                //   <div className="logo" />
+                // </Link>
+                this.renderHeader()
               )
             }
-            <Drawer title={i18next.t("general:Close")} placement="left" visible={this.state.menuVisible} onClose={this.onClose}>
+            {/* <Drawer title={i18next.t("general:Close")} placement="left" visible={this.state.menuVisible} onClose={this.onClose}>
               <Menu
                 // theme="dark"
                 mode={(Setting.isMobile()) ? "inline" : "horizontal"}
@@ -675,7 +677,7 @@ class App extends Component {
             </Drawer>
             <Button icon={<BarsOutlined />} onClick={this.showMenu} type="text">
               {i18next.t("general:Menu")}
-            </Button>
+            </Button> */}
             <div style = {{float: "right"}}>
               {
                 this.renderAccount()

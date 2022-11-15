@@ -95,7 +95,7 @@
     "no-unused-vars": "off",
     "react/no-deprecated": "error",
     "react/jsx-key": "error",
-    "no-console": "error",
+    "no-console": "off",
     "eqeqeq": "error",
     "keyword-spacing": "error",
 

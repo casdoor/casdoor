@@ -285,7 +285,7 @@
     "Please input your code!": "请输入您的验证码！",
     "Please input your password!": "请输入您的密码！",
     "Please input your password, at least 6 characters!": "请输入您的密码，不少于6位",
-    "Please input your username, Email or phone!": "请输入您的用户名、Email或手机号！",
+    "Please input your username, Email or phone!": "请输入您的用户名",
     "Sign In": "登录",
     "Sign in with WebAuthn": "WebAuthn登录",
     "Sign in with {type}": "{type}登录",

@@ -393,14 +393,14 @@ class LoginPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t("login:Please input your username, Email or phone!"),
+                    message: i18next.t("login:Please input your username!"),
                   },
                   {
                     validator: (_, value) => {
                       if (this.state.loginMethod === "verificationCode") {
                         if (this.state.email !== "" && !Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
                           this.setState({validEmailOrPhone: false});
-                          return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
+                          return Promise.reject(i18next.t("login:The input is not valid Email!"));
                         }
 
                         if (Setting.isValidPhone(this.state.username)) {
@@ -420,7 +420,7 @@ class LoginPage extends React.Component {
                 <Input
                   id = "input"
                   prefix={<UserOutlined className="site-form-item-icon" />}
-                  placeholder={(this.state.loginMethod === "verificationCode") ? i18next.t("login:Email or phone") : i18next.t("login:username, Email or phone")}
+                  placeholder={(this.state.loginMethod === "verificationCode") ? i18next.t("login:Email or phone") : i18next.t("login:username")}
                   disabled={!application.enablePassword}
                   onChange={e => {
                     this.setState({

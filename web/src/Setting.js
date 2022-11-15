@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Link, useHistory} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {Tag, Tooltip, message} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
@@ -766,8 +766,8 @@ export function renderLoginLink(application, text) {
 
 export function redirectToLoginPage(application) {
   const loginLink = getLoginLink(application);
-  const history = useHistory();
-  history.push(loginLink);
+  console.log(99999, loginLink);
+  goToLink(loginLink);
 }
 
 function renderLink(url, text, onClick) {

@@ -27,10 +27,10 @@ code {
 }
 
 .logo {
-  background: url("https://cdn.casbin.org/img/casdoor-logo_1185x256.png");
+  background: url("https://www.weechip.com/logo.png");
   background-size: 130px, 27px;
   width: 130px;
-  height: 27px;
+  height: 32px;
   margin: 17px 0 16px 15px;
   float: left;
 }
@@ -47,5 +47,5 @@ code {
 }
 
 .ant-layout-header {
-  background-color: white !important;
+  background-color: #06636a !important;
 }
