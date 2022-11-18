@@ -28,9 +28,7 @@ import i18next from "i18next";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
-import {withTranslation} from "react-i18next";
 import {CaptchaModal} from "../common/CaptchaModal";
-import {withRouter} from "react-router-dom";
 
 const {TabPane} = Tabs;
 
@@ -800,7 +798,7 @@ class LoginPage extends React.Component {
                   {/* {*/}
                   {/*  this.state.clientId !== null ? "Redirect" : null*/}
                   {/* }*/}
-                  <SelectLanguageBox id="language-box-corner" style={{top: "55px", right: "5px", position: "absolute"}} />
+                  <SelectLanguageBox languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
                   {
                     this.renderSignedInBox()
                   }
@@ -817,4 +815,4 @@ class LoginPage extends React.Component {
   }
 }
 
-export default withTranslation()(withRouter(LoginPage));
+export default LoginPage;

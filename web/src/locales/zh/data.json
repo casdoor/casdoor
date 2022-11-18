@@ -170,6 +170,8 @@
     "Is enabled - Tooltip": "是否启用",
     "LDAPs": "LDAP",
     "LDAPs - Tooltip": "LDAPs",
+    "Languages": "语言",
+    "Languages - Tooltip": "可选语言",
     "Last name": "姓氏",
     "Logo": "Logo",
     "Logo - Tooltip": "应用程序向外展示的图标",

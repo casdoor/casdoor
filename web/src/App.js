@@ -636,7 +636,7 @@ class App extends Component {
                 {
                   this.renderAccount()
                 }
-                <SelectLanguageBox />
+                {this.state.account && <SelectLanguageBox languages={this.state.account.organization.languages} />}
               </div>
             </Header>
             <Layout style={{backgroundColor: "#f5f5f5", alignItems: "stretch"}}>
@@ -680,7 +680,7 @@ class App extends Component {
               {
                 this.renderAccount()
               }
-              <SelectLanguageBox />
+              {this.state.account && <SelectLanguageBox languages={this.state.account.organization.languages} />}
             </div>
           </Header>
           {
