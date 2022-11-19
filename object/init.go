@@ -58,6 +58,7 @@ func initBuiltInOrganization() bool {
 		PhonePrefix:   "86",
 		DefaultAvatar: fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
 		Tags:          []string{},
+		Languages:     []string{"en", "zh", "es", "fr", "de", "ja", "ko", "ru"},
 		AccountItems: []*AccountItem{
 			{Name: "Organization", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
 			{Name: "ID", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},

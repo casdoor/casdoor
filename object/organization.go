@@ -45,6 +45,7 @@ type Organization struct {
 	DefaultAvatar      string   `xorm:"varchar(100)" json:"defaultAvatar"`
 	DefaultApplication string   `xorm:"varchar(100)" json:"defaultApplication"`
 	Tags               []string `xorm:"mediumtext" json:"tags"`
+	Languages          []string `xorm:"varchar(255)" json:"languages"`
 	MasterPassword     string   `xorm:"varchar(100)" json:"masterPassword"`
 	EnableSoftDeletion bool     `json:"enableSoftDeletion"`
 	IsProfilePublic    bool     `json:"isProfilePublic"`

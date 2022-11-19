@@ -28,28 +28,45 @@ class SelectLanguageBox extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      languages: props.languages ?? ["en", "zh", "es", "fr", "de", "ja", "ko", "ru"],
     };
   }
 
+  items = [
+    this.getItem("English", "en", flagIcon("US", "English")),
+    this.getItem("简体中文", "zh", flagIcon("CN", "简体中文")),
+    this.getItem("Español", "es", flagIcon("ES", "Español")),
+    this.getItem("Français", "fr", flagIcon("FR", "Français")),
+    this.getItem("Deutsch", "de", flagIcon("DE", "Deutsch")),
+    this.getItem("日本語", "ja", flagIcon("JP", "日本語")),
+    this.getItem("한국어", "ko", flagIcon("KR", "한국어")),
+    this.getItem("Русский", "ru", flagIcon("RU", "Русский")),
+  ];
+
+  getOrganizationLanguages(languages) {
+    const select = [];
+    for (const language of languages) {
+      this.items.map((item, index) => item.key === language ? select.push(item) : null);
+    }
+    return select;
+  }
+
+  getItem(label, key, icon) {
+    return {key, icon, label};
+  }
+
   render() {
+    const languageItems = this.getOrganizationLanguages(this.state.languages);
     const menu = (
-      <Menu onClick={(e) => {
-        Setting.changeLanguage(e.key);
+      <Menu items={languageItems} onClick={(e) => {
+        Setting.setLanguage(e.key);
       }}>
-        <Menu.Item key="en" icon={flagIcon("US", "English")}>English</Menu.Item>
-        <Menu.Item key="zh" icon={flagIcon("CN", "简体中文")}>简体中文</Menu.Item>
-        <Menu.Item key="es" icon={flagIcon("ES", "Español")}>Español</Menu.Item>
-        <Menu.Item key="fr" icon={flagIcon("FR", "Français")}>Français</Menu.Item>
-        <Menu.Item key="de" icon={flagIcon("DE", "Deutsch")}>Deutsch</Menu.Item>
-        <Menu.Item key="ja" icon={flagIcon("JP", "日本語")}>日本語</Menu.Item>
-        <Menu.Item key="ko" icon={flagIcon("KR", "한국어")}>한국어</Menu.Item>
-        <Menu.Item key="ru" icon={flagIcon("RU", "Русский")}>Русский</Menu.Item>
       </Menu>
     );
 
     return (
       <Dropdown overlay={menu} >
-        <div className="language-box" id={this.props.id} style={this.props.style} />
+        <div className="language-box" style={{display: languageItems.length === 0 ? "none" : null, ...this.props.style}} />
       </Dropdown>
     );
   }

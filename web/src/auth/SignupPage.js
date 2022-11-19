@@ -645,7 +645,7 @@ class SignupPage extends React.Component {
                 {
                   Setting.renderLogo(application)
                 }
-                <SelectLanguageBox id="language-box-corner" style={{top: "55px", right: "5px", position: "absolute"}} />
+                <SelectLanguageBox languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
                 {
                   this.renderForm(application)
                 }

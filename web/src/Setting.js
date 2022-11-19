@@ -552,13 +552,6 @@ export function setLanguage(language) {
   i18next.changeLanguage(language);
 }
 
-export function changeLanguage(language) {
-  localStorage.setItem("language", language);
-  changeMomentLanguage(language);
-  i18next.changeLanguage(language);
-  // window.location.reload(true);
-}
-
 export function getAcceptLanguage() {
   return i18next.language + ";q=0.9,en;q=0.8";
 }
