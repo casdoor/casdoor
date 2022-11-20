@@ -22,6 +22,7 @@ import {authConfig} from "./auth/Auth";
 import * as ProviderEditTestEmail from "./TestEmailWidget";
 import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -34,11 +35,13 @@ class ProviderEditPage extends React.Component {
       providerName: props.match.params.providerName,
       owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       provider: null,
+      organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
   UNSAFE_componentWillMount() {
+    this.getOrganizations();
     this.getProvider();
   }
 
@@ -49,6 +52,17 @@ class ProviderEditPage extends React.Component {
           provider: provider,
         });
       });
+  }
+
+  getOrganizations() {
+    if (Setting.isAdminUser(this.props.account)) {
+      OrganizationBackend.getOrganizations("admin")
+        .then((res) => {
+          this.setState({
+            organizations: res.msg === undefined ? res : [],
+          });
+        });
+    }
   }
 
   parseProviderField(key, value) {
@@ -189,6 +203,19 @@ class ProviderEditPage extends React.Component {
             <Input value={this.state.provider.displayName} onChange={e => {
               this.updateProviderField("displayName", e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.provider.owner} onChange={(value => {this.updateProviderField("owner", value);})}>
+              {Setting.isAdminUser(this.props.account) ? <Option key={"admin"} value={"admin"}>{i18next.t("provider:admin (share)")}</Option> : null}
+              {
+                this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -760,18 +787,19 @@ class ProviderEditPage extends React.Component {
 
   submitProviderEdit(willExist) {
     const provider = Setting.deepCopy(this.state.provider);
-    ProviderBackend.updateProvider(this.state.provider.owner, this.state.providerName, provider)
+    ProviderBackend.updateProvider(this.state.owner, this.state.providerName, provider)
       .then((res) => {
         if (res.msg === "") {
           Setting.showMessage("success", "Successfully saved");
           this.setState({
+            owner: this.state.provider.owner,
             providerName: this.state.provider.name,
           });
 
           if (willExist) {
             this.props.history.push("/providers");
           } else {
-            this.props.history.push(`/providers/${this.state.provider.name}`);
+            this.props.history.push(`/providers/${this.state.provider.owner}/${this.state.provider.name}`);
           }
         } else {
           Setting.showMessage("error", res.msg);

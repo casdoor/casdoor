@@ -25,7 +25,7 @@ import (
 
 type Provider struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	Name        string `xorm:"varchar(100) notnull pk unique" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	DisplayName       string `xorm:"varchar(100)" json:"displayName"`
@@ -93,8 +93,8 @@ func GetMaskedProviders(providers []*Provider) []*Provider {
 }
 
 func GetProviderCount(owner, field, value string) int {
-	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Provider{})
+	session := GetSession("", -1, -1, field, value, "", "")
+	count, err := session.Where("owner = ? or owner = ? ", "admin", owner).Count(&Provider{})
 	if err != nil {
 		panic(err)
 	}
@@ -114,7 +114,7 @@ func GetGlobalProviderCount(field, value string) int {
 
 func GetProviders(owner string) []*Provider {
 	providers := []*Provider{}
-	err := adapter.Engine.Desc("created_time").Find(&providers, &Provider{Owner: owner})
+	err := adapter.Engine.Where("owner = ? or owner = ? ", "admin", owner).Desc("created_time").Find(&providers, &Provider{})
 	if err != nil {
 		panic(err)
 	}
@@ -133,9 +133,9 @@ func GetGlobalProviders() []*Provider {
 }
 
 func GetPaginationProviders(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Provider {
-	var providers []*Provider
-	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&providers)
+	providers := []*Provider{}
+	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
+	err := session.Where("owner = ? or owner = ? ", "admin", owner).Find(&providers)
 	if err != nil {
 		panic(err)
 	}
@@ -144,7 +144,7 @@ func GetPaginationProviders(owner string, offset, limit int, field, value, sortF
 }
 
 func GetPaginationGlobalProviders(offset, limit int, field, value, sortField, sortOrder string) []*Provider {
-	var providers []*Provider
+	providers := []*Provider{}
 	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&providers)
 	if err != nil {
@@ -159,7 +159,7 @@ func getProvider(owner string, name string) *Provider {
 		return nil
 	}
 
-	provider := Provider{Owner: owner, Name: name}
+	provider := Provider{Name: name}
 	existed, err := adapter.Engine.Get(&provider)
 	if err != nil {
 		panic(err)

@@ -91,7 +91,7 @@ class ApplicationEditPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      owner: props.account.owner,
+      owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       applicationName: props.match.params.applicationName,
       application: null,
       organizations: [],
@@ -142,21 +142,11 @@ class ApplicationEditPage extends React.Component {
   }
 
   getProviders() {
-    if (Setting.isAdminUser(this.props.account)) {
-      ProviderBackend.getGlobalProviders()
-        .then((res) => {
-          this.setState({
-            providers: res,
-          });
-        });
-    } else {
-      ProviderBackend.getProviders(this.state.owner)
-        .then((res) => {
-          this.setState({
-            providers: res,
-          });
-        });
-    }
+    ProviderBackend.getProviders(this.state.owner).then((res => {
+      this.setState({
+        providers: res,
+      });
+    }));
   }
 
   getSamlMetadata() {
@@ -287,7 +277,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.application.organization} onChange={(value => {this.updateApplicationField("organization", value);})}>
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.application.organization} onChange={(value => {this.updateApplicationField("organization", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -791,7 +781,7 @@ class ApplicationEditPage extends React.Component {
 
   submitApplicationEdit(willExist) {
     const application = Setting.deepCopy(this.state.application);
-    ApplicationBackend.updateApplication(this.state.application.owner, this.state.applicationName, application)
+    ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
       .then((res) => {
         if (res.msg === "") {
           Setting.showMessage("success", "Successfully saved");
@@ -802,7 +792,7 @@ class ApplicationEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/applications");
           } else {
-            this.props.history.push(`/applications/${this.state.application.name}`);
+            this.props.history.push(`/applications/${this.state.application.organization}/${this.state.application.name}`);
           }
         } else {
           Setting.showMessage("error", res.msg);

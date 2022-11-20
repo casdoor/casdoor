@@ -23,11 +23,28 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 
 class ApplicationListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      classes: props,
+      organizationName: props.account.owner,
+      data: [],
+      pagination: {
+        current: 1,
+        pageSize: 10,
+      },
+      loading: false,
+      searchText: "",
+      searchedColumn: "",
+    };
+  }
+
   newApplication() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "admin", // this.props.account.applicationname,
+      owner: "admin", // this.props.account.applicationName,
       name: `application_${randomName}`,
+      organization: this.state.organizationName,
       createdTime: moment().format(),
       displayName: `New Application - ${randomName}`,
       logo: `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`,
@@ -61,7 +78,7 @@ class ApplicationListPage extends BaseListPage {
     const newApplication = this.newApplication();
     ApplicationBackend.addApplication(newApplication)
       .then((res) => {
-        this.props.history.push({pathname: `/applications/${newApplication.name}`, mode: "add"});
+        this.props.history.push({pathname: `/applications/${newApplication.organization}/${newApplication.name}`, mode: "add"});
       }
       )
       .catch(error => {
@@ -96,7 +113,7 @@ class ApplicationListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/applications/${text}`}>
+            <Link to={`/applications/${record.organization}/${text}`}>
               {text}
             </Link>
           );
@@ -213,7 +230,7 @@ class ApplicationListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/applications/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/applications/${record.organization}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete application: ${record.name} ?`}
                 onConfirm={() => this.deleteApplication(index)}
@@ -254,7 +271,8 @@ class ApplicationListPage extends BaseListPage {
     const field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
-    ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    (Setting.isAdminUser(this.props.account) ? ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) :
+      ApplicationBackend.getApplicationsByOrganization("admin", this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

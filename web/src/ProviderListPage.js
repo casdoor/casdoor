@@ -27,7 +27,7 @@ class ProviderListPage extends BaseListPage {
     super(props);
     this.state = {
       classes: props,
-      owner: Setting.isAdminUser(props.account) ? "admin" : props.account.organization.name,
+      owner: Setting.isAdminUser(props.account) ? "admin" : props.account.owner,
       data: [],
       pagination: {
         current: 1,
@@ -96,11 +96,19 @@ class ProviderListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/providers/${text}`}>
+            <Link to={`/providers/${record.owner}/${text}`}>
               {text}
             </Link>
           );
         },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "owner",
+        key: "owner",
+        width: "150px",
+        sorter: true,
+        ...this.getColumnSearchProps("owner"),
       },
       {
         title: i18next.t("general:Created time"),
@@ -192,12 +200,12 @@ class ProviderListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/providers/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/providers/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete provider: ${record.name} ?`}
                 onConfirm={() => this.deleteProvider(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );

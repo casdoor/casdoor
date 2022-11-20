@@ -95,7 +95,7 @@ class ResourceListPage extends BaseListPage {
         ...this.getColumnSearchProps("provider"),
         render: (text, record, index) => {
           return (
-            <Link to={`/providers/${text}`}>
+            <Link to={`/providers/${record.owner}/${text}`}>
               {text}
             </Link>
           );
