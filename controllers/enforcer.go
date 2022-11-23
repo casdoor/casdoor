@@ -21,12 +21,6 @@ import (
 )
 
 func (c *ApiController) Enforce() {
-	userId := c.GetSessionUsername()
-	if userId == "" {
-		c.ResponseError(c.T("EnforcerErr.SignInFirst"))
-		return
-	}
-
 	var permissionRule object.PermissionRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissionRule)
 	if err != nil {
@@ -34,17 +28,11 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
-	c.Data["json"] = object.Enforce(userId, &permissionRule)
+	c.Data["json"] = object.Enforce(&permissionRule)
 	c.ServeJSON()
 }
 
 func (c *ApiController) BatchEnforce() {
-	userId := c.GetSessionUsername()
-	if userId == "" {
-		c.ResponseError(c.T("EnforcerErr.SignInFirst"))
-		return
-	}
-
 	var permissionRules []object.PermissionRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissionRules)
 	if err != nil {
@@ -52,7 +40,7 @@ func (c *ApiController) BatchEnforce() {
 		return
 	}
 
-	c.Data["json"] = object.BatchEnforce(userId, permissionRules)
+	c.Data["json"] = object.BatchEnforce(permissionRules)
 	c.ServeJSON()
 }
 
