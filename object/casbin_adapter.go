@@ -148,34 +148,7 @@ func (casbinAdapter *CasbinAdapter) getTable() string {
 	}
 }
 
-func safeReturn(policy []string, i int) string {
-	if len(policy) > i {
-		return policy[i]
-	} else {
-		return ""
-	}
-}
-
-func matrixToCasbinRules(pType string, policies [][]string) []*xormadapter.CasbinRule {
-	res := []*xormadapter.CasbinRule{}
-
-	for _, policy := range policies {
-		line := xormadapter.CasbinRule{
-			Ptype: pType,
-			V0:    safeReturn(policy, 0),
-			V1:    safeReturn(policy, 1),
-			V2:    safeReturn(policy, 2),
-			V3:    safeReturn(policy, 3),
-			V4:    safeReturn(policy, 4),
-			V5:    safeReturn(policy, 5),
-		}
-		res = append(res, &line)
-	}
-
-	return res
-}
-
-func SyncPolicies(casbinAdapter *CasbinAdapter) []*xormadapter.CasbinRule {
+func initEnforcer(modelObj *Model, casbinAdapter *CasbinAdapter) (*casbin.Enforcer, error) {
 	// init Adapter
 	if casbinAdapter.Adapter == nil {
 		var dataSourceName string
@@ -191,20 +164,60 @@ func SyncPolicies(casbinAdapter *CasbinAdapter) []*xormadapter.CasbinRule {
 			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
 		}
 
-		casbinAdapter.Adapter, _ = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(casbinAdapter.DatabaseType, dataSourceName, casbinAdapter.Database).Engine, casbinAdapter.getTable(), "")
+		var err error
+		casbinAdapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(casbinAdapter.DatabaseType, dataSourceName, casbinAdapter.Database).Engine, casbinAdapter.getTable(), "")
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// init Model
-	modelObj := getModel(casbinAdapter.Owner, casbinAdapter.Model)
 	m, err := model.NewModelFromString(modelObj.ModelText)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	// init Enforcer
 	enforcer, err := casbin.NewEnforcer(m, casbinAdapter.Adapter)
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+
+	return enforcer, nil
+}
+
+func safeReturn(policy []string, i int) string {
+	if len(policy) > i {
+		return policy[i]
+	} else {
+		return ""
+	}
+}
+
+func matrixToCasbinRules(Ptype string, policies [][]string) []*xormadapter.CasbinRule {
+	res := []*xormadapter.CasbinRule{}
+
+	for _, policy := range policies {
+		line := xormadapter.CasbinRule{
+			Ptype: Ptype,
+			V0:    safeReturn(policy, 0),
+			V1:    safeReturn(policy, 1),
+			V2:    safeReturn(policy, 2),
+			V3:    safeReturn(policy, 3),
+			V4:    safeReturn(policy, 4),
+			V5:    safeReturn(policy, 5),
+		}
+		res = append(res, &line)
+	}
+
+	return res
+}
+
+func SyncPolicies(casbinAdapter *CasbinAdapter) ([]*xormadapter.CasbinRule, error) {
+	modelObj := getModel(casbinAdapter.Owner, casbinAdapter.Model)
+	enforcer, err := initEnforcer(modelObj, casbinAdapter)
+	if err != nil {
+		return nil, err
 	}
 
 	policies := matrixToCasbinRules("p", enforcer.GetPolicy())
@@ -212,5 +225,48 @@ func SyncPolicies(casbinAdapter *CasbinAdapter) []*xormadapter.CasbinRule {
 		policies = append(policies, matrixToCasbinRules("g", enforcer.GetGroupingPolicy())...)
 	}
 
-	return policies
+	return policies, nil
+}
+
+func UpdatePolicy(oldPolicy, newPolicy []string, casbinAdapter *CasbinAdapter) (bool, error) {
+	modelObj := getModel(casbinAdapter.Owner, casbinAdapter.Model)
+	enforcer, err := initEnforcer(modelObj, casbinAdapter)
+	if err != nil {
+		return false, err
+	}
+
+	affected, err := enforcer.UpdatePolicy(oldPolicy, newPolicy)
+	if err != nil {
+		return affected, err
+	}
+	return affected, nil
+}
+
+func AddPolicy(policy []string, casbinAdapter *CasbinAdapter) (bool, error) {
+	modelObj := getModel(casbinAdapter.Owner, casbinAdapter.Model)
+	enforcer, err := initEnforcer(modelObj, casbinAdapter)
+	if err != nil {
+		return false, err
+	}
+
+	affected, err := enforcer.AddPolicy(policy)
+	if err != nil {
+		return affected, err
+	}
+	return affected, nil
+}
+
+func RemovePolicy(policy []string, casbinAdapter *CasbinAdapter) (bool, error) {
+	modelObj := getModel(casbinAdapter.Owner, casbinAdapter.Model)
+	enforcer, err := initEnforcer(modelObj, casbinAdapter)
+	if err != nil {
+		return false, err
+	}
+
+	affected, err := enforcer.RemovePolicy(policy)
+	if err != nil {
+		return affected, err
+	}
+
+	return affected, nil
 }
