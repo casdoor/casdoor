@@ -3,6 +3,7 @@ module github.com/casdoor/casdoor
 go 1.16
 
 require (
+	gitee.com/travelliu/dm v1.8.11192 // indirect
 	github.com/RobotsAndPencils/go-saml v0.0.0-20170520135329-fb13cb52a46b
 	github.com/Unknwon/goconfig v1.0.0
 	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
@@ -24,8 +25,11 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/golang-jwt/jwt/v4 v4.2.0
+	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/google/uuid v1.3.0
+	github.com/jackc/pgx/v4 v4.12.0 // indirect
+	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/lestrrat-go/jwx v0.9.0
 	github.com/lib/pq v1.10.2
@@ -53,7 +57,8 @@ require (
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect
+	modernc.org/sqlite v1.14.2 // indirect
 	xorm.io/builder v0.3.12 // indirect
 	xorm.io/core v0.7.2
-	xorm.io/xorm v1.3.2
+	xorm.io/xorm v1.2.0
 )
