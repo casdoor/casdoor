@@ -242,7 +242,7 @@ class UserEditPage extends React.Component {
               </Col>
             </Row>
             <Row style={{marginTop: "20px"}}>
-              <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} user={this.state.user} account={this.props.account} />
+              <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} user={this.state.user} organization={this.state.organizations.find(organization => organization.name === this.state.organizationName)} />
             </Row>
           </Col>
         </Row>

@@ -25,6 +25,6 @@ import (
 )
 
 func TestDeployStaticFiles(t *testing.T) {
-	provider := object.GetProvider(util.GetId("provider_storage_aliyun_oss"))
+	provider := object.GetProvider(util.GetId("admin", "provider_storage_aliyun_oss"))
 	deployStaticFiles(provider)
 }
