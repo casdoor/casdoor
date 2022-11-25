@@ -104,9 +104,12 @@ class UserEditPage extends React.Component {
 
   setReturnUrl() {
     const searchParams = new URLSearchParams(this.props.location.search);
-    this.setState({
-      returnUrl: searchParams.get("returnUrl"),
-    });
+    const returnUrl = searchParams.get("returnUrl");
+    if (returnUrl !== null) {
+      this.setState({
+        returnUrl: returnUrl,
+      });
+    }
   }
 
   parseUserField(key, value) {
