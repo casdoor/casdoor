@@ -105,6 +105,9 @@ func initAPI() {
 	beego.Router("/api/add-adapter", &controllers.ApiController{}, "POST:AddCasbinAdapter")
 	beego.Router("/api/delete-adapter", &controllers.ApiController{}, "POST:DeleteCasbinAdapter")
 	beego.Router("/api/sync-policies", &controllers.ApiController{}, "GET:SyncPolicies")
+	beego.Router("/api/update-policy", &controllers.ApiController{}, "POST:UpdatePolicy")
+	beego.Router("/api/add-policy", &controllers.ApiController{}, "POST:AddPolicy")
+	beego.Router("/api/remove-policy", &controllers.ApiController{}, "POST:RemovePolicy")
 
 	beego.Router("/api/set-password", &controllers.ApiController{}, "POST:SetPassword")
 	beego.Router("/api/check-user-password", &controllers.ApiController{}, "POST:CheckUserPassword")

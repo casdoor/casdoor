@@ -6,11 +6,15 @@
     "Sign Up": "S'inscrire"
   },
   "adapter": {
+    "Add policy successfully": "Add policy successfully",
+    "Delete policy successfully": "Delete policy successfully",
     "Edit Adapter": "Edit Adapter",
     "New Adapter": "New Adapter",
     "Policies": "Policies",
     "Policies - Tooltip": "Policies - Tooltip",
-    "Sync": "Sync"
+    "Repeated policy": "Repeated policy",
+    "Sync": "Sync",
+    "Update policy successfully": "Update policy successfully"
   },
   "application": {
     "Always": "Always",
@@ -555,6 +559,7 @@
     "UserInfo URL": "UserInfo URL",
     "UserInfo URL - Tooltip": "UserInfo URL - Tooltip",
     "Visible": "Visible",
+    "admin (share)": "admin (share)",
     "alertType": "Type d'alerte"
   },
   "record": {

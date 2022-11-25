@@ -6,11 +6,15 @@
     "Sign Up": "注册"
   },
   "adapter": {
+    "Add policy successfully": "添加策略成功",
+    "Delete policy successfully": "删除策略成功",
     "Edit Adapter": "编辑适配器",
     "New Adapter": "添加适配器",
     "Policies": "策略",
     "Policies - Tooltip": "策略",
-    "Sync": "同步"
+    "Repeated policy": "策略重复",
+    "Sync": "同步",
+    "Update policy successfully": "更新策略成功"
   },
   "application": {
     "Always": "始终开启",
@@ -555,6 +559,7 @@
     "UserInfo URL": "UserInfo URL",
     "UserInfo URL - Tooltip": "UserInfo URL - 工具提示",
     "Visible": "是否可见",
+    "admin (share)": "admin (share)",
     "alertType": "警报类型"
   },
   "record": {

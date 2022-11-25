@@ -45,7 +45,7 @@ class AdapterListPage extends BaseListPage {
     const newAdapter = this.newAdapter();
     AdapterBackend.addAdapter(newAdapter)
       .then((res) => {
-        this.props.history.push({pathname: `/adapters/${newAdapter.owner}/${newAdapter.name}`, mode: "add"});
+        this.props.history.push({pathname: `/adapters/${newAdapter.organization}/${newAdapter.name}`, mode: "add"});
       }
       )
       .catch(error => {

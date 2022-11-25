@@ -416,9 +416,7 @@ export function goToLinkSoft(ths, link) {
 }
 
 export function showMessage(type, text) {
-  if (type === "") {
-    return;
-  } else if (type === "success") {
+  if (type === "success") {
     message.success(text);
   } else if (type === "error") {
     message.error(text);
@@ -445,8 +443,8 @@ export function deepCopy(obj) {
   return Object.assign({}, obj);
 }
 
-export function addRow(array, row) {
-  return [...array, row];
+export function addRow(array, row, position = "end") {
+  return position === "end" ? [...array, row] : [row, ...array];
 }
 
 export function prependRow(array, row) {
