@@ -49,6 +49,7 @@ class UserEditPage extends React.Component {
       applications: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
       loading: true,
+      returnUrl: null,
     };
   }
 
@@ -57,6 +58,7 @@ class UserEditPage extends React.Component {
     this.getOrganizations();
     this.getApplicationsByOrganization(this.state.organizationName);
     this.getUserApplication();
+    this.setReturnUrl();
   }
 
   getUser() {
@@ -100,9 +102,14 @@ class UserEditPage extends React.Component {
       });
   }
 
-  getReturnUrl() {
+  setReturnUrl() {
     const searchParams = new URLSearchParams(this.props.location.search);
-    return searchParams.get("returnUrl");
+    const returnUrl = searchParams.get("returnUrl");
+    if (returnUrl !== null) {
+      this.setState({
+        returnUrl: returnUrl,
+      });
+    }
   }
 
   parseUserField(key, value) {
@@ -619,9 +626,8 @@ class UserEditPage extends React.Component {
             }
           } else {
             if (willExist) {
-              const returnUrl = this.getReturnUrl();
-              if (returnUrl) {
-                window.location.href = returnUrl;
+              if (this.state.returnUrl) {
+                window.location.href = this.state.returnUrl;
               }
             }
           }
