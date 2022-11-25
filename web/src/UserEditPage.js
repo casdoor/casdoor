@@ -104,8 +104,9 @@ class UserEditPage extends React.Component {
 
   setReturnUrl() {
     const searchParams = new URLSearchParams(this.props.location.search);
-    const returnUrl = searchParams.get("returnUrl");
-    returnUrl !== null ? this.setState({returnUrl: returnUrl}) : null;
+    this.setState({
+      returnUrl: searchParams.get("returnUrl"),
+    });
   }
 
   parseUserField(key, value) {
@@ -622,9 +623,8 @@ class UserEditPage extends React.Component {
             }
           } else {
             if (willExist) {
-              const returnUrl = this.state.returnUrl;
-              if (returnUrl) {
-                window.location.href = returnUrl;
+              if (this.state.returnUrl) {
+                window.location.href = this.state.returnUrl;
               }
             }
           }
