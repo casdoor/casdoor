@@ -30,6 +30,7 @@ export const CropperDiv = (props) => {
   const {title} = props;
   const {user} = props;
   const {buttonText} = props;
+  const {organization} = props;
   let uploadButton;
 
   const onChange = (e) => {
@@ -92,9 +93,8 @@ export const CropperDiv = (props) => {
 
   const getOptions = (data) => {
     const options = [];
-    if (props.account.organization.defaultAvatar !== null) {
-      options.push({value: props.account.organization.defaultAvatar});
-    }
+    options.push({value: organization?.defaultAvatar});
+
     for (let i = 0; i < data.length; i++) {
       if (data[i].fileType === "image") {
         const url = `${data[i].url}`;
@@ -125,7 +125,7 @@ export const CropperDiv = (props) => {
 
   useEffect(() => {
     setLoading(true);
-    ResourceBackend.getResources(props.account.owner, props.account.name, "", "", "", "", "", "")
+    ResourceBackend.getResources(user.owner, user.name, "", "", "", "", "", "")
       .then((res) => {
         setLoading(false);
         setOptions(getOptions(res));

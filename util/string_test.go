@@ -137,16 +137,16 @@ func TestGenerateId(t *testing.T) {
 func TestGetId(t *testing.T) {
 	scenarios := []struct {
 		description string
-		input       string
+		input       []string
 		expected    interface{}
 	}{
-		{"Scenery one", "casdoor", "admin/casdoor"},
-		{"Scenery two", "casbin", "admin/casbin"},
-		{"Scenery three", "lorem ipsum", "admin/lorem ipsum"},
+		{"Scenery one", []string{"admin", "casdoor"}, "admin/casdoor"},
+		{"Scenery two", []string{"admin", "casbin"}, "admin/casbin"},
+		{"Scenery three", []string{"test", "lorem ipsum"}, "test/lorem ipsum"},
 	}
 	for _, scenery := range scenarios {
 		t.Run(scenery.description, func(t *testing.T) {
-			actual := GetId(scenery.input)
+			actual := GetId(scenery.input[0], scenery.input[1])
 			assert.Equal(t, scenery.expected, actual, "This not is a valid MD5")
 		})
 	}

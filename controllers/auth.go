@@ -307,7 +307,7 @@ func (c *ApiController) Login() {
 		}
 
 		organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", application.Organization))
-		provider := object.GetProvider(util.GetId(form.Provider))
+		provider := object.GetProvider(util.GetId("admin", form.Provider))
 		providerItem := application.GetProviderItem(provider.Name)
 		if !providerItem.IsProviderVisible() {
 			c.ResponseError(fmt.Sprintf(c.T("ProviderErr.ProviderNotEnabled"), provider.Name))

@@ -156,7 +156,7 @@ func (c *ApiController) UploadResource() {
 		return
 	}
 
-	provider, user, ok := c.GetProviderFromContext("Storage")
+	provider, _, ok := c.GetProviderFromContext("Storage")
 	if !ok {
 		return
 	}
@@ -202,12 +202,10 @@ func (c *ApiController) UploadResource() {
 
 	switch tag {
 	case "avatar":
+		user := object.GetUserNoCheck(util.GetId(owner, username))
 		if user == nil {
-			user = object.GetUserNoCheck(username)
-			if user == nil {
-				c.ResponseError(c.T("ResourceErr.UserIsNil"))
-				return
-			}
+			c.ResponseError(c.T("ResourceErr.UserIsNil"))
+			return
 		}
 
 		user.Avatar = fileUrl

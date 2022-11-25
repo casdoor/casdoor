@@ -126,7 +126,7 @@ func getInitScore() (int, error) {
 func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, *object.User, bool) {
 	providerName := c.Input().Get("provider")
 	if providerName != "" {
-		provider := object.GetProvider(util.GetId(providerName))
+		provider := object.GetProvider(util.GetId("admin", providerName))
 		if provider == nil {
 			c.ResponseError(c.T("ProviderErr.ProviderNotFound"), providerName)
 			return nil, nil, false
