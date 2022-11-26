@@ -68,13 +68,15 @@
     "Side panel HTML - Tooltip": "Side panel HTML - Tooltip",
     "Signin page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "Signin page URL copied to clipboard successfully, please paste it into the incognito window or another browser",
     "Signin session": "Signin session",
+    "Sign Up Error": "Sign Up Error",
     "Signup items": "Signup items",
     "Signup items - Tooltip": "Signup items that need to be filled in when users register",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser",
     "Token expire": "Token expire",
     "Token expire - Tooltip": "Token expire - Tooltip",
     "Token format": "Token format",
-    "Token format - Tooltip": "Token format - Tooltip"
+    "Token format - Tooltip": "Token format - Tooltip",
+    "You are unexpected to see this prompt page": "You are unexpected to see this prompt page"
   },
   "cert": {
     "Bit size": "Bit size",

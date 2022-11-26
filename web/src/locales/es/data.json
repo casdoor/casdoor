@@ -38,6 +38,7 @@
     "SAML metadata URL copied to clipboard successfully": "SAML metadata URL copiado al portapapeles con éxito",
     "Signin page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "Signin page URL copied to clipboard successfully, please paste it into the incognito window or another browser",
     "Signin session": "Signin session",
+    "Sign Up Error": "Sign Up Error",
     "Signup items": "Signup items",
     "Signup items - Tooltip": "Signup items - Tooltip",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser",
@@ -45,6 +46,7 @@
     "Token expire - Tooltip": "Expiración del Token - Tooltip",
     "Token format": "Formato del Token",
     "Token format - Tooltip": "Formato del Token - Tooltip",
+    "You are unexpected to see this prompt page": "You are unexpected to see this prompt page",
     "Rule": "Rule",
     "None": "None",
     "Always": "Always"
