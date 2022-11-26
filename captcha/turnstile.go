@@ -23,21 +23,21 @@ import (
 	"strings"
 )
 
-const TurnstileVerifyUrl = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+const CloudflareTurnstileVerifyUrl = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
 
-type TurnstileProvider struct{}
+type CloudflareTurnstileProvider struct{}
 
-func NewTurnstileProvider() *TurnstileProvider {
-	captcha := &TurnstileProvider{}
+func NewCloudflareTurnstileProvider() *CloudflareTurnstileProvider {
+	captcha := &CloudflareTurnstileProvider{}
 	return captcha
 }
 
-func (captcha *TurnstileProvider) VerifyCaptcha(token, clientSecret string) (bool, error) {
+func (captcha *CloudflareTurnstileProvider) VerifyCaptcha(token, clientSecret string) (bool, error) {
 	reqData := url.Values{
 		"secret":   {clientSecret},
 		"response": {token},
 	}
-	resp, err := http.PostForm(TurnstileVerifyUrl, reqData)
+	resp, err := http.PostForm(CloudflareTurnstileVerifyUrl, reqData)
 	if err != nil {
 		return false, err
 	}

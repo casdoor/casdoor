@@ -105,7 +105,7 @@ export const CaptchaWidget = ({captchaType, subType, siteKey, clientSecret, onCh
       }, 500);
       break;
     }
-    case "Turnstile": {
+    case "Cloudflare Turnstile": {
       const tTimer = setInterval(() => {
         if (!window.turnstile) {
           loadScript("https://challenges.cloudflare.com/turnstile/v0/api.js");
