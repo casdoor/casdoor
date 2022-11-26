@@ -145,6 +145,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_geetest.png`,
       url: "https://www.geetest.com",
     },
+    "Turnstile": {
+      logo: `${StaticBaseUrl}/img/social_turnstile.png`,
+      url: "https://www.cloudflare.com/products/turnstile/",
+    },
   },
 };
 
@@ -695,6 +699,7 @@ export function getProviderTypeOptions(category) {
       {id: "hCaptcha", name: "hCaptcha"},
       {id: "Aliyun Captcha", name: "Aliyun Captcha"},
       {id: "GEETEST", name: "GEETEST"},
+      {id: "Turnstile", name: "Turnstile"},
     ]);
   } else {
     return [];
