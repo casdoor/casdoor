@@ -105,6 +105,21 @@ export const CaptchaWidget = ({captchaType, subType, siteKey, clientSecret, onCh
       }, 500);
       break;
     }
+    case "Cloudflare Turnstile": {
+      const tTimer = setInterval(() => {
+        if (!window.turnstile) {
+          loadScript("https://challenges.cloudflare.com/turnstile/v0/api.js");
+        }
+        if (window.turnstile && window.turnstile.render) {
+          window.turnstile.render("#captcha", {
+            sitekey: siteKey,
+            callback: onChange,
+          });
+          clearInterval(tTimer);
+        }
+      }, 300);
+      break;
+    }
     default:
       break;
     }

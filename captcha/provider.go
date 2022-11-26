@@ -31,6 +31,8 @@ func GetCaptchaProvider(captchaType string) CaptchaProvider {
 		return NewAliyunCaptchaProvider()
 	} else if captchaType == "GEETEST" {
 		return NewGEETESTCaptchaProvider()
+	} else if captchaType == "Cloudflare Turnstile" {
+		return NewCloudflareTurnstileProvider()
 	}
 	return nil
 }
