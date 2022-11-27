@@ -92,6 +92,10 @@ func (c *ApiController) SendVerificationCode() {
 	user := c.getCurrentUser()
 	application := object.GetApplication(applicationId)
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", application.Owner, application.Organization))
+	if organization == nil {
+		c.ResponseError(c.T("OrgErr.DoNotExist"))
+		return
+	}
 
 	if checkUser == "true" && user == nil && object.GetUserByFields(organization.Name, dest) == nil {
 		c.ResponseError(c.T("LoginErr.LoginFirst"))
@@ -114,6 +118,12 @@ func (c *ApiController) SendVerificationCode() {
 			return
 		}
 
+		userByEmail := object.GetUserByEmail(organization.Name, dest)
+		if userByEmail == nil {
+			c.ResponseError(c.T("UserErr.DoNotExistSignUp"))
+			return
+		}
+
 		provider := application.GetEmailProvider()
 		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, remoteAddr, dest)
 	case "phone":
@@ -124,8 +134,10 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError(c.T("PhoneErr.NumberInvalid"))
 			return
 		}
-		if organization == nil {
-			c.ResponseError(c.T("OrgErr.DoNotExist"))
+
+		userByPhone := object.GetUserByPhone(organization.Name, dest)
+		if userByPhone == nil {
+			c.ResponseError(c.T("UserErr.DoNotExistSignUp"))
 			return
 		}
 
