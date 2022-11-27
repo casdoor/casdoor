@@ -171,9 +171,7 @@ func (c *ApiController) UploadResource() {
 		fileType, _ = util.GetOwnerAndNameFromId(mimeType)
 	}
 
-	// fullFilePath conflict, either replace or rename
 	if tag != "avatar" && tag != "termsOfUse" {
-		// rename
 		ext := filepath.Ext(filepath.Base(fullFilePath))
 		index := len(fullFilePath) - len(ext)
 		for i := 1; ; i++ {
@@ -181,6 +179,8 @@ func (c *ApiController) UploadResource() {
 			if object.GetResourceCount(owner, username, "name", objectKey) == 0 {
 				break
 			}
+
+			// duplicated fullFilePath found, change it
 			fullFilePath = fullFilePath[:index] + fmt.Sprintf("-%d", i) + ext
 		}
 	}
