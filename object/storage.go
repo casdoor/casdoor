@@ -54,7 +54,7 @@ func escapePath(path string) string {
 	return res
 }
 
-func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool) (string, string) {
+func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool) (string, string) {
 	escapedPath := util.UrlJoin(provider.PathPrefix, escapePath(fullFilePath))
 	objectKey := util.UrlJoin(util.GetUrlPath(provider.Domain), escapedPath)
 
@@ -93,7 +93,7 @@ func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 		UpdateProvider(provider.GetId(), provider)
 	}
 
-	fileUrl, objectKey := getUploadFileUrl(provider, fullFilePath, true)
+	fileUrl, objectKey := GetUploadFileUrl(provider, fullFilePath, true)
 
 	_, err := storageProvider.Put(objectKey, fileBuffer)
 	if err != nil {

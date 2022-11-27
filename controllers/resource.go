@@ -171,6 +171,20 @@ func (c *ApiController) UploadResource() {
 		fileType, _ = util.GetOwnerAndNameFromId(mimeType)
 	}
 
+	// fullFilePath conflict, either replace or rename
+	if tag != "avatar" && tag != "termsOfUse" {
+		// rename
+		ext := filepath.Ext(filepath.Base(fullFilePath))
+		index := len(fullFilePath) - len(ext)
+		for i := 1; ; i++ {
+			_, objectKey := object.GetUploadFileUrl(provider, fullFilePath, true)
+			if object.GetResourceCount(owner, username, "name", objectKey) == 0 {
+				break
+			}
+			fullFilePath = fullFilePath[:index] + fmt.Sprintf("-%d", i) + ext
+		}
+	}
+
 	fileUrl, objectKey, err := object.UploadFileSafe(provider, fullFilePath, fileBuffer)
 	if err != nil {
 		c.ResponseError(err.Error())
