@@ -302,7 +302,6 @@
     "Sign in with WebAuthn": "WebAuthn登录",
     "Sign in with {type}": "{type}登录",
     "Signing in...": "正在登录...",
-    "Successfully logged in with webauthn credentials": "Successfully logged in with webauthn credentials",
     "The input is not valid Email or Phone!": "您输入的电子邮箱格式或手机号有误！",
     "To access": "访问",
     "Verification Code": "验证码",
