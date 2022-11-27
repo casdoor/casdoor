@@ -113,7 +113,11 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError(c.T("EmailErr.EmailInvalid"))
 			return
 		}
-
+		userByEmail := object.GetUserByEmail(organization.Name, dest)
+		if userByEmail == nil {
+			c.ResponseError(c.T("UserErr.DoNotExistSignUp"))
+			return
+		}
 		provider := application.GetEmailProvider()
 		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, remoteAddr, dest)
 	case "phone":
@@ -122,6 +126,11 @@ func (c *ApiController) SendVerificationCode() {
 		}
 		if !util.IsPhoneCnValid(dest) {
 			c.ResponseError(c.T("PhoneErr.NumberInvalid"))
+			return
+		}
+		userByPhone := object.GetUserByPhone(organization.Name, dest)
+		if userByPhone == nil {
+			c.ResponseError(c.T("UserErr.DoNotExistSignUp"))
 			return
 		}
 		if organization == nil {
