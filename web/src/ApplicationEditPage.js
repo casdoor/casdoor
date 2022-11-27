@@ -49,6 +49,10 @@ const template = `<style>
 }
 </style>`;
 
+const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
+
+const width = {desktop: "90%", mobile: "110%"};
+
 const sideTemplate = `<style>
   .left-model{
     text-align: center;
@@ -710,10 +714,71 @@ class ApplicationEditPage extends React.Component {
     );
   }
 
+  renderPreview(url, promptMessage, buttonCaption, page, width) {
+    return (
+      <>
+        <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
+          copy(`${window.location.origin}${url}`);
+          Setting.showMessage("success", i18next.t(promptMessage));
+        }}
+        >
+          {i18next.t(buttonCaption)}
+        </Button>
+        <br />
+        <div style={{position: "relative", width: width, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
+          {page}
+          <div style={maskStyle} />
+        </div>
+      </>
+    );
+  }
+
+  renderSignup(signUpUrl, width) {
+    const signUpPage = this.state.application.enablePassword ? (
+      <SignupPage application={this.state.application} />
+    ) : (
+      <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
+    );
+    return (
+      this.renderPreview(
+        signUpUrl,
+        "application:Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser",
+        "application:Copy signup page URL",
+        signUpPage,
+        width
+      )
+    );
+  }
+
+  renderSignin(signInUrl, width) {
+    const signInPage = <LoginPage type={"login"} mode={"signin"} application={this.state.application} />;
+    return (
+      this.renderPreview(
+        signInUrl,
+        "application:Signin page URL copied to clipboard successfully, please paste it into the incognito window or another browser",
+        "application:Copy signin page URL",
+        signInPage,
+        width
+      )
+    );
+  }
+
+  renderPrompt(promptUrl, width) {
+    const promptPage = <PromptPage application={this.state.application} account={this.props.account} />;
+    return (
+      this.renderPreview(
+        promptUrl,
+        "application:Prompt page URL copied to clipboard successfully, please paste it into the incognito window or another browser",
+        "application:Copy prompt page URL",
+        promptPage,
+        width
+      )
+    );
+  }
+
   renderSignupSigninPreview() {
     let signUpUrl = `/signup/${this.state.application.name}`;
     const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
-    const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
     if (!this.state.application.enablePassword) {
       signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");
     }
@@ -723,42 +788,12 @@ class ApplicationEditPage extends React.Component {
         {Setting.isMobile() ?
           (
             <>
-              <Row>
+              <Row gutter={[16, 24]}>
                 <Col span={22}>
-                  <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
-                    copy(`${window.location.origin}${signUpUrl}`);
-                    Setting.showMessage("success", i18next.t("application:Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
-                  }}
-                  >
-                    {i18next.t("application:Copy signup page URL")}
-                  </Button>
-                  <br />
-                  <div style={{position: "relative", width: "110%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
-                    {
-                      this.state.application.enablePassword ? (
-                        <SignupPage application={this.state.application} />
-                      ) : (
-                        <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
-                      )
-                    }
-                    <div style={maskStyle} />
-                  </div>
+                  {this.renderSignup(signUpUrl, width.mobile)}
                 </Col>
-              </Row>
-              <Row>
                 <Col span={22}>
-                  <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
-                    copy(`${window.location.origin}${signInUrl}`);
-                    Setting.showMessage("success", i18next.t("application:Signin page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
-                  }}
-                  >
-                    {i18next.t("application:Copy signin page URL")}
-                  </Button>
-                  <br />
-                  <div style={{position: "relative", width: "110%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
-                    <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
-                    <div style={maskStyle} />
-                  </div>
+                  {this.renderSignin(signInUrl, width.mobile)}
                 </Col>
               </Row>
             </>
@@ -766,38 +801,10 @@ class ApplicationEditPage extends React.Component {
           (
             <>
               <Col span={11}>
-                <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
-                  copy(`${window.location.origin}${signUpUrl}`);
-                  Setting.showMessage("success", i18next.t("application:Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
-                }}
-                >
-                  {i18next.t("application:Copy signup page URL")}
-                </Button>
-                <br />
-                <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
-                  {
-                    this.state.application.enablePassword ? (
-                      <SignupPage application={this.state.application} />
-                    ) : (
-                      <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
-                    )
-                  }
-                  <div style={maskStyle} />
-                </div>
+                {this.renderSignup(signUpUrl, width.desktop)}
               </Col>
               <Col span={11}>
-                <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
-                  copy(`${window.location.origin}${signInUrl}`);
-                  Setting.showMessage("success", i18next.t("application:Signin page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
-                }}
-                >
-                  {i18next.t("application:Copy signin page URL")}
-                </Button>
-                <br />
-                <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
-                  <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
-                  <div style={maskStyle} />
-                </div>
+                {this.renderSignin(signInUrl, width.desktop)}
               </Col>
             </>)
         }
@@ -807,37 +814,14 @@ class ApplicationEditPage extends React.Component {
 
   renderPromptPreview() {
     const promptUrl = `/prompt/${this.state.application.name}`;
-    const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
     return (
       <>
         {Setting.isMobile() ?
           (<Col span={22}>
-            <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
-              copy(`${window.location.origin}${promptUrl}`);
-              Setting.showMessage("success", i18next.t("application:Prompt page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
-            }}
-            >
-              {i18next.t("application:Copy prompt page URL")}
-            </Button>
-            <br />
-            <div style={{position: "relative", width: "110%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
-              <PromptPage application={this.state.application} account={this.props.account} />
-              <div style={maskStyle} />
-            </div>
+            {this.renderPrompt(promptUrl, width.mobile)}
           </Col>) :
           (<Col span={11}>
-            <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
-              copy(`${window.location.origin}${promptUrl}`);
-              Setting.showMessage("success", i18next.t("application:Prompt page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
-            }}
-            >
-              {i18next.t("application:Copy prompt page URL")}
-            </Button>
-            <br />
-            <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
-              <PromptPage application={this.state.application} account={this.props.account} />
-              <div style={maskStyle} />
-            </div>
+            {this.renderPrompt(promptUrl, width.desktop)}
           </Col>)
         }
       </>
