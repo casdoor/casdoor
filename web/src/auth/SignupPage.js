@@ -539,8 +539,8 @@ class SignupPage extends React.Component {
       return (
         <Result
           status="error"
-          title="Sign Up Error"
-          subTitle={"The application does not allow to sign up new account"}
+          title={i18next.t("application:Sign Up Error")}
+          subTitle={i18next.t("application:The application does not allow to sign up new account")}
           extra={[
             <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application, this.props.history)}>
               {

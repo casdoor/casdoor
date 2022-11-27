@@ -335,8 +335,8 @@ class LoginPage extends React.Component {
       return (
         <Result
           status="error"
-          title="Sign Up Error"
-          subTitle={"The application does not allow to sign up new account"}
+          title={i18next.t("application:Sign Up Error")}
+          subTitle={i18next.t("application:The application does not allow to sign up new account")}
           extra={[
             <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application, this.props.history)}>
               {
@@ -368,7 +368,7 @@ class LoginPage extends React.Component {
             rules={[
               {
                 required: true,
-                message: "Please input your application!",
+                message: i18next.t("application:Please input your application!"),
               },
             ]}
           >
@@ -379,7 +379,7 @@ class LoginPage extends React.Component {
             rules={[
               {
                 required: true,
-                message: "Please input your organization!",
+                message: i18next.t("application:Please input your organization!"),
               },
             ]}
           >
@@ -681,7 +681,7 @@ class LoginPage extends React.Component {
                 const accessToken = res.data;
                 Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
               } else {
-                Setting.showMessage("success", "Successfully logged in with webauthn credentials");
+                Setting.showMessage("success", i18next.t("login:Successfully logged in with webauthn credentials"));
                 Setting.goToLink("/");
               }
             } else {
@@ -689,7 +689,7 @@ class LoginPage extends React.Component {
             }
           })
           .catch(error => {
-            Setting.showMessage("error", `Failed to connect to server: ${error}`);
+            Setting.showMessage("error", `${i18next.t("application:Failed to connect to server: ")}${error}`);
           });
       });
   }
