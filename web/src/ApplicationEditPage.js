@@ -50,7 +50,6 @@ const template = `<style>
 </style>`;
 
 const previewGrid = Setting.isMobile() ? 22 : 11;
-
 const previewWidth = Setting.isMobile() ? "110%" : "90%";
 
 const sideTemplate = `<style>
