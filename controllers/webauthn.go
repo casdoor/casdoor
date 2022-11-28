@@ -104,6 +104,10 @@ func (c *ApiController) WebAuthnSigninBegin() {
 		c.ResponseError(fmt.Sprintf(c.T("UserErr.DoNotExistInOrg"), userOwner, userName))
 		return
 	}
+	if len(user.WebauthnCredentials) == 0 {
+		c.ResponseError(c.T("UserErr.NoWebAuthnCredential"))
+	}
+
 	options, sessionData, err := webauthnObj.BeginLogin(user)
 	if err != nil {
 		c.ResponseError(err.Error())
