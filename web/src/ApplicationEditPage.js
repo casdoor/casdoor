@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Popover, Radio, Row, Select, Space, Switch, Upload} from "antd";
+import {Button, Card, Col, Input, Popover, Radio, Row, Select, Switch, Upload} from "antd";
 import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -744,7 +744,6 @@ class ApplicationEditPage extends React.Component {
             <div style={maskStyle} />
           </div>
         </Col>
-        <Space />
         <Col span={previewGrid}>
           <Button style={{marginBottom: "10px", marginTop: Setting.isMobile() ? "15px" : "0"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
             copy(`${window.location.origin}${signInUrl}`);
