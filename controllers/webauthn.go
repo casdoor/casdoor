@@ -106,6 +106,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 	}
 	if len(user.WebauthnCredentials) == 0 {
 		c.ResponseError(c.T("UserErr.NoWebAuthnCredential"))
+		return
 	}
 
 	options, sessionData, err := webauthnObj.BeginLogin(user)
