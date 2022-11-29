@@ -49,9 +49,12 @@ class SyncerListPage extends BaseListPage {
     const newSyncer = this.newSyncer();
     SyncerBackend.addSyncer(newSyncer)
       .then((res) => {
-        this.props.history.push({pathname: `/syncers/${newSyncer.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/syncers/${newSyncer.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Syncer failed to add: ${res.msg}`);
+        }
+      })
       .catch(error => {
         Setting.showMessage("error", `Syncer failed to add: ${error}`);
       });

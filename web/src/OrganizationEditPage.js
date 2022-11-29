@@ -335,7 +335,7 @@ class OrganizationEditPage extends React.Component {
     const organization = Setting.deepCopy(this.state.organization);
     OrganizationBackend.updateOrganization(this.state.organization.owner, this.state.organizationName, organization)
       .then((res) => {
-        if (res.msg === "") {
+        if (res.status === "ok") {
           Setting.showMessage("success", "Successfully saved");
           this.setState({
             organizationName: this.state.organization.name,

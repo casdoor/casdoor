@@ -38,9 +38,12 @@ class ModelListPage extends BaseListPage {
     const newModel = this.newModel();
     ModelBackend.addModel(newModel)
       .then((res) => {
-        this.props.history.push({pathname: `/models/${newModel.owner}/${newModel.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/models/${newModel.owner}/${newModel.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Model failed to add: ${res.msg}`);
+        }
+      })
       .catch(error => {
         Setting.showMessage("error", `Model failed to add: ${error}`);
       });

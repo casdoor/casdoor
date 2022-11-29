@@ -789,7 +789,7 @@ class ProviderEditPage extends React.Component {
     const provider = Setting.deepCopy(this.state.provider);
     ProviderBackend.updateProvider(this.state.owner, this.state.providerName, provider)
       .then((res) => {
-        if (res.msg === "") {
+        if (res.status === "ok") {
           Setting.showMessage("success", "Successfully saved");
           this.setState({
             owner: this.state.provider.owner,

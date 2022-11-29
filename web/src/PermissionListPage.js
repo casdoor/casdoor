@@ -48,13 +48,12 @@ class PermissionListPage extends BaseListPage {
     const newPermission = this.newPermission();
     PermissionBackend.addPermission(newPermission)
       .then((res) => {
-        if (res.msg !== "") {
-          Setting.showMessage("error", res.msg);
-          return;
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/permissions/${newPermission.owner}/${newPermission.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Permission failed to add: ${res.msg}`);
         }
-        this.props.history.push({pathname: `/permissions/${newPermission.owner}/${newPermission.name}`, mode: "add"});
-      }
-      )
+      })
       .catch(error => {
         Setting.showMessage("error", `Permission failed to add: ${error}`);
       });
