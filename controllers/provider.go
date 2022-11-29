@@ -122,6 +122,12 @@ func (c *ApiController) AddProvider() {
 		return
 	}
 
+	count := object.GetProviderCount("", "", "")
+	if err := checkQuotaForProvider(count); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddProvider(&provider))
 	c.ServeJSON()
 }

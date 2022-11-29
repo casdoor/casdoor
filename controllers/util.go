@@ -153,3 +153,47 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 
 	return provider, user, true
 }
+
+func checkQuotaForApplication(count int) error {
+	quota := conf.GetConfigQuota().Application
+	if quota == -1 {
+		return nil
+	}
+	if count >= quota {
+		return fmt.Errorf("application quota is exceeded")
+	}
+	return nil
+}
+
+func checkQuotaForOrganization(count int) error {
+	quota := conf.GetConfigQuota().Organization
+	if quota == -1 {
+		return nil
+	}
+	if count >= quota {
+		return fmt.Errorf("organization quota is exceeded")
+	}
+	return nil
+}
+
+func checkQuotaForProvider(count int) error {
+	quota := conf.GetConfigQuota().Provider
+	if quota == -1 {
+		return nil
+	}
+	if count >= quota {
+		return fmt.Errorf("provider quota is exceeded")
+	}
+	return nil
+}
+
+func checkQuotaForUser(count int) error {
+	quota := conf.GetConfigQuota().User
+	if quota == -1 {
+		return nil
+	}
+	if count >= quota {
+		return fmt.Errorf("user quota is exceeded")
+	}
+	return nil
+}

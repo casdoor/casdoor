@@ -167,6 +167,12 @@ func (c *ApiController) AddApplication() {
 		return
 	}
 
+	count := object.GetApplicationCount("", "", "")
+	if err := checkQuotaForApplication(count); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddApplication(&application))
 	c.ServeJSON()
 }
