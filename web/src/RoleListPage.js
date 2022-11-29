@@ -40,9 +40,12 @@ class RoleListPage extends BaseListPage {
     const newRole = this.newRole();
     RoleBackend.addRole(newRole)
       .then((res) => {
-        this.props.history.push({pathname: `/roles/${newRole.owner}/${newRole.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/roles/${newRole.owner}/${newRole.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Role failed to add: ${res.msg}`);
+        }
+      })
       .catch(error => {
         Setting.showMessage("error", `Role failed to add: ${error}`);
       });

@@ -786,7 +786,7 @@ class ApplicationEditPage extends React.Component {
     const application = Setting.deepCopy(this.state.application);
     ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
       .then((res) => {
-        if (res.msg === "") {
+        if (res.status === "ok") {
           Setting.showMessage("success", "Successfully saved");
           this.setState({
             applicationName: this.state.application.name,

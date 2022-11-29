@@ -51,7 +51,11 @@ class PaymentListPage extends BaseListPage {
     const newPayment = this.newPayment();
     PaymentBackend.addPayment(newPayment)
       .then((res) => {
-        this.props.history.push({pathname: `/payments/${newPayment.name}`, mode: "add"});
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/payments/${newPayment.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Payment failed to add: ${res.msg}`);
+        }
       }
       )
       .catch(error => {

@@ -72,9 +72,12 @@ class UserListPage extends BaseListPage {
     const newUser = this.newUser();
     UserBackend.addUser(newUser)
       .then((res) => {
-        this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `User failed to add: ${res.msg}`);
+        }
+      })
       .catch(error => {
         Setting.showMessage("error", `User failed to add: ${error}`);
       });
