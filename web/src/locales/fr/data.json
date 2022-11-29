@@ -6,14 +6,17 @@
     "Sign Up": "S'inscrire"
   },
   "adapter": {
+    "Add policy failed": "Add policy failed",
     "Add policy successfully": "Add policy successfully",
     "Delete policy successfully": "Delete policy successfully",
     "Edit Adapter": "Edit Adapter",
+    "Failed to add the adapter": "Failed to add the adapter",
     "New Adapter": "New Adapter",
     "Policies": "Policies",
     "Policies - Tooltip": "Policies - Tooltip",
     "Repeated policy": "Repeated policy",
     "Sync": "Sync",
+    "Update policy failed": "Update policy failed",
     "Update policy successfully": "Update policy successfully"
   },
   "application": {
@@ -167,6 +170,7 @@
     "Edit": "Editer",
     "Email": "Courriel",
     "Email - Tooltip": "email",
+    "Failed to connect to server": "Failed to connect to server",
     "Favicon": "Favicon",
     "Favicon - Tooltip": "Application icon",
     "First name": "First name",
@@ -237,6 +241,7 @@
     "Sorry, you do not have permission to access this page.": "Désolé, vous n'avez pas la permission d'accéder à cette page.",
     "State": "State",
     "State - Tooltip": "State - Tooltip",
+    "Successfully saved": "Successfully saved",
     "Swagger": "Swagger",
     "Sync": "Sync",
     "Syncers": "Synchronisateurs",

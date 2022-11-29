@@ -203,9 +203,9 @@ class PromptPage extends React.Component {
     const user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.user.owner, this.state.user.name, user)
       .then((res) => {
-        if (res.msg === "") {
+        if (res.status === "ok") {
           if (isFinal) {
-            Setting.showMessage("success", "Successfully saved");
+            Setting.showMessage("success", i18next.t("general:Successfully saved"));
 
             this.logout();
           }
@@ -217,7 +217,7 @@ class PromptPage extends React.Component {
       })
       .catch(error => {
         if (isFinal) {
-          Setting.showMessage("error", `Failed to connect to server: ${error}`);
+          Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
         }
       });
   }

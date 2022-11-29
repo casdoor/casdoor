@@ -78,7 +78,7 @@ class PaymentEditPage extends React.Component {
         this.setState({
           isInvoiceLoading: false,
         });
-        if (res.msg === "") {
+        if (res.status === "ok") {
           Setting.showMessage("success", "Successfully invoiced");
           Setting.openLinkSafe(res.data);
           this.getPayment();
@@ -90,7 +90,7 @@ class PaymentEditPage extends React.Component {
         this.setState({
           isInvoiceLoading: false,
         });
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
       });
   }
 
@@ -443,8 +443,8 @@ class PaymentEditPage extends React.Component {
     const payment = Setting.deepCopy(this.state.payment);
     PaymentBackend.updatePayment(this.state.payment.owner, this.state.paymentName, payment)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             paymentName: this.state.payment.name,
           });
@@ -460,7 +460,7 @@ class PaymentEditPage extends React.Component {
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
       });
   }
 

@@ -417,8 +417,8 @@ class PermissionEditPage extends React.Component {
     const permission = Setting.deepCopy(this.state.permission);
     PermissionBackend.updatePermission(this.state.organizationName, this.state.permissionName, permission)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             permissionName: this.state.permission.name,
           });
@@ -434,7 +434,7 @@ class PermissionEditPage extends React.Component {
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
       });
   }
 

@@ -109,7 +109,7 @@ class PolicyTable extends React.Component {
         this.setState({editingIndex: "", oldPolicy: ""});
         Setting.showMessage("success", i18next.t("adapter:Update policy successfully"));
       } else {
-        Setting.showMessage("error", i18next.t(`adapter:Update policy failed, ${res.msg}`));
+        Setting.showMessage("error", i18next.t("adapter:Update policy failed") + res.msg);
       }
     });
   }
@@ -124,7 +124,7 @@ class PolicyTable extends React.Component {
           Setting.showMessage("success", i18next.t("adapter:Add policy successfully"));
         }
       } else {
-        Setting.showMessage("error", i18next.t(`adapter:Add policy failed, ${res.msg}`));
+        Setting.showMessage("error", i18next.t("adapter:Add policy failed") + res.msg);
       }
     });
   }
@@ -136,7 +136,7 @@ class PolicyTable extends React.Component {
         this.updateTable(table);
         Setting.showMessage("success", i18next.t("adapter:Delete policy successfully"));
       } else {
-        Setting.showMessage("error", i18next.t(`adapter:Delete policy failed, ${res.msg}`));
+        Setting.showMessage("error", i18next.t("adapter:Delete policy failed, {{error}}", {error: res.msg}));
       }
     });
   }

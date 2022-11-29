@@ -673,7 +673,7 @@ class LoginPage extends React.Component {
           }),
         })
           .then(res => res.json()).then((res) => {
-            if (res.msg === "") {
+            if (res.status === "ok") {
               const responseType = values["type"];
               if (responseType === "code") {
                 this.postCodeLoginAction(res);

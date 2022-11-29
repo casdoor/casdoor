@@ -48,26 +48,25 @@ class AdapterListPage extends BaseListPage {
         if (res.status === "ok") {
           this.props.history.push({pathname: `/adapters/${newAdapter.organization}/${newAdapter.name}`, mode: "add"});
         } else {
-          Setting.showMessage("error", `Adapter failed to add: ${res.msg}`);
+          Setting.showMessage("error", i18next.t("adapter:Failed to add the adapter") + res.msg);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Adapter failed to add: ${error}`);
+        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
       });
   }
 
   deleteAdapter(i) {
     AdapterBackend.deleteAdapter(this.state.data[i])
       .then((res) => {
-        Setting.showMessage("success", "Adapter deleted successfully");
+        Setting.showMessage("success", "Deleted successfully");
         this.setState({
           data: Setting.deleteRow(this.state.data, i),
           pagination: {total: this.state.pagination.total - 1},
         });
-      }
-      )
+      })
       .catch(error => {
-        Setting.showMessage("error", `Adapter failed to delete: ${error}`);
+        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
       });
   }
 

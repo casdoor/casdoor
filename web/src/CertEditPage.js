@@ -217,8 +217,8 @@ class CertEditPage extends React.Component {
     const cert = Setting.deepCopy(this.state.cert);
     CertBackend.updateCert(this.state.cert.owner, this.state.certName, cert)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             certName: this.state.cert.name,
           });
@@ -234,7 +234,7 @@ class CertEditPage extends React.Component {
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
       });
   }
 

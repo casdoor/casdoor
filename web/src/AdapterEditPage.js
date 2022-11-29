@@ -263,8 +263,8 @@ class AdapterEditPage extends React.Component {
     const adapter = Setting.deepCopy(this.state.adapter);
     AdapterBackend.updateAdapter(this.state.adapter.owner, this.state.adapterName, adapter)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             adapterName: this.state.adapter.name,
           });
@@ -280,7 +280,7 @@ class AdapterEditPage extends React.Component {
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
       });
   }
 

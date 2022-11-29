@@ -6,14 +6,17 @@
     "Sign Up": "注册"
   },
   "adapter": {
+    "Add policy failed": "添加策略失败",
     "Add policy successfully": "添加策略成功",
     "Delete policy successfully": "删除策略成功",
     "Edit Adapter": "编辑适配器",
+    "Failed to add the adapter": "添加适配器失败",
     "New Adapter": "添加适配器",
     "Policies": "策略",
     "Policies - Tooltip": "策略",
     "Repeated policy": "策略重复",
     "Sync": "同步",
+    "Update policy failed": "更新策略失败",
     "Update policy successfully": "更新策略成功"
   },
   "application": {
@@ -167,6 +170,7 @@
     "Edit": "编辑",
     "Email": "电子邮箱",
     "Email - Tooltip": "电子邮件：",
+    "Failed to connect to server": "服务器出错",
     "Favicon": "网站图标",
     "Favicon - Tooltip": "网站的Favicon图标",
     "First name": "名字",
@@ -237,6 +241,7 @@
     "Sorry, you do not have permission to access this page.": "抱歉，您无权访问该页面",
     "State": "状态",
     "State - Tooltip": "状态",
+    "Successfully saved": "保存成功",
     "Swagger": "API文档",
     "Sync": "同步",
     "Syncers": "同步器",

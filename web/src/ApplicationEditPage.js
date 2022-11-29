@@ -787,7 +787,7 @@ class ApplicationEditPage extends React.Component {
     ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
       .then((res) => {
         if (res.status === "ok") {
-          Setting.showMessage("success", "Successfully saved");
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             applicationName: this.state.application.name,
           });
@@ -803,7 +803,7 @@ class ApplicationEditPage extends React.Component {
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
       });
   }
 

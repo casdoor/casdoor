@@ -271,8 +271,8 @@ class ProductEditPage extends React.Component {
     const product = Setting.deepCopy(this.state.product);
     ProductBackend.updateProduct(this.state.product.owner, this.state.productName, product)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             productName: this.state.product.name,
           });
@@ -288,7 +288,7 @@ class ProductEditPage extends React.Component {
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
       });
   }
 
