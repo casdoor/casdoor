@@ -347,22 +347,26 @@ class OrganizationEditPage extends React.Component {
             this.props.history.push(`/organizations/${this.state.organization.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateOrganizationField("name", this.state.organizationName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteOrganization() {
     OrganizationBackend.deleteOrganization(this.state.organization)
-      .then(() => {
-        this.props.history.push("/organizations");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/organizations");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

@@ -308,22 +308,26 @@ class WebhookEditPage extends React.Component {
             this.props.history.push(`/webhooks/${this.state.webhook.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateWebhookField("name", this.state.webhookName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteWebhook() {
     WebhookBackend.deleteWebhook(this.state.webhook)
-      .then(() => {
-        this.props.history.push("/webhooks");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/webhooks");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `Webhook failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

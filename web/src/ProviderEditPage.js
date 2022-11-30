@@ -802,22 +802,26 @@ class ProviderEditPage extends React.Component {
             this.props.history.push(`/providers/${this.state.provider.owner}/${this.state.provider.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateProviderField("name", this.state.providerName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteProvider() {
     ProviderBackend.deleteProvider(this.state.provider)
-      .then(() => {
-        this.props.history.push("/providers");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/providers");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `Provider failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

@@ -6,18 +6,13 @@
     "Sign Up": "Регистрация"
   },
   "adapter": {
-    "Add policy failed": "Add policy failed",
-    "Add policy successfully": "Add policy successfully",
-    "Delete policy successfully": "Delete policy successfully",
     "Edit Adapter": "Edit Adapter",
-    "Failed to add the adapter": "Failed to add the adapter",
+    "Failed to sync policies: ": "Failed to sync policies: ",
     "New Adapter": "New Adapter",
     "Policies": "Policies",
     "Policies - Tooltip": "Policies - Tooltip",
-    "Repeated policy": "Repeated policy",
-    "Sync": "Sync",
-    "Update policy failed": "Update policy failed",
-    "Update policy successfully": "Update policy successfully"
+    "Repeated policy rules": "Repeated policy rules",
+    "Sync": "Sync"
   },
   "application": {
     "Always": "Always",
@@ -41,7 +36,6 @@
     "Enable signin session - Tooltip": "Включить сеанс входа - Подсказка",
     "Enable signup": "Включить регистрацию",
     "Enable signup - Tooltip": "Whether to allow users to sign up",
-    "Failed to connect to server": "Failed to connect to server",
     "File uploaded successfully": "Файл успешно загружен",
     "Form CSS": "Form CSS",
     "Form CSS - Edit": "Form CSS - Edit",
@@ -131,7 +125,7 @@
     "Please input your username!": "Пожалуйста, введите ваше имя пользователя!",
     "Reset": "Сбросить",
     "Retrieve password": "Получить пароль",
-    "Unknown forget type": "Неизвестный тип",
+    "Unknown forget type: ": "Unknown forget type: ",
     "Verify": "Подтвердить"
   },
   "general": {
@@ -170,7 +164,10 @@
     "Edit": "Редактирование",
     "Email": "Почта",
     "Email - Tooltip": "email",
+    "Failed to add": "Failed to add",
     "Failed to connect to server": "Failed to connect to server",
+    "Failed to delete": "Failed to delete",
+    "Failed to save": "Failed to save",
     "Favicon": "Иконка",
     "Favicon - Tooltip": "Application icon",
     "First name": "Имя",
@@ -241,6 +238,8 @@
     "Sorry, you do not have permission to access this page.": "Извините, вы не имеете права доступа к этой странице.",
     "State": "State",
     "State - Tooltip": "State - Tooltip",
+    "Successfully added": "Successfully added",
+    "Successfully deleted": "Successfully deleted",
     "Successfully saved": "Successfully saved",
     "Swagger": "Swagger",
     "Sync": "Sync",

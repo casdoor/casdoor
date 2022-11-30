@@ -34,7 +34,7 @@ class WebAuthnCredentialTable extends React.Component {
 
       this.props.refresh();
     }).catch(error => {
-      Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
+      Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
     });
   }
 

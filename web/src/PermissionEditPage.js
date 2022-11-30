@@ -429,22 +429,26 @@ class PermissionEditPage extends React.Component {
             this.props.history.push(`/permissions/${this.state.permission.owner}/${this.state.permission.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updatePermissionField("name", this.state.permissionName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deletePermission() {
     PermissionBackend.deletePermission(this.state.permission)
-      .then(() => {
-        this.props.history.push("/permissions");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/permissions");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `Permission failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

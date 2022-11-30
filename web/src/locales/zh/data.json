@@ -6,18 +6,13 @@
     "Sign Up": "注册"
   },
   "adapter": {
-    "Add policy failed": "添加策略失败",
-    "Add policy successfully": "添加策略成功",
-    "Delete policy successfully": "删除策略成功",
     "Edit Adapter": "编辑适配器",
-    "Failed to add the adapter": "添加适配器失败",
+    "Failed to sync policies: ": "同步策略失败: ",
     "New Adapter": "添加适配器",
     "Policies": "策略",
     "Policies - Tooltip": "策略",
-    "Repeated policy": "策略重复",
-    "Sync": "同步",
-    "Update policy failed": "更新策略失败",
-    "Update policy successfully": "更新策略成功"
+    "Repeated policy rules": "重复的策略",
+    "Sync": "同步"
   },
   "application": {
     "Always": "始终开启",
@@ -41,7 +36,6 @@
     "Enable signin session - Tooltip": "从应用登录Casdoor后，Casdoor是否保持会话",
     "Enable signup": "启用注册",
     "Enable signup - Tooltip": "是否允许用户注册",
-    "Failed to connect to server": "无法连接服务器",
     "File uploaded successfully": "文件上传成功",
     "Form CSS": "表单CSS",
     "Form CSS - Edit": "编辑表单CSS",
@@ -131,7 +125,7 @@
     "Please input your username!": "请输入您的用户名！",
     "Reset": "重置",
     "Retrieve password": "找回密码",
-    "Unknown forget type": "未知的忘记密码类型",
+    "Unknown forget type: ": "未知的忘记密码类型: ",
     "Verify": "验证"
   },
   "general": {
@@ -170,7 +164,10 @@
     "Edit": "编辑",
     "Email": "电子邮箱",
     "Email - Tooltip": "电子邮件：",
-    "Failed to connect to server": "服务器出错",
+    "Failed to add": "添加失败",
+    "Failed to connect to server": "连接服务器失败",
+    "Failed to delete": "删除失败",
+    "Failed to save": "保存失败",
     "Favicon": "网站图标",
     "Favicon - Tooltip": "网站的Favicon图标",
     "First name": "名字",
@@ -241,6 +238,8 @@
     "Sorry, you do not have permission to access this page.": "抱歉，您无权访问该页面",
     "State": "状态",
     "State - Tooltip": "状态",
+    "Successfully added": "添加成功",
+    "Successfully deleted": "删除成功",
     "Successfully saved": "保存成功",
     "Swagger": "API文档",
     "Sync": "同步",

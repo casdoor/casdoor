@@ -90,16 +90,15 @@ class PolicyTable extends React.Component {
     this.setState({loading: true});
     AdapterBackend.syncPolicies(this.props.owner, this.props.name)
       .then((res) => {
-        if (res.status !== "error") {
-          this.setState({loading: false, policyLists: res});
+        if (res.status === "ok") {
+          this.setState({policyLists: res});
         } else {
-          this.setState({loading: false});
-          Setting.showMessage("error", `Adapter failed to get policies, ${res.msg}`);
+          Setting.showMessage("error", i18next.t("adapter:Failed to sync policies: ") + res.msg);
         }
+        this.setState({loading: false});
       })
       .catch(error => {
-        this.setState({loading: false});
-        Setting.showMessage("error", `Adapter failed to get policies, ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
@@ -107,9 +106,9 @@ class PolicyTable extends React.Component {
     AdapterBackend.UpdatePolicy(this.props.owner, this.props.name, [this.state.oldPolicy, table[i]]).then(res => {
       if (res.status === "ok") {
         this.setState({editingIndex: "", oldPolicy: ""});
-        Setting.showMessage("success", i18next.t("adapter:Update policy successfully"));
+        Setting.showMessage("success", i18next.t("general:Successfully saved"));
       } else {
-        Setting.showMessage("error", i18next.t("adapter:Update policy failed") + res.msg);
+        Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
       }
     });
   }
@@ -119,12 +118,12 @@ class PolicyTable extends React.Component {
       if (res.status === "ok") {
         this.setState({editingIndex: "", oldPolicy: "", add: false});
         if (res.data !== "Affected") {
-          Setting.showMessage("info", i18next.t("adapter:Repeated policy"));
+          Setting.showMessage("info", i18next.t("adapter:Repeated policy rules"));
         } else {
-          Setting.showMessage("success", i18next.t("adapter:Add policy successfully"));
+          Setting.showMessage("success", i18next.t("general:Successfully added"));
         }
       } else {
-        Setting.showMessage("error", i18next.t("adapter:Add policy failed") + res.msg);
+        Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
       }
     });
   }
@@ -134,9 +133,9 @@ class PolicyTable extends React.Component {
       if (res.status === "ok") {
         table = Setting.deleteRow(table, i);
         this.updateTable(table);
-        Setting.showMessage("success", i18next.t("adapter:Delete policy successfully"));
+        Setting.showMessage("success", i18next.t("general:Successfully deleted"));
       } else {
-        Setting.showMessage("error", i18next.t("adapter:Delete policy failed, {{error}}", {error: res.msg}));
+        Setting.showMessage("error", i18next.t("general:Failed to delete"));
       }
     });
   }

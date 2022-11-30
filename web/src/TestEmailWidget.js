@@ -25,7 +25,7 @@ export function sendTestEmail(provider, email) {
       }
     })
     .catch(error => {
-      Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
+      Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
     });
 }
 
@@ -39,7 +39,7 @@ export function connectSmtpServer(provider) {
       }
     })
     .catch(error => {
-      Setting.showMessage("error", i18next.t("general:Failed to connect to server") + error);
+      Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
     });
 }
 

@@ -81,7 +81,7 @@ class LdapTable extends React.Component {
           table = Setting.deleteRow(table, i);
           this.updateTable(table);
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
         }
       }
       )

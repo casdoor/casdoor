@@ -126,7 +126,7 @@ class AuthCallback extends React.Component {
             // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
             msg += "Now you can visit apps protected by Casdoor.";
           }
-          Util.showMessage("success", msg);
+          Setting.showMessage("success", msg);
 
           if (casService !== "") {
             const st = res.data;
@@ -135,7 +135,7 @@ class AuthCallback extends React.Component {
             window.location.href = newUrl.toString();
           }
         } else {
-          Util.showMessage("error", `Failed to log in: ${res.msg}`);
+          Setting.showMessage("error", `Failed to log in: ${res.msg}`);
         }
       });
       return;
@@ -148,7 +148,7 @@ class AuthCallback extends React.Component {
         if (res.status === "ok") {
           const responseType = this.getResponseType();
           if (responseType === "login") {
-            Util.showMessage("success", "Logged in successfully");
+            Setting.showMessage("success", "Logged in successfully");
             // Setting.goToLinkSoft(this, "/");
 
             const link = Setting.getFromLink();
@@ -156,7 +156,7 @@ class AuthCallback extends React.Component {
           } else if (responseType === "code") {
             const code = res.data;
             Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
-            // Util.showMessage("success", `Authorization code: ${res.data}`);
+            // Setting.showMessage("success", `Authorization code: ${res.data}`);
           } else if (responseType === "token" || responseType === "id_token") {
             const token = res.data;
             Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);

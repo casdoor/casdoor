@@ -13,18 +13,10 @@
 // limitations under the License.
 
 import React from "react";
-import {Alert, Button, Result, message} from "antd";
+import {Alert, Button, Result} from "antd";
 import {getWechatMessageEvent} from "./AuthBackend";
 import * as Setting from "../Setting";
 import * as Provider from "./Provider";
-
-export function showMessage(type, text) {
-  if (type === "success") {
-    message.success(text);
-  } else if (type === "error") {
-    message.error(text);
-  }
-}
 
 export function renderMessage(msg) {
   if (msg !== null) {

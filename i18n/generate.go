@@ -83,7 +83,7 @@ func parseToData() *I18nData {
 
 	data := I18nData{}
 	for _, word := range allWords {
-		tokens := strings.Split(word, ":")
+		tokens := strings.SplitN(word, ":", 2)
 		namespace := tokens[0]
 		key := tokens[1]
 
