@@ -174,6 +174,7 @@ func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath
 	// If method equals GET
 	return true
 }
+
 func initConf(dataSourceName string, dbName string) (string, string) {
 	if conf.GetConfigString("driverName") != "postgres" {
 		return dataSourceName, dbName
