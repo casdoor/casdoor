@@ -174,3 +174,21 @@ func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath
 	// If method equals GET
 	return true
 }
+
+func getDbname() string {
+	var ans string
+	n := strings.Index(conf.GetConfigDataSourceName(), "dbname")
+	if n == -1 {
+		ans = conf.GetConfigDataSourceName() + conf.GetConfigString("dbName")
+		return ans
+	}
+	s := conf.GetConfigDataSourceName()[n:]
+	n = strings.Index(s, "=")
+	dbname := s[n+1:]
+	if dbname == "" {
+		ans = conf.GetConfigDataSourceName() + conf.GetConfigString("dbName")
+	} else {
+		ans = conf.GetConfigDataSourceName()
+	}
+	return ans
+}
