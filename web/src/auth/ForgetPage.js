@@ -102,6 +102,12 @@ class ForgetPage extends React.Component {
         if (res.status === "ok") {
           const phone = res.data.phone;
           const email = res.data.email;
+          const saveFields = () => {
+            if (this.state.isFixed) {
+              forms.step2.setFieldsValue({email: this.state.fixedContent});
+              this.setState({username: this.state.fixedContent});
+            }
+          };
           this.setState({phone: phone, email: email, username: res.data.name, name: res.data.name});
 
           if (phone !== "" && email === "") {
@@ -116,17 +122,14 @@ class ForgetPage extends React.Component {
 
           switch (res.data2) {
           case "email":
-            this.setState({isFixed: true, fixedContent: email, verifyType: "email"});
+            this.setState({isFixed: true, fixedContent: email, verifyType: "email"}, () => {saveFields();});
             break;
           case "phone":
-            this.setState({isFixed: true, fixedContent: phone, verifyType: "phone"});
+            this.setState({isFixed: true, fixedContent: phone, verifyType: "phone"}, () => {saveFields();});
             break;
           default:
+            saveFields();
             break;
-          }
-          if (this.state.isFixed) {
-            forms.step2.setFieldsValue({email: this.state.fixedContent});
-            this.setState({username: this.state.fixedContent});
           }
           this.setState({current: 1});
         } else {
