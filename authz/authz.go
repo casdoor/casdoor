@@ -30,9 +30,9 @@ var Enforcer *casbin.Enforcer
 
 func InitAuthz() {
 	var err error
-
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	a, err := xormadapter.NewAdapterWithTableName(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName()+conf.GetConfigString("dbName"), "casbin_rule", tableNamePrefix, true)
+	a, err := xormadapter.NewAdapterWithTableName(conf.GetConfigString("driverName"), getDbname(), "casbin_rule", tableNamePrefix, true)
+
 	if err != nil {
 		panic(err)
 	}
