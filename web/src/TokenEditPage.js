@@ -167,8 +167,8 @@ class TokenEditPage extends React.Component {
     const token = Setting.deepCopy(this.state.token);
     TokenBackend.updateToken(this.state.token.owner, this.state.tokenName, token)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             tokenName: this.state.token.name,
           });
@@ -179,22 +179,26 @@ class TokenEditPage extends React.Component {
             this.props.history.push(`/tokens/${this.state.token.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateTokenField("name", this.state.tokenName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteToken() {
     TokenBackend.deleteToken(this.state.token)
-      .then(() => {
-        this.props.history.push("/tokens");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/tokens");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `Token failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

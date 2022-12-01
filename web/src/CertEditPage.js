@@ -217,8 +217,8 @@ class CertEditPage extends React.Component {
     const cert = Setting.deepCopy(this.state.cert);
     CertBackend.updateCert(this.state.cert.owner, this.state.certName, cert)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             certName: this.state.cert.name,
           });
@@ -229,22 +229,26 @@ class CertEditPage extends React.Component {
             this.props.history.push(`/certs/${this.state.cert.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateCertField("name", this.state.certName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteCert() {
     CertBackend.deleteCert(this.state.cert)
-      .then(() => {
-        this.props.history.push("/certs");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/certs");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `Cert failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

@@ -78,7 +78,7 @@ class PaymentEditPage extends React.Component {
         this.setState({
           isInvoiceLoading: false,
         });
-        if (res.msg === "") {
+        if (res.status === "ok") {
           Setting.showMessage("success", "Successfully invoiced");
           Setting.openLinkSafe(res.data);
           this.getPayment();
@@ -90,7 +90,7 @@ class PaymentEditPage extends React.Component {
         this.setState({
           isInvoiceLoading: false,
         });
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
@@ -443,8 +443,8 @@ class PaymentEditPage extends React.Component {
     const payment = Setting.deepCopy(this.state.payment);
     PaymentBackend.updatePayment(this.state.payment.owner, this.state.paymentName, payment)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             paymentName: this.state.payment.name,
           });
@@ -455,22 +455,26 @@ class PaymentEditPage extends React.Component {
             this.props.history.push(`/payments/${this.state.payment.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updatePaymentField("name", this.state.paymentName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deletePayment() {
     PaymentBackend.deletePayment(this.state.payment)
-      .then(() => {
-        this.props.history.push("/payments");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/payments");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `Payment failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

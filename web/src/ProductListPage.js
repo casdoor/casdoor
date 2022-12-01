@@ -47,27 +47,31 @@ class ProductListPage extends BaseListPage {
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push({pathname: `/products/${newProduct.name}`, mode: "add"});
+          Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
-          Setting.showMessage("error", `Product failed to add: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Product failed to add: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteProduct(i) {
     ProductBackend.deleteProduct(this.state.data[i])
       .then((res) => {
-        Setting.showMessage("success", "Product deleted successfully");
-        this.setState({
-          data: Setting.deleteRow(this.state.data, i),
-          pagination: {total: this.state.pagination.total - 1},
-        });
-      }
-      )
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+          this.setState({
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Product failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

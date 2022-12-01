@@ -6,15 +6,13 @@
     "Sign Up": "新規登録"
   },
   "adapter": {
-    "Add policy successfully": "Add policy successfully",
-    "Delete policy successfully": "Delete policy successfully",
     "Edit Adapter": "Edit Adapter",
+    "Failed to sync policies: ": "Failed to sync policies: ",
     "New Adapter": "New Adapter",
     "Policies": "Policies",
     "Policies - Tooltip": "Policies - Tooltip",
-    "Repeated policy": "Repeated policy",
-    "Sync": "Sync",
-    "Update policy successfully": "Update policy successfully"
+    "Repeated policy rules": "Repeated policy rules",
+    "Sync": "Sync"
   },
   "application": {
     "Always": "Always",
@@ -38,7 +36,6 @@
     "Enable signin session - Tooltip": "Enable signin session - Tooltip",
     "Enable signup": "サインアップを有効にする",
     "Enable signup - Tooltip": "Whether to allow users to sign up",
-    "Failed to connect to server": "Failed to connect to server",
     "File uploaded successfully": "ファイルが正常にアップロードされました",
     "Form CSS": "Form CSS",
     "Form CSS - Edit": "Form CSS - Edit",
@@ -128,7 +125,7 @@
     "Please input your username!": "ユーザー名を入力してください！",
     "Reset": "Reset",
     "Retrieve password": "パスワードの取得",
-    "Unknown forget type": "Unknown forget type",
+    "Unknown forget type: ": "Unknown forget type: ",
     "Verify": "確認する"
   },
   "general": {
@@ -167,6 +164,10 @@
     "Edit": "編集",
     "Email": "Eメールアドレス",
     "Email - Tooltip": "email",
+    "Failed to add": "Failed to add",
+    "Failed to connect to server": "Failed to connect to server",
+    "Failed to delete": "Failed to delete",
+    "Failed to save": "Failed to save",
     "Favicon": "Favicon",
     "Favicon - Tooltip": "Application icon",
     "First name": "First name",
@@ -237,6 +238,9 @@
     "Sorry, you do not have permission to access this page.": "申し訳ありませんが、このページにアクセスする権限がありません。",
     "State": "State",
     "State - Tooltip": "State - Tooltip",
+    "Successfully added": "Successfully added",
+    "Successfully deleted": "Successfully deleted",
+    "Successfully saved": "Successfully saved",
     "Swagger": "Swagger",
     "Sync": "Sync",
     "Syncers": "Syncers",

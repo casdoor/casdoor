@@ -94,7 +94,7 @@ class SignupPage extends React.Component {
     if (applicationName !== undefined) {
       this.getApplication(applicationName);
     } else {
-      Util.showMessage("error", `Unknown application name: ${applicationName}`);
+      Setting.showMessage("error", `Unknown application name: ${applicationName}`);
     }
   }
 

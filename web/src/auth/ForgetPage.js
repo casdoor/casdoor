@@ -61,10 +61,7 @@ class ForgetPage extends React.Component {
     if (this.state.applicationName !== undefined) {
       this.getApplication();
     } else {
-      Util.showMessage(
-        "error",
-        i18next.t("forget:Unknown forget type: ") + this.state.type
-      );
+      Setting.showMessage("error", i18next.t("forget:Unknown forget type: ") + this.state.type);
     }
   }
 

@@ -158,8 +158,8 @@ class ModelEditPage extends React.Component {
     const model = Setting.deepCopy(this.state.model);
     ModelBackend.updateModel(this.state.organizationName, this.state.modelName, model)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             modelName: this.state.model.name,
           });
@@ -170,22 +170,26 @@ class ModelEditPage extends React.Component {
             this.props.history.push(`/models/${this.state.model.owner}/${this.state.model.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateModelField("name", this.state.modelName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteModel() {
     ModelBackend.deleteModel(this.state.model)
-      .then(() => {
-        this.props.history.push("/models");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/models");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `Model failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

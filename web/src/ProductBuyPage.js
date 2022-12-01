@@ -81,11 +81,11 @@ class ProductBuyPage extends React.Component {
 
     ProductBackend.buyProduct(this.state.product.owner, this.state.productName, provider.name)
       .then((res) => {
-        if (res.msg === "") {
+        if (res.status === "ok") {
           const payUrl = res.data;
           Setting.goToLink(payUrl);
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
 
           this.setState({
             isPlacingOrder: false,
@@ -93,7 +93,7 @@ class ProductBuyPage extends React.Component {
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

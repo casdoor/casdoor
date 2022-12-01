@@ -67,7 +67,7 @@ class LoginPage extends React.Component {
     } else if (this.state.type === "saml") {
       this.getSamlApplication();
     } else {
-      Util.showMessage("error", `Unknown authentication type: ${this.state.type}`);
+      Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
     }
   }
 
@@ -92,7 +92,7 @@ class LoginPage extends React.Component {
             application: res.data,
           });
         } else {
-          // Util.showMessage("error", res.msg);
+          // Setting.showMessage("error", res.msg);
           this.setState({
             application: res.data,
             msg: res.msg,
@@ -122,7 +122,7 @@ class LoginPage extends React.Component {
               applicationName: res.data.name,
             });
           } else {
-            Util.showMessage("error", res.msg);
+            Setting.showMessage("error", res.msg);
           }
         });
     }
@@ -269,7 +269,7 @@ class LoginPage extends React.Component {
             // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
             msg += "Now you can visit apps protected by Casdoor.";
           }
-          Util.showMessage("success", msg);
+          Setting.showMessage("success", msg);
 
           this.setState({openCaptchaModal: false});
 
@@ -281,7 +281,7 @@ class LoginPage extends React.Component {
           }
         } else {
           this.setState({openCaptchaModal: false});
-          Util.showMessage("error", `Failed to log in: ${res.msg}`);
+          Setting.showMessage("error", `Failed to log in: ${res.msg}`);
         }
       });
     } else {
@@ -295,13 +295,13 @@ class LoginPage extends React.Component {
             const responseType = values["type"];
 
             if (responseType === "login") {
-              Util.showMessage("success", "Logged in successfully");
+              Setting.showMessage("success", "Logged in successfully");
 
               const link = Setting.getFromLink();
               Setting.goToLink(link);
             } else if (responseType === "code") {
               this.postCodeLoginAction(res);
-              // Util.showMessage("success", `Authorization code: ${res.data}`);
+              // Setting.showMessage("success", `Authorization code: ${res.data}`);
             } else if (responseType === "token" || responseType === "id_token") {
               const accessToken = res.data;
               Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
@@ -312,7 +312,7 @@ class LoginPage extends React.Component {
             }
           } else {
             this.setState({openCaptchaModal: false});
-            Util.showMessage("error", `Failed to log in: ${res.msg}`);
+            Setting.showMessage("error", `Failed to log in: ${res.msg}`);
           }
         });
     }
@@ -673,7 +673,7 @@ class LoginPage extends React.Component {
           }),
         })
           .then(res => res.json()).then((res) => {
-            if (res.msg === "") {
+            if (res.status === "ok") {
               const responseType = values["type"];
               if (responseType === "code") {
                 this.postCodeLoginAction(res);
@@ -689,7 +689,7 @@ class LoginPage extends React.Component {
             }
           })
           .catch(error => {
-            Setting.showMessage("error", `${i18next.t("application:Failed to connect to server: ")}${error}`);
+            Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}${error}`);
           });
       });
   }

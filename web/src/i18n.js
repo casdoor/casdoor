@@ -89,7 +89,7 @@ i18n.use(initReactI18next).init({
   keySeparator: false,
 
   interpolation: {
-    escapeValue: false,
+    escapeValue: true,
   },
   // debug: true,
   saveMissing: true,

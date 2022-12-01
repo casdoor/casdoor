@@ -43,15 +43,18 @@ class ResourceListPage extends BaseListPage {
   deleteResource(i) {
     ResourceBackend.deleteResource(this.state.data[i])
       .then((res) => {
-        Setting.showMessage("success", "Resource deleted successfully");
-        this.setState({
-          data: Setting.deleteRow(this.state.data, i),
-          pagination: {total: this.state.pagination.total - 1},
-        });
-      }
-      )
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+          this.setState({
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Resource failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
