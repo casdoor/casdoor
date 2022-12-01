@@ -30,9 +30,9 @@ var Enforcer *casbin.Enforcer
 
 func InitAuthz() {
 	var err error
+	dataSourceName, dbName := initConf(conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	a, err := xormadapter.NewAdapterWithTableName(conf.GetConfigString("driverName"), getDbname(), "casbin_rule", tableNamePrefix, true)
-
+	a, err := xormadapter.NewAdapterWithTableName(conf.GetConfigString("driverName"), dataSourceName+dbName, "casbin_rule", tableNamePrefix, true)
 	if err != nil {
 		panic(err)
 	}
@@ -174,21 +174,22 @@ func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath
 	// If method equals GET
 	return true
 }
-
-func getDbname() string {
-	var ans string
-	n := strings.Index(conf.GetConfigDataSourceName(), "dbname")
-	if n == -1 {
-		ans = conf.GetConfigDataSourceName() + conf.GetConfigString("dbName")
-		return ans
+func initConf(dataSourceName string, dbName string) (string, string) {
+	if conf.GetConfigString("driverName") != "postgres" {
+		return dataSourceName, dbName
 	}
+	n := strings.Index(dataSourceName, "dbname")
 	s := conf.GetConfigDataSourceName()[n:]
 	n = strings.Index(s, "=")
 	dbname := s[n+1:]
 	if dbname == "" {
-		ans = conf.GetConfigDataSourceName() + conf.GetConfigString("dbName")
+		if dbName == "" {
+			dataSourceName = dataSourceName + "casdoor"
+		} else {
+			dataSourceName = dataSourceName + dbName
+		}
 	} else {
-		ans = conf.GetConfigDataSourceName()
+		dbName = ""
 	}
-	return ans
+	return dataSourceName, dbName
 }

@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"runtime"
+	"strings"
 
 	"github.com/beego/beego"
 	xormadapter "github.com/casbin/xorm-adapter/v3"
@@ -71,6 +72,7 @@ func finalizer(a *Adapter) {
 
 // NewAdapter is the constructor for Adapter.
 func NewAdapter(driverName string, dataSourceName string, dbName string) *Adapter {
+	dataSourceName, dbName = initConf(dataSourceName, dbName)
 	a := &Adapter{}
 	a.driverName = driverName
 	a.dataSourceName = dataSourceName
@@ -265,4 +267,24 @@ func initMigrations() {
 	}
 	m := migrate.New(adapter.Engine, migrate.DefaultOptions, migrations)
 	m.Migrate()
+}
+
+func initConf(dataSourceName string, dbName string) (string, string) {
+	if conf.GetConfigString("driverName") != "postgres" {
+		return dataSourceName, dbName
+	}
+	n := strings.Index(dataSourceName, "dbname")
+	s := conf.GetConfigDataSourceName()[n:]
+	n = strings.Index(s, "=")
+	dbname := s[n+1:]
+	if dbname == "" {
+		if dbName == "" {
+			dataSourceName = dataSourceName + "casdoor"
+		} else {
+			dataSourceName = dataSourceName + dbName
+		}
+	} else {
+		dbName = ""
+	}
+	return dataSourceName, dbName
 }
