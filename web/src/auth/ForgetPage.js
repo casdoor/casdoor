@@ -106,6 +106,7 @@ class ForgetPage extends React.Component {
             if (this.state.isFixed) {
               forms.step2.setFieldsValue({email: this.state.fixedContent});
               this.setState({username: this.state.fixedContent});
+              this.setState({current: 1});
             }
           };
           this.setState({phone: phone, email: email, username: res.data.name, name: res.data.name});
@@ -131,7 +132,6 @@ class ForgetPage extends React.Component {
             saveFields();
             break;
           }
-          this.setState({current: 1});
         } else {
           Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
         }
