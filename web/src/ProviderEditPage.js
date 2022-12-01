@@ -257,7 +257,9 @@ class ProviderEditPage extends React.Component {
                   {id: "SAML", name: "SAML"},
                   {id: "Payment", name: "Payment"},
                   {id: "Captcha", name: "Captcha"},
-                ].map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
+                ]
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
               }
             </Select>
           </Col>
@@ -280,7 +282,9 @@ class ProviderEditPage extends React.Component {
               }
             })}>
               {
-                Setting.getProviderTypeOptions(this.state.provider.category).map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
+                Setting.getProviderTypeOptions(this.state.provider.category)
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
               }
             </Select>
           </Col>
