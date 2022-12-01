@@ -12,19 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build !skipCi
-// +build !skipCi
+package util
 
-package deployment
+import xormadapter "github.com/casbin/xorm-adapter/v3"
 
-import (
-	"testing"
-
-	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/util"
-)
-
-func TestDeployStaticFiles(t *testing.T) {
-	provider := object.GetProvider(util.GetId("admin", "provider_storage_aliyun_oss"))
-	deployStaticFiles(provider)
+func CasbinToSlice(casbinRule xormadapter.CasbinRule) []string {
+	s := []string{
+		casbinRule.V0,
+		casbinRule.V1,
+		casbinRule.V2,
+		casbinRule.V3,
+		casbinRule.V4,
+		casbinRule.V5,
+	}
+	return s
 }

@@ -221,10 +221,9 @@ class App extends Component {
         if (res.status === "ok") {
           account = res.data;
           account.organization = res.data2;
-
           this.setLanguage(account);
         } else {
-          if (res.msg !== "Please sign in first") {
+          if (res.data !== "Please login first") {
             Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
           }
         }
@@ -421,13 +420,8 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
-      res.push(
-        <Menu.Item key="/providers">
-          <Link to="/providers">
-            {i18next.t("general:Providers")}
-          </Link>
-        </Menu.Item>
-      );
+    }
+    if (Setting.isLocalAdminUser(this.state.account)) {
       res.push(
         <Menu.Item key="/applications">
           <Link to="/applications">
@@ -435,9 +429,13 @@ class App extends Component {
           </Link>
         </Menu.Item>
       );
-    }
-
-    if (Setting.isLocalAdminUser(this.state.account)) {
+      res.push(
+        <Menu.Item key="/providers">
+          <Link to="/providers">
+            {i18next.t("general:Providers")}
+          </Link>
+        </Menu.Item>
+      );
       res.push(
         <Menu.Item key="/resources">
           <Link to="/resources">
@@ -566,9 +564,9 @@ class App extends Component {
           <Route exact path="/adapters" render={(props) => this.renderLoginIfNotLoggedIn(<AdapterListPage account={this.state.account} {...props} />)} />
           <Route exact path="/adapters/:organizationName/:adapterName" render={(props) => this.renderLoginIfNotLoggedIn(<AdapterEditPage account={this.state.account} {...props} />)} />
           <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)} />
-          <Route exact path="/providers/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/providers/:organizationName/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)} />
           <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)} />
-          <Route exact path="/applications/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)} />
+          <Route exact path="/applications/:organizationName/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)} />
           <Route exact path="/resources" render={(props) => this.renderLoginIfNotLoggedIn(<ResourceListPage account={this.state.account} {...props} />)} />
           {/* <Route exact path="/resources/:resourceName" render={(props) => this.renderLoginIfNotLoggedIn(<ResourceEditPage account={this.state.account} {...props} />)}/>*/}
           <Route exact path="/ldap/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapEditPage account={this.state.account} {...props} />)} />
@@ -636,7 +634,7 @@ class App extends Component {
                 {
                   this.renderAccount()
                 }
-                <SelectLanguageBox />
+                {this.state.account && <SelectLanguageBox languages={this.state.account.organization.languages} />}
               </div>
             </Header>
             <Layout style={{backgroundColor: "#f5f5f5", alignItems: "stretch"}}>
@@ -680,7 +678,7 @@ class App extends Component {
               {
                 this.renderAccount()
               }
-              <SelectLanguageBox />
+              {this.state.account && <SelectLanguageBox languages={this.state.account.organization.languages} />}
             </div>
           </Header>
           {

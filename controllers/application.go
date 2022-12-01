@@ -46,7 +46,7 @@ func (c *ApiController) GetApplications() {
 		if organization == "" {
 			applications = object.GetApplications(owner)
 		} else {
-			applications = object.GetApplicationsByOrganizationName(owner, organization)
+			applications = object.GetOrganizationApplications(owner, organization)
 		}
 
 		c.Data["json"] = object.GetMaskedApplications(applications, userId)
@@ -103,17 +103,31 @@ func (c *ApiController) GetUserApplication() {
 // @router /get-organization-applications [get]
 func (c *ApiController) GetOrganizationApplications() {
 	userId := c.GetSessionUsername()
-	owner := c.Input().Get("owner")
 	organization := c.Input().Get("organization")
+	owner := c.Input().Get("owner")
+	limit := c.Input().Get("pageSize")
+	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
 
 	if organization == "" {
 		c.ResponseError(c.T("ParameterErr.OrgMissingErr"))
 		return
 	}
 
-	applications := object.GetApplicationsByOrganizationName(owner, organization)
-	c.Data["json"] = object.GetMaskedApplications(applications, userId)
-	c.ServeJSON()
+	if limit == "" || page == "" {
+		var applications []*object.Application
+		applications = object.GetOrganizationApplications(owner, organization)
+		c.Data["json"] = object.GetMaskedApplications(applications, userId)
+		c.ServeJSON()
+	} else {
+		limit := util.ParseInt(limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetOrganizationApplicationCount(owner, organization, field, value)))
+		applications := object.GetMaskedApplications(object.GetPaginationOrganizationApplications(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder), userId)
+		c.ResponseOk(applications, paginator.Nums())
+	}
 }
 
 // UpdateApplication
@@ -149,6 +163,12 @@ func (c *ApiController) AddApplication() {
 	var application object.Application
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
 	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	count := object.GetApplicationCount("", "", "")
+	if err := checkQuotaForApplication(count); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}

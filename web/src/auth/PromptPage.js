@@ -22,6 +22,7 @@ import i18next from "i18next";
 import AffiliationSelect from "../common/AffiliationSelect";
 import OAuthWidget from "../common/OAuthWidget";
 import SelectRegionBox from "../SelectRegionBox";
+import {withRouter} from "react-router-dom";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -190,7 +191,7 @@ class PromptPage extends React.Component {
           if (redirectUrl !== "" && redirectUrl !== null) {
             Setting.goToLink(redirectUrl);
           } else {
-            Setting.goToLogin(this, this.getApplicationObj());
+            Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
           }
         } else {
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);
@@ -231,13 +232,13 @@ class PromptPage extends React.Component {
       return (
         <Result
           status="error"
-          title="Sign Up Error"
-          subTitle={"You are unexpected to see this prompt page"}
+          title={i18next.t("application:Sign Up Error")}
+          subTitle={i18next.t("application:You are unexpected to see this prompt page")}
           extra={[
-            <Button type="primary" key="signin" onClick={() => {
-              Setting.goToLogin(this, application);
-            }}>
-              Sign In
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application, this.props.history)}>
+              {
+                i18next.t("login:Sign In")
+              }
             </Button>,
           ]}
         >
@@ -272,4 +273,4 @@ class PromptPage extends React.Component {
   }
 }
 
-export default PromptPage;
+export default withRouter(PromptPage);

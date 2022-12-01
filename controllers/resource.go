@@ -156,7 +156,7 @@ func (c *ApiController) UploadResource() {
 		return
 	}
 
-	provider, user, ok := c.GetProviderFromContext("Storage")
+	provider, _, ok := c.GetProviderFromContext("Storage")
 	if !ok {
 		return
 	}
@@ -169,6 +169,20 @@ func (c *ApiController) UploadResource() {
 		ext := filepath.Ext(filename)
 		mimeType := mime.TypeByExtension(ext)
 		fileType, _ = util.GetOwnerAndNameFromId(mimeType)
+	}
+
+	if tag != "avatar" && tag != "termsOfUse" {
+		ext := filepath.Ext(filepath.Base(fullFilePath))
+		index := len(fullFilePath) - len(ext)
+		for i := 1; ; i++ {
+			_, objectKey := object.GetUploadFileUrl(provider, fullFilePath, true)
+			if object.GetResourceCount(owner, username, "name", objectKey) == 0 {
+				break
+			}
+
+			// duplicated fullFilePath found, change it
+			fullFilePath = fullFilePath[:index] + fmt.Sprintf("-%d", i) + ext
+		}
 	}
 
 	fileUrl, objectKey, err := object.UploadFileSafe(provider, fullFilePath, fileBuffer)
@@ -202,12 +216,10 @@ func (c *ApiController) UploadResource() {
 
 	switch tag {
 	case "avatar":
+		user := object.GetUserNoCheck(util.GetId(owner, username))
 		if user == nil {
-			user = object.GetUserNoCheck(username)
-			if user == nil {
-				c.ResponseError(c.T("ResourceErr.UserIsNil"))
-				return
-			}
+			c.ResponseError(c.T("ResourceErr.UserIsNil"))
+			return
 		}
 
 		user.Avatar = fileUrl

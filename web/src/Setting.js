@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import React from "react";
+import {Link} from "react-router-dom";
 import {Tag, Tooltip, message} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
-import React from "react";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
 import i18next from "i18next";
@@ -22,7 +23,6 @@ import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
-import {Link} from "react-router-dom";
 import * as path from "path-browserify";
 
 export const ServerUrl = "";
@@ -144,6 +144,10 @@ export const OtherProviderInfo = {
     "GEETEST": {
       logo: `${StaticBaseUrl}/img/social_geetest.png`,
       url: "https://www.geetest.com",
+    },
+    "Cloudflare Turnstile": {
+      logo: `${StaticBaseUrl}/img/social_cloudflare.png`,
+      url: "https://www.cloudflare.com/products/turnstile/",
     },
   },
 };
@@ -416,9 +420,7 @@ export function goToLinkSoft(ths, link) {
 }
 
 export function showMessage(type, text) {
-  if (type === "") {
-    return;
-  } else if (type === "success") {
+  if (type === "success") {
     message.success(text);
   } else if (type === "error") {
     message.error(text);
@@ -445,8 +447,8 @@ export function deepCopy(obj) {
   return Object.assign({}, obj);
 }
 
-export function addRow(array, row) {
-  return [...array, row];
+export function addRow(array, row, position = "end") {
+  return position === "end" ? [...array, row] : [row, ...array];
 }
 
 export function prependRow(array, row) {
@@ -552,14 +554,10 @@ export function setLanguage(language) {
   i18next.changeLanguage(language);
 }
 
-export function changeLanguage(language) {
-  localStorage.setItem("language", language);
-  changeMomentLanguage(language);
-  i18next.changeLanguage(language);
-  // window.location.reload(true);
-}
-
 export function getAcceptLanguage() {
+  if (i18next.language === null || i18next.language === "") {
+    return "en;q=0.9,en;q=0.8";
+  }
   return i18next.language + ";q=0.9,en;q=0.8";
 }
 
@@ -701,6 +699,7 @@ export function getProviderTypeOptions(category) {
       {id: "hCaptcha", name: "hCaptcha"},
       {id: "Aliyun Captcha", name: "Aliyun Captcha"},
       {id: "GEETEST", name: "GEETEST"},
+      {id: "Cloudflare Turnstile", name: "Cloudflare Turnstile"},
     ]);
   } else {
     return [];
@@ -743,26 +742,30 @@ export function renderLogo(application) {
   }
 }
 
-export function goToLogin(ths, application) {
+export function getLoginLink(application) {
+  let url;
   if (application === null) {
-    return;
-  }
-
-  if (!application.enablePassword && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
-    const link = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
-    goToLink(link);
-    return;
-  }
-
-  if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/login");
+    url = null;
+  } else if (!application.enablePassword && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
+    url = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
+  } else if (authConfig.appName === application.name) {
+    url = "/login";
+  } else if (application.signinUrl === "") {
+    url = path.join(application.homepageUrl, "/login");
   } else {
-    if (application.signinUrl === "") {
-      goToLink(path.join(application.homepageUrl, "login"));
-    } else {
-      goToLink(application.signinUrl);
-    }
+    url = application.signinUrl;
   }
+  return url;
+}
+
+export function renderLoginLink(application, text) {
+  const url = getLoginLink(application);
+  return renderLink(url, text, null);
+}
+
+export function redirectToLoginPage(application, history) {
+  const loginLink = getLoginLink(application);
+  history.push(loginLink);
 }
 
 function renderLink(url, text, onClick) {

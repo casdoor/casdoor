@@ -26,6 +26,7 @@ import {CountDownInput} from "../common/CountDownInput";
 import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
 import SelectLanguageBox from "../SelectLanguageBox";
+import {withRouter} from "react-router-dom";
 
 const formItemLayout = {
   labelCol: {
@@ -538,13 +539,13 @@ class SignupPage extends React.Component {
       return (
         <Result
           status="error"
-          title="Sign Up Error"
-          subTitle={"The application does not allow to sign up new account"}
+          title={i18next.t("application:Sign Up Error")}
+          subTitle={i18next.t("application:The application does not allow to sign up new account")}
           extra={[
-            <Button type="primary" key="signin" onClick={() => {
-              Setting.goToLogin(this, application);
-            }}>
-              Sign In
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application, this.props.history)}>
+              {
+                i18next.t("login:Sign In")
+              }
             </Button>,
           ]}
         >
@@ -562,7 +563,7 @@ class SignupPage extends React.Component {
           application: application.name,
           organization: application.organization,
         }}
-        style={{width: !Setting.isMobile() ? "400px" : "250px"}}
+        style={{width: !Setting.isMobile() ? "400px" : "300px"}}
         size="large"
       >
         <Form.Item
@@ -600,7 +601,7 @@ class SignupPage extends React.Component {
             if (linkInStorage !== null && linkInStorage !== "") {
               Setting.goToLink(linkInStorage);
             } else {
-              Setting.goToLogin(this, application);
+              Setting.redirectToLoginPage(application, this.props.history);
             }
           }}>
             {i18next.t("signup:sign in now")}
@@ -633,7 +634,6 @@ class SignupPage extends React.Component {
         <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
           {Setting.inIframe() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
           <div className="login-panel" >
-            <SelectLanguageBox id="language-box-corner" style={{top: "50px"}} />
             <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
               <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
             </div>
@@ -645,6 +645,7 @@ class SignupPage extends React.Component {
                 {
                   Setting.renderLogo(application)
                 }
+                <SelectLanguageBox languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
                 {
                   this.renderForm(application)
                 }
@@ -660,4 +661,4 @@ class SignupPage extends React.Component {
   }
 }
 
-export default SignupPage;
+export default withRouter(SignupPage);

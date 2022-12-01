@@ -17,18 +17,27 @@ package controllers
 import (
 	"encoding/base64"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"io/ioutil"
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
+	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 	"github.com/google/uuid"
+)
+
+var (
+	wechatScanType string
+	lock           sync.RWMutex
 )
 
 func codeToResponse(code *object.Code) *Response {
@@ -251,6 +260,25 @@ func (c *ApiController) Login() {
 				return
 			}
 		} else {
+			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+			if application == nil {
+				c.ResponseError(fmt.Sprintf("The application: %s does not exist", form.Application))
+				return
+			}
+
+			if object.CheckToEnableCaptcha(application) {
+				isHuman, err := captcha.VerifyCaptchaByCaptchaType(form.CaptchaType, form.CaptchaToken, form.ClientSecret)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+
+				if !isHuman {
+					c.ResponseError("Turing test failed.")
+					return
+				}
+			}
+
 			password := form.Password
 			user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage())
 		}
@@ -279,7 +307,7 @@ func (c *ApiController) Login() {
 		}
 
 		organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", application.Organization))
-		provider := object.GetProvider(fmt.Sprintf("admin/%s", form.Provider))
+		provider := object.GetProvider(util.GetId("admin", form.Provider))
 		providerItem := application.GetProviderItem(provider.Name)
 		if !providerItem.IsProviderVisible() {
 			c.ResponseError(fmt.Sprintf(c.T("ProviderErr.ProviderNotEnabled"), provider.Name))
@@ -509,4 +537,47 @@ func (c *ApiController) HandleSamlLogin() {
 	targetUrl := fmt.Sprintf("%s?relayState=%s&samlResponse=%s",
 		slice[4], relayState, samlResponse)
 	c.Redirect(targetUrl, 303)
+}
+
+// HandleOfficialAccountEvent ...
+// @Tag HandleOfficialAccountEvent API
+// @Title HandleOfficialAccountEvent
+// @router /api/webhook [POST]
+func (c *ApiController) HandleOfficialAccountEvent() {
+	respBytes, err := ioutil.ReadAll(c.Ctx.Request.Body)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+	var data struct {
+		MsgType  string `xml:"MsgType"`
+		Event    string `xml:"Event"`
+		EventKey string `xml:"EventKey"`
+	}
+	err = xml.Unmarshal(respBytes, &data)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+	lock.Lock()
+	defer lock.Unlock()
+	if data.EventKey != "" {
+		wechatScanType = data.Event
+		c.Ctx.WriteString("")
+	}
+}
+
+// GetWebhookEventType ...
+// @Tag GetWebhookEventType API
+// @Title GetWebhookEventType
+// @router /api/get-webhook-event [GET]
+func (c *ApiController) GetWebhookEventType() {
+	lock.Lock()
+	defer lock.Unlock()
+	resp := &Response{
+		Status: "ok",
+		Msg:    "",
+		Data:   wechatScanType,
+	}
+	c.Data["json"] = resp
+	wechatScanType = ""
+	c.ServeJSON()
 }

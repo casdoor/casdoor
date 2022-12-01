@@ -17,6 +17,7 @@ package controllers
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
@@ -56,7 +57,7 @@ func (c *ApiController) T(error string) string {
 // GetAcceptLanguage ...
 func (c *ApiController) GetAcceptLanguage() string {
 	lang := c.Ctx.Request.Header.Get("Accept-Language")
-	if lang == "" {
+	if lang == "" || !strings.Contains(conf.GetConfigString("languages"), lang[0:2]) {
 		lang = "en"
 	}
 	return lang[0:2]
@@ -83,7 +84,7 @@ func (c *ApiController) SetTokenErrorHttpStatus() {
 func (c *ApiController) RequireSignedIn() (string, bool) {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(c.T("LoginErr.SignInFirst"))
+		c.ResponseError(c.T("LoginErr.LoginFirst"), "Please login first")
 		return "", false
 	}
 	return userId, true
@@ -98,6 +99,7 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 
 	user := object.GetUser(userId)
 	if user == nil {
+		c.ClearUserSession()
 		c.ResponseError(fmt.Sprintf(c.T("UserErr.DoNotExist"), userId))
 		return nil, false
 	}
@@ -124,7 +126,7 @@ func getInitScore() (int, error) {
 func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, *object.User, bool) {
 	providerName := c.Input().Get("provider")
 	if providerName != "" {
-		provider := object.GetProvider(util.GetId(providerName))
+		provider := object.GetProvider(util.GetId("admin", providerName))
 		if provider == nil {
 			c.ResponseError(c.T("ProviderErr.ProviderNotFound"), providerName)
 			return nil, nil, false
@@ -150,4 +152,48 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 	}
 
 	return provider, user, true
+}
+
+func checkQuotaForApplication(count int) error {
+	quota := conf.GetConfigQuota().Application
+	if quota == -1 {
+		return nil
+	}
+	if count >= quota {
+		return fmt.Errorf("application quota is exceeded")
+	}
+	return nil
+}
+
+func checkQuotaForOrganization(count int) error {
+	quota := conf.GetConfigQuota().Organization
+	if quota == -1 {
+		return nil
+	}
+	if count >= quota {
+		return fmt.Errorf("organization quota is exceeded")
+	}
+	return nil
+}
+
+func checkQuotaForProvider(count int) error {
+	quota := conf.GetConfigQuota().Provider
+	if quota == -1 {
+		return nil
+	}
+	if count >= quota {
+		return fmt.Errorf("provider quota is exceeded")
+	}
+	return nil
+}
+
+func checkQuotaForUser(count int) error {
+	quota := conf.GetConfigQuota().User
+	if quota == -1 {
+		return nil
+	}
+	if count >= quota {
+		return fmt.Errorf("user quota is exceeded")
+	}
+	return nil
 }

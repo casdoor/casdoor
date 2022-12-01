@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import React from "react";
-import {Link} from "react-router-dom";
 import {Button, Checkbox, Col, Form, Input, Result, Row, Spin, Tabs} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
@@ -29,7 +28,7 @@ import i18next from "i18next";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
-import {withTranslation} from "react-i18next";
+import {CaptchaModal} from "../common/CaptchaModal";
 
 const {TabPane} = Tabs;
 
@@ -49,6 +48,9 @@ class LoginPage extends React.Component {
       validEmail: false,
       validPhone: false,
       loginMethod: "password",
+      enableCaptchaModal: false,
+      openCaptchaModal: false,
+      verifyCaptcha: undefined,
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -66,6 +68,18 @@ class LoginPage extends React.Component {
       this.getSamlApplication();
     } else {
       Util.showMessage("error", `Unknown authentication type: ${this.state.type}`);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.application && !prevState.application) {
+      const defaultCaptchaProviderItems = this.getDefaultCaptchaProviderItems(this.state.application);
+
+      if (!defaultCaptchaProviderItems) {
+        return;
+      }
+
+      this.setState({enableCaptchaModal: defaultCaptchaProviderItems.some(providerItem => providerItem.rule === "Always")});
     }
   }
 
@@ -226,6 +240,23 @@ class LoginPage extends React.Component {
       return;
     }
 
+    if (this.state.loginMethod === "password" && this.state.enableCaptchaModal) {
+      this.setState({
+        openCaptchaModal: true,
+        verifyCaptcha: (captchaType, captchaToken, secret) => {
+          values["captchaType"] = captchaType;
+          values["captchaToken"] = captchaToken;
+          values["clientSecret"] = secret;
+
+          this.login(values);
+        },
+      });
+    } else {
+      this.login(values);
+    }
+  }
+
+  login(values) {
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     if (this.state.type === "cas") {
       // CAS
@@ -240,6 +271,8 @@ class LoginPage extends React.Component {
           }
           Util.showMessage("success", msg);
 
+          this.setState({openCaptchaModal: false});
+
           if (casParams.service !== "") {
             const st = res.data;
             const newUrl = new URL(casParams.service);
@@ -247,6 +280,7 @@ class LoginPage extends React.Component {
             window.location.href = newUrl.toString();
           }
         } else {
+          this.setState({openCaptchaModal: false});
           Util.showMessage("error", `Failed to log in: ${res.msg}`);
         }
       });
@@ -259,6 +293,7 @@ class LoginPage extends React.Component {
         .then((res) => {
           if (res.status === "ok") {
             const responseType = values["type"];
+
             if (responseType === "login") {
               Util.showMessage("success", "Logged in successfully");
 
@@ -276,6 +311,7 @@ class LoginPage extends React.Component {
               Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
             }
           } else {
+            this.setState({openCaptchaModal: false});
             Util.showMessage("error", `Failed to log in: ${res.msg}`);
           }
         });
@@ -299,16 +335,14 @@ class LoginPage extends React.Component {
       return (
         <Result
           status="error"
-          title="Sign Up Error"
-          subTitle={"The application does not allow to sign up new account"}
+          title={i18next.t("application:Sign Up Error")}
+          subTitle={i18next.t("application:The application does not allow to sign up new account")}
           extra={[
-            <Link key="login" onClick={() => {
-              Setting.goToLogin(this, application);
-            }}>
-              <Button type="primary" key="signin">
-                Sign In
-              </Button>
-            </Link>,
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application, this.props.history)}>
+              {
+                i18next.t("login:Sign In")
+              }
+            </Button>,
           ]}
         >
         </Result>
@@ -334,7 +368,7 @@ class LoginPage extends React.Component {
             rules={[
               {
                 required: true,
-                message: "Please input your application!",
+                message: i18next.t("application:Please input your application!"),
               },
             ]}
           >
@@ -345,7 +379,7 @@ class LoginPage extends React.Component {
             rules={[
               {
                 required: true,
-                message: "Please input your organization!",
+                message: i18next.t("application:Please input your organization!"),
               },
             ]}
           >
@@ -422,6 +456,9 @@ class LoginPage extends React.Component {
               }
             </Button>
             {
+              this.renderCaptchaModal(application)
+            }
+            {
               this.renderFooter(application)
             }
           </Form.Item>
@@ -463,16 +500,54 @@ class LoginPage extends React.Component {
     }
   }
 
+  getDefaultCaptchaProviderItems(application) {
+    const providers = application?.providers;
+
+    if (providers === undefined || providers === null) {
+      return null;
+    }
+
+    return providers.filter(providerItem => {
+      if (providerItem.provider === undefined || providerItem.provider === null) {
+        return false;
+      }
+
+      return providerItem.provider.category === "Captcha" && providerItem.provider.type === "Default";
+    });
+  }
+
+  renderCaptchaModal(application) {
+    if (!this.state.enableCaptchaModal) {
+      return null;
+    }
+
+    const provider = this.getDefaultCaptchaProviderItems(application)
+      .filter(providerItem => providerItem.rule === "Always")
+      .map(providerItem => providerItem.provider)[0];
+
+    return <CaptchaModal
+      owner={provider.owner}
+      name={provider.name}
+      captchaType={provider.type}
+      subType={provider.subType}
+      clientId={provider.clientId}
+      clientId2={provider.clientId2}
+      clientSecret={provider.clientSecret}
+      clientSecret2={provider.clientSecret2}
+      open={this.state.openCaptchaModal}
+      onOk={(captchaType, captchaToken, secret) => this.state.verifyCaptcha?.(captchaType, captchaToken, secret)}
+      canCancel={false}
+    />;
+  }
+
   renderFooter(application) {
     if (this.state.mode === "signup") {
       return (
         <div style={{float: "right"}}>
           {i18next.t("signup:Have account?")}&nbsp;
-          <Link onClick={() => {
-            Setting.goToLogin(this, application);
-          }}>
-            {i18next.t("signup:sign in now")}
-          </Link>
+          {
+            Setting.renderLoginLink(application, i18next.t("signup:sign in now"))
+          }
         </div>
       );
     } else {
@@ -606,7 +681,7 @@ class LoginPage extends React.Component {
                 const accessToken = res.data;
                 Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
               } else {
-                Setting.showMessage("success", "Successfully logged in with webauthn credentials");
+                Setting.showMessage("success", i18next.t("login:Successfully logged in with webauthn credentials"));
                 Setting.goToLink("/");
               }
             } else {
@@ -614,7 +689,7 @@ class LoginPage extends React.Component {
             }
           })
           .catch(error => {
-            Setting.showMessage("error", `Failed to connect to server: ${error}`);
+            Setting.showMessage("error", `${i18next.t("application:Failed to connect to server: ")}${error}`);
           });
       });
   }
@@ -708,7 +783,6 @@ class LoginPage extends React.Component {
         <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
           {Setting.inIframe() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
           <div className="login-panel">
-            <SelectLanguageBox id="language-box-corner" style={{top: "50px"}} />
             <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
               <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
             </div>
@@ -724,6 +798,7 @@ class LoginPage extends React.Component {
                   {/* {*/}
                   {/*  this.state.clientId !== null ? "Redirect" : null*/}
                   {/* }*/}
+                  <SelectLanguageBox languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
                   {
                     this.renderSignedInBox()
                   }
@@ -740,4 +815,4 @@ class LoginPage extends React.Component {
   }
 }
 
-export default withTranslation()(LoginPage);
+export default LoginPage;

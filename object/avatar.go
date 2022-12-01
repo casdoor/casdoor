@@ -60,7 +60,7 @@ func getPermanentAvatarUrl(organization string, username string, url string, upl
 	}
 
 	fullFilePath := fmt.Sprintf("/avatar/%s/%s.png", organization, username)
-	uploadedFileUrl, _ := getUploadFileUrl(defaultStorageProvider, fullFilePath, false)
+	uploadedFileUrl, _ := GetUploadFileUrl(defaultStorageProvider, fullFilePath, false)
 
 	if upload {
 		DownloadAndUpload(url, fullFilePath)

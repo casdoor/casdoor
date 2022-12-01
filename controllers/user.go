@@ -183,6 +183,12 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
+	count := object.GetUserCount("", "", "")
+	if err := checkQuotaForUser(count); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	msg := object.CheckUsername(user.Name, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)

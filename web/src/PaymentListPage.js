@@ -51,7 +51,11 @@ class PaymentListPage extends BaseListPage {
     const newPayment = this.newPayment();
     PaymentBackend.addPayment(newPayment)
       .then((res) => {
-        this.props.history.push({pathname: `/payments/${newPayment.name}`, mode: "add"});
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/payments/${newPayment.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Payment failed to add: ${res.msg}`);
+        }
       }
       )
       .catch(error => {
@@ -76,6 +80,38 @@ class PaymentListPage extends BaseListPage {
 
   renderTable(payments) {
     const columns = [
+      {
+        title: i18next.t("general:Name"),
+        dataIndex: "name",
+        key: "name",
+        width: "180px",
+        fixed: "left",
+        sorter: true,
+        ...this.getColumnSearchProps("name"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/payments/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Provider"),
+        dataIndex: "provider",
+        key: "provider",
+        width: "150px",
+        fixed: "left",
+        sorter: true,
+        ...this.getColumnSearchProps("provider"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/providers/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
       {
         title: i18next.t("general:Organization"),
         dataIndex: "organization",
@@ -106,22 +142,7 @@ class PaymentListPage extends BaseListPage {
           );
         },
       },
-      {
-        title: i18next.t("general:Name"),
-        dataIndex: "name",
-        key: "name",
-        width: "180px",
-        fixed: "left",
-        sorter: true,
-        ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/payments/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
+
       {
         title: i18next.t("general:Created time"),
         dataIndex: "createdTime",
@@ -140,22 +161,6 @@ class PaymentListPage extends BaseListPage {
       //   sorter: true,
       //   ...this.getColumnSearchProps('displayName'),
       // },
-      {
-        title: i18next.t("general:Provider"),
-        dataIndex: "provider",
-        key: "provider",
-        width: "150px",
-        fixed: "left",
-        sorter: true,
-        ...this.getColumnSearchProps("provider"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/providers/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
       {
         title: i18next.t("payment:Type"),
         dataIndex: "type",

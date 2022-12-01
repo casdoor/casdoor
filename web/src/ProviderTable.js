@@ -39,7 +39,7 @@ class ProviderTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {name: Setting.getNewRowNameForTable(table, "Please select a provider"), canSignUp: true, canSignIn: true, canUnlink: true, alertType: "None"};
+    const row = {name: Setting.getNewRowNameForTable(table, "Please select a provider"), canSignUp: true, canSignIn: true, canUnlink: true, alertType: "None", rule: "None"};
     if (table === undefined) {
       table = [];
     }
@@ -105,7 +105,7 @@ class ProviderTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:canSignUp"),
+        title: i18next.t("provider:Can signup"),
         dataIndex: "canSignUp",
         key: "canSignUp",
         width: "120px",
@@ -122,7 +122,7 @@ class ProviderTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:canSignIn"),
+        title: i18next.t("provider:Can signin"),
         dataIndex: "canSignIn",
         key: "canSignIn",
         width: "120px",
@@ -139,7 +139,7 @@ class ProviderTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:canUnlink"),
+        title: i18next.t("provider:Can unlink"),
         dataIndex: "canUnlink",
         key: "canUnlink",
         width: "120px",
@@ -156,7 +156,7 @@ class ProviderTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:prompted"),
+        title: i18next.t("provider:Prompted"),
         dataIndex: "prompted",
         key: "prompted",
         width: "120px",
@@ -193,6 +193,28 @@ class ProviderTable extends React.Component {
       //     )
       //   }
       // },
+      {
+        title: i18next.t("application:Rule"),
+        dataIndex: "rule",
+        key: "rule",
+        width: "100px",
+        render: (text, record, index) => {
+          if (record.provider?.category !== "Captcha") {
+            return null;
+          }
+          return (
+            <Select virtual={false} style={{width: "100%"}}
+              value={text}
+              defaultValue="None"
+              onChange={value => {
+                this.updateField(table, index, "rule", value);
+              }} >
+              <Option key="None" value="None">{i18next.t("application:None")}</Option>
+              <Option key="Always" value="Always">{i18next.t("application:Always")}</Option>
+            </Select>
+          );
+        },
+      },
       {
         title: i18next.t("general:Action"),
         key: "action",

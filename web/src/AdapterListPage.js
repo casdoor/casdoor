@@ -45,9 +45,12 @@ class AdapterListPage extends BaseListPage {
     const newAdapter = this.newAdapter();
     AdapterBackend.addAdapter(newAdapter)
       .then((res) => {
-        this.props.history.push({pathname: `/adapters/${newAdapter.owner}/${newAdapter.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/adapters/${newAdapter.organization}/${newAdapter.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Adapter failed to add: ${res.msg}`);
+        }
+      })
       .catch(error => {
         Setting.showMessage("error", `Adapter failed to add: ${error}`);
       });
@@ -71,21 +74,6 @@ class AdapterListPage extends BaseListPage {
   renderTable(adapters) {
     const columns = [
       {
-        title: i18next.t("general:Organization"),
-        dataIndex: "organization",
-        key: "organization",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("organization"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/organizations/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
@@ -96,6 +84,21 @@ class AdapterListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <Link to={`/adapters/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "organization",
+        key: "organization",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("organization"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
               {text}
             </Link>
           );

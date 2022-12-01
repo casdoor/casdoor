@@ -123,8 +123,8 @@ func GenerateSimpleTimeId() string {
 	return t
 }
 
-func GetId(name string) string {
-	return fmt.Sprintf("admin/%s", name)
+func GetId(owner, name string) string {
+	return fmt.Sprintf("%s/%s", owner, name)
 }
 
 func GetMd5Hash(text string) string {

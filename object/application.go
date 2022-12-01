@@ -20,6 +20,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
 )
@@ -84,6 +85,16 @@ func GetApplicationCount(owner, field, value string) int {
 	return int(count)
 }
 
+func GetOrganizationApplicationCount(owner, Organization, field, value string) int {
+	session := GetSession(owner, -1, -1, field, value, "", "")
+	count, err := session.Count(&Application{Organization: Organization})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
 func GetApplications(owner string) []*Application {
 	applications := []*Application{}
 	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner})
@@ -94,8 +105,18 @@ func GetApplications(owner string) []*Application {
 	return applications
 }
 
-func GetPaginationApplications(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
+func GetOrganizationApplications(owner string, organization string) []*Application {
 	applications := []*Application{}
+	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner, Organization: organization})
+	if err != nil {
+		panic(err)
+	}
+
+	return applications
+}
+
+func GetPaginationApplications(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
+	var applications []*Application
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&applications)
 	if err != nil {
@@ -105,9 +126,10 @@ func GetPaginationApplications(owner string, offset, limit int, field, value, so
 	return applications
 }
 
-func GetApplicationsByOrganizationName(owner string, organization string) []*Application {
+func GetPaginationOrganizationApplications(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
 	applications := []*Application{}
-	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner, Organization: organization})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&applications, &Application{Owner: owner, Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -119,9 +141,11 @@ func getProviderMap(owner string) map[string]*Provider {
 	providers := GetProviders(owner)
 	m := map[string]*Provider{}
 	for _, provider := range providers {
-		//if provider.Category != "OAuth" {
-		//	continue
-		//}
+		// Get QRCode only once
+		if provider.Type == "WeChat" && provider.DisableSsl == true && provider.Content == "" {
+			provider.Content, _ = idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2)
+			UpdateProvider(provider.Owner+"/"+provider.Name, provider)
+		}
 
 		m[provider.Name] = GetMaskedProvider(provider)
 	}
@@ -129,7 +153,7 @@ func getProviderMap(owner string) map[string]*Provider {
 }
 
 func extendApplicationWithProviders(application *Application) {
-	m := getProviderMap(application.Owner)
+	m := getProviderMap(application.Organization)
 	for _, providerItem := range application.Providers {
 		if provider, ok := m[providerItem.Name]; ok {
 			providerItem.Provider = provider
@@ -270,6 +294,13 @@ func UpdateApplication(id string, application *Application) bool {
 		application.Name = name
 	}
 
+	if name != application.Name {
+		err := applicationChangeTrigger(name, application.Name)
+		if err != nil {
+			return false
+		}
+	}
+
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}
@@ -371,7 +402,7 @@ func IsAllowOrigin(origin string) bool {
 }
 
 func getApplicationMap(organization string) map[string]*Application {
-	applications := GetApplicationsByOrganizationName("admin", organization)
+	applications := GetOrganizationApplications("admin", organization)
 
 	applicationMap := make(map[string]*Application)
 	for _, application := range applications {
@@ -399,4 +430,56 @@ func ExtendManagedAccountsWithUser(user *User) *User {
 	user.ManagedAccounts = managedAccounts
 
 	return user
+}
+
+func applicationChangeTrigger(oldName string, newName string) error {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
+
+	organization := new(Organization)
+	organization.DefaultApplication = newName
+	_, err = session.Where("default_application=?", oldName).Update(organization)
+	if err != nil {
+		return err
+	}
+
+	user := new(User)
+	user.SignupApplication = newName
+	_, err = session.Where("signup_application=?", oldName).Update(user)
+	if err != nil {
+		return err
+	}
+
+	resource := new(Resource)
+	resource.Application = newName
+	_, err = session.Where("application=?", oldName).Update(resource)
+	if err != nil {
+		return err
+	}
+
+	var permissions []*Permission
+	err = adapter.Engine.Find(&permissions)
+	if err != nil {
+		return err
+	}
+	for i := 0; i < len(permissions); i++ {
+		permissionResoureces := permissions[i].Resources
+		for j := 0; j < len(permissionResoureces); j++ {
+			if permissionResoureces[j] == oldName {
+				permissionResoureces[j] = newName
+			}
+		}
+		permissions[i].Resources = permissionResoureces
+		_, err = session.Where("name=?", permissions[i].Name).Update(permissions[i])
+		if err != nil {
+			return err
+		}
+	}
+
+	return session.Commit()
 }

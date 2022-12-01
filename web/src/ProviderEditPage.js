@@ -22,6 +22,7 @@ import {authConfig} from "./auth/Auth";
 import * as ProviderEditTestEmail from "./TestEmailWidget";
 import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -32,22 +33,36 @@ class ProviderEditPage extends React.Component {
     this.state = {
       classes: props,
       providerName: props.match.params.providerName,
+      owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       provider: null,
+      organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
   UNSAFE_componentWillMount() {
+    this.getOrganizations();
     this.getProvider();
   }
 
   getProvider() {
-    ProviderBackend.getProvider("admin", this.state.providerName)
+    ProviderBackend.getProvider(this.state.owner, this.state.providerName)
       .then((provider) => {
         this.setState({
           provider: provider,
         });
       });
+  }
+
+  getOrganizations() {
+    if (Setting.isAdminUser(this.props.account)) {
+      OrganizationBackend.getOrganizations("admin")
+        .then((res) => {
+          this.setState({
+            organizations: res.msg === undefined ? res : [],
+          });
+        });
+    }
   }
 
   parseProviderField(key, value) {
@@ -188,6 +203,19 @@ class ProviderEditPage extends React.Component {
             <Input value={this.state.provider.displayName} onChange={e => {
               this.updateProviderField("displayName", e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.provider.owner} onChange={(value => {this.updateProviderField("owner", value);})}>
+              {Setting.isAdminUser(this.props.account) ? <Option key={"admin"} value={"admin"}>{i18next.t("provider:admin (share)")}</Option> : null}
+              {
+                this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -424,6 +452,20 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
+          this.state.provider.type !== "WeChat" ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("provider:Enable QR code"), i18next.t("provider:Enable QR code - Tooltip"))} :
+              </Col>
+              <Col span={1} >
+                <Switch checked={this.state.provider.disableSsl} onChange={checked => {
+                  this.updateProviderField("disableSsl", checked);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
+        {
           this.state.provider.type !== "Adfs" && this.state.provider.type !== "Casdoor" && this.state.provider.type !== "Okta" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>
@@ -466,6 +508,16 @@ class ProviderEditPage extends React.Component {
               <Col span={22} >
                 <Input value={this.state.provider.bucket} onChange={e => {
                   this.updateProviderField("bucket", e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={2}>
+                {Setting.getLabel(i18next.t("provider:Path prefix"), i18next.t("provider:The prefix path of the file - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.provider.pathPrefix} onChange={e => {
+                  this.updateProviderField("pathPrefix", e.target.value);
                 }} />
               </Col>
             </Row>
@@ -735,18 +787,19 @@ class ProviderEditPage extends React.Component {
 
   submitProviderEdit(willExist) {
     const provider = Setting.deepCopy(this.state.provider);
-    ProviderBackend.updateProvider(this.state.provider.owner, this.state.providerName, provider)
+    ProviderBackend.updateProvider(this.state.owner, this.state.providerName, provider)
       .then((res) => {
-        if (res.msg === "") {
+        if (res.status === "ok") {
           Setting.showMessage("success", "Successfully saved");
           this.setState({
+            owner: this.state.provider.owner,
             providerName: this.state.provider.name,
           });
 
           if (willExist) {
             this.props.history.push("/providers");
           } else {
-            this.props.history.push(`/providers/${this.state.provider.name}`);
+            this.props.history.push(`/providers/${this.state.provider.owner}/${this.state.provider.name}`);
           }
         } else {
           Setting.showMessage("error", res.msg);

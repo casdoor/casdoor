@@ -40,9 +40,12 @@ class RoleListPage extends BaseListPage {
     const newRole = this.newRole();
     RoleBackend.addRole(newRole)
       .then((res) => {
-        this.props.history.push({pathname: `/roles/${newRole.owner}/${newRole.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/roles/${newRole.owner}/${newRole.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Role failed to add: ${res.msg}`);
+        }
+      })
       .catch(error => {
         Setting.showMessage("error", `Role failed to add: ${error}`);
       });
@@ -66,21 +69,6 @@ class RoleListPage extends BaseListPage {
   renderTable(roles) {
     const columns = [
       {
-        title: i18next.t("general:Organization"),
-        dataIndex: "owner",
-        key: "owner",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("owner"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/organizations/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
@@ -91,6 +79,21 @@ class RoleListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <Link to={`/roles/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "owner",
+        key: "owner",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("owner"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
               {text}
             </Link>
           );

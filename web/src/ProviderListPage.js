@@ -23,10 +23,25 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 
 class ProviderListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      classes: props,
+      owner: Setting.isAdminUser(props.account) ? "admin" : props.account.owner,
+      data: [],
+      pagination: {
+        current: 1,
+        pageSize: 10,
+      },
+      loading: false,
+      searchText: "",
+      searchedColumn: "",
+    };
+  }
   newProvider() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "admin", // this.props.account.providername,
+      owner: this.state.owner,
       name: `provider_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Provider - ${randomName}`,
@@ -46,9 +61,12 @@ class ProviderListPage extends BaseListPage {
     const newProvider = this.newProvider();
     ProviderBackend.addProvider(newProvider)
       .then((res) => {
-        this.props.history.push({pathname: `/providers/${newProvider.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/providers/${newProvider.owner}/${newProvider.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Provider failed to add: ${res.msg}`);
+        }
+      })
       .catch(error => {
         Setting.showMessage("error", `Provider failed to add: ${error}`);
       });
@@ -81,11 +99,19 @@ class ProviderListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/providers/${text}`}>
+            <Link to={`/providers/${record.owner}/${text}`}>
               {text}
             </Link>
           );
         },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "owner",
+        key: "owner",
+        width: "150px",
+        sorter: true,
+        ...this.getColumnSearchProps("owner"),
       },
       {
         title: i18next.t("general:Created time"),
@@ -177,12 +203,12 @@ class ProviderListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/providers/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/providers/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete provider: ${record.name} ?`}
                 onConfirm={() => this.deleteProvider(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );
@@ -224,7 +250,8 @@ class ProviderListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    ProviderBackend.getProviders("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    (Setting.isAdminUser(this.props.account) ? ProviderBackend.getGlobalProviders(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      : ProviderBackend.getProviders(this.state.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

@@ -38,9 +38,12 @@ class ModelListPage extends BaseListPage {
     const newModel = this.newModel();
     ModelBackend.addModel(newModel)
       .then((res) => {
-        this.props.history.push({pathname: `/models/${newModel.owner}/${newModel.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/models/${newModel.owner}/${newModel.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Model failed to add: ${res.msg}`);
+        }
+      })
       .catch(error => {
         Setting.showMessage("error", `Model failed to add: ${error}`);
       });
@@ -64,21 +67,6 @@ class ModelListPage extends BaseListPage {
   renderTable(models) {
     const columns = [
       {
-        title: i18next.t("general:Organization"),
-        dataIndex: "owner",
-        key: "owner",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("owner"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/organizations/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
@@ -89,6 +77,21 @@ class ModelListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <Link to={`/models/${record.owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "owner",
+        key: "owner",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("owner"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
               {text}
             </Link>
           );

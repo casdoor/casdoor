@@ -256,6 +256,31 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Languages"), i18next.t("general:Languages - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="tags" style={{width: "100%"}}
+              value={this.state.organization.languages}
+              onChange={(value => {
+                this.updateOrganizationField("languages", value);
+              })} >
+              {
+                [
+                  {value: "en", label: "English"},
+                  {value: "zh", label: "简体中文"},
+                  {value: "es", label: "Español"},
+                  {value: "fr", label: "Français"},
+                  {value: "de", label: "Deutsch"},
+                  {value: "ja", label: "日本語"},
+                  {value: "ko", label: "한국어"},
+                  {value: "ru", label: "Русский"},
+                ].map((item, index) => <Option key={index} value={item.value}>{item.label}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("organization:Soft deletion"), i18next.t("organization:Soft deletion - Tooltip"))} :
           </Col>
@@ -310,7 +335,7 @@ class OrganizationEditPage extends React.Component {
     const organization = Setting.deepCopy(this.state.organization);
     OrganizationBackend.updateOrganization(this.state.organization.owner, this.state.organizationName, organization)
       .then((res) => {
-        if (res.msg === "") {
+        if (res.status === "ok") {
           Setting.showMessage("success", "Successfully saved");
           this.setState({
             organizationName: this.state.organization.name,

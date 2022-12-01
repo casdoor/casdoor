@@ -65,6 +65,20 @@ func (c *ApiController) GetPermissionsBySubmitter() {
 	return
 }
 
+// GetPermissionsByRole
+// @Title GetPermissionsByRole
+// @Tag Permission API
+// @Description get permissions by role
+// @Param   id    query    string  true        "The id of the role"
+// @Success 200 {array} object.Permission The Response object
+// @router /get-permissions-by-role [get]
+func (c *ApiController) GetPermissionsByRole() {
+	id := c.Input().Get("id")
+	permissions := object.GetPermissionsByRole(id)
+	c.ResponseOk(permissions, len(permissions))
+	return
+}
+
 // GetPermission
 // @Title GetPermission
 // @Tag Permission API

@@ -54,7 +54,7 @@ export function oAuthParamsToQuery(oAuthParams) {
   }
 
   // code
-  return `?clientId=${oAuthParams.clientId}&responseType=${oAuthParams.responseType}&redirectUri=${oAuthParams.redirectUri}&scope=${oAuthParams.scope}&state=${oAuthParams.state}&nonce=${oAuthParams.nonce}&code_challenge_method=${oAuthParams.challengeMethod}&code_challenge=${oAuthParams.codeChallenge}`;
+  return `?clientId=${oAuthParams.clientId}&responseType=${oAuthParams.responseType}&redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&scope=${oAuthParams.scope}&state=${oAuthParams.state}&nonce=${oAuthParams.nonce}&code_challenge_method=${oAuthParams.challengeMethod}&code_challenge=${oAuthParams.codeChallenge}`;
 }
 
 export function getApplicationLogin(oAuthParams) {
@@ -125,6 +125,16 @@ export function loginWithSaml(values, param) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function getWechatMessageEvent() {
+  return fetch(`${Setting.ServerUrl}/api/get-webhook-event`, {
+    method: "GET",
+    credentials: "include",
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },

@@ -64,6 +64,10 @@ type RequestForm struct {
 	RelayState   string `json:"relayState"`
 	SamlRequest  string `json:"samlRequest"`
 	SamlResponse string `json:"samlResponse"`
+
+	CaptchaType  string `json:"captchaType"`
+	CaptchaToken string `json:"captchaToken"`
+	ClientSecret string `json:"clientSecret"`
 }
 
 type Response struct {
@@ -241,8 +245,7 @@ func (c *ApiController) Logout() {
 	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 	application := c.GetSessionApplication()
-	c.SetSessionUsername("")
-	c.SetSessionData(nil)
+	c.ClearUserSession()
 
 	if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
 		c.ResponseOk(user)

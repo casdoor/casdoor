@@ -42,9 +42,12 @@ class WebhookListPage extends BaseListPage {
     const newWebhook = this.newWebhook();
     WebhookBackend.addWebhook(newWebhook)
       .then((res) => {
-        this.props.history.push({pathname: `/webhooks/${newWebhook.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/webhooks/${newWebhook.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Webhook failed to add: ${res.msg}`);
+        }
+      })
       .catch(error => {
         Setting.showMessage("error", `Webhook failed to add: ${error}`);
       });
@@ -68,21 +71,6 @@ class WebhookListPage extends BaseListPage {
   renderTable(webhooks) {
     const columns = [
       {
-        title: i18next.t("general:Organization"),
-        dataIndex: "organization",
-        key: "organization",
-        width: "110px",
-        sorter: true,
-        ...this.getColumnSearchProps("organization"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/organizations/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
@@ -93,6 +81,21 @@ class WebhookListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <Link to={`/webhooks/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "organization",
+        key: "organization",
+        width: "110px",
+        sorter: true,
+        ...this.getColumnSearchProps("organization"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
               {text}
             </Link>
           );

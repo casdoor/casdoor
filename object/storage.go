@@ -54,8 +54,8 @@ func escapePath(path string) string {
 	return res
 }
 
-func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool) (string, string) {
-	escapedPath := escapePath(fullFilePath)
+func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool) (string, string) {
+	escapedPath := util.UrlJoin(provider.PathPrefix, escapePath(fullFilePath))
 	objectKey := util.UrlJoin(util.GetUrlPath(provider.Domain), escapedPath)
 
 	host := ""
@@ -70,7 +70,7 @@ func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 		host = util.UrlJoin(provider.Domain, "/files")
 	}
 	if provider.Type == "Azure Blob" {
-		host = fmt.Sprintf("%s/%s", host, provider.Bucket)
+		host = util.UrlJoin(host, provider.Bucket)
 	}
 
 	fileUrl := util.UrlJoin(host, escapePath(objectKey))
@@ -93,7 +93,7 @@ func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 		UpdateProvider(provider.GetId(), provider)
 	}
 
-	fileUrl, objectKey := getUploadFileUrl(provider, fullFilePath, true)
+	fileUrl, objectKey := GetUploadFileUrl(provider, fullFilePath, true)
 
 	_, err := storageProvider.Put(objectKey, fileBuffer)
 	if err != nil {

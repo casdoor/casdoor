@@ -54,6 +54,8 @@ func initAPI() {
 	beego.Router("/api/get-saml-login", &controllers.ApiController{}, "GET:GetSamlLogin")
 	beego.Router("/api/acs", &controllers.ApiController{}, "POST:HandleSamlLogin")
 	beego.Router("/api/saml/metadata", &controllers.ApiController{}, "GET:GetSamlMeta")
+	beego.Router("/api/webhook", &controllers.ApiController{}, "POST:HandleOfficialAccountEvent")
+	beego.Router("/api/get-webhook-event", &controllers.ApiController{}, "GET:GetWebhookEventType")
 
 	beego.Router("/api/get-organizations", &controllers.ApiController{}, "GET:GetOrganizations")
 	beego.Router("/api/get-organization", &controllers.ApiController{}, "GET:GetOrganization")
@@ -80,6 +82,7 @@ func initAPI() {
 
 	beego.Router("/api/get-permissions", &controllers.ApiController{}, "GET:GetPermissions")
 	beego.Router("/api/get-permissions-by-submitter", &controllers.ApiController{}, "GET:GetPermissionsBySubmitter")
+	beego.Router("/api/get-permissions-by-role", &controllers.ApiController{}, "GET:GetPermissionsByRole")
 	beego.Router("/api/get-permission", &controllers.ApiController{}, "GET:GetPermission")
 	beego.Router("/api/update-permission", &controllers.ApiController{}, "POST:UpdatePermission")
 	beego.Router("/api/add-permission", &controllers.ApiController{}, "POST:AddPermission")
@@ -103,6 +106,9 @@ func initAPI() {
 	beego.Router("/api/add-adapter", &controllers.ApiController{}, "POST:AddCasbinAdapter")
 	beego.Router("/api/delete-adapter", &controllers.ApiController{}, "POST:DeleteCasbinAdapter")
 	beego.Router("/api/sync-policies", &controllers.ApiController{}, "GET:SyncPolicies")
+	beego.Router("/api/update-policy", &controllers.ApiController{}, "POST:UpdatePolicy")
+	beego.Router("/api/add-policy", &controllers.ApiController{}, "POST:AddPolicy")
+	beego.Router("/api/remove-policy", &controllers.ApiController{}, "POST:RemovePolicy")
 
 	beego.Router("/api/set-password", &controllers.ApiController{}, "POST:SetPassword")
 	beego.Router("/api/check-user-password", &controllers.ApiController{}, "POST:CheckUserPassword")
@@ -123,6 +129,7 @@ func initAPI() {
 
 	beego.Router("/api/get-providers", &controllers.ApiController{}, "GET:GetProviders")
 	beego.Router("/api/get-provider", &controllers.ApiController{}, "GET:GetProvider")
+	beego.Router("/api/get-global-providers", &controllers.ApiController{}, "GET:GetGlobalProviders")
 	beego.Router("/api/update-provider", &controllers.ApiController{}, "POST:UpdateProvider")
 	beego.Router("/api/add-provider", &controllers.ApiController{}, "POST:AddProvider")
 	beego.Router("/api/delete-provider", &controllers.ApiController{}, "POST:DeleteProvider")

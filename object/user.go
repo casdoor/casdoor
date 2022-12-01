@@ -380,6 +380,13 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 		return false
 	}
 
+	if name != user.Name {
+		err := userChangeTrigger(name, user.Name)
+		if err != nil {
+			return false
+		}
+	}
+
 	if user.Password == "***" {
 		user.Password = oldUser.Password
 	}
@@ -414,6 +421,13 @@ func UpdateUserForAllFields(id string, user *User) bool {
 	oldUser := getUser(owner, name)
 	if oldUser == nil {
 		return false
+	}
+
+	if name != user.Name {
+		err := userChangeTrigger(name, user.Name)
+		if err != nil {
+			return false
+		}
 	}
 
 	user.UpdateUserHash()
@@ -566,4 +580,63 @@ func ExtendUserWithRolesAndPermissions(user *User) {
 
 	user.Roles = GetRolesByUser(user.GetId())
 	user.Permissions = GetPermissionsByUser(user.GetId())
+}
+
+func userChangeTrigger(oldName string, newName string) error {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
+
+	var roles []*Role
+	err = adapter.Engine.Find(&roles)
+	if err != nil {
+		return err
+	}
+	for _, role := range roles {
+		for j, u := range role.Users {
+			// u = organization/username
+			split := strings.Split(u, "/")
+			if split[1] == oldName {
+				split[1] = newName
+				role.Users[j] = split[0] + "/" + split[1]
+			}
+		}
+		_, err = session.Where("name=?", role.Name).Update(role)
+		if err != nil {
+			return err
+		}
+	}
+
+	var permissions []*Permission
+	err = adapter.Engine.Find(&permissions)
+	if err != nil {
+		return err
+	}
+	for _, permission := range permissions {
+		for j, u := range permission.Users {
+			// u = organization/username
+			split := strings.Split(u, "/")
+			if split[1] == oldName {
+				split[1] = newName
+				permission.Users[j] = split[0] + "/" + split[1]
+			}
+		}
+		_, err = session.Where("name=?", permission.Name).Update(permission)
+		if err != nil {
+			return err
+		}
+	}
+
+	resource := new(Resource)
+	resource.User = newName
+	_, err = session.Where("user=?", oldName).Update(resource)
+	if err != nil {
+		return err
+	}
+
+	return session.Commit()
 }

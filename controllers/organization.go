@@ -99,6 +99,12 @@ func (c *ApiController) AddOrganization() {
 		return
 	}
 
+	count := object.GetOrganizationCount("", "", "")
+	if err := checkQuotaForOrganization(count); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddOrganization(&organization))
 	c.ServeJSON()
 }

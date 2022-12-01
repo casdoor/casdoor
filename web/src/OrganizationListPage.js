@@ -37,6 +37,7 @@ class OrganizationListPage extends BaseListPage {
       defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       defaultApplication: "",
       tags: [],
+      languages: ["en", "zh", "es", "fr", "de", "ja", "ko", "ru"],
       masterPassword: "",
       enableSoftDeletion: false,
       isProfilePublic: true,
@@ -74,9 +75,12 @@ class OrganizationListPage extends BaseListPage {
     const newOrganization = this.newOrganization();
     OrganizationBackend.addOrganization(newOrganization)
       .then((res) => {
-        this.props.history.push({pathname: `/organizations/${newOrganization.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/organizations/${newOrganization.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Organization failed to add: ${res.msg}`);
+        }
+      })
       .catch(error => {
         Setting.showMessage("error", `Organization failed to add: ${error}`);
       });

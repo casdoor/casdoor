@@ -58,6 +58,7 @@ func initBuiltInOrganization() bool {
 		PhonePrefix:   "86",
 		DefaultAvatar: fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
 		Tags:          []string{},
+		Languages:     []string{"en", "zh", "es", "fr", "de", "ja", "ko", "ru"},
 		AccountItems: []*AccountItem{
 			{Name: "Organization", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
 			{Name: "ID", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},
@@ -143,7 +144,7 @@ func initBuiltInApplication() {
 		EnablePassword: true,
 		EnableSignUp:   true,
 		Providers: []*ProviderItem{
-			{Name: "provider_captcha_default", CanSignUp: false, CanSignIn: false, CanUnlink: false, Prompted: false, AlertType: "None", Provider: nil},
+			{Name: "provider_captcha_default", CanSignUp: false, CanSignIn: false, CanUnlink: false, Prompted: false, AlertType: "None", Rule: "None", Provider: nil},
 		},
 		SignupItems: []*SignupItem{
 			{Name: "ID", Visible: false, Required: true, Prompted: false, Rule: "Random"},
@@ -221,7 +222,7 @@ func initBuiltInLdap() {
 }
 
 func initBuiltInProvider() {
-	provider := GetProvider("admin/provider_captcha_default")
+	provider := GetProvider(util.GetId("admin", "provider_captcha_default"))
 	if provider != nil {
 		return
 	}

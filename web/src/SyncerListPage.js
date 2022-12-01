@@ -49,9 +49,12 @@ class SyncerListPage extends BaseListPage {
     const newSyncer = this.newSyncer();
     SyncerBackend.addSyncer(newSyncer)
       .then((res) => {
-        this.props.history.push({pathname: `/syncers/${newSyncer.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/syncers/${newSyncer.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Syncer failed to add: ${res.msg}`);
+        }
+      })
       .catch(error => {
         Setting.showMessage("error", `Syncer failed to add: ${error}`);
       });
@@ -89,21 +92,6 @@ class SyncerListPage extends BaseListPage {
   renderTable(syncers) {
     const columns = [
       {
-        title: i18next.t("general:Organization"),
-        dataIndex: "organization",
-        key: "organization",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("organization"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/organizations/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
@@ -114,6 +102,21 @@ class SyncerListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <Link to={`/syncers/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "organization",
+        key: "organization",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("organization"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
               {text}
             </Link>
           );

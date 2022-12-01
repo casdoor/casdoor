@@ -42,9 +42,12 @@ class TokenListPage extends BaseListPage {
     const newToken = this.newToken();
     TokenBackend.addToken(newToken)
       .then((res) => {
-        this.props.history.push({pathname: `/tokens/${newToken.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/tokens/${newToken.name}`, mode: "add"});
+        } else {
+          Setting.showMessage("error", `Token failed to add: ${res.msg}`);
+        }
+      })
       .catch(error => {
         Setting.showMessage("error", `Token failed to add: ${error}`);
       });
@@ -102,7 +105,7 @@ class TokenListPage extends BaseListPage {
         ...this.getColumnSearchProps("application"),
         render: (text, record, index) => {
           return (
-            <Link to={`/applications/${text}`}>
+            <Link to={`/applications/${record.organization}/${text}`}>
               {text}
             </Link>
           );

@@ -56,10 +56,38 @@ func readInitDataFromFile(filePath string) *InitData {
 
 	s := util.ReadStringFromPath(filePath)
 
-	data := &InitData{}
+	data := &InitData{
+		Organizations: []*Organization{},
+		Applications:  []*Application{},
+		Users:         []*User{},
+		Certs:         []*Cert{},
+		Providers:     []*Provider{},
+		Ldaps:         []*Ldap{},
+	}
 	err := util.JsonToStruct(s, data)
 	if err != nil {
 		panic(err)
+	}
+
+	// transform nil slice to empty slice
+	for _, organization := range data.Organizations {
+		if organization.Tags == nil {
+			organization.Tags = []string{}
+		}
+	}
+	for _, application := range data.Applications {
+		if application.Providers == nil {
+			application.Providers = []*ProviderItem{}
+		}
+		if application.SignupItems == nil {
+			application.SignupItems = []*SignupItem{}
+		}
+		if application.GrantTypes == nil {
+			application.GrantTypes = []string{}
+		}
+		if application.RedirectUris == nil {
+			application.RedirectUris = []string{}
+		}
 	}
 
 	return data
@@ -140,7 +168,7 @@ func initDefinedLdap(ldap *Ldap) {
 }
 
 func initDefinedProvider(provider *Provider) {
-	existed := GetProvider(provider.GetId())
+	existed := GetProvider(util.GetId("admin", provider.Name))
 	if existed != nil {
 		return
 	}

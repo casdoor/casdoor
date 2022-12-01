@@ -85,6 +85,8 @@ p, *, *, POST, /api/logout, *, *
 p, *, *, GET, /api/logout, *, *
 p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
+p, *, *, POST, /api/webhook, *, *
+p, *, *, GET, /api/get-webhook-event, *, *
 p, *, *, *, /api/login/oauth, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-organization-applications, *, *
@@ -142,7 +144,7 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 
 	userId := fmt.Sprintf("%s/%s", subOwner, subName)
 	user := object.GetUser(userId)
-	if user != nil && user.IsAdmin && subOwner == objOwner {
+	if user != nil && user.IsAdmin && (subOwner == objOwner || (objOwner == "admin" && subOwner == objName)) {
 		return true
 	}
 

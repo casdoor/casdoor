@@ -49,6 +49,9 @@ const template = `<style>
 }
 </style>`;
 
+const previewGrid = Setting.isMobile() ? 22 : 11;
+const previewWidth = Setting.isMobile() ? "110%" : "90%";
+
 const sideTemplate = `<style>
   .left-model{
     text-align: center;
@@ -91,6 +94,7 @@ class ApplicationEditPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       applicationName: props.match.params.applicationName,
       application: null,
       organizations: [],
@@ -141,12 +145,11 @@ class ApplicationEditPage extends React.Component {
   }
 
   getProviders() {
-    ProviderBackend.getProviders("admin")
-      .then((res) => {
-        this.setState({
-          providers: res,
-        });
+    ProviderBackend.getProviders(this.state.owner).then((res => {
+      this.setState({
+        providers: res,
       });
+    }));
   }
 
   getSamlMetadata() {
@@ -277,7 +280,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.application.organization} onChange={(value => {this.updateApplicationField("organization", value);})}>
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.application.organization} onChange={(value => {this.updateApplicationField("organization", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -720,7 +723,7 @@ class ApplicationEditPage extends React.Component {
 
     return (
       <React.Fragment>
-        <Col span={11}>
+        <Col span={previewGrid}>
           <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
             copy(`${window.location.origin}${signUpUrl}`);
             Setting.showMessage("success", i18next.t("application:Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
@@ -729,7 +732,7 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("application:Copy signup page URL")}
           </Button>
           <br />
-          <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
+          <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
             {
               this.state.application.enablePassword ? (
                 <SignupPage application={this.state.application} />
@@ -740,8 +743,8 @@ class ApplicationEditPage extends React.Component {
             <div style={maskStyle} />
           </div>
         </Col>
-        <Col span={11}>
-          <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
+        <Col span={previewGrid}>
+          <Button style={{marginBottom: "10px", marginTop: Setting.isMobile() ? "15px" : "0"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
             copy(`${window.location.origin}${signInUrl}`);
             Setting.showMessage("success", i18next.t("application:Signin page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
           }}
@@ -749,7 +752,7 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("application:Copy signin page URL")}
           </Button>
           <br />
-          <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
+          <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
             <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
             <div style={maskStyle} />
           </div>
@@ -762,7 +765,7 @@ class ApplicationEditPage extends React.Component {
     const promptUrl = `/prompt/${this.state.application.name}`;
     const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
     return (
-      <Col span={11}>
+      <Col span={previewGrid}>
         <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
           copy(`${window.location.origin}${promptUrl}`);
           Setting.showMessage("success", i18next.t("application:Prompt page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
@@ -771,7 +774,7 @@ class ApplicationEditPage extends React.Component {
           {i18next.t("application:Copy prompt page URL")}
         </Button>
         <br />
-        <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
+        <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
           <PromptPage application={this.state.application} account={this.props.account} />
           <div style={maskStyle} />
         </div>
@@ -781,9 +784,9 @@ class ApplicationEditPage extends React.Component {
 
   submitApplicationEdit(willExist) {
     const application = Setting.deepCopy(this.state.application);
-    ApplicationBackend.updateApplication(this.state.application.owner, this.state.applicationName, application)
+    ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
       .then((res) => {
-        if (res.msg === "") {
+        if (res.status === "ok") {
           Setting.showMessage("success", "Successfully saved");
           this.setState({
             applicationName: this.state.application.name,
@@ -792,7 +795,7 @@ class ApplicationEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/applications");
           } else {
-            this.props.history.push(`/applications/${this.state.application.name}`);
+            this.props.history.push(`/applications/${this.state.application.organization}/${this.state.application.name}`);
           }
         } else {
           Setting.showMessage("error", res.msg);

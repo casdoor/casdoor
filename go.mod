@@ -23,6 +23,7 @@ require (
 	github.com/go-pay/gopay v1.5.72
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/golang-jwt/jwt/v4 v4.2.0
+	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/google/uuid v1.2.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
@@ -36,6 +37,7 @@ require (
 	github.com/russellhaering/goxmldsig v1.1.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/shirou/gopsutil v3.21.11+incompatible
+	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/stretchr/testify v1.8.0
 	github.com/tealeg/xlsx v1.0.5
@@ -51,6 +53,7 @@ require (
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect
+	xorm.io/builder v0.3.12 // indirect
 	xorm.io/core v0.7.2
-	xorm.io/xorm v1.0.4
+	xorm.io/xorm v1.0.5
 )
