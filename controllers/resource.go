@@ -40,6 +40,15 @@ func (c *ApiController) GetResources() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
+	userObj, ok := c.RequireSignedInUser()
+	if !ok {
+		return
+	}
+	if userObj.IsAdmin {
+		user = ""
+	}
+
 	if limit == "" || page == "" {
 		c.Data["json"] = object.GetResources(owner, user)
 		c.ServeJSON()
