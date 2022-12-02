@@ -33,12 +33,7 @@ func InitAuthz() {
 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	driverName := conf.GetConfigString("driverName")
-	var dataSourceName string
-	if driverName != "mysql" {
-		dataSourceName = conf.GetConfigDataSourceName()
-	} else {
-		dataSourceName = conf.GetConfigDataSourceName() + conf.GetConfigString("dbName")
-	}
+	dataSourceName := conf.GetConfigRealDataSourceName(driverName)
 	a, err := xormadapter.NewAdapterWithTableName(driverName, dataSourceName, "casbin_rule", tableNamePrefix, true)
 	if err != nil {
 		panic(err)

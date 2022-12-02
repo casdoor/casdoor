@@ -30,12 +30,7 @@ func getEnforcer(permission *Permission) *casbin.Enforcer {
 	}
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	driverName := conf.GetConfigString("driverName")
-	var dataSourceName string
-	if driverName != "mysql" {
-		dataSourceName = conf.GetConfigDataSourceName()
-	} else {
-		dataSourceName = conf.GetConfigDataSourceName() + conf.GetConfigString("dbName")
-	}
+	dataSourceName := conf.GetConfigRealDataSourceName(driverName)
 	adapter, err := xormadapter.NewAdapterWithTableName(driverName, dataSourceName, tableName, tableNamePrefix, true)
 	if err != nil {
 		panic(err)
