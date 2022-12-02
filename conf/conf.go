@@ -120,3 +120,13 @@ func GetConfigBatchSize() int {
 func GetConfigQuota() *Quota {
 	return quota
 }
+
+func GetConfigRealDataSourceName(driverName string) string {
+	var dataSourceName string
+	if driverName != "mysql" {
+		dataSourceName = GetConfigDataSourceName()
+	} else {
+		dataSourceName = GetConfigDataSourceName() + GetConfigString("dbName")
+	}
+	return dataSourceName
+}
