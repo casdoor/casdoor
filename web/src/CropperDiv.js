@@ -140,7 +140,7 @@ export const CropperDiv = (props) => {
       <Modal
         maskClosable={false}
         title={title}
-        visible={visible}
+        open={visible}
         okText={i18next.t("user:Upload a photo")}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}

@@ -148,7 +148,7 @@ export const CaptchaModal = ({
         maskClosable={false}
         destroyOnClose={true}
         title={i18next.t("general:Captcha")}
-        visible={visible}
+        open={visible}
         width={348}
         footer={renderFooter()}
       >

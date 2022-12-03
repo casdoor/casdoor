@@ -64,7 +64,7 @@ export const PasswordModal = (props) => {
       <Modal
         maskClosable={false}
         title={i18next.t("user:Password")}
-        visible={visible}
+        open={visible}
         okText={i18next.t("user:Set Password")}
         cancelText={i18next.t("user:Cancel")}
         confirmLoading={confirmLoading}

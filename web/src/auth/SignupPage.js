@@ -510,7 +510,7 @@ class SignupPage extends React.Component {
     return (
       <Modal
         title={i18next.t("signup:Terms of Use")}
-        visible={this.state.isTermsOfUseVisible}
+        open={this.state.isTermsOfUseVisible}
         width={"55vw"}
         closable={false}
         okText={i18next.t("signup:Accept")}

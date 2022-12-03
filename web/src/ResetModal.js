@@ -71,7 +71,7 @@ export const ResetModal = (props) => {
       <Modal
         maskClosable={false}
         title={buttonText}
-        visible={visible}
+        open={visible}
         okText={buttonText}
         cancelText={i18next.t("user:Cancel")}
         confirmLoading={confirmLoading}

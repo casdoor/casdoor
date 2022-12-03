@@ -117,7 +117,7 @@ class PaymentEditPage extends React.Component {
           {" " + i18next.t("payment:Confirm your invoice information")}
         </div>
       }
-      visible={this.state.isModalVisible}
+      open={this.state.isModalVisible}
       onOk={handleIssueInvoice}
       onCancel={handleCancel}
       okText={i18next.t("payment:Issue Invoice")}
