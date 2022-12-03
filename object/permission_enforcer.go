@@ -65,22 +65,27 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`
 		panic(err)
 	}
 
+	// load Policy with a specific Permission
+	enforcer.LoadFilteredPolicy(xormadapter.Filter{
+		V5: []string{permission.Owner + "/" + permission.Name},
+	})
 	return enforcer
 }
 
 func getPolicies(permission *Permission) ([][]string, [][]string) {
 	var policies [][]string
 	var groupingPolicies [][]string
+	id := permission.Owner + "/" + permission.Name
 	domainExist := len(permission.Domains) > 0
 	for _, user := range permission.Users {
 		for _, resource := range permission.Resources {
 			for _, action := range permission.Actions {
 				if domainExist {
 					for _, domain := range permission.Domains {
-						policies = append(policies, []string{user, domain, resource, strings.ToLower(action)})
+						policies = append(policies, []string{user, domain, resource, strings.ToLower(action), "", id})
 					}
 				} else {
-					policies = append(policies, []string{user, resource, strings.ToLower(action)})
+					policies = append(policies, []string{user, resource, strings.ToLower(action), "", "", id})
 				}
 			}
 		}
@@ -90,29 +95,29 @@ func getPolicies(permission *Permission) ([][]string, [][]string) {
 		for _, subUser := range roleObj.Users {
 			if domainExist {
 				for _, domain := range permission.Domains {
-					groupingPolicies = append(groupingPolicies, []string{subUser, domain, role})
+					groupingPolicies = append(groupingPolicies, []string{subUser, domain, role, "", "", id})
 				}
 			} else {
-				groupingPolicies = append(groupingPolicies, []string{subUser, role})
+				groupingPolicies = append(groupingPolicies, []string{subUser, role, "", "", "", id})
 			}
 		}
 		for _, subRole := range roleObj.Roles {
 			if domainExist {
 				for _, domain := range permission.Domains {
-					groupingPolicies = append(groupingPolicies, []string{subRole, domain, role})
+					groupingPolicies = append(groupingPolicies, []string{subRole, domain, role, "", "", id})
 				}
 			} else {
-				groupingPolicies = append(groupingPolicies, []string{subRole, role})
+				groupingPolicies = append(groupingPolicies, []string{subRole, role, "", "", "", id})
 			}
 		}
 		for _, resource := range permission.Resources {
 			for _, action := range permission.Actions {
 				if domainExist {
 					for _, domain := range permission.Domains {
-						policies = append(policies, []string{role, domain, resource, strings.ToLower(action)})
+						policies = append(policies, []string{role, domain, resource, strings.ToLower(action), "", id})
 					}
 				} else {
-					policies = append(policies, []string{role, resource, strings.ToLower(action)})
+					policies = append(policies, []string{role, resource, strings.ToLower(action), "", "", id})
 				}
 			}
 		}
