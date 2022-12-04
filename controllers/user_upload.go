@@ -61,6 +61,6 @@ func (c *ApiController) UploadUsers() {
 	if affected {
 		c.ResponseOk()
 	} else {
-		c.ResponseError(c.T("UserErr.FailToImportUsers"))
+		c.ResponseError(c.T("Failed to import users"))
 	}
 }

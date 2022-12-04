@@ -141,13 +141,13 @@ func (c *ApiController) BuyProduct() {
 
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(c.T("LoginErr.LoginFirst"))
+		c.ResponseError(c.T("Please login first"))
 		return
 	}
 
 	user := object.GetUser(userId)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.T("UserErr.DoNotExist"), userId))
+		c.ResponseError(fmt.Sprintf(c.T("The user: %s doesn't exist"), userId))
 		return
 	}
 

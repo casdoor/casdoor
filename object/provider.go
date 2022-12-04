@@ -277,7 +277,7 @@ func GetCaptchaProviderByOwnerName(applicationId, lang string) (*Provider, error
 	}
 
 	if !existed {
-		return nil, fmt.Errorf(i18n.Translate(lang, "ProviderErr.DoNotExist"), applicationId)
+		return nil, fmt.Errorf(i18n.Translate(lang, "the provider: %s does not exist"), applicationId)
 	}
 
 	return &provider, nil
@@ -289,7 +289,7 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 	}
 	application := GetApplication(applicationId)
 	if application == nil || len(application.Providers) == 0 {
-		return nil, fmt.Errorf(i18n.Translate(lang, "ApplicationErr.InvalidID"))
+		return nil, fmt.Errorf(i18n.Translate(lang, "Invalid application id"))
 	}
 	for _, provider := range application.Providers {
 		if provider.Provider == nil {

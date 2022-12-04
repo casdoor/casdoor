@@ -153,7 +153,7 @@ func CheckVerificationCode(dest, code, lang string) string {
 	record := getVerificationRecord(dest)
 
 	if record == nil {
-		return i18n.Translate(lang, "PhoneErr.CodeNotSent")
+		return i18n.Translate(lang, "Code has not been sent yet!")
 	}
 
 	timeout, err := conf.GetConfigInt64("verificationCodeTimeout")
@@ -163,7 +163,7 @@ func CheckVerificationCode(dest, code, lang string) string {
 
 	now := time.Now().Unix()
 	if now-record.Time > timeout*60 {
-		return fmt.Sprintf(i18n.Translate(lang, "PhoneErr.CodeTimeOut"), timeout)
+		return fmt.Sprintf(i18n.Translate(lang, "You should verify your code in %d min!"), timeout)
 	}
 
 	if record.Code != code {

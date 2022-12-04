@@ -120,3 +120,23 @@ func writeToAllLanguageFiles(errName map[string]bool) {
 		}
 	}
 }
+
+func replaceAllOldString(paths []string) {
+	var c1 *goconfig.ConfigFile
+	c1, err := goconfig.LoadConfigFile("../i18n/languages/" + "locale_en" + ".ini")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	errName := getErrName(paths)
+	for i := 0; i < len(paths); i++ {
+		content := util.ReadStringFromPath(paths[i])
+		for k, _ := range errName {
+			if strings.Contains(content, k) {
+				parts := strings.Split(k, ".")
+				newString, _ := c1.GetValue(parts[0], parts[1])
+				content = strings.ReplaceAll(content, k, newString)
+				os.WriteFile(paths[i], []byte(content), 0666)
+			}
+		}
+	}
+}

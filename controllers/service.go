@@ -81,7 +81,7 @@ func (c *ApiController) SendEmail() {
 	}
 
 	if util.IsStrsEmpty(emailForm.Title, emailForm.Content, emailForm.Sender) {
-		c.ResponseError(fmt.Sprintf(c.T("EmailErr.EmptyParam"), emailForm))
+		c.ResponseError(fmt.Sprintf(c.T("Empty parameters for emailForm: %v"), emailForm))
 		return
 	}
 
@@ -93,7 +93,7 @@ func (c *ApiController) SendEmail() {
 	}
 
 	if len(invalidReceivers) != 0 {
-		c.ResponseError(fmt.Sprintf(c.T("EmailErr.InvalidReceivers"), invalidReceivers))
+		c.ResponseError(fmt.Sprintf(c.T("Invalid Email receivers: %s"), invalidReceivers))
 		return
 	}
 
@@ -141,7 +141,7 @@ func (c *ApiController) SendSms() {
 	}
 
 	if len(invalidReceivers) != 0 {
-		c.ResponseError(fmt.Sprintf(c.T("PhoneErr.InvalidReceivers"), invalidReceivers))
+		c.ResponseError(fmt.Sprintf(c.T("Invalid phone receivers: %s"), invalidReceivers))
 		return
 	}
 

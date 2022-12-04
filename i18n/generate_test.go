@@ -41,9 +41,11 @@ func TestGenerateI18nStringsForFrontend(t *testing.T) {
 
 func TestGenerateI18nStringsForBackend(t *testing.T) {
 	paths := getAllGoFilePaths()
-
+	fmt.Println(paths)
 	errName := getErrName(paths)
-
+	for k, v := range errName {
+		fmt.Println(k, v)
+	}
 	writeToAllLanguageFiles(errName)
 
 	fmt.Println("Total Err Words:", len(errName))
@@ -51,4 +53,9 @@ func TestGenerateI18nStringsForBackend(t *testing.T) {
 	for i := range errName {
 		fmt.Println(i)
 	}
+}
+
+func TestReplaceAllOldStrings(t *testing.T) {
+	paths := getAllGoFilePaths()
+	replaceAllOldString(paths)
 }

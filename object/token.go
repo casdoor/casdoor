@@ -241,12 +241,12 @@ func GetTokenByTokenAndApplication(token string, application string) *Token {
 
 func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string, lang string) (string, *Application) {
 	if responseType != "code" && responseType != "token" && responseType != "id_token" {
-		return fmt.Sprintf(i18n.Translate(lang, "ApplicationErr.GrantTypeNotSupport"), responseType), nil
+		return fmt.Sprintf(i18n.Translate(lang, "Grant_type: %s is not supported in this application"), responseType), nil
 	}
 
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
-		return i18n.Translate(lang, "TokenErr.InvalidClientId"), nil
+		return i18n.Translate(lang, "Invalid client_id"), nil
 	}
 
 	validUri := false
@@ -257,7 +257,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		}
 	}
 	if !validUri {
-		return fmt.Sprintf(i18n.Translate(lang, "TokenErr.RedirectURIDoNotExist"), redirectUri), application
+		return fmt.Sprintf(i18n.Translate(lang, "Redirect URI: %s doesn't exist in the allowed Redirect URI list"), redirectUri), application
 	}
 
 	// Mask application for /api/get-app-login

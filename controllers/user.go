@@ -149,7 +149,7 @@ func (c *ApiController) UpdateUser() {
 	}
 
 	if user.DisplayName == "" {
-		c.ResponseError(c.T("UserErr.DisplayNameCanNotBeEmpty"))
+		c.ResponseError(c.T("Display name cannot be empty"))
 		return
 	}
 
@@ -236,7 +236,7 @@ func (c *ApiController) GetEmailAndPhone() {
 
 	user := object.GetUserByFields(form.Organization, form.Username)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.T("UserErr.DoNotExistInOrg"), form.Organization, form.Username))
+		c.ResponseError(fmt.Sprintf(c.T("The user: %s/%s doesn't exist"), form.Organization, form.Username))
 		return
 	}
 
@@ -294,12 +294,12 @@ func (c *ApiController) SetPassword() {
 	}
 
 	if strings.Contains(newPassword, " ") {
-		c.ResponseError(c.T("SetPasswordErr.CanNotContainBlank"))
+		c.ResponseError(c.T("New password cannot contain blank space."))
 		return
 	}
 
 	if len(newPassword) <= 5 {
-		c.ResponseError(c.T("SetPasswordErr.LessThanSixCharacters"))
+		c.ResponseError(c.T("New password must have at least 6 characters"))
 		return
 	}
 
