@@ -65,6 +65,8 @@ class CertEditPage extends React.Component {
   }
 
   renderCert() {
+    const editorWidth = Setting.isMobile() ? 22 : 9;
+
     return (
       <Card size="small" title={
         <div>
@@ -166,7 +168,7 @@ class CertEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("cert:Certificate"), i18next.t("cert:Certificate - Tooltip"))} :
           </Col>
-          <Col span={9} >
+          <Col span={editorWidth} >
             <Button style={{marginRight: "10px", marginBottom: "10px"}} onClick={() => {
               copy(this.state.cert.certificate);
               Setting.showMessage("success", i18next.t("cert:Certificate copied to clipboard successfully"));
@@ -189,7 +191,7 @@ class CertEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("cert:Private key"), i18next.t("cert:Private key - Tooltip"))} :
           </Col>
-          <Col span={9} >
+          <Col span={editorWidth} >
             <Button style={{marginRight: "10px", marginBottom: "10px"}} onClick={() => {
               copy(this.state.cert.privateKey);
               Setting.showMessage("success", i18next.t("cert:Private key copied to clipboard successfully"));
