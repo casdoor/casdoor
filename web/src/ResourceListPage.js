@@ -257,7 +257,7 @@ class ResourceListPage extends BaseListPage {
                 okText={i18next.t("user:OK")}
                 cancelText={i18next.t("user:Cancel")}
               >
-                <Button type="danger">{i18next.t("general:Delete")}</Button>
+                <Button type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );

@@ -17,7 +17,7 @@ import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
 import {BarsOutlined, DownOutlined, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
-import {Avatar, BackTop, Button, Card, Drawer, Dropdown, Layout, Menu, Result} from "antd";
+import {Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -295,23 +295,16 @@ class App extends Component {
   }
 
   renderRightDropdown() {
-    const menu = (
-      <Menu onClick={this.handleRightDropdownClick.bind(this)}>
-        <Menu.Item key="/account">
-          <SettingOutlined />
-          &nbsp;&nbsp;
-          {i18next.t("account:My Account")}
-        </Menu.Item>
-        <Menu.Item key="/logout">
-          <LogoutOutlined />
-          &nbsp;&nbsp;
-          {i18next.t("account:Logout")}
-        </Menu.Item>
-      </Menu>
-    );
+    const items = [];
+    items.push(Setting.getItem(<><SettingOutlined />&nbsp;&nbsp;{i18next.t("account:My Account")}</>,
+      "/account"
+    ));
+    items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Logout")}</>,
+      "/logout"));
+    const onClick = this.handleRightDropdownClick.bind(this);
 
     return (
-      <Dropdown key="/rightDropDown" overlay={menu} className="rightDropDown">
+      <Dropdown key="/rightDropDown" menu={{items, onClick}} className="rightDropDown">
         <div className="ant-dropdown-link" style={{float: "right", cursor: "pointer"}}>
           &nbsp;
           &nbsp;
@@ -363,155 +356,89 @@ class App extends Component {
       return [];
     }
 
-    res.push(
-      <Menu.Item key="/">
-        <Link to="/">
-          {i18next.t("general:Home")}
-        </Link>
-      </Menu.Item>
-    );
+    res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/"));
 
     if (Setting.isAdminUser(this.state.account)) {
-      res.push(
-        <Menu.Item key="/organizations">
-          <Link to="/organizations">
-            {i18next.t("general:Organizations")}
-          </Link>
-        </Menu.Item>
-      );
+      res.push(Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>,
+        "/organizations"));
     }
 
     if (Setting.isLocalAdminUser(this.state.account)) {
-      res.push(
-        <Menu.Item key="/users">
-          <Link to="/users">
-            {i18next.t("general:Users")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
-        <Menu.Item key="/roles">
-          <Link to="/roles">
-            {i18next.t("general:Roles")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
-        <Menu.Item key="/permissions">
-          <Link to="/permissions">
-            {i18next.t("general:Permissions")}
-          </Link>
-        </Menu.Item>
-      );
+      res.push(Setting.getItem(<Link to="/users">{i18next.t("general:Users")}</Link>,
+        "/users"
+      ));
+
+      res.push(Setting.getItem(<Link to="/roles">{i18next.t("general:Roles")}</Link>,
+        "/roles"
+      ));
+
+      res.push(Setting.getItem(<Link to="/permissions">{i18next.t("general:Permissions")}</Link>,
+        "/permissions"
+      ));
     }
 
     if (Setting.isAdminUser(this.state.account)) {
-      res.push(
-        <Menu.Item key="/models">
-          <Link to="/models">
-            {i18next.t("general:Models")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
-        <Menu.Item key="/adapters">
-          <Link to="/adapters">
-            {i18next.t("general:Adapters")}
-          </Link>
-        </Menu.Item>
-      );
+      res.push(Setting.getItem(<Link to="/models">{i18next.t("general:Models")}</Link>,
+        "/models"
+      ));
+
+      res.push(Setting.getItem(<Link to="/adapters">{i18next.t("general:Adapters")}</Link>,
+        "/adapters"
+      ));
     }
+
     if (Setting.isLocalAdminUser(this.state.account)) {
-      res.push(
-        <Menu.Item key="/applications">
-          <Link to="/applications">
-            {i18next.t("general:Applications")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
-        <Menu.Item key="/providers">
-          <Link to="/providers">
-            {i18next.t("general:Providers")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
-        <Menu.Item key="/resources">
-          <Link to="/resources">
-            {i18next.t("general:Resources")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
-        <Menu.Item key="/records">
-          <Link to="/records">
-            {i18next.t("general:Records")}
-          </Link>
-        </Menu.Item>
-      );
+      res.push(Setting.getItem(<Link to="/applications">{i18next.t("general:Applications")}</Link>,
+        "/applications"
+      ));
+
+      res.push(Setting.getItem(<Link to="/providers">{i18next.t("general:Providers")}</Link>,
+        "/providers"
+      ));
+
+      res.push(Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>,
+        "/resources"
+      ));
+
+      res.push(Setting.getItem(<Link to="/records">{i18next.t("general:Records")}</Link>,
+        "/records"
+      ));
     }
 
     if (Setting.isAdminUser(this.state.account)) {
-      res.push(
-        <Menu.Item key="/tokens">
-          <Link to="/tokens">
-            {i18next.t("general:Tokens")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
-        <Menu.Item key="/webhooks">
-          <Link to="/webhooks">
-            {i18next.t("general:Webhooks")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
-        <Menu.Item key="/syncers">
-          <Link to="/syncers">
-            {i18next.t("general:Syncers")}
-          </Link>
-        </Menu.Item>
-      );
-      res.push(
-        <Menu.Item key="/certs">
-          <Link to="/certs">
-            {i18next.t("general:Certs")}
-          </Link>
-        </Menu.Item>
-      );
+      res.push(Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>,
+        "/tokens"
+      ));
+
+      res.push(Setting.getItem(<Link to="/webhooks">{i18next.t("general:Webhooks")}</Link>,
+        "/webhooks"
+      ));
+
+      res.push(Setting.getItem(<Link to="/syncers">{i18next.t("general:Syncers")}</Link>,
+        "/syncers"
+      ));
+
+      res.push(Setting.getItem(<Link to="/certs">{i18next.t("general:Certs")}</Link>,
+        "/certs"
+      ));
 
       if (Conf.EnableExtraPages) {
-        res.push(
-          <Menu.Item key="/products">
-            <Link to="/products">
-              {i18next.t("general:Products")}
-            </Link>
-          </Menu.Item>
-        );
-        res.push(
-          <Menu.Item key="/payments">
-            <Link to="/payments">
-              {i18next.t("general:Payments")}
-            </Link>
-          </Menu.Item>
-        );
-        res.push(
-          <Menu.Item key="/sysinfo">
-            <Link to="/sysinfo">
-              {i18next.t("general:SysInfo")}
-            </Link>
-          </Menu.Item>
-        );
+        res.push(Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>,
+          "/products"
+        ));
+
+        res.push(Setting.getItem(<Link to="/payments">{i18next.t("general:Payments")}</Link>,
+          "/payments"
+        ));
+
+        res.push(Setting.getItem(<Link to="/sysinfo">{i18next.t("general:SysInfo")}</Link>,
+          "/sysinfo"
+        ));
       }
-      res.push(
-        <Menu.Item key="/swagger">
-          <a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>
-            {i18next.t("general:Swagger")}
-          </a>
-        </Menu.Item>
-      );
+      res.push(Setting.getItem(<a target="_blank" rel="noreferrer"
+        href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>{i18next.t("general:Swagger")}</a>,
+      "/swagger"
+      ));
     }
 
     return res;
@@ -623,13 +550,11 @@ class App extends Component {
               <div>
                 <Menu
                   // theme="dark"
+                  items={this.renderMenu()}
                   mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
                   selectedKeys={[`${this.state.selectedMenuKey}`]}
                   style={{lineHeight: "64px", position: "absolute", left: "145px", right: "200px"}}
                 >
-                  {
-                    this.renderMenu()
-                  }
                 </Menu>
                 {
                   this.renderAccount()
@@ -661,14 +586,12 @@ class App extends Component {
             <Drawer title={i18next.t("general:Close")} placement="left" visible={this.state.menuVisible} onClose={this.onClose}>
               <Menu
                 // theme="dark"
+                items={this.renderMenu()}
                 mode={(Setting.isMobile()) ? "inline" : "horizontal"}
                 selectedKeys={[`${this.state.selectedMenuKey}`]}
                 style={{lineHeight: "64px"}}
                 onClick={this.onClose}
               >
-                {
-                  this.renderMenu()
-                }
               </Menu>
             </Drawer>
             <Button icon={<BarsOutlined />} onClick={this.showMenu} type="text">
@@ -754,7 +677,7 @@ class App extends Component {
 
     return (
       <div id="parent-area">
-        <BackTop />
+        <FloatButton.BackTop />
         <CustomGithubCorner />
         <div id="content-wrap" style={{flexDirection: "column"}}>
           {
@@ -775,9 +698,16 @@ class App extends Component {
           <Helmet>
             <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
           </Helmet>
-          {
-            this.renderPage()
-          }
+          <ConfigProvider theme={{
+            token: {
+              colorPrimary: "rgb(89,54,213)",
+              colorInfo: "rgb(89,54,213)",
+            },
+          }}>
+            {
+              this.renderPage()
+            }
+          </ConfigProvider>
         </React.Fragment>
       );
     }
@@ -789,9 +719,16 @@ class App extends Component {
           <title>{organization.displayName}</title>
           <link rel="icon" href={organization.favicon} />
         </Helmet>
-        {
-          this.renderPage()
-        }
+        <ConfigProvider theme={{
+          token: {
+            colorPrimary: "rgb(89,54,213)",
+            colorInfo: "rgb(89,54,213)",
+          },
+        }}>
+          {
+            this.renderPage()
+          }
+        </ConfigProvider>
       </React.Fragment>
     );
   }

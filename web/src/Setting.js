@@ -858,6 +858,15 @@ export function getLabel(text, tooltip) {
   );
 }
 
+export function getItem(label, key, icon, children, type) {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    type,
+  };
+}
 function repeat(str, len) {
   while (str.length < len) {
     str += str.substr(0, len - str.length);

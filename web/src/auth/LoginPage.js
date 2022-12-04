@@ -30,8 +30,6 @@ import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {CaptchaModal} from "../common/CaptchaModal";
 
-const {TabPane} = Tabs;
-
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
@@ -734,21 +732,16 @@ class LoginPage extends React.Component {
 
   renderMethodChoiceBox() {
     const application = this.getApplicationObj();
+    const items = [
+      {label: i18next.t("login:Password"), key: "password"},
+    ];
+    application.enableCodeSignin ? items.push({label: i18next.t("login:Verification Code"), key: "verificationCode"}) : null;
+    application.enableWebAuthn ? items.push({label: i18next.t("login:WebAuthn"), key: "webAuthn"}) : null;
+
     if (application.enableCodeSignin || application.enableWebAuthn) {
       return (
         <div>
-          <Tabs size={"small"} defaultActiveKey="password" onChange={(key) => {this.setState({loginMethod: key});}} centered>
-            <TabPane tab={i18next.t("login:Password")} key="password" />
-            {
-              !application.enableCodeSignin ? null : (
-                <TabPane tab={i18next.t("login:Verification Code")} key="verificationCode" />
-              )
-            }
-            {
-              !application.enableWebAuthn ? null : (
-                <TabPane tab={i18next.t("login:WebAuthn")} key="webAuthn" />
-              )
-            }
+          <Tabs items={items} size={"small"} defaultActiveKey="password" onChange={(key) => {this.setState({loginMethod: key});}} centered>
           </Tabs>
         </div>
       );

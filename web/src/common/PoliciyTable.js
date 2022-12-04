@@ -93,7 +93,7 @@ class PolicyTable extends React.Component {
         if (res.status === "ok") {
           this.setState({policyLists: res});
         } else {
-          Setting.showMessage("error", i18next.t("adapter:Failed to sync policies: ") + res.msg);
+          Setting.showMessage("error", `${i18next.t("adapter:Failed to sync policies")}: ${res.msg}`);
         }
         this.setState({loading: false});
       })
