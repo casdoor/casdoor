@@ -35,11 +35,11 @@ class ForgetPage extends React.Component {
       classes: props,
       account: props.account,
       applicationName:
-          props.applicationName !== undefined
-            ? props.applicationName
-            : props.match === undefined
-              ? null
-              : props.match.params.applicationName,
+        props.applicationName !== undefined
+          ? props.applicationName
+          : props.match === undefined
+            ? null
+            : props.match.params.applicationName,
       application: null,
       msg: null,
       userId: "",
@@ -61,10 +61,7 @@ class ForgetPage extends React.Component {
     if (this.state.applicationName !== undefined) {
       this.getApplication();
     } else {
-      Util.showMessage(
-        "error",
-        i18next.t("forget:Unknown forget type: ") + this.state.type
-      );
+      Setting.showMessage("error", i18next.t("forget:Unknown forget type: ") + this.state.type);
     }
   }
 
@@ -102,13 +99,6 @@ class ForgetPage extends React.Component {
         if (res.status === "ok") {
           const phone = res.data.phone;
           const email = res.data.email;
-          const saveFields = () => {
-            if (this.state.isFixed) {
-              forms.step2.setFieldsValue({email: this.state.fixedContent});
-              this.setState({username: this.state.fixedContent});
-              this.setState({current: 1});
-            }
-          };
           this.setState({phone: phone, email: email, username: res.data.name, name: res.data.name});
 
           if (phone !== "" && email === "") {
@@ -123,15 +113,19 @@ class ForgetPage extends React.Component {
 
           switch (res.data2) {
           case "email":
-            this.setState({isFixed: true, fixedContent: email, verifyType: "email"}, () => {saveFields();});
+            this.setState({isFixed: true, fixedContent: email, verifyType: "email"});
             break;
           case "phone":
-            this.setState({isFixed: true, fixedContent: phone, verifyType: "phone"}, () => {saveFields();});
+            this.setState({isFixed: true, fixedContent: phone, verifyType: "phone"});
             break;
           default:
-            saveFields();
             break;
           }
+          if (this.state.isFixed) {
+            forms.step2.setFieldsValue({email: this.state.fixedContent});
+            this.setState({username: this.state.fixedContent});
+          }
+          this.setState({current: 1});
         } else {
           Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
         }
