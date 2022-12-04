@@ -35,11 +35,11 @@ class ForgetPage extends React.Component {
       classes: props,
       account: props.account,
       applicationName:
-        props.applicationName !== undefined
-          ? props.applicationName
-          : props.match === undefined
-            ? null
-            : props.match.params.applicationName,
+          props.applicationName !== undefined
+            ? props.applicationName
+            : props.match === undefined
+              ? null
+              : props.match.params.applicationName,
       application: null,
       msg: null,
       userId: "",
@@ -61,7 +61,10 @@ class ForgetPage extends React.Component {
     if (this.state.applicationName !== undefined) {
       this.getApplication();
     } else {
-      Setting.showMessage("error", i18next.t("forget:Unknown forget type: ") + this.state.type);
+      Util.showMessage(
+        "error",
+        i18next.t("forget:Unknown forget type: ") + this.state.type
+      );
     }
   }
 
