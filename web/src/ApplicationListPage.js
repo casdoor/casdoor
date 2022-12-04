@@ -70,7 +70,7 @@ class ApplicationListPage extends BaseListPage {
       redirectUris: ["http://localhost:9000/callback"],
       tokenFormat: "JWT",
       expireInHours: 24 * 7,
-      formOffset: 8,
+      formOffset: 2,
     };
   }
 
@@ -243,7 +243,7 @@ class ApplicationListPage extends BaseListPage {
                 onConfirm={() => this.deleteApplication(index)}
                 disabled={record.name === "app-built-in"}
               >
-                <Button style={{marginBottom: "10px"}} disabled={record.name === "app-built-in"} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} disabled={record.name === "app-built-in"} danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );

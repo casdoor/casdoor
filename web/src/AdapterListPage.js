@@ -208,7 +208,7 @@ class AdapterListPage extends BaseListPage {
                 title={`Sure to delete adapter: ${record.name} ?`}
                 onConfirm={() => this.deleteAdapter(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );

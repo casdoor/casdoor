@@ -144,7 +144,7 @@ class LdapListPage extends React.Component {
                 onConfirm={() => this.deleteLdap(index)}
               >
                 <Button style={{marginBottom: "10px"}}
-                  type="danger">{i18next.t("general:Delete")}</Button>
+                  danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );

@@ -172,7 +172,7 @@ class CertListPage extends BaseListPage {
                 title={`Sure to delete cert: ${record.name} ?`}
                 onConfirm={() => this.deleteCert(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );

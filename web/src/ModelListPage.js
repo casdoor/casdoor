@@ -146,7 +146,7 @@ class ModelListPage extends BaseListPage {
                 title={`Sure to delete model: ${record.name} ?`}
                 onConfirm={() => this.deleteModel(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );

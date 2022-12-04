@@ -17,7 +17,7 @@ import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
 import {BarsOutlined, DownOutlined, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
-import {Avatar, Button, Card, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
+import {Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -698,9 +698,15 @@ class App extends Component {
           <Helmet>
             <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
           </Helmet>
-          {
-            this.renderPage()
-          }
+          <ConfigProvider theme={{
+            token: {
+              colorPrimary: "rgb(89,54,213)",
+            },
+          }}>
+            {
+              this.renderPage()
+            }
+          </ConfigProvider>
         </React.Fragment>
       );
     }
@@ -712,9 +718,15 @@ class App extends Component {
           <title>{organization.displayName}</title>
           <link rel="icon" href={organization.favicon} />
         </Helmet>
-        {
-          this.renderPage()
-        }
+        <ConfigProvider theme={{
+          token: {
+            colorPrimary: "rgb(89,54,213)",
+          },
+        }}>
+          {
+            this.renderPage()
+          }
+        </ConfigProvider>
       </React.Fragment>
     );
   }
