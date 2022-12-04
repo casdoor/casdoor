@@ -66,7 +66,6 @@ class CertEditPage extends React.Component {
 
   renderCert() {
     const editorWidth = Setting.isMobile() ? 22 : 9;
-
     return (
       <Card size="small" title={
         <div>
