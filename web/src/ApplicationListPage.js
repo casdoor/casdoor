@@ -243,7 +243,7 @@ class ApplicationListPage extends BaseListPage {
                 onConfirm={() => this.deleteApplication(index)}
                 disabled={record.name === "app-built-in"}
               >
-                <Button style={{marginBottom: "10px"}} disabled={record.name === "app-built-in"} danger>{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} disabled={record.name === "app-built-in"} type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );

@@ -304,7 +304,7 @@ class PermissionListPage extends BaseListPage {
                 title={`Sure to delete permission: ${record.name} ?`}
                 onConfirm={() => this.deletePermission(index)}
               >
-                <Button style={{marginBottom: "10px"}} danger>{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );

@@ -701,6 +701,7 @@ class App extends Component {
           <ConfigProvider theme={{
             token: {
               colorPrimary: "rgb(89,54,213)",
+              colorInfo: "rgb(89,54,213)",
             },
           }}>
             {
@@ -721,6 +722,7 @@ class App extends Component {
         <ConfigProvider theme={{
           token: {
             colorPrimary: "rgb(89,54,213)",
+            colorInfo: "rgb(89,54,213)",
           },
         }}>
           {

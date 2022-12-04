@@ -51,7 +51,7 @@ class WebAuthnCredentialTable extends React.Component {
         width: "170px",
         render: (text, record, index) => {
           return (
-            <Button style={{marginTop: "5px", marginBottom: "5px", marginRight: "5px"}} danger onClick={() => {this.deleteRow(this.props.table, index);}}>
+            <Button style={{marginTop: "5px", marginBottom: "5px", marginRight: "5px"}} type="primary" danger onClick={() => {this.deleteRow(this.props.table, index);}}>
               {i18next.t("general:Delete")}
             </Button>
           );
