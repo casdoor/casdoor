@@ -361,7 +361,7 @@ class LoginPage extends React.Component {
           size="large"
         >
           <Form.Item
-            style={{height: 0, visibility: "hidden"}}
+            hidden={true}
             name="application"
             rules={[
               {
@@ -372,7 +372,7 @@ class LoginPage extends React.Component {
           >
           </Form.Item>
           <Form.Item
-            style={{height: 0, visibility: "hidden"}}
+            hidden={true}
             name="organization"
             rules={[
               {
@@ -479,7 +479,7 @@ class LoginPage extends React.Component {
                 {application.displayName}
               </span>
             </a>
-            :
+              :
           </div>
           <br />
           {

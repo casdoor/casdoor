@@ -42,7 +42,7 @@ const formItemLayout = {
       span: 24,
     },
     sm: {
-      span: 18,
+      span: 16,
     },
   },
 };
@@ -563,12 +563,13 @@ class SignupPage extends React.Component {
           application: application.name,
           organization: application.organization,
         }}
-        style={{width: !Setting.isMobile() ? "400px" : "300px"}}
         size="large"
+        layout={Setting.isMobile() ? "vertical" : "horizontal"}
+        style={{width: Setting.isMobile() ? "300px" : "400px"}}
       >
         <Form.Item
-          style={{height: 0, visibility: "hidden"}}
           name="application"
+          hidden={true}
           rules={[
             {
               required: true,
@@ -578,8 +579,8 @@ class SignupPage extends React.Component {
         >
         </Form.Item>
         <Form.Item
-          style={{height: 0, visibility: "hidden"}}
           name="organization"
+          hidden={true}
           rules={[
             {
               required: true,
@@ -595,7 +596,7 @@ class SignupPage extends React.Component {
           <Button type="primary" htmlType="submit">
             {i18next.t("account:Sign Up")}
           </Button>
-          &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
+            &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
           <a onClick={() => {
             const linkInStorage = sessionStorage.getItem("signinUrl");
             if (linkInStorage !== null && linkInStorage !== "") {
@@ -638,18 +639,16 @@ class SignupPage extends React.Component {
               <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
             </div>
             <div className="login-form">
-              <div >
-                {
-                  Setting.renderHelmet(application)
-                }
-                {
-                  Setting.renderLogo(application)
-                }
-                <SelectLanguageBox languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
-                {
-                  this.renderForm(application)
-                }
-              </div>
+              {
+                Setting.renderHelmet(application)
+              }
+              {
+                Setting.renderLogo(application)
+              }
+              <SelectLanguageBox languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
+              {
+                this.renderForm(application)
+              }
             </div>
           </div>
         </div>
