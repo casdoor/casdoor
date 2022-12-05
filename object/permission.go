@@ -111,8 +111,8 @@ func GetPermission(id string) *Permission {
 	return getPermission(owner, name)
 }
 
-// VerifyPermission verify if the permission is valid
-func VerifyPermission(permission *Permission) {
+// checkPermissionValid verifies if the permission is valid
+func checkPermissionValid(permission *Permission) {
 	enforcer := getEnforcer(permission)
 	enforcer.EnableAutoSave(false)
 	policies, groupingPolicies := getPolicies(permission)
@@ -131,7 +131,7 @@ func VerifyPermission(permission *Permission) {
 }
 
 func UpdatePermission(id string, permission *Permission) bool {
-	VerifyPermission(permission)
+	checkPermissionValid(permission)
 	owner, name := util.GetOwnerAndNameFromId(id)
 	oldPermission := getPermission(owner, name)
 	if oldPermission == nil {
