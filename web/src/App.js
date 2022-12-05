@@ -76,7 +76,7 @@ import AdapterListPage from "./AdapterListPage";
 import AdapterEditPage from "./AdapterEditPage";
 import {withTranslation} from "react-i18next";
 
-const {Header, Footer} = Layout;
+const {Header, Footer, Content} = Layout;
 
 class App extends Component {
   constructor(props) {
@@ -537,44 +537,45 @@ class App extends Component {
   renderContent() {
     if (!Setting.isMobile()) {
       return (
-        <div style={{display: "flex", flex: "auto", width: "100%", flexDirection: "column"}}>
-          <Layout style={{display: "flex", alignItems: "stretch"}}>
-            <Header style={{padding: "0", marginBottom: "3px"}}>
+        <Layout id="parent-area">
+          <Header style={{marginBottom: "3px", paddingInline: 0}}>
+            {
+              Setting.isMobile() ? null : (
+                <Link to={"/"}>
+                  <div className="logo" />
+                </Link>
+              )
+            }
+            <div>
+              <Menu
+                // theme="dark"
+                items={this.renderMenu()}
+                mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
+                selectedKeys={[`${this.state.selectedMenuKey}`]}
+                style={{lineHeight: "64px", position: "absolute", left: "145px", right: "200px"}}
+              >
+              </Menu>
               {
-                Setting.isMobile() ? null : (
-                  <Link to={"/"}>
-                    <div className="logo" />
-                  </Link>
-                )
+                this.renderAccount()
               }
-              <div>
-                <Menu
-                  // theme="dark"
-                  items={this.renderMenu()}
-                  mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
-                  selectedKeys={[`${this.state.selectedMenuKey}`]}
-                  style={{lineHeight: "64px", position: "absolute", left: "145px", right: "200px"}}
-                >
-                </Menu>
-                {
-                  this.renderAccount()
-                }
-                {this.state.account && <SelectLanguageBox languages={this.state.account.organization.languages} />}
-              </div>
-            </Header>
-            <Layout style={{backgroundColor: "#f5f5f5", alignItems: "stretch"}}>
-              <Card className="content-warp-card">
-                {
-                  this.renderRouter()
-                }
-              </Card>
-            </Layout>
-          </Layout>
-        </div>
+              {this.state.account && <SelectLanguageBox languages={this.state.account.organization.languages} />}
+            </div>
+          </Header>
+          <Content style={{backgroundColor: "#f5f5f5", alignItems: "stretch", display: "flex", flexDirection: "column"}}>
+            <Card className="content-warp-card">
+              {
+                this.renderRouter()
+              }
+            </Card>
+          </Content>
+          {
+            this.renderFooter()
+          }
+        </Layout>
       );
     } else {
       return (
-        <div>
+        <Layout>
           <Header style={{padding: "0", marginBottom: "3px"}}>
             {
               Setting.isMobile() ? null : (
@@ -604,10 +605,11 @@ class App extends Component {
               {this.state.account && <SelectLanguageBox languages={this.state.account.organization.languages} />}
             </div>
           </Header>
-          {
-            this.renderRouter()
-          }
-        </div>
+          <Content style={{display: "flex", flexDirection: "column"}} >{
+            this.renderRouter()}
+          </Content>
+          {this.renderFooter()}
+        </Layout>
       );
     }
   }
@@ -644,50 +646,47 @@ class App extends Component {
   renderPage() {
     if (this.isDoorPages()) {
       return (
-        <div style={{display: "flex", flexDirection: "column", height: "100%"}}>
-          <div id="login-content-wrap" style={{flexDirection: "column"}}>
-            <Switch>
-              <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} />)} />
-              <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />)} />
-              <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage account={this.state.account} {...props} />)} />
-              <Route exact path="/login/:owner" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage account={this.state.account} {...props} />)} />
-              <Route exact path="/auto-signup/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signup"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
-              <Route exact path="/signup/oauth/authorize" render={(props) => <SignupPage account={this.state.account} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
-              <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
-              <Route exact path="/login/saml/authorize/:owner/:applicationName" render={(props) => <LoginPage account={this.state.account} type={"saml"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
-              <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout clearAccount={() => this.setState({account: null})} {...props} />)} />
-              <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage type={"cas"} mode={"signup"} account={this.state.account} {...props} />);}} />
-              <Route exact path="/callback" component={AuthCallback} />
-              <Route exact path="/callback/saml" component={SamlCallback} />
-              <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)} />
-              <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)} />
-              <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)} />
-              <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} {...props} />)} />
-              <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo {...props} />)} />
-              <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
-                extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
-            </Switch>
-          </div>
-          {
-            this.renderFooter()
-          }
-        </div>
+        <>
+          <Layout id="parent-area">
+            <Content style={{display: "flex"}}>
+              <Switch>
+                <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} />)} />
+                <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />)} />
+                <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage account={this.state.account} {...props} />)} />
+                <Route exact path="/login/:owner" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage account={this.state.account} {...props} />)} />
+                <Route exact path="/auto-signup/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signup"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
+                <Route exact path="/signup/oauth/authorize" render={(props) => <SignupPage account={this.state.account} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
+                <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
+                <Route exact path="/login/saml/authorize/:owner/:applicationName" render={(props) => <LoginPage account={this.state.account} type={"saml"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
+                <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout clearAccount={() => this.setState({account: null})} {...props} />)} />
+                <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage type={"cas"} mode={"signup"} account={this.state.account} {...props} />);}} />
+                <Route exact path="/callback" component={AuthCallback} />
+                <Route exact path="/callback/saml" component={SamlCallback} />
+                <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)} />
+                <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)} />
+                <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)} />
+                <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} {...props} />)} />
+                <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo {...props} />)} />
+                <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
+                  extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
+              </Switch>
+            </Content>
+            {
+              this.renderFooter()
+            }
+          </Layout>
+        </>
       );
     }
 
     return (
-      <div id="parent-area">
+      <>
         <FloatButton.BackTop />
         <CustomGithubCorner />
-        <div id="content-wrap" style={{flexDirection: "column"}}>
-          {
-            this.renderContent()
-          }
-        </div>
         {
-          this.renderFooter()
+          this.renderContent()
         }
-      </div>
+      </>
     );
   }
 
