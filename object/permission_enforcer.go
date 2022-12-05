@@ -157,7 +157,12 @@ func removePolicies(permission *Permission) {
 func Enforce(permissionRule *PermissionRule) bool {
 	permission := GetPermission(permissionRule.Id)
 	enforcer := getEnforcer(permission)
-	allow, err := enforcer.Enforce(permissionRule.V0, permissionRule.V1, permissionRule.V2)
+
+	request := []interface{}{permissionRule.V0, permissionRule.V1, permissionRule.V2}
+	if permissionRule.V3 != "" {
+		request = append(request, permissionRule.V3)
+	}
+	allow, err := enforcer.Enforce(request...)
 	if err != nil {
 		panic(err)
 	}
@@ -167,7 +172,11 @@ func Enforce(permissionRule *PermissionRule) bool {
 func BatchEnforce(permissionRules []PermissionRule) []bool {
 	var requests [][]interface{}
 	for _, permissionRule := range permissionRules {
-		requests = append(requests, []interface{}{permissionRule.V0, permissionRule.V1, permissionRule.V2})
+		if permissionRule.V3 != "" {
+			requests = append(requests, []interface{}{permissionRule.V0, permissionRule.V1, permissionRule.V2, permissionRule.V3})
+		} else {
+			requests = append(requests, []interface{}{permissionRule.V0, permissionRule.V1, permissionRule.V2})
+		}
 	}
 	permission := GetPermission(permissionRules[0].Id)
 	enforcer := getEnforcer(permission)
