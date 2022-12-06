@@ -29,6 +29,7 @@
     "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
     "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
     "The user: %s/%s doesn't exist": "The user: %s/%s doesn't exist",
+    "Turing test failed.": "Turing test failed.",
     "Unauthorized operation": "Unauthorized operation",
     "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s"
   },

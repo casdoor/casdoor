@@ -16,9 +16,10 @@ package object
 
 import (
 	"fmt"
-	"github.com/casdoor/casdoor/i18n"
 	"regexp"
 	"time"
+
+	"github.com/casdoor/casdoor/i18n"
 )
 
 var reRealName *regexp.Regexp

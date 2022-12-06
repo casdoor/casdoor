@@ -15,6 +15,7 @@
 package i18n
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -100,6 +101,7 @@ func getI18nJSONData(errName map[string]string) *I18nData {
 		index := strings.LastIndex(v, "\\")
 		namespace := v[index+1 : len(v)-3]
 		key := k[len(namespace)+1:]
+		fmt.Printf("k=%s,v=%s,namespace=%s,key=%s\n", k, v, namespace, key)
 		if _, ok := data[namespace]; !ok {
 			data[namespace] = map[string]string{}
 		}

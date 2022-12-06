@@ -262,7 +262,7 @@ func (c *ApiController) Login() {
 		} else {
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 			if application == nil {
-				c.ResponseError(fmt.Sprintf("auth:The application: %s does not exist", form.Application))
+				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), form.Application))
 				return
 			}
 
@@ -274,7 +274,7 @@ func (c *ApiController) Login() {
 				}
 
 				if !isHuman {
-					c.ResponseError("auth:Turing test failed.")
+					c.ResponseError(c.T("auth:Turing test failed."))
 					return
 				}
 			}
@@ -460,7 +460,7 @@ func (c *ApiController) Login() {
 				record2.User = user.Name
 				util.SafeGoroutine(func() { object.AddRecord(record2) })
 			} else if provider.Category == "SAML" {
-				resp = &Response{Status: "error", Msg: "auth:The account does not exist"}
+				resp = &Response{Status: "error", Msg: "The account does not exist"}
 			}
 			// resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"
