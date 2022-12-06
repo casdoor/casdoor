@@ -68,6 +68,10 @@
     "You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again": "You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again",
     "unsupported password type: %s": "unsupported password type: %s"
   },
+  "check_util": {
+    "You have entered the wrong password too many times, please wait for %d minutes and try again": "You have entered the wrong password too many times, please wait for %d minutes and try again",
+    "password is incorrect, you have %d remaining chances": "password is incorrect, you have %d remaining chances"
+  },
   "enforcer": {
     "Please sign in first": "Please sign in first"
   },

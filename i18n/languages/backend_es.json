@@ -16,7 +16,7 @@
     "Challenge method should be S256": "Challenge method should be S256",
     "Failed to create user, user information is invalid: %s": "Failed to create user, user information is invalid: %s",
     "Failed to login in: %s": "Failed to login in: %s",
-    "Get init score failed, error: %%w": "Get init score failed, error: %%w",
+    "Get init score failed, error: %w": "Get init score failed, error: %w",
     "Invalid token": "Invalid token",
     "Please sign out first before signing in": "Please sign out first before signing in",
     "State expected: %s, but got: %s": "State expected: %s, but got: %s",
@@ -27,10 +27,10 @@
     "The application: %s does not exist": "The application: %s does not exist",
     "The provider type: %s is not supported": "The provider type: %s is not supported",
     "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
+    "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
     "The user: %s/%s doesn't exist": "The user: %s/%s doesn't exist",
     "Unauthorized operation": "Unauthorized operation",
-    "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s",
-    "auth:The user is forbidden to sign in, please contact the administrator": "auth:The user is forbidden to sign in, please contact the administrator"
+    "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s"
   },
   "cas": {
     "Service %s and %s do not match": "Service %s and %s do not match"
@@ -46,17 +46,18 @@
     "FirstName cannot be blank": "FirstName cannot be blank",
     "LastName cannot be blank": "LastName cannot be blank",
     "Ldap user name or password incorrect": "Ldap user name or password incorrect",
-    "Multiple accounts with same uid": "Multiple accounts with same uid",
+    "Multiple accounts with same uid, please check your ldap server": "Multiple accounts with same uid, please check your ldap server",
     "Organization does not exist": "Organization does not exist",
     "Password must have at least 6 characters": "Password must have at least 6 characters",
     "Phone already exists": "Phone already exists",
     "Phone cannot be empty": "Phone cannot be empty",
     "Phone number is invalid": "Phone number is invalid",
     "Please login first": "Please login first",
-    "Session outdated": "Session outdated",
-    "The user is forbidden to sign in": "The user is forbidden to sign in",
+    "Session outdated, please login again": "Session outdated, please login again",
+    "The user doesn't exist": "The user doesn't exist",
+    "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
     "The user: %s doesn't exist": "The user: %s doesn't exist",
-    "The username may only contain alphanumeric characters": "The username may only contain alphanumeric characters",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.",
     "Username already exists": "Username already exists",
     "Username cannot be an email address": "Username cannot be an email address",
     "Username cannot contain white spaces": "Username cannot contain white spaces",
@@ -64,8 +65,12 @@
     "Username is too long (maximum is 39 characters).": "Username is too long (maximum is 39 characters).",
     "Username must have at least 2 characters": "Username must have at least 2 characters",
     "You don't have the permission to do this": "You don't have the permission to do this",
-    "You have entered the wrong password too many times": "You have entered the wrong password too many times",
+    "You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again": "You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again",
     "unsupported password type: %s": "unsupported password type: %s"
+  },
+  "check_util": {
+    "You have entered the wrong password too many times, please wait for %d minutes and try again": "You have entered the wrong password too many times, please wait for %d minutes and try again",
+    "password is incorrect, you have %d remaining chances": "password is incorrect, you have %d remaining chances"
   },
   "enforcer": {
     "Please sign in first": "Please sign in first"
@@ -77,10 +82,10 @@
   "link": {
     "Please link first": "Please link first",
     "This application has no providers": "This application has no providers",
+    "This application has no providers of type": "This application has no providers of type",
     "This provider can't be unlinked": "This provider can't be unlinked",
     "You are not the global admin, you can't unlink other users": "You are not the global admin, you can't unlink other users",
-    "You can't unlink yourself, you are not a member of any application": "You can't unlink yourself, you are not a member of any application",
-    "link:This application has no providers of type": "link:This application has no providers of type"
+    "You can't unlink yourself, you are not a member of any application": "You can't unlink yourself, you are not a member of any application"
   },
   "organization": {
     "Only admin can modify the %s.": "Only admin can modify the %s.",
@@ -135,10 +140,10 @@
     "Failed to import users": "Failed to import users"
   },
   "util": {
-    "Application %s not foundForUserID": "Application %s not foundForUserID",
+    "No application is found for userId: %s": "No application is found for userId: %s",
+    "No provider for category: %s is found for application: %s": "No provider for category: %s is found for application: %s",
     "Please login first": "Please login first",
     "The provider: %s is not found": "The provider: %s is not found",
-    "The provider: %s is not foundForCategory": "The provider: %s is not foundForCategory",
     "The user: %s doesn't exist": "The user: %s doesn't exist"
   },
   "verification": {

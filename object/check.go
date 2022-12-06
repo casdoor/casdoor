@@ -184,7 +184,7 @@ func CheckPassword(user *User, password string, lang string) string {
 			return ""
 		}
 
-		return recordSigninErrorInfo(user)
+		return recordSigninErrorInfo(user, lang)
 	} else {
 		return fmt.Sprintf(i18n.Translate(lang, "check:unsupported password type: %s"), organization.PasswordType)
 	}

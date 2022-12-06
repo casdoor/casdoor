@@ -49,6 +49,7 @@ func TestGenerateI18nStringsForBackend(t *testing.T) {
 	writeI18nFile("backend_en", dataEn)
 
 	applyToOtherLanguage(dataEn, "backend_de")
+	applyToOtherLanguage(dataEn, "backend_es")
 	applyToOtherLanguage(dataEn, "backend_fr")
 	applyToOtherLanguage(dataEn, "backend_ja")
 	applyToOtherLanguage(dataEn, "backend_ko")

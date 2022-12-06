@@ -68,6 +68,10 @@
     "You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again": "输入密码错误次数已达上限，请在 %d 分 %d 秒后重试",
     "unsupported password type: %s": "不支持的密码类型: %s"
   },
+  "check_util": {
+    "You have entered the wrong password too many times, please wait for %d minutes and try again": "输入密码错误次数已达上限，请在 %d 分后重试",
+    "password is incorrect, you have %d remaining chances": "密码错误，您还有 %d 次尝试的机会"
+  },
   "enforcer": {
     "Please sign in first": "请先登录"
   },
