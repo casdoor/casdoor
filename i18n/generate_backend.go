@@ -98,7 +98,12 @@ func getErrName(paths []string) map[string]string {
 func getI18nJSONData(errName map[string]string) *I18nData {
 	data := I18nData{}
 	for k, v := range errName {
-		index := strings.LastIndex(v, "\\")
+		var index int
+		if strings.Contains(v, "/") {
+			index = strings.LastIndex(v, "/")
+		} else {
+			index = strings.LastIndex(v, "\\")
+		}
 		namespace := v[index+1 : len(v)-3]
 		key := k[len(namespace)+1:]
 		fmt.Printf("k=%s,v=%s,namespace=%s,key=%s\n", k, v, namespace, key)
