@@ -99,6 +99,13 @@ class ForgetPage extends React.Component {
         if (res.status === "ok") {
           const phone = res.data.phone;
           const email = res.data.email;
+          const saveFields = () => {
+            if (this.state.isFixed) {
+              forms.step2.setFieldsValue({email: this.state.fixedContent});
+              this.setState({username: this.state.fixedContent});
+            }
+            this.setState({current: 1});
+          };
           this.setState({phone: phone, email: email, username: res.data.name, name: res.data.name});
 
           if (phone !== "" && email === "") {
@@ -113,19 +120,15 @@ class ForgetPage extends React.Component {
 
           switch (res.data2) {
           case "email":
-            this.setState({isFixed: true, fixedContent: email, verifyType: "email"});
+            this.setState({isFixed: true, fixedContent: email, verifyType: "email"}, () => {saveFields();});
             break;
           case "phone":
-            this.setState({isFixed: true, fixedContent: phone, verifyType: "phone"});
+            this.setState({isFixed: true, fixedContent: phone, verifyType: "phone"}, () => {saveFields();});
             break;
           default:
+            saveFields();
             break;
           }
-          if (this.state.isFixed) {
-            forms.step2.setFieldsValue({email: this.state.fixedContent});
-            this.setState({username: this.state.fixedContent});
-          }
-          this.setState({current: 1});
         } else {
           Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
         }
@@ -133,26 +136,28 @@ class ForgetPage extends React.Component {
       break;
     case "step2":
       const oAuthParams = Util.getOAuthGetParameters();
+      const login = () => {
+        AuthBackend.login({
+          application: forms.step2.getFieldValue("application"),
+          organization: forms.step2.getFieldValue("organization"),
+          username: this.state.username,
+          name: this.state.name,
+          code: forms.step2.getFieldValue("emailCode"),
+          phonePrefix: this.state.application?.organizationObj.phonePrefix,
+          type: "login",
+        }, oAuthParams).then(res => {
+          if (res.status === "ok") {
+            this.setState({current: 2, userId: res.data, username: res.data.split("/")[1]});
+          } else {
+            Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+          }
+        });
+      };
       if (this.state.verifyType === "email") {
-        this.setState({username: this.state.email});
+        this.setState({username: this.state.email}, () => {login();});
       } else if (this.state.verifyType === "phone") {
-        this.setState({username: this.state.phone});
+        this.setState({username: this.state.phone}, () => {login();});
       }
-      AuthBackend.login({
-        application: forms.step2.getFieldValue("application"),
-        organization: forms.step2.getFieldValue("organization"),
-        username: this.state.username,
-        name: this.state.name,
-        code: forms.step2.getFieldValue("emailCode"),
-        phonePrefix: this.state.application?.organizationObj.phonePrefix,
-        type: "login",
-      }, oAuthParams).then(res => {
-        if (res.status === "ok") {
-          this.setState({current: 2, userId: res.data, username: res.data.split("/")[1]});
-        } else {
-          Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
-        }
-      });
       break;
     default:
       break;
@@ -487,7 +492,7 @@ class ForgetPage extends React.Component {
     return (
       <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
         <CustomGithubCorner />
-        <div className="login-content forget-content" style={{padding: Setting.isMobile() ? "0" : null, boxShadow: Setting.isMobile() ? "none" : null}}>
+        <div className="forget-content" style={{padding: Setting.isMobile() ? "0" : null, boxShadow: Setting.isMobile() ? "none" : null}}>
           <Row>
             <Col span={24} style={{justifyContent: "center"}}>
               <Row>

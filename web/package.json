@@ -9,7 +9,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "antd": "^4.22.8",
+    "antd": "5.0.3",
     "codemirror": "^5.61.1",
     "copy-to-clipboard": "^3.3.1",
     "core-js": "^3.25.0",

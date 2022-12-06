@@ -28,7 +28,7 @@ export function renderMessage(msg) {
           description={msg}
           type="error"
           action={
-            <Button size="small" danger>
+            <Button size="small" type="primary" danger>
               Detail
             </Button>
           }

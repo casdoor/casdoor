@@ -87,7 +87,7 @@ class BaseListPage extends React.Component {
       record[dataIndex]
         ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
         : "",
-    onFilterDropdownVisibleChange: visible => {
+    onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => this.searchInput.select(), 100);
       }

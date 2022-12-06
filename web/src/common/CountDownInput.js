@@ -156,7 +156,7 @@ export const CountDownInput = (props) => {
         maskClosable={false}
         destroyOnClose={true}
         title={i18next.t("general:Captcha")}
-        visible={visible}
+        open={visible}
         okText={i18next.t("user:OK")}
         cancelText={i18next.t("user:Cancel")}
         onOk={handleOk}

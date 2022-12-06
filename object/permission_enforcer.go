@@ -65,22 +65,27 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`
 		panic(err)
 	}
 
+	// load Policy with a specific Permission
+	enforcer.LoadFilteredPolicy(xormadapter.Filter{
+		V5: []string{permission.Owner + "/" + permission.Name},
+	})
 	return enforcer
 }
 
 func getPolicies(permission *Permission) ([][]string, [][]string) {
 	var policies [][]string
 	var groupingPolicies [][]string
+	permissionId := permission.Owner + "/" + permission.Name
 	domainExist := len(permission.Domains) > 0
 	for _, user := range permission.Users {
 		for _, resource := range permission.Resources {
 			for _, action := range permission.Actions {
 				if domainExist {
 					for _, domain := range permission.Domains {
-						policies = append(policies, []string{user, domain, resource, strings.ToLower(action)})
+						policies = append(policies, []string{user, domain, resource, strings.ToLower(action), "", permissionId})
 					}
 				} else {
-					policies = append(policies, []string{user, resource, strings.ToLower(action)})
+					policies = append(policies, []string{user, resource, strings.ToLower(action), "", "", permissionId})
 				}
 			}
 		}
@@ -90,29 +95,29 @@ func getPolicies(permission *Permission) ([][]string, [][]string) {
 		for _, subUser := range roleObj.Users {
 			if domainExist {
 				for _, domain := range permission.Domains {
-					groupingPolicies = append(groupingPolicies, []string{subUser, domain, role})
+					groupingPolicies = append(groupingPolicies, []string{subUser, domain, role, "", "", permissionId})
 				}
 			} else {
-				groupingPolicies = append(groupingPolicies, []string{subUser, role})
+				groupingPolicies = append(groupingPolicies, []string{subUser, role, "", "", "", permissionId})
 			}
 		}
 		for _, subRole := range roleObj.Roles {
 			if domainExist {
 				for _, domain := range permission.Domains {
-					groupingPolicies = append(groupingPolicies, []string{subRole, domain, role})
+					groupingPolicies = append(groupingPolicies, []string{subRole, domain, role, "", "", permissionId})
 				}
 			} else {
-				groupingPolicies = append(groupingPolicies, []string{subRole, role})
+				groupingPolicies = append(groupingPolicies, []string{subRole, role, "", "", "", permissionId})
 			}
 		}
 		for _, resource := range permission.Resources {
 			for _, action := range permission.Actions {
 				if domainExist {
 					for _, domain := range permission.Domains {
-						policies = append(policies, []string{role, domain, resource, strings.ToLower(action)})
+						policies = append(policies, []string{role, domain, resource, strings.ToLower(action), "", permissionId})
 					}
 				} else {
-					policies = append(policies, []string{role, resource, strings.ToLower(action)})
+					policies = append(policies, []string{role, resource, strings.ToLower(action), "", "", permissionId})
 				}
 			}
 		}
@@ -157,7 +162,12 @@ func removePolicies(permission *Permission) {
 func Enforce(permissionRule *PermissionRule) bool {
 	permission := GetPermission(permissionRule.Id)
 	enforcer := getEnforcer(permission)
-	allow, err := enforcer.Enforce(permissionRule.V0, permissionRule.V1, permissionRule.V2)
+
+	request := []interface{}{permissionRule.V0, permissionRule.V1, permissionRule.V2}
+	if permissionRule.V3 != "" {
+		request = append(request, permissionRule.V3)
+	}
+	allow, err := enforcer.Enforce(request...)
 	if err != nil {
 		panic(err)
 	}
@@ -167,7 +177,11 @@ func Enforce(permissionRule *PermissionRule) bool {
 func BatchEnforce(permissionRules []PermissionRule) []bool {
 	var requests [][]interface{}
 	for _, permissionRule := range permissionRules {
-		requests = append(requests, []interface{}{permissionRule.V0, permissionRule.V1, permissionRule.V2})
+		if permissionRule.V3 != "" {
+			requests = append(requests, []interface{}{permissionRule.V0, permissionRule.V1, permissionRule.V2, permissionRule.V3})
+		} else {
+			requests = append(requests, []interface{}{permissionRule.V0, permissionRule.V1, permissionRule.V2})
+		}
 	}
 	permission := GetPermission(permissionRules[0].Id)
 	enforcer := getEnforcer(permission)

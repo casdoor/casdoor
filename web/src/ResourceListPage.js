@@ -210,16 +210,14 @@ class ResourceListPage extends BaseListPage {
           if (record.fileType === "image") {
             return (
               <a target="_blank" rel="noreferrer" href={record.url}>
-                <img src={record.url} alt={record.name} width={100} />
+                <img src={record.url} alt={record.name} width={200} />
               </a>
             );
           } else if (record.fileType === "video") {
             return (
-              <div>
-                <video width={100} controls>
-                  <source src={text} type="video/mp4" />
-                </video>
-              </div>
+              <video width={200} controls>
+                <source src={record.url} type="video/mp4" />
+              </video>
             );
           }
         },
@@ -259,7 +257,7 @@ class ResourceListPage extends BaseListPage {
                 okText={i18next.t("user:OK")}
                 cancelText={i18next.t("user:Cancel")}
               >
-                <Button type="danger">{i18next.t("general:Delete")}</Button>
+                <Button type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );

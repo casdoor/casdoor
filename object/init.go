@@ -158,7 +158,7 @@ func initBuiltInApplication() {
 		},
 		RedirectUris:  []string{},
 		ExpireInHours: 168,
-		FormOffset:    8,
+		FormOffset:    2,
 	}
 	AddApplication(application)
 }

@@ -30,8 +30,6 @@ import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {CaptchaModal} from "../common/CaptchaModal";
 
-const {TabPane} = Tabs;
-
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
@@ -363,7 +361,7 @@ class LoginPage extends React.Component {
           size="large"
         >
           <Form.Item
-            style={{height: 0, visibility: "hidden"}}
+            hidden={true}
             name="application"
             rules={[
               {
@@ -374,7 +372,7 @@ class LoginPage extends React.Component {
           >
           </Form.Item>
           <Form.Item
-            style={{height: 0, visibility: "hidden"}}
+            hidden={true}
             name="organization"
             rules={[
               {
@@ -481,7 +479,7 @@ class LoginPage extends React.Component {
                 {application.displayName}
               </span>
             </a>
-            :
+              :
           </div>
           <br />
           {
@@ -734,21 +732,16 @@ class LoginPage extends React.Component {
 
   renderMethodChoiceBox() {
     const application = this.getApplicationObj();
+    const items = [
+      {label: i18next.t("login:Password"), key: "password"},
+    ];
+    application.enableCodeSignin ? items.push({label: i18next.t("login:Verification Code"), key: "verificationCode"}) : null;
+    application.enableWebAuthn ? items.push({label: i18next.t("login:WebAuthn"), key: "webAuthn"}) : null;
+
     if (application.enableCodeSignin || application.enableWebAuthn) {
       return (
         <div>
-          <Tabs size={"small"} defaultActiveKey="password" onChange={(key) => {this.setState({loginMethod: key});}} centered>
-            <TabPane tab={i18next.t("login:Password")} key="password" />
-            {
-              !application.enableCodeSignin ? null : (
-                <TabPane tab={i18next.t("login:Verification Code")} key="verificationCode" />
-              )
-            }
-            {
-              !application.enableWebAuthn ? null : (
-                <TabPane tab={i18next.t("login:WebAuthn")} key="webAuthn" />
-              )
-            }
+          <Tabs items={items} size={"small"} defaultActiveKey="password" onChange={(key) => {this.setState({loginMethod: key});}} centered>
           </Tabs>
         </div>
       );
@@ -781,7 +774,7 @@ class LoginPage extends React.Component {
       <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
         <CustomGithubCorner />
         <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
-          {Setting.inIframe() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
+          {Setting.inIframe() || Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
           <div className="login-panel">
             <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
               <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />

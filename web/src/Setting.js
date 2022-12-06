@@ -732,12 +732,12 @@ export function renderLogo(application) {
   if (application.homepageUrl !== "") {
     return (
       <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
-        <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "10px"}} />
+        <img className="panel-logo" width={250} src={application.logo} alt={application.displayName} />
       </a>
     );
   } else {
     return (
-      <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "10px"}} />
+      <img className="panel-logo" width={250} src={application.logo} alt={application.displayName} />
     );
   }
 }
@@ -858,6 +858,15 @@ export function getLabel(text, tooltip) {
   );
 }
 
+export function getItem(label, key, icon, children, type) {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    type,
+  };
+}
 function repeat(str, len) {
   while (str.length < len) {
     str += str.substr(0, len - str.length);

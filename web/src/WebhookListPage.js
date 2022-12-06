@@ -201,7 +201,7 @@ class WebhookListPage extends BaseListPage {
                 title={`Sure to delete webhook: ${record.name} ?`}
                 onConfirm={() => this.deleteWebhook(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );

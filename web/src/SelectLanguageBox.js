@@ -33,14 +33,14 @@ class SelectLanguageBox extends React.Component {
   }
 
   items = [
-    this.getItem("English", "en", flagIcon("US", "English")),
-    this.getItem("简体中文", "zh", flagIcon("CN", "简体中文")),
-    this.getItem("Español", "es", flagIcon("ES", "Español")),
-    this.getItem("Français", "fr", flagIcon("FR", "Français")),
-    this.getItem("Deutsch", "de", flagIcon("DE", "Deutsch")),
-    this.getItem("日本語", "ja", flagIcon("JP", "日本語")),
-    this.getItem("한국어", "ko", flagIcon("KR", "한국어")),
-    this.getItem("Русский", "ru", flagIcon("RU", "Русский")),
+    Setting.getItem("English", "en", flagIcon("US", "English")),
+    Setting.getItem("简体中文", "zh", flagIcon("CN", "简体中文")),
+    Setting.getItem("Español", "es", flagIcon("ES", "Español")),
+    Setting.getItem("Français", "fr", flagIcon("FR", "Français")),
+    Setting.getItem("Deutsch", "de", flagIcon("DE", "Deutsch")),
+    Setting.getItem("日本語", "ja", flagIcon("JP", "日本語")),
+    Setting.getItem("한국어", "ko", flagIcon("KR", "한국어")),
+    Setting.getItem("Русский", "ru", flagIcon("RU", "Русский")),
   ];
 
   getOrganizationLanguages(languages) {
@@ -49,10 +49,6 @@ class SelectLanguageBox extends React.Component {
       this.items.map((item, index) => item.key === language ? select.push(item) : null);
     }
     return select;
-  }
-
-  getItem(label, key, icon) {
-    return {key, icon, label};
   }
 
   render() {
