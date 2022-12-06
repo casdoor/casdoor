@@ -25,7 +25,7 @@ import (
 //go:embed languages/*.json
 var f embed.FS
 
-var langMap = make(map[string]map[string]map[string]string) //for example : langMap[en][account][Invalid information] = Invalid information
+var langMap = make(map[string]map[string]map[string]string) // for example : langMap[en][account][Invalid information] = Invalid information
 
 func getI18nFilePath(language string) string {
 	if strings.Contains(language, "backend") {

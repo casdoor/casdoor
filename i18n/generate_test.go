@@ -21,7 +21,7 @@ import (
 
 func applyToOtherLanguage(dataEn *I18nData, lang string) {
 	dataOther := readI18nFile(lang)
-	//println(dataOther)
+	println(dataOther)
 
 	applyData(dataEn, dataOther)
 	writeI18nFile(lang, dataEn)
