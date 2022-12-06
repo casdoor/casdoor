@@ -12,7 +12,6 @@ require (
 	github.com/casbin/casbin/v2 v2.30.1
 	github.com/casbin/xorm-adapter/v3 v3.0.1
 	github.com/casdoor/go-sms-sender v0.5.1
-	github.com/casdoor/goth v1.69.0-FIX2
 	github.com/casdoor/oss v1.2.0
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/denisenkom/go-mssqldb v0.0.0-20200428022330-06a60b6afbbc
@@ -27,9 +26,10 @@ require (
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/google/uuid v1.2.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
-	github.com/lestrrat-go/jwx v0.9.0
+	github.com/lestrrat-go/jwx v1.2.21
 	github.com/lib/pq v1.8.0
 	github.com/lor00x/goldap v0.0.0-20180618054307-a546dffdd1a3
+	github.com/markbates/goth v1.75.2
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/qiangmzsx/string-adapter/v2 v2.1.0
 	github.com/robfig/cron/v3 v3.0.1
@@ -44,7 +44,7 @@ require (
 	github.com/thanhpk/randstr v1.0.4
 	github.com/tklauser/go-sysconf v0.3.10 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
-	golang.org/x/crypto v0.0.0-20220208233918-bba287dce954
+	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
 	golang.org/x/oauth2 v0.0.0-20210628180205-a41e5a781914
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
