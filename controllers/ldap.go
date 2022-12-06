@@ -52,7 +52,7 @@ func (c *ApiController) GetLdapUser() {
 	ldapServer := LdapServer{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldapServer)
 	if err != nil || util.IsStrsEmpty(ldapServer.Host, ldapServer.Admin, ldapServer.Passwd, ldapServer.BaseDn) {
-		c.ResponseError(c.T("Missing parameter"))
+		c.ResponseError(c.T("ldap:Missing parameter"))
 		return
 	}
 
@@ -120,7 +120,7 @@ func (c *ApiController) GetLdap() {
 	id := c.Input().Get("id")
 
 	if util.IsStrsEmpty(id) {
-		c.ResponseError(c.T("Missing parameter"))
+		c.ResponseError(c.T("ldap:Missing parameter"))
 		return
 	}
 
@@ -136,17 +136,17 @@ func (c *ApiController) AddLdap() {
 	var ldap object.Ldap
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
 	if err != nil {
-		c.ResponseError(c.T("Missing parameter"))
+		c.ResponseError(c.T("ldap:Missing parameter"))
 		return
 	}
 
 	if util.IsStrsEmpty(ldap.Owner, ldap.ServerName, ldap.Host, ldap.Admin, ldap.Passwd, ldap.BaseDn) {
-		c.ResponseError(c.T("Missing parameter"))
+		c.ResponseError(c.T("ldap:Missing parameter"))
 		return
 	}
 
 	if object.CheckLdapExist(&ldap) {
-		c.ResponseError(c.T("Ldap server exist"))
+		c.ResponseError(c.T("ldap:Ldap server exist"))
 		return
 	}
 
@@ -171,7 +171,7 @@ func (c *ApiController) UpdateLdap() {
 	var ldap object.Ldap
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
 	if err != nil || util.IsStrsEmpty(ldap.Owner, ldap.ServerName, ldap.Host, ldap.Admin, ldap.Passwd, ldap.BaseDn) {
-		c.ResponseError(c.T("Missing parameter"))
+		c.ResponseError(c.T("ldap:Missing parameter"))
 		return
 	}
 

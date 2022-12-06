@@ -15,13 +15,11 @@
 package i18n
 
 import (
-	"log"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 
-	"github.com/Unknwon/goconfig"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -43,7 +41,7 @@ func GetAllI18nStrings(fileContent string, path string) []string {
 			return res
 		}
 		for _, match := range matches {
-			match := strings.Split(match[1], ",")
+			match := strings.SplitN(match[1], ",", 2)
 			res = append(res, match[1][2:])
 		}
 	} else {
@@ -84,59 +82,28 @@ func getAllGoFilePaths() []string {
 	return res
 }
 
-func getErrName(paths []string) map[string]bool {
-	ErrName := make(map[string]bool)
+func getErrName(paths []string) map[string]string {
+	ErrName := make(map[string]string)
 	for i := 0; i < len(paths); i++ {
 		content := util.ReadStringFromPath(paths[i])
 		words := GetAllI18nStrings(content, paths[i])
-		for i := 0; i < len(words); i++ {
-			ErrName[words[i]] = true
+		for j := 0; j < len(words); j++ {
+			ErrName[words[j]] = paths[i]
 		}
 	}
 	return ErrName
 }
 
-func writeToAllLanguageFiles(errName map[string]bool) {
-	languages := "en,zh,es,fr,de,ja,ko,ru"
-	languageArr := strings.Split(languages, ",")
-	var c [10]*goconfig.ConfigFile
-	for i := 0; i < len(languageArr); i++ {
-		var err error
-		c[i], err = goconfig.LoadConfigFile("../i18n/languages/" + "locale_" + languageArr[i] + ".ini")
-		if err != nil {
-			log.Println(err.Error())
+func getI18nJSONData(errName map[string]string) *I18nData {
+	data := I18nData{}
+	for k, v := range errName {
+		index := strings.LastIndex(v, "\\")
+		namespace := v[index+1 : len(v)-3]
+		key := k[len(namespace)+1:]
+		if _, ok := data[namespace]; !ok {
+			data[namespace] = map[string]string{}
 		}
-		for j := range errName {
-			parts := strings.Split(j, ".")
-			_, err := c[i].GetValue(parts[0], parts[1])
-			if err != nil {
-				c[i].SetValue(parts[0], parts[1], parts[1])
-			}
-		}
-		c[i].SetPrettyFormat(true)
-		err = goconfig.SaveConfigFile(c[i], "../i18n/languages/"+"locale_"+languageArr[i]+".ini")
-		if err != nil {
-			log.Println(err)
-		}
+		data[namespace][key] = key
 	}
-}
-
-func replaceAllOldString(paths []string) {
-	var c1 *goconfig.ConfigFile
-	c1, err := goconfig.LoadConfigFile("../i18n/languages/" + "locale_en" + ".ini")
-	if err != nil {
-		log.Println(err.Error())
-	}
-	errName := getErrName(paths)
-	for i := 0; i < len(paths); i++ {
-		content := util.ReadStringFromPath(paths[i])
-		for k, _ := range errName {
-			if strings.Contains(content, k) {
-				parts := strings.Split(k, ".")
-				newString, _ := c1.GetValue(parts[0], parts[1])
-				content = strings.ReplaceAll(content, k, newString)
-				os.WriteFile(paths[i], []byte(content), 0666)
-			}
-		}
-	}
+	return &data
 }

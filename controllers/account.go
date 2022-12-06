@@ -102,7 +102,7 @@ type Captcha struct {
 // @router /signup [post]
 func (c *ApiController) Signup() {
 	if c.GetSessionUsername() != "" {
-		c.ResponseError(c.T("Please sign out first before signing up"), c.GetSessionUsername())
+		c.ResponseError(c.T("account:Please sign out first before signing up"), c.GetSessionUsername())
 		return
 	}
 
@@ -115,7 +115,7 @@ func (c *ApiController) Signup() {
 
 	application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 	if !application.EnableSignUp {
-		c.ResponseError(c.T("The application does not allow to sign up new account"))
+		c.ResponseError(c.T("account:The application does not allow to sign up new account"))
 		return
 	}
 
@@ -129,7 +129,7 @@ func (c *ApiController) Signup() {
 	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && form.Email != "" {
 		checkResult := object.CheckVerificationCode(form.Email, form.EmailCode, c.GetAcceptLanguage())
 		if len(checkResult) != 0 {
-			c.ResponseError(c.T("Email: %s"), checkResult)
+			c.ResponseError(c.T("account:Email: %s"), checkResult)
 			return
 		}
 	}
@@ -139,7 +139,7 @@ func (c *ApiController) Signup() {
 		checkPhone = fmt.Sprintf("+%s%s", form.PhonePrefix, form.Phone)
 		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode, c.GetAcceptLanguage())
 		if len(checkResult) != 0 {
-			c.ResponseError(c.T("Phone: %s"), checkResult)
+			c.ResponseError(c.T("account:Phone: %s"), checkResult)
 			return
 		}
 	}
@@ -163,7 +163,7 @@ func (c *ApiController) Signup() {
 
 	initScore, err := getInitScore()
 	if err != nil {
-		c.ResponseError(fmt.Errorf(c.T("Get init score failed, error: %w"), err).Error())
+		c.ResponseError(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err).Error())
 		return
 	}
 
@@ -209,7 +209,7 @@ func (c *ApiController) Signup() {
 
 	affected := object.AddUser(user)
 	if !affected {
-		c.ResponseError(c.T("Invalid information"), util.StructToJson(user))
+		c.ResponseError(c.T("account:Invalid information"), util.StructToJson(user))
 		return
 	}
 

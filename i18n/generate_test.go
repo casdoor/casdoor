@@ -41,21 +41,23 @@ func TestGenerateI18nStringsForFrontend(t *testing.T) {
 
 func TestGenerateI18nStringsForBackend(t *testing.T) {
 	paths := getAllGoFilePaths()
-	fmt.Println(paths)
+
 	errName := getErrName(paths)
-	for k, v := range errName {
-		fmt.Println(k, v)
-	}
-	writeToAllLanguageFiles(errName)
+
+	dataEn := getI18nJSONData(errName)
+
+	writeI18nFile("backend_en", dataEn)
+
+	applyToOtherLanguage(dataEn, "backend_de")
+	applyToOtherLanguage(dataEn, "backend_fr")
+	applyToOtherLanguage(dataEn, "backend_ja")
+	applyToOtherLanguage(dataEn, "backend_ko")
+	applyToOtherLanguage(dataEn, "backend_ru")
+	applyToOtherLanguage(dataEn, "backend_zh")
 
 	fmt.Println("Total Err Words:", len(errName))
 
 	for i := range errName {
 		fmt.Println(i)
 	}
-}
-
-func TestReplaceAllOldStrings(t *testing.T) {
-	paths := getAllGoFilePaths()
-	replaceAllOldString(paths)
 }

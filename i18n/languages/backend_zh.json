@@ -1,0 +1,167 @@
+{
+  "account": {
+    "Email: %s": "邮件: %s",
+    "Get init score failed, error: %w": "初始化分数失败: %w",
+    "Invalid information": "无效信息",
+    "Phone: %s": "电话: %s",
+    "Please sign out first before signing up": "请在登陆前登出",
+    "The application does not allow to sign up new account": "该应用不允许注册新账户"
+  },
+  "application": {
+    "Parameter organization is missing": "Organization参数丢失",
+    "The user: %s doesn't exist": "用户不存在: %s"
+  },
+  "auth": {
+    "%s No phone prefix": "%s 无此电话前缀",
+    "Challenge method should be S256": "Challenge 方法应该为 S256",
+    "Failed to create user, user information is invalid: %s": "创建用户失败，用户信息无效: %s",
+    "Failed to login in: %s": "无法登录: %s",
+    "Get init score failed, error: %w": "初始化分数失败: %w",
+    "Invalid token": "无效token",
+    "Please sign out first before signing in": "请在登陆前登出",
+    "State expected: %s, but got: %s": "期望状态位: %s, 实际状态为: %s",
+    "The account does not exist": "账户不存在",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许通过 %s 注册新账户, 请使用其他方式注册",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许注册新账户, 请联系IT支持",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "提供商账户: %s 与用户名: %s (%s) 已经与其他账户绑定: %s (%s)",
+    "The application: %s does not exist": "应用 %s 不存在",
+    "The provider type: %s is not supported": "不支持该类型的提供商: %s",
+    "The provider: %s is not enabled for the application": "提供商: %s 未被启用",
+    "The user is forbidden to sign in, please contact the administrator": "该用户被禁止登陆，请联系管理员",
+    "The user: %s/%s doesn't exist": "用户不存在: %s/%s",
+    "Unauthorized operation": "未授权的操作",
+    "Unknown authentication type (not password or provider), form = %s": "未授权的操作"
+  },
+  "cas": {
+    "Service %s and %s do not match": "服务 %s 与 %s 不匹配"
+  },
+  "check": {
+    "Affiliation cannot be blank": "联系方式不可为空",
+    "DisplayName cannot be blank": "展示名称不可为空",
+    "DisplayName is not valid real name": "展示名称无效",
+    "Email already exists": "该邮箱已存在",
+    "Email cannot be empty": "邮箱不可为空",
+    "Email is invalid": "无效邮箱",
+    "Empty username.": "用户名不可为空",
+    "FirstName cannot be blank": "名不可以为空",
+    "LastName cannot be blank": "姓不可以为空",
+    "Ldap user name or password incorrect": "Ldap密码错误",
+    "Multiple accounts with same uid, please check your ldap server": "多个帐户具有相同的uid，请检查您的 ldap 服务器",
+    "Organization does not exist": "组织不存在",
+    "Password must have at least 6 characters": "新密码至少为6位",
+    "Phone already exists": "该电话已存在",
+    "Phone cannot be empty": "电话不可为空",
+    "Phone number is invalid": "无效电话",
+    "Please login first": "请先登录",
+    "Session outdated, please login again": "Session已过期，请重新登陆",
+    "The user doesn't exist": "用户不存在",
+    "The user is forbidden to sign in, please contact the administrator": "该用户被禁止登陆，请联系管理员",
+    "The user: %s doesn't exist": "用户不存在: %s",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "用户名只能包含字母数字字符、下划线或连字符，不能有连续的连字符或下划线，也不能以连字符或下划线开头或结尾",
+    "Username already exists": "用户名已存在",
+    "Username cannot be an email address": "用户名不可以是邮箱地址",
+    "Username cannot contain white spaces": "用户名不可以包含空格",
+    "Username cannot start with a digit": "用户名禁止使用数字作为第一个字符",
+    "Username is too long (maximum is 39 characters).": "用户名过长（最大长度为39个字符）",
+    "Username must have at least 2 characters": "用户名至少要有2个字符",
+    "You don't have the permission to do this": "用户名至少要有2个字符",
+    "You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again": "输入密码错误次数已达上限，请在 %d 分 %d 秒后重试",
+    "unsupported password type: %s": "不支持的密码类型: %s"
+  },
+  "enforcer": {
+    "Please sign in first": "请先登录"
+  },
+  "ldap": {
+    "Ldap server exist": "Ldap服务器已存在",
+    "Missing parameter": "参数丢失"
+  },
+  "link": {
+    "Please link first": "请先绑定",
+    "This application has no providers": "该应用无提供商",
+    "This application has no providers of type": "应用没有该类型的提供商",
+    "This provider can't be unlinked": "该提供商不可被链接",
+    "You are not the global admin, you can't unlink other users": "您不是全局管理员，无法取消链接其他用户",
+    "You can't unlink yourself, you are not a member of any application": "您无法取消链接，您不是任何应用程序的成员"
+  },
+  "organization": {
+    "Only admin can modify the %s.": "您无法取消链接，您不是任何应用程序的成员",
+    "The %s is immutable.": "%s是不可变的",
+    "Unknown modify rule %s.": "未知的修改规则"
+  },
+  "product": {
+    "Please login first": "请先登录",
+    "The user: %s doesn't exist": "用户不存在: %s"
+  },
+  "provider": {
+    "Invalid application id": "无效的Application ID",
+    "the provider: %s does not exist": "提供商: %s 不存在"
+  },
+  "resource": {
+    "User is nil for tag: avatar": "用户头像标签为空",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "username或FilePath为空: username = %s, fullFilePath = %s"
+  },
+  "saml": {
+    "Application %s not found": "应用 %s 未找到"
+  },
+  "saml_sp": {
+    "provider %s's category is not SAML": "提供商 %s类型不是SAML"
+  },
+  "service": {
+    "Empty parameters for emailForm: %v": "邮件参数为空: %v",
+    "Invalid Email receivers: %s": " 无效的邮箱接收者: %s",
+    "Invalid phone receivers: %s": "无效的电话接收者: %s"
+  },
+  "storage": {
+    "The objectKey: %s is not allowed": "object key :%s 不被允许",
+    "The provider type: %s is not supported": "提供商类型: %s 尚未支持"
+  },
+  "system_info": {
+    "You are not authorized to access this resource": "您无权获取此资源"
+  },
+  "token": {
+    "Challenge method should be S256": "Challenge 方法应该为 S256",
+    "Empty clientId or clientSecret": "clientId或clientSecret为空",
+    "Grant_type: %s is not supported in this application": "此应用中不支持此授权类型: %s",
+    "Invalid application or wrong clientSecret": "无效应用或错误的clientSecret",
+    "Invalid client_id": "无效的ClientId",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "重定向 URI：%s 在可列表中未找到"
+  },
+  "user": {
+    "Display name cannot be empty": "展示名称不可为空",
+    "New password cannot contain blank space.": "新密码不可以包含空格",
+    "New password must have at least 6 characters": "新密码至少需要6位字符",
+    "The user: %s/%s doesn't exist": "用户不存在: %s/%s"
+  },
+  "user_upload": {
+    "Failed to import users": "导入用户失败"
+  },
+  "util": {
+    "No application is found for userId: %s": "找不到该用户的应用程序 %s",
+    "No provider for category: %s is found for application: %s": "找不到该用户的应用程序 %s",
+    "Please login first": "请先登录",
+    "The provider: %s is not found": "该提供商未找到: %s",
+    "The user: %s doesn't exist": "用户不存在: %s"
+  },
+  "verification": {
+    "Code has not been sent yet!": "验证码还未发送",
+    "Email is invalid": "非法的邮箱",
+    "Invalid captcha provider.": "非法的验证码提供商",
+    "Missing parameter": "参数丢失",
+    "Organization does not exist": "组织不存在",
+    "Phone number is invalid": "非法的电话号码",
+    "Please login first": "请先登录",
+    "Turing test failed.": "验证码还未发送",
+    "Unable to get the email modify rule.": "无法得到邮箱修改规则",
+    "Unable to get the phone modify rule.": "无法得到电话修改规则",
+    "Unknown type": "未知类型",
+    "Wrong parameter": "参数错误",
+    "You should verify your code in %d min!": "请在 %d 分钟内输入正确验证码",
+    "the user does not exist, please sign up first": "用户不存在，请先注册"
+  },
+  "webauthn": {
+    "Found no credentials for this user": "该用户没有WebAuthn凭据",
+    "Please call WebAuthnSigninBegin first": "请先调用 WebAuthnSigninBegi",
+    "Please login first": "请先登录",
+    "The user: %s/%s doesn't exist": "用户: %s/%s 不存在"
+  }
+}

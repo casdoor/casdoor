@@ -47,7 +47,7 @@ func (c *ApiController) Unlink() {
 
 	if user.Id != unlinkedUser.Id && !user.IsGlobalAdmin {
 		// if the user is not the same as the one we are unlinking, we need to make sure the user is the global admin.
-		c.ResponseError(c.T("You are not the global admin, you can't unlink other users"))
+		c.ResponseError(c.T("link:You are not the global admin, you can't unlink other users"))
 		return
 	}
 
@@ -55,23 +55,23 @@ func (c *ApiController) Unlink() {
 		// if the user is unlinking themselves, should check the provider can be unlinked, if not, we should return an error.
 		application := object.GetApplicationByUser(user)
 		if application == nil {
-			c.ResponseError(c.T("You can't unlink yourself, you are not a member of any application"))
+			c.ResponseError(c.T("link:You can't unlink yourself, you are not a member of any application"))
 			return
 		}
 
 		if len(application.Providers) == 0 {
-			c.ResponseError(c.T("This application has no providers"))
+			c.ResponseError(c.T("link:This application has no providers"))
 			return
 		}
 
 		provider := application.GetProviderItemByType(providerType)
 		if provider == nil {
-			c.ResponseError(c.T("This application has no providers of type") + providerType)
+			c.ResponseError(c.T("link:This application has no providers of type") + providerType)
 			return
 		}
 
 		if !provider.CanUnlink {
-			c.ResponseError(c.T("This provider can't be unlinked"))
+			c.ResponseError(c.T("link:This provider can't be unlinked"))
 			return
 		}
 
@@ -84,7 +84,7 @@ func (c *ApiController) Unlink() {
 	value := object.GetUserField(&unlinkedUser, providerType)
 
 	if value == "" {
-		c.ResponseError(c.T("Please link first"), value)
+		c.ResponseError(c.T("link:Please link first"), value)
 		return
 	}
 

@@ -44,21 +44,21 @@ func init() {
 
 func CheckUserSignup(application *Application, organization *Organization, username string, password string, displayName string, firstName string, lastName string, email string, phone string, affiliation string, lang string) string {
 	if organization == nil {
-		return i18n.Translate(lang, "Organization does not exist")
+		return i18n.Translate(lang, "check:Organization does not exist")
 	}
 
 	if application.IsSignupItemVisible("Username") {
 		if len(username) <= 1 {
-			return i18n.Translate(lang, "Username must have at least 2 characters")
+			return i18n.Translate(lang, "check:Username must have at least 2 characters")
 		}
 		if unicode.IsDigit(rune(username[0])) {
-			return i18n.Translate(lang, "Username cannot start with a digit")
+			return i18n.Translate(lang, "check:Username cannot start with a digit")
 		}
 		if util.IsEmailValid(username) {
-			return i18n.Translate(lang, "Username cannot be an email address")
+			return i18n.Translate(lang, "check:Username cannot be an email address")
 		}
 		if reWhiteSpace.MatchString(username) {
-			return i18n.Translate(lang, "Username cannot contain white spaces")
+			return i18n.Translate(lang, "check:Username cannot contain white spaces")
 		}
 		msg := CheckUsername(username, lang)
 		if msg != "" {
@@ -66,65 +66,65 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 		}
 
 		if HasUserByField(organization.Name, "name", username) {
-			return i18n.Translate(lang, "Username already exists")
+			return i18n.Translate(lang, "check:Username already exists")
 		}
 		if HasUserByField(organization.Name, "email", email) {
-			return i18n.Translate(lang, "Email already exists")
+			return i18n.Translate(lang, "check:Email already exists")
 		}
 		if HasUserByField(organization.Name, "phone", phone) {
-			return i18n.Translate(lang, "Phone already exists")
+			return i18n.Translate(lang, "check:Phone already exists")
 		}
 	}
 
 	if len(password) <= 5 {
-		return i18n.Translate(lang, "Password must have at least 6 characters")
+		return i18n.Translate(lang, "check:Password must have at least 6 characters")
 	}
 
 	if application.IsSignupItemVisible("Email") {
 		if email == "" {
 			if application.IsSignupItemRequired("Email") {
-				return i18n.Translate(lang, "Email cannot be empty")
+				return i18n.Translate(lang, "check:Email cannot be empty")
 			} else {
 				return ""
 			}
 		}
 
 		if HasUserByField(organization.Name, "email", email) {
-			return i18n.Translate(lang, "Email already exists")
+			return i18n.Translate(lang, "check:Email already exists")
 		} else if !util.IsEmailValid(email) {
-			return i18n.Translate(lang, "Email is invalid")
+			return i18n.Translate(lang, "check:Email is invalid")
 		}
 	}
 
 	if application.IsSignupItemVisible("Phone") {
 		if phone == "" {
 			if application.IsSignupItemRequired("Phone") {
-				return i18n.Translate(lang, "Phone cannot be empty")
+				return i18n.Translate(lang, "check:Phone cannot be empty")
 			} else {
 				return ""
 			}
 		}
 
 		if HasUserByField(organization.Name, "phone", phone) {
-			return i18n.Translate(lang, "Phone already exists")
+			return i18n.Translate(lang, "check:Phone already exists")
 		} else if organization.PhonePrefix == "86" && !util.IsPhoneCnValid(phone) {
-			return i18n.Translate(lang, "Phone number is invalid")
+			return i18n.Translate(lang, "check:Phone number is invalid")
 		}
 	}
 
 	if application.IsSignupItemVisible("Display name") {
 		if application.GetSignupItemRule("Display name") == "First, last" && (firstName != "" || lastName != "") {
 			if firstName == "" {
-				return i18n.Translate(lang, "FirstName cannot be blank")
+				return i18n.Translate(lang, "check:FirstName cannot be blank")
 			} else if lastName == "" {
-				return i18n.Translate(lang, "LastName cannot be blank")
+				return i18n.Translate(lang, "check:LastName cannot be blank")
 			}
 		} else {
 			if displayName == "" {
-				return i18n.Translate(lang, "DisplayName cannot be blank")
+				return i18n.Translate(lang, "check:DisplayName cannot be blank")
 			} else if application.GetSignupItemRule("Display name") == "Real name" {
 				if !isValidRealName(displayName) {
-					return i18n.Translate(lang, "DisplayName is not valid real name")
+					return i18n.Translate(lang, "check:DisplayName is not valid real name")
 				}
 			}
 		}
@@ -132,7 +132,7 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 
 	if application.IsSignupItemVisible("Affiliation") {
 		if affiliation == "" {
-			return i18n.Translate(lang, "Affiliation cannot be blank")
+			return i18n.Translate(lang, "check:Affiliation cannot be blank")
 		}
 	}
 
@@ -147,7 +147,7 @@ func checkSigninErrorTimes(user *User, lang string) string {
 
 		// deny the login if the error times is greater than the limit and the last login time is less than the duration
 		if seconds > 0 {
-			return fmt.Sprintf(i18n.Translate(lang, "You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again"), seconds/60, seconds%60)
+			return fmt.Sprintf(i18n.Translate(lang, "check:You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again"), seconds/60, seconds%60)
 		}
 
 		// reset the error times
@@ -167,7 +167,7 @@ func CheckPassword(user *User, password string, lang string) string {
 
 	organization := GetOrganizationByUser(user)
 	if organization == nil {
-		return i18n.Translate(lang, "Organization does not exist")
+		return i18n.Translate(lang, "check:Organization does not exist")
 	}
 
 	credManager := cred.GetCredManager(organization.PasswordType)
@@ -186,7 +186,7 @@ func CheckPassword(user *User, password string, lang string) string {
 
 		return recordSigninErrorInfo(user)
 	} else {
-		return fmt.Sprintf(i18n.Translate(lang, "unsupported password type: %s"), organization.PasswordType)
+		return fmt.Sprintf(i18n.Translate(lang, "check:unsupported password type: %s"), organization.PasswordType)
 	}
 }
 
@@ -210,7 +210,7 @@ func checkLdapUserPassword(user *User, password string, lang string) (*User, str
 		if len(searchResult.Entries) == 0 {
 			continue
 		} else if len(searchResult.Entries) > 1 {
-			return nil, i18n.Translate(lang, "Multiple accounts with same uid, please check your ldap server")
+			return nil, i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server")
 		}
 
 		dn := searchResult.Entries[0].DN
@@ -221,7 +221,7 @@ func checkLdapUserPassword(user *User, password string, lang string) (*User, str
 	}
 
 	if !ldapLoginSuccess {
-		return nil, i18n.Translate(lang, "Ldap user name or password incorrect")
+		return nil, i18n.Translate(lang, "check:Ldap user name or password incorrect")
 	}
 	return user, ""
 }
@@ -229,11 +229,11 @@ func checkLdapUserPassword(user *User, password string, lang string) (*User, str
 func CheckUserPassword(organization string, username string, password string, lang string) (*User, string) {
 	user := GetUserByFields(organization, username)
 	if user == nil || user.IsDeleted == true {
-		return nil, i18n.Translate(lang, "The user: %s doesn't existSignUp")
+		return nil, i18n.Translate(lang, "check:The user doesn't exist")
 	}
 
 	if user.IsForbidden {
-		return nil, i18n.Translate(lang, "The user is forbidden to sign in, please contact the administrator")
+		return nil, i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator")
 	}
 
 	if user.Ldap != "" {
@@ -254,13 +254,13 @@ func filterField(field string) bool {
 
 func CheckUserPermission(requestUserId, userId, userOwner string, strict bool, lang string) (bool, error) {
 	if requestUserId == "" {
-		return false, fmt.Errorf(i18n.Translate(lang, "Please login first"))
+		return false, fmt.Errorf(i18n.Translate(lang, "check:Please login first"))
 	}
 
 	if userId != "" {
 		targetUser := GetUser(userId)
 		if targetUser == nil {
-			return false, fmt.Errorf(i18n.Translate(lang, "The user: %s doesn't exist"), userId)
+			return false, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist"), userId)
 		}
 
 		userOwner = targetUser.Owner
@@ -272,7 +272,7 @@ func CheckUserPermission(requestUserId, userId, userOwner string, strict bool, l
 	} else {
 		requestUser := GetUser(requestUserId)
 		if requestUser == nil {
-			return false, fmt.Errorf(i18n.Translate(lang, "Session outdated, please login again"))
+			return false, fmt.Errorf(i18n.Translate(lang, "check:Session outdated, please login again"))
 		}
 		if requestUser.IsGlobalAdmin {
 			hasPermission = true
@@ -287,7 +287,7 @@ func CheckUserPermission(requestUserId, userId, userOwner string, strict bool, l
 		}
 	}
 
-	return hasPermission, fmt.Errorf(i18n.Translate(lang, "You don't have the permission to do this"))
+	return hasPermission, fmt.Errorf(i18n.Translate(lang, "check:You don't have the permission to do this"))
 }
 
 func CheckAccessPermission(userId string, application *Application) (bool, error) {
@@ -322,9 +322,9 @@ func CheckAccessPermission(userId string, application *Application) (bool, error
 
 func CheckUsername(username string, lang string) string {
 	if username == "" {
-		return i18n.Translate(lang, "Empty username.")
+		return i18n.Translate(lang, "check:Empty username.")
 	} else if len(username) > 39 {
-		return i18n.Translate(lang, "Username is too long (maximum is 39 characters).")
+		return i18n.Translate(lang, "check:Username is too long (maximum is 39 characters).")
 	}
 
 	exclude, _ := regexp.Compile("^[\u0021-\u007E]+$")
@@ -335,7 +335,7 @@ func CheckUsername(username string, lang string) string {
 	// https://stackoverflow.com/questions/58726546/github-username-convention-using-regex
 	re, _ := regexp.Compile("^[a-zA-Z0-9]+((?:-[a-zA-Z0-9]+)|(?:_[a-zA-Z0-9]+))*$")
 	if !re.MatchString(username) {
-		return i18n.Translate(lang, "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.")
+		return i18n.Translate(lang, "check:The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.")
 	}
 
 	return ""

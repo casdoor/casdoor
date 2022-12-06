@@ -210,7 +210,7 @@ func (c *RootController) SamlValidate() {
 	}
 
 	if !strings.HasPrefix(target, service) {
-		c.ResponseError(fmt.Sprintf(c.T("Service %s and %s do not match"), target, service))
+		c.ResponseError(fmt.Sprintf(c.T("cas:Service %s and %s do not match"), target, service))
 		return
 	}
 
