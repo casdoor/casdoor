@@ -42,12 +42,16 @@ func InitAuthz() {
 	modelText := `
 [request_definition]
 r = subOwner, subName, method, urlPath, objOwner, objName
+
 [policy_definition]
 p = subOwner, subName, method, urlPath, objOwner, objName
+
 [role_definition]
 g = _, _
+
 [policy_effect]
 e = some(where (p.eft == allow))
+
 [matchers]
 m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
     (r.subName == p.subName || p.subName == "*" || r.subName != "anonymous" && p.subName == "!anonymous") && \
