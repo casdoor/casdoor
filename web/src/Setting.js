@@ -544,6 +544,21 @@ export function getAvatarColor(s) {
   return colorList[hash % 4];
 }
 
+export function getLanguageText(text) {
+  if (!text.includes("|")) {
+    return text;
+  }
+
+  let res;
+  const tokens = text.split("|");
+  if (getLanguage() !== "zh") {
+    res = trim(tokens[0], "");
+  } else {
+    res = trim(tokens[1], "");
+  }
+  return res;
+}
+
 export function getLanguage() {
   return i18next.language;
 }

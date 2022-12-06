@@ -160,10 +160,10 @@ class ProductBuyPage extends React.Component {
           <Descriptions title={i18next.t("product:Buy Product")} bordered>
             <Descriptions.Item label={i18next.t("general:Name")} span={3}>
               <span style={{fontSize: 28}}>
-                {product?.displayName}
+                {Setting.getLanguageText(product?.displayName)}
               </span>
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{product?.detail}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Tag")}><span style={{fontSize: 16}}>{product?.tag}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:SKU")}><span style={{fontSize: 16}}>{product?.name}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Image")} span={3}>
