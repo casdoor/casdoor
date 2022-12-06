@@ -15,11 +15,11 @@
 package idp
 
 import (
-	"bytes"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
@@ -118,13 +118,14 @@ func (idp *AdfsIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	keyset, err := jwk.Parse(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	keyset, err := jwk.ParseKey(body)
 	if err != nil {
 		return nil, err
 	}
 	tokenSrc := []byte(token.AccessToken)
-	publicKey, _ := keyset.Keys[0].Materialize()
-	idToken, _ := jwt.Parse(bytes.NewReader(tokenSrc), jwt.WithVerify(jwa.RS256, publicKey))
+	publicKey, _ := keyset.PublicKey()
+	idToken, _ := jwt.Parse(tokenSrc, jwt.WithVerify(jwa.RS256, publicKey))
 	sid, _ := idToken.Get("sid")
 	upn, _ := idToken.Get("upn")
 	name, _ := idToken.Get("unique_name")
