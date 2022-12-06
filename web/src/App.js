@@ -648,7 +648,7 @@ class App extends Component {
       return (
         <>
           <Layout id="parent-area">
-            <Content style={{display: "flex"}}>
+            <Content style={{display: "flex", justifyContent: "center"}}>
               <Switch>
                 <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} />)} />
                 <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />)} />
