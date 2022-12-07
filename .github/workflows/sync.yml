@@ -29,6 +29,11 @@ jobs:
         crowdin_branch_name: l10n_branch
         config: './web/crowdin.yml'
 
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        CROWDIN_PROJECT_ID: '463556'
+        CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
     - name: crowdin backend action
       uses: crowdin/github-action@1.4.8
       with:
