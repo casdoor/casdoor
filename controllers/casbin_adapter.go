@@ -96,7 +96,6 @@ func (c *ApiController) SyncPolicies() {
 		return
 	}
 
-	c.Data["json"] = policies
 	c.ResponseOk(policies)
 }
 
