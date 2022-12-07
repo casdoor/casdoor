@@ -91,7 +91,7 @@ class PolicyTable extends React.Component {
     AdapterBackend.syncPolicies(this.props.owner, this.props.name)
       .then((res) => {
         if (res.status === "ok") {
-          this.setState({policyLists: res});
+          this.setState({policyLists: res.data});
         } else {
           Setting.showMessage("error", `${i18next.t("adapter:Failed to sync policies")}: ${res.msg}`);
         }

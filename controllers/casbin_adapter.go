@@ -32,8 +32,8 @@ func (c *ApiController) GetCasbinAdapters() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetCasbinAdapters(owner)
-		c.ServeJSON()
+		adapters := object.GetCasbinAdapters(owner)
+		c.ResponseOk(adapters)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetCasbinAdapterCount(owner, field, value)))
@@ -44,8 +44,8 @@ func (c *ApiController) GetCasbinAdapters() {
 
 func (c *ApiController) GetCasbinAdapter() {
 	id := c.Input().Get("id")
-	c.Data["json"] = object.GetCasbinAdapter(id)
-	c.ServeJSON()
+	adapter := object.GetCasbinAdapter(id)
+	c.ResponseOk(adapter)
 }
 
 func (c *ApiController) UpdateCasbinAdapter() {
@@ -97,7 +97,7 @@ func (c *ApiController) SyncPolicies() {
 	}
 
 	c.Data["json"] = policies
-	c.ServeJSON()
+	c.ResponseOk(policies)
 }
 
 func (c *ApiController) UpdatePolicy() {
