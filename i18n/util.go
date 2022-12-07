@@ -22,14 +22,16 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-//go:embed languages/*.json
+//go:embed locales/*/data.json
 var f embed.FS
 
 var langMap = make(map[string]map[string]map[string]string) // for example : langMap[en][account][Invalid information] = Invalid information
 
 func getI18nFilePath(language string) string {
 	if strings.Contains(language, "backend") {
-		return fmt.Sprintf("../i18n/languages/%s.json", language)
+		// change language from 'backend_en' to 'en'
+		language = language[8:]
+		return fmt.Sprintf("../i18n/locales/%s/data.json", language)
 	} else {
 		return fmt.Sprintf("../web/src/locales/%s/data.json", language)
 	}
@@ -82,7 +84,7 @@ func Translate(lang string, error string) string {
 	if langMap[lang] != nil {
 		return langMap[lang][parts[0]][parts[1]]
 	} else {
-		file, _ := f.ReadFile("languages/backend_" + lang + ".json")
+		file, _ := f.ReadFile("locales/" + lang + "/data.json")
 		data := I18nData{}
 		err := util.JsonToStruct(string(file), &data)
 		if err != nil {
