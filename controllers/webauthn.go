@@ -35,7 +35,7 @@ func (c *ApiController) WebAuthnSignupBegin() {
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	user := c.getCurrentUser()
 	if user == nil {
-		c.ResponseError(c.T("LoginErr.LoginFirst"))
+		c.ResponseError(c.T("webauthn:Please login first"))
 		return
 	}
 
@@ -66,13 +66,13 @@ func (c *ApiController) WebAuthnSignupFinish() {
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	user := c.getCurrentUser()
 	if user == nil {
-		c.ResponseError(c.T("LoginErr.LoginFirst"))
+		c.ResponseError(c.T("webauthn:Please login first"))
 		return
 	}
 	sessionObj := c.GetSession("registration")
 	sessionData, ok := sessionObj.(webauthn.SessionData)
 	if !ok {
-		c.ResponseError(c.T("AuthErr.CallWebAuthnSigninBegin"))
+		c.ResponseError(c.T("webauthn:Please call WebAuthnSigninBegin first"))
 		return
 	}
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
@@ -101,11 +101,11 @@ func (c *ApiController) WebAuthnSigninBegin() {
 	userName := c.Input().Get("name")
 	user := object.GetUserByFields(userOwner, userName)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.T("UserErr.DoNotExistInOrg"), userOwner, userName))
+		c.ResponseError(fmt.Sprintf(c.T("webauthn:The user: %s/%s doesn't exist"), userOwner, userName))
 		return
 	}
 	if len(user.WebauthnCredentials) == 0 {
-		c.ResponseError(c.T("UserErr.NoWebAuthnCredential"))
+		c.ResponseError(c.T("webauthn:Found no credentials for this user"))
 		return
 	}
 
@@ -132,7 +132,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	sessionObj := c.GetSession("authentication")
 	sessionData, ok := sessionObj.(webauthn.SessionData)
 	if !ok {
-		c.ResponseError(c.T("AuthErr.CallWebAuthnSigninBegin"))
+		c.ResponseError(c.T("webauthn:Please call WebAuthnSigninBegin first"))
 		return
 	}
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))

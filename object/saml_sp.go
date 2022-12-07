@@ -45,7 +45,7 @@ func ParseSamlResponse(samlResponse string, providerType string) (string, error)
 func GenerateSamlLoginUrl(id, relayState, lang string) (string, string, error) {
 	provider := GetProvider(id)
 	if provider.Category != "SAML" {
-		return "", "", fmt.Errorf(i18n.Translate(lang, "ProviderErr.CategoryNotSAML"), provider.Name)
+		return "", "", fmt.Errorf(i18n.Translate(lang, "saml_sp:provider %s's category is not SAML"), provider.Name)
 	}
 	sp, err := buildSp(provider, "")
 	if err != nil {

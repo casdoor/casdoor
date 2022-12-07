@@ -18,6 +18,8 @@ import (
 	"fmt"
 	"regexp"
 	"time"
+
+	"github.com/casdoor/casdoor/i18n"
 )
 
 var reRealName *regexp.Regexp
@@ -43,7 +45,7 @@ func resetUserSigninErrorTimes(user *User) {
 	UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, user.IsGlobalAdmin)
 }
 
-func recordSigninErrorInfo(user *User) string {
+func recordSigninErrorInfo(user *User, lang string) string {
 	// increase failed login count
 	user.SigninWrongTimes++
 
@@ -56,9 +58,9 @@ func recordSigninErrorInfo(user *User) string {
 	UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, user.IsGlobalAdmin)
 	leftChances := SigninWrongTimesLimit - user.SigninWrongTimes
 	if leftChances > 0 {
-		return fmt.Sprintf("password is incorrect, you have %d remaining chances", leftChances)
+		return fmt.Sprintf(i18n.Translate(lang, "check_util:password is incorrect, you have %d remaining chances"), leftChances)
 	}
 
 	// don't show the chance error message if the user has no chance left
-	return fmt.Sprintf("You have entered the wrong password too many times, please wait for %d minutes and try again", int(LastSignWrongTimeDuration.Minutes()))
+	return fmt.Sprintf(i18n.Translate(lang, "check_util:You have entered the wrong password too many times, please wait for %d minutes and try again"), int(LastSignWrongTimeDuration.Minutes()))
 }

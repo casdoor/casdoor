@@ -84,7 +84,7 @@ func (c *ApiController) SetTokenErrorHttpStatus() {
 func (c *ApiController) RequireSignedIn() (string, bool) {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(c.T("LoginErr.LoginFirst"), "Please login first")
+		c.ResponseError(c.T("util:Please login first"), "util:Please login first")
 		return "", false
 	}
 	return userId, true
@@ -100,7 +100,7 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 	user := object.GetUser(userId)
 	if user == nil {
 		c.ClearUserSession()
-		c.ResponseError(fmt.Sprintf(c.T("UserErr.DoNotExist"), userId))
+		c.ResponseError(fmt.Sprintf(c.T("util:The user: %s doesn't exist"), userId))
 		return nil, false
 	}
 	return user, true
@@ -128,7 +128,7 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 	if providerName != "" {
 		provider := object.GetProvider(util.GetId("admin", providerName))
 		if provider == nil {
-			c.ResponseError(c.T("ProviderErr.ProviderNotFound"), providerName)
+			c.ResponseError(c.T("util:The provider: %s is not found"), providerName)
 			return nil, nil, false
 		}
 		return provider, nil, true
@@ -141,13 +141,13 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 
 	application, user := object.GetApplicationByUserId(userId)
 	if application == nil {
-		c.ResponseError(fmt.Sprintf(c.T("ApplicationErr.AppNotFoundForUserID"), userId))
+		c.ResponseError(fmt.Sprintf(c.T("util:No application is found for userId: %s"), userId))
 		return nil, nil, false
 	}
 
 	provider := application.GetProviderByCategory(category)
 	if provider == nil {
-		c.ResponseError(fmt.Sprintf(c.T("ProviderErr.ProviderNotFoundForCategory"), category, application.Name))
+		c.ResponseError(fmt.Sprintf(c.T("util:No provider for category: %s is found for application: %s"), category, application.Name))
 		return nil, nil, false
 	}
 

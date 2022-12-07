@@ -86,7 +86,7 @@ func (c *ApiController) GetUserApplication() {
 	id := c.Input().Get("id")
 	user := object.GetUser(id)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.T("UserErr.DoNotExist"), id))
+		c.ResponseError(fmt.Sprintf(c.T("application:The user: %s doesn't exist"), id))
 		return
 	}
 
@@ -113,7 +113,7 @@ func (c *ApiController) GetOrganizationApplications() {
 	sortOrder := c.Input().Get("sortOrder")
 
 	if organization == "" {
-		c.ResponseError(c.T("ParameterErr.OrgMissingErr"))
+		c.ResponseError(c.T("application:Parameter organization is missing"))
 		return
 	}
 

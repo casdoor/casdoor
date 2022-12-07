@@ -150,7 +150,7 @@ func (c *ApiController) GetOAuthCode() {
 	codeChallenge := c.Input().Get("code_challenge")
 
 	if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
-		c.ResponseError(c.T("AuthErr.ChallengeMethodErr"))
+		c.ResponseError(c.T("token:Challenge method should be S256"))
 		return
 	}
 	host := c.Ctx.Request.Host
@@ -290,7 +290,7 @@ func (c *ApiController) IntrospectToken() {
 		clientId = c.Input().Get("client_id")
 		clientSecret = c.Input().Get("client_secret")
 		if clientId == "" || clientSecret == "" {
-			c.ResponseError(c.T("TokenErr.EmptyClientID"))
+			c.ResponseError(c.T("token:Empty clientId or clientSecret"))
 			c.Data["json"] = &object.TokenError{
 				Error: object.InvalidRequest,
 			}
@@ -301,7 +301,7 @@ func (c *ApiController) IntrospectToken() {
 	}
 	application := object.GetApplicationByClientId(clientId)
 	if application == nil || application.ClientSecret != clientSecret {
-		c.ResponseError(c.T("TokenErr.InvalidAppOrWrongClientSecret"))
+		c.ResponseError(c.T("token:Invalid application or wrong clientSecret"))
 		c.Data["json"] = &object.TokenError{
 			Error: object.InvalidClient,
 		}

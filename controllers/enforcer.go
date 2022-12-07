@@ -47,7 +47,7 @@ func (c *ApiController) BatchEnforce() {
 func (c *ApiController) GetAllObjects() {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(c.T("EnforcerErr.SignInFirst"))
+		c.ResponseError(c.T("enforcer:Please sign in first"))
 		return
 	}
 
@@ -58,7 +58,7 @@ func (c *ApiController) GetAllObjects() {
 func (c *ApiController) GetAllActions() {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(c.T("EnforcerErr.SignInFirst"))
+		c.ResponseError(c.T("enforcer:Please sign in first"))
 		return
 	}
 
@@ -69,7 +69,7 @@ func (c *ApiController) GetAllActions() {
 func (c *ApiController) GetAllRoles() {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(c.T("EnforcerErr.SignInFirst"))
+		c.ResponseError(c.T("enforcer:Please sign in first"))
 		return
 	}
 

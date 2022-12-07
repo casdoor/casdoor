@@ -204,14 +204,14 @@ func CheckAccountItemModifyRule(accountItem *AccountItem, user *User, lang strin
 	switch accountItem.ModifyRule {
 	case "Admin":
 		if !(user.IsAdmin || user.IsGlobalAdmin) {
-			return false, fmt.Sprintf(i18n.Translate(lang, "OrgErr.OnlyAdmin"), accountItem.Name)
+			return false, fmt.Sprintf(i18n.Translate(lang, "organization:Only admin can modify the %s."), accountItem.Name)
 		}
 	case "Immutable":
-		return false, fmt.Sprintf(i18n.Translate(lang, "OrgErr.Immutable"), accountItem.Name)
+		return false, fmt.Sprintf(i18n.Translate(lang, "organization:The %s is immutable."), accountItem.Name)
 	case "Self":
 		break
 	default:
-		return false, fmt.Sprintf(i18n.Translate(lang, "OrgErr.UnknownModifyRule"), accountItem.ModifyRule)
+		return false, fmt.Sprintf(i18n.Translate(lang, "organization:Unknown modify rule %s."), accountItem.ModifyRule)
 	}
 	return true, ""
 }

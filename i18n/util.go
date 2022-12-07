@@ -20,16 +20,21 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/util"
-	"gopkg.in/ini.v1"
 )
 
-//go:embed languages/*.ini
+//go:embed locales/*/data.json
 var f embed.FS
 
-var langMapConfig = make(map[string]*ini.File)
+var langMap = make(map[string]map[string]map[string]string) // for example : langMap[en][account][Invalid information] = Invalid information
 
 func getI18nFilePath(language string) string {
-	return fmt.Sprintf("../web/src/locales/%s/data.json", language)
+	if strings.Contains(language, "backend") {
+		// change language from 'backend_en' to 'en'
+		language = language[8:]
+		return fmt.Sprintf("../i18n/locales/%s/data.json", language)
+	} else {
+		return fmt.Sprintf("../web/src/locales/%s/data.json", language)
+	}
 }
 
 func readI18nFile(language string) *I18nData {
@@ -71,16 +76,20 @@ func applyData(data1 *I18nData, data2 *I18nData) {
 }
 
 func Translate(lang string, error string) string {
-	parts := strings.Split(error, ".")
-	if !strings.Contains(error, ".") || len(parts) != 2 {
+	parts := strings.SplitN(error, ":", 2)
+	if !strings.Contains(error, ":") || len(parts) != 2 {
 		return "Translate Error: " + error
 	}
-
-	if langMapConfig[lang] != nil {
-		return langMapConfig[lang].Section(parts[0]).Key(parts[1]).String()
+	if langMap[lang] != nil {
+		return langMap[lang][parts[0]][parts[1]]
 	} else {
-		file, _ := f.ReadFile("languages/locale_" + lang + ".ini")
-		langMapConfig[lang], _ = ini.Load(file)
-		return langMapConfig[lang].Section(parts[0]).Key(parts[1]).String()
+		file, _ := f.ReadFile("locales/" + lang + "/data.json")
+		data := I18nData{}
+		err := util.JsonToStruct(string(file), &data)
+		if err != nil {
+			panic(err)
+		}
+		langMap[lang] = data
+		return langMap[lang][parts[0]][parts[1]]
 	}
 }

@@ -29,6 +29,22 @@ jobs:
         crowdin_branch_name: l10n_branch
         config: './web/crowdin.yml'
 
+    - name: crowdin backend action
+      uses: crowdin/github-action@1.4.8
+      with:
+        upload_translations: true
+
+        download_translations: true
+        push_translations: true
+        commit_message: 'refactor: New Crowdin Backend translations by Github Action'
+
+        localization_branch_name: l10n_crowdin_action
+        create_pull_request: true
+        pull_request_title: 'refactor: New Crowdin Backend translations'
+
+        crowdin_branch_name: l10n_branch
+        config: './crowdin.yml'
+
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         CROWDIN_PROJECT_ID: '463556'
