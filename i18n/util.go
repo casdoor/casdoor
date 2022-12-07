@@ -80,7 +80,6 @@ func Translate(lang string, error string) string {
 	if !strings.Contains(error, ":") || len(parts) != 2 {
 		return "Translate Error: " + error
 	}
-	fmt.Println(parts)
 	if langMap[lang] != nil {
 		return langMap[lang][parts[0]][parts[1]]
 	} else {
