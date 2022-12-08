@@ -48,12 +48,14 @@ class AdapterEditPage extends React.Component {
 
   getAdapter() {
     AdapterBackend.getAdapter(this.state.owner, this.state.adapterName)
-      .then((adapter) => {
-        this.setState({
-          adapter: adapter,
-        });
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            adapter: res.data,
+          });
 
-        this.getModels(adapter.owner);
+          this.getModels(this.adapter.owner);
+        }
       });
   }
 
