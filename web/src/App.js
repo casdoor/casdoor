@@ -224,7 +224,7 @@ class App extends Component {
           this.setLanguage(account);
         } else {
           if (res.data !== "Please login first") {
-            Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
+            Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
           }
         }
 
@@ -249,7 +249,7 @@ class App extends Component {
             account: null,
           });
 
-          Setting.showMessage("success", "Logged out successfully");
+          Setting.showMessage("success", i18next.t("application:Logged out successfully"));
           const redirectUri = res.data2;
           if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
             Setting.goToLink(redirectUri);

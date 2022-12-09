@@ -92,6 +92,7 @@ class PolicyTable extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           this.setState({policyLists: res.data});
+          Setting.showMessage("success", i18next.t("adapter:Sync policies successfully"));
         } else {
           Setting.showMessage("error", `${i18next.t("adapter:Failed to sync policies")}: ${res.msg}`);
         }
@@ -293,7 +294,7 @@ class PolicyTable extends React.Component {
 
   render() {
     return (<>
-      <Button type="primary" onClick={() => {this.synPolicies();}}>
+      <Button type="primary" disabled={this.state.editingIndex !== ""} onClick={() => {this.synPolicies();}}>
         {i18next.t("adapter:Sync")}
       </Button>
       {
