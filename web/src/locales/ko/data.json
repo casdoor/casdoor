@@ -7,12 +7,13 @@
   },
   "adapter": {
     "Edit Adapter": "Edit Adapter",
-    "Failed to sync policies: ": "Failed to sync policies: ",
+    "Failed to sync policies": "Failed to sync policies",
     "New Adapter": "New Adapter",
     "Policies": "Policies",
     "Policies - Tooltip": "Policies - Tooltip",
     "Repeated policy rules": "Repeated policy rules",
-    "Sync": "Sync"
+    "Sync": "Sync",
+    "Sync policies successfully": "Sync policies successfully"
   },
   "application": {
     "Always": "Always",
@@ -36,6 +37,7 @@
     "Enable signin session - Tooltip": "Enable signin session - Tooltip",
     "Enable signup": "Enable signup",
     "Enable signup - Tooltip": "Whether to allow users to sign up",
+    "Failed to sign in": "Failed to sign in",
     "File uploaded successfully": "File uploaded successfully",
     "Form CSS": "Form CSS",
     "Form CSS - Edit": "Form CSS - Edit",
@@ -45,6 +47,8 @@
     "Grant types": "Grant types",
     "Grant types - Tooltip": "Grant types - Tooltip",
     "Left": "Left",
+    "Logged in successfully": "Logged in successfully",
+    "Logged out successfully": "Logged out successfully",
     "New Application": "New Application",
     "None": "None",
     "Password ON": "Password ON",

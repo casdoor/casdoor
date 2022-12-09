@@ -7,12 +7,13 @@
   },
   "adapter": {
     "Edit Adapter": "编辑适配器",
-    "Failed to sync policies: ": "同步策略失败: ",
+    "Failed to sync policies": "同步策略失败",
     "New Adapter": "添加适配器",
     "Policies": "策略",
     "Policies - Tooltip": "策略",
     "Repeated policy rules": "重复的策略",
-    "Sync": "同步"
+    "Sync": "同步",
+    "Sync policies successfully": "同步策略成功"
   },
   "application": {
     "Always": "始终开启",
@@ -36,6 +37,7 @@
     "Enable signin session - Tooltip": "从应用登录Casdoor后，Casdoor是否保持会话",
     "Enable signup": "启用注册",
     "Enable signup - Tooltip": "是否允许用户注册",
+    "Failed to sign in": "登录失败",
     "File uploaded successfully": "文件上传成功",
     "Form CSS": "表单CSS",
     "Form CSS - Edit": "编辑表单CSS",
@@ -45,6 +47,8 @@
     "Grant types": "OAuth授权类型",
     "Grant types - Tooltip": "选择允许哪些OAuth协议中的Grant types",
     "Left": "居左",
+    "Logged in successfully": "登录成功",
+    "Logged out successfully": "登出成功",
     "New Application": "添加应用",
     "None": "关闭",
     "Password ON": "开启密码",
