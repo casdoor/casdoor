@@ -164,7 +164,7 @@ class OAuthWidget extends React.Component {
           </span>
           {
             linkedValue === "" ? (
-              <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "link")}>
+              <a key={provider.displayName} href={user.id !== account.id ? null : Provider.getAuthUrl(application, provider, "link")}>
                 <Button style={{marginLeft: "20px", width: "80px"}} type="primary" disabled={user.id !== account.id}>{i18next.t("user:Link")}</Button>
               </a>
             ) : (
