@@ -86,8 +86,6 @@ class OrganizationEditPage extends React.Component {
 
   updateOrganizationField(key, value) {
     value = this.parseOrganizationField(key, value);
-    // eslint-disable-next-line no-console
-    console.log(value);
     const organization = this.state.organization;
     organization[key] = value;
     this.setState({
