@@ -47,6 +47,7 @@ type Organization struct {
 	Tags               []string `xorm:"mediumtext" json:"tags"`
 	Languages          []string `xorm:"varchar(255)" json:"languages"`
 	MasterPassword     string   `xorm:"varchar(100)" json:"masterPassword"`
+	InitScore          int      `json:"initScore"`
 	EnableSoftDeletion bool     `json:"enableSoftDeletion"`
 	IsProfilePublic    bool     `json:"isProfilePublic"`
 

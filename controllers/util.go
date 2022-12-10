@@ -119,8 +119,12 @@ func (c *ApiController) RequireAdmin() (string, bool) {
 	return user.Owner, true
 }
 
-func getInitScore() (int, error) {
-	return strconv.Atoi(conf.GetConfigString("initScore"))
+func getInitScore(organization *object.Organization) (int, error) {
+	if organization != nil {
+		return organization.InitScore, nil
+	} else {
+		return strconv.Atoi(conf.GetConfigString("initScore"))
+	}
 }
 
 func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, *object.User, bool) {

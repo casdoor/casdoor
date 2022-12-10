@@ -62,6 +62,7 @@ class UserListPage extends BaseListPage {
       isAdmin: (owner === "built-in"),
       isGlobalAdmin: (owner === "built-in"),
       IsForbidden: false,
+      score: this.state.organization.initScore,
       isDeleted: false,
       properties: {},
       signupApplication: "app-built-in",

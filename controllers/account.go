@@ -161,7 +161,7 @@ func (c *ApiController) Signup() {
 		username = id
 	}
 
-	initScore, err := getInitScore()
+	initScore, err := getInitScore(organization)
 	if err != nil {
 		c.ResponseError(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err).Error())
 		return
