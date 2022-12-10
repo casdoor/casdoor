@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
@@ -86,7 +86,8 @@ class OrganizationEditPage extends React.Component {
 
   updateOrganizationField(key, value) {
     value = this.parseOrganizationField(key, value);
-
+    // eslint-disable-next-line no-console
+    console.log(value);
     const organization = this.state.organization;
     organization[key] = value;
     this.setState({
@@ -278,6 +279,16 @@ class OrganizationEditPage extends React.Component {
                 ].map((item, index) => <Option key={index} value={item.value}>{item.label}</Option>)
               }
             </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("organization:InitScore"), i18next.t("organization:The user's initScore - Tooltip"))} :
+          </Col>
+          <Col span={4} >
+            <InputNumber value={this.state.organization.initScore} onChange={value => {
+              this.updateOrganizationField("initScore", value);
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

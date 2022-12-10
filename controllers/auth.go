@@ -412,7 +412,7 @@ func (c *ApiController) Login() {
 
 				properties := map[string]string{}
 				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
-				initScore, err := getInitScore()
+				initScore, err := getInitScore(organization)
 				if err != nil {
 					c.ResponseError(fmt.Errorf(c.T("auth:Get init score failed, error: %w"), err).Error())
 					return
