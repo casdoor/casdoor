@@ -113,7 +113,7 @@ class ResourceListPage extends BaseListPage {
         ...this.getColumnSearchProps("application"),
         render: (text, record, index) => {
           return (
-            <Link to={`/applications/${text}`}>
+            <Link to={`/applications/${record.organization}/${text}`}>
               {text}
             </Link>
           );

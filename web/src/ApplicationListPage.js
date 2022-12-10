@@ -197,9 +197,9 @@ class ApplicationListPage extends BaseListPage {
                     <List.Item>
                       <div style={{display: "inline"}}>
                         <Tooltip placement="topLeft" title="Edit">
-                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${providerItem.name}`)} />
+                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${record.organization}/${providerItem.name}`)} />
                         </Tooltip>
-                        <Link to={`/providers/${providerItem.name}`}>
+                        <Link to={`/providers/${record.organization}/${providerItem.name}`}>
                           {providerItem.name}
                         </Link>
                       </div>
