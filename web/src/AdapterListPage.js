@@ -87,7 +87,7 @@ class AdapterListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/adapters/${text}`}>
+            <Link to={`/adapters/${record.organization}/${text}`}>
               {text}
             </Link>
           );
