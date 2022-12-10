@@ -14,7 +14,7 @@
 
 import React from "react";
 import * as Setting from "./Setting";
-import {Dropdown, Menu} from "antd";
+import {Dropdown} from "antd";
 import "./App.less";
 
 function flagIcon(country, alt) {
@@ -53,15 +53,12 @@ class SelectLanguageBox extends React.Component {
 
   render() {
     const languageItems = this.getOrganizationLanguages(this.state.languages);
-    const menu = (
-      <Menu items={languageItems} onClick={(e) => {
-        Setting.setLanguage(e.key);
-      }}>
-      </Menu>
-    );
+    const onClick = (e) => {
+      Setting.setLanguage(e.key);
+    };
 
     return (
-      <Dropdown overlay={menu} >
+      <Dropdown menu={{items: languageItems, onClick}} >
         <div className="language-box" style={{display: languageItems.length === 0 ? "none" : null, ...this.props.style}} />
       </Dropdown>
     );
