@@ -42,12 +42,15 @@ class SelectRegionBox extends React.Component {
         placeholder="Please select country/region"
         onChange={(value => {this.onChange(value);})}
         filterOption={(input, option) =>
-          option.label.indexOf(input) >= 0
+          (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+        }
+        filterSort={(optionA, optionB) =>
+          (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
         }
       >
         {
           Setting.CountryRegionData.map((item, index) => (
-            <Option key={index} value={item.code} label={item.code} >
+            <Option key={index} value={item.code} label={`${item.name} (${item.code})`} >
               <img src={`${Setting.StaticBaseUrl}/flag-icons/${item.code}.svg`} alt={item.name} height={20} style={{marginRight: 10}} />
               {`${item.name} (${item.code})`}
             </Option>
