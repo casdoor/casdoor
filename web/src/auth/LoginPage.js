@@ -69,6 +69,12 @@ class LoginPage extends React.Component {
     }
   }
 
+  componentDidMount() {
+    Setting.Countries.forEach((country) => {
+      new Image().src = `${Setting.StaticBaseUrl}/flag-icons/${country.country}.svg`;
+    });
+  }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.state.application && !prevState.application) {
       const defaultCaptchaProviderItems = this.getDefaultCaptchaProviderItems(this.state.application);
