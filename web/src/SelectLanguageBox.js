@@ -32,16 +32,7 @@ class SelectLanguageBox extends React.Component {
     };
   }
 
-  items = [
-    Setting.getItem("English", "en", flagIcon("US", "English")),
-    Setting.getItem("简体中文", "zh", flagIcon("CN", "简体中文")),
-    Setting.getItem("Español", "es", flagIcon("ES", "Español")),
-    Setting.getItem("Français", "fr", flagIcon("FR", "Français")),
-    Setting.getItem("Deutsch", "de", flagIcon("DE", "Deutsch")),
-    Setting.getItem("日本語", "ja", flagIcon("JP", "日本語")),
-    Setting.getItem("한국어", "ko", flagIcon("KR", "한국어")),
-    Setting.getItem("Русский", "ru", flagIcon("RU", "Русский")),
-  ];
+  items = Setting.Countries.map((country) => Setting.getItem(country.label, country.key, flagIcon(country.country, country.alt)));
 
   getOrganizationLanguages(languages) {
     const select = [];
