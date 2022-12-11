@@ -92,6 +92,7 @@ export const ResetModal = (props) => {
             <CountDownInput
               textBefore={i18next.t("code:Code You Received")}
               onChange={setCode}
+              method={"reset"}
               onButtonClickArgs={[dest, destType, Setting.getApplicationName(application)]}
               application={application}
             />

@@ -373,6 +373,7 @@ class SignupPage extends React.Component {
             >
               <CountDownInput
                 disabled={!this.state.validEmail}
+                method={"signup"}
                 onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(application)]}
                 application={application}
               />
@@ -426,6 +427,7 @@ class SignupPage extends React.Component {
           >
             <CountDownInput
               disabled={!this.state.validPhone}
+              method={"signup"}
               onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
               application={application}
             />

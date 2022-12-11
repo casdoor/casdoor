@@ -47,6 +47,7 @@ func (c *ApiController) SendVerificationCode() {
 	checkKey := c.Ctx.Request.Form.Get("checkKey")
 	checkUser := c.Ctx.Request.Form.Get("checkUser")
 	applicationId := c.Ctx.Request.Form.Get("applicationId")
+	method := c.Ctx.Request.Form.Get("method")
 	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
 
 	if destType == "" {
@@ -119,7 +120,7 @@ func (c *ApiController) SendVerificationCode() {
 		}
 
 		userByEmail := object.GetUserByEmail(organization.Name, dest)
-		if userByEmail == nil {
+		if userByEmail == nil && method != "signup" && method != "reset" {
 			c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 			return
 		}
@@ -136,7 +137,7 @@ func (c *ApiController) SendVerificationCode() {
 		}
 
 		userByPhone := object.GetUserByPhone(organization.Name, dest)
-		if userByPhone == nil {
+		if userByPhone == nil && method != "signup" && method != "reset" {
 			c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 			return
 		}
