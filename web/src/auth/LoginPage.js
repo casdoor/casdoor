@@ -725,6 +725,7 @@ class LoginPage extends React.Component {
           >
             <CountDownInput
               disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
+              method={"login"}
               onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
               application={application}
             />

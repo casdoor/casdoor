@@ -355,12 +355,14 @@ class ForgetPage extends React.Component {
             {this.state.verifyType === "email" ? (
               <CountDownInput
                 disabled={this.state.username === "" || this.state.verifyType === ""}
+                method={"forget"}
                 onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(this.state.application), this.state.name]}
                 application={application}
               />
             ) : (
               <CountDownInput
                 disabled={this.state.username === "" || this.state.verifyType === ""}
+                method={"forget"}
                 onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(this.state.application), this.state.name]}
                 application={application}
               />
