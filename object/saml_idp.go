@@ -251,6 +251,11 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 
 	_, originBackend := getOriginFromHost(host)
 
+	// redirect Url (Assertion Consumer Url)
+	if application.SamlReplyUrl != "" {
+		authnRequest.AssertionConsumerServiceURL = application.SamlReplyUrl
+	}
+
 	// build signedResponse
 	samlResponse, _ := NewSamlResponse(user, originBackend, certificate, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer.Url, authnRequest.ID, application.RedirectUris)
 	randomKeyStore := &X509Key{

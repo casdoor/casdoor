@@ -125,5 +125,5 @@ export const CaptchaWidget = ({captchaType, subType, siteKey, clientSecret, onCh
     }
   }, [captchaType, subType, siteKey, clientSecret, clientId2, clientSecret2]);
 
-  return <div id="captcha"></div>;
+  return <div id="captcha" />;
 };

@@ -29,6 +29,7 @@ import CustomGithubCorner from "../CustomGithubCorner";
 import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {CaptchaModal} from "../common/CaptchaModal";
+import RedirectForm from "../common/RedirectForm";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -49,6 +50,9 @@ class LoginPage extends React.Component {
       enableCaptchaModal: false,
       openCaptchaModal: false,
       verifyCaptcha: undefined,
+      samlResponse: "",
+      relayState: "",
+      redirectUrl: "",
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -184,6 +188,7 @@ class LoginPage extends React.Component {
 
     if (values["samlRequest"] !== null && values["samlRequest"] !== "" && values["samlRequest"] !== undefined) {
       values["type"] = "saml";
+      values["relayState"] = oAuthParams.relayState;
     }
 
     if (this.state.application.organization !== null && this.state.application.organization !== undefined) {
@@ -312,7 +317,15 @@ class LoginPage extends React.Component {
             } else if (responseType === "saml") {
               const SAMLResponse = res.data;
               const redirectUri = res.data2;
-              Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
+              if (this.state.application.assertionConsumerUrl !== "") {
+                this.setState({
+                  samlResponse: res.data,
+                  redirectUrl: res.data2,
+                  relayState: oAuthParams.relayState,
+                });
+              } else {
+                Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
+              }
             }
           } else {
             this.setState({openCaptchaModal: false});
@@ -759,6 +772,10 @@ class LoginPage extends React.Component {
     const application = this.getApplicationObj();
     if (application === null) {
       return Util.renderMessageLarge(this, this.state.msg);
+    }
+
+    if (this.state.samlResponse !== "") {
+      return <RedirectForm samlResponse={this.state.samlResponse} redirectUrl={this.state.redirectUrl} relayState={this.state.relayState} />;
     }
 
     if (application.signinHtml !== "") {
