@@ -127,6 +127,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 // @Success 200 {object} Response "The Response object"
 // @router /webauthn/signin/finish [post]
 func (c *ApiController) WebAuthnSigninFinish() {
+	responseType := c.Input().Get("responseType")
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	sessionObj := c.GetSession("authentication")
 	sessionData, ok := sessionObj.(webauthn.SessionData)
@@ -147,7 +148,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 
 	application := object.GetApplicationByUser(user)
 	var form RequestForm
-	form.Type = "login"
+	form.Type = responseType
 	resp := c.HandleLoggedIn(application, user, &form)
 	c.Data["json"] = resp
 	c.ServeJSON()
