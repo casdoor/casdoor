@@ -41,7 +41,7 @@ func getEnforcer(permission *Permission) *casbin.Enforcer {
 r = sub, obj, act
 
 [policy_definition]
-p = sub, obj, act
+p = sub, obj, act, "", "", permissionId
 
 [role_definition]
 g = _, _
