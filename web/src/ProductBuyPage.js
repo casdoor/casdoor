@@ -36,6 +36,10 @@ class ProductBuyPage extends React.Component {
   }
 
   getProduct() {
+    if (this.state.productName === undefined) {
+      return;
+    }
+
     ProductBackend.getProduct("admin", this.state.productName)
       .then((product) => {
         this.setState({
@@ -107,6 +111,10 @@ class ProductBuyPage extends React.Component {
   }
 
   renderQrCodeModal() {
+    if (this.state.qrCodeModalProvider === undefined || this.state.qrCodeModalProvider === null) {
+      return null;
+    }
+
     return (
       <Modal title={
         <div>
@@ -114,7 +122,7 @@ class ProductBuyPage extends React.Component {
           {" " + i18next.t("product:Please scan the QR code to pay")}
         </div>
       }
-      open={this.state.qrCodeModalProvider !== null}
+      open={this.state.qrCodeModalProvider !== undefined && this.state.qrCodeModalProvider !== null}
       onOk={() => {
         Setting.goToLink(this.state.product.returnUrl);
       }}
