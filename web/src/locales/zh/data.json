@@ -434,6 +434,8 @@
     "CNY": "人民币",
     "Currency": "币种",
     "Currency - Tooltip": "币种 - 工具提示",
+    "Description": "描述",
+    "Description - Tooltip": "描述 - 工具提示",
     "Detail": "详情",
     "Detail - Tooltip": "详情 - 工具提示",
     "Edit Product": "编辑商品",
