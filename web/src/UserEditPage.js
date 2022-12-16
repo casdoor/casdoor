@@ -28,6 +28,7 @@ import SamlWidget from "./common/SamlWidget";
 import SelectRegionBox from "./SelectRegionBox";
 import WebAuthnCredentialTable from "./WebauthnCredentialTable";
 import ManagedAccountTable from "./ManagedAccountTable";
+import PropertyTable from "./PropertyTable"
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
@@ -493,10 +494,7 @@ class UserEditPage extends React.Component {
             {i18next.t("user:Properties")}:
           </Col>
           <Col span={22} >
-            <CodeMirror
-              value={JSON.stringify(this.state.user.properties, null, 4)}
-              options={{mode: "javascript", theme: "material-darker"}}
-            />
+            <PropertyTable properties={this.state.user.properties} user={this.state.user} />
           </Col>
         </Row>
       );
