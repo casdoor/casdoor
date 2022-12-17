@@ -44,14 +44,12 @@
 
 ## Online demo
 
-- International: https://door.casdoor.org (read-only)
-- Asian mirror: https://door.casdoor.com (read-only)
-- Asian mirror: https://demo.casdoor.com (read-write, will restore for every 5 minutes)
+- Read-only site: https://door.casdoor.com (any modification operation will fail)
+- Writable site: https://demo.casdoor.com (original data will be restored for every 5 minutes)
 
 ## Documentation
 
-- International: https://casdoor.org
-- Asian mirror: https://casdoor.cn
+https://casdoor.org
 
 ## Install
 
