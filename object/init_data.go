@@ -136,7 +136,6 @@ func readInitDataFromFile(filePath string) *InitData {
 			application.RedirectUris = []string{}
 		}
 	}
-
 	for _, permission := range data.Permissions {
 		if permission.Actions == nil {
 			permission.Actions = []string{}
@@ -151,7 +150,6 @@ func readInitDataFromFile(filePath string) *InitData {
 			permission.Users = []string{}
 		}
 	}
-
 	for _, role := range data.Roles {
 		if role.Roles == nil {
 			role.Roles = []string{}
@@ -160,13 +158,11 @@ func readInitDataFromFile(filePath string) *InitData {
 			role.Users = []string{}
 		}
 	}
-
 	for _, syncer := range data.Syncers {
 		if syncer.TableColumns == nil {
 			syncer.TableColumns = []*TableColumn{}
 		}
 	}
-
 	for _, webhook := range data.Webhooks {
 		if webhook.Events == nil {
 			webhook.Events = []string{}
@@ -300,6 +296,7 @@ func initDefinedResource(resource *Resource) {
 	}
 	AddResource(resource)
 }
+
 func initDefinedRole(role *Role) {
 	existed := GetRole(role.GetId())
 	if existed != nil {
@@ -307,6 +304,7 @@ func initDefinedRole(role *Role) {
 	}
 	AddRole(role)
 }
+
 func initDefinedSyncer(syncer *Syncer) {
 	existed := GetSyncer(syncer.GetId())
 	if existed != nil {
@@ -314,6 +312,7 @@ func initDefinedSyncer(syncer *Syncer) {
 	}
 	AddSyncer(syncer)
 }
+
 func initDefinedToken(token *Token) {
 	existed := GetToken(token.GetId())
 	if existed != nil {
