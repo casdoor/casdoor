@@ -14,9 +14,7 @@
 
 package object
 
-import (
-	"github.com/casdoor/casdoor/util"
-)
+import "github.com/casdoor/casdoor/util"
 
 type InitData struct {
 	Organizations []*Organization `json:"organizations"`
