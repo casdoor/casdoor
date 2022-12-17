@@ -54,7 +54,7 @@ class AdapterEditPage extends React.Component {
             adapter: res.data,
           });
 
-          this.getModels(this.adapter.owner);
+          this.getModels(this.state.owner);
         }
       });
   }
