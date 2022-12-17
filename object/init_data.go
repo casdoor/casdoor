@@ -23,6 +23,15 @@ type InitData struct {
 	Certs         []*Cert         `json:"certs"`
 	Providers     []*Provider     `json:"providers"`
 	Ldaps         []*Ldap         `json:"ldaps"`
+	Models        []*Model        `json:"models"`
+	Permissions   []*Permission   `json:"permissions"`
+	Payments      []*Payment      `json:"payments"`
+	Products      []*Product      `json:"products"`
+	Resources     []*Resource     `json:"resources"`
+	Roles         []*Role         `json:"roles"`
+	Syncers       []*Syncer       `json:"syncers"`
+	Tokens        []*Token        `json:"tokens"`
+	Webhooks      []*Webhook      `json:"webhooks"`
 }
 
 func InitFromFile() {
@@ -46,6 +55,33 @@ func InitFromFile() {
 		for _, ldap := range initData.Ldaps {
 			initDefinedLdap(ldap)
 		}
+		for _, model := range initData.Models {
+			initDefinedModel(model)
+		}
+		for _, permission := range initData.Permissions {
+			initDefinedPermission(permission)
+		}
+		for _, payment := range initData.Payments {
+			initDefinedPayment(payment)
+		}
+		for _, product := range initData.Products {
+			initDefinedProduct(product)
+		}
+		for _, resource := range initData.Resources {
+			initDefinedResource(resource)
+		}
+		for _, role := range initData.Roles {
+			initDefinedRole(role)
+		}
+		for _, syncer := range initData.Syncers {
+			initDefinedSyncer(syncer)
+		}
+		for _, token := range initData.Tokens {
+			initDefinedToken(token)
+		}
+		for _, webhook := range initData.Webhooks {
+			initDefinedWebhook(webhook)
+		}
 	}
 }
 
@@ -63,6 +99,15 @@ func readInitDataFromFile(filePath string) *InitData {
 		Certs:         []*Cert{},
 		Providers:     []*Provider{},
 		Ldaps:         []*Ldap{},
+		Models:        []*Model{},
+		Permissions:   []*Permission{},
+		Payments:      []*Payment{},
+		Products:      []*Product{},
+		Resources:     []*Resource{},
+		Roles:         []*Role{},
+		Syncers:       []*Syncer{},
+		Tokens:        []*Token{},
+		Webhooks:      []*Webhook{},
 	}
 	err := util.JsonToStruct(s, data)
 	if err != nil {
@@ -87,6 +132,41 @@ func readInitDataFromFile(filePath string) *InitData {
 		}
 		if application.RedirectUris == nil {
 			application.RedirectUris = []string{}
+		}
+	}
+	for _, permission := range data.Permissions {
+		if permission.Actions == nil {
+			permission.Actions = []string{}
+		}
+		if permission.Resources == nil {
+			permission.Resources = []string{}
+		}
+		if permission.Roles == nil {
+			permission.Roles = []string{}
+		}
+		if permission.Users == nil {
+			permission.Users = []string{}
+		}
+	}
+	for _, role := range data.Roles {
+		if role.Roles == nil {
+			role.Roles = []string{}
+		}
+		if role.Users == nil {
+			role.Users = []string{}
+		}
+	}
+	for _, syncer := range data.Syncers {
+		if syncer.TableColumns == nil {
+			syncer.TableColumns = []*TableColumn{}
+		}
+	}
+	for _, webhook := range data.Webhooks {
+		if webhook.Events == nil {
+			webhook.Events = []string{}
+		}
+		if webhook.Headers == nil {
+			webhook.Headers = []*Header{}
 		}
 	}
 
@@ -173,4 +253,85 @@ func initDefinedProvider(provider *Provider) {
 		return
 	}
 	AddProvider(provider)
+}
+
+func initDefinedModel(model *Model) {
+	existed := GetModel(model.GetId())
+	if existed != nil {
+		return
+	}
+	model.CreatedTime = util.GetCurrentTime()
+	AddModel(model)
+}
+
+func initDefinedPermission(permission *Permission) {
+	existed := GetPermission(permission.GetId())
+	if existed != nil {
+		return
+	}
+	permission.CreatedTime = util.GetCurrentTime()
+	AddPermission(permission)
+}
+
+func initDefinedPayment(payment *Payment) {
+	existed := GetPayment(payment.GetId())
+	if existed != nil {
+		return
+	}
+	payment.CreatedTime = util.GetCurrentTime()
+	AddPayment(payment)
+}
+
+func initDefinedProduct(product *Product) {
+	existed := GetProduct(product.GetId())
+	if existed != nil {
+		return
+	}
+	product.CreatedTime = util.GetCurrentTime()
+	AddProduct(product)
+}
+
+func initDefinedResource(resource *Resource) {
+	existed := GetResource(resource.GetId())
+	if existed != nil {
+		return
+	}
+	resource.CreatedTime = util.GetCurrentTime()
+	AddResource(resource)
+}
+
+func initDefinedRole(role *Role) {
+	existed := GetRole(role.GetId())
+	if existed != nil {
+		return
+	}
+	role.CreatedTime = util.GetCurrentTime()
+	AddRole(role)
+}
+
+func initDefinedSyncer(syncer *Syncer) {
+	existed := GetSyncer(syncer.GetId())
+	if existed != nil {
+		return
+	}
+	syncer.CreatedTime = util.GetCurrentTime()
+	AddSyncer(syncer)
+}
+
+func initDefinedToken(token *Token) {
+	existed := GetToken(token.GetId())
+	if existed != nil {
+		return
+	}
+	token.CreatedTime = util.GetCurrentTime()
+	AddToken(token)
+}
+
+func initDefinedWebhook(webhook *Webhook) {
+	existed := GetWebhook(webhook.GetId())
+	if existed != nil {
+		return
+	}
+	webhook.CreatedTime = util.GetCurrentTime()
+	AddWebhook(webhook)
 }
