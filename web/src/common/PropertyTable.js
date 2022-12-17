@@ -15,20 +15,26 @@
 import React from "react";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 import {Button, Input, Popconfirm, Table, Tooltip} from "antd";
-import * as Setting from "./Setting";
-import * as UserBackend from "./backend/UserBackend";
+import * as Setting from "../Setting";
+import * as UserBackend from "../backend/UserBackend";
 import i18next from "i18next";
 
-class PropertyTable extends React.Component {
+class PolicyTable extends React.Component {
   constructor(props) {
     super(props);
+    const keys = Object.keys(this.props.properties);
+    const properties = [];
+    for (let i = 0; i < keys.length; i++) {
+      const property = new Object();
+      property.key = keys[i];
+      property.value = this.props.properties[keys[i]];
+      properties[i] = property;
+    }
     this.state = {
-      propertyKeys: Object.keys(this.props.properties),
-      propertyValues: Object.values(this.props.properties),
+      properties: properties,
       loading: false,
       editingIndex: "",
-      oldPropertyKey: "",
-      oldPropertyValue: "",
+      oldProperty: "",
       add: false,
     };
   }
@@ -38,32 +44,28 @@ class PropertyTable extends React.Component {
   };
 
   edit = (record, index) => {
-    this.setState({editingIndex: index, oldPropertyKey: this.state.propertyKeys[index], oldPropertyValue: this.state.propertyValues[index]});
+    this.setState({editingIndex: index, oldProperty: Setting.deepCopy(record)});
   };
 
   cancel = (table, index) => {
-    this.state.propertyKeys[index]=this.state.oldPropertyKey
-    this.state.propertyValues[index]=this.state.oldPropertyValue
-    this.updateTable(this.state.propertyKeys,this.state.propertyValues)
-    this.setState({editingIndex: "", oldPropertyKey: "", oldPropertyValue: ""});
-    if(this.state.add){
-      this.deleteRow(this.state.propertyKeys,this.state.propertyValues,index)
-      this.setState({add: false})
+    Object.keys(table[index]).forEach((key) => {
+      table[index][key] = this.state.oldProperty[key];
+    });
+    this.updateTable(table);
+    this.setState({editingIndex: "", oldProperty: ""});
+    if (this.state.add) {
+      this.deleteRow(this.state.properties, index);
+      this.setState({add: false});
     }
   };
 
-  updateTable(keys,values) {
-    this.setState({propertyKeys: keys,propertyValues: values});
+  updateTable(table) {
+    this.setState({properties: table});
   }
 
   updateField(table, index, key, value) {
-    if(key=="Keys"){
-      this.state.propertyKeys[index]=value;
-    }
-    if(key=="Values"){
-      this.state.propertyValues[index]=value;
-    }
-    this.updateTable(this.state.propertyKeys,this.state.propertyValues)
+    table[index][key] = value;
+    this.updateTable(table);
   }
 
   addRow(table) {
@@ -72,57 +74,52 @@ class PropertyTable extends React.Component {
       table = [];
     }
     table = Setting.addRow(table, row, "top");
-    this.state.propertyValues = Setting.addRow(this.state.propertyValues, row, "top");
-    this.updateTable(table, this.state.propertyValues);
-    this.edit(row, 0); 
+    this.updateTable(table);
+    this.edit(row, 0);
     this.setState({add: true});
   }
 
-  deleteRow(keys, values, i) {
-    keys = Setting.deleteRow(keys, i);
-    values = Setting.deleteRow(values, i);
-    this.updateTable(keys,values);
+  deleteRow(table, i) {
+    table = Setting.deleteRow(table, i);
+    this.updateTable(table);
   }
 
   save(table, i) {
-    this.state.add ? this.addProperty(table, i) : this.updateProperty(table, i);
+    this.state.add ? this.addPropety(table, i) : this.updateProperty(table, i);
   }
 
   updateProperty(table, i) {
-    var user = this.props.user;
-    var key = this.state.propertyKeys[i];
-    var value = this.state.propertyValues[i];
-    user.properties[key]=value
-    this.updateUser(user)
+    this.updateUser(table, "update", i);
   }
 
-  addProperty(table, i) {
-    var user = this.props.user;
-    var key = this.state.propertyKeys[i];
-    var value = this.state.propertyValues[i];
-    user.properties[key]=value
-    this.updateUser(user)
+  addPropety(table, i) {
+    this.updateUser(table, "update", i);
   }
 
   deleteProperty(table, i) {
-    var user = this.props.user;
-    var key = this.state.propertyKeys;
-    delete user.properties[key[i]]
-    this.updateUser(user)
-    this.updateTable(Object.keys(user.properties),Object.values(user.properties))
+    this.updateUser(table, "delete", i);
+    table = Setting.deleteRow(table, i);
+    this.updateTable(table);
   }
-  
-  updateUser(user){
-    UserBackend.updateUser(user.owner, user.name, user).then(res=>{
-      if(res.status === "ok"){
-        this.setState({editingIndex: "", oldPropertyKey: "", oldPropertyValue: "" ,add: false});
-        if(res.data !== "Affected"){
+
+  updateUser(table, method, i) {
+    const user = this.props.user;
+    if (method === "delete") {
+      delete user.properties[table[i].key];
+    }
+    if (method === "update") {
+      user.properties[table[i].key] = table[i].value;
+    }
+    UserBackend.updateUser(user.owner, user.name, user).then(res => {
+      if (res.status === "ok") {
+        this.setState({editingIndex: "", oldPropertyKey: "", oldPropertyValue: "", add: false});
+        if (res.data !== "Affected") {
           Setting.showMessage("info", "Repeated property");
-        }else{
+        } else {
           Setting.showMessage("success", "Success");
-        } 
-      }else{
-        Setting.showMessage("error", "Failed to add: ${res.msg}")
+        }
+      } else {
+        Setting.showMessage("error", "Failed to add: ${res.msg}");
       }
     });
   }
@@ -130,22 +127,22 @@ class PropertyTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: "Key",
+        title: "Keys",
         dataIndex: "key",
         width: "100px",
         render: (text, record, index) => {
           const editing = this.isEditing(index);
           return (
-            editing&&this.state.add ?
+            editing && this.state.add ?
               <Input value={text} onChange={e => {
-                this.updateField(table, index, "Keys", e.target.value);
+                this.updateField(table, index, "key", e.target.value);
               }} />
-            : table[index]
+              : text
           );
         },
       },
       {
-        title: "Value",
+        title: "Values",
         dataIndex: "value",
         width: "100px",
         render: (text, record, index) => {
@@ -153,9 +150,9 @@ class PropertyTable extends React.Component {
           return (
             editing ?
               <Input value={text} onChange={e => {
-                this.updateField(table, index, "Values", e.target.value);
+                this.updateField(table, index, "value", e.target.value);
               }} />
-              : this.state.propertyValues[index]
+              : text
           );
         },
       },
@@ -185,14 +182,15 @@ class PropertyTable extends React.Component {
             </div>
           );
         },
-      }];
+      },
+    ];
 
     return (
       <Table
         pagination={{
           defaultPageSize: 10,
         }}
-        columns={columns} dataSource={table} rowKey="index" size="middle" bordered
+        columns={columns} dataSource={table} rowKey="key" size="middle" bordered
         loading={this.state.loading}
         title={() => (
           <div>
@@ -206,11 +204,11 @@ class PropertyTable extends React.Component {
   render() {
     return (<>
       {
-        this.renderTable(this.state.propertyKeys)
+        this.renderTable(this.state.properties)
       }
     </>
     );
   }
 }
 
-export default PropertyTable;
+export default PolicyTable;

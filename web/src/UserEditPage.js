@@ -28,9 +28,8 @@ import SamlWidget from "./common/SamlWidget";
 import SelectRegionBox from "./SelectRegionBox";
 import WebAuthnCredentialTable from "./WebauthnCredentialTable";
 import ManagedAccountTable from "./ManagedAccountTable";
-import PropertyTable from "./PropertyTable"
+import PropertyTable from "./common/PropertyTable";
 
-import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/javascript/javascript");
