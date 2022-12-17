@@ -262,6 +262,7 @@ func initDefinedModel(model *Model) {
 	if existed != nil {
 		return
 	}
+	model.CreatedTime = util.GetCurrentTime()
 	AddModel(model)
 }
 
@@ -270,6 +271,7 @@ func initDefinedPermission(permission *Permission) {
 	if existed != nil {
 		return
 	}
+	permission.CreatedTime = util.GetCurrentTime()
 	AddPermission(permission)
 }
 
@@ -278,6 +280,7 @@ func initDefinedPayment(payment *Payment) {
 	if existed != nil {
 		return
 	}
+	payment.CreatedTime = util.GetCurrentTime()
 	AddPayment(payment)
 }
 
@@ -286,6 +289,7 @@ func initDefinedProduct(product *Product) {
 	if existed != nil {
 		return
 	}
+	product.CreatedTime = util.GetCurrentTime()
 	AddProduct(product)
 }
 
@@ -294,6 +298,7 @@ func initDefinedResource(resource *Resource) {
 	if existed != nil {
 		return
 	}
+	resource.CreatedTime = util.GetCurrentTime()
 	AddResource(resource)
 }
 
@@ -302,6 +307,7 @@ func initDefinedRole(role *Role) {
 	if existed != nil {
 		return
 	}
+	role.CreatedTime = util.GetCurrentTime()
 	AddRole(role)
 }
 
@@ -310,6 +316,7 @@ func initDefinedSyncer(syncer *Syncer) {
 	if existed != nil {
 		return
 	}
+	syncer.CreatedTime = util.GetCurrentTime()
 	AddSyncer(syncer)
 }
 
@@ -318,6 +325,7 @@ func initDefinedToken(token *Token) {
 	if existed != nil {
 		return
 	}
+	token.CreatedTime = util.GetCurrentTime()
 	AddToken(token)
 }
 
@@ -326,5 +334,6 @@ func initDefinedWebhook(webhook *Webhook) {
 	if existed != nil {
 		return
 	}
+	webhook.CreatedTime = util.GetCurrentTime()
 	AddWebhook(webhook)
 }
