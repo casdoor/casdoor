@@ -256,6 +256,8 @@ func (idp *DingTalkIdProvider) isUserInOrg(unionId string) (bool, error) {
 	}
 	if data.ErrCode == 60121 {
 		return false, fmt.Errorf("the user is not found in the organization where clientId and clientSecret belong")
+	} else if data.ErrCode != 0 {
+		return false, fmt.Errorf(data.ErrMessage)
 	}
 	return true, nil
 }
