@@ -169,6 +169,10 @@ func GetToken(id string) *Token {
 	return getToken(owner, name)
 }
 
+func (token *Token) GetId() string {
+	return fmt.Sprintf("%s/%s", token.Owner, token.Name)
+}
+
 func UpdateToken(id string, token *Token) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if getToken(owner, name) == nil {

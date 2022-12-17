@@ -156,5 +156,187 @@
       "autoSync": 0,
       "lastSync": ""
     }
+  ],
+  "models": [
+    {
+      "owner": "",
+      "name": "",
+      "modelText": "",
+      "displayName": ""
+    }
+  ],
+  "permissions": [
+    {
+      "actions": [
+        ""
+      ],
+      "displayName": "",
+      "effect": "",
+      "isEnabled": true,
+      "model": "",
+      "name": "",
+      "owner": "",
+      "resourceType": "",
+      "resources": [
+        ""
+      ],
+      "roles": [
+        ""
+      ],
+      "users": [
+        ""
+      ]
+    }
+  ],
+  "payments": [
+    {
+      "currency": "",
+      "detail": "",
+      "displayName": "",
+      "invoiceRemark": "",
+      "invoiceTaxId": "",
+      "invoiceTitle": "",
+      "invoiceType": "",
+      "invoiceUrl": "",
+      "message": "",
+      "name": "",
+      "organization": "",
+      "owner": "",
+      "payUrl": "",
+      "personEmail": "",
+      "personIdCard": "",
+      "personName": "",
+      "personPhone": "",
+      "price": 0,
+      "productDisplayName": "",
+      "productName": "",
+      "provider": "",
+      "returnUrl": "",
+      "state": "",
+      "tag": "",
+      "type": "",
+      "user": ""
+    }
+  ],
+  "products": [
+    {
+      "currency": "",
+      "detail": "",
+      "displayName": "",
+      "image": "",
+      "name": "",
+      "owner": "",
+      "price": 0,
+      "providers": [
+        ""
+      ],
+      "quantity": 0,
+      "returnUrl": "",
+      "sold": 0,
+      "state": "",
+      "tag": ""
+    }
+  ],
+  "resources": [
+    {
+      "owner": "",
+      "name": "",
+      "user": "",
+      "provider": "",
+      "application": "",
+      "tag": "",
+      "parent": "",
+      "fileName": "",
+      "fileType": "",
+      "fileFormat": "",
+      "url": "",
+      "description": ""
+    }
+  ],
+  "roles": [
+    {
+      "displayName": "",
+      "isEnabled": true,
+      "name": "",
+      "owner": "",
+      "roles": [
+        ""
+      ],
+      "users": [
+        ""
+      ]
+    }
+  ],
+  "syncers": [
+    {
+      "affiliationTable": "",
+      "avatarBaseUrl": "",
+      "database": "",
+      "databaseType": "",
+      "errorText": "",
+      "host": "",
+      "isEnabled": true,
+      "name": "",
+      "organization": "",
+      "owner": "",
+      "password": "",
+      "port": 0,
+      "syncInterval": 0,
+      "table": "",
+      "tableColumns": [
+        {
+          "casdoorName": "",
+          "isHashed": true,
+          "name": "",
+          "type": "",
+          "values": [
+            ""
+          ]
+        }
+      ],
+      "tablePrimaryKey": "",
+      "type": "",
+      "user": ""
+    }
+  ],
+  "Token": [
+    {
+      "accessToken": "",
+      "application": "",
+      "code": "",
+      "codeChallenge": "",
+      "codeExpireIn": 0,
+      "codeIsUsed": true,
+      "createdTime": "",
+      "expiresIn": 0,
+      "name": "",
+      "organization": "",
+      "owner": "",
+      "refreshToken": "",
+      "scope": "",
+      "tokenType": "",
+      "user": ""
+    }
+  ],
+  "webhooks": [
+    {
+      "contentType": "",
+      "events": [
+        ""
+      ],
+      "headers": [
+        {
+          "name": "",
+          "value": ""
+        }
+      ],
+      "isEnabled": true,
+      "isUserExtended": true,
+      "method": "",
+      "name": "",
+      "organization": "",
+      "owner": "",
+      "url": ""
+    }
   ]
 }
