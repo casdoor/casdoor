@@ -26,6 +26,7 @@ class PolicyTable extends React.Component {
     const properties = [];
     for (let i = 0; i < keys.length; i++) {
       const property = new Object();
+      property.index = crypto.randomUUID();
       property.key = keys[i];
       property.value = this.props.properties[keys[i]];
       properties[i] = property;
@@ -36,8 +37,15 @@ class PolicyTable extends React.Component {
       editingIndex: "",
       oldProperty: "",
       add: false,
+      page: 1,
     };
   }
+
+  getTrueIndex = (index) => {
+    const pageSize = 10;
+    index = (this.state.page - 1) * pageSize + index;
+    return index;
+  };
 
   isEditing = (index) => {
     return index === this.state.editingIndex;
@@ -48,6 +56,7 @@ class PolicyTable extends React.Component {
   };
 
   cancel = (table, index) => {
+    index = this.getTrueIndex(index);
     Object.keys(table[index]).forEach((key) => {
       table[index][key] = this.state.oldProperty[key];
     });
@@ -64,15 +73,17 @@ class PolicyTable extends React.Component {
   }
 
   updateField(table, index, key, value) {
+    index = this.getTrueIndex(index);
     table[index][key] = value;
     this.updateTable(table);
   }
 
   addRow(table) {
-    const row = {};
+    const row = {index: crypto.randomUUID()};
     if (table === undefined) {
       table = [];
     }
+    this.setState({page: 1});
     table = Setting.addRow(table, row, "top");
     this.updateTable(table);
     this.edit(row, 0);
@@ -85,6 +96,7 @@ class PolicyTable extends React.Component {
   }
 
   save(table, i) {
+    i = this.getTrueIndex(i);
     this.state.add ? this.addPropety(table, i) : this.updateProperty(table, i);
   }
 
@@ -97,6 +109,7 @@ class PolicyTable extends React.Component {
   }
 
   deleteProperty(table, i) {
+    i = this.getTrueIndex(i);
     this.updateUser(table, "delete", i);
     table = Setting.deleteRow(table, i);
     this.updateTable(table);
@@ -189,8 +202,12 @@ class PolicyTable extends React.Component {
       <Table
         pagination={{
           defaultPageSize: 10,
+          onChange: (page) => {
+            this.setState({page: page});
+          },
+          current: this.state.page,
         }}
-        columns={columns} dataSource={table} rowKey="key" size="middle" bordered
+        columns={columns} dataSource={table} rowKey="index" size="middle" bordered
         loading={this.state.loading}
         title={() => (
           <div>
