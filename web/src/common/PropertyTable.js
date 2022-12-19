@@ -189,7 +189,7 @@ class PolicyTable extends React.Component {
               <Tooltip placement="topLeft" title="Edit">
                 <Button disabled={this.state.editingIndex !== ""} style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => this.edit(record, index)} />
               </Tooltip>
-              <Tooltip placement="topLeft" title="Delete">
+              <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
                 <Button disabled={this.state.editingIndex !== ""} style={{marginRight: "5px"}} icon={<DeleteOutlined />} size="small" onClick={() => this.deleteProperty(table, index)} />
               </Tooltip>
             </div>
