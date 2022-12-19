@@ -178,7 +178,7 @@ class PolicyTable extends React.Component {
           return editable ? (
             <span>
               <Button style={{marginRight: 8}} onClick={() => this.save(table, index)}>
-              Save
+              {i18next.t("general:Save")}
               </Button>
               <Popconfirm title="Sure to cancel?" onConfirm={() => this.cancel(table, index)}>
                 <a>Cancel</a>
