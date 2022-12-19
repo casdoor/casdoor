@@ -299,7 +299,7 @@
       "user": ""
     }
   ],
-  "Token": [
+  "tokens": [
     {
       "accessToken": "",
       "application": "",
