@@ -181,7 +181,7 @@ class PolicyTable extends React.Component {
                 {i18next.t("general:Save")}
               </Button>
               <Popconfirm title={i18next.t("general:Cancel")} onConfirm={() => this.cancel(table, index)}>
-                <a>Cancel</a>
+                <a>{i18next.t("general:Cancel")}</a>
               </Popconfirm>
             </span>
           ) : (
