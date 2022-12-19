@@ -127,12 +127,12 @@ class PolicyTable extends React.Component {
       if (res.status === "ok") {
         this.setState({editingIndex: "", oldPropertyKey: "", oldPropertyValue: "", add: false});
         if (res.data !== "Affected") {
-          Setting.showMessage("info", "Repeated property");
+          Setting.showMessage("info", i18next.t("adapter:Failed to add"));
         } else {
-          Setting.showMessage("success", "Success");
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
         }
       } else {
-        Setting.showMessage("error", "Failed to add: ${res.msg}");
+        Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
       }
     });
   }
