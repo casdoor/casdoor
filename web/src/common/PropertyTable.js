@@ -178,18 +178,18 @@ class PolicyTable extends React.Component {
           return editable ? (
             <span>
               <Button style={{marginRight: 8}} onClick={() => this.save(table, index)}>
-              Save
+                {i18next.t("general:Save")}
               </Button>
-              <Popconfirm title="Sure to cancel?" onConfirm={() => this.cancel(table, index)}>
+              <Popconfirm title={i18next.t("general:Cancel")} onConfirm={() => this.cancel(table, index)}>
                 <a>Cancel</a>
               </Popconfirm>
             </span>
           ) : (
             <div>
-              <Tooltip placement="topLeft" title="Edit">
+              <Tooltip placement="topLeft" title={i18next.t("general:Edit")}>
                 <Button disabled={this.state.editingIndex !== ""} style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => this.edit(record, index)} />
               </Tooltip>
-              <Tooltip placement="topLeft" title="Delete">
+              <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
                 <Button disabled={this.state.editingIndex !== ""} style={{marginRight: "5px"}} icon={<DeleteOutlined />} size="small" onClick={() => this.deleteProperty(table, index)} />
               </Tooltip>
             </div>
