@@ -681,6 +681,7 @@ export function getProviderTypeOptions(category) {
         {id: "Bilibili", name: "Bilibili"},
         {id: "Okta", name: "Okta"},
         {id: "Douyin", name: "Douyin"},
+        {id: "Line", name: "Line"},
         {id: "Custom", name: "Custom"},
       ]
     );
