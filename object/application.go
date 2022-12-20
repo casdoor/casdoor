@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-	"net/url"
 	"regexp"
 	"strings"
 
@@ -354,52 +353,26 @@ func (application *Application) GetId() string {
 	return fmt.Sprintf("%s/%s", application.Owner, application.Name)
 }
 
-func CheckRedirectUriValid(application *Application, redirectUri string) bool {
-	validUri := false
-	for _, tmpUri := range application.RedirectUris {
-		tmpUriRegex := regexp.MustCompile(tmpUri)
-		if tmpUriRegex.MatchString(redirectUri) || strings.Contains(redirectUri, tmpUri) {
-			validUri = true
+func (application *Application) IsRedirectUriValid(redirectUri string) bool {
+	isValid := false
+	for _, targetUri := range application.RedirectUris {
+		targetUriRegex := regexp.MustCompile(targetUri)
+		if targetUriRegex.MatchString(redirectUri) || strings.Contains(redirectUri, targetUri) {
+			isValid = true
 			break
 		}
 	}
-	return validUri
+	return isValid
 }
 
-func IsAllowOrigin(origin string) bool {
-	allowOrigin := false
-	originUrl, err := url.Parse(origin)
-	if err != nil {
-		return false
-	}
-
-	rows, err := adapter.Engine.Cols("redirect_uris").Rows(&Application{})
-	if err != nil {
-		panic(err)
-	}
-
-	application := Application{}
-	for rows.Next() {
-		err := rows.Scan(&application)
-		if err != nil {
-			panic(err)
-		}
-		for _, tmpRedirectUri := range application.RedirectUris {
-			u1, err := url.Parse(tmpRedirectUri)
-			if err != nil {
-				continue
-			}
-			if u1.Scheme == originUrl.Scheme && u1.Host == originUrl.Host {
-				allowOrigin = true
-				break
-			}
-		}
-		if allowOrigin {
-			break
+func IsOriginAllowed(origin string) bool {
+	applications := GetApplications("")
+	for _, application := range applications {
+		if application.IsRedirectUriValid(origin) {
+			return true
 		}
 	}
-
-	return allowOrigin
+	return false
 }
 
 func getApplicationMap(organization string) map[string]*Application {

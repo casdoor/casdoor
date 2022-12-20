@@ -240,8 +240,8 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 
 	// verify samlRequest
-	if valid := CheckRedirectUriValid(application, authnRequest.Issuer.Url); !valid {
-		return "", "", fmt.Errorf("err: invalid issuer url")
+	if isValid := application.IsRedirectUriValid(authnRequest.Issuer.Url); !isValid {
+		return "", "", fmt.Errorf("err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", authnRequest.Issuer.Url)
 	}
 
 	// get certificate string

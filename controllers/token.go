@@ -261,7 +261,7 @@ func (c *ApiController) TokenLogout() {
 	flag, application := object.DeleteTokenByAccessToken(token)
 	redirectUri := c.Input().Get("post_logout_redirect_uri")
 	state := c.Input().Get("state")
-	if application != nil && object.CheckRedirectUriValid(application, redirectUri) {
+	if application != nil && application.IsRedirectUriValid(redirectUri) {
 		c.Ctx.Redirect(http.StatusFound, redirectUri+"?state="+state)
 		return
 	}

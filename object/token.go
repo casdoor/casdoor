@@ -18,7 +18,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/i18n"
@@ -253,14 +252,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		return i18n.Translate(lang, "token:Invalid client_id"), nil
 	}
 
-	validUri := false
-	for _, tmpUri := range application.RedirectUris {
-		if strings.Contains(redirectUri, tmpUri) {
-			validUri = true
-			break
-		}
-	}
-	if !validUri {
+	if !application.IsRedirectUriValid(redirectUri) {
 		return fmt.Sprintf(i18n.Translate(lang, "token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), redirectUri), application
 	}
 
