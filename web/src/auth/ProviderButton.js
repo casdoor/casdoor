@@ -39,6 +39,7 @@ import SteamLoginButton from "./SteamLoginButton";
 import BilibiliLoginButton from "./BilibiliLoginButton";
 import OktaLoginButton from "./OktaLoginButton";
 import DouyinLoginButton from "./DouyinLoginButton";
+import LineLoginButton from "./LineLoginButton";
 import * as AuthBackend from "./AuthBackend";
 import {getEvent} from "./Util";
 import {Modal} from "antd";
@@ -93,6 +94,8 @@ function getSigninButton(type) {
     return <OktaLoginButton text={text} align={"center"} />;
   } else if (type === "Douyin") {
     return <DouyinLoginButton text={text} align={"center"} />;
+  } else if (type === "Line") {
+    return <LineLoginButton text={text} align={"center"} />;
   }
 
   return text;

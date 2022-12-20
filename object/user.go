@@ -102,6 +102,7 @@ type User struct {
 	Bilibili string `xorm:"bilibili varchar(100)" json:"bilibili"`
 	Okta     string `xorm:"okta varchar(100)" json:"okta"`
 	Douyin   string `xorm:"douyin varchar(100)" json:"douyin"`
+	Line     string `xorm:"line varchar(100)" json:"line"`
 	Custom   string `xorm:"custom varchar(100)" json:"custom"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
