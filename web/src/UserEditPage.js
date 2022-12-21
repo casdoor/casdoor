@@ -116,7 +116,15 @@ class UserEditPage extends React.Component {
     // if ([].includes(key)) {
     //   value = Setting.myParseInt(value);
     // }
-    return value;
+    const obj = new Object();
+    if (["properties"].includes(key)) {
+      for (let i = 0; i < value.length; i++) {
+        if (value[i].key !== null && value[i].value !== null) {
+          obj[value[i].key] = value[i].value;
+        }
+      }
+    }
+    return obj;
   }
 
   updateUserField(key, value) {
@@ -493,7 +501,7 @@ class UserEditPage extends React.Component {
             {i18next.t("user:Properties")}:
           </Col>
           <Col span={22} >
-            <PropertyTable properties={this.state.user.properties} user={this.state.user} />
+            <PropertyTable properties={this.state.user.properties} onUpdateTable={(value) => {this.updateUserField("properties", value);}} />
           </Col>
         </Row>
       );

@@ -13,10 +13,9 @@
 // limitations under the License.
 
 import React from "react";
-import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
-import {Button, Input, Popconfirm, Table, Tooltip} from "antd";
+import {DeleteOutlined} from "@ant-design/icons";
+import {Button, Input, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
-import * as UserBackend from "../backend/UserBackend";
 import i18next from "i18next";
 
 class PolicyTable extends React.Component {
@@ -34,107 +33,31 @@ class PolicyTable extends React.Component {
     this.state = {
       properties: properties,
       loading: false,
-      editingIndex: "",
-      oldProperty: "",
-      add: false,
-      page: 1,
     };
   }
 
-  getTrueIndex = (index) => {
-    const pageSize = 10;
-    index = (this.state.page - 1) * pageSize + index;
-    return index;
-  };
-
-  isEditing = (index) => {
-    return index === this.state.editingIndex;
-  };
-
-  edit = (record, index) => {
-    this.setState({editingIndex: index, oldProperty: Setting.deepCopy(record)});
-  };
-
-  cancel = (table, index) => {
-    index = this.getTrueIndex(index);
-    Object.keys(table[index]).forEach((key) => {
-      table[index][key] = this.state.oldProperty[key];
-    });
-    this.updateTable(table);
-    this.setState({editingIndex: "", oldProperty: ""});
-    if (this.state.add) {
-      this.deleteRow(this.state.properties, index);
-      this.setState({add: false});
-    }
-  };
-
   updateTable(table) {
     this.setState({properties: table});
+    this.props.onUpdateTable(table);
   }
 
   updateField(table, index, key, value) {
-    index = this.getTrueIndex(index);
     table[index][key] = value;
     this.updateTable(table);
   }
 
   addRow(table) {
     const row = {index: crypto.randomUUID()};
+    table = Setting.addRow(table, row, "top");
     if (table === undefined) {
       table = [];
     }
-    this.setState({page: 1});
-    table = Setting.addRow(table, row, "top");
     this.updateTable(table);
-    this.edit(row, 0);
-    this.setState({add: true});
   }
 
   deleteRow(table, i) {
     table = Setting.deleteRow(table, i);
     this.updateTable(table);
-  }
-
-  save(table, i) {
-    i = this.getTrueIndex(i);
-    this.state.add ? this.addPropety(table, i) : this.updateProperty(table, i);
-  }
-
-  updateProperty(table, i) {
-    this.updateUser(table, "update", i);
-  }
-
-  addPropety(table, i) {
-    this.updateUser(table, "update", i);
-  }
-
-  deleteProperty(table, i) {
-    i = this.getTrueIndex(i);
-    this.updateUser(table, "delete", i);
-    table = Setting.deleteRow(table, i);
-    this.updateTable(table);
-  }
-
-  updateUser(table, method, i) {
-    const user = this.props.user;
-    if (method === "delete") {
-      delete user.properties[table[i].key];
-    }
-    if (method === "update") {
-      user.properties[table[i].key] = table[i].value;
-    }
-    UserBackend.updateUser(user.owner, user.name, user).then(res => {
-      if (res.status === "ok") {
-        this.setState({editingIndex: "", oldPropertyKey: "", oldPropertyValue: "", add: false});
-        if (res.data !== "Affected") {
-          Setting.showMessage("info", i18next.t("adapter:Failed to add"));
-        } else {
-          Setting.showMessage("success", i18next.t("general:Successfully saved"));
-        }
-      } else {
-        Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-      }
-    });
   }
 
   renderTable(table) {
@@ -144,13 +67,10 @@ class PolicyTable extends React.Component {
         dataIndex: "key",
         width: "100px",
         render: (text, record, index) => {
-          const editing = this.isEditing(index);
           return (
-            editing && this.state.add ?
-              <Input value={text} onChange={e => {
-                this.updateField(table, index, "key", e.target.value);
-              }} />
-              : text
+            <Input value={text} onChange={e => {
+              this.updateField(table, index, "key", e.target.value);
+            }} />
           );
         },
       },
@@ -159,40 +79,24 @@ class PolicyTable extends React.Component {
         dataIndex: "value",
         width: "100px",
         render: (text, record, index) => {
-          const editing = this.isEditing(index);
           return (
-            editing ?
-              <Input value={text} onChange={e => {
-                this.updateField(table, index, "value", e.target.value);
-              }} />
-              : text
+            <Input value={text} onChange={e => {
+              this.updateField(table, index, "value", e.target.value);
+            }} />
           );
         },
       },
       {
         title: "Option",
         key: "option",
-        width: "100px",
+        width: "30px",
         render: (text, record, index) => {
-          const editable = this.isEditing(index);
-          return editable ? (
+          return (
             <span>
-              <Button style={{marginRight: 8}} onClick={() => this.save(table, index)}>
-                {i18next.t("general:Save")}
-              </Button>
-              <Popconfirm title={i18next.t("general:Cancel")} onConfirm={() => this.cancel(table, index)}>
-                <a>{i18next.t("general:Cancel")}</a>
-              </Popconfirm>
-            </span>
-          ) : (
-            <div>
-              <Tooltip placement="topLeft" title={i18next.t("general:Edit")}>
-                <Button disabled={this.state.editingIndex !== ""} style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => this.edit(record, index)} />
-              </Tooltip>
               <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
-                <Button disabled={this.state.editingIndex !== ""} style={{marginRight: "5px"}} icon={<DeleteOutlined />} size="small" onClick={() => this.deleteProperty(table, index)} />
+                <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
               </Tooltip>
-            </div>
+            </span>
           );
         },
       },
@@ -200,18 +104,11 @@ class PolicyTable extends React.Component {
 
     return (
       <Table
-        pagination={{
-          defaultPageSize: 10,
-          onChange: (page) => {
-            this.setState({page: page});
-          },
-          current: this.state.page,
-        }}
-        columns={columns} dataSource={table} rowKey="index" size="middle" bordered
+        columns={columns} dataSource={table} rowKey="index" size="middle" bordered pagination={false}
         loading={this.state.loading}
         title={() => (
           <div>
-            <Button disabled={this.state.editingIndex !== ""} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
           </div>
         )}
       />
