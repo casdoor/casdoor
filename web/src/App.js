@@ -55,6 +55,7 @@ import CustomGithubCorner from "./CustomGithubCorner";
 import * as Conf from "./Conf";
 
 import * as Auth from "./auth/Auth";
+import EntryPage from "./EntryPage";
 import ResultPage from "./auth/ResultPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
@@ -68,7 +69,6 @@ import SystemInfo from "./SystemInfo";
 import AdapterListPage from "./AdapterListPage";
 import AdapterEditPage from "./AdapterEditPage";
 import {withTranslation} from "react-i18next";
-import EntryPage from "./EntryPage";
 
 const {Header, Footer, Content} = Layout;
 
@@ -628,11 +628,11 @@ class App extends Component {
 
   isEntryPages() {
     return window.location.pathname.startsWith("/signup") ||
-        window.location.pathname.startsWith("/login") ||
-        window.location.pathname.startsWith("/forget") ||
-        window.location.pathname.startsWith("/prompt") ||
-        window.location.pathname.startsWith("/cas") ||
-        window.location.pathname.startsWith("/auto-signup");
+      window.location.pathname.startsWith("/login") ||
+      window.location.pathname.startsWith("/forget") ||
+      window.location.pathname.startsWith("/prompt") ||
+      window.location.pathname.startsWith("/cas") ||
+      window.location.pathname.startsWith("/auto-signup");
   }
 
   renderPage() {
