@@ -257,7 +257,7 @@ class App extends Component {
         }
       });
   }
-  
+
   onUpdateAccount(account) {
     this.setState({
       account: account,
