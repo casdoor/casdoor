@@ -70,13 +70,14 @@ class ForgetPage extends React.Component {
       return;
     }
 
-    ApplicationBackend.getApplication("admin", this.state.applicationName).then(
-      (application) => {
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
+      .then((application) => {
+        this.onUpdateApplication(application);
         this.setState({
           application: application,
         });
       }
-    );
+      );
   }
 
   getApplicationObj() {
@@ -85,6 +86,10 @@ class ForgetPage extends React.Component {
     } else {
       return this.state.application;
     }
+  }
+
+  onUpdateApplication(application) {
+    this.props.onUpdateApplication(application);
   }
 
   onFormFinish(name, info, forms) {
@@ -492,7 +497,7 @@ class ForgetPage extends React.Component {
     }
 
     return (
-      <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
+      <>
         <CustomGithubCorner />
         <div className="forget-content" style={{padding: Setting.isMobile() ? "0" : null, boxShadow: Setting.isMobile() ? "none" : null}}>
           <Row>
@@ -550,7 +555,7 @@ class ForgetPage extends React.Component {
             </Col>
           </Row>
         </div>
-      </div>
+      </>
     );
   }
 }

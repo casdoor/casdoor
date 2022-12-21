@@ -105,6 +105,7 @@ class SignupPage extends React.Component {
 
     ApplicationBackend.getApplication("admin", applicationName)
       .then((application) => {
+        this.onUpdateApplication(application);
         this.setState({
           application: application,
         });
@@ -147,6 +148,10 @@ class SignupPage extends React.Component {
 
   onUpdateAccount(account) {
     this.props.onUpdateAccount(account);
+  }
+
+  onUpdateApplication(application) {
+    this.props.onUpdateApplication(application);
   }
 
   parseOffset(offset) {
@@ -632,7 +637,7 @@ class SignupPage extends React.Component {
     }
 
     return (
-      <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
+      <>
         <CustomGithubCorner />
         <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
           {Setting.inIframe() || Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
@@ -657,7 +662,7 @@ class SignupPage extends React.Component {
         {
           this.renderModal()
         }
-      </div>
+      </>
     );
   }
 }

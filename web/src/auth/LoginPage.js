@@ -117,6 +117,7 @@ class LoginPage extends React.Component {
     if (this.state.owner === null || this.state.owner === undefined || this.state.owner === "") {
       ApplicationBackend.getApplication("admin", this.state.applicationName)
         .then((application) => {
+          this.onUpdateApplication(application);
           this.setState({
             application: application,
           });
@@ -125,6 +126,7 @@ class LoginPage extends React.Component {
       OrganizationBackend.getDefaultApplication("admin", this.state.owner)
         .then((res) => {
           if (res.status === "ok") {
+            this.onUpdateApplication(res.date);
             this.setState({
               application: res.data,
               applicationName: res.data.name,
@@ -159,6 +161,10 @@ class LoginPage extends React.Component {
 
   onUpdateAccount(account) {
     this.props.onUpdateAccount(account);
+  }
+
+  onUpdateApplication(application) {
+    this.props.onUpdateApplication(application);
   }
 
   parseOffset(offset) {
@@ -795,7 +801,7 @@ class LoginPage extends React.Component {
     }
 
     return (
-      <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
+      <>
         <CustomGithubCorner />
         <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
           {Setting.inIframe() || Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
@@ -827,7 +833,7 @@ class LoginPage extends React.Component {
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 }
