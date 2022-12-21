@@ -250,23 +250,24 @@ class PromptPage extends React.Component {
     }
 
     return (
-      <Card>
-        <div style={{marginTop: "30px", marginBottom: "30px", textAlign: "center"}}>
-          {
-            Setting.renderHelmet(application)
-          }
-          {
-            Setting.renderLogo(application)
-          }
-          {
-            this.renderContent(application)
-          }
-
-          <div style={{marginTop: "50px"}}>
-            <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
+      <div style={{display: "flex", flex: "1", justifyContent: "center"}}>
+        <Card>
+          <div style={{marginTop: "30px", marginBottom: "30px", textAlign: "center"}}>
+            {
+              Setting.renderHelmet(application)
+            }
+            {
+              Setting.renderLogo(application)
+            }
+            {
+              this.renderContent(application)
+            }
+            <div style={{marginTop: "50px"}}>
+              <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
     );
   }
 }
