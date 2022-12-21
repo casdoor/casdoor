@@ -61,19 +61,19 @@ class LoginPage extends React.Component {
     }
   }
 
-  UNSAFE_componentWillMount() {
-    if (this.state.type === "login" || this.state.type === "cas") {
-      this.getApplication();
-    } else if (this.state.type === "code") {
-      this.getApplicationLogin();
-    } else if (this.state.type === "saml") {
-      this.getSamlApplication();
-    } else {
-      Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
-    }
-  }
-
   componentDidMount() {
+    if (this.getApplicationObj() === null) {
+      if (this.state.type === "login" || this.state.type === "cas") {
+        this.getApplication();
+      } else if (this.state.type === "code") {
+        this.getApplicationLogin();
+      } else if (this.state.type === "saml") {
+        this.getSamlApplication();
+      } else {
+        Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
+      }
+    }
+
     Setting.Countries.forEach((country) => {
       new Image().src = `${Setting.StaticBaseUrl}/flag-icons/${country.country}.svg`;
     });
@@ -144,19 +144,15 @@ class LoginPage extends React.Component {
     }
     ApplicationBackend.getApplication(this.state.owner, this.state.applicationName)
       .then((application) => {
+        this.onUpdateApplication(application);
         this.setState({
           application: application,
         });
-      }
-      );
+      });
   }
 
   getApplicationObj() {
-    if (this.props.application !== undefined) {
-      return this.props.application;
-    } else {
-      return this.state.application;
-    }
+    return this.props.application ?? this.state.application;
   }
 
   onUpdateAccount(account) {

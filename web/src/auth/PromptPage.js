@@ -30,7 +30,7 @@ class PromptPage extends React.Component {
     this.state = {
       classes: props,
       type: props.type,
-      applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
+      applicationName: props.applicationName ?? (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
       user: null,
     };
@@ -38,7 +38,9 @@ class PromptPage extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.getUser();
-    this.getApplication();
+    if (this.getApplicationObj() === null) {
+      this.getApplication();
+    }
   }
 
   getUser() {
@@ -67,11 +69,7 @@ class PromptPage extends React.Component {
   }
 
   getApplicationObj() {
-    if (this.props.application !== undefined) {
-      return this.props.application;
-    } else {
-      return this.state.application;
-    }
+    return this.props.application ?? this.state.application;
   }
 
   onUpdateApplication(application) {

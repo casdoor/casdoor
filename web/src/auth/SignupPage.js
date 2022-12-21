@@ -91,10 +91,12 @@ class SignupPage extends React.Component {
       sessionStorage.setItem("signinUrl", signinUrl);
     }
 
-    if (applicationName !== undefined) {
-      this.getApplication(applicationName);
-    } else {
-      Setting.showMessage("error", `Unknown application name: ${applicationName}`);
+    if (this.getApplicationObj() === null) {
+      if (applicationName !== undefined) {
+        this.getApplication(applicationName);
+      } else {
+        Setting.showMessage("error", `Unknown application name: ${applicationName}`);
+      }
     }
   }
 
@@ -129,11 +131,7 @@ class SignupPage extends React.Component {
   }
 
   getApplicationObj() {
-    if (this.props.application !== undefined) {
-      return this.props.application;
-    } else {
-      return this.state.application;
-    }
+    return this.props.application ?? this.state.application;
   }
 
   getTermsofuseContent(url) {
