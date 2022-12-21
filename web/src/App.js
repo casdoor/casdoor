@@ -257,6 +257,12 @@ class App extends Component {
         }
       });
   }
+  
+  onUpdateAccount(account) {
+    this.setState({
+      account: account,
+    });
+  }
 
   handleRightDropdownClick(e) {
     if (e.key === "/account") {
@@ -643,11 +649,7 @@ class App extends Component {
             <Content style={{display: "flex", justifyContent: "center"}}>
               {
                 this.isEntryPages() ?
-                  <EntryPage account={this.state.account} onUpdateAccount={(account) => {
-                    this.setState({
-                      account: account,
-                    });
-                  }} />
+                  <EntryPage account={this.state.account} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />
                   :
                   <Switch>
                     <Route exact path="/callback" component={AuthCallback} />
