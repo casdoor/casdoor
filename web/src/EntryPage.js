@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from "./Setting";
+import React from "react";
 import {Redirect, Route, Switch} from "react-router-dom";
+import {Spin} from "antd";
+import i18next from "i18next";
+import * as Setting from "./Setting";
 import SignupPage from "./auth/SignupPage";
 import SelfLoginPage from "./auth/SelfLoginPage";
 import LoginPage from "./auth/LoginPage";
 import SelfForgetPage from "./auth/SelfForgetPage";
 import ForgetPage from "./auth/ForgetPage";
-import React from "react";
 import PromptPage from "./auth/PromptPage";
 import CasLogout from "./auth/CasLogout";
-import {Spin} from "antd";
-import i18next from "i18next";
 
 class EntryPage extends React.Component {
   constructor(props) {
@@ -40,6 +40,7 @@ class EntryPage extends React.Component {
       return component;
     }
   }
+
   renderLoginIfNotLoggedIn(component) {
     if (this.props.account === null) {
       sessionStorage.setItem("from", window.location.pathname);
