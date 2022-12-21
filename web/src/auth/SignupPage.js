@@ -637,7 +637,7 @@ class SignupPage extends React.Component {
     }
 
     return (
-      <>
+      <React.Fragment>
         <CustomGithubCorner />
         <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
           {Setting.inIframe() || Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
@@ -662,7 +662,7 @@ class SignupPage extends React.Component {
         {
           this.renderModal()
         }
-      </>
+      </React.Fragment>
     );
   }
 }

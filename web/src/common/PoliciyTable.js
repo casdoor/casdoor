@@ -293,14 +293,15 @@ class PolicyTable extends React.Component {
   }
 
   render() {
-    return (<>
-      <Button type="primary" disabled={this.state.editingIndex !== ""} onClick={() => {this.synPolicies();}}>
-        {i18next.t("adapter:Sync")}
-      </Button>
-      {
-        this.renderTable(this.state.policyLists)
-      }
-    </>
+    return (
+      <React.Fragment>
+        <Button type="primary" disabled={this.state.editingIndex !== ""} onClick={() => {this.synPolicies();}}>
+          {i18next.t("adapter:Sync")}
+        </Button>
+        {
+          this.renderTable(this.state.policyLists)
+        }
+      </React.Fragment>
     );
   }
 }

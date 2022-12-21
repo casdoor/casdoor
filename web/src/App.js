@@ -61,7 +61,6 @@ import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from "./SelectLanguageBox";
 import i18next from "i18next";
-import PromptPage from "./auth/PromptPage";
 import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
 import SamlCallback from "./auth/SamlCallback";
 import CasLogout from "./auth/CasLogout";
@@ -259,12 +258,6 @@ class App extends Component {
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);
         }
       });
-  }
-
-  onUpdateAccount(account) {
-    this.setState({
-      account: account,
-    });
   }
 
   handleRightDropdownClick(e) {
@@ -616,7 +609,7 @@ class App extends Component {
     // https://www.freecodecamp.org/neyarnws/how-to-keep-your-footer-where-it-belongs-59c6aa05c59c/
 
     return (
-      <>
+      <React.Fragment>
         {!this.state.account ? null : <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />}
         <Footer id="footer" style={
           {
@@ -627,7 +620,7 @@ class App extends Component {
         }>
           Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={`${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`} /></a>
         </Footer>
-      </>
+      </React.Fragment>
     );
   }
 
@@ -637,19 +630,23 @@ class App extends Component {
       window.location.pathname.startsWith("/callback") ||
       window.location.pathname.startsWith("/prompt") ||
       window.location.pathname.startsWith("/forget") ||
-      window.location.pathname.startsWith("/cas");
+      window.location.pathname.startsWith("/cas") ||
+      window.location.pathname.startsWith("/auto-signup");
   }
 
   isEntryPages() {
     return window.location.pathname.startsWith("/signup") ||
         window.location.pathname.startsWith("/login") ||
         window.location.pathname.startsWith("/forget") ||
+        window.location.pathname.startsWith("/prompt") ||
         window.location.pathname.startsWith("/auto-signup");
   }
 
   renderPage() {
     const onUpdateAccount = (account) => {
-      this.onUpdateAccount(account);
+      this.setState({
+        account: account,
+      });
     };
 
     if (this.isDoorPages()) {
@@ -666,8 +663,6 @@ class App extends Component {
                     <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage type={"cas"} mode={"signup"} account={this.state.account} {...props} />);}} />
                     <Route exact path="/callback" component={AuthCallback} />
                     <Route exact path="/callback/saml" component={SamlCallback} />
-                    <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)} />
-                    <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} onUpdateAccount={onUpdateAccount} {...props} />)} />
                     <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
                       extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
                   </Switch>

@@ -126,7 +126,7 @@ class LoginPage extends React.Component {
       OrganizationBackend.getDefaultApplication("admin", this.state.owner)
         .then((res) => {
           if (res.status === "ok") {
-            this.onUpdateApplication(res.date);
+            this.onUpdateApplication(res.data);
             this.setState({
               application: res.data,
               applicationName: res.data.name,
@@ -579,12 +579,12 @@ class LoginPage extends React.Component {
           <span style={{float: "right"}}>
             {
               !application.enableSignUp ? null : (
-                <>
+                <React.Fragment>
                   {i18next.t("login:No account?")}&nbsp;
                   {
                     Setting.renderSignupLink(application, i18next.t("login:sign up now"))
                   }
-                </>
+                </React.Fragment>
               )
             }
           </span>
@@ -801,7 +801,7 @@ class LoginPage extends React.Component {
     }
 
     return (
-      <>
+      <React.Fragment>
         <CustomGithubCorner />
         <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
           {Setting.inIframe() || Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
@@ -833,7 +833,7 @@ class LoginPage extends React.Component {
             </div>
           </div>
         </div>
-      </>
+      </React.Fragment>
     );
   }
 }

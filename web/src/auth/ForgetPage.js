@@ -497,7 +497,7 @@ class ForgetPage extends React.Component {
     }
 
     return (
-      <>
+      <React.Fragment>
         <CustomGithubCorner />
         <div className="forget-content" style={{padding: Setting.isMobile() ? "0" : null, boxShadow: Setting.isMobile() ? "none" : null}}>
           <Row>
@@ -555,7 +555,7 @@ class ForgetPage extends React.Component {
             </Col>
           </Row>
         </div>
-      </>
+      </React.Fragment>
     );
   }
 }

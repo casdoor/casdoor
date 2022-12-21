@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Result, Row} from "antd";
+import {Button, Card, Col, Result, Row} from "antd";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
 import * as AuthBackend from "./AuthBackend";
@@ -59,6 +59,7 @@ class PromptPage extends React.Component {
 
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
+        this.onUpdateApplication(application);
         this.setState({
           application: application,
         });
@@ -71,6 +72,10 @@ class PromptPage extends React.Component {
     } else {
       return this.state.application;
     }
+  }
+
+  onUpdateApplication(application) {
+    this.props.onUpdateApplication(application);
   }
 
   parseUserField(key, value) {
@@ -122,7 +127,7 @@ class PromptPage extends React.Component {
 
   renderContent(application) {
     return (
-      <div style={{width: "400px"}}>
+      <div style={{width: "500px"}}>
         {
           this.renderAffiliation(application)
         }
@@ -247,28 +252,23 @@ class PromptPage extends React.Component {
     }
 
     return (
-      <Row>
-        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-          <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center"}}>
-            {
-              Setting.renderHelmet(application)
-            }
-            {
-              Setting.renderLogo(application)
-            }
-            {
-              this.renderContent(application)
-            }
-            <Row style={{margin: 10}}>
-              <Col span={18}>
-              </Col>
-            </Row>
-            <div style={{marginTop: "50px"}}>
-              <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
-            </div>
+      <Card>
+        <div style={{marginTop: "30px", marginBottom: "30px", textAlign: "center"}}>
+          {
+            Setting.renderHelmet(application)
+          }
+          {
+            Setting.renderLogo(application)
+          }
+          {
+            this.renderContent(application)
+          }
+
+          <div style={{marginTop: "50px"}}>
+            <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
           </div>
-        </Col>
-      </Row>
+        </div>
+      </Card>
     );
   }
 }
