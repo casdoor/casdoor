@@ -56,14 +56,12 @@ import * as Conf from "./Conf";
 
 import * as Auth from "./auth/Auth";
 import ResultPage from "./auth/ResultPage";
-import LoginPage from "./auth/LoginPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from "./SelectLanguageBox";
 import i18next from "i18next";
 import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
 import SamlCallback from "./auth/SamlCallback";
-import CasLogout from "./auth/CasLogout";
 import ModelListPage from "./ModelListPage";
 import ModelEditPage from "./ModelEditPage";
 import SystemInfo from "./SystemInfo";
@@ -625,13 +623,7 @@ class App extends Component {
   }
 
   isDoorPages() {
-    return window.location.pathname.startsWith("/signup") ||
-      window.location.pathname.startsWith("/login") ||
-      window.location.pathname.startsWith("/callback") ||
-      window.location.pathname.startsWith("/prompt") ||
-      window.location.pathname.startsWith("/forget") ||
-      window.location.pathname.startsWith("/cas") ||
-      window.location.pathname.startsWith("/auto-signup");
+    return this.isEntryPages() || window.location.pathname.startsWith("/callback");
   }
 
   isEntryPages() {
@@ -639,16 +631,11 @@ class App extends Component {
         window.location.pathname.startsWith("/login") ||
         window.location.pathname.startsWith("/forget") ||
         window.location.pathname.startsWith("/prompt") ||
+        window.location.pathname.startsWith("/cas") ||
         window.location.pathname.startsWith("/auto-signup");
   }
 
   renderPage() {
-    const onUpdateAccount = (account) => {
-      this.setState({
-        account: account,
-      });
-    };
-
     if (this.isDoorPages()) {
       return (
         <React.Fragment>
@@ -656,11 +643,13 @@ class App extends Component {
             <Content style={{display: "flex", justifyContent: "center"}}>
               {
                 this.isEntryPages() ?
-                  <EntryPage account={this.state.account} onUpdateAccount={onUpdateAccount} />
+                  <EntryPage account={this.state.account} onUpdateAccount={(account) => {
+                    this.setState({
+                      account: account,
+                    });
+                  }} />
                   :
                   <Switch>
-                    <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout clearAccount={() => this.setState({account: null})} {...props} />)} />
-                    <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage type={"cas"} mode={"signup"} account={this.state.account} {...props} />);}} />
                     <Route exact path="/callback" component={AuthCallback} />
                     <Route exact path="/callback/saml" component={SamlCallback} />
                     <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}

@@ -21,12 +21,15 @@ import SelfForgetPage from "./auth/SelfForgetPage";
 import ForgetPage from "./auth/ForgetPage";
 import React from "react";
 import PromptPage from "./auth/PromptPage";
+import CasLogout from "./auth/CasLogout";
+import {Spin} from "antd";
+import i18next from "i18next";
 
 class EntryPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      application: null,
+      application: undefined,
     };
   }
 
@@ -56,6 +59,7 @@ class EntryPage extends React.Component {
     };
 
     return <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${this.state.application?.formBackgroundUrl})`}}>
+      <Spin spinning={this.state.application === undefined} tip={i18next.t("login:Loading")} />
       <Switch>
         <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} onUpdateApplication={onUpdateApplication} {...props} />)} />
         <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} onUpdateApplication={onUpdateApplication} {...props} />)} />
@@ -69,6 +73,8 @@ class EntryPage extends React.Component {
         <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage onUpdateApplication={onUpdateApplication} {...props} />)} />
         <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage {...this.props} onUpdateApplication={onUpdateApplication} {...props} />)} />
         <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage {...this.props} onUpdateApplication={onUpdateApplication} {...props} />)} />
+        <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout {...this.props} {...props} />)} />
+        <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage {...this.props} type={"cas"} mode={"signup"} {...props} />);}} />
       </Switch>
     </div>;
   }

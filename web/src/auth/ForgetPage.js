@@ -76,8 +76,7 @@ class ForgetPage extends React.Component {
         this.setState({
           application: application,
         });
-      }
-      );
+      });
   }
 
   getApplicationObj() {
