@@ -95,7 +95,7 @@ class SamlCallback extends React.Component {
 
   render() {
     return (
-      <div style={{textAlign: "center"}}>
+      <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
         {
           (this.state.msg === null) ? (
             <Spin size="large" tip={i18next.t("login:Signing in...")} style={{paddingTop: "10%"}} />

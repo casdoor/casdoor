@@ -193,8 +193,8 @@ class LoginPage extends React.Component {
       values["relayState"] = oAuthParams.relayState;
     }
 
-    if (this.state.application.organization !== null && this.state.application.organization !== undefined) {
-      values["organization"] = this.state.application.organization;
+    if (this.getApplicationObj()?.organization) {
+      values["organization"] = this.getApplicationObj().organization;
     }
   }
   postCodeLoginAction(res) {
@@ -790,7 +790,7 @@ class LoginPage extends React.Component {
     if (this.props.application === undefined && !application.enablePassword && visibleOAuthProviderItems.length === 1) {
       Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signup"));
       return (
-        <div style={{textAlign: "center"}}>
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
           <Spin size="large" tip={i18next.t("login:Signing in...")} style={{paddingTop: "10%"}} />
         </div>
       );
