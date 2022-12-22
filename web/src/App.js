@@ -55,20 +55,14 @@ import CustomGithubCorner from "./CustomGithubCorner";
 import * as Conf from "./Conf";
 
 import * as Auth from "./auth/Auth";
-import SignupPage from "./auth/SignupPage";
+import EntryPage from "./EntryPage";
 import ResultPage from "./auth/ResultPage";
-import LoginPage from "./auth/LoginPage";
-import SelfLoginPage from "./auth/SelfLoginPage";
-import SelfForgetPage from "./auth/SelfForgetPage";
-import ForgetPage from "./auth/ForgetPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import SelectLanguageBox from "./SelectLanguageBox";
 import i18next from "i18next";
-import PromptPage from "./auth/PromptPage";
 import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
 import SamlCallback from "./auth/SamlCallback";
-import CasLogout from "./auth/CasLogout";
 import ModelListPage from "./ModelListPage";
 import ModelEditPage from "./ModelEditPage";
 import SystemInfo from "./SystemInfo";
@@ -619,7 +613,7 @@ class App extends Component {
     // https://www.freecodecamp.org/neyarnws/how-to-keep-your-footer-where-it-belongs-59c6aa05c59c/
 
     return (
-      <>
+      <React.Fragment>
         {!this.state.account ? null : <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />}
         <Footer id="footer" style={
           {
@@ -630,63 +624,57 @@ class App extends Component {
         }>
           Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={`${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`} /></a>
         </Footer>
-      </>
+      </React.Fragment>
     );
   }
 
   isDoorPages() {
+    return this.isEntryPages() || window.location.pathname.startsWith("/callback");
+  }
+
+  isEntryPages() {
     return window.location.pathname.startsWith("/signup") ||
       window.location.pathname.startsWith("/login") ||
-      window.location.pathname.startsWith("/callback") ||
-      window.location.pathname.startsWith("/prompt") ||
       window.location.pathname.startsWith("/forget") ||
-      window.location.pathname.startsWith("/cas");
+      window.location.pathname.startsWith("/prompt") ||
+      window.location.pathname.startsWith("/cas") ||
+      window.location.pathname.startsWith("/auto-signup");
   }
 
   renderPage() {
     if (this.isDoorPages()) {
       return (
-        <>
+        <React.Fragment>
           <Layout id="parent-area">
             <Content style={{display: "flex", justifyContent: "center"}}>
-              <Switch>
-                <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} />)} />
-                <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage account={this.state.account} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />)} />
-                <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage account={this.state.account} {...props} />)} />
-                <Route exact path="/login/:owner" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage account={this.state.account} {...props} />)} />
-                <Route exact path="/auto-signup/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signup"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
-                <Route exact path="/signup/oauth/authorize" render={(props) => <SignupPage account={this.state.account} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
-                <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage account={this.state.account} type={"code"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
-                <Route exact path="/login/saml/authorize/:owner/:applicationName" render={(props) => <LoginPage account={this.state.account} type={"saml"} mode={"signin"} {...props} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />} />
-                <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout clearAccount={() => this.setState({account: null})} {...props} />)} />
-                <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage type={"cas"} mode={"signup"} account={this.state.account} {...props} />);}} />
-                <Route exact path="/callback" component={AuthCallback} />
-                <Route exact path="/callback/saml" component={SamlCallback} />
-                <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...props} />)} />
-                <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...props} />)} />
-                <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} {...props} />)} />
-                <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage account={this.state.account} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} {...props} />)} />
-                <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo {...props} />)} />
-                <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
-                  extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
-              </Switch>
+              {
+                this.isEntryPages() ?
+                  <EntryPage account={this.state.account} onUpdateAccount={(account) => {this.onUpdateAccount(account);}} />
+                  :
+                  <Switch>
+                    <Route exact path="/callback" component={AuthCallback} />
+                    <Route exact path="/callback/saml" component={SamlCallback} />
+                    <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
+                      extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
+                  </Switch>
+              }
             </Content>
             {
               this.renderFooter()
             }
           </Layout>
-        </>
+        </React.Fragment>
       );
     }
 
     return (
-      <>
+      <React.Fragment>
         <FloatButton.BackTop />
         <CustomGithubCorner />
         {
           this.renderContent()
         }
-      </>
+      </React.Fragment>
     );
   }
 

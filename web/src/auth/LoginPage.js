@@ -61,19 +61,19 @@ class LoginPage extends React.Component {
     }
   }
 
-  UNSAFE_componentWillMount() {
-    if (this.state.type === "login" || this.state.type === "cas") {
-      this.getApplication();
-    } else if (this.state.type === "code") {
-      this.getApplicationLogin();
-    } else if (this.state.type === "saml") {
-      this.getSamlApplication();
-    } else {
-      Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
-    }
-  }
-
   componentDidMount() {
+    if (this.getApplicationObj() === null) {
+      if (this.state.type === "login" || this.state.type === "cas") {
+        this.getApplication();
+      } else if (this.state.type === "code") {
+        this.getApplicationLogin();
+      } else if (this.state.type === "saml") {
+        this.getSamlApplication();
+      } else {
+        Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
+      }
+    }
+
     Setting.Countries.forEach((country) => {
       new Image().src = `${Setting.StaticBaseUrl}/flag-icons/${country.country}.svg`;
     });
@@ -117,6 +117,7 @@ class LoginPage extends React.Component {
     if (this.state.owner === null || this.state.owner === undefined || this.state.owner === "") {
       ApplicationBackend.getApplication("admin", this.state.applicationName)
         .then((application) => {
+          this.onUpdateApplication(application);
           this.setState({
             application: application,
           });
@@ -125,6 +126,7 @@ class LoginPage extends React.Component {
       OrganizationBackend.getDefaultApplication("admin", this.state.owner)
         .then((res) => {
           if (res.status === "ok") {
+            this.onUpdateApplication(res.data);
             this.setState({
               application: res.data,
               applicationName: res.data.name,
@@ -142,23 +144,23 @@ class LoginPage extends React.Component {
     }
     ApplicationBackend.getApplication(this.state.owner, this.state.applicationName)
       .then((application) => {
+        this.onUpdateApplication(application);
         this.setState({
           application: application,
         });
-      }
-      );
+      });
   }
 
   getApplicationObj() {
-    if (this.props.application !== undefined) {
-      return this.props.application;
-    } else {
-      return this.state.application;
-    }
+    return this.props.application ?? this.state.application;
   }
 
   onUpdateAccount(account) {
     this.props.onUpdateAccount(account);
+  }
+
+  onUpdateApplication(application) {
+    this.props.onUpdateApplication(application);
   }
 
   parseOffset(offset) {
@@ -191,8 +193,8 @@ class LoginPage extends React.Component {
       values["relayState"] = oAuthParams.relayState;
     }
 
-    if (this.state.application.organization !== null && this.state.application.organization !== undefined) {
-      values["organization"] = this.state.application.organization;
+    if (this.getApplicationObj()?.organization) {
+      values["organization"] = this.getApplicationObj().organization;
     }
   }
   postCodeLoginAction(res) {
@@ -573,12 +575,12 @@ class LoginPage extends React.Component {
           <span style={{float: "right"}}>
             {
               !application.enableSignUp ? null : (
-                <>
+                <React.Fragment>
                   {i18next.t("login:No account?")}&nbsp;
                   {
                     Setting.renderSignupLink(application, i18next.t("login:sign up now"))
                   }
-                </>
+                </React.Fragment>
               )
             }
           </span>
@@ -788,14 +790,14 @@ class LoginPage extends React.Component {
     if (this.props.application === undefined && !application.enablePassword && visibleOAuthProviderItems.length === 1) {
       Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signup"));
       return (
-        <div style={{textAlign: "center"}}>
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
           <Spin size="large" tip={i18next.t("login:Signing in...")} style={{paddingTop: "10%"}} />
         </div>
       );
     }
 
     return (
-      <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
+      <React.Fragment>
         <CustomGithubCorner />
         <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
           {Setting.inIframe() || Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
@@ -827,7 +829,7 @@ class LoginPage extends React.Component {
             </div>
           </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

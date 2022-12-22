@@ -34,12 +34,7 @@ class ForgetPage extends React.Component {
     this.state = {
       classes: props,
       account: props.account,
-      applicationName:
-          props.applicationName !== undefined
-            ? props.applicationName
-            : props.match === undefined
-              ? null
-              : props.match.params.applicationName,
+      applicationName: props.applicationName ?? props.match.params?.applicationName,
       application: null,
       msg: null,
       userId: "",
@@ -57,34 +52,36 @@ class ForgetPage extends React.Component {
     };
   }
 
-  UNSAFE_componentWillMount() {
-    if (this.state.applicationName !== undefined) {
-      this.getApplication();
-    } else {
-      Setting.showMessage("error", i18next.t("forget:Unknown forget type: ") + this.state.type);
+  componentDidMount() {
+    if (this.getApplicationObj() === null) {
+      if (this.state.applicationName !== undefined) {
+        this.getApplication();
+      } else {
+        Setting.showMessage("error", i18next.t("forget:Unknown forget type: ") + this.state.type);
+      }
     }
   }
 
   getApplication() {
-    if (this.state.applicationName === null) {
+    if (this.state.applicationName === undefined) {
       return;
     }
 
-    ApplicationBackend.getApplication("admin", this.state.applicationName).then(
-      (application) => {
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
+      .then((application) => {
+        this.onUpdateApplication(application);
         this.setState({
           application: application,
         });
-      }
-    );
+      });
   }
 
   getApplicationObj() {
-    if (this.props.application !== undefined) {
-      return this.props.application;
-    } else {
-      return this.state.application;
-    }
+    return this.props.application ?? this.state.application;
+  }
+
+  onUpdateApplication(application) {
+    this.props.onUpdateApplication(application);
   }
 
   onFormFinish(name, info, forms) {
@@ -143,7 +140,7 @@ class ForgetPage extends React.Component {
           username: this.state.username,
           name: this.state.name,
           code: forms.step2.getFieldValue("emailCode"),
-          phonePrefix: this.state.application?.organizationObj.phonePrefix,
+          phonePrefix: this.getApplicationObj()?.organizationObj.phonePrefix,
           type: "login",
         }, oAuthParams).then(res => {
           if (res.status === "ok") {
@@ -166,10 +163,10 @@ class ForgetPage extends React.Component {
 
   onFinish(values) {
     values.username = this.state.username;
-    values.userOwner = this.state.application?.organizationObj.name;
+    values.userOwner = this.getApplicationObj()?.organizationObj.name;
     UserBackend.setPassword(values.userOwner, values.username, "", values?.newPassword).then(res => {
       if (res.status === "ok") {
-        Setting.redirectToLoginPage(this.state.application, this.props.history);
+        Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
       } else {
         Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
       }
@@ -356,14 +353,14 @@ class ForgetPage extends React.Component {
               <CountDownInput
                 disabled={this.state.username === "" || this.state.verifyType === ""}
                 method={"forget"}
-                onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(this.state.application), this.state.name]}
+                onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(this.getApplicationObj()), this.state.name]}
                 application={application}
               />
             ) : (
               <CountDownInput
                 disabled={this.state.username === "" || this.state.verifyType === ""}
                 method={"forget"}
-                onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(this.state.application), this.state.name]}
+                onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(this.getApplicationObj()), this.state.name]}
                 application={application}
               />
             )}
@@ -492,7 +489,7 @@ class ForgetPage extends React.Component {
     }
 
     return (
-      <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
+      <React.Fragment>
         <CustomGithubCorner />
         <div className="forget-content" style={{padding: Setting.isMobile() ? "0" : null, boxShadow: Setting.isMobile() ? "none" : null}}>
           <Row>
@@ -550,7 +547,7 @@ class ForgetPage extends React.Component {
             </Col>
           </Row>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }
