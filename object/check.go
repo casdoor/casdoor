@@ -313,8 +313,9 @@ func CheckAccessPermission(userId string, application *Application) (bool, error
 				return true, err
 			}
 			enforcer := getEnforcer(permission)
-			allowed, err = enforcer.Enforce(userId, application.Name, "read")
-			break
+			if allowed, err = enforcer.Enforce(userId, application.Name, "read"); allowed {
+				return allowed, err
+			}
 		}
 	}
 	return allowed, err
