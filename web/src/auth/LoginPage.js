@@ -96,6 +96,7 @@ class LoginPage extends React.Component {
     AuthBackend.getApplicationLogin(oAuthParams)
       .then((res) => {
         if (res.status === "ok") {
+          this.onUpdateApplication(res.data);
           this.setState({
             application: res.data,
           });
