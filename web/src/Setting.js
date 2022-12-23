@@ -799,7 +799,7 @@ export function renderLoginLink(application, text) {
 
 export function redirectToLoginPage(application, history) {
   const loginLink = getLoginLink(application);
-  if (loginLink.indexOf("http://") === 0 || loginLink.indexOf("https://") === 0) {
+  if (loginLink.indexOf("http") === 0 || loginLink.indexOf("https") === 0) {
     openLink(loginLink);
   }
   history.push(loginLink);
