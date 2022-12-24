@@ -102,6 +102,7 @@ class LoginPage extends React.Component {
           });
         } else {
           // Setting.showMessage("error", res.msg);
+          this.onUpdateApplication(null);
           this.setState({
             application: res.data,
             msg: res.msg,
@@ -133,6 +134,7 @@ class LoginPage extends React.Component {
               applicationName: res.data.name,
             });
           } else {
+            this.onUpdateApplication(null);
             Setting.showMessage("error", res.msg);
           }
         });

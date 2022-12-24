@@ -40,6 +40,7 @@ class CasLogout extends React.Component {
         if (res.status === "ok") {
           Setting.showMessage("success", "Logged out successfully");
           this.props.onUpdateAccount(null);
+          this.onUpdateApplication(null);
           const redirectUri = res.data2;
           if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
             Setting.goToLink(redirectUri);
@@ -49,6 +50,7 @@ class CasLogout extends React.Component {
             Setting.goToLinkSoft(this, `/cas/${this.state.owner}/${this.state.applicationName}/login`);
           }
         } else {
+          this.onUpdateApplication(null);
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);
         }
       });
