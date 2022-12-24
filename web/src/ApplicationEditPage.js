@@ -726,7 +726,7 @@ class ApplicationEditPage extends React.Component {
   renderSignupSigninPreview() {
     let signUpUrl = `/signup/${this.state.application.name}`;
     const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
-    const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
+    const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "97%", width: "100%", background: "rgba(0,0,0,0.4)"};
     if (!this.state.application.enablePassword) {
       signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");
     }
@@ -742,15 +742,19 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("application:Copy signup page URL")}
           </Button>
           <br />
-          <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
+          <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", overflow: "auto"}}>
             {
               this.state.application.enablePassword ? (
-                <SignupPage application={this.state.application} />
+                <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
+                  <SignupPage application={this.state.application} preview = "auto" />
+                </div>
               ) : (
-                <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
+                <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
+                  <LoginPage type={"login"} mode={"signup"} application={this.state.application} preview = "auto" />
+                </div>
               )
             }
-            <div style={maskStyle} />
+            <div style={{overflow: "auto", ...maskStyle}} />
           </div>
         </Col>
         <Col span={previewGrid}>
@@ -762,9 +766,11 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("application:Copy signin page URL")}
           </Button>
           <br />
-          <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
-            <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
-            <div style={maskStyle} />
+          <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", overflow: "auto"}}>
+            <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
+              <LoginPage type={"login"} mode={"signin"} application={this.state.application} preview = "auto" />
+            </div>
+            <div style={{overflow: "auto", ...maskStyle}} />
           </div>
         </Col>
       </React.Fragment>

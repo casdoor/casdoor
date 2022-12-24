@@ -637,7 +637,7 @@ class SignupPage extends React.Component {
     return (
       <React.Fragment>
         <CustomGithubCorner />
-        <div className="login-content" style={{margin: this.parseOffset(application.formOffset)}}>
+        <div className="login-content" style={{margin: this.props.preview ?? this.parseOffset(application.formOffset)}}>
           {Setting.inIframe() || Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
           <div className="login-panel" >
             <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
