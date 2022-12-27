@@ -28,7 +28,7 @@ code {
 
 .logo {
   background: url("https://cdn.casbin.org/img/casdoor-logo_1185x256.png");
-  background-size: 130px, 27px;
+  background-size: 130px, 27px !important;
   width: 130px;
   height: 27px;
   margin: 17px 0 16px 15px;

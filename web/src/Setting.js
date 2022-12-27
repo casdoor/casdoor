@@ -569,6 +569,14 @@ export function getAvatarColor(s) {
   return colorList[hash % 4];
 }
 
+export function getLogo(theme) {
+  if (theme === "Dark") {
+    return `${StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
+  } else {
+    return `${StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+  }
+}
+
 export function getLanguageText(text) {
   if (!text.includes("|")) {
     return text;

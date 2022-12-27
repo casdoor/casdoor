@@ -83,6 +83,7 @@ class App extends Component {
       uri: null,
       menuVisible: false,
       themeAlgorithm: null,
+      logo: null,
     };
 
     Setting.initServerUrl();
@@ -103,8 +104,10 @@ class App extends Component {
     } else {
       this.setState({"themeAlgorithm": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["style"]});
     }
+    this.setState({"logo": Setting.getLogo(localStorage.getItem("theme"))});
     addEventListener("themeChange", (e) => {
       this.setState({"themeAlgorithm": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["style"]});
+      this.setState({"logo": Setting.getLogo(localStorage.getItem("theme"))});
     });
   }
 
@@ -557,7 +560,7 @@ class App extends Component {
             {
               Setting.isMobile() ? null : (
                 <Link to={"/"}>
-                  <div className="logo" />
+                  <div className="logo" style={{background: `url(${this.state.logo})`}} />
                 </Link>
               )
             }
@@ -639,7 +642,7 @@ class App extends Component {
             textAlign: "center",
           }
         }>
-          Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={`${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`} /></a>
+          Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
         </Footer>
       </React.Fragment>
     );
