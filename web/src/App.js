@@ -636,8 +636,6 @@ class App extends Component {
         {!this.state.account ? null : <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />}
         <Footer id="footer" style={
           {
-            borderTop: "1px solid #e8e8e8",
-            backgroundColor: "white",
             textAlign: "center",
           }
         }>
