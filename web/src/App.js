@@ -17,7 +17,7 @@ import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
 import {BarsOutlined, DownOutlined, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
-import {Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
+import {Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result, theme} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -82,7 +82,7 @@ class App extends Component {
       account: undefined,
       uri: null,
       menuVisible: false,
-      theme: null,
+      themeAlgorithm: null,
     };
 
     Setting.initServerUrl();
@@ -98,16 +98,13 @@ class App extends Component {
   }
 
   componentDidMount() {
-    if (localStorage.getItem("theme") === null) {
-      this.setState({"theme": {token: {
-        colorPrimary: "rgb(89,54,213)",
-        colorInfo: "rgb(89,54,213)",
-      }}});
+    if (localStorage.getItem("themeAlgorithm") === null) {
+      this.setState({"themeAlgorithm": theme.defaultAlgorithm});
     } else {
-      this.setState({"theme": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["style"]});
+      this.setState({"themeAlgorithm": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["style"]});
     }
     addEventListener("themeChange", (e) => {
-      this.setState({"theme": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["style"]});
+      this.setState({"themeAlgorithm": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["style"]});
     });
   }
 
@@ -481,7 +478,13 @@ class App extends Component {
 
   renderRouter() {
     return (
-      <ConfigProvider theme={this.state.theme}>
+      <ConfigProvider theme={{
+        token: {
+          colorPrimary: "rgb(89,54,213)",
+          colorInfo: "rgb(89,54,213)",
+        },
+        algorithm: this.state.themeAlgorithm,
+      }}>
         <div>
           <Switch>
             <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)} />
@@ -705,7 +708,13 @@ class App extends Component {
           <Helmet>
             <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
           </Helmet>
-          <ConfigProvider theme={this.state.theme}>
+          <ConfigProvider theme={{
+            token: {
+              colorPrimary: "rgb(89,54,213)",
+              colorInfo: "rgb(89,54,213)",
+            },
+            algorithm: this.state.themeAlgorithm,
+          }}>
             {
               this.renderPage()
             }
@@ -721,7 +730,13 @@ class App extends Component {
           <title>{organization.displayName}</title>
           <link rel="icon" href={organization.favicon} />
         </Helmet>
-        <ConfigProvider theme={this.state.theme}>
+        <ConfigProvider theme={{
+          token: {
+            colorPrimary: "rgb(89,54,213)",
+            colorInfo: "rgb(89,54,213)",
+          },
+          algorithm: this.state.themeAlgorithm,
+        }}>
           {
             this.renderPage()
           }

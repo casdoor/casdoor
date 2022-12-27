@@ -28,7 +28,7 @@ class SelectLanguageBox extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      themes: props.theme ?? ["casbin", "calm", "lava"],
+      themes: props.theme ?? ["Default", "Dark", "Compact"],
     };
   }
 

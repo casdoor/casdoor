@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Tag, Tooltip, message} from "antd";
+import {Tag, Tooltip, message, theme} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -43,22 +43,11 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
 ];
 
-export const Themes = [{label: "casbin", key: "casbin", style: {
-  token: {
-    colorPrimary: "rgb(89,54,213)",
-    colorInfo: "rgb(89,54,213)",
-  },
-}}, {label: "calm", key: "calm", style: {
-  token: {
-    colorPrimary: "rgb(98, 182, 183)",
-    colorInfo: "rgb(98, 182, 183)",
-  },
-}}, {label: "lava", key: "lava", style: {
-  token: {
-    colorPrimary: "rgb(200, 75, 49)",
-    colorInfo: "rgb(200, 75, 49)",
-  },
-}},
+const {defaultAlgorithm, darkAlgorithm, compactAlgorithm} = theme;
+
+export const Themes = [{label: "Dark", key: "Dark", style: darkAlgorithm},
+  {label: "Compact", key: "Compact", style: compactAlgorithm},
+  {label: "Default", key: "Default", style: defaultAlgorithm},
 ];
 
 export const OtherProviderInfo = {
