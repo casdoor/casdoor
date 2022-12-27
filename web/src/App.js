@@ -98,7 +98,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    if (localStorage.getItem("themeAlgorithm") === null) {
+    if (localStorage.getItem("theme") === null) {
       this.setState({"themeAlgorithm": theme.defaultAlgorithm});
     } else {
       this.setState({"themeAlgorithm": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["style"]});
