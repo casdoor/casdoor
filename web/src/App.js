@@ -81,6 +81,7 @@ class App extends Component {
       account: undefined,
       uri: null,
       menuVisible: false,
+      theme: null,
     };
 
     Setting.initServerUrl();
@@ -93,6 +94,20 @@ class App extends Component {
   UNSAFE_componentWillMount() {
     this.updateMenuKey();
     this.getAccount();
+  }
+
+  componentDidMount() {
+    if (localStorage.getItem("theme") === null) {
+      this.setState({"theme": {token: {
+        colorPrimary: "rgb(89,54,213)",
+        colorInfo: "rgb(89,54,213)",
+      }}});
+    } else {
+      this.setState({"theme": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["style"]});
+    }
+    addEventListener("themeChange", (e) => {
+      this.setState({"theme": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["style"]});
+    });
   }
 
   componentDidUpdate() {
@@ -685,12 +700,7 @@ class App extends Component {
           <Helmet>
             <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
           </Helmet>
-          <ConfigProvider theme={{
-            token: {
-              colorPrimary: "rgb(89,54,213)",
-              colorInfo: "rgb(89,54,213)",
-            },
-          }}>
+          <ConfigProvider theme={this.state.theme}>
             {
               this.renderPage()
             }
@@ -706,12 +716,7 @@ class App extends Component {
           <title>{organization.displayName}</title>
           <link rel="icon" href={organization.favicon} />
         </Helmet>
-        <ConfigProvider theme={{
-          token: {
-            colorPrimary: "rgb(89,54,213)",
-            colorInfo: "rgb(89,54,213)",
-          },
-        }}>
+        <ConfigProvider theme={this.state.theme}>
           {
             this.renderPage()
           }

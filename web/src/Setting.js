@@ -43,6 +43,24 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
 ];
 
+export const Themes = [{label: "casbin", key: "casbin", style: {
+  token: {
+    colorPrimary: "rgb(89,54,213)",
+    colorInfo: "rgb(89,54,213)",
+  },
+}}, {label: "calm", key: "calm", style: {
+  token: {
+    colorPrimary: "rgb(98, 182, 183)",
+    colorInfo: "rgb(98, 182, 183)",
+  },
+}}, {label: "lava", key: "lava", style: {
+  token: {
+    colorPrimary: "rgb(200, 75, 49)",
+    colorInfo: "rgb(200, 75, 49)",
+  },
+}},
+];
+
 export const OtherProviderInfo = {
   SMS: {
     "Aliyun SMS": {
@@ -585,6 +603,11 @@ export function setLanguage(language) {
   localStorage.setItem("language", language);
   changeMomentLanguage(language);
   i18next.changeLanguage(language);
+}
+
+export function setTheme(themeKey) {
+  localStorage.setItem("theme", themeKey);
+  dispatchEvent(new Event("themeChange"));
 }
 
 export function getAcceptLanguage() {
