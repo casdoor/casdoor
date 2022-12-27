@@ -18,9 +18,15 @@ import {Dropdown} from "antd";
 import "./App.less";
 
 function flagIcon(themeKey) {
-  return (
-    <img width={24} alt={themeKey} src={`${Setting.StaticBaseUrl}/language-icons/${themeKey}.svg`} />
-  );
+  if (themeKey === "Dark") {
+    return <img width={24} alt={themeKey} src={`${Setting.StaticBaseUrl}/img/dark.svg`} />;
+  }
+  if (themeKey === "Default") {
+    return <img width={24} alt={themeKey} src={`${Setting.StaticBaseUrl}/img/light.svg`} />;
+  }
+  if (themeKey === "Compact") {
+    return <img width={24} alt={themeKey} src={`${Setting.StaticBaseUrl}/img/light.svg`} />;
+  }
 }
 
 class SelectLanguageBox extends React.Component {
@@ -29,15 +35,27 @@ class SelectLanguageBox extends React.Component {
     this.state = {
       classes: props,
       themes: props.theme ?? ["Default", "Dark", "Compact"],
+      icon: null,
     };
   }
 
   items = Setting.Themes.map((theme) => Setting.getItem(theme.label, theme.key, flagIcon(theme.key)));
 
-  getOrganizationThemes(languages) {
+  componentDidMount() {
+    if (localStorage.getItem("theme") === null) {
+      this.setState({"icon": `${Setting.StaticBaseUrl}/img/light.svg`});
+    } else {
+      this.setState({"icon": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["selectThemeLogo"]});
+    }
+    addEventListener("themeChange", (e) => {
+      this.setState({"icon": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["selectThemeLogo"]});
+    });
+  }
+
+  getOrganizationThemes(themes) {
     const select = [];
-    for (const language of languages) {
-      this.items.map((item, index) => item.key === language ? select.push(item) : null);
+    for (const theme of themes) {
+      this.items.map((item, index) => item.key === theme ? select.push(item) : null);
     }
     return select;
   }
@@ -50,7 +68,7 @@ class SelectLanguageBox extends React.Component {
 
     return (
       <Dropdown menu={{items: themeItems, onClick}} >
-        <div className="theme-box" style={{display: themeItems.length === 0 ? "none" : null, ...this.props.style}} />
+        <div className="theme-box" style={{display: themeItems.length === 0 ? "none" : null, background: `url(${this.state.icon})`, ...this.props.style}} />
       </Dropdown>
     );
   }
