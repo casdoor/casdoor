@@ -25,6 +25,7 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许注册新账户, 请联系IT支持",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "提供商账户: %s 与用户名: %s (%s) 已经与其他账户绑定: %s (%s)",
     "The application: %s does not exist": "应用 %s 不存在",
+    "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
     "The provider type: %s is not supported": "不支持该类型的提供商: %s",
     "The provider: %s is not enabled for the application": "提供商: %s 未被启用",
     "The user is forbidden to sign in, please contact the administrator": "该用户被禁止登陆，请联系管理员",

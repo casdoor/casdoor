@@ -25,6 +25,7 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
     "The application: %s does not exist": "The application: %s does not exist",
+    "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
     "The provider type: %s is not supported": "The provider type: %s is not supported",
     "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
     "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
