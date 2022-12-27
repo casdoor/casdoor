@@ -553,7 +553,7 @@ class App extends Component {
     if (!Setting.isMobile()) {
       return (
         <Layout id="parent-area">
-          <Header style={{marginBottom: "3px", paddingInline: 0}}>
+          <Header style={{marginBottom: "3px", paddingInline: 0, backgroundColor: this.state.themeAlgorithm === theme.darkAlgorithm ? "black" : "white"}}>
             {
               Setting.isMobile() ? null : (
                 <Link to={"/"}>
@@ -561,23 +561,19 @@ class App extends Component {
                 </Link>
               )
             }
-            <div>
-              <Menu
-                // theme="dark"
-                items={this.renderMenu()}
-                mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
-                selectedKeys={[`${this.state.selectedMenuKey}`]}
-                style={{lineHeight: "64px", position: "absolute", left: "145px", right: "200px"}}
-              >
-              </Menu>
-              {
-                this.renderAccount()
-              }
-              {this.state.account && <SelectThemeBox themes={this.state.account.organization.themes} style={{right: "180px", position: "absolute"}} />}
-              {this.state.account && <SelectLanguageBox languages={this.state.account.organization.languages} />}
-            </div>
+            <Menu
+              items={this.renderMenu()}
+              mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
+              selectedKeys={[`${this.state.selectedMenuKey}`]}
+              style={{position: "absolute", left: "145px", right: "220px"}}
+            />
+            {
+              this.renderAccount()
+            }
+            {this.state.account && <SelectThemeBox themes={this.state.account.organization.themes} style={{right: "190px", position: "absolute"}} />}
+            {this.state.account && <SelectLanguageBox languages={this.state.account.organization.languages} />}
           </Header>
-          <Content style={{backgroundColor: "#f5f5f5", alignItems: "stretch", display: "flex", flexDirection: "column"}}>
+          <Content style={{alignItems: "stretch", display: "flex", flexDirection: "column"}}>
             <Card className="content-warp-card">
               {
                 this.renderRouter()
