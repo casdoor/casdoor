@@ -17,9 +17,9 @@ import * as Setting from "./Setting";
 import {Dropdown} from "antd";
 import "./App.less";
 
-function flagIcon(country, alt) {
+function flagIcon(themeKey) {
   return (
-    <img width={24} alt={alt} src={`${Setting.StaticBaseUrl}/flag-icons/${country}.svg`} />
+    <img width={24} alt={themeKey} src={`${Setting.StaticBaseUrl}/language-icons/${themeKey}.svg`} />
   );
 }
 
@@ -32,7 +32,7 @@ class SelectLanguageBox extends React.Component {
     };
   }
 
-  items = Setting.Themes.map((theme) => Setting.getItem(theme.label, theme.key, flagIcon(theme.country, theme.alt)));
+  items = Setting.Themes.map((theme) => Setting.getItem(theme.label, theme.key, flagIcon(theme.key)));
 
   getOrganizationThemes(languages) {
     const select = [];
@@ -50,7 +50,7 @@ class SelectLanguageBox extends React.Component {
 
     return (
       <Dropdown menu={{items: themeItems, onClick}} >
-        <div className="language-box" style={{display: themeItems.length === 0 ? "none" : null, ...this.props.style}} />
+        <div className="theme-box" style={{display: themeItems.length === 0 ? "none" : null, ...this.props.style}} />
       </Dropdown>
     );
   }
