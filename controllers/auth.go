@@ -265,6 +265,10 @@ func (c *ApiController) Login() {
 				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), form.Application))
 				return
 			}
+			if !application.EnablePassword {
+				c.ResponseError(c.T("auth:The login method: login with password is not enabled for the application"))
+				return
+			}
 
 			if object.CheckToEnableCaptcha(application) {
 				isHuman, err := captcha.VerifyCaptchaByCaptchaType(form.CaptchaType, form.CaptchaToken, form.ClientSecret)
