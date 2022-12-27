@@ -27,6 +27,7 @@ import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {withRouter} from "react-router-dom";
+import SelectThemeBox from "../SelectThemeBox";
 
 const formItemLayout = {
   labelCol: {
@@ -650,6 +651,7 @@ class SignupPage extends React.Component {
               {
                 Setting.renderLogo(application)
               }
+              <SelectThemeBox themes={application.organizationObj.themes} style={{top: "55px", right: "55px", position: "absolute"}} />
               <SelectLanguageBox languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
               {
                 this.renderForm(application)

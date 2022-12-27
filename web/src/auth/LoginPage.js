@@ -821,7 +821,7 @@ class LoginPage extends React.Component {
                   {/* {*/}
                   {/*  this.state.clientId !== null ? "Redirect" : null*/}
                   {/* }*/}
-                  <SelectThemeBox languages={application.organizationObj.languages} style={{top: "55px", right: "55px", position: "absolute"}} />
+                  <SelectThemeBox themes={application.organizationObj.themes} style={{top: "55px", right: "55px", position: "absolute"}} />
                   <SelectLanguageBox languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
                   {
                     this.renderSignedInBox()
