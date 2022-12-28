@@ -568,12 +568,12 @@ class App extends Component {
               items={this.renderMenu()}
               mode={(Setting.isMobile() && this.isStartPages()) ? "inline" : "horizontal"}
               selectedKeys={[`${this.state.selectedMenuKey}`]}
-              style={{position: "absolute", left: "145px", right: "220px"}}
+              style={{position: "absolute", left: "145px"}}
             />
             {
               this.renderAccount()
             }
-            {this.state.account && <SelectThemeBox themes={this.state.account.organization.themes} style={{right: "190px", position: "absolute"}} />}
+            {this.state.account && <SelectThemeBox themes={this.state.account.organization.themes} />}
             {this.state.account && <SelectLanguageBox languages={this.state.account.organization.languages} />}
           </Header>
           <Content style={{alignItems: "stretch", display: "flex", flexDirection: "column"}}>
