@@ -18,15 +18,15 @@ import {Dropdown} from "antd";
 import "./App.less";
 import i18next from "i18next";
 
-function flagIcon(themeKey) {
-  if (themeKey === "Dark") {
-    return <img width={24} alt={themeKey} src={`${Setting.StaticBaseUrl}/img/dark.svg`} />;
-  }
-  if (themeKey === "Default") {
-    return <img width={24} alt={themeKey} src={`${Setting.StaticBaseUrl}/img/light.svg`} />;
-  }
-  if (themeKey === "Compact") {
-    return <img width={24} alt={themeKey} src={`${Setting.StaticBaseUrl}/img/light.svg`} />;
+function themeIcon(themeKey) {
+  return <img width={24} alt={themeKey} src={getLogoURL(themeKey)} />;
+}
+
+function getLogoURL(themeKey) {
+  if (themeKey) {
+    return Setting.Themes.find(t => t.key === themeKey)["selectThemeLogo"];
+  } else {
+    return Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["selectThemeLogo"];
   }
 }
 
@@ -47,17 +47,17 @@ class SelectThemeBox extends React.Component {
       this.items = this.getThemes();
     });
     if (localStorage.getItem("theme") === null) {
-      this.setState({"icon": `${Setting.StaticBaseUrl}/img/light.svg`});
+      this.setState({"icon": getLogoURL("Default")});
     } else {
-      this.setState({"icon": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["selectThemeLogo"]});
+      this.setState({"icon": getLogoURL()});
     }
     addEventListener("themeChange", (e) => {
-      this.setState({"icon": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["selectThemeLogo"]});
+      this.setState({"icon": getLogoURL()});
     });
   }
 
   getThemes() {
-    return Setting.Themes.map((theme) => Setting.getItem(i18next.t(`general:${theme.label}`), theme.key, flagIcon(theme.key)));
+    return Setting.Themes.map((theme) => Setting.getItem(i18next.t(`general:${theme.label}`), theme.key, themeIcon(theme.key)));
   }
 
   getOrganizationThemes(themes) {
