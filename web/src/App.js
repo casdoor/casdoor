@@ -591,11 +591,11 @@ class App extends Component {
     } else {
       return (
         <Layout>
-          <Header style={{padding: "0", marginBottom: "3px"}}>
+          <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm === theme.darkAlgorithm ? "black" : "white"}}>
             {
               Setting.isMobile() ? null : (
                 <Link to={"/"}>
-                  <div className="logo" />
+                  <div className="logo" style={{background: `url(${this.state.logo})`}} />
                 </Link>
               )
             }
@@ -613,13 +613,11 @@ class App extends Component {
             <Button icon={<BarsOutlined />} onClick={this.showMenu} type="text">
               {i18next.t("general:Menu")}
             </Button>
-            <div style = {{float: "right"}}>
-              {
-                this.renderAccount()
-              }
-              {this.state.account && <SelectThemeBox themes={this.state.account.organization.themes} style={{right: "180px", position: "absolute"}} />}
-              {this.state.account && <SelectLanguageBox languages={this.state.account.organization.languages} />}
-            </div>
+            {
+              this.renderAccount()
+            }
+            {this.state.account && <SelectThemeBox themes={this.state.account.organization.themes} />}
+            {this.state.account && <SelectLanguageBox languages={this.state.account.organization.languages} />}
           </Header>
           <Content style={{display: "flex", flexDirection: "column"}} >{
             this.renderRouter()}
