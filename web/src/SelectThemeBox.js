@@ -46,11 +46,7 @@ class SelectThemeBox extends React.Component {
     i18next.on("languageChanged", () => {
       this.items = this.getThemes();
     });
-    if (localStorage.getItem("theme") === null) {
-      this.setState({"icon": getLogoURL("Default")});
-    } else {
-      this.setState({"icon": getLogoURL()});
-    }
+    localStorage.getItem("theme") ? this.setState({"icon": getLogoURL()}) : this.setState({"icon": getLogoURL("Default")});
     addEventListener("themeChange", (e) => {
       this.setState({"icon": getLogoURL()});
     });

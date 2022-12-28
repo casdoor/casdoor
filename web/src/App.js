@@ -99,11 +99,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    if (localStorage.getItem("theme") === null) {
-      this.setState({"themeAlgorithm": theme.defaultAlgorithm});
-    } else {
-      this.setState({"themeAlgorithm": this.getTheme()});
-    }
+    localStorage.getItem("theme") ?
+      this.setState({"themeAlgorithm": this.getTheme()}) : this.setState({"themeAlgorithm": theme.defaultAlgorithm});
     this.setState({"logo": Setting.getLogo(localStorage.getItem("theme"))});
     addEventListener("themeChange", (e) => {
       this.setState({"themeAlgorithm": this.getTheme()});
