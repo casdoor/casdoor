@@ -30,7 +30,6 @@ import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {CaptchaModal} from "../common/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
-import SelectThemeBox from "../SelectThemeBox";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -821,7 +820,6 @@ class LoginPage extends React.Component {
                   {/* {*/}
                   {/*  this.state.clientId !== null ? "Redirect" : null*/}
                   {/* }*/}
-                  <SelectThemeBox themes={application.organizationObj.themes} style={{top: "55px", right: "55px", position: "absolute"}} />
                   <SelectLanguageBox languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
                   {
                     this.renderSignedInBox()
