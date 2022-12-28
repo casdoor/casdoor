@@ -24,6 +24,7 @@ import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import * as path from "path-browserify";
+import CompactIcon from "./icons/compact.svg";
 
 export const ServerUrl = "";
 
@@ -46,7 +47,7 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
 const {defaultAlgorithm, darkAlgorithm, compactAlgorithm} = theme;
 
 export const Themes = [{label: "Dark", key: "Dark", style: darkAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/dark.svg`},
-  {label: "Compact", key: "Compact", style: compactAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/light.svg`},
+  {label: "Compact", key: "Compact", style: compactAlgorithm, selectThemeLogo: CompactIcon},
   {label: "Default", key: "Default", style: defaultAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/light.svg`},
 ];
 
