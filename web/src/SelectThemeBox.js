@@ -16,6 +16,7 @@ import React from "react";
 import * as Setting from "./Setting";
 import {Dropdown} from "antd";
 import "./App.less";
+import i18next from "i18next";
 
 function flagIcon(themeKey) {
   if (themeKey === "Dark") {
@@ -29,7 +30,7 @@ function flagIcon(themeKey) {
   }
 }
 
-class SelectLanguageBox extends React.Component {
+class SelectThemeBox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -39,9 +40,12 @@ class SelectLanguageBox extends React.Component {
     };
   }
 
-  items = Setting.Themes.map((theme) => Setting.getItem(theme.label, theme.key, flagIcon(theme.key)));
+  items = this.getThemes();
 
   componentDidMount() {
+    i18next.on("languageChanged", () => {
+      this.items = this.getThemes();
+    });
     if (localStorage.getItem("theme") === null) {
       this.setState({"icon": `${Setting.StaticBaseUrl}/img/light.svg`});
     } else {
@@ -50,6 +54,10 @@ class SelectLanguageBox extends React.Component {
     addEventListener("themeChange", (e) => {
       this.setState({"icon": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["selectThemeLogo"]});
     });
+  }
+
+  getThemes() {
+    return Setting.Themes.map((theme) => Setting.getItem(i18next.t(`general:${theme.label}`), theme.key, flagIcon(theme.key)));
   }
 
   getOrganizationThemes(themes) {
@@ -74,4 +82,4 @@ class SelectLanguageBox extends React.Component {
   }
 }
 
-export default SelectLanguageBox;
+export default SelectThemeBox;
