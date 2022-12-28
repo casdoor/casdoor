@@ -102,11 +102,11 @@ class App extends Component {
     if (localStorage.getItem("theme") === null) {
       this.setState({"themeAlgorithm": theme.defaultAlgorithm});
     } else {
-      this.setState({"themeAlgorithm": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["style"]});
+      this.setState({"themeAlgorithm": this.getTheme()});
     }
     this.setState({"logo": Setting.getLogo(localStorage.getItem("theme"))});
     addEventListener("themeChange", (e) => {
-      this.setState({"themeAlgorithm": Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["style"]});
+      this.setState({"themeAlgorithm": this.getTheme()});
       this.setState({"logo": Setting.getLogo(localStorage.getItem("theme"))});
     });
   }
@@ -198,6 +198,10 @@ class App extends Component {
       return `language=${language}`;
     }
     return "";
+  }
+
+  getTheme() {
+    return Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["style"];
   }
 
   setLanguage(account) {
