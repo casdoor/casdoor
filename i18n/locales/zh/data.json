@@ -31,7 +31,7 @@
     "The user: %s/%s doesn't exist": "用户不存在: %s/%s",
     "Turing test failed.": "真人验证失败",
     "Unauthorized operation": "未授权的操作",
-    "Unknown authentication type (not password or provider), form = %s": "未授权的操作"
+    "Unknown authentication type (not password or provider), form = %s": "未授权的操作 %s"
   },
   "cas": {
     "Service %s and %s do not match": "服务 %s 与 %s 不匹配"
