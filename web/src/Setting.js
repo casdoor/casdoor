@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Tag, Tooltip, message} from "antd";
+import {Tag, Tooltip, message, theme} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -41,6 +41,13 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
   {label: "日本語", key: "ja", country: "JP", alt: "日本語"},
   {label: "한국어", key: "ko", country: "KR", alt: "한국어"},
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
+];
+
+const {defaultAlgorithm, darkAlgorithm, compactAlgorithm} = theme;
+
+export const Themes = [{label: "Dark", key: "Dark", style: darkAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/dark.svg`},
+  {label: "Compact", key: "Compact", style: compactAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/compact.svg`},
+  {label: "Default", key: "Default", style: defaultAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/light.svg`},
 ];
 
 export const OtherProviderInfo = {
@@ -562,6 +569,14 @@ export function getAvatarColor(s) {
   return colorList[hash % 4];
 }
 
+export function getLogo(theme) {
+  if (theme === "Dark") {
+    return `${StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
+  } else {
+    return `${StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+  }
+}
+
 export function getLanguageText(text) {
   if (!text.includes("|")) {
     return text;
@@ -585,6 +600,11 @@ export function setLanguage(language) {
   localStorage.setItem("language", language);
   changeMomentLanguage(language);
   i18next.changeLanguage(language);
+}
+
+export function setTheme(themeKey) {
+  localStorage.setItem("theme", themeKey);
+  dispatchEvent(new Event("themeChange"));
 }
 
 export function getAcceptLanguage() {

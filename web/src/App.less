@@ -13,14 +13,12 @@
 }
 
 .App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
 }
 
 .App-link {
@@ -41,7 +39,6 @@ img {
   flex-direction: column;
   height: 100%;
   min-height: 100vh;
-  background-color: #f5f5f5;
 }
 
 .panel-logo {
@@ -55,7 +52,7 @@ img {
   background-repeat: no-repeat;
   border-radius: 5px;
   width: 45px;
-  height: 65px;
+  height: 100%;
   float: right;
   cursor: pointer;
 
@@ -64,9 +61,32 @@ img {
   }
 }
 
+.login-form .language-box {
+  height: 65px;
+}
+
+.theme-box {
+  background: url("@{StaticBaseUrl}/img/muti_language.svg");
+  background-size: 25px, 25px;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  border-radius: 5px;
+  width: 45px;
+  height: 100%;
+  float: right;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f5f5f5 !important;
+  }
+}
+
 .rightDropDown {
+  border-radius: 7px;
+
   &:hover {
     background-color: #f5f5f5;
+    color: black;
   }
 }
 
@@ -127,4 +147,10 @@ img {
   background: #fff no-repeat;
   background-size: 100% 100%;
   background-attachment: fixed;
+}
+
+.ant-menu-horizontal {
+  border-bottom: none !important;
+  margin-right: 30px;
+  right: 230px;
 }
