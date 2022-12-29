@@ -214,4 +214,5 @@ func initAPI() {
 
 	beego.Router("/api/get-system-info", &controllers.ApiController{}, "GET:GetSystemInfo")
 	beego.Router("/api/get-release", &controllers.ApiController{}, "GET:GitRepoVersion")
+
 }

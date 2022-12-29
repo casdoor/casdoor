@@ -231,3 +231,117 @@ func GetAllRoles(userId string) []string {
 	}
 	return res
 }
+
+func getGroupingPoliciesByPermissions(column []string, role *Role, permissions []*Permission) map[string][][]string {
+	var groupingPolicies = make(map[string][][]string, len(permissions))
+	for _, p := range permissions {
+		domainExist := len(p.Domains) > 0
+		key := p.Adapter + "/" + strings.Join(p.Domains, ",")
+		if _, ok := groupingPolicies[key]; ok {
+			continue
+		}
+		for _, v := range column {
+			if domainExist {
+				for _, domain := range p.Domains {
+					groupingPolicies[key] = append(groupingPolicies[key], []string{v, domain, role.Owner + "/" + role.Name})
+				}
+			} else {
+				groupingPolicies[key] = append(groupingPolicies[key], []string{v, role.Owner + "/" + role.Name})
+			}
+		}
+	}
+
+	return groupingPolicies
+}
+
+func getPoliciesByPermissions(column []string, permissions []*Permission) map[string][][]string {
+	var policies = make(map[string][][]string, len(permissions))
+	for _, p := range permissions {
+		domainExist := len(p.Domains) > 0
+		key := p.Adapter + "/" + strings.Join(p.Domains, ",")
+		//if _, ok := policies[key]; ok {
+		//	continue
+		//}
+		for _, v := range column {
+			for _, resource := range p.Resources {
+				for _, action := range p.Actions {
+					if domainExist {
+						for _, domain := range p.Domains {
+							policies[key] = append(policies[key], []string{v, domain, resource, strings.ToLower(action)})
+						}
+					} else {
+						policies[key] = append(policies[key], []string{v, resource, strings.ToLower(action)})
+					}
+				}
+			}
+		}
+	}
+	return policies
+}
+
+//func operateGroupingPoliciesByPermission(permission *Permission, enforcer *casbin.Enforcer, isAdd bool) {
+//	var err error
+//	domainExist := len(permission.Domains) > 0
+//	for _, role := range permission.Roles {
+//		roleObj := GetRole(role)
+//		for _, user := range roleObj.Users {
+//			if domainExist {
+//				for _, domain := range permission.Domains {
+//					if isAdd {
+//						_, err = enforcer.AddNamedGroupingPolicy("g", user, domain, roleObj.Owner+"/"+roleObj.Name)
+//					} else {
+//						_, err = enforcer.RemoveNamedGroupingPolicy("g", user, domain, roleObj.Owner+"/"+roleObj.Name)
+//					}
+//					if err != nil {
+//						panic(err)
+//					}
+//				}
+//			} else {
+//				if isAdd {
+//					_, err = enforcer.AddNamedGroupingPolicy("g", user, roleObj.Owner+"/"+roleObj.Name)
+//				} else {
+//					_, err = enforcer.RemoveNamedGroupingPolicy("g", user, roleObj.Owner+"/"+roleObj.Name)
+//				}
+//				if err != nil {
+//					panic(err)
+//				}
+//			}
+//		}
+//	}
+//}
+//
+//func operatePoliciesByPermission(permission *Permission, enforcer *casbin.Enforcer, isAdd bool, isUser bool) {
+//	var err error
+//	column := permission.Roles
+//	if isUser {
+//		column = permission.Users
+//	}
+//	domainExist := len(permission.Domains) > 0
+//	for _, v := range column {
+//		for _, resource := range permission.Resources {
+//			for _, action := range permission.Actions {
+//				if domainExist {
+//					for _, domain := range permission.Domains {
+//						if isAdd {
+//							_, err = enforcer.AddNamedPolicy("p", v, domain, resource, action)
+//						} else {
+//							_, err = enforcer.RemoveNamedPolicy("p", v, domain, resource, action)
+//						}
+//						if err != nil {
+//							panic(err)
+//						}
+//					}
+//				} else {
+//					if isAdd {
+//						_, err = enforcer.AddNamedPolicy("p", v, resource, action)
+//					} else {
+//						_, err = enforcer.RemoveNamedPolicy("p", v, resource, action)
+//					}
+//					if err != nil {
+//						panic(err)
+//					}
+//				}
+//			}
+//		}
+//	}
+//}

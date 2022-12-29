@@ -16,8 +16,9 @@ package object
 
 import (
 	"fmt"
-
+	"github.com/casbin/casbin/v2"
 	"github.com/casdoor/casdoor/util"
+	"strings"
 	"xorm.io/core"
 )
 
@@ -87,6 +88,262 @@ func GetRole(id string) *Role {
 	return getRole(owner, name)
 }
 
+// 1.这里需要将permission的信息也要update
+// 2.修改角色，资源，动作对照表
+// 3.如果同个适配器 会出现重复删的情况
+//func UpdateRole(id string, role *Role) bool {
+//	owner, name := util.GetOwnerAndNameFromId(id)
+//	oldRole := getRole(owner, name)
+//	if oldRole == nil {
+//		return false
+//	}
+//
+//	permissions := GetPermissionsByRole(id)
+//	for _, p := range permissions {
+//		removeGroupingPolicies(p)
+//		removePolicies(p)
+//
+//		//判断role name或owner字段有没被改变,删除掉permission中roles的元素 重新添加进去
+//		if owner != role.Owner || name != role.Name {
+//			for k, v := range p.Roles {
+//				if v == id {
+//					p.Roles = append(p.Roles[:k], p.Roles[k+1:]...)
+//					p.Roles = append(p.Roles, role.Owner+"/"+role.Name)
+//					break
+//				}
+//			}
+//		}
+//
+//		_, err := adapter.Engine.ID(core.PK{p.Owner, p.Name}).AllCols().Update(p)
+//		if err != nil {
+//			panic(err)
+//		}
+//	}
+//
+//	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	for _, p := range permissions {
+//		addGroupingPolicies(p)
+//		addPolicies(p)
+//	}
+//
+//	return affected != 0
+//}
+
+//func UpdateRole(id string, role *Role) bool {
+//	owner, name := util.GetOwnerAndNameFromId(id)
+//	oldRole := getRole(owner, name)
+//	if oldRole == nil {
+//		return false
+//	}
+//
+//	permissions := GetPermissionsByRole(id)
+//	//if len(permissions) == 0 {
+//	//	return affected != 0
+//	//}
+//
+//	//删除全部的p和g
+//	//if id != role.Owner+"/"+role.Name || len(domainsAdded) > 0 || len(domainsDeleted) > 0 {
+//	if id != role.Owner+"/"+role.Name {
+//		for _, p := range permissions {
+//			removeGroupingPolicies(p)
+//			removePolicies(p)
+//			for k, v := range p.Roles {
+//				if v == id {
+//					p.Roles = append(p.Roles[:k], p.Roles[k+1:]...)
+//					p.Roles = append(p.Roles, role.Owner+"/"+role.Name)
+//					break
+//				}
+//			}
+//			_, err := adapter.Engine.ID(core.PK{p.Owner, p.Name}).AllCols().Update(p)
+//			if err != nil {
+//				panic(err)
+//			}
+//		}
+//
+//		affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
+//		if err != nil {
+//			panic(err)
+//		}
+//
+//		for _, p := range permissions {
+//			addGroupingPolicies(p)
+//			addPolicies(p)
+//		}
+//
+//		return affected != 0
+//
+//	}
+//
+//	usersAdded, usersDeleted := util.Arrcmp(oldRole.Users, role.Users)
+//	rolesAdded, rolesDeleted := util.Arrcmp(oldRole.Roles, role.Roles)
+//
+//	//emap := make(map[string]*casbin.Enforcer, len(permissions))
+//	pmap := make(map[string]*Permission, len(permissions))
+//	for _, p := range permissions {
+//		//emap[p.Owner+"/"+p.Name] = getEnforcer(p)
+//		pmap[p.Owner+"/"+p.Name] = p
+//	}
+//
+//	if len(usersDeleted) > 0 {
+//		for _, u := range usersDeleted {
+//			for _, p := range pmap {
+//				enforcer := getEnforcer(p)
+//				enforcer.RemoveNamedGroupingPolicy("g", u)
+//			}
+//		}
+//	}
+//
+//	if len(usersAdded) > 0 {
+//		usersAddedGroupingPolicies := getGroupingPoliciesByColumn(usersAdded, role, permissions)
+//		for k, v := range usersAddedGroupingPolicies {
+//			enforcer := getEnforcer(pmap[k])
+//			_, err := enforcer.AddGroupingPolicies(v)
+//			if err != nil {
+//				panic(err)
+//			}
+//		}
+//	}
+//
+//	if len(rolesDeleted) > 0 {
+//		for _, u := range rolesDeleted {
+//			for _, p := range pmap {
+//				enforcer := getEnforcer(p)
+//				enforcer.RemoveNamedGroupingPolicy("g", u)
+//			}
+//		}
+//	}
+//
+//	if len(rolesAdded) > 0 {
+//		rolesAddedGroupingPolicies := getGroupingPoliciesByColumn(rolesAdded, role, permissions)
+//		for k, v := range rolesAddedGroupingPolicies {
+//			enforcer := getEnforcer(pmap[k])
+//			_, err := enforcer.AddGroupingPolicies(v)
+//			if err != nil {
+//				panic(err)
+//			}
+//		}
+//	}
+//
+//	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	return affected != 0
+//}
+
+//func UpdateRole(id string, role *Role) bool {
+//	owner, name := util.GetOwnerAndNameFromId(id)
+//	oldRole := getRole(owner, name)
+//	if oldRole == nil {
+//		return false
+//	}
+//
+//	permissions := GetPermissionsByRole(id)
+//	//if len(permissions) == 0 {
+//	//	return affected != 0
+//	//}
+//
+//	//删除全部的p和g
+//	//if id != role.Owner+"/"+role.Name || len(domainsAdded) > 0 || len(domainsDeleted) > 0 {
+//	if id != role.Owner+"/"+role.Name {
+//		for _, p := range permissions {
+//			removeGroupingPolicies(p)
+//			removePolicies(p)
+//			for k, v := range p.Roles {
+//				if v == id {
+//					p.Roles = append(p.Roles[:k], p.Roles[k+1:]...)
+//					p.Roles = append(p.Roles, role.Owner+"/"+role.Name)
+//					break
+//				}
+//			}
+//			_, err := adapter.Engine.ID(core.PK{p.Owner, p.Name}).AllCols().Update(p)
+//			if err != nil {
+//				panic(err)
+//			}
+//		}
+//
+//		affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
+//		if err != nil {
+//			panic(err)
+//		}
+//
+//		for _, p := range permissions {
+//			addGroupingPolicies(p)
+//			addPolicies(p)
+//		}
+//
+//		return affected != 0
+//
+//	}
+//
+//	usersAdded, usersDeleted := util.Arrcmp(oldRole.Users, role.Users)
+//	rolesAdded, rolesDeleted := util.Arrcmp(oldRole.Roles, role.Roles)
+//
+//	emap := make(map[string]*casbin.Enforcer, len(permissions))
+//	for _, p := range permissions {
+//		key := p.Adapter + "/" + strings.Join(p.Domains, ",")
+//		if _, ok := emap[key]; !ok {
+//			emap[key] = getEnforcer(p)
+//		}
+//	}
+//
+//	if len(usersDeleted) > 0 {
+//		usersDeletedGroupingPolicies := getGroupingPoliciesByColumn(usersDeleted, role, permissions)
+//		for k, v := range usersDeletedGroupingPolicies {
+//			enforcer := emap[k]
+//			_, err := enforcer.RemoveGroupingPolicies(v)
+//			if err != nil {
+//				panic(err)
+//			}
+//		}
+//	}
+//
+//	if len(usersAdded) > 0 {
+//		usersAddedGroupingPolicies := getGroupingPoliciesByColumn(usersAdded, role, permissions)
+//		for k, v := range usersAddedGroupingPolicies {
+//			enforcer := emap[k]
+//			_, err := enforcer.AddGroupingPolicies(v)
+//			if err != nil {
+//				panic(err)
+//			}
+//		}
+//	}
+//
+//	if len(rolesDeleted) > 0 {
+//		rolesDeletedGroupingPolicies := getGroupingPoliciesByColumn(rolesDeleted, role, permissions)
+//		for k, v := range rolesDeletedGroupingPolicies {
+//			enforcer := emap[k]
+//			_, err := enforcer.RemoveGroupingPolicies(v)
+//			if err != nil {
+//				panic(err)
+//			}
+//		}
+//	}
+//
+//	if len(rolesAdded) > 0 {
+//		rolesAddedGroupingPolicies := getGroupingPoliciesByColumn(rolesAdded, role, permissions)
+//		for k, v := range rolesAddedGroupingPolicies {
+//			enforcer := emap[k]
+//			_, err := enforcer.AddGroupingPolicies(v)
+//			if err != nil {
+//				panic(err)
+//			}
+//		}
+//	}
+//
+//	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	return affected != 0
+//}
+
 func UpdateRole(id string, role *Role) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	oldRole := getRole(owner, name)
@@ -95,28 +352,109 @@ func UpdateRole(id string, role *Role) bool {
 	}
 
 	permissions := GetPermissionsByRole(id)
-	for _, permission := range permissions {
-		removeGroupingPolicies(permission)
+
+	emap := make(map[string]*casbin.Enforcer, len(permissions))
+	for _, p := range permissions {
+		key := p.Adapter + "/" + strings.Join(p.Domains, ",")
+		if _, ok := emap[key]; !ok {
+			emap[key] = getEnforcer(p)
+		}
+	}
+
+	if id != role.Owner+"/"+role.Name {
+		groupingPolicies := getGroupingPoliciesByPermissions(oldRole.Users, oldRole, permissions)
+
+		for k, e := range emap {
+			res := strings.Split(k, "/")
+			index := 1
+			if res[1] != "" {
+				index = 2
+			}
+
+			for _, beforeGroupingPolicy := range groupingPolicies[k] {
+				var afterGroupingPolicy []string = make([]string, len(beforeGroupingPolicy))
+				copy(afterGroupingPolicy, beforeGroupingPolicy)
+				afterGroupingPolicy[index] = role.Owner + "/" + role.Name
+				_, err := e.UpdateGroupingPolicy(beforeGroupingPolicy, afterGroupingPolicy)
+				if err != nil {
+					panic(err)
+				}
+			}
+
+			beforePolicy := []string{id}
+			afterPolicy := []string{role.Owner + "/" + role.Name}
+			_, err := e.UpdatePolicy(beforePolicy, afterPolicy)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		for _, p := range permissions {
+			for k, v := range p.Roles {
+				if v == id {
+					p.Roles = append(p.Roles[:k], p.Roles[k+1:]...)
+					p.Roles = append(p.Roles, role.Owner+"/"+role.Name)
+					break
+				}
+			}
+			_, err := adapter.Engine.ID(core.PK{p.Owner, p.Name}).AllCols().Update(p)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+	}
+
+	usersAdded, usersDeleted := util.Arrcmp(oldRole.Users, role.Users)
+	rolesAdded, rolesDeleted := util.Arrcmp(oldRole.Roles, role.Roles)
+
+	if len(usersDeleted) > 0 {
+		usersDeletedGroupingPolicies := getGroupingPoliciesByPermissions(usersDeleted, role, permissions)
+		for k, v := range usersDeletedGroupingPolicies {
+			enforcer := emap[k]
+			_, err := enforcer.RemoveGroupingPolicies(v)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+
+	if len(usersAdded) > 0 {
+		usersAddedGroupingPolicies := getGroupingPoliciesByPermissions(usersAdded, role, permissions)
+		for k, v := range usersAddedGroupingPolicies {
+			enforcer := emap[k]
+			_, err := enforcer.AddGroupingPolicies(v)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+
+	if len(rolesDeleted) > 0 {
+		rolesDeletedGroupingPolicies := getGroupingPoliciesByPermissions(rolesDeleted, role, permissions)
+		for k, v := range rolesDeletedGroupingPolicies {
+			enforcer := emap[k]
+			_, err := enforcer.RemoveGroupingPolicies(v)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+
+	if len(rolesAdded) > 0 {
+		rolesAddedGroupingPolicies := getGroupingPoliciesByPermissions(rolesAdded, role, permissions)
+		for k, v := range rolesAddedGroupingPolicies {
+			enforcer := emap[k]
+			_, err := enforcer.AddGroupingPolicies(v)
+			if err != nil {
+				panic(err)
+			}
+		}
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
 	if err != nil {
 		panic(err)
-	}
-
-	new_id := role.GetId()
-	if id == new_id {
-		permissions := GetPermissionsByRole(id)
-		for _, permission := range permissions {
-			addGroupingPolicies(permission)
-		}
-	}
-
-	if id != new_id {
-		permissions := GetPermissionsByRole(new_id)
-		for _, permission := range permissions {
-			addGroupingPolicies(permission)
-		}
 	}
 
 	return affected != 0
@@ -134,19 +472,35 @@ func AddRole(role *Role) bool {
 func DeleteRole(role *Role) bool {
 	permissions := GetPermissionsByRole(role.GetId())
 
-	for _, permission := range permissions {
-		removeGroupingPolicies(permission)
+	emap := make(map[string]*casbin.Enforcer, len(permissions))
+	for _, p := range permissions {
+		key := p.Adapter + "/" + strings.Join(p.Domains, ",")
+		if _, ok := emap[key]; !ok {
+			emap[key] = getEnforcer(p)
+		}
+	}
+
+	for k, e := range emap {
+		res := strings.Split(k, "/")
+		index := 1
+		if res[1] != "" {
+			index = 2
+		}
+		_, err := e.RemoveFilteredGroupingPolicy(index, role.Owner+"/"+role.Name)
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = e.RemoveFilteredNamedPolicy("p", 0, role.Owner+"/"+role.Name)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{role.Owner, role.Name}).Delete(&Role{})
 	if err != nil {
 		panic(err)
 	}
-
-	for _, permission := range permissions {
-		addGroupingPolicies(permission)
-	}
-
 	return affected != 0
 }
 
