@@ -723,6 +723,7 @@
     "Is forbidden - Tooltip": "账户是否已被禁用",
     "Is global admin": "是全局管理员",
     "Is global admin - Tooltip": "是应用程序管理员",
+    "Keys": "键",
     "Link": "绑定",
     "Location": "城市",
     "Location - Tooltip": "居住地址所在的城市",
@@ -738,6 +739,7 @@
     "Password Set": "密码已设置",
     "Please select avatar from resources": "从资源中选择...",
     "Properties": "属性",
+    "Properties - Tooltip": "属性",
     "Re-enter New": "重复新密码",
     "Reset Email...": "重置邮箱...",
     "Reset Phone...": "重置手机号...",
@@ -753,6 +755,7 @@
     "Unlink": "解绑",
     "Upload (.xlsx)": "上传（.xlsx）",
     "Upload a photo": "上传头像",
+    "Values": "值",
     "WebAuthn credentials": "WebAuthn凭据",
     "input password": "输入密码"
   },

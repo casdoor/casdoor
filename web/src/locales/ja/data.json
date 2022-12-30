@@ -723,6 +723,7 @@
     "Is forbidden - Tooltip": "Whether the account is disabled",
     "Is global admin": "グローバル管理者",
     "Is global admin - Tooltip": "Is the application global administrator",
+    "Keys": "Keys",
     "Link": "リンク",
     "Location": "場所",
     "Location - Tooltip": "場所 → ツールチップ",
@@ -738,6 +739,7 @@
     "Password Set": "パスワード設定",
     "Please select avatar from resources": "Please select avatar from resources",
     "Properties": "プロパティー",
+    "Properties - Tooltip": "Properties - Tooltip",
     "Re-enter New": "新しい入力",
     "Reset Email...": "Reset Email...",
     "Reset Phone...": "電話番号をリセット...",
@@ -753,6 +755,7 @@
     "Unlink": "リンクを解除",
     "Upload (.xlsx)": "アップロード (.xlsx)",
     "Upload a photo": "写真をアップロード",
+    "Values": "Values",
     "WebAuthn credentials": "WebAuthn credentials",
     "input password": "パスワードを入力"
   },

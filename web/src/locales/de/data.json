@@ -723,6 +723,7 @@
     "Is forbidden - Tooltip": "Whether the account is disabled",
     "Is global admin": "Ist globaler Admin",
     "Is global admin - Tooltip": "Is the application global administrator",
+    "Keys": "Keys",
     "Link": "Link",
     "Location": "Standort",
     "Location - Tooltip": "Standort - Tooltip",
@@ -738,6 +739,7 @@
     "Password Set": "Passwort setzen",
     "Please select avatar from resources": "Please select avatar from resources",
     "Properties": "Eigenschaften",
+    "Properties - Tooltip": "Properties - Tooltip",
     "Re-enter New": "Neu erneut eingeben",
     "Reset Email...": "Reset Email...",
     "Reset Phone...": "Telefon zurücksetzen...",
@@ -753,6 +755,7 @@
     "Unlink": "Link aufheben",
     "Upload (.xlsx)": "Upload (.xlsx)",
     "Upload a photo": "Foto hochladen",
+    "Values": "Values",
     "WebAuthn credentials": "WebAuthn credentials",
     "input password": "Passwort eingeben"
   },

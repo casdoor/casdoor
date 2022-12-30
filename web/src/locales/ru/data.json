@@ -723,6 +723,7 @@
     "Is forbidden - Tooltip": "Whether the account is disabled",
     "Is global admin": "Глобальный администратор",
     "Is global admin - Tooltip": "Is the application global administrator",
+    "Keys": "Keys",
     "Link": "Ссылка",
     "Location": "Местоположение",
     "Location - Tooltip": "Расположение - Подсказка",
@@ -738,6 +739,7 @@
     "Password Set": "Пароль установлен",
     "Please select avatar from resources": "Please select avatar from resources",
     "Properties": "Свойства",
+    "Properties - Tooltip": "Properties - Tooltip",
     "Re-enter New": "Введите еще раз",
     "Reset Email...": "Reset Email...",
     "Reset Phone...": "Сбросить телефон...",
@@ -753,6 +755,7 @@
     "Unlink": "Отвязать",
     "Upload (.xlsx)": "Загрузить (.xlsx)",
     "Upload a photo": "Загрузить фото",
+    "Values": "Values",
     "WebAuthn credentials": "WebAuthn credentials",
     "input password": "пароль для ввода"
   },

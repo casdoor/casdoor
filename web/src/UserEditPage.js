@@ -28,11 +28,7 @@ import SamlWidget from "./common/SamlWidget";
 import SelectRegionBox from "./SelectRegionBox";
 import WebAuthnCredentialTable from "./WebauthnCredentialTable";
 import ManagedAccountTable from "./ManagedAccountTable";
-
-import {Controlled as CodeMirror} from "react-codemirror2";
-import "codemirror/lib/codemirror.css";
-require("codemirror/theme/material-darker.css");
-require("codemirror/mode/javascript/javascript");
+import PropertyTable from "./propertyTable";
 
 const {Option} = Select;
 
@@ -490,13 +486,10 @@ class UserEditPage extends React.Component {
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("user:Properties")}:
+            {Setting.getLabel(i18next.t("user:Properties"), i18next.t("user:Properties - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <CodeMirror
-              value={JSON.stringify(this.state.user.properties, null, 4)}
-              options={{mode: "javascript", theme: "material-darker"}}
-            />
+            <PropertyTable properties={this.state.user.properties} onUpdateTable={(value) => {this.updateUserField("properties", value);}} />
           </Col>
         </Row>
       );
