@@ -1,0 +1,173 @@
+{
+  "account": {
+    "Email: %s": "Email: %s",
+    "Get init score failed, error: %w": "Get init score failed, error: %w",
+    "Invalid information": "Invalid information",
+    "Phone: %s": "Phone: %s",
+    "Please sign out first before signing up": "Please sign out first before signing up",
+    "The application does not allow to sign up new account": "The application does not allow to sign up new account"
+  },
+  "application": {
+    "Parameter organization is missing": "Parameter organization is missing",
+    "The user: %s doesn't exist": "The user: %s doesn't exist"
+  },
+  "auth": {
+    "%s No phone prefix": "%s No phone prefix",
+    "Challenge method should be S256": "Challenge method should be S256",
+    "Failed to create user, user information is invalid: %s": "Failed to create user, user information is invalid: %s",
+    "Failed to login in: %s": "Failed to login in: %s",
+    "Get init score failed, error: %w": "Get init score failed, error: %w",
+    "Invalid token": "Invalid token",
+    "Please sign out first before signing in": "Please sign out first before signing in",
+    "State expected: %s, but got: %s": "State expected: %s, but got: %s",
+    "The account does not exist": "The account does not exist",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
+    "The application: %s does not exist": "The application: %s does not exist",
+    "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
+    "The provider type: %s is not supported": "The provider type: %s is not supported",
+    "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
+    "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
+    "The user: %s/%s doesn't exist": "The user: %s/%s doesn't exist",
+    "Turing test failed.": "Turing test failed.",
+    "Unauthorized operation": "Unauthorized operation",
+    "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s"
+  },
+  "cas": {
+    "Service %s and %s do not match": "Service %s and %s do not match"
+  },
+  "check": {
+    "Affiliation cannot be blank": "Affiliation cannot be blank",
+    "DisplayName cannot be blank": "DisplayName cannot be blank",
+    "DisplayName is not valid real name": "DisplayName is not valid real name",
+    "Email already exists": "Email already exists",
+    "Email cannot be empty": "Email cannot be empty",
+    "Email is invalid": "Email is invalid",
+    "Empty username.": "Empty username.",
+    "FirstName cannot be blank": "FirstName cannot be blank",
+    "LastName cannot be blank": "LastName cannot be blank",
+    "Ldap user name or password incorrect": "Ldap user name or password incorrect",
+    "Multiple accounts with same uid, please check your ldap server": "Multiple accounts with same uid, please check your ldap server",
+    "Organization does not exist": "Organization does not exist",
+    "Password must have at least 6 characters": "Password must have at least 6 characters",
+    "Phone already exists": "Phone already exists",
+    "Phone cannot be empty": "Phone cannot be empty",
+    "Phone number is invalid": "Phone number is invalid",
+    "Please login first": "Please login first",
+    "Session outdated, please login again": "Session outdated, please login again",
+    "The user doesn't exist": "The user doesn't exist",
+    "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
+    "The user: %s doesn't exist": "The user: %s doesn't exist",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.",
+    "Username already exists": "Username already exists",
+    "Username cannot be an email address": "Username cannot be an email address",
+    "Username cannot contain white spaces": "Username cannot contain white spaces",
+    "Username cannot start with a digit": "Username cannot start with a digit",
+    "Username is too long (maximum is 39 characters).": "Username is too long (maximum is 39 characters).",
+    "Username must have at least 2 characters": "Username must have at least 2 characters",
+    "You don't have the permission to do this": "You don't have the permission to do this",
+    "You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again": "You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again",
+    "unsupported password type: %s": "unsupported password type: %s"
+  },
+  "check_util": {
+    "You have entered the wrong password too many times, please wait for %d minutes and try again": "You have entered the wrong password too many times, please wait for %d minutes and try again",
+    "password is incorrect, you have %d remaining chances": "password is incorrect, you have %d remaining chances"
+  },
+  "enforcer": {
+    "Please sign in first": "Please sign in first"
+  },
+  "ldap": {
+    "Ldap server exist": "Ldap server exist",
+    "Missing parameter": "Missing parameter"
+  },
+  "link": {
+    "Please link first": "Please link first",
+    "This application has no providers": "This application has no providers",
+    "This application has no providers of type": "This application has no providers of type",
+    "This provider can't be unlinked": "This provider can't be unlinked",
+    "You are not the global admin, you can't unlink other users": "You are not the global admin, you can't unlink other users",
+    "You can't unlink yourself, you are not a member of any application": "You can't unlink yourself, you are not a member of any application"
+  },
+  "organization": {
+    "Only admin can modify the %s.": "Only admin can modify the %s.",
+    "The %s is immutable.": "The %s is immutable.",
+    "Unknown modify rule %s.": "Unknown modify rule %s."
+  },
+  "product": {
+    "Please login first": "Please login first",
+    "The user: %s doesn't exist": "The user: %s doesn't exist"
+  },
+  "provider": {
+    "Invalid application id": "Invalid application id",
+    "the provider: %s does not exist": "the provider: %s does not exist"
+  },
+  "resource": {
+    "User is nil for tag: avatar": "User is nil for tag: avatar",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Username or fullFilePath is empty: username = %s, fullFilePath = %s"
+  },
+  "saml": {
+    "Application %s not found": "Application %s not found"
+  },
+  "saml_sp": {
+    "provider %s's category is not SAML": "provider %s's category is not SAML"
+  },
+  "service": {
+    "Empty parameters for emailForm: %v": "Empty parameters for emailForm: %v",
+    "Invalid Email receivers: %s": "Invalid Email receivers: %s",
+    "Invalid phone receivers: %s": "Invalid phone receivers: %s"
+  },
+  "storage": {
+    "The objectKey: %s is not allowed": "The objectKey: %s is not allowed",
+    "The provider type: %s is not supported": "The provider type: %s is not supported"
+  },
+  "system_info": {
+    "You are not authorized to access this resource": "You are not authorized to access this resource"
+  },
+  "token": {
+    "Challenge method should be S256": "Challenge method should be S256",
+    "Empty clientId or clientSecret": "Empty clientId or clientSecret",
+    "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
+    "Invalid application or wrong clientSecret": "Invalid application or wrong clientSecret",
+    "Invalid client_id": "Invalid client_id",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s doesn't exist in the allowed Redirect URI list"
+  },
+  "user": {
+    "Display name cannot be empty": "Display name cannot be empty",
+    "New password cannot contain blank space.": "New password cannot contain blank space.",
+    "New password must have at least 6 characters": "New password must have at least 6 characters",
+    "The user: %s/%s doesn't exist": "The user: %s/%s doesn't exist"
+  },
+  "user_upload": {
+    "Failed to import users": "Failed to import users"
+  },
+  "util": {
+    "No application is found for userId: %s": "No application is found for userId: %s",
+    "No provider for category: %s is found for application: %s": "No provider for category: %s is found for application: %s",
+    "Please login first": "Please login first",
+    "The provider: %s is not found": "The provider: %s is not found",
+    "The user: %s doesn't exist": "The user: %s doesn't exist"
+  },
+  "verification": {
+    "Code has not been sent yet!": "Code has not been sent yet!",
+    "Email is invalid": "Email is invalid",
+    "Invalid captcha provider.": "Invalid captcha provider.",
+    "Missing parameter": "Missing parameter",
+    "Organization does not exist": "Organization does not exist",
+    "Phone number is invalid": "Phone number is invalid",
+    "Please login first": "Please login first",
+    "Turing test failed.": "Turing test failed.",
+    "Unable to get the email modify rule.": "Unable to get the email modify rule.",
+    "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",
+    "Unknown type": "Unknown type",
+    "Wrong parameter": "Wrong parameter",
+    "You should verify your code in %d min!": "You should verify your code in %d min!",
+    "the user does not exist, please sign up first": "the user does not exist, please sign up first"
+  },
+  "webauthn": {
+    "Found no credentials for this user": "Found no credentials for this user",
+    "Please call WebAuthnSigninBegin first": "Please call WebAuthnSigninBegin first",
+    "Please login first": "Please login first",
+    "The user: %s/%s doesn't exist": "The user: %s/%s doesn't exist"
+  }
+}
