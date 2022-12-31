@@ -125,6 +125,32 @@ func (c *ApiController) GetUser() {
 	c.ServeJSON()
 }
 
+func checkPermissionForUpdateUser(id string, newUser object.User, loginUser *object.User) bool {
+	oldUser := object.GetUser(id)
+	org := object.GetOrganizationByUser(oldUser)
+
+	if oldUser.IsAdmin != newUser.IsAdmin {
+		isAdmin := object.GetAccountItemByName("Is admin", org)
+		if isAdmin.ModifyRule == "Immutable" {
+			return false
+		}
+		if isAdmin.ModifyRule == "Admin" && !loginUser.IsAdmin && !loginUser.IsGlobalAdmin {
+			return false
+		}
+	}
+
+	if oldUser.IsGlobalAdmin != newUser.IsGlobalAdmin {
+		isGlobalAdmin := object.GetAccountItemByName("Is global admin", org)
+		if isGlobalAdmin.ModifyRule == "Immutable" {
+			return false
+		}
+		if isGlobalAdmin.ModifyRule == "Admin" && !loginUser.IsAdmin && !loginUser.IsGlobalAdmin {
+			return false
+		}
+	}
+	return true
+}
+
 // UpdateUser
 // @Title UpdateUser
 // @Tag User API
@@ -159,6 +185,12 @@ func (c *ApiController) UpdateUser() {
 	}
 
 	isGlobalAdmin := c.IsGlobalAdmin()
+
+	if !checkPermissionForUpdateUser(id, user, c.getCurrentUser()) {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
 	affected := object.UpdateUser(id, &user, columns, isGlobalAdmin)
 	if affected {
 		object.UpdateUserToOriginalDatabase(&user)
