@@ -507,7 +507,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:Is admin"), i18next.t("user:Is admin - Tooltip"))} :
           </Col>
           <Col span={(Setting.isMobile()) ? 22 : 2} >
-            <Switch disabled={this.state.user.owner === "built-in"} checked={this.state.user.isAdmin} onChange={checked => {
+            <Switch disabled={this.state.user.owner === "built-in" || disabled} checked={this.state.user.isAdmin} onChange={checked => {
               this.updateUserField("isAdmin", checked);
             }} />
           </Col>
@@ -520,7 +520,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:Is global admin"), i18next.t("user:Is global admin - Tooltip"))} :
           </Col>
           <Col span={(Setting.isMobile()) ? 22 : 2} >
-            <Switch disabled={this.state.user.owner === "built-in"} checked={this.state.user.isGlobalAdmin} onChange={checked => {
+            <Switch disabled={this.state.user.owner === "built-in" || disabled} checked={this.state.user.isGlobalAdmin} onChange={checked => {
               this.updateUserField("isGlobalAdmin", checked);
             }} />
           </Col>
