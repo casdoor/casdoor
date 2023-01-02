@@ -242,6 +242,7 @@ func (c *ApiController) Signup() {
 // @router /logout [get,post]
 func (c *ApiController) Logout() {
 	user := c.GetSessionUsername()
+	object.DeleteUserSession(user)
 	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 	application := c.GetSessionApplication()
