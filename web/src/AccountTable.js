@@ -170,7 +170,7 @@ class AccountTable extends React.Component {
           }
 
           let options;
-          if (record.viewRule === "Admin") {
+          if (record.viewRule === "Admin" || record.name === "Is admin" || record.name === "Is global admin") {
             options = [
               {id: "Admin", name: "Admin"},
               {id: "Immutable", name: "Immutable"},

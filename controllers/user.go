@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/beego/beego/utils/pagination"
@@ -125,6 +126,117 @@ func (c *ApiController) GetUser() {
 	c.ServeJSON()
 }
 
+func checkPermissionForUpdateUser(id string, newUser object.User, c *ApiController) (bool, string) {
+	oldUser := object.GetUser(id)
+	org := object.GetOrganizationByUser(oldUser)
+	var itemsChanged []*object.AccountItem
+
+	if oldUser.Owner != newUser.Owner {
+		item := object.GetAccountItemByName("Organization", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Name != newUser.Name {
+		item := object.GetAccountItemByName("Name", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Id != newUser.Id {
+		item := object.GetAccountItemByName("ID", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.DisplayName != newUser.DisplayName {
+		item := object.GetAccountItemByName("Display name", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Avatar != newUser.Avatar {
+		item := object.GetAccountItemByName("Avatar", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Type != newUser.Type {
+		item := object.GetAccountItemByName("User type", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	// The password is *** when not modified
+	if oldUser.Password != newUser.Password && newUser.Password != "***" {
+		item := object.GetAccountItemByName("Password", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Email != newUser.Email {
+		item := object.GetAccountItemByName("Email", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Phone != newUser.Phone {
+		item := object.GetAccountItemByName("Phone", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Region != newUser.Region {
+		item := object.GetAccountItemByName("Country/Region", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Location != newUser.Location {
+		item := object.GetAccountItemByName("Location", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Affiliation != newUser.Affiliation {
+		item := object.GetAccountItemByName("Affiliation", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Title != newUser.Title {
+		item := object.GetAccountItemByName("Title", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Homepage != newUser.Homepage {
+		item := object.GetAccountItemByName("Homepage", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Bio != newUser.Bio {
+		item := object.GetAccountItemByName("Bio", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Tag != newUser.Tag {
+		item := object.GetAccountItemByName("Tag", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.SignupApplication != newUser.SignupApplication {
+		item := object.GetAccountItemByName("Signup application", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if reflect.DeepEqual(oldUser.Roles, newUser.Roles) {
+		item := object.GetAccountItemByName("Roles", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if reflect.DeepEqual(oldUser.Permissions, newUser.Permissions) {
+		item := object.GetAccountItemByName("Permissions", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if reflect.DeepEqual(oldUser.Properties, newUser.Properties) {
+		item := object.GetAccountItemByName("Properties", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.IsAdmin != newUser.IsAdmin {
+		item := object.GetAccountItemByName("Is admin", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.IsGlobalAdmin != newUser.IsGlobalAdmin {
+		item := object.GetAccountItemByName("Is global admin", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.IsForbidden != newUser.IsForbidden {
+		item := object.GetAccountItemByName("Is forbidden", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.IsDeleted != newUser.IsDeleted {
+		item := object.GetAccountItemByName("Is deleted", org)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	for i := range itemsChanged {
+		if pass, err := object.CheckAccountItemModifyRule(itemsChanged[i], c.getCurrentUser(), c.GetAcceptLanguage()); !pass {
+			return pass, err
+		}
+	}
+	return true, ""
+}
+
 // UpdateUser
 // @Title UpdateUser
 // @Tag User API
@@ -159,6 +271,12 @@ func (c *ApiController) UpdateUser() {
 	}
 
 	isGlobalAdmin := c.IsGlobalAdmin()
+
+	if pass, err := checkPermissionForUpdateUser(id, user, c); !pass {
+		c.ResponseError(c.T(err))
+		return
+	}
+
 	affected := object.UpdateUser(id, &user, columns, isGlobalAdmin)
 	if affected {
 		object.UpdateUserToOriginalDatabase(&user)
