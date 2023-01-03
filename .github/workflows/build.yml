@@ -57,7 +57,7 @@ jobs:
           go build -race -ldflags "-extldflags '-static'"
         working-directory: ./
 
-  e2e:
+  Ee:
     name: e2e-test
     runs-on: ubuntu-latest
     needs: [ go-tests ]
