@@ -57,21 +57,22 @@ jobs:
           go build -race -ldflags "-extldflags '-static'"
         working-directory: ./
 
-  Ee:
+  E2e:
     name: e2e-test
     runs-on: ubuntu-latest
     needs: [ go-tests ]
     steps:
-            - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
         with:
           go-version: '^1.16.5'
       - name: start
         run: go run main.go
-      working-directory: ./
+        working-directory: ./
       - name: e2e
         run: yarn cypress run --spec "**/e2e/**.cy.js"'
-      working-directory: ./web
+        working-directory: ./web
+ 
 
   linter:
     name: Go-Linter
