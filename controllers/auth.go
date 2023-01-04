@@ -103,12 +103,12 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			resp = tokenToResponse(token)
 		}
 	} else if form.Type == ResponseTypeSaml { // saml flow
-		res, redirectUrl, err := object.GetSamlResponse(application, user, form.SamlRequest, c.Ctx.Request.Host)
+		res, redirectUrl, method, err := object.GetSamlResponse(application, user, form.SamlRequest, c.Ctx.Request.Host)
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
 			return
 		}
-		resp = &Response{Status: "ok", Msg: "", Data: res, Data2: redirectUrl}
+		resp = &Response{Status: "ok", Msg: "", Data: res, Data2: map[string]string{"redirectUrl": redirectUrl, "method": method}}
 	} else if form.Type == ResponseTypeCas {
 		// not oauth but CAS SSO protocol
 		service := c.Input().Get("service")

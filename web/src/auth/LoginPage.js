@@ -320,15 +320,15 @@ class LoginPage extends React.Component {
               const accessToken = res.data;
               Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
             } else if (responseType === "saml") {
-              const SAMLResponse = res.data;
-              const redirectUri = res.data2;
-              if (this.state.application.assertionConsumerUrl !== "") {
+              if (res.data2.method === "POST") {
                 this.setState({
                   samlResponse: res.data,
-                  redirectUrl: res.data2,
+                  redirectUrl: res.data2.redirectUrl,
                   relayState: oAuthParams.relayState,
                 });
               } else {
+                const SAMLResponse = res.data;
+                const redirectUri = res.data2.redirectUrl;
                 Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
               }
             }
@@ -616,13 +616,13 @@ class LoginPage extends React.Component {
       this.sendSilentSigninData("signing-in");
 
       const values = {};
-      values["application"] = this.state.application.name;
+      values["application"] = application.name;
       this.onFinish(values);
     }
 
     if (application.enableAutoSignin) {
       const values = {};
-      values["application"] = this.state.application.name;
+      values["application"] = application.name;
       this.onFinish(values);
     }
 
@@ -637,7 +637,7 @@ class LoginPage extends React.Component {
         <br />
         <SelfLoginButton account={this.props.account} onClick={() => {
           const values = {};
-          values["application"] = this.state.application.name;
+          values["application"] = application.name;
           this.onFinish(values);
         }} />
         <br />

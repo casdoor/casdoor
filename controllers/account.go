@@ -272,12 +272,14 @@ func (c *ApiController) GetAccount() {
 		user = object.ExtendManagedAccountsWithUser(user)
 	}
 
+	object.ExtendUserWithRolesAndPermissions(user)
+
 	organization := object.GetMaskedOrganization(object.GetOrganizationByUser(user))
 	resp := Response{
 		Status: "ok",
 		Sub:    user.Id,
 		Name:   user.Name,
-		Data:   user,
+		Data:   object.GetMaskedUser(user),
 		Data2:  organization,
 	}
 	c.Data["json"] = resp

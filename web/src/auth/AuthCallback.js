@@ -20,6 +20,7 @@ import * as Util from "./Util";
 import {authConfig} from "./Auth";
 import * as Setting from "../Setting";
 import i18next from "i18next";
+import RedirectForm from "../common/RedirectForm";
 
 class AuthCallback extends React.Component {
   constructor(props) {
@@ -27,6 +28,9 @@ class AuthCallback extends React.Component {
     this.state = {
       classes: props,
       msg: null,
+      samlResponse: "",
+      relayState: "",
+      redirectUrl: "",
     };
   }
 
@@ -164,9 +168,17 @@ class AuthCallback extends React.Component {
             const from = innerParams.get("from");
             Setting.goToLinkSoft(this, from);
           } else if (responseType === "saml") {
-            const SAMLResponse = res.data;
-            const redirectUri = res.data2;
-            Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
+            if (res.data2.method === "POST") {
+              this.setState({
+                samlResponse: res.data,
+                redirectUrl: res.data2.redirectUrl,
+                relayState: oAuthParams.relayState,
+              });
+            } else {
+              const SAMLResponse = res.data;
+              const redirectUri = res.data2.redirectUrl;
+              Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
+            }
           }
         } else {
           this.setState({
@@ -177,6 +189,10 @@ class AuthCallback extends React.Component {
   }
 
   render() {
+    if (this.state.samlResponse !== "") {
+      return <RedirectForm samlResponse={this.state.samlResponse} redirectUrl={this.state.redirectUrl} relayState={this.state.relayState} />;
+    }
+
     return (
       <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
         {

@@ -223,11 +223,14 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 
 // GetSamlResponse generates a SAML2.0 response
 // parameter samlRequest is saml request in base64 format
-func GetSamlResponse(application *Application, user *User, samlRequest string, host string) (string, string, error) {
+func GetSamlResponse(application *Application, user *User, samlRequest string, host string) (string, string, string, error) {
+	// request type
+	method := "GET"
+
 	// base64 decode
 	defated, err := base64.StdEncoding.DecodeString(samlRequest)
 	if err != nil {
-		return "", "", fmt.Errorf("err: %s", err.Error())
+		return "", "", method, fmt.Errorf("err: %s", err.Error())
 	}
 	// decompress
 	var buffer bytes.Buffer
@@ -236,12 +239,12 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	var authnRequest saml.AuthnRequest
 	err = xml.Unmarshal(buffer.Bytes(), &authnRequest)
 	if err != nil {
-		return "", "", fmt.Errorf("err: %s", err.Error())
+		return "", "", method, fmt.Errorf("err: %s", err.Error())
 	}
 
 	// verify samlRequest
 	if isValid := application.IsRedirectUriValid(authnRequest.Issuer.Url); !isValid {
-		return "", "", fmt.Errorf("err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", authnRequest.Issuer.Url)
+		return "", "", method, fmt.Errorf("err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", authnRequest.Issuer.Url)
 	}
 
 	// get certificate string
@@ -253,6 +256,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 
 	// redirect Url (Assertion Consumer Url)
 	if application.SamlReplyUrl != "" {
+		method = "POST"
 		authnRequest.AssertionConsumerServiceURL = application.SamlReplyUrl
 	}
 
@@ -275,7 +279,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	doc.SetRoot(samlResponse)
 	xmlBytes, err := doc.WriteToBytes()
 	if err != nil {
-		return "", "", fmt.Errorf("err: %s", err.Error())
+		return "", "", method, fmt.Errorf("err: %s", err.Error())
 	}
 
 	// compress
@@ -283,7 +287,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 		flated := bytes.NewBuffer(nil)
 		writer, err := flate.NewWriter(flated, flate.DefaultCompression)
 		if err != nil {
-			return "", "", fmt.Errorf("err: %s", err.Error())
+			return "", "", method, fmt.Errorf("err: %s", err.Error())
 		}
 		writer.Write(xmlBytes)
 		writer.Close()
@@ -291,7 +295,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 	// base64 encode
 	res := base64.StdEncoding.EncodeToString(xmlBytes)
-	return res, authnRequest.AssertionConsumerServiceURL, nil
+	return res, authnRequest.AssertionConsumerServiceURL, method, nil
 }
 
 // NewSamlResponse11 return a saml1.1 response(not 2.0)
