@@ -273,7 +273,7 @@ func (c *ApiController) UpdateUser() {
 	isGlobalAdmin := c.IsGlobalAdmin()
 
 	if pass, err := checkPermissionForUpdateUser(id, user, c); !pass {
-		c.ResponseError(c.T(err))
+		c.ResponseError(err)
 		return
 	}
 
