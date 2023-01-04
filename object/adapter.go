@@ -223,7 +223,7 @@ func (a *Adapter) createTable() {
 		panic(err)
 	}
 
-	err = a.Engine.Sync2(new(userSession))
+	err = a.Engine.Sync2(new(Session))
 	if err != nil {
 		panic(err)
 	}

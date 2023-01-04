@@ -140,7 +140,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	}
 
 	if resp.Status == "ok" {
-		object.SetUserSession(user.GetId(), c.CruSession.SessionID())
+		object.SetSession(user.GetId(), c.CruSession.SessionID())
 	}
 
 	return resp

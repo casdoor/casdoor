@@ -529,7 +529,9 @@ func AddUsersInBatch(users []*User) bool {
 }
 
 func DeleteUser(user *User) bool {
-	DeleteUserSession(user.GetId())
+	// Forced offline the user first
+	DeleteSession(user.GetId())
+
 	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
 	if err != nil {
 		panic(err)
