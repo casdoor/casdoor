@@ -90,7 +90,7 @@
     "You can't unlink yourself, you are not a member of any application": "您无法取消链接，您不是任何应用程序的成员"
   },
   "organization": {
-    "Only admin can modify the %s.": "您无法取消链接，您不是任何应用程序的成员",
+    "Only admin can modify the %s.": "仅允许管理员可以修改 %s",
     "The %s is immutable.": "%s是不可变的",
     "Unknown modify rule %s.": "未知的修改规则"
   },
