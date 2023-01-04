@@ -276,7 +276,7 @@ func (c *ApiController) GetAccount() {
 		Status: "ok",
 		Sub:    user.Id,
 		Name:   user.Name,
-		Data:   user,
+		Data:   object.GetMaskedUser(user),
 		Data2:  organization,
 	}
 	c.Data["json"] = resp
