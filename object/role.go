@@ -192,3 +192,11 @@ func roleChangeTrigger(oldName string, newName string) error {
 
 	return session.Commit()
 }
+
+func GetMaskedRoles(roles []*Role) []*Role {
+	for _, role := range roles {
+		role.Users = nil
+	}
+
+	return roles
+}

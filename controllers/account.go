@@ -273,6 +273,9 @@ func (c *ApiController) GetAccount() {
 
 	object.ExtendUserWithRolesAndPermissions(user)
 
+	user.Permissions = object.GetMaskedPermissions(user.Permissions)
+	user.Roles = object.GetMaskedRoles(user.Roles)
+
 	organization := object.GetMaskedOrganization(object.GetOrganizationByUser(user))
 	resp := Response{
 		Status: "ok",
