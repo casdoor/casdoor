@@ -17,7 +17,6 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/beego/beego/utils/pagination"
@@ -200,18 +199,28 @@ func checkPermissionForUpdateUser(id string, newUser object.User, c *ApiControll
 		item := object.GetAccountItemByName("Signup application", org)
 		itemsChanged = append(itemsChanged, item)
 	}
-	if len(oldUser.Roles) != len(newUser.Roles) && !reflect.DeepEqual(oldUser.Roles, newUser.Roles) {
+
+	oldUserRolesJson, _ := json.Marshal(oldUser.Roles)
+	newUserRolesJson, _ := json.Marshal(newUser.Roles)
+	if string(oldUserRolesJson) != string(newUserRolesJson) {
 		item := object.GetAccountItemByName("Roles", org)
 		itemsChanged = append(itemsChanged, item)
 	}
-	if len(oldUser.Permissions) != len(newUser.Permissions) && !reflect.DeepEqual(oldUser.Permissions, newUser.Permissions) {
+
+	oldUserPermissionJson, _ := json.Marshal(oldUser.Permissions)
+	newUserPermissionJson, _ := json.Marshal(newUser.Permissions)
+	if string(oldUserPermissionJson) != string(newUserPermissionJson) {
 		item := object.GetAccountItemByName("Permissions", org)
 		itemsChanged = append(itemsChanged, item)
 	}
-	if !reflect.DeepEqual(oldUser.Properties, newUser.Properties) {
+
+	oldUserPropertiesJson, _ := json.Marshal(oldUser.Properties)
+	newUserPropertiesJson, _ := json.Marshal(newUser.Properties)
+	if string(oldUserPropertiesJson) != string(newUserPropertiesJson) {
 		item := object.GetAccountItemByName("Properties", org)
 		itemsChanged = append(itemsChanged, item)
 	}
+
 	if oldUser.IsAdmin != newUser.IsAdmin {
 		item := object.GetAccountItemByName("Is admin", org)
 		itemsChanged = append(itemsChanged, item)
