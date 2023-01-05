@@ -269,3 +269,12 @@ func ContainsAsterisk(userId string, users []string) bool {
 
 	return containsAsterisk
 }
+
+func GetMaskedPermissions(permissions []*Permission) []*Permission {
+	for _, permission := range permissions {
+		permission.Users = nil
+		permission.Submitter = ""
+	}
+
+	return permissions
+}
