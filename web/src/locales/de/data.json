@@ -246,7 +246,7 @@
     "Signup application - Tooltip": "Signup application - Tooltip",
     "Sorry, the page you visited does not exist.": "Die von Ihnen besuchte Seite existiert leider nicht.",
     "Sorry, the user you visited does not exist or you are not authorized to access this user.": "Sorry, the user you visited does not exist or you are not authorized to access this user.",
-    "Sorry, you do not have permission to access this page.": "Sorry, you do not have permission to access this page.",
+    "Sorry, you do not have permission to access this page or logged in status invalid.": "Sorry, you do not have permission to access this page or logged in status invalid.",
     "State": "State",
     "State - Tooltip": "State - Tooltip",
     "Successfully added": "Successfully added",

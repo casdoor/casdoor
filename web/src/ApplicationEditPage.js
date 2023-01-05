@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Popover, Radio, Row, Select, Switch, Upload} from "antd";
+import {Button, Card, Col, Input, Popover, Radio, Result, Row, Select, Switch, Upload} from "antd";
 import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -103,6 +103,7 @@ class ApplicationEditPage extends React.Component {
       uploading: false,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
       samlMetadata: null,
+      isAuthorized: true,
     };
   }
 
@@ -129,9 +130,15 @@ class ApplicationEditPage extends React.Component {
   getOrganizations() {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
-        this.setState({
-          organizations: (res.msg === undefined) ? res : [],
-        });
+        if (res?.status === "error") {
+          this.setState({
+            isAuthorized: false,
+          });
+        } else {
+          this.setState({
+            organizations: (res.msg === undefined) ? res : [],
+          });
+        }
       });
   }
 
@@ -838,6 +845,17 @@ class ApplicationEditPage extends React.Component {
   }
 
   render() {
+    if (!this.state.isAuthorized) {
+      return (
+        <Result
+          status="403"
+          title="403 Unauthorized"
+          subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
+          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
+        />
+      );
+    }
+
     return (
       <div>
         {
