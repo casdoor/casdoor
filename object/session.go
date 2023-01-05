@@ -53,16 +53,37 @@ func SetSession(id string, sessionId string) {
 func DeleteSession(id string) bool {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 
-	Session := &Session{Owner: owner, Name: name}
-	_, err := adapter.Engine.ID(core.PK{owner, name}).Get(Session)
+	session := &Session{Owner: owner, Name: name}
+	_, err := adapter.Engine.ID(core.PK{owner, name}).Get(session)
 	if err != nil {
 		return false
 	}
 
-	DeleteBeegoSession(Session.SessionId)
+	DeleteBeegoSession(session.SessionId)
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).Delete(Session)
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).Delete(session)
 	return affected != 0
+}
+
+func DeleteSessionId(id string, sessionId string) bool {
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
+
+	session := &Session{Owner: owner, Name: name}
+	_, err := adapter.Engine.ID(core.PK{owner, name}).Get(session)
+	if err != nil {
+		return false
+	}
+
+	DeleteBeegoSession([]string{sessionId})
+	session.SessionId = util.DeleteVal(session.SessionId, sessionId)
+
+	if len(session.SessionId) < 1 {
+		affected, _ := adapter.Engine.ID(core.PK{owner, name}).Delete(session)
+		return affected != 0
+	} else {
+		affected, _ := adapter.Engine.ID(core.PK{owner, name}).Update(session)
+		return affected != 0
+	}
 }
 
 func DeleteBeegoSession(sessionIds []string) {
