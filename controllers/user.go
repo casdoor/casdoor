@@ -200,15 +200,15 @@ func checkPermissionForUpdateUser(id string, newUser object.User, c *ApiControll
 		item := object.GetAccountItemByName("Signup application", org)
 		itemsChanged = append(itemsChanged, item)
 	}
-	if reflect.DeepEqual(oldUser.Roles, newUser.Roles) {
+	if len(oldUser.Roles) != len(newUser.Roles) && !reflect.DeepEqual(oldUser.Roles, newUser.Roles) {
 		item := object.GetAccountItemByName("Roles", org)
 		itemsChanged = append(itemsChanged, item)
 	}
-	if reflect.DeepEqual(oldUser.Permissions, newUser.Permissions) {
+	if len(oldUser.Permissions) != len(newUser.Permissions) && !reflect.DeepEqual(oldUser.Permissions, newUser.Permissions) {
 		item := object.GetAccountItemByName("Permissions", org)
 		itemsChanged = append(itemsChanged, item)
 	}
-	if reflect.DeepEqual(oldUser.Properties, newUser.Properties) {
+	if !reflect.DeepEqual(oldUser.Properties, newUser.Properties) {
 		item := object.GetAccountItemByName("Properties", org)
 		itemsChanged = append(itemsChanged, item)
 	}
