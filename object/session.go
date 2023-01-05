@@ -15,9 +15,10 @@
 package object
 
 import (
+	"time"
+
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/util"
-	"time"
 	"xorm.io/core"
 )
 
