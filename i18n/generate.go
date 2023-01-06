@@ -46,17 +46,15 @@ func getAllI18nStrings(fileContent string) []string {
 	return res
 }
 
-func getAllJsFilePaths() []string {
-	path := "../web/src"
-
+func getAllFilePathsInFolder(folder string, fileSuffix string) []string {
 	res := []string{}
-	err := filepath.Walk(path,
+	err := filepath.Walk(folder,
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
 
-			if !strings.HasSuffix(info.Name(), ".js") {
+			if !strings.HasSuffix(info.Name(), fileSuffix) {
 				return nil
 			}
 
@@ -73,7 +71,7 @@ func getAllJsFilePaths() []string {
 
 func parseToData() *I18nData {
 	allWords := []string{}
-	paths := getAllJsFilePaths()
+	paths := getAllFilePathsInFolder("../web/src", ".js")
 	for _, path := range paths {
 		fileContent := util.ReadStringFromPath(path)
 		words := getAllI18nStrings(fileContent)

@@ -40,7 +40,7 @@ func TestGenerateI18nStringsForFrontend(t *testing.T) {
 }
 
 func TestGenerateI18nStringsForBackend(t *testing.T) {
-	paths := getAllGoFilePaths()
+	paths := getAllFilePathsInFolder("../", ".go")
 
 	errName := getErrName(paths)
 

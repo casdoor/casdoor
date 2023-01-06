@@ -15,8 +15,6 @@
 package i18n
 
 import (
-	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -52,31 +50,6 @@ func GetAllI18nStrings(fileContent string, path string) []string {
 		for _, match := range matches {
 			res = append(res, match[1][1:])
 		}
-	}
-
-	return res
-}
-
-func getAllGoFilePaths() []string {
-	path := "../"
-
-	res := []string{}
-	err := filepath.Walk(path,
-		func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-
-			if !strings.HasSuffix(info.Name(), ".go") {
-				return nil
-			}
-
-			res = append(res, path)
-			// fmt.Println(path, info.Name())
-			return nil
-		})
-	if err != nil {
-		panic(err)
 	}
 
 	return res
