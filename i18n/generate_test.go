@@ -15,28 +15,28 @@
 package i18n
 
 import (
-	"fmt"
 	"testing"
 )
 
-func applyToOtherLanguage(dataEn *I18nData, lang string) {
-	dataOther := readI18nFile(lang)
-	println(dataOther)
+func applyToOtherLanguage(category string, language string, i18nData *I18nData) {
+	newData := readI18nFile(category, language)
+	println(newData)
 
-	applyData(dataEn, dataOther)
-	writeI18nFile(lang, dataEn)
+	applyData(i18nData, newData)
+	writeI18nFile(category, language, i18nData)
 }
 
 func TestGenerateI18nStringsForFrontend(t *testing.T) {
-	dataEn := parseToData()
-	writeI18nFile("en", dataEn)
+	enData := parseToData()
+	writeI18nFile("frontend", "en", enData)
 
-	applyToOtherLanguage(dataEn, "de")
-	applyToOtherLanguage(dataEn, "fr")
-	applyToOtherLanguage(dataEn, "ja")
-	applyToOtherLanguage(dataEn, "ko")
-	applyToOtherLanguage(dataEn, "ru")
-	applyToOtherLanguage(dataEn, "zh")
+	applyToOtherLanguage("frontend", "de", enData)
+	applyToOtherLanguage("frontend", "es", enData)
+	applyToOtherLanguage("frontend", "fr", enData)
+	applyToOtherLanguage("frontend", "ja", enData)
+	applyToOtherLanguage("frontend", "ko", enData)
+	applyToOtherLanguage("frontend", "ru", enData)
+	applyToOtherLanguage("frontend", "zh", enData)
 }
 
 func TestGenerateI18nStringsForBackend(t *testing.T) {
@@ -44,21 +44,15 @@ func TestGenerateI18nStringsForBackend(t *testing.T) {
 
 	errName := getErrName(paths)
 
-	dataEn := getI18nJSONData(errName)
+	enData := getI18nJSONData(errName)
 
-	writeI18nFile("backend_en", dataEn)
+	writeI18nFile("backend", "en", enData)
 
-	applyToOtherLanguage(dataEn, "backend_de")
-	applyToOtherLanguage(dataEn, "backend_es")
-	applyToOtherLanguage(dataEn, "backend_fr")
-	applyToOtherLanguage(dataEn, "backend_ja")
-	applyToOtherLanguage(dataEn, "backend_ko")
-	applyToOtherLanguage(dataEn, "backend_ru")
-	applyToOtherLanguage(dataEn, "backend_zh")
-
-	fmt.Println("Total Err Words:", len(errName))
-
-	for i := range errName {
-		fmt.Println(i)
-	}
+	applyToOtherLanguage("backend", "de", enData)
+	applyToOtherLanguage("backend", "es", enData)
+	applyToOtherLanguage("backend", "fr", enData)
+	applyToOtherLanguage("backend", "ja", enData)
+	applyToOtherLanguage("backend", "ko", enData)
+	applyToOtherLanguage("backend", "ru", enData)
+	applyToOtherLanguage("backend", "zh", enData)
 }

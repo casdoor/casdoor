@@ -27,18 +27,16 @@ var f embed.FS
 
 var langMap = make(map[string]map[string]map[string]string) // for example : langMap[en][account][Invalid information] = Invalid information
 
-func getI18nFilePath(language string) string {
-	if strings.Contains(language, "backend") {
-		// change language from 'backend_en' to 'en'
-		language = language[8:]
+func getI18nFilePath(category string, language string) string {
+	if category == "backend" {
 		return fmt.Sprintf("../i18n/locales/%s/data.json", language)
 	} else {
 		return fmt.Sprintf("../web/src/locales/%s/data.json", language)
 	}
 }
 
-func readI18nFile(language string) *I18nData {
-	s := util.ReadStringFromPath(getI18nFilePath(language))
+func readI18nFile(category string, language string) *I18nData {
+	s := util.ReadStringFromPath(getI18nFilePath(category, language))
 
 	data := &I18nData{}
 	err := util.JsonToStruct(s, data)
@@ -48,13 +46,13 @@ func readI18nFile(language string) *I18nData {
 	return data
 }
 
-func writeI18nFile(language string, data *I18nData) {
+func writeI18nFile(category string, language string, data *I18nData) {
 	s := util.StructToJsonFormatted(data)
 	s = strings.ReplaceAll(s, "\\u0026", "&")
 	s += "\n"
 	println(s)
 
-	util.WriteStringToPath(s, getI18nFilePath(language))
+	util.WriteStringToPath(s, getI18nFilePath(category, language))
 }
 
 func applyData(data1 *I18nData, data2 *I18nData) {
