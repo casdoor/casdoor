@@ -209,7 +209,7 @@ func (c *ApiController) Login() {
 	if form.Username != "" {
 		if form.Type == ResponseTypeLogin {
 			if c.GetSessionUsername() != "" {
-				c.ResponseError(c.T("auth:Please sign out first before signing in"), c.GetSessionUsername())
+				c.ResponseError(c.T("account:Please sign out first before signing in"), c.GetSessionUsername())
 				return
 			}
 		}
@@ -247,7 +247,7 @@ func (c *ApiController) Login() {
 			}
 			user = object.GetUserByFields(form.Organization, form.Username)
 			if user == nil {
-				c.ResponseError(fmt.Sprintf(c.T("auth:The user: %s/%s doesn't exist"), form.Organization, form.Username))
+				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s/%s doesn't exist"), form.Organization, form.Username))
 				return
 			}
 			checkResult = object.CheckSigninCode(user, checkDest, form.Code, c.GetAcceptLanguage())
@@ -422,7 +422,7 @@ func (c *ApiController) Login() {
 				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
 				initScore, err := getInitScore(organization)
 				if err != nil {
-					c.ResponseError(fmt.Errorf(c.T("auth:Get init score failed, error: %w"), err).Error())
+					c.ResponseError(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err).Error())
 					return
 				}
 
@@ -468,13 +468,13 @@ func (c *ApiController) Login() {
 				record2.User = user.Name
 				util.SafeGoroutine(func() { object.AddRecord(record2) })
 			} else if provider.Category == "SAML" {
-				resp = &Response{Status: "error", Msg: "The account does not exist"}
+				resp = &Response{Status: "error", Msg: c.T("general:The user doesn't exist")}
 			}
 			// resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"
 			userId := c.GetSessionUsername()
 			if userId == "" {
-				c.ResponseError(c.T("auth:The account does not exist"), userInfo)
+				c.ResponseError(c.T("general:The user doesn't exist"), userInfo)
 				return
 			}
 

@@ -265,7 +265,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	user := GetUser(userId)
 	if user == nil {
 		return &Code{
-			Message: fmt.Sprintf("token:The user: %s doesn't exist", userId),
+			Message: fmt.Sprintf("general:The user: %s doesn't exist", userId),
 			Code:    "",
 		}
 	}

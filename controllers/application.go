@@ -86,7 +86,7 @@ func (c *ApiController) GetUserApplication() {
 	id := c.Input().Get("id")
 	user := object.GetUser(id)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.T("application:The user: %s doesn't exist"), id))
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), id))
 		return
 	}
 

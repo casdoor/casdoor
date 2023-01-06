@@ -4,23 +4,20 @@
     "Get init score failed, error: %w": "初始化分数失败: %w",
     "Invalid information": "无效信息",
     "Phone: %s": "手机号: %s",
-    "Please sign out first before signing up": "请在登录前登出",
+    "Please sign out first before signing in": "请在登录前登出",
+    "Please sign out first before signing up": "请在注册前登出",
     "The application does not allow to sign up new account": "该应用不允许注册新账户"
   },
   "application": {
-    "Parameter organization is missing": "organization参数丢失",
-    "The user: %s doesn't exist": "用户不存在: %s"
+    "Parameter organization is missing": "organization参数丢失"
   },
   "auth": {
     "%s No phone prefix": "%s 无此手机号前缀",
     "Challenge method should be S256": "Challenge 方法应该为 S256",
     "Failed to create user, user information is invalid: %s": "创建用户失败，用户信息无效: %s",
     "Failed to login in: %s": "无法登录: %s",
-    "Get init score failed, error: %w": "初始化分数失败: %w",
     "Invalid token": "无效token",
-    "Please sign out first before signing in": "请在登录前登出",
     "State expected: %s, but got: %s": "期望状态为: %s, 实际状态为: %s",
-    "The account does not exist": "账户不存在",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许通过 %s 注册新账户, 请使用其他方式注册",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许注册新账户, 请联系IT支持",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "提供商账户: %s 与用户名: %s (%s) 已经与其他账户绑定: %s (%s)",
@@ -29,7 +26,6 @@
     "The provider type: %s is not supported": "不支持该类型的提供商: %s",
     "The provider: %s is not enabled for the application": "提供商: %s 未被启用",
     "The user is forbidden to sign in, please contact the administrator": "该用户被禁止登录，请联系管理员",
-    "The user: %s/%s doesn't exist": "用户不存在: %s/%s",
     "Turing test failed.": "人机验证失败",
     "Unauthorized operation": "未授权的操作",
     "Unknown authentication type (not password or provider), form = %s": "未知的认证类型（非密码或第三方提供商）：%s"
@@ -54,11 +50,8 @@
     "Phone already exists": "该手机号已存在",
     "Phone cannot be empty": "手机号不可为空",
     "Phone number is invalid": "无效手机号",
-    "Please login first": "请先登录",
     "Session outdated, please login again": "会话已过期，请重新登录",
-    "The user doesn't exist": "用户不存在",
     "The user is forbidden to sign in, please contact the administrator": "该用户被禁止登录，请联系管理员",
-    "The user: %s doesn't exist": "用户不存在: %s",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "用户名只能包含字母数字字符、下划线或连字符，不能有连续的连字符或下划线，也不能以连字符或下划线开头或结尾",
     "Username already exists": "用户名已存在",
     "Username cannot be an email address": "用户名不可以是邮箱地址",
@@ -66,13 +59,15 @@
     "Username cannot start with a digit": "用户名禁止使用数字开头",
     "Username is too long (maximum is 39 characters).": "用户名过长（最大允许长度为39个字符）",
     "Username must have at least 2 characters": "用户名至少要有2个字符",
-    "You don't have the permission to do this": "无权进行该操作",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "密码错误次数已达上限，请在 %d 分后重试",
     "password or code is incorrect, you have %d remaining chances": "密码错误，您还有 %d 次尝试的机会",
     "unsupported password type: %s": "不支持的密码类型: %s"
   },
-  "enforcer": {
-    "Please sign in first": "请先登录"
+  "general": {
+    "Please login first": "请先登录",
+    "The user doesn't exist": "用户不存在",
+    "The user: %s doesn't exist": "用户: %s 不存在",
+    "The user: %s/%s doesn't exist": "用户: %s/%s 不存在"
   },
   "ldap": {
     "Ldap server exist": "LDAP服务器已存在",
@@ -90,10 +85,6 @@
     "Only admin can modify the %s.": "仅允许管理员可以修改 %s",
     "The %s is immutable.": "%s是不可变的",
     "Unknown modify rule %s.": "未知的修改规则"
-  },
-  "product": {
-    "Please login first": "请先登录",
-    "The user: %s doesn't exist": "用户不存在: %s"
   },
   "provider": {
     "Invalid application id": "无效的应用ID",
@@ -118,11 +109,7 @@
     "The objectKey: %s is not allowed": "objectKey :%s 不被允许",
     "The provider type: %s is not supported": "提供商类型: %s 尚未支持"
   },
-  "system_info": {
-    "You are not authorized to access this resource": "您无权获取此资源"
-  },
   "token": {
-    "Challenge method should be S256": "Challenge 方法应该为 S256",
     "Empty clientId or clientSecret": "clientId或clientSecret为空",
     "Grant_type: %s is not supported in this application": "此应用中不支持此授权类型: %s",
     "Invalid application or wrong clientSecret": "无效应用或错误的clientSecret",
@@ -132,8 +119,7 @@
   "user": {
     "Display name cannot be empty": "显示名称不可为空",
     "New password cannot contain blank space.": "新密码不可以包含空格",
-    "New password must have at least 6 characters": "新密码至少需要6位字符",
-    "The user: %s/%s doesn't exist": "用户不存在: %s/%s"
+    "New password must have at least 6 characters": "新密码至少需要6位字符"
   },
   "user_upload": {
     "Failed to import users": "导入用户失败"
@@ -141,9 +127,7 @@
   "util": {
     "No application is found for userId: %s": "找不到该用户的应用程序 %s",
     "No provider for category: %s is found for application: %s": "找不到该用户的应用程序 %s",
-    "Please login first": "请先登录",
-    "The provider: %s is not found": "未找到提供商: %s",
-    "The user: %s doesn't exist": "用户不存在: %s"
+    "The provider: %s is not found": "未找到提供商: %s"
   },
   "verification": {
     "Code has not been sent yet!": "验证码还未发送",
@@ -152,7 +136,6 @@
     "Missing parameter": "参数丢失",
     "Organization does not exist": "组织不存在",
     "Phone number is invalid": "非法的手机号码",
-    "Please login first": "请先登录",
     "Turing test failed.": "验证码还未发送",
     "Unable to get the email modify rule.": "无法得到邮箱修改规则",
     "Unable to get the phone modify rule.": "无法得到手机号修改规则",
@@ -163,8 +146,6 @@
   },
   "webauthn": {
     "Found no credentials for this user": "该用户没有WebAuthn凭据",
-    "Please call WebAuthnSigninBegin first": "请先调用 WebAuthnSigninBegin",
-    "Please login first": "请先登录",
-    "The user: %s/%s doesn't exist": "用户: %s/%s 不存在"
+    "Please call WebAuthnSigninBegin first": "请先调用 WebAuthnSigninBegin"
   }
 }

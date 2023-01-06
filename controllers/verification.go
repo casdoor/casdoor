@@ -99,7 +99,7 @@ func (c *ApiController) SendVerificationCode() {
 	}
 
 	if checkUser == "true" && user == nil && object.GetUserByFields(organization.Name, dest) == nil {
-		c.ResponseError(c.T("verification:Please login first"))
+		c.ResponseError(c.T("general:Please login first"))
 		return
 	}
 

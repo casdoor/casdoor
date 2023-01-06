@@ -84,7 +84,7 @@ func (c *ApiController) SetTokenErrorHttpStatus() {
 func (c *ApiController) RequireSignedIn() (string, bool) {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(c.T("util:Please login first"), "Please login first")
+		c.ResponseError(c.T("general:Please login first"), "Please login first")
 		return "", false
 	}
 	return userId, true
@@ -100,7 +100,7 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 	user := object.GetUser(userId)
 	if user == nil {
 		c.ClearUserSession()
-		c.ResponseError(fmt.Sprintf(c.T("util:The user: %s doesn't exist"), userId))
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
 		return nil, false
 	}
 	return user, true

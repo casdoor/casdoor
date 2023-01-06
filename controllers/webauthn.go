@@ -35,7 +35,7 @@ func (c *ApiController) WebAuthnSignupBegin() {
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	user := c.getCurrentUser()
 	if user == nil {
-		c.ResponseError(c.T("webauthn:Please login first"))
+		c.ResponseError(c.T("general:Please login first"))
 		return
 	}
 
@@ -66,7 +66,7 @@ func (c *ApiController) WebAuthnSignupFinish() {
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	user := c.getCurrentUser()
 	if user == nil {
-		c.ResponseError(c.T("webauthn:Please login first"))
+		c.ResponseError(c.T("general:Please login first"))
 		return
 	}
 	sessionObj := c.GetSession("registration")
@@ -101,7 +101,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 	userName := c.Input().Get("name")
 	user := object.GetUserByFields(userOwner, userName)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.T("webauthn:The user: %s/%s doesn't exist"), userOwner, userName))
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s/%s doesn't exist"), userOwner, userName))
 		return
 	}
 	if len(user.WebauthnCredentials) == 0 {

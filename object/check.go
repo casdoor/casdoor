@@ -229,7 +229,7 @@ func checkLdapUserPassword(user *User, password string, lang string) (*User, str
 func CheckUserPassword(organization string, username string, password string, lang string) (*User, string) {
 	user := GetUserByFields(organization, username)
 	if user == nil || user.IsDeleted == true {
-		return nil, i18n.Translate(lang, "check:The user doesn't exist")
+		return nil, i18n.Translate(lang, "general:The user doesn't exist")
 	}
 
 	if user.IsForbidden {
@@ -254,13 +254,13 @@ func filterField(field string) bool {
 
 func CheckUserPermission(requestUserId, userId, userOwner string, strict bool, lang string) (bool, error) {
 	if requestUserId == "" {
-		return false, fmt.Errorf(i18n.Translate(lang, "check:Please login first"))
+		return false, fmt.Errorf(i18n.Translate(lang, "general:Please login first"))
 	}
 
 	if userId != "" {
 		targetUser := GetUser(userId)
 		if targetUser == nil {
-			return false, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist"), userId)
+			return false, fmt.Errorf(i18n.Translate(lang, "general:The user: %s doesn't exist"), userId)
 		}
 
 		userOwner = targetUser.Owner
@@ -287,7 +287,7 @@ func CheckUserPermission(requestUserId, userId, userOwner string, strict bool, l
 		}
 	}
 
-	return hasPermission, fmt.Errorf(i18n.Translate(lang, "check:You don't have the permission to do this"))
+	return hasPermission, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
 }
 
 func CheckAccessPermission(userId string, application *Application) (bool, error) {
