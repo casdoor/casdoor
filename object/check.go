@@ -147,7 +147,7 @@ func checkSigninErrorTimes(user *User, lang string) string {
 
 		// deny the login if the error times is greater than the limit and the last login time is less than the duration
 		if seconds > 0 {
-			return fmt.Sprintf(i18n.Translate(lang, "check:You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again"), seconds/60, seconds%60)
+			return fmt.Sprintf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes %d seconds and try again"), seconds/60, seconds%60)
 		}
 
 		// reset the error times

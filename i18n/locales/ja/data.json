@@ -67,12 +67,12 @@
     "Username is too long (maximum is 39 characters).": "Username is too long (maximum is 39 characters).",
     "Username must have at least 2 characters": "Username must have at least 2 characters",
     "You don't have the permission to do this": "You don't have the permission to do this",
-    "You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again": "You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again",
+    "You have entered the wrong password or code too many times, please wait for %d minutes %d seconds and try again": "You have entered the wrong password or code too many times, please wait for %d minutes %d seconds and try again",
     "unsupported password type: %s": "unsupported password type: %s"
   },
   "check_util": {
-    "You have entered the wrong password too many times, please wait for %d minutes and try again": "You have entered the wrong password too many times, please wait for %d minutes and try again",
-    "password is incorrect, you have %d remaining chances": "password is incorrect, you have %d remaining chances"
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
+    "password or code is incorrect, you have %d remaining chances": "password or code is incorrect, you have %d remaining chances"
   },
   "enforcer": {
     "Please sign in first": "Please sign in first"

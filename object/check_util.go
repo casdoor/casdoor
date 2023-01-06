@@ -58,9 +58,9 @@ func recordSigninErrorInfo(user *User, lang string) string {
 	UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, user.IsGlobalAdmin)
 	leftChances := SigninWrongTimesLimit - user.SigninWrongTimes
 	if leftChances > 0 {
-		return fmt.Sprintf(i18n.Translate(lang, "check_util:password is incorrect, you have %d remaining chances"), leftChances)
+		return fmt.Sprintf(i18n.Translate(lang, "check_util:password or code is incorrect, you have %d remaining chances"), leftChances)
 	}
 
 	// don't show the chance error message if the user has no chance left
-	return fmt.Sprintf(i18n.Translate(lang, "check_util:You have entered the wrong password too many times, please wait for %d minutes and try again"), int(LastSignWrongTimeDuration.Minutes()))
+	return fmt.Sprintf(i18n.Translate(lang, "check_util:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), int(LastSignWrongTimeDuration.Minutes()))
 }

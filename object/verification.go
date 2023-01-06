@@ -26,6 +26,10 @@ import (
 	"xorm.io/core"
 )
 
+const (
+	wrongCode = "wrongCode"
+)
+
 type VerificationRecord struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -167,7 +171,7 @@ func CheckVerificationCode(dest, code, lang string) string {
 	}
 
 	if record.Code != code {
-		return "Wrong code!"
+		return wrongCode
 	}
 
 	return ""
@@ -183,6 +187,24 @@ func DisableVerificationCode(dest string) {
 	_, err := adapter.Engine.ID(core.PK{record.Owner, record.Name}).AllCols().Update(record)
 	if err != nil {
 		panic(err)
+	}
+}
+
+func CheckSigninCode(user *User, dest, code, lang string) string {
+	// check the login error times
+	if msg := checkSigninErrorTimes(user, lang); msg != "" {
+		return msg
+	}
+
+	result := CheckVerificationCode(dest, code, lang)
+	switch result {
+	case "":
+		resetUserSigninErrorTimes(user)
+		return ""
+	case wrongCode:
+		return recordSigninErrorInfo(user, lang)
+	default:
+		return result
 	}
 }
 
