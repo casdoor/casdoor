@@ -222,12 +222,13 @@ func (c *ApiController) Login() {
 			}
 
 			// check result through Email or Phone
+			var checkDest string
 			if strings.Contains(form.Username, "@") {
 				verificationCodeType = "email"
 				if user != nil && util.GetMaskedEmail(user.Email) == form.Username {
 					form.Username = user.Email
 				}
-				checkResult = object.CheckVerificationCode(form.Username, form.Code, c.GetAcceptLanguage())
+				checkDest = form.Username
 			} else {
 				verificationCodeType = "phone"
 				if len(form.PhonePrefix) == 0 {
@@ -238,11 +239,16 @@ func (c *ApiController) Login() {
 				if user != nil && util.GetMaskedPhone(user.Phone) == form.Username {
 					form.Username = user.Phone
 				}
-				checkPhone := fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username)
-				checkResult = object.CheckVerificationCode(checkPhone, form.Code, c.GetAcceptLanguage())
+				checkDest = fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username)
 			}
+			user = object.GetUserByFields(form.Organization, form.Username)
+			if user == nil {
+				c.ResponseError(fmt.Sprintf(c.T("auth:The user: %s/%s doesn't exist"), form.Organization, form.Username))
+				return
+			}
+			checkResult = object.CheckSigninCode(user, checkDest, form.Code, c.GetAcceptLanguage())
 			if len(checkResult) != 0 {
-				responseText := fmt.Sprintf("%s%s", verificationCodeType, checkResult)
+				responseText := fmt.Sprintf("%s - %s", verificationCodeType, checkResult)
 				c.ResponseError(responseText)
 				return
 			}
@@ -252,12 +258,6 @@ func (c *ApiController) Login() {
 				object.DisableVerificationCode(form.Username)
 			} else {
 				object.DisableVerificationCode(fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username))
-			}
-
-			user = object.GetUserByFields(form.Organization, form.Username)
-			if user == nil {
-				c.ResponseError(fmt.Sprintf(c.T("auth:The user: %s/%s doesn't exist"), form.Organization, form.Username))
-				return
 			}
 		} else {
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))

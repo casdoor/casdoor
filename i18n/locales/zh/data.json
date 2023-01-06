@@ -67,12 +67,12 @@
     "Username is too long (maximum is 39 characters).": "用户名过长（最大长度为39个字符）",
     "Username must have at least 2 characters": "用户名至少要有2个字符",
     "You don't have the permission to do this": "用户名至少要有2个字符",
-    "You have entered the wrong password too many times, please wait for %d minutes %d seconds and try again": "输入密码错误次数已达上限，请在 %d 分 %d 秒后重试",
+    "You have entered the wrong password or code too many times, please wait for %d minutes %d seconds and try again": "You have entered the wrong password or code too many times, please wait for %d minutes %d seconds and try again",
     "unsupported password type: %s": "不支持的密码类型: %s"
   },
   "check_util": {
-    "You have entered the wrong password too many times, please wait for %d minutes and try again": "输入密码错误次数已达上限，请在 %d 分后重试",
-    "password is incorrect, you have %d remaining chances": "密码错误，您还有 %d 次尝试的机会"
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
+    "password or code is incorrect, you have %d remaining chances": "密码错误，您还有 %d 次尝试的机会"
   },
   "enforcer": {
     "Please sign in first": "请先登录"
