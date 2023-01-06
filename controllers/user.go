@@ -363,7 +363,7 @@ func (c *ApiController) GetEmailAndPhone() {
 
 	user := object.GetUserByFields(form.Organization, form.Username)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s/%s doesn't exist"), form.Organization, form.Username))
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(form.Organization, form.Username)))
 		return
 	}
 

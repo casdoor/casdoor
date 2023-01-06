@@ -229,7 +229,7 @@ func checkLdapUserPassword(user *User, password string, lang string) (*User, str
 func CheckUserPassword(organization string, username string, password string, lang string) (*User, string) {
 	user := GetUserByFields(organization, username)
 	if user == nil || user.IsDeleted == true {
-		return nil, i18n.Translate(lang, "general:The user doesn't exist")
+		return nil, fmt.Sprintf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username))
 	}
 
 	if user.IsForbidden {

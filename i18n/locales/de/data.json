@@ -65,9 +65,7 @@
   },
   "general": {
     "Please login first": "Please login first",
-    "The user doesn't exist": "The user doesn't exist",
-    "The user: %s doesn't exist": "The user: %s doesn't exist",
-    "The user: %s/%s doesn't exist": "The user: %s/%s doesn't exist"
+    "The user: %s doesn't exist": "The user: %s doesn't exist"
   },
   "ldap": {
     "Ldap server exist": "Ldap server exist",

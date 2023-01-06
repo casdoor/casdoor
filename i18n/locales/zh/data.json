@@ -65,9 +65,7 @@
   },
   "general": {
     "Please login first": "请先登录",
-    "The user doesn't exist": "用户不存在",
-    "The user: %s doesn't exist": "用户: %s 不存在",
-    "The user: %s/%s doesn't exist": "用户: %s/%s 不存在"
+    "The user: %s doesn't exist": "用户: %s 不存在"
   },
   "ldap": {
     "Ldap server exist": "LDAP服务器已存在",
@@ -125,8 +123,8 @@
     "Failed to import users": "导入用户失败"
   },
   "util": {
-    "No application is found for userId: %s": "找不到该用户的应用程序 %s",
-    "No provider for category: %s is found for application: %s": "找不到该用户的应用程序 %s",
+    "No application is found for userId: %s": "未找到用户: %s 的应用",
+    "No provider for category: %s is found for application: %s": "未找到类别为: %s 的提供商来满足应用: %s",
     "The provider: %s is not found": "未找到提供商: %s"
   },
   "verification": {

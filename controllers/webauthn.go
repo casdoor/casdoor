@@ -101,7 +101,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 	userName := c.Input().Get("name")
 	user := object.GetUserByFields(userOwner, userName)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s/%s doesn't exist"), userOwner, userName))
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(userOwner, userName)))
 		return
 	}
 	if len(user.WebauthnCredentials) == 0 {

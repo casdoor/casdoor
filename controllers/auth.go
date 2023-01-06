@@ -247,7 +247,7 @@ func (c *ApiController) Login() {
 			}
 			user = object.GetUserByFields(form.Organization, form.Username)
 			if user == nil {
-				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s/%s doesn't exist"), form.Organization, form.Username))
+				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(form.Organization, form.Username)))
 				return
 			}
 			checkResult = object.CheckSigninCode(user, checkDest, form.Code, c.GetAcceptLanguage())
@@ -468,13 +468,13 @@ func (c *ApiController) Login() {
 				record2.User = user.Name
 				util.SafeGoroutine(func() { object.AddRecord(record2) })
 			} else if provider.Category == "SAML" {
-				resp = &Response{Status: "error", Msg: c.T("general:The user doesn't exist")}
+				resp = &Response{Status: "error", Msg: fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(application.Organization, userInfo.Id))}
 			}
 			// resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // form.Method != "signup"
 			userId := c.GetSessionUsername()
 			if userId == "" {
-				c.ResponseError(c.T("general:The user doesn't exist"), userInfo)
+				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(application.Organization, userInfo.Id)), userInfo)
 				return
 			}
 
