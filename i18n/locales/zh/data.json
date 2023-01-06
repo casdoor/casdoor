@@ -4,18 +4,18 @@
     "Get init score failed, error: %w": "初始化分数失败: %w",
     "Invalid information": "无效信息",
     "Phone: %s": "手机号: %s",
-    "Please sign out first before signing in": "请在登录前登出",
-    "Please sign out first before signing up": "请在注册前登出",
-    "The application does not allow to sign up new account": "该应用不允许注册新账户"
+    "Please sign out first before signing in": "请在登录前先退出登录",
+    "Please sign out first before signing up": "请在注册前先退出登录",
+    "The application does not allow to sign up new account": "该应用不允许注册新用户"
   },
   "application": {
-    "Parameter organization is missing": "organization参数丢失"
+    "Parameter organization is missing": "缺少organization参数"
   },
   "auth": {
     "%s No phone prefix": "%s 无此手机号前缀",
     "Challenge method should be S256": "Challenge 方法应该为 S256",
     "Failed to create user, user information is invalid: %s": "创建用户失败，用户信息无效: %s",
-    "Failed to login in: %s": "无法登录: %s",
+    "Failed to login in: %s": "登录失败: %s",
     "Invalid token": "无效token",
     "State expected: %s, but got: %s": "期望状态为: %s, 实际状态为: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许通过 %s 注册新账户, 请使用其他方式注册",
@@ -24,7 +24,7 @@
     "The application: %s does not exist": "应用 %s 不存在",
     "The login method: login with password is not enabled for the application": "该应用禁止采用密码登录方式",
     "The provider type: %s is not supported": "不支持该类型的提供商: %s",
-    "The provider: %s is not enabled for the application": "提供商: %s 未被启用",
+    "The provider: %s is not enabled for the application": "该应用的提供商: %s 未被启用",
     "The user is forbidden to sign in, please contact the administrator": "该用户被禁止登录，请联系管理员",
     "Turing test failed.": "人机验证失败",
     "Unauthorized operation": "未授权的操作",
@@ -34,7 +34,7 @@
     "Service %s and %s do not match": "服务 %s 与 %s 不匹配"
   },
   "check": {
-    "Affiliation cannot be blank": "联系方式不可为空",
+    "Affiliation cannot be blank": "工作单位不可为空",
     "DisplayName cannot be blank": "显示名称不可为空",
     "DisplayName is not valid real name": "显示名称必须是真实姓名",
     "Email already exists": "该邮箱已存在",
@@ -69,11 +69,11 @@
   },
   "ldap": {
     "Ldap server exist": "LDAP服务器已存在",
-    "Missing parameter": "参数丢失"
+    "Missing parameter": "LDAP缺少参数"
   },
   "link": {
     "Please link first": "请先绑定",
-    "This application has no providers": "该应用无提供商",
+    "This application has no providers": "该应用无可用的提供商",
     "This application has no providers of type": "应用没有该类型的提供商",
     "This provider can't be unlinked": "该提供商被禁止解绑",
     "You are not the global admin, you can't unlink other users": "您不是全局管理员，无法解绑其他用户",
@@ -81,35 +81,35 @@
   },
   "organization": {
     "Only admin can modify the %s.": "仅允许管理员可以修改 %s",
-    "The %s is immutable.": "%s是不可变的",
-    "Unknown modify rule %s.": "未知的修改规则"
+    "The %s is immutable.": "%s 是不可变的",
+    "Unknown modify rule %s.": "未知的修改规则: %s"
   },
   "provider": {
     "Invalid application id": "无效的应用ID",
     "the provider: %s does not exist": "提供商: %s 不存在"
   },
   "resource": {
-    "User is nil for tag: avatar": "用户头像标签为空",
+    "User is nil for tag: avatar": "上传头像时用户为空",
     "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "username或fullFilePath为空: username = %s, fullFilePath = %s"
   },
   "saml": {
-    "Application %s not found": "应用 %s 未找到"
+    "Application %s not found": "未找到应用: %s"
   },
   "saml_sp": {
-    "provider %s's category is not SAML": "提供商 %s类型不是SAML"
+    "provider %s's category is not SAML": "提供商: %s 不是SAML类型"
   },
   "service": {
     "Empty parameters for emailForm: %v": "邮件参数为空: %v",
-    "Invalid Email receivers: %s": " 无效的邮箱接收者: %s",
-    "Invalid phone receivers: %s": "无效的手机号接收者: %s"
+    "Invalid Email receivers: %s": " 无效的邮箱收件人: %s",
+    "Invalid phone receivers: %s": "无效的手机短信收信人: %s"
   },
   "storage": {
-    "The objectKey: %s is not allowed": "objectKey :%s 不被允许",
-    "The provider type: %s is not supported": "提供商类型: %s 尚未支持"
+    "The objectKey: %s is not allowed": "objectKey: %s 被禁止",
+    "The provider type: %s is not supported": "不支持的提供商类型: %s"
   },
   "token": {
     "Empty clientId or clientSecret": "clientId或clientSecret为空",
-    "Grant_type: %s is not supported in this application": "此应用中不支持此授权类型: %s",
+    "Grant_type: %s is not supported in this application": "该应用不支持Grant_type: %s",
     "Invalid application or wrong clientSecret": "无效应用或错误的clientSecret",
     "Invalid client_id": "无效的ClientId",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "重定向 URI：%s 在许可跳转列表中未找到"
@@ -131,19 +131,19 @@
     "Code has not been sent yet!": "验证码还未发送",
     "Email is invalid": "非法的邮箱",
     "Invalid captcha provider.": "非法的验证码提供商",
-    "Missing parameter": "参数丢失",
+    "Missing parameter": "缺少参数",
     "Organization does not exist": "组织不存在",
     "Phone number is invalid": "非法的手机号码",
     "Turing test failed.": "验证码还未发送",
-    "Unable to get the email modify rule.": "无法得到邮箱修改规则",
-    "Unable to get the phone modify rule.": "无法得到手机号修改规则",
+    "Unable to get the email modify rule.": "无法获取邮箱修改规则",
+    "Unable to get the phone modify rule.": "无法获取手机号修改规则",
     "Unknown type": "未知类型",
     "Wrong parameter": "参数错误",
     "You should verify your code in %d min!": "请在 %d 分钟内输入正确验证码",
     "the user does not exist, please sign up first": "用户不存在，请先注册"
   },
   "webauthn": {
-    "Found no credentials for this user": "该用户没有WebAuthn凭据",
+    "Found no credentials for this user": "该用户没有 WebAuthn 凭据",
     "Please call WebAuthnSigninBegin first": "请先调用 WebAuthnSigninBegin"
   }
 }
