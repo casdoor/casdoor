@@ -45,9 +45,9 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
 
 const {defaultAlgorithm, darkAlgorithm, compactAlgorithm} = theme;
 
-export const Themes = [{label: "Dark", key: "Dark", style: darkAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/dark.svg`},
-  {label: "Compact", key: "Compact", style: compactAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/compact.svg`},
-  {label: "Default", key: "Default", style: defaultAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/light.svg`},
+export const Themes = [{label: i18next.t("general:Dark"), key: "Dark", style: darkAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/dark.svg`},
+  {label: i18next.t("general:Compact"), key: "Compact", style: compactAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/compact.svg`},
+  {label: i18next.t("general:Default"), key: "Default", style: defaultAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/light.svg`},
 ];
 
 export const OtherProviderInfo = {

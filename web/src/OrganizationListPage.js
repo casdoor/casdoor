@@ -251,7 +251,7 @@ class OrganizationListPage extends BaseListPage {
         <Result
           status="403"
           title="403 Unauthorized"
-          subTitle={i18next.t("general:Sorry, you do not have permission to access this page.")}
+          subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
           extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
         />
       );

@@ -70,6 +70,7 @@ import AdapterListPage from "./AdapterListPage";
 import AdapterEditPage from "./AdapterEditPage";
 import {withTranslation} from "react-i18next";
 import SelectThemeBox from "./SelectThemeBox";
+import SessionListPage from "./SessionListPage";
 
 const {Header, Footer, Content} = Layout;
 
@@ -421,6 +422,10 @@ class App extends Component {
         "/tokens"
       ));
 
+      res.push(Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>,
+        "/sessions"
+      ));
+
       res.push(Setting.getItem(<Link to="/webhooks">{i18next.t("general:Webhooks")}</Link>,
         "/webhooks"
       ));
@@ -517,6 +522,7 @@ class App extends Component {
             <Route exact path="/ldap/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapEditPage account={this.state.account} {...props} />)} />
             <Route exact path="/ldap/sync/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapSyncPage account={this.state.account} {...props} />)} />
             <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)} />
+            <Route exact path="/sessions" render={(props) => this.renderLoginIfNotLoggedIn(<SessionListPage account={this.state.account} {...props} />)} />
             <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)} />
             <Route exact path="/webhooks" render={(props) => this.renderLoginIfNotLoggedIn(<WebhookListPage account={this.state.account} {...props} />)} />
             <Route exact path="/webhooks/:webhookName" render={(props) => this.renderLoginIfNotLoggedIn(<WebhookEditPage account={this.state.account} {...props} />)} />

@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2022 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,46 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import {Link} from "react-router-dom";
-import {Button, Popconfirm, Switch, Table} from "antd";
-import moment from "moment";
-import * as Setting from "./Setting";
-import * as ModelBackend from "./backend/ModelBackend";
-import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
+import * as Setting from "./Setting";
+import i18next from "i18next";
+import {Link} from "react-router-dom";
+import {Button, Popconfirm, Table, Tag} from "antd";
+import React from "react";
+import * as SessionBackend from "./backend/SessionBackend";
 
-class ModelListPage extends BaseListPage {
-  newModel() {
-    const randomName = Setting.getRandomName();
-    return {
-      owner: "built-in",
-      name: `model_${randomName}`,
-      createdTime: moment().format(),
-      displayName: `New Model - ${randomName}`,
-      modelText: "",
-      isEnabled: true,
-    };
-  }
+class SessionListPage extends BaseListPage {
 
-  addModel() {
-    const newModel = this.newModel();
-    ModelBackend.addModel(newModel)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push({pathname: `/models/${newModel.owner}/${newModel.name}`, mode: "add"});
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
-  }
-
-  deleteModel(i) {
-    ModelBackend.deleteModel(this.state.data[i])
+  deleteSession(i) {
+    SessionBackend.deleteSession(this.state.data[i])
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully deleted"));
@@ -68,7 +40,7 @@ class ModelListPage extends BaseListPage {
       });
   }
 
-  renderTable(models) {
+  renderTable(sessions) {
     const columns = [
       {
         title: i18next.t("general:Name"),
@@ -78,21 +50,14 @@ class ModelListPage extends BaseListPage {
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/models/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
       },
       {
         title: i18next.t("general:Organization"),
         dataIndex: "owner",
-        key: "owner",
-        width: "120px",
+        key: "organization",
+        width: "110px",
         sorter: true,
-        ...this.getColumnSearchProps("owner"),
+        ...this.getColumnSearchProps("organization"),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -105,29 +70,21 @@ class ModelListPage extends BaseListPage {
         title: i18next.t("general:Created time"),
         dataIndex: "createdTime",
         key: "createdTime",
-        width: "160px",
+        width: "180px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         },
       },
       {
-        title: i18next.t("general:Display name"),
-        dataIndex: "displayName",
-        key: "displayName",
-        width: "200px",
-        sorter: true,
-        ...this.getColumnSearchProps("displayName"),
-      },
-      {
-        title: i18next.t("general:Is enabled"),
-        dataIndex: "isEnabled",
-        key: "isEnabled",
-        width: "120px",
+        title: i18next.t("general:Session ID"),
+        dataIndex: "sessionId",
+        key: "sessionId",
+        width: "180px",
         sorter: true,
         render: (text, record, index) => {
-          return (
-            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          return text.map((item, index) =>
+            <Tag key={index}>{item}</Tag>
           );
         },
       },
@@ -135,16 +92,14 @@ class ModelListPage extends BaseListPage {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
-        width: "170px",
+        width: "70px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary"
-                onClick={() => this.props.history.push(`/models/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
-                title={`Sure to delete model: ${record.name} ?`}
-                onConfirm={() => this.deleteModel(index)}
+                title={`Sure to delete session: ${record.name} ?`}
+                onConfirm={() => this.deleteSession(index)}
               >
                 <Button style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
@@ -163,15 +118,7 @@ class ModelListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={models} rowKey="name" size="middle" bordered
-          pagination={paginationProps}
-          title={() => (
-            <div>
-              {i18next.t("general:Models")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button type="primary" size="small"
-                onClick={this.addModel.bind(this)}>{i18next.t("general:Add")}</Button>
-            </div>
-          )}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={sessions} rowKey="name" size="middle" bordered pagination={paginationProps}
           loading={this.state.loading}
           onChange={this.handleTableChange}
         />
@@ -182,12 +129,12 @@ class ModelListPage extends BaseListPage {
   fetch = (params = {}) => {
     let field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
-    if (params.type !== undefined && params.type !== null) {
-      field = "type";
-      value = params.type;
+    if (params.contentType !== undefined && params.contentType !== null) {
+      field = "contentType";
+      value = params.contentType;
     }
     this.setState({loading: true});
-    ModelBackend.getModels("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    SessionBackend.getSessions("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
@@ -212,4 +159,4 @@ class ModelListPage extends BaseListPage {
   };
 }
 
-export default ModelListPage;
+export default SessionListPage;

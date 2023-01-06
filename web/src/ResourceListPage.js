@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Popconfirm, Table, Upload} from "antd";
+import {Button, Popconfirm, Result, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import copy from "copy-to-clipboard";
 import * as Setting from "./Setting";
@@ -37,6 +37,7 @@ class ResourceListPage extends BaseListPage {
       searchedColumn: "",
       fileList: [],
       uploading: false,
+      isAuthorized: true,
     };
   }
 
@@ -272,6 +273,17 @@ class ResourceListPage extends BaseListPage {
       showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
+    if (!this.state.isAuthorized) {
+      return (
+        <Result
+          status="403"
+          title="403 Unauthorized"
+          subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
+          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
+        />
+      );
+    }
+
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={resources} rowKey="name" size="middle" bordered pagination={paginationProps}
@@ -308,6 +320,13 @@ class ResourceListPage extends BaseListPage {
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
           });
+        } else {
+          if (res.data.includes("Please login first")) {
+            this.setState({
+              loading: false,
+              isAuthorized: false,
+            });
+          }
         }
       });
   };
