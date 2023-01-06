@@ -26,8 +26,8 @@ func applyToOtherLanguage(category string, language string, i18nData *I18nData) 
 	writeI18nFile(category, language, i18nData)
 }
 
-func TestGenerateI18nStringsForFrontend(t *testing.T) {
-	enData := parseToData()
+func TestGenerateI18nFrontend(t *testing.T) {
+	enData := parseEnData("frontend")
 	writeI18nFile("frontend", "en", enData)
 
 	applyToOtherLanguage("frontend", "de", enData)
@@ -39,13 +39,8 @@ func TestGenerateI18nStringsForFrontend(t *testing.T) {
 	applyToOtherLanguage("frontend", "zh", enData)
 }
 
-func TestGenerateI18nStringsForBackend(t *testing.T) {
-	paths := getAllFilePathsInFolder("../", ".go")
-
-	errName := getErrName(paths)
-
-	enData := getI18nJSONData(errName)
-
+func TestGenerateI18nBackend(t *testing.T) {
+	enData := parseEnData("backend")
 	writeI18nFile("backend", "en", enData)
 
 	applyToOtherLanguage("backend", "de", enData)
