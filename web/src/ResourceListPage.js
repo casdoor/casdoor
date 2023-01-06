@@ -321,7 +321,7 @@ class ResourceListPage extends BaseListPage {
             searchedColumn: params.searchedColumn,
           });
         } else {
-          if (res.msg.includes("Please login first")) {
+          if (res.data.includes("Please login first")) {
             this.setState({
               loading: false,
               isAuthorized: false,

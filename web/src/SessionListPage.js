@@ -16,7 +16,7 @@ import BaseListPage from "./BaseListPage";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Result, Table, Tag} from "antd";
+import {Button, Popconfirm, Table, Tag} from "antd";
 import React from "react";
 import * as SessionBackend from "./backend/SessionBackend";
 
@@ -115,17 +115,6 @@ class SessionListPage extends BaseListPage {
       showSizeChanger: true,
       showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
-
-    if (!this.state.isAuthorized) {
-      return (
-        <Result
-          status="403"
-          title="403 Unauthorized"
-          subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
-          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
-        />
-      );
-    }
 
     return (
       <div>

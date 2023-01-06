@@ -370,8 +370,6 @@ class UserListPage extends BaseListPage {
       showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
-    // eslint-disable-next-line no-console
-    console.log(this.state.isAuthorized);
     if (!this.state.isAuthorized) {
       return (
         <Result
@@ -425,6 +423,13 @@ class UserListPage extends BaseListPage {
             if (users.length > 0) {
               this.getOrganization(users[0].owner);
             }
+          } else {
+            if (res.msg.includes("Unauthorized")) {
+              this.setState({
+                loading: false,
+                isAuthorized: false,
+              });
+            }
           }
         });
     } else {
@@ -445,6 +450,13 @@ class UserListPage extends BaseListPage {
             const users = res.data;
             if (users.length > 0) {
               this.getOrganization(users[0].owner);
+            }
+          } else {
+            if (res.msg.includes("Unauthorized")) {
+              this.setState({
+                loading: false,
+                isAuthorized: false,
+              });
             }
           }
         });
