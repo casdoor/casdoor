@@ -112,6 +112,18 @@ jobs:
       - name: e2e
         run: npx cypress run --spec "**/e2e/**.cy.js"
         working-directory: ./web
+      - uses: actions/checkout@v2
+      - uses: cypress-io/github-action@v4
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: ./cypress/screenshots
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: cypress-videos
+          path: ./cypress/videos  
 
   release-and-push:
     name: Release And Push
