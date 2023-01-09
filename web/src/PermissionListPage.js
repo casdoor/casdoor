@@ -192,7 +192,7 @@ class PermissionListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("actions"),
         render: (text, record, index) => {
-          const tags = text.map((tag, i) => {
+          const tags = text?.map((tag, i) => {
             switch (tag) {
             case "Read":
               return i18next.t("permission:Read");

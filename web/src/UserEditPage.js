@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Result, Row, Select, Spin, Switch} from "antd";
+import {Button, Card, Col, Input, Result, Row, Select, Spin, Switch, Typography} from "antd";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -115,7 +115,17 @@ class UserEditPage extends React.Component {
     return value;
   }
 
+  getEmptyText(text) {
+    return (
+      <Typography.Text type="secondary">{text ?? "无"}</Typography.Text>
+    );
+  }
+
   updateUserField(key, value) {
+    if (key === "owner") {
+      this.getApplicationsByOrganization(value);
+    }
+
     value = this.parseUserField(key, value);
 
     const user = this.state.user;
@@ -439,7 +449,9 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             {
-              Setting.getTags(this.state.user.roles.map(role => role.name))
+              this.state.user.roles && this.state.user.roles.length > 0 ?
+                Setting.getTags(this.state.user.roles.map(role => role.name)) :
+                this.getEmptyText("无角色")
             }
           </Col>
         </Row>
@@ -452,7 +464,9 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             {
-              Setting.getTags(this.state.user.permissions.map(permission => permission.name))
+              this.state.user.permissions && this.state.user.permissions.length > 0 ?
+                Setting.getTags(this.state.user.permissions.map(permission => permission.name)) :
+                this.getEmptyText("无权限")
             }
           </Col>
         </Row>
