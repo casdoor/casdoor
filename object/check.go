@@ -60,8 +60,8 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 		if reWhiteSpace.MatchString(username) {
 			return i18n.Translate(lang, "check:Username cannot contain white spaces")
 		}
-		msg := CheckUsername(username, lang)
-		if msg != "" {
+
+		if msg := CheckUsername(username, lang); msg != "" {
 			return msg
 		}
 
@@ -337,6 +337,34 @@ func CheckUsername(username string, lang string) string {
 	re, _ := regexp.Compile("^[a-zA-Z0-9]+((?:-[a-zA-Z0-9]+)|(?:_[a-zA-Z0-9]+))*$")
 	if !re.MatchString(username) {
 		return i18n.Translate(lang, "check:The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.")
+	}
+
+	return ""
+}
+
+func CheckUpdateUser(oldUser *User, user *User, lang string) string {
+	if user.DisplayName == "" {
+		return i18n.Translate(lang, "user:Display name cannot be empty")
+	}
+
+	if msg := CheckUsername(user.Name, lang); msg != "" {
+		return msg
+	}
+
+	if oldUser.Name != user.Name {
+		if HasUserByField(user.Owner, "name", user.Name) {
+			return i18n.Translate(lang, "check:Username already exists")
+		}
+	}
+	if oldUser.Email != user.Email {
+		if HasUserByField(user.Name, "email", user.Email) {
+			return i18n.Translate(lang, "check:Email already exists")
+		}
+	}
+	if oldUser.Phone != user.Phone {
+		if HasUserByField(user.Owner, "phone", user.Phone) {
+			return i18n.Translate(lang, "check:Phone already exists")
+		}
 	}
 
 	return ""

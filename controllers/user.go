@@ -148,8 +148,8 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
-	if user.DisplayName == "" {
-		c.ResponseError(c.T("user:Display name cannot be empty"))
+	if msg := object.CheckUpdateUser(object.GetUser(id), &user, c.GetAcceptLanguage()); msg != "" {
+		c.ResponseError(msg)
 		return
 	}
 

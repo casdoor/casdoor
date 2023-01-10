@@ -175,9 +175,14 @@ func (c *ApiController) ResetEmailOrPhone() {
 	}
 
 	checkDest := dest
-	org := object.GetOrganizationByUser(user)
+	organization := object.GetOrganizationByUser(user)
 	if destType == "phone" {
-		phoneItem := object.GetAccountItemByName("Phone", org)
+		if object.HasUserByField(user.Owner, "phone", user.Phone) {
+			c.ResponseError(c.T("check:Phone already exists"))
+			return
+		}
+
+		phoneItem := object.GetAccountItemByName("Phone", organization)
 		if phoneItem == nil {
 			c.ResponseError(c.T("verification:Unable to get the phone modify rule."))
 			return
@@ -189,12 +194,17 @@ func (c *ApiController) ResetEmailOrPhone() {
 		}
 
 		phonePrefix := "86"
-		if org != nil && org.PhonePrefix != "" {
-			phonePrefix = org.PhonePrefix
+		if organization != nil && organization.PhonePrefix != "" {
+			phonePrefix = organization.PhonePrefix
 		}
 		checkDest = fmt.Sprintf("+%s%s", phonePrefix, dest)
 	} else if destType == "email" {
-		emailItem := object.GetAccountItemByName("Email", org)
+		if object.HasUserByField(user.Owner, "email", user.Email) {
+			c.ResponseError(c.T("check:Email already exists"))
+			return
+		}
+
+		emailItem := object.GetAccountItemByName("Email", organization)
 		if emailItem == nil {
 			c.ResponseError(c.T("verification:Unable to get the email modify rule."))
 			return

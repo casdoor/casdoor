@@ -37,7 +37,11 @@ export const ResetModal = (props) => {
 
   const handleOk = () => {
     if (dest === "") {
-      Setting.showMessage("error", i18next.t("user:Empty " + destType));
+      if (destType === "phone") {
+        Setting.showMessage("error", i18next.t("user:Phone cannot be empty"));
+      } else {
+        Setting.showMessage("error", i18next.t("user:Email cannot be empty"));
+      }
       return;
     }
     if (code === "") {
