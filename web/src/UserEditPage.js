@@ -284,18 +284,16 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
-            <Input value={this.state.user.email}
+            <Select value={this.state.user.email}
+              options={[Setting.getItem(this.state.user.email, this.state.user.email)]}
               disabled={disabled}
               onChange={e => {
                 this.updateUserField("email", e.target.value);
               }} />
           </Col>
           <Col span={11} >
-            {
-              !this.isSelf() ? null : (
-                <ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />
-              )
-            }
+            {/* backend auto get the current user, so admin can not edit. Just self can reset*/}
+            {this.isSelf() ? <ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Email...")} destType={"email"} /> : null}
           </Col>
         </Row>
       );
@@ -306,14 +304,15 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
-            <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+            <Select value={`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`}
+              options={[Setting.getItem(`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`, this.state.user.phone)]}
               disabled={disabled}
               onChange={e => {
                 this.updateUserField("phone", e.target.value);
               }} />
           </Col>
           <Col span={11} >
-            {this.state.user.id === this.props.account?.id ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
+            {this.isSelf() ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
           </Col>
         </Row>
       );

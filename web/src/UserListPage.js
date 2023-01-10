@@ -354,6 +354,7 @@ class UserListPage extends BaseListPage {
               <Popconfirm
                 title={`Sure to delete user: ${record.name} ?`}
                 onConfirm={() => this.deleteUser(index)}
+                disabled={disabled}
               >
                 <Button disabled={disabled} style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
