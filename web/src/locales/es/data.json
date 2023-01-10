@@ -16,6 +16,7 @@
     "Sync policies successfully": "Sync policies successfully"
   },
   "application": {
+    "Empty": "Empty",
     "Always": "Always",
     "Auto signin": "Auto signin",
     "Auto signin - Tooltip": "Auto signin - Tooltip",

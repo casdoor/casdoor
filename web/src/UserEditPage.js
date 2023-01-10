@@ -117,7 +117,7 @@ class UserEditPage extends React.Component {
 
   getEmptyText(text) {
     return (
-      <Typography.Text type="secondary">{text ?? "无"}</Typography.Text>
+      <Typography.Text type="secondary">{text ?? i18next.t("general:Empty")}</Typography.Text>
     );
   }
 
@@ -451,7 +451,7 @@ class UserEditPage extends React.Component {
             {
               this.state.user.roles && this.state.user.roles.length > 0 ?
                 Setting.getTags(this.state.user.roles.map(role => role.name)) :
-                this.getEmptyText("无角色")
+                this.getEmptyText(`${i18next.t("general:Empty")}${i18next.t("general:Roles")}`)
             }
           </Col>
         </Row>
@@ -466,7 +466,7 @@ class UserEditPage extends React.Component {
             {
               this.state.user.permissions && this.state.user.permissions.length > 0 ?
                 Setting.getTags(this.state.user.permissions.map(permission => permission.name)) :
-                this.getEmptyText("无权限")
+                this.getEmptyText(`${i18next.t("general:Empty")}${i18next.t("general:Permissions")}`)
             }
           </Col>
         </Row>
