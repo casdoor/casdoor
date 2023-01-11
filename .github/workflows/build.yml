@@ -108,14 +108,13 @@ jobs:
       - name: e2e
         uses: cypress-io/github-action@v4
         with:
+          install: false
           start: yarn start
           wait-on: 'http://localhost:7001'
           wait-on-timeout: 120
           spec: ./cypress/e2e/**.cy.js
           working-directory: ./web
 
-      - uses: actions/checkout@v2
-      - uses: cypress-io/github-action@v5
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
