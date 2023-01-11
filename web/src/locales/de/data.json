@@ -33,6 +33,8 @@
     "Enable WebAuthn signin - Tooltip": "Enable WebAuthn signin - Tooltip",
     "Enable code signin": "Code-Anmeldung aktivieren",
     "Enable code signin - Tooltip": "Aktiviere Codeanmeldung - Tooltip",
+    "Enable link accounts that with the same email": "Enable link accounts that with the same email",
+    "Enable link accounts that with the same email - Tooltip": "Enable link accounts that with the same email - Tooltip",
     "Enable side panel": "Enable side panel",
     "Enable signin session - Tooltip": "Aktiviere Anmeldesession - Tooltip",
     "Enable signup": "Anmeldung aktivieren",
