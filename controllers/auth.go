@@ -405,54 +405,61 @@ func (c *ApiController) Login() {
 					return
 				}
 
-				// Handle username conflicts
-				tmpUser := object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Username))
-				if tmpUser != nil {
-					uid, err := uuid.NewRandom()
+				if application.EnableLinkWithEmail {
+					// find user that has the same email
+					user = object.GetUserByField(application.Organization, "email", userInfo.Email)
+				}
+
+				if user == nil || user.IsDeleted {
+					// Handle username conflicts
+					tmpUser := object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Username))
+					if tmpUser != nil {
+						uid, err := uuid.NewRandom()
+						if err != nil {
+							c.ResponseError(err.Error())
+							return
+						}
+
+						uidStr := strings.Split(uid.String(), "-")
+						userInfo.Username = fmt.Sprintf("%s_%s", userInfo.Username, uidStr[1])
+					}
+
+					properties := map[string]string{}
+					properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
+					initScore, err := getInitScore(organization)
 					if err != nil {
-						c.ResponseError(err.Error())
+						c.ResponseError(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err).Error())
 						return
 					}
 
-					uidStr := strings.Split(uid.String(), "-")
-					userInfo.Username = fmt.Sprintf("%s_%s", userInfo.Username, uidStr[1])
+					user = &object.User{
+						Owner:             application.Organization,
+						Name:              userInfo.Username,
+						CreatedTime:       util.GetCurrentTime(),
+						Id:                util.GenerateId(),
+						Type:              "normal-user",
+						DisplayName:       userInfo.DisplayName,
+						Avatar:            userInfo.AvatarUrl,
+						Address:           []string{},
+						Email:             userInfo.Email,
+						Score:             initScore,
+						IsAdmin:           false,
+						IsGlobalAdmin:     false,
+						IsForbidden:       false,
+						IsDeleted:         false,
+						SignupApplication: application.Name,
+						Properties:        properties,
+					}
+
+					affected := object.AddUser(user)
+					if !affected {
+						c.ResponseError(fmt.Sprintf(c.T("auth:Failed to create user, user information is invalid: %s"), util.StructToJson(user)))
+						return
+					}
 				}
 
-				properties := map[string]string{}
-				properties["no"] = strconv.Itoa(len(object.GetUsers(application.Organization)) + 2)
-				initScore, err := getInitScore(organization)
-				if err != nil {
-					c.ResponseError(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err).Error())
-					return
-				}
-
-				user = &object.User{
-					Owner:             application.Organization,
-					Name:              userInfo.Username,
-					CreatedTime:       util.GetCurrentTime(),
-					Id:                util.GenerateId(),
-					Type:              "normal-user",
-					DisplayName:       userInfo.DisplayName,
-					Avatar:            userInfo.AvatarUrl,
-					Address:           []string{},
-					Email:             userInfo.Email,
-					Score:             initScore,
-					IsAdmin:           false,
-					IsGlobalAdmin:     false,
-					IsForbidden:       false,
-					IsDeleted:         false,
-					SignupApplication: application.Name,
-					Properties:        properties,
-				}
 				// sync info from 3rd-party if possible
 				object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
-
-				affected := object.AddUser(user)
-				if !affected {
-					c.ResponseError(fmt.Sprintf(c.T("auth:Failed to create user, user information is invalid: %s"), util.StructToJson(user)))
-					return
-				}
-
 				object.LinkUserAccount(user, provider.Type, userInfo.Id)
 
 				resp = c.HandleLoggedIn(application, user, &form)
