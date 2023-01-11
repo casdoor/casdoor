@@ -270,75 +270,7 @@ class LoginPage extends React.Component {
     }
   }
 
-  login(values) {
-    // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
-    if (this.state.type === "cas") {
-      // CAS
-      const casParams = Util.getCasParameters();
-      values["type"] = this.state.type;
-      AuthBackend.loginCas(values, casParams).then((res) => {
-        if (res.status === "ok") {
-          let msg = "Logged in successfully. ";
-          if (casParams.service === "") {
-            // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
-            msg += "Now you can visit apps protected by Casdoor.";
-          }
-          Setting.showMessage("success", msg);
-
-          this.setState({openCaptchaModal: false});
-
-          if (casParams.service !== "") {
-            const st = res.data;
-            const newUrl = new URL(casParams.service);
-            newUrl.searchParams.append("ticket", st);
-            window.location.href = newUrl.toString();
-          }
-        } else {
-          this.setState({openCaptchaModal: false});
-          Setting.showMessage("error", `Failed to log in: ${res.msg}`);
-        }
-      });
-    } else {
-      // OAuth
-      const oAuthParams = Util.getOAuthGetParameters();
-      this.populateOauthValues(values);
-
-      AuthBackend.login(values, oAuthParams)
-        .then((res) => {
-          if (res.status === "ok") {
-            const responseType = values["type"];
-
-            if (responseType === "login") {
-              Setting.showMessage("success", i18next.t("application:Logged in successfully"));
-
-              const link = Setting.getFromLink();
-              Setting.goToLink(link);
-            } else if (responseType === "code") {
-              this.postCodeLoginAction(res);
-              // Setting.showMessage("success", `Authorization code: ${res.data}`);
-            } else if (responseType === "token" || responseType === "id_token") {
-              const accessToken = res.data;
-              Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
-            } else if (responseType === "saml") {
-              if (res.data2.method === "POST") {
-                this.setState({
-                  samlResponse: res.data,
-                  redirectUrl: res.data2.redirectUrl,
-                  relayState: oAuthParams.relayState,
-                });
-              } else {
-                const SAMLResponse = res.data;
-                const redirectUri = res.data2.redirectUrl;
-                Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
-              }
-            }
-          } else {
-            this.setState({openCaptchaModal: false});
-            Setting.showMessage("error", `Failed to log in: ${res.msg}`);
-          }
-        });
-    }
-  }
+  // 
 
   isProviderVisible(providerItem) {
     if (this.state.mode === "signup") {
