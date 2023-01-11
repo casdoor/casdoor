@@ -16,7 +16,6 @@
     "Sync policies successfully": "Sync policies successfully"
   },
   "application": {
-    "Empty": "Empty",
     "Always": "Always",
     "Auto signin": "Auto signin",
     "Auto signin - Tooltip": "Auto signin - Tooltip",
@@ -174,6 +173,7 @@
     "Edit": "Editer",
     "Email": "Courriel",
     "Email - Tooltip": "email",
+    "Empty": "Empty",
     "Failed to add": "Failed to add",
     "Failed to connect to server": "Failed to connect to server",
     "Failed to delete": "Failed to delete",

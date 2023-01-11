@@ -135,7 +135,6 @@
     "Verify": "验证"
   },
   "general": {
-    "Empty": "无",
     "Action": "操作",
     "Adapter": "适配器",
     "Adapter - Tooltip": "策略存储的表名",
@@ -174,6 +173,7 @@
     "Edit": "编辑",
     "Email": "电子邮箱",
     "Email - Tooltip": "电子邮件：",
+    "Empty": "无",
     "Failed to add": "添加失败",
     "Failed to connect to server": "连接服务器失败",
     "Failed to delete": "删除失败",
