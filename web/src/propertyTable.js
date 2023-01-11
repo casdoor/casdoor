@@ -23,12 +23,15 @@ class PropertyTable extends React.Component {
     super(props);
     this.state = {
       properties: [],
-      count: Object.entries(this.props.properties).length,
+      count: this.props.properties !== null ? Object.entries(this.props.properties).length : 0,
     };
     // transfer the Object to object[]
-    Object.entries(this.props.properties).map((item, index) => {
-      this.state.properties.push({key: index, name: item[0], value: item[1]});
-    });
+    if (this.props.properties !== null) {
+      Object.entries(this.props.properties).map((item, index) => {
+        this.state.properties.push({key: index, name: item[0], value: item[1]});
+      });
+    }
+
   }
 
   page = 1;

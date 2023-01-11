@@ -284,12 +284,19 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
-            <Select value={this.state.user.email}
-              options={[Setting.getItem(this.state.user.email, this.state.user.email)]}
-              disabled={disabled}
-              onChange={e => {
-                this.updateUserField("email", e.target.value);
-              }} />
+            {Setting.isLocalAdminUser(this.props.account) ?
+              (<Input value={this.state.user.email}
+                disabled={disabled}
+                onChange={e => {
+                  this.updateUserField("email", e.target.value);
+                }} />) :
+              (<Select value={this.state.user.email}
+                options={[Setting.getItem(this.state.user.email, this.state.user.email)]}
+                disabled={disabled}
+                onChange={e => {
+                  this.updateUserField("email", e.target.value);
+                }} />)
+            }
           </Col>
           <Col span={11} >
             {/* backend auto get the current user, so admin can not edit. Just self can reset*/}
@@ -304,12 +311,18 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
-            <Select value={`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`}
-              options={[Setting.getItem(`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`, this.state.user.phone)]}
-              disabled={disabled}
-              onChange={e => {
-                this.updateUserField("phone", e.target.value);
-              }} />
+            {Setting.isLocalAdminUser(this.props.account) ?
+              <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+                disabled={disabled}
+                onChange={e => {
+                  this.updateUserField("phone", e.target.value);
+                }} /> :
+              (<Select value={`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`}
+                options={[Setting.getItem(`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`, this.state.user.phone)]}
+                disabled={disabled}
+                onChange={e => {
+                  this.updateUserField("phone", e.target.value);
+                }} />)}
           </Col>
           <Col span={11} >
             {this.isSelf() ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
