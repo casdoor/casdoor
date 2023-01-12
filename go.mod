@@ -13,20 +13,18 @@ require (
 	github.com/casdoor/go-sms-sender v0.5.1
 	github.com/casdoor/oss v1.2.0
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
-	github.com/denisenkom/go-mssqldb v0.0.0-20200428022330-06a60b6afbbc
+	github.com/denisenkom/go-mssqldb v0.10.0
 	github.com/duo-labs/webauthn v0.0.0-20211221191814-a22482edaa3b
 	github.com/forestmgy/ldapserver v1.1.0
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
 	github.com/go-ldap/ldap/v3 v3.3.0
 	github.com/go-pay/gopay v1.5.72
-	github.com/go-sql-driver/mysql v1.5.0
 	github.com/golang-jwt/jwt/v4 v4.2.0
-	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
-	github.com/google/uuid v1.2.0
+	github.com/google/uuid v1.3.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/lestrrat-go/jwx v1.2.21
-	github.com/lib/pq v1.8.0
+	github.com/lib/pq v1.10.2
 	github.com/lor00x/goldap v0.0.0-20180618054307-a546dffdd1a3
 	github.com/markbates/goth v1.75.2
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
@@ -51,7 +49,8 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect
+	modernc.org/sqlite v1.14.2
 	xorm.io/builder v0.3.12 // indirect
 	xorm.io/core v0.7.2
-	xorm.io/xorm v1.0.5
+	xorm.io/xorm v1.1.2
 )

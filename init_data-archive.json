@@ -1,0 +1,193 @@
+{
+  "organizations": [
+    {
+      "owner": "admin",
+      "name": "LiuTest",
+      "displayName": "LiuTest",
+      "websiteUrl": "",
+      "favicon": "",
+      "passwordType": "",
+      "phonePrefix": "",
+      "defaultAvatar": "",
+      "tags": [""]
+    }
+  ],
+  "applications": [
+    {
+      "owner": "admin",
+      "name": "LiuTest",
+      "displayName": "LiuTest",
+      "logo": "",
+      "homepageUrl": "",
+      "organization": "",
+      "cert": "",
+      "enablePassword": false,
+      "enableSignUp": true,
+      "clientId": "",
+      "clientSecret": "",
+      "providers": [
+        {
+          "name": "",
+          "canSignUp": true,
+          "canSignIn": true,
+          "canUnlink": false,
+          "prompted": false,
+          "alertType": "None"
+        }
+      ],
+      "signupItems": [
+        {
+          "name": "ID",
+          "visible": false,
+          "required": true,
+          "prompted": false,
+          "rule": "Random"
+        },
+        {
+          "name": "Username",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        },
+        {
+          "name": "Display name",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        },
+        {
+          "name": "Password",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        },
+        {
+          "name": "Confirm password",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        },
+        {
+          "name": "Email",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        },
+        {
+          "name": "Phone",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        },
+        {
+          "name": "Agreement",
+            "visible": true,
+            "required": true,
+            "prompted": false,
+            "rule": "None"
+        }
+      ],
+      "redirectUris": [""],
+      "expireInHours": 168
+    }
+  ],
+  "users": [
+    {
+      "owner": "",
+      "name": "",
+      "type": "normal-user",
+      "password": "",
+      "displayName": "",
+      "avatar": "",
+      "email": "",
+      "phone": "",
+      "address": [],
+      "affiliation": "",
+      "tag": "",
+      "score": 2000,
+      "ranking": 1,
+      "isAdmin": true,
+      "isGlobalAdmin": true,
+      "isForbidden": false,
+      "isDeleted": false,
+      "signupApplication": "",
+      "createdIp": ""
+    }
+  ],
+  "providers": [
+    {
+      "owner": "admin",
+      "name": "LiuTest",
+      "displayName": "LiuTest",
+      "category": "",
+      "type": ""
+    }
+  ],
+  "certs": [
+    {
+      "owner": "admin",
+      "name": "LiuTest",
+      "displayName": "LiuTest",
+      "scope": "JWT",
+      "type": "x509",
+      "cryptoAlgorithm": "RS256",
+      "bitSize": 4096,
+      "expireInYears": 20,
+      "certificate": "",
+      "privateKey": ""
+    }
+  ],
+  "ldaps": [
+    {
+      "id": "3",
+      "owner": "admin",
+      "serverName": "",
+      "host": "",
+      "port": 389,
+      "admin": "",
+      "passwd": "",
+      "baseDn": "",
+      "autoSync": 0,
+      "lastSync": ""
+    }
+  ],
+  "models": [
+      {
+        "owner": "built-in",
+        "name": "built-in-model",
+        "modelText": "[request_definition]\nr = sub, obj, act\n\n[policy_definition]\np = sub, obj, act\n\n[policy_effect]\ne = some(where (p.eft == allow))\n\n[matchers]\nm = r.sub == p.sub && r.obj == p.obj && r.act == p.act",
+        "displayName": "testing display name"
+      }
+    ],
+  "permissions": [
+    {
+      "actions": [
+        "Read",
+        "Write",
+        "Admin"
+      ],
+      "displayName": "Built-in Permission",
+      "effect": "Allow",
+      "isEnabled": false,
+      "model": "built-in-model",
+      "name": "yangming",
+      "owner": "built-in",
+      "resourceType": "Application",
+      "resources": [
+        "app-built-in"
+      ],
+      "roles": [
+        ""
+      ],
+      "users": [
+        "admin"
+      ]
+    }
+  ]
+}

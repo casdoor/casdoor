@@ -88,7 +88,13 @@ func CamelToSnakeCase(camel string) string {
 
 func GetOwnerAndNameFromId(id string) (string, string) {
 	tokens := strings.Split(id, "/")
+	println("ids")
+	println(id)
+	println("tokens")
+	println(len(tokens))
 	if len(tokens) != 2 {
+		println("wrong")
+		println(tokens[0])
 		panic(errors.New("GetOwnerAndNameFromId() error, wrong token count for ID: " + id))
 	}
 
