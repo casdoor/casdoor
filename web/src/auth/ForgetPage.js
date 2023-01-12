@@ -320,9 +320,9 @@ class ForgetPage extends React.Component {
           >
             {
               this.state.isFixed ? <Input disabled /> :
-                <Select
+                <Select virtual={false}
                   key={this.state.verifyType}
-                  virtual={false} style={{textAlign: "left"}}
+                  style={{textAlign: "left"}}
                   defaultValue={this.state.verifyType}
                   disabled={this.state.username === ""}
                   placeholder={i18next.t("forget:Choose email or phone")}

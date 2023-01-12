@@ -179,7 +179,7 @@ class ProviderTable extends React.Component {
       //   width: '120px',
       //   render: (text, record, index) => {
       //     return (
-      //       <Select virtual={false} style={{width: '100%'}} value={text} onChange={(value => {
+      //       <Select virtual={false}  style={{width: '100%'}} value={text} onChange={(value => {
       //         this.updateField(table, index, 'alertType', value);
       //       })}>
       //         {

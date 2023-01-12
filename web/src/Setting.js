@@ -924,6 +924,14 @@ export function getItem(label, key, icon, children, type) {
     type,
   };
 }
+
+export function getOption(label, value) {
+  return {
+    label,
+    value,
+  };
+}
+
 function repeat(str, len) {
   while (str.length < len) {
     str += str.substr(0, len - str.length);
