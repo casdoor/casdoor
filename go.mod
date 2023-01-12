@@ -13,7 +13,7 @@ require (
 	github.com/casdoor/go-sms-sender v0.5.1
 	github.com/casdoor/oss v1.2.0
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
-	github.com/denisenkom/go-mssqldb v0.0.0-20200428022330-06a60b6afbbc
+	github.com/denisenkom/go-mssqldb v0.9.0
 	github.com/duo-labs/webauthn v0.0.0-20211221191814-a22482edaa3b
 	github.com/forestmgy/ldapserver v1.1.0
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
@@ -51,7 +51,8 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect
+	modernc.org/sqlite v1.10.1-0.20210314190707-798bbeb9bb84
 	xorm.io/builder v0.3.12 // indirect
 	xorm.io/core v0.7.2
-	xorm.io/xorm v1.0.5
+	xorm.io/xorm v1.1.2
 )
