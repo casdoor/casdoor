@@ -95,20 +95,6 @@ func checkPermissionForUpdateUser(userId string, newUser object.User, c *ApiCont
 		itemsChanged = append(itemsChanged, item)
 	}
 
-	oldUserRolesJson, _ := json.Marshal(oldUser.Roles)
-	newUserRolesJson, _ := json.Marshal(newUser.Roles)
-	if string(oldUserRolesJson) != string(newUserRolesJson) {
-		item := object.GetAccountItemByName("Roles", organization)
-		itemsChanged = append(itemsChanged, item)
-	}
-
-	oldUserPermissionJson, _ := json.Marshal(oldUser.Permissions)
-	newUserPermissionJson, _ := json.Marshal(newUser.Permissions)
-	if string(oldUserPermissionJson) != string(newUserPermissionJson) {
-		item := object.GetAccountItemByName("Permissions", organization)
-		itemsChanged = append(itemsChanged, item)
-	}
-
 	oldUserPropertiesJson, _ := json.Marshal(oldUser.Properties)
 	newUserPropertiesJson, _ := json.Marshal(newUser.Properties)
 	if string(oldUserPropertiesJson) != string(newUserPropertiesJson) {
