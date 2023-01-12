@@ -343,12 +343,9 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Token format"), i18next.t("application:Token format - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.application.tokenFormat} onChange={(value => {this.updateApplicationField("tokenFormat", value);})}>
-              {
-                ["JWT", "JWT-Empty"]
-                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
-              }
-            </Select>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.application.tokenFormat} onChange={(value => {this.updateApplicationField("tokenFormat", value);})}
+              options={["JWT", "JWT-Empty"].map((item) => Setting.getOption(item, item))}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -604,6 +601,16 @@ class ApplicationEditPage extends React.Component {
               application={this.state.application}
               onUpdateTable={(value) => {this.updateApplicationField("providers", value);}}
             />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col span={(Setting.isMobile()) ? 19 : 6}>
+            {Setting.getLabel(i18next.t("application:Enable link accounts that with the same email"), i18next.t("application:Enable link accounts that with the same email - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.enableLinkWithEmail} onChange={checked => {
+              this.updateApplicationField("enableLinkWithEmail", checked);
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

@@ -257,12 +257,9 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:User type"), i18next.t("general:User type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.user.type} onChange={(value => {this.updateUserField("type", value);})}>
-              {
-                ["normal-user"]
-                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
-              }
-            </Select>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.user.type} onChange={(value => {this.updateUserField("type", value);})}
+              options={["normal-user"].map(item => Setting.getOption(item, item))}
+            />
           </Col>
         </Row>
       );
@@ -284,18 +281,23 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
-            <Input value={this.state.user.email}
-              disabled={disabled}
-              onChange={e => {
-                this.updateUserField("email", e.target.value);
-              }} />
+            {Setting.isLocalAdminUser(this.props.account) ?
+              (<Input value={this.state.user.email}
+                disabled={disabled}
+                onChange={e => {
+                  this.updateUserField("email", e.target.value);
+                }} />) :
+              (<Select virtual={false} value={this.state.user.email}
+                options={[Setting.getItem(this.state.user.email, this.state.user.email)]}
+                disabled={disabled}
+                onChange={e => {
+                  this.updateUserField("email", e.target.value);
+                }} />)
+            }
           </Col>
           <Col span={11} >
-            {
-              !this.isSelf() ? null : (
-                <ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />
-              )
-            }
+            {/* backend auto get the current user, so admin can not edit. Just self can reset*/}
+            {this.isSelf() ? <ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Email...")} destType={"email"} /> : null}
           </Col>
         </Row>
       );
@@ -306,14 +308,21 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
-            <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
-              disabled={disabled}
-              onChange={e => {
-                this.updateUserField("phone", e.target.value);
-              }} />
+            {Setting.isLocalAdminUser(this.props.account) ?
+              <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+                disabled={disabled}
+                onChange={e => {
+                  this.updateUserField("phone", e.target.value);
+                }} /> :
+              (<Select virtual={false} value={`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`}
+                options={[Setting.getItem(`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`, this.state.user.phone)]}
+                disabled={disabled}
+                onChange={e => {
+                  this.updateUserField("phone", e.target.value);
+                }} />)}
           </Col>
           <Col span={11} >
-            {this.state.user.id === this.props.account?.id ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
+            {this.isSelf() ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
           </Col>
         </Row>
       );
@@ -397,16 +406,14 @@ class UserEditPage extends React.Component {
           <Col span={22} >
             {
               this.state.application?.organizationObj.tags?.length > 0 ? (
-                <Select virtual={false} style={{width: "100%"}} value={this.state.user.tag} onChange={(value => {this.updateUserField("tag", value);})}>
-                  {
-                    this.state.application.organizationObj.tags?.map((tag, index) => {
-                      const tokens = tag.split("|");
-                      const value = tokens[0];
-                      const displayValue = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1];
-                      return <Option key={index} value={value}>{displayValue}</Option>;
-                    })
-                  }
-                </Select>
+                <Select virtual={false} style={{width: "100%"}} value={this.state.user.tag}
+                  onChange={(value => {this.updateUserField("tag", value);})}
+                  options={this.state.application.organizationObj.tags?.map((tag) => {
+                    const tokens = tag.split("|");
+                    const value = tokens[0];
+                    const displayValue = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1];
+                    return Setting.getOption(displayValue, value);
+                  })} />
               ) : (
                 <Input value={this.state.user.tag} onChange={e => {
                   this.updateUserField("tag", e.target.value);
@@ -423,11 +430,10 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Signup application"), i18next.t("general:Signup application - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.signupApplication} onChange={(value => {this.updateUserField("signupApplication", value);})}>
-              {
-                this.state.applications.map((application, index) => <Option key={index} value={application.name}>{application.name}</Option>)
-              }
-            </Select>
+            <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.signupApplication}
+              onChange={(value => {this.updateUserField("signupApplication", value);})}
+              options={this.state.applications.map((application) => Setting.getOption(application.name, application.name))
+              } />
           </Col>
         </Row>
       );
@@ -468,7 +474,7 @@ class UserEditPage extends React.Component {
               <div style={{marginBottom: 20}}>
                 {
                   (this.state.application === null || this.state.user === null) ? null : (
-                    this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) =>
+                    this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem) =>
                       (providerItem.provider.category === "OAuth") ? (
                         <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} account={this.props.account} onUnlinked={() => {return this.unlinked();}} />
                       ) : (

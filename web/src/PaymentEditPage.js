@@ -302,7 +302,7 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("payment:Invoice type"), i18next.t("payment:Invoice type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select disabled={this.state.payment.invoiceUrl !== ""} virtual={false} style={{width: "100%"}} value={this.state.payment.invoiceType} onChange={(value => {
+            <Select virtual={false} disabled={this.state.payment.invoiceUrl !== ""} style={{width: "100%"}} value={this.state.payment.invoiceType} onChange={(value => {
               this.updatePaymentField("invoiceType", value);
               if (value === "Individual") {
                 this.updatePaymentField("invoiceTitle", this.state.payment.personName);

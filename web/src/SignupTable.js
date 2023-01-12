@@ -195,11 +195,7 @@ class SignupTable extends React.Component {
           return (
             <Select virtual={false} style={{width: "100%"}} value={text} onChange={(value => {
               this.updateField(table, index, "rule", value);
-            })}>
-              {
-                options.map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
-              }
-            </Select>
+            })} options={options.map(item => Setting.getOption(item.name, item.id))} />
           );
         },
       },

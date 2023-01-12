@@ -165,12 +165,9 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Password type"), i18next.t("general:Password type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.organization.passwordType} onChange={(value => {this.updateOrganizationField("passwordType", value);})}>
-              {
-                ["plain", "salt", "md5-salt", "bcrypt", "pbkdf2-salt", "argon2id"]
-                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
-              }
-            </Select>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.organization.passwordType} onChange={(value => {this.updateOrganizationField("passwordType", value);})}
+              options={["plain", "salt", "md5-salt", "bcrypt", "pbkdf2-salt", "argon2id"].map(item => Setting.getOption(item, item))}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -225,11 +222,9 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Default application"), i18next.t("general:Default application - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.organization.defaultApplication} onChange={(value => {this.updateOrganizationField("defaultApplication", value);})}>
-              {
-                this.state.applications?.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
-              }
-            </Select>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.organization.defaultApplication} onChange={(value => {this.updateOrganizationField("defaultApplication", value);})}
+              options={this.state.applications?.map((item) => Setting.getOption(item.name, item.name))
+              } />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

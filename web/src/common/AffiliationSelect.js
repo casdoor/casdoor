@@ -18,8 +18,6 @@ import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import * as Setting from "../Setting";
 
-const {Option} = Select;
-
 class AffiliationSelect extends React.Component {
   constructor(props) {
     super(props);
@@ -99,20 +97,16 @@ class AffiliationSelect extends React.Component {
                   this.updateUserField("affiliation", e.target.value);
                 }} />
               ) : (
-                <Select virtual={false} style={{width: "100%"}} value={this.props.user.affiliation} onChange={(value => {
-                  const name = value;
-                  const affiliationOption = Setting.getArrayItem(this.state.affiliationOptions, "name", name);
-                  const id = affiliationOption.id;
-                  this.updateUserField("affiliation", name);
-                  this.updateUserField("score", id);
-                })}>
-                  {
-                    <Option key={0} value={""}>(empty)</Option>
-                  }
-                  {
-                    this.state.affiliationOptions.map((affiliationOption, index) => <Option key={affiliationOption.id} value={affiliationOption.name}>{affiliationOption.name}</Option>)
-                  }
-                </Select>
+                <Select virtual={false} style={{width: "100%"}} value={this.props.user.affiliation}
+                  onChange={(value => {
+                    const name = value;
+                    const affiliationOption = Setting.getArrayItem(this.state.affiliationOptions, "name", name);
+                    const id = affiliationOption.id;
+                    this.updateUserField("affiliation", name);
+                    this.updateUserField("score", id);
+                  })}
+                  options={[Setting.getOption("(empty)", "")].concat(this.state.affiliationOptions.map((affiliationOption) => Setting.getOption(affiliationOption.name, affiliationOption.name))
+                  )} />
               )
             }
           </Col>
