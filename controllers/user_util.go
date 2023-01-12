@@ -119,8 +119,15 @@ func checkPermissionForUpdateUser(userId string, newUser object.User, c *ApiCont
 		itemsChanged = append(itemsChanged, item)
 	}
 
+	currentUser := c.getCurrentUser()
+	if currentUser == nil && c.IsGlobalAdmin() {
+		currentUser = &object.User{
+			IsGlobalAdmin: true,
+		}
+	}
+
 	for i := range itemsChanged {
-		if pass, err := object.CheckAccountItemModifyRule(itemsChanged[i], c.getCurrentUser(), c.GetAcceptLanguage()); !pass {
+		if pass, err := object.CheckAccountItemModifyRule(itemsChanged[i], currentUser, c.GetAcceptLanguage()); !pass {
 			return pass, err
 		}
 	}
