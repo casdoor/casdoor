@@ -30,6 +30,7 @@ import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {CaptchaModal} from "../common/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
+import {getTermsOfUseContent, isAgreementRequired, renderAgreement, renderModal} from "./SignupPage";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -53,12 +54,16 @@ class LoginPage extends React.Component {
       samlResponse: "",
       relayState: "",
       redirectUrl: "",
+      isTermsOfUseVisible: false,
+      termsOfUseContent: "",
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
       this.state.owner = props.match?.params.owner;
       this.state.applicationName = props.match?.params.casApplicationName;
     }
+
+    this.form = React.createRef();
   }
 
   componentDidMount() {
@@ -122,7 +127,9 @@ class LoginPage extends React.Component {
           this.onUpdateApplication(application);
           this.setState({
             application: application,
-          });
+          }, () => getTermsOfUseContent(this.state.application.termsOfUse, res => {
+            this.setState({termsOfUseContent: res});
+          }));
         });
     } else {
       OrganizationBackend.getDefaultApplication("admin", this.state.owner)
@@ -132,7 +139,9 @@ class LoginPage extends React.Component {
             this.setState({
               application: res.data,
               applicationName: res.data.name,
-            });
+            }, () => getTermsOfUseContent(this.state.application.termsOfUse, res => {
+              this.setState({termsOfUseContent: res});
+            }));
           } else {
             this.onUpdateApplication(null);
             Setting.showMessage("error", res.msg);
@@ -383,6 +392,7 @@ class LoginPage extends React.Component {
           onFinish={(values) => {this.onFinish(values);}}
           style={{width: "300px"}}
           size="large"
+          ref={this.form}
         >
           <Form.Item
             hidden={true}
@@ -465,6 +475,13 @@ class LoginPage extends React.Component {
               Setting.renderForgetLink(application, i18next.t("login:Forgot password?"))
             }
           </Form.Item>
+          {
+            renderAgreement(isAgreementRequired(application), () => {
+              this.setState({
+                isTermsOfUseVisible: true,
+              });
+            })
+          }
           <Form.Item>
             <Button
               type="primary"
@@ -826,6 +843,19 @@ class LoginPage extends React.Component {
                   }
                   {
                     this.renderForm(application)
+                  }
+                  {
+                    renderModal(this.state.isTermsOfUseVisible, () => {
+                      this.form.current.setFieldsValue({agreement: true});
+                      this.setState({
+                        isTermsOfUseVisible: false,
+                      });
+                    }, () => {
+                      this.form.current.setFieldsValue({agreement: false});
+                      this.setState({
+                        isTermsOfUseVisible: false,
+                      });
+                    }, this.state.termsOfUseContent)
                   }
                 </div>
               </div>
