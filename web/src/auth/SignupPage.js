@@ -479,7 +479,7 @@ class SignupPage extends React.Component {
           this.setState({
             isTermsOfUseVisible: true,
           });
-        }, tailFormItemLayout)
+        }, false, tailFormItemLayout)
       );
     }
   }
@@ -644,7 +644,7 @@ export function isAgreementRequired(application) {
   return false;
 }
 
-export function renderAgreement(required, onClick, layout) {
+export function renderAgreement(required, onClick, noStyle, layout) {
   return (
     <Form.Item
       name="agreement"
@@ -657,7 +657,7 @@ export function renderAgreement(required, onClick, layout) {
         },
       ]}
       {...layout}
-      noStyle
+      noStyle={noStyle}
     >
       <Checkbox style={{float: "left"}}>
         {i18next.t("signup:Accept")}&nbsp;

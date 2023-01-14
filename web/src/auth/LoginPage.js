@@ -472,7 +472,7 @@ class LoginPage extends React.Component {
                   this.setState({
                     isTermsOfUseVisible: true,
                   });
-                }) : (
+                }, true) : (
                   <Form.Item name="autoSignin" valuePropName="checked" noStyle>
                     <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
                       {i18next.t("login:Auto sign in")}
