@@ -466,22 +466,24 @@ class LoginPage extends React.Component {
             }
           </Row>
           <Form.Item>
-            <Form.Item name="autoSignin" valuePropName="checked" noStyle>
-              <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
-                {i18next.t("login:Auto sign in")}
-              </Checkbox>
-            </Form.Item>
+            {
+              isAgreementRequired(application) ?
+                renderAgreement(isAgreementRequired(application), () => {
+                  this.setState({
+                    isTermsOfUseVisible: true,
+                  });
+                }) : (
+                  <Form.Item name="autoSignin" valuePropName="checked" noStyle>
+                    <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
+                      {i18next.t("login:Auto sign in")}
+                    </Checkbox>
+                  </Form.Item>
+                )
+            }
             {
               Setting.renderForgetLink(application, i18next.t("login:Forgot password?"))
             }
           </Form.Item>
-          {
-            renderAgreement(isAgreementRequired(application), () => {
-              this.setState({
-                isTermsOfUseVisible: true,
-              });
-            })
-          }
           <Form.Item>
             <Button
               type="primary"

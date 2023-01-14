@@ -657,8 +657,9 @@ export function renderAgreement(required, onClick, layout) {
         },
       ]}
       {...layout}
+      noStyle
     >
-      <Checkbox>
+      <Checkbox style={{float: "left"}}>
         {i18next.t("signup:Accept")}&nbsp;
         <a onClick={onClick}>
           {i18next.t("signup:Terms of Use")}
