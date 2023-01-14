@@ -468,7 +468,7 @@ class LoginPage extends React.Component {
           <Form.Item>
             {
               isAgreementRequired(application) ?
-                renderAgreement(isAgreementRequired(application), () => {
+                renderAgreement(true, () => {
                   this.setState({
                     isTermsOfUseVisible: true,
                   });
