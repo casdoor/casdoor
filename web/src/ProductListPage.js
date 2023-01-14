@@ -45,26 +45,33 @@ class ProductListPage extends BaseListPage {
     const newProduct = this.newProduct();
     ProductBackend.addProduct(newProduct)
       .then((res) => {
-        this.props.history.push({pathname: `/products/${newProduct.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/products/${newProduct.name}`, mode: "add"});
+          Setting.showMessage("success", i18next.t("general:Successfully added"));
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Product failed to add: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteProduct(i) {
     ProductBackend.deleteProduct(this.state.data[i])
       .then((res) => {
-        Setting.showMessage("success", "Product deleted successfully");
-        this.setState({
-          data: Setting.deleteRow(this.state.data, i),
-          pagination: {total: this.state.pagination.total - 1},
-        });
-      }
-      )
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+          this.setState({
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Product failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
@@ -236,7 +243,7 @@ class ProductListPage extends BaseListPage {
                 title={`Sure to delete product: ${record.name} ?`}
                 onConfirm={() => this.deleteProduct(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );
@@ -288,6 +295,13 @@ class ProductListPage extends BaseListPage {
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
           });
+        } else {
+          if (res.msg.includes("Unauthorized")) {
+            this.setState({
+              loading: false,
+              isAuthorized: false,
+            });
+          }
         }
       });
   };

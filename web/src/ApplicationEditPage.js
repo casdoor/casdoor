@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Popover, Radio, Row, Select, Switch, Upload} from "antd";
+import {Button, Card, Col, Input, Popover, Radio, Result, Row, Select, Switch, Upload} from "antd";
 import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -32,6 +32,7 @@ import copy from "copy-to-clipboard";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
+
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/htmlmixed/htmlmixed");
 require("codemirror/mode/xml/xml");
@@ -39,19 +40,61 @@ require("codemirror/mode/css/css");
 
 const {Option} = Select;
 
-const template = {
-  padding: "30px",
-  border: "2px solid #ffffff",
-  borderRadius: "7px",
-  backgroundColor: "#ffffff",
-  boxShadow: " 0px 0px 20px rgba(0, 0, 0, 0.20)",
-};
+const template = `<style>
+  .login-panel{
+    padding: 40px 70px 0 70px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 0 30px 20px rgba(0, 0, 0, 0.20);
+}
+</style>`;
+
+const previewGrid = Setting.isMobile() ? 22 : 11;
+const previewWidth = Setting.isMobile() ? "110%" : "90%";
+
+const sideTemplate = `<style>
+  .left-model{
+    text-align: center;
+    padding: 30px;
+    background-color: #8ca0ed;
+    position: absolute;
+    transform: none;
+    width: 100%;
+    height: 100%;
+  }
+  .side-logo{
+    display: flex;
+    align-items: center;
+  }
+  .side-logo span {
+    font-family: Montserrat, sans-serif;
+    font-weight: 900;
+    font-size: 2.4rem;
+    line-height: 1.3;
+    margin-left: 16px;
+    color: #404040;
+  }
+  .img{
+    max-width: none;
+    margin: 41px 0 13px;
+  }
+</style>
+<div class="left-model">
+  <span class="side-logo"> <img src="https://cdn.casbin.org/img/casdoor-logo_1185x256.png" alt="Casdoor" style="width: 120px"> 
+    <span>SSO</span> 
+  </span>
+  <div class="img">
+    <img src="https://cdn.casbin.org/img/casbin.svg" alt="Casdoor"/>
+  </div>
+</div>
+`;
 
 class ApplicationEditPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
+      owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       applicationName: props.match.params.applicationName,
       application: null,
       organizations: [],
@@ -60,6 +103,7 @@ class ApplicationEditPage extends React.Component {
       uploading: false,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
       samlMetadata: null,
+      isAuthorized: true,
     };
   }
 
@@ -86,9 +130,15 @@ class ApplicationEditPage extends React.Component {
   getOrganizations() {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
-        this.setState({
-          organizations: (res.msg === undefined) ? res : [],
-        });
+        if (res?.status === "error") {
+          this.setState({
+            isAuthorized: false,
+          });
+        } else {
+          this.setState({
+            organizations: (res.msg === undefined) ? res : [],
+          });
+        }
       });
   }
 
@@ -102,12 +152,11 @@ class ApplicationEditPage extends React.Component {
   }
 
   getProviders() {
-    ProviderBackend.getProviders("admin")
-      .then((res) => {
-        this.setState({
-          providers: res,
-        });
+    ProviderBackend.getProviders(this.state.owner).then((res => {
+      this.setState({
+        providers: res,
       });
+    }));
   }
 
   getSamlMetadata() {
@@ -149,7 +198,7 @@ class ApplicationEditPage extends React.Component {
           Setting.showMessage("success", i18next.t("application:File uploaded successfully"));
           this.updateApplicationField("termsOfUse", res.data);
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
         }
       }).finally(() => {
         this.setState({uploading: false});
@@ -157,7 +206,6 @@ class ApplicationEditPage extends React.Component {
   }
 
   renderApplication() {
-    const preview = JSON.stringify(template, null, 2);
     return (
       <Card size="small" title={
         <div>
@@ -239,7 +287,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.application.organization} onChange={(value => {this.updateApplicationField("organization", value);})}>
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.application.organization} onChange={(value => {this.updateApplicationField("organization", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -295,12 +343,9 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Token format"), i18next.t("application:Token format - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.application.tokenFormat} onChange={(value => {this.updateApplicationField("tokenFormat", value);})}>
-              {
-                ["JWT", "JWT-Empty"]
-                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
-              }
-            </Select>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.application.tokenFormat} onChange={(value => {this.updateApplicationField("tokenFormat", value);})}
+              options={["JWT", "JWT-Empty"].map((item) => Setting.getOption(item, item))}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -350,6 +395,16 @@ class ApplicationEditPage extends React.Component {
           <Col span={1} >
             <Switch checked={this.state.application.enableSigninSession} onChange={checked => {
               this.updateApplicationField("enableSigninSession", checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("application:Auto signin"), i18next.t("application:Auto signin - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.enableAutoSignin} onChange={checked => {
+              this.updateApplicationField("enableAutoSignin", checked);
             }} />
           </Col>
         </Row>
@@ -495,6 +550,16 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:SAML Reply URL"), i18next.t("application:Redirect URL (Assertion Consumer Service POST Binding URL) - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input prefix={<LinkOutlined />} value={this.state.application.samlReplyUrl} onChange={e => {
+              this.updateApplicationField("samlReplyUrl", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("application:Enable SAML compress"), i18next.t("application:Enable SAML compress - Tooltip"))} :
           </Col>
@@ -539,6 +604,16 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
+          <Col span={(Setting.isMobile()) ? 19 : 6}>
+            {Setting.getLabel(i18next.t("application:Enable link accounts that with the same email"), i18next.t("application:Enable link accounts that with the same email - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.enableLinkWithEmail} onChange={checked => {
+              this.updateApplicationField("enableLinkWithEmail", checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
           </Col>
@@ -552,10 +627,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={22} style={(Setting.isMobile()) ? {maxWidth: "100%"} : {}}>
             <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
-              <Col span={23} >
+              <Col span={22} >
                 <Input prefix={<LinkOutlined />} value={this.state.application.formBackgroundUrl} onChange={e => {
                   this.updateApplicationField("formBackgroundUrl", e.target.value);
                 }} />
@@ -580,7 +655,7 @@ class ApplicationEditPage extends React.Component {
           <Col span={22}>
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror value={this.state.application.formCss === "" ? preview : this.state.application.formCss}
+                <CodeMirror value={this.state.application.formCss === "" ? template : this.state.application.formCss}
                   options={{mode: "css", theme: "material-darker"}}
                   onBeforeChange={(editor, data, value) => {
                     this.updateApplicationField("formCss", value);
@@ -596,14 +671,42 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:From position"), i18next.t("application:From position - Tooltip"))} :
+            {Setting.getLabel(i18next.t("application:Form position"), i18next.t("application:Form position - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Radio.Group onChange={e => {this.updateApplicationField("formOffset", e.target.value);}} value={this.state.application.formOffset !== 0 ? this.state.application.formOffset : 8}>
-              <Radio.Button value={2}>left</Radio.Button>
-              <Radio.Button value={8}>center</Radio.Button>
-              <Radio.Button value={14}>right</Radio.Button>
-            </Radio.Group>
+            <Row style={{marginTop: "20px"}} >
+              <Radio.Group onChange={e => {this.updateApplicationField("formOffset", e.target.value);}} value={this.state.application.formOffset}>
+                <Radio.Button value={1}>{i18next.t("application:Left")}</Radio.Button>
+                <Radio.Button value={2}>{i18next.t("application:Center")}</Radio.Button>
+                <Radio.Button value={3}>{i18next.t("application:Right")}</Radio.Button>
+                <Radio.Button value={4}>
+                  {i18next.t("application:Enable side panel")}
+                </Radio.Button>
+              </Radio.Group>
+            </Row>
+            {this.state.application.formOffset === 4 ?
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
+                  {Setting.getLabel(i18next.t("application:Side panel HTML"), i18next.t("application:Side panel HTML - Tooltip"))} :
+                </Col>
+                <Col span={21} >
+                  <Popover placement="right" content={
+                    <div style={{width: "900px", height: "300px"}} >
+                      <CodeMirror value={this.state.application.formSideHtml === "" ? sideTemplate : this.state.application.formSideHtml}
+                        options={{mode: "htmlmixed", theme: "material-darker"}}
+                        onBeforeChange={(editor, data, value) => {
+                          this.updateApplicationField("formSideHtml", value);
+                        }}
+                      />
+                    </div>
+                  } title={i18next.t("application:Side panel HTML - Edit")} trigger="click">
+                    <Input value={this.state.application.formSideHtml} style={{marginBottom: "10px"}} onChange={e => {
+                      this.updateApplicationField("formSideHtml", e.target.value);
+                    }} />
+                  </Popover>
+                </Col>
+              </Row>
+              : null}
           </Col>
         </Row>
         {
@@ -637,14 +740,14 @@ class ApplicationEditPage extends React.Component {
   renderSignupSigninPreview() {
     let signUpUrl = `/signup/${this.state.application.name}`;
     const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
-    const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
+    const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "97%", width: "100%", background: "rgba(0,0,0,0.4)"};
     if (!this.state.application.enablePassword) {
       signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");
     }
 
     return (
       <React.Fragment>
-        <Col span={11}>
+        <Col span={previewGrid}>
           <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
             copy(`${window.location.origin}${signUpUrl}`);
             Setting.showMessage("success", i18next.t("application:Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
@@ -653,19 +756,23 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("application:Copy signup page URL")}
           </Button>
           <br />
-          <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
+          <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", overflow: "auto"}}>
             {
               this.state.application.enablePassword ? (
-                <SignupPage application={this.state.application} />
+                <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
+                  <SignupPage application={this.state.application} preview = "auto" />
+                </div>
               ) : (
-                <LoginPage type={"login"} mode={"signup"} application={this.state.application} />
+                <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
+                  <LoginPage type={"login"} mode={"signup"} application={this.state.application} preview = "auto" />
+                </div>
               )
             }
-            <div style={maskStyle} />
+            <div style={{overflow: "auto", ...maskStyle}} />
           </div>
         </Col>
-        <Col span={11}>
-          <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
+        <Col span={previewGrid}>
+          <Button style={{marginBottom: "10px", marginTop: Setting.isMobile() ? "15px" : "0"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
             copy(`${window.location.origin}${signInUrl}`);
             Setting.showMessage("success", i18next.t("application:Signin page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
           }}
@@ -673,9 +780,11 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("application:Copy signin page URL")}
           </Button>
           <br />
-          <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", alignItems: "center", overflow: "auto", flexDirection: "column", flex: "auto"}}>
-            <LoginPage type={"login"} mode={"signin"} application={this.state.application} />
-            <div style={maskStyle} />
+          <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", overflow: "auto"}}>
+            <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
+              <LoginPage type={"login"} mode={"signin"} application={this.state.application} preview = "auto" />
+            </div>
+            <div style={{overflow: "auto", ...maskStyle}} />
           </div>
         </Col>
       </React.Fragment>
@@ -686,7 +795,7 @@ class ApplicationEditPage extends React.Component {
     const promptUrl = `/prompt/${this.state.application.name}`;
     const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
     return (
-      <Col span={11}>
+      <Col span={previewGrid}>
         <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
           copy(`${window.location.origin}${promptUrl}`);
           Setting.showMessage("success", i18next.t("application:Prompt page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
@@ -695,9 +804,9 @@ class ApplicationEditPage extends React.Component {
           {i18next.t("application:Copy prompt page URL")}
         </Button>
         <br />
-        <div style={{position: "relative", width: "90%", border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
+        <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
           <PromptPage application={this.state.application} account={this.props.account} />
-          <div style={maskStyle}></div>
+          <div style={maskStyle} />
         </div>
       </Col>
     );
@@ -705,10 +814,10 @@ class ApplicationEditPage extends React.Component {
 
   submitApplicationEdit(willExist) {
     const application = Setting.deepCopy(this.state.application);
-    ApplicationBackend.updateApplication(this.state.application.owner, this.state.applicationName, application)
+    ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             applicationName: this.state.application.name,
           });
@@ -716,29 +825,44 @@ class ApplicationEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/applications");
           } else {
-            this.props.history.push(`/applications/${this.state.application.name}`);
+            this.props.history.push(`/applications/${this.state.application.organization}/${this.state.application.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateApplicationField("name", this.state.applicationName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteApplication() {
     ApplicationBackend.deleteApplication(this.state.application)
-      .then(() => {
-        this.props.history.push("/applications");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/applications");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `Application failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   render() {
+    if (!this.state.isAuthorized) {
+      return (
+        <Result
+          status="403"
+          title="403 Unauthorized"
+          subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
+          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
+        />
+      );
+    }
+
     return (
       <div>
         {

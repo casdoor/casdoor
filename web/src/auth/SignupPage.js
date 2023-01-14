@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Checkbox, Col, Form, Input, Modal, Result, Row} from "antd";
+import {Button, Checkbox, Form, Input, Modal, Result} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import * as ProviderButton from "./ProviderButton";
@@ -25,6 +25,8 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import {CountDownInput} from "../common/CountDownInput";
 import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
+import SelectLanguageBox from "../SelectLanguageBox";
+import {withRouter} from "react-router-dom";
 
 const formItemLayout = {
   labelCol: {
@@ -40,7 +42,7 @@ const formItemLayout = {
       span: 24,
     },
     sm: {
-      span: 18,
+      span: 16,
     },
   },
 };
@@ -63,7 +65,7 @@ class SignupPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      applicationName: props.match?.params.applicationName !== undefined ? props.match.params.applicationName : authConfig.appName,
+      applicationName: props.match.params?.applicationName ?? authConfig.appName,
       application: null,
       email: "",
       phone: "",
@@ -89,10 +91,12 @@ class SignupPage extends React.Component {
       sessionStorage.setItem("signinUrl", signinUrl);
     }
 
-    if (applicationName !== undefined) {
-      this.getApplication(applicationName);
-    } else {
-      Util.showMessage("error", `Unknown application name: ${applicationName}`);
+    if (this.getApplicationObj() === null) {
+      if (applicationName !== undefined) {
+        this.getApplication(applicationName);
+      } else {
+        Setting.showMessage("error", `Unknown application name: ${applicationName}`);
+      }
     }
   }
 
@@ -103,6 +107,7 @@ class SignupPage extends React.Component {
 
     ApplicationBackend.getApplication("admin", applicationName)
       .then((application) => {
+        this.onUpdateApplication(application);
         this.setState({
           application: application,
         });
@@ -126,11 +131,7 @@ class SignupPage extends React.Component {
   }
 
   getApplicationObj() {
-    if (this.props.application !== undefined) {
-      return this.props.application;
-    } else {
-      return this.state.application;
-    }
+    return this.props.application ?? this.state.application;
   }
 
   getTermsofuseContent(url) {
@@ -145,6 +146,22 @@ class SignupPage extends React.Component {
 
   onUpdateAccount(account) {
     this.props.onUpdateAccount(account);
+  }
+
+  onUpdateApplication(application) {
+    this.props.onUpdateApplication(application);
+  }
+
+  parseOffset(offset) {
+    if (offset === 2 || offset === 4 || Setting.inIframe() || Setting.isMobile()) {
+      return "0 auto";
+    }
+    if (offset === 1) {
+      return "0 10%";
+    }
+    if (offset === 3) {
+      return "0 60%";
+    }
   }
 
   onFinish(values) {
@@ -359,6 +376,7 @@ class SignupPage extends React.Component {
             >
               <CountDownInput
                 disabled={!this.state.validEmail}
+                method={"signup"}
                 onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(application)]}
                 application={application}
               />
@@ -412,6 +430,7 @@ class SignupPage extends React.Component {
           >
             <CountDownInput
               disabled={!this.state.validPhone}
+              method={"signup"}
               onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
               application={application}
             />
@@ -496,7 +515,7 @@ class SignupPage extends React.Component {
     return (
       <Modal
         title={i18next.t("signup:Terms of Use")}
-        visible={this.state.isTermsOfUseVisible}
+        open={this.state.isTermsOfUseVisible}
         width={"55vw"}
         closable={false}
         okText={i18next.t("signup:Accept")}
@@ -525,13 +544,13 @@ class SignupPage extends React.Component {
       return (
         <Result
           status="error"
-          title="Sign Up Error"
-          subTitle={"The application does not allow to sign up new account"}
+          title={i18next.t("application:Sign Up Error")}
+          subTitle={i18next.t("application:The application does not allow to sign up new account")}
           extra={[
-            <Button type="primary" key="signin" onClick={() => {
-              Setting.goToLogin(this, application);
-            }}>
-              Sign In
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application, this.props.history)}>
+              {
+                i18next.t("login:Sign In")
+              }
             </Button>,
           ]}
         >
@@ -549,12 +568,13 @@ class SignupPage extends React.Component {
           application: application.name,
           organization: application.organization,
         }}
-        style={{width: !Setting.isMobile() ? "400px" : "250px"}}
         size="large"
+        layout={Setting.isMobile() ? "vertical" : "horizontal"}
+        style={{width: Setting.isMobile() ? "300px" : "400px"}}
       >
         <Form.Item
-          style={{height: 0, visibility: "hidden"}}
           name="application"
+          hidden={true}
           rules={[
             {
               required: true,
@@ -564,8 +584,8 @@ class SignupPage extends React.Component {
         >
         </Form.Item>
         <Form.Item
-          style={{height: 0, visibility: "hidden"}}
           name="organization"
+          hidden={true}
           rules={[
             {
               required: true,
@@ -581,13 +601,13 @@ class SignupPage extends React.Component {
           <Button type="primary" htmlType="submit">
             {i18next.t("account:Sign Up")}
           </Button>
-          &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
+            &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
           <a onClick={() => {
             const linkInStorage = sessionStorage.getItem("signinUrl");
             if (linkInStorage !== null && linkInStorage !== "") {
               Setting.goToLink(linkInStorage);
             } else {
-              Setting.goToLogin(this, application);
+              Setting.redirectToLoginPage(application, this.props.history);
             }
           }}>
             {i18next.t("signup:sign in now")}
@@ -595,7 +615,7 @@ class SignupPage extends React.Component {
         </Form.Item>
         {
           application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-            return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small");
+            return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small", this.props.location);
           })
         }
       </Form>
@@ -614,33 +634,35 @@ class SignupPage extends React.Component {
       );
     }
 
-    const formStyle = Setting.inIframe() ? null : Setting.parseObject(application.formCss);
-
     return (
-      <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${application.formBackgroundUrl})`}}>
+      <React.Fragment>
         <CustomGithubCorner />
-        &nbsp;
-        <Row>
-          <Col span={8} offset={application.formOffset === 0 || Setting.inIframe() || Setting.isMobile() ? 8 : application.formOffset} style={{display: "flex", justifyContent: "center"}} >
-            <div style={{marginBottom: "10px", textAlign: "center", ...formStyle}}>
+        <div className="login-content" style={{margin: this.props.preview ?? this.parseOffset(application.formOffset)}}>
+          {Setting.inIframe() || Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
+          <div className="login-panel" >
+            <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
+              <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
+            </div>
+            <div className="login-form">
               {
                 Setting.renderHelmet(application)
               }
               {
                 Setting.renderLogo(application)
               }
+              <SelectLanguageBox languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
               {
                 this.renderForm(application)
               }
             </div>
-          </Col>
-        </Row>
+          </div>
+        </div>
         {
           this.renderModal()
         }
-      </div>
+      </React.Fragment>
     );
   }
 }
 
-export default SignupPage;
+export default withRouter(SignupPage);

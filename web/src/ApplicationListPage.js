@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Col, List, Popconfirm, Row, Table, Tooltip} from "antd";
+import {Button, Col, List, Popconfirm, Result, Row, Table, Tooltip} from "antd";
 import {EditOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as Setting from "./Setting";
@@ -23,11 +23,29 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 
 class ApplicationListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      classes: props,
+      organizationName: props.account.owner,
+      data: [],
+      pagination: {
+        current: 1,
+        pageSize: 10,
+      },
+      loading: false,
+      searchText: "",
+      searchedColumn: "",
+      isAuthorized: true,
+    };
+  }
+
   newApplication() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "admin", // this.props.account.applicationname,
+      owner: "admin", // this.props.account.applicationName,
       name: `application_${randomName}`,
+      organization: this.state.organizationName,
       createdTime: moment().format(),
       displayName: `New Application - ${randomName}`,
       logo: `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`,
@@ -53,7 +71,7 @@ class ApplicationListPage extends BaseListPage {
       redirectUris: ["http://localhost:9000/callback"],
       tokenFormat: "JWT",
       expireInHours: 24 * 7,
-      formOffset: 8,
+      formOffset: 2,
     };
   }
 
@@ -61,26 +79,33 @@ class ApplicationListPage extends BaseListPage {
     const newApplication = this.newApplication();
     ApplicationBackend.addApplication(newApplication)
       .then((res) => {
-        this.props.history.push({pathname: `/applications/${newApplication.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/applications/${newApplication.organization}/${newApplication.name}`, mode: "add"});
+          Setting.showMessage("success", i18next.t("general:Successfully added"));
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Application failed to add: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteApplication(i) {
     ApplicationBackend.deleteApplication(this.state.data[i])
       .then((res) => {
-        Setting.showMessage("success", "Application deleted successfully");
-        this.setState({
-          data: Setting.deleteRow(this.state.data, i),
-          pagination: {total: this.state.pagination.total - 1},
-        });
-      }
-      )
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+          this.setState({
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Application failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
@@ -96,7 +121,7 @@ class ApplicationListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/applications/${text}`}>
+            <Link to={`/applications/${record.organization}/${text}`}>
               {text}
             </Link>
           );
@@ -173,9 +198,9 @@ class ApplicationListPage extends BaseListPage {
                     <List.Item>
                       <div style={{display: "inline"}}>
                         <Tooltip placement="topLeft" title="Edit">
-                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${providerItem.name}`)} />
+                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${record.organization}/${providerItem.name}`)} />
                         </Tooltip>
-                        <Link to={`/providers/${providerItem.name}`}>
+                        <Link to={`/providers/${record.organization}/${providerItem.name}`}>
                           {providerItem.name}
                         </Link>
                       </div>
@@ -213,13 +238,13 @@ class ApplicationListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/applications/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/applications/${record.organization}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete application: ${record.name} ?`}
                 onConfirm={() => this.deleteApplication(index)}
                 disabled={record.name === "app-built-in"}
               >
-                <Button style={{marginBottom: "10px"}} disabled={record.name === "app-built-in"} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} disabled={record.name === "app-built-in"} type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );
@@ -233,6 +258,17 @@ class ApplicationListPage extends BaseListPage {
       showSizeChanger: true,
       showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
+
+    if (!this.state.isAuthorized) {
+      return (
+        <Result
+          status="403"
+          title="403 Unauthorized"
+          subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
+          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
+        />
+      );
+    }
 
     return (
       <div>
@@ -254,7 +290,8 @@ class ApplicationListPage extends BaseListPage {
     const field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
-    ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    (Setting.isAdminUser(this.props.account) ? ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) :
+      ApplicationBackend.getApplicationsByOrganization("admin", this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
@@ -267,6 +304,13 @@ class ApplicationListPage extends BaseListPage {
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
           });
+        } else {
+          if (res.msg.includes("Unauthorized")) {
+            this.setState({
+              loading: false,
+              isAuthorized: false,
+            });
+          }
         }
       });
   };

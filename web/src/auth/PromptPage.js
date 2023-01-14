@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Result, Row} from "antd";
+import {Button, Card, Col, Result, Row} from "antd";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
 import * as AuthBackend from "./AuthBackend";
@@ -22,6 +22,7 @@ import i18next from "i18next";
 import AffiliationSelect from "../common/AffiliationSelect";
 import OAuthWidget from "../common/OAuthWidget";
 import SelectRegionBox from "../SelectRegionBox";
+import {withRouter} from "react-router-dom";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -29,7 +30,7 @@ class PromptPage extends React.Component {
     this.state = {
       classes: props,
       type: props.type,
-      applicationName: props.applicationName !== undefined ? props.applicationName : (props.match === undefined ? null : props.match.params.applicationName),
+      applicationName: props.applicationName ?? (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
       user: null,
     };
@@ -37,7 +38,9 @@ class PromptPage extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.getUser();
-    this.getApplication();
+    if (this.getApplicationObj() === null) {
+      this.getApplication();
+    }
   }
 
   getUser() {
@@ -58,6 +61,7 @@ class PromptPage extends React.Component {
 
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
+        this.onUpdateApplication(application);
         this.setState({
           application: application,
         });
@@ -65,11 +69,11 @@ class PromptPage extends React.Component {
   }
 
   getApplicationObj() {
-    if (this.props.application !== undefined) {
-      return this.props.application;
-    } else {
-      return this.state.application;
-    }
+    return this.props.application ?? this.state.application;
+  }
+
+  onUpdateApplication(application) {
+    this.props.onUpdateApplication(application);
   }
 
   parseUserField(key, value) {
@@ -121,7 +125,7 @@ class PromptPage extends React.Component {
 
   renderContent(application) {
     return (
-      <div style={{width: "400px"}}>
+      <div style={{width: "500px"}}>
         {
           this.renderAffiliation(application)
         }
@@ -190,7 +194,7 @@ class PromptPage extends React.Component {
           if (redirectUrl !== "" && redirectUrl !== null) {
             Setting.goToLink(redirectUrl);
           } else {
-            Setting.goToLogin(this, this.getApplicationObj());
+            Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
           }
         } else {
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);
@@ -202,9 +206,9 @@ class PromptPage extends React.Component {
     const user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.user.owner, this.state.user.name, user)
       .then((res) => {
-        if (res.msg === "") {
+        if (res.status === "ok") {
           if (isFinal) {
-            Setting.showMessage("success", "Successfully saved");
+            Setting.showMessage("success", i18next.t("general:Successfully saved"));
 
             this.logout();
           }
@@ -216,7 +220,7 @@ class PromptPage extends React.Component {
       })
       .catch(error => {
         if (isFinal) {
-          Setting.showMessage("error", `Failed to connect to server: ${error}`);
+          Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
         }
       });
   }
@@ -231,13 +235,13 @@ class PromptPage extends React.Component {
       return (
         <Result
           status="error"
-          title="Sign Up Error"
-          subTitle={"You are unexpected to see this prompt page"}
+          title={i18next.t("application:Sign Up Error")}
+          subTitle={i18next.t("application:You are unexpected to see this prompt page")}
           extra={[
-            <Button type="primary" key="signin" onClick={() => {
-              Setting.goToLogin(this, application);
-            }}>
-              Sign In
+            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application, this.props.history)}>
+              {
+                i18next.t("login:Sign In")
+              }
             </Button>,
           ]}
         >
@@ -246,9 +250,9 @@ class PromptPage extends React.Component {
     }
 
     return (
-      <Row>
-        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-          <div style={{marginTop: "80px", marginBottom: "50px", textAlign: "center"}}>
+      <div style={{display: "flex", flex: "1", justifyContent: "center"}}>
+        <Card>
+          <div style={{marginTop: "30px", marginBottom: "30px", textAlign: "center"}}>
             {
               Setting.renderHelmet(application)
             }
@@ -258,18 +262,14 @@ class PromptPage extends React.Component {
             {
               this.renderContent(application)
             }
-            <Row style={{margin: 10}}>
-              <Col span={18}>
-              </Col>
-            </Row>
             <div style={{marginTop: "50px"}}>
               <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
             </div>
           </div>
-        </Col>
-      </Row>
+        </Card>
+      </div>
     );
   }
 }
 
-export default PromptPage;
+export default withRouter(PromptPage);

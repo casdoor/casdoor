@@ -60,7 +60,7 @@ func (c *ApiController) SendEmail() {
 	var provider *object.Provider
 	if emailForm.Provider != "" {
 		// called by frontend's TestEmailWidget, provider name is set by frontend
-		provider = object.GetProvider(fmt.Sprintf("admin/%s", emailForm.Provider))
+		provider = object.GetProvider(util.GetId("admin", emailForm.Provider))
 	} else {
 		// called by Casdoor SDK via Client ID & Client Secret, so the used Email provider will be the application' Email provider or the default Email provider
 		var ok bool
@@ -81,7 +81,7 @@ func (c *ApiController) SendEmail() {
 	}
 
 	if util.IsStrsEmpty(emailForm.Title, emailForm.Content, emailForm.Sender) {
-		c.ResponseError(fmt.Sprintf("Empty parameters for emailForm: %v", emailForm))
+		c.ResponseError(fmt.Sprintf(c.T("service:Empty parameters for emailForm: %v"), emailForm))
 		return
 	}
 
@@ -93,7 +93,7 @@ func (c *ApiController) SendEmail() {
 	}
 
 	if len(invalidReceivers) != 0 {
-		c.ResponseError(fmt.Sprintf("Invalid Email receivers: %s", invalidReceivers))
+		c.ResponseError(fmt.Sprintf(c.T("service:Invalid Email receivers: %s"), invalidReceivers))
 		return
 	}
 
@@ -141,7 +141,7 @@ func (c *ApiController) SendSms() {
 	}
 
 	if len(invalidReceivers) != 0 {
-		c.ResponseError(fmt.Sprintf("Invalid phone receivers: %s", invalidReceivers))
+		c.ResponseError(fmt.Sprintf(c.T("service:Invalid phone receivers: %s"), invalidReceivers))
 		return
 	}
 

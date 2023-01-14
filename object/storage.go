@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/storage"
 	"github.com/casdoor/casdoor/util"
 )
@@ -53,8 +54,8 @@ func escapePath(path string) string {
 	return res
 }
 
-func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool) (string, string) {
-	escapedPath := escapePath(fullFilePath)
+func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool) (string, string) {
+	escapedPath := util.UrlJoin(provider.PathPrefix, escapePath(fullFilePath))
 	objectKey := util.UrlJoin(util.GetUrlPath(provider.Domain), escapedPath)
 
 	host := ""
@@ -69,7 +70,7 @@ func getUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 		host = util.UrlJoin(provider.Domain, "/files")
 	}
 	if provider.Type == "Azure Blob" {
-		host = fmt.Sprintf("%s/%s", host, provider.Bucket)
+		host = util.UrlJoin(host, provider.Bucket)
 	}
 
 	fileUrl := util.UrlJoin(host, escapePath(objectKey))
@@ -92,7 +93,7 @@ func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 		UpdateProvider(provider.GetId(), provider)
 	}
 
-	fileUrl, objectKey := getUploadFileUrl(provider, fullFilePath, true)
+	fileUrl, objectKey := GetUploadFileUrl(provider, fullFilePath, true)
 
 	_, err := storageProvider.Put(objectKey, fileBuffer)
 	if err != nil {
@@ -126,11 +127,16 @@ func UploadFileSafe(provider *Provider, fullFilePath string, fileBuffer *bytes.B
 	return fileUrl, objectKey, nil
 }
 
-func DeleteFile(provider *Provider, objectKey string) error {
+func DeleteFile(provider *Provider, objectKey string, lang string) error {
+	// check fullFilePath is there security issue
+	if strings.Contains(objectKey, "..") {
+		return fmt.Errorf(i18n.Translate(lang, "storage:The objectKey: %s is not allowed"), objectKey)
+	}
+
 	endpoint := getProviderEndpoint(provider)
 	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint)
 	if storageProvider == nil {
-		return fmt.Errorf("the provider type: %s is not supported", provider.Type)
+		return fmt.Errorf(i18n.Translate(lang, "storage:The provider type: %s is not supported"), provider.Type)
 	}
 
 	if provider.Domain == "" {

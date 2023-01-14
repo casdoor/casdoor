@@ -39,6 +39,10 @@ import SteamLoginButton from "./SteamLoginButton";
 import BilibiliLoginButton from "./BilibiliLoginButton";
 import OktaLoginButton from "./OktaLoginButton";
 import DouyinLoginButton from "./DouyinLoginButton";
+import LineLoginButton from "./LineLoginButton";
+import * as AuthBackend from "./AuthBackend";
+import {getEvent} from "./Util";
+import {Modal} from "antd";
 
 function getSigninButton(type) {
   const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
@@ -90,27 +94,94 @@ function getSigninButton(type) {
     return <OktaLoginButton text={text} align={"center"} />;
   } else if (type === "Douyin") {
     return <DouyinLoginButton text={text} align={"center"} />;
+  } else if (type === "Line") {
+    return <LineLoginButton text={text} align={"center"} />;
   }
 
   return text;
 }
 
-export function renderProviderLogo(provider, application, width, margin, size) {
+function getSamlUrl(provider, location) {
+  const params = new URLSearchParams(location.search);
+  const clientId = params.get("client_id");
+  const application = params.get("state");
+  const realRedirectUri = params.get("redirect_uri");
+  const redirectUri = `${window.location.origin}/callback/saml`;
+  const providerName = provider.name;
+  const relayState = `${clientId}&${application}&${providerName}&${realRedirectUri}&${redirectUri}`;
+  AuthBackend.getSamlLogin(`${provider.owner}/${providerName}`, btoa(relayState)).then((res) => {
+    if (res.data2 === "POST") {
+      document.write(res.data);
+    } else {
+      window.location.href = res.data;
+    }
+  });
+}
+
+export function renderProviderLogo(provider, application, width, margin, size, location) {
   if (size === "small") {
     if (provider.category === "OAuth") {
-      return (
-        <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-          <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
-        </a>
-      );
+      if (provider.type === "WeChat" && provider.clientId2 !== "" && provider.clientSecret2 !== "" && provider.content !== "" && provider.disableSsl === true && !navigator.userAgent.includes("MicroMessenger")) {
+        const info = async() => {
+          const t1 = setInterval(await getEvent, 1000, application, provider);
+          {Modal.info({
+            title: i18next.t("provider:Please use WeChat and scan the QR code to sign in"),
+            content: (
+              <div>
+                <img width={256} height={256} src = {"data:image/png;base64," + provider.content} alt="Wechat QR code" style={{margin: margin}} />
+              </div>
+            ),
+            onOk() {
+              window.clearInterval(t1);
+            },
+          });}
+        };
+        return (
+          <a key={provider.displayName} >
+            <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} onClick={info} />
+          </a>
+        );
+      } else {
+        return (
+          <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
+            <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
+          </a>
+        );
+      }
     } else if (provider.category === "SAML") {
       return (
-        <a key={provider.displayName} onClick={this.getSamlUrl.bind(this, provider)}>
+        <a key={provider.displayName} onClick={() => getSamlUrl(provider, location)}>
           <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
         </a>
       );
     }
 
+  } else if (provider.type === "Custom") {
+    // style definition
+    const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.displayName);
+    const customAStyle = {display: "block", height: "55px", color: "#000"};
+    const customButtonStyle = {display: "flex", alignItems: "center", width: "calc(100% - 10px)", height: "50px", margin: "5px", padding: "0 10px", backgroundColor: "transparent", boxShadow: "0px 1px 3px rgba(0,0,0,0.5)", border: "0px", borderRadius: "3px", cursor: "pointer"};
+    const customImgStyle = {justfyContent: "space-between"};
+    const customSpanStyle = {textAlign: "center", lineHeight: "50px", width: "100%", fontSize: "19px"};
+    if (provider.category === "OAuth") {
+      return (
+        <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")} style={customAStyle}>
+          <button style={customButtonStyle}>
+            <img width={26} src={getProviderLogoURL(provider)} alt={provider.displayName} style={customImgStyle} />
+            <span style={customSpanStyle}>{text}</span>
+          </button>
+        </a>
+      );
+    } else if (provider.category === "SAML") {
+      return (
+        <a key={provider.displayName} onClick={() => getSamlUrl(provider, location)} style={customAStyle}>
+          <button style={customButtonStyle}>
+            <img width={26} src={getProviderLogoURL(provider)} alt={provider.displayName} style={customImgStyle} />
+            <span style={customSpanStyle}>{text}</span>
+          </button>
+        </a>
+      );
+    }
   } else {
     return (
       <div key={provider.displayName} style={{marginBottom: "10px"}}>

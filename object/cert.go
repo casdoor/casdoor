@@ -114,6 +114,12 @@ func UpdateCert(id string, cert *Cert) bool {
 		return false
 	}
 
+	if name != cert.Name {
+		err := certChangeTrigger(name, cert.Name)
+		if err != nil {
+			return false
+		}
+	}
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(cert)
 	if err != nil {
 		panic(err)
@@ -160,4 +166,23 @@ func getCertByApplication(application *Application) *Cert {
 
 func GetDefaultCert() *Cert {
 	return getCert("admin", "cert-built-in")
+}
+
+func certChangeTrigger(oldName string, newName string) error {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
+
+	application := new(Application)
+	application.Cert = newName
+	_, err = session.Where("cert=?", oldName).Update(application)
+	if err != nil {
+		return err
+	}
+
+	return session.Commit()
 }

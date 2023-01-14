@@ -22,7 +22,6 @@ class SelfForgetPage extends React.Component {
       <ForgetPage
         type={"forgotPassword"}
         applicationName={authConfig.appName}
-        account={this.props.account}
         {...this.props}
       />
     );

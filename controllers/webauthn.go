@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 
 	"github.com/casdoor/casdoor/object"
@@ -34,7 +35,7 @@ func (c *ApiController) WebAuthnSignupBegin() {
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	user := c.getCurrentUser()
 	if user == nil {
-		c.ResponseError("Please login first.")
+		c.ResponseError(c.T("general:Please login first"))
 		return
 	}
 
@@ -65,13 +66,13 @@ func (c *ApiController) WebAuthnSignupFinish() {
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	user := c.getCurrentUser()
 	if user == nil {
-		c.ResponseError("Please login first.")
+		c.ResponseError(c.T("general:Please login first"))
 		return
 	}
 	sessionObj := c.GetSession("registration")
 	sessionData, ok := sessionObj.(webauthn.SessionData)
 	if !ok {
-		c.ResponseError("Please call WebAuthnSignupBegin first")
+		c.ResponseError(c.T("webauthn:Please call WebAuthnSigninBegin first"))
 		return
 	}
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
@@ -100,9 +101,14 @@ func (c *ApiController) WebAuthnSigninBegin() {
 	userName := c.Input().Get("name")
 	user := object.GetUserByFields(userOwner, userName)
 	if user == nil {
-		c.ResponseError("Please Giveout Owner and Username.")
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(userOwner, userName)))
 		return
 	}
+	if len(user.WebauthnCredentials) == 0 {
+		c.ResponseError(c.T("webauthn:Found no credentials for this user"))
+		return
+	}
+
 	options, sessionData, err := webauthnObj.BeginLogin(user)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -121,11 +127,12 @@ func (c *ApiController) WebAuthnSigninBegin() {
 // @Success 200 {object} Response "The Response object"
 // @router /webauthn/signin/finish [post]
 func (c *ApiController) WebAuthnSigninFinish() {
+	responseType := c.Input().Get("responseType")
 	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
 	sessionObj := c.GetSession("authentication")
 	sessionData, ok := sessionObj.(webauthn.SessionData)
 	if !ok {
-		c.ResponseError("Please call WebAuthnSigninBegin first")
+		c.ResponseError(c.T("webauthn:Please call WebAuthnSigninBegin first"))
 		return
 	}
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
@@ -138,5 +145,11 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	}
 	c.SetSessionUsername(userId)
 	util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-	c.ResponseOk(userId)
+
+	application := object.GetApplicationByUser(user)
+	var form RequestForm
+	form.Type = responseType
+	resp := c.HandleLoggedIn(application, user, &form)
+	c.Data["json"] = resp
+	c.ServeJSON()
 }

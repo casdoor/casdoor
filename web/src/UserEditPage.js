@@ -17,7 +17,6 @@ import {Button, Card, Col, Input, Result, Row, Select, Spin, Switch} from "antd"
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
-import {LinkOutlined} from "@ant-design/icons";
 import i18next from "i18next";
 import CropperDiv from "./CropperDiv.js";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
@@ -29,11 +28,7 @@ import SamlWidget from "./common/SamlWidget";
 import SelectRegionBox from "./SelectRegionBox";
 import WebAuthnCredentialTable from "./WebauthnCredentialTable";
 import ManagedAccountTable from "./ManagedAccountTable";
-
-import {Controlled as CodeMirror} from "react-codemirror2";
-import "codemirror/lib/codemirror.css";
-require("codemirror/theme/material-darker.css");
-require("codemirror/mode/javascript/javascript");
+import PropertyTable from "./propertyTable";
 
 const {Option} = Select;
 
@@ -50,6 +45,7 @@ class UserEditPage extends React.Component {
       applications: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
       loading: true,
+      returnUrl: null,
     };
   }
 
@@ -58,6 +54,7 @@ class UserEditPage extends React.Component {
     this.getOrganizations();
     this.getApplicationsByOrganization(this.state.organizationName);
     this.getUserApplication();
+    this.setReturnUrl();
   }
 
   getUser() {
@@ -101,6 +98,16 @@ class UserEditPage extends React.Component {
       });
   }
 
+  setReturnUrl() {
+    const searchParams = new URLSearchParams(this.props.location.search);
+    const returnUrl = searchParams.get("returnUrl");
+    if (returnUrl !== null) {
+      this.setState({
+        returnUrl: returnUrl,
+      });
+    }
+  }
+
   parseUserField(key, value) {
     // if ([].includes(key)) {
     //   value = Setting.myParseInt(value);
@@ -122,8 +129,12 @@ class UserEditPage extends React.Component {
     this.getUser();
   }
 
+  isSelf() {
+    return (this.state.user.id === this.props.account?.id);
+  }
+
   isSelfOrAdmin() {
-    return (this.state.user.id === this.props.account?.id) || Setting.isAdminUser(this.props.account);
+    return this.isSelf() || Setting.isAdminUser(this.props.account);
   }
 
   renderAccountItem(accountItem) {
@@ -131,7 +142,6 @@ class UserEditPage extends React.Component {
       return null;
     }
 
-    const isSelf = this.state.user.id === this.props.account?.id;
     const isAdmin = Setting.isAdminUser(this.props.account);
 
     // return (
@@ -143,7 +153,7 @@ class UserEditPage extends React.Component {
     // )
 
     if (accountItem.viewRule === "Self") {
-      if (!isSelf && !isAdmin) {
+      if (!this.isSelfOrAdmin()) {
         return null;
       }
     } else if (accountItem.viewRule === "Admin") {
@@ -154,7 +164,7 @@ class UserEditPage extends React.Component {
 
     let disabled = false;
     if (accountItem.modifyRule === "Self") {
-      if (!isSelf && !isAdmin) {
+      if (!this.isSelfOrAdmin()) {
         disabled = true;
       }
     } else if (accountItem.modifyRule === "Admin") {
@@ -226,16 +236,6 @@ class UserEditPage extends React.Component {
           <Col span={22} >
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {i18next.t("general:URL")}:
-              </Col>
-              <Col span={22} >
-                <Input prefix={<LinkOutlined />} value={this.state.user.avatar} onChange={e => {
-                  this.updateUserField("avatar", e.target.value);
-                }} />
-              </Col>
-            </Row>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {i18next.t("general:Preview")}:
               </Col>
               <Col span={22} >
@@ -245,7 +245,7 @@ class UserEditPage extends React.Component {
               </Col>
             </Row>
             <Row style={{marginTop: "20px"}}>
-              <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} user={this.state.user} account={this.props.account} />
+              <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} user={this.state.user} organization={this.state.organizations.find(organization => organization.name === this.state.organizationName)} />
             </Row>
           </Col>
         </Row>
@@ -257,12 +257,9 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:User type"), i18next.t("general:User type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.user.type} onChange={(value => {this.updateUserField("type", value);})}>
-              {
-                ["normal-user"]
-                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
-              }
-            </Select>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.user.type} onChange={(value => {this.updateUserField("type", value);})}
+              options={["normal-user"].map(item => Setting.getOption(item, item))}
+            />
           </Col>
         </Row>
       );
@@ -284,14 +281,23 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
-            <Input value={this.state.user.email}
-              disabled={disabled}
-              onChange={e => {
-                this.updateUserField("email", e.target.value);
-              }} />
+            {Setting.isLocalAdminUser(this.props.account) ?
+              (<Input value={this.state.user.email}
+                disabled={disabled}
+                onChange={e => {
+                  this.updateUserField("email", e.target.value);
+                }} />) :
+              (<Select virtual={false} value={this.state.user.email}
+                options={[Setting.getItem(this.state.user.email, this.state.user.email)]}
+                disabled={disabled}
+                onChange={e => {
+                  this.updateUserField("email", e.target.value);
+                }} />)
+            }
           </Col>
           <Col span={11} >
-            {this.state.user.id === this.props.account?.id ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Email...")} destType={"email"} />) : null}
+            {/* backend auto get the current user, so admin can not edit. Just self can reset*/}
+            {this.isSelf() ? <ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Email...")} destType={"email"} /> : null}
           </Col>
         </Row>
       );
@@ -302,14 +308,21 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
-            <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
-              disabled={disabled}
-              onChange={e => {
-                this.updateUserField("phone", e.target.value);
-              }} />
+            {Setting.isLocalAdminUser(this.props.account) ?
+              <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+                disabled={disabled}
+                onChange={e => {
+                  this.updateUserField("phone", e.target.value);
+                }} /> :
+              (<Select virtual={false} value={`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`}
+                options={[Setting.getItem(`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`, this.state.user.phone)]}
+                disabled={disabled}
+                onChange={e => {
+                  this.updateUserField("phone", e.target.value);
+                }} />)}
           </Col>
           <Col span={11} >
-            {this.state.user.id === this.props.account?.id ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
+            {this.isSelf() ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
           </Col>
         </Row>
       );
@@ -393,16 +406,14 @@ class UserEditPage extends React.Component {
           <Col span={22} >
             {
               this.state.application?.organizationObj.tags?.length > 0 ? (
-                <Select virtual={false} style={{width: "100%"}} value={this.state.user.tag} onChange={(value => {this.updateUserField("tag", value);})}>
-                  {
-                    this.state.application.organizationObj.tags?.map((tag, index) => {
-                      const tokens = tag.split("|");
-                      const value = tokens[0];
-                      const displayValue = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1];
-                      return <Option key={index} value={value}>{displayValue}</Option>;
-                    })
-                  }
-                </Select>
+                <Select virtual={false} style={{width: "100%"}} value={this.state.user.tag}
+                  onChange={(value => {this.updateUserField("tag", value);})}
+                  options={this.state.application.organizationObj.tags?.map((tag) => {
+                    const tokens = tag.split("|");
+                    const value = tokens[0];
+                    const displayValue = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1];
+                    return Setting.getOption(displayValue, value);
+                  })} />
               ) : (
                 <Input value={this.state.user.tag} onChange={e => {
                   this.updateUserField("tag", e.target.value);
@@ -419,11 +430,10 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Signup application"), i18next.t("general:Signup application - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.signupApplication} onChange={(value => {this.updateUserField("signupApplication", value);})}>
-              {
-                this.state.applications.map((application, index) => <Option key={index} value={application.name}>{application.name}</Option>)
-              }
-            </Select>
+            <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.signupApplication}
+              onChange={(value => {this.updateUserField("signupApplication", value);})}
+              options={this.state.applications.map((application) => Setting.getOption(application.name, application.name))
+              } />
           </Col>
         </Row>
       );
@@ -464,7 +474,7 @@ class UserEditPage extends React.Component {
               <div style={{marginBottom: 20}}>
                 {
                   (this.state.application === null || this.state.user === null) ? null : (
-                    this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem, index) =>
+                    this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem) =>
                       (providerItem.provider.category === "OAuth") ? (
                         <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} account={this.props.account} onUnlinked={() => {return this.unlinked();}} />
                       ) : (
@@ -482,13 +492,10 @@ class UserEditPage extends React.Component {
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("user:Properties")}:
+            {Setting.getLabel(i18next.t("user:Properties"), i18next.t("user:Properties - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <CodeMirror
-              value={JSON.stringify(this.state.user.properties, null, 4)}
-              options={{mode: "javascript", theme: "material-darker"}}
-            />
+            <PropertyTable properties={this.state.user.properties} onUpdateTable={(value) => {this.updateUserField("properties", value);}} />
           </Col>
         </Row>
       );
@@ -499,7 +506,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:Is admin"), i18next.t("user:Is admin - Tooltip"))} :
           </Col>
           <Col span={(Setting.isMobile()) ? 22 : 2} >
-            <Switch disabled={this.state.user.owner === "built-in"} checked={this.state.user.isAdmin} onChange={checked => {
+            <Switch disabled={disabled} checked={this.state.user.isAdmin} onChange={checked => {
               this.updateUserField("isAdmin", checked);
             }} />
           </Col>
@@ -512,7 +519,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:Is global admin"), i18next.t("user:Is global admin - Tooltip"))} :
           </Col>
           <Col span={(Setting.isMobile()) ? 22 : 2} >
-            <Switch disabled={this.state.user.owner === "built-in"} checked={this.state.user.isGlobalAdmin} onChange={checked => {
+            <Switch disabled={disabled} checked={this.state.user.isGlobalAdmin} onChange={checked => {
               this.updateUserField("isGlobalAdmin", checked);
             }} />
           </Col>
@@ -551,7 +558,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:WebAuthn credentials"), i18next.t("user:WebAuthn credentials"))} :
           </Col>
           <Col span={22} >
-            <WebAuthnCredentialTable table={this.state.user.webauthnCredentials} updateTable={(table) => {this.updateUserField("webauthnCredentials", table);}} refresh={this.getUser.bind(this)} />
+            <WebAuthnCredentialTable isSelf={this.isSelf()} table={this.state.user.webauthnCredentials} updateTable={(table) => {this.updateUserField("webauthnCredentials", table);}} refresh={this.getUser.bind(this)} />
           </Col>
         </Row>
       );
@@ -603,8 +610,8 @@ class UserEditPage extends React.Component {
     const user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.organizationName, this.state.userName, user)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             organizationName: this.state.user.owner,
             userName: this.state.user.name,
@@ -616,25 +623,35 @@ class UserEditPage extends React.Component {
             } else {
               this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
             }
+          } else {
+            if (willExist) {
+              if (this.state.returnUrl) {
+                window.location.href = this.state.returnUrl;
+              }
+            }
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateUserField("owner", this.state.organizationName);
           this.updateUserField("name", this.state.userName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteUser() {
     UserBackend.deleteUser(this.state.user)
-      .then(() => {
-        this.props.history.push("/users");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/users");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `User failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
@@ -642,7 +659,7 @@ class UserEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.loading ? <Spin size="large" /> : (
+          this.state.loading ? <Spin size="large" style={{marginLeft: "50%", marginTop: "10%"}} /> : (
             this.state.user !== null ? this.renderUser() :
               <Result
                 status="404"

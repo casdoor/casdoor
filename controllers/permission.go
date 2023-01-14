@@ -17,7 +17,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/astaxie/beego/utils/pagination"
+	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -61,6 +61,20 @@ func (c *ApiController) GetPermissionsBySubmitter() {
 	}
 
 	permissions := object.GetPermissionsBySubmitter(user.Owner, user.Name)
+	c.ResponseOk(permissions, len(permissions))
+	return
+}
+
+// GetPermissionsByRole
+// @Title GetPermissionsByRole
+// @Tag Permission API
+// @Description get permissions by role
+// @Param   id    query    string  true        "The id of the role"
+// @Success 200 {array} object.Permission The Response object
+// @router /get-permissions-by-role [get]
+func (c *ApiController) GetPermissionsByRole() {
+	id := c.Input().Get("id")
+	permissions := object.GetPermissionsByRole(id)
 	c.ResponseOk(permissions, len(permissions))
 	return
 }

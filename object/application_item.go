@@ -15,7 +15,7 @@
 package object
 
 func (application *Application) GetProviderByCategory(category string) *Provider {
-	providers := GetProviders(application.Owner)
+	providers := GetProviders(application.Organization)
 	m := map[string]*Provider{}
 	for _, provider := range providers {
 		if provider.Category != category {

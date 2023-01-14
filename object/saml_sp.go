@@ -24,6 +24,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	saml2 "github.com/russellhaering/gosaml2"
 	dsig "github.com/russellhaering/goxmldsig"
 )
@@ -41,10 +42,10 @@ func ParseSamlResponse(samlResponse string, providerType string) (string, error)
 	return assertionInfo.NameID, nil
 }
 
-func GenerateSamlLoginUrl(id, relayState string) (string, string, error) {
+func GenerateSamlLoginUrl(id, relayState, lang string) (string, string, error) {
 	provider := GetProvider(id)
 	if provider.Category != "SAML" {
-		return "", "", fmt.Errorf("provider %s's category is not SAML", provider.Name)
+		return "", "", fmt.Errorf(i18n.Translate(lang, "saml_sp:provider %s's category is not SAML"), provider.Name)
 	}
 	sp, err := buildSp(provider, "")
 	if err != nil {

@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/astaxie/beego/utils/pagination"
+	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -100,7 +100,7 @@ func (c *ApiController) GetUser() {
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", owner))
 	if !organization.IsProfilePublic {
 		requestUserId := c.GetSessionUsername()
-		hasPermission, err := object.CheckUserPermission(requestUserId, id, owner, false)
+		hasPermission, err := object.CheckUserPermission(requestUserId, id, owner, false, c.GetAcceptLanguage())
 		if !hasPermission {
 			c.ResponseError(err.Error())
 			return
@@ -148,8 +148,8 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
-	if user.DisplayName == "" {
-		c.ResponseError("Display name cannot be empty")
+	if msg := object.CheckUpdateUser(object.GetUser(id), &user, c.GetAcceptLanguage()); msg != "" {
+		c.ResponseError(msg)
 		return
 	}
 
@@ -159,6 +159,12 @@ func (c *ApiController) UpdateUser() {
 	}
 
 	isGlobalAdmin := c.IsGlobalAdmin()
+
+	if pass, err := checkPermissionForUpdateUser(id, user, c); !pass {
+		c.ResponseError(err)
+		return
+	}
+
 	affected := object.UpdateUser(id, &user, columns, isGlobalAdmin)
 	if affected {
 		object.UpdateUserToOriginalDatabase(&user)
@@ -180,6 +186,18 @@ func (c *ApiController) AddUser() {
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	count := object.GetUserCount("", "", "")
+	if err := checkQuotaForUser(count); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	msg := object.CheckUsername(user.Name, c.GetAcceptLanguage())
+	if msg != "" {
+		c.ResponseError(msg)
 		return
 	}
 
@@ -224,7 +242,7 @@ func (c *ApiController) GetEmailAndPhone() {
 
 	user := object.GetUserByFields(form.Organization, form.Username)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf("The user: %s/%s doesn't exist", form.Organization, form.Username))
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(form.Organization, form.Username)))
 		return
 	}
 
@@ -265,7 +283,7 @@ func (c *ApiController) SetPassword() {
 	requestUserId := c.GetSessionUsername()
 	userId := fmt.Sprintf("%s/%s", userOwner, userName)
 
-	hasPermission, err := object.CheckUserPermission(requestUserId, userId, userOwner, true)
+	hasPermission, err := object.CheckUserPermission(requestUserId, userId, userOwner, true, c.GetAcceptLanguage())
 	if !hasPermission {
 		c.ResponseError(err.Error())
 		return
@@ -274,7 +292,7 @@ func (c *ApiController) SetPassword() {
 	targetUser := object.GetUser(userId)
 
 	if oldPassword != "" {
-		msg := object.CheckPassword(targetUser, oldPassword)
+		msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
 		if msg != "" {
 			c.ResponseError(msg)
 			return
@@ -282,12 +300,12 @@ func (c *ApiController) SetPassword() {
 	}
 
 	if strings.Contains(newPassword, " ") {
-		c.ResponseError("New password cannot contain blank space.")
+		c.ResponseError(c.T("user:New password cannot contain blank space."))
 		return
 	}
 
 	if len(newPassword) <= 5 {
-		c.ResponseError("New password must have at least 6 characters")
+		c.ResponseError(c.T("user:New password must have at least 6 characters"))
 		return
 	}
 
@@ -309,7 +327,7 @@ func (c *ApiController) CheckUserPassword() {
 		return
 	}
 
-	_, msg := object.CheckUserPassword(user.Owner, user.Name, user.Password)
+	_, msg := object.CheckUserPassword(user.Owner, user.Name, user.Password, c.GetAcceptLanguage())
 	if msg == "" {
 		c.ResponseOk()
 	} else {

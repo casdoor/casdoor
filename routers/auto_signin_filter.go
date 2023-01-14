@@ -17,7 +17,7 @@ package routers
 import (
 	"fmt"
 
-	"github.com/astaxie/beego/context"
+	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -62,7 +62,7 @@ func AutoSigninFilter(ctx *context.Context) {
 	password := ctx.Input.Query("password")
 	if userId != "" && password != "" && ctx.Input.Query("grant_type") == "" {
 		owner, name := util.GetOwnerAndNameFromId(userId)
-		_, msg := object.CheckUserPassword(owner, name, password)
+		_, msg := object.CheckUserPassword(owner, name, password, "en")
 		if msg != "" {
 			responseError(ctx, msg)
 			return

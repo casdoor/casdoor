@@ -112,8 +112,27 @@ func GetPermission(id string) *Permission {
 	return getPermission(owner, name)
 }
 
-func UpdatePermission(id string, permission *Permission) bool {
+//// checkPermissionValid verifies if the permission is valid
+//func checkPermissionValid(permission *Permission) {
+//	enforcer := getEnforcer(permission)
+//	enforcer.EnableAutoSave(false)
+//	policies, groupingPolicies := getPolicies(permission)
+//
+//	if len(groupingPolicies) > 0 {
+//		_, err := enforcer.AddGroupingPolicies(groupingPolicies)
+//		if err != nil {
+//			panic(err)
+//		}
+//	}
+//
+//	_, err := enforcer.AddPolicies(policies)
+//	if err != nil {
+//		panic(err)
+//	}
+//}
 
+func UpdatePermission(id string, permission *Permission) bool {
+	//checkPermissionValid(permission)
 	owner, name := util.GetOwnerAndNameFromId(id)
 	oldPermission := getPermission(owner, name)
 	if oldPermission == nil {
@@ -219,6 +238,8 @@ func UpdatePermission(id string, permission *Permission) bool {
 		}
 
 		permissionMock := &Permission{
+			Owner:     permission.Owner,
+			Name:      permission.Name,
 			Users:     permission.Users,
 			Roles:     permission.Roles,
 			Domains:   domainsAdded,
@@ -233,6 +254,8 @@ func UpdatePermission(id string, permission *Permission) bool {
 
 	if len(usersDeleted) > 0 {
 		permissionMock := &Permission{
+			Owner:     oldPermission.Owner,
+			Name:      oldPermission.Name,
 			Users:     usersDeleted,
 			Roles:     oldPermission.Roles,
 			Resources: oldPermission.Resources,
@@ -245,6 +268,8 @@ func UpdatePermission(id string, permission *Permission) bool {
 
 	if len(usersAdded) > 0 {
 		permissionMock := &Permission{
+			Owner:     permission.Owner,
+			Name:      permission.Name,
 			Users:     usersAdded,
 			Roles:     permission.Roles,
 			Resources: permission.Resources,
@@ -273,6 +298,8 @@ func UpdatePermission(id string, permission *Permission) bool {
 		}
 
 		permissionMock := &Permission{
+			Owner:     oldPermission.Owner,
+			Name:      oldPermission.Name,
 			Users:     oldPermission.Users,
 			Roles:     rolesDeleted,
 			Resources: oldPermission.Resources,
@@ -286,6 +313,8 @@ func UpdatePermission(id string, permission *Permission) bool {
 	if len(rolesAdded) > 0 {
 
 		permissionMock := &Permission{
+			Owner:     permission.Owner,
+			Name:      permission.Name,
 			Roles:     rolesAdded,
 			Domains:   permission.Domains,
 			Resources: permission.Resources,
@@ -309,6 +338,8 @@ func UpdatePermission(id string, permission *Permission) bool {
 
 	if len(resourcesAdded) > 0 {
 		permissionMock := &Permission{
+			Owner:     permission.Owner,
+			Name:      permission.Name,
 			Users:     permission.Users,
 			Roles:     permission.Roles,
 			Domains:   permission.Domains,
@@ -335,6 +366,8 @@ func UpdatePermission(id string, permission *Permission) bool {
 	if len(actionsAdded) > 0 {
 
 		permissionMock := &Permission{
+			Owner:     permission.Owner,
+			Name:      permission.Name,
 			Users:     permission.Users,
 			Roles:     permission.Roles,
 			Domains:   permission.Domains,
@@ -558,6 +591,7 @@ func operateGroupingPoliciesByPermission(permission *Permission, enforcer *casbi
 
 func operatePoliciesByPermission(permission *Permission, enforcer *casbin.Enforcer, isAdd bool, isUser bool) {
 	var err error
+	permissionId := permission.Owner + "/" + permission.Name
 	column := permission.Roles
 	if isUser {
 		column = permission.Users
@@ -569,9 +603,9 @@ func operatePoliciesByPermission(permission *Permission, enforcer *casbin.Enforc
 				if domainExist {
 					for _, domain := range permission.Domains {
 						if isAdd {
-							_, err = enforcer.AddNamedPolicy("p", v, domain, resource, action)
+							_, err = enforcer.AddNamedPolicy("p", v, domain, resource, strings.ToLower(action), "", permissionId)
 						} else {
-							_, err = enforcer.RemoveNamedPolicy("p", v, domain, resource, action)
+							_, err = enforcer.RemoveNamedPolicy("p", v, domain, resource, strings.ToLower(action), "", permissionId)
 						}
 						if err != nil {
 							panic(err)
@@ -579,9 +613,9 @@ func operatePoliciesByPermission(permission *Permission, enforcer *casbin.Enforc
 					}
 				} else {
 					if isAdd {
-						_, err = enforcer.AddNamedPolicy("p", v, resource, action)
+						_, err = enforcer.AddNamedPolicy("p", v, resource, action, "", "", permissionId)
 					} else {
-						_, err = enforcer.RemoveNamedPolicy("p", v, resource, action)
+						_, err = enforcer.RemoveNamedPolicy("p", v, resource, action, "", "", permissionId)
 					}
 					if err != nil {
 						panic(err)
@@ -590,4 +624,14 @@ func operatePoliciesByPermission(permission *Permission, enforcer *casbin.Enforc
 			}
 		}
 	}
+}
+
+func GetMaskedPermissions(permissions []*Permission) []*Permission {
+	for _, permission := range permissions {
+		permission.Users = nil
+		permission.Submitter = ""
+	}
+
+	return permissions
+
 }

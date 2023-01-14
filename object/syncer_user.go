@@ -37,7 +37,16 @@ func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
 		return nil, err
 	}
 
-	return syncer.getOriginalUsersFromMap(results), nil
+	// Memory leak problem handling
+	// https://github.com/casdoor/casdoor/issues/1256
+	users := syncer.getOriginalUsersFromMap(results)
+	for _, m := range results {
+		for k := range m {
+			delete(m, k)
+		}
+	}
+
+	return users, nil
 }
 
 func (syncer *Syncer) getOriginalUserMap() ([]*OriginalUser, map[string]*OriginalUser, error) {
@@ -120,7 +129,7 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User) (bool, error) {
 	}
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
-		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
 	}
 
 	columns := syncer.getCasdoorColumns()

@@ -37,6 +37,7 @@ class OrganizationListPage extends BaseListPage {
       defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       defaultApplication: "",
       tags: [],
+      languages: ["en", "zh", "es", "fr", "de", "ja", "ko", "ru"],
       masterPassword: "",
       enableSoftDeletion: false,
       isProfilePublic: true,
@@ -74,26 +75,33 @@ class OrganizationListPage extends BaseListPage {
     const newOrganization = this.newOrganization();
     OrganizationBackend.addOrganization(newOrganization)
       .then((res) => {
-        this.props.history.push({pathname: `/organizations/${newOrganization.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/organizations/${newOrganization.name}`, mode: "add"});
+          Setting.showMessage("success", i18next.t("general:Successfully added"));
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Organization failed to add: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteOrganization(i) {
     OrganizationBackend.deleteOrganization(this.state.data[i])
       .then((res) => {
-        Setting.showMessage("success", "Organization deleted successfully");
-        this.setState({
-          data: Setting.deleteRow(this.state.data, i),
-          pagination: {total: this.state.pagination.total - 1},
-        });
-      }
-      )
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+          this.setState({
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Organization failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
@@ -223,7 +231,7 @@ class OrganizationListPage extends BaseListPage {
                 onConfirm={() => this.deleteOrganization(index)}
                 disabled={record.name === "built-in"}
               >
-                <Button style={{marginBottom: "10px"}} disabled={record.name === "built-in"} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} disabled={record.name === "built-in"} type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );
@@ -243,7 +251,7 @@ class OrganizationListPage extends BaseListPage {
         <Result
           status="403"
           title="403 Unauthorized"
-          subTitle={i18next.t("general:Sorry, you do not have permission to access this page.")}
+          subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
           extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
         />
       );

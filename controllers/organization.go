@@ -17,7 +17,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/astaxie/beego/utils/pagination"
+	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -99,6 +99,12 @@ func (c *ApiController) AddOrganization() {
 		return
 	}
 
+	count := object.GetOrganizationCount("", "", "")
+	if err := checkQuotaForOrganization(count); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddOrganization(&organization))
 	c.ServeJSON()
 }
@@ -133,11 +139,12 @@ func (c *ApiController) GetDefaultApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
 
-	application := object.GetMaskedApplication(object.GetDefaultApplication(id), userId)
-	if application == nil {
-		c.ResponseError("Please set a default application for this organization")
+	application, err := object.GetDefaultApplication(id)
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk(application)
+	maskedApplication := object.GetMaskedApplication(application, userId)
+	c.ResponseOk(maskedApplication)
 }

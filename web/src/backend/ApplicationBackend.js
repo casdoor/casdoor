@@ -18,13 +18,19 @@ export function getApplications(owner, page = "", pageSize = "", field = "", val
   return fetch(`${Setting.ServerUrl}/api/get-applications?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
-export function getApplicationsByOrganization(owner, organization) {
-  return fetch(`${Setting.ServerUrl}/api/get-organization-applications?owner=${owner}&organization=${organization}`, {
+export function getApplicationsByOrganization(owner, organization, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-organization-applications?owner=${owner}&organization=${organization}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -32,6 +38,9 @@ export function getApplication(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-application?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -39,6 +48,9 @@ export function getUserApplication(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-user-application?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -48,16 +60,21 @@ export function updateApplication(owner, name, application) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newApplication),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
 export function addApplication(application) {
   const newApplication = Setting.deepCopy(application);
-  newApplication.organization = "built-in";
   return fetch(`${Setting.ServerUrl}/api/add-application`, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newApplication),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -67,6 +84,9 @@ export function deleteApplication(application) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newApplication),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -74,5 +94,8 @@ export function getSamlMetadata(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/saml/metadata?application=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.text());
 }

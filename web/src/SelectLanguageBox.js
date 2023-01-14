@@ -14,7 +14,7 @@
 
 import React from "react";
 import * as Setting from "./Setting";
-import {Dropdown, Menu} from "antd";
+import {Dropdown} from "antd";
 import "./App.less";
 
 function flagIcon(country, alt) {
@@ -28,28 +28,29 @@ class SelectLanguageBox extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      languages: props.languages ?? ["en", "zh", "es", "fr", "de", "ja", "ko", "ru"],
     };
   }
 
+  items = Setting.Countries.map((country) => Setting.getItem(country.label, country.key, flagIcon(country.country, country.alt)));
+
+  getOrganizationLanguages(languages) {
+    const select = [];
+    for (const language of languages) {
+      this.items.map((item, index) => item.key === language ? select.push(item) : null);
+    }
+    return select;
+  }
+
   render() {
-    const menu = (
-      <Menu onClick={(e) => {
-        Setting.changeLanguage(e.key);
-      }}>
-        <Menu.Item key="en" icon={flagIcon("US", "English")}>English</Menu.Item>
-        <Menu.Item key="es" icon={flagIcon("ES", "Español")}>Español</Menu.Item>
-        <Menu.Item key="zh" icon={flagIcon("CN", "简体中文")}>简体中文</Menu.Item>
-        <Menu.Item key="fr" icon={flagIcon("FR", "Français")}>Français</Menu.Item>
-        <Menu.Item key="de" icon={flagIcon("DE", "Deutsch")}>Deutsch</Menu.Item>
-        <Menu.Item key="ja" icon={flagIcon("JP", "日本語")}>日本語</Menu.Item>
-        <Menu.Item key="ko" icon={flagIcon("KR", "한국어")}>한국어</Menu.Item>
-        <Menu.Item key="ru" icon={flagIcon("RU", "Русский")}>Русский</Menu.Item>
-      </Menu>
-    );
+    const languageItems = this.getOrganizationLanguages(this.state.languages);
+    const onClick = (e) => {
+      Setting.setLanguage(e.key);
+    };
 
     return (
-      <Dropdown overlay={menu} >
-        <div className="language_box" />
+      <Dropdown menu={{items: languageItems, onClick}} >
+        <div className="language-box" style={{display: languageItems.length === 0 ? "none" : null, ...this.props.style}} />
       </Dropdown>
     );
   }

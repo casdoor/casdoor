@@ -566,3 +566,62 @@ func GetRolesByUser(userId string) []*Role {
 
 	return roles
 }
+
+func roleChangeTrigger(oldName string, newName string) error {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
+
+	var roles []*Role
+	err = adapter.Engine.Find(&roles)
+	if err != nil {
+		return err
+	}
+	for _, role := range roles {
+		for j, u := range role.Roles {
+			split := strings.Split(u, "/")
+			if split[1] == oldName {
+				split[1] = newName
+				role.Roles[j] = split[0] + "/" + split[1]
+			}
+		}
+		_, err = session.Where("name=?", role.Name).Update(role)
+		if err != nil {
+			return err
+		}
+	}
+
+	var permissions []*Permission
+	err = adapter.Engine.Find(&permissions)
+	if err != nil {
+		return err
+	}
+	for _, permission := range permissions {
+		for j, u := range permission.Roles {
+			// u = organization/username
+			split := strings.Split(u, "/")
+			if split[1] == oldName {
+				split[1] = newName
+				permission.Roles[j] = split[0] + "/" + split[1]
+			}
+		}
+		_, err = session.Where("name=?", permission.Name).Update(permission)
+		if err != nil {
+			return err
+		}
+	}
+
+	return session.Commit()
+}
+
+func GetMaskedRoles(roles []*Role) []*Role {
+	for _, role := range roles {
+		role.Users = nil
+	}
+
+	return roles
+}

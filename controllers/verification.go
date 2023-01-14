@@ -47,26 +47,27 @@ func (c *ApiController) SendVerificationCode() {
 	checkKey := c.Ctx.Request.Form.Get("checkKey")
 	checkUser := c.Ctx.Request.Form.Get("checkUser")
 	applicationId := c.Ctx.Request.Form.Get("applicationId")
+	method := c.Ctx.Request.Form.Get("method")
 	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
 
 	if destType == "" {
-		c.ResponseError("Missing parameter: type.")
+		c.ResponseError(c.T("verification:Missing parameter") + ": type.")
 		return
 	}
 	if dest == "" {
-		c.ResponseError("Missing parameter: dest.")
+		c.ResponseError(c.T("verification:Missing parameter") + ": dest.")
 		return
 	}
 	if applicationId == "" {
-		c.ResponseError("Missing parameter: applicationId.")
+		c.ResponseError(c.T("verification:Missing parameter") + ": applicationId.")
 		return
 	}
 	if !strings.Contains(applicationId, "/") {
-		c.ResponseError("Wrong parameter: applicationId.")
+		c.ResponseError(c.T("verification:Wrong parameter") + ": applicationId.")
 		return
 	}
 	if checkType == "" {
-		c.ResponseError("Missing parameter: checkType.")
+		c.ResponseError(c.T("verification:Missing parameter") + ": checkType.")
 		return
 	}
 
@@ -74,7 +75,7 @@ func (c *ApiController) SendVerificationCode() {
 
 	if captchaProvider != nil {
 		if checkKey == "" {
-			c.ResponseError("Missing parameter: checkKey.")
+			c.ResponseError(c.T("verification:Missing parameter") + ": checkKey.")
 			return
 		}
 		isHuman, err := captchaProvider.VerifyCaptcha(checkKey, checkId)
@@ -84,7 +85,7 @@ func (c *ApiController) SendVerificationCode() {
 		}
 
 		if !isHuman {
-			c.ResponseError("Turing test failed.")
+			c.ResponseError(c.T("verification:Turing test failed."))
 			return
 		}
 	}
@@ -92,9 +93,13 @@ func (c *ApiController) SendVerificationCode() {
 	user := c.getCurrentUser()
 	application := object.GetApplication(applicationId)
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", application.Owner, application.Organization))
+	if organization == nil {
+		c.ResponseError(c.T("verification:Organization does not exist"))
+		return
+	}
 
 	if checkUser == "true" && user == nil && object.GetUserByFields(organization.Name, dest) == nil {
-		c.ResponseError("Please login first")
+		c.ResponseError(c.T("general:Please login first"))
 		return
 	}
 
@@ -110,7 +115,13 @@ func (c *ApiController) SendVerificationCode() {
 			dest = user.Email
 		}
 		if !util.IsEmailValid(dest) {
-			c.ResponseError("Invalid Email address")
+			c.ResponseError(c.T("verification:Email is invalid"))
+			return
+		}
+
+		userByEmail := object.GetUserByEmail(organization.Name, dest)
+		if userByEmail == nil && method != "signup" && method != "reset" {
+			c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 			return
 		}
 
@@ -121,11 +132,13 @@ func (c *ApiController) SendVerificationCode() {
 			dest = user.Phone
 		}
 		if !util.IsPhoneCnValid(dest) {
-			c.ResponseError("Invalid phone number")
+			c.ResponseError(c.T("verification:Phone number is invalid"))
 			return
 		}
-		if organization == nil {
-			c.ResponseError("The organization doesn't exist.")
+
+		userByPhone := object.GetUserByPhone(organization.Name, dest)
+		if userByPhone == nil && method != "signup" && method != "reset" {
+			c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 			return
 		}
 
@@ -157,42 +170,52 @@ func (c *ApiController) ResetEmailOrPhone() {
 	dest := c.Ctx.Request.Form.Get("dest")
 	code := c.Ctx.Request.Form.Get("code")
 	if len(dest) == 0 || len(code) == 0 || len(destType) == 0 {
-		c.ResponseError("Missing parameter.")
+		c.ResponseError(c.T("verification:Missing parameter"))
 		return
 	}
 
 	checkDest := dest
-	org := object.GetOrganizationByUser(user)
+	organization := object.GetOrganizationByUser(user)
 	if destType == "phone" {
-		phoneItem := object.GetAccountItemByName("Phone", org)
-		if phoneItem == nil {
-			c.ResponseError("Unable to get the phone modify rule.")
+		if object.HasUserByField(user.Owner, "phone", user.Phone) {
+			c.ResponseError(c.T("check:Phone already exists"))
 			return
 		}
 
-		if pass, errMsg := object.CheckAccountItemModifyRule(phoneItem, user); !pass {
+		phoneItem := object.GetAccountItemByName("Phone", organization)
+		if phoneItem == nil {
+			c.ResponseError(c.T("verification:Unable to get the phone modify rule."))
+			return
+		}
+
+		if pass, errMsg := object.CheckAccountItemModifyRule(phoneItem, user, c.GetAcceptLanguage()); !pass {
 			c.ResponseError(errMsg)
 			return
 		}
 
 		phonePrefix := "86"
-		if org != nil && org.PhonePrefix != "" {
-			phonePrefix = org.PhonePrefix
+		if organization != nil && organization.PhonePrefix != "" {
+			phonePrefix = organization.PhonePrefix
 		}
 		checkDest = fmt.Sprintf("+%s%s", phonePrefix, dest)
 	} else if destType == "email" {
-		emailItem := object.GetAccountItemByName("Email", org)
-		if emailItem == nil {
-			c.ResponseError("Unable to get the email modify rule.")
+		if object.HasUserByField(user.Owner, "email", user.Email) {
+			c.ResponseError(c.T("check:Email already exists"))
 			return
 		}
 
-		if pass, errMsg := object.CheckAccountItemModifyRule(emailItem, user); !pass {
+		emailItem := object.GetAccountItemByName("Email", organization)
+		if emailItem == nil {
+			c.ResponseError(c.T("verification:Unable to get the email modify rule."))
+			return
+		}
+
+		if pass, errMsg := object.CheckAccountItemModifyRule(emailItem, user, c.GetAcceptLanguage()); !pass {
 			c.ResponseError(errMsg)
 			return
 		}
 	}
-	if ret := object.CheckVerificationCode(checkDest, code); len(ret) != 0 {
+	if ret := object.CheckVerificationCode(checkDest, code, c.GetAcceptLanguage()); len(ret) != 0 {
 		c.ResponseError(ret)
 		return
 	}
@@ -205,7 +228,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 		user.Phone = dest
 		object.SetUserField(user, "phone", user.Phone)
 	default:
-		c.ResponseError("Unknown type.")
+		c.ResponseError(c.T("verification:Unknown type"))
 		return
 	}
 
@@ -224,17 +247,17 @@ func (c *ApiController) VerifyCaptcha() {
 	captchaToken := c.Ctx.Request.Form.Get("captchaToken")
 	clientSecret := c.Ctx.Request.Form.Get("clientSecret")
 	if captchaToken == "" {
-		c.ResponseError("Missing parameter: captchaToken.")
+		c.ResponseError(c.T("verification:Missing parameter") + ": captchaToken.")
 		return
 	}
 	if clientSecret == "" {
-		c.ResponseError("Missing parameter: clientSecret.")
+		c.ResponseError(c.T("verification:Missing parameter") + ": clientSecret.")
 		return
 	}
 
 	provider := captcha.GetCaptchaProvider(captchaType)
 	if provider == nil {
-		c.ResponseError("Invalid captcha provider.")
+		c.ResponseError(c.T("verification:Invalid captcha provider."))
 		return
 	}
 

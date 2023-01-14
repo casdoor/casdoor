@@ -15,12 +15,14 @@
 package authz
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
-	xormadapter "github.com/casbin/xorm-adapter/v2"
+	xormadapter "github.com/casbin/xorm-adapter/v3"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/object"
 	stringadapter "github.com/qiangmzsx/string-adapter/v2"
 )
 
@@ -30,7 +32,9 @@ func InitAuthz() {
 	var err error
 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	a, err := xormadapter.NewAdapterWithTableName(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName()+conf.GetConfigString("dbName"), "casbin_rule", tableNamePrefix, true)
+	driverName := conf.GetConfigString("driverName")
+	dataSourceName := conf.GetConfigRealDataSourceName(driverName)
+	a, err := xormadapter.NewAdapterWithTableName(driverName, dataSourceName, "casbin_rule", tableNamePrefix, true)
 	if err != nil {
 		panic(err)
 	}
@@ -83,6 +87,8 @@ p, *, *, POST, /api/logout, *, *
 p, *, *, GET, /api/logout, *, *
 p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
+p, *, *, POST, /api/webhook, *, *
+p, *, *, GET, /api/get-webhook-event, *, *
 p, *, *, *, /api/login/oauth, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-organization-applications, *, *
@@ -141,6 +147,12 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		if !isAllowedInDemoMode(subOwner, subName, method, urlPath, objOwner, objName) {
 			return false
 		}
+	}
+
+	userId := fmt.Sprintf("%s/%s", subOwner, subName)
+	user := object.GetUser(userId)
+	if user != nil && user.IsAdmin && (subOwner == objOwner || (objOwner == "admin" && subOwner == objName)) {
+		return true
 	}
 
 	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)

@@ -102,6 +102,7 @@ type User struct {
 	Bilibili string `xorm:"bilibili varchar(100)" json:"bilibili"`
 	Okta     string `xorm:"okta varchar(100)" json:"okta"`
 	Douyin   string `xorm:"douyin varchar(100)" json:"douyin"`
+	Line     string `xorm:"line varchar(100)" json:"line"`
 	Custom   string `xorm:"custom varchar(100)" json:"custom"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
@@ -109,8 +110,8 @@ type User struct {
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
 
-	Roles       []*Role       `json:"roles"`
-	Permissions []*Permission `json:"permissions"`
+	Roles       []*Role       `xorm:"-" json:"roles"`
+	Permissions []*Permission `xorm:"-" json:"permissions"`
 
 	LastSigninWrongTime string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
 	SigninWrongTimes    int    `json:"signinWrongTimes"`
@@ -380,13 +381,20 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 		return false
 	}
 
+	if name != user.Name {
+		err := userChangeTrigger(name, user.Name)
+		if err != nil {
+			return false
+		}
+	}
+
 	if user.Password == "***" {
 		user.Password = oldUser.Password
 	}
 	user.UpdateUserHash()
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" && user.PermanentAvatar != "*" {
-		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, false)
 	}
 
 	if len(columns) == 0 {
@@ -416,10 +424,17 @@ func UpdateUserForAllFields(id string, user *User) bool {
 		return false
 	}
 
+	if name != user.Name {
+		err := userChangeTrigger(name, user.Name)
+		if err != nil {
+			return false
+		}
+	}
+
 	user.UpdateUserHash()
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
-		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, false)
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
@@ -449,7 +464,7 @@ func AddUser(user *User) bool {
 	user.UpdateUserHash()
 	user.PreHash = user.Hash
 
-	user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+	user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, false)
 
 	user.Ranking = GetUserCount(user.Owner, "", "") + 1
 
@@ -474,7 +489,7 @@ func AddUsers(users []*User) bool {
 		user.UpdateUserHash()
 		user.PreHash = user.Hash
 
-		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar)
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
 	}
 
 	affected, err := adapter.Engine.Insert(users)
@@ -514,6 +529,9 @@ func AddUsersInBatch(users []*User) bool {
 }
 
 func DeleteUser(user *User) bool {
+	// Forced offline the user first
+	DeleteSession(user.GetId())
+
 	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
 	if err != nil {
 		panic(err)
@@ -566,4 +584,63 @@ func ExtendUserWithRolesAndPermissions(user *User) {
 
 	user.Roles = GetRolesByUser(user.GetId())
 	user.Permissions = GetPermissionsByUser(user.GetId())
+}
+
+func userChangeTrigger(oldName string, newName string) error {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
+
+	var roles []*Role
+	err = adapter.Engine.Find(&roles)
+	if err != nil {
+		return err
+	}
+	for _, role := range roles {
+		for j, u := range role.Users {
+			// u = organization/username
+			split := strings.Split(u, "/")
+			if split[1] == oldName {
+				split[1] = newName
+				role.Users[j] = split[0] + "/" + split[1]
+			}
+		}
+		_, err = session.Where("name=?", role.Name).Update(role)
+		if err != nil {
+			return err
+		}
+	}
+
+	var permissions []*Permission
+	err = adapter.Engine.Find(&permissions)
+	if err != nil {
+		return err
+	}
+	for _, permission := range permissions {
+		for j, u := range permission.Users {
+			// u = organization/username
+			split := strings.Split(u, "/")
+			if split[1] == oldName {
+				split[1] = newName
+				permission.Users[j] = split[0] + "/" + split[1]
+			}
+		}
+		_, err = session.Where("name=?", permission.Name).Update(permission)
+		if err != nil {
+			return err
+		}
+	}
+
+	resource := new(Resource)
+	resource.User = newName
+	_, err = session.Where("user=?", oldName).Update(resource)
+	if err != nil {
+		return err
+	}
+
+	return session.Commit()
 }

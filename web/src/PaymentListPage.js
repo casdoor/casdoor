@@ -51,31 +51,71 @@ class PaymentListPage extends BaseListPage {
     const newPayment = this.newPayment();
     PaymentBackend.addPayment(newPayment)
       .then((res) => {
-        this.props.history.push({pathname: `/payments/${newPayment.name}`, mode: "add"});
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/payments/${newPayment.name}`, mode: "add"});
+          Setting.showMessage("success", i18next.t("general:Successfully added"));
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
+        }
       }
       )
       .catch(error => {
-        Setting.showMessage("error", `Payment failed to add: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deletePayment(i) {
     PaymentBackend.deletePayment(this.state.data[i])
       .then((res) => {
-        Setting.showMessage("success", "Payment deleted successfully");
-        this.setState({
-          data: Setting.deleteRow(this.state.data, i),
-          pagination: {total: this.state.pagination.total - 1},
-        });
-      }
-      )
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+          this.setState({
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Payment failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   renderTable(payments) {
     const columns = [
+      {
+        title: i18next.t("general:Name"),
+        dataIndex: "name",
+        key: "name",
+        width: "180px",
+        fixed: "left",
+        sorter: true,
+        ...this.getColumnSearchProps("name"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/payments/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Provider"),
+        dataIndex: "provider",
+        key: "provider",
+        width: "150px",
+        fixed: "left",
+        sorter: true,
+        ...this.getColumnSearchProps("provider"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/providers/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
       {
         title: i18next.t("general:Organization"),
         dataIndex: "organization",
@@ -106,22 +146,7 @@ class PaymentListPage extends BaseListPage {
           );
         },
       },
-      {
-        title: i18next.t("general:Name"),
-        dataIndex: "name",
-        key: "name",
-        width: "180px",
-        fixed: "left",
-        sorter: true,
-        ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/payments/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
+
       {
         title: i18next.t("general:Created time"),
         dataIndex: "createdTime",
@@ -140,22 +165,6 @@ class PaymentListPage extends BaseListPage {
       //   sorter: true,
       //   ...this.getColumnSearchProps('displayName'),
       // },
-      {
-        title: i18next.t("general:Provider"),
-        dataIndex: "provider",
-        key: "provider",
-        width: "150px",
-        fixed: "left",
-        sorter: true,
-        ...this.getColumnSearchProps("provider"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/providers/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
       {
         title: i18next.t("payment:Type"),
         dataIndex: "type",
@@ -217,7 +226,7 @@ class PaymentListPage extends BaseListPage {
                 title={`Sure to delete payment: ${record.name} ?`}
                 onConfirm={() => this.deletePayment(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );
@@ -269,6 +278,13 @@ class PaymentListPage extends BaseListPage {
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
           });
+        } else {
+          if (res.msg.includes("Unauthorized")) {
+            this.setState({
+              loading: false,
+              isAuthorized: false,
+            });
+          }
         }
       });
   };

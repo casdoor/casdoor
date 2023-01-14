@@ -14,24 +14,40 @@
 
 package i18n
 
-import "testing"
+import (
+	"testing"
+)
 
-func applyToOtherLanguage(dataEn *I18nData, lang string) {
-	dataOther := readI18nFile(lang)
-	println(dataOther)
+func applyToOtherLanguage(category string, language string, i18nData *I18nData) {
+	newData := readI18nFile(category, language)
+	println(newData)
 
-	applyData(dataEn, dataOther)
-	writeI18nFile(lang, dataEn)
+	applyData(i18nData, newData)
+	writeI18nFile(category, language, i18nData)
 }
 
-func TestGenerateI18nStrings(t *testing.T) {
-	dataEn := parseToData()
-	writeI18nFile("en", dataEn)
+func TestGenerateI18nFrontend(t *testing.T) {
+	enData := parseEnData("frontend")
+	writeI18nFile("frontend", "en", enData)
 
-	applyToOtherLanguage(dataEn, "de")
-	applyToOtherLanguage(dataEn, "fr")
-	applyToOtherLanguage(dataEn, "ja")
-	applyToOtherLanguage(dataEn, "ko")
-	applyToOtherLanguage(dataEn, "ru")
-	applyToOtherLanguage(dataEn, "zh")
+	applyToOtherLanguage("frontend", "de", enData)
+	applyToOtherLanguage("frontend", "es", enData)
+	applyToOtherLanguage("frontend", "fr", enData)
+	applyToOtherLanguage("frontend", "ja", enData)
+	applyToOtherLanguage("frontend", "ko", enData)
+	applyToOtherLanguage("frontend", "ru", enData)
+	applyToOtherLanguage("frontend", "zh", enData)
+}
+
+func TestGenerateI18nBackend(t *testing.T) {
+	enData := parseEnData("backend")
+	writeI18nFile("backend", "en", enData)
+
+	applyToOtherLanguage("backend", "de", enData)
+	applyToOtherLanguage("backend", "es", enData)
+	applyToOtherLanguage("backend", "fr", enData)
+	applyToOtherLanguage("backend", "ja", enData)
+	applyToOtherLanguage("backend", "ko", enData)
+	applyToOtherLanguage("backend", "ru", enData)
+	applyToOtherLanguage("backend", "zh", enData)
 }

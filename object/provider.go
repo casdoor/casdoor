@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -24,7 +25,7 @@ import (
 
 type Provider struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	Name        string `xorm:"varchar(100) notnull pk unique" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	DisplayName       string `xorm:"varchar(100)" json:"displayName"`
@@ -45,9 +46,9 @@ type Provider struct {
 
 	Host       string `xorm:"varchar(100)" json:"host"`
 	Port       int    `json:"port"`
-	DisableSsl bool   `json:"disableSsl"`
+	DisableSsl bool   `json:"disableSsl"` // If the provider type is WeChat, DisableSsl means EnableQRCode
 	Title      string `xorm:"varchar(100)" json:"title"`
-	Content    string `xorm:"varchar(1000)" json:"content"`
+	Content    string `xorm:"varchar(1000)" json:"content"` // If provider type is WeChat, Content means QRCode string by Base64 encoding
 	Receiver   string `xorm:"varchar(100)" json:"receiver"`
 
 	RegionId     string `xorm:"varchar(100)" json:"regionId"`
@@ -59,6 +60,7 @@ type Provider struct {
 	IntranetEndpoint string `xorm:"varchar(100)" json:"intranetEndpoint"`
 	Domain           string `xorm:"varchar(100)" json:"domain"`
 	Bucket           string `xorm:"varchar(100)" json:"bucket"`
+	PathPrefix       string `xorm:"varchar(100)" json:"pathPrefix"`
 
 	Metadata               string `xorm:"mediumtext" json:"metadata"`
 	IdP                    string `xorm:"mediumtext" json:"idP"`
@@ -91,7 +93,17 @@ func GetMaskedProviders(providers []*Provider) []*Provider {
 }
 
 func GetProviderCount(owner, field, value string) int {
-	session := GetSession(owner, -1, -1, field, value, "", "")
+	session := GetSession("", -1, -1, field, value, "", "")
+	count, err := session.Where("owner = ? or owner = ? ", "admin", owner).Count(&Provider{})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
+func GetGlobalProviderCount(field, value string) int {
+	session := GetSession("", -1, -1, field, value, "", "")
 	count, err := session.Count(&Provider{})
 	if err != nil {
 		panic(err)
@@ -102,7 +114,17 @@ func GetProviderCount(owner, field, value string) int {
 
 func GetProviders(owner string) []*Provider {
 	providers := []*Provider{}
-	err := adapter.Engine.Desc("created_time").Find(&providers, &Provider{Owner: owner})
+	err := adapter.Engine.Where("owner = ? or owner = ? ", "admin", owner).Desc("created_time").Find(&providers, &Provider{})
+	if err != nil {
+		panic(err)
+	}
+
+	return providers
+}
+
+func GetGlobalProviders() []*Provider {
+	providers := []*Provider{}
+	err := adapter.Engine.Desc("created_time").Find(&providers)
 	if err != nil {
 		panic(err)
 	}
@@ -112,7 +134,18 @@ func GetProviders(owner string) []*Provider {
 
 func GetPaginationProviders(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Provider {
 	providers := []*Provider{}
-	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
+	err := session.Where("owner = ? or owner = ? ", "admin", owner).Find(&providers)
+	if err != nil {
+		panic(err)
+	}
+
+	return providers
+}
+
+func GetPaginationGlobalProviders(offset, limit int, field, value, sortField, sortOrder string) []*Provider {
+	providers := []*Provider{}
+	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&providers)
 	if err != nil {
 		panic(err)
@@ -126,7 +159,7 @@ func getProvider(owner string, name string) *Provider {
 		return nil
 	}
 
-	provider := Provider{Owner: owner, Name: name}
+	provider := Provider{Name: name}
 	existed, err := adapter.Engine.Get(&provider)
 	if err != nil {
 		panic(err)
@@ -172,6 +205,13 @@ func UpdateProvider(id string, provider *Provider) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if getProvider(owner, name) == nil {
 		return false
+	}
+
+	if name != provider.Name {
+		err := providerChangeTrigger(name, provider.Name)
+		if err != nil {
+			return false
+		}
 	}
 
 	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
@@ -228,7 +268,7 @@ func (p *Provider) GetId() string {
 	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
 }
 
-func GetCaptchaProviderByOwnerName(applicationId string) (*Provider, error) {
+func GetCaptchaProviderByOwnerName(applicationId, lang string) (*Provider, error) {
 	owner, name := util.GetOwnerAndNameFromId(applicationId)
 	provider := Provider{Owner: owner, Name: name, Category: "Captcha"}
 	existed, err := adapter.Engine.Get(&provider)
@@ -237,27 +277,65 @@ func GetCaptchaProviderByOwnerName(applicationId string) (*Provider, error) {
 	}
 
 	if !existed {
-		return nil, fmt.Errorf("the provider: %s does not exist", applicationId)
+		return nil, fmt.Errorf(i18n.Translate(lang, "provider:the provider: %s does not exist"), applicationId)
 	}
 
 	return &provider, nil
 }
 
-func GetCaptchaProviderByApplication(applicationId, isCurrentProvider string) (*Provider, error) {
+func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang string) (*Provider, error) {
 	if isCurrentProvider == "true" {
-		return GetCaptchaProviderByOwnerName(applicationId)
+		return GetCaptchaProviderByOwnerName(applicationId, lang)
 	}
 	application := GetApplication(applicationId)
 	if application == nil || len(application.Providers) == 0 {
-		return nil, fmt.Errorf("invalid application id")
+		return nil, fmt.Errorf(i18n.Translate(lang, "provider:Invalid application id"))
 	}
 	for _, provider := range application.Providers {
 		if provider.Provider == nil {
 			continue
 		}
 		if provider.Provider.Category == "Captcha" {
-			return GetCaptchaProviderByOwnerName(fmt.Sprintf("%s/%s", provider.Provider.Owner, provider.Provider.Name))
+			return GetCaptchaProviderByOwnerName(fmt.Sprintf("%s/%s", provider.Provider.Owner, provider.Provider.Name), lang)
 		}
 	}
 	return nil, nil
+}
+
+func providerChangeTrigger(oldName string, newName string) error {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
+
+	var applications []*Application
+	err = adapter.Engine.Find(&applications)
+	if err != nil {
+		return err
+	}
+	for i := 0; i < len(applications); i++ {
+		providers := applications[i].Providers
+		for j := 0; j < len(providers); j++ {
+			if providers[j].Name == oldName {
+				providers[j].Name = newName
+			}
+		}
+		applications[i].Providers = providers
+		_, err = session.Where("name=?", applications[i].Name).Update(applications[i])
+		if err != nil {
+			return err
+		}
+	}
+
+	resource := new(Resource)
+	resource.Provider = newName
+	_, err = session.Where("provider=?", oldName).Update(resource)
+	if err != nil {
+		return err
+	}
+
+	return session.Commit()
 }

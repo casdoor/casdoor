@@ -76,11 +76,59 @@ jobs:
           version: latest
           args: --disable-all -c dummy.yml -E=gofumpt --max-same-issues=0 --timeout 5m --modules-download-mode=mod
 
+  e2e:
+    name: e2e-test
+    runs-on: ubuntu-latest
+    needs: [ frontend, backend, linter ]
+    services:
+      mysql:
+          image: mysql:5.7
+          env:
+            MYSQL_DATABASE: casdoor
+            MYSQL_ROOT_PASSWORD: 123456
+          ports:
+              - 3306:3306
+          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16.5'
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16    
+      - name: front install
+        run: yarn install
+        working-directory: ./web
+      - name: front start
+        run: nohup yarn start &
+        working-directory: ./web  
+      - name: back start
+        run: nohup go run ./main.go &
+        working-directory: ./
+      - name: Sleep for starting
+        run: sleep 90s
+        shell: bash
+      - name: e2e
+        run: npx cypress run --spec "**/e2e/**.cy.js"
+        working-directory: ./web
+
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: ./web/cypress/screenshots
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-videos
+          path: ./web/cypress/videos    
+
   release-and-push:
     name: Release And Push
     runs-on: ubuntu-latest
     if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
-    needs: [ frontend, backend, linter ]
+    needs: [ frontend, backend, linter, e2e ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -125,26 +173,36 @@ jobs:
               
           fi
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          version: latest
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' &&steps.should_push.outputs.push=='true'
+        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-
       - name: Push to Docker Hub
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           target: STANDARD
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
 
       - name: Push All In One Version to Docker Hub
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           target: ALLINONE
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest

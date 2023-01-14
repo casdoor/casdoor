@@ -51,7 +51,7 @@ class SamlCallback extends React.Component {
     const samlResponse = params.get("samlResponse");
     const messages = atob(relayState).split("&");
     const clientId = messages[0];
-    const applicationName = messages[1] === "null" ? "app-built-in" : messages[1];
+    const applicationName = (messages[1] === "null" || messages[1] === "undefined") ? "app-built-in" : messages[1];
     const providerName = messages[2];
     const redirectUri = messages[3];
     const responseType = this.getResponseType(redirectUri);
@@ -79,7 +79,7 @@ class SamlCallback extends React.Component {
         if (res.status === "ok") {
           const responseType = this.getResponseType(redirectUri);
           if (responseType === "login") {
-            Util.showMessage("success", "Logged in successfully");
+            Setting.showMessage("success", "Logged in successfully");
             Setting.goToLink("/");
           } else if (responseType === "code") {
             const code = res.data;
@@ -95,7 +95,7 @@ class SamlCallback extends React.Component {
 
   render() {
     return (
-      <div style={{textAlign: "center"}}>
+      <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
         {
           (this.state.msg === null) ? (
             <Spin size="large" tip={i18next.t("login:Signing in...")} style={{paddingTop: "10%"}} />

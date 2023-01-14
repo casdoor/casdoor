@@ -24,9 +24,10 @@ import (
 
 type Claims struct {
 	*User
-	Nonce string `json:"nonce,omitempty"`
-	Tag   string `json:"tag,omitempty"`
-	Scope string `json:"scope,omitempty"`
+	TokenType string `json:"tokenType,omitempty"`
+	Nonce     string `json:"nonce,omitempty"`
+	Tag       string `json:"tag,omitempty"`
+	Scope     string `json:"scope,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -37,8 +38,9 @@ type UserShort struct {
 
 type ClaimsShort struct {
 	*UserShort
-	Nonce string `json:"nonce,omitempty"`
-	Scope string `json:"scope,omitempty"`
+	TokenType string `json:"tokenType,omitempty"`
+	Nonce     string `json:"nonce,omitempty"`
+	Scope     string `json:"scope,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -53,6 +55,7 @@ func getShortUser(user *User) *UserShort {
 func getShortClaims(claims Claims) ClaimsShort {
 	res := ClaimsShort{
 		UserShort:        getShortUser(claims.User),
+		TokenType:        claims.TokenType,
 		Nonce:            claims.Nonce,
 		Scope:            claims.Scope,
 		RegisteredClaims: claims.RegisteredClaims,
@@ -72,8 +75,9 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 	jti := fmt.Sprintf("%s/%s", application.Owner, name)
 
 	claims := Claims{
-		User:  user,
-		Nonce: nonce,
+		User:      user,
+		TokenType: "access-token",
+		Nonce:     nonce,
 		// FIXME: A workaround for custom claim by reusing `tag` in user info
 		Tag:   user.Tag,
 		Scope: scope,
@@ -97,10 +101,12 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 
 		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsShort)
 		claimsShort.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
+		claimsShort.TokenType = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsShort)
 	} else {
 		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 		claims.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
+		claims.TokenType = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 	}
 

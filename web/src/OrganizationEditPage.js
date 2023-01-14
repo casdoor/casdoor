@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
@@ -86,7 +86,6 @@ class OrganizationEditPage extends React.Component {
 
   updateOrganizationField(key, value) {
     value = this.parseOrganizationField(key, value);
-
     const organization = this.state.organization;
     organization[key] = value;
     this.setState({
@@ -166,12 +165,9 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Password type"), i18next.t("general:Password type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.organization.passwordType} onChange={(value => {this.updateOrganizationField("passwordType", value);})}>
-              {
-                ["plain", "salt", "md5-salt", "bcrypt", "pbkdf2-salt", "argon2id"]
-                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
-              }
-            </Select>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.organization.passwordType} onChange={(value => {this.updateOrganizationField("passwordType", value);})}
+              options={["plain", "salt", "md5-salt", "bcrypt", "pbkdf2-salt", "argon2id"].map(item => Setting.getOption(item, item))}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -226,11 +222,9 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Default application"), i18next.t("general:Default application - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.organization.defaultApplication} onChange={(value => {this.updateOrganizationField("defaultApplication", value);})}>
-              {
-                this.state.applications?.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
-              }
-            </Select>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.organization.defaultApplication} onChange={(value => {this.updateOrganizationField("defaultApplication", value);})}
+              options={this.state.applications?.map((item) => Setting.getOption(item.name, item.name))
+              } />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -252,6 +246,41 @@ class OrganizationEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.organization.masterPassword} onChange={e => {
               this.updateOrganizationField("masterPassword", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Languages"), i18next.t("general:Languages - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="tags" style={{width: "100%"}}
+              value={this.state.organization.languages}
+              onChange={(value => {
+                this.updateOrganizationField("languages", value);
+              })} >
+              {
+                [
+                  {value: "en", label: "English"},
+                  {value: "zh", label: "简体中文"},
+                  {value: "es", label: "Español"},
+                  {value: "fr", label: "Français"},
+                  {value: "de", label: "Deutsch"},
+                  {value: "ja", label: "日本語"},
+                  {value: "ko", label: "한국어"},
+                  {value: "ru", label: "Русский"},
+                ].map((item, index) => <Option key={index} value={item.value}>{item.label}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("organization:InitScore"), i18next.t("organization:The user's initScore - Tooltip"))} :
+          </Col>
+          <Col span={4} >
+            <InputNumber value={this.state.organization.initScore} onChange={value => {
+              this.updateOrganizationField("initScore", value);
             }} />
           </Col>
         </Row>
@@ -310,8 +339,8 @@ class OrganizationEditPage extends React.Component {
     const organization = Setting.deepCopy(this.state.organization);
     OrganizationBackend.updateOrganization(this.state.organization.owner, this.state.organizationName, organization)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             organizationName: this.state.organization.name,
           });
@@ -322,22 +351,26 @@ class OrganizationEditPage extends React.Component {
             this.props.history.push(`/organizations/${this.state.organization.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateOrganizationField("name", this.state.organizationName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteOrganization() {
     OrganizationBackend.deleteOrganization(this.state.organization)
-      .then(() => {
-        this.props.history.push("/organizations");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/organizations");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

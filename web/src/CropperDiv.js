@@ -12,22 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import * as Setting from "./Setting";
-import {Button, Col, Modal, Row} from "antd";
+import {Button, Col, Modal, Row, Select} from "antd";
 import i18next from "i18next";
 import * as ResourceBackend from "./backend/ResourceBackend";
 
 export const CropperDiv = (props) => {
+  const [loading, setLoading] = useState(true);
+  const [options, setOptions] = useState([]);
   const [image, setImage] = useState("");
   const [cropper, setCropper] = useState();
-  const [visible, setVisible] = React.useState(false);
-  const [confirmLoading, setConfirmLoading] = React.useState(false);
+  const [visible, setVisible] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
   const {title} = props;
   const {user} = props;
   const {buttonText} = props;
+  const {organization} = props;
   let uploadButton;
 
   const onChange = (e) => {
@@ -60,7 +63,7 @@ export const CropperDiv = (props) => {
       ResourceBackend.uploadResource(user.owner, user.name, "avatar", "CropperDiv", fullFilePath, blob)
         .then((res) => {
           if (res.status === "ok") {
-            window.location.href = "/account";
+            window.location.href = window.location.pathname;
           } else {
             Setting.showMessage("error", res.msg);
           }
@@ -88,6 +91,47 @@ export const CropperDiv = (props) => {
     uploadButton.click();
   };
 
+  const getOptions = (data) => {
+    const options = [];
+    options.push({value: organization?.defaultAvatar});
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].fileType === "image") {
+        const url = `${data[i].url}`;
+        options.push({
+          value: url,
+        });
+      }
+    }
+    return options;
+  };
+
+  const getBase64Image = (src) => {
+    return new Promise((resolve) => {
+      const image = new Image();
+      image.src = src;
+      image.setAttribute("crossOrigin", "anonymous");
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(image, 0, 0, image.width, image.height);
+        const dataURL = canvas.toDataURL("image/png");
+        resolve(dataURL);
+      };
+    });
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    ResourceBackend.getResources(user.owner, user.name, "", "", "", "", "", "")
+      .then((res) => {
+        setLoading(false);
+        setOptions(getOptions(res));
+      });
+  }, []);
+
   return (
     <div>
       <Button type="default" onClick={showModal}>
@@ -96,7 +140,7 @@ export const CropperDiv = (props) => {
       <Modal
         maskClosable={false}
         title={title}
-        visible={visible}
+        open={visible}
         okText={i18next.t("user:Upload a photo")}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
@@ -105,10 +149,20 @@ export const CropperDiv = (props) => {
           [<Button block key="submit" type="primary" onClick={handleOk}>{i18next.t("user:Set new profile picture")}</Button>]
         }
       >
-        <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
+        <Col style={{margin: "0px auto 60px auto", width: 1000, height: 350}}>
           <Row style={{width: "100%", marginBottom: "20px"}}>
             <input style={{display: "none"}} ref={input => uploadButton = input} type="file" accept="image/*" onChange={onChange} />
             <Button block onClick={selectFile}>{i18next.t("user:Select a photo...")}</Button>
+            <Select virtual={false}
+              style={{width: "100%"}}
+              loading={loading}
+              placeholder={i18next.t("user:Please select avatar from resources")}
+              onChange={(async value => {
+                setImage(await getBase64Image(value));
+              })}
+              options={options}
+              allowClear={true}
+            />
           </Row>
           <Cropper
             style={{height: "100%"}}

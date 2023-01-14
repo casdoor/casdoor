@@ -76,7 +76,7 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 		JwksUri:                                fmt.Sprintf("%s/.well-known/jwks", originBackend),
 		IntrospectionEndpoint:                  fmt.Sprintf("%s/api/login/oauth/introspect", originBackend),
 		ResponseTypesSupported:                 []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token", "none"},
-		ResponseModesSupported:                 []string{"login", "code", "link"},
+		ResponseModesSupported:                 []string{"query", "fragment", "login", "code", "link"},
 		GrantTypesSupported:                    []string{"password", "authorization_code"},
 		SubjectTypesSupported:                  []string{"public"},
 		IdTokenSigningAlgValuesSupported:       []string{"RS256"},

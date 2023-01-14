@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Spin} from "antd";
+import {Card, Spin} from "antd";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
 import * as Setting from "../Setting";
@@ -39,7 +39,8 @@ class CasLogout extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", "Logged out successfully");
-          this.props.clearAccount();
+          this.props.onUpdateAccount(null);
+          this.onUpdateApplication(null);
           const redirectUri = res.data2;
           if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
             Setting.goToLink(redirectUri);
@@ -49,6 +50,7 @@ class CasLogout extends React.Component {
             Setting.goToLinkSoft(this, `/cas/${this.state.owner}/${this.state.applicationName}/login`);
           }
         } else {
+          this.onUpdateApplication(null);
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);
         }
       });
@@ -57,11 +59,13 @@ class CasLogout extends React.Component {
 
   render() {
     return (
-      <div style={{textAlign: "center"}}>
-        {
-          <Spin size="large" tip={i18next.t("login:Logging out...")} style={{paddingTop: "10%"}} />
-        }
-      </div>
+      <Card>
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+          {
+            <Spin size="large" tip={i18next.t("login:Logging out...")} style={{paddingTop: "10%"}} />
+          }
+        </div>
+      </Card>
     );
   }
 }

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Popconfirm, Table, Upload} from "antd";
+import {Button, Popconfirm, Result, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import copy from "copy-to-clipboard";
 import * as Setting from "./Setting";
@@ -37,21 +37,25 @@ class ResourceListPage extends BaseListPage {
       searchedColumn: "",
       fileList: [],
       uploading: false,
+      isAuthorized: true,
     };
   }
 
   deleteResource(i) {
     ResourceBackend.deleteResource(this.state.data[i])
       .then((res) => {
-        Setting.showMessage("success", "Resource deleted successfully");
-        this.setState({
-          data: Setting.deleteRow(this.state.data, i),
-          pagination: {total: this.state.pagination.total - 1},
-        });
-      }
-      )
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+          this.setState({
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Resource failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
@@ -95,7 +99,7 @@ class ResourceListPage extends BaseListPage {
         ...this.getColumnSearchProps("provider"),
         render: (text, record, index) => {
           return (
-            <Link to={`/providers/${text}`}>
+            <Link to={`/providers/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -110,7 +114,7 @@ class ResourceListPage extends BaseListPage {
         ...this.getColumnSearchProps("application"),
         render: (text, record, index) => {
           return (
-            <Link to={`/applications/${text}`}>
+            <Link to={`/applications/${record.organization}/${text}`}>
               {text}
             </Link>
           );
@@ -207,16 +211,14 @@ class ResourceListPage extends BaseListPage {
           if (record.fileType === "image") {
             return (
               <a target="_blank" rel="noreferrer" href={record.url}>
-                <img src={record.url} alt={record.name} width={100} />
+                <img src={record.url} alt={record.name} width={200} />
               </a>
             );
           } else if (record.fileType === "video") {
             return (
-              <div>
-                <video width={100} controls>
-                  <source src={text} type="video/mp4" />
-                </video>
-              </div>
+              <video width={200} controls>
+                <source src={record.url} type="video/mp4" />
+              </video>
             );
           }
         },
@@ -256,7 +258,7 @@ class ResourceListPage extends BaseListPage {
                 okText={i18next.t("user:OK")}
                 cancelText={i18next.t("user:Cancel")}
               >
-                <Button type="danger">{i18next.t("general:Delete")}</Button>
+                <Button type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );
@@ -270,6 +272,17 @@ class ResourceListPage extends BaseListPage {
       showSizeChanger: true,
       showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
+
+    if (!this.state.isAuthorized) {
+      return (
+        <Result
+          status="403"
+          title="403 Unauthorized"
+          subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
+          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
+        />
+      );
+    }
 
     return (
       <div>
@@ -307,6 +320,13 @@ class ResourceListPage extends BaseListPage {
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
           });
+        } else {
+          if (res.data.includes("Please login first")) {
+            this.setState({
+              loading: false,
+              isAuthorized: false,
+            });
+          }
         }
       });
   };

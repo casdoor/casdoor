@@ -9,7 +9,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "antd": "^4.22.8",
+    "antd": "5.1.2",
     "codemirror": "^5.61.1",
     "copy-to-clipboard": "^3.3.1",
     "core-js": "^3.25.0",
@@ -70,6 +70,7 @@
     "eslint-plugin-react": "^7.31.1",
     "husky": "^4.3.8",
     "lint-staged": "^13.0.3",
+    "path-browserify": "^1.0.1",
     "stylelint": "^14.11.0",
     "stylelint-config-recommended-less": "^1.0.4",
     "stylelint-config-standard": "^28.0.0"

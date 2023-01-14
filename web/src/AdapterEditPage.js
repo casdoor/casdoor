@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select, Switch, Table, Tooltip} from "antd";
+import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import * as AdapterBackend from "./backend/AdapterBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -21,7 +21,7 @@ import i18next from "i18next";
 
 import "codemirror/lib/codemirror.css";
 import * as ModelBackend from "./backend/ModelBackend";
-import {EditOutlined, MinusOutlined} from "@ant-design/icons";
+import PolicyTable from "./common/PoliciyTable";
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/javascript/javascript");
 
@@ -32,12 +32,11 @@ class AdapterEditPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
+      owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       adapterName: props.match.params.adapterName,
       adapter: null,
       organizations: [],
       models: [],
-      policyLists: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -48,18 +47,20 @@ class AdapterEditPage extends React.Component {
   }
 
   getAdapter() {
-    AdapterBackend.getAdapter(this.state.organizationName, this.state.adapterName)
-      .then((adapter) => {
-        this.setState({
-          adapter: adapter,
-        });
+    AdapterBackend.getAdapter(this.state.owner, this.state.adapterName)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            adapter: res.data,
+          });
 
-        this.getModels(adapter.owner);
+          this.getModels(this.state.owner);
+        }
       });
   }
 
   getOrganizations() {
-    OrganizationBackend.getOrganizations(this.state.organizationName)
+    OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
@@ -93,93 +94,6 @@ class AdapterEditPage extends React.Component {
     });
   }
 
-  synPolicies() {
-    this.setState({loading: true});
-    AdapterBackend.syncPolicies(this.state.adapter.owner, this.state.adapter.name)
-      .then((res) => {
-        this.setState({loading: false, policyLists: res});
-      })
-      .catch(error => {
-        this.setState({loading: false});
-        Setting.showMessage("error", `Adapter failed to get policies: ${error}`);
-      });
-  }
-
-  renderTable(table) {
-    const columns = [
-      {
-        title: "Rule Type",
-        dataIndex: "PType",
-        key: "PType",
-        width: "100px",
-      },
-      {
-        title: "V0",
-        dataIndex: "V0",
-        key: "V0",
-        width: "100px",
-      },
-      {
-        title: "V1",
-        dataIndex: "V1",
-        key: "V1",
-        width: "100px",
-      },
-      {
-        title: "V2",
-        dataIndex: "V2",
-        key: "V2",
-        width: "100px",
-      },
-      {
-        title: "V3",
-        dataIndex: "V3",
-        key: "V3",
-        width: "100px",
-      },
-      {
-        title: "V4",
-        dataIndex: "V4",
-        key: "V4",
-        width: "100px",
-      },
-      {
-        title: "V5",
-        dataIndex: "V5",
-        key: "V5",
-        width: "100px",
-      },
-      {
-        title: "Option",
-        key: "option",
-        width: "100px",
-        render: (text, record, index) => {
-          return (
-            <div>
-              <Tooltip placement="topLeft" title="Edit">
-                <Button style={{marginRight: "0.5rem"}} icon={<EditOutlined />} size="small" />
-              </Tooltip>
-              <Tooltip placement="topLeft" title="Delete">
-                <Button icon={<MinusOutlined />} size="small" />
-              </Tooltip>
-            </div>
-          );
-        },
-      }];
-
-    return (
-      <div>
-        <Table
-          pagination={{
-            defaultPageSize: 10,
-          }}
-          columns={columns} dataSource={table} rowKey="name" size="middle" bordered
-          loading={this.state.loading}
-        />
-      </div>
-    );
-  }
-
   renderAdapter() {
     return (
       <Card size="small" title={
@@ -195,7 +109,7 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.adapter.organization} onChange={(value => {this.updateadapterField("organization", value);})}>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.adapter.organization} onChange={(value => {this.updateAdapterField("organization", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -329,19 +243,8 @@ class AdapterEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("adapter:Policies"), i18next.t("adapter:Policies - Tooltip"))} :
           </Col>
-          <Col span={2}>
-            <Button type="primary" onClick={() => {this.synPolicies();}}>
-              {i18next.t("adapter:Sync")}
-            </Button>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-          </Col>
-          <Col span={22} >
-            {
-              this.renderTable(this.state.policyLists)
-            }
+          <Col span={22}>
+            <PolicyTable owner={this.state.owner} name={this.state.adapterName} mode={this.state.mode} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -362,8 +265,8 @@ class AdapterEditPage extends React.Component {
     const adapter = Setting.deepCopy(this.state.adapter);
     AdapterBackend.updateAdapter(this.state.adapter.owner, this.state.adapterName, adapter)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             adapterName: this.state.adapter.name,
           });
@@ -371,25 +274,29 @@ class AdapterEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/adapters");
           } else {
-            this.props.history.push(`/adapters/${this.state.adapter.name}`);
+            this.props.history.push(`/adapters/${this.state.owner}/${this.state.adapter.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateAdapterField("name", this.state.adapterName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteAdapter() {
     AdapterBackend.deleteAdapter(this.state.adapter)
-      .then(() => {
-        this.props.history.push("/adapters");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/adapters");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `adapter failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

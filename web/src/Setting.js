@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Tag, Tooltip, message} from "antd";
-import {QuestionCircleTwoTone} from "@ant-design/icons";
 import React from "react";
+import {Link} from "react-router-dom";
+import {Tag, Tooltip, message, theme} from "antd";
+import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
 import i18next from "i18next";
@@ -22,6 +23,7 @@ import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
+import * as path from "path-browserify";
 
 export const ServerUrl = "";
 
@@ -30,6 +32,23 @@ export const StaticBaseUrl = "https://cdn.casbin.org";
 
 // https://catamphetamine.gitlab.io/country-flag-icons/3x2/index.html
 export const CountryRegionData = getCountryRegionData();
+
+export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
+  {label: "简体中文", key: "zh", country: "CN", alt: "简体中文"},
+  {label: "Español", key: "es", country: "ES", alt: "Español"},
+  {label: "Français", key: "fr", country: "FR", alt: "Français"},
+  {label: "Deutsch", key: "de", country: "DE", alt: "Deutsch"},
+  {label: "日本語", key: "ja", country: "JP", alt: "日本語"},
+  {label: "한국어", key: "ko", country: "KR", alt: "한국어"},
+  {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
+];
+
+const {defaultAlgorithm, darkAlgorithm, compactAlgorithm} = theme;
+
+export const Themes = [{label: i18next.t("general:Dark"), key: "Dark", style: darkAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/dark.svg`},
+  {label: i18next.t("general:Compact"), key: "Compact", style: compactAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/compact.svg`},
+  {label: i18next.t("general:Default"), key: "Default", style: defaultAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/light.svg`},
+];
 
 export const OtherProviderInfo = {
   SMS: {
@@ -48,6 +67,14 @@ export const OtherProviderInfo = {
     "Huawei Cloud SMS": {
       logo: `${StaticBaseUrl}/img/social_huawei.png`,
       url: "https://www.huaweicloud.com/product/msgsms.html",
+    },
+    "Twilio SMS": {
+      logo: `${StaticBaseUrl}/img/social_twilio.png`,
+      url: "https://www.twilio.com/messaging",
+    },
+    "SmsBao SMS": {
+      logo: `${StaticBaseUrl}/img/social_smsbao.png`,
+      url: "https://www.smsbao.com/",
     },
     "Mock SMS": {
       logo: `${StaticBaseUrl}/img/social_default.png`,
@@ -134,6 +161,10 @@ export const OtherProviderInfo = {
     "GEETEST": {
       logo: `${StaticBaseUrl}/img/social_geetest.png`,
       url: "https://www.geetest.com",
+    },
+    "Cloudflare Turnstile": {
+      logo: `${StaticBaseUrl}/img/social_cloudflare.png`,
+      url: "https://www.cloudflare.com/products/turnstile/",
     },
   },
 };
@@ -237,8 +268,10 @@ export function isValidPersonName(personName) {
 }
 
 export function isValidIdCard(idCard) {
-  const idCardRegex = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9X]$/;
-  return idCardRegex.test(idCard);
+  return idCard !== "";
+
+  // const idCardRegex = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9X]$/;
+  // return idCardRegex.test(idCard);
 }
 
 export function isValidEmail(email) {
@@ -248,34 +281,40 @@ export function isValidEmail(email) {
 }
 
 export function isValidPhone(phone) {
-  if (phone === "") {
-    return false;
-  }
+  return phone !== "";
 
-  // https://learnku.com/articles/31543, `^s*$` filter empty email individually.
-  const phoneRegex = /^\s*$|^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/;
-  return phoneRegex.test(phone);
+  // if (phone === "") {
+  //   return false;
+  // }
+  //
+  // // https://learnku.com/articles/31543, `^s*$` filter empty email individually.
+  // const phoneRegex = /^\s*$|^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/;
+  // return phoneRegex.test(phone);
 }
 
 export function isValidInvoiceTitle(invoiceTitle) {
-  if (invoiceTitle === "") {
-    return false;
-  }
+  return invoiceTitle !== "";
 
-  // https://blog.css8.cn/post/14210975.html
-  const invoiceTitleRegex = /^[()（）\u4e00-\u9fa5]{0,50}$/;
-  return invoiceTitleRegex.test(invoiceTitle);
+  // if (invoiceTitle === "") {
+  //   return false;
+  // }
+  //
+  // // https://blog.css8.cn/post/14210975.html
+  // const invoiceTitleRegex = /^[()（）\u4e00-\u9fa5]{0,50}$/;
+  // return invoiceTitleRegex.test(invoiceTitle);
 }
 
 export function isValidTaxId(taxId) {
-  // https://www.codetd.com/article/8592083
-  const regArr = [/^[\da-z]{10,15}$/i, /^\d{6}[\da-z]{10,12}$/i, /^[a-z]\d{6}[\da-z]{9,11}$/i, /^[a-z]{2}\d{6}[\da-z]{8,10}$/i, /^\d{14}[\dx][\da-z]{4,5}$/i, /^\d{17}[\dx][\da-z]{1,2}$/i, /^[a-z]\d{14}[\dx][\da-z]{3,4}$/i, /^[a-z]\d{17}[\dx][\da-z]{0,1}$/i, /^[\d]{6}[\da-z]{13,14}$/i];
-  for (let i = 0; i < regArr.length; i++) {
-    if (regArr[i].test(taxId)) {
-      return true;
-    }
-  }
-  return false;
+  return taxId !== "";
+
+  // // https://www.codetd.com/article/8592083
+  // const regArr = [/^[\da-z]{10,15}$/i, /^\d{6}[\da-z]{10,12}$/i, /^[a-z]\d{6}[\da-z]{9,11}$/i, /^[a-z]{2}\d{6}[\da-z]{8,10}$/i, /^\d{14}[\dx][\da-z]{4,5}$/i, /^\d{17}[\dx][\da-z]{1,2}$/i, /^[a-z]\d{14}[\dx][\da-z]{3,4}$/i, /^[a-z]\d{17}[\dx][\da-z]{0,1}$/i, /^[\d]{6}[\da-z]{13,14}$/i];
+  // for (let i = 0; i < regArr.length; i++) {
+  //   if (regArr[i].test(taxId)) {
+  //     return true;
+  //   }
+  // }
+  // return false;
 }
 
 export function isAffiliationPrompted(application) {
@@ -406,9 +445,7 @@ export function goToLinkSoft(ths, link) {
 }
 
 export function showMessage(type, text) {
-  if (type === "") {
-    return;
-  } else if (type === "success") {
+  if (type === "success") {
     message.success(text);
   } else if (type === "error") {
     message.error(text);
@@ -435,8 +472,8 @@ export function deepCopy(obj) {
   return Object.assign({}, obj);
 }
 
-export function addRow(array, row) {
-  return [...array, row];
+export function addRow(array, row, position = "end") {
+  return position === "end" ? [...array, row] : [row, ...array];
 }
 
 export function prependRow(array, row) {
@@ -532,6 +569,29 @@ export function getAvatarColor(s) {
   return colorList[hash % 4];
 }
 
+export function getLogo(theme) {
+  if (theme === "Dark") {
+    return `${StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
+  } else {
+    return `${StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+  }
+}
+
+export function getLanguageText(text) {
+  if (!text.includes("|")) {
+    return text;
+  }
+
+  let res;
+  const tokens = text.split("|");
+  if (getLanguage() !== "zh") {
+    res = trim(tokens[0], "");
+  } else {
+    res = trim(tokens[1], "");
+  }
+  return res;
+}
+
 export function getLanguage() {
   return i18next.language;
 }
@@ -542,11 +602,16 @@ export function setLanguage(language) {
   i18next.changeLanguage(language);
 }
 
-export function changeLanguage(language) {
-  localStorage.setItem("language", language);
-  changeMomentLanguage(language);
-  i18next.changeLanguage(language);
-  window.location.reload(true);
+export function setTheme(themeKey) {
+  localStorage.setItem("theme", themeKey);
+  dispatchEvent(new Event("themeChange"));
+}
+
+export function getAcceptLanguage() {
+  if (i18next.language === null || i18next.language === "") {
+    return "en;q=0.9,en;q=0.8";
+  }
+  return i18next.language + ";q=0.9,en;q=0.8";
 }
 
 export function changeMomentLanguage(language) {
@@ -636,6 +701,7 @@ export function getProviderTypeOptions(category) {
         {id: "Bilibili", name: "Bilibili"},
         {id: "Okta", name: "Okta"},
         {id: "Douyin", name: "Douyin"},
+        {id: "Line", name: "Line"},
         {id: "Custom", name: "Custom"},
       ]
     );
@@ -653,6 +719,8 @@ export function getProviderTypeOptions(category) {
         {id: "Tencent Cloud SMS", name: "Tencent Cloud SMS"},
         {id: "Volc Engine SMS", name: "Volc Engine SMS"},
         {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
+        {id: "Twilio SMS", name: "Twilio SMS"},
+        {id: "SmsBao SMS", name: "SmsBao SMS"},
       ]
     );
   } else if (category === "Storage") {
@@ -685,6 +753,7 @@ export function getProviderTypeOptions(category) {
       {id: "hCaptcha", name: "hCaptcha"},
       {id: "Aliyun Captcha", name: "Aliyun Captcha"},
       {id: "GEETEST", name: "GEETEST"},
+      {id: "Cloudflare Turnstile", name: "Cloudflare Turnstile"},
     ]);
   } else {
     return [];
@@ -717,74 +786,109 @@ export function renderLogo(application) {
   if (application.homepageUrl !== "") {
     return (
       <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
-        <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "10px"}} />
+        <img className="panel-logo" width={250} src={application.logo} alt={application.displayName} />
       </a>
     );
   } else {
     return (
-      <img width={250} src={application.logo} alt={application.displayName} style={{marginBottom: "10px"}} />
+      <img className="panel-logo" width={250} src={application.logo} alt={application.displayName} />
     );
   }
 }
 
-export function goToLogin(ths, application) {
+export function getLoginLink(application) {
+  let url;
   if (application === null) {
-    return;
-  }
-
-  if (!application.enablePassword && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
-    const link = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
-    goToLink(link);
-    return;
-  }
-
-  if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/login");
+    url = null;
+  } else if (!application.enablePassword && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
+    url = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
+  } else if (authConfig.appName === application.name) {
+    url = "/login";
+  } else if (application.signinUrl === "") {
+    url = path.join(application.homepageUrl, "/login");
   } else {
-    if (application.signinUrl === "") {
-      goToLink(`${application.homepageUrl}/login`);
-    } else {
-      goToLink(application.signinUrl);
-    }
+    url = application.signinUrl;
+  }
+  return url;
+}
+
+export function renderLoginLink(application, text) {
+  const url = getLoginLink(application);
+  return renderLink(url, text, null);
+}
+
+export function redirectToLoginPage(application, history) {
+  const loginLink = getLoginLink(application);
+  if (loginLink.indexOf("http") === 0 || loginLink.indexOf("https") === 0) {
+    window.location.replace(loginLink);
+  }
+  history.push(loginLink);
+}
+
+function renderLink(url, text, onClick) {
+  if (url === null) {
+    return null;
+  }
+
+  if (url.startsWith("/")) {
+    return (
+      <Link style={{float: "right"}} to={url} onClick={() => {
+        if (onClick !== null) {
+          onClick();
+        }
+      }}>{text}</Link>
+    );
+  } else if (url.startsWith("http")) {
+    return (
+      <a target="_blank" rel="noopener noreferrer" style={{float: "right"}} href={url} onClick={() => {
+        if (onClick !== null) {
+          onClick();
+        }
+      }}>{text}</a>
+    );
+  } else {
+    return null;
   }
 }
 
-export function goToSignup(ths, application) {
+export function renderSignupLink(application, text) {
+  let url;
   if (application === null) {
-    return;
-  }
-
-  if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
-    const link = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
-    goToLink(link);
-    return;
-  }
-
-  if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/signup");
+    url = null;
+  } else if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
+    url = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
+  } else if (authConfig.appName === application.name) {
+    url = "/signup";
   } else {
     if (application.signupUrl === "") {
-      goToLinkSoft(ths, `/signup/${application.name}`);
+      url = `/signup/${application.name}`;
     } else {
-      goToLink(application.signupUrl);
+      url = application.signupUrl;
     }
   }
+
+  const storeSigninUrl = () => {
+    sessionStorage.setItem("signinUrl", window.location.href);
+  };
+
+  return renderLink(url, text, storeSigninUrl);
 }
 
-export function goToForget(ths, application) {
+export function renderForgetLink(application, text) {
+  let url;
   if (application === null) {
-    return;
-  }
-
-  if (authConfig.appName === application.name) {
-    goToLinkSoft(ths, "/forget");
+    url = null;
+  } else if (authConfig.appName === application.name) {
+    url = "/forget";
   } else {
     if (application.forgetUrl === "") {
-      goToLinkSoft(ths, `/forget/${application.name}`);
+      url = `/forget/${application.name}`;
     } else {
-      goToLink(application.forgetUrl);
+      url = application.forgetUrl;
     }
   }
+
+  return renderLink(url, text, null);
 }
 
 export function renderHelmet(application) {
@@ -809,6 +913,23 @@ export function getLabel(text, tooltip) {
       </Tooltip>
     </React.Fragment>
   );
+}
+
+export function getItem(label, key, icon, children, type) {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    type,
+  };
+}
+
+export function getOption(label, value) {
+  return {
+    label,
+    value,
+  };
 }
 
 function repeat(str, len) {

@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/astaxie/beego/context"
+	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 )

@@ -14,9 +14,10 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Switch, Table, Upload} from "antd";
+import {Button, Popconfirm, Result, Switch, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import moment from "moment";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
@@ -28,6 +29,7 @@ class UserListPage extends BaseListPage {
     this.state = {
       classes: props,
       organizationName: props.match.params.organizationName,
+      organization: null,
       data: [],
       pagination: {
         current: 1,
@@ -36,6 +38,7 @@ class UserListPage extends BaseListPage {
       loading: false,
       searchText: "",
       searchedColumn: "",
+      isAuthorized: true,
     };
   }
 
@@ -60,6 +63,7 @@ class UserListPage extends BaseListPage {
       isAdmin: (owner === "built-in"),
       isGlobalAdmin: (owner === "built-in"),
       IsForbidden: false,
+      score: this.state.organization.initScore,
       isDeleted: false,
       properties: {},
       signupApplication: "app-built-in",
@@ -70,26 +74,33 @@ class UserListPage extends BaseListPage {
     const newUser = this.newUser();
     UserBackend.addUser(newUser)
       .then((res) => {
-        this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add"});
+          Setting.showMessage("success", i18next.t("general:Successfully added"));
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `User failed to add: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteUser(i) {
     UserBackend.deleteUser(this.state.data[i])
       .then((res) => {
-        Setting.showMessage("success", "User deleted successfully");
-        this.setState({
-          data: Setting.deleteRow(this.state.data, i),
-          pagination: {total: this.state.pagination.total - 1},
-        });
-      }
-      )
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+          this.setState({
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `User failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
@@ -165,7 +176,7 @@ class UserListPage extends BaseListPage {
         ...this.getColumnSearchProps("signupApplication"),
         render: (text, record, index) => {
           return (
-            <Link to={`/applications/${text}`}>
+            <Link to={`/applications/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -271,6 +282,15 @@ class UserListPage extends BaseListPage {
         width: "110px",
         sorter: true,
         ...this.getColumnSearchProps("tag"),
+        render: (text, record, index) => {
+          const tagMap = {};
+          this.state.organization?.tags?.map((tag, index) => {
+            const tokens = tag.split("|");
+            const displayValue = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1];
+            tagMap[tokens[0]] = displayValue;
+          });
+          return tagMap[text];
+        },
       },
       {
         title: i18next.t("user:Is admin"),
@@ -334,8 +354,9 @@ class UserListPage extends BaseListPage {
               <Popconfirm
                 title={`Sure to delete user: ${record.name} ?`}
                 onConfirm={() => this.deleteUser(index)}
+                disabled={disabled}
               >
-                <Button disabled={disabled} style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button disabled={disabled} style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );
@@ -350,9 +371,20 @@ class UserListPage extends BaseListPage {
       showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
 
+    if (!this.state.isAuthorized) {
+      return (
+        <Result
+          status="403"
+          title="403 Unauthorized"
+          subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
+          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
+        />
+      );
+    }
+
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={users} rowKey="name" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={users} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -374,7 +406,7 @@ class UserListPage extends BaseListPage {
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
     if (this.state.organizationName === undefined) {
-      UserBackend.getGlobalUsers(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      (Setting.isAdminUser(this.props.account) ? UserBackend.getGlobalUsers(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) : UserBackend.getUsers(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
         .then((res) => {
           if (res.status === "ok") {
             this.setState({
@@ -387,6 +419,18 @@ class UserListPage extends BaseListPage {
               searchText: params.searchText,
               searchedColumn: params.searchedColumn,
             });
+
+            const users = res.data;
+            if (users.length > 0) {
+              this.getOrganization(users[0].owner);
+            }
+          } else {
+            if (res.msg.includes("Unauthorized")) {
+              this.setState({
+                loading: false,
+                isAuthorized: false,
+              });
+            }
           }
         });
     } else {
@@ -403,10 +447,31 @@ class UserListPage extends BaseListPage {
               searchText: params.searchText,
               searchedColumn: params.searchedColumn,
             });
+
+            const users = res.data;
+            if (users.length > 0) {
+              this.getOrganization(users[0].owner);
+            }
+          } else {
+            if (res.msg.includes("Unauthorized")) {
+              this.setState({
+                loading: false,
+                isAuthorized: false,
+              });
+            }
           }
         });
     }
   };
+
+  getOrganization(organizationName) {
+    OrganizationBackend.getOrganization("admin", organizationName)
+      .then((organization) => {
+        this.setState({
+          organization: organization,
+        });
+      });
+  }
 }
 
 export default UserListPage;

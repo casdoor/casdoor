@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/astaxie/beego/utils/pagination"
+	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -141,13 +141,13 @@ func (c *ApiController) BuyProduct() {
 
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError("Please login first")
+		c.ResponseError(c.T("general:Please login first"))
 		return
 	}
 
 	user := object.GetUser(userId)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf("The user: %s doesn't exist", userId))
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
 		return
 	}
 

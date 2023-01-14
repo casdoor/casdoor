@@ -18,8 +18,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
+	"github.com/beego/beego"
+	"github.com/beego/beego/logs"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -63,8 +63,7 @@ func (c *ApiController) GetSessionUsername() string {
 	if sessionData != nil &&
 		sessionData.ExpireTime != 0 &&
 		sessionData.ExpireTime < time.Now().Unix() {
-		c.SetSessionUsername("")
-		c.SetSessionData(nil)
+		c.ClearUserSession()
 		return ""
 	}
 
@@ -85,13 +84,17 @@ func (c *ApiController) GetSessionApplication() *object.Application {
 	return application
 }
 
+func (c *ApiController) ClearUserSession() {
+	c.SetSessionUsername("")
+	c.SetSessionData(nil)
+}
+
 func (c *ApiController) GetSessionOidc() (string, string) {
 	sessionData := c.GetSessionData()
 	if sessionData != nil &&
 		sessionData.ExpireTime != 0 &&
 		sessionData.ExpireTime < time.Now().Unix() {
-		c.SetSessionUsername("")
-		c.SetSessionData(nil)
+		c.ClearUserSession()
 		return "", ""
 	}
 	scopeValue := c.GetSession("scope")
