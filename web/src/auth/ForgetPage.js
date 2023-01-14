@@ -23,6 +23,7 @@ import {CountDownInput} from "../common/CountDownInput";
 import * as UserBackend from "../backend/UserBackend";
 import {CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../CustomGithubCorner";
+import {withRouter} from "react-router-dom";
 
 const {Step} = Steps;
 const {Option} = Select;
@@ -33,12 +34,7 @@ class ForgetPage extends React.Component {
     this.state = {
       classes: props,
       account: props.account,
-      applicationName:
-          props.applicationName !== undefined
-            ? props.applicationName
-            : props.match === undefined
-              ? null
-              : props.match.params.applicationName,
+      applicationName: props.applicationName ?? props.match.params?.applicationName,
       application: null,
       msg: null,
       userId: "",
@@ -56,37 +52,36 @@ class ForgetPage extends React.Component {
     };
   }
 
-  UNSAFE_componentWillMount() {
-    if (this.state.applicationName !== undefined) {
-      this.getApplication();
-    } else {
-      Util.showMessage(
-        "error",
-        i18next.t("forget:Unknown forget type: ") + this.state.type
-      );
+  componentDidMount() {
+    if (this.getApplicationObj() === null) {
+      if (this.state.applicationName !== undefined) {
+        this.getApplication();
+      } else {
+        Setting.showMessage("error", i18next.t("forget:Unknown forget type: ") + this.state.type);
+      }
     }
   }
 
   getApplication() {
-    if (this.state.applicationName === null) {
+    if (this.state.applicationName === undefined) {
       return;
     }
 
-    ApplicationBackend.getApplication("admin", this.state.applicationName).then(
-      (application) => {
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
+      .then((application) => {
+        this.onUpdateApplication(application);
         this.setState({
           application: application,
         });
-      }
-    );
+      });
   }
 
   getApplicationObj() {
-    if (this.props.application !== undefined) {
-      return this.props.application;
-    } else {
-      return this.state.application;
-    }
+    return this.props.application ?? this.state.application;
+  }
+
+  onUpdateApplication(application) {
+    this.props.onUpdateApplication(application);
   }
 
   onFormFinish(name, info, forms) {
@@ -101,6 +96,13 @@ class ForgetPage extends React.Component {
         if (res.status === "ok") {
           const phone = res.data.phone;
           const email = res.data.email;
+          const saveFields = () => {
+            if (this.state.isFixed) {
+              forms.step2.setFieldsValue({email: this.state.fixedContent});
+              this.setState({username: this.state.fixedContent});
+            }
+            this.setState({current: 1});
+          };
           this.setState({phone: phone, email: email, username: res.data.name, name: res.data.name});
 
           if (phone !== "" && email === "") {
@@ -115,19 +117,15 @@ class ForgetPage extends React.Component {
 
           switch (res.data2) {
           case "email":
-            this.setState({isFixed: true, fixedContent: email, verifyType: "email"});
+            this.setState({isFixed: true, fixedContent: email, verifyType: "email"}, () => {saveFields();});
             break;
           case "phone":
-            this.setState({isFixed: true, fixedContent: phone, verifyType: "phone"});
+            this.setState({isFixed: true, fixedContent: phone, verifyType: "phone"}, () => {saveFields();});
             break;
           default:
+            saveFields();
             break;
           }
-          if (this.state.isFixed) {
-            forms.step2.setFieldsValue({email: this.state.fixedContent});
-            this.setState({username: this.state.fixedContent});
-          }
-          this.setState({current: 1});
         } else {
           Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
         }
@@ -135,26 +133,28 @@ class ForgetPage extends React.Component {
       break;
     case "step2":
       const oAuthParams = Util.getOAuthGetParameters();
+      const login = () => {
+        AuthBackend.login({
+          application: forms.step2.getFieldValue("application"),
+          organization: forms.step2.getFieldValue("organization"),
+          username: this.state.username,
+          name: this.state.name,
+          code: forms.step2.getFieldValue("emailCode"),
+          phonePrefix: this.getApplicationObj()?.organizationObj.phonePrefix,
+          type: "login",
+        }, oAuthParams).then(res => {
+          if (res.status === "ok") {
+            this.setState({current: 2, userId: res.data, username: res.data.split("/")[1]});
+          } else {
+            Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+          }
+        });
+      };
       if (this.state.verifyType === "email") {
-        this.setState({username: this.state.email});
+        this.setState({username: this.state.email}, () => {login();});
       } else if (this.state.verifyType === "phone") {
-        this.setState({username: this.state.phone});
+        this.setState({username: this.state.phone}, () => {login();});
       }
-      AuthBackend.login({
-        application: forms.step2.getFieldValue("application"),
-        organization: forms.step2.getFieldValue("organization"),
-        username: this.state.username,
-        name: this.state.name,
-        code: forms.step2.getFieldValue("emailCode"),
-        phonePrefix: this.state.application?.organizationObj.phonePrefix,
-        type: "login",
-      }, oAuthParams).then(res => {
-        if (res.status === "ok") {
-          this.setState({current: 2, userId: res.data, username: res.data.split("/")[1]});
-        } else {
-          Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
-        }
-      });
       break;
     default:
       break;
@@ -163,10 +163,10 @@ class ForgetPage extends React.Component {
 
   onFinish(values) {
     values.username = this.state.username;
-    values.userOwner = this.state.application?.organizationObj.name;
+    values.userOwner = this.getApplicationObj()?.organizationObj.name;
     UserBackend.setPassword(values.userOwner, values.username, "", values?.newPassword).then(res => {
       if (res.status === "ok") {
-        Setting.goToLogin(this, this.state.application);
+        Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
       } else {
         Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
       }
@@ -320,9 +320,9 @@ class ForgetPage extends React.Component {
           >
             {
               this.state.isFixed ? <Input disabled /> :
-                <Select
+                <Select virtual={false}
                   key={this.state.verifyType}
-                  virtual={false} style={{textAlign: "left"}}
+                  style={{textAlign: "left"}}
                   defaultValue={this.state.verifyType}
                   disabled={this.state.username === ""}
                   placeholder={i18next.t("forget:Choose email or phone")}
@@ -352,13 +352,15 @@ class ForgetPage extends React.Component {
             {this.state.verifyType === "email" ? (
               <CountDownInput
                 disabled={this.state.username === "" || this.state.verifyType === ""}
-                onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(this.state.application), this.state.name]}
+                method={"forget"}
+                onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(this.getApplicationObj()), this.state.name]}
                 application={application}
               />
             ) : (
               <CountDownInput
                 disabled={this.state.username === "" || this.state.verifyType === ""}
-                onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(this.state.application), this.state.name]}
+                method={"forget"}
+                onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(this.getApplicationObj()), this.state.name]}
                 application={application}
               />
             )}
@@ -487,63 +489,67 @@ class ForgetPage extends React.Component {
     }
 
     return (
-      <Row>
-        <Col span={24} style={{justifyContent: "center"}}>
+      <React.Fragment>
+        <CustomGithubCorner />
+        <div className="forget-content" style={{padding: Setting.isMobile() ? "0" : null, boxShadow: Setting.isMobile() ? "none" : null}}>
           <Row>
-            <Col span={24}>
-              <div style={{marginTop: "80px", marginBottom: "10px", textAlign: "center"}}>
-                {
-                  Setting.renderHelmet(application)
-                }
-                <CustomGithubCorner />
-                {
-                  Setting.renderLogo(application)
-                }
+            <Col span={24} style={{justifyContent: "center"}}>
+              <Row>
+                <Col span={24}>
+                  <div style={{marginTop: "80px", marginBottom: "10px", textAlign: "center"}}>
+                    {
+                      Setting.renderHelmet(application)
+                    }
+                    {
+                      Setting.renderLogo(application)
+                    }
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={24}>
+                  <div style={{textAlign: "center", fontSize: "28px"}}>
+                    {i18next.t("forget:Retrieve password")}
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={24}>
+                  <Steps
+                    current={this.state.current}
+                    style={{
+                      width: "90%",
+                      maxWidth: "500px",
+                      margin: "auto",
+                      marginTop: "80px",
+                    }}
+                  >
+                    <Step
+                      title={i18next.t("forget:Account")}
+                      icon={<UserOutlined />}
+                    />
+                    <Step
+                      title={i18next.t("forget:Verify")}
+                      icon={<SolutionOutlined />}
+                    />
+                    <Step
+                      title={i18next.t("forget:Reset")}
+                      icon={<KeyOutlined />}
+                    />
+                  </Steps>
+                </Col>
+              </Row>
+            </Col>
+            <Col span={24} style={{display: "flex", justifyContent: "center"}}>
+              <div style={{marginTop: "10px", textAlign: "center"}}>
+                {this.renderForm(application)}
               </div>
             </Col>
           </Row>
-          <Row>
-            <Col span={24}>
-              <div style={{textAlign: "center", fontSize: "28px"}}>
-                {i18next.t("forget:Retrieve password")}
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={24}>
-              <Steps
-                current={this.state.current}
-                style={{
-                  width: "90%",
-                  maxWidth: "500px",
-                  margin: "auto",
-                  marginTop: "80px",
-                }}
-              >
-                <Step
-                  title={i18next.t("forget:Account")}
-                  icon={<UserOutlined />}
-                />
-                <Step
-                  title={i18next.t("forget:Verify")}
-                  icon={<SolutionOutlined />}
-                />
-                <Step
-                  title={i18next.t("forget:Reset")}
-                  icon={<KeyOutlined />}
-                />
-              </Steps>
-            </Col>
-          </Row>
-        </Col>
-        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-          <div style={{marginTop: "10px", textAlign: "center"}}>
-            {this.renderForm(application)}
-          </div>
-        </Col>
-      </Row>
+        </div>
+      </React.Fragment>
     );
   }
 }
 
-export default ForgetPage;
+export default withRouter(ForgetPage);

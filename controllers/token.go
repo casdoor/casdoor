@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/astaxie/beego/utils/pagination"
+	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -150,12 +150,12 @@ func (c *ApiController) GetOAuthCode() {
 	codeChallenge := c.Input().Get("code_challenge")
 
 	if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
-		c.ResponseError("Challenge method should be S256")
+		c.ResponseError(c.T("auth:Challenge method should be S256"))
 		return
 	}
 	host := c.Ctx.Request.Host
 
-	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, host)
+	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, host, c.GetAcceptLanguage())
 	c.ServeJSON()
 }
 
@@ -204,7 +204,7 @@ func (c *ApiController) GetOAuthToken() {
 	}
 	host := c.Ctx.Request.Host
 
-	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, tag, avatar)
+	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, tag, avatar, c.GetAcceptLanguage())
 	c.SetTokenErrorHttpStatus()
 	c.ServeJSON()
 }
@@ -261,7 +261,7 @@ func (c *ApiController) TokenLogout() {
 	flag, application := object.DeleteTokenByAccessToken(token)
 	redirectUri := c.Input().Get("post_logout_redirect_uri")
 	state := c.Input().Get("state")
-	if application != nil && object.CheckRedirectUriValid(application, redirectUri) {
+	if application != nil && application.IsRedirectUriValid(redirectUri) {
 		c.Ctx.Redirect(http.StatusFound, redirectUri+"?state="+state)
 		return
 	}
@@ -290,7 +290,7 @@ func (c *ApiController) IntrospectToken() {
 		clientId = c.Input().Get("client_id")
 		clientSecret = c.Input().Get("client_secret")
 		if clientId == "" || clientSecret == "" {
-			c.ResponseError("empty clientId or clientSecret")
+			c.ResponseError(c.T("token:Empty clientId or clientSecret"))
 			c.Data["json"] = &object.TokenError{
 				Error: object.InvalidRequest,
 			}
@@ -301,7 +301,7 @@ func (c *ApiController) IntrospectToken() {
 	}
 	application := object.GetApplicationByClientId(clientId)
 	if application == nil || application.ClientSecret != clientSecret {
-		c.ResponseError("invalid application or wrong clientSecret")
+		c.ResponseError(c.T("token:Invalid application or wrong clientSecret"))
 		c.Data["json"] = &object.TokenError{
 			Error: object.InvalidClient,
 		}

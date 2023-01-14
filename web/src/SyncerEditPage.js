@@ -298,8 +298,8 @@ class SyncerEditPage extends React.Component {
     const syncer = Setting.deepCopy(this.state.syncer);
     SyncerBackend.updateSyncer(this.state.syncer.owner, this.state.syncerName, syncer)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             syncerName: this.state.syncer.name,
           });
@@ -310,22 +310,26 @@ class SyncerEditPage extends React.Component {
             this.props.history.push(`/syncers/${this.state.syncer.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateSyncerField("name", this.state.syncerName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteSyncer() {
     SyncerBackend.deleteSyncer(this.state.syncer)
-      .then(() => {
-        this.props.history.push("/syncers");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/syncers");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `Syncer failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

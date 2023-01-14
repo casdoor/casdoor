@@ -13,15 +13,10 @@
 // limitations under the License.
 
 import React from "react";
-import {Alert, Button, Result, message} from "antd";
-
-export function showMessage(type, text) {
-  if (type === "success") {
-    message.success(text);
-  } else if (type === "error") {
-    message.error(text);
-  }
-}
+import {Alert, Button, Result} from "antd";
+import {getWechatMessageEvent} from "./AuthBackend";
+import * as Setting from "../Setting";
+import * as Provider from "./Provider";
 
 export function renderMessage(msg) {
   if (msg !== null) {
@@ -33,7 +28,7 @@ export function renderMessage(msg) {
           description={msg}
           type="error"
           action={
-            <Button size="small" danger>
+            <Button size="small" type="primary" danger>
               Detail
             </Button>
           }
@@ -149,4 +144,13 @@ export function getQueryParamsFromState(state) {
   } else {
     return query;
   }
+}
+
+export function getEvent(application, provider) {
+  getWechatMessageEvent()
+    .then(res => {
+      if (res.data === "SCAN" || res.data === "subscribe") {
+        Setting.goToLink(Provider.getAuthUrl(application, provider, "signup"));
+      }
+    });
 }

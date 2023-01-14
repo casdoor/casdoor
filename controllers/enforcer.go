@@ -21,12 +21,6 @@ import (
 )
 
 func (c *ApiController) Enforce() {
-	userId := c.GetSessionUsername()
-	if userId == "" {
-		c.ResponseError("Please sign in first")
-		return
-	}
-
 	var permissionRule object.PermissionRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissionRule)
 	if err != nil {
@@ -34,17 +28,11 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
-	c.Data["json"] = object.Enforce(userId, &permissionRule)
+	c.Data["json"] = object.Enforce(&permissionRule)
 	c.ServeJSON()
 }
 
 func (c *ApiController) BatchEnforce() {
-	userId := c.GetSessionUsername()
-	if userId == "" {
-		c.ResponseError("Please sign in first")
-		return
-	}
-
 	var permissionRules []object.PermissionRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissionRules)
 	if err != nil {
@@ -52,14 +40,14 @@ func (c *ApiController) BatchEnforce() {
 		return
 	}
 
-	c.Data["json"] = object.BatchEnforce(userId, permissionRules)
+	c.Data["json"] = object.BatchEnforce(permissionRules)
 	c.ServeJSON()
 }
 
 func (c *ApiController) GetAllObjects() {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError("Please sign in first")
+		c.ResponseError(c.T("general:Please login first"))
 		return
 	}
 
@@ -70,7 +58,7 @@ func (c *ApiController) GetAllObjects() {
 func (c *ApiController) GetAllActions() {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError("Please sign in first")
+		c.ResponseError(c.T("general:Please login first"))
 		return
 	}
 
@@ -81,7 +69,7 @@ func (c *ApiController) GetAllActions() {
 func (c *ApiController) GetAllRoles() {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError("Please sign in first")
+		c.ResponseError(c.T("general:Please login first"))
 		return
 	}
 

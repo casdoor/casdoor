@@ -120,7 +120,7 @@ class AccountTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:visible"),
+        title: i18next.t("organization:Visible"),
         dataIndex: "visible",
         key: "visible",
         width: "120px",
@@ -133,7 +133,7 @@ class AccountTable extends React.Component {
         },
       },
       {
-        title: i18next.t("organization:viewRule"),
+        title: i18next.t("organization:View rule"),
         dataIndex: "viewRule",
         key: "viewRule",
         width: "155px",
@@ -160,7 +160,7 @@ class AccountTable extends React.Component {
         },
       },
       {
-        title: i18next.t("organization:modifyRule"),
+        title: i18next.t("organization:Modify rule"),
         dataIndex: "modifyRule",
         key: "modifyRule",
         width: "155px",
@@ -170,7 +170,7 @@ class AccountTable extends React.Component {
           }
 
           let options;
-          if (record.viewRule === "Admin") {
+          if (record.viewRule === "Admin" || record.name === "Is admin" || record.name === "Is global admin") {
             options = [
               {id: "Admin", name: "Admin"},
               {id: "Immutable", name: "Immutable"},

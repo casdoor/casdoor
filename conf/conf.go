@@ -15,14 +15,24 @@
 package conf
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"runtime"
 	"strconv"
 	"strings"
 
-	"github.com/astaxie/beego"
+	"github.com/beego/beego"
 )
+
+type Quota struct {
+	Organization int `json:"organization"`
+	User         int `json:"user"`
+	Application  int `json:"application"`
+	Provider     int `json:"provider"`
+}
+
+var quota = &Quota{-1, -1, -1, -1}
 
 func init() {
 	// this array contains the beego configuration items that may be modified via env
@@ -33,6 +43,17 @@ func init() {
 			if err != nil {
 				panic(err)
 			}
+		}
+	}
+	initQuota()
+}
+
+func initQuota() {
+	res := beego.AppConfig.String("quota")
+	if res != "" {
+		err := json.Unmarshal([]byte(res), quota)
+		if err != nil {
+			panic(err)
 		}
 	}
 }
@@ -94,4 +115,18 @@ func GetConfigBatchSize() int {
 		res = 100
 	}
 	return res
+}
+
+func GetConfigQuota() *Quota {
+	return quota
+}
+
+func GetConfigRealDataSourceName(driverName string) string {
+	var dataSourceName string
+	if driverName != "mysql" {
+		dataSourceName = GetConfigDataSourceName()
+	} else {
+		dataSourceName = GetConfigDataSourceName() + GetConfigString("dbName")
+	}
+	return dataSourceName
 }

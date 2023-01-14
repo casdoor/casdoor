@@ -26,16 +26,22 @@ import (
 
 type I18nData map[string]map[string]string
 
-var reI18n *regexp.Regexp
+var (
+	reI18nFrontend          *regexp.Regexp
+	reI18nBackendObject     *regexp.Regexp
+	reI18nBackendController *regexp.Regexp
+)
 
 func init() {
-	reI18n, _ = regexp.Compile("i18next.t\\(\"(.*?)\"\\)")
+	reI18nFrontend, _ = regexp.Compile("i18next.t\\(\"(.*?)\"\\)")
+	reI18nBackendObject, _ = regexp.Compile("i18n.Translate\\((.*?)\"\\)")
+	reI18nBackendController, _ = regexp.Compile("c.T\\((.*?)\"\\)")
 }
 
-func getAllI18nStrings(fileContent string) []string {
+func getAllI18nStringsFrontend(fileContent string) []string {
 	res := []string{}
 
-	matches := reI18n.FindAllStringSubmatch(fileContent, -1)
+	matches := reI18nFrontend.FindAllStringSubmatch(fileContent, -1)
 	if matches == nil {
 		return res
 	}
@@ -46,17 +52,39 @@ func getAllI18nStrings(fileContent string) []string {
 	return res
 }
 
-func getAllJsFilePaths() []string {
-	path := "../web/src"
-
+func getAllI18nStringsBackend(fileContent string, isObjectPackage bool) []string {
 	res := []string{}
-	err := filepath.Walk(path,
+	if isObjectPackage {
+		matches := reI18nBackendObject.FindAllStringSubmatch(fileContent, -1)
+		if matches == nil {
+			return res
+		}
+		for _, match := range matches {
+			match := strings.SplitN(match[1], ",", 2)
+			res = append(res, match[1][2:])
+		}
+	} else {
+		matches := reI18nBackendController.FindAllStringSubmatch(fileContent, -1)
+		if matches == nil {
+			return res
+		}
+		for _, match := range matches {
+			res = append(res, match[1][1:])
+		}
+	}
+
+	return res
+}
+
+func getAllFilePathsInFolder(folder string, fileSuffix string) []string {
+	res := []string{}
+	err := filepath.Walk(folder,
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
 
-			if !strings.HasSuffix(info.Name(), ".js") {
+			if !strings.HasSuffix(info.Name(), fileSuffix) {
 				return nil
 			}
 
@@ -71,19 +99,32 @@ func getAllJsFilePaths() []string {
 	return res
 }
 
-func parseToData() *I18nData {
+func parseEnData(category string) *I18nData {
+	var paths []string
+	if category == "backend" {
+		paths = getAllFilePathsInFolder("../", ".go")
+	} else {
+		paths = getAllFilePathsInFolder("../web/src", ".js")
+	}
+
 	allWords := []string{}
-	paths := getAllJsFilePaths()
 	for _, path := range paths {
 		fileContent := util.ReadStringFromPath(path)
-		words := getAllI18nStrings(fileContent)
+
+		var words []string
+		if category == "backend" {
+			isObjectPackage := strings.Contains(path, "object")
+			words = getAllI18nStringsBackend(fileContent, isObjectPackage)
+		} else {
+			words = getAllI18nStringsFrontend(fileContent)
+		}
 		allWords = append(allWords, words...)
 	}
 	fmt.Printf("%v\n", allWords)
 
 	data := I18nData{}
 	for _, word := range allWords {
-		tokens := strings.Split(word, ":")
+		tokens := strings.SplitN(word, ":", 2)
 		namespace := tokens[0]
 		key := tokens[1]
 

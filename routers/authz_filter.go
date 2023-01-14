@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/astaxie/beego/context"
+	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/util"
 )
@@ -63,11 +63,16 @@ func getObject(ctx *context.Context) (string, string) {
 	if method == http.MethodGet {
 		// query == "?id=built-in/admin"
 		id := ctx.Input.Query("id")
-		if id == "" {
-			return "", ""
+		if id != "" {
+			return util.GetOwnerAndNameFromId(id)
 		}
 
-		return util.GetOwnerAndNameFromId(id)
+		owner := ctx.Input.Query("owner")
+		if owner != "" {
+			return owner, ""
+		}
+
+		return "", ""
 	} else {
 		body := ctx.Input.RequestBody
 

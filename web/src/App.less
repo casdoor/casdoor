@@ -1,6 +1,5 @@
 /* stylelint-disable at-rule-name-case */
 /* stylelint-disable selector-class-pattern */
-@import "~antd/dist/antd.less";
 
 @StaticBaseUrl: "https://cdn.casbin.org";
 
@@ -14,21 +13,24 @@
 }
 
 .App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
 }
 
 .App-link {
   color: #61dafb;
 }
 
-#root{
+img {
+  border-style: none;
+  vertical-align: middle;
+}
+
+#root {
   height: 100%;
 }
 
@@ -37,35 +39,20 @@
   flex-direction: column;
   height: 100%;
   min-height: 100vh;
-  background-color: #f5f5f5;
 }
 
-#content-wrap {
-  display: flex;
-  flex: 1 1 0;
-  align-items: stretch;
-  width: 100%;
+.panel-logo {
+  margin-bottom: 30px;
 }
 
-#login-content-wrap {
-  display: flex;
-  flex: 1 1 0;
-  width: 100%;
-}
-
-#footer {
-  bottom: 0;
-  width: 100%;
-  height: 70px; /* Footer height */
-}
-
-.language_box {
+.language-box {
   background: url("@{StaticBaseUrl}/img/muti_language.svg");
   background-size: 25px, 25px;
   background-position: center;
   background-repeat: no-repeat;
+  border-radius: 5px;
   width: 45px;
-  height: 65px;
+  height: 100%;
   float: right;
   cursor: pointer;
 
@@ -74,9 +61,32 @@
   }
 }
 
+.login-form .language-box {
+  height: 65px;
+}
+
+.theme-box {
+  background: url("@{StaticBaseUrl}/img/muti_language.svg");
+  background-size: 25px, 25px;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  border-radius: 5px;
+  width: 45px;
+  height: 100%;
+  float: right;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f5f5f5 !important;
+  }
+}
+
 .rightDropDown {
+  border-radius: 7px;
+
   &:hover {
     background-color: #f5f5f5;
+    color: black;
   }
 }
 
@@ -87,9 +97,60 @@
   align-items: stretch;
 }
 
+.side-image {
+  display: none;
+
+  @media screen and (min-width: 1100px) {
+    display: block;
+    position: relative;
+    width: 500px;
+    border-right: 0.5px solid rgb(196 203 215);
+  }
+}
+
+.forget-content {
+  padding: 10px 100px 20px;
+  margin: 30px auto;
+  border: 2px solid #fff;
+  border-radius: 7px;
+  background-color: rgb(255 255 255);
+  box-shadow: 0 0 20px rgb(0 0 0 / 20%);
+}
+
+.login-panel {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  display: flex;
+  background-color: rgb(255 255 255);
+  overflow: hidden;
+}
+
+.login-form {
+  text-align: center;
+  padding: 30px;
+}
+
+.login-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  margin: 0 auto;
+  position: relative;
+}
+
 .loginBackground {
-  height: 100%;
-  background: #ffffff no-repeat;
+  flex: auto;
+  display: flex;
+  align-items: center;
+  background: #fff no-repeat;
   background-size: 100% 100%;
   background-attachment: fixed;
+}
+
+.ant-menu-horizontal {
+  border-bottom: none !important;
+  margin-right: 30px;
+  right: 230px;
 }

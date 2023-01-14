@@ -65,6 +65,7 @@ class CertEditPage extends React.Component {
   }
 
   renderCert() {
+    const editorWidth = Setting.isMobile() ? 22 : 9;
     return (
       <Card size="small" title={
         <div>
@@ -166,7 +167,7 @@ class CertEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("cert:Certificate"), i18next.t("cert:Certificate - Tooltip"))} :
           </Col>
-          <Col span={9} >
+          <Col span={editorWidth} >
             <Button style={{marginRight: "10px", marginBottom: "10px"}} onClick={() => {
               copy(this.state.cert.certificate);
               Setting.showMessage("success", i18next.t("cert:Certificate copied to clipboard successfully"));
@@ -189,7 +190,7 @@ class CertEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("cert:Private key"), i18next.t("cert:Private key - Tooltip"))} :
           </Col>
-          <Col span={9} >
+          <Col span={editorWidth} >
             <Button style={{marginRight: "10px", marginBottom: "10px"}} onClick={() => {
               copy(this.state.cert.privateKey);
               Setting.showMessage("success", i18next.t("cert:Private key copied to clipboard successfully"));
@@ -217,8 +218,8 @@ class CertEditPage extends React.Component {
     const cert = Setting.deepCopy(this.state.cert);
     CertBackend.updateCert(this.state.cert.owner, this.state.certName, cert)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             certName: this.state.cert.name,
           });
@@ -229,22 +230,26 @@ class CertEditPage extends React.Component {
             this.props.history.push(`/certs/${this.state.cert.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateCertField("name", this.state.certName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteCert() {
     CertBackend.deleteCert(this.state.cert)
-      .then(() => {
-        this.props.history.push("/certs");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/certs");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `Cert failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

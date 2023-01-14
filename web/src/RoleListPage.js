@@ -25,7 +25,7 @@ class RoleListPage extends BaseListPage {
   newRole() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "built-in",
+      owner: this.props.account.owner,
       name: `role_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Role - ${randomName}`,
@@ -40,46 +40,38 @@ class RoleListPage extends BaseListPage {
     const newRole = this.newRole();
     RoleBackend.addRole(newRole)
       .then((res) => {
-        this.props.history.push({pathname: `/roles/${newRole.owner}/${newRole.name}`, mode: "add"});
-      }
-      )
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/roles/${newRole.owner}/${newRole.name}`, mode: "add"});
+          Setting.showMessage("success", i18next.t("general:Successfully added"));
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Role failed to add: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteRole(i) {
     RoleBackend.deleteRole(this.state.data[i])
       .then((res) => {
-        Setting.showMessage("success", "Role deleted successfully");
-        this.setState({
-          data: Setting.deleteRow(this.state.data, i),
-          pagination: {total: this.state.pagination.total - 1},
-        });
-      }
-      )
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+          this.setState({
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Role failed to delete: ${error}`);
+
       });
   }
 
   renderTable(roles) {
     const columns = [
-      {
-        title: i18next.t("general:Organization"),
-        dataIndex: "owner",
-        key: "owner",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("owner"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/organizations/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
       {
         title: i18next.t("general:Name"),
         dataIndex: "name",
@@ -91,6 +83,21 @@ class RoleListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <Link to={`/roles/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "owner",
+        key: "owner",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("owner"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
               {text}
             </Link>
           );
@@ -172,7 +179,7 @@ class RoleListPage extends BaseListPage {
                 title={`Sure to delete role: ${record.name} ?`}
                 onConfirm={() => this.deleteRole(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );
@@ -211,7 +218,7 @@ class RoleListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    RoleBackend.getRoles("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    RoleBackend.getRoles(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
@@ -224,6 +231,13 @@ class RoleListPage extends BaseListPage {
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
           });
+        } else {
+          if (res.msg.includes("Unauthorized")) {
+            this.setState({
+              loading: false,
+              isAuthorized: false,
+            });
+          }
         }
       });
   };

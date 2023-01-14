@@ -16,7 +16,6 @@ import React from "react";
 import {Button, Result} from "antd";
 import i18next from "i18next";
 import {authConfig} from "./Auth";
-import * as Util from "./Util";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Setting from "../Setting";
 
@@ -34,7 +33,7 @@ class ResultPage extends React.Component {
     if (this.state.applicationName !== undefined) {
       this.getApplication();
     } else {
-      Util.showMessage("error", `Unknown application name: ${this.state.applicationName}`);
+      Setting.showMessage("error", `Unknown application name: ${this.state.applicationName}`);
     }
   }
 
@@ -69,7 +68,7 @@ class ResultPage extends React.Component {
               if (linkInStorage !== null && linkInStorage !== "") {
                 Setting.goToLink(linkInStorage);
               } else {
-                Setting.goToLogin(this, application);
+                Setting.redirectToLoginPage(application);
               }
             }}>
               {i18next.t("login:Sign In")}

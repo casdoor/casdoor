@@ -23,6 +23,7 @@ import ja from "./locales/ja/data.json";
 import es from "./locales/es/data.json";
 import * as Conf from "./Conf";
 import * as Setting from "./Setting";
+import {initReactI18next} from "react-i18next";
 
 const resources = {
   en: en,
@@ -80,7 +81,7 @@ function initLanguage() {
   return language;
 }
 
-i18n.init({
+i18n.use(initReactI18next).init({
   lng: initLanguage(),
 
   resources: resources,
@@ -88,7 +89,7 @@ i18n.init({
   keySeparator: false,
 
   interpolation: {
-    escapeValue: false,
+    escapeValue: true,
   },
   // debug: true,
   saveMissing: true,

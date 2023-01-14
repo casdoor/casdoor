@@ -17,7 +17,8 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/astaxie/beego/utils/pagination"
+	"github.com/beego/beego/utils/pagination"
+	xormadapter "github.com/casbin/xorm-adapter/v3"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -31,8 +32,8 @@ func (c *ApiController) GetCasbinAdapters() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetCasbinAdapters(owner)
-		c.ServeJSON()
+		adapters := object.GetCasbinAdapters(owner)
+		c.ResponseOk(adapters)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetCasbinAdapterCount(owner, field, value)))
@@ -43,8 +44,8 @@ func (c *ApiController) GetCasbinAdapters() {
 
 func (c *ApiController) GetCasbinAdapter() {
 	id := c.Input().Get("id")
-	c.Data["json"] = object.GetCasbinAdapter(id)
-	c.ServeJSON()
+	adapter := object.GetCasbinAdapter(id)
+	c.ResponseOk(adapter)
 }
 
 func (c *ApiController) UpdateCasbinAdapter() {
@@ -89,6 +90,68 @@ func (c *ApiController) SyncPolicies() {
 	id := c.Input().Get("id")
 	adapter := object.GetCasbinAdapter(id)
 
-	c.Data["json"] = object.SyncPolicies(adapter)
+	policies, err := object.SyncPolicies(adapter)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(policies)
+}
+
+func (c *ApiController) UpdatePolicy() {
+	id := c.Input().Get("id")
+	adapter := object.GetCasbinAdapter(id)
+	var policies []xormadapter.CasbinRule
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policies)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	affected, err := object.UpdatePolicy(util.CasbinToSlice(policies[0]), util.CasbinToSlice(policies[1]), adapter)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.Data["json"] = wrapActionResponse(affected)
+	c.ServeJSON()
+}
+
+func (c *ApiController) AddPolicy() {
+	id := c.Input().Get("id")
+	adapter := object.GetCasbinAdapter(id)
+	var policy xormadapter.CasbinRule
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	affected, err := object.AddPolicy(util.CasbinToSlice(policy), adapter)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.Data["json"] = wrapActionResponse(affected)
+	c.ServeJSON()
+}
+
+func (c *ApiController) RemovePolicy() {
+	id := c.Input().Get("id")
+	adapter := object.GetCasbinAdapter(id)
+	var policy xormadapter.CasbinRule
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	affected, err := object.RemovePolicy(util.CasbinToSlice(policy), adapter)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.Data["json"] = wrapActionResponse(affected)
 	c.ServeJSON()
 }

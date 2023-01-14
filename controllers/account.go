@@ -64,6 +64,10 @@ type RequestForm struct {
 	RelayState   string `json:"relayState"`
 	SamlRequest  string `json:"samlRequest"`
 	SamlResponse string `json:"samlResponse"`
+
+	CaptchaType  string `json:"captchaType"`
+	CaptchaToken string `json:"captchaToken"`
+	ClientSecret string `json:"clientSecret"`
 }
 
 type Response struct {
@@ -98,7 +102,7 @@ type Captcha struct {
 // @router /signup [post]
 func (c *ApiController) Signup() {
 	if c.GetSessionUsername() != "" {
-		c.ResponseError("Please sign out first before signing up", c.GetSessionUsername())
+		c.ResponseError(c.T("account:Please sign out first before signing up"), c.GetSessionUsername())
 		return
 	}
 
@@ -111,21 +115,21 @@ func (c *ApiController) Signup() {
 
 	application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 	if !application.EnableSignUp {
-		c.ResponseError("The application does not allow to sign up new account")
+		c.ResponseError(c.T("account:The application does not allow to sign up new account"))
 		return
 	}
 
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", form.Organization))
-	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.FirstName, form.LastName, form.Email, form.Phone, form.Affiliation)
+	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.FirstName, form.LastName, form.Email, form.Phone, form.Affiliation, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
 		return
 	}
 
 	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && form.Email != "" {
-		checkResult := object.CheckVerificationCode(form.Email, form.EmailCode)
+		checkResult := object.CheckVerificationCode(form.Email, form.EmailCode, c.GetAcceptLanguage())
 		if len(checkResult) != 0 {
-			c.ResponseError(fmt.Sprintf("Email: %s", checkResult))
+			c.ResponseError(c.T("account:Email: %s"), checkResult)
 			return
 		}
 	}
@@ -133,9 +137,9 @@ func (c *ApiController) Signup() {
 	var checkPhone string
 	if application.IsSignupItemVisible("Phone") && form.Phone != "" {
 		checkPhone = fmt.Sprintf("+%s%s", form.PhonePrefix, form.Phone)
-		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode)
+		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode, c.GetAcceptLanguage())
 		if len(checkResult) != 0 {
-			c.ResponseError(fmt.Sprintf("Phone: %s", checkResult))
+			c.ResponseError(c.T("account:Phone: %s"), checkResult)
 			return
 		}
 	}
@@ -157,9 +161,9 @@ func (c *ApiController) Signup() {
 		username = id
 	}
 
-	initScore, err := getInitScore()
+	initScore, err := getInitScore(organization)
 	if err != nil {
-		c.ResponseError(fmt.Errorf("get init score failed, error: %w", err).Error())
+		c.ResponseError(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err).Error())
 		return
 	}
 
@@ -205,7 +209,7 @@ func (c *ApiController) Signup() {
 
 	affected := object.AddUser(user)
 	if !affected {
-		c.ResponseError(fmt.Sprintf("Failed to create user, user information is invalid: %s", util.StructToJson(user)))
+		c.ResponseError(c.T("account:Invalid information"), util.StructToJson(user))
 		return
 	}
 
@@ -238,11 +242,11 @@ func (c *ApiController) Signup() {
 // @router /logout [get,post]
 func (c *ApiController) Logout() {
 	user := c.GetSessionUsername()
+	object.DeleteSessionId(user, c.Ctx.Input.CruSession.SessionID())
 	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 	application := c.GetSessionApplication()
-	c.SetSessionUsername("")
-	c.SetSessionData(nil)
+	c.ClearUserSession()
 
 	if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
 		c.ResponseOk(user)
@@ -268,12 +272,17 @@ func (c *ApiController) GetAccount() {
 		user = object.ExtendManagedAccountsWithUser(user)
 	}
 
+	object.ExtendUserWithRolesAndPermissions(user)
+
+	user.Permissions = object.GetMaskedPermissions(user.Permissions)
+	user.Roles = object.GetMaskedRoles(user.Roles)
+
 	organization := object.GetMaskedOrganization(object.GetOrganizationByUser(user))
 	resp := Response{
 		Status: "ok",
 		Sub:    user.Id,
 		Name:   user.Name,
-		Data:   user,
+		Data:   object.GetMaskedUser(user),
 		Data2:  organization,
 	}
 	c.Data["json"] = resp
@@ -309,7 +318,7 @@ func (c *ApiController) GetCaptcha() {
 	applicationId := c.Input().Get("applicationId")
 	isCurrentProvider := c.Input().Get("isCurrentProvider")
 
-	captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider)
+	captchaProvider, err := object.GetCaptchaProviderByApplication(applicationId, isCurrentProvider, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

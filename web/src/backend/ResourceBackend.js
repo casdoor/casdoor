@@ -18,6 +18,9 @@ export function getResources(owner, user, page = "", pageSize = "", field = "", 
   return fetch(`${Setting.ServerUrl}/api/get-resources?owner=${owner}&user=${user}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -25,6 +28,9 @@ export function getResource(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-resource?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -34,6 +40,9 @@ export function updateResource(owner, name, resource) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newResource),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -43,6 +52,9 @@ export function addResource(resource) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newResource),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -52,6 +64,9 @@ export function deleteResource(resource, provider = "") {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newResource),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -63,5 +78,8 @@ export function uploadResource(owner, user, tag, parent, fullFilePath, file, pro
     body: formData,
     method: "POST",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }

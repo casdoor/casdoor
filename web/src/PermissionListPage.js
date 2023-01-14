@@ -29,7 +29,7 @@ class PermissionListPage extends BaseListPage {
       name: `permission_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Permission - ${randomName}`,
-      users: [this.props.account.name],
+      users: [`${this.props.account.owner}/${this.props.account.name}`],
       roles: [],
       domains: [],
       resourceType: "Application",
@@ -48,50 +48,39 @@ class PermissionListPage extends BaseListPage {
     const newPermission = this.newPermission();
     PermissionBackend.addPermission(newPermission)
       .then((res) => {
-        if (res.msg !== "") {
-          Setting.showMessage("error", res.msg);
-          return;
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/permissions/${newPermission.owner}/${newPermission.name}`, mode: "add"});
+          Setting.showMessage("success", i18next.t("general:Successfully added"));
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
         }
-        this.props.history.push({pathname: `/permissions/${newPermission.owner}/${newPermission.name}`, mode: "add"});
-      }
-      )
+      })
       .catch(error => {
-        Setting.showMessage("error", `Permission failed to add: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deletePermission(i) {
     PermissionBackend.deletePermission(this.state.data[i])
       .then((res) => {
-        Setting.showMessage("success", "Permission deleted successfully");
-        this.setState({
-          data: Setting.deleteRow(this.state.data, i),
-          pagination: {total: this.state.pagination.total - 1},
-        });
-      }
-      )
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+          this.setState({
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
       .catch(error => {
-        Setting.showMessage("error", `Permission failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   renderTable(permissions) {
     const columns = [
-      {
-        title: i18next.t("general:Organization"),
-        dataIndex: "owner",
-        key: "owner",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("owner"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/organizations/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
+      // https://github.com/ant-design/ant-design/issues/22184
       {
         title: i18next.t("general:Name"),
         dataIndex: "name",
@@ -103,6 +92,21 @@ class PermissionListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <Link to={`/permissions/${record.owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "owner",
+        key: "owner",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("owner"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
               {text}
             </Link>
           );
@@ -300,7 +304,7 @@ class PermissionListPage extends BaseListPage {
                 title={`Sure to delete permission: ${record.name} ?`}
                 onConfirm={() => this.deletePermission(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="danger">{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
               </Popconfirm>
             </div>
           );
@@ -341,7 +345,7 @@ class PermissionListPage extends BaseListPage {
     this.setState({loading: true});
 
     const getPermissions = Setting.isLocalAdminUser(this.props.account) ? PermissionBackend.getPermissions : PermissionBackend.getPermissionsBySubmitter;
-    getPermissions("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    getPermissions(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
@@ -354,6 +358,13 @@ class PermissionListPage extends BaseListPage {
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
           });
+        } else {
+          if (res.msg.includes("Unauthorized")) {
+            this.setState({
+              loading: false,
+              isAuthorized: false,
+            });
+          }
         }
       });
   };

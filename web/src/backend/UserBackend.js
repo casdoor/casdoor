@@ -19,6 +19,9 @@ export function getGlobalUsers(page, pageSize, field = "", value = "", sortField
   return fetch(`${Setting.ServerUrl}/api/get-global-users?p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -26,6 +29,9 @@ export function getUsers(owner, page = "", pageSize = "", field = "", value = ""
   return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -33,6 +39,9 @@ export function getUser(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-user?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -42,6 +51,9 @@ export function updateUser(owner, name, user) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newUser),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -51,6 +63,9 @@ export function addUser(user) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newUser),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -60,6 +75,9 @@ export function deleteUser(user) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newUser),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
@@ -85,14 +103,18 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
     method: "POST",
     credentials: "include",
     body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
-export function sendCode(checkType, checkId, checkKey, dest, type, applicationId, checkUser) {
+export function sendCode(checkType, checkId, checkKey, method, dest, type, applicationId, checkUser) {
   const formData = new FormData();
   formData.append("checkType", checkType);
   formData.append("checkId", checkId);
   formData.append("checkKey", checkKey);
+  formData.append("method", method);
   formData.append("dest", dest);
   formData.append("type", type);
   formData.append("applicationId", applicationId);
@@ -101,6 +123,9 @@ export function sendCode(checkType, checkId, checkKey, dest, type, applicationId
     method: "POST",
     credentials: "include",
     body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json()).then(res => {
     if (res.status === "ok") {
       Setting.showMessage("success", i18next.t("user:Code Sent"));
@@ -121,6 +146,9 @@ export function verifyCaptcha(captchaType, captchaToken, clientSecret) {
     method: "POST",
     credentials: "include",
     body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json()).then(res => {
     if (res.status === "ok") {
       if (res.data) {
@@ -145,11 +173,17 @@ export function resetEmailOrPhone(dest, type, code) {
     method: "POST",
     credentials: "include",
     body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }
 
 export function getCaptcha(owner, name, isCurrentProvider) {
   return fetch(`${Setting.ServerUrl}/api/get-captcha?applicationId=${owner}/${encodeURIComponent(name)}&isCurrentProvider=${isCurrentProvider}`, {
     method: "GET",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json()).then(res => res.data);
 }

@@ -222,6 +222,13 @@ class RecordListPage extends BaseListPage {
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
           });
+        } else {
+          if (res.data.includes("Please login first")) {
+            this.setState({
+              loading: false,
+              isAuthorized: false,
+            });
+          }
         }
       });
   };

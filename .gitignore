@@ -28,4 +28,5 @@ files/
 lastupdate.tmp
 commentsRouter*.go
 
-conf/app.conf
+# ignore build result
+casdoor

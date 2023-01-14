@@ -92,6 +92,12 @@ func UpdateModel(id string, modelObj *Model) bool {
 		return false
 	}
 
+	if name != modelObj.Name {
+		err := modelChangeTrigger(name, modelObj.Name)
+		if err != nil {
+			return false
+		}
+	}
 	// check model grammar
 	_, err := model.NewModelFromString(modelObj.ModelText)
 	if err != nil {
@@ -126,4 +132,23 @@ func DeleteModel(model *Model) bool {
 
 func (model *Model) GetId() string {
 	return fmt.Sprintf("%s/%s", model.Owner, model.Name)
+}
+
+func modelChangeTrigger(oldName string, newName string) error {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
+
+	permission := new(Permission)
+	permission.Model = newName
+	_, err = session.Where("model=?", oldName).Update(permission)
+	if err != nil {
+		return err
+	}
+
+	return session.Commit()
 }

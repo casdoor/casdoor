@@ -15,9 +15,12 @@
 package idp
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -167,7 +170,10 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		Email:       dtUserInfo.Email,
 		AvatarUrl:   dtUserInfo.AvatarUrl,
 	}
-
+	isUserInOrg, err := idp.isUserInOrg(userInfo.UnionId)
+	if !isUserInOrg {
+		return nil, err
+	}
 	return &userInfo, nil
 }
 
@@ -193,4 +199,65 @@ func (idp *DingTalkIdProvider) postWithBody(body interface{}, url string) ([]byt
 	}(resp.Body)
 
 	return data, nil
+}
+
+func (idp *DingTalkIdProvider) getInnerAppAccessToken() string {
+	appKey := idp.Config.ClientID
+	appSecret := idp.Config.ClientSecret
+	body := make(map[string]string)
+	body["appKey"] = appKey
+	body["appSecret"] = appSecret
+	bodyData, err := json.Marshal(body)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	reader := bytes.NewReader(bodyData)
+	request, err := http.NewRequest("POST", "https://api.dingtalk.com/v1.0/oauth2/accessToken", reader)
+	request.Header.Set("Content-Type", "application/json;charset=UTF-8")
+	resp, err := idp.Client.Do(request)
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	var data struct {
+		ExpireIn    int    `json:"expireIn"`
+		AccessToken string `json:"accessToken"`
+	}
+	err = json.Unmarshal(respBytes, &data)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	return data.AccessToken
+}
+
+func (idp *DingTalkIdProvider) isUserInOrg(unionId string) (bool, error) {
+	body := make(map[string]string)
+	body["unionid"] = unionId
+	bodyData, err := json.Marshal(body)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	reader := bytes.NewReader(bodyData)
+	accessToken := idp.getInnerAppAccessToken()
+	request, _ := http.NewRequest("POST", "https://oapi.dingtalk.com/topapi/user/getbyunionid?access_token="+accessToken, reader)
+	request.Header.Set("Content-Type", "application/json;charset=UTF-8")
+	resp, err := idp.Client.Do(request)
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	var data struct {
+		ErrCode    int    `json:"errcode"`
+		ErrMessage string `json:"errmsg"`
+	}
+	err = json.Unmarshal(respBytes, &data)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	if data.ErrCode == 60121 {
+		return false, fmt.Errorf("the user is not found in the organization where clientId and clientSecret belong")
+	} else if data.ErrCode != 0 {
+		return false, fmt.Errorf(data.ErrMessage)
+	}
+	return true, nil
 }

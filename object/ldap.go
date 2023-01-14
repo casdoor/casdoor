@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/astaxie/beego"
+	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 	"github.com/thanhpk/randstr"
@@ -409,6 +409,7 @@ func SyncLdapUsers(owner string, users []LdapRespUser, ldapId string) (*[]LdapRe
 				}
 			}
 		}
+
 		if !found && !AddUser(&User{
 			Owner:       owner,
 			Name:        buildLdapUserName(user.Uid, user.UidNumber),

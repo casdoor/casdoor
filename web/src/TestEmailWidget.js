@@ -13,32 +13,33 @@
 // limitations under the License.
 
 import * as Setting from "./Setting";
+import i18next from "i18next";
 
 export function sendTestEmail(provider, email) {
   testEmailProvider(provider, email)
     .then((res) => {
-      if (res.msg === "") {
+      if (res.status === "ok") {
         Setting.showMessage("success", "Successfully send email");
       } else {
         Setting.showMessage("error", res.msg);
       }
     })
     .catch(error => {
-      Setting.showMessage("error", `Failed to connect to server: ${error}`);
+      Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
     });
 }
 
 export function connectSmtpServer(provider) {
   testEmailProvider(provider)
     .then((res) => {
-      if (res.msg === "") {
+      if (res.status === "ok") {
         Setting.showMessage("success", "Successfully connecting smtp server");
       } else {
         Setting.showMessage("error", res.msg);
       }
     })
     .catch(error => {
-      Setting.showMessage("error", `Failed to connect to server: ${error}`);
+      Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
     });
 }
 

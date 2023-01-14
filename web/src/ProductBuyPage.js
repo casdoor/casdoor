@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Descriptions, Spin} from "antd";
+import {Button, Descriptions, Modal, Spin} from "antd";
+import {CheckCircleTwoTone} from "@ant-design/icons";
 import i18next from "i18next";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as Setting from "./Setting";
@@ -26,6 +27,7 @@ class ProductBuyPage extends React.Component {
       productName: props.match?.params.productName,
       product: null,
       isPlacingOrder: false,
+      qrCodeModalProvider: null,
     };
   }
 
@@ -34,6 +36,10 @@ class ProductBuyPage extends React.Component {
   }
 
   getProduct() {
+    if (this.state.productName === undefined) {
+      return;
+    }
+
     ProductBackend.getProduct("admin", this.state.productName)
       .then((product) => {
         this.setState({
@@ -75,17 +81,24 @@ class ProductBuyPage extends React.Component {
   }
 
   buyProduct(product, provider) {
+    if (provider.clientId.startsWith("http")) {
+      this.setState({
+        qrCodeModalProvider: provider,
+      });
+      return;
+    }
+
     this.setState({
       isPlacingOrder: true,
     });
 
     ProductBackend.buyProduct(this.state.product.owner, this.state.productName, provider.name)
       .then((res) => {
-        if (res.msg === "") {
+        if (res.status === "ok") {
           const payUrl = res.data;
           Setting.goToLink(payUrl);
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
 
           this.setState({
             isPlacingOrder: false,
@@ -93,8 +106,47 @@ class ProductBuyPage extends React.Component {
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
+  }
+
+  renderQrCodeModal() {
+    if (this.state.qrCodeModalProvider === undefined || this.state.qrCodeModalProvider === null) {
+      return null;
+    }
+
+    return (
+      <Modal title={
+        <div>
+          <CheckCircleTwoTone twoToneColor="rgb(45,120,213)" />
+          {" " + i18next.t("product:Please scan the QR code to pay")}
+        </div>
+      }
+      open={this.state.qrCodeModalProvider !== undefined && this.state.qrCodeModalProvider !== null}
+      onOk={() => {
+        Setting.goToLink(this.state.product.returnUrl);
+      }}
+      onCancel={() => {
+        this.setState({
+          qrCodeModalProvider: null,
+        });
+      }}
+      okText={i18next.t("product:I have completed the payment")}
+      cancelText={i18next.t("general:Cancel")}>
+        <p key={this.state.qrCodeModalProvider?.name}>
+          {
+            i18next.t("product:Please provide your username in the remark")
+          }
+          :&nbsp;&nbsp;
+          {
+            Setting.getTag("default", this.props.account.name)
+          }
+          <br />
+          <br />
+          <img src={this.state.qrCodeModalProvider?.clientId} alt={this.state.qrCodeModalProvider?.name} width={"472px"} style={{marginBottom: "20px"}} />
+        </p>
+      </Modal>
+    );
   }
 
   getPayButton(provider) {
@@ -160,10 +212,10 @@ class ProductBuyPage extends React.Component {
           <Descriptions title={i18next.t("product:Buy Product")} bordered>
             <Descriptions.Item label={i18next.t("general:Name")} span={3}>
               <span style={{fontSize: 28}}>
-                {product?.displayName}
+                {Setting.getLanguageText(product?.displayName)}
               </span>
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{product?.detail}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Tag")}><span style={{fontSize: 16}}>{product?.tag}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:SKU")}><span style={{fontSize: 16}}>{product?.name}</span></Descriptions.Item>
             <Descriptions.Item label={i18next.t("product:Image")} span={3}>
@@ -185,6 +237,9 @@ class ProductBuyPage extends React.Component {
             </Descriptions.Item>
           </Descriptions>
         </Spin>
+        {
+          this.renderQrCodeModal()
+        }
       </div>
     );
   }

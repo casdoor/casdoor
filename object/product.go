@@ -27,15 +27,16 @@ type Product struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
-	Image     string   `xorm:"varchar(100)" json:"image"`
-	Detail    string   `xorm:"varchar(100)" json:"detail"`
-	Tag       string   `xorm:"varchar(100)" json:"tag"`
-	Currency  string   `xorm:"varchar(100)" json:"currency"`
-	Price     float64  `json:"price"`
-	Quantity  int      `json:"quantity"`
-	Sold      int      `json:"sold"`
-	Providers []string `xorm:"varchar(100)" json:"providers"`
-	ReturnUrl string   `xorm:"varchar(1000)" json:"returnUrl"`
+	Image       string   `xorm:"varchar(100)" json:"image"`
+	Detail      string   `xorm:"varchar(255)" json:"detail"`
+	Description string   `xorm:"varchar(100)" json:"description"`
+	Tag         string   `xorm:"varchar(100)" json:"tag"`
+	Currency    string   `xorm:"varchar(100)" json:"currency"`
+	Price       float64  `json:"price"`
+	Quantity    int      `json:"quantity"`
+	Sold        int      `json:"sold"`
+	Providers   []string `xorm:"varchar(100)" json:"providers"`
+	ReturnUrl   string   `xorm:"varchar(1000)" json:"returnUrl"`
 
 	State string `xorm:"varchar(100)" json:"state"`
 
@@ -213,6 +214,10 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 }
 
 func ExtendProductWithProviders(product *Product) {
+	if product == nil {
+		return
+	}
+
 	product.ProviderObjs = []*Provider{}
 
 	m := getProviderMap(product.Owner)

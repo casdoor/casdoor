@@ -22,7 +22,7 @@ import {CaptchaWidget} from "./CaptchaWidget";
 const {Search} = Input;
 
 export const CountDownInput = (props) => {
-  const {disabled, textBefore, onChange, onButtonClickArgs, application} = props;
+  const {disabled, textBefore, onChange, onButtonClickArgs, application, method} = props;
   const [visible, setVisible] = React.useState(false);
   const [key, setKey] = React.useState("");
   const [captchaImg, setCaptchaImg] = React.useState("");
@@ -53,7 +53,7 @@ export const CountDownInput = (props) => {
   const handleOk = () => {
     setVisible(false);
     setButtonLoading(true);
-    UserBackend.sendCode(checkType, checkId, key, ...onButtonClickArgs).then(res => {
+    UserBackend.sendCode(checkType, checkId, key, method, ...onButtonClickArgs).then(res => {
       setKey("");
       setButtonLoading(false);
       if (res) {
@@ -70,7 +70,7 @@ export const CountDownInput = (props) => {
   const loadCaptcha = () => {
     UserBackend.getCaptcha(application.owner, application.name, false).then(res => {
       if (res.type === "none") {
-        UserBackend.sendCode("none", "", "", ...onButtonClickArgs).then(res => {
+        UserBackend.sendCode("none", "", "", method, ...onButtonClickArgs).then(res => {
           if (res) {
             handleCountDown(60);
           }
@@ -101,7 +101,7 @@ export const CountDownInput = (props) => {
             backgroundRepeat: "no-repeat",
             height: "80px",
             width: "200px",
-            borderRadius: "3px",
+            borderRadius: "5px",
             border: "1px solid #ccc",
             marginBottom: 10,
           }}
@@ -156,7 +156,7 @@ export const CountDownInput = (props) => {
         maskClosable={false}
         destroyOnClose={true}
         title={i18next.t("general:Captcha")}
-        visible={visible}
+        open={visible}
         okText={i18next.t("user:OK")}
         cancelText={i18next.t("user:Cancel")}
         onOk={handleOk}

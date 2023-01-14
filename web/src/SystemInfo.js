@@ -90,37 +90,66 @@ class SystemInfo extends React.Component {
         </div> : i18next.t("system:Get Memory Usage Failed")
     );
 
-    return (
-      <Row>
-        <Col span={6}></Col>
-        <Col span={12}>
-          <Row gutter={[10, 10]}>
-            <Col span={12}>
-              <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center"}}>
-                {this.state.loading ? <Spin size="large" /> : CPUInfo}
-              </Card>
-            </Col>
-            <Col span={12}>
-              <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center"}}>
-                {this.state.loading ? <Spin size="large" /> : MemInfo}
-              </Card>
-            </Col>
-          </Row>
-          <Divider />
-          <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
-            <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
-            GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
-            <br />
-            {i18next.t("system:Version")}: <a href={this.state.href}>{this.state.latestVersion}</a>
-            <br />
-            {i18next.t("system:Official Website")}: <a href="https://casdoor.org/">casdoor.org</a>
-            <br />
-            {i18next.t("system:Community")}: <a href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">contact us</a>
-          </Card>
-        </Col>
-        <Col span={6}></Col>
-      </Row>
-    );
+    if (!Setting.isMobile()) {
+      return (
+        <Row>
+          <Col span={6}></Col>
+          <Col span={12}>
+            <Row gutter={[10, 10]}>
+              <Col span={12}>
+                <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                  {this.state.loading ? <Spin size="large" /> : CPUInfo}
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                  {this.state.loading ? <Spin size="large" /> : MemInfo}
+                </Card>
+              </Col>
+            </Row>
+            <Divider />
+            <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
+              <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
+              GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
+              <br />
+              {i18next.t("system:Version")}: <a href={this.state.href}>{this.state.latestVersion}</a>
+              <br />
+              {i18next.t("system:Official Website")}: <a href="https://casdoor.org/">casdoor.org</a>
+              <br />
+              {i18next.t("system:Community")}: <a href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">contact us</a>
+            </Card>
+          </Col>
+          <Col span={6}></Col>
+        </Row>
+      );
+    } else {
+      return (
+        <Row gutter={[16, 0]}>
+          <Col span={24}>
+            <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
+              {this.state.loading ? <Spin size="large" /> : CPUInfo}
+            </Card>
+          </Col>
+          <Col span={24}>
+            <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
+              {this.state.loading ? <Spin size="large" /> : MemInfo}
+            </Card>
+          </Col>
+          <Col span={24}>
+            <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
+              <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
+              GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
+              <br />
+              {i18next.t("system:Version")}: <a href={this.state.href}>{this.state.latestVersion}</a>
+              <br />
+              {i18next.t("system:Official Website")}: <a href="https://casdoor.org/">casdoor.org</a>
+              <br />
+              {i18next.t("system:Community")}: <a href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">contact us</a>
+            </Card>
+          </Col>
+        </Row>
+      );
+    }
   }
 }
 

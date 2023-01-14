@@ -37,7 +37,11 @@ export const ResetModal = (props) => {
 
   const handleOk = () => {
     if (dest === "") {
-      Setting.showMessage("error", i18next.t("user:Empty " + destType));
+      if (destType === "phone") {
+        Setting.showMessage("error", i18next.t("user:Phone cannot be empty"));
+      } else {
+        Setting.showMessage("error", i18next.t("user:Email cannot be empty"));
+      }
       return;
     }
     if (code === "") {
@@ -71,7 +75,7 @@ export const ResetModal = (props) => {
       <Modal
         maskClosable={false}
         title={buttonText}
-        visible={visible}
+        open={visible}
         okText={buttonText}
         cancelText={i18next.t("user:Cancel")}
         confirmLoading={confirmLoading}
@@ -92,6 +96,7 @@ export const ResetModal = (props) => {
             <CountDownInput
               textBefore={i18next.t("code:Code You Received")}
               onChange={setCode}
+              method={"reset"}
               onButtonClickArgs={[dest, destType, Setting.getApplicationName(application)]}
               application={application}
             />

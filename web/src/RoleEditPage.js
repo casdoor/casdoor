@@ -16,11 +16,9 @@ import React from "react";
 import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
 import * as RoleBackend from "./backend/RoleBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
-import * as UserBackend from "./backend/UserBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-
-const {Option} = Select;
+import * as UserBackend from "./backend/UserBackend";
 
 class RoleEditPage extends React.Component {
   constructor(props) {
@@ -113,11 +111,9 @@ class RoleEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.role.owner} onChange={(value => {this.updateRoleField("owner", value);})}>
-              {
-                this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
-              }
-            </Select>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.role.owner} onChange={(value => {this.updateRoleField("owner", value);})}
+              options={this.state.organizations.map((organization) => Setting.getOption(organization.name, organization.name))
+              } />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -145,11 +141,10 @@ class RoleEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub users"), i18next.t("role:Sub users - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.role.users} onChange={(value => {this.updateRoleField("users", value);})}>
-              {
-                this.state.users.map((user, index) => <Option key={index} value={`${user.owner}/${user.name}`}>{`${user.owner}/${user.name}`}</Option>)
-              }
-            </Select>
+            <Select mode="tags" style={{width: "100%"}} value={this.state.role.users}
+              onChange={(value => {this.updateRoleField("users", value);})}
+              options={this.state.users.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`))}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -157,11 +152,9 @@ class RoleEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub roles"), i18next.t("role:Sub roles - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.role.roles} onChange={(value => {this.updateRoleField("roles", value);})}>
-              {
-                this.state.roles.filter(role => (role.owner !== this.state.role.owner || role.name !== this.state.role.name)).map((role, index) => <Option key={index} value={`${role.owner}/${role.name}`}>{`${role.owner}/${role.name}`}</Option>)
-              }
-            </Select>
+            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.role.roles} onChange={(value => {this.updateRoleField("roles", value);})}
+              options={this.state.roles.filter(role => (role.owner !== this.state.role.owner || role.name !== this.state.role.name)).map((role) => Setting.getOption(`${role.owner}/${role.name}`, `${role.owner}/${role.name}`))
+              } />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -171,11 +164,9 @@ class RoleEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.role.domains} onChange={(value => {
               this.updateRoleField("domains", value);
-            })}>
-              {
-                this.state.role.domains.map((domain, index) => <Option key={index} value={domain}>{domain}</Option>)
-              }
-            </Select>
+            })}
+            options={this.state.role.domains?.map((domain) => Setting.getOption(domain, domain))
+            } />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -196,8 +187,8 @@ class RoleEditPage extends React.Component {
     const role = Setting.deepCopy(this.state.role);
     RoleBackend.updateRole(this.state.organizationName, this.state.roleName, role)
       .then((res) => {
-        if (res.msg === "") {
-          Setting.showMessage("success", "Successfully saved");
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             roleName: this.state.role.name,
           });
@@ -208,22 +199,26 @@ class RoleEditPage extends React.Component {
             this.props.history.push(`/roles/${this.state.role.owner}/${this.state.role.name}`);
           }
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateRoleField("name", this.state.roleName);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   deleteRole() {
     RoleBackend.deleteRole(this.state.role)
-      .then(() => {
-        this.props.history.push("/roles");
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/roles");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
       })
       .catch(error => {
-        Setting.showMessage("error", `Role failed to delete: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
