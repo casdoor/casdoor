@@ -30,7 +30,6 @@ import {CountDownInput} from "../common/CountDownInput";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {CaptchaModal} from "../common/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
-import {isAgreementRequired, renderAgreement, renderModal} from "./SignupPage";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -467,8 +466,8 @@ class LoginPage extends React.Component {
           </Row>
           <Form.Item>
             {
-              isAgreementRequired(application) ?
-                renderAgreement(true, () => {
+              Setting.isAgreementRequired(application) ?
+                Setting.renderAgreement(true, () => {
                   this.setState({
                     isTermsOfUseVisible: true,
                   });
@@ -847,7 +846,7 @@ class LoginPage extends React.Component {
                     this.renderForm(application)
                   }
                   {
-                    renderModal(this.state.isTermsOfUseVisible, () => {
+                    Setting.renderModal(this.state.isTermsOfUseVisible, () => {
                       this.form.current.setFieldsValue({agreement: true});
                       this.setState({
                         isTermsOfUseVisible: false,

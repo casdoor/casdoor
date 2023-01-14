@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Tag, Tooltip, message, theme} from "antd";
+import {Checkbox, Form, Modal, Tag, Tooltip, message, theme} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -515,6 +515,61 @@ export function getTermsOfUseContent(url, setTermsOfUseContent) {
   }).then(r => {
     r.text().then(setTermsOfUseContent);
   });
+}
+
+export function isAgreementRequired(application) {
+  if (application) {
+    const agreementItem = application.signupItems.find(item => item.name === "Agreement");
+    if (agreementItem.rule === "None" || !agreementItem.rule) {
+      return false;
+    }
+    if (agreementItem && agreementItem.required) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function renderAgreement(required, onClick, noStyle, layout) {
+  return (
+    <Form.Item
+      name="agreement"
+      key="agreement"
+      valuePropName="checked"
+      rules={[
+        {
+          required: required,
+          message: i18next.t("signup:Please accept the agreement!"),
+        },
+      ]}
+      {...layout}
+      noStyle={noStyle}
+    >
+      <Checkbox style={{float: "left"}}>
+        {i18next.t("signup:Accept")}&nbsp;
+        <a onClick={onClick}>
+          {i18next.t("signup:Terms of Use")}
+        </a>
+      </Checkbox>
+    </Form.Item>
+  );
+}
+
+export function renderModal(isOpen, onOk, onCancel, doc) {
+  return (
+    <Modal
+      title={i18next.t("signup:Terms of Use")}
+      open={isOpen}
+      width={"55vw"}
+      closable={false}
+      okText={i18next.t("signup:Accept")}
+      cancelText={i18next.t("signup:Decline")}
+      onOk={onOk}
+      onCancel={onCancel}
+    >
+      <iframe title={"terms"} style={{border: 0, width: "100%", height: "60vh"}} srcDoc={doc} />
+    </Modal>
+  );
 }
 
 export function getFormattedDate(date) {

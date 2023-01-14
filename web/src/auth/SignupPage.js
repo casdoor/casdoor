@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Checkbox, Form, Input, Modal, Result} from "antd";
+import {Button, Form, Input, Result} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import * as ProviderButton from "./ProviderButton";
@@ -475,7 +475,7 @@ class SignupPage extends React.Component {
       );
     } else if (signupItem.name === "Agreement") {
       return (
-        renderAgreement(isAgreementRequired(application), () => {
+        Setting.renderAgreement(Setting.isAgreementRequired(application), () => {
           this.setState({
             isTermsOfUseVisible: true,
           });
@@ -486,7 +486,7 @@ class SignupPage extends React.Component {
 
   renderModal() {
     return (
-      renderModal(this.state.isTermsOfUseVisible, () => {
+      Setting.renderModal(this.state.isTermsOfUseVisible, () => {
         this.form.current.setFieldsValue({agreement: true});
         this.setState({
           isTermsOfUseVisible: false,
@@ -624,61 +624,6 @@ class SignupPage extends React.Component {
       </React.Fragment>
     );
   }
-}
-
-export function isAgreementRequired(application) {
-  if (application) {
-    const agreementItem = application.signupItems.find(item => item.name === "Agreement");
-    if (agreementItem.rule === "None" || !agreementItem.rule) {
-      return false;
-    }
-    if (agreementItem && agreementItem.required) {
-      return true;
-    }
-  }
-  return false;
-}
-
-export function renderAgreement(required, onClick, noStyle, layout) {
-  return (
-    <Form.Item
-      name="agreement"
-      key="agreement"
-      valuePropName="checked"
-      rules={[
-        {
-          required: required,
-          message: i18next.t("signup:Please accept the agreement!"),
-        },
-      ]}
-      {...layout}
-      noStyle={noStyle}
-    >
-      <Checkbox style={{float: "left"}}>
-        {i18next.t("signup:Accept")}&nbsp;
-        <a onClick={onClick}>
-          {i18next.t("signup:Terms of Use")}
-        </a>
-      </Checkbox>
-    </Form.Item>
-  );
-}
-
-export function renderModal(isOpen, onOk, onCancel, doc) {
-  return (
-    <Modal
-      title={i18next.t("signup:Terms of Use")}
-      open={isOpen}
-      width={"55vw"}
-      closable={false}
-      okText={i18next.t("signup:Accept")}
-      cancelText={i18next.t("signup:Decline")}
-      onOk={onOk}
-      onCancel={onCancel}
-    >
-      <iframe title={"terms"} style={{border: 0, width: "100%", height: "60vh"}} srcDoc={doc} />
-    </Modal>
-  );
 }
 
 export default withRouter(SignupPage);
