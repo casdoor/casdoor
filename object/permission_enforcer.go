@@ -15,9 +15,11 @@
 package object
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/config"
 	"github.com/casbin/casbin/v2/model"
 	xormadapter "github.com/casbin/xorm-adapter/v3"
 	"github.com/casdoor/casdoor/conf"
@@ -36,26 +38,14 @@ func getEnforcer(permission *Permission) *casbin.Enforcer {
 		panic(err)
 	}
 
-	modelText := `
-[request_definition]
-r = sub, obj, act
-
-[policy_definition]
-p = sub, obj, act, "", "", permissionId
-
-[role_definition]
-g = _, _
-
-[policy_effect]
-e = some(where (p.eft == allow))
-
-[matchers]
-m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`
 	permissionModel := getModel(permission.Owner, permission.Model)
+	m := model.Model{}
 	if permissionModel != nil {
-		modelText = permissionModel.ModelText
+		m, err = GetBuiltInModel(permissionModel.ModelText)
+	} else {
+		m, err = GetBuiltInModel("")
 	}
-	m, err := model.NewModelFromString(modelText)
+
 	if err != nil {
 		panic(err)
 	}
@@ -66,16 +56,19 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`
 	}
 
 	// load Policy with a specific Permission
-	enforcer.LoadFilteredPolicy(xormadapter.Filter{
-		V5: []string{permission.Owner + "/" + permission.Name},
+	err = enforcer.LoadFilteredPolicy(xormadapter.Filter{
+		V5: []string{permission.GetId()},
 	})
+	if err != nil {
+		panic(err)
+	}
 	return enforcer
 }
 
 func getPolicies(permission *Permission) ([][]string, [][]string) {
 	var policies [][]string
 	var groupingPolicies [][]string
-	permissionId := permission.Owner + "/" + permission.Name
+	permissionId := permission.GetId()
 	domainExist := len(permission.Domains) > 0
 	for _, user := range permission.Users {
 		for _, resource := range permission.Resources {
@@ -163,10 +156,8 @@ func Enforce(permissionRule *PermissionRule) bool {
 	permission := GetPermission(permissionRule.Id)
 	enforcer := getEnforcer(permission)
 
-	request := []interface{}{permissionRule.V0, permissionRule.V1, permissionRule.V2}
-	if permissionRule.V3 != "" {
-		request = append(request, permissionRule.V3)
-	}
+	request, _ := permissionRule.GetRequest(builtInAdapter, permissionRule.Id)
+
 	allow, err := enforcer.Enforce(request...)
 	if err != nil {
 		panic(err)
@@ -177,11 +168,8 @@ func Enforce(permissionRule *PermissionRule) bool {
 func BatchEnforce(permissionRules []PermissionRule) []bool {
 	var requests [][]interface{}
 	for _, permissionRule := range permissionRules {
-		if permissionRule.V3 != "" {
-			requests = append(requests, []interface{}{permissionRule.V0, permissionRule.V1, permissionRule.V2, permissionRule.V3})
-		} else {
-			requests = append(requests, []interface{}{permissionRule.V0, permissionRule.V1, permissionRule.V2})
-		}
+		request, _ := permissionRule.GetRequest(builtInAdapter, permissionRule.Id)
+		requests = append(requests, request)
 	}
 	permission := GetPermission(permissionRules[0].Id)
 	enforcer := getEnforcer(permission)
@@ -225,4 +213,47 @@ func GetAllRoles(userId string) []string {
 		res = append(res, role.Name)
 	}
 	return res
+}
+
+func GetBuiltInModel(modelText string) (model.Model, error) {
+	if modelText == "" {
+		modelText = `
+[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act, "", "", permissionId
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`
+		return model.NewModelFromString(modelText)
+	} else {
+		cfg, err := config.NewConfigFromText(modelText)
+		if err != nil {
+			return nil, err
+		}
+
+		// load [policy_definition]
+		policyDefinition := strings.Split(cfg.String("policy_definition::p"), ",")
+		fieldsNum := len(policyDefinition)
+		if fieldsNum > builtInAvailableField {
+			panic(fmt.Errorf("the maximum policy_definition field number cannot exceed %d", builtInAvailableField))
+		}
+		// filled empty field with "" and V5 with "permissionId"
+		for i := builtInAvailableField - fieldsNum; i > 0; i-- {
+			policyDefinition = append(policyDefinition, "")
+		}
+		policyDefinition = append(policyDefinition, "permissionId")
+
+		m, _ := model.NewModelFromString(modelText)
+		m.AddDef("p", "p", strings.Join(policyDefinition, ","))
+
+		return m, err
+	}
 }

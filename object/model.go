@@ -68,14 +68,14 @@ func getModel(owner string, name string) *Model {
 		return nil
 	}
 
-	model := Model{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&model)
+	m := Model{Owner: owner, Name: name}
+	existed, err := adapter.Engine.Get(&m)
 	if err != nil {
 		panic(err)
 	}
 
 	if existed {
-		return &model
+		return &m
 	} else {
 		return nil
 	}
