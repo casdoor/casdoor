@@ -509,6 +509,14 @@ export function isMobile() {
   return isMobileDevice;
 }
 
+export function getTermsOfUseContent(url, setTermsOfUseContent) {
+  fetch(url, {
+    method: "GET",
+  }).then(r => {
+    r.text().then(setTermsOfUseContent);
+  });
+}
+
 export function getFormattedDate(date) {
   if (date === undefined) {
     return null;

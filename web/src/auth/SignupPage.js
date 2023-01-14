@@ -112,7 +112,7 @@ class SignupPage extends React.Component {
         });
 
         if (application !== null && application !== undefined) {
-          getTermsOfUseContent(application.termsOfUse, res => {
+          Setting.getTermsOfUseContent(application.termsOfUse, res => {
             this.setState({termsOfUseContent: res});
           });
         }
@@ -624,14 +624,6 @@ class SignupPage extends React.Component {
       </React.Fragment>
     );
   }
-}
-
-export function getTermsOfUseContent(url, setTermsOfUseContent) {
-  fetch(url, {
-    method: "GET",
-  }).then(r => {
-    r.text().then(setTermsOfUseContent);
-  });
 }
 
 export function isAgreementRequired(application) {
