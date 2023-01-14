@@ -121,3 +121,26 @@ func (c *ApiController) DeleteRole() {
 	c.Data["json"] = wrapActionResponse(object.DeleteRole(&role))
 	c.ServeJSON()
 }
+
+// SetRoles
+// @Title SetRoles
+// @Tag Role API
+// @Description get role
+// @Param   userId    body    string  true        "The id of the user"
+// @Success 200 {object} controllers.Response The Response object
+// @router /set-roles [post]
+func (c *ApiController) SetRoles() {
+	params := &struct {
+		UserId string   `json:"userId"`
+		Roles  []string `json:"roles"`
+	}{}
+
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, params)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.SetRoles(params.UserId, params.Roles))
+	c.ServeJSON()
+}

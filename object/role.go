@@ -88,6 +88,55 @@ func GetRole(id string) *Role {
 	return getRole(owner, name)
 }
 
+func SetRoles(userId string, roles []string) bool {
+
+	owner, name := util.GetOwnerAndNameFromId(userId)
+	user := getUser(owner, name)
+	if user == nil {
+		return false
+	}
+
+	emap := make(map[string]*casbin.Enforcer)
+	for _, roleId := range roles {
+		owner, name = util.GetOwnerAndNameFromId(roleId)
+		role := getRole(owner, name)
+		if role == nil {
+			continue
+		}
+
+		permissions := GetPermissionsByRole(roleId)
+		for _, p := range permissions {
+			key := p.Adapter + "/" + strings.Join(p.Domains, ",")
+			if _, ok := emap[key]; !ok {
+				emap[key] = getEnforcer(p)
+			}
+		}
+
+		usersAddedGroupingPolicies := getGroupingPoliciesByPermissions([]string{userId}, role, permissions)
+		for k, v := range usersAddedGroupingPolicies {
+			enforcer := emap[k]
+			_, err := enforcer.AddGroupingPolicies(v)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		ok, _ := util.InArray(userId, role.Users)
+		if !ok {
+			role.Users = append(role.Users, userId)
+		}
+		affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
+		if err != nil {
+			panic(err)
+		}
+		if affected == 0 {
+			return false
+		}
+	}
+	return true
+
+}
+
 // 1.这里需要将permission的信息也要update
 // 2.修改角色，资源，动作对照表
 // 3.如果同个适配器 会出现重复删的情况
