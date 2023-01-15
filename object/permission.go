@@ -57,6 +57,40 @@ type PermissionRule struct {
 	Id    string `xorm:"varchar(100) index not null default ''" json:"id"`
 }
 
+const (
+	builtInAvailableField = 5 // Casdoor built-in adapter, use V5 to filter permission, so has 5 available field
+	builtInAdapter        = "permission_rule"
+)
+
+func (p *Permission) GetId() string {
+	return util.GetId(p.Owner, p.Name)
+}
+
+func (p *PermissionRule) GetRequest(adapterName string, permissionId string) ([]interface{}, error) {
+	request := []interface{}{p.V0, p.V1, p.V2}
+
+	if p.V3 != "" {
+		request = append(request, p.V3)
+	}
+
+	if p.V4 != "" {
+		request = append(request, p.V4)
+	}
+
+	if adapterName == builtInAdapter {
+		if p.V5 != "" {
+			return nil, fmt.Errorf("too many parameters. The maximum parameter number cannot exceed %d", builtInAvailableField)
+		}
+		request = append(request, permissionId)
+		return request, nil
+	} else {
+		if p.V5 != "" {
+			request = append(request, p.V5)
+		}
+		return request, nil
+	}
+}
+
 func GetPermissionCount(owner, field, value string) int {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Permission{})
@@ -193,10 +227,6 @@ func DeletePermission(permission *Permission) bool {
 	}
 
 	return affected != 0
-}
-
-func (permission *Permission) GetId() string {
-	return fmt.Sprintf("%s/%s", permission.Owner, permission.Name)
 }
 
 func GetPermissionsByUser(userId string) []*Permission {
