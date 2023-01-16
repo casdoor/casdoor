@@ -107,6 +107,7 @@ func getPolicies(permission *Permission) [][]string {
 
 func getGroupingPolicies(permission *Permission) [][]string {
 	var groupingPolicies [][]string
+	permissionId := permission.Owner + "/" + permission.Name
 	domainExist := len(permission.Domains) > 0
 
 	for _, role := range permission.Roles {
@@ -115,19 +116,19 @@ func getGroupingPolicies(permission *Permission) [][]string {
 			for _, subUser := range roleObj.Users {
 				if domainExist {
 					for _, domain := range permission.Domains {
-						groupingPolicies = append(groupingPolicies, []string{subUser, domain, role})
+						groupingPolicies = append(groupingPolicies, []string{subUser, domain, role, "", "", permissionId})
 					}
 				} else {
-					groupingPolicies = append(groupingPolicies, []string{subUser, role})
+					groupingPolicies = append(groupingPolicies, []string{subUser, role, "", "", "", permissionId})
 				}
 			}
 			for _, subRole := range roleObj.Roles {
 				if domainExist {
 					for _, domain := range permission.Domains {
-						groupingPolicies = append(groupingPolicies, []string{subRole, domain, role})
+						groupingPolicies = append(groupingPolicies, []string{subRole, domain, role, "", "", permissionId})
 					}
 				} else {
-					groupingPolicies = append(groupingPolicies, []string{subRole, role})
+					groupingPolicies = append(groupingPolicies, []string{subRole, role, "", "", "", permissionId})
 				}
 			}
 		}
@@ -251,6 +252,7 @@ func GetAllRoles(userId string) []string {
 func getGroupingPoliciesByPermissions(column []string, role *Role, permissions []*Permission) map[string][][]string {
 	var groupingPolicies = make(map[string][][]string, len(permissions))
 	for _, p := range permissions {
+		permissionId := p.Owner + "/" + p.Name
 		domainExist := len(p.Domains) > 0
 		key := p.Adapter + "/" + strings.Join(p.Domains, ",")
 		if _, ok := groupingPolicies[key]; ok {
@@ -259,10 +261,10 @@ func getGroupingPoliciesByPermissions(column []string, role *Role, permissions [
 		for _, v := range column {
 			if domainExist {
 				for _, domain := range p.Domains {
-					groupingPolicies[key] = append(groupingPolicies[key], []string{v, domain, role.Owner + "/" + role.Name})
+					groupingPolicies[key] = append(groupingPolicies[key], []string{v, domain, role.Owner + "/" + role.Name, "", "", permissionId})
 				}
 			} else {
-				groupingPolicies[key] = append(groupingPolicies[key], []string{v, role.Owner + "/" + role.Name})
+				groupingPolicies[key] = append(groupingPolicies[key], []string{v, role.Owner + "/" + role.Name, "", "", "", permissionId})
 			}
 		}
 	}

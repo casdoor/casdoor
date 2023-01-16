@@ -561,15 +561,16 @@ func judgeRepeatRole(enforcer *casbin.Enforcer, roles []string, domains []string
 func operateGroupingPoliciesByPermission(permission *Permission, enforcer *casbin.Enforcer, isAdd bool) {
 	var err error
 	domainExist := len(permission.Domains) > 0
+	permissionId := permission.Owner + "/" + permission.Name
 	for _, role := range permission.Roles {
 		roleObj := GetRole(role)
 		for _, user := range roleObj.Users {
 			if domainExist {
 				for _, domain := range permission.Domains {
 					if isAdd {
-						_, err = enforcer.AddNamedGroupingPolicy("g", user, domain, roleObj.Owner+"/"+roleObj.Name)
+						_, err = enforcer.AddNamedGroupingPolicy("g", user, domain, roleObj.Owner+"/"+roleObj.Name, "", "", permissionId)
 					} else {
-						_, err = enforcer.RemoveNamedGroupingPolicy("g", user, domain, roleObj.Owner+"/"+roleObj.Name)
+						_, err = enforcer.RemoveNamedGroupingPolicy("g", user, domain, roleObj.Owner+"/"+roleObj.Name, "", "", permissionId)
 					}
 					if err != nil {
 						panic(err)
@@ -577,9 +578,9 @@ func operateGroupingPoliciesByPermission(permission *Permission, enforcer *casbi
 				}
 			} else {
 				if isAdd {
-					_, err = enforcer.AddNamedGroupingPolicy("g", user, roleObj.Owner+"/"+roleObj.Name)
+					_, err = enforcer.AddNamedGroupingPolicy("g", user, roleObj.Owner+"/"+roleObj.Name, "", "", "", permissionId)
 				} else {
-					_, err = enforcer.RemoveNamedGroupingPolicy("g", user, roleObj.Owner+"/"+roleObj.Name)
+					_, err = enforcer.RemoveNamedGroupingPolicy("g", user, roleObj.Owner+"/"+roleObj.Name, "", "", "", permissionId)
 				}
 				if err != nil {
 					panic(err)
