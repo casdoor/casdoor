@@ -95,6 +95,12 @@ func UpdateRole(id string, role *Role) bool {
 		return false
 	}
 
+	permissions := GetPermissionsByRole(id)
+	for _, permission := range permissions {
+		removeGroupingPolicies(permission)
+		removePolicies(permission)
+	}
+
 	if name != role.Name {
 		err := roleChangeTrigger(name, role.Name)
 		if err != nil {
@@ -105,6 +111,13 @@ func UpdateRole(id string, role *Role) bool {
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
 	if err != nil {
 		panic(err)
+	}
+
+	newRoleID := role.GetId()
+	permissions = GetPermissionsByRole(newRoleID)
+	for _, permission := range permissions {
+		addGroupingPolicies(permission)
+		addPolicies(permission)
 	}
 
 	return affected != 0

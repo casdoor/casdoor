@@ -152,3 +152,7 @@ func modelChangeTrigger(oldName string, newName string) error {
 
 	return session.Commit()
 }
+
+func HasRoleDefinition(m model.Model) bool {
+	return m["g"] != nil
+}
