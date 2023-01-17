@@ -133,6 +133,13 @@ func AddRole(role *Role) bool {
 }
 
 func DeleteRole(role *Role) bool {
+	roleId := role.GetId()
+	permissions := GetPermissionsByRole(roleId)
+	for _, permission := range permissions {
+		permission.Roles = util.DeleteVal(permission.Roles, roleId)
+		UpdatePermission(permission.GetId(), permission)
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{role.Owner, role.Name}).Delete(&Role{})
 	if err != nil {
 		panic(err)
