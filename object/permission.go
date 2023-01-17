@@ -149,18 +149,24 @@ func GetPermission(id string) *Permission {
 func checkPermissionValid(permission *Permission) {
 	enforcer := getEnforcer(permission)
 	enforcer.EnableAutoSave(false)
-	policies, groupingPolicies := getPolicies(permission)
 
+	policies := getPolicies(permission)
+	_, err := enforcer.AddPolicies(policies)
+	if err != nil {
+		panic(err)
+	}
+
+	if !HasRoleDefinition(enforcer.GetModel()) {
+		permission.Roles = []string{}
+		return
+	}
+
+	groupingPolicies := getGroupingPolicies(permission)
 	if len(groupingPolicies) > 0 {
 		_, err := enforcer.AddGroupingPolicies(groupingPolicies)
 		if err != nil {
 			panic(err)
 		}
-	}
-
-	_, err := enforcer.AddPolicies(policies)
-	if err != nil {
-		panic(err)
 	}
 }
 
@@ -178,6 +184,7 @@ func UpdatePermission(id string, permission *Permission) bool {
 	}
 
 	if affected != 0 {
+		removeGroupingPolicies(oldPermission)
 		removePolicies(oldPermission)
 		if oldPermission.Adapter != "" && oldPermission.Adapter != permission.Adapter {
 			isEmpty, _ := adapter.Engine.IsTableEmpty(oldPermission.Adapter)
@@ -188,6 +195,7 @@ func UpdatePermission(id string, permission *Permission) bool {
 				}
 			}
 		}
+		addGroupingPolicies(permission)
 		addPolicies(permission)
 	}
 
@@ -201,6 +209,7 @@ func AddPermission(permission *Permission) bool {
 	}
 
 	if affected != 0 {
+		addGroupingPolicies(permission)
 		addPolicies(permission)
 	}
 
@@ -214,6 +223,7 @@ func DeletePermission(permission *Permission) bool {
 	}
 
 	if affected != 0 {
+		removeGroupingPolicies(permission)
 		removePolicies(permission)
 		if permission.Adapter != "" && permission.Adapter != "permission_rule" {
 			isEmpty, _ := adapter.Engine.IsTableEmpty(permission.Adapter)

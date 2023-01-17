@@ -50,26 +50,36 @@ func getEnforcer(permission *Permission) *casbin.Enforcer {
 		panic(err)
 	}
 
+	policyFilter := xormadapter.Filter{}
+
+	if !HasRoleDefinition(m) {
+		policyFilter.Ptype = []string{"p"}
+		err = adapter.LoadFilteredPolicy(m, policyFilter)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	enforcer, err := casbin.NewEnforcer(m, adapter)
 	if err != nil {
 		panic(err)
 	}
 
 	// load Policy with a specific Permission
-	err = enforcer.LoadFilteredPolicy(xormadapter.Filter{
-		V5: []string{permission.GetId()},
-	})
+	policyFilter.V5 = []string{permission.GetId()}
+	err = enforcer.LoadFilteredPolicy(policyFilter)
 	if err != nil {
 		panic(err)
 	}
 	return enforcer
 }
 
-func getPolicies(permission *Permission) ([][]string, [][]string) {
+func getPolicies(permission *Permission) [][]string {
 	var policies [][]string
-	var groupingPolicies [][]string
+
 	permissionId := permission.GetId()
 	domainExist := len(permission.Domains) > 0
+
 	for _, user := range permission.Users {
 		for _, resource := range permission.Resources {
 			for _, action := range permission.Actions {
@@ -83,26 +93,8 @@ func getPolicies(permission *Permission) ([][]string, [][]string) {
 			}
 		}
 	}
+
 	for _, role := range permission.Roles {
-		roleObj := GetRole(role)
-		for _, subUser := range roleObj.Users {
-			if domainExist {
-				for _, domain := range permission.Domains {
-					groupingPolicies = append(groupingPolicies, []string{subUser, domain, role, "", "", permissionId})
-				}
-			} else {
-				groupingPolicies = append(groupingPolicies, []string{subUser, role, "", "", "", permissionId})
-			}
-		}
-		for _, subRole := range roleObj.Roles {
-			if domainExist {
-				for _, domain := range permission.Domains {
-					groupingPolicies = append(groupingPolicies, []string{subRole, domain, role, "", "", permissionId})
-				}
-			} else {
-				groupingPolicies = append(groupingPolicies, []string{subRole, role, "", "", "", permissionId})
-			}
-		}
 		for _, resource := range permission.Resources {
 			for _, action := range permission.Actions {
 				if domainExist {
@@ -115,19 +107,49 @@ func getPolicies(permission *Permission) ([][]string, [][]string) {
 			}
 		}
 	}
-	return policies, groupingPolicies
+
+	return policies
+}
+
+func getGroupingPolicies(permission *Permission) [][]string {
+	var groupingPolicies [][]string
+
+	domainExist := len(permission.Domains) > 0
+	permissionId := permission.GetId()
+
+	for _, role := range permission.Roles {
+		roleObj := GetRole(role)
+		if roleObj == nil {
+			continue
+		}
+
+		for _, subUser := range roleObj.Users {
+			if domainExist {
+				for _, domain := range permission.Domains {
+					groupingPolicies = append(groupingPolicies, []string{subUser, domain, role, "", "", permissionId})
+				}
+			} else {
+				groupingPolicies = append(groupingPolicies, []string{subUser, role, "", "", "", permissionId})
+			}
+		}
+
+		for _, subRole := range roleObj.Roles {
+			if domainExist {
+				for _, domain := range permission.Domains {
+					groupingPolicies = append(groupingPolicies, []string{subRole, domain, role, "", "", permissionId})
+				}
+			} else {
+				groupingPolicies = append(groupingPolicies, []string{subRole, role, "", "", "", permissionId})
+			}
+		}
+	}
+
+	return groupingPolicies
 }
 
 func addPolicies(permission *Permission) {
 	enforcer := getEnforcer(permission)
-	policies, groupingPolicies := getPolicies(permission)
-
-	if len(groupingPolicies) > 0 {
-		_, err := enforcer.AddGroupingPolicies(groupingPolicies)
-		if err != nil {
-			panic(err)
-		}
-	}
+	policies := getPolicies(permission)
 
 	_, err := enforcer.AddPolicies(policies)
 	if err != nil {
@@ -135,9 +157,21 @@ func addPolicies(permission *Permission) {
 	}
 }
 
-func removePolicies(permission *Permission) {
+func addGroupingPolicies(permission *Permission) {
 	enforcer := getEnforcer(permission)
-	policies, groupingPolicies := getPolicies(permission)
+	groupingPolicies := getGroupingPolicies(permission)
+
+	if len(groupingPolicies) > 0 {
+		_, err := enforcer.AddGroupingPolicies(groupingPolicies)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func removeGroupingPolicies(permission *Permission) {
+	enforcer := getEnforcer(permission)
+	groupingPolicies := getGroupingPolicies(permission)
 
 	if len(groupingPolicies) > 0 {
 		_, err := enforcer.RemoveGroupingPolicies(groupingPolicies)
@@ -145,6 +179,11 @@ func removePolicies(permission *Permission) {
 			panic(err)
 		}
 	}
+}
+
+func removePolicies(permission *Permission) {
+	enforcer := getEnforcer(permission)
+	policies := getPolicies(permission)
 
 	_, err := enforcer.RemovePolicies(policies)
 	if err != nil {
