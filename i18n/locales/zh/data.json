@@ -8,9 +8,6 @@
     "Please sign out first before signing up": "请在注册前先退出登录",
     "The application does not allow to sign up new account": "该应用不允许注册新用户"
   },
-  "application": {
-    "Parameter organization is missing": "缺少organization参数"
-  },
   "auth": {
     "%s No phone prefix": "%s 无此手机号前缀",
     "Challenge method should be S256": "Challenge 方法应该为 S256",
@@ -64,12 +61,12 @@
     "unsupported password type: %s": "不支持的密码类型: %s"
   },
   "general": {
+    "Missing parameter": "缺少参数",
     "Please login first": "请先登录",
     "The user: %s doesn't exist": "用户: %s 不存在"
   },
   "ldap": {
-    "Ldap server exist": "LDAP服务器已存在",
-    "Missing parameter": "LDAP缺少参数"
+    "Ldap server exist": "LDAP服务器已存在"
   },
   "link": {
     "Please link first": "请先绑定",
@@ -112,7 +109,8 @@
     "Grant_type: %s is not supported in this application": "该应用不支持Grant_type: %s",
     "Invalid application or wrong clientSecret": "无效应用或错误的clientSecret",
     "Invalid client_id": "无效的ClientId",
-    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "重定向 URI：%s 在许可跳转列表中未找到"
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "重定向 URI：%s 在许可跳转列表中未找到",
+    "Token not found, invalid accessToken": "未查询到对应token, accessToken无效"
   },
   "user": {
     "Display name cannot be empty": "显示名称不可为空",
@@ -131,7 +129,6 @@
     "Code has not been sent yet!": "验证码还未发送",
     "Email is invalid": "非法的邮箱",
     "Invalid captcha provider.": "非法的验证码提供商",
-    "Missing parameter": "缺少参数",
     "Organization does not exist": "组织不存在",
     "Phone number is invalid": "非法的手机号码",
     "Turing test failed.": "验证码还未发送",

@@ -275,6 +275,34 @@
                 }
             }
         },
+        "/api/add-record": {
+            "post": {
+                "tags": [
+                    "Record API"
+                ],
+                "description": "add a record",
+                "operationId": "ApiController.AddRecord",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the record",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Record"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/add-resource": {
             "post": {
                 "tags": [
@@ -431,6 +459,14 @@
                 "operationId": "ApiController.GetCaptcha"
             }
         },
+        "/api/api/get-webhook-event": {
+            "get": {
+                "tags": [
+                    "GetWebhookEventType API"
+                ],
+                "operationId": "ApiController.GetWebhookEventType"
+            }
+        },
         "/api/api/reset-email-or-phone": {
             "post": {
                 "tags": [
@@ -521,6 +557,14 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/api/webhook": {
+            "post": {
+                "tags": [
+                    "HandleOfficialAccountEvent API"
+                ],
+                "operationId": "ApiController.HandleOfficialAccountEvent"
             }
         },
         "/api/buy-product": {
@@ -840,6 +884,35 @@
                 }
             }
         },
+        "/api/delete-session": {
+            "post": {
+                "tags": [
+                    "Session API"
+                ],
+                "description": "Delete session by userId",
+                "operationId": "ApiController.DeleteSession",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "ID",
+                        "description": "The ID(owner/name) of user.",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/delete-syncer": {
             "post": {
                 "tags": [
@@ -1133,6 +1206,32 @@
                 }
             }
         },
+        "/api/get-default-application": {
+            "get": {
+                "tags": [
+                    "Organization API"
+                ],
+                "description": "get default application",
+                "operationId": "ApiController.GetDefaultApplication",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "organization id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/get-email-and-phone": {
             "post": {
                 "tags": [
@@ -1161,6 +1260,26 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-global-providers": {
+            "get": {
+                "tags": [
+                    "Provider API"
+                ],
+                "description": "get Global providers",
+                "operationId": "ApiController.GetGlobalProviders",
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Provider"
+                            }
                         }
                     }
                 }
@@ -1459,6 +1578,55 @@
                 }
             }
         },
+        "/api/get-permissions-by-role": {
+            "get": {
+                "tags": [
+                    "Permission API"
+                ],
+                "description": "get permissions by role",
+                "operationId": "ApiController.GetPermissionsByRole",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the role",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Permission"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-permissions-by-submitter": {
+            "get": {
+                "tags": [
+                    "Permission API"
+                ],
+                "description": "get permissions by submitter",
+                "operationId": "ApiController.GetPermissionsBySubmitter",
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Permission"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/get-product": {
             "get": {
                 "tags": [
@@ -1631,6 +1799,20 @@
                 }
             }
         },
+        "/api/get-release": {
+            "get": {
+                "tags": [
+                    "System API"
+                ],
+                "description": "get local github repo's latest release version info",
+                "operationId": "ApiController.GitRepoVersion",
+                "responses": {
+                    "200": {
+                        "description": "{string} local latest version hash of casdoor"
+                    }
+                }
+            }
+        },
         "/api/get-resource": {
             "get": {
                 "tags": [
@@ -1696,6 +1878,35 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/object.Role"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-sessions": {
+            "get": {
+                "tags": [
+                    "Session API"
+                ],
+                "description": "Get organization user sessions",
+                "operationId": "ApiController.GetSessions",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The organization name",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
                             }
                         }
                     }
@@ -1794,6 +2005,32 @@
                             "items": {
                                 "$ref": "#/definitions/object.Syncer"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-system-info": {
+            "get": {
+                "tags": [
+                    "System API"
+                ],
+                "description": "get user's system info",
+                "operationId": "ApiController.GetSystemInfo",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id of the user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.SystemInfo"
                         }
                     }
                 }
@@ -2360,45 +2597,6 @@
                 }
             }
         },
-        "/api/login/oauth/logout": {
-            "get": {
-                "tags": [
-                    "Token API"
-                ],
-                "description": "delete token by AccessToken",
-                "operationId": "ApiController.TokenLogout",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "id_token_hint",
-                        "description": "id_token_hint",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "post_logout_redirect_uri",
-                        "description": "post_logout_redirect_uri",
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "state",
-                        "description": "state",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/api/login/oauth/refresh_token": {
             "post": {
                 "tags": [
@@ -2471,6 +2669,26 @@
                 ],
                 "description": "logout the current user",
                 "operationId": "ApiController.Logout",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id_token_hint",
+                        "description": "id_token_hint",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "post_logout_redirect_uri",
+                        "description": "post_logout_redirect_uri",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "state",
+                        "description": "state",
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "The Response object",
@@ -2486,6 +2704,26 @@
                 ],
                 "description": "logout the current user",
                 "operationId": "ApiController.Logout",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id_token_hint",
+                        "description": "id_token_hint",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "post_logout_redirect_uri",
+                        "description": "post_logout_redirect_uri",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "state",
+                        "description": "state",
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "The Response object",
@@ -3267,11 +3505,11 @@
         }
     },
     "definitions": {
-        "2200.0xc0003f8480.false": {
+        "2268.0xc0000f9650.false": {
             "title": "false",
             "type": "object"
         },
-        "2235.0xc0003f84b0.false": {
+        "2302.0xc0000f9680.false": {
             "title": "false",
             "type": "object"
         },
@@ -3315,6 +3553,15 @@
                 },
                 "autoSignin": {
                     "type": "boolean"
+                },
+                "captchaToken": {
+                    "type": "string"
+                },
+                "captchaType": {
+                    "type": "string"
+                },
+                "clientSecret": {
+                    "type": "string"
                 },
                 "code": {
                     "type": "string"
@@ -3389,10 +3636,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2200.0xc0003f8480.false"
+                    "$ref": "#/definitions/2268.0xc0000f9650.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2235.0xc0003f84b0.false"
+                    "$ref": "#/definitions/2302.0xc0000f9680.false"
                 },
                 "msg": {
                     "type": "string"
@@ -3491,7 +3738,13 @@
                 "displayName": {
                     "type": "string"
                 },
+                "enableAutoSignin": {
+                    "type": "boolean"
+                },
                 "enableCodeSignin": {
+                    "type": "boolean"
+                },
+                "enableLinkWithEmail": {
                     "type": "boolean"
                 },
                 "enablePassword": {
@@ -3514,6 +3767,19 @@
                     "format": "int64"
                 },
                 "forgetUrl": {
+                    "type": "string"
+                },
+                "formBackgroundUrl": {
+                    "type": "string"
+                },
+                "formCss": {
+                    "type": "string"
+                },
+                "formOffset": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "formSideHtml": {
                     "type": "string"
                 },
                 "grantTypes": {
@@ -3555,6 +3821,9 @@
                 "refreshExpireInHours": {
                     "type": "integer",
                     "format": "int64"
+                },
+                "samlReplyUrl": {
+                    "type": "string"
                 },
                 "signinHtml": {
                     "type": "string"
@@ -3689,6 +3958,24 @@
                 }
             }
         },
+        "object.ManagedAccount": {
+            "title": "ManagedAccount",
+            "type": "object",
+            "properties": {
+                "application": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "signinUrl": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "object.Model": {
             "title": "Model",
             "type": "object",
@@ -3725,6 +4012,9 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "end_session_endpoint": {
+                    "type": "string"
                 },
                 "grant_types_supported": {
                     "type": "array",
@@ -3801,6 +4091,9 @@
                 "createdTime": {
                     "type": "string"
                 },
+                "defaultApplication": {
+                    "type": "string"
+                },
                 "defaultAvatar": {
                     "type": "string"
                 },
@@ -3813,8 +4106,18 @@
                 "favicon": {
                     "type": "string"
                 },
+                "initScore": {
+                    "type": "integer",
+                    "format": "int64"
+                },
                 "isProfilePublic": {
                     "type": "boolean"
+                },
+                "languages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "masterPassword": {
                     "type": "string"
@@ -3943,11 +4246,26 @@
                         "type": "string"
                     }
                 },
+                "adapter": {
+                    "type": "string"
+                },
+                "approveTime": {
+                    "type": "string"
+                },
+                "approver": {
+                    "type": "string"
+                },
                 "createdTime": {
                     "type": "string"
                 },
                 "displayName": {
                     "type": "string"
+                },
+                "domains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "effect": {
                     "type": "string"
@@ -3979,6 +4297,12 @@
                         "type": "string"
                     }
                 },
+                "state": {
+                    "type": "string"
+                },
+                "submitter": {
+                    "type": "string"
+                },
                 "users": {
                     "type": "array",
                     "items": {
@@ -3995,6 +4319,9 @@
                     "type": "string"
                 },
                 "currency": {
+                    "type": "string"
+                },
+                "description": {
                     "type": "string"
                 },
                 "detail": {
@@ -4015,6 +4342,12 @@
                 "price": {
                     "type": "number",
                     "format": "double"
+                },
+                "providerObjs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.Provider"
+                    }
                 },
                 "providers": {
                     "type": "array",
@@ -4090,6 +4423,9 @@
                 "customUserInfoUrl": {
                     "type": "string"
                 },
+                "disableSsl": {
+                    "type": "boolean"
+                },
                 "displayName": {
                     "type": "string"
                 },
@@ -4126,11 +4462,17 @@
                 "owner": {
                     "type": "string"
                 },
+                "pathPrefix": {
+                    "type": "string"
+                },
                 "port": {
                     "type": "integer",
                     "format": "int64"
                 },
                 "providerUrl": {
+                    "type": "string"
+                },
+                "receiver": {
                     "type": "string"
                 },
                 "regionId": {
@@ -4172,11 +4514,17 @@
                 "name": {
                     "type": "string"
                 },
+                "owner": {
+                    "type": "string"
+                },
                 "prompted": {
                     "type": "boolean"
                 },
                 "provider": {
                     "$ref": "#/definitions/object.Provider"
+                },
+                "rule": {
+                    "type": "string"
                 }
             }
         },
@@ -4232,6 +4580,12 @@
                 },
                 "displayName": {
                     "type": "string"
+                },
+                "domains": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "isEnabled": {
                     "type": "boolean"
@@ -4344,6 +4698,10 @@
                     "type": "string"
                 }
             }
+        },
+        "object.SystemInfo": {
+            "title": "SystemInfo",
+            "type": "object"
         },
         "object.TableColumn": {
             "title": "TableColumn",
@@ -4605,7 +4963,13 @@
                 "lastSigninTime": {
                     "type": "string"
                 },
+                "lastSigninWrongTime": {
+                    "type": "string"
+                },
                 "ldap": {
+                    "type": "string"
+                },
+                "line": {
                     "type": "string"
                 },
                 "linkedin": {
@@ -4613,6 +4977,12 @@
                 },
                 "location": {
                     "type": "string"
+                },
+                "managedAccounts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.ManagedAccount"
+                    }
                 },
                 "name": {
                     "type": "string"
@@ -4669,6 +5039,10 @@
                     "type": "integer",
                     "format": "int64"
                 },
+                "signinWrongTimes": {
+                    "type": "integer",
+                    "format": "int64"
+                },
                 "signupApplication": {
                     "type": "string"
                 },
@@ -4685,9 +5059,6 @@
                     "type": "string"
                 },
                 "type": {
-                    "type": "string"
-                },
-                "unionId": {
                     "type": "string"
                 },
                 "updatedTime": {

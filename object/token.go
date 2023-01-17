@@ -27,7 +27,7 @@ import (
 )
 
 const (
-	hourSeconds          = 3600
+	hourMinutes          = 60
 	InvalidRequest       = "invalid_request"
 	InvalidClient        = "invalid_client"
 	InvalidGrant         = "invalid_grant"
@@ -204,7 +204,7 @@ func DeleteToken(token *Token) bool {
 	return affected != 0
 }
 
-func DeleteTokenByAccessToken(accessToken string) (bool, *Application) {
+func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token) {
 	token := Token{AccessToken: accessToken}
 	existed, err := adapter.Engine.Get(&token)
 	if err != nil {
@@ -212,15 +212,17 @@ func DeleteTokenByAccessToken(accessToken string) (bool, *Application) {
 	}
 
 	if !existed {
-		return false, nil
+		return false, nil, nil
 	}
-	application := getApplication(token.Owner, token.Application)
-	affected, err := adapter.Engine.Where("access_token=?", accessToken).Delete(&Token{})
+
+	token.ExpiresIn = 0
+	affected, err := adapter.Engine.ID(core.PK{token.Owner, token.Name}).Cols("expires_in").Update(&token)
 	if err != nil {
 		panic(err)
 	}
 
-	return affected != 0, application
+	application := getApplication(token.Owner, token.Application)
+	return affected != 0, application, &token
 }
 
 func GetTokenByAccessToken(accessToken string) *Token {
@@ -304,7 +306,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		Code:          util.GenerateClientId(),
 		AccessToken:   accessToken,
 		RefreshToken:  refreshToken,
-		ExpiresIn:     application.ExpireInHours * hourSeconds,
+		ExpiresIn:     application.ExpireInHours * hourMinutes,
 		Scope:         scope,
 		TokenType:     "Bearer",
 		CodeChallenge: challenge,
@@ -438,7 +440,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		Code:         util.GenerateClientId(),
 		AccessToken:  newAccessToken,
 		RefreshToken: newRefreshToken,
-		ExpiresIn:    application.ExpireInHours * hourSeconds,
+		ExpiresIn:    application.ExpireInHours * hourMinutes,
 		Scope:        scope,
 		TokenType:    "Bearer",
 	}
@@ -588,7 +590,7 @@ func GetPasswordToken(application *Application, username string, password string
 		Code:         util.GenerateClientId(),
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		ExpiresIn:    application.ExpireInHours * hourSeconds,
+		ExpiresIn:    application.ExpireInHours * hourMinutes,
 		Scope:        scope,
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
@@ -628,7 +630,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		User:         nullUser.Name,
 		Code:         util.GenerateClientId(),
 		AccessToken:  accessToken,
-		ExpiresIn:    application.ExpireInHours * hourSeconds,
+		ExpiresIn:    application.ExpireInHours * hourMinutes,
 		Scope:        scope,
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
@@ -655,7 +657,7 @@ func GetTokenByUser(application *Application, user *User, scope string, host str
 		Code:         util.GenerateClientId(),
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		ExpiresIn:    application.ExpireInHours * hourSeconds,
+		ExpiresIn:    application.ExpireInHours * hourMinutes,
 		Scope:        scope,
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,

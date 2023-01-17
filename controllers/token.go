@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"net/http"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -244,28 +243,6 @@ func (c *ApiController) RefreshToken() {
 
 	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
 	c.SetTokenErrorHttpStatus()
-	c.ServeJSON()
-}
-
-// TokenLogout
-// @Title TokenLogout
-// @Tag Token API
-// @Description delete token by AccessToken
-// @Param   id_token_hint     query    string  true        "id_token_hint"
-// @Param   post_logout_redirect_uri    query    string  false      "post_logout_redirect_uri"
-// @Param   state     query    string  true        "state"
-// @Success 200 {object} controllers.Response The Response object
-// @router /login/oauth/logout [get]
-func (c *ApiController) TokenLogout() {
-	token := c.Input().Get("id_token_hint")
-	flag, application := object.DeleteTokenByAccessToken(token)
-	redirectUri := c.Input().Get("post_logout_redirect_uri")
-	state := c.Input().Get("state")
-	if application != nil && application.IsRedirectUriValid(redirectUri) {
-		c.Ctx.Redirect(http.StatusFound, redirectUri+"?state="+state)
-		return
-	}
-	c.Data["json"] = wrapActionResponse(flag)
 	c.ServeJSON()
 }
 

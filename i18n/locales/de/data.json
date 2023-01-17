@@ -8,9 +8,6 @@
     "Please sign out first before signing up": "Please sign out first before signing up",
     "The application does not allow to sign up new account": "The application does not allow to sign up new account"
   },
-  "application": {
-    "Parameter organization is missing": "Parameter organization is missing"
-  },
   "auth": {
     "%s No phone prefix": "%s No phone prefix",
     "Challenge method should be S256": "Challenge method should be S256",
@@ -64,12 +61,12 @@
     "unsupported password type: %s": "unsupported password type: %s"
   },
   "general": {
+    "Missing parameter": "Missing parameter",
     "Please login first": "Please login first",
     "The user: %s doesn't exist": "The user: %s doesn't exist"
   },
   "ldap": {
-    "Ldap server exist": "Ldap server exist",
-    "Missing parameter": "Missing parameter"
+    "Ldap server exist": "Ldap server exist"
   },
   "link": {
     "Please link first": "Please link first",
@@ -112,7 +109,8 @@
     "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
     "Invalid application or wrong clientSecret": "Invalid application or wrong clientSecret",
     "Invalid client_id": "Invalid client_id",
-    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s doesn't exist in the allowed Redirect URI list"
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s doesn't exist in the allowed Redirect URI list",
+    "Token not found, invalid accessToken": "Token not found, invalid accessToken"
   },
   "user": {
     "Display name cannot be empty": "Display name cannot be empty",
@@ -131,7 +129,6 @@
     "Code has not been sent yet!": "Code has not been sent yet!",
     "Email is invalid": "Email is invalid",
     "Invalid captcha provider.": "Invalid captcha provider.",
-    "Missing parameter": "Missing parameter",
     "Organization does not exist": "Organization does not exist",
     "Phone number is invalid": "Phone number is invalid",
     "Turing test failed.": "Turing test failed.",
