@@ -347,11 +347,10 @@ func CheckUpdateUser(oldUser *User, user *User, lang string) string {
 		return i18n.Translate(lang, "user:Display name cannot be empty")
 	}
 
-	if msg := CheckUsername(user.Name, lang); msg != "" {
-		return msg
-	}
-
 	if oldUser.Name != user.Name {
+		if msg := CheckUsername(user.Name, lang); msg != "" {
+			return msg
+		}
 		if HasUserByField(user.Owner, "name", user.Name) {
 			return i18n.Translate(lang, "check:Username already exists")
 		}
