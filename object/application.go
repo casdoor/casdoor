@@ -287,7 +287,8 @@ func GetMaskedApplications(applications []*Application, userId string) []*Applic
 
 func UpdateApplication(id string, application *Application) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getApplication(owner, name) == nil {
+	oldApplication := getApplication(owner, name)
+	if oldApplication == nil {
 		return false
 	}
 
@@ -302,7 +303,7 @@ func UpdateApplication(id string, application *Application) bool {
 		}
 	}
 
-	if GetApplicationByClientId(application.ClientId) != nil {
+	if oldApplication.ClientId != application.ClientId && GetApplicationByClientId(application.ClientId) != nil {
 		return false
 	}
 
