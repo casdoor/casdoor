@@ -287,7 +287,8 @@ func GetMaskedApplications(applications []*Application, userId string) []*Applic
 
 func UpdateApplication(id string, application *Application) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getApplication(owner, name) == nil {
+	oldApplication := getApplication(owner, name)
+	if oldApplication == nil {
 		return false
 	}
 
@@ -300,6 +301,10 @@ func UpdateApplication(id string, application *Application) bool {
 		if err != nil {
 			return false
 		}
+	}
+
+	if oldApplication.ClientId != application.ClientId && GetApplicationByClientId(application.ClientId) != nil {
+		return false
 	}
 
 	for _, providerItem := range application.Providers {
@@ -324,6 +329,9 @@ func AddApplication(application *Application) bool {
 	}
 	if application.ClientSecret == "" {
 		application.ClientSecret = util.GenerateClientSecret()
+	}
+	if GetApplicationByClientId(application.ClientId) != nil {
+		return false
 	}
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
