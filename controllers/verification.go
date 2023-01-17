@@ -51,15 +51,15 @@ func (c *ApiController) SendVerificationCode() {
 	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
 
 	if destType == "" {
-		c.ResponseError(c.T("verification:Missing parameter") + ": type.")
+		c.ResponseError(c.T("general:Missing parameter") + ": type.")
 		return
 	}
 	if dest == "" {
-		c.ResponseError(c.T("verification:Missing parameter") + ": dest.")
+		c.ResponseError(c.T("general:Missing parameter") + ": dest.")
 		return
 	}
 	if applicationId == "" {
-		c.ResponseError(c.T("verification:Missing parameter") + ": applicationId.")
+		c.ResponseError(c.T("general:Missing parameter") + ": applicationId.")
 		return
 	}
 	if !strings.Contains(applicationId, "/") {
@@ -67,7 +67,7 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 	if checkType == "" {
-		c.ResponseError(c.T("verification:Missing parameter") + ": checkType.")
+		c.ResponseError(c.T("general:Missing parameter") + ": checkType.")
 		return
 	}
 
@@ -75,7 +75,7 @@ func (c *ApiController) SendVerificationCode() {
 
 	if captchaProvider != nil {
 		if checkKey == "" {
-			c.ResponseError(c.T("verification:Missing parameter") + ": checkKey.")
+			c.ResponseError(c.T("general:Missing parameter") + ": checkKey.")
 			return
 		}
 		isHuman, err := captchaProvider.VerifyCaptcha(checkKey, checkId)
@@ -170,7 +170,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 	dest := c.Ctx.Request.Form.Get("dest")
 	code := c.Ctx.Request.Form.Get("code")
 	if len(dest) == 0 || len(code) == 0 || len(destType) == 0 {
-		c.ResponseError(c.T("verification:Missing parameter"))
+		c.ResponseError(c.T("general:Missing parameter"))
 		return
 	}
 
@@ -247,11 +247,11 @@ func (c *ApiController) VerifyCaptcha() {
 	captchaToken := c.Ctx.Request.Form.Get("captchaToken")
 	clientSecret := c.Ctx.Request.Form.Get("clientSecret")
 	if captchaToken == "" {
-		c.ResponseError(c.T("verification:Missing parameter") + ": captchaToken.")
+		c.ResponseError(c.T("general:Missing parameter") + ": captchaToken.")
 		return
 	}
 	if clientSecret == "" {
-		c.ResponseError(c.T("verification:Missing parameter") + ": clientSecret.")
+		c.ResponseError(c.T("general:Missing parameter") + ": clientSecret.")
 		return
 	}
 

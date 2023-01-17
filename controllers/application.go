@@ -113,7 +113,7 @@ func (c *ApiController) GetOrganizationApplications() {
 	sortOrder := c.Input().Get("sortOrder")
 
 	if organization == "" {
-		c.ResponseError(c.T("application:Parameter organization is missing"))
+		c.ResponseError(c.T("general:Missing parameter") + ": organization")
 		return
 	}
 

@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"strconv"
 	"strings"
 
@@ -238,21 +239,67 @@ func (c *ApiController) Signup() {
 // @Title Logout
 // @Tag Login API
 // @Description logout the current user
+// @Param   id_token_hint   query        string  false        "id_token_hint"
+// @Param   post_logout_redirect_uri    query    string  false     "post_logout_redirect_uri"
+// @Param   state     query    string  false     "state"
 // @Success 200 {object} controllers.Response The Response object
 // @router /logout [get,post]
 func (c *ApiController) Logout() {
 	user := c.GetSessionUsername()
-	object.DeleteSessionId(user, c.Ctx.Input.CruSession.SessionID())
-	util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
-	application := c.GetSessionApplication()
-	c.ClearUserSession()
+	// https://openid.net/specs/openid-connect-rpinitiated-1_0-final.html
+	accessToken := c.Input().Get("id_token_hint")
+	redirectUri := c.Input().Get("post_logout_redirect_uri")
+	state := c.Input().Get("state")
 
-	if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
-		c.ResponseOk(user)
+	if accessToken == "" && redirectUri == "" {
+		c.ClearUserSession()
+		object.DeleteSessionId(user, c.Ctx.Input.CruSession.SessionID())
+		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
+
+		application := c.GetSessionApplication()
+		if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
+			c.ResponseOk(user)
+			return
+		}
+		c.ResponseOk(user, application.HomepageUrl)
 		return
+	} else {
+		if redirectUri == "" {
+			c.ResponseError(c.T("general:Missing parameter") + ": post_logout_redirect_uri")
+			return
+		}
+		if accessToken == "" {
+			c.ResponseError(c.T("general:Missing parameter") + ": id_token_hint")
+			return
+		}
+
+		affected, application, token := object.ExpireTokenByAccessToken(accessToken)
+		if !affected {
+			c.ResponseError(c.T("token:Token not found, invalid accessToken"))
+			return
+		}
+
+		if application == nil {
+			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist")), token.Application)
+			return
+		}
+
+		if application.IsRedirectUriValid(redirectUri) {
+			if user == "" {
+				user = util.GetId(token.Organization, token.User)
+			}
+
+			c.ClearUserSession()
+			object.DeleteSessionId(user, c.Ctx.Input.CruSession.SessionID())
+			util.LogInfo(c.Ctx, "API: [%s] logged out", user)
+
+			c.Ctx.Redirect(http.StatusFound, fmt.Sprintf("%s?state=%s", strings.TrimRight(redirectUri, "/"), state))
+		} else {
+			c.ResponseError(fmt.Sprintf(c.T("token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), redirectUri))
+			return
+		}
 	}
-	c.ResponseOk(user, application.HomepageUrl)
 }
 
 // GetAccount

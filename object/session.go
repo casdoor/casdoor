@@ -15,8 +15,6 @@
 package object
 
 import (
-	"time"
-
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -42,7 +40,7 @@ func SetSession(id string, sessionId string) {
 	if get {
 		_, err = adapter.Engine.ID(core.PK{owner, name}).Update(session)
 	} else {
-		session.CreatedTime = time.Now().Format(time.RFC3339)
+		session.CreatedTime = util.GetCurrentTime()
 		_, err = adapter.Engine.Insert(session)
 	}
 	if err != nil {
@@ -66,7 +64,7 @@ func DeleteSession(id string) bool {
 }
 
 func DeleteSessionId(id string, sessionId string) bool {
-	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
+	owner, name := util.GetOwnerAndNameFromId(id)
 
 	session := &Session{Owner: owner, Name: name}
 	_, err := adapter.Engine.ID(core.PK{owner, name}).Get(session)

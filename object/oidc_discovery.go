@@ -40,6 +40,7 @@ type OidcDiscovery struct {
 	ClaimsSupported                        []string `json:"claims_supported"`
 	RequestParameterSupported              bool     `json:"request_parameter_supported"`
 	RequestObjectSigningAlgValuesSupported []string `json:"request_object_signing_alg_values_supported"`
+	EndSessionEndpoint                     string   `json:"end_session_endpoint"`
 }
 
 func getOriginFromHost(host string) (string, string) {
@@ -84,6 +85,7 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 		ClaimsSupported:                        []string{"iss", "ver", "sub", "aud", "iat", "exp", "id", "type", "displayName", "avatar", "permanentAvatar", "email", "phone", "location", "affiliation", "title", "homepage", "bio", "tag", "region", "language", "score", "ranking", "isOnline", "isAdmin", "isGlobalAdmin", "isForbidden", "signupApplication", "ldap"},
 		RequestParameterSupported:              true,
 		RequestObjectSigningAlgValuesSupported: []string{"HS256", "HS384", "HS512"},
+		EndSessionEndpoint:                     fmt.Sprintf("%s/api/logout", originBackend),
 	}
 
 	return oidcDiscovery
