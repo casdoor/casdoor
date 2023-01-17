@@ -302,6 +302,10 @@ func UpdateApplication(id string, application *Application) bool {
 		}
 	}
 
+	if GetApplicationByClientId(application.ClientId) != nil {
+		return false
+	}
+
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}
@@ -324,6 +328,9 @@ func AddApplication(application *Application) bool {
 	}
 	if application.ClientSecret == "" {
 		application.ClientSecret = util.GenerateClientSecret()
+	}
+	if GetApplicationByClientId(application.ClientId) != nil {
+		return false
 	}
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
