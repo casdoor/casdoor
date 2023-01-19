@@ -530,7 +530,15 @@ export function isAgreementRequired(application) {
   return false;
 }
 
-export function renderAgreement(required, onClick, noStyle, layout) {
+export function isDefaultTrue(application) {
+  const agreementItem = application.signupItems.find(item => item.name === "Agreement");
+  if (isAgreementRequired(application) && agreementItem.rule === "Signin (Default True)") {
+    return true;
+  }
+  return false;
+}
+
+export function renderAgreement(required, onClick, noStyle, layout, initialValue) {
   return (
     <Form.Item
       name="agreement"
@@ -544,6 +552,7 @@ export function renderAgreement(required, onClick, noStyle, layout) {
       ]}
       {...layout}
       noStyle={noStyle}
+      initialValue={initialValue}
     >
       <Checkbox style={{float: "left"}}>
         {i18next.t("signup:Accept")}&nbsp;

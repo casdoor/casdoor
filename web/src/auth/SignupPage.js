@@ -479,7 +479,7 @@ class SignupPage extends React.Component {
           this.setState({
             isTermsOfUseVisible: true,
           });
-        }, false, tailFormItemLayout)
+        }, false, tailFormItemLayout, Setting.isDefaultTrue(application))
       );
     }
   }
