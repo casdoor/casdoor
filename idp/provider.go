@@ -98,7 +98,7 @@ func GetIdProvider(typ string, subType string, clientId string, clientSecret str
 	return nil
 }
 
-var gothList = []string{"Apple", "AzureAD", "Slack", "Steam", "Line"}
+var gothList = []string{"Amazon", "Apple", "AzureAD", "Slack", "Steam", "Line"}
 
 func isGothSupport(provider string) bool {
 	for _, value := range gothList {

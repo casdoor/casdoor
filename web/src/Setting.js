@@ -702,6 +702,7 @@ export function getProviderTypeOptions(category) {
         {id: "Okta", name: "Okta"},
         {id: "Douyin", name: "Douyin"},
         {id: "Line", name: "Line"},
+        {id: "Amazon", name: "Amazon"},
         {id: "Custom", name: "Custom"},
       ]
     );

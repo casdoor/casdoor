@@ -174,11 +174,29 @@ func (c *ApiController) GetApplicationLogin() {
 }
 
 func setHttpClient(idProvider idp.IdProvider, providerType string) {
-	if providerType == "GitHub" || providerType == "Google" || providerType == "Facebook" || providerType == "LinkedIn" || providerType == "Steam" || providerType == "Line" {
+	if isProxyProviderType(providerType) {
 		idProvider.SetHttpClient(proxy.ProxyHttpClient)
 	} else {
 		idProvider.SetHttpClient(proxy.DefaultHttpClient)
 	}
+}
+
+func isProxyProviderType(providerType string) bool {
+	providerTypes := []string{
+		"GitHub",
+		"Google",
+		"Facebook",
+		"LinkedIn",
+		"Steam",
+		"Line",
+		"Amazon",
+	}
+	for _, v := range providerTypes {
+		if strings.EqualFold(v, providerType) {
+			return true
+		}
+	}
+	return false
 }
 
 // Login ...

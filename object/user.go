@@ -103,6 +103,7 @@ type User struct {
 	Okta     string `xorm:"okta varchar(100)" json:"okta"`
 	Douyin   string `xorm:"douyin varchar(100)" json:"douyin"`
 	Line     string `xorm:"line varchar(100)" json:"line"`
+	Amazon   string `xorm:"amazon varchar(100)" json:"amazon"`
 	Custom   string `xorm:"custom varchar(100)" json:"custom"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`

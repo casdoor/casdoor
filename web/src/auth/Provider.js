@@ -125,6 +125,10 @@ const authInfo = {
     scope: "profile%20openid%20email",
     endpoint: "https://access.line.me/oauth2/v2.1/authorize",
   },
+  Amazon: {
+    scope: "profile",
+    endpoint: "https://www.amazon.com/ap/oa",
+  },
 };
 
 export function getProviderUrl(provider) {
@@ -261,6 +265,8 @@ export function getAuthUrl(application, provider, method) {
   } else if (provider.type === "Bilibili") {
     return `${endpoint}#/?client_id=${provider.clientId}&return_url=${redirectUri}&state=${state}&response_type=code`;
   } else if (provider.type === "Line") {
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
+  } else if (provider.type === "Amazon") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   }
 }
