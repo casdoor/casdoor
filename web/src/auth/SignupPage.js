@@ -13,8 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Link} from "react-router-dom";
-import {Button, Checkbox, Form, Input, Modal, Result} from "antd";
+import {Button, Form, Input, Result} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import * as ProviderButton from "./ProviderButton";
@@ -113,7 +112,9 @@ class SignupPage extends React.Component {
         });
 
         if (application !== null && application !== undefined) {
-          this.getTermsofuseContent(application.termsOfUse);
+          Setting.getTermsOfUseContent(application.termsOfUse, res => {
+            this.setState({termsOfUseContent: res});
+          });
         }
       });
   }
@@ -132,16 +133,6 @@ class SignupPage extends React.Component {
 
   getApplicationObj() {
     return this.props.application ?? this.state.application;
-  }
-
-  getTermsofuseContent(url) {
-    fetch(url, {
-      method: "GET",
-    }).then(r => {
-      r.text().then(res => {
-        this.setState({termsOfUseContent: res});
-      });
-    });
   }
 
   onUpdateAccount(account) {
@@ -484,58 +475,28 @@ class SignupPage extends React.Component {
       );
     } else if (signupItem.name === "Agreement") {
       return (
-        <Form.Item
-          name="agreement"
-          key="agreement"
-          valuePropName="checked"
-          rules={[
-            {
-              required: required,
-              message: i18next.t("signup:Please accept the agreement!"),
-            },
-          ]}
-          {...tailFormItemLayout}
-        >
-          <Checkbox>
-            {i18next.t("signup:Accept")}&nbsp;
-            <Link onClick={() => {
-              this.setState({
-                isTermsOfUseVisible: true,
-              });
-            }}>
-              {i18next.t("signup:Terms of Use")}
-            </Link>
-          </Checkbox>
-        </Form.Item>
+        Setting.renderAgreement(Setting.isAgreementRequired(application), () => {
+          this.setState({
+            isTermsOfUseVisible: true,
+          });
+        }, false, tailFormItemLayout)
       );
     }
   }
 
   renderModal() {
     return (
-      <Modal
-        title={i18next.t("signup:Terms of Use")}
-        open={this.state.isTermsOfUseVisible}
-        width={"55vw"}
-        closable={false}
-        okText={i18next.t("signup:Accept")}
-        cancelText={i18next.t("signup:Decline")}
-        onOk={() => {
-          this.form.current.setFieldsValue({agreement: true});
-          this.setState({
-            isTermsOfUseVisible: false,
-          });
-        }}
-        onCancel={() => {
-          this.form.current.setFieldsValue({agreement: false});
-          this.setState({
-            isTermsOfUseVisible: false,
-          });
-          this.props.history.goBack();
-        }}
-      >
-        <iframe title={"terms"} style={{border: 0, width: "100%", height: "60vh"}} srcDoc={this.state.termsOfUseContent} />
-      </Modal>
+      Setting.renderModal(this.state.isTermsOfUseVisible, () => {
+        this.form.current.setFieldsValue({agreement: true});
+        this.setState({
+          isTermsOfUseVisible: false,
+        });
+      }, () => {
+        this.form.current.setFieldsValue({agreement: false});
+        this.setState({
+          isTermsOfUseVisible: false,
+        });
+      }, this.state.termsOfUseContent)
     );
   }
 
