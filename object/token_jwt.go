@@ -18,9 +18,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/duo-labs/webauthn/webauthn"
-
 	"github.com/casdoor/casdoor/util"
+	"github.com/duo-labs/webauthn/webauthn"
 	"github.com/golang-jwt/jwt/v4"
 )
 
