@@ -189,11 +189,13 @@ export function getAuthUrl(application, provider, method) {
   const isShortState = provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger");
   const state = Util.getStateFromQueryParams(application.name, provider.name, method, isShortState);
 
-  if (provider.type === "Google") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
-  } else if (provider.type === "GitHub") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
-  } else if (provider.type === "QQ") {
+  if (provider.type === "Google"
+    || provider.type === "GitHub"
+    || provider.type === "QQ"
+    || provider.type === "Facebook"
+    || provider.type === "Weibo"
+    || provider.type === "Gitee"
+    || provider.type === "LinkedIn") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "WeChat") {
     if (navigator.userAgent.includes("MicroMessenger")) {
@@ -201,16 +203,6 @@ export function getAuthUrl(application, provider, method) {
     } else {
       return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}#wechat_redirect`;
     }
-  } else if (provider.type === "Facebook") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
-  } else if (provider.type === "DingTalk") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}&prompt=consent`;
-  } else if (provider.type === "Weibo") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
-  } else if (provider.type === "Gitee") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
-  } else if (provider.type === "LinkedIn") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "WeCom") {
     if (provider.subType === "Internal") {
       if (provider.method === "Silent") {
@@ -236,7 +228,11 @@ export function getAuthUrl(application, provider, method) {
     }
   } else if (provider.type === "Lark") {
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`;
-  } else if (provider.type === "GitLab") {
+  } else if (provider.type === "GitLab"
+          || provider.type === "AzureAD"
+          || provider.type === "Slack"
+          || provider.type === "Line"
+          || provider.type === "Amazon") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Adfs") {
     return `${provider.domain}/adfs/oauth2/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&nonce=casdoor&scope=openid`;
@@ -250,10 +246,6 @@ export function getAuthUrl(application, provider, method) {
     return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}?state=${state}`;
   } else if (provider.type === "Apple") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&response_mode=form_post`;
-  } else if (provider.type === "AzureAD") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
-  } else if (provider.type === "Slack") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Steam") {
     return `${endpoint}?openid.claimed_id=http://specs.openid.net/auth/2.0/identifier_select&openid.identity=http://specs.openid.net/auth/2.0/identifier_select&openid.mode=checkid_setup&openid.ns=http://specs.openid.net/auth/2.0&openid.realm=${window.location.origin}&openid.return_to=${redirectUri}?state=${state}`;
   } else if (provider.type === "Okta") {
@@ -264,9 +256,5 @@ export function getAuthUrl(application, provider, method) {
     return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.customScope}&response_type=code&state=${state}`;
   } else if (provider.type === "Bilibili") {
     return `${endpoint}#/?client_id=${provider.clientId}&return_url=${redirectUri}&state=${state}&response_type=code`;
-  } else if (provider.type === "Line") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
-  } else if (provider.type === "Amazon") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   }
 }
