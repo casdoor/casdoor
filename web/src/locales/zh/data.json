@@ -223,6 +223,7 @@
     "Phone - Tooltip": "手机号",
     "Phone prefix": "手机号前缀",
     "Phone prefix - Tooltip": "移动电话号码前缀，用于区分国家或地区",
+    "Phone prefix - Error": "添加新项只需输入前缀数字",
     "Preview": "预览",
     "Preview - Tooltip": "预览",
     "Products": "商品",
@@ -785,5 +786,12 @@
     "URL": "网址",
     "URL - Tooltip": "URL",
     "Value": "值"
+  },
+  "country": {
+    "CHN": "中国大陆",
+    "HKG": "中国香港",
+    "MAC": "中国澳门",
+    "TWN": "中国台湾",
+    "USA": "美国"
   }
 }

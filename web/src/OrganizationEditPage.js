@@ -17,6 +17,7 @@ import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
+import * as OrganizationConstants from "./constants/Organization";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
@@ -185,9 +186,25 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Phone prefix"), i18next.t("general:Phone prefix - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input addonBefore={"+"} value={this.state.organization.phonePrefix} onChange={e => {
-              this.updateOrganizationField("phonePrefix", e.target.value);
-            }} />
+            <Select virtual={false} mode="tags" style={{width: "100%"}}
+              value={JSON.parse(this.state.organization.phonePrefix)}
+              onChange={(value => {
+                value = value.map(item => parseInt(item));
+                if (value.some(item => isNaN(item))) {
+                  Setting.showMessage("error", i18next.t("general:Phone prefix - Error"));
+                  return;
+                }
+                this.updateOrganizationField("phonePrefix", JSON.stringify(value));
+              })} >
+              {
+                OrganizationConstants.phonePrefixes
+                  .map((item, index) =>
+                    <Option key={index} value={item.value}>
+                      {`${i18next.t(`country:${item.code}`)} (+${item.value})`}
+                    </Option>
+                  )
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -260,16 +277,8 @@ class OrganizationEditPage extends React.Component {
                 this.updateOrganizationField("languages", value);
               })} >
               {
-                [
-                  {value: "en", label: "English"},
-                  {value: "zh", label: "简体中文"},
-                  {value: "es", label: "Español"},
-                  {value: "fr", label: "Français"},
-                  {value: "de", label: "Deutsch"},
-                  {value: "ja", label: "日本語"},
-                  {value: "ko", label: "한국어"},
-                  {value: "ru", label: "Русский"},
-                ].map((item, index) => <Option key={index} value={item.value}>{item.label}</Option>)
+                OrganizationConstants.languages
+                  .map((item, index) => <Option key={index} value={item.value}>{item.label}</Option>)
               }
             </Select>
           </Col>

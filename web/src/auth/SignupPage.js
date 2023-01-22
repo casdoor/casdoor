@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Form, Input, Result} from "antd";
+import {Button, Form, Input, Result, Select} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import * as ProviderButton from "./ProviderButton";
@@ -26,6 +26,8 @@ import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {withRouter} from "react-router-dom";
+
+const {Option} = Select;
 
 const formItemLayout = {
   labelCol: {
@@ -68,6 +70,7 @@ class SignupPage extends React.Component {
       application: null,
       email: "",
       phone: "",
+      phonePrefix: "86",
       emailCode: "",
       phoneCode: "",
       validEmail: false,
@@ -157,7 +160,7 @@ class SignupPage extends React.Component {
 
   onFinish(values) {
     const application = this.getApplicationObj();
-    values.phonePrefix = application.organizationObj.phonePrefix;
+    values.phonePrefix = this.state.phonePrefix;
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === "ok") {
@@ -376,6 +379,7 @@ class SignupPage extends React.Component {
         </React.Fragment>
       );
     } else if (signupItem.name === "Phone") {
+      const phonePrefixes = [].concat(JSON.parse(this.state.application?.organizationObj.phonePrefix ?? "86"));
       return (
         <React.Fragment>
           <Form.Item
@@ -404,7 +408,13 @@ class SignupPage extends React.Component {
               style={{
                 width: "100%",
               }}
-              addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+              addonBefore={
+                <Select defaultValue={phonePrefixes[0]} onChange={(value => this.setState({phonePrefix: value}))}>
+                  {
+                    phonePrefixes.map((item, index) => <Option key={index} value={item}>{`+${item}`}</Option>)
+                  }
+                </Select>
+              }
               onChange={e => this.setState({phone: e.target.value})}
             />
           </Form.Item>
@@ -422,7 +432,7 @@ class SignupPage extends React.Component {
             <CountDownInput
               disabled={!this.state.validPhone}
               method={"signup"}
-              onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
+              onButtonClickArgs={[`${this.state.phonePrefix}${this.state.phone}`, "phone", Setting.getApplicationName(application)]}
               application={application}
             />
           </Form.Item>

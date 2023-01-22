@@ -223,6 +223,7 @@
     "Phone - Tooltip": "Phone",
     "Phone prefix": "Phone prefix",
     "Phone prefix - Tooltip": "Mobile phone number prefix, used to distinguish countries or regions",
+    "Phone prefix - Error": "To add a new item, simply enter the prefix number",
     "Preview": "Preview",
     "Preview - Tooltip": "The form in which the password is stored in the database",
     "Products": "Products",
@@ -785,5 +786,12 @@
     "URL": "URL",
     "URL - Tooltip": "URL - Tooltip",
     "Value": "Value"
+  },
+  "country": {
+    "CHN": "China Mainland",
+    "HKG": "Hong Kong, China",
+    "MAC": "Macao, China",
+    "TWN": "Taiwan, China",
+    "USA": "United States"
   }
 }
