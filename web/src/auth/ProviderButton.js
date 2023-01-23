@@ -40,7 +40,7 @@ import BilibiliLoginButton from "./BilibiliLoginButton";
 import OktaLoginButton from "./OktaLoginButton";
 import DouyinLoginButton from "./DouyinLoginButton";
 import LineLoginButton from "./LineLoginButton";
-import AmazonLoginButton from "./AmazonLoginButton";
+import LoginButton from "./LoginButton";
 import * as AuthBackend from "./AuthBackend";
 import {getEvent} from "./Util";
 import {Modal} from "antd";
@@ -98,7 +98,7 @@ function getSigninButton(type) {
   } else if (type === "Line") {
     return <LineLoginButton text={text} align={"center"} />;
   } else if (type === "Amazon") {
-    return <AmazonLoginButton text={text} align={"center"} />;
+    return <LoginButton providerName="Amazon" providerIcon="amazon.svg" />;
   }
 
   return text;
