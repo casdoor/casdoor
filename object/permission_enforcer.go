@@ -290,8 +290,12 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`
 		}
 		policyDefinition = append(policyDefinition, "permissionId")
 
+		requestDefinition := strings.Split(cfg.String("request_definition::r"), ",")
+		requestDefinition = append(requestDefinition, "permissionId")
+
 		m, _ := model.NewModelFromString(modelText)
 		m.AddDef("p", "p", strings.Join(policyDefinition, ","))
+		m.AddDef("r", "r", strings.Join(requestDefinition, ","))
 
 		return m, err
 	}
