@@ -404,7 +404,7 @@ class SignupPage extends React.Component {
               style={{
                 width: "100%",
               }}
-              addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+              addonBefore={`+${this.getApplicationObj()?.organizationObj.phonePrefix}`}
               onChange={e => this.setState({phone: e.target.value})}
             />
           </Form.Item>
