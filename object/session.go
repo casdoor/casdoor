@@ -25,7 +25,8 @@ type Session struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	SessionId []string `json:"sessionId"`
+	Application string   `xorm:"varchar(100) notnull pk default ''" json:"application"`
+	SessionId   []string `json:"sessionId"`
 }
 
 func SetSession(id string, sessionId string) {
@@ -127,4 +128,47 @@ func GetSessionCount(owner, field, value string) int {
 	}
 
 	return int(count)
+}
+
+func AddUserSession(owner string, application string, name string, sessionId string, sessionUnixTimestamp string) bool {
+	session := &Session{Owner: owner, Name: name, Application: application}
+
+	session.CreatedTime = sessionUnixTimestamp
+	session.SessionId = append(session.SessionId, sessionId)
+	affected, err := adapter.Engine.Insert(session)
+	if err != nil {
+		panic(err)
+	}
+	return affected != 0
+}
+
+func DeleteUserSession(owner string, application string, name string) bool {
+	session := &Session{Owner: owner, Name: name, Application: application}
+	_, err := adapter.Engine.ID(core.PK{owner, application, name}).Get(session)
+	if err != nil {
+		return false
+	}
+
+	affected, err := adapter.Engine.ID(core.PK{owner, application, name}).Delete(session)
+	return affected != 0
+}
+
+func IsUserSessionDuplicated(owner string, application string, name string, sessionId string, unixTimeStamp string) bool {
+	session := &Session{Owner: owner, Name: name, Application: application}
+	get, _ := adapter.Engine.ID(core.PK{owner, application, name}).Get(session)
+	if !get {
+		return false
+	} else {
+		if len(session.SessionId) > 1 {
+			return true
+		} else if len(session.SessionId) < 1 {
+			return false
+		} else {
+			if session.SessionId[0] != sessionId {
+				return true
+			} else {
+				return unixTimeStamp != session.CreatedTime
+			}
+		}
+	}
 }

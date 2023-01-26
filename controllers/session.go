@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -65,4 +64,75 @@ func (c *ApiController) GetSessions() {
 		sessions := object.GetPaginationSessions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		c.ResponseOk(sessions, paginator.Nums())
 	}
+}
+
+//AddUserSession
+// @Title AddUserSession
+// @Tag Session API
+// @Description Add application user sessions
+// @Param   ID     				string  "The ID(owner/application/name) of user."
+//			sessionId			string	"sessionId to be added"
+//			sessionCreateTime	string	"unixTimeStamp"
+// @Success 200 {array} string The Response object
+// @router /add-user-session [post]
+func (c *ApiController) AddUserSession() {
+	var session object.Session
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if len(session.SessionId) != 1 {
+		c.Data["json"] = &Response{Status: "error", Msg: "only one session can be added at a time"}
+	} else {
+		c.Data["json"] = wrapActionResponse(object.AddUserSession(session.Owner, session.Application, session.Name, session.SessionId[0], session.CreatedTime))
+	}
+
+	c.ServeJSON()
+}
+
+//DeleteUserSession
+// @Title DeleteUserSession
+// @Tag Session API
+// @Description Delete application user sessions
+// @Param   ID     				string  "The ID(owner/application/name) of user."
+// @Success 200 {array} string The Response object
+// @router /delete-user-session [post]
+func (c *ApiController) DeleteUserSession() {
+	var session object.Session
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.DeleteUserSession(session.Owner, session.Application, session.Name))
+	c.ServeJSON()
+}
+
+//IsUserSessionDuplicated
+// @Title IsUserSessionDuplicated
+// @Tag Session API
+// @Description Judge Whether this application user session is repeated
+// @Param   ID     				string  "The ID(owner/application/name) of user."
+//			sessionId			string	"sessionId to be checked"
+//			sessionCreateTime	string	"unixTimeStamp"
+// @Success 200 {array} string The Response object
+// @router /is-user-session-duplicated [get]
+func (c *ApiController) IsUserSessionDuplicated() {
+	var session object.Session
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if len(session.SessionId) != 1 {
+		c.Data["json"] = &Response{Status: "error", Msg: "only one session can be checked at a time"}
+	} else {
+		isUserSessionDuplicated := object.IsUserSessionDuplicated(session.Owner, session.Application, session.Name, session.SessionId[0], session.CreatedTime)
+		c.Data["json"] = &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
+	}
+	c.ServeJSON()
 }
