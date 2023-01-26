@@ -22,6 +22,7 @@ import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./LdapTable";
 import AccountTable from "./AccountTable";
+import ThemeEditor from "./common/theme/ThemeEditor";
 
 const {Option} = Select;
 
@@ -316,6 +317,7 @@ class OrganizationEditPage extends React.Component {
             />
           </Col>
         </Row>
+        <ThemeEditor />
         <Row style={{marginTop: "20px"}}>
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:LDAPs"), i18next.t("general:LDAPs - Tooltip"))} :
