@@ -22,7 +22,6 @@ import ru from "./locales/ru/data.json";
 import ja from "./locales/ja/data.json";
 import es from "./locales/es/data.json";
 import * as Conf from "./Conf";
-import * as Setting from "./Setting";
 import {initReactI18next} from "react-i18next";
 
 const resources = {
@@ -76,7 +75,6 @@ function initLanguage() {
       }
     }
   }
-  Setting.changeMomentLanguage(language);
 
   return language;
 }

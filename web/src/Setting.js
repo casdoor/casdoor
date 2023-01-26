@@ -45,9 +45,10 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
 
 const {defaultAlgorithm, darkAlgorithm, compactAlgorithm} = theme;
 
-export const Themes = [{label: i18next.t("general:Dark"), key: "Dark", style: darkAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/dark.svg`},
-  {label: i18next.t("general:Compact"), key: "Compact", style: compactAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/compact.svg`},
-  {label: i18next.t("general:Default"), key: "Default", style: defaultAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/light.svg`},
+export const Themes = [
+  {label: i18next.t("general:Dark"), key: "dark", theme: darkAlgorithm, selectThemeIcon: `${StaticBaseUrl}/img/dark.svg`},
+  {label: i18next.t("general:Compact"), key: "compact", theme: compactAlgorithm, selectThemeIcon: `${StaticBaseUrl}/img/compact.svg`},
+  {label: i18next.t("general:Default"), key: "default", theme: defaultAlgorithm, selectThemeIcon: `${StaticBaseUrl}/img/light.svg`},
 ];
 
 export const OtherProviderInfo = {
@@ -670,13 +671,12 @@ export function getLanguage() {
 
 export function setLanguage(language) {
   localStorage.setItem("language", language);
-  changeMomentLanguage(language);
   i18next.changeLanguage(language);
 }
 
 export function setTheme(themeKey) {
   localStorage.setItem("theme", themeKey);
-  dispatchEvent(new Event("themeChange"));
+  dispatchEvent(new Event("changeTheme"));
 }
 
 export function getAcceptLanguage() {
@@ -684,29 +684,6 @@ export function getAcceptLanguage() {
     return "en;q=0.9,en;q=0.8";
   }
   return i18next.language + ";q=0.9,en;q=0.8";
-}
-
-export function changeMomentLanguage(language) {
-  // if (language === "zh") {
-  //   moment.locale("zh", {
-  //     relativeTime: {
-  //       future: "%s内",
-  //       past: "%s前",
-  //       s: "几秒",
-  //       ss: "%d秒",
-  //       m: "1分钟",
-  //       mm: "%d分钟",
-  //       h: "1小时",
-  //       hh: "%d小时",
-  //       d: "1天",
-  //       dd: "%d天",
-  //       M: "1个月",
-  //       MM: "%d个月",
-  //       y: "1年",
-  //       yy: "%d年",
-  //     },
-  //   });
-  // }
 }
 
 export function getClickable(text) {
