@@ -97,7 +97,7 @@ func (c *ApiController) AddUserSession() {
 // @Title DeleteUserSession
 // @Tag Session API
 // @Description Delete application user sessions
-// @Param   ID     				string  "The ID(owner/application/name) of user."
+// @Param   ID  string  "The ID(owner/application/name) of user."
 // @Success 200 {array} string The Response object
 // @router /delete-user-session [post]
 func (c *ApiController) DeleteUserSession() {
