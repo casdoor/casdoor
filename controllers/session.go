@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -66,7 +67,7 @@ func (c *ApiController) GetSessions() {
 	}
 }
 
-//AddUserSession
+// AddUserSession
 // @Title AddUserSession
 // @Tag Session API
 // @Description Add application user sessions
@@ -92,7 +93,7 @@ func (c *ApiController) AddUserSession() {
 	c.ServeJSON()
 }
 
-//DeleteUserSession
+// DeleteUserSession
 // @Title DeleteUserSession
 // @Tag Session API
 // @Description Delete application user sessions
@@ -111,7 +112,7 @@ func (c *ApiController) DeleteUserSession() {
 	c.ServeJSON()
 }
 
-//IsUserSessionDuplicated
+// IsUserSessionDuplicated
 // @Title IsUserSessionDuplicated
 // @Tag Session API
 // @Description Judge Whether this application user session is repeated
