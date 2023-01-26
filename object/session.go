@@ -23,10 +23,10 @@ import (
 type Session struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	Application string `xorm:"varchar(100) notnull pk default ''" json:"application"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Application string   `xorm:"varchar(100) notnull pk default ''" json:"application"`
-	SessionId   []string `json:"sessionId"`
+	SessionId []string `json:"sessionId"`
 }
 
 func SetSession(id string, sessionId string) {
