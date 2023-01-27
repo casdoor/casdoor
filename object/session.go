@@ -35,14 +35,13 @@ type Session struct {
 }
 
 func SetSession(id string, sessionId string, application *Application) {
-	if application.Organization != casdoorOrganization {
+	if application.Organization != casdoorOrganization || application.Name != casdoorApplication {
 		return
 	}
 
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
-	sessionApplicationName := application.Name
 
-	session := &Session{Owner: owner, Name: name, Application: sessionApplicationName}
+	session := &Session{Owner: owner, Name: name, Application: casdoorApplication}
 
 	get, err := adapter.Engine.Get(session)
 	if err != nil {
@@ -51,7 +50,7 @@ func SetSession(id string, sessionId string, application *Application) {
 
 	session.SessionId = append(session.SessionId, sessionId)
 	if get {
-		_, err = adapter.Engine.ID(core.PK{owner, name, sessionApplicationName}).Update(session)
+		_, err = adapter.Engine.ID(core.PK{owner, name, casdoorApplication}).Update(session)
 	} else {
 		session.CreatedTime = util.GetCurrentTime()
 		_, err = adapter.Engine.Insert(session)
