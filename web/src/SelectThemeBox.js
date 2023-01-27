@@ -18,66 +18,72 @@ import {Dropdown} from "antd";
 import "./App.less";
 import i18next from "i18next";
 
-function themeIcon(themeKey) {
-  return <img width={24} alt={themeKey} src={getIconURL(themeKey)} />;
+export const Themes = [
+  {label: "Default theme", key: "default", icon: `${Setting.StaticBaseUrl}/img/light.svg`},
+  {label: "Dark theme", key: "dark", icon: `${Setting.StaticBaseUrl}/img/dark.svg`},
+  {label: "Compact theme", key: "compact", icon: `${Setting.StaticBaseUrl}/img/compact.svg`},
+];
+
+function themeIcon(themeKey, iconUrl) {
+  return <img width={24} alt={themeKey} src={iconUrl} />;
 }
 
-function getIconURL(themeKey) {
-  if (themeKey) {
-    return Setting.Themes.find(t => t.key === themeKey).selectThemeIcon;
-  } else {
-    return localStorage.getItem("theme") === null ? getIconURL("default") :
-      Setting.Themes.find(t => t.key === localStorage.getItem("theme"));
+function getIconUrl(themeKey) {
+  if (themeKey?.includes("dark")) {
+    return Themes.find(t => t.key === "dark").icon;
+  } else if (themeKey?.includes("default")) {
+    return Themes.find(t => t.key === "default").icon;
   }
+
+  return localStorage.getItem("theme") === null ? Themes.find(t => t.key === "default").icon :
+    Themes.find(t => t.key === localStorage.getItem("themeAlgorithm"));
 }
 
 class SelectThemeBox extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      classes: props,
-      themes: props.theme ?? ["default", "dark", "compact"],
-      icon: null,
-    };
   }
 
+  iconUrl = getIconUrl();
   items = this.getThemeItems();
 
   componentDidMount() {
     i18next.on("languageChanged", () => {
       this.items = this.getThemeItems();
     });
-
-    this.setState({
-      icon: getIconURL(),
-    });
-
-    addEventListener("changeTheme", (e) => {
-      this.setState({icon: getIconURL()});
-    });
   }
 
   getThemeItems() {
-    return Setting.Themes.map((theme) => Setting.getItem(i18next.t(`general:${theme.label}`), theme.key, themeIcon(theme.key)));
-  }
-
-  getOrganizationThemes(themes) {
-    const select = [];
-    for (const theme of themes) {
-      this.items.map((item, index) => item.key === theme ? select.push(item) : null);
-    }
-    return select;
+    return Themes.map((theme) => Setting.getItem(i18next.t(`theme:${theme.label}`), theme.key, themeIcon(theme.key, theme.icon)));
   }
 
   render() {
-    const themeItems = this.getOrganizationThemes(this.state.themes);
     const onClick = (e) => {
-      Setting.setTheme(e.key);
+      let nextTheme;
+      if (e.key === "compact") {
+        if (this.props.themeAlgorithm.includes("compact")) {
+          nextTheme = this.props.themeAlgorithm.filter((theme) => theme !== "compact");
+        } else {
+          nextTheme = [...this.props.themeAlgorithm, "compact"];
+        }
+      } else {
+        if (!this.props.themeAlgorithm.includes(e.key)) {
+          if (e.key === "dark") {
+            nextTheme = [...this.props.themeAlgorithm.filter((theme) => theme !== "default"), e.key];
+          } else {
+            nextTheme = [...this.props.themeAlgorithm.filter((theme) => theme !== "dark"), e.key];
+          }
+        } else {
+          nextTheme = [...this.props.themeAlgorithm];
+        }
+      }
+      this.props.onChange(nextTheme);
+      this.icon = getIconUrl(nextTheme);
     };
 
     return (
-      <Dropdown menu={{items: themeItems, onClick}} >
-        <div className="theme-box" style={{display: themeItems.length === 0 ? "none" : null, background: `url(${this.state.icon})`, ...this.props.style}} />
+      <Dropdown menu={{items: this.items, onClick}} >
+        <div className="theme-box" style={{background: `url(${this.iconUrl})`, ...this.props.style}} />
       </Dropdown>
     );
   }

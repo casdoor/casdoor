@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+
 import {css} from "@emotion/react";
 import {Space, theme} from "antd";
 import * as React from "react";
@@ -12,11 +14,11 @@ export const THEMES = {
   comic: "https://gw.alipayobjects.com/zos/bmw-prod/ed9b04e8-9b8d-4945-8f8a-c8fc025e846f.svg",
 };
 
-const locales = {
-  default: i18next.t("organization:Default"),
-  dark: i18next.t("organization:Dark"),
-  lark: i18next.t("organization:Document"),
-  comic: i18next.t("organization:Blossom"),
+const themeTypes = {
+  default: "Default",
+  dark: "Dark",
+  lark: "Document",
+  comic: "Blossom",
 };
 
 const useStyle = () => {
@@ -62,6 +64,11 @@ export default function ThemePicker({value, onChange}) {
   const {token} = useToken();
   const style = useStyle();
 
+  React.useEffect(() => {
+    i18next.on("languageChanged", () => {
+    });
+  });
+
   return (
     <Space size={token.paddingLG}>
       {Object.keys(THEMES).map((theme) => {
@@ -78,7 +85,7 @@ export default function ThemePicker({value, onChange}) {
               <input type="radio" name="theme" />
               <img src={url} alt={theme} />
             </label>
-            <span>{locales[theme]}</span>
+            <span>{i18next.t(`theme:${themeTypes[theme]}`)}</span>
           </Space>
         );
       })}

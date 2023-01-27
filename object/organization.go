@@ -33,10 +33,10 @@ type AccountItem struct {
 
 type ThemeData struct {
 	ThemeType    string `xorm:"varchar(30)" json:"themeType"`
-	ColorPrimary string `xorm:"varchar(30)" json:"colorPrimary"`
+	ColorPrimary string `xorm:"varchar(10)" json:"colorPrimary"`
 	BorderRadius int    `xorm:"int" json:"borderRadius"`
-	Compact      string `xorm:"varchar(30)" json:"compact"`
-	Enable       bool   `json:"enable"`
+	IsCompact    bool   `xorm:"bool" json:"isCompact"`
+	IsEnabled    bool   `xorm:"bool" json:"isEnabled"`
 }
 
 type Organization struct {
@@ -54,7 +54,7 @@ type Organization struct {
 	DefaultApplication string     `xorm:"varchar(100)" json:"defaultApplication"`
 	Tags               []string   `xorm:"mediumtext" json:"tags"`
 	Languages          []string   `xorm:"varchar(255)" json:"languages"`
-	ThemeData          *ThemeData `xorm:"varchar(200)" json:"themeData"`
+	ThemeData          *ThemeData `xorm:"json" json:"themeData"`
 	MasterPassword     string     `xorm:"varchar(100)" json:"masterPassword"`
 	InitScore          int        `json:"initScore"`
 	EnableSoftDeletion bool       `json:"enableSoftDeletion"`

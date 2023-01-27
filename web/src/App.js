@@ -71,6 +71,7 @@ import AdapterEditPage from "./AdapterEditPage";
 import {withTranslation} from "react-i18next";
 import SelectThemeBox from "./SelectThemeBox";
 import SessionListPage from "./SessionListPage";
+import {ThemeDefault} from "./common/theme/ThemeEditor";
 
 const {Header, Footer, Content} = Layout;
 
@@ -83,7 +84,8 @@ class App extends Component {
       account: undefined,
       uri: null,
       menuVisible: false,
-      themeAlgorithm: null,
+      themeAlgorithm: ["default"],
+      themeData: ThemeDefault,
       logo: null,
     };
 
@@ -101,15 +103,7 @@ class App extends Component {
 
   componentDidMount() {
     this.setState({
-      themeAlgorithm: this.getTheme(),
-      logo: Setting.getLogo(localStorage.getItem("theme")),
-    });
-
-    addEventListener("changeTheme", (e) => {
-      this.setState({
-        themeAlgorithm: this.getTheme(),
-        logo: Setting.getLogo(localStorage.getItem("theme")),
-      });
+      logo: this.getLogo(localStorage.getItem("themeAlgorithm")),
     });
   }
 
@@ -202,9 +196,35 @@ class App extends Component {
     return "";
   }
 
-  getTheme() {
-    return localStorage.getItem("theme") === null ? theme.defaultAlgorithm :
-      Setting.Themes.find(t => t.key === localStorage.getItem("theme")).theme;
+  getAlgorithm(themeAlgorithms) {
+    return themeAlgorithms.map((themeAlgorithm) => {
+      if (themeAlgorithm === "dark") {
+        return theme.darkAlgorithm;
+      }
+      if (themeAlgorithm === "compact") {
+        return theme.compactAlgorithm;
+      }
+      return theme.defaultAlgorithm;
+    });
+  }
+
+  initAlgorithm = (themeData) => {
+    // init Algorithm according the theme type
+    const algorithms = [themeData.themeType !== "dark" ? "default" : "dark"];
+
+    if (themeData.isCompact === true) {
+      algorithms.push("compact");
+    }
+
+    return algorithms;
+  };
+
+  getLogo(theme) {
+    if (theme === "dark") {
+      return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
+    } else {
+      return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+    }
   }
 
   setLanguage(account) {
@@ -239,6 +259,10 @@ class App extends Component {
           account = res.data;
           account.organization = res.data2;
           this.setLanguage(account);
+          this.setState({
+            themeAlgorithm: this.initAlgorithm(Setting.getThemeData(account.organization)),
+            themeData: Setting.getThemeData(account.organization),
+          });
         } else {
           if (res.data !== "Please login first") {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
@@ -558,7 +582,7 @@ class App extends Component {
     return (
       <Layout id="parent-area">
         {/* https://github.com/ant-design/ant-design/issues/40394 ant design bug. If it will be fixed, we can delete the code for control the color of Header*/}
-        <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm === theme.darkAlgorithm ? "black" : "white"}}>
+        <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}}>
           {Setting.isMobile() ? null : (
             <Link to={"/"}>
               <div className="logo" style={{background: `url(${this.state.logo})`}} />
@@ -591,15 +615,17 @@ class App extends Component {
           {this.renderAccount()}
           {this.state.account &&
               <React.Fragment>
-                <SelectThemeBox themes={this.state.account.organization.themes} />
+                <SelectThemeBox themeAlgorithm={this.state.themeAlgorithm}
+                  onChange={(nextTheme) => {
+                    this.setState({themeAlgorithm: nextTheme});
+                  }} />
                 <SelectLanguageBox languages={this.state.account.organization.languages} />
               </React.Fragment>
           }
         </Header>
         <Content style={{display: "flex", flexDirection: "column"}} >
           {Setting.isMobile() ?
-            this.renderRouter()
-            :
+            this.renderRouter() :
             <Card className="content-warp-card">
               {this.renderRouter()}
             </Card>
@@ -677,21 +703,21 @@ class App extends Component {
   render() {
     return (
       <React.Fragment>
-        <Helmet>
-          {(this.state.account === undefined || this.state.account === null) ?
+        {(this.state.account === undefined || this.state.account === null) ?
+          <Helmet>
             <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
-            : <React.Fragment>
-              <title>{this.state.account.organization?.displayName}</title>
-              <link rel="icon" href={this.state.account.organization?.favicon} />
-            </React.Fragment>
-          }
-        </Helmet>
+          </Helmet> :
+          <Helmet>
+            <title>{this.state.account.organization?.displayName}</title>
+            <link rel="icon" href={this.state.account.organization?.favicon} />
+          </Helmet>
+        }
         <ConfigProvider theme={{
           token: {
-            colorPrimary: "rgb(89,54,213)",
-            colorInfo: "rgb(89,54,213)",
+            colorPrimary: this.state.themeData.colorPrimary,
+            colorInfo: this.state.themeData.colorPrimary,
           },
-          algorithm: this.state.themeAlgorithm,
+          algorithm: this.getAlgorithm(this.state.themeAlgorithm),
         }}>
           {
             this.renderPage()

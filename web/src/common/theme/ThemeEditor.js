@@ -1,15 +1,18 @@
-import {Card, ConfigProvider, Form, Radio, theme} from "antd";
+import {Card, ConfigProvider, Form, Layout, Radio, theme} from "antd";
 import ThemePicker from "./ThemePicker";
 import ColorPicker from "./ColorPicker";
 import RadiusPicker from "./RadiusPicker";
 import * as React from "react";
-import {PINK_COLOR} from "./colorUtil";
+import {GREEN_COLOR, PINK_COLOR} from "./ColorPicker";
+import {Content} from "antd/es/layout/layout";
+import i18next from "i18next";
+import {useEffect} from "react";
 
-const ThemeDefault = {
+export const ThemeDefault = {
   themeType: "default",
-  colorPrimary: "#1677FF",
+  colorPrimary: "#5734d3",
   borderRadius: 6,
-  compact: "default",
+  isCompact: false,
 };
 
 const ThemesInfo = {
@@ -18,7 +21,7 @@ const ThemesInfo = {
     borderRadius: 2,
   },
   lark: {
-    colorPrimary: "#00B96B",
+    colorPrimary: GREEN_COLOR,
     borderRadius: 4,
   },
   comic: {
@@ -27,31 +30,29 @@ const ThemesInfo = {
   },
 };
 
-export default function ThemeEditor() {
-  const [themeData, setThemeData] = React.useState(ThemeDefault);
+const onChange = () => {};
 
-  const onThemeChange = (_, nextThemeData) => {
-    setThemeData(nextThemeData);
-  };
+export default function ThemeEditor(props) {
+  const themeData = props.themeData ?? ThemeDefault;
+  const onThemeChange = props.onThemeChange ?? onChange;
 
-  const {compact, themeType, ...themeToken} = themeData;
+  const {isCompact, themeType, ...themeToken} = themeData;
   const isLight = themeType !== "dark";
   const [form] = Form.useForm();
 
   const algorithmFn = React.useMemo(() => {
     const algorithms = [isLight ? theme.defaultAlgorithm : theme.darkAlgorithm];
 
-    if (compact === "compact") {
+    if (isCompact === true) {
       algorithms.push(theme.compactAlgorithm);
     }
 
     return algorithms;
-  }, [isLight, compact]);
+  }, [isLight, isCompact]);
 
-  // ================================ Themes ================================
-  React.useEffect(() => {
+  useEffect(() => {
     const mergedData = Object.assign(Object.assign(Object.assign({}, ThemeDefault), {themeType}), ThemesInfo[themeType]);
-    setThemeData(mergedData);
+    onThemeChange(null, mergedData);
     form.setFieldsValue(mergedData);
   }, [themeType]);
 
@@ -65,34 +66,38 @@ export default function ThemeEditor() {
         algorithm: algorithmFn,
       }}
     >
-      <Card
-        title={"主题"}
-      >
-        <Form
-          form={form}
-          initialValues={themeData}
-          onValuesChange={onThemeChange}
-          labelCol={{span: 4}}
-          wrapperCol={{span: 20}}
-        >
-          <Form.Item label={"type"} name="themeType">
-            <ThemePicker />
-          </Form.Item>
-
-          <Form.Item label={"color"} name="colorPrimary">
-            <ColorPicker />
-          </Form.Item>
-          <Form.Item label={"radius"} name="borderRadius">
-            <RadiusPicker />
-          </Form.Item>
-          <Form.Item label={"compact"} name="compact">
-            <Radio.Group>
-              <Radio value="default">default</Radio>
-              <Radio value="compact">compact</Radio>
-            </Radio.Group>
-          </Form.Item>
-        </Form>
-      </Card>
+      <Layout style={{}}>
+        <Content style={{width: "800px", margin: "0 auto"}}>
+          <Card
+            title={i18next.t("theme:My Theme")}
+          >
+            <Form
+              form={form}
+              initialValues={themeData}
+              onValuesChange={onThemeChange}
+              labelCol={{span: 4}}
+              wrapperCol={{span: 20}}
+              style={{width: "800px", margin: "0 auto"}}
+            >
+              <Form.Item label={i18next.t("theme:Theme")} name="themeType">
+                <ThemePicker />
+              </Form.Item>
+              <Form.Item label={i18next.t("theme:Primary Color")} name="colorPrimary">
+                <ColorPicker />
+              </Form.Item>
+              <Form.Item label={i18next.t("theme:Border Radius")} name="borderRadius">
+                <RadiusPicker />
+              </Form.Item>
+              <Form.Item label={i18next.t("theme:Compact")} name="isCompact">
+                <Radio.Group>
+                  <Radio value={false}>{i18next.t("theme:default")}</Radio>
+                  <Radio value={true}>{i18next.t("theme:compact")}</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Form>
+          </Card>
+        </Content>
+      </Layout>
     </ConfigProvider>
   );
 }

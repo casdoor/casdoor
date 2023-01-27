@@ -1,9 +1,43 @@
+/** @jsxImportSource @emotion/react */
+
 import {Input, Popover, Space, theme} from "antd";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {css} from "@emotion/react";
 import {TinyColor} from "@ctrl/tinycolor";
 import ColorPanel from "antd-token-previewer/es/ColorPanel";
-import {PRESET_COLORS} from "./colorUtil";
+
+export const BLUE_COLOR = "#1677FF";
+export const PINK_COLOR = "#ED4192";
+export const GREEN_COLOR = "#00B96B";
+
+export const COLORS = [
+  {
+    color: BLUE_COLOR,
+  },
+  {
+    color: "#5734d3",
+  },
+  {
+    color: "#9E339F",
+  },
+  {
+    color: PINK_COLOR,
+  },
+  {
+    color: "#E0282E",
+  },
+  {
+    color: "#F4801A",
+  },
+  {
+    color: "#F2BD27",
+  },
+  {
+    color: GREEN_COLOR,
+  },
+];
+
+export const PRESET_COLORS = COLORS.map(({color}) => color);
 
 const {useToken} = theme;
 
@@ -23,10 +57,6 @@ const useStyle = () => {
         height: 0;
         opacity: 0;
       }
-
-      &:focus-within {
-        // need ？
-      }
     `,
     colorActive: css `
       box-shadow: 0 0 0 1px ${token.colorBgContainer},
@@ -37,21 +67,25 @@ const useStyle = () => {
 
 const DebouncedColorPanel = ({color, onChange}) => {
   const [value, setValue] = useState(color);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
-      onChange === null || onChange === void 0 ? void 0 : onChange(value);
+      onChange?.(value);
     }, 200);
     return () => clearTimeout(timeout);
   }, [value]);
+
   useEffect(() => {
     setValue(color);
   }, [color]);
-  return React.createElement(ColorPanel, {color: value, onChange: setValue});
+
+  return <ColorPanel color={value} onChange={setValue} />;
 };
 
 export default function ColorPicker({value, onChange}) {
   const style = useStyle();
-  const matchColors = React.useMemo(() => {
+
+  const matchColors = useMemo(() => {
     const valueStr = new TinyColor(value).toRgbString();
     let existActive = false;
 
@@ -59,6 +93,7 @@ export default function ColorPicker({value, onChange}) {
       const colorStr = new TinyColor(color).toRgbString();
       const active = colorStr === valueStr;
       existActive = existActive || active;
+
       return {
         color,
         active,

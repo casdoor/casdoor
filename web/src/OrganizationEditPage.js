@@ -22,7 +22,7 @@ import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./LdapTable";
 import AccountTable from "./AccountTable";
-import ThemeEditor from "./common/theme/ThemeEditor";
+import ThemeEditor, {ThemeDefault} from "./common/theme/ThemeEditor";
 
 const {Option} = Select;
 
@@ -317,7 +317,23 @@ class OrganizationEditPage extends React.Component {
             />
           </Col>
         </Row>
-        <ThemeEditor />
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:Follow System theme"), i18next.t("organization:Follow System theme - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Col span={1} >
+              <Switch checked={!(this.state.organization.themeData?.isEnabled ?? false)} onChange={checked => {
+                const {_, ...theme} = this.state.organization.themeData ?? {...ThemeDefault, isEnabled: false};
+                this.updateOrganizationField("themeData", {...theme, isEnabled: !checked});
+              }} />
+            </Col>
+          </Col>
+        </Row>
+        <ThemeEditor themeData={this.state.organization.themeData} onThemeChange={(_, nextThemeData) => {
+          const {isEnabled} = this.state.organization.themeData ?? {...ThemeDefault, isEnabled: false};
+          this.updateOrganizationField("themeData", {...nextThemeData, isEnabled});
+        }} />
         <Row style={{marginTop: "20px"}}>
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:LDAPs"), i18next.t("general:LDAPs - Tooltip"))} :
