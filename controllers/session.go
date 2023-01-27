@@ -71,9 +71,9 @@ func (c *ApiController) GetSessions() {
 // @Title AddUserSession
 // @Tag Session API
 // @Description Add application user sessions
-// @Param   ID     query    string  true        "The ID(owner/application/name) of user."
-// @Param   sessionId     query    string  true        "sessionId to be added"
-// @Param   sessionCreateTime     query    string  true        "unixTimeStamp"
+// @Param   ID     				string  "The ID(owner/application/name) of user."
+// @Param	sessionId			string	"sessionId to be added"
+// @Param	sessionCreateTime	string	"unixTimeStamp"
 // @Success 200 {array} string The Response object
 // @router /add-user-session [post]
 func (c *ApiController) AddUserSession() {
@@ -97,7 +97,7 @@ func (c *ApiController) AddUserSession() {
 // @Title DeleteUserSession
 // @Tag Session API
 // @Description Delete application user sessions
-// @Param   ID     query    string  true        "The ID(owner/application/name) of user."
+// @Param   ID  string  "The ID(owner/application/name) of user."
 // @Success 200 {array} string The Response object
 // @router /delete-user-session [post]
 func (c *ApiController) DeleteUserSession() {
@@ -116,9 +116,9 @@ func (c *ApiController) DeleteUserSession() {
 // @Title IsUserSessionDuplicated
 // @Tag Session API
 // @Description Judge Whether this application user session is repeated
-// @Param   ID     query    string  true        "The ID(owner/application/name) of user."
-// @Param   sessionId     query    string  true        "sessionId to be checked"
-// @Param   sessionCreateTime     query    string  true        "unixTimeStamp"
+// @Param   ID     				string  "The ID(owner/application/name) of user."
+// @Param	sessionId			string	"sessionId to be checked"
+// @Param	sessionCreateTime	string	"unixTimeStamp"
 // @Success 200 {array} string The Response object
 // @router /is-user-session-duplicated [post]
 func (c *ApiController) IsUserSessionDuplicated() {
