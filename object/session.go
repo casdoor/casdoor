@@ -20,8 +20,10 @@ import (
 	"xorm.io/core"
 )
 
-var casdoorApplication = "app-built-in"
-var casdoorOrganization = "built-in"
+var (
+	casdoorApplication  = "app-built-in"
+	casdoorOrganization = "built-in"
+)
 
 type Session struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
