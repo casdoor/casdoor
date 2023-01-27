@@ -167,7 +167,7 @@ func initAPI() {
 
 	beego.Router("/api/add-user-session", &controllers.ApiController{}, "POST:AddUserSession")
 	beego.Router("/api/delete-user-session", &controllers.ApiController{}, "POST:DeleteUserSession")
-	beego.Router("/api/is-user-session-duplicated", &controllers.ApiController{}, "GET:IsUserSessionDuplicated")
+	beego.Router("/api/is-user-session-duplicated", &controllers.ApiController{}, "POST:IsUserSessionDuplicated")
 
 	beego.Router("/api/get-webhooks", &controllers.ApiController{}, "GET:GetWebhooks")
 	beego.Router("/api/get-webhook", &controllers.ApiController{}, "GET:GetWebhook")

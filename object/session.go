@@ -20,7 +20,8 @@ import (
 	"xorm.io/core"
 )
 
-var casdoorApp = "app-built-in"
+var casdoorApplication = "app-built-in"
+var casdoorOrganization = "built-in"
 
 type Session struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -31,9 +32,16 @@ type Session struct {
 	SessionId []string `json:"sessionId"`
 }
 
-func SetSession(id string, sessionId string) {
+func SetSession(id string, sessionId string, application *Application) {
+	if application.Organization != casdoorOrganization {
+		return
+	}
+
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
-	session := &Session{Owner: owner, Name: name, Application: casdoorApp}
+	sessionApplicationName := application.Name
+
+	session := &Session{Owner: owner, Name: name, Application: sessionApplicationName}
+
 	get, err := adapter.Engine.Get(session)
 	if err != nil {
 		panic(err)
@@ -41,7 +49,7 @@ func SetSession(id string, sessionId string) {
 
 	session.SessionId = append(session.SessionId, sessionId)
 	if get {
-		_, err = adapter.Engine.ID(core.PK{owner, name, casdoorApp}).Update(session)
+		_, err = adapter.Engine.ID(core.PK{owner, name, sessionApplicationName}).Update(session)
 	} else {
 		session.CreatedTime = util.GetCurrentTime()
 		_, err = adapter.Engine.Insert(session)
@@ -54,23 +62,23 @@ func SetSession(id string, sessionId string) {
 func DeleteSession(id string) bool {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 
-	session := &Session{Owner: owner, Name: name, Application: casdoorApp}
-	_, err := adapter.Engine.ID(core.PK{owner, name, casdoorApp}).Get(session)
+	session := &Session{Owner: owner, Name: name, Application: casdoorApplication}
+	_, err := adapter.Engine.ID(core.PK{owner, name, casdoorApplication}).Get(session)
 	if err != nil {
 		return false
 	}
 
 	DeleteBeegoSession(session.SessionId)
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name, casdoorApp}).Delete(session)
+	affected, err := adapter.Engine.ID(core.PK{owner, name, casdoorApplication}).Delete(session)
 	return affected != 0
 }
 
 func DeleteSessionId(id string, sessionId string) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 
-	session := &Session{Owner: owner, Name: name, Application: casdoorApp}
-	_, err := adapter.Engine.ID(core.PK{owner, name, casdoorApp}).Get(session)
+	session := &Session{Owner: owner, Name: name, Application: casdoorApplication}
+	_, err := adapter.Engine.ID(core.PK{owner, name, casdoorApplication}).Get(session)
 	if err != nil {
 		return false
 	}
@@ -79,10 +87,10 @@ func DeleteSessionId(id string, sessionId string) bool {
 	session.SessionId = util.DeleteVal(session.SessionId, sessionId)
 
 	if len(session.SessionId) < 1 {
-		affected, _ := adapter.Engine.ID(core.PK{owner, name, casdoorApp}).Delete(session)
+		affected, _ := adapter.Engine.ID(core.PK{owner, name, casdoorApplication}).Delete(session)
 		return affected != 0
 	} else {
-		affected, _ := adapter.Engine.ID(core.PK{owner, name, casdoorApp}).Update(session)
+		affected, _ := adapter.Engine.ID(core.PK{owner, name, casdoorApplication}).Update(session)
 		return affected != 0
 	}
 }
