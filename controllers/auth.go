@@ -190,6 +190,11 @@ func isProxyProviderType(providerType string) bool {
 		"Steam",
 		"Line",
 		"Amazon",
+		"Instagram",
+		"TikTok",
+		"Twitter",
+		"Uber",
+		"Yahoo",
 	}
 	for _, v := range providerTypes {
 		if strings.EqualFold(v, providerType) {
