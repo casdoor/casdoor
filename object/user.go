@@ -578,7 +578,7 @@ func AddUsersInBatch(users []*User) bool {
 
 func DeleteUser(user *User) bool {
 	// Forced offline the user first
-	DeleteSession(user.GetId())
+	DeleteSession(user.GetId(), casdoorApplication)
 
 	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
 	if err != nil {

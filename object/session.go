@@ -60,18 +60,18 @@ func SetSession(id string, sessionId string, application *Application) {
 	}
 }
 
-func DeleteSession(id string) bool {
+func DeleteSession(id string, applicationName string) bool {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 
-	session := &Session{Owner: owner, Name: name, Application: casdoorApplication}
-	_, err := adapter.Engine.ID(core.PK{owner, name, casdoorApplication}).Get(session)
+	session := &Session{Owner: owner, Name: name, Application: applicationName}
+	_, err := adapter.Engine.ID(core.PK{owner, name, applicationName}).Get(session)
 	if err != nil {
 		return false
 	}
 
 	DeleteBeegoSession(session.SessionId)
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name, casdoorApplication}).Delete(session)
+	affected, err := adapter.Engine.ID(core.PK{owner, name, applicationName}).Delete(session)
 	return affected != 0
 }
 
@@ -141,11 +141,13 @@ func GetSessionCount(owner, field, value string) int {
 	return int(count)
 }
 
-func AddUserSession(owner string, application string, name string, sessionId string, sessionUnixTimestamp string) bool {
-	session := &Session{Owner: owner, Name: name, Application: application}
+func AddUserSession(owner string, applicationName string, userName string, sessionId []string, sessionCreateTime string) bool {
+	session := &Session{Owner: owner, Name: userName, Application: applicationName}
 
-	session.CreatedTime = sessionUnixTimestamp
-	session.SessionId = append(session.SessionId, sessionId)
+	session.CreatedTime = sessionCreateTime
+	for _, v := range sessionId {
+		session.SessionId = append(session.SessionId, v)
+	}
 	affected, err := adapter.Engine.Insert(session)
 	if err != nil {
 		panic(err)
@@ -153,20 +155,20 @@ func AddUserSession(owner string, application string, name string, sessionId str
 	return affected != 0
 }
 
-func DeleteUserSession(owner string, application string, name string) bool {
-	session := &Session{Owner: owner, Name: name, Application: application}
-	_, err := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
+func DeleteUserSession(owner string, applicationName string, userName string) bool {
+	session := &Session{Owner: owner, Name: userName, Application: applicationName}
+	_, err := adapter.Engine.ID(core.PK{owner, userName, applicationName}).Get(session)
 	if err != nil {
 		return false
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name, application}).Delete(session)
+	affected, err := adapter.Engine.ID(core.PK{owner, userName, applicationName}).Delete(session)
 	return affected != 0
 }
 
-func IsUserSessionDuplicated(owner string, application string, name string, sessionId string, unixTimeStamp string) bool {
-	session := &Session{Owner: owner, Name: name, Application: application}
-	get, _ := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
+func IsUserSessionDuplicated(owner string, applicationName string, userName string, sessionId string, sessionCreateTime string) bool {
+	session := &Session{Owner: owner, Name: userName, Application: applicationName}
+	get, _ := adapter.Engine.ID(core.PK{owner, userName, applicationName}).Get(session)
 	if !get {
 		return false
 	} else {
@@ -178,7 +180,7 @@ func IsUserSessionDuplicated(owner string, application string, name string, sess
 			if session.SessionId[0] != sessionId {
 				return true
 			} else {
-				return unixTimeStamp != session.CreatedTime
+				return sessionCreateTime != session.CreatedTime
 			}
 		}
 	}

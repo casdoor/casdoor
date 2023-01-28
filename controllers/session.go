@@ -37,7 +37,7 @@ func (c *ApiController) DeleteSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetId(session.Owner, session.Name)))
+	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetId(session.Owner, session.Name), session.Application))
 	c.ServeJSON()
 }
 
@@ -84,11 +84,7 @@ func (c *ApiController) AddUserSession() {
 		return
 	}
 
-	if len(session.SessionId) != 1 {
-		c.Data["json"] = &Response{Status: "error", Msg: "only one session can be added at a time"}
-	} else {
-		c.Data["json"] = wrapActionResponse(object.AddUserSession(session.Owner, session.Application, session.Name, session.SessionId[0], session.CreatedTime))
-	}
+	c.Data["json"] = wrapActionResponse(object.AddUserSession(session.Owner, session.Application, session.Name, session.SessionId, session.CreatedTime))
 
 	c.ServeJSON()
 }
@@ -120,20 +116,16 @@ func (c *ApiController) DeleteUserSession() {
 // @Param   sessionId     query    string  true        "sessionId to be checked"
 // @Param   sessionCreateTime     query    string  true        "unixTimeStamp"
 // @Success 200 {array} string The Response object
-// @router /is-user-session-duplicated [post]
+// @router /is-user-session-duplicated [get]
 func (c *ApiController) IsUserSessionDuplicated() {
-	var session object.Session
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
+	owner := c.Input().Get("owner")
+	application := c.Input().Get("application")
+	name := c.Input().Get("name")
+	createdTime := c.Input().Get("createdTime")
+	sessionId := c.Input().Get("sessionId")
 
-	if len(session.SessionId) != 1 {
-		c.Data["json"] = &Response{Status: "error", Msg: "only one session can be checked at a time"}
-	} else {
-		isUserSessionDuplicated := object.IsUserSessionDuplicated(session.Owner, session.Application, session.Name, session.SessionId[0], session.CreatedTime)
-		c.Data["json"] = &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
-	}
+	isUserSessionDuplicated := object.IsUserSessionDuplicated(owner, application, name, sessionId, createdTime)
+	c.Data["json"] = &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
+
 	c.ServeJSON()
 }
