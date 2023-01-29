@@ -72,9 +72,8 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`
 	return enforcer
 }
 
-func getPolicies(permission *Permission) ([][]string, [][]string) {
+func getPolicies(permission *Permission) [][]string {
 	var policies [][]string
-	var groupingPolicies [][]string
 	permissionId := permission.Owner + "/" + permission.Name
 	domainExist := len(permission.Domains) > 0
 	for _, user := range permission.Users {
@@ -91,25 +90,6 @@ func getPolicies(permission *Permission) ([][]string, [][]string) {
 		}
 	}
 	for _, role := range permission.Roles {
-		roleObj := GetRole(role)
-		for _, subUser := range roleObj.Users {
-			if domainExist {
-				for _, domain := range permission.Domains {
-					groupingPolicies = append(groupingPolicies, []string{subUser, domain, role, "", "", permissionId})
-				}
-			} else {
-				groupingPolicies = append(groupingPolicies, []string{subUser, role, "", "", "", permissionId})
-			}
-		}
-		for _, subRole := range roleObj.Roles {
-			if domainExist {
-				for _, domain := range permission.Domains {
-					groupingPolicies = append(groupingPolicies, []string{subRole, domain, role, "", "", permissionId})
-				}
-			} else {
-				groupingPolicies = append(groupingPolicies, []string{subRole, role, "", "", "", permissionId})
-			}
-		}
 		for _, resource := range permission.Resources {
 			for _, action := range permission.Actions {
 				if domainExist {
@@ -122,12 +102,44 @@ func getPolicies(permission *Permission) ([][]string, [][]string) {
 			}
 		}
 	}
-	return policies, groupingPolicies
+	return policies
 }
 
-func addPolicies(permission *Permission) {
+func getGroupingPolicies(permission *Permission) [][]string {
+	var groupingPolicies [][]string
+	permissionId := permission.Owner + "/" + permission.Name
+	domainExist := len(permission.Domains) > 0
+
+	for _, role := range permission.Roles {
+		roleObj := GetRole(role)
+		if roleObj != nil {
+			for _, subUser := range roleObj.Users {
+				if domainExist {
+					for _, domain := range permission.Domains {
+						groupingPolicies = append(groupingPolicies, []string{subUser, domain, role, "", "", permissionId})
+					}
+				} else {
+					groupingPolicies = append(groupingPolicies, []string{subUser, role, "", "", "", permissionId})
+				}
+			}
+			for _, subRole := range roleObj.Roles {
+				if domainExist {
+					for _, domain := range permission.Domains {
+						groupingPolicies = append(groupingPolicies, []string{subRole, domain, role, "", "", permissionId})
+					}
+				} else {
+					groupingPolicies = append(groupingPolicies, []string{subRole, role, "", "", "", permissionId})
+				}
+			}
+		}
+
+	}
+	return groupingPolicies
+}
+
+func addGroupingPolicies(permission *Permission) {
 	enforcer := getEnforcer(permission)
-	policies, groupingPolicies := getPolicies(permission)
+	groupingPolicies := getGroupingPolicies(permission)
 
 	if len(groupingPolicies) > 0 {
 		_, err := enforcer.AddGroupingPolicies(groupingPolicies)
@@ -135,6 +147,11 @@ func addPolicies(permission *Permission) {
 			panic(err)
 		}
 	}
+}
+
+func addPolicies(permission *Permission) {
+	enforcer := getEnforcer(permission)
+	policies := getPolicies(permission)
 
 	_, err := enforcer.AddPolicies(policies)
 	if err != nil {
@@ -142,9 +159,9 @@ func addPolicies(permission *Permission) {
 	}
 }
 
-func removePolicies(permission *Permission) {
+func removeGroupingPolicies(permission *Permission) {
 	enforcer := getEnforcer(permission)
-	policies, groupingPolicies := getPolicies(permission)
+	groupingPolicies := getGroupingPolicies(permission)
 
 	if len(groupingPolicies) > 0 {
 		_, err := enforcer.RemoveGroupingPolicies(groupingPolicies)
@@ -152,6 +169,11 @@ func removePolicies(permission *Permission) {
 			panic(err)
 		}
 	}
+}
+
+func removePolicies(permission *Permission) {
+	enforcer := getEnforcer(permission)
+	policies := getPolicies(permission)
 
 	_, err := enforcer.RemovePolicies(policies)
 	if err != nil {
@@ -226,3 +248,119 @@ func GetAllRoles(userId string) []string {
 	}
 	return res
 }
+
+func getGroupingPoliciesByPermissions(column []string, role *Role, permissions []*Permission) map[string][][]string {
+	var groupingPolicies = make(map[string][][]string, len(permissions))
+	for _, p := range permissions {
+		permissionId := p.Owner + "/" + p.Name
+		domainExist := len(p.Domains) > 0
+		key := p.Adapter + "/" + strings.Join(p.Domains, ",")
+		if _, ok := groupingPolicies[key]; ok {
+			continue
+		}
+		for _, v := range column {
+			if domainExist {
+				for _, domain := range p.Domains {
+					groupingPolicies[key] = append(groupingPolicies[key], []string{v, domain, role.Owner + "/" + role.Name, "", "", permissionId})
+				}
+			} else {
+				groupingPolicies[key] = append(groupingPolicies[key], []string{v, role.Owner + "/" + role.Name, "", "", "", permissionId})
+			}
+		}
+	}
+
+	return groupingPolicies
+}
+
+func getPoliciesByPermissions(column []string, permissions []*Permission) map[string][][]string {
+	var policies = make(map[string][][]string, len(permissions))
+	for _, p := range permissions {
+		permissionId := p.Owner + "/" + p.Name
+		domainExist := len(p.Domains) > 0
+		key := p.Adapter + "/" + strings.Join(p.Domains, ",")
+		//if _, ok := policies[key]; ok {
+		//	continue
+		//}
+		for _, v := range column {
+			for _, resource := range p.Resources {
+				for _, action := range p.Actions {
+					if domainExist {
+						for _, domain := range p.Domains {
+							policies[key] = append(policies[key], []string{v, domain, resource, strings.ToLower(action), "", permissionId})
+						}
+					} else {
+						policies[key] = append(policies[key], []string{v, resource, strings.ToLower(action), "", "", permissionId})
+					}
+				}
+			}
+		}
+	}
+	return policies
+}
+
+//func operateGroupingPoliciesByPermission(permission *Permission, enforcer *casbin.Enforcer, isAdd bool) {
+//	var err error
+//	domainExist := len(permission.Domains) > 0
+//	for _, role := range permission.Roles {
+//		roleObj := GetRole(role)
+//		for _, user := range roleObj.Users {
+//			if domainExist {
+//				for _, domain := range permission.Domains {
+//					if isAdd {
+//						_, err = enforcer.AddNamedGroupingPolicy("g", user, domain, roleObj.Owner+"/"+roleObj.Name)
+//					} else {
+//						_, err = enforcer.RemoveNamedGroupingPolicy("g", user, domain, roleObj.Owner+"/"+roleObj.Name)
+//					}
+//					if err != nil {
+//						panic(err)
+//					}
+//				}
+//			} else {
+//				if isAdd {
+//					_, err = enforcer.AddNamedGroupingPolicy("g", user, roleObj.Owner+"/"+roleObj.Name)
+//				} else {
+//					_, err = enforcer.RemoveNamedGroupingPolicy("g", user, roleObj.Owner+"/"+roleObj.Name)
+//				}
+//				if err != nil {
+//					panic(err)
+//				}
+//			}
+//		}
+//	}
+//}
+//
+//func operatePoliciesByPermission(permission *Permission, enforcer *casbin.Enforcer, isAdd bool, isUser bool) {
+//	var err error
+//	column := permission.Roles
+//	if isUser {
+//		column = permission.Users
+//	}
+//	domainExist := len(permission.Domains) > 0
+//	for _, v := range column {
+//		for _, resource := range permission.Resources {
+//			for _, action := range permission.Actions {
+//				if domainExist {
+//					for _, domain := range permission.Domains {
+//						if isAdd {
+//							_, err = enforcer.AddNamedPolicy("p", v, domain, resource, action)
+//						} else {
+//							_, err = enforcer.RemoveNamedPolicy("p", v, domain, resource, action)
+//						}
+//						if err != nil {
+//							panic(err)
+//						}
+//					}
+//				} else {
+//					if isAdd {
+//						_, err = enforcer.AddNamedPolicy("p", v, resource, action)
+//					} else {
+//						_, err = enforcer.RemoveNamedPolicy("p", v, resource, action)
+//					}
+//					if err != nil {
+//						panic(err)
+//					}
+//				}
+//			}
+//		}
+//	}
+//}
