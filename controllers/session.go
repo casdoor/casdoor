@@ -84,7 +84,7 @@ func (c *ApiController) AddUserSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddUserSession(session.Owner, session.Application, session.Name, session.SessionId, session.CreatedTime))
+	c.Data["json"] = wrapActionResponse(object.AddUserSession(session.Owner, session.Application, session.Name, session.SessionId, util.GetCurrentTime()))
 
 	c.ServeJSON()
 }
@@ -121,10 +121,9 @@ func (c *ApiController) IsUserSessionDuplicated() {
 	owner := c.Input().Get("owner")
 	application := c.Input().Get("application")
 	name := c.Input().Get("name")
-	createdTime := c.Input().Get("createdTime")
 	sessionId := c.Input().Get("sessionId")
 
-	isUserSessionDuplicated := object.IsUserSessionDuplicated(owner, application, name, sessionId, createdTime)
+	isUserSessionDuplicated := object.IsUserSessionDuplicated(owner, application, name, sessionId)
 	c.Data["json"] = &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
 
 	c.ServeJSON()
