@@ -56,7 +56,7 @@ func (c *ApiController) GetSessions() {
 // @Success 200 {array} string The Response object
 // @router /get-session [get]
 func (c *ApiController) GetSingleSession() {
-	id := c.Input().Get("id")
+	id := c.Input().Get("sessionPkId")
 
 	c.Data["json"] = object.GetSingleSession(id)
 	c.ServeJSON()
@@ -129,7 +129,7 @@ func (c *ApiController) DeleteSession() {
 // @Success 200 {array} string The Response object
 // @router /is-user-session-duplicated [get]
 func (c *ApiController) IsSessionDuplicated() {
-	id := c.Input().Get("id")
+	id := c.Input().Get("sessionPkId")
 	sessionId := c.Input().Get("sessionId")
 
 	isUserSessionDuplicated := object.IsUserSessionDuplicated(id, sessionId)
