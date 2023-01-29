@@ -95,6 +95,15 @@ func GetOwnerAndNameFromId(id string) (string, string) {
 	return tokens[0], tokens[1]
 }
 
+func GetOwnerAndNameAndApplicationFromSessionPkId(id string) (string, string, string) {
+	tokens := strings.Split(id, "/")
+	if len(tokens) != 3 {
+		panic(errors.New("GetOwnerAndNameAndApplicationFromSessionPkId() error, wrong token count for ID: " + id))
+	}
+
+	return tokens[0], tokens[1], tokens[2]
+}
+
 func GetOwnerAndNameFromIdNoCheck(id string) (string, string) {
 	tokens := strings.SplitN(id, "/", 2)
 	return tokens[0], tokens[1]
@@ -125,6 +134,10 @@ func GenerateSimpleTimeId() string {
 
 func GetId(owner, name string) string {
 	return fmt.Sprintf("%s/%s", owner, name)
+}
+
+func GetSessionPkId(owner, name, application string) string {
+	return fmt.Sprintf("%s/%s/%s", owner, name, application)
 }
 
 func GetMd5Hash(text string) string {

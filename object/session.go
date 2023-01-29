@@ -34,77 +34,6 @@ type Session struct {
 	SessionId []string `json:"sessionId"`
 }
 
-func SetSession(id string, sessionId string, application *Application) {
-	if application.Organization != casdoorOrganization || application.Name != casdoorApplication {
-		return
-	}
-
-	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
-
-	session := &Session{Owner: owner, Name: name, Application: casdoorApplication}
-
-	get, err := adapter.Engine.Get(session)
-	if err != nil {
-		panic(err)
-	}
-
-	session.SessionId = append(session.SessionId, sessionId)
-	if get {
-		_, err = adapter.Engine.ID(core.PK{owner, name, casdoorApplication}).Update(session)
-	} else {
-		session.CreatedTime = util.GetCurrentTime()
-		_, err = adapter.Engine.Insert(session)
-	}
-	if err != nil {
-		panic(err)
-	}
-}
-
-func DeleteSession(id string, applicationName string) bool {
-	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
-
-	session := &Session{Owner: owner, Name: name, Application: applicationName}
-	_, err := adapter.Engine.ID(core.PK{owner, name, applicationName}).Get(session)
-	if err != nil {
-		return false
-	}
-
-	DeleteBeegoSession(session.SessionId)
-
-	affected, err := adapter.Engine.ID(core.PK{owner, name, applicationName}).Delete(session)
-	return affected != 0
-}
-
-func DeleteSessionId(id string, sessionId string) bool {
-	owner, name := util.GetOwnerAndNameFromId(id)
-
-	session := &Session{Owner: owner, Name: name, Application: casdoorApplication}
-	_, err := adapter.Engine.ID(core.PK{owner, name, casdoorApplication}).Get(session)
-	if err != nil {
-		return false
-	}
-
-	DeleteBeegoSession([]string{sessionId})
-	session.SessionId = util.DeleteVal(session.SessionId, sessionId)
-
-	if len(session.SessionId) < 1 {
-		affected, _ := adapter.Engine.ID(core.PK{owner, name, casdoorApplication}).Delete(session)
-		return affected != 0
-	} else {
-		affected, _ := adapter.Engine.ID(core.PK{owner, name, casdoorApplication}).Update(session)
-		return affected != 0
-	}
-}
-
-func DeleteBeegoSession(sessionIds []string) {
-	for _, sessionId := range sessionIds {
-		err := beego.GlobalSessions.GetProvider().SessionDestroy(sessionId)
-		if err != nil {
-			return
-		}
-	}
-}
-
 func GetSessions(owner string) []*Session {
 	sessions := []*Session{}
 	var err error
@@ -141,34 +70,118 @@ func GetSessionCount(owner, field, value string) int {
 	return int(count)
 }
 
-func AddUserSession(owner string, applicationName string, userName string, sessionId []string, sessionCreateTime string) bool {
-	session := &Session{Owner: owner, Name: userName, Application: applicationName}
-
-	session.CreatedTime = sessionCreateTime
-	for _, v := range sessionId {
-		session.SessionId = append(session.SessionId, v)
-	}
-	affected, err := adapter.Engine.Insert(session)
+func GetSingleSession(id string) *Session {
+	owner, name, application := util.GetOwnerAndNameAndApplicationFromSessionPkId(id)
+	session := &Session{Owner: owner, Name: name, Application: application}
+	_, err := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
 	if err != nil {
 		panic(err)
 	}
-	return affected != 0
+
+	return session
 }
 
-func DeleteUserSession(owner string, applicationName string, userName string) bool {
-	session := &Session{Owner: owner, Name: userName, Application: applicationName}
-	_, err := adapter.Engine.ID(core.PK{owner, userName, applicationName}).Get(session)
+func UpdateSession(id string, session *Session) bool {
+	owner, name, application := util.GetOwnerAndNameAndApplicationFromSessionPkId(id)
+
+	_, err := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
 	if err != nil {
 		return false
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, userName, applicationName}).Delete(session)
+	affected, err := adapter.Engine.ID(core.PK{owner, name, application}).Update(session)
+	if err != nil {
+		panic(err)
+	}
+
 	return affected != 0
 }
 
-func IsUserSessionDuplicated(owner string, applicationName string, userName string, sessionId string) bool {
-	session := &Session{Owner: owner, Name: userName, Application: applicationName}
-	get, _ := adapter.Engine.ID(core.PK{owner, userName, applicationName}).Get(session)
+func AddSession(session *Session) bool {
+	owner, name, application := session.Owner, session.Name, session.Application
+
+	dbSession := &Session{Owner: owner, Name: name, Application: application}
+	get, err := adapter.Engine.ID(core.PK{owner, name, application}).Get(dbSession)
+	if err != nil {
+		return false
+	}
+
+	var affected int64
+	var dbErr error
+	if !get {
+		session.CreatedTime = util.GetCurrentTime()
+		affected, dbErr = adapter.Engine.Insert(session)
+	} else {
+		m := make(map[string]struct{})
+		for _, v := range dbSession.SessionId {
+			m[v] = struct{}{}
+		}
+		for _, v := range session.SessionId {
+			if _, exists := m[v]; !exists {
+				dbSession.SessionId = append(dbSession.SessionId, v)
+			}
+		}
+		affected, dbErr = adapter.Engine.ID(core.PK{owner, name, application}).Update(dbSession)
+	}
+	if dbErr != nil {
+		panic(dbErr)
+	}
+	return affected != 0
+}
+
+func DeleteSession(id string) bool {
+	owner, name, application := util.GetOwnerAndNameAndApplicationFromSessionPkId(id)
+
+	session := &Session{Owner: owner, Name: name, Application: application}
+	_, err := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
+	if err != nil {
+		return false
+	}
+
+	if owner == casdoorOrganization && application == casdoorApplication {
+		DeleteBeegoSession(session.SessionId)
+	}
+
+	affected, err := adapter.Engine.ID(core.PK{owner, name, application}).Delete(session)
+	return affected != 0
+}
+
+func DeleteSessionId(id string, sessionId string) bool {
+	owner, name, application := util.GetOwnerAndNameAndApplicationFromSessionPkId(id)
+
+	session := &Session{Owner: owner, Name: name, Application: application}
+	_, err := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
+	if err != nil {
+		return false
+	}
+
+	if owner == casdoorOrganization && application == casdoorApplication {
+		DeleteBeegoSession([]string{sessionId})
+	}
+	session.SessionId = util.DeleteVal(session.SessionId, sessionId)
+
+	if len(session.SessionId) < 1 {
+		affected, _ := adapter.Engine.ID(core.PK{owner, name, application}).Delete(session)
+		return affected != 0
+	} else {
+		affected, _ := adapter.Engine.ID(core.PK{owner, name, application}).Update(session)
+		return affected != 0
+	}
+}
+
+func DeleteBeegoSession(sessionIds []string) {
+	for _, sessionId := range sessionIds {
+		err := beego.GlobalSessions.GetProvider().SessionDestroy(sessionId)
+		if err != nil {
+			return
+		}
+	}
+}
+
+func IsUserSessionDuplicated(id string, sessionId string) bool {
+	owner, name, application := util.GetOwnerAndNameAndApplicationFromSessionPkId(id)
+	session := &Session{Owner: owner, Name: name, Application: application}
+	get, _ := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
 	if !get {
 		return false
 	} else {
