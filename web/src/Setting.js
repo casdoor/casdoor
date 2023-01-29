@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Checkbox, Form, Modal, Tag, Tooltip, message, theme} from "antd";
+import {Checkbox, Form, Modal, Tag, Tooltip, message} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -24,6 +24,7 @@ import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import * as path from "path-browserify";
+import {ThemeDefault} from "./common/theme/ThemeEditor";
 
 export const ServerUrl = "";
 
@@ -43,13 +44,15 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
 ];
 
-const {defaultAlgorithm, darkAlgorithm, compactAlgorithm} = theme;
-
-export const Themes = [
-  {label: i18next.t("general:Dark"), key: "dark", theme: darkAlgorithm, selectThemeIcon: `${StaticBaseUrl}/img/dark.svg`},
-  {label: i18next.t("general:Compact"), key: "compact", theme: compactAlgorithm, selectThemeIcon: `${StaticBaseUrl}/img/compact.svg`},
-  {label: i18next.t("general:Default"), key: "default", theme: defaultAlgorithm, selectThemeIcon: `${StaticBaseUrl}/img/light.svg`},
-];
+export function getThemeData(organization, application) {
+  if (application?.themeData?.isEnabled) {
+    return application.themeData;
+  } else if (organization?.themeData?.isEnabled) {
+    return organization.themeData;
+  } else {
+    return ThemeDefault;
+  }
+}
 
 export const OtherProviderInfo = {
   SMS: {
@@ -533,10 +536,8 @@ export function isAgreementRequired(application) {
 
 export function isDefaultTrue(application) {
   const agreementItem = application.signupItems.find(item => item.name === "Agreement");
-  if (isAgreementRequired(application) && agreementItem.rule === "Signin (Default True)") {
-    return true;
-  }
-  return false;
+
+  return isAgreementRequired(application) && agreementItem.rule === "Signin (Default True)";
 }
 
 export function renderAgreement(required, onClick, noStyle, layout, initialValue) {
