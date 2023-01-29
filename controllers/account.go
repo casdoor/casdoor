@@ -254,7 +254,7 @@ func (c *ApiController) Logout() {
 
 	if accessToken == "" && redirectUri == "" {
 		c.ClearUserSession()
-		object.DeleteSessionId(user, c.Ctx.Input.CruSession.SessionID())
+		object.DeleteSessionId(util.GetSessionPkId("built-in", "app-built-in", user), c.Ctx.Input.CruSession.SessionID())
 		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 		application := c.GetSessionApplication()
@@ -291,7 +291,7 @@ func (c *ApiController) Logout() {
 			}
 
 			c.ClearUserSession()
-			object.DeleteSessionId(user, c.Ctx.Input.CruSession.SessionID())
+			object.DeleteSessionId(util.GetSessionPkId("built-in", "app-built-in", user), c.Ctx.Input.CruSession.SessionID())
 			util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 			c.Ctx.Redirect(http.StatusFound, fmt.Sprintf("%s?state=%s", strings.TrimRight(redirectUri, "/"), state))

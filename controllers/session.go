@@ -22,29 +22,10 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-// DeleteSession
-// @Title DeleteSession
-// @Tag Session API
-// @Description Delete session by userId
-// @Param   id     query    string  true        "The id ( owner/name )(owner/name) of user."
-// @Success 200 {array} string The Response object
-// @router /delete-session [post]
-func (c *ApiController) DeleteSession() {
-	var session object.Session
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetId(session.Owner, session.Name), session.Application))
-	c.ServeJSON()
-}
-
 // GetSessions
 // @Title GetSessions
 // @Tag Session API
-// @Description Get organization user sessions
+// @Description Get organization user sessions.
 // @Param   owner     query    string  true        "The organization name"
 // @Success 200 {array} string The Response object
 // @router /get-sessions [get]
@@ -67,16 +48,48 @@ func (c *ApiController) GetSessions() {
 	}
 }
 
-// AddUserSession
-// @Title AddUserSession
+// GetSingleSession
+// @Title GetSingleSession
 // @Tag Session API
-// @Description Add application user sessions
-// @Param   ID     query    string  true        "The ID(owner/application/name) of user"
+// @Description Get session for one user in one application.
+// @Param   ID     query    string  true        "The ID(organization/application/user) of session"
+// @Success 200 {array} string The Response object
+// @router /get-session [get]
+func (c *ApiController) GetSingleSession() {
+	id := c.Input().Get("id")
+
+	c.Data["json"] = object.GetSingleSession(id)
+	c.ServeJSON()
+}
+
+// UpdateSession
+// @Title UpdateSession
+// @Tag Session API
+// @Description Update session for one user in one application.
+// @Param   ID     query    string  true        "The ID(organization/application/user) of session"
+// @Success 200 {array} string The Response object
+// @router /update-session [post]
+func (c *ApiController) UpdateSession() {
+	var session object.Session
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.UpdateSession(util.GetSessionPkId(session.Owner, session.Name, session.Application), &session))
+	c.ServeJSON()
+}
+
+// AddSession
+// @Title AddSession
+// @Tag Session API
+// @Description Add session for one user in one application, if the session already exist then add sessionId instead.
+// @Param   ID     query    string  true        "The ID(organization/application/user) of session"
 // @Param   sessionId     query    string  true        "sessionId to be added"
-// @Param   sessionCreateTime     query    string  true        "unixTimeStamp"
 // @Success 200 {array} string The Response object
-// @router /add-user-session [post]
-func (c *ApiController) AddUserSession() {
+// @router /add-session [post]
+func (c *ApiController) AddSession() {
 	var session object.Session
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
 	if err != nil {
@@ -84,19 +97,18 @@ func (c *ApiController) AddUserSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddUserSession(session.Owner, session.Application, session.Name, session.SessionId, util.GetCurrentTime()))
-
+	c.Data["json"] = wrapActionResponse(object.AddSession(&session))
 	c.ServeJSON()
 }
 
-// DeleteUserSession
-// @Title DeleteUserSession
+// DeleteSession
+// @Title DeleteSession
 // @Tag Session API
-// @Description Delete application user sessions
-// @Param   ID     query    string  true        "The ID(owner/application/name) of user"
+// @Description Delete session for one user in one application.
+// @Param   ID     query    string  true        "The ID(organization/application/user) of session"
 // @Success 200 {array} string The Response object
-// @router /delete-user-session [post]
-func (c *ApiController) DeleteUserSession() {
+// @router /delete-session [post]
+func (c *ApiController) DeleteSession() {
 	var session object.Session
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
 	if err != nil {
@@ -104,26 +116,25 @@ func (c *ApiController) DeleteUserSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteUserSession(session.Owner, session.Application, session.Name))
+	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetSessionPkId(session.Owner, session.Name, session.Application)))
 	c.ServeJSON()
 }
 
-// IsUserSessionDuplicated
-// @Title IsUserSessionDuplicated
+// IsSessionDuplicated
+// @Title IsSessionDuplicated
 // @Tag Session API
-// @Description Judge Whether this application user session is repeated
-// @Param   ID     query    string  true        "The ID(owner/application/name) of user"
+// @Description Judge Whether this session is repeated.
+// @Param   ID     query    string  true        "The ID(organization/application/user) of session"
 // @Param   sessionId     query    string  true        "sessionId to be checked"
-// @Param   sessionCreateTime     query    string  true        "unixTimeStamp"
 // @Success 200 {array} string The Response object
 // @router /is-user-session-duplicated [get]
-func (c *ApiController) IsUserSessionDuplicated() {
+func (c *ApiController) IsSessionDuplicated() {
 	owner := c.Input().Get("owner")
 	application := c.Input().Get("application")
 	name := c.Input().Get("name")
 	sessionId := c.Input().Get("sessionId")
 
-	isUserSessionDuplicated := object.IsUserSessionDuplicated(owner, application, name, sessionId)
+	isUserSessionDuplicated := object.IsUserSessionDuplicated(util.GetSessionPkId(owner, name, application), sessionId)
 	c.Data["json"] = &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
 
 	c.ServeJSON()

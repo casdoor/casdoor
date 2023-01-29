@@ -139,8 +139,13 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		})
 	}
 
-	if resp.Status == "ok" {
-		object.SetSession(user.GetId(), c.Ctx.Input.CruSession.SessionID(), application)
+	if resp.Status == "ok" && user.Owner == "built-in" && application.Name == "app-built-in" {
+		object.AddSession(&object.Session{
+			Owner:       user.Owner,
+			Name:        user.Name,
+			Application: application.Name,
+			SessionId:   []string{c.Ctx.Input.CruSession.SessionID()},
+		})
 	}
 
 	return resp
