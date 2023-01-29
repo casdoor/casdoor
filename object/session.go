@@ -166,7 +166,7 @@ func DeleteUserSession(owner string, applicationName string, userName string) bo
 	return affected != 0
 }
 
-func IsUserSessionDuplicated(owner string, applicationName string, userName string, sessionId string, sessionCreateTime string) bool {
+func IsUserSessionDuplicated(owner string, applicationName string, userName string, sessionId string) bool {
 	session := &Session{Owner: owner, Name: userName, Application: applicationName}
 	get, _ := adapter.Engine.ID(core.PK{owner, userName, applicationName}).Get(session)
 	if !get {
@@ -177,11 +177,7 @@ func IsUserSessionDuplicated(owner string, applicationName string, userName stri
 		} else if len(session.SessionId) < 1 {
 			return false
 		} else {
-			if session.SessionId[0] != sessionId {
-				return true
-			} else {
-				return sessionCreateTime != session.CreatedTime
-			}
+			return session.SessionId[0] != sessionId
 		}
 	}
 }
