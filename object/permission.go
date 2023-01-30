@@ -139,30 +139,28 @@ func UpdatePermission(id string, permission *Permission) bool {
 		return false
 	}
 
-	//旧的执行器
 	oldEnforcer := getEnforcer(oldPermission)
 	oldIndex := 1
 	if len(oldPermission.Domains) > 0 {
 		oldIndex = 2
 	}
 
-	//新的执行器
 	newEnforcer := getEnforcer(permission)
 	//newIndex := 1
 	//if len(permission.Domains) > 0 {
 	//	newIndex = 2
 	//}
 
-	//如果修改适配器，将数据移动到新的适配器中
+	//If the adapter is modified, move the data to the new adapter
 	if oldPermission.Adapter != permission.Adapter {
 		permissions := GetPermissionsByAdapterAndDomainsAndRole(oldPermission.Adapter, oldPermission.Domains, "")
-		//如果只有一个permission用了该适配器，直接删除掉GroupingPolicyBy
+		//If only one permission uses the adapter, remove the GroupingPolicy directly.
 		if len(permissions) == 1 {
 			for _, role := range oldPermission.Roles {
 				RemoveGroupingPolicyByDomains(oldEnforcer, oldPermission.Domains, oldIndex, role)
 			}
 		} else {
-			//有多个permission在使用该适配器，要判断oldPermission.Roles中的元素是否在其他permission中引用，如果有引用 则不删除
+			//If there are multiple permissions using the adapter, determine whether the elements in oldPermission.Roles are referenced in other permissions, and if so, do not delete them.
 			judgeRepeatRole(oldEnforcer, oldPermission.Roles, oldPermission.Domains, oldIndex, permissions)
 		}
 
@@ -209,7 +207,7 @@ func UpdatePermission(id string, permission *Permission) bool {
 			}
 		}
 
-		//如果permission修改后Domains为"" 重新生成GroupingPolicies和Policies
+		//If permissions are modified and Domains are [] regenerate GroupingPolicies and Policies
 		if len(permission.Domains) == 0 {
 			addGroupingPolicies(permission)
 			addPolicies(permission)
@@ -218,7 +216,7 @@ func UpdatePermission(id string, permission *Permission) bool {
 	}
 
 	if len(domainsAdded) > 0 {
-		//如果oldPermission.Domains原先为"",添加了新的domain后删除掉原先的GroupingPolicy和Policy
+		//If oldPermission.Domains was originally [], delete the original GroupingPolicy and Policy after adding the new domain.
 		if len(oldPermission.Domains) == 0 {
 			permissions := GetPermissionsByAdapterAndDomainsAndRole(oldPermission.Adapter, []string{}, "")
 			if len(permissions) == 1 {
