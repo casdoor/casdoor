@@ -95,6 +95,11 @@ func GetOwnerAndNameFromId(id string) (string, string) {
 	return tokens[0], tokens[1]
 }
 
+func GetOwnerAndNameFromIdNoCheck(id string) (string, string) {
+	tokens := strings.SplitN(id, "/", 2)
+	return tokens[0], tokens[1]
+}
+
 func GetOwnerAndNameAndApplicationFromSessionPkId(id string) (string, string, string) {
 	tokens := strings.Split(id, "/")
 	if len(tokens) != 3 {
@@ -102,11 +107,6 @@ func GetOwnerAndNameAndApplicationFromSessionPkId(id string) (string, string, st
 	}
 
 	return tokens[0], tokens[1], tokens[2]
-}
-
-func GetOwnerAndNameFromIdNoCheck(id string) (string, string) {
-	tokens := strings.SplitN(id, "/", 2)
-	return tokens[0], tokens[1]
 }
 
 func GenerateId() string {
