@@ -132,7 +132,7 @@ func (c *ApiController) IsSessionDuplicated() {
 	id := c.Input().Get("sessionPkId")
 	sessionId := c.Input().Get("sessionId")
 
-	isUserSessionDuplicated := object.IsUserSessionDuplicated(id, sessionId)
+	isUserSessionDuplicated := object.IsSessionDuplicated(id, sessionId)
 	c.Data["json"] = &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
 
 	c.ServeJSON()

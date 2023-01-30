@@ -178,7 +178,7 @@ func DeleteBeegoSession(sessionIds []string) {
 	}
 }
 
-func IsUserSessionDuplicated(id string, sessionId string) bool {
+func IsSessionDuplicated(id string, sessionId string) bool {
 	owner, name, application := util.GetOwnerAndNameAndApplicationFromSessionPkId(id)
 	session := &Session{Owner: owner, Name: name, Application: application}
 	get, _ := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
