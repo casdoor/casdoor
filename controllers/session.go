@@ -84,7 +84,7 @@ func (c *ApiController) UpdateSession() {
 // AddSession
 // @Title AddSession
 // @Tag Session API
-// @Description Add session for one user in one application, if the session already exist then add sessionId instead.
+// @Description Add session for one user in one application. If there are other existing sessions, join the session into the list.
 // @Param   ID     query    string  true        "The ID(organization/application/user) of session"
 // @Param   sessionId     query    string  true        "sessionId to be added"
 // @Success 200 {array} string The Response object
@@ -123,7 +123,7 @@ func (c *ApiController) DeleteSession() {
 // IsSessionDuplicated
 // @Title IsSessionDuplicated
 // @Tag Session API
-// @Description Judge Whether this session is repeated.
+// @Description Check if there are other different sessions for one user in one application.
 // @Param   ID     query    string  true        "The ID(organization/application/user) of session"
 // @Param   sessionId     query    string  true        "sessionId to be checked"
 // @Success 200 {array} string The Response object
