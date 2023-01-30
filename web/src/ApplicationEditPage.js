@@ -32,7 +32,7 @@ import copy from "copy-to-clipboard";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
-import ThemeEditor, {ThemeDefault} from "./common/theme/ThemeEditor";
+import ThemeEditor from "./common/theme/ThemeEditor";
 
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/htmlmixed/htmlmixed");
@@ -712,21 +712,29 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Follow Organization theme"), i18next.t("application:Follow Organization theme - Tooltip"))} :
+            {Setting.getLabel(i18next.t("theme:Theme"), i18next.t("theme:Theme - Tooltip"))} :
           </Col>
-          <Col span={22} >
-            <Col span={1} >
-              <Switch checked={!(this.state.application.themeData?.isEnabled ?? false)} onChange={checked => {
-                const {_, ...theme} = this.state.application.themeData ?? {...ThemeDefault, isEnabled: false};
-                this.updateApplicationField("themeData", {...theme, isEnabled: !checked});
-              }} />
-            </Col>
+          <Col span={22} style={{marginTop: "5px"}}>
+            <Row>
+              <Radio.Group value={this.state.application.themeData?.isEnabled ?? false} onChange={e => {
+                const {_, ...theme} = this.state.application.themeData ?? {...Setting.ThemeDefault, isEnabled: false};
+                this.updateApplicationField("themeData", {...theme, isEnabled: e.target.value});
+              }} >
+                <Radio.Button value={false}>{i18next.t("application:Follow organization theme")}</Radio.Button>
+                <Radio.Button value={true}>{i18next.t("theme:Customize theme")}</Radio.Button>
+              </Radio.Group>
+            </Row>
+            {
+              this.state.application.themeData?.isEnabled ?
+                <Row style={{marginTop: "20px"}}>
+                  <ThemeEditor themeData={this.state.application.themeData} onThemeChange={(_, nextThemeData) => {
+                    const {isEnabled} = this.state.application.themeData ?? {...Setting.ThemeDefault, isEnabled: false};
+                    this.updateApplicationField("themeData", {...nextThemeData, isEnabled});
+                  }} />
+                </Row> : null
+            }
           </Col>
         </Row>
-        <ThemeEditor themeData={this.state.application.themeData} onThemeChange={(_, nextThemeData) => {
-          const {isEnabled} = this.state.application.themeData ?? {...ThemeDefault, isEnabled: false};
-          this.updateApplicationField("themeData", {...nextThemeData, isEnabled});
-        }} />
         {
           !this.state.application.enableSignUp ? null : (
             <Row style={{marginTop: "20px"}} >

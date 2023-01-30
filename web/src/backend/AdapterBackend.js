@@ -71,8 +71,6 @@ export function deleteAdapter(Adapter) {
 }
 
 export function UpdatePolicy(owner, name, policy) {
-  // eslint-disable-next-line no-console
-  console.log(policy);
   return fetch(`${Setting.ServerUrl}/api/update-policy?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",

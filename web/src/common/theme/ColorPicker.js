@@ -108,11 +108,7 @@ export default function ColorPicker({value, onChange}) {
       const active = colorStr === valueStr;
       existActive = existActive || active;
 
-      return {
-        color,
-        active,
-        picker: false,
-      };
+      return {color, active, picker: false};
     });
 
     return [
@@ -134,7 +130,6 @@ export default function ColorPicker({value, onChange}) {
         }}
         style={{width: 120}}
       />
-
       <Space size="middle">
         {matchColors.map(({color, active, picker}) => {
           let colorNode = (

@@ -25,7 +25,6 @@ export default function RadiusPicker({value, onChange}) {
         formatter={(val) => `${val}px`}
         parser={(str) => (str ? parseFloat(str) : str)}
       />
-
       <Slider
         tooltip={{open: false}}
         style={{width: 128}}

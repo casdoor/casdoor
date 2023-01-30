@@ -17,7 +17,7 @@ import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
 import {BarsOutlined, DownOutlined, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
-import {Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result, theme} from "antd";
+import {Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -71,7 +71,6 @@ import AdapterEditPage from "./AdapterEditPage";
 import {withTranslation} from "react-i18next";
 import SelectThemeBox from "./SelectThemeBox";
 import SessionListPage from "./SessionListPage";
-import {ThemeDefault} from "./common/theme/ThemeEditor";
 
 const {Header, Footer, Content} = Layout;
 
@@ -85,8 +84,7 @@ class App extends Component {
       uri: null,
       menuVisible: false,
       themeAlgorithm: ["default"],
-      themeData: ThemeDefault,
-      logo: null,
+      themeData: Setting.ThemeDefault,
     };
 
     Setting.initServerUrl();
@@ -99,12 +97,6 @@ class App extends Component {
   UNSAFE_componentWillMount() {
     this.updateMenuKey();
     this.getAccount();
-  }
-
-  componentDidMount() {
-    this.setState({
-      logo: this.getLogo(localStorage.getItem("themeAlgorithm")),
-    });
   }
 
   componentDidUpdate() {
@@ -196,31 +188,8 @@ class App extends Component {
     return "";
   }
 
-  getAlgorithm(themeAlgorithms) {
-    return themeAlgorithms.map((themeAlgorithm) => {
-      if (themeAlgorithm === "dark") {
-        return theme.darkAlgorithm;
-      }
-      if (themeAlgorithm === "compact") {
-        return theme.compactAlgorithm;
-      }
-      return theme.defaultAlgorithm;
-    });
-  }
-
-  initAlgorithm = (themeData) => {
-    // init Algorithm according the theme type
-    const algorithms = [themeData.themeType !== "dark" ? "default" : "dark"];
-
-    if (themeData.isCompact === true) {
-      algorithms.push("compact");
-    }
-
-    return algorithms;
-  };
-
-  getLogo(theme) {
-    if (theme === "dark") {
+  getLogo(themes) {
+    if (themes.includes("dark")) {
       return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
     } else {
       return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
@@ -258,10 +227,13 @@ class App extends Component {
         if (res.status === "ok") {
           account = res.data;
           account.organization = res.data2;
+
           this.setLanguage(account);
+          const theme = Setting.getThemeData(account.organization);
           this.setState({
-            themeAlgorithm: this.initAlgorithm(Setting.getThemeData(account.organization)),
-            themeData: Setting.getThemeData(account.organization),
+            themeAlgorithm: Setting.getAlgorithmNames(theme),
+            themeData: theme,
+            logo: this.getLogo(Setting.getAlgorithmNames(theme)),
           });
         } else {
           if (res.data !== "Please login first") {
@@ -288,6 +260,7 @@ class App extends Component {
 
           this.setState({
             account: null,
+            themeAlgorithm: ["default"],
           });
 
           Setting.showMessage("success", i18next.t("application:Logged out successfully"));
@@ -603,8 +576,7 @@ class App extends Component {
               <Button icon={<BarsOutlined />} onClick={this.showMenu} type="text">
                 {i18next.t("general:Menu")}
               </Button>
-            </React.Fragment>
-            :
+            </React.Fragment> :
             <Menu
               items={this.renderMenu()}
               mode={"horizontal"}
@@ -616,8 +588,11 @@ class App extends Component {
           {this.state.account &&
               <React.Fragment>
                 <SelectThemeBox themeAlgorithm={this.state.themeAlgorithm}
-                  onChange={(nextTheme) => {
-                    this.setState({themeAlgorithm: nextTheme});
+                  onChange={(nextThemeAlgorithm) => {
+                    this.setState({
+                      themeAlgorithm: nextThemeAlgorithm,
+                      logo: this.getLogo(nextThemeAlgorithm),
+                    });
                   }} />
                 <SelectLanguageBox languages={this.state.account.organization.languages} />
               </React.Fragment>
@@ -645,7 +620,7 @@ class App extends Component {
             textAlign: "center",
           }
         }>
-          Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
+          Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.getLogo(Setting.getAlgorithmNames(this.state.themeData))} /></a>
         </Footer>
       </React.Fragment>
     );
@@ -671,9 +646,19 @@ class App extends Component {
           <Content style={{display: "flex", justifyContent: "center"}}>
             {
               this.isEntryPages() ?
-                <EntryPage account={this.state.account} onUpdateAccount={(account) => {
-                  this.onUpdateAccount(account);
-                }} /> :
+                <EntryPage
+                  account={this.state.account}
+                  theme={this.state.themeData}
+                  onUpdateAccount={(account) => {
+                    this.onUpdateAccount(account);
+                  }}
+                  updataThemeData={(nextThemeData) => {
+                    this.setState({
+                      themeData: nextThemeData,
+                    });
+                    localStorage.setItem("themeAlgorithm", Setting.getAlgorithmNames(nextThemeData).toString());
+                  }}
+                /> :
                 <Switch>
                   <Route exact path="/callback" component={AuthCallback} />
                   <Route exact path="/callback/saml" component={SamlCallback} />
@@ -717,7 +702,7 @@ class App extends Component {
             colorPrimary: this.state.themeData.colorPrimary,
             colorInfo: this.state.themeData.colorPrimary,
           },
-          algorithm: this.getAlgorithm(this.state.themeAlgorithm),
+          algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
         }}>
           {
             this.renderPage()

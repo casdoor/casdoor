@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Checkbox, Form, Modal, Tag, Tooltip, message} from "antd";
+import {Checkbox, Form, Modal, Tag, Tooltip, message, theme} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -24,7 +24,6 @@ import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import * as path from "path-browserify";
-import {ThemeDefault} from "./common/theme/ThemeEditor";
 
 export const ServerUrl = "";
 
@@ -44,6 +43,13 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
 ];
 
+export const ThemeDefault = {
+  themeType: "default",
+  colorPrimary: "#5734d3",
+  borderRadius: 6,
+  isCompact: false,
+};
+
 export function getThemeData(organization, application) {
   if (application?.themeData?.isEnabled) {
     return application.themeData;
@@ -52,6 +58,26 @@ export function getThemeData(organization, application) {
   } else {
     return ThemeDefault;
   }
+}
+
+export function getAlgorithm(themeAlgorithmNames) {
+  return themeAlgorithmNames.map((algorithmName) => {
+    if (algorithmName === "dark") {
+      return theme.darkAlgorithm;
+    }
+    if (algorithmName === "compact") {
+      return theme.compactAlgorithm;
+    }
+    return theme.defaultAlgorithm;
+  });
+}
+
+export function getAlgorithmNames(themeData) {
+  const algorithms = [themeData?.themeType !== "dark" ? "default" : "dark"];
+  if (themeData?.isCompact === true) {
+    algorithms.push("compact");
+  }
+  return algorithms;
 }
 
 export const OtherProviderInfo = {

@@ -1,4 +1,4 @@
-// Copyright 2022 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,24 +19,21 @@ import "./App.less";
 import i18next from "i18next";
 
 export const Themes = [
-  {label: "Default theme", key: "default", icon: `${Setting.StaticBaseUrl}/img/light.svg`},
-  {label: "Dark theme", key: "dark", icon: `${Setting.StaticBaseUrl}/img/dark.svg`},
-  {label: "Compact theme", key: "compact", icon: `${Setting.StaticBaseUrl}/img/compact.svg`},
+  {label: "Default", key: "default", icon: `${Setting.StaticBaseUrl}/img/light.svg`}, // i18next.t("theme:Default")
+  {label: "Dark", key: "dark", icon: `${Setting.StaticBaseUrl}/img/dark.svg`}, // i18next.t("theme:Dark")
+  {label: "Compact", key: "compact", icon: `${Setting.StaticBaseUrl}/img/compact.svg`}, // i18next.t("theme:Compact")
 ];
 
 function themeIcon(themeKey, iconUrl) {
   return <img width={24} alt={themeKey} src={iconUrl} />;
 }
 
-function getIconUrl(themeKey) {
+function getIconURL(themeKey) {
   if (themeKey?.includes("dark")) {
     return Themes.find(t => t.key === "dark").icon;
   } else if (themeKey?.includes("default")) {
     return Themes.find(t => t.key === "default").icon;
   }
-
-  return localStorage.getItem("theme") === null ? Themes.find(t => t.key === "default").icon :
-    Themes.find(t => t.key === localStorage.getItem("themeAlgorithm"));
 }
 
 class SelectThemeBox extends React.Component {
@@ -44,7 +41,7 @@ class SelectThemeBox extends React.Component {
     super(props);
   }
 
-  iconUrl = getIconUrl();
+  iconUrl = getIconURL(this.props.themeAlgorithm);
   items = this.getThemeItems();
 
   componentDidMount() {
@@ -77,12 +74,18 @@ class SelectThemeBox extends React.Component {
           nextTheme = [...this.props.themeAlgorithm];
         }
       }
+
+      this.iconUrl = getIconURL(nextTheme);
       this.props.onChange(nextTheme);
-      this.icon = getIconUrl(nextTheme);
     };
 
     return (
-      <Dropdown menu={{items: this.items, onClick}} >
+      <Dropdown menu={{
+        items: this.items,
+        onClick,
+        selectable: true,
+        multiple: true,
+        selectedKeys: [...this.props.themeAlgorithm]}} >
         <div className="theme-box" style={{background: `url(${this.iconUrl})`, ...this.props.style}} />
       </Dropdown>
     );

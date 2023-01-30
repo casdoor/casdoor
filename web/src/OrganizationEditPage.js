@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Radio, Row, Select, Switch} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
@@ -22,7 +22,7 @@ import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./LdapTable";
 import AccountTable from "./AccountTable";
-import ThemeEditor, {ThemeDefault} from "./common/theme/ThemeEditor";
+import ThemeEditor from "./common/theme/ThemeEditor";
 
 const {Option} = Select;
 
@@ -319,21 +319,29 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("organization:Follow System theme"), i18next.t("organization:Follow System theme - Tooltip"))} :
+            {Setting.getLabel(i18next.t("theme:Theme"), i18next.t("theme:Theme - Tooltip"))} :
           </Col>
-          <Col span={22} >
-            <Col span={1} >
-              <Switch checked={!(this.state.organization.themeData?.isEnabled ?? false)} onChange={checked => {
-                const {_, ...theme} = this.state.organization.themeData ?? {...ThemeDefault, isEnabled: false};
-                this.updateOrganizationField("themeData", {...theme, isEnabled: !checked});
-              }} />
-            </Col>
+          <Col span={22} style={{marginTop: "5px"}}>
+            <Row>
+              <Radio.Group value={this.state.organization.themeData?.isEnabled ?? false} onChange={e => {
+                const {_, ...theme} = this.state.organization.themeData ?? {...Setting.ThemeDefault, isEnabled: false};
+                this.updateOrganizationField("themeData", {...theme, isEnabled: e.target.value});
+              }} >
+                <Radio.Button value={false}>{i18next.t("organization:Follow system theme")}</Radio.Button>
+                <Radio.Button value={true}>{i18next.t("theme:Customize theme")}</Radio.Button>
+              </Radio.Group>
+            </Row>
+            {
+              this.state.organization.themeData?.isEnabled ?
+                <Row style={{marginTop: "20px"}}>
+                  <ThemeEditor themeData={this.state.organization.themeData} onThemeChange={(_, nextThemeData) => {
+                    const {isEnabled} = this.state.organization.themeData ?? {...Setting.ThemeDefault, isEnabled: false};
+                    this.updateOrganizationField("themeData", {...nextThemeData, isEnabled});
+                  }} />
+                </Row> : null
+            }
           </Col>
         </Row>
-        <ThemeEditor themeData={this.state.organization.themeData} onThemeChange={(_, nextThemeData) => {
-          const {isEnabled} = this.state.organization.themeData ?? {...ThemeDefault, isEnabled: false};
-          this.updateOrganizationField("themeData", {...nextThemeData, isEnabled});
-        }} />
         <Row style={{marginTop: "20px"}}>
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:LDAPs"), i18next.t("general:LDAPs - Tooltip"))} :

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Card, ConfigProvider, Form, Layout, Radio, theme} from "antd";
+import {Card, ConfigProvider, Form, Layout, Switch, theme} from "antd";
 import ThemePicker from "./ThemePicker";
 import ColorPicker from "./ColorPicker";
 import RadiusPicker from "./RadiusPicker";
@@ -21,13 +21,7 @@ import {GREEN_COLOR, PINK_COLOR} from "./ColorPicker";
 import {Content} from "antd/es/layout/layout";
 import i18next from "i18next";
 import {useEffect} from "react";
-
-export const ThemeDefault = {
-  themeType: "default",
-  colorPrimary: "#5734d3",
-  borderRadius: 6,
-  isCompact: false,
-};
+import * as Setting from "../../Setting";
 
 const ThemesInfo = {
   default: {},
@@ -47,7 +41,7 @@ const ThemesInfo = {
 const onChange = () => {};
 
 export default function ThemeEditor(props) {
-  const themeData = props.themeData ?? ThemeDefault;
+  const themeData = props.themeData ?? Setting.ThemeDefault;
   const onThemeChange = props.onThemeChange ?? onChange;
 
   const {isCompact, themeType, ...themeToken} = themeData;
@@ -65,7 +59,7 @@ export default function ThemeEditor(props) {
   }, [isLight, isCompact]);
 
   useEffect(() => {
-    const mergedData = Object.assign(Object.assign(Object.assign({}, ThemeDefault), {themeType}), ThemesInfo[themeType]);
+    const mergedData = Object.assign(Object.assign(Object.assign({}, Setting.ThemeDefault), {themeType}), ThemesInfo[themeType]);
     onThemeChange(null, mergedData);
     form.setFieldsValue(mergedData);
   }, [themeType]);
@@ -80,10 +74,10 @@ export default function ThemeEditor(props) {
         algorithm: algorithmFn,
       }}
     >
-      <Layout style={{}}>
-        <Content style={{width: "800px", margin: "0 auto"}}>
+      <Layout style={{width: "800px", margin: "0 auto", backgroundColor: "white"}}>
+        <Content >
           <Card
-            title={i18next.t("theme:My Theme")}
+            title={i18next.t("theme:Theme")}
           >
             <Form
               form={form}
@@ -96,17 +90,14 @@ export default function ThemeEditor(props) {
               <Form.Item label={i18next.t("theme:Theme")} name="themeType">
                 <ThemePicker />
               </Form.Item>
-              <Form.Item label={i18next.t("theme:Primary Color")} name="colorPrimary">
+              <Form.Item label={i18next.t("theme:Primary color")} name="colorPrimary">
                 <ColorPicker />
               </Form.Item>
-              <Form.Item label={i18next.t("theme:Border Radius")} name="borderRadius">
+              <Form.Item label={i18next.t("theme:Border radius")} name="borderRadius">
                 <RadiusPicker />
               </Form.Item>
-              <Form.Item label={i18next.t("theme:Compact")} name="isCompact">
-                <Radio.Group>
-                  <Radio value={false}>{i18next.t("theme:default")}</Radio>
-                  <Radio value={true}>{i18next.t("theme:compact")}</Radio>
-                </Radio.Group>
+              <Form.Item label={i18next.t("theme:Compact")} valuePropName="checked" name="isCompact">
+                <Switch />
               </Form.Item>
             </Form>
           </Card>
