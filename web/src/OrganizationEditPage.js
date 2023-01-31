@@ -327,7 +327,7 @@ class OrganizationEditPage extends React.Component {
                 const {_, ...theme} = this.state.organization.themeData ?? {...Setting.ThemeDefault, isEnabled: false};
                 this.updateOrganizationField("themeData", {...theme, isEnabled: e.target.value});
               }} >
-                <Radio.Button value={false}>{i18next.t("organization:Follow system theme")}</Radio.Button>
+                <Radio.Button value={false}>{i18next.t("organization:Follow global theme")}</Radio.Button>
                 <Radio.Button value={true}>{i18next.t("theme:Customize theme")}</Radio.Button>
               </Radio.Group>
             </Row>

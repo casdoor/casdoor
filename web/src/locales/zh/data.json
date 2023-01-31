@@ -1,6 +1,5 @@
 {
   "account": {
-    "Login": "登录",
     "Logout": "登出",
     "My Account": "我的账户",
     "Sign Up": "注册"
@@ -339,7 +338,7 @@
     "Default avatar": "默认头像",
     "Edit Organization": "编辑组织",
     "Favicon": "图标",
-    "Follow system theme": "使用系统主题",
+    "Follow global theme": "使用全局默认主题",
     "InitScore": "初始积分",
     "Is profile public": "用户个人页公开",
     "Is profile public - Tooltip": "关闭后，只有全局管理员或同组织用户才能访问用户主页",
@@ -693,7 +692,7 @@
     "Blossom": "桃花缘",
     "Border radius": "圆角",
     "Compact": "紧凑",
-    "Compact ": "宽松度",
+    "Compact ": "宽松度 ",
     "Customize theme": "定制主题",
     "Dark": "暗黑",
     "Default": "默认",

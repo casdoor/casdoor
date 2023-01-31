@@ -1,6 +1,5 @@
 {
   "account": {
-    "Login": "Iniciar sesión",
     "Logout": "Cerrar sesión",
     "My Account": "Mi cuenta",
     "Sign Up": "Registrarme"
@@ -339,7 +338,7 @@
     "Default avatar": "Avatar por defecto",
     "Edit Organization": "Editar Organización",
     "Favicon": "Favicon",
-    "Follow system theme": "Follow system theme",
+    "Follow global theme": "Follow global theme",
     "InitScore": "InitScore",
     "Is profile public": "Es el perfil publico",
     "Is profile public - Tooltip": "Es el perfil publico - Tooltip",

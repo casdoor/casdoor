@@ -284,14 +284,6 @@ class App extends Component {
     });
   }
 
-  handleRightDropdownClick(e) {
-    if (e.key === "/account") {
-      this.props.history.push("/account");
-    } else if (e.key === "/logout") {
-      this.logout();
-    }
-  }
-
   renderAvatar() {
     if (this.state.account.avatar === "") {
       return (
@@ -315,13 +307,18 @@ class App extends Component {
     ));
     items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Logout")}</>,
       "/logout"));
-    const onClick = this.handleRightDropdownClick.bind(this);
+
+    const onClick = (e) => {
+      if (e.key === "/account") {
+        this.props.history.push("/account");
+      } else if (e.key === "/logout") {
+        this.logout();
+      }
+    };
 
     return (
-      <Dropdown key="/rightDropDown" menu={{items, onClick}} className="rightDropDown">
-        <div className="ant-dropdown-link" style={{float: "right", cursor: "pointer"}}>
-          &nbsp;
-          &nbsp;
+      <Dropdown key="/rightDropDown" menu={{items, onClick}} >
+        <div className="rightDropDown">
           {
             this.renderAvatar()
           }
@@ -336,34 +333,30 @@ class App extends Component {
     );
   }
 
-  renderAccount() {
-    const res = [];
-
+  renderAccountMenu() {
     if (this.state.account === undefined) {
       return null;
     } else if (this.state.account === null) {
-      // res.push(
-      //   <Menu.Item key="/signup" style={{float: 'right', marginRight: '20px'}}>
-      //     <Link to="/signup">
-      //       {i18next.t("account:Sign Up")}
-      //     </Link>
-      //   </Menu.Item>
-      // );
-      // res.push(
-      //   <Menu.Item key="/login" style={{float: 'right'}}>
-      //     <Link to="/login">
-      //       {i18next.t("account:Login")}
-      //     </Link>
-      //   </Menu.Item>
-      // );
+      return null;
     } else {
-      res.push(this.renderRightDropdown());
+      return (
+        <React.Fragment>
+          {this.renderRightDropdown()}
+          <SelectThemeBox
+            themeAlgorithm={this.state.themeAlgorithm}
+            onChange={(nextThemeAlgorithm) => {
+              this.setState({
+                themeAlgorithm: nextThemeAlgorithm,
+                logo: this.getLogo(nextThemeAlgorithm),
+              });
+            }} />
+          <SelectLanguageBox languages={this.state.account.organization.languages} />
+        </React.Fragment>
+      );
     }
-
-    return res;
   }
 
-  renderMenu() {
+  getMenuItems() {
     const res = [];
 
     if (this.state.account === null || this.state.account === undefined) {
@@ -565,9 +558,9 @@ class App extends Component {
             <React.Fragment>
               <Drawer title={i18next.t("general:Close")} placement="left" visible={this.state.menuVisible} onClose={this.onClose}>
                 <Menu
-                  items={this.renderMenu()}
+                  items={this.getMenuItems()}
                   mode={"inline"}
-                  selectedKeys={[`${this.state.selectedMenuKey}`]}
+                  selectedKeys={[this.state.selectedMenuKey]}
                   style={{lineHeight: "64px"}}
                   onClick={this.onClose}
                 >
@@ -578,24 +571,14 @@ class App extends Component {
               </Button>
             </React.Fragment> :
             <Menu
-              items={this.renderMenu()}
+              items={this.getMenuItems()}
               mode={"horizontal"}
-              selectedKeys={[`${this.state.selectedMenuKey}`]}
-              style={{position: "absolute", left: "145px"}}
+              selectedKeys={[this.state.selectedMenuKey]}
+              style={{position: "absolute", left: "145px", right: "260px"}}
             />
           }
-          {this.renderAccount()}
-          {this.state.account &&
-              <React.Fragment>
-                <SelectThemeBox themeAlgorithm={this.state.themeAlgorithm}
-                  onChange={(nextThemeAlgorithm) => {
-                    this.setState({
-                      themeAlgorithm: nextThemeAlgorithm,
-                      logo: this.getLogo(nextThemeAlgorithm),
-                    });
-                  }} />
-                <SelectLanguageBox languages={this.state.account.organization.languages} />
-              </React.Fragment>
+          {
+            this.renderAccountMenu()
           }
         </Header>
         <Content style={{display: "flex", flexDirection: "column"}} >

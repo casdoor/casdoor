@@ -17,18 +17,16 @@ import * as Setting from "./Setting";
 import {Dropdown} from "antd";
 import "./App.less";
 import i18next from "i18next";
+import {CheckOutlined} from "@ant-design/icons";
+import {CompactTheme, DarkTheme, Light} from "antd-token-previewer/es/icons";
 
 export const Themes = [
-  {label: "Default", key: "default", icon: `${Setting.StaticBaseUrl}/img/light.svg`}, // i18next.t("theme:Default")
-  {label: "Dark", key: "dark", icon: `${Setting.StaticBaseUrl}/img/dark.svg`}, // i18next.t("theme:Dark")
-  {label: "Compact", key: "compact", icon: `${Setting.StaticBaseUrl}/img/compact.svg`}, // i18next.t("theme:Compact")
+  {label: "Default", key: "default", icon: <Light style={{fontSize: "24px"}} />},        // i18next.t("theme:Default")
+  {label: "Dark", key: "dark", icon: <DarkTheme style={{fontSize: "24px"}} />},          // i18next.t("theme:Dark")
+  {label: "Compact", key: "compact", icon: <CompactTheme style={{fontSize: "24px"}} />}, // i18next.t("theme:Compact")
 ];
 
-function themeIcon(themeKey, iconUrl) {
-  return <img width={24} alt={themeKey} src={iconUrl} />;
-}
-
-function getIconURL(themeKey) {
+function getIcon(themeKey) {
   if (themeKey?.includes("dark")) {
     return Themes.find(t => t.key === "dark").icon;
   } else if (themeKey?.includes("default")) {
@@ -41,17 +39,14 @@ class SelectThemeBox extends React.Component {
     super(props);
   }
 
-  iconUrl = getIconURL(this.props.themeAlgorithm);
-  items = this.getThemeItems();
-
-  componentDidMount() {
-    i18next.on("languageChanged", () => {
-      this.items = this.getThemeItems();
-    });
-  }
+  icon = getIcon(this.props.themeAlgorithm);
 
   getThemeItems() {
-    return Themes.map((theme) => Setting.getItem(i18next.t(`theme:${theme.label}`), theme.key, themeIcon(theme.key, theme.icon)));
+    return Themes.map((theme) => Setting.getItem(
+      <div>{i18next.t(`theme:${theme.label}`)}
+        {this.props.themeAlgorithm.includes(theme.key) ? <CheckOutlined /> : null}
+      </div>,
+      theme.key, theme.icon));
   }
 
   render() {
@@ -75,18 +70,21 @@ class SelectThemeBox extends React.Component {
         }
       }
 
-      this.iconUrl = getIconURL(nextTheme);
+      this.icon = getIcon(nextTheme);
       this.props.onChange(nextTheme);
     };
 
     return (
       <Dropdown menu={{
-        items: this.items,
+        items: this.getThemeItems(),
         onClick,
         selectable: true,
         multiple: true,
-        selectedKeys: [...this.props.themeAlgorithm]}} >
-        <div className="theme-box" style={{background: `url(${this.iconUrl})`, ...this.props.style}} />
+        selectedKeys: [...this.props.themeAlgorithm],
+      }} >
+        <div className="select-box">
+          {this.icon}
+        </div>
       </Dropdown>
     );
   }

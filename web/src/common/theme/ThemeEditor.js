@@ -74,7 +74,7 @@ export default function ThemeEditor(props) {
         algorithm: algorithmFn,
       }}
     >
-      <Layout style={{width: "800px", margin: "0 auto", backgroundColor: "white"}}>
+      <Layout style={{width: "800px", backgroundColor: "white"}}>
         <Content >
           <Card
             title={i18next.t("theme:Theme")}
@@ -85,7 +85,7 @@ export default function ThemeEditor(props) {
               onValuesChange={onThemeChange}
               labelCol={{span: 4}}
               wrapperCol={{span: 20}}
-              style={{width: "800px", margin: "0 auto"}}
+              style={{width: "800px"}}
             >
               <Form.Item label={i18next.t("theme:Theme")} name="themeType">
                 <ThemePicker />
@@ -96,7 +96,7 @@ export default function ThemeEditor(props) {
               <Form.Item label={i18next.t("theme:Border radius")} name="borderRadius">
                 <RadiusPicker />
               </Form.Item>
-              <Form.Item label={i18next.t("theme:Compact")} valuePropName="checked" name="isCompact">
+              <Form.Item label={i18next.t("theme:Compact ")} valuePropName="checked" name="isCompact">
                 <Switch />
               </Form.Item>
             </Form>

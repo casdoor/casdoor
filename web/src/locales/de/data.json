@@ -1,6 +1,5 @@
 {
   "account": {
-    "Login": "Anmelden",
     "Logout": "Abmelden",
     "My Account": "Mein Konto",
     "Sign Up": "Registrieren"
@@ -339,7 +338,7 @@
     "Default avatar": "Standard Avatar",
     "Edit Organization": "Organisation bearbeiten",
     "Favicon": "Févicon",
-    "Follow system theme": "Follow system theme",
+    "Follow global theme": "Follow global theme",
     "InitScore": "InitScore",
     "Is profile public": "Is profile public",
     "Is profile public - Tooltip": "Is profile public - Tooltip",
