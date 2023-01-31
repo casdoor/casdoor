@@ -26,6 +26,7 @@ import (
 
 func InitDb() {
 	MigratePermissionRule()
+	MigrateSession()
 
 	existed := initBuiltInOrganization()
 	if !existed {

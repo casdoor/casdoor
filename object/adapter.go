@@ -223,10 +223,72 @@ func (a *Adapter) createTable() {
 		panic(err)
 	}
 
-	err = a.Engine.Sync2(new(Session))
+	err = a.syncSession()
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (a *Adapter) syncSession() error {
+	// Create a new field called 'application' and add it to the primary key
+	if exist, _ := a.Engine.IsTableExist("session"); exist {
+		if colErr := a.Engine.Find(&[]*Session{}); colErr != nil {
+			var err error
+			tx := a.Engine.NewSession()
+			defer tx.Close()
+
+			// add Begin() before any action
+			tx.Begin()
+
+			err = tx.Table("session_tmp").CreateTable(&Session{})
+			if err != nil {
+				return err
+			}
+
+			type oldSession struct {
+				Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
+				Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+				CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+
+				SessionId []string `json:"sessionId"`
+			}
+			oldSessions := []*oldSession{}
+			tx.Table("session").Find(&oldSessions)
+			newSessions := []*Session{}
+			for _, oldSession := range oldSessions {
+				newSessions = append(newSessions, &Session{
+					Owner:       oldSession.Owner,
+					Name:        oldSession.Name,
+					Application: "null",
+					CreatedTime: oldSession.CreatedTime,
+					SessionId:   oldSession.SessionId,
+				})
+			}
+			_, err = tx.Table("session_tmp").Insert(newSessions)
+			count1, _ := tx.Table("session_tmp").Count()
+			count2, _ := tx.Table("session").Count()
+			if err != nil || count1 != count2 {
+				tx.DropTable("session_tmp")
+				return err
+			}
+
+			// can't find an api from xorm called "alter table name"
+			tx.DropTable("session")
+			tx.Table("session").CreateTable(&Session{})
+
+			sql3 := "INSERT INTO `session` SELECT * FROM `session_tmp`"
+			_, err = tx.Exec(sql3)
+			if err != nil {
+				return err
+			}
+
+			tx.DropTable("session_tmp")
+
+			// add Commit() after all actions
+			tx.Commit()
+		}
+	}
+	return a.Engine.Sync2(new(Session))
 }
 
 func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
