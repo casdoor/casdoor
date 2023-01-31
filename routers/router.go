@@ -79,6 +79,7 @@ func initAPI() {
 	beego.Router("/api/update-role", &controllers.ApiController{}, "POST:UpdateRole")
 	beego.Router("/api/add-role", &controllers.ApiController{}, "POST:AddRole")
 	beego.Router("/api/delete-role", &controllers.ApiController{}, "POST:DeleteRole")
+	beego.Router("/api/set-roles", &controllers.ApiController{}, "POST:SetRoles")
 
 	beego.Router("/api/get-permissions", &controllers.ApiController{}, "GET:GetPermissions")
 	beego.Router("/api/get-permissions-by-submitter", &controllers.ApiController{}, "GET:GetPermissionsBySubmitter")
