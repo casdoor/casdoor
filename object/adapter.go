@@ -272,8 +272,8 @@ func (a *Adapter) syncSession() error {
 			}
 
 			tx.DropTable("session")
-			sql3 := "ALTER TABLE `session_tmp` RENAME TO `session`"
-			_, err = tx.Exec(sql3)
+			sql := "ALTER TABLE `session_tmp` RENAME TO `session`"
+			_, err = tx.Exec(sql)
 			if err != nil {
 				return err
 			}
