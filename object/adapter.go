@@ -271,17 +271,12 @@ func (a *Adapter) syncSession() error {
 				return err
 			}
 
-			// can't find an api from xorm called "alter table name"
 			tx.DropTable("session")
-			tx.Table("session").CreateTable(&Session{})
-
-			sql3 := "INSERT INTO `session` SELECT * FROM `session_tmp`"
+			sql3 := "ALTER TABLE `session_tmp` RENAME TO `session`"
 			_, err = tx.Exec(sql3)
 			if err != nil {
 				return err
 			}
-
-			tx.DropTable("session_tmp")
 
 			// add Commit() after all actions
 			tx.Commit()
