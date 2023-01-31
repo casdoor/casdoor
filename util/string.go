@@ -100,10 +100,10 @@ func GetOwnerAndNameFromIdNoCheck(id string) (string, string) {
 	return tokens[0], tokens[1]
 }
 
-func GetOwnerAndNameAndApplicationFromSessionPkId(id string) (string, string, string) {
+func GetOwnerAndNameAndOtherFromId(id string) (string, string, string) {
 	tokens := strings.Split(id, "/")
 	if len(tokens) != 3 {
-		panic(errors.New("GetOwnerAndNameAndApplicationFromSessionPkId() error, wrong token count for ID: " + id))
+		panic(errors.New("GetOwnerAndNameAndOtherFromId() error, wrong token count for ID: " + id))
 	}
 
 	return tokens[0], tokens[1], tokens[2]
@@ -136,7 +136,7 @@ func GetId(owner, name string) string {
 	return fmt.Sprintf("%s/%s", owner, name)
 }
 
-func GetSessionPkId(owner, name, application string) string {
+func GetSessionId(owner, name, application string) string {
 	return fmt.Sprintf("%s/%s/%s", owner, name, application)
 }
 

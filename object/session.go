@@ -28,7 +28,7 @@ var (
 type Session struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	Application string `xorm:"varchar(100) notnull pk default ''" json:"application"`
+	Application string `xorm:"varchar(100) notnull pk" json:"application"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	SessionId []string `json:"sessionId"`
@@ -71,7 +71,7 @@ func GetSessionCount(owner, field, value string) int {
 }
 
 func GetSingleSession(id string) *Session {
-	owner, name, application := util.GetOwnerAndNameAndApplicationFromSessionPkId(id)
+	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
 	session := &Session{Owner: owner, Name: name, Application: application}
 	_, err := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
 	if err != nil {
@@ -82,7 +82,7 @@ func GetSingleSession(id string) *Session {
 }
 
 func UpdateSession(id string, session *Session) bool {
-	owner, name, application := util.GetOwnerAndNameAndApplicationFromSessionPkId(id)
+	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
 
 	_, err := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
 	if err != nil {
@@ -130,7 +130,7 @@ func AddSession(session *Session) bool {
 }
 
 func DeleteSession(id string) bool {
-	owner, name, application := util.GetOwnerAndNameAndApplicationFromSessionPkId(id)
+	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
 
 	session := &Session{Owner: owner, Name: name, Application: application}
 	_, err := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
@@ -147,7 +147,7 @@ func DeleteSession(id string) bool {
 }
 
 func DeleteSessionId(id string, sessionId string) bool {
-	owner, name, application := util.GetOwnerAndNameAndApplicationFromSessionPkId(id)
+	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
 
 	session := &Session{Owner: owner, Name: name, Application: application}
 	_, err := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
@@ -179,7 +179,7 @@ func DeleteBeegoSession(sessionIds []string) {
 }
 
 func IsSessionDuplicated(id string, sessionId string) bool {
-	owner, name, application := util.GetOwnerAndNameAndApplicationFromSessionPkId(id)
+	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
 	session := &Session{Owner: owner, Name: name, Application: application}
 	get, _ := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
 	if !get {
@@ -193,4 +193,35 @@ func IsSessionDuplicated(id string, sessionId string) bool {
 			return session.SessionId[0] != sessionId
 		}
 	}
+}
+
+func MigrateSession() {
+	tx := adapter.Engine.NewSession()
+	defer tx.Close()
+
+	// add Begin() before any action
+	tx.Begin()
+
+	sessions := []*Session{}
+	err := tx.Find(&sessions, &Session{})
+	if err != nil {
+		panic(err)
+	}
+
+	// update session table
+
+	addAppSql := "UPDATE `session` SET application = 'app-built-in' WHERE owner = 'built-in' AND application = 'null'"
+	_, err = tx.Exec(addAppSql)
+	if err != nil {
+		panic(err)
+	}
+
+	delSql := "DELETE FROM `session` WHERE application = 'null'"
+	_, err = tx.Exec(delSql)
+	if err != nil {
+		panic(err)
+	}
+
+	// add Commit() after all actions
+	tx.Commit()
 }

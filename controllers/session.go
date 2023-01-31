@@ -77,7 +77,7 @@ func (c *ApiController) UpdateSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateSession(util.GetSessionPkId(session.Owner, session.Name, session.Application), &session))
+	c.Data["json"] = wrapActionResponse(object.UpdateSession(util.GetSessionId(session.Owner, session.Name, session.Application), &session))
 	c.ServeJSON()
 }
 
@@ -116,7 +116,7 @@ func (c *ApiController) DeleteSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetSessionPkId(session.Owner, session.Name, session.Application)))
+	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetSessionId(session.Owner, session.Name, session.Application)))
 	c.ServeJSON()
 }
 
