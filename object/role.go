@@ -222,6 +222,19 @@ func DeleteRole(role *Role) bool {
 		if _, ok := emap[key]; !ok {
 			emap[key] = getEnforcer(p)
 		}
+
+		for k, v := range p.Roles {
+			if v == role.Owner+"/"+role.Name {
+				p.Roles = append(p.Roles[:k], p.Roles[k+1:]...)
+				break
+			}
+		}
+
+		_, err := adapter.Engine.ID(core.PK{p.Owner, p.Name}).AllCols().Update(p)
+		if err != nil {
+			panic(err)
+		}
+
 	}
 
 	for k, e := range emap {

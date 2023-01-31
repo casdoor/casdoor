@@ -456,7 +456,7 @@ func GetPermissionsByAdapterAndDomainsAndRole(table string, domains []string, ro
 		orWhere := "(" + strings.Join(domainsWhere, " or ") + ")"
 		where += " and " + orWhere
 	} else {
-		orWhere := "domains = ''"
+		orWhere := "domains = '[]'"
 		where += " and " + orWhere
 	}
 
@@ -464,6 +464,8 @@ func GetPermissionsByAdapterAndDomainsAndRole(table string, domains []string, ro
 		orWhere := " roles like " + "'%" + role + "%'"
 		where += " and " + orWhere
 	}
+
+	fmt.Println(where, "++++++++where++++++++")
 
 	err := adapter.Engine.Where(where).Find(&permissions)
 	if err != nil {
@@ -559,16 +561,16 @@ func judgeRepeatRole(enforcer *casbin.Enforcer, roles []string, domains []string
 func operateGroupingPoliciesByPermission(permission *Permission, enforcer *casbin.Enforcer, isAdd bool) {
 	var err error
 	domainExist := len(permission.Domains) > 0
-	permissionId := permission.Owner + "/" + permission.Name
+	//permissionId := permission.Owner + "/" + permission.Name
 	for _, role := range permission.Roles {
 		roleObj := GetRole(role)
 		for _, user := range roleObj.Users {
 			if domainExist {
 				for _, domain := range permission.Domains {
 					if isAdd {
-						_, err = enforcer.AddNamedGroupingPolicy("g", user, domain, roleObj.Owner+"/"+roleObj.Name, "", "", permissionId)
+						_, err = enforcer.AddNamedGroupingPolicy("g", user, domain, roleObj.Owner+"/"+roleObj.Name)
 					} else {
-						_, err = enforcer.RemoveNamedGroupingPolicy("g", user, domain, roleObj.Owner+"/"+roleObj.Name, "", "", permissionId)
+						_, err = enforcer.RemoveNamedGroupingPolicy("g", user, domain, roleObj.Owner+"/"+roleObj.Name)
 					}
 					if err != nil {
 						panic(err)
@@ -576,9 +578,9 @@ func operateGroupingPoliciesByPermission(permission *Permission, enforcer *casbi
 				}
 			} else {
 				if isAdd {
-					_, err = enforcer.AddNamedGroupingPolicy("g", user, roleObj.Owner+"/"+roleObj.Name, "", "", "", permissionId)
+					_, err = enforcer.AddNamedGroupingPolicy("g", user, roleObj.Owner+"/"+roleObj.Name)
 				} else {
-					_, err = enforcer.RemoveNamedGroupingPolicy("g", user, roleObj.Owner+"/"+roleObj.Name, "", "", "", permissionId)
+					_, err = enforcer.RemoveNamedGroupingPolicy("g", user, roleObj.Owner+"/"+roleObj.Name)
 				}
 				if err != nil {
 					panic(err)
