@@ -96,7 +96,7 @@ export default function ThemeEditor(props) {
               <Form.Item label={i18next.t("theme:Border radius")} name="borderRadius">
                 <RadiusPicker />
               </Form.Item>
-              <Form.Item label={i18next.t("theme:Compact ")} valuePropName="checked" name="isCompact">
+              <Form.Item label={i18next.t("theme:Is compact")} valuePropName="checked" name="isCompact">
                 <Switch />
               </Form.Item>
             </Form>

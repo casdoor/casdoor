@@ -43,8 +43,9 @@ class SelectThemeBox extends React.Component {
 
   getThemeItems() {
     return Themes.map((theme) => Setting.getItem(
-      <div>{i18next.t(`theme:${theme.label}`)}
-        {this.props.themeAlgorithm.includes(theme.key) ? <CheckOutlined /> : null}
+      <div style={{display: "flex", justifyContent: "space-between"}}>
+        <div>{i18next.t(`theme:${theme.label}`)}</div>
+        {this.props.themeAlgorithm.includes(theme.key) ? <CheckOutlined style={{marginLeft: "5px"}} /> : null}
       </div>,
       theme.key, theme.icon));
   }
@@ -81,7 +82,8 @@ class SelectThemeBox extends React.Component {
         selectable: true,
         multiple: true,
         selectedKeys: [...this.props.themeAlgorithm],
-      }} >
+      }}
+      trigger={["click"]}>
         <div className="select-box">
           {this.icon}
         </div>

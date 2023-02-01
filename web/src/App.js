@@ -203,6 +203,19 @@ class App extends Component {
     }
   }
 
+  setTheme = (theme, initThemeAlgorithm) => {
+    this.setState({
+      themeData: theme,
+    });
+
+    if (initThemeAlgorithm) {
+      this.setState({
+        logo: this.getLogo(Setting.getAlgorithmNames(theme)),
+        themeAlgorithm: Setting.getAlgorithmNames(theme),
+      });
+    }
+  };
+
   getAccount() {
     const params = new URLSearchParams(this.props.location.search);
 
@@ -229,12 +242,7 @@ class App extends Component {
           account.organization = res.data2;
 
           this.setLanguage(account);
-          const theme = Setting.getThemeData(account.organization);
-          this.setState({
-            themeAlgorithm: Setting.getAlgorithmNames(theme),
-            themeData: theme,
-            logo: this.getLogo(Setting.getAlgorithmNames(theme)),
-          });
+          this.setTheme(Setting.getThemeData(account.organization), Conf.InitThemeAlgorithm);
         } else {
           if (res.data !== "Please login first") {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
@@ -488,7 +496,7 @@ class App extends Component {
         <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)} />
         <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)} />
         <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} onChangeTheme={this.setTheme} {...props} />)} />
         <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
         <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
         <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />} />
@@ -551,7 +559,7 @@ class App extends Component {
         <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}}>
           {Setting.isMobile() ? null : (
             <Link to={"/"}>
-              <div className="logo" style={{background: `url(${this.state.logo})`}} />
+              <div className="logo" style={{background: `url(${this.getLogo(Setting.getAlgorithmNames(this.state.themeData))})`}} />
             </Link>
           )}
           {Setting.isMobile() ?
@@ -684,6 +692,7 @@ class App extends Component {
           token: {
             colorPrimary: this.state.themeData.colorPrimary,
             colorInfo: this.state.themeData.colorPrimary,
+            borderRadius: this.state.themeData.borderRadius,
           },
           algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
         }}>

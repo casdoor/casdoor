@@ -77,6 +77,7 @@ export function getAlgorithmNames(themeData) {
   if (themeData?.isCompact === true) {
     algorithms.push("compact");
   }
+
   return algorithms;
 }
 

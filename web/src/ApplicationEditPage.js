@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Popover, Radio, Result, Row, Select, Switch, Upload} from "antd";
+import {Button, Card, Col, ConfigProvider, Input, Popover, Radio, Result, Row, Select, Switch, Upload} from "antd";
 import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -764,6 +764,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   renderSignupSigninPreview() {
+    const themeData = this.state.application.themeData;
     let signUpUrl = `/signup/${this.state.application.name}`;
     const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
     const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "97%", width: "100%", background: "rgba(0,0,0,0.4)"};
@@ -782,20 +783,28 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("application:Copy signup page URL")}
           </Button>
           <br />
-          <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", overflow: "auto"}}>
-            {
-              this.state.application.enablePassword ? (
-                <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                  <SignupPage application={this.state.application} preview = "auto" />
-                </div>
-              ) : (
-                <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-                  <LoginPage type={"login"} mode={"signup"} application={this.state.application} preview = "auto" />
-                </div>
-              )
-            }
-            <div style={{overflow: "auto", ...maskStyle}} />
-          </div>
+          <ConfigProvider theme={{
+            token: {
+              colorPrimary: themeData.colorPrimary,
+              colorInfo: themeData.colorPrimary,
+              borderRadius: themeData.borderRadius,
+            },
+          }}>
+            <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", overflow: "auto"}}>
+              {
+                this.state.application.enablePassword ? (
+                  <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
+                    <SignupPage application={this.state.application} preview = "auto" />
+                  </div>
+                ) : (
+                  <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
+                    <LoginPage type={"login"} mode={"signup"} application={this.state.application} preview = "auto" />
+                  </div>
+                )
+              }
+              <div style={{overflow: "auto", ...maskStyle}} />
+            </div>
+          </ConfigProvider>
         </Col>
         <Col span={previewGrid}>
           <Button style={{marginBottom: "10px", marginTop: Setting.isMobile() ? "15px" : "0"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
@@ -806,18 +815,27 @@ class ApplicationEditPage extends React.Component {
             {i18next.t("application:Copy signin page URL")}
           </Button>
           <br />
-          <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", overflow: "auto"}}>
-            <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
-              <LoginPage type={"login"} mode={"signin"} application={this.state.application} preview = "auto" />
+          <ConfigProvider theme={{
+            token: {
+              colorPrimary: themeData.colorPrimary,
+              colorInfo: themeData.colorPrimary,
+              borderRadius: themeData.borderRadius,
+            },
+          }}>
+            <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", overflow: "auto"}}>
+              <div className="loginBackground" style={{backgroundImage: `url(${this.state.application?.formBackgroundUrl})`, overflow: "auto"}}>
+                <LoginPage type={"login"} mode={"signin"} application={this.state.application} preview = "auto" />
+              </div>
+              <div style={{overflow: "auto", ...maskStyle}} />
             </div>
-            <div style={{overflow: "auto", ...maskStyle}} />
-          </div>
+          </ConfigProvider>
         </Col>
       </React.Fragment>
     );
   }
 
   renderPromptPreview() {
+    const themeData = this.state.application.themeData;
     const promptUrl = `/prompt/${this.state.application.name}`;
     const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
     return (
@@ -830,10 +848,18 @@ class ApplicationEditPage extends React.Component {
           {i18next.t("application:Copy prompt page URL")}
         </Button>
         <br />
-        <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
-          <PromptPage application={this.state.application} account={this.props.account} />
-          <div style={maskStyle} />
-        </div>
+        <ConfigProvider theme={{
+          token: {
+            colorPrimary: themeData.colorPrimary,
+            colorInfo: themeData.colorPrimary,
+            borderRadius: themeData.borderRadius,
+          },
+        }}>
+          <div style={{position: "relative", width: previewWidth, border: "1px solid rgb(217,217,217)", boxShadow: "10px 10px 5px #888888", flexDirection: "column", flex: "auto"}}>
+            <PromptPage application={this.state.application} account={this.props.account} />
+            <div style={maskStyle} />
+          </div>
+        </ConfigProvider>
       </Col>
     );
   }
