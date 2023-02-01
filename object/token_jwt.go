@@ -174,6 +174,7 @@ func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 		LastSigninWrongTime: user.LastSigninWrongTime,
 		SigninWrongTimes:    user.SigninWrongTimes,
 	}
+
 	return res
 }
 
@@ -200,12 +201,32 @@ func getClaimsWithoutThirdIdp(claims Claims) ClaimsWithoutThirdIdp {
 	return res
 }
 
+func refineUser(user *User) *User {
+	user.Password = ""
+
+	if user.Address == nil {
+		user.Address = []string{}
+	}
+	if user.Properties == nil {
+		user.Properties = map[string]string{}
+	}
+	if user.Roles == nil {
+		user.Roles = []*Role{}
+	}
+	if user.Permissions == nil {
+		user.Permissions = []*Permission{}
+	}
+
+	return user
+}
+
 func generateJwtToken(application *Application, user *User, nonce string, scope string, host string) (string, string, string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours) * time.Hour)
 
-	user.Password = ""
+	user = refineUser(user)
+
 	_, originBackend := getOriginFromHost(host)
 
 	name := util.GenerateId()
