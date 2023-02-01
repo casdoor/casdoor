@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 
@@ -229,16 +230,17 @@ func (a *Adapter) createTable() {
 }
 
 func (a *Adapter) syncSession() error {
-	// Create a new field called 'application' and add it to the primary key
 	if exist, _ := a.Engine.IsTableExist("session"); exist {
 		if colErr := a.Engine.Find(&[]*Session{}); colErr != nil {
+			// Create a new field called 'application' and add it to the primary key for table `session`
 			var err error
 			tx := a.Engine.NewSession()
 
-			err = tx.Table("session_tmp").CreateTable(&Session{})
-			if err != nil {
-				panic(err)
+			if alreadyCreated, _ := a.Engine.IsTableExist("session_tmp"); alreadyCreated {
+				panic(errors.New("there is already a table called 'session_tmp', please rename or delete it for casdoor version migration"))
 			}
+
+			tx.Table("session_tmp").CreateTable(&Session{})
 
 			type oldSession struct {
 				Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -247,9 +249,12 @@ func (a *Adapter) syncSession() error {
 
 				SessionId []string `json:"sessionId"`
 			}
+
 			oldSessions := []*oldSession{}
-			tx.Table("session").Find(&oldSessions)
 			newSessions := []*Session{}
+
+			tx.Table("session").Find(&oldSessions)
+
 			for _, oldSession := range oldSessions {
 				newApplication := "null"
 				if oldSession.Owner == "built-in" {
@@ -264,32 +269,50 @@ func (a *Adapter) syncSession() error {
 				})
 			}
 
-			hasTmpErr := false
+			rollbackFlag := false
 			_, err = tx.Table("session_tmp").Insert(newSessions)
 			count1, _ := tx.Table("session_tmp").Count()
 			count2, _ := tx.Table("session").Count()
 
 			if err != nil || count1 != count2 {
-				hasTmpErr = true
+				rollbackFlag = true
 			}
 
-			delSql := "DELETE FROM `session_tmp` WHERE application = 'null'"
-			_, err = tx.Exec(delSql)
+			delete := &Session{
+				Application: "null",
+			}
+			_, err = tx.Table("session_tmp").Delete(*delete)
 			if err != nil {
-				hasTmpErr = true
+				rollbackFlag = true
 			}
 
-			if hasTmpErr {
+			err = tx.DropTable("session")
+			if err != nil {
+				rollbackFlag = true
+			}
+
+			if rollbackFlag {
 				tx.DropTable("session_tmp")
-				panic(err)
+				panic(errors.New("there is something wrong with version data migration for table `session`, please restart later"))
 			}
 
-			tx.DropTable("session")
-
-			renameSql := "ALTER TABLE `session_tmp` RENAME TO `session`"
-			_, err = tx.Exec(renameSql)
+			// Already drop table `session`
+			// Can't find an api from xorm for altering table name
+			err = tx.Table("session").CreateTable(&Session{})
 			if err != nil {
-				panic(err)
+				panic(errors.New("there is something wrong with version data migration for table `session`, please restart later"))
+			}
+
+			sessions := []*Session{}
+			tx.Table("session_tmp").Find(&sessions)
+			_, err = tx.Table("session").Insert(sessions)
+			if err != nil {
+				panic(errors.New("there is something wrong with version data migration for table `session`, please drop table `session` and rename table `session_tmp` to `session`"))
+			}
+
+			err = tx.DropTable("session_tmp")
+			if err != nil {
+				panic(errors.New("fail to drop table `session_tmp` for casdoor, please drop it manually and restart"))
 			}
 
 			tx.Close()
