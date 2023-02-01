@@ -234,14 +234,10 @@ func (a *Adapter) syncSession() error {
 		if colErr := a.Engine.Find(&[]*Session{}); colErr != nil {
 			var err error
 			tx := a.Engine.NewSession()
-			defer tx.Close()
-
-			// add Begin() before any action
-			tx.Begin()
 
 			err = tx.Table("session_tmp").CreateTable(&Session{})
 			if err != nil {
-				return err
+				panic(err)
 			}
 
 			type oldSession struct {
@@ -255,31 +251,48 @@ func (a *Adapter) syncSession() error {
 			tx.Table("session").Find(&oldSessions)
 			newSessions := []*Session{}
 			for _, oldSession := range oldSessions {
+				newApplication := "null"
+				if oldSession.Owner == "built-in" {
+					newApplication = "app-built-in"
+				}
 				newSessions = append(newSessions, &Session{
 					Owner:       oldSession.Owner,
 					Name:        oldSession.Name,
-					Application: "null",
+					Application: newApplication,
 					CreatedTime: oldSession.CreatedTime,
 					SessionId:   oldSession.SessionId,
 				})
 			}
+
+			hasTmpErr := false
 			_, err = tx.Table("session_tmp").Insert(newSessions)
 			count1, _ := tx.Table("session_tmp").Count()
 			count2, _ := tx.Table("session").Count()
+
 			if err != nil || count1 != count2 {
+				hasTmpErr = true
+			}
+
+			delSql := "DELETE FROM `session_tmp` WHERE application = 'null'"
+			_, err = tx.Exec(delSql)
+			if err != nil {
+				hasTmpErr = true
+			}
+
+			if hasTmpErr {
 				tx.DropTable("session_tmp")
-				return err
+				panic(err)
 			}
 
 			tx.DropTable("session")
-			sql := "ALTER TABLE `session_tmp` RENAME TO `session`"
-			_, err = tx.Exec(sql)
+
+			renameSql := "ALTER TABLE `session_tmp` RENAME TO `session`"
+			_, err = tx.Exec(renameSql)
 			if err != nil {
-				return err
+				panic(err)
 			}
 
-			// add Commit() after all actions
-			tx.Commit()
+			tx.Close()
 		}
 	}
 	return a.Engine.Sync2(new(Session))
