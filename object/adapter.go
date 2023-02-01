@@ -238,7 +238,7 @@ func (a *Adapter) syncSession() error {
 			tx := a.Engine.NewSession()
 
 			if alreadyCreated, _ := a.Engine.IsTableExist("session_tmp"); alreadyCreated {
-				panic(errors.New("there is already a table called 'session_tmp', please rename or delete it for casdoor version migration"))
+				panic(errors.New("there is already a table called 'session_tmp', please rename or delete it for casdoor version migration and restart"))
 			}
 
 			tx.Table("session_tmp").CreateTable(&Session{})
@@ -294,21 +294,21 @@ func (a *Adapter) syncSession() error {
 
 			if rollbackFlag {
 				tx.DropTable("session_tmp")
-				panic(errors.New("there is something wrong with version data migration for table `session`, please restart later"))
+				panic(errors.New("there is something wrong with version data migration for table `session`, if there is a table called `session_tmp` not created by you in casdoor, please drop it, then restart anyhow"))
 			}
 
 			// Already drop table `session`
 			// Can't find an api from xorm for altering table name
 			err = tx.Table("session").CreateTable(&Session{})
 			if err != nil {
-				panic(errors.New("there is something wrong with version data migration for table `session`, please restart later"))
+				panic(errors.New("there is something wrong with version data migration for table `session`, please restart"))
 			}
 
 			sessions := []*Session{}
 			tx.Table("session_tmp").Find(&sessions)
 			_, err = tx.Table("session").Insert(sessions)
 			if err != nil {
-				panic(errors.New("there is something wrong with version data migration for table `session`, please drop table `session` and rename table `session_tmp` to `session`"))
+				panic(errors.New("there is something wrong with version data migration for table `session`, please drop table `session` and rename table `session_tmp` to `session` and restart"))
 			}
 
 			err = tx.DropTable("session_tmp")
