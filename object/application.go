@@ -57,23 +57,24 @@ type Application struct {
 	GrantTypes          []string        `xorm:"varchar(1000)" json:"grantTypes"`
 	OrganizationObj     *Organization   `xorm:"-" json:"organizationObj"`
 
-	ClientId             string   `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret         string   `xorm:"varchar(100)" json:"clientSecret"`
-	RedirectUris         []string `xorm:"varchar(1000)" json:"redirectUris"`
-	TokenFormat          string   `xorm:"varchar(100)" json:"tokenFormat"`
-	ExpireInHours        int      `json:"expireInHours"`
-	RefreshExpireInHours int      `json:"refreshExpireInHours"`
-	SignupUrl            string   `xorm:"varchar(200)" json:"signupUrl"`
-	SigninUrl            string   `xorm:"varchar(200)" json:"signinUrl"`
-	ForgetUrl            string   `xorm:"varchar(200)" json:"forgetUrl"`
-	AffiliationUrl       string   `xorm:"varchar(100)" json:"affiliationUrl"`
-	TermsOfUse           string   `xorm:"varchar(100)" json:"termsOfUse"`
-	SignupHtml           string   `xorm:"mediumtext" json:"signupHtml"`
-	SigninHtml           string   `xorm:"mediumtext" json:"signinHtml"`
-	FormCss              string   `xorm:"text" json:"formCss"`
-	FormOffset           int      `json:"formOffset"`
-	FormSideHtml         string   `xorm:"mediumtext" json:"formSideHtml"`
-	FormBackgroundUrl    string   `xorm:"varchar(200)" json:"formBackgroundUrl"`
+	ClientId             string     `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret         string     `xorm:"varchar(100)" json:"clientSecret"`
+	RedirectUris         []string   `xorm:"varchar(1000)" json:"redirectUris"`
+	TokenFormat          string     `xorm:"varchar(100)" json:"tokenFormat"`
+	ExpireInHours        int        `json:"expireInHours"`
+	RefreshExpireInHours int        `json:"refreshExpireInHours"`
+	SignupUrl            string     `xorm:"varchar(200)" json:"signupUrl"`
+	SigninUrl            string     `xorm:"varchar(200)" json:"signinUrl"`
+	ForgetUrl            string     `xorm:"varchar(200)" json:"forgetUrl"`
+	AffiliationUrl       string     `xorm:"varchar(100)" json:"affiliationUrl"`
+	TermsOfUse           string     `xorm:"varchar(100)" json:"termsOfUse"`
+	SignupHtml           string     `xorm:"mediumtext" json:"signupHtml"`
+	SigninHtml           string     `xorm:"mediumtext" json:"signinHtml"`
+	ThemeData            *ThemeData `xorm:"json" json:"themeData"`
+	FormCss              string     `xorm:"text" json:"formCss"`
+	FormOffset           int        `json:"formOffset"`
+	FormSideHtml         string     `xorm:"mediumtext" json:"formSideHtml"`
+	FormBackgroundUrl    string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
 }
 
 func GetApplicationCount(owner, field, value string) int {

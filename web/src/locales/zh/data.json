@@ -1,6 +1,5 @@
 {
   "account": {
-    "Login": "登录",
     "Logout": "登出",
     "My Account": "我的账户",
     "Sign Up": "注册"
@@ -41,6 +40,7 @@
     "Enable signup - Tooltip": "是否允许用户注册",
     "Failed to sign in": "登录失败",
     "File uploaded successfully": "文件上传成功",
+    "Follow organization theme": "使用组织主题",
     "Form CSS": "表单CSS",
     "Form CSS - Edit": "编辑表单CSS",
     "Form CSS - Tooltip": "表单的CSS样式（如增加边框和阴影）",
@@ -158,10 +158,7 @@
     "Click to Upload": "点击上传",
     "Client IP": "客户端IP",
     "Close": "关闭",
-    "Compact": "紧凑",
     "Created time": "创建时间",
-    "Dark": "黑暗",
-    "Default": "默认",
     "Default application": "默认应用",
     "Default application - Tooltip": "默认应用",
     "Default avatar": "默认头像",
@@ -341,6 +338,7 @@
     "Default avatar": "默认头像",
     "Edit Organization": "编辑组织",
     "Favicon": "图标",
+    "Follow global theme": "使用全局默认主题",
     "InitScore": "初始积分",
     "Is profile public": "用户个人页公开",
     "Is profile public - Tooltip": "关闭后，只有全局管理员或同组织用户才能访问用户主页",
@@ -689,6 +687,19 @@
     "Official Website": "官方网站",
     "Unknown Version": "未知版本",
     "Version": "版本"
+  },
+  "theme": {
+    "Blossom": "桃花缘",
+    "Border radius": "圆角",
+    "Compact": "紧凑",
+    "Customize theme": "定制主题",
+    "Dark": "暗黑",
+    "Default": "默认",
+    "Document": "知识协作",
+    "Is compact": "宽松度",
+    "Primary color": "主色",
+    "Theme": "主题",
+    "Theme - Tooltip": "为你的应用设置主题"
   },
   "token": {
     "Access token": "访问令牌",

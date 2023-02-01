@@ -77,10 +77,6 @@ class LoginPage extends React.Component {
         Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
       }
     }
-
-    Setting.Countries.forEach((country) => {
-      new Image().src = `${Setting.StaticBaseUrl}/flag-icons/${country.country}.svg`;
-    });
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {

@@ -1,6 +1,5 @@
 {
   "account": {
-    "Login": "ログイン",
     "Logout": "ログアウト",
     "My Account": "マイアカウント",
     "Sign Up": "新規登録"
@@ -41,6 +40,7 @@
     "Enable signup - Tooltip": "Whether to allow users to sign up",
     "Failed to sign in": "Failed to sign in",
     "File uploaded successfully": "ファイルが正常にアップロードされました",
+    "Follow organization theme": "Follow organization theme",
     "Form CSS": "Form CSS",
     "Form CSS - Edit": "Form CSS - Edit",
     "Form CSS - Tooltip": "Form CSS - Tooltip",
@@ -158,10 +158,7 @@
     "Click to Upload": "Click to Upload",
     "Client IP": "クライアント IP",
     "Close": "Close",
-    "Compact": "Compact",
     "Created time": "作成日時",
-    "Dark": "Dark",
-    "Default": "Default",
     "Default application": "Default application",
     "Default application - Tooltip": "Default application - Tooltip",
     "Default avatar": "デフォルトのアバター",
@@ -341,6 +338,7 @@
     "Default avatar": "デフォルトのアバター",
     "Edit Organization": "組織を編集",
     "Favicon": "ファビコン",
+    "Follow global theme": "Follow global theme",
     "InitScore": "InitScore",
     "Is profile public": "Is profile public",
     "Is profile public - Tooltip": "Is profile public - Tooltip",
@@ -689,6 +687,19 @@
     "Official Website": "Official Website",
     "Unknown Version": "Unknown Version",
     "Version": "Version"
+  },
+  "theme": {
+    "Blossom": "Blossom",
+    "Border radius": "Border radius",
+    "Compact": "Compact",
+    "Customize theme": "Customize theme",
+    "Dark": "Dark",
+    "Default": "Default",
+    "Document": "Document",
+    "Is compact": "Is compact",
+    "Primary color": "Primary color",
+    "Theme": "Theme",
+    "Theme - Tooltip": "Theme - Tooltip"
   },
   "token": {
     "Access token": "アクセストークン",

@@ -31,25 +31,34 @@ type AccountItem struct {
 	ModifyRule string `json:"modifyRule"`
 }
 
+type ThemeData struct {
+	ThemeType    string `xorm:"varchar(30)" json:"themeType"`
+	ColorPrimary string `xorm:"varchar(10)" json:"colorPrimary"`
+	BorderRadius int    `xorm:"int" json:"borderRadius"`
+	IsCompact    bool   `xorm:"bool" json:"isCompact"`
+	IsEnabled    bool   `xorm:"bool" json:"isEnabled"`
+}
+
 type Organization struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName        string   `xorm:"varchar(100)" json:"displayName"`
-	WebsiteUrl         string   `xorm:"varchar(100)" json:"websiteUrl"`
-	Favicon            string   `xorm:"varchar(100)" json:"favicon"`
-	PasswordType       string   `xorm:"varchar(100)" json:"passwordType"`
-	PasswordSalt       string   `xorm:"varchar(100)" json:"passwordSalt"`
-	PhonePrefix        string   `xorm:"varchar(10)"  json:"phonePrefix"`
-	DefaultAvatar      string   `xorm:"varchar(100)" json:"defaultAvatar"`
-	DefaultApplication string   `xorm:"varchar(100)" json:"defaultApplication"`
-	Tags               []string `xorm:"mediumtext" json:"tags"`
-	Languages          []string `xorm:"varchar(255)" json:"languages"`
-	MasterPassword     string   `xorm:"varchar(100)" json:"masterPassword"`
-	InitScore          int      `json:"initScore"`
-	EnableSoftDeletion bool     `json:"enableSoftDeletion"`
-	IsProfilePublic    bool     `json:"isProfilePublic"`
+	DisplayName        string     `xorm:"varchar(100)" json:"displayName"`
+	WebsiteUrl         string     `xorm:"varchar(100)" json:"websiteUrl"`
+	Favicon            string     `xorm:"varchar(100)" json:"favicon"`
+	PasswordType       string     `xorm:"varchar(100)" json:"passwordType"`
+	PasswordSalt       string     `xorm:"varchar(100)" json:"passwordSalt"`
+	PhonePrefix        string     `xorm:"varchar(10)"  json:"phonePrefix"`
+	DefaultAvatar      string     `xorm:"varchar(100)" json:"defaultAvatar"`
+	DefaultApplication string     `xorm:"varchar(100)" json:"defaultApplication"`
+	Tags               []string   `xorm:"mediumtext" json:"tags"`
+	Languages          []string   `xorm:"varchar(255)" json:"languages"`
+	ThemeData          *ThemeData `xorm:"json" json:"themeData"`
+	MasterPassword     string     `xorm:"varchar(100)" json:"masterPassword"`
+	InitScore          int        `json:"initScore"`
+	EnableSoftDeletion bool       `json:"enableSoftDeletion"`
+	IsProfilePublic    bool       `json:"isProfilePublic"`
 
 	AccountItems []*AccountItem `xorm:"varchar(3000)" json:"accountItems"`
 }

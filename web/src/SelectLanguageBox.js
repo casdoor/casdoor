@@ -16,6 +16,7 @@ import React from "react";
 import * as Setting from "./Setting";
 import {Dropdown} from "antd";
 import "./App.less";
+import {GlobalOutlined} from "@ant-design/icons";
 
 function flagIcon(country, alt) {
   return (
@@ -30,6 +31,10 @@ class SelectLanguageBox extends React.Component {
       classes: props,
       languages: props.languages ?? ["en", "zh", "es", "fr", "de", "ja", "ko", "ru"],
     };
+
+    Setting.Countries.forEach((country) => {
+      new Image().src = `${Setting.StaticBaseUrl}/flag-icons/${country.country}.svg`;
+    });
   }
 
   items = Setting.Countries.map((country) => Setting.getItem(country.label, country.key, flagIcon(country.country, country.alt)));
@@ -50,7 +55,9 @@ class SelectLanguageBox extends React.Component {
 
     return (
       <Dropdown menu={{items: languageItems, onClick}} >
-        <div className="language-box" style={{display: languageItems.length === 0 ? "none" : null, ...this.props.style}} />
+        <div className="select-box" style={{display: languageItems.length === 0 ? "none" : null}} >
+          <GlobalOutlined style={{fontSize: "24px"}} />
+        </div>
       </Dropdown>
     );
   }

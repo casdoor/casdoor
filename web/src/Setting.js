@@ -43,12 +43,43 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
 ];
 
-const {defaultAlgorithm, darkAlgorithm, compactAlgorithm} = theme;
+export const ThemeDefault = {
+  themeType: "default",
+  colorPrimary: "#5734d3",
+  borderRadius: 6,
+  isCompact: false,
+};
 
-export const Themes = [{label: i18next.t("general:Dark"), key: "Dark", style: darkAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/dark.svg`},
-  {label: i18next.t("general:Compact"), key: "Compact", style: compactAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/compact.svg`},
-  {label: i18next.t("general:Default"), key: "Default", style: defaultAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/light.svg`},
-];
+export function getThemeData(organization, application) {
+  if (application?.themeData?.isEnabled) {
+    return application.themeData;
+  } else if (organization?.themeData?.isEnabled) {
+    return organization.themeData;
+  } else {
+    return ThemeDefault;
+  }
+}
+
+export function getAlgorithm(themeAlgorithmNames) {
+  return themeAlgorithmNames.map((algorithmName) => {
+    if (algorithmName === "dark") {
+      return theme.darkAlgorithm;
+    }
+    if (algorithmName === "compact") {
+      return theme.compactAlgorithm;
+    }
+    return theme.defaultAlgorithm;
+  });
+}
+
+export function getAlgorithmNames(themeData) {
+  const algorithms = [themeData?.themeType !== "dark" ? "default" : "dark"];
+  if (themeData?.isCompact === true) {
+    algorithms.push("compact");
+  }
+
+  return algorithms;
+}
 
 export const OtherProviderInfo = {
   SMS: {
@@ -532,10 +563,8 @@ export function isAgreementRequired(application) {
 
 export function isDefaultTrue(application) {
   const agreementItem = application.signupItems.find(item => item.name === "Agreement");
-  if (isAgreementRequired(application) && agreementItem.rule === "Signin (Default True)") {
-    return true;
-  }
-  return false;
+
+  return isAgreementRequired(application) && agreementItem.rule === "Signin (Default True)";
 }
 
 export function renderAgreement(required, onClick, noStyle, layout, initialValue) {
@@ -670,13 +699,12 @@ export function getLanguage() {
 
 export function setLanguage(language) {
   localStorage.setItem("language", language);
-  changeMomentLanguage(language);
   i18next.changeLanguage(language);
 }
 
 export function setTheme(themeKey) {
   localStorage.setItem("theme", themeKey);
-  dispatchEvent(new Event("themeChange"));
+  dispatchEvent(new Event("changeTheme"));
 }
 
 export function getAcceptLanguage() {
@@ -684,29 +712,6 @@ export function getAcceptLanguage() {
     return "en;q=0.9,en;q=0.8";
   }
   return i18next.language + ";q=0.9,en;q=0.8";
-}
-
-export function changeMomentLanguage(language) {
-  // if (language === "zh") {
-  //   moment.locale("zh", {
-  //     relativeTime: {
-  //       future: "%s内",
-  //       past: "%s前",
-  //       s: "几秒",
-  //       ss: "%d秒",
-  //       m: "1分钟",
-  //       mm: "%d分钟",
-  //       h: "1小时",
-  //       hh: "%d小时",
-  //       d: "1天",
-  //       dd: "%d天",
-  //       M: "1个月",
-  //       MM: "%d个月",
-  //       y: "1年",
-  //       yy: "%d年",
-  //     },
-  //   });
-  // }
 }
 
 export function getClickable(text) {
