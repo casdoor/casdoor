@@ -82,8 +82,7 @@ class SelectThemeBox extends React.Component {
         selectable: true,
         multiple: true,
         selectedKeys: [...this.props.themeAlgorithm],
-      }}
-      trigger={["click"]}>
+      }}>
         <div className="select-box">
           {this.icon}
         </div>
