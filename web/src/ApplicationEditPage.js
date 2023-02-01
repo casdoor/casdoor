@@ -764,7 +764,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   renderSignupSigninPreview() {
-    const themeData = this.state.application.themeData;
+    const themeData = this.state.application.themeData ?? Setting.ThemeDefault;
     let signUpUrl = `/signup/${this.state.application.name}`;
     const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
     const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "97%", width: "100%", background: "rgba(0,0,0,0.4)"};
@@ -835,7 +835,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   renderPromptPreview() {
-    const themeData = this.state.application.themeData;
+    const themeData = this.state.application.themeData ?? Setting.ThemeDefault;
     const promptUrl = `/prompt/${this.state.application.name}`;
     const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
     return (
