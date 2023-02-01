@@ -194,34 +194,3 @@ func IsSessionDuplicated(id string, sessionId string) bool {
 		}
 	}
 }
-
-func MigrateSession() {
-	tx := adapter.Engine.NewSession()
-	defer tx.Close()
-
-	// add Begin() before any action
-	tx.Begin()
-
-	sessions := []*Session{}
-	err := tx.Find(&sessions, &Session{})
-	if err != nil {
-		panic(err)
-	}
-
-	// update session table
-
-	addAppSql := "UPDATE `session` SET application = 'app-built-in' WHERE owner = 'built-in' AND application = 'null'"
-	_, err = tx.Exec(addAppSql)
-	if err != nil {
-		panic(err)
-	}
-
-	delSql := "DELETE FROM `session` WHERE application = 'null'"
-	_, err = tx.Exec(delSql)
-	if err != nil {
-		panic(err)
-	}
-
-	// add Commit() after all actions
-	tx.Commit()
-}
