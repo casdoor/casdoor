@@ -146,7 +146,7 @@ const authInfo = {
     endpoint: "https://account.box.com/api/oauth2/authorize",
   },
   CloudFoundry: {
-    scope: "openid",
+    scope: "cloud_controller.read",
     endpoint: "https://login.cloudfoundry.org/oauth/authorize",
   },
   Dailymotion: {
@@ -207,7 +207,7 @@ const authInfo = {
   },
   Mailru: {
     scope: "userinfo",
-    endpoint: "https://connect.mail.ru/oauth/authorize",
+    endpoint: "https://oauth.mail.ru/login",
   },
   Meetup: {
     scope: "basic",
@@ -226,8 +226,8 @@ const authInfo = {
     endpoint: "https://cloud.example.org/apps/oauth2/authorize",
   },
   OneDrive: {
-    scope: "offline_access%20files.readwrite.all",
-    endpoint: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+    scope: "offline_access%20onedrive.readonly",
+    endpoint: "https://login.live.com/oauth20_authorize.srf",
   },
   Oura: {
     scope: "personal",
@@ -239,7 +239,7 @@ const authInfo = {
   },
   Paypal: {
     scope: "openid%20profile%20email",
-    endpoint: "https://www.paypal.com/webapps/auth/protocol/openidconnect/v1/authorize",
+    endpoint: "https://www.sandbox.paypal.com/connect",
   },
   SalesForce: {
     scope: "openid%20profile%20email",
@@ -249,9 +249,13 @@ const authInfo = {
     scope: "read_products",
     endpoint: "https://myshopify.com/admin/oauth/authorize",
   },
-  SoundCloud: {
+  Soundcloud: {
     scope: "non-expiring",
-    endpoint: "https://soundcloud.com/connect",
+    endpoint: "https://api.soundcloud.com/connect",
+  },
+  Spotify: {
+    scope: "user-read-email",
+    endpoint: "https://accounts.spotify.com/authorize",
   },
   Strava: {
     scope: "read",
@@ -263,19 +267,19 @@ const authInfo = {
   },
   TikTok: {
     scope: "user.info.basic",
-    endpoint: "https://open-api.tiktok.com/platform/oauth/connect",
+    endpoint: "https://www.tiktok.com/auth/authorize/",
   },
   Tumblr: {
     scope: "email",
-    endpoint: "https://www.tumblr.com/oauth/authorize",
+    endpoint: "https://www.tumblr.com/oauth2/authorize",
   },
   Twitch: {
     scope: "user_read",
     endpoint: "https://id.twitch.tv/oauth2/authorize",
   },
   Twitter: {
-    scope: "email",
-    endpoint: "https://api.twitter.com/oauth/authenticate",
+    scope: "users.read",
+    endpoint: "https://twitter.com/i/oauth2/authorize",
   },
   Typetalk: {
     scope: "my",
@@ -303,7 +307,7 @@ const authInfo = {
   },
   Yammer: {
     scope: "user",
-    endpoint: "https://www.yammer.com/dialog/oauth",
+    endpoint: "https://www.yammer.com/oauth2/authorize",
   },
   Yandex: {
     scope: "login:email",
@@ -372,19 +376,19 @@ export function getAuthUrl(application, provider, method) {
 
   const isShortState = provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger");
   const state = Util.getStateFromQueryParams(application.name, provider.name, method, isShortState);
+  const codeChallenge = "P3S-a7dr8bgM4bF6vOyiKkKETDl16rcAzao9F8UIL1Y"; // SHA256(Base64-URL-encode("casdoor-verifier"))
 
-  if (provider.type === "Google" || provider.type === "GitHub" || provider.type === "QQ" || provider.type === "Facebook" || provider.type === "Weibo"
-    || provider.type === "Gitee" || provider.type === "LinkedIn" || provider.type === "GitLab" || provider.type === "AzureAD" || provider.type === "Slack"
-    || provider.type === "Line" || provider.type === "Amazon" || provider.type === "Auth0" || provider.type === "BattleNet" || provider.type === "Bitbucket"
-    || provider.type === "Box" || provider.type === "CloudFoundry" || provider.type === "Dailymotion" || provider.type === "Deezer" || provider.type === "DigitalOcean"
-    || provider.type === "Discord" || provider.type === "Dropbox" || provider.type === "EveOnline" || provider.type === "Fitbit" || provider.type === "Gitea"
+  if (provider.type === "Google" || provider.type === "GitHub" || provider.type === "QQ" || provider.type === "Facebook" || provider.type === "DingTalk"
+    || provider.type === "Weibo" || provider.type === "Gitee" || provider.type === "LinkedIn" || provider.type === "GitLab" || provider.type === "AzureAD"
+    || provider.type === "Slack" || provider.type === "Line" || provider.type === "Amazon" || provider.type === "Auth0" || provider.type === "BattleNet"
+    || provider.type === "Bitbucket" || provider.type === "Box" || provider.type === "CloudFoundry" || provider.type === "Dailymotion"
+    || provider.type === "DigitalOcean" || provider.type === "Discord" || provider.type === "Dropbox" || provider.type === "EveOnline" || provider.type === "Gitea"
     || provider.type === "Heroku" || provider.type === "InfluxCloud" || provider.type === "Instagram" || provider.type === "Intercom" || provider.type === "Kakao"
-    || provider.type === "Lastfm" || provider.type === "MailRu" || provider.type === "Meetup" || provider.type === "MicrosoftOnline" || provider.type === "Naver"
-    || provider.type === "Nextcloud" || provider.type === "OneDrive" || provider.type === "Oura" || provider.type === "Patreon" || provider.type === "PayPal"
-    || provider.type === "SalesForce" || provider.type === "Shopify" || provider.type === "SoundCloud" || provider.type === "Strava" || provider.type === "Stripe"
-    || provider.type === "TikTok" || provider.type === "Tumblr" || provider.type === "Twitch" || provider.type === "Twitter" || provider.type === "Typetalk"
-    || provider.type === "Uber" || provider.type === "VK" || provider.type === "Wepay" || provider.type === "Xero" || provider.type === "Yahoo"
-    || provider.type === "Yammer" || provider.type === "Yandex" || provider.type === "Zoom") {
+    || provider.type === "MailRu" || provider.type === "Meetup" || provider.type === "MicrosoftOnline" || provider.type === "Naver" || provider.type === "Nextcloud"
+    || provider.type === "OneDrive" || provider.type === "Oura" || provider.type === "Patreon" || provider.type === "PayPal" || provider.type === "SalesForce"
+    || provider.type === "SoundCloud" || provider.type === "Spotify" || provider.type === "Strava" || provider.type === "Stripe" || provider.type === "Tumblr"
+    || provider.type === "Twitch" || provider.type === "Typetalk" || provider.type === "Uber" || provider.type === "VK" || provider.type === "Wepay"
+    || provider.type === "Xero" || provider.type === "Yahoo" || provider.type === "Yammer" || provider.type === "Yandex" || provider.type === "Zoom") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "WeChat") {
     if (navigator.userAgent.includes("MicroMessenger")) {
@@ -433,11 +437,19 @@ export function getAuthUrl(application, provider, method) {
     return `${endpoint}?openid.claimed_id=http://specs.openid.net/auth/2.0/identifier_select&openid.identity=http://specs.openid.net/auth/2.0/identifier_select&openid.mode=checkid_setup&openid.ns=http://specs.openid.net/auth/2.0&openid.realm=${window.location.origin}&openid.return_to=${redirectUri}?state=${state}`;
   } else if (provider.type === "Okta") {
     return `${provider.domain}/v1/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
-  } else if (provider.type === "Douyin") {
+  } else if (provider.type === "Douyin" || provider.type === "TikTok") {
     return `${endpoint}?client_key=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Custom") {
     return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.customScope}&response_type=code&state=${state}`;
   } else if (provider.type === "Bilibili") {
     return `${endpoint}#/?client_id=${provider.clientId}&return_url=${redirectUri}&state=${state}&response_type=code`;
+  } else if (provider.type === "Deezer") {
+    return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&perms=${scope}`;
+  } else if (provider.type === "Lastfm") {
+    return `${endpoint}?api_key=${provider.clientId}&cb=${redirectUri}`;
+  } else if (provider.type === "Shopify") {
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}&grant_options[]=per-user`;
+  } else if (provider.type === "Twitter" || provider.type === "Fitbit") {
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
   }
 }

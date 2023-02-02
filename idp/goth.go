@@ -71,7 +71,7 @@ import (
 	"github.com/markbates/goth/providers/tiktok"
 	"github.com/markbates/goth/providers/tumblr"
 	"github.com/markbates/goth/providers/twitch"
-	"github.com/markbates/goth/providers/twitter"
+	"github.com/markbates/goth/providers/twitterv2"
 	"github.com/markbates/goth/providers/typetalk"
 	"github.com/markbates/goth/providers/uber"
 	"github.com/markbates/goth/providers/wepay"
@@ -333,8 +333,8 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 		}
 	case "Twitter":
 		idp = GothIdProvider{
-			Provider: twitter.New(clientId, clientSecret, redirectUrl),
-			Session:  &twitter.Session{},
+			Provider: twitterv2.New(clientId, clientSecret, redirectUrl),
+			Session:  &twitterv2.Session{},
 		}
 	case "Typetalk":
 		idp = GothIdProvider{
@@ -406,6 +406,9 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		// to call the function to obtain accessToken
 		value = url.Values{}
 		value.Add("code", code)
+		if idp.Provider.Name() == "twitterv2" || idp.Provider.Name() == "fitbit" {
+			value.Add("oauth_verifier", "casdoor-verifier")
+		}
 	}
 	accessToken, err := idp.Session.Authorize(idp.Provider, value)
 	if err != nil {
