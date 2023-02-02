@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Popconfirm, Result, Table, Upload} from "antd";
+import {Button, Popconfirm, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import copy from "copy-to-clipboard";
 import * as Setting from "./Setting";
@@ -25,20 +25,13 @@ import BaseListPage from "./BaseListPage";
 class ResourceListPage extends BaseListPage {
   constructor(props) {
     super(props);
-    this.state = {
-      classes: props,
-      data: [],
-      pagination: {
-        current: 1,
-        pageSize: 10,
-      },
-      loading: false,
-      searchText: "",
-      searchedColumn: "",
+  }
+
+  componentDidMount() {
+    this.setState({
       fileList: [],
       uploading: false,
-      isAuthorized: true,
-    };
+    });
   }
 
   deleteResource(i) {
@@ -272,17 +265,6 @@ class ResourceListPage extends BaseListPage {
       showSizeChanger: true,
       showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
-
-    if (!this.state.isAuthorized) {
-      return (
-        <Result
-          status="403"
-          title="403 Unauthorized"
-          subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
-          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
-        />
-      );
-    }
 
     return (
       <div>

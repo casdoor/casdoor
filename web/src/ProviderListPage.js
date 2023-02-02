@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Result, Table} from "antd";
+import {Button, Popconfirm, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
@@ -25,20 +25,14 @@ import BaseListPage from "./BaseListPage";
 class ProviderListPage extends BaseListPage {
   constructor(props) {
     super(props);
-    this.state = {
-      classes: props,
-      owner: Setting.isAdminUser(props.account) ? "admin" : props.account.owner,
-      data: [],
-      pagination: {
-        current: 1,
-        pageSize: 10,
-      },
-      loading: false,
-      searchText: "",
-      searchedColumn: "",
-      isAuthorized: true,
-    };
   }
+
+  componentDidMount() {
+    this.setState({
+      owner: Setting.isAdminUser(this.props.account) ? "admin" : this.props.account.owner,
+    });
+  }
+
   newProvider() {
     const randomName = Setting.getRandomName();
     return {
@@ -227,17 +221,6 @@ class ProviderListPage extends BaseListPage {
       showSizeChanger: true,
       showTotal: () => i18next.t("general:{total} in total").replace("{total}", this.state.pagination.total),
     };
-
-    if (!this.state.isAuthorized) {
-      return (
-        <Result
-          status="403"
-          title="403 Unauthorized"
-          subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
-          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
-        />
-      );
-    }
 
     return (
       <div>

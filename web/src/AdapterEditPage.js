@@ -109,7 +109,10 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.adapter.organization} onChange={(value => {this.updateAdapterField("organization", value);})}>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.adapter.organization} onChange={(value => {
+              this.getModels(value);
+              this.updateAdapterField("organization", value);
+            })}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }

@@ -85,6 +85,7 @@ class App extends Component {
       menuVisible: false,
       themeAlgorithm: ["default"],
       themeData: Setting.ThemeDefault,
+      logo: this.getLogo(Setting.getAlgorithmNames(Setting.ThemeDefault)),
     };
 
     Setting.initServerUrl();
@@ -330,12 +331,12 @@ class App extends Component {
           {
             this.renderAvatar()
           }
-          &nbsp;
-          &nbsp;
+            &nbsp;
+            &nbsp;
           {Setting.isMobile() ? null : Setting.getShortName(this.state.account.displayName)} &nbsp; <DownOutlined />
-          &nbsp;
-          &nbsp;
-          &nbsp;
+            &nbsp;
+            &nbsp;
+            &nbsp;
         </div>
       </Dropdown>
     );
@@ -484,8 +485,8 @@ class App extends Component {
 
   isStartPages() {
     return window.location.pathname.startsWith("/login") ||
-      window.location.pathname.startsWith("/signup") ||
-      window.location.pathname === "/";
+        window.location.pathname.startsWith("/signup") ||
+        window.location.pathname === "/";
   }
 
   renderRouter() {
@@ -559,7 +560,7 @@ class App extends Component {
         <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}}>
           {Setting.isMobile() ? null : (
             <Link to={"/"}>
-              <div className="logo" style={{background: `url(${this.getLogo(Setting.getAlgorithmNames(this.state.themeData))})`}} />
+              <div className="logo" style={{background: `url(${this.state.logo})`}} />
             </Link>
           )}
           {Setting.isMobile() ?
@@ -611,7 +612,7 @@ class App extends Component {
             textAlign: "center",
           }
         }>
-          Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.getLogo(Setting.getAlgorithmNames(this.state.themeData))} /></a>
+            Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
         </Footer>
       </React.Fragment>
     );
@@ -623,11 +624,11 @@ class App extends Component {
 
   isEntryPages() {
     return window.location.pathname.startsWith("/signup") ||
-      window.location.pathname.startsWith("/login") ||
-      window.location.pathname.startsWith("/forget") ||
-      window.location.pathname.startsWith("/prompt") ||
-      window.location.pathname.startsWith("/cas") ||
-      window.location.pathname.startsWith("/auto-signup");
+        window.location.pathname.startsWith("/login") ||
+        window.location.pathname.startsWith("/forget") ||
+        window.location.pathname.startsWith("/prompt") ||
+        window.location.pathname.startsWith("/cas") ||
+        window.location.pathname.startsWith("/auto-signup");
   }
 
   renderPage() {
@@ -643,12 +644,7 @@ class App extends Component {
                   onUpdateAccount={(account) => {
                     this.onUpdateAccount(account);
                   }}
-                  updataThemeData={(nextThemeData) => {
-                    this.setState({
-                      themeData: nextThemeData,
-                    });
-                    localStorage.setItem("themeAlgorithm", Setting.getAlgorithmNames(nextThemeData).toString());
-                  }}
+                  updataThemeData={this.setTheme}
                 /> :
                 <Switch>
                   <Route exact path="/callback" component={AuthCallback} />

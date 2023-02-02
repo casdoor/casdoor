@@ -182,7 +182,10 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.owner} onChange={(value => {this.updateUserField("owner", value);})}>
+            <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.owner} onChange={(value => {
+              this.getApplicationsByOrganization(value);
+              this.updateUserField("owner", value);
+            })}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
