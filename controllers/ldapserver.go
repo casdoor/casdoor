@@ -105,7 +105,7 @@ func handleSearch(w ldapserver.ResponseWriter, m *ldapserver.Message) {
 	}
 	for i := 0; i < len(users); i++ {
 		user := users[i]
-		dn := fmt.Sprintf("cn=%s,%s", user.DisplayName, string(r.BaseObject()))
+		dn := fmt.Sprintf("cn=%s,%s", user.Name, string(r.BaseObject()))
 		e := ldapserver.NewSearchResultEntry(dn)
 		e.AddAttribute("cn", message.AttributeValue(user.Name))
 		e.AddAttribute("uid", message.AttributeValue(user.Name))
