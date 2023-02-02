@@ -25,16 +25,14 @@ class ManagedAccountTable extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      managedAccounts: [],
+      managedAccounts: this.props.table !== null ? this.props.table.map((item, index) => {
+        item.key = index;
+        return item;
+      }) : [],
     };
-
-    this.state.managedAccounts = this.props.table.map((item, index) => {
-      item.key = index;
-      return item;
-    });
   }
 
-  count = this.props.table.length;
+  count = this.props.table?.length ?? 0;
 
   updateTable(table) {
     this.setState({
