@@ -12,20 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import i18next from "i18next";
 import {createButton} from "react-social-login-buttons";
 import {StaticBaseUrl} from "../Setting";
 
-function LoginButton({name, text, align = "center", style = {background: "#ffffff", color: "#000000"}, activeStyle = {background: "#ededee"}}) {
+function LoginButton({type, align = "center", style = {background: "#ffffff", color: "#000000"}, activeStyle = {background: "#ededee"}}) {
   function Icon({width = 24, height = 24, color}) {
-    return <img src={`${StaticBaseUrl}/buttons/${name.toLowerCase()}.svg`} alt={`Sign in with ${name}`} style={{width: width, height: height}} />;
+    return <img src={`${StaticBaseUrl}/buttons/${type.toLowerCase()}.svg`} alt={`Sign in with ${type}`} style={{width: width, height: height}} />;
   }
   const config = {
-    text: `Sign in with ${name}`,
+    text: `Sign in with ${type}`,
     icon: Icon,
     style: style,
     activeStyle: activeStyle,
   };
   const Button = createButton(config);
+  const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
   return <Button text={text} align={align} />;
 }
 

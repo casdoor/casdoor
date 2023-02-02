@@ -95,7 +95,7 @@ function getSigninButton(type) {
   } else if (type === "Douyin") {
     return <DouyinLoginButton text={text} align={"center"} />;
   } else {
-    return <LoginButton name={type} text={text} />;
+    return <LoginButton key={type} type={type} />;
   }
 }
 
