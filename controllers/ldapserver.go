@@ -111,8 +111,28 @@ func handleSearch(w ldapserver.ResponseWriter, m *ldapserver.Message) {
 		e.AddAttribute("uid", message.AttributeValue(user.Name))
 		e.AddAttribute("email", message.AttributeValue(user.Email))
 		e.AddAttribute("mobile", message.AttributeValue(user.Phone))
+		e.AddAttribute("userPassword", message.AttributeValue(getUserPasswordWithType(user)))
 		// e.AddAttribute("postalAddress", message.AttributeValue(user.Address[0]))
 		w.Write(e)
 	}
 	w.Write(res)
+}
+
+// get user password with hash type prefix
+// TODO not handle salt yet
+// @return {md5}5f4dcc3b5aa765d61d8327deb882cf99
+func getUserPasswordWithType(user *object.User) string {
+	org := object.GetOrganizationByUser(user)
+	if org.PasswordType == "" || org.PasswordType == "plain" {
+		return user.Password
+	}
+	prefix := org.PasswordType
+	if prefix == "salt" {
+		prefix = "sha256"
+	} else if prefix == "md5-salt" {
+		prefix = "md5"
+	} else if prefix == "pbkdf2-salt" {
+		prefix = "pbkdf2"
+	}
+	return fmt.Sprintf("{%s}%s", prefix, user.Password)
 }
