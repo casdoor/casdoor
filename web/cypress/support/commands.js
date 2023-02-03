@@ -23,3 +23,20 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+Cypress.Commands.add('login', ()=>{
+    cy.request({
+        method: "POST",
+        url: "http://localhost:7001/api/login",
+        body: {
+          "application": "app-built-in",
+          "organization": "built-in",
+          "username": "admin",
+          "password": "123",
+          "autoSignin": true,
+          "type": "login",
+          "phonePrefix": "86",
+        },
+      }).then((Response) => {
+        expect(Response).property("body").property("status").to.equal("ok");
+      });
+})
