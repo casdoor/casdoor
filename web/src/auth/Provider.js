@@ -125,6 +125,198 @@ const authInfo = {
     scope: "profile%20openid%20email",
     endpoint: "https://access.line.me/oauth2/v2.1/authorize",
   },
+  Amazon: {
+    scope: "profile",
+    endpoint: "https://www.amazon.com/ap/oa",
+  },
+  Auth0: {
+    scope: "openid%20profile%20email",
+    endpoint: "http://auth0.com/authorize",
+  },
+  BattleNet: {
+    scope: "openid",
+    endpoint: "https://oauth.battlenet.com.cn/authorize",
+  },
+  Bitbucket: {
+    scope: "account",
+    endpoint: "https://bitbucket.org/site/oauth2/authorize",
+  },
+  Box: {
+    scope: "root_readwrite",
+    endpoint: "https://account.box.com/api/oauth2/authorize",
+  },
+  CloudFoundry: {
+    scope: "cloud_controller.read",
+    endpoint: "https://login.cloudfoundry.org/oauth/authorize",
+  },
+  Dailymotion: {
+    scope: "userinfo",
+    endpoint: "https://api.dailymotion.com/oauth/authorize",
+  },
+  Deezer: {
+    scope: "basic_access",
+    endpoint: "https://connect.deezer.com/oauth/auth.php",
+  },
+  DigitalOcean: {
+    scope: "read",
+    endpoint: "https://cloud.digitalocean.com/v1/oauth/authorize",
+  },
+  Discord: {
+    scope: "identify%20email",
+    endpoint: "https://discord.com/api/oauth2/authorize",
+  },
+  Dropbox: {
+    scope: "account_info.read",
+    endpoint: "https://www.dropbox.com/oauth2/authorize",
+  },
+  EveOnline: {
+    scope: "publicData",
+    endpoint: "https://login.eveonline.com/oauth/authorize",
+  },
+  Fitbit: {
+    scope: "activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight",
+    endpoint: "https://www.fitbit.com/oauth2/authorize",
+  },
+  Gitea: {
+    scope: "user:email",
+    endpoint: "https://gitea.com/login/oauth/authorize",
+  },
+  Heroku: {
+    scope: "global",
+    endpoint: "https://id.heroku.com/oauth/authorize",
+  },
+  InfluxCloud: {
+    scope: "read:org",
+    endpoint: "https://cloud2.influxdata.com/oauth/authorize",
+  },
+  Instagram: {
+    scope: "user_profile",
+    endpoint: "https://api.instagram.com/oauth/authorize",
+  },
+  Intercom: {
+    scope: "user.read",
+    endpoint: "https://app.intercom.com/oauth",
+  },
+  Kakao: {
+    scope: "account_email",
+    endpoint: "https://kauth.kakao.com/oauth/authorize",
+  },
+  Lastfm: {
+    scope: "user_read",
+    endpoint: "https://www.last.fm/api/auth",
+  },
+  Mailru: {
+    scope: "userinfo",
+    endpoint: "https://oauth.mail.ru/login",
+  },
+  Meetup: {
+    scope: "basic",
+    endpoint: "https://secure.meetup.com/oauth2/authorize",
+  },
+  MicrosoftOnline: {
+    scope: "openid%20profile%20email",
+    endpoint: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+  },
+  Naver: {
+    scope: "profile",
+    endpoint: "https://nid.naver.com/oauth2.0/authorize",
+  },
+  Nextcloud: {
+    scope: "openid%20profile%20email",
+    endpoint: "https://cloud.example.org/apps/oauth2/authorize",
+  },
+  OneDrive: {
+    scope: "offline_access%20onedrive.readonly",
+    endpoint: "https://login.live.com/oauth20_authorize.srf",
+  },
+  Oura: {
+    scope: "personal",
+    endpoint: "https://cloud.ouraring.com/oauth/authorize",
+  },
+  Patreon: {
+    scope: "identity",
+    endpoint: "https://www.patreon.com/oauth2/authorize",
+  },
+  Paypal: {
+    scope: "openid%20profile%20email",
+    endpoint: "https://www.sandbox.paypal.com/connect",
+  },
+  SalesForce: {
+    scope: "openid%20profile%20email",
+    endpoint: "https://login.salesforce.com/services/oauth2/authorize",
+  },
+  Shopify: {
+    scope: "read_products",
+    endpoint: "https://myshopify.com/admin/oauth/authorize",
+  },
+  Soundcloud: {
+    scope: "non-expiring",
+    endpoint: "https://api.soundcloud.com/connect",
+  },
+  Spotify: {
+    scope: "user-read-email",
+    endpoint: "https://accounts.spotify.com/authorize",
+  },
+  Strava: {
+    scope: "read",
+    endpoint: "https://www.strava.com/oauth/authorize",
+  },
+  Stripe: {
+    scope: "read_only",
+    endpoint: "https://connect.stripe.com/oauth/authorize",
+  },
+  TikTok: {
+    scope: "user.info.basic",
+    endpoint: "https://www.tiktok.com/auth/authorize/",
+  },
+  Tumblr: {
+    scope: "email",
+    endpoint: "https://www.tumblr.com/oauth2/authorize",
+  },
+  Twitch: {
+    scope: "user_read",
+    endpoint: "https://id.twitch.tv/oauth2/authorize",
+  },
+  Twitter: {
+    scope: "users.read",
+    endpoint: "https://twitter.com/i/oauth2/authorize",
+  },
+  Typetalk: {
+    scope: "my",
+    endpoint: "https://typetalk.com/oauth2/authorize",
+  },
+  Uber: {
+    scope: "profile",
+    endpoint: "https://login.uber.com/oauth/v2/authorize",
+  },
+  VK: {
+    scope: "email",
+    endpoint: "https://oauth.vk.com/authorize",
+  },
+  Wepay: {
+    scope: "manage_accounts%20view_user",
+    endpoint: "https://www.wepay.com/v2/oauth2/authorize",
+  },
+  Xero: {
+    scope: "openid%20profile%20email",
+    endpoint: "https://login.xero.com/identity/connect/authorize",
+  },
+  Yahoo: {
+    scope: "openid%20profile%20email",
+    endpoint: "https://api.login.yahoo.com/oauth2/request_auth",
+  },
+  Yammer: {
+    scope: "user",
+    endpoint: "https://www.yammer.com/oauth2/authorize",
+  },
+  Yandex: {
+    scope: "login:email",
+    endpoint: "https://oauth.yandex.com/authorize",
+  },
+  Zoom: {
+    scope: "user:read",
+    endpoint: "https://zoom.us/oauth/authorize",
+  },
 };
 
 export function getProviderUrl(provider) {
@@ -184,12 +376,19 @@ export function getAuthUrl(application, provider, method) {
 
   const isShortState = provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger");
   const state = Util.getStateFromQueryParams(application.name, provider.name, method, isShortState);
+  const codeChallenge = "P3S-a7dr8bgM4bF6vOyiKkKETDl16rcAzao9F8UIL1Y"; // SHA256(Base64-URL-encode("casdoor-verifier"))
 
-  if (provider.type === "Google") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
-  } else if (provider.type === "GitHub") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
-  } else if (provider.type === "QQ") {
+  if (provider.type === "Google" || provider.type === "GitHub" || provider.type === "QQ" || provider.type === "Facebook" || provider.type === "DingTalk"
+    || provider.type === "Weibo" || provider.type === "Gitee" || provider.type === "LinkedIn" || provider.type === "GitLab" || provider.type === "AzureAD"
+    || provider.type === "Slack" || provider.type === "Line" || provider.type === "Amazon" || provider.type === "Auth0" || provider.type === "BattleNet"
+    || provider.type === "Bitbucket" || provider.type === "Box" || provider.type === "CloudFoundry" || provider.type === "Dailymotion"
+    || provider.type === "DigitalOcean" || provider.type === "Discord" || provider.type === "Dropbox" || provider.type === "EveOnline" || provider.type === "Gitea"
+    || provider.type === "Heroku" || provider.type === "InfluxCloud" || provider.type === "Instagram" || provider.type === "Intercom" || provider.type === "Kakao"
+    || provider.type === "MailRu" || provider.type === "Meetup" || provider.type === "MicrosoftOnline" || provider.type === "Naver" || provider.type === "Nextcloud"
+    || provider.type === "OneDrive" || provider.type === "Oura" || provider.type === "Patreon" || provider.type === "PayPal" || provider.type === "SalesForce"
+    || provider.type === "SoundCloud" || provider.type === "Spotify" || provider.type === "Strava" || provider.type === "Stripe" || provider.type === "Tumblr"
+    || provider.type === "Twitch" || provider.type === "Typetalk" || provider.type === "Uber" || provider.type === "VK" || provider.type === "Wepay"
+    || provider.type === "Xero" || provider.type === "Yahoo" || provider.type === "Yammer" || provider.type === "Yandex" || provider.type === "Zoom") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "WeChat") {
     if (navigator.userAgent.includes("MicroMessenger")) {
@@ -197,16 +396,6 @@ export function getAuthUrl(application, provider, method) {
     } else {
       return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}#wechat_redirect`;
     }
-  } else if (provider.type === "Facebook") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
-  } else if (provider.type === "DingTalk") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}&prompt=consent`;
-  } else if (provider.type === "Weibo") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
-  } else if (provider.type === "Gitee") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
-  } else if (provider.type === "LinkedIn") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}`;
   } else if (provider.type === "WeCom") {
     if (provider.subType === "Internal") {
       if (provider.method === "Silent") {
@@ -232,8 +421,6 @@ export function getAuthUrl(application, provider, method) {
     }
   } else if (provider.type === "Lark") {
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`;
-  } else if (provider.type === "GitLab") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Adfs") {
     return `${provider.domain}/adfs/oauth2/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&nonce=casdoor&scope=openid`;
   } else if (provider.type === "Baidu") {
@@ -246,21 +433,23 @@ export function getAuthUrl(application, provider, method) {
     return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}?state=${state}`;
   } else if (provider.type === "Apple") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&response_mode=form_post`;
-  } else if (provider.type === "AzureAD") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
-  } else if (provider.type === "Slack") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Steam") {
     return `${endpoint}?openid.claimed_id=http://specs.openid.net/auth/2.0/identifier_select&openid.identity=http://specs.openid.net/auth/2.0/identifier_select&openid.mode=checkid_setup&openid.ns=http://specs.openid.net/auth/2.0&openid.realm=${window.location.origin}&openid.return_to=${redirectUri}?state=${state}`;
   } else if (provider.type === "Okta") {
     return `${provider.domain}/v1/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
-  } else if (provider.type === "Douyin") {
+  } else if (provider.type === "Douyin" || provider.type === "TikTok") {
     return `${endpoint}?client_key=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Custom") {
     return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.customScope}&response_type=code&state=${state}`;
   } else if (provider.type === "Bilibili") {
     return `${endpoint}#/?client_id=${provider.clientId}&return_url=${redirectUri}&state=${state}&response_type=code`;
-  } else if (provider.type === "Line") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
+  } else if (provider.type === "Deezer") {
+    return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&perms=${scope}`;
+  } else if (provider.type === "Lastfm") {
+    return `${endpoint}?api_key=${provider.clientId}&cb=${redirectUri}`;
+  } else if (provider.type === "Shopify") {
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}&grant_options[]=per-user`;
+  } else if (provider.type === "Twitter" || provider.type === "Fitbit") {
+    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
   }
 }
