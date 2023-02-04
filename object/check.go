@@ -107,8 +107,6 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 
 		if HasUserByField(organization.Name, "phone", phone) {
 			return i18n.Translate(lang, "check:Phone already exists")
-		} else if organization.PhonePrefix == "86" && !util.IsPhoneCnValid(phone) {
-			return i18n.Translate(lang, "check:Phone number is invalid")
 		}
 	}
 

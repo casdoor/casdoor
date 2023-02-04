@@ -24,6 +24,7 @@ import {authConfig} from "./Auth";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import {CountDownInput} from "../common/CountDownInput";
 import SelectRegionBox from "../SelectRegionBox";
+import SelectPhonePrefixBox from "../SelectPhonePrefixBox";
 import CustomGithubCorner from "../CustomGithubCorner";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {withRouter} from "react-router-dom";
@@ -71,6 +72,7 @@ class SignupPage extends React.Component {
       phone: "",
       emailCode: "",
       phoneCode: "",
+      phonePrefix: "",
       validEmail: false,
       validPhone: false,
       region: "",
@@ -166,7 +168,6 @@ class SignupPage extends React.Component {
 
   onFinish(values) {
     const application = this.getApplicationObj();
-    values.phonePrefix = application.organizationObj.phonePrefix;
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === "ok") {
@@ -413,7 +414,15 @@ class SignupPage extends React.Component {
               style={{
                 width: "100%",
               }}
-              addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
+              addonBefore={
+                <Form.Item
+                  name="phonePrefix"
+                  key="phonePrefix"
+                  style={{height: 15}}
+                >
+                  <SelectPhonePrefixBox obj={application.organizationObj} method="signup" onChange={(value) => {this.setState({phonePrefix: value});}} />
+                </Form.Item>
+              }
               onChange={e => this.setState({phone: e.target.value})}
             />
           </Form.Item>
@@ -431,7 +440,7 @@ class SignupPage extends React.Component {
             <CountDownInput
               disabled={!this.state.validPhone}
               method={"signup"}
-              onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
+              onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application), null, this.state.phonePrefix]}
               application={application}
             />
           </Form.Item>

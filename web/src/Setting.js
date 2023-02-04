@@ -24,6 +24,7 @@ import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import * as path from "path-browserify";
+import prefixPhone from "./PrefiexPhone";
 
 export const ServerUrl = "";
 
@@ -31,7 +32,8 @@ export const ServerUrl = "";
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
 // https://catamphetamine.gitlab.io/country-flag-icons/3x2/index.html
-export const CountryRegionData = getCountryRegionData();
+export const CountryRegionData = getCountryRegionData(false);
+export const CountryPrefiexphone = getCountryRegionData(true);
 
 export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
   {label: "简体中文", key: "zh", country: "CN", alt: "简体中文"},
@@ -169,7 +171,7 @@ export const OtherProviderInfo = {
   },
 };
 
-export function getCountryRegionData() {
+export function getCountryRegionData(isPhone) {
   let language = i18next.language;
   if (language === null || language === "null") {
     language = Conf.DefaultLanguage;
@@ -179,7 +181,11 @@ export function getCountryRegionData() {
   countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
   const data = countries.getNames(language, {select: "official"});
   const result = [];
-  for (const i in data) {result.push({code: i, name: data[i]});}
+  if (isPhone === true) {
+    for (const i in data) {result.push({code: i, name: data[i], phone: prefixPhone[i]});}
+  } else {
+    for (const i in data) {result.push({code: i, name: data[i], phone: ""});}
+  }
   return result;
 }
 

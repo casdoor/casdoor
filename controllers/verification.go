@@ -42,6 +42,7 @@ func (c *ApiController) getCurrentUser() *object.User {
 func (c *ApiController) SendVerificationCode() {
 	destType := c.Ctx.Request.Form.Get("type")
 	dest := c.Ctx.Request.Form.Get("dest")
+	phonePrefix := c.Ctx.Request.Form.Get("phonePrefix")
 	checkType := c.Ctx.Request.Form.Get("checkType")
 	checkId := c.Ctx.Request.Form.Get("checkId")
 	checkKey := c.Ctx.Request.Form.Get("checkKey")
@@ -142,7 +143,16 @@ func (c *ApiController) SendVerificationCode() {
 			return
 		}
 
-		dest = fmt.Sprintf("+%s%s", organization.PhonePrefix, dest)
+		if phonePrefix == "" || phonePrefix == "undefined" {
+			if user == nil || user.PhonePrefix == "" {
+				//phonePrefix = organization.PhonePrefix
+				fmt.Println("this")
+			} else {
+				phonePrefix = user.PhonePrefix
+			}
+		}
+
+		dest = fmt.Sprintf("%s%s", phonePrefix, dest)
 		provider := application.GetSmsProvider()
 		sendResp = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, dest)
 	}
@@ -169,6 +179,8 @@ func (c *ApiController) ResetEmailOrPhone() {
 	destType := c.Ctx.Request.Form.Get("type")
 	dest := c.Ctx.Request.Form.Get("dest")
 	code := c.Ctx.Request.Form.Get("code")
+	phonePrefix := c.Ctx.Request.Form.Get("phonePrefix")
+
 	if len(dest) == 0 || len(code) == 0 || len(destType) == 0 {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return
@@ -177,7 +189,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 	checkDest := dest
 	organization := object.GetOrganizationByUser(user)
 	if destType == "phone" {
-		if object.HasUserByField(user.Owner, "phone", user.Phone) {
+		if object.HasUserByField(user.Owner, "phone", dest) {
 			c.ResponseError(c.T("check:Phone already exists"))
 			return
 		}
@@ -193,11 +205,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 			return
 		}
 
-		phonePrefix := "86"
-		if organization != nil && organization.PhonePrefix != "" {
-			phonePrefix = organization.PhonePrefix
-		}
-		checkDest = fmt.Sprintf("+%s%s", phonePrefix, dest)
+		checkDest = fmt.Sprintf("%s%s", phonePrefix, dest)
 	} else if destType == "email" {
 		if object.HasUserByField(user.Owner, "email", user.Email) {
 			c.ResponseError(c.T("check:Email already exists"))
@@ -226,6 +234,8 @@ func (c *ApiController) ResetEmailOrPhone() {
 		object.SetUserField(user, "email", user.Email)
 	case "phone":
 		user.Phone = dest
+		user.PhonePrefix = phonePrefix
+		object.SetUserField(user, "phone_prefix", user.PhonePrefix)
 		object.SetUserField(user, "phone", user.Phone)
 	default:
 		c.ResponseError(c.T("verification:Unknown type"))

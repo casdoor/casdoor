@@ -47,6 +47,7 @@ type User struct {
 	Email             string   `xorm:"varchar(100) index" json:"email"`
 	EmailVerified     bool     `json:"emailVerified"`
 	Phone             string   `xorm:"varchar(100) index" json:"phone"`
+	PhonePrefix       string   `xorm:"varchar(100)" json:"phonePrefix"`
 	Location          string   `xorm:"varchar(100)" json:"location"`
 	Address           []string `json:"address"`
 	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
@@ -129,6 +130,7 @@ type Userinfo struct {
 	Avatar      string `json:"picture,omitempty"`
 	Address     string `json:"address,omitempty"`
 	Phone       string `json:"phone,omitempty"`
+	PhonePrefix string `json:"phonePrefix,omitempty"`
 }
 
 type ManagedAccount struct {
@@ -406,7 +408,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 		}
 	}
 	if isGlobalAdmin {
-		columns = append(columns, "name", "email", "phone")
+		columns = append(columns, "name", "email", "phone_prefix", "phone")
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)

@@ -137,7 +137,7 @@ func (c *ApiController) Signup() {
 
 	var checkPhone string
 	if application.IsSignupItemVisible("Phone") && form.Phone != "" {
-		checkPhone = fmt.Sprintf("+%s%s", form.PhonePrefix, form.Phone)
+		checkPhone = fmt.Sprintf("%s%s", form.PhonePrefix, form.Phone)
 		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode, c.GetAcceptLanguage())
 		if len(checkResult) != 0 {
 			c.ResponseError(c.T("account:Phone: %s"), checkResult)
@@ -179,6 +179,7 @@ func (c *ApiController) Signup() {
 		Avatar:            organization.DefaultAvatar,
 		Email:             form.Email,
 		Phone:             form.Phone,
+		PhonePrefix:       form.PhonePrefix,
 		Address:           []string{},
 		Affiliation:       form.Affiliation,
 		IdCard:            form.IdCard,

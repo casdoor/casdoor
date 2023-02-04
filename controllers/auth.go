@@ -240,10 +240,13 @@ func (c *ApiController) Login() {
 					c.ResponseError(responseText)
 					return
 				}
+				if form.PhonePrefix == "1" {
+					form.PhonePrefix = user.PhonePrefix
+				}
 				if user != nil && util.GetMaskedPhone(user.Phone) == form.Username {
 					form.Username = user.Phone
 				}
-				checkDest = fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username)
+				checkDest = fmt.Sprintf("%s%s", form.PhonePrefix, form.Username)
 			}
 			user = object.GetUserByFields(form.Organization, form.Username)
 			if user == nil {

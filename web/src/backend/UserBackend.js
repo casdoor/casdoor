@@ -109,13 +109,14 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
   }).then(res => res.json());
 }
 
-export function sendCode(checkType, checkId, checkKey, method, dest, type, applicationId, checkUser) {
+export function sendCode(checkType, checkId, checkKey, method, dest, type, applicationId, checkUser, phonePrefix) {
   const formData = new FormData();
   formData.append("checkType", checkType);
   formData.append("checkId", checkId);
   formData.append("checkKey", checkKey);
   formData.append("method", method);
   formData.append("dest", dest);
+  formData.append("phonePrefix", phonePrefix);
   formData.append("type", type);
   formData.append("applicationId", applicationId);
   formData.append("checkUser", checkUser);
@@ -164,11 +165,12 @@ export function verifyCaptcha(captchaType, captchaToken, clientSecret) {
   });
 }
 
-export function resetEmailOrPhone(dest, type, code) {
+export function resetEmailOrPhone(dest, type, code, phonePrefix) {
   const formData = new FormData();
   formData.append("dest", dest);
   formData.append("type", type);
   formData.append("code", code);
+  formData.append("phonePrefix", phonePrefix);
   return fetch(`${Setting.ServerUrl}/api/reset-email-or-phone`, {
     method: "POST",
     credentials: "include",

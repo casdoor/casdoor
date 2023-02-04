@@ -22,6 +22,7 @@ import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./LdapTable";
 import AccountTable from "./AccountTable";
+import SelectPhonePrefixBox from "./SelectPhonePrefixBox";
 
 const {Option} = Select;
 
@@ -185,8 +186,8 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Phone prefix"), i18next.t("general:Phone prefix - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input addonBefore={"+"} value={this.state.organization.phonePrefix} onChange={e => {
-              this.updateOrganizationField("phonePrefix", e.target.value);
+            <SelectPhonePrefixBox obj={this.state.organization} isOrgnazition={true} onChange={(value) => {
+              this.updateOrganizationField("phonePrefix", value);
             }} />
           </Col>
         </Row>

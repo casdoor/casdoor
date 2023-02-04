@@ -29,6 +29,7 @@ import SelectRegionBox from "./SelectRegionBox";
 import WebAuthnCredentialTable from "./WebauthnCredentialTable";
 import ManagedAccountTable from "./ManagedAccountTable";
 import PropertyTable from "./propertyTable";
+import SelectPhonePrefixBox from "./SelectPhonePrefixBox";
 
 const {Option} = Select;
 
@@ -309,11 +310,15 @@ class UserEditPage extends React.Component {
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
             {Setting.isLocalAdminUser(this.props.account) ?
-              <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
-                disabled={disabled}
-                onChange={e => {
-                  this.updateUserField("phone", e.target.value);
-                }} /> :
+              <Input value={this.state.user.phone} addonBefore={
+                <SelectPhonePrefixBox obj={this.state.user} onChange={(value) => {
+                  this.updateUserField("phonePrefix", value);
+                }} />
+              }
+              disabled={disabled}
+              onChange={e => {
+                this.updateUserField("phone", e.target.value);
+              }} /> :
               (<Select virtual={false} value={`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`}
                 options={[Setting.getItem(`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`, this.state.user.phone)]}
                 disabled={disabled}
@@ -322,7 +327,7 @@ class UserEditPage extends React.Component {
                 }} />)}
           </Col>
           <Col span={11} >
-            {this.isSelf() ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
+            {this.isSelf() ? (<ResetModal application={this.state.application} user={this.state.user} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
           </Col>
         </Row>
       );

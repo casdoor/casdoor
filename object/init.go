@@ -110,6 +110,7 @@ func initBuiltInUser() {
 		DisplayName:       "Admin",
 		Avatar:            fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
 		Email:             "admin@example.com",
+		PhonePrefix:       "86",
 		Phone:             "12345678910",
 		Address:           []string{},
 		Affiliation:       "Example Inc.",
