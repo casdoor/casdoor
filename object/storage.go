@@ -72,8 +72,13 @@ func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 	if provider.Type == "Azure Blob" {
 		host = util.UrlJoin(host, provider.Bucket)
 	}
+	fileUrl := ""
+	if provider.Type == "Tencent Cloud COS" {
+		fileUrl = util.UrlJoin(host, objectKey)
+	} else {
+		fileUrl = util.UrlJoin(host, escapePath(objectKey))
+	}
 
-	fileUrl := util.UrlJoin(host, escapePath(objectKey))
 	if hasTimestamp {
 		fileUrl = fmt.Sprintf("%s?t=%s", fileUrl, util.GetCurrentUnixTime())
 	}
