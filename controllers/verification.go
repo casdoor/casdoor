@@ -143,13 +143,8 @@ func (c *ApiController) SendVerificationCode() {
 			return
 		}
 
-		if phonePrefix == "" || phonePrefix == "undefined" {
-			if user == nil || user.PhonePrefix == "" {
-				//phonePrefix = organization.PhonePrefix
-				fmt.Println("this")
-			} else {
-				phonePrefix = user.PhonePrefix
-			}
+		if (phonePrefix == "" || phonePrefix == "undefined") && userByPhone != nil {
+			phonePrefix = userByPhone.PhonePrefix
 		}
 
 		dest = fmt.Sprintf("%s%s", phonePrefix, dest)

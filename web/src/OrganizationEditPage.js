@@ -186,7 +186,7 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Phone prefix"), i18next.t("general:Phone prefix - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <SelectPhonePrefixBox obj={this.state.organization} isOrgnazition={true} onChange={(value) => {
+            <SelectPhonePrefixBox obj={this.state.organization} isOrgnazition={true} defaultPhone={this.state.organization.phonePrefix} onChange={(value) => {
               this.updateOrganizationField("phonePrefix", value);
             }} />
           </Col>

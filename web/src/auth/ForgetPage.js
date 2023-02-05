@@ -45,6 +45,7 @@ class ForgetPage extends React.Component {
       fixedContent: "",
       token: "",
       phone: "",
+      phonePrefix: "",
       emailCode: "",
       phoneCode: "",
       verifyType: null, // "email" or "phone"
@@ -103,7 +104,7 @@ class ForgetPage extends React.Component {
             }
             this.setState({current: 1});
           };
-          this.setState({phone: phone, email: email, username: res.data.name, name: res.data.name});
+          this.setState({phone: phone, email: email, username: res.data.name, name: res.data.name, phonePrefix: res.data.phonePrefix});
 
           if (phone !== "" && email === "") {
             this.setState({
@@ -140,7 +141,7 @@ class ForgetPage extends React.Component {
           username: this.state.username,
           name: this.state.name,
           code: forms.step2.getFieldValue("emailCode"),
-          phonePrefix: this.getApplicationObj()?.organizationObj.phonePrefix,
+          phonePrefix: this.state.phonePrefix,
           type: "login",
         }, oAuthParams).then(res => {
           if (res.status === "ok") {

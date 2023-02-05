@@ -27,7 +27,7 @@ export const ResetModal = (props) => {
   const [dest, setDest] = React.useState("");
   const [code, setCode] = React.useState("");
   const [phonePrefix, setPhonePrefix] = React.useState("");
-  const {buttonText, destType, application, user} = props;
+  const {buttonText, destType, application} = props;
 
   const showModal = () => {
     setVisible(true);
@@ -87,7 +87,7 @@ export const ResetModal = (props) => {
         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
           <Row style={{width: "100%", marginBottom: "20px"}}>
             <Input
-              addonBefore={destType === "email" ? i18next.t("user:New Email") : <SelectPhonePrefixBox obj={user} onChange={(value) => {
+              addonBefore={destType === "email" ? i18next.t("user:New Email") : <SelectPhonePrefixBox obj={application.organizationObj} onChange={(value) => {
                 setPhonePrefix(value);
               }} />
               }

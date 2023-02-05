@@ -311,7 +311,7 @@ class UserEditPage extends React.Component {
           <Col style={{paddingRight: "20px"}} span={11} >
             {Setting.isLocalAdminUser(this.props.account) ?
               <Input value={this.state.user.phone} addonBefore={
-                <SelectPhonePrefixBox obj={this.state.user} onChange={(value) => {
+                <SelectPhonePrefixBox obj={this.state.application.organizationObj} defaultPhone={this.state.user.phonePrefix} onChange={(value) => {
                   this.updateUserField("phonePrefix", value);
                 }} />
               }

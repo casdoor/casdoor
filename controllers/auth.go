@@ -217,6 +217,7 @@ func (c *ApiController) Login() {
 		var user *object.User
 		var msg string
 
+		// Login with code
 		if form.Password == "" {
 			var verificationCodeType string
 			var checkResult string
@@ -234,17 +235,11 @@ func (c *ApiController) Login() {
 				}
 				checkDest = form.Username
 			} else {
-				verificationCodeType = "phone"
-				if len(form.PhonePrefix) == 0 {
-					responseText := fmt.Sprintf(c.T("auth:%s No phone prefix"), verificationCodeType)
-					c.ResponseError(responseText)
-					return
-				}
-				if form.PhonePrefix == "1" {
-					form.PhonePrefix = user.PhonePrefix
-				}
 				if user != nil && util.GetMaskedPhone(user.Phone) == form.Username {
 					form.Username = user.Phone
+				} else {
+					user = object.GetUserByFields(form.Organization, form.Username)
+					form.PhonePrefix = user.PhonePrefix
 				}
 				checkDest = fmt.Sprintf("%s%s", form.PhonePrefix, form.Username)
 			}

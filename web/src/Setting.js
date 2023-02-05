@@ -32,8 +32,9 @@ export const ServerUrl = "";
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
 // https://catamphetamine.gitlab.io/country-flag-icons/3x2/index.html
-export const CountryRegionData = getCountryRegionData(false);
-export const CountryPrefiexphone = getCountryRegionData(true);
+export const CountryRegionData = getCountryRegionData();
+export const CountryPrefiexphone = getCountryRegionData("phoneList");
+export const PhonePrefiexMap = getCountryRegionData("phoneMap");
 
 export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
   {label: "简体中文", key: "zh", country: "CN", alt: "简体中文"},
@@ -171,7 +172,7 @@ export const OtherProviderInfo = {
   },
 };
 
-export function getCountryRegionData(isPhone) {
+export function getCountryRegionData(key) {
   let language = i18next.language;
   if (language === null || language === "null") {
     language = Conf.DefaultLanguage;
@@ -181,9 +182,15 @@ export function getCountryRegionData(isPhone) {
   countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
   const data = countries.getNames(language, {select: "official"});
   const result = [];
-  if (isPhone === true) {
+  const phoneMap = new Map();
+  switch (key) {
+  case "phoneList":
     for (const i in data) {result.push({code: i, name: data[i], phone: prefixPhone[i]});}
-  } else {
+    break;
+  case "phoneMap":
+    for (const i in data) {phoneMap.set(prefixPhone[i], {code: i, name: data[i], phone: prefixPhone[i]});}
+    return phoneMap;
+  default:
     for (const i in data) {result.push({code: i, name: data[i], phone: ""});}
   }
   return result;

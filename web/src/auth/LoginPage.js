@@ -185,7 +185,7 @@ class LoginPage extends React.Component {
     } else {
       values["type"] = this.state.type;
     }
-    values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix;
+    // values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix[0];
 
     if (oAuthParams !== null) {
       values["samlRequest"] = oAuthParams.samlRequest;

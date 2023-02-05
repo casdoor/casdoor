@@ -255,10 +255,12 @@ func (c *ApiController) GetEmailAndPhone() {
 	case user.Phone:
 		contentType = "phone"
 		respUser.Phone = user.Phone
+		respUser.PhonePrefix = user.PhonePrefix
 	case user.Name:
 		contentType = "username"
 		respUser.Email = util.GetMaskedEmail(user.Email)
 		respUser.Phone = util.GetMaskedPhone(user.Phone)
+		respUser.PhonePrefix = user.PhonePrefix
 	}
 
 	c.ResponseOk(respUser, contentType)
