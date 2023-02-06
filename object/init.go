@@ -26,6 +26,7 @@ import (
 
 func InitDb() {
 	MigratePermissionRule()
+	MigratePhonePrefix()
 
 	existed := initBuiltInOrganization()
 	if !existed {

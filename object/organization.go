@@ -41,7 +41,7 @@ type Organization struct {
 	Favicon            string   `xorm:"varchar(100)" json:"favicon"`
 	PasswordType       string   `xorm:"varchar(100)" json:"passwordType"`
 	PasswordSalt       string   `xorm:"varchar(100)" json:"passwordSalt"`
-	PhonePrefix        []string `xorm:"varchar(10)"  json:"phonePrefix"`
+	PhonePrefix        []string `xorm:"varchar(100)"  json:"phonePrefix"`
 	DefaultAvatar      string   `xorm:"varchar(100)" json:"defaultAvatar"`
 	DefaultApplication string   `xorm:"varchar(100)" json:"defaultApplication"`
 	Tags               []string `xorm:"mediumtext" json:"tags"`

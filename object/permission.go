@@ -296,6 +296,29 @@ func MigratePermissionRule() {
 	}
 }
 
+func MigratePhonePrefix() {
+	orgSql := "SELECT * FROM `organization`"
+	upOrgSql := "UPDATE `organization` SET `phone_prefix` = ? WHERE `name` = ?"
+	userSql := "SELECT * FROM `user` WHERE `phone_prefix` IS NULL AND `owner` = ?"
+	upUserSql := "UPDATE `user` SET `phone_prefix` = ? WHERE `name` = ?"
+	results, err := adapter.Engine.Query(orgSql)
+	for _, org := range results {
+		users, _ := adapter.Engine.Query(userSql, string(org["name"]))
+		for _, user := range users {
+			if string(org["phone_prefix"][0]) != "[" {
+				adapter.Engine.Exec(upUserSql, org["phone_prefix"], user["name"])
+			}
+		}
+		if string(org["phone_prefix"][0]) != "[" {
+			key := `["` + string(org["phone_prefix"]) + `"]`
+			adapter.Engine.Exec(upOrgSql, []byte(key), org["name"])
+		}
+	}
+	if err != nil {
+		panic(err)
+	}
+}
+
 func ContainsAsterisk(userId string, users []string) bool {
 	containsAsterisk := false
 	group, _ := util.GetOwnerAndNameFromId(userId)

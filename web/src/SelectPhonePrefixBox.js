@@ -46,7 +46,7 @@ class SelectPhonePrefixBox extends React.Component {
 
     return (
       <Select virtual={false}
-        mode={isOrgnazition ? "tags" : ""}
+        mode={isOrgnazition ? "multiple" : ""}
         allowClear
         showSearch={true}
         optionFilterProp="label"
@@ -54,6 +54,7 @@ class SelectPhonePrefixBox extends React.Component {
         defaultValue={this.props.defaultPhone ? this.props.defaultPhone : undefined}
         placeholder= "please select phone prefix"
         dropdownMatchSelectWidth = {false}
+        optionLabelProp={isOrgnazition ? "label" : "value"}
         onChange={(value => {
           this.onChange(value);
         })}

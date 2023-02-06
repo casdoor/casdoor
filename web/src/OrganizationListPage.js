@@ -33,7 +33,7 @@ class OrganizationListPage extends BaseListPage {
       favicon: `${Setting.StaticBaseUrl}/img/favicon.png`,
       passwordType: "plain",
       PasswordSalt: "",
-      phonePrefix: "86",
+      phonePrefix: ["86"],
       defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       defaultApplication: "",
       tags: [],
