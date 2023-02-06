@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,62 +17,75 @@ import * as Setting from "./Setting";
 import {Dropdown} from "antd";
 import "./App.less";
 import i18next from "i18next";
+import {CheckOutlined} from "@ant-design/icons";
+import {CompactTheme, DarkTheme, Light} from "antd-token-previewer/es/icons";
 
-function themeIcon(themeKey) {
-  return <img width={24} alt={themeKey} src={getLogoURL(themeKey)} />;
-}
+export const Themes = [
+  {label: "Default", key: "default", icon: <Light style={{fontSize: "24px", color: "#4d4d4d"}} />},        // i18next.t("theme:Default")
+  {label: "Dark", key: "dark", icon: <DarkTheme style={{fontSize: "24px", color: "#4d4d4d"}} />},          // i18next.t("theme:Dark")
+  {label: "Compact", key: "compact", icon: <CompactTheme style={{fontSize: "24px", color: "#4d4d4d"}} />}, // i18next.t("theme:Compact")
+];
 
-function getLogoURL(themeKey) {
-  if (themeKey) {
-    return Setting.Themes.find(t => t.key === themeKey)["selectThemeLogo"];
-  } else {
-    return Setting.Themes.find(t => t.key === localStorage.getItem("theme"))["selectThemeLogo"];
+function getIcon(themeKey) {
+  if (themeKey?.includes("dark")) {
+    return Themes.find(t => t.key === "dark").icon;
+  } else if (themeKey?.includes("default")) {
+    return Themes.find(t => t.key === "default").icon;
   }
 }
 
 class SelectThemeBox extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      classes: props,
-      themes: props.theme ?? ["Default", "Dark", "Compact"],
-      icon: null,
-    };
   }
 
-  items = this.getThemes();
+  icon = getIcon(this.props.themeAlgorithm);
 
-  componentDidMount() {
-    i18next.on("languageChanged", () => {
-      this.items = this.getThemes();
-    });
-    localStorage.getItem("theme") ? this.setState({"icon": getLogoURL()}) : this.setState({"icon": getLogoURL("Default")});
-    addEventListener("themeChange", (e) => {
-      this.setState({"icon": getLogoURL()});
-    });
-  }
-
-  getThemes() {
-    return Setting.Themes.map((theme) => Setting.getItem(i18next.t(`general:${theme.label}`), theme.key, themeIcon(theme.key)));
-  }
-
-  getOrganizationThemes(themes) {
-    const select = [];
-    for (const theme of themes) {
-      this.items.map((item, index) => item.key === theme ? select.push(item) : null);
-    }
-    return select;
+  getThemeItems() {
+    return Themes.map((theme) => Setting.getItem(
+      <div style={{display: "flex", justifyContent: "space-between"}}>
+        <div>{i18next.t(`theme:${theme.label}`)}</div>
+        {this.props.themeAlgorithm.includes(theme.key) ? <CheckOutlined style={{marginLeft: "5px"}} /> : null}
+      </div>,
+      theme.key, theme.icon));
   }
 
   render() {
-    const themeItems = this.getOrganizationThemes(this.state.themes);
     const onClick = (e) => {
-      Setting.setTheme(e.key);
+      let nextTheme;
+      if (e.key === "compact") {
+        if (this.props.themeAlgorithm.includes("compact")) {
+          nextTheme = this.props.themeAlgorithm.filter((theme) => theme !== "compact");
+        } else {
+          nextTheme = [...this.props.themeAlgorithm, "compact"];
+        }
+      } else {
+        if (!this.props.themeAlgorithm.includes(e.key)) {
+          if (e.key === "dark") {
+            nextTheme = [...this.props.themeAlgorithm.filter((theme) => theme !== "default"), e.key];
+          } else {
+            nextTheme = [...this.props.themeAlgorithm.filter((theme) => theme !== "dark"), e.key];
+          }
+        } else {
+          nextTheme = [...this.props.themeAlgorithm];
+        }
+      }
+
+      this.icon = getIcon(nextTheme);
+      this.props.onChange(nextTheme);
     };
 
     return (
-      <Dropdown menu={{items: themeItems, onClick}} >
-        <div className="theme-box" style={{display: themeItems.length === 0 ? "none" : null, background: `url(${this.state.icon})`, ...this.props.style}} />
+      <Dropdown menu={{
+        items: this.getThemeItems(),
+        onClick,
+        selectable: true,
+        multiple: true,
+        selectedKeys: [...this.props.themeAlgorithm],
+      }}>
+        <div className="select-box">
+          {this.icon}
+        </div>
       </Dropdown>
     );
   }

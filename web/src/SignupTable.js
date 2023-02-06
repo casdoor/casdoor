@@ -186,6 +186,12 @@ class SignupTable extends React.Component {
               {id: "Normal", name: "Normal"},
               {id: "No verification", name: "No verification"},
             ];
+          } else if (record.name === "Agreement") {
+            options = [
+              {id: "None", name: "None"},
+              {id: "Signin", name: "Signin"},
+              {id: "Signin (Default True)", name: "Signin (Default True)"},
+            ];
           }
 
           if (options.length === 0) {

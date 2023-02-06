@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Tag, Tooltip, message, theme} from "antd";
+import {Checkbox, Form, Modal, Tag, Tooltip, message, theme} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -46,12 +46,43 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
 ];
 
-const {defaultAlgorithm, darkAlgorithm, compactAlgorithm} = theme;
+export const ThemeDefault = {
+  themeType: "default",
+  colorPrimary: "#5734d3",
+  borderRadius: 6,
+  isCompact: false,
+};
 
-export const Themes = [{label: i18next.t("general:Dark"), key: "Dark", style: darkAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/dark.svg`},
-  {label: i18next.t("general:Compact"), key: "Compact", style: compactAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/compact.svg`},
-  {label: i18next.t("general:Default"), key: "Default", style: defaultAlgorithm, selectThemeLogo: `${StaticBaseUrl}/img/light.svg`},
-];
+export function getThemeData(organization, application) {
+  if (application?.themeData?.isEnabled) {
+    return application.themeData;
+  } else if (organization?.themeData?.isEnabled) {
+    return organization.themeData;
+  } else {
+    return ThemeDefault;
+  }
+}
+
+export function getAlgorithm(themeAlgorithmNames) {
+  return themeAlgorithmNames.map((algorithmName) => {
+    if (algorithmName === "dark") {
+      return theme.darkAlgorithm;
+    }
+    if (algorithmName === "compact") {
+      return theme.compactAlgorithm;
+    }
+    return theme.defaultAlgorithm;
+  });
+}
+
+export function getAlgorithmNames(themeData) {
+  const algorithms = [themeData?.themeType !== "dark" ? "default" : "dark"];
+  if (themeData?.isCompact === true) {
+    algorithms.push("compact");
+  }
+
+  return algorithms;
+}
 
 export const OtherProviderInfo = {
   SMS: {
@@ -86,7 +117,11 @@ export const OtherProviderInfo = {
   },
   Email: {
     "Default": {
-      logo: `${StaticBaseUrl}/img/social_default.png`,
+      logo: `${StaticBaseUrl}/img/email_default.png`,
+      url: "",
+    },
+    "SUBMAIL": {
+      logo: `${StaticBaseUrl}/img/social_submail.png`,
       url: "",
     },
   },
@@ -146,7 +181,7 @@ export const OtherProviderInfo = {
   },
   Captcha: {
     "Default": {
-      logo: `${StaticBaseUrl}/img/social_default.png`,
+      logo: `${StaticBaseUrl}/img/captcha_default.png`,
       url: "https://pkg.go.dev/github.com/dchest/captcha",
     },
     "reCAPTCHA": {
@@ -522,6 +557,76 @@ export function isMobile() {
   return isMobileDevice;
 }
 
+export function getTermsOfUseContent(url, setTermsOfUseContent) {
+  fetch(url, {
+    method: "GET",
+  }).then(r => {
+    r.text().then(setTermsOfUseContent);
+  });
+}
+
+export function isAgreementRequired(application) {
+  if (application) {
+    const agreementItem = application.signupItems.find(item => item.name === "Agreement");
+    if (!agreementItem || agreementItem.rule === "None" || !agreementItem.rule) {
+      return false;
+    }
+    if (agreementItem.required) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function isDefaultTrue(application) {
+  const agreementItem = application.signupItems.find(item => item.name === "Agreement");
+
+  return isAgreementRequired(application) && agreementItem.rule === "Signin (Default True)";
+}
+
+export function renderAgreement(required, onClick, noStyle, layout, initialValue) {
+  return (
+    <Form.Item
+      name="agreement"
+      key="agreement"
+      valuePropName="checked"
+      rules={[
+        {
+          required: required,
+          message: i18next.t("signup:Please accept the agreement!"),
+        },
+      ]}
+      {...layout}
+      noStyle={noStyle}
+      initialValue={initialValue}
+    >
+      <Checkbox style={{float: "left"}}>
+        {i18next.t("signup:Accept")}&nbsp;
+        <a onClick={onClick}>
+          {i18next.t("signup:Terms of Use")}
+        </a>
+      </Checkbox>
+    </Form.Item>
+  );
+}
+
+export function renderModal(isOpen, onOk, onCancel, doc) {
+  return (
+    <Modal
+      title={i18next.t("signup:Terms of Use")}
+      open={isOpen}
+      width={"55vw"}
+      closable={false}
+      okText={i18next.t("signup:Accept")}
+      cancelText={i18next.t("signup:Decline")}
+      onOk={onOk}
+      onCancel={onCancel}
+    >
+      <iframe title={"terms"} style={{border: 0, width: "100%", height: "60vh"}} srcDoc={doc} />
+    </Modal>
+  );
+}
+
 export function getFormattedDate(date) {
   if (date === undefined) {
     return null;
@@ -611,13 +716,12 @@ export function getLanguage() {
 
 export function setLanguage(language) {
   localStorage.setItem("language", language);
-  changeMomentLanguage(language);
   i18next.changeLanguage(language);
 }
 
 export function setTheme(themeKey) {
   localStorage.setItem("theme", themeKey);
-  dispatchEvent(new Event("themeChange"));
+  dispatchEvent(new Event("changeTheme"));
 }
 
 export function getAcceptLanguage() {
@@ -625,29 +729,6 @@ export function getAcceptLanguage() {
     return "en;q=0.9,en;q=0.8";
   }
   return i18next.language + ";q=0.9,en;q=0.8";
-}
-
-export function changeMomentLanguage(language) {
-  // if (language === "zh") {
-  //   moment.locale("zh", {
-  //     relativeTime: {
-  //       future: "%s内",
-  //       past: "%s前",
-  //       s: "几秒",
-  //       ss: "%d秒",
-  //       m: "1分钟",
-  //       mm: "%d分钟",
-  //       h: "1小时",
-  //       hh: "%d小时",
-  //       d: "1天",
-  //       dd: "%d天",
-  //       M: "1个月",
-  //       MM: "%d个月",
-  //       y: "1年",
-  //       yy: "%d年",
-  //     },
-  //   });
-  // }
 }
 
 export function getClickable(text) {
@@ -715,6 +796,54 @@ export function getProviderTypeOptions(category) {
         {id: "Okta", name: "Okta"},
         {id: "Douyin", name: "Douyin"},
         {id: "Line", name: "Line"},
+        {id: "Amazon", name: "Amazon"},
+        {id: "Auth0", name: "Auth0"},
+        {id: "BattleNet", name: "Battle.net"},
+        {id: "Bitbucket", name: "Bitbucket"},
+        {id: "Box", name: "Box"},
+        {id: "CloudFoundry", name: "Cloud Foundry"},
+        {id: "Dailymotion", name: "Dailymotion"},
+        {id: "Deezer", name: "Deezer"},
+        {id: "DigitalOcean", name: "DigitalOcean"},
+        {id: "Discord", name: "Discord"},
+        {id: "Dropbox", name: "Dropbox"},
+        {id: "EveOnline", name: "Eve Online"},
+        {id: "Fitbit", name: "Fitbit"},
+        {id: "Gitea", name: "Gitea"},
+        {id: "Heroku", name: "Heroku"},
+        {id: "InfluxCloud", name: "InfluxCloud"},
+        {id: "Instagram", name: "Instagram"},
+        {id: "Intercom", name: "Intercom"},
+        {id: "Kakao", name: "Kakao"},
+        {id: "Lastfm", name: "Lastfm"},
+        {id: "Mailru", name: "Mailru"},
+        {id: "Meetup", name: "Meetup"},
+        {id: "MicrosoftOnline", name: "MicrosoftOnline"},
+        {id: "Naver", name: "Naver"},
+        {id: "Nextcloud", name: "Nextcloud"},
+        {id: "OneDrive", name: "OneDrive"},
+        {id: "Oura", name: "Oura"},
+        {id: "Patreon", name: "Patreon"},
+        {id: "Paypal", name: "Paypal"},
+        {id: "SalesForce", name: "SalesForce"},
+        {id: "Shopify", name: "Shopify"},
+        {id: "Soundcloud", name: "Soundcloud"},
+        {id: "Spotify", name: "Spotify"},
+        {id: "Strava", name: "Strava"},
+        {id: "Stripe", name: "Stripe"},
+        {id: "TikTok", name: "TikTok"},
+        {id: "Tumblr", name: "Tumblr"},
+        {id: "Twitch", name: "Twitch"},
+        {id: "Twitter", name: "Twitter"},
+        {id: "Typetalk", name: "Typetalk"},
+        {id: "Uber", name: "Uber"},
+        {id: "VK", name: "VK"},
+        {id: "Wepay", name: "Wepay"},
+        {id: "Xero", name: "Xero"},
+        {id: "Yahoo", name: "Yahoo"},
+        {id: "Yammer", name: "Yammer"},
+        {id: "Yandex", name: "Yandex"},
+        {id: "Zoom", name: "Zoom"},
         {id: "Custom", name: "Custom"},
       ]
     );

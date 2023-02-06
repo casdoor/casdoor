@@ -23,18 +23,19 @@ class PropertyTable extends React.Component {
     super(props);
     this.state = {
       properties: [],
-      count: this.props.properties !== null ? Object.entries(this.props.properties).length : 0,
     };
+
     // transfer the Object to object[]
     if (this.props.properties !== null) {
       Object.entries(this.props.properties).map((item, index) => {
         this.state.properties.push({key: index, name: item[0], value: item[1]});
       });
     }
-
   }
 
   page = 1;
+  pageSize = 10;
+  count = this.props.properties !== null ? Object.entries(this.props.properties).length : 0;
 
   updateTable(table) {
     this.setState({properties: table});
@@ -46,12 +47,12 @@ class PropertyTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {key: this.state.count, name: "", value: ""};
+    const row = {key: this.count, name: "", value: ""};
     if (table === undefined) {
       table = [];
     }
     table = Setting.addRow(table, row);
-    this.setState({count: this.state.count + 1});
+    this.count = this.count + 1;
     this.updateTable(table);
   }
 
@@ -61,8 +62,8 @@ class PropertyTable extends React.Component {
   }
 
   getIndex(index) {
-    // Parameter is the row index in table, need to calculate the index in dataSource. 10 is the pageSize.
-    return index + (this.page - 1) * 10;
+    // Need to be used in all place when modify table. Parameter is the row index in table, need to calculate the index in dataSource.
+    return index + (this.page - 1) * this.pageSize;
   }
 
   updateField(table, index, key, value) {
@@ -114,7 +115,10 @@ class PropertyTable extends React.Component {
           <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
         </div>
       )}
-      pagination={{onChange: page => {this.page = page;}}}
+      pagination={{
+        defaultPageSize: this.pageSize,
+        onChange: page => {this.page = page;},
+      }}
       columns={columns} dataSource={table} rowKey="key" size="middle" bordered
       />
     );

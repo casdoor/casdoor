@@ -80,7 +80,7 @@ func (c *ApiController) UpdateModel() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateModel(id, &model))
+	c.Data["json"] = wrapErrorResponse(object.UpdateModelWithCheck(id, &model))
 	c.ServeJSON()
 }
 

@@ -25,11 +25,25 @@ class ManagedAccountTable extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      managedAccounts: this.props.table !== null ? this.props.table.map((item, index) => {
+        item.key = index;
+        return item;
+      }) : [],
     };
   }
 
+  count = this.props.table?.length ?? 0;
+
   updateTable(table) {
-    this.props.onUpdateTable(table);
+    this.setState({
+      managedAccounts: table,
+    });
+
+    this.props.onUpdateTable([...table].map((item) => {
+      const newItem = Setting.deepCopy(item);
+      delete newItem.key;
+      return newItem;
+    }));
   }
 
   updateField(table, index, key, value) {
@@ -38,10 +52,12 @@ class ManagedAccountTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {application: "", username: "", password: ""};
+    const row = {key: this.count, application: "", username: "", password: ""};
     if (table === undefined || table === null) {
       table = [];
     }
+
+    this.count += 1;
     table = Setting.addRow(table, row);
     this.updateTable(table);
   }
@@ -131,7 +147,7 @@ class ManagedAccountTable extends React.Component {
     ];
 
     return (
-      <Table scroll={{x: "max-content"}} rowKey="name" columns={columns} dataSource={table} size="middle" bordered pagination={false}
+      <Table scroll={{x: "max-content"}} rowKey="key" columns={columns} dataSource={table} size="middle" bordered pagination={false}
         title={() => (
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -148,7 +164,7 @@ class ManagedAccountTable extends React.Component {
         <Row style={{marginTop: "20px"}} >
           <Col span={24}>
             {
-              this.renderTable(this.props.table)
+              this.renderTable(this.state.managedAccounts)
             }
           </Col>
         </Row>

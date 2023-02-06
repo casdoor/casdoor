@@ -28,7 +28,16 @@ class PolicyTable extends React.Component {
       editingIndex: "",
       oldPolicy: "",
       add: false,
+      page: 1,
     };
+  }
+
+  count = 0;
+  pageSize = 10;
+
+  getIndex(index) {
+    // Need to be used in all place when modify table. Parameter is the row index in table, need to calculate the index in dataSource.
+    return index + (this.state.page - 1) * 10;
   }
 
   UNSAFE_componentWillMount() {
@@ -46,8 +55,8 @@ class PolicyTable extends React.Component {
   };
 
   cancel = (table, index) => {
-    Object.keys(table[index]).forEach((key) => {
-      table[index][key] = this.state.oldPolicy[key];
+    Object.keys(table[this.getIndex(index)]).forEach((key) => {
+      table[this.getIndex(index)][key] = this.state.oldPolicy[key];
     });
     this.updateTable(table);
     this.setState({editingIndex: "", oldPolicy: ""});
@@ -62,23 +71,28 @@ class PolicyTable extends React.Component {
   }
 
   updateField(table, index, key, value) {
-    table[index][key] = value;
+    table[this.getIndex(index)][key] = value;
     this.updateTable(table);
   }
 
   addRow(table) {
-    const row = {Ptype: "p"};
+    const row = {key: this.count, Ptype: "p"};
     if (table === undefined) {
       table = [];
     }
     table = Setting.addRow(table, row, "top");
+
+    this.count = this.count + 1;
     this.updateTable(table);
     this.edit(row, 0);
-    this.setState({add: true});
+    this.setState({
+      page: 1,
+      add: true,
+    });
   }
 
-  deleteRow(table, i) {
-    table = Setting.deleteRow(table, i);
+  deleteRow(table, index) {
+    table = Setting.deleteRow(table, this.getIndex(index));
     this.updateTable(table);
   }
 
@@ -91,8 +105,14 @@ class PolicyTable extends React.Component {
     AdapterBackend.syncPolicies(this.props.owner, this.props.name)
       .then((res) => {
         if (res.status === "ok") {
-          this.setState({policyLists: res.data});
           Setting.showMessage("success", i18next.t("adapter:Sync policies successfully"));
+
+          const policyList = res.data;
+          policyList.map((policy, index) => {
+            policy.key = index;
+          });
+          this.count = policyList.length;
+          this.setState({policyLists: policyList});
         } else {
           Setting.showMessage("error", `${i18next.t("adapter:Failed to sync policies")}: ${res.msg}`);
         }
@@ -129,12 +149,12 @@ class PolicyTable extends React.Component {
     });
   }
 
-  deletePolicy(table, i) {
-    AdapterBackend.RemovePolicy(this.props.owner, this.props.name, table[i]).then(res => {
+  deletePolicy(table, index) {
+    AdapterBackend.RemovePolicy(this.props.owner, this.props.name, table[this.getIndex(index)]).then(res => {
       if (res.status === "ok") {
-        table = Setting.deleteRow(table, i);
-        this.updateTable(table);
         Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+
+        this.deleteRow(table, index);
       } else {
         Setting.showMessage("error", i18next.t("general:Failed to delete"));
       }
@@ -279,9 +299,14 @@ class PolicyTable extends React.Component {
     return (
       <Table
         pagination={{
-          defaultPageSize: 10,
+          defaultPageSize: this.pageSize,
+          onChange: (page) => this.setState({
+            page: page,
+          }),
+          disabled: this.state.editingIndex !== "",
+          current: this.state.page,
         }}
-        columns={columns} dataSource={table} rowKey="index" size="middle" bordered
+        columns={columns} dataSource={table} rowKey="key" size="middle" bordered
         loading={this.state.loading}
         title={() => (
           <div>

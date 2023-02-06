@@ -53,12 +53,16 @@ class LoginPage extends React.Component {
       samlResponse: "",
       relayState: "",
       redirectUrl: "",
+      isTermsOfUseVisible: false,
+      termsOfUseContent: "",
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
       this.state.owner = props.match?.params.owner;
       this.state.applicationName = props.match?.params.casApplicationName;
     }
+
+    this.form = React.createRef();
   }
 
   componentDidMount() {
@@ -73,10 +77,6 @@ class LoginPage extends React.Component {
         Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
       }
     }
-
-    Setting.Countries.forEach((country) => {
-      new Image().src = `${Setting.StaticBaseUrl}/flag-icons/${country.country}.svg`;
-    });
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -122,7 +122,9 @@ class LoginPage extends React.Component {
           this.onUpdateApplication(application);
           this.setState({
             application: application,
-          });
+          }, () => Setting.getTermsOfUseContent(this.state.application.termsOfUse, res => {
+            this.setState({termsOfUseContent: res});
+          }));
         });
     } else {
       OrganizationBackend.getDefaultApplication("admin", this.state.owner)
@@ -132,7 +134,9 @@ class LoginPage extends React.Component {
             this.setState({
               application: res.data,
               applicationName: res.data.name,
-            });
+            }, () => Setting.getTermsOfUseContent(this.state.application.termsOfUse, res => {
+              this.setState({termsOfUseContent: res});
+            }));
           } else {
             this.onUpdateApplication(null);
             Setting.showMessage("error", res.msg);
@@ -383,6 +387,7 @@ class LoginPage extends React.Component {
           onFinish={(values) => {this.onFinish(values);}}
           style={{width: "300px"}}
           size="large"
+          ref={this.form}
         >
           <Form.Item
             hidden={true}
@@ -456,11 +461,20 @@ class LoginPage extends React.Component {
             }
           </Row>
           <Form.Item>
-            <Form.Item name="autoSignin" valuePropName="checked" noStyle>
-              <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
-                {i18next.t("login:Auto sign in")}
-              </Checkbox>
-            </Form.Item>
+            {
+              Setting.isAgreementRequired(application) ?
+                Setting.renderAgreement(true, () => {
+                  this.setState({
+                    isTermsOfUseVisible: true,
+                  });
+                }, true, {}, Setting.isDefaultTrue(application)) : (
+                  <Form.Item name="autoSignin" valuePropName="checked" noStyle>
+                    <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
+                      {i18next.t("login:Auto sign in")}
+                    </Checkbox>
+                  </Form.Item>
+                )
+            }
             {
               Setting.renderForgetLink(application, i18next.t("login:Forgot password?"))
             }
@@ -826,6 +840,19 @@ class LoginPage extends React.Component {
                   }
                   {
                     this.renderForm(application)
+                  }
+                  {
+                    Setting.renderModal(this.state.isTermsOfUseVisible, () => {
+                      this.form.current.setFieldsValue({agreement: true});
+                      this.setState({
+                        isTermsOfUseVisible: false,
+                      });
+                    }, () => {
+                      this.form.current.setFieldsValue({agreement: false});
+                      this.setState({
+                        isTermsOfUseVisible: false,
+                      });
+                    }, this.state.termsOfUseContent)
                   }
                 </div>
               </div>

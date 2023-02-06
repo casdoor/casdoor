@@ -86,6 +86,17 @@ func GetModel(id string) *Model {
 	return getModel(owner, name)
 }
 
+func UpdateModelWithCheck(id string, modelObj *Model) error {
+	// check model grammar
+	_, err := model.NewModelFromString(modelObj.ModelText)
+	if err != nil {
+		return err
+	}
+	UpdateModel(id, modelObj)
+
+	return nil
+}
+
 func UpdateModel(id string, modelObj *Model) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if getModel(owner, name) == nil {
@@ -97,11 +108,6 @@ func UpdateModel(id string, modelObj *Model) bool {
 		if err != nil {
 			return false
 		}
-	}
-	// check model grammar
-	_, err := model.NewModelFromString(modelObj.ModelText)
-	if err != nil {
-		panic(err)
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(modelObj)
