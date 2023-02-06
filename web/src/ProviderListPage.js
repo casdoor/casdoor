@@ -141,6 +141,8 @@ class ProviderListPage extends BaseListPage {
           {text: "SMS", value: "SMS"},
           {text: "Storage", value: "Storage"},
           {text: "SAML", value: "SAML"},
+          {text: "Captcha", value: "Captcha"},
+          {text: "Payment", value: "Payment"},
         ],
         width: "110px",
         sorter: true,
@@ -159,6 +161,7 @@ class ProviderListPage extends BaseListPage {
           {text: "Storage", value: "Storage", children: Setting.getProviderTypeOptions("Storage").map((o) => {return {text: o.id, value: o.name};})},
           {text: "SAML", value: "SAML", children: Setting.getProviderTypeOptions("SAML").map((o) => {return {text: o.id, value: o.name};})},
           {text: "Captcha", value: "Captcha", children: Setting.getProviderTypeOptions("Captcha").map((o) => {return {text: o.id, value: o.name};})},
+          {text: "Payment", value: "Payment", children: Setting.getProviderTypeOptions("Payment").map((o) => {return {text: o.id, value: o.name};})},
         ],
         sorter: true,
         render: (text, record, index) => {

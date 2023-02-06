@@ -114,7 +114,11 @@ export const OtherProviderInfo = {
   },
   Email: {
     "Default": {
-      logo: `${StaticBaseUrl}/img/social_default.png`,
+      logo: `${StaticBaseUrl}/img/email_default.png`,
+      url: "",
+    },
+    "SUBMAIL": {
+      logo: `${StaticBaseUrl}/img/social_submail.png`,
       url: "",
     },
   },
@@ -174,7 +178,7 @@ export const OtherProviderInfo = {
   },
   Captcha: {
     "Default": {
-      logo: `${StaticBaseUrl}/img/social_default.png`,
+      logo: `${StaticBaseUrl}/img/captcha_default.png`,
       url: "https://pkg.go.dev/github.com/dchest/captcha",
     },
     "reCAPTCHA": {
