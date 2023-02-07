@@ -10,7 +10,7 @@ type Migrator interface {
 func DoMigration(adapter *object.Adapter) {
 	migrators := []Migrator{
 		&Migrator_1_101_0_PR_1083{},
-		&Migrator_1_229_0_PR_1494{},
+		&Migrator_1_235_0_PR_1494{},
 		// more migrators add here...
 	}
 	for _, migrator := range migrators {

@@ -6,7 +6,7 @@ import (
 	"github.com/casdoor/casdoor/object"
 )
 
-type Migrator_1_229_0_PR_1494 struct{}
+type Migrator_1_235_0_PR_1494 struct{}
 
 type newSession struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -25,16 +25,17 @@ type oldSession struct {
 	SessionId []string `json:"sessionId"`
 }
 
-func (*Migrator_1_229_0_PR_1494) IsMigrationNeeded(adapter *object.Adapter) bool {
-	if exist, _ := adapter.Engine.IsTableExist("session"); exist {
-		if err := adapter.Engine.Table("session").Find(&[]*oldSession{}); err == nil {
-			return true
-		}
+func (*Migrator_1_235_0_PR_1494) IsMigrationNeeded(adapter *object.Adapter) bool {
+	exist, _ := adapter.Engine.IsTableExist("session")
+	err := adapter.Engine.Table("session").Find(&[]*oldSession{})
+
+	if exist && err == nil {
+		return true
 	}
 	return false
 }
 
-func (*Migrator_1_229_0_PR_1494) DoMigration(adapter *object.Adapter) {
+func (*Migrator_1_235_0_PR_1494) DoMigration(adapter *object.Adapter) {
 	// Create a new field called 'application' and add it to the primary key for table `session`
 	var err error
 	tx := adapter.Engine.NewSession()
