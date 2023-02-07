@@ -41,16 +41,21 @@ func InitConfig() {
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
-	InitAdapter(true)
+	a := InitAdapter()
+	CreateTables(a, true)
 	MigrateDatabase()
 }
 
-func InitAdapter(createDatabase bool) {
+func InitAdapter() *Adapter {
 	adapter = NewAdapter(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
+	return adapter
+}
+
+func CreateTables(a *Adapter, createDatabase bool) {
 	if createDatabase {
-		adapter.CreateDatabase()
+		a.CreateDatabase()
 	}
-	adapter.createTable()
+	a.createTable()
 }
 
 // Adapter represents the MySQL adapter for policy storage.
@@ -223,7 +228,7 @@ func (a *Adapter) createTable() {
 		panic(err)
 	}
 
-	err = a.syncSession()
+	err = a.Engine.Sync2(new(Session))
 	if err != nil {
 		panic(err)
 	}

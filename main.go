@@ -24,6 +24,7 @@ import (
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/controllers"
+	"github.com/casdoor/casdoor/migrate"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/routers"
@@ -35,7 +36,10 @@ func main() {
 	createDatabase := flag.Bool("createDatabase", false, "true if you need Casdoor to create database")
 	flag.Parse()
 
-	object.InitAdapter(*createDatabase)
+	adapter := object.InitAdapter()
+	migrate.DoMigration(adapter)
+	object.CreateTables(adapter, *createDatabase)
+
 	object.InitDb()
 	object.InitFromFile()
 	object.InitDefaultStorageProvider()
