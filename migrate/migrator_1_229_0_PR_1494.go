@@ -27,7 +27,7 @@ type oldSession struct {
 
 func (*Migrator_1_229_0_PR_1494) IsMigrationNeeded(adapter *object.Adapter) bool {
 	if exist, _ := adapter.Engine.IsTableExist("session"); exist {
-		if colErr := adapter.Engine.Table("session").Find(&[]*newSession{}); colErr != nil {
+		if err := adapter.Engine.Table("session").Find(&[]*oldSession{}); err == nil {
 			return true
 		}
 	}
