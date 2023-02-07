@@ -139,7 +139,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		})
 	}
 
-	if resp.Status == "ok" && user.Owner == "built-in" && application.Name == "app-built-in" {
+	if resp.Status == "ok" && user.Owner == object.CasdoorOrganization && application.Name == object.CasdoorApplication {
 		object.AddSession(&object.Session{
 			Owner:       user.Owner,
 			Name:        user.Name,
