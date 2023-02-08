@@ -25,8 +25,6 @@ import (
 )
 
 func InitDb() {
-	MigratePermissionRule()
-
 	existed := initBuiltInOrganization()
 	if !existed {
 		initBuiltInModel()

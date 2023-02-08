@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 
@@ -41,16 +42,21 @@ func InitConfig() {
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
-	InitAdapter(true)
+	a := InitAdapter()
+	CreateTables(a, true)
 	initMigrations()
 }
 
-func InitAdapter(createDatabase bool) {
+func InitAdapter() *Adapter {
 	adapter = NewAdapter(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
+	return adapter
+}
+
+func CreateTables(a *Adapter, createDatabase bool) {
 	if createDatabase {
-		adapter.CreateDatabase()
+		a.CreateDatabase()
 	}
-	adapter.createTable()
+	a.createTable()
 }
 
 // Adapter represents the MySQL adapter for policy storage.
@@ -227,6 +233,98 @@ func (a *Adapter) createTable() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (a *Adapter) syncSession() error {
+	if exist, _ := a.Engine.IsTableExist("session"); exist {
+		if colErr := a.Engine.Find(&[]*Session{}); colErr != nil {
+			// Create a new field called 'application' and add it to the primary key for table `session`
+			var err error
+			tx := a.Engine.NewSession()
+
+			if alreadyCreated, _ := a.Engine.IsTableExist("session_tmp"); alreadyCreated {
+				panic(errors.New("there is already a table called 'session_tmp', please rename or delete it for casdoor version migration and restart"))
+			}
+
+			tx.Table("session_tmp").CreateTable(&Session{})
+
+			type oldSession struct {
+				Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
+				Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+				CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+
+				SessionId []string `json:"sessionId"`
+			}
+
+			oldSessions := []*oldSession{}
+			newSessions := []*Session{}
+
+			tx.Table("session").Find(&oldSessions)
+
+			for _, oldSession := range oldSessions {
+				newApplication := "null"
+				if oldSession.Owner == "built-in" {
+					newApplication = "app-built-in"
+				}
+				newSessions = append(newSessions, &Session{
+					Owner:       oldSession.Owner,
+					Name:        oldSession.Name,
+					Application: newApplication,
+					CreatedTime: oldSession.CreatedTime,
+					SessionId:   oldSession.SessionId,
+				})
+			}
+
+			rollbackFlag := false
+			_, err = tx.Table("session_tmp").Insert(newSessions)
+			count1, _ := tx.Table("session_tmp").Count()
+			count2, _ := tx.Table("session").Count()
+
+			if err != nil || count1 != count2 {
+				rollbackFlag = true
+			}
+
+			delete := &Session{
+				Application: "null",
+			}
+			_, err = tx.Table("session_tmp").Delete(*delete)
+			if err != nil {
+				rollbackFlag = true
+			}
+
+			if rollbackFlag {
+				tx.DropTable("session_tmp")
+				panic(errors.New("there is something wrong with data migration for table `session`, if there is a table called `session_tmp` not created by you in casdoor, please drop it, then restart anyhow"))
+			}
+
+			err = tx.DropTable("session")
+			if err != nil {
+				panic(errors.New("fail to drop table `session` for casdoor, please drop it and rename the table `session_tmp` to `session` manually and restart"))
+			}
+
+			// Already drop table `session`
+			// Can't find an api from xorm for altering table name
+			err = tx.Table("session").CreateTable(&Session{})
+			if err != nil {
+				panic(errors.New("there is something wrong with data migration for table `session`, please restart"))
+			}
+
+			sessions := []*Session{}
+			tx.Table("session_tmp").Find(&sessions)
+			_, err = tx.Table("session").Insert(sessions)
+			if err != nil {
+				panic(errors.New("there is something wrong with data migration for table `session`, please drop table `session` and rename table `session_tmp` to `session` and restart"))
+			}
+
+			err = tx.DropTable("session_tmp")
+			if err != nil {
+				panic(errors.New("fail to drop table `session_tmp` for casdoor, please drop it manually and restart"))
+			}
+
+			tx.Close()
+		}
+	}
+	return a.Engine.Sync2(new(Session))
 }
 
 func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
