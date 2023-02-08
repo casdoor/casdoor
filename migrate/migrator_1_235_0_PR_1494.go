@@ -41,9 +41,9 @@ type oldSession struct {
 
 func (*Migrator_1_235_0_PR_1494) IsMigrationNeeded(adapter *object.Adapter) bool {
 	exist, _ := adapter.Engine.IsTableExist("session")
-	err := adapter.Engine.Table("session").Find(&[]*oldSession{})
+	err := adapter.Engine.Table("session").Find(&[]*newSession{})
 
-	if exist && err == nil {
+	if exist && err != nil {
 		return true
 	}
 	return false
