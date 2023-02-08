@@ -66,7 +66,10 @@ func (*Migrator_1_101_0_PR_1083) IsMigrationNeeded(adapter *object.Adapter) bool
 	exist2, _ := adapter.Engine.IsTableExist("permission")
 	exist3, _ := adapter.Engine.IsTableExist("permission_rule")
 
-	if exist1 && exist2 && exist3 {
+	err1 := adapter.Engine.Table("model").Find(&[]*oldModel{})
+	err2 := adapter.Engine.Table("permission").Find(&[]*oldPermission{})
+
+	if exist1 && exist2 && exist3 && err1 == nil && err2 == nil {
 		return true
 	}
 	return false
