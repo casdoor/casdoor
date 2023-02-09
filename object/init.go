@@ -25,8 +25,6 @@ import (
 )
 
 func InitDb() {
-	MigratePermissionRule()
-
 	existed := initBuiltInOrganization()
 	if !existed {
 		initBuiltInModel()
@@ -36,6 +34,8 @@ func InitDb() {
 		initBuiltInApplication()
 		initBuiltInCert()
 		initBuiltInLdap()
+	} else {
+		MigrateDatabase()
 	}
 
 	initWebAuthn()
