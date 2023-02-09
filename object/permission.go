@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"xorm.io/core"
@@ -267,33 +266,6 @@ func GetPermissionsBySubmitter(owner string, submitter string) []*Permission {
 	}
 
 	return permissions
-}
-
-func MigratePermissionRule() {
-	models := []*Model{}
-	err := adapter.Engine.Find(&models, &Model{})
-	if err != nil {
-		panic(err)
-	}
-
-	isHit := false
-	for _, model := range models {
-		if strings.Contains(model.ModelText, "permission") {
-			// update model table
-			model.ModelText = strings.Replace(model.ModelText, "permission,", "", -1)
-			UpdateModel(model.GetId(), model)
-			isHit = true
-		}
-	}
-
-	if isHit {
-		// update permission_rule table
-		sql := "UPDATE `permission_rule`SET V0 = V1, V1 = V2, V2 = V3, V3 = V4, V4 = V5 WHERE V0 IN (SELECT CONCAT(owner, '/', name) AS permission_id FROM `permission`)"
-		_, err = adapter.Engine.Exec(sql)
-		if err != nil {
-			return
-		}
-	}
 }
 
 func ContainsAsterisk(userId string, users []string) bool {

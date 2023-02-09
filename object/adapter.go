@@ -28,7 +28,6 @@ import (
 	_ "modernc.org/sqlite"               // db = sqlite
 	"xorm.io/core"
 	"xorm.io/xorm"
-	"xorm.io/xorm/migrate"
 )
 
 var adapter *Adapter
@@ -42,7 +41,7 @@ func InitConfig() {
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
 	InitAdapter(true)
-	initMigrations()
+	MigrateDatabase()
 }
 
 func InitAdapter(createDatabase bool) {
@@ -251,23 +250,4 @@ func GetSession(owner string, offset, limit int, field, value, sortField, sortOr
 		session = session.Desc(util.SnakeString(sortField))
 	}
 	return session
-}
-
-func initMigrations() {
-	migrations := []*migrate.Migration{
-		{
-			ID: "20221015CasbinRule--fill ptype field with p",
-			Migrate: func(tx *xorm.Engine) error {
-				_, err := tx.Cols("ptype").Update(&xormadapter.CasbinRule{
-					Ptype: "p",
-				})
-				return err
-			},
-			Rollback: func(tx *xorm.Engine) error {
-				return tx.DropTables(&xormadapter.CasbinRule{})
-			},
-		},
-	}
-	m := migrate.New(adapter.Engine, migrate.DefaultOptions, migrations)
-	m.Migrate()
 }
