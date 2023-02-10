@@ -52,7 +52,7 @@ func (c *ApiController) GetModels() {
 // @Title GetModel
 // @Tag Model API
 // @Description get model
-// @Param   id    query    string  true        "The id of the model"
+// @Param   id     query    string  true        "The id ( owner/name ) of the model"
 // @Success 200 {object} object.Model The Response object
 // @router /get-model [get]
 func (c *ApiController) GetModel() {
@@ -66,7 +66,7 @@ func (c *ApiController) GetModel() {
 // @Title UpdateModel
 // @Tag Model API
 // @Description update model
-// @Param   id    query    string  true        "The id of the model"
+// @Param   id     query    string  true        "The id ( owner/name ) of the model"
 // @Param   body    body   object.Model  true        "The details of the model"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-model [post]

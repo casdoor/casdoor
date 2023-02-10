@@ -52,7 +52,7 @@ func (c *ApiController) GetRoles() {
 // @Title GetRole
 // @Tag Role API
 // @Description get role
-// @Param   id    query    string  true        "The id of the role"
+// @Param   id     query    string  true        "The id ( owner/name ) of the role"
 // @Success 200 {object} object.Role The Response object
 // @router /get-role [get]
 func (c *ApiController) GetRole() {
@@ -66,7 +66,7 @@ func (c *ApiController) GetRole() {
 // @Title UpdateRole
 // @Tag Role API
 // @Description update role
-// @Param   id    query    string  true        "The id of the role"
+// @Param   id     query    string  true        "The id ( owner/name ) of the role"
 // @Param   body    body   object.Role  true        "The details of the role"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-role [post]

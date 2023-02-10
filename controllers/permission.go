@@ -69,7 +69,7 @@ func (c *ApiController) GetPermissionsBySubmitter() {
 // @Title GetPermissionsByRole
 // @Tag Permission API
 // @Description get permissions by role
-// @Param   id    query    string  true        "The id of the role"
+// @Param   id     query    string  true        "The id ( owner/name ) of the role"
 // @Success 200 {array} object.Permission The Response object
 // @router /get-permissions-by-role [get]
 func (c *ApiController) GetPermissionsByRole() {
@@ -83,7 +83,7 @@ func (c *ApiController) GetPermissionsByRole() {
 // @Title GetPermission
 // @Tag Permission API
 // @Description get permission
-// @Param   id    query    string  true        "The id of the permission"
+// @Param   id     query    string  true        "The id ( owner/name ) of the permission"
 // @Success 200 {object} object.Permission The Response object
 // @router /get-permission [get]
 func (c *ApiController) GetPermission() {
@@ -97,7 +97,7 @@ func (c *ApiController) GetPermission() {
 // @Title UpdatePermission
 // @Tag Permission API
 // @Description update permission
-// @Param   id    query    string  true        "The id of the permission"
+// @Param   id     query    string  true        "The id ( owner/name ) of the permission"
 // @Param   body    body   object.Permission  true        "The details of the permission"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-permission [post]

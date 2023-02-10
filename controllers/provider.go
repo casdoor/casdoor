@@ -76,7 +76,7 @@ func (c *ApiController) GetGlobalProviders() {
 // @Title GetProvider
 // @Tag Provider API
 // @Description get provider
-// @Param   id    query    string  true        "The id of the provider"
+// @Param   id     query    string  true        "The id ( owner/name ) of the provider"
 // @Success 200 {object} object.Provider The Response object
 // @router /get-provider [get]
 func (c *ApiController) GetProvider() {
@@ -89,7 +89,7 @@ func (c *ApiController) GetProvider() {
 // @Title UpdateProvider
 // @Tag Provider API
 // @Description update provider
-// @Param   id    query    string  true        "The id of the provider"
+// @Param   id     query    string  true        "The id ( owner/name ) of the provider"
 // @Param   body    body   object.Provider  true        "The details of the provider"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-provider [post]

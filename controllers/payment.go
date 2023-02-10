@@ -71,7 +71,7 @@ func (c *ApiController) GetUserPayments() {
 // @Title GetPayment
 // @Tag Payment API
 // @Description get payment
-// @Param   id    query    string  true        "The id of the payment"
+// @Param   id     query    string  true        "The id ( owner/name ) of the payment"
 // @Success 200 {object} object.Payment The Response object
 // @router /get-payment [get]
 func (c *ApiController) GetPayment() {
@@ -85,7 +85,7 @@ func (c *ApiController) GetPayment() {
 // @Title UpdatePayment
 // @Tag Payment API
 // @Description update payment
-// @Param   id    query    string  true        "The id of the payment"
+// @Param   id     query    string  true        "The id ( owner/name ) of the payment"
 // @Param   body    body   object.Payment  true        "The details of the payment"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-payment [post]
@@ -172,7 +172,7 @@ func (c *ApiController) NotifyPayment() {
 // @Title InvoicePayment
 // @Tag Payment API
 // @Description invoice payment
-// @Param   id    query    string  true        "The id of the payment"
+// @Param   id     query    string  true        "The id ( owner/name ) of the payment"
 // @Success 200 {object} controllers.Response The Response object
 // @router /invoice-payment [post]
 func (c *ApiController) InvoicePayment() {

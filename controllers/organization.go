@@ -66,7 +66,7 @@ func (c *ApiController) GetOrganization() {
 // @Title UpdateOrganization
 // @Tag Organization API
 // @Description update organization
-// @Param   id     query    string  true        "The id of the organization"
+// @Param   id     query    string  true        "The id ( owner/name ) of the organization"
 // @Param   body    body   object.Organization  true        "The details of the organization"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-organization [post]

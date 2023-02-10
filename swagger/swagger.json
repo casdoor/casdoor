@@ -578,7 +578,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the product",
+                        "description": "The id ( owner/name ) of the product",
                         "required": true,
                         "type": "string"
                     },
@@ -894,8 +894,8 @@
                 "parameters": [
                     {
                         "in": "query",
-                        "name": "ID",
-                        "description": "The ID(owner/name) of user.",
+                        "name": "id",
+                        "description": "The id ( owner/name )(owner/name) of user.",
                         "required": true,
                         "type": "string"
                     }
@@ -1107,7 +1107,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the application.",
+                        "description": "The id ( owner/name ) of the application.",
                         "required": true,
                         "type": "string"
                     }
@@ -1162,7 +1162,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the cert",
+                        "description": "The id ( owner/name ) of the cert",
                         "required": true,
                         "type": "string"
                     }
@@ -1340,7 +1340,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the model",
+                        "description": "The id ( owner/name ) of the model",
                         "required": true,
                         "type": "string"
                     }
@@ -1479,7 +1479,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the payment",
+                        "description": "The id ( owner/name ) of the payment",
                         "required": true,
                         "type": "string"
                     }
@@ -1534,7 +1534,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the permission",
+                        "description": "The id ( owner/name ) of the permission",
                         "required": true,
                         "type": "string"
                     }
@@ -1589,7 +1589,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the role",
+                        "description": "The id ( owner/name ) of the role",
                         "required": true,
                         "type": "string"
                     }
@@ -1638,7 +1638,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the product",
+                        "description": "The id ( owner/name ) of the product",
                         "required": true,
                         "type": "string"
                     }
@@ -1693,7 +1693,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the provider",
+                        "description": "The id ( owner/name ) of the provider",
                         "required": true,
                         "type": "string"
                     }
@@ -1840,7 +1840,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the role",
+                        "description": "The id ( owner/name ) of the role",
                         "required": true,
                         "type": "string"
                     }
@@ -1966,7 +1966,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the syncer",
+                        "description": "The id ( owner/name ) of the syncer",
                         "required": true,
                         "type": "string"
                     }
@@ -2021,7 +2021,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the user",
+                        "description": "The id ( owner/name ) of the user",
                         "required": true,
                         "type": "string"
                     }
@@ -2047,7 +2047,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of token",
+                        "description": "The id ( owner/name ) of token",
                         "required": true,
                         "type": "string"
                     }
@@ -2116,7 +2116,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the user",
+                        "description": "The id ( owner/name ) of the user",
                         "required": true,
                         "type": "string"
                     },
@@ -2160,7 +2160,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the user",
+                        "description": "The id ( owner/name ) of the user",
                         "required": true,
                         "type": "string"
                     }
@@ -2286,7 +2286,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the webhook",
+                        "description": "The id ( owner/name ) of the webhook",
                         "required": true,
                         "type": "string"
                     }
@@ -2341,7 +2341,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the payment",
+                        "description": "The id ( owner/name ) of the payment",
                         "required": true,
                         "type": "string"
                     }
@@ -2504,8 +2504,8 @@
                 "parameters": [
                     {
                         "in": "query",
-                        "name": "user_id",
-                        "description": "The id of user",
+                        "name": "id",
+                        "description": "The id ( owner/name ) of user",
                         "required": true,
                         "type": "string"
                     },
@@ -2904,7 +2904,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the application",
+                        "description": "The id ( owner/name ) of the application",
                         "required": true,
                         "type": "string"
                     },
@@ -2939,7 +2939,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the cert",
+                        "description": "The id ( owner/name ) of the cert",
                         "required": true,
                         "type": "string"
                     },
@@ -2982,7 +2982,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the model",
+                        "description": "The id ( owner/name ) of the model",
                         "required": true,
                         "type": "string"
                     },
@@ -3017,7 +3017,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the organization",
+                        "description": "The id ( owner/name ) of the organization",
                         "required": true,
                         "type": "string"
                     },
@@ -3052,7 +3052,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the payment",
+                        "description": "The id ( owner/name ) of the payment",
                         "required": true,
                         "type": "string"
                     },
@@ -3087,7 +3087,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the permission",
+                        "description": "The id ( owner/name ) of the permission",
                         "required": true,
                         "type": "string"
                     },
@@ -3122,7 +3122,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the product",
+                        "description": "The id ( owner/name ) of the product",
                         "required": true,
                         "type": "string"
                     },
@@ -3157,7 +3157,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the provider",
+                        "description": "The id ( owner/name ) of the provider",
                         "required": true,
                         "type": "string"
                     },
@@ -3200,7 +3200,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the role",
+                        "description": "The id ( owner/name ) of the role",
                         "required": true,
                         "type": "string"
                     },
@@ -3235,7 +3235,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the syncer",
+                        "description": "The id ( owner/name ) of the syncer",
                         "required": true,
                         "type": "string"
                     },
@@ -3270,7 +3270,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of token",
+                        "description": "The id ( owner/name ) of token",
                         "required": true,
                         "type": "string"
                     },
@@ -3305,7 +3305,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the user",
+                        "description": "The id ( owner/name ) of the user",
                         "required": true,
                         "type": "string"
                     },
@@ -3340,7 +3340,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id of the webhook",
+                        "description": "The id ( owner/name ) of the webhook",
                         "required": true,
                         "type": "string"
                     },
@@ -3505,11 +3505,11 @@
         }
     },
     "definitions": {
-        "2268.0xc0000f9650.false": {
+        "2346.0xc0001ce990.false": {
             "title": "false",
             "type": "object"
         },
-        "2302.0xc0000f9680.false": {
+        "2381.0xc0001ce9c0.false": {
             "title": "false",
             "type": "object"
         },
@@ -3636,10 +3636,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2268.0xc0000f9650.false"
+                    "$ref": "#/definitions/2346.0xc0001ce990.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2302.0xc0000f9680.false"
+                    "$ref": "#/definitions/2381.0xc0001ce9c0.false"
                 },
                 "msg": {
                     "type": "string"
@@ -3845,6 +3845,9 @@
                 },
                 "termsOfUse": {
                     "type": "string"
+                },
+                "themeData": {
+                    "$ref": "#/definitions/object.ThemeData"
                 },
                 "tokenFormat": {
                     "type": "string"
@@ -4142,6 +4145,9 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "themeData": {
+                    "$ref": "#/definitions/object.ThemeData"
                 },
                 "websiteUrl": {
                     "type": "string"
@@ -4727,6 +4733,28 @@
                 }
             }
         },
+        "object.ThemeData": {
+            "title": "ThemeData",
+            "type": "object",
+            "properties": {
+                "borderRadius": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "colorPrimary": {
+                    "type": "string"
+                },
+                "isCompact": {
+                    "type": "boolean"
+                },
+                "isEnabled": {
+                    "type": "boolean"
+                },
+                "themeType": {
+                    "type": "string"
+                }
+            }
+        },
         "object.Token": {
             "title": "Token",
             "type": "object",
@@ -4836,7 +4864,13 @@
                 "alipay": {
                     "type": "string"
                 },
+                "amazon": {
+                    "type": "string"
+                },
                 "apple": {
+                    "type": "string"
+                },
+                "auth0": {
                     "type": "string"
                 },
                 "avatar": {
@@ -4848,6 +4882,9 @@
                 "baidu": {
                     "type": "string"
                 },
+                "battlenet": {
+                    "type": "string"
+                },
                 "bilibili": {
                     "type": "string"
                 },
@@ -4857,7 +4894,16 @@
                 "birthday": {
                     "type": "string"
                 },
+                "bitbucket": {
+                    "type": "string"
+                },
+                "box": {
+                    "type": "string"
+                },
                 "casdoor": {
+                    "type": "string"
+                },
+                "cloudfoundry": {
                     "type": "string"
                 },
                 "createdIp": {
@@ -4869,13 +4915,28 @@
                 "custom": {
                     "type": "string"
                 },
+                "dailymotion": {
+                    "type": "string"
+                },
+                "deezer": {
+                    "type": "string"
+                },
+                "digitalocean": {
+                    "type": "string"
+                },
                 "dingtalk": {
+                    "type": "string"
+                },
+                "discord": {
                     "type": "string"
                 },
                 "displayName": {
                     "type": "string"
                 },
                 "douyin": {
+                    "type": "string"
+                },
+                "dropbox": {
                     "type": "string"
                 },
                 "education": {
@@ -4887,13 +4948,22 @@
                 "emailVerified": {
                     "type": "boolean"
                 },
+                "eveonline": {
+                    "type": "string"
+                },
                 "facebook": {
                     "type": "string"
                 },
                 "firstName": {
                     "type": "string"
                 },
+                "fitbit": {
+                    "type": "string"
+                },
                 "gender": {
+                    "type": "string"
+                },
+                "gitea": {
                     "type": "string"
                 },
                 "gitee": {
@@ -4911,6 +4981,9 @@
                 "hash": {
                     "type": "string"
                 },
+                "heroku": {
+                    "type": "string"
+                },
                 "homepage": {
                     "type": "string"
                 },
@@ -4923,7 +4996,16 @@
                 "idCardType": {
                     "type": "string"
                 },
+                "influxcloud": {
+                    "type": "string"
+                },
                 "infoflow": {
+                    "type": "string"
+                },
+                "instagram": {
+                    "type": "string"
+                },
+                "intercom": {
                     "type": "string"
                 },
                 "isAdmin": {
@@ -4943,6 +5025,9 @@
                 },
                 "isOnline": {
                     "type": "boolean"
+                },
+                "kakao": {
+                    "type": "string"
                 },
                 "karma": {
                     "type": "integer",
@@ -4966,6 +5051,9 @@
                 "lastSigninWrongTime": {
                     "type": "string"
                 },
+                "lastfm": {
+                    "type": "string"
+                },
                 "ldap": {
                     "type": "string"
                 },
@@ -4978,16 +5066,37 @@
                 "location": {
                     "type": "string"
                 },
+                "mailru": {
+                    "type": "string"
+                },
                 "managedAccounts": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/object.ManagedAccount"
                     }
                 },
+                "meetup": {
+                    "type": "string"
+                },
+                "microsoftonline": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
+                "naver": {
+                    "type": "string"
+                },
+                "nextcloud": {
+                    "type": "string"
+                },
                 "okta": {
+                    "type": "string"
+                },
+                "onedrive": {
+                    "type": "string"
+                },
+                "oura": {
                     "type": "string"
                 },
                 "owner": {
@@ -4997,6 +5106,12 @@
                     "type": "string"
                 },
                 "passwordSalt": {
+                    "type": "string"
+                },
+                "patreon": {
+                    "type": "string"
+                },
+                "paypal": {
                     "type": "string"
                 },
                 "permanentAvatar": {
@@ -5035,9 +5150,15 @@
                         "$ref": "#/definitions/object.Role"
                     }
                 },
+                "salesforce": {
+                    "type": "string"
+                },
                 "score": {
                     "type": "integer",
                     "format": "int64"
+                },
+                "shopify": {
+                    "type": "string"
                 },
                 "signinWrongTimes": {
                     "type": "integer",
@@ -5049,19 +5170,52 @@
                 "slack": {
                     "type": "string"
                 },
+                "soundcloud": {
+                    "type": "string"
+                },
+                "spotify": {
+                    "type": "string"
+                },
                 "steam": {
+                    "type": "string"
+                },
+                "strava": {
+                    "type": "string"
+                },
+                "stripe": {
                     "type": "string"
                 },
                 "tag": {
                     "type": "string"
                 },
+                "tiktok": {
+                    "type": "string"
+                },
                 "title": {
+                    "type": "string"
+                },
+                "tumblr": {
+                    "type": "string"
+                },
+                "twitch": {
+                    "type": "string"
+                },
+                "twitter": {
                     "type": "string"
                 },
                 "type": {
                     "type": "string"
                 },
+                "typetalk": {
+                    "type": "string"
+                },
+                "uber": {
+                    "type": "string"
+                },
                 "updatedTime": {
+                    "type": "string"
+                },
+                "vk": {
                     "type": "string"
                 },
                 "webauthnCredentials": {
@@ -5077,6 +5231,24 @@
                     "type": "string"
                 },
                 "weibo": {
+                    "type": "string"
+                },
+                "wepay": {
+                    "type": "string"
+                },
+                "xero": {
+                    "type": "string"
+                },
+                "yahoo": {
+                    "type": "string"
+                },
+                "yammer": {
+                    "type": "string"
+                },
+                "yandex": {
+                    "type": "string"
+                },
+                "zoom": {
                     "type": "string"
                 }
             }

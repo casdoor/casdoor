@@ -54,7 +54,7 @@ func (c *ApiController) GetTokens() {
 // @Title GetToken
 // @Tag Token API
 // @Description get token
-// @Param   id     query    string  true        "The id of token"
+// @Param   id     query    string  true        "The id ( owner/name ) of token"
 // @Success 200 {object} object.Token The Response object
 // @router /get-token [get]
 func (c *ApiController) GetToken() {
@@ -68,7 +68,7 @@ func (c *ApiController) GetToken() {
 // @Title UpdateToken
 // @Tag Token API
 // @Description update token
-// @Param   id     query    string  true        "The id of token"
+// @Param   id     query    string  true        "The id ( owner/name ) of token"
 // @Param   body    body   object.Token  true        "Details of the token"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-token [post]
@@ -128,7 +128,7 @@ func (c *ApiController) DeleteToken() {
 // @Title GetOAuthCode
 // @Tag Token API
 // @Description get OAuth code
-// @Param   user_id     query    string  true        "The id of user"
+// @Param   id     query    string  true        "The id ( owner/name ) of user"
 // @Param   client_id     query    string  true        "OAuth client id"
 // @Param   response_type     query    string  true        "OAuth response type"
 // @Param   redirect_uri     query    string  true        "OAuth redirect URI"
