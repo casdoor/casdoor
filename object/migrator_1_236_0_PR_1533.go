@@ -21,7 +21,7 @@ import (
 	"xorm.io/xorm/migrate"
 )
 
-type Migrator_1_236_0_PR_1494 struct{}
+type Migrator_1_236_0_PR_1533 struct{}
 
 type sessionV2 struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -40,7 +40,7 @@ type sessionV1 struct {
 	SessionId []string `json:"sessionId"`
 }
 
-func (*Migrator_1_236_0_PR_1494) IsMigrationNeeded(adapter *Adapter) bool {
+func (*Migrator_1_236_0_PR_1533) IsMigrationNeeded(adapter *Adapter) bool {
 	exist, _ := adapter.Engine.IsTableExist("session")
 	err := adapter.Engine.Table("session").Find(&[]*sessionV2{})
 
@@ -50,7 +50,7 @@ func (*Migrator_1_236_0_PR_1494) IsMigrationNeeded(adapter *Adapter) bool {
 	return false
 }
 
-func (*Migrator_1_236_0_PR_1494) DoMigration(adapter *Adapter) *migrate.Migration {
+func (*Migrator_1_236_0_PR_1533) DoMigration(adapter *Adapter) *migrate.Migration {
 	migration := migrate.Migration{
 		ID: "20230210MigrateSession--Create a new field called 'application' and add it to the primary key for table `session`",
 		Migrate: func(engine *xorm.Engine) error {
