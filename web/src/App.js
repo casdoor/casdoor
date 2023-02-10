@@ -554,6 +554,13 @@ class App extends Component {
   };
 
   renderContent() {
+    const onClick = ({key}) => {
+      if (key === "/swagger") {
+        window.open(Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger", "_blank");
+      } else {
+        this.props.history.push(key);
+      }
+    };
     return (
       <Layout id="parent-area">
         {/* https://github.com/ant-design/ant-design/issues/40394 ant design bug. If it will be fixed, we can delete the code for control the color of Header*/}
@@ -580,6 +587,7 @@ class App extends Component {
               </Button>
             </React.Fragment> :
             <Menu
+              onClick={onClick}
               items={this.getMenuItems()}
               mode={"horizontal"}
               selectedKeys={[this.state.selectedMenuKey]}
