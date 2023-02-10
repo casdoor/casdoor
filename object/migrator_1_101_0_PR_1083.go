@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package migrate
+package object
 
 import (
 	"fmt"
 	"strings"
 
 	casbinmodel "github.com/casbin/casbin/v2/model"
-	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-
 	"xorm.io/core"
+	"xorm.io/xorm"
+	"xorm.io/xorm/migrate"
 )
 
 type Migrator_1_101_0_PR_1083 struct{}
 
-type oldModel struct {
+type modelV1 struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
@@ -37,7 +37,7 @@ type oldModel struct {
 	IsEnabled bool   `json:"isEnabled"`
 }
 
-type oldPermission struct {
+type permissionV1 struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
@@ -61,7 +61,7 @@ type oldPermission struct {
 	State       string `xorm:"varchar(100)" json:"state"`
 }
 
-func (*Migrator_1_101_0_PR_1083) IsMigrationNeeded(adapter *object.Adapter) bool {
+func (*Migrator_1_101_0_PR_1083) IsMigrationNeeded(adapter *Adapter) bool {
 	exist1, _ := adapter.Engine.IsTableExist("model")
 	exist2, _ := adapter.Engine.IsTableExist("permission")
 	exist3, _ := adapter.Engine.IsTableExist("permission_rule")
@@ -72,46 +72,53 @@ func (*Migrator_1_101_0_PR_1083) IsMigrationNeeded(adapter *object.Adapter) bool
 	return false
 }
 
-func (*Migrator_1_101_0_PR_1083) DoMigration(adapter *object.Adapter) {
-	// MigratePermissionRule
-	models := []*oldModel{}
-	err := adapter.Engine.Table("model").Find(&models, &oldModel{})
-	if err != nil {
-		panic(err)
+func (*Migrator_1_101_0_PR_1083) DoMigration(adapter *Adapter) *migrate.Migration {
+	migration := migrate.Migration{
+		ID: "20230209MigratePermissionRule--Use V5 instead of V1 to store permissionID",
+		Migrate: func(engine *xorm.Engine) error {
+			models := []*modelV1{}
+			err := engine.Table("model").Find(&models, &modelV1{})
+			if err != nil {
+				panic(err)
+			}
+
+			isHit := false
+			for _, model := range models {
+				if strings.Contains(model.ModelText, "permission") {
+					// update model table
+					model.ModelText = strings.Replace(model.ModelText, "permission,", "", -1)
+					migrateUpdateModel(adapter, model.getId(), model)
+					isHit = true
+				}
+			}
+
+			if isHit {
+				// update permission_rule table
+				sql := "UPDATE `permission_rule`SET V0 = V1, V1 = V2, V2 = V3, V3 = V4, V4 = V5 WHERE V0 IN (SELECT CONCAT(owner, '/', name) AS permission_id FROM `permission`)"
+				_, err = engine.Exec(sql)
+				if err != nil {
+					return err
+				}
+			}
+			return err
+		},
 	}
 
-	isHit := false
-	for _, model := range models {
-		if strings.Contains(model.ModelText, "permission") {
-			// update model table
-			model.ModelText = strings.Replace(model.ModelText, "permission,", "", -1)
-			updateModel(adapter, model.getId(), model)
-			isHit = true
-		}
-	}
-
-	if isHit {
-		// update permission_rule table
-		sql := "UPDATE `permission_rule`SET V0 = V1, V1 = V2, V2 = V3, V3 = V4, V4 = V5 WHERE V0 IN (SELECT CONCAT(owner, '/', name) AS permission_id FROM `permission`)"
-		_, err = adapter.Engine.Exec(sql)
-		if err != nil {
-			return
-		}
-	}
+	return &migration
 }
 
-func (oldModel *oldModel) getId() string {
+func (oldModel *modelV1) getId() string {
 	return fmt.Sprintf("%s/%s", oldModel.Owner, oldModel.Name)
 }
 
-func updateModel(adapter *object.Adapter, id string, modelObj *oldModel) bool {
+func migrateUpdateModel(adapter *Adapter, id string, modelObj *modelV1) bool {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getModel(adapter, owner, name) == nil {
+	if migrateGetModel(adapter, owner, name) == nil {
 		return false
 	}
 
 	if name != modelObj.Name {
-		err := modelChangeTrigger(adapter, name, modelObj.Name)
+		err := migrateModelChangeTrigger(adapter, name, modelObj.Name)
 		if err != nil {
 			return false
 		}
@@ -130,12 +137,12 @@ func updateModel(adapter *object.Adapter, id string, modelObj *oldModel) bool {
 	return affected != 0
 }
 
-func getModel(adapter *object.Adapter, owner string, name string) *oldModel {
+func migrateGetModel(adapter *Adapter, owner string, name string) *modelV1 {
 	if owner == "" || name == "" {
 		return nil
 	}
 
-	m := oldModel{Owner: owner, Name: name}
+	m := modelV1{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Table("model").Get(&m)
 	if err != nil {
 		panic(err)
@@ -148,7 +155,7 @@ func getModel(adapter *object.Adapter, owner string, name string) *oldModel {
 	}
 }
 
-func modelChangeTrigger(adapter *object.Adapter, oldName string, newName string) error {
+func migrateModelChangeTrigger(adapter *Adapter, oldName string, newName string) error {
 	session := adapter.Engine.NewSession()
 	defer session.Close()
 
@@ -157,7 +164,7 @@ func modelChangeTrigger(adapter *object.Adapter, oldName string, newName string)
 		return err
 	}
 
-	permission := new(oldPermission)
+	permission := new(permissionV1)
 	permission.Model = newName
 	_, err = session.Table("permission").Where("model=?", oldName).Update(permission)
 	if err != nil {

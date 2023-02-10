@@ -52,7 +52,7 @@ func (c *ApiController) GetSessions() {
 // @Title GetSingleSession
 // @Tag Session API
 // @Description Get session for one user in one application.
-// @Param   ID     query    string  true        "The ID(organization/application/user) of session"
+// @Param   id     query    string  true        "The id(organization/application/user) of session"
 // @Success 200 {array} string The Response object
 // @router /get-session [get]
 func (c *ApiController) GetSingleSession() {
@@ -66,7 +66,7 @@ func (c *ApiController) GetSingleSession() {
 // @Title UpdateSession
 // @Tag Session API
 // @Description Update session for one user in one application.
-// @Param   ID     query    string  true        "The ID(organization/application/user) of session"
+// @Param   id     query    string  true        "The id(organization/application/user) of session"
 // @Success 200 {array} string The Response object
 // @router /update-session [post]
 func (c *ApiController) UpdateSession() {
@@ -85,7 +85,7 @@ func (c *ApiController) UpdateSession() {
 // @Title AddSession
 // @Tag Session API
 // @Description Add session for one user in one application. If there are other existing sessions, join the session into the list.
-// @Param   ID     query    string  true        "The ID(organization/application/user) of session"
+// @Param   id     query    string  true        "The id(organization/application/user) of session"
 // @Param   sessionId     query    string  true        "sessionId to be added"
 // @Success 200 {array} string The Response object
 // @router /add-session [post]
@@ -105,7 +105,7 @@ func (c *ApiController) AddSession() {
 // @Title DeleteSession
 // @Tag Session API
 // @Description Delete session for one user in one application.
-// @Param   ID     query    string  true        "The ID(organization/application/user) of session"
+// @Param   id     query    string  true        "The id(organization/application/user) of session"
 // @Success 200 {array} string The Response object
 // @router /delete-session [post]
 func (c *ApiController) DeleteSession() {
@@ -124,7 +124,7 @@ func (c *ApiController) DeleteSession() {
 // @Title IsSessionDuplicated
 // @Tag Session API
 // @Description Check if there are other different sessions for one user in one application.
-// @Param   ID     query    string  true        "The ID(organization/application/user) of session"
+// @Param   id     query    string  true        "The id(organization/application/user) of session"
 // @Param   sessionId     query    string  true        "sessionId to be checked"
 // @Success 200 {array} string The Response object
 // @router /is-user-session-duplicated [get]

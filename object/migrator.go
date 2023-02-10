@@ -12,24 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package migrate
+package object
 
-import "github.com/casdoor/casdoor/object"
+import "xorm.io/xorm/migrate"
 
 type Migrator interface {
-	IsMigrationNeeded(adapter *object.Adapter) bool
-	DoMigration(adapter *object.Adapter)
+	IsMigrationNeeded(adapter *Adapter) bool
+	DoMigration(adapter *Adapter) *migrate.Migration
 }
 
-func DoMigration(adapter *object.Adapter) {
+func DoMigration(adapter *Adapter) {
 	migrators := []Migrator{
 		&Migrator_1_101_0_PR_1083{},
-		&Migrator_1_235_0_PR_1494{},
-		// more migrators add here...
+		&Migrator_1_235_0_PR_1530{},
+		&Migrator_1_236_0_PR_1494{},
+		// more migrators add here in chronological order...
 	}
+
+	migrations := []*migrate.Migration{}
+
 	for _, migrator := range migrators {
 		if migrator.IsMigrationNeeded(adapter) {
-			migrator.DoMigration(adapter)
+			migrations = append(migrations, migrator.DoMigration(adapter))
 		}
 	}
+
+	m := migrate.New(adapter.Engine, migrate.DefaultOptions, migrations)
+	m.Migrate()
 }

@@ -24,7 +24,6 @@ import (
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/controllers"
-	"github.com/casdoor/casdoor/migrate"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/routers"
@@ -37,7 +36,7 @@ func main() {
 	flag.Parse()
 
 	adapter := object.InitAdapter()
-	migrate.DoMigration(adapter)
+	object.DoMigration(adapter)
 	object.CreateTables(adapter, *createDatabase)
 
 	object.InitDb()
