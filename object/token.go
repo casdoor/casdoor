@@ -321,7 +321,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string, tag string, avatar string, lang string) interface{} {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string) interface{} {
 	application := GetApplicationByClientId(clientId)
 	if application == nil {
 		return &TokenError{
@@ -348,6 +348,8 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, tokenError = GetPasswordToken(application, username, password, scope, host)
 	case "client_credentials": // Client Credentials Grant
 		token, tokenError = GetClientCredentialsToken(application, clientSecret, scope, host)
+	case "refresh_token":
+		return RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
 	}
 
 	if tag == "wechat_miniprogram" {
