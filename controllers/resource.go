@@ -180,6 +180,7 @@ func (c *ApiController) UploadResource() {
 		fileType, _ = util.GetOwnerAndNameFromId(mimeType)
 	}
 
+	fullFilePath = object.GetTruncatedPath(provider, fullFilePath, 175)
 	if tag != "avatar" && tag != "termsOfUse" {
 		ext := filepath.Ext(filepath.Base(fullFilePath))
 		index := len(fullFilePath) - len(ext)

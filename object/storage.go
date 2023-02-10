@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/url"
+	"path/filepath"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
@@ -52,6 +53,25 @@ func escapePath(path string) string {
 
 	res := strings.Join(tokens, "/")
 	return res
+}
+
+func GetTruncatedPath(provider *Provider, fullFilePath string, limit int) string {
+	pathPrefix := util.UrlJoin(util.GetUrlPath(provider.Domain), provider.PathPrefix)
+
+	dir, file := filepath.Split(fullFilePath)
+	ext := filepath.Ext(file)
+	fileName := strings.TrimSuffix(file, ext)
+	for {
+		escapedString := escapePath(escapePath(fullFilePath))
+		if len(escapedString) < limit-len(pathPrefix) {
+			break
+		}
+		rs := []rune(fileName)
+		fileName = string(rs[0 : len(rs)-1])
+		fullFilePath = dir + fileName + ext
+	}
+
+	return fullFilePath
 }
 
 func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool) (string, string) {
