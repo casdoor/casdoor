@@ -80,7 +80,7 @@ func (c *ApiController) GetUsers() {
 // @Title GetUser
 // @Tag User API
 // @Description get user
-// @Param   id     query    string  true         "The id of the user"
+// @Param   id     query    string  true        "The id ( owner/name ) of the user"
 // @Param   owner  query    string  false        "The owner of the user"
 // @Param   email  query    string  false 	     "The email of the user"
 // @Param   phone  query    string  false 	     "The phone of the user"
@@ -129,7 +129,7 @@ func (c *ApiController) GetUser() {
 // @Title UpdateUser
 // @Tag User API
 // @Description update user
-// @Param   id     query    string  true        "The id of the user"
+// @Param   id     query    string  true        "The id ( owner/name ) of the user"
 // @Param   body    body   object.User  true        "The details of the user"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-user [post]

@@ -52,7 +52,7 @@ func (c *ApiController) GetWebhooks() {
 // @Title GetWebhook
 // @Tag Webhook API
 // @Description get webhook
-// @Param   id    query    string  true        "The id of the webhook"
+// @Param   id     query    string  true        "The id ( owner/name ) of the webhook"
 // @Success 200 {object} object.Webhook The Response object
 // @router /get-webhook [get]
 func (c *ApiController) GetWebhook() {
@@ -66,7 +66,7 @@ func (c *ApiController) GetWebhook() {
 // @Title UpdateWebhook
 // @Tag Webhook API
 // @Description update webhook
-// @Param   id    query    string  true        "The id of the webhook"
+// @Param   id     query    string  true        "The id ( owner/name ) of the webhook"
 // @Param   body    body   object.Webhook  true        "The details of the webhook"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-webhook [post]

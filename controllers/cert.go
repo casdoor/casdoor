@@ -52,7 +52,7 @@ func (c *ApiController) GetCerts() {
 // @Title GetCert
 // @Tag Cert API
 // @Description get cert
-// @Param   id    query    string  true        "The id of the cert"
+// @Param   id     query    string  true        "The id ( owner/name ) of the cert"
 // @Success 200 {object} object.Cert The Response object
 // @router /get-cert [get]
 func (c *ApiController) GetCert() {
@@ -66,7 +66,7 @@ func (c *ApiController) GetCert() {
 // @Title UpdateCert
 // @Tag Cert API
 // @Description update cert
-// @Param   id    query    string  true        "The id of the cert"
+// @Param   id     query    string  true        "The id ( owner/name ) of the cert"
 // @Param   body    body   object.Cert  true        "The details of the cert"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-cert [post]

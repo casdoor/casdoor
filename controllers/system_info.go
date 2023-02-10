@@ -29,7 +29,7 @@ type SystemInfo struct {
 // @Title GetSystemInfo
 // @Tag System API
 // @Description get user's system info
-// @Param   id    query    string  true        "The id of the user"
+// @Param   id     query    string  true        "The id ( owner/name ) of the user"
 // @Success 200 {object} object.SystemInfo The Response object
 // @router /get-system-info [get]
 func (c *ApiController) GetSystemInfo() {

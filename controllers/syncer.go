@@ -52,7 +52,7 @@ func (c *ApiController) GetSyncers() {
 // @Title GetSyncer
 // @Tag Syncer API
 // @Description get syncer
-// @Param   id    query    string  true        "The id of the syncer"
+// @Param   id     query    string  true        "The id ( owner/name ) of the syncer"
 // @Success 200 {object} object.Syncer The Response object
 // @router /get-syncer [get]
 func (c *ApiController) GetSyncer() {
@@ -66,7 +66,7 @@ func (c *ApiController) GetSyncer() {
 // @Title UpdateSyncer
 // @Tag Syncer API
 // @Description update syncer
-// @Param   id    query    string  true        "The id of the syncer"
+// @Param   id     query    string  true        "The id ( owner/name ) of the syncer"
 // @Param   body    body   object.Syncer  true        "The details of the syncer"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-syncer [post]

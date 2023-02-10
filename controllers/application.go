@@ -63,7 +63,7 @@ func (c *ApiController) GetApplications() {
 // @Title GetApplication
 // @Tag Application API
 // @Description get the detail of an application
-// @Param   id     query    string  true        "The id of the application."
+// @Param   id     query    string  true        "The id ( owner/name ) of the application."
 // @Success 200 {object} object.Application The Response object
 // @router /get-application [get]
 func (c *ApiController) GetApplication() {
@@ -78,7 +78,7 @@ func (c *ApiController) GetApplication() {
 // @Title GetUserApplication
 // @Tag Application API
 // @Description get the detail of the user's application
-// @Param   id     query    string  true        "The id of the user"
+// @Param   id     query    string  true        "The id ( owner/name ) of the user"
 // @Success 200 {object} object.Application The Response object
 // @router /get-user-application [get]
 func (c *ApiController) GetUserApplication() {
@@ -134,7 +134,7 @@ func (c *ApiController) GetOrganizationApplications() {
 // @Title UpdateApplication
 // @Tag Application API
 // @Description update an application
-// @Param   id     query    string  true        "The id of the application"
+// @Param   id     query    string  true        "The id ( owner/name ) of the application"
 // @Param   body    body   object.Application  true        "The details of the application"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-application [post]

@@ -53,7 +53,7 @@ func (c *ApiController) GetProducts() {
 // @Title GetProduct
 // @Tag Product API
 // @Description get product
-// @Param   id    query    string  true        "The id of the product"
+// @Param   id     query    string  true        "The id ( owner/name ) of the product"
 // @Success 200 {object} object.Product The Response object
 // @router /get-product [get]
 func (c *ApiController) GetProduct() {
@@ -70,7 +70,7 @@ func (c *ApiController) GetProduct() {
 // @Title UpdateProduct
 // @Tag Product API
 // @Description update product
-// @Param   id    query    string  true        "The id of the product"
+// @Param   id     query    string  true        "The id ( owner/name ) of the product"
 // @Param   body    body   object.Product  true        "The details of the product"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-product [post]
@@ -130,7 +130,7 @@ func (c *ApiController) DeleteProduct() {
 // @Title BuyProduct
 // @Tag Product API
 // @Description buy product
-// @Param   id    query    string  true            "The id of the product"
+// @Param   id     query    string  true        "The id ( owner/name ) of the product"
 // @Param   providerName    query    string  true  "The name of the provider"
 // @Success 200 {object} controllers.Response The Response object
 // @router /buy-product [post]

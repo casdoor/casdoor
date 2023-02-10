@@ -26,7 +26,7 @@ import (
 // @Title DeleteSession
 // @Tag Session API
 // @Description Delete session by userId
-// @Param   ID     query    string  true        "The ID(owner/name) of user."
+// @Param   id     query    string  true        "The id ( owner/name )(owner/name) of user."
 // @Success 200 {array} string The Response object
 // @router /delete-session [post]
 func (c *ApiController) DeleteSession() {
