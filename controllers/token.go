@@ -172,6 +172,7 @@ func (c *ApiController) GetOAuthCode() {
 // @router /login/oauth/access_token [post]
 func (c *ApiController) GetOAuthToken() {
 	grantType := c.Input().Get("grant_type")
+	refreshToken := c.Input().Get("refresh_token")
 	clientId := c.Input().Get("client_id")
 	clientSecret := c.Input().Get("client_secret")
 	code := c.Input().Get("code")
@@ -192,6 +193,7 @@ func (c *ApiController) GetOAuthToken() {
 			clientId = tokenRequest.ClientId
 			clientSecret = tokenRequest.ClientSecret
 			grantType = tokenRequest.GrantType
+			refreshToken = tokenRequest.RefreshToken
 			code = tokenRequest.Code
 			verifier = tokenRequest.Verifier
 			scope = tokenRequest.Scope
@@ -203,7 +205,7 @@ func (c *ApiController) GetOAuthToken() {
 	}
 	host := c.Ctx.Request.Host
 
-	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, tag, avatar, c.GetAcceptLanguage())
+	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
 	c.SetTokenErrorHttpStatus()
 	c.ServeJSON()
 }
