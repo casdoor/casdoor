@@ -22,7 +22,7 @@ import (
 
 type Migrator_1_235_0_PR_1530 struct{}
 
-func (*Migrator_1_235_0_PR_1530) IsMigrationNeeded(adapter *Adapter) bool {
+func (*Migrator_1_235_0_PR_1530) IsMigrationNeeded() bool {
 	exist, _ := adapter.Engine.IsTableExist("casbin_rule")
 
 	if exist {
@@ -31,7 +31,7 @@ func (*Migrator_1_235_0_PR_1530) IsMigrationNeeded(adapter *Adapter) bool {
 	return false
 }
 
-func (*Migrator_1_235_0_PR_1530) DoMigration(adapter *Adapter) *migrate.Migration {
+func (*Migrator_1_235_0_PR_1530) DoMigration() *migrate.Migration {
 	migration := migrate.Migration{
 		ID: "20221015CasbinRule--fill ptype field with p",
 		Migrate: func(engine *xorm.Engine) error {

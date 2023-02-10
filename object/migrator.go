@@ -17,11 +17,11 @@ package object
 import "xorm.io/xorm/migrate"
 
 type Migrator interface {
-	IsMigrationNeeded(adapter *Adapter) bool
-	DoMigration(adapter *Adapter) *migrate.Migration
+	IsMigrationNeeded() bool
+	DoMigration() *migrate.Migration
 }
 
-func DoMigration(adapter *Adapter) {
+func DoMigration() {
 	migrators := []Migrator{
 		&Migrator_1_101_0_PR_1083{},
 		&Migrator_1_235_0_PR_1530{},
@@ -32,8 +32,8 @@ func DoMigration(adapter *Adapter) {
 	migrations := []*migrate.Migration{}
 
 	for _, migrator := range migrators {
-		if migrator.IsMigrationNeeded(adapter) {
-			migrations = append(migrations, migrator.DoMigration(adapter))
+		if migrator.IsMigrationNeeded() {
+			migrations = append(migrations, migrator.DoMigration())
 		}
 	}
 

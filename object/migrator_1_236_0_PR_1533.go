@@ -23,26 +23,9 @@ import (
 
 type Migrator_1_236_0_PR_1533 struct{}
 
-type sessionV2 struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	Application string `xorm:"varchar(100) notnull pk" json:"application"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-
-	SessionId []string `json:"sessionId"`
-}
-
-type sessionV1 struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-
-	SessionId []string `json:"sessionId"`
-}
-
-func (*Migrator_1_236_0_PR_1533) IsMigrationNeeded(adapter *Adapter) bool {
+func (*Migrator_1_236_0_PR_1533) IsMigrationNeeded() bool {
 	exist, _ := adapter.Engine.IsTableExist("session")
-	err := adapter.Engine.Table("session").Find(&[]*sessionV2{})
+	err := adapter.Engine.Table("session").Find(&[]*Session{})
 
 	if exist && err != nil {
 		return true
@@ -50,21 +33,33 @@ func (*Migrator_1_236_0_PR_1533) IsMigrationNeeded(adapter *Adapter) bool {
 	return false
 }
 
-func (*Migrator_1_236_0_PR_1533) DoMigration(adapter *Adapter) *migrate.Migration {
+func (*Migrator_1_236_0_PR_1533) DoMigration() *migrate.Migration {
 	migration := migrate.Migration{
-		ID: "20230210MigrateSession--Create a new field called 'application' and add it to the primary key for table `session`",
+		ID: "20230211MigrateSession--Create a new field called 'application' and add it to the primary key for table `session`",
 		Migrate: func(engine *xorm.Engine) error {
-			var err error
-			tx := adapter.Engine.NewSession()
-
-			if alreadyCreated, _ := adapter.Engine.IsTableExist("session_tmp"); alreadyCreated {
+			if alreadyCreated, _ := engine.IsTableExist("session_tmp"); alreadyCreated {
 				return errors.New("there is already a table called 'session_tmp', please rename or delete it for casdoor version migration and restart")
 			}
 
-			tx.Table("session_tmp").CreateTable(&sessionV2{})
+			type oldSession struct {
+				Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
+				Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+				CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-			oldSessions := []*sessionV1{}
-			newSessions := []*sessionV2{}
+				SessionId []string `json:"sessionId"`
+			}
+
+			var err error
+			tx := engine.NewSession()
+
+			defer tx.Close()
+
+			tx.Begin()
+
+			tx.Table("session_tmp").CreateTable(&Session{})
+
+			oldSessions := []*oldSession{}
+			newSessions := []*Session{}
 
 			tx.Table("session").Find(&oldSessions)
 
@@ -73,7 +68,7 @@ func (*Migrator_1_236_0_PR_1533) DoMigration(adapter *Adapter) *migrate.Migratio
 				if oldSession.Owner == "built-in" {
 					newApplication = "app-built-in"
 				}
-				newSessions = append(newSessions, &sessionV2{
+				newSessions = append(newSessions, &Session{
 					Owner:       oldSession.Owner,
 					Name:        oldSession.Name,
 					Application: newApplication,
@@ -91,7 +86,7 @@ func (*Migrator_1_236_0_PR_1533) DoMigration(adapter *Adapter) *migrate.Migratio
 				rollbackFlag = true
 			}
 
-			delete := &sessionV2{
+			delete := &Session{
 				Application: "null",
 			}
 			_, err = tx.Table("session_tmp").Delete(*delete)
@@ -111,12 +106,12 @@ func (*Migrator_1_236_0_PR_1533) DoMigration(adapter *Adapter) *migrate.Migratio
 
 			// Already drop table `session`
 			// Can't find an api from xorm for altering table name
-			err = tx.Table("session").CreateTable(&sessionV2{})
+			err = tx.Table("session").CreateTable(&Session{})
 			if err != nil {
 				return errors.New("there is something wrong with data migration for table `session`, please restart")
 			}
 
-			sessions := []*sessionV2{}
+			sessions := []*Session{}
 			tx.Table("session_tmp").Find(&sessions)
 			_, err = tx.Table("session").Insert(sessions)
 			if err != nil {
@@ -127,6 +122,8 @@ func (*Migrator_1_236_0_PR_1533) DoMigration(adapter *Adapter) *migrate.Migratio
 			if err != nil {
 				return errors.New("fail to drop table `session_tmp` for casdoor, please drop it manually and restart")
 			}
+
+			tx.Commit()
 
 			return nil
 		},
