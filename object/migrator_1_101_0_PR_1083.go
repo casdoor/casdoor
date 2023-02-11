@@ -10,51 +10,36 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.package object
+// limitations under the License.
 
 package object
 
 import (
 	"strings"
 
-	xormadapter "github.com/casbin/xorm-adapter/v3"
 	"xorm.io/xorm"
 	"xorm.io/xorm/migrate"
 )
 
-func MigrateDatabase() {
-	migrations := []*migrate.Migration{
-		MigrateCasbinRule(),
-		MigratePermissionRule(),
-	}
+type Migrator_1_101_0_PR_1083 struct{}
 
-	m := migrate.New(adapter.Engine, migrate.DefaultOptions, migrations)
-	m.Migrate()
+func (*Migrator_1_101_0_PR_1083) IsMigrationNeeded() bool {
+	exist1, _ := adapter.Engine.IsTableExist("model")
+	exist2, _ := adapter.Engine.IsTableExist("permission")
+	exist3, _ := adapter.Engine.IsTableExist("permission_rule")
+
+	if exist1 && exist2 && exist3 {
+		return true
+	}
+	return false
 }
 
-func MigrateCasbinRule() *migrate.Migration {
-	migration := migrate.Migration{
-		ID: "20221015CasbinRule--fill ptype field with p",
-		Migrate: func(engine *xorm.Engine) error {
-			_, err := engine.Cols("ptype").Update(&xormadapter.CasbinRule{
-				Ptype: "p",
-			})
-			return err
-		},
-		Rollback: func(engine *xorm.Engine) error {
-			return engine.DropTables(&xormadapter.CasbinRule{})
-		},
-	}
-
-	return &migration
-}
-
-func MigratePermissionRule() *migrate.Migration {
+func (*Migrator_1_101_0_PR_1083) DoMigration() *migrate.Migration {
 	migration := migrate.Migration{
 		ID: "20230209MigratePermissionRule--Use V5 instead of V1 to store permissionID",
 		Migrate: func(engine *xorm.Engine) error {
 			models := []*Model{}
-			err := engine.Find(&models, &Model{})
+			err := engine.Table("model").Find(&models, &Model{})
 			if err != nil {
 				panic(err)
 			}

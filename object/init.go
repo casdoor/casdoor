@@ -34,8 +34,6 @@ func InitDb() {
 		initBuiltInApplication()
 		initBuiltInCert()
 		initBuiltInLdap()
-	} else {
-		MigrateDatabase()
 	}
 
 	initWebAuthn()

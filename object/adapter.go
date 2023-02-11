@@ -40,12 +40,16 @@ func InitConfig() {
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
-	InitAdapter(true)
-	MigrateDatabase()
+	InitAdapter()
+	DoMigration()
+	CreateTables(true)
 }
 
-func InitAdapter(createDatabase bool) {
+func InitAdapter() {
 	adapter = NewAdapter(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
+}
+
+func CreateTables(createDatabase bool) {
 	if createDatabase {
 		adapter.CreateDatabase()
 	}
