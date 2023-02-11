@@ -22,7 +22,7 @@ import (
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casdoor/casdoor/util"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
-	"xorm.io/core"
+	"github.com/xorm-io/core"
 )
 
 type CasbinAdapter struct {

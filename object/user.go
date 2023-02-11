@@ -21,7 +21,7 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/duo-labs/webauthn/webauthn"
-	"xorm.io/core"
+	"github.com/xorm-io/core"
 )
 
 const (
