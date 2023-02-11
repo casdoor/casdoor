@@ -35,7 +35,7 @@ func (*Migrator_1_240_0_PR_1539) IsMigrationNeeded() bool {
 
 func (*Migrator_1_240_0_PR_1539) DoMigration() *migrate.Migration {
 	migration := migrate.Migration{
-		ID: "20230211MigrateSession--Create a new field called 'application' and add it to the primary key for table `session`",
+		ID: "20230211MigrateSession--Create a new field 'application' for table `session`",
 		Migrate: func(engine *xorm.Engine) error {
 			if alreadyCreated, _ := engine.IsTableExist("session_tmp"); alreadyCreated {
 				return errors.New("there is already a table called 'session_tmp', please rename or delete it for casdoor version migration and restart")

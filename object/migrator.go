@@ -37,6 +37,11 @@ func DoMigration() {
 		}
 	}
 
-	m := migrate.New(adapter.Engine, migrate.DefaultOptions, migrations)
+	options := &migrate.Options{
+		TableName:    "migration",
+		IDColumnName: "id",
+	}
+
+	m := migrate.New(adapter.Engine, options, migrations)
 	m.Migrate()
 }
