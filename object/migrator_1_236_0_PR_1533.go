@@ -17,8 +17,8 @@ package object
 import (
 	"errors"
 
-	"xorm.io/xorm"
-	"xorm.io/xorm/migrate"
+	"github.com/xorm-io/xorm"
+	"github.com/xorm-io/xorm/migrate"
 )
 
 type Migrator_1_236_0_PR_1533 struct{}

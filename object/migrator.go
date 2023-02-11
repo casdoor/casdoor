@@ -14,7 +14,7 @@
 
 package object
 
-import "xorm.io/xorm/migrate"
+import "github.com/xorm-io/xorm/migrate"
 
 type Migrator interface {
 	IsMigrationNeeded() bool

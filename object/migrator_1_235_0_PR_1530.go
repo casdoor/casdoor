@@ -15,9 +15,9 @@
 package object
 
 import (
-	xormadapter "github.com/casbin/xorm-adapter/v3"
-	"xorm.io/xorm"
-	"xorm.io/xorm/migrate"
+	xormadapter "github.com/casdoor/xorm-adapter/v3"
+	"github.com/xorm-io/xorm"
+	"github.com/xorm-io/xorm/migrate"
 )
 
 type Migrator_1_235_0_PR_1530 struct{}

@@ -19,15 +19,15 @@ import (
 	"runtime"
 
 	"github.com/beego/beego"
-	xormadapter "github.com/casbin/xorm-adapter/v3"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
+	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql"   // db = mysql
 	_ "github.com/lib/pq"                // db = postgres
-	_ "modernc.org/sqlite"               // db = sqlite
+	"github.com/xorm-io/xorm"
+	_ "modernc.org/sqlite" // db = sqlite
 	"xorm.io/core"
-	"xorm.io/xorm"
 )
 
 var adapter *Adapter
