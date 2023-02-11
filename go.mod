@@ -11,12 +11,12 @@ require (
 	github.com/casbin/casbin/v2 v2.30.1
 	github.com/casbin/xorm-adapter/v3 v3.0.1
 	github.com/casdoor/go-sms-sender v0.5.1
+	github.com/casdoor/gomail/v2 v2.0.1
 	github.com/casdoor/oss v1.2.0
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/denisenkom/go-mssqldb v0.9.0
 	github.com/duo-labs/webauthn v0.0.0-20211221191814-a22482edaa3b
 	github.com/forestmgy/ldapserver v1.1.0
-	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
 	github.com/go-ldap/ldap/v3 v3.3.0
 	github.com/go-pay/gopay v1.5.72
 	github.com/go-sql-driver/mysql v1.5.0
@@ -46,8 +46,6 @@ require (
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
 	golang.org/x/oauth2 v0.0.0-20210628180205-a41e5a781914
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
-	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
-	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0
 	gopkg.in/yaml.v2 v2.3.0 // indirect
