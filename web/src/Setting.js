@@ -118,8 +118,12 @@ export const OtherProviderInfo = {
       url: "",
     },
     "SUBMAIL": {
-      logo: `${StaticBaseUrl}/img/social_submail.png`,
-      url: "",
+      logo: `${StaticBaseUrl}/img/social_submail.svg`,
+      url: "https://www.mysubmail.com",
+    },
+    "Mailtrap": {
+      logo: `${StaticBaseUrl}/img/email_mailtrap.png`,
+      url: "https://mailtrap.io",
     },
   },
   Storage: {
@@ -839,6 +843,7 @@ export function getProviderTypeOptions(category) {
       [
         {id: "Default", name: "Default"},
         {id: "SUBMAIL", name: "SUBMAIL"},
+        {id: "Mailtrap", name: "Mailtrap"},
       ]
     );
   } else if (category === "SMS") {

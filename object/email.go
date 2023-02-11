@@ -19,7 +19,7 @@ package object
 import (
 	"crypto/tls"
 
-	"github.com/go-gomail/gomail"
+	"github.com/casdoor/gomail/v2"
 )
 
 func getDialer(provider *Provider) *gomail.Dialer {
@@ -44,6 +44,10 @@ func SendEmail(provider *Provider, title string, content string, dest string, se
 	message.SetHeader("To", dest)
 	message.SetHeader("Subject", title)
 	message.SetBody("text/html", content)
+
+	if provider.Type == "Mailtrap" {
+		message.SkipUsernameCheck = true
+	}
 
 	return dialer.DialAndSend(message)
 }
