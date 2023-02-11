@@ -25,7 +25,7 @@ func DoMigration() {
 	migrators := []Migrator{
 		&Migrator_1_101_0_PR_1083{},
 		&Migrator_1_235_0_PR_1530{},
-		&Migrator_1_236_0_PR_1533{},
+		&Migrator_1_240_0_PR_1539{},
 		// more migrators add here in chronological order...
 	}
 
