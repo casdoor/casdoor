@@ -16,6 +16,8 @@ package object
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/util"
@@ -85,7 +87,7 @@ func GetSingleSession(id string) *Session {
 }
 
 func UpdateSession(id string, session *Session) bool {
-	length := CountSessionIdByteLength(session.SessionId)
+	length, _ := CountSessionIdByteLength(session.SessionId)
 	if length > MaxSessionIdByteLength {
 		return false
 	}
@@ -106,7 +108,7 @@ func UpdateSession(id string, session *Session) bool {
 }
 
 func AddSession(session *Session) bool {
-	length := CountSessionIdByteLength(session.SessionId)
+	length, _ := CountSessionIdByteLength(session.SessionId)
 	if length > MaxSessionIdByteLength {
 		return false
 	}
@@ -125,7 +127,10 @@ func AddSession(session *Session) bool {
 		session.CreatedTime = util.GetCurrentTime()
 		affected, dbErr = adapter.Engine.Insert(session)
 	} else {
-		dbLength := CountSessionIdByteLength(dbSession.SessionId)
+		dbLength, jsonErr := CountSessionIdByteLength(dbSession.SessionId)
+		if jsonErr != nil {
+			panic(errors.New(fmt.Sprintf("%s/%s/%s's sessionId in table `session` is not a legal jsonString, please handle it manually", owner, name, application)))
+		}
 		if length+dbLength > MaxSessionIdByteLength {
 			// remove some of preceding sessionIds in db
 			needDeleteLength := length + dbLength - MaxSessionIdByteLength
@@ -225,7 +230,7 @@ func IsSessionDuplicated(id string, sessionId string) bool {
 	}
 }
 
-func CountSessionIdByteLength(sessionId []string) int {
-	marshal, _ := json.Marshal(sessionId)
-	return len(marshal)
+func CountSessionIdByteLength(sessionId []string) (int, error) {
+	json, err := json.Marshal(sessionId)
+	return len(json), err
 }
