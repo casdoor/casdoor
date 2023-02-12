@@ -129,7 +129,7 @@ func AddSession(session *Session) bool {
 	} else {
 		dbLength, jsonErr := CountSessionIdByteLength(dbSession.SessionId)
 		if jsonErr != nil {
-			panic(errors.New(fmt.Sprintf("%s/%s/%s's sessionId in table `session` is not a legal jsonString, please handle it manually.", owner, name, application)))
+			panic(errors.New(fmt.Sprintf("user-%s/%s/%s's sessionId in table `session` is not a legal jsonString, please handle it manually.", owner, name, application)))
 		}
 		if length+dbLength > MaxSessionIdByteLength {
 			// remove some of preceding sessionIds in db
