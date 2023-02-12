@@ -19,7 +19,7 @@ import (
 
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casdoor/casdoor/util"
-	"xorm.io/core"
+	"github.com/xorm-io/core"
 )
 
 type Model struct {

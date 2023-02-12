@@ -20,9 +20,9 @@ import (
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
-	xormadapter "github.com/casbin/xorm-adapter/v3"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
+	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	stringadapter "github.com/qiangmzsx/string-adapter/v2"
 )
 

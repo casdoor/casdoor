@@ -20,7 +20,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/idp"
-	"xorm.io/core"
+	"github.com/xorm-io/core"
 )
 
 func GetUserByField(organizationName string, field string, value string) *User {

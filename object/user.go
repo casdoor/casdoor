@@ -21,7 +21,7 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/duo-labs/webauthn/webauthn"
-	"xorm.io/core"
+	"github.com/xorm-io/core"
 )
 
 const (
@@ -578,7 +578,7 @@ func AddUsersInBatch(users []*User) bool {
 
 func DeleteUser(user *User) bool {
 	// Forced offline the user first
-	DeleteSession(user.GetId())
+	DeleteSession(util.GetSessionId(user.Owner, user.Name, CasdoorApplication))
 
 	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
 	if err != nil {

@@ -22,29 +22,10 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-// DeleteSession
-// @Title DeleteSession
-// @Tag Session API
-// @Description Delete session by userId
-// @Param   id     query    string  true        "The id ( owner/name )(owner/name) of user."
-// @Success 200 {array} string The Response object
-// @router /delete-session [post]
-func (c *ApiController) DeleteSession() {
-	var session object.Session
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetId(session.Owner, session.Name)))
-	c.ServeJSON()
-}
-
 // GetSessions
 // @Title GetSessions
 // @Tag Session API
-// @Description Get organization user sessions
+// @Description Get organization user sessions.
 // @Param   owner     query    string  true        "The organization name"
 // @Success 200 {array} string The Response object
 // @router /get-sessions [get]
@@ -65,4 +46,94 @@ func (c *ApiController) GetSessions() {
 		sessions := object.GetPaginationSessions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		c.ResponseOk(sessions, paginator.Nums())
 	}
+}
+
+// GetSingleSession
+// @Title GetSingleSession
+// @Tag Session API
+// @Description Get session for one user in one application.
+// @Param   id     query    string  true        "The id(organization/application/user) of session"
+// @Success 200 {array} string The Response object
+// @router /get-session [get]
+func (c *ApiController) GetSingleSession() {
+	id := c.Input().Get("sessionPkId")
+
+	c.Data["json"] = object.GetSingleSession(id)
+	c.ServeJSON()
+}
+
+// UpdateSession
+// @Title UpdateSession
+// @Tag Session API
+// @Description Update session for one user in one application.
+// @Param   id     query    string  true        "The id(organization/application/user) of session"
+// @Success 200 {array} string The Response object
+// @router /update-session [post]
+func (c *ApiController) UpdateSession() {
+	var session object.Session
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.UpdateSession(util.GetSessionId(session.Owner, session.Name, session.Application), &session))
+	c.ServeJSON()
+}
+
+// AddSession
+// @Title AddSession
+// @Tag Session API
+// @Description Add session for one user in one application. If there are other existing sessions, join the session into the list.
+// @Param   id     query    string  true        "The id(organization/application/user) of session"
+// @Param   sessionId     query    string  true        "sessionId to be added"
+// @Success 200 {array} string The Response object
+// @router /add-session [post]
+func (c *ApiController) AddSession() {
+	var session object.Session
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.AddSession(&session))
+	c.ServeJSON()
+}
+
+// DeleteSession
+// @Title DeleteSession
+// @Tag Session API
+// @Description Delete session for one user in one application.
+// @Param   id     query    string  true        "The id(organization/application/user) of session"
+// @Success 200 {array} string The Response object
+// @router /delete-session [post]
+func (c *ApiController) DeleteSession() {
+	var session object.Session
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &session)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetSessionId(session.Owner, session.Name, session.Application)))
+	c.ServeJSON()
+}
+
+// IsSessionDuplicated
+// @Title IsSessionDuplicated
+// @Tag Session API
+// @Description Check if there are other different sessions for one user in one application.
+// @Param   id     query    string  true        "The id(organization/application/user) of session"
+// @Param   sessionId     query    string  true        "sessionId to be checked"
+// @Success 200 {array} string The Response object
+// @router /is-user-session-duplicated [get]
+func (c *ApiController) IsSessionDuplicated() {
+	id := c.Input().Get("sessionPkId")
+	sessionId := c.Input().Get("sessionId")
+
+	isUserSessionDuplicated := object.IsSessionDuplicated(id, sessionId)
+	c.Data["json"] = &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
+
+	c.ServeJSON()
 }

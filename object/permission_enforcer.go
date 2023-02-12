@@ -21,8 +21,8 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/config"
 	"github.com/casbin/casbin/v2/model"
-	xormadapter "github.com/casbin/xorm-adapter/v3"
 	"github.com/casdoor/casdoor/conf"
+	xormadapter "github.com/casdoor/xorm-adapter/v3"
 )
 
 func getEnforcer(permission *Permission) *casbin.Enforcer {
