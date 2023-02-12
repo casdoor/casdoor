@@ -98,6 +98,12 @@ func UpdateSession(id string, session *Session) bool {
 	return affected != 0
 }
 
+func removeExtraSessionIds(session *Session) {
+	if len(session.SessionId) > 100 {
+		session.SessionId = session.SessionId[(len(session.SessionId) - 100):]
+	}
+}
+
 func AddSession(session *Session) bool {
 	dbSession := GetSingleSession(session.GetId())
 	if dbSession == nil {
@@ -119,6 +125,8 @@ func AddSession(session *Session) bool {
 				dbSession.SessionId = append(dbSession.SessionId, v)
 			}
 		}
+
+		removeExtraSessionIds(session)
 
 		return UpdateSession(dbSession.GetId(), dbSession)
 	}
