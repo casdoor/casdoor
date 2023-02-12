@@ -15,14 +15,17 @@
 package object
 
 import (
+	"encoding/json"
+
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
 
 var (
-	CasdoorApplication  = "app-built-in"
-	CasdoorOrganization = "built-in"
+	CasdoorApplication     = "app-built-in"
+	CasdoorOrganization    = "built-in"
+	MaxSessionIdByteLength = 65000
 )
 
 type Session struct {
@@ -82,6 +85,11 @@ func GetSingleSession(id string) *Session {
 }
 
 func UpdateSession(id string, session *Session) bool {
+	length := CountSessionIdByteLength(session.SessionId)
+	if length > MaxSessionIdByteLength {
+		return false
+	}
+
 	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
 
 	_, err := adapter.Engine.ID(core.PK{owner, name, application}).Get(session)
@@ -98,6 +106,11 @@ func UpdateSession(id string, session *Session) bool {
 }
 
 func AddSession(session *Session) bool {
+	length := CountSessionIdByteLength(session.SessionId)
+	if length > MaxSessionIdByteLength {
+		return false
+	}
+
 	owner, name, application := session.Owner, session.Name, session.Application
 
 	dbSession := &Session{Owner: owner, Name: name, Application: application}
@@ -112,6 +125,21 @@ func AddSession(session *Session) bool {
 		session.CreatedTime = util.GetCurrentTime()
 		affected, dbErr = adapter.Engine.Insert(session)
 	} else {
+		dbLength := CountSessionIdByteLength(dbSession.SessionId)
+		if length+dbLength > MaxSessionIdByteLength {
+			// remove some of preceding sessionIds in db
+			needDeleteLength := length + dbLength - MaxSessionIdByteLength
+			hasDeletedLength := 0
+			deleteIndex := 0
+			for ; deleteIndex < len(dbSession.SessionId); deleteIndex++ {
+				hasDeletedLength += len(dbSession.SessionId[deleteIndex]) + 3
+				if hasDeletedLength >= needDeleteLength {
+					break
+				}
+			}
+			dbSession.SessionId = dbSession.SessionId[deleteIndex+1:]
+		}
+		// avoid inserting duplicate sessionIds
 		m := make(map[string]struct{})
 		for _, v := range dbSession.SessionId {
 			m[v] = struct{}{}
@@ -121,8 +149,10 @@ func AddSession(session *Session) bool {
 				dbSession.SessionId = append(dbSession.SessionId, v)
 			}
 		}
+
 		affected, dbErr = adapter.Engine.ID(core.PK{owner, name, application}).Update(dbSession)
 	}
+
 	if dbErr != nil {
 		panic(dbErr)
 	}
@@ -193,4 +223,9 @@ func IsSessionDuplicated(id string, sessionId string) bool {
 			return session.SessionId[0] != sessionId
 		}
 	}
+}
+
+func CountSessionIdByteLength(sessionId []string) int {
+	marshal, _ := json.Marshal(sessionId)
+	return len(marshal)
 }
