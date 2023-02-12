@@ -49,19 +49,27 @@ func (*Migrator_1_240_0_PR_1539) DoMigration() *migrate.Migration {
 				SessionId []string `json:"sessionId"`
 			}
 
-			var err error
 			tx := engine.NewSession()
 
 			defer tx.Close()
 
-			tx.Begin()
+			err := tx.Begin()
+			if err != nil {
+				return err
+			}
 
-			tx.Table("session_tmp").CreateTable(&Session{})
+			err = tx.Table("session_tmp").CreateTable(&Session{})
+			if err != nil {
+				return err
+			}
 
 			oldSessions := []*oldSession{}
 			newSessions := []*Session{}
 
-			tx.Table("session").Find(&oldSessions)
+			err = tx.Table("session").Find(&oldSessions)
+			if err != nil {
+				return err
+			}
 
 			for _, oldSession := range oldSessions {
 				newApplication := "null"
