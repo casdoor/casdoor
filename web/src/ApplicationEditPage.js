@@ -217,77 +217,77 @@ class ApplicationEditPage extends React.Component {
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
         <Row style={{marginTop: "10px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input value={this.state.application.name} disabled={this.state.application.name === "app-built-in"} onChange={e => {
               this.updateApplicationField("name", e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto">
             <Input value={this.state.application.displayName} onChange={e => {
               this.updateApplicationField("displayName", e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Logo"), i18next.t("general:Logo - Tooltip"))} :
           </Col>
-          <Col span={22} style={(Setting.isMobile()) ? {maxWidth: "100%"} : {}}>
+          <Col flex="auto" style={(Setting.isMobile()) ? {maxWidth: "100%"} : {}}>
             <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+              <Col style={{marginTop: "5px"}} xs={22} sm={4} md={3} lg={2} xl={2}>
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
-              <Col span={23} >
+              <Col flex="auto" >
                 <Input prefix={<LinkOutlined />} value={this.state.application.logo} onChange={e => {
                   this.updateApplicationField("logo", e.target.value);
                 }} />
               </Col>
             </Row>
             <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+              <Col style={{marginTop: "5px"}} xs={22} sm={4} md={3} lg={2} xl={2}>
                 {i18next.t("general:Preview")}:
               </Col>
-              <Col span={23} >
+              <Col flex="auto" >
                 <a target="_blank" rel="noreferrer" href={this.state.application.logo}>
-                  <img src={this.state.application.logo} alt={this.state.application.logo} height={90} style={{marginBottom: "20px"}} />
+                  <img src={this.state.application.logo} alt={this.state.application.logo} height={90} className="previewImage"style={{marginBottom: "20px"}} />
                 </a>
               </Col>
             </Row>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Home"), i18next.t("general:Home - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input prefix={<LinkOutlined />} value={this.state.application.homepageUrl} onChange={e => {
               this.updateApplicationField("homepageUrl", e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Description"), i18next.t("general:Description - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input value={this.state.application.description} onChange={e => {
               this.updateApplicationField("description", e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.application.organization} onChange={(value => {this.updateApplicationField("organization", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
@@ -296,30 +296,30 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input value={this.state.application.clientId} onChange={e => {
               this.updateApplicationField("clientId", e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input value={this.state.application.clientSecret} onChange={e => {
               this.updateApplicationField("clientSecret", e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Cert"), i18next.t("general:Cert - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Select virtual={false} style={{width: "100%"}} value={this.state.application.cert} onChange={(value => {this.updateApplicationField("cert", value);})}>
               {
                 this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
@@ -328,10 +328,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("application:Redirect URLs"), i18next.t("application:Redirect URLs - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <UrlTable
               title={i18next.t("application:Redirect URLs")}
               table={this.state.application.redirectUris}
@@ -340,30 +340,30 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("application:Token format"), i18next.t("application:Token format - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Select virtual={false} style={{width: "100%"}} value={this.state.application.tokenFormat} onChange={(value => {this.updateApplicationField("tokenFormat", value);})}
               options={["JWT", "JWT-Empty"].map((item) => Setting.getOption(item, item))}
             />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("application:Token expire"), i18next.t("application:Token expire - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input style={{width: "150px"}} value={this.state.application.expireInHours} suffix="Hours" onChange={e => {
               this.updateApplicationField("expireInHours", e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("application:Refresh token expire"), i18next.t("application:Refresh token expire - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input style={{width: "150px"}} value={this.state.application.refreshExpireInHours} suffix="Hours" onChange={e => {
               this.updateApplicationField("refreshExpireInHours", e.target.value);
             }} />
@@ -430,50 +430,50 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Signup URL"), i18next.t("general:Signup URL - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input prefix={<LinkOutlined />} value={this.state.application.signupUrl} onChange={e => {
               this.updateApplicationField("signupUrl", e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Signin URL"), i18next.t("general:Signin URL - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input prefix={<LinkOutlined />} value={this.state.application.signinUrl} onChange={e => {
               this.updateApplicationField("signinUrl", e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Forget URL"), i18next.t("general:Forget URL - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input prefix={<LinkOutlined />} value={this.state.application.forgetUrl} onChange={e => {
               this.updateApplicationField("forgetUrl", e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Affiliation URL"), i18next.t("general:Affiliation URL - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input prefix={<LinkOutlined />} value={this.state.application.affiliationUrl} onChange={e => {
               this.updateApplicationField("affiliationUrl", e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("provider:Terms of Use"), i18next.t("provider:Terms of Use - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input value={this.state.application.termsOfUse} style={{marginBottom: "10px"}} onChange={e => {
               this.updateApplicationField("termsOfUse", e.target.value);
             }} />
@@ -484,10 +484,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("provider:Signup HTML"), i18next.t("provider:Signup HTML - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
                 <CodeMirror
@@ -506,10 +506,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("provider:Signin HTML"), i18next.t("provider:Signin HTML - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
                 <CodeMirror
@@ -528,10 +528,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("application:Grant types"), i18next.t("application:Grant types - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Select virtual={false} mode="tags" style={{width: "100%"}}
               value={this.state.application.grantTypes}
               onChange={(value => {
@@ -551,10 +551,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("application:SAML Reply URL"), i18next.t("application:Redirect URL (Assertion Consumer Service POST Binding URL) - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input prefix={<LinkOutlined />} value={this.state.application.samlReplyUrl} onChange={e => {
               this.updateApplicationField("samlReplyUrl", e.target.value);
             }} />
@@ -571,10 +571,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("application:SAML metadata"), i18next.t("application:SAML metadata - Tooltip"))} :
           </Col>
-          <Col span={22}>
+          <Col flex="auto">
             <CodeMirror
               value={this.state.samlMetadata}
               options={{mode: "xml", theme: "default"}}
@@ -591,10 +591,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Providers"), i18next.t("general:Providers - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <ProviderTable
               title={i18next.t("general:Providers")}
               table={this.state.application.providers}
@@ -615,7 +615,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
           </Col>
           {
@@ -623,25 +623,25 @@ class ApplicationEditPage extends React.Component {
           }
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("application:Background URL"), i18next.t("application:Background URL - Tooltip"))} :
           </Col>
-          <Col span={22} style={(Setting.isMobile()) ? {maxWidth: "100%"} : {}}>
+          <Col flex="auto" style={(Setting.isMobile()) ? {maxWidth: "100%"} : {}}>
             <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
               </Col>
-              <Col span={22} >
+              <Col flex="auto" >
                 <Input prefix={<LinkOutlined />} value={this.state.application.formBackgroundUrl} onChange={e => {
                   this.updateApplicationField("formBackgroundUrl", e.target.value);
                 }} />
               </Col>
             </Row>
             <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
                 {i18next.t("general:Preview")}:
               </Col>
-              <Col span={22} >
+              <Col flex="auto" >
                 <a target="_blank" rel="noreferrer" href={this.state.application.formBackgroundUrl}>
                   <img src={this.state.application.formBackgroundUrl} alt={this.state.application.formBackgroundUrl} height={90} style={{marginBottom: "20px"}} />
                 </a>
@@ -650,10 +650,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("application:Form CSS"), i18next.t("application:Form CSS - Tooltip"))} :
           </Col>
-          <Col span={22}>
+          <Col flex="auto">
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
                 <CodeMirror value={this.state.application.formCss === "" ? template : this.state.application.formCss}
@@ -671,10 +671,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("application:Form position"), i18next.t("application:Form position - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Row style={{marginTop: "20px"}} >
               <Radio.Group onChange={e => {this.updateApplicationField("formOffset", e.target.value);}} value={this.state.application.formOffset}>
                 <Radio.Button value={1}>{i18next.t("application:Left")}</Radio.Button>
@@ -711,10 +711,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("theme:Theme"), i18next.t("theme:Theme - Tooltip"))} :
           </Col>
-          <Col span={22} style={{marginTop: "5px"}}>
+          <Col flex="auto" style={{marginTop: "5px"}}>
             <Row>
               <Radio.Group value={this.state.application.themeData?.isEnabled ?? false} onChange={e => {
                 const {_, ...theme} = this.state.application.themeData ?? {...Setting.ThemeDefault, isEnabled: false};
@@ -738,10 +738,10 @@ class ApplicationEditPage extends React.Component {
         {
           !this.state.application.enableSignUp ? null : (
             <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
                 {Setting.getLabel(i18next.t("application:Signup items"), i18next.t("application:Signup items - Tooltip"))} :
               </Col>
-              <Col span={22} >
+              <Col flex="auto" >
                 <SignupTable
                   title={i18next.t("application:Signup items")}
                   table={this.state.application.signupItems}
@@ -752,7 +752,7 @@ class ApplicationEditPage extends React.Component {
           )
         }
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          <Col style={{marginTop: "5px"}} xs={22} sm={6} md={4} lg={4} xl={3}>
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
           </Col>
           {
