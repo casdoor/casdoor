@@ -19,7 +19,7 @@ import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
 import i18next from "i18next";
-import {CountDownInput} from "../common/CountDownInput";
+import {SendCodeInput} from "../common/SendCodeInput";
 import * as UserBackend from "../backend/UserBackend";
 import {CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../CustomGithubCorner";
@@ -350,14 +350,14 @@ class ForgetPage extends React.Component {
             ]}
           >
             {this.state.verifyType === "email" ? (
-              <CountDownInput
+              <SendCodeInput
                 disabled={this.state.username === "" || this.state.verifyType === ""}
                 method={"forget"}
                 onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(this.getApplicationObj()), this.state.name]}
                 application={application}
               />
             ) : (
-              <CountDownInput
+              <SendCodeInput
                 disabled={this.state.username === "" || this.state.verifyType === ""}
                 method={"forget"}
                 onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(this.getApplicationObj()), this.state.name]}

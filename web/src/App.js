@@ -84,8 +84,8 @@ class App extends Component {
       uri: null,
       menuVisible: false,
       themeAlgorithm: ["default"],
-      themeData: Setting.ThemeDefault,
-      logo: this.getLogo(Setting.getAlgorithmNames(Setting.ThemeDefault)),
+      themeData: Conf.ThemeDefault,
+      logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
     };
 
     Setting.initServerUrl();
