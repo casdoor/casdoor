@@ -14,14 +14,13 @@
 
 import {Card, ConfigProvider, Form, Layout, Switch, theme} from "antd";
 import ThemePicker from "./ThemePicker";
-import ColorPicker from "./ColorPicker";
+import ColorPicker, {GREEN_COLOR, PINK_COLOR} from "./ColorPicker";
 import RadiusPicker from "./RadiusPicker";
 import * as React from "react";
-import {GREEN_COLOR, PINK_COLOR} from "./ColorPicker";
+import {useEffect} from "react";
 import {Content} from "antd/es/layout/layout";
 import i18next from "i18next";
-import {useEffect} from "react";
-import * as Setting from "../../Setting";
+import * as Conf from "../../Conf";
 
 const ThemesInfo = {
   default: {},
@@ -41,7 +40,7 @@ const ThemesInfo = {
 const onChange = () => {};
 
 export default function ThemeEditor(props) {
-  const themeData = props.themeData ?? Setting.ThemeDefault;
+  const themeData = props.themeData ?? Conf.ThemeDefault;
   const onThemeChange = props.onThemeChange ?? onChange;
 
   const {isCompact, themeType, ...themeToken} = themeData;
@@ -59,7 +58,7 @@ export default function ThemeEditor(props) {
   }, [isLight, isCompact]);
 
   useEffect(() => {
-    const mergedData = Object.assign(Object.assign(Object.assign({}, Setting.ThemeDefault), {themeType}), ThemesInfo[themeType]);
+    const mergedData = Object.assign(Object.assign(Object.assign({}, Conf.ThemeDefault), {themeType}), ThemesInfo[themeType]);
     onThemeChange(null, mergedData);
     form.setFieldsValue(mergedData);
   }, [themeType]);

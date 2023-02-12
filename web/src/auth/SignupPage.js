@@ -21,7 +21,7 @@ import i18next from "i18next";
 import * as Util from "./Util";
 import {authConfig} from "./Auth";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
-import {CountDownInput} from "../common/CountDownInput";
+import {SendCodeInput} from "../common/SendCodeInput";
 import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
 import SelectLanguageBox from "../SelectLanguageBox";
@@ -365,7 +365,7 @@ class SignupPage extends React.Component {
                 message: i18next.t("code:Please input your verification code!"),
               }]}
             >
-              <CountDownInput
+              <SendCodeInput
                 disabled={!this.state.validEmail}
                 method={"signup"}
                 onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(application)]}
@@ -419,7 +419,7 @@ class SignupPage extends React.Component {
               },
             ]}
           >
-            <CountDownInput
+            <SendCodeInput
               disabled={!this.state.validPhone}
               method={"signup"}
               onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}

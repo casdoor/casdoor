@@ -135,13 +135,6 @@ class UserListPage extends BaseListPage {
   }
 
   renderTable(users) {
-    // transfer country code to name based on selected language
-    const countries = require("i18n-iso-countries");
-    countries.registerLocale(require("i18n-iso-countries/langs/" + i18next.language + ".json"));
-    for (const index in users) {
-      users[index].region = countries.getName(users[index].region, i18next.language, {select: "official"});
-    }
-
     const columns = [
       {
         title: i18next.t("general:Organization"),
@@ -267,6 +260,9 @@ class UserListPage extends BaseListPage {
         width: "140px",
         sorter: true,
         ...this.getColumnSearchProps("region"),
+        render: (text, record, index) => {
+          return Setting.getCountriesData().getName(record.region, Setting.getLanguage(), {select: "official"});
+        },
       },
       {
         title: i18next.t("user:Tag"),

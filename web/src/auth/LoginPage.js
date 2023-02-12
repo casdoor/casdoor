@@ -26,7 +26,7 @@ import * as Setting from "../Setting";
 import SelfLoginButton from "./SelfLoginButton";
 import i18next from "i18next";
 import CustomGithubCorner from "../CustomGithubCorner";
-import {CountDownInput} from "../common/CountDownInput";
+import {SendCodeInput} from "../common/SendCodeInput";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {CaptchaModal} from "../common/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
@@ -419,7 +419,7 @@ class LoginPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t("login:Please input your username, Email or phone!"),
+                    message: i18next.t("login:Please input your Email or Phone!"),
                   },
                   {
                     validator: (_, value) => {
@@ -755,7 +755,7 @@ class LoginPage extends React.Component {
             name="code"
             rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
           >
-            <CountDownInput
+            <SendCodeInput
               disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
               method={"login"}
               onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}

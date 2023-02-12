@@ -18,6 +18,7 @@ import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
 import * as Setting from "./Setting";
+import * as Conf from "./Conf";
 import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./LdapTable";
@@ -324,7 +325,7 @@ class OrganizationEditPage extends React.Component {
           <Col span={22} style={{marginTop: "5px"}}>
             <Row>
               <Radio.Group value={this.state.organization.themeData?.isEnabled ?? false} onChange={e => {
-                const {_, ...theme} = this.state.organization.themeData ?? {...Setting.ThemeDefault, isEnabled: false};
+                const {_, ...theme} = this.state.organization.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
                 this.updateOrganizationField("themeData", {...theme, isEnabled: e.target.value});
               }} >
                 <Radio.Button value={false}>{i18next.t("organization:Follow global theme")}</Radio.Button>
@@ -335,7 +336,7 @@ class OrganizationEditPage extends React.Component {
               this.state.organization.themeData?.isEnabled ?
                 <Row style={{marginTop: "20px"}}>
                   <ThemeEditor themeData={this.state.organization.themeData} onThemeChange={(_, nextThemeData) => {
-                    const {isEnabled} = this.state.organization.themeData ?? {...Setting.ThemeDefault, isEnabled: false};
+                    const {isEnabled} = this.state.organization.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
                     this.updateOrganizationField("themeData", {...nextThemeData, isEnabled});
                   }} />
                 </Row> : null

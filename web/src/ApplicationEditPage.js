@@ -18,6 +18,7 @@ import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
+import * as Conf from "./Conf";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ResourceBackend from "./backend/ResourceBackend";
@@ -717,7 +718,7 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} style={{marginTop: "5px"}}>
             <Row>
               <Radio.Group value={this.state.application.themeData?.isEnabled ?? false} onChange={e => {
-                const {_, ...theme} = this.state.application.themeData ?? {...Setting.ThemeDefault, isEnabled: false};
+                const {_, ...theme} = this.state.application.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
                 this.updateApplicationField("themeData", {...theme, isEnabled: e.target.value});
               }} >
                 <Radio.Button value={false}>{i18next.t("application:Follow organization theme")}</Radio.Button>
@@ -728,7 +729,7 @@ class ApplicationEditPage extends React.Component {
               this.state.application.themeData?.isEnabled ?
                 <Row style={{marginTop: "20px"}}>
                   <ThemeEditor themeData={this.state.application.themeData} onThemeChange={(_, nextThemeData) => {
-                    const {isEnabled} = this.state.application.themeData ?? {...Setting.ThemeDefault, isEnabled: false};
+                    const {isEnabled} = this.state.application.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
                     this.updateApplicationField("themeData", {...nextThemeData, isEnabled});
                   }} />
                 </Row> : null
@@ -764,7 +765,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   renderSignupSigninPreview() {
-    const themeData = this.state.application.themeData ?? Setting.ThemeDefault;
+    const themeData = this.state.application.themeData ?? Conf.ThemeDefault;
     let signUpUrl = `/signup/${this.state.application.name}`;
     const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
     const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "97%", width: "100%", background: "rgba(0,0,0,0.4)"};
@@ -835,7 +836,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   renderPromptPreview() {
-    const themeData = this.state.application.themeData ?? Setting.ThemeDefault;
+    const themeData = this.state.application.themeData ?? Conf.ThemeDefault;
     const promptUrl = `/prompt/${this.state.application.name}`;
     const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "100%", width: "100%", background: "rgba(0,0,0,0.4)"};
     return (

@@ -17,6 +17,7 @@ import {Redirect, Route, Switch} from "react-router-dom";
 import {Spin} from "antd";
 import i18next from "i18next";
 import * as Setting from "./Setting";
+import * as Conf from "./Conf";
 import SignupPage from "./auth/SignupPage";
 import SelfLoginPage from "./auth/SelfLoginPage";
 import LoginPage from "./auth/LoginPage";
@@ -62,7 +63,7 @@ class EntryPage extends React.Component {
         application: application,
       });
 
-      const themeData = application !== null ? Setting.getThemeData(application.organizationObj, application) : Setting.ThemeDefault;
+      const themeData = application !== null ? Setting.getThemeData(application.organizationObj, application) : Conf.ThemeDefault;
       this.props.updataThemeData(themeData);
     };
 

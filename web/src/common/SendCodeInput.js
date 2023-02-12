@@ -21,7 +21,7 @@ import {CaptchaWidget} from "./CaptchaWidget";
 
 const {Search} = Input;
 
-export const CountDownInput = (props) => {
+export const SendCodeInput = (props) => {
   const {disabled, textBefore, onChange, onButtonClickArgs, application, method} = props;
   const [visible, setVisible] = React.useState(false);
   const [key, setKey] = React.useState("");

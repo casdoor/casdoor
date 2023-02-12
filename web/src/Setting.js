@@ -30,33 +30,13 @@ export const ServerUrl = "";
 // export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
-// https://catamphetamine.gitlab.io/country-flag-icons/3x2/index.html
-export const CountryRegionData = getCountryRegionData();
-
-export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
-  {label: "简体中文", key: "zh", country: "CN", alt: "简体中文"},
-  {label: "Español", key: "es", country: "ES", alt: "Español"},
-  {label: "Français", key: "fr", country: "FR", alt: "Français"},
-  {label: "Deutsch", key: "de", country: "DE", alt: "Deutsch"},
-  {label: "日本語", key: "ja", country: "JP", alt: "日本語"},
-  {label: "한국어", key: "ko", country: "KR", alt: "한국어"},
-  {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
-];
-
-export const ThemeDefault = {
-  themeType: "default",
-  colorPrimary: "#5734d3",
-  borderRadius: 6,
-  isCompact: false,
-};
-
 export function getThemeData(organization, application) {
   if (application?.themeData?.isEnabled) {
     return application.themeData;
   } else if (organization?.themeData?.isEnabled) {
     return organization.themeData;
   } else {
-    return ThemeDefault;
+    return Conf.ThemeDefault;
   }
 }
 
@@ -204,18 +184,18 @@ export const OtherProviderInfo = {
   },
 };
 
-export function getCountryRegionData() {
-  let language = i18next.language;
-  if (language === null || language === "null") {
-    language = Conf.DefaultLanguage;
-  }
-
+export function getCountriesData() {
   const countries = require("i18n-iso-countries");
-  countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
-  const data = countries.getNames(language, {select: "official"});
-  const result = [];
-  for (const i in data) {result.push({code: i, name: data[i]});}
-  return result;
+  countries.registerLocale(require("i18n-iso-countries/langs/" + getLanguage() + ".json"));
+  return countries;
+}
+
+export function getCountryNames() {
+  const data = getCountriesData().getNames(getLanguage(), {select: "official"});
+
+  return Object.entries(data).map(items => {
+    return {code: items[0], name: items[1]};
+  });
 }
 
 export function initServerUrl() {
@@ -698,7 +678,7 @@ export function getLanguageText(text) {
 }
 
 export function getLanguage() {
-  return i18next.language;
+  return i18next.language ?? Conf.DefaultLanguage;
 }
 
 export function setLanguage(language) {
