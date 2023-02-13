@@ -127,7 +127,7 @@ func (c *ApiController) DeleteSession() {
 // @Param   id     query    string  true        "The id(organization/application/user) of session"
 // @Param   sessionId     query    string  true        "sessionId to be checked"
 // @Success 200 {array} string The Response object
-// @router /is-user-session-duplicated [get]
+// @router /is-session-duplicated [get]
 func (c *ApiController) IsSessionDuplicated() {
 	id := c.Input().Get("sessionPkId")
 	sessionId := c.Input().Get("sessionId")
