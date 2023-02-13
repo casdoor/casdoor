@@ -75,9 +75,13 @@ func GetSessionCount(owner, field, value string) int {
 func GetSingleSession(id string) *Session {
 	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
 	session := Session{Owner: owner, Name: name, Application: application}
-	_, err := adapter.Engine.Get(session)
+	get, err := adapter.Engine.Get(&session)
 	if err != nil {
 		panic(err)
+	}
+
+	if !get {
+		return nil
 	}
 
 	return &session
@@ -126,7 +130,7 @@ func AddSession(session *Session) bool {
 			}
 		}
 
-		removeExtraSessionIds(session)
+		removeExtraSessionIds(dbSession)
 
 		return UpdateSession(dbSession.GetId(), dbSession)
 	}
