@@ -14,6 +14,7 @@
 
 export const ShowGithubCorner = false;
 export const GithubRepo = "https://github.com/casdoor/casdoor";
+export const IsDemoMode = true;
 
 export const ForceLanguage = "";
 export const DefaultLanguage = "en";
