@@ -255,7 +255,9 @@ func (c *ApiController) Logout() {
 	if accessToken == "" && redirectUri == "" {
 		c.ClearUserSession()
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
-		object.DeleteSessionId(util.GetSessionId(object.CasdoorOrganization, object.CasdoorApplication, user), c.Ctx.Input.CruSession.SessionID())
+		owner, username := util.GetOwnerAndNameFromId(user)
+
+		object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
 		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 		application := c.GetSessionApplication()
