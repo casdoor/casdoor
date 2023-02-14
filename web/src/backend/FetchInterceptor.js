@@ -30,7 +30,8 @@ const demoModePrompt = async(url, option) => {
       icon: <ExclamationCircleFilled />,
       content: i18next.t("general:Go Writable demo site?"),
       onOk() {
-        window.open("https://demo.casdoor.com", "_blank");
+        const fullURL = document.location.toString();
+        window.open("https://demo.casdoor.com" + fullURL.substring(fullURL.lastIndexOf("/")) + "?username=built-in/admin&password=123", "_blank");
       },
       onCancel() {},
     });
