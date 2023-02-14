@@ -97,21 +97,20 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16    
+      - name: back start
+        run: nohup go run ./main.go &
+        working-directory: ./
       - name: front install
         run: yarn install
         working-directory: ./web
       - name: front start
         run: nohup yarn start &
         working-directory: ./web  
-      - name: back start
-        run: nohup go run ./main.go &
-        working-directory: ./
-      - name: Sleep for starting
-        run: sleep 90s
-        shell: bash
-      - name: e2e
-        run: npx cypress run --spec "**/e2e/**.cy.js"
-        working-directory: ./web
+      - uses: cypress-io/github-action@v4
+        with:
+          working-directory: ./web
+          wait-on: 'http://localhost:7001'
+          wait-on-timeout: 180
 
       - uses: actions/upload-artifact@v3
         if: failure()
