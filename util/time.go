@@ -31,6 +31,6 @@ func GetCurrentUnixTime() string {
 
 func IsTokenExpired(createdTime string, expiresIn int) bool {
 	createdTimeObj, _ := time.Parse(time.RFC3339, createdTime)
-	expiresAtObj := createdTimeObj.Add(time.Duration(expiresIn) * time.Minute)
+	expiresAtObj := createdTimeObj.Add(time.Duration(expiresIn) * time.Second)
 	return time.Now().After(expiresAtObj)
 }
