@@ -265,8 +265,8 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		claimsWithoutThirdIdp := getClaimsWithoutThirdIdp(claims)
 
 		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsWithoutThirdIdp)
-		claims.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
-		claims.TokenType = "refresh-token"
+		claimsWithoutThirdIdp.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
+		claimsWithoutThirdIdp.TokenType = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsWithoutThirdIdp)
 	}
 
