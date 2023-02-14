@@ -56,15 +56,15 @@ func Test_IsTokenExpired(t *testing.T) {
 			description: "Token emitted now is valid for 60 minutes",
 			input: input{
 				createdTime: time.Now().Format(time.RFC3339),
-				expiresIn:   60,
+				expiresIn:   3600,
 			},
 			expected: false,
 		},
 		{
-			description: "Token emitted 60 minutes before now is valid for 60 minutes",
+			description: "Token emitted 60 minutes before now is valid for 61 minutes",
 			input: input{
 				createdTime: time.Now().Add(-time.Minute * 60).Format(time.RFC3339),
-				expiresIn:   61,
+				expiresIn:   3660,
 			},
 			expected: false,
 		},
@@ -72,7 +72,7 @@ func Test_IsTokenExpired(t *testing.T) {
 			description: "Token emitted 2 hours before now is Expired after 60 minutes",
 			input: input{
 				createdTime: time.Now().Add(-time.Hour * 2).Format(time.RFC3339),
-				expiresIn:   60,
+				expiresIn:   3600,
 			},
 			expected: true,
 		},
@@ -80,23 +80,23 @@ func Test_IsTokenExpired(t *testing.T) {
 			description: "Token emitted 61 minutes before now is Expired after 60 minutes",
 			input: input{
 				createdTime: time.Now().Add(-time.Minute * 61).Format(time.RFC3339),
-				expiresIn:   60,
+				expiresIn:   3600,
 			},
 			expected: true,
 		},
 		{
-			description: "Token emitted 2 hours before now  is valid for 120 minutes",
+			description: "Token emitted 2 hours before now  is valid for 121 minutes",
 			input: input{
 				createdTime: time.Now().Add(-time.Hour * 2).Format(time.RFC3339),
-				expiresIn:   121,
+				expiresIn:   7260,
 			},
 			expected: false,
 		},
 		{
-			description: "Token emitted 159 minutes before now is Expired after 60 minutes",
+			description: "Token emitted 159 minutes before now is Expired after 120 minutes",
 			input: input{
 				createdTime: time.Now().Add(-time.Minute * 159).Format(time.RFC3339),
-				expiresIn:   120,
+				expiresIn:   7200,
 			},
 			expected: true,
 		},

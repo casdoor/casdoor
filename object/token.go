@@ -27,7 +27,7 @@ import (
 )
 
 const (
-	hourMinutes          = 60
+	hourSeconds          = int(time.Hour / time.Second)
 	InvalidRequest       = "invalid_request"
 	InvalidClient        = "invalid_client"
 	InvalidGrant         = "invalid_grant"
@@ -306,7 +306,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		Code:          util.GenerateClientId(),
 		AccessToken:   accessToken,
 		RefreshToken:  refreshToken,
-		ExpiresIn:     application.ExpireInHours * hourMinutes,
+		ExpiresIn:     application.ExpireInHours * hourSeconds,
 		Scope:         scope,
 		TokenType:     "Bearer",
 		CodeChallenge: challenge,
@@ -442,7 +442,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		Code:         util.GenerateClientId(),
 		AccessToken:  newAccessToken,
 		RefreshToken: newRefreshToken,
-		ExpiresIn:    application.ExpireInHours * hourMinutes,
+		ExpiresIn:    application.ExpireInHours * hourSeconds,
 		Scope:        scope,
 		TokenType:    "Bearer",
 	}
@@ -592,7 +592,7 @@ func GetPasswordToken(application *Application, username string, password string
 		Code:         util.GenerateClientId(),
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		ExpiresIn:    application.ExpireInHours * hourMinutes,
+		ExpiresIn:    application.ExpireInHours * hourSeconds,
 		Scope:        scope,
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
@@ -632,7 +632,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		User:         nullUser.Name,
 		Code:         util.GenerateClientId(),
 		AccessToken:  accessToken,
-		ExpiresIn:    application.ExpireInHours * hourMinutes,
+		ExpiresIn:    application.ExpireInHours * hourSeconds,
 		Scope:        scope,
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
@@ -659,7 +659,7 @@ func GetTokenByUser(application *Application, user *User, scope string, host str
 		Code:         util.GenerateClientId(),
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		ExpiresIn:    application.ExpireInHours * hourMinutes,
+		ExpiresIn:    application.ExpireInHours * hourSeconds,
 		Scope:        scope,
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
