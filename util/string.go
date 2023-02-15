@@ -145,7 +145,7 @@ func GetMd5Hash(text string) string {
 	return hex.EncodeToString(hash[:])
 }
 
-func IsStrsEmpty(strs ...string) bool {
+func IsStringsEmpty(strs ...string) bool {
 	for _, str := range strs {
 		if len(str) == 0 {
 			return true
@@ -227,7 +227,7 @@ func IsChinese(str string) bool {
 }
 
 func GetMaskedPhone(phone string) string {
-	return getMaskedPhone(phone)
+	return rePhone.ReplaceAllString(phone, "$1****$2")
 }
 
 func GetMaskedEmail(email string) string {

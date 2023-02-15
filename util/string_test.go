@@ -183,7 +183,7 @@ func TestIsStrsEmpty(t *testing.T) {
 	}
 	for _, scenery := range scenarios {
 		t.Run(scenery.description, func(t *testing.T) {
-			actual := IsStrsEmpty(scenery.input...)
+			actual := IsStringsEmpty(scenery.input...)
 			assert.Equal(t, scenery.expected, actual, "The returned value not is expected")
 		})
 	}

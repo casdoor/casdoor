@@ -80,7 +80,7 @@ func (c *ApiController) SendEmail() {
 		c.ResponseOk()
 	}
 
-	if util.IsStrsEmpty(emailForm.Title, emailForm.Content, emailForm.Sender) {
+	if util.IsStringsEmpty(emailForm.Title, emailForm.Content, emailForm.Sender) {
 		c.ResponseError(fmt.Sprintf(c.T("service:Empty parameters for emailForm: %v"), emailForm))
 		return
 	}
@@ -130,13 +130,13 @@ func (c *ApiController) SendSms() {
 		return
 	}
 
-	org := object.GetOrganization(smsForm.OrgId)
 	var invalidReceivers []string
 	for idx, receiver := range smsForm.Receivers {
+		// The receiver phone format: E164 like +8613854673829 +441932567890
 		if !util.IsPhoneCnValid(receiver) {
 			invalidReceivers = append(invalidReceivers, receiver)
 		} else {
-			smsForm.Receivers[idx] = fmt.Sprintf("+%s%s", org.PhonePrefix, receiver)
+			smsForm.Receivers[idx] = receiver
 		}
 	}
 
