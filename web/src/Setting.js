@@ -23,12 +23,23 @@ import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
+import * as phoneNumber from "libphonenumber-js";
 import * as path from "path-browserify";
 
 export const ServerUrl = "";
 
 // export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
 export const StaticBaseUrl = "https://cdn.casbin.org";
+
+export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
+  {label: "简体中文", key: "zh", country: "CN", alt: "简体中文"},
+  {label: "Español", key: "es", country: "ES", alt: "Español"},
+  {label: "Français", key: "fr", country: "FR", alt: "Français"},
+  {label: "Deutsch", key: "de", country: "DE", alt: "Deutsch"},
+  {label: "日本語", key: "ja", country: "JP", alt: "日本語"},
+  {label: "한국어", key: "ko", country: "KR", alt: "한국어"},
+  {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
+];
 
 export function getThemeData(organization, application) {
   if (application?.themeData?.isEnabled) {
@@ -188,18 +199,31 @@ export const OtherProviderInfo = {
   },
 };
 
-export function getCountriesData() {
+export function initCountries() {
   const countries = require("i18n-iso-countries");
   countries.registerLocale(require("i18n-iso-countries/langs/" + getLanguage() + ".json"));
   return countries;
 }
 
-export function getCountryNames() {
-  const data = getCountriesData().getNames(getLanguage(), {select: "official"});
-
-  return Object.entries(data).map(items => {
-    return {code: items[0], name: items[1]};
+export function getCountriesData(countryCodes = phoneNumber.getCountries()) {
+  return countryCodes?.map((countryCode) => {
+    if (phoneNumber.isSupportedCountry(countryCode)) {
+      const name = initCountries().getName(countryCode, getLanguage());
+      return {
+        code: countryCode,
+        name: name,
+        phone: phoneNumber.getCountryCallingCode(countryCode),
+      };
+    }
   });
+}
+
+export function countryFlag(country) {
+  return <img src={`${StaticBaseUrl}/flag-icons/${country.code}.svg`} alt={country.name} height={20} style={{marginRight: 10}} />;
+}
+
+export function getPhoneCodeFromCountryCode(countryCode) {
+  return phoneNumber.isSupportedCountry(countryCode) ? phoneNumber.getCountryCallingCode(countryCode) : "";
 }
 
 export function initServerUrl() {
@@ -299,7 +323,11 @@ export function isValidEmail(email) {
   return emailRegex.test(email);
 }
 
-export function isValidPhone(phone) {
+export function isValidPhone(phone, countryCode = "") {
+  if (countryCode !== "") {
+    return phoneNumber.isValidPhoneNumber(phone, countryCode);
+  }
+
   return phone !== "";
 
   // if (phone === "") {

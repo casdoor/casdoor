@@ -29,6 +29,7 @@ import SelectRegionBox from "./SelectRegionBox";
 import WebAuthnCredentialTable from "./WebauthnCredentialTable";
 import ManagedAccountTable from "./ManagedAccountTable";
 import PropertyTable from "./propertyTable";
+import PhoneNumberInput from "./common/PhoneNumberInput";
 
 const {Option} = Select;
 
@@ -312,13 +313,25 @@ class UserEditPage extends React.Component {
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
             {Setting.isLocalAdminUser(this.props.account) ?
-              <Input value={this.state.user.phone} addonBefore={`+${this.state.application?.organizationObj.phonePrefix}`}
-                disabled={disabled}
-                onChange={e => {
-                  this.updateUserField("phone", e.target.value);
-                }} /> :
-              (<Select virtual={false} value={`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`}
-                options={[Setting.getItem(`+${this.state.application?.organizationObj.phonePrefix} ${this.state.user.phone}`, this.state.user.phone)]}
+              <Input.Group compact>
+                <PhoneNumberInput
+                  style={{width: "20%"}}
+                  value={this.state.countryCode}
+                  onChange={(value) => {
+                    this.updateUserField("countryCode", value);
+                  }}
+                  countryCodes={this.state.application?.organizationObj.countryCodes}
+                />
+                <Input value={this.state.user.phone}
+                  style={{width: "80%"}}
+                  disabled={disabled}
+                  onChange={e => {
+                    this.updateUserField("phone", e.target.value);
+                  }} />
+              </Input.Group>
+              :
+              (<Select virtual={false} value={`+${Setting.getPhoneCodeFromCountryCode(this.state.user.countryCode)} ${this.state.user.phone}`}
+                options={[Setting.getItem(`+${Setting.getPhoneCodeFromCountryCode(this.state.user.countryCode)} ${this.state.user.phone}`, this.state.user.phone)]}
                 disabled={disabled}
                 onChange={e => {
                   this.updateUserField("phone", e.target.value);

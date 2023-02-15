@@ -49,6 +49,7 @@ class UserListPage extends BaseListPage {
       avatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       email: `${randomName}@example.com`,
       phone: Setting.getRandomNumber(),
+      countryCode: this.state.organization.defaultCountryCode,
       address: [],
       affiliation: "Example Inc.",
       tag: "staff",
@@ -261,7 +262,7 @@ class UserListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("region"),
         render: (text, record, index) => {
-          return Setting.getCountriesData().getName(record.region, Setting.getLanguage(), {select: "official"});
+          return Setting.initCountries().getName(record.region, Setting.getLanguage(), {select: "official"});
         },
       },
       {

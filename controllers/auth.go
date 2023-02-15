@@ -263,34 +263,32 @@ func (c *ApiController) Login() {
 				checkDest = form.Username
 			} else {
 				verificationCodeType = "phone"
-				if len(form.PhonePrefix) == 0 {
-					responseText := fmt.Sprintf(c.T("auth:%s No phone prefix"), verificationCodeType)
-					c.ResponseError(responseText)
-					return
-				}
 				if user != nil && util.GetMaskedPhone(user.Phone) == form.Username {
 					form.Username = user.Phone
 				}
-				checkDest = fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username)
 			}
-			user = object.GetUserByFields(form.Organization, form.Username)
-			if user == nil {
+
+			if user = object.GetUserByFields(form.Organization, form.Username); user == nil {
 				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(form.Organization, form.Username)))
 				return
 			}
+			if verificationCodeType == "phone" {
+				form.CountryCode = user.GetCountryCode(form.CountryCode)
+				var ok bool
+				if checkDest, ok = util.GetE164Number(form.Username, form.CountryCode); !ok {
+					c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), form.CountryCode))
+					return
+				}
+			}
+
 			checkResult = object.CheckSigninCode(user, checkDest, form.Code, c.GetAcceptLanguage())
 			if len(checkResult) != 0 {
-				responseText := fmt.Sprintf("%s - %s", verificationCodeType, checkResult)
-				c.ResponseError(responseText)
+				c.ResponseError(fmt.Sprintf("%s - %s", verificationCodeType, checkResult))
 				return
 			}
 
 			// disable the verification code
-			if strings.Contains(form.Username, "@") {
-				object.DisableVerificationCode(form.Username)
-			} else {
-				object.DisableVerificationCode(fmt.Sprintf("+%s%s", form.PhonePrefix, form.Username))
-			}
+			object.DisableVerificationCode(checkDest)
 		} else {
 			application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
 			if application == nil {

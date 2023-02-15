@@ -14,6 +14,8 @@
 
 package util
 
+import "sort"
+
 func DeleteVal(values []string, val string) []string {
 	newValues := []string{}
 	for _, v := range values {
@@ -22,4 +24,9 @@ func DeleteVal(values []string, val string) []string {
 		}
 	}
 	return newValues
+}
+
+func ContainsString(values []string, val string) bool {
+	sort.Strings(values)
+	return sort.SearchStrings(values, val) != len(values)
 }

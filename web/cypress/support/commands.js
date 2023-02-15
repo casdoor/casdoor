@@ -34,7 +34,6 @@ Cypress.Commands.add('login', ()=>{
           "password": "123",
           "autoSignin": true,
           "type": "login",
-          "phonePrefix": "86",
         },
       }).then((Response) => {
         expect(Response).property("body").property("status").to.equal("ok");
