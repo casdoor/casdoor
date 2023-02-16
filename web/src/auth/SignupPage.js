@@ -405,7 +405,7 @@ class SignupPage extends React.Component {
               >
                 <PhoneNumberInput
                   showSearsh={true}
-                  style={{width: "30%"}}
+                  style={{width: "35%"}}
                   value={this.state.countryCode}
                   onChange={(value) => {this.setState({countryCode: value});}}
                   countryCodes={this.getApplicationObj().organizationObj.countryCodes}
@@ -434,7 +434,7 @@ class SignupPage extends React.Component {
                 ]}
               >
                 <Input
-                  style={{width: "70%"}}
+                  style={{width: "65%"}}
                   onChange={e => this.setState({phone: e.target.value})}
                 />
               </Form.Item>
