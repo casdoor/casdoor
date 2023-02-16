@@ -73,7 +73,8 @@ func (*Migrator_1_244_0_PR_1557) DoMigration() *migrate.Migration {
 					{Name: "Is forbidden", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 					{Name: "Is deleted", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 					{Name: "WebAuthn credentials", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
-					{Name: "Managed accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"}}
+					{Name: "Managed accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
+				}
 
 				sql := fmt.Sprintf("select phone_prefix from organization where owner='%s' and name='%s'", organization.Owner, organization.Name)
 				results, _ := engine.Query(sql)

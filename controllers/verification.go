@@ -200,7 +200,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 			c.ResponseError(errMsg)
 			return
 		}
-		if checkDest, ok = util.GetE164Number(dest, user.CountryCode); !ok {
+		if checkDest, ok = util.GetE164Number(dest, user.GetCountryCode("")); !ok {
 			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), user.CountryCode))
 			return
 		}
