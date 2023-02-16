@@ -58,7 +58,7 @@ type RequestForm struct {
 
 	EmailCode   string `json:"emailCode"`
 	PhoneCode   string `json:"phoneCode"`
-	PhonePrefix string `json:"phonePrefix"`
+	CountryCode string `json:"countryCode"`
 
 	AutoSignin bool `json:"autoSignin"`
 
@@ -121,7 +121,7 @@ func (c *ApiController) Signup() {
 	}
 
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", form.Organization))
-	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.FirstName, form.LastName, form.Email, form.Phone, form.Affiliation, c.GetAcceptLanguage())
+	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.FirstName, form.LastName, form.Email, form.Phone, form.CountryCode, form.Affiliation, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
 		return
@@ -137,7 +137,7 @@ func (c *ApiController) Signup() {
 
 	var checkPhone string
 	if application.IsSignupItemVisible("Phone") && form.Phone != "" {
-		checkPhone = fmt.Sprintf("+%s%s", form.PhonePrefix, form.Phone)
+		checkPhone, _ = util.GetE164Number(form.Phone, form.CountryCode)
 		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode, c.GetAcceptLanguage())
 		if len(checkResult) != 0 {
 			c.ResponseError(c.T("account:Phone: %s"), checkResult)
@@ -179,6 +179,7 @@ func (c *ApiController) Signup() {
 		Avatar:            organization.DefaultAvatar,
 		Email:             form.Email,
 		Phone:             form.Phone,
+		CountryCode:       form.CountryCode,
 		Address:           []string{},
 		Affiliation:       form.Affiliation,
 		IdCard:            form.IdCard,

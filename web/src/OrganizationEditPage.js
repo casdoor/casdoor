@@ -184,12 +184,20 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Phone prefix"), i18next.t("general:Phone prefix - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Supported country code"), i18next.t("general:Supported country code - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input addonBefore={"+"} value={this.state.organization.phonePrefix} onChange={e => {
-              this.updateOrganizationField("phonePrefix", e.target.value);
-            }} />
+            <Select virtual={false} mode={"multiple"} style={{width: "100%"}} value={this.state.organization.countryCodes ?? []}
+              options={Setting.getCountriesData().map(country => {
+                return Setting.getOption(
+                  <>
+                    {Setting.countryFlag(country)}
+                    {`${country.name} +${country.phone}`}
+                  </>,
+                  country.code);
+              })} onChange={value => {
+                this.updateOrganizationField("countryCodes", value);
+              }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -257,22 +265,13 @@ class OrganizationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="tags" style={{width: "100%"}}
-              value={this.state.organization.languages}
+              options={Setting.Countries.map((item) => {
+                return Setting.getOption(item.label, item.key);
+              })}
+              value={this.state.organization.languages ?? []}
               onChange={(value => {
                 this.updateOrganizationField("languages", value);
               })} >
-              {
-                [
-                  {value: "en", label: "English"},
-                  {value: "zh", label: "简体中文"},
-                  {value: "es", label: "Español"},
-                  {value: "fr", label: "Français"},
-                  {value: "de", label: "Deutsch"},
-                  {value: "ja", label: "日本語"},
-                  {value: "ko", label: "한국어"},
-                  {value: "ru", label: "Русский"},
-                ].map((item, index) => <Option key={index} value={item.value}>{item.label}</Option>)
-              }
             </Select>
           </Col>
         </Row>

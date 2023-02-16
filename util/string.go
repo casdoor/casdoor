@@ -227,7 +227,7 @@ func IsChinese(str string) bool {
 }
 
 func GetMaskedPhone(phone string) string {
-	return getMaskedPhone(phone)
+	return rePhone.ReplaceAllString(phone, "$1****$2")
 }
 
 func GetMaskedEmail(email string) string {
