@@ -29,6 +29,8 @@ const demoModePrompt = async(url, option) => {
       title: i18next.t("general:This is a read-only demo site!"),
       icon: <ExclamationCircleFilled />,
       content: i18next.t("general:Go Writable demo site?"),
+      okText: i18next.t("user:OK"),
+      cancelText: i18next.t("general:Cancel"),
       onOk() {
         const fullURL = document.location.toString();
         window.open("https://demo.casdoor.com" + fullURL.substring(fullURL.lastIndexOf("/")) + "?username=built-in/admin&password=123", "_blank");
