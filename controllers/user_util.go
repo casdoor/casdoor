@@ -63,7 +63,7 @@ func checkPermissionForUpdateUser(userId string, newUser object.User, c *ApiCont
 		itemsChanged = append(itemsChanged, item)
 	}
 	if oldUser.CountryCode != newUser.CountryCode {
-		item := object.GetAccountItemByName("CountryCode", organization)
+		item := object.GetAccountItemByName("Country code", organization)
 		itemsChanged = append(itemsChanged, item)
 	}
 	if oldUser.Region != newUser.Region {

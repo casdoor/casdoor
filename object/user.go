@@ -455,7 +455,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 		}
 	}
 	if isGlobalAdmin {
-		columns = append(columns, "name", "email", "phone", "countryCode")
+		columns = append(columns, "name", "email", "phone", "country_code")
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)

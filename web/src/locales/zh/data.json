@@ -725,6 +725,7 @@
     "Captcha Verify Failed": "验证码校验失败",
     "Captcha Verify Success": "验证码校验成功",
     "Code Sent": "验证码已发送",
+    "Country code": "国家代码",
     "Country/Region": "国家/地区",
     "Country/Region - Tooltip": "国家/地区",
     "Edit User": "编辑用户",

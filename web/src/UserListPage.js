@@ -49,7 +49,7 @@ class UserListPage extends BaseListPage {
       avatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       email: `${randomName}@example.com`,
       phone: Setting.getRandomNumber(),
-      countryCode: this.state.organization.defaultCountryCode,
+      countryCode: this.state.organization.countryCodes?.length > 0 ? this.state.organization.countryCodes[0] : "",
       address: [],
       affiliation: "Example Inc.",
       tag: "staff",

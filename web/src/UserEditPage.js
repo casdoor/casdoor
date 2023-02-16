@@ -315,7 +315,7 @@ class UserEditPage extends React.Component {
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
             {Setting.isLocalAdminUser(this.props.account) ?
-              <Input.Group compact>
+              <Input.Group compact style={{width: "280Px"}}>
                 <PhoneNumberInput
                   style={{width: "30%"}}
                   value={this.state.user.countryCode}
