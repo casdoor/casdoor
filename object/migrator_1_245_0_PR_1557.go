@@ -23,9 +23,9 @@ import (
 	"github.com/xorm-io/xorm/migrate"
 )
 
-type Migrator_1_244_0_PR_1557 struct{}
+type Migrator_1_245_0_PR_1557 struct{}
 
-func (*Migrator_1_244_0_PR_1557) IsMigrationNeeded() bool {
+func (*Migrator_1_245_0_PR_1557) IsMigrationNeeded() bool {
 	exist, _ := adapter.Engine.IsTableExist("organization")
 
 	if exist {
@@ -34,7 +34,7 @@ func (*Migrator_1_244_0_PR_1557) IsMigrationNeeded() bool {
 	return false
 }
 
-func (*Migrator_1_244_0_PR_1557) DoMigration() *migrate.Migration {
+func (*Migrator_1_245_0_PR_1557) DoMigration() *migrate.Migration {
 	migration := migrate.Migration{
 		ID: "20230215organization--transfer phonePrefix to defaultCountryCode, countryCodes",
 		Migrate: func(engine *xorm.Engine) error {

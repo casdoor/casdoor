@@ -26,7 +26,7 @@ func DoMigration() {
 		&Migrator_1_101_0_PR_1083{},
 		&Migrator_1_235_0_PR_1530{},
 		&Migrator_1_240_0_PR_1539{},
-		&Migrator_1_244_0_PR_1557{},
+		&Migrator_1_245_0_PR_1557{},
 		// more migrators add here in chronological order...
 	}
 

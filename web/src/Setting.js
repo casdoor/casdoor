@@ -211,7 +211,7 @@ export function getCountriesData(countryCodes = phoneNumber.getCountries()) {
       const name = initCountries().getName(countryCode, getLanguage());
       return {
         code: countryCode,
-        name: name,
+        name: name || "",
         phone: phoneNumber.getCountryCallingCode(countryCode),
       };
     }
@@ -328,15 +328,9 @@ export function isValidPhone(phone, countryCode = "") {
     return phoneNumber.isValidPhoneNumber(phone, countryCode);
   }
 
-  return phone !== "";
-
-  // if (phone === "") {
-  //   return false;
-  // }
-  //
   // // https://learnku.com/articles/31543, `^s*$` filter empty email individually.
-  // const phoneRegex = /^\s*$|^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/;
-  // return phoneRegex.test(phone);
+  const phoneRegex = /[0-9]{4,15}$/;
+  return phoneRegex.test(phone);
 }
 
 export function isValidInvoiceTitle(invoiceTitle) {

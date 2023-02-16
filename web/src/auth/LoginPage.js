@@ -427,7 +427,7 @@ class LoginPage extends React.Component {
                   {
                     validator: (_, value) => {
                       if (this.state.loginMethod === "verificationCode") {
-                        if (this.state.email !== "" && !Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
+                        if (!Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
                           this.setState({validEmailOrPhone: false});
                           return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
                         }
