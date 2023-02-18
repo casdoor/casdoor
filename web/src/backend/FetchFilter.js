@@ -21,35 +21,38 @@ import * as Setting from "../Setting";
 const {confirm} = Modal;
 const {fetch: originalFetch} = window;
 
-const demoModeCallback = async(url, option) => {
-  if (option.method === "POST") {
-    confirm({
-      title: i18next.t("general:This is a read-only demo site!"),
-      icon: <ExclamationCircleFilled />,
-      content: i18next.t("general:Go to writable demo site?"),
-      okText: i18next.t("user:OK"),
-      cancelText: i18next.t("general:Cancel"),
-      onOk() {
-        Setting.openLink(`https://demo.casdoor.com${location.path}${location.search}?username=built-in/admin&password=123`);
-      },
-      onCancel() {},
-    });
-  }
-
-  return option;
+const demoModeCallback = (res) => {
+  res.json().then(data => {
+    if (data.msg === "Unauthorized operation") {
+      confirm({
+        title: i18next.t("general:This is a read-only demo site!"),
+        icon: <ExclamationCircleFilled />,
+        content: i18next.t("general:Go to writable demo site?"),
+        okText: i18next.t("user:OK"),
+        cancelText: i18next.t("general:Cancel"),
+        onOk() {
+          Setting.openLink(`https://demo.casdoor.com${location.path}${location.search}?username=built-in/admin&password=123`);
+        },
+        onCancel() {},
+      });
+    }
+  });
 };
 
 const requestFilters = [];
 const responseFilters = [];
 
 if (Conf.IsDemoMode) {
-  requestFilters.push(demoModeCallback);
+  responseFilters.push(demoModeCallback);
 }
 
 window.fetch = async(url, option = {}) => {
   requestFilters.forEach(filter => filter(url, option));
 
-  const response = await originalFetch(url, option);
-  responseFilters.forEach(filter => (response) => filter(response));
-  return response;
+  return new Promise((resolve, reject) => {
+    originalFetch(url, option).then(res => {
+      responseFilters.forEach(filter => filter(res.clone()));
+      resolve(res);
+    });
+  });
 };
