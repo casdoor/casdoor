@@ -23,7 +23,7 @@ const {fetch: originalFetch} = window;
 
 const demoModeCallback = (res) => {
   res.json().then(data => {
-    if (data.msg === "Unauthorized operation") {
+    if (data.data === "Unauthorized") {
       confirm({
         title: i18next.t("general:This is a read-only demo site!"),
         icon: <ExclamationCircleFilled />,
@@ -31,7 +31,7 @@ const demoModeCallback = (res) => {
         okText: i18next.t("user:OK"),
         cancelText: i18next.t("general:Cancel"),
         onOk() {
-          Setting.openLink(`https://demo.casdoor.com${location.path}${location.search}?username=built-in/admin&password=123`);
+          Setting.openLink(`https://demo.casdoor.com${location.pathname}?username=built-in/admin&password=123`);
         },
         onCancel() {},
       });

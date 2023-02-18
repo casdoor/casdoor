@@ -47,7 +47,7 @@ func responseError(ctx *context.Context, error string, data ...interface{}) {
 }
 
 func denyRequest(ctx *context.Context) {
-	responseError(ctx, "Unauthorized operation")
+	responseError(ctx, "Unauthorized operation", "Unauthorized")
 }
 
 func getUsernameByClientIdSecret(ctx *context.Context) string {
