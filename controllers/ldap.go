@@ -104,7 +104,7 @@ func (c *ApiController) GetLdapUser() {
 // GetLdaps
 // @Tag Account API
 // @Title GetLdaps
-// @router /get-ldaps [post]
+// @router /get-ldaps [get]
 func (c *ApiController) GetLdaps() {
 	owner := c.Input().Get("owner")
 
@@ -115,7 +115,7 @@ func (c *ApiController) GetLdaps() {
 // GetLdap
 // @Tag Account API
 // @Title GetLdap
-// @router /get-ldap [post]
+// @router /get-ldap [get]
 func (c *ApiController) GetLdap() {
 	id := c.Input().Get("id")
 

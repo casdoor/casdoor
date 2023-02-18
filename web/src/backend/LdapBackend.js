@@ -16,7 +16,7 @@ import * as Setting from "../Setting";
 
 export function getLdaps(owner) {
   return fetch(`${Setting.ServerUrl}/api/get-ldaps?owner=${owner}`, {
-    method: "POST",
+    method: "GET",
     credentials: "include",
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
@@ -26,7 +26,7 @@ export function getLdaps(owner) {
 
 export function getLdap(id) {
   return fetch(`${Setting.ServerUrl}/api/get-ldap?id=${id}`, {
-    method: "POST",
+    method: "GET",
     credentials: "include",
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
