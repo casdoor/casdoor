@@ -31,7 +31,7 @@ const demoModeCallback = (res) => {
         okText: i18next.t("user:OK"),
         cancelText: i18next.t("general:Cancel"),
         onOk() {
-          Setting.openLink(`https://demo.casdoor.com${location.path}${location.search}?username=built-in/admin&password=123`);
+          Setting.openLink(`https://demo.casdoor.com${location.pathname}${location.search}?username=built-in/admin&password=123`);
         },
         onCancel() {},
       });
