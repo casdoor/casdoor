@@ -145,7 +145,7 @@ func GetMd5Hash(text string) string {
 	return hex.EncodeToString(hash[:])
 }
 
-func IsStrsEmpty(strs ...string) bool {
+func IsStringsEmpty(strs ...string) bool {
 	for _, str := range strs {
 		if len(str) == 0 {
 			return true

@@ -80,7 +80,7 @@ func (c *ApiController) SendEmail() {
 		c.ResponseOk()
 	}
 
-	if util.IsStrsEmpty(emailForm.Title, emailForm.Content, emailForm.Sender) {
+	if util.IsStringsEmpty(emailForm.Title, emailForm.Content, emailForm.Sender) {
 		c.ResponseError(fmt.Sprintf(c.T("service:Empty parameters for emailForm: %v"), emailForm))
 		return
 	}

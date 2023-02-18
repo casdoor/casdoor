@@ -177,7 +177,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 	dest := c.Ctx.Request.Form.Get("dest")
 	code := c.Ctx.Request.Form.Get("code")
 
-	if util.IsStrsEmpty(destType, dest, code) {
+	if util.IsStringsEmpty(destType, dest, code) {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return
 	}

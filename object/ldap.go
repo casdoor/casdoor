@@ -329,7 +329,7 @@ func GetLdaps(owner string) []*Ldap {
 }
 
 func GetLdap(id string) *Ldap {
-	if util.IsStrsEmpty(id) {
+	if util.IsStringsEmpty(id) {
 		return nil
 	}
 
