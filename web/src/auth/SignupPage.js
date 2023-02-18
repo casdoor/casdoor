@@ -26,6 +26,7 @@ import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {withRouter} from "react-router-dom";
+import PhoneNumberInput from "../common/PhoneNumberInput";
 
 const formItemLayout = {
   labelCol: {
@@ -68,6 +69,7 @@ class SignupPage extends React.Component {
       application: null,
       email: "",
       phone: "",
+      countryCode: "",
       emailCode: "",
       phoneCode: "",
       validEmail: false,
@@ -157,7 +159,6 @@ class SignupPage extends React.Component {
 
   onFinish(values) {
     const application = this.getApplicationObj();
-    values.phonePrefix = application.organizationObj.phonePrefix;
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === "ok") {
@@ -378,35 +379,66 @@ class SignupPage extends React.Component {
     } else if (signupItem.name === "Phone") {
       return (
         <React.Fragment>
-          <Form.Item
-            name="phone"
-            key="phone"
-            label={i18next.t("general:Phone")}
-            rules={[
-              {
-                required: required,
-                message: i18next.t("signup:Please input your phone number!"),
-              },
-              {
-                validator: (_, value) => {
-                  if (this.state.phone !== "" && !Setting.isValidPhone(this.state.phone)) {
-                    this.setState({validPhone: false});
-                    return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
-                  }
+          <Form.Item label={i18next.t("general:Phone")} required>
+            <Input.Group compact>
+              <Form.Item
+                name="countryCode"
+                key="countryCode"
+                noStyle
+                rules={[
+                  {
+                    required: required,
+                    message: i18next.t("signup:Please select your country code!"),
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (this.state.phone !== "" && !Setting.isValidPhone(this.state.phone, this.state.countryCode)) {
+                        this.setState({validPhone: false});
+                        return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
+                      }
 
-                  this.setState({validPhone: true});
-                  return Promise.resolve();
-                },
-              },
-            ]}
-          >
-            <Input
-              style={{
-                width: "100%",
-              }}
-              addonBefore={`+${this.getApplicationObj()?.organizationObj.phonePrefix}`}
-              onChange={e => this.setState({phone: e.target.value})}
-            />
+                      this.setState({validPhone: true});
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <PhoneNumberInput
+                  showSearsh={true}
+                  style={{width: "35%"}}
+                  value={this.state.countryCode}
+                  onChange={(value) => {this.setState({countryCode: value});}}
+                  countryCodes={this.getApplicationObj().organizationObj.countryCodes}
+                />
+              </Form.Item>
+              <Form.Item
+                name="phone"
+                key="phone"
+                noStyle
+                rules={[
+                  {
+                    required: required,
+                    message: i18next.t("signup:Please input your phone number!"),
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (this.state.phone !== "" && !Setting.isValidPhone(this.state.phone, this.state.countryCode)) {
+                        this.setState({validPhone: false});
+                        return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
+                      }
+
+                      this.setState({validPhone: true});
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <Input
+                  style={{width: "65%"}}
+                  onChange={e => this.setState({phone: e.target.value})}
+                />
+              </Form.Item>
+            </Input.Group>
           </Form.Item>
           <Form.Item
             name="phoneCode"

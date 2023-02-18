@@ -140,7 +140,6 @@ class ForgetPage extends React.Component {
           username: this.state.username,
           name: this.state.name,
           code: forms.step2.getFieldValue("emailCode"),
-          phonePrefix: this.getApplicationObj()?.organizationObj.phonePrefix,
           type: "login",
         }, oAuthParams).then(res => {
           if (res.status === "ok") {

@@ -170,3 +170,18 @@ func ClearUserOAuthProperties(user *User, providerType string) bool {
 
 	return affected != 0
 }
+
+func (user *User) GetCountryCode(countryCode string) string {
+	if countryCode != "" {
+		return countryCode
+	}
+
+	if user != nil && user.CountryCode != "" {
+		return user.CountryCode
+	}
+
+	if org := GetOrganizationByUser(user); org != nil && len(org.CountryCodes) > 0 {
+		return org.CountryCodes[0]
+	}
+	return ""
+}

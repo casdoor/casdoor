@@ -7829,6 +7829,11 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
+libphonenumber-js@^1.10.19:
+  version "1.10.20"
+  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.20.tgz#03c310adf83381eeceb4bd6830442fd14e64964d"
+  integrity sha512-kQovlKNdLcVzerbTPmJ+Fx4R+7/pYXmPDIllHjg7IxL4X6MsMG7jaT5opfYrBok0uqkByVif//JUR8e11l/V7w==
+
 lilconfig@2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/lilconfig/-/lilconfig-2.0.5.tgz#19e57fd06ccc3848fd1891655b5a447092225b25"

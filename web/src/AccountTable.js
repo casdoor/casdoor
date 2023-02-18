@@ -78,6 +78,7 @@ class AccountTable extends React.Component {
             {name: "Password", displayName: i18next.t("general:Password")},
             {name: "Email", displayName: i18next.t("general:Email")},
             {name: "Phone", displayName: i18next.t("general:Phone")},
+            {name: "Country code", displayName: i18next.t("user:Country code")},
             {name: "Country/Region", displayName: i18next.t("user:Country/Region")},
             {name: "Location", displayName: i18next.t("user:Location")},
             {name: "Affiliation", displayName: i18next.t("user:Affiliation")},

@@ -57,7 +57,7 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 
-	// "/page?username=abc&password=123"
+	// "/page?username=built-in/admin&password=123"
 	userId = ctx.Input.Query("username")
 	password := ctx.Input.Query("password")
 	if userId != "" && password != "" && ctx.Input.Query("grant_type") == "" {

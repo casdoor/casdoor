@@ -15,7 +15,6 @@ describe("Login test", () => {
         "password": "123",
         "autoSignin": true,
         "type": "login",
-        "phonePrefix": "86",
       },
     }).then((Response) => {
       expect(Response).property("body").property("status").to.equal("ok");
@@ -40,7 +39,6 @@ describe("Login test", () => {
         "password": "1234",
         "autoSignin": true,
         "type": "login",
-        "phonePrefix": "86",
       },
     }).then((Response) => {
       expect(Response).property("body").property("status").to.equal("error");

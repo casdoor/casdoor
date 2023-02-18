@@ -14,7 +14,11 @@
 
 package object
 
-import "github.com/casdoor/go-sms-sender"
+import (
+	"strings"
+
+	"github.com/casdoor/go-sms-sender"
+)
 
 func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 	client, err := go_sms_sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.AppId)
@@ -23,6 +27,12 @@ func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 	}
 	if err != nil {
 		return err
+	}
+
+	if provider.Type == go_sms_sender.Aliyun {
+		for i, number := range phoneNumbers {
+			phoneNumbers[i] = strings.TrimPrefix(number, "+")
+		}
 	}
 
 	params := map[string]string{}

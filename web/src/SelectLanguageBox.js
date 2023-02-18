@@ -18,16 +18,6 @@ import {Dropdown} from "antd";
 import "./App.less";
 import {GlobalOutlined} from "@ant-design/icons";
 
-export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
-  {label: "简体中文", key: "zh", country: "CN", alt: "简体中文"},
-  {label: "Español", key: "es", country: "ES", alt: "Español"},
-  {label: "Français", key: "fr", country: "FR", alt: "Français"},
-  {label: "Deutsch", key: "de", country: "DE", alt: "Deutsch"},
-  {label: "日本語", key: "ja", country: "JP", alt: "日本語"},
-  {label: "한국어", key: "ko", country: "KR", alt: "한국어"},
-  {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
-];
-
 function flagIcon(country, alt) {
   return (
     <img width={24} alt={alt} src={`${Setting.StaticBaseUrl}/flag-icons/${country}.svg`} />
@@ -39,15 +29,15 @@ class SelectLanguageBox extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      languages: props.languages ?? ["en", "zh", "es", "fr", "de", "ja", "ko", "ru"],
+      languages: props.languages ?? Setting.Countries.map(item => item.key),
     };
 
-    Countries.forEach((country) => {
+    Setting.Countries.forEach((country) => {
       new Image().src = `${Setting.StaticBaseUrl}/flag-icons/${country.country}.svg`;
     });
   }
 
-  items = Countries.map((country) => Setting.getItem(country.label, country.key, flagIcon(country.country, country.alt)));
+  items = Setting.Countries.map((country) => Setting.getItem(country.label, country.key, flagIcon(country.country, country.alt)));
 
   getOrganizationLanguages(languages) {
     const select = [];

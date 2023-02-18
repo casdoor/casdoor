@@ -7,7 +7,7 @@
       "websiteUrl": "",
       "favicon": "",
       "passwordType": "",
-      "phonePrefix": "",
+      "countryCodes": [""],
       "defaultAvatar": "",
       "tags": [""]
     }
@@ -107,6 +107,7 @@
       "avatar": "",
       "email": "",
       "phone": "",
+      "countryCode": "",
       "address": [],
       "affiliation": "",
       "tag": "",
