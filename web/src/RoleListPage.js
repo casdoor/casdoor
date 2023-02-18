@@ -232,7 +232,7 @@ class RoleListPage extends BaseListPage {
             searchedColumn: params.searchedColumn,
           });
         } else {
-          if (res.msg.includes("Unauthorized")) {
+          if (Setting.isResponseDenied(res)) {
             this.setState({
               loading: false,
               isAuthorized: false,

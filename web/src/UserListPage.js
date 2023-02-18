@@ -404,7 +404,7 @@ class UserListPage extends BaseListPage {
               this.getOrganization(users[0].owner);
             }
           } else {
-            if (res.msg.includes("Unauthorized")) {
+            if (Setting.isResponseDenied(res)) {
               this.setState({
                 loading: false,
                 isAuthorized: false,
@@ -432,7 +432,7 @@ class UserListPage extends BaseListPage {
               this.getOrganization(users[0].owner);
             }
           } else {
-            if (res.msg.includes("Unauthorized")) {
+            if (Setting.isResponseDenied(res)) {
               this.setState({
                 loading: false,
                 isAuthorized: false,

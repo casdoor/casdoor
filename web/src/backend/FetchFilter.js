@@ -23,7 +23,7 @@ const {fetch: originalFetch} = window;
 
 const demoModeCallback = (res) => {
   res.json().then(data => {
-    if (data.msg === "Unauthorized operation") {
+    if (Setting.isResponseDenied(data)) {
       confirm({
         title: i18next.t("general:This is a read-only demo site!"),
         icon: <ExclamationCircleFilled />,

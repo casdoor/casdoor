@@ -262,6 +262,13 @@ export function isProviderVisible(providerItem) {
   return true;
 }
 
+export function isResponseDenied(data) {
+  if (data.msg === "Unauthorized operation" || data.msg === "未授权的操作") {
+    return true;
+  }
+  return false;
+}
+
 export function isProviderVisibleForSignUp(providerItem) {
   if (providerItem.canSignUp === false) {
     return false;
