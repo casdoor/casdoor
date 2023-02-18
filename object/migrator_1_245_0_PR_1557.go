@@ -38,8 +38,13 @@ func (*Migrator_1_245_0_PR_1557) DoMigration() *migrate.Migration {
 	migration := migrate.Migration{
 		ID: "20230215organization--transfer phonePrefix to defaultCountryCode, countryCodes",
 		Migrate: func(engine *xorm.Engine) error {
+			err := adapter.Engine.Sync2(new(Organization))
+			if err != nil {
+				panic(err)
+			}
+
 			organizations := []*Organization{}
-			err := engine.Table("organization").Find(&organizations, &Organization{})
+			err = engine.Table("organization").Find(&organizations, &Organization{})
 			if err != nil {
 				panic(err)
 			}
@@ -55,7 +60,7 @@ func (*Migrator_1_245_0_PR_1557) DoMigration() *migrate.Migration {
 					{Name: "Password", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 					{Name: "Email", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 					{Name: "Phone", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
-					{Name: "CountryCode", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
+					{Name: "Country code", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
 					{Name: "Country/Region", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 					{Name: "Location", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 					{Name: "Affiliation", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
@@ -75,7 +80,6 @@ func (*Migrator_1_245_0_PR_1557) DoMigration() *migrate.Migration {
 					{Name: "WebAuthn credentials", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 					{Name: "Managed accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 				}
-
 				sql := fmt.Sprintf("select phone_prefix from organization where owner='%s' and name='%s'", organization.Owner, organization.Name)
 				results, _ := engine.Query(sql)
 
