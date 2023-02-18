@@ -56,7 +56,7 @@ func initBuiltInOrganization() bool {
 		CountryCodes:  []string{"CN"},
 		DefaultAvatar: fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
 		Tags:          []string{},
-		Languages:     []string{"en", "zh", "es", "fr", "de", "ja", "ko", "ru"},
+		Languages:     []string{"en", "zh", "es", "fr", "de", "ja", "ko", "ru", "vi"},
 		InitScore:     2000,
 		AccountItems: []*AccountItem{
 			{Name: "Organization", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
