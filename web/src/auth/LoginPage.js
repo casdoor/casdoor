@@ -16,6 +16,7 @@ import React from "react";
 import {Button, Checkbox, Col, Form, Input, Result, Row, Spin, Tabs} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
+import * as Conf from "../Conf";
 import * as AuthBackend from "./AuthBackend";
 import * as OrganizationBackend from "../backend/OrganizationBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
@@ -384,6 +385,8 @@ class LoginPage extends React.Component {
             organization: application.organization,
             application: application.name,
             autoSignin: true,
+            username: Conf.ShowGithubCorner ? "admin" : "",
+            password: Conf.ShowGithubCorner ? "123" : "",
           }}
           onFinish={(values) => {
             this.onFinish(values);

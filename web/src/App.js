@@ -688,6 +688,11 @@ class App extends Component {
       return null;
     }
 
+    const language = Setting.getLanguage();
+    if (language === "en" || language === "zh") {
+      return null;
+    }
+
     return (
       <Alert type="info" banner showIcon={false} closable message={
         <div style={{textAlign: "center"}}>
