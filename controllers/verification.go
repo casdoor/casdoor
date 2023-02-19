@@ -70,24 +70,27 @@ func (c *ApiController) SendVerificationCode() {
 		c.ResponseError(c.T("general:Missing parameter") + ": checkType.")
 		return
 	}
-	if checkKey == "" {
-		c.ResponseError(c.T("general:Missing parameter") + ": checkKey.")
-		return
-	}
 	if !strings.Contains(applicationId, "/") {
 		c.ResponseError(c.T("verification:Wrong parameter") + ": applicationId.")
 		return
 	}
 
-	if captchaProvider := captcha.GetCaptchaProvider(checkType); captchaProvider == nil {
-		c.ResponseError(c.T("general:don't support captchaProvider: ") + checkType)
-		return
-	} else if isHuman, err := captchaProvider.VerifyCaptcha(checkKey, checkId); err != nil {
-		c.ResponseError(err.Error())
-		return
-	} else if !isHuman {
-		c.ResponseError(c.T("verification:Turing test failed."))
-		return
+	if checkType != "none" {
+		if checkKey == "" {
+			c.ResponseError(c.T("general:Missing parameter") + ": checkKey.")
+			return
+		}
+
+		if captchaProvider := captcha.GetCaptchaProvider(checkType); captchaProvider == nil {
+			c.ResponseError(c.T("general:don't support captchaProvider: ") + checkType)
+			return
+		} else if isHuman, err := captchaProvider.VerifyCaptcha(checkKey, checkId); err != nil {
+			c.ResponseError(err.Error())
+			return
+		} else if !isHuman {
+			c.ResponseError(c.T("verification:Turing test failed."))
+			return
+		}
 	}
 
 	application := object.GetApplication(applicationId)
