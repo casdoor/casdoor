@@ -33,11 +33,11 @@ class OrganizationListPage extends BaseListPage {
       favicon: `${Setting.StaticBaseUrl}/img/favicon.png`,
       passwordType: "plain",
       PasswordSalt: "",
-      phonePrefix: "86",
+      countryCodes: ["CN"],
       defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       defaultApplication: "",
       tags: [],
-      languages: ["en", "zh", "es", "fr", "de", "ja", "ko", "ru"],
+      languages: ["en", "zh", "es", "fr", "de", "ja", "ko", "ru", "vi"],
       masterPassword: "",
       enableSoftDeletion: false,
       isProfilePublic: true,
@@ -284,7 +284,7 @@ class OrganizationListPage extends BaseListPage {
             searchedColumn: params.searchedColumn,
           });
         } else {
-          if (res.msg.includes("Unauthorized")) {
+          if (Setting.isResponseDenied(res)) {
             this.setState({
               loading: false,
               isAuthorized: false,

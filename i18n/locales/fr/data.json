@@ -9,7 +9,6 @@
     "The application does not allow to sign up new account": "The application does not allow to sign up new account"
   },
   "auth": {
-    "%s No phone prefix": "%s No phone prefix",
     "Challenge method should be S256": "Challenge method should be S256",
     "Failed to create user, user information is invalid: %s": "Failed to create user, user information is invalid: %s",
     "Failed to login in: %s": "Failed to login in: %s",
@@ -57,13 +56,15 @@
     "Username is too long (maximum is 39 characters).": "Username is too long (maximum is 39 characters).",
     "Username must have at least 2 characters": "Username must have at least 2 characters",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
+    "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
     "password or code is incorrect, you have %d remaining chances": "password or code is incorrect, you have %d remaining chances",
     "unsupported password type: %s": "unsupported password type: %s"
   },
   "general": {
     "Missing parameter": "Missing parameter",
     "Please login first": "Please login first",
-    "The user: %s doesn't exist": "The user: %s doesn't exist"
+    "The user: %s doesn't exist": "The user: %s doesn't exist",
+    "don't support captchaProvider: ": "don't support captchaProvider: "
   },
   "ldap": {
     "Ldap server exist": "Ldap server exist"
@@ -130,7 +131,7 @@
     "Email is invalid": "Email is invalid",
     "Invalid captcha provider.": "Invalid captcha provider.",
     "Organization does not exist": "Organization does not exist",
-    "Phone number is invalid": "Phone number is invalid",
+    "Phone number is invalid in your region %s": "Phone number is invalid in your region %s",
     "Turing test failed.": "Turing test failed.",
     "Unable to get the email modify rule.": "Unable to get the email modify rule.",
     "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",

@@ -21,7 +21,7 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/duo-labs/webauthn/webauthn"
-	"xorm.io/core"
+	"github.com/xorm-io/core"
 )
 
 const (
@@ -46,7 +46,8 @@ type User struct {
 	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
 	Email             string   `xorm:"varchar(100) index" json:"email"`
 	EmailVerified     bool     `json:"emailVerified"`
-	Phone             string   `xorm:"varchar(100) index" json:"phone"`
+	Phone             string   `xorm:"varchar(20) index" json:"phone"`
+	CountryCode       string   `xorm:"varchar(6)" json:"countryCode"`
 	Location          string   `xorm:"varchar(100)" json:"location"`
 	Address           []string `json:"address"`
 	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
@@ -454,7 +455,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 		}
 	}
 	if isGlobalAdmin {
-		columns = append(columns, "name", "email", "phone")
+		columns = append(columns, "name", "email", "phone", "country_code")
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
@@ -578,7 +579,7 @@ func AddUsersInBatch(users []*User) bool {
 
 func DeleteUser(user *User) bool {
 	// Forced offline the user first
-	DeleteSession(user.GetId())
+	DeleteSession(util.GetSessionId(user.Owner, user.Name, CasdoorApplication))
 
 	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
 	if err != nil {

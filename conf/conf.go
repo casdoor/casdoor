@@ -105,6 +105,20 @@ func GetConfigDataSourceName() string {
 	return dataSourceName
 }
 
+func GetLanguage(language string) string {
+	if language == "" {
+		return "en"
+	}
+
+	language = language[0:2]
+
+	if strings.Contains(GetConfigString("languages"), language) {
+		return language
+	} else {
+		return "en"
+	}
+}
+
 func IsDemoMode() bool {
 	return strings.ToLower(GetConfigString("isDemoMode")) == "true"
 }

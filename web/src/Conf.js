@@ -14,9 +14,17 @@
 
 export const ShowGithubCorner = false;
 export const GithubRepo = "https://github.com/casdoor/casdoor";
+export const IsDemoMode = false;
 
 export const ForceLanguage = "";
 export const DefaultLanguage = "en";
-export const InitThemeAlgorithm = true;
 
 export const EnableExtraPages = true;
+
+export const InitThemeAlgorithm = true;
+export const ThemeDefault = {
+  themeType: "default",
+  colorPrimary: "#5734d3",
+  borderRadius: 6,
+  isCompact: false,
+};

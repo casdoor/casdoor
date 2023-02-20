@@ -17,7 +17,7 @@ import i18next from "i18next";
 import React from "react";
 import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
-import {CountDownInput} from "./common/CountDownInput";
+import {SendCodeInput} from "./common/SendCodeInput";
 import {MailOutlined, PhoneOutlined} from "@ant-design/icons";
 
 export const ResetModal = (props) => {
@@ -93,7 +93,7 @@ export const ResetModal = (props) => {
             />
           </Row>
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <CountDownInput
+            <SendCodeInput
               textBefore={i18next.t("code:Code You Received")}
               onChange={setCode}
               method={"reset"}

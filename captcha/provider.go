@@ -21,19 +21,21 @@ type CaptchaProvider interface {
 }
 
 func GetCaptchaProvider(captchaType string) CaptchaProvider {
-	if captchaType == "Default" {
+	switch captchaType {
+	case "Default":
 		return NewDefaultCaptchaProvider()
-	} else if captchaType == "reCAPTCHA" {
+	case "reCAPTCHA":
 		return NewReCaptchaProvider()
-	} else if captchaType == "hCaptcha" {
-		return NewHCaptchaProvider()
-	} else if captchaType == "Aliyun Captcha" {
+	case "Aliyun Captcha":
 		return NewAliyunCaptchaProvider()
-	} else if captchaType == "GEETEST" {
+	case "hCaptcha":
+		return NewHCaptchaProvider()
+	case "GEETEST":
 		return NewGEETESTCaptchaProvider()
-	} else if captchaType == "Cloudflare Turnstile" {
+	case "Cloudflare Turnstile":
 		return NewCloudflareTurnstileProvider()
 	}
+
 	return nil
 }
 

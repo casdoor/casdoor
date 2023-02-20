@@ -16,6 +16,7 @@ import React from "react";
 import {Button, Checkbox, Col, Form, Input, Result, Row, Spin, Tabs} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
+import * as Conf from "../Conf";
 import * as AuthBackend from "./AuthBackend";
 import * as OrganizationBackend from "../backend/OrganizationBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
@@ -26,7 +27,7 @@ import * as Setting from "../Setting";
 import SelfLoginButton from "./SelfLoginButton";
 import i18next from "i18next";
 import CustomGithubCorner from "../CustomGithubCorner";
-import {CountDownInput} from "../common/CountDownInput";
+import {SendCodeInput} from "../common/SendCodeInput";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {CaptchaModal} from "../common/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
@@ -189,7 +190,6 @@ class LoginPage extends React.Component {
     } else {
       values["type"] = this.state.type;
     }
-    values["phonePrefix"] = this.getApplicationObj()?.organizationObj.phonePrefix;
 
     if (oAuthParams !== null) {
       values["samlRequest"] = oAuthParams.samlRequest;
@@ -204,6 +204,7 @@ class LoginPage extends React.Component {
       values["organization"] = this.getApplicationObj().organization;
     }
   }
+
   postCodeLoginAction(res) {
     const application = this.getApplicationObj();
     const ths = this;
@@ -364,7 +365,8 @@ class LoginPage extends React.Component {
           title={i18next.t("application:Sign Up Error")}
           subTitle={i18next.t("application:The application does not allow to sign up new account")}
           extra={[
-            <Button type="primary" key="signin" onClick={() => Setting.redirectToLoginPage(application, this.props.history)}>
+            <Button type="primary" key="signin"
+              onClick={() => Setting.redirectToLoginPage(application, this.props.history)}>
               {
                 i18next.t("login:Sign In")
               }
@@ -383,8 +385,12 @@ class LoginPage extends React.Component {
             organization: application.organization,
             application: application.name,
             autoSignin: true,
+            username: Conf.ShowGithubCorner ? "admin" : "",
+            password: Conf.ShowGithubCorner ? "123" : "",
           }}
-          onFinish={(values) => {this.onFinish(values);}}
+          onFinish={(values) => {
+            this.onFinish(values);
+          }}
           style={{width: "300px"}}
           size="large"
           ref={this.form}
@@ -419,12 +425,12 @@ class LoginPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t("login:Please input your username, Email or phone!"),
+                    message: i18next.t("login:Please input your Email or Phone!"),
                   },
                   {
                     validator: (_, value) => {
                       if (this.state.loginMethod === "verificationCode") {
-                        if (this.state.email !== "" && !Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
+                        if (!Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
                           this.setState({validEmailOrPhone: false});
                           return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
                         }
@@ -444,7 +450,7 @@ class LoginPage extends React.Component {
                 ]}
               >
                 <Input
-                  id = "input"
+                  id="input"
                   prefix={<UserOutlined className="site-form-item-icon" />}
                   placeholder={(this.state.loginMethod === "verificationCode") ? i18next.t("login:Email or phone") : i18next.t("login:username, Email or phone")}
                   disabled={!application.enablePassword}
@@ -755,7 +761,7 @@ class LoginPage extends React.Component {
             name="code"
             rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
           >
-            <CountDownInput
+            <SendCodeInput
               disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
               method={"login"}
               onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
@@ -774,13 +780,18 @@ class LoginPage extends React.Component {
     const items = [
       {label: i18next.t("login:Password"), key: "password"},
     ];
-    application.enableCodeSignin ? items.push({label: i18next.t("login:Verification Code"), key: "verificationCode"}) : null;
+    application.enableCodeSignin ? items.push({
+      label: i18next.t("login:Verification Code"),
+      key: "verificationCode",
+    }) : null;
     application.enableWebAuthn ? items.push({label: i18next.t("login:WebAuthn"), key: "webAuthn"}) : null;
 
     if (application.enableCodeSignin || application.enableWebAuthn) {
       return (
         <div>
-          <Tabs items={items} size={"small"} defaultActiveKey="password" onChange={(key) => {this.setState({loginMethod: key});}} centered>
+          <Tabs items={items} size={"small"} defaultActiveKey="password" onChange={(key) => {
+            this.setState({loginMethod: key});
+          }} centered>
           </Tabs>
         </div>
       );
@@ -823,7 +834,7 @@ class LoginPage extends React.Component {
               <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
             </div>
             <div className="login-form">
-              <div >
+              <div>
                 <div>
                   {
                     Setting.renderHelmet(application)

@@ -17,7 +17,6 @@ package controllers
 import (
 	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
@@ -56,11 +55,8 @@ func (c *ApiController) T(error string) string {
 
 // GetAcceptLanguage ...
 func (c *ApiController) GetAcceptLanguage() string {
-	lang := c.Ctx.Request.Header.Get("Accept-Language")
-	if lang == "" || !strings.Contains(conf.GetConfigString("languages"), lang[0:2]) {
-		lang = "en"
-	}
-	return lang[0:2]
+	language := c.Ctx.Request.Header.Get("Accept-Language")
+	return conf.GetLanguage(language)
 }
 
 // SetTokenErrorHttpStatus ...

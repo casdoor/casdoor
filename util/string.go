@@ -100,6 +100,15 @@ func GetOwnerAndNameFromIdNoCheck(id string) (string, string) {
 	return tokens[0], tokens[1]
 }
 
+func GetOwnerAndNameAndOtherFromId(id string) (string, string, string) {
+	tokens := strings.Split(id, "/")
+	if len(tokens) != 3 {
+		panic(errors.New("GetOwnerAndNameAndOtherFromId() error, wrong token count for ID: " + id))
+	}
+
+	return tokens[0], tokens[1], tokens[2]
+}
+
 func GenerateId() string {
 	return uuid.NewString()
 }
@@ -127,12 +136,16 @@ func GetId(owner, name string) string {
 	return fmt.Sprintf("%s/%s", owner, name)
 }
 
+func GetSessionId(owner, name, application string) string {
+	return fmt.Sprintf("%s/%s/%s", owner, name, application)
+}
+
 func GetMd5Hash(text string) string {
 	hash := md5.Sum([]byte(text))
 	return hex.EncodeToString(hash[:])
 }
 
-func IsStrsEmpty(strs ...string) bool {
+func IsStringsEmpty(strs ...string) bool {
 	for _, str := range strs {
 		if len(str) == 0 {
 			return true
@@ -214,7 +227,7 @@ func IsChinese(str string) bool {
 }
 
 func GetMaskedPhone(phone string) string {
-	return getMaskedPhone(phone)
+	return rePhone.ReplaceAllString(phone, "$1****$2")
 }
 
 func GetMaskedEmail(email string) string {

@@ -179,33 +179,7 @@ func initDefinedOrganization(organization *Organization) {
 		return
 	}
 	organization.CreatedTime = util.GetCurrentTime()
-	organization.AccountItems = []*AccountItem{
-		{Name: "Organization", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
-		{Name: "ID", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},
-		{Name: "Name", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
-		{Name: "Display name", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
-		{Name: "Avatar", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
-		{Name: "User type", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
-		{Name: "Password", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
-		{Name: "Email", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
-		{Name: "Phone", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
-		{Name: "Country/Region", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
-		{Name: "Location", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
-		{Name: "Affiliation", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
-		{Name: "Title", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
-		{Name: "Homepage", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
-		{Name: "Bio", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
-		{Name: "Tag", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
-		{Name: "Signup application", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
-		{Name: "Roles", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},
-		{Name: "Permissions", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},
-		{Name: "3rd-party logins", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
-		{Name: "Properties", Visible: false, ViewRule: "Admin", ModifyRule: "Admin"},
-		{Name: "Is admin", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
-		{Name: "Is global admin", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
-		{Name: "Is forbidden", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
-		{Name: "Is deleted", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
-	}
+	organization.AccountItems = getBuiltInAccountItems()
 
 	AddOrganization(organization)
 }

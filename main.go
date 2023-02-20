@@ -35,7 +35,10 @@ func main() {
 	createDatabase := flag.Bool("createDatabase", false, "true if you need Casdoor to create database")
 	flag.Parse()
 
-	object.InitAdapter(*createDatabase)
+	object.InitAdapter()
+	object.DoMigration()
+	object.CreateTables(*createDatabase)
+
 	object.InitDb()
 	object.InitFromFile()
 	object.InitDefaultStorageProvider()

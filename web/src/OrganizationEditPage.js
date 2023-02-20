@@ -18,6 +18,7 @@ import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
 import * as Setting from "./Setting";
+import * as Conf from "./Conf";
 import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./LdapTable";
@@ -183,12 +184,20 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Phone prefix"), i18next.t("general:Phone prefix - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Supported country code"), i18next.t("general:Supported country code - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input addonBefore={"+"} value={this.state.organization.phonePrefix} onChange={e => {
-              this.updateOrganizationField("phonePrefix", e.target.value);
-            }} />
+            <Select virtual={false} mode={"multiple"} style={{width: "100%"}} value={this.state.organization.countryCodes ?? []}
+              options={Setting.getCountriesData().map(country => {
+                return Setting.getOption(
+                  <>
+                    {Setting.countryFlag(country)}
+                    {`${country.name} +${country.phone}`}
+                  </>,
+                  country.code);
+              })} onChange={value => {
+                this.updateOrganizationField("countryCodes", value);
+              }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -256,22 +265,13 @@ class OrganizationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="tags" style={{width: "100%"}}
-              value={this.state.organization.languages}
+              options={Setting.Countries.map((item) => {
+                return Setting.getOption(item.label, item.key);
+              })}
+              value={this.state.organization.languages ?? []}
               onChange={(value => {
                 this.updateOrganizationField("languages", value);
               })} >
-              {
-                [
-                  {value: "en", label: "English"},
-                  {value: "zh", label: "简体中文"},
-                  {value: "es", label: "Español"},
-                  {value: "fr", label: "Français"},
-                  {value: "de", label: "Deutsch"},
-                  {value: "ja", label: "日本語"},
-                  {value: "ko", label: "한국어"},
-                  {value: "ru", label: "Русский"},
-                ].map((item, index) => <Option key={index} value={item.value}>{item.label}</Option>)
-              }
             </Select>
           </Col>
         </Row>
@@ -324,7 +324,7 @@ class OrganizationEditPage extends React.Component {
           <Col span={22} style={{marginTop: "5px"}}>
             <Row>
               <Radio.Group value={this.state.organization.themeData?.isEnabled ?? false} onChange={e => {
-                const {_, ...theme} = this.state.organization.themeData ?? {...Setting.ThemeDefault, isEnabled: false};
+                const {_, ...theme} = this.state.organization.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
                 this.updateOrganizationField("themeData", {...theme, isEnabled: e.target.value});
               }} >
                 <Radio.Button value={false}>{i18next.t("organization:Follow global theme")}</Radio.Button>
@@ -335,7 +335,7 @@ class OrganizationEditPage extends React.Component {
               this.state.organization.themeData?.isEnabled ?
                 <Row style={{marginTop: "20px"}}>
                   <ThemeEditor themeData={this.state.organization.themeData} onThemeChange={(_, nextThemeData) => {
-                    const {isEnabled} = this.state.organization.themeData ?? {...Setting.ThemeDefault, isEnabled: false};
+                    const {isEnabled} = this.state.organization.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
                     this.updateOrganizationField("themeData", {...nextThemeData, isEnabled});
                   }} />
                 </Row> : null

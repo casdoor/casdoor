@@ -20,7 +20,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/idp"
-	"xorm.io/core"
+	"github.com/xorm-io/core"
 )
 
 func GetUserByField(organizationName string, field string, value string) *User {
@@ -169,4 +169,19 @@ func ClearUserOAuthProperties(user *User, providerType string) bool {
 	}
 
 	return affected != 0
+}
+
+func (user *User) GetCountryCode(countryCode string) string {
+	if countryCode != "" {
+		return countryCode
+	}
+
+	if user != nil && user.CountryCode != "" {
+		return user.CountryCode
+	}
+
+	if org := GetOrganizationByUser(user); org != nil && len(org.CountryCodes) > 0 {
+		return org.CountryCodes[0]
+	}
+	return ""
 }

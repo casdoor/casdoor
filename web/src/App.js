@@ -16,8 +16,8 @@ import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
-import {BarsOutlined, DownOutlined, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
-import {Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
+import {BarsOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
+import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -84,8 +84,8 @@ class App extends Component {
       uri: null,
       menuVisible: false,
       themeAlgorithm: ["default"],
-      themeData: Setting.ThemeDefault,
-      logo: this.getLogo(Setting.getAlgorithmNames(Setting.ThemeDefault)),
+      themeData: Conf.ThemeDefault,
+      logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
     };
 
     Setting.initServerUrl();
@@ -671,12 +671,41 @@ class App extends Component {
 
     return (
       <React.Fragment>
+        {
+          this.renderBanner()
+        }
         <FloatButton.BackTop />
         <CustomGithubCorner />
         {
           this.renderContent()
         }
       </React.Fragment>
+    );
+  }
+
+  renderBanner() {
+    if (!Conf.IsDemoMode) {
+      return null;
+    }
+
+    const language = Setting.getLanguage();
+    if (language === "en" || language === "zh") {
+      return null;
+    }
+
+    return (
+      <Alert type="info" banner showIcon={false} closable message={
+        <div style={{textAlign: "center"}}>
+          <InfoCircleFilled style={{color: "rgb(87,52,211)"}} />
+          &nbsp;&nbsp;
+          {i18next.t("general:Found some texts still not translated? Please help us translate at")}
+          &nbsp;
+          <a target="_blank" rel="noreferrer" href={"https://crowdin.com/project/casdoor-site"}>
+            Crowdin
+          </a>
+          &nbsp;!&nbsp;🙏
+        </div>
+      } />
     );
   }
 

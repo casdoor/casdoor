@@ -49,6 +49,7 @@ class UserListPage extends BaseListPage {
       avatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       email: `${randomName}@example.com`,
       phone: Setting.getRandomNumber(),
+      countryCode: this.state.organization.countryCodes?.length > 0 ? this.state.organization.countryCodes[0] : "",
       address: [],
       affiliation: "Example Inc.",
       tag: "staff",
@@ -135,13 +136,6 @@ class UserListPage extends BaseListPage {
   }
 
   renderTable(users) {
-    // transfer country code to name based on selected language
-    const countries = require("i18n-iso-countries");
-    countries.registerLocale(require("i18n-iso-countries/langs/" + i18next.language + ".json"));
-    for (const index in users) {
-      users[index].region = countries.getName(users[index].region, i18next.language, {select: "official"});
-    }
-
     const columns = [
       {
         title: i18next.t("general:Organization"),
@@ -267,6 +261,9 @@ class UserListPage extends BaseListPage {
         width: "140px",
         sorter: true,
         ...this.getColumnSearchProps("region"),
+        render: (text, record, index) => {
+          return Setting.initCountries().getName(record.region, Setting.getLanguage(), {select: "official"});
+        },
       },
       {
         title: i18next.t("user:Tag"),
@@ -407,7 +404,7 @@ class UserListPage extends BaseListPage {
               this.getOrganization(users[0].owner);
             }
           } else {
-            if (res.msg.includes("Unauthorized")) {
+            if (Setting.isResponseDenied(res)) {
               this.setState({
                 loading: false,
                 isAuthorized: false,
@@ -435,7 +432,7 @@ class UserListPage extends BaseListPage {
               this.getOrganization(users[0].owner);
             }
           } else {
-            if (res.msg.includes("Unauthorized")) {
+            if (Setting.isResponseDenied(res)) {
               this.setState({
                 loading: false,
                 isAuthorized: false,

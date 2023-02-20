@@ -29,7 +29,7 @@ class SelectLanguageBox extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      languages: props.languages ?? ["en", "zh", "es", "fr", "de", "ja", "ko", "ru"],
+      languages: props.languages ?? Setting.Countries.map(item => item.key),
     };
 
     Setting.Countries.forEach((country) => {

@@ -23,6 +23,7 @@ import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
+import * as phoneNumber from "libphonenumber-js";
 import * as path from "path-browserify";
 
 export const ServerUrl = "";
@@ -30,25 +31,16 @@ export const ServerUrl = "";
 // export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
-// https://catamphetamine.gitlab.io/country-flag-icons/3x2/index.html
-export const CountryRegionData = getCountryRegionData();
-
 export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
-  {label: "简体中文", key: "zh", country: "CN", alt: "简体中文"},
+  {label: "中文", key: "zh", country: "CN", alt: "中文"},
   {label: "Español", key: "es", country: "ES", alt: "Español"},
   {label: "Français", key: "fr", country: "FR", alt: "Français"},
   {label: "Deutsch", key: "de", country: "DE", alt: "Deutsch"},
   {label: "日本語", key: "ja", country: "JP", alt: "日本語"},
   {label: "한국어", key: "ko", country: "KR", alt: "한국어"},
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
+  {label: "TiếngViệt", key: "vi", country: "VI", alt: "TiếngViệt"},
 ];
-
-export const ThemeDefault = {
-  themeType: "default",
-  colorPrimary: "#5734d3",
-  borderRadius: 6,
-  isCompact: false,
-};
 
 export function getThemeData(organization, application) {
   if (application?.themeData?.isEnabled) {
@@ -56,7 +48,7 @@ export function getThemeData(organization, application) {
   } else if (organization?.themeData?.isEnabled) {
     return organization.themeData;
   } else {
-    return ThemeDefault;
+    return Conf.ThemeDefault;
   }
 }
 
@@ -118,8 +110,12 @@ export const OtherProviderInfo = {
       url: "",
     },
     "SUBMAIL": {
-      logo: `${StaticBaseUrl}/img/social_submail.png`,
-      url: "",
+      logo: `${StaticBaseUrl}/img/social_submail.svg`,
+      url: "https://www.mysubmail.com",
+    },
+    "Mailtrap": {
+      logo: `${StaticBaseUrl}/img/email_mailtrap.png`,
+      url: "https://mailtrap.io",
     },
   },
   Storage: {
@@ -204,18 +200,31 @@ export const OtherProviderInfo = {
   },
 };
 
-export function getCountryRegionData() {
-  let language = i18next.language;
-  if (language === null || language === "null") {
-    language = Conf.DefaultLanguage;
-  }
-
+export function initCountries() {
   const countries = require("i18n-iso-countries");
-  countries.registerLocale(require("i18n-iso-countries/langs/" + language + ".json"));
-  const data = countries.getNames(language, {select: "official"});
-  const result = [];
-  for (const i in data) {result.push({code: i, name: data[i]});}
-  return result;
+  countries.registerLocale(require("i18n-iso-countries/langs/" + getLanguage() + ".json"));
+  return countries;
+}
+
+export function getCountriesData(countryCodes = phoneNumber.getCountries()) {
+  return countryCodes?.map((countryCode) => {
+    if (phoneNumber.isSupportedCountry(countryCode)) {
+      const name = initCountries().getName(countryCode, getLanguage());
+      return {
+        code: countryCode,
+        name: name || "",
+        phone: phoneNumber.getCountryCallingCode(countryCode),
+      };
+    }
+  });
+}
+
+export function countryFlag(country) {
+  return <img src={`${StaticBaseUrl}/flag-icons/${country.code}.svg`} alt={country.name} height={20} style={{marginRight: 10}} />;
+}
+
+export function getPhoneCodeFromCountryCode(countryCode) {
+  return phoneNumber.isSupportedCountry(countryCode) ? phoneNumber.getCountryCallingCode(countryCode) : "";
 }
 
 export function initServerUrl() {
@@ -252,6 +261,13 @@ export function isProviderVisible(providerItem) {
   }
 
   return true;
+}
+
+export function isResponseDenied(data) {
+  if (data.msg === "Unauthorized operation" || data.msg === "未授权的操作") {
+    return true;
+  }
+  return false;
 }
 
 export function isProviderVisibleForSignUp(providerItem) {
@@ -315,16 +331,14 @@ export function isValidEmail(email) {
   return emailRegex.test(email);
 }
 
-export function isValidPhone(phone) {
-  return phone !== "";
+export function isValidPhone(phone, countryCode = "") {
+  if (countryCode !== "") {
+    return phoneNumber.isValidPhoneNumber(phone, countryCode);
+  }
 
-  // if (phone === "") {
-  //   return false;
-  // }
-  //
   // // https://learnku.com/articles/31543, `^s*$` filter empty email individually.
-  // const phoneRegex = /^\s*$|^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/;
-  // return phoneRegex.test(phone);
+  const phoneRegex = /[0-9]{4,15}$/;
+  return phoneRegex.test(phone);
 }
 
 export function isValidInvoiceTitle(invoiceTitle) {
@@ -698,7 +712,7 @@ export function getLanguageText(text) {
 }
 
 export function getLanguage() {
-  return i18next.language;
+  return i18next.language ?? Conf.DefaultLanguage;
 }
 
 export function setLanguage(language) {
@@ -839,6 +853,7 @@ export function getProviderTypeOptions(category) {
       [
         {id: "Default", name: "Default"},
         {id: "SUBMAIL", name: "SUBMAIL"},
+        {id: "Mailtrap", name: "Mailtrap"},
       ]
     );
   } else if (category === "SMS") {

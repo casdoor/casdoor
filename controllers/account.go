@@ -58,7 +58,7 @@ type RequestForm struct {
 
 	EmailCode   string `json:"emailCode"`
 	PhoneCode   string `json:"phoneCode"`
-	PhonePrefix string `json:"phonePrefix"`
+	CountryCode string `json:"countryCode"`
 
 	AutoSignin bool `json:"autoSignin"`
 
@@ -121,7 +121,7 @@ func (c *ApiController) Signup() {
 	}
 
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", form.Organization))
-	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.FirstName, form.LastName, form.Email, form.Phone, form.Affiliation, c.GetAcceptLanguage())
+	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.FirstName, form.LastName, form.Email, form.Phone, form.CountryCode, form.Affiliation, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
 		return
@@ -137,7 +137,7 @@ func (c *ApiController) Signup() {
 
 	var checkPhone string
 	if application.IsSignupItemVisible("Phone") && form.Phone != "" {
-		checkPhone = fmt.Sprintf("+%s%s", form.PhonePrefix, form.Phone)
+		checkPhone, _ = util.GetE164Number(form.Phone, form.CountryCode)
 		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode, c.GetAcceptLanguage())
 		if len(checkResult) != 0 {
 			c.ResponseError(c.T("account:Phone: %s"), checkResult)
@@ -179,6 +179,7 @@ func (c *ApiController) Signup() {
 		Avatar:            organization.DefaultAvatar,
 		Email:             form.Email,
 		Phone:             form.Phone,
+		CountryCode:       form.CountryCode,
 		Address:           []string{},
 		Affiliation:       form.Affiliation,
 		IdCard:            form.IdCard,
@@ -254,7 +255,10 @@ func (c *ApiController) Logout() {
 
 	if accessToken == "" && redirectUri == "" {
 		c.ClearUserSession()
-		object.DeleteSessionId(user, c.Ctx.Input.CruSession.SessionID())
+		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
+		owner, username := util.GetOwnerAndNameFromId(user)
+
+		object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
 		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 		application := c.GetSessionApplication()
@@ -291,7 +295,8 @@ func (c *ApiController) Logout() {
 			}
 
 			c.ClearUserSession()
-			object.DeleteSessionId(user, c.Ctx.Input.CruSession.SessionID())
+			// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
+			object.DeleteSessionId(util.GetSessionId(object.CasdoorOrganization, object.CasdoorApplication, user), c.Ctx.Input.CruSession.SessionID())
 			util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 			c.Ctx.Redirect(http.StatusFound, fmt.Sprintf("%s?state=%s", strings.TrimRight(redirectUri, "/"), state))

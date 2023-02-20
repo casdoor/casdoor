@@ -18,9 +18,9 @@ import (
 	"encoding/json"
 
 	"github.com/beego/beego/utils/pagination"
-	xormadapter "github.com/casbin/xorm-adapter/v3"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
+	xormadapter "github.com/casdoor/xorm-adapter/v3"
 )
 
 func (c *ApiController) GetCasbinAdapters() {

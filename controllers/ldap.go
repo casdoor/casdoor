@@ -51,7 +51,7 @@ type LdapSyncResp struct {
 func (c *ApiController) GetLdapUser() {
 	ldapServer := LdapServer{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldapServer)
-	if err != nil || util.IsStrsEmpty(ldapServer.Host, ldapServer.Admin, ldapServer.Passwd, ldapServer.BaseDn) {
+	if err != nil || util.IsStringsEmpty(ldapServer.Host, ldapServer.Admin, ldapServer.Passwd, ldapServer.BaseDn) {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return
 	}
@@ -104,7 +104,7 @@ func (c *ApiController) GetLdapUser() {
 // GetLdaps
 // @Tag Account API
 // @Title GetLdaps
-// @router /get-ldaps [post]
+// @router /get-ldaps [get]
 func (c *ApiController) GetLdaps() {
 	owner := c.Input().Get("owner")
 
@@ -115,11 +115,11 @@ func (c *ApiController) GetLdaps() {
 // GetLdap
 // @Tag Account API
 // @Title GetLdap
-// @router /get-ldap [post]
+// @router /get-ldap [get]
 func (c *ApiController) GetLdap() {
 	id := c.Input().Get("id")
 
-	if util.IsStrsEmpty(id) {
+	if util.IsStringsEmpty(id) {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return
 	}
@@ -140,7 +140,7 @@ func (c *ApiController) AddLdap() {
 		return
 	}
 
-	if util.IsStrsEmpty(ldap.Owner, ldap.ServerName, ldap.Host, ldap.Admin, ldap.Passwd, ldap.BaseDn) {
+	if util.IsStringsEmpty(ldap.Owner, ldap.ServerName, ldap.Host, ldap.Admin, ldap.Passwd, ldap.BaseDn) {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return
 	}
@@ -170,7 +170,7 @@ func (c *ApiController) AddLdap() {
 func (c *ApiController) UpdateLdap() {
 	var ldap object.Ldap
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &ldap)
-	if err != nil || util.IsStrsEmpty(ldap.Owner, ldap.ServerName, ldap.Host, ldap.Admin, ldap.Passwd, ldap.BaseDn) {
+	if err != nil || util.IsStringsEmpty(ldap.Owner, ldap.ServerName, ldap.Host, ldap.Admin, ldap.Passwd, ldap.BaseDn) {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return
 	}

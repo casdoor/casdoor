@@ -19,7 +19,7 @@ import (
 	"net/http"
 
 	"github.com/casdoor/casdoor/util"
-	"xorm.io/core"
+	"github.com/xorm-io/core"
 )
 
 type Payment struct {

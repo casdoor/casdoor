@@ -23,7 +23,7 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
-	"xorm.io/core"
+	"github.com/xorm-io/core"
 )
 
 const (
@@ -122,11 +122,8 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 	record.Owner = provider.Owner
 	record.Name = util.GenerateId()
 	record.CreatedTime = util.GetCurrentTime()
-	if user != nil {
-		record.User = user.GetId()
-	}
-	record.Provider = provider.Name
 
+	record.Provider = provider.Name
 	record.Receiver = dest
 	record.Code = code
 	record.Time = time.Now().Unix()

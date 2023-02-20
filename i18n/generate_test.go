@@ -30,24 +30,26 @@ func TestGenerateI18nFrontend(t *testing.T) {
 	enData := parseEnData("frontend")
 	writeI18nFile("frontend", "en", enData)
 
-	applyToOtherLanguage("frontend", "de", enData)
+	applyToOtherLanguage("frontend", "zh", enData)
 	applyToOtherLanguage("frontend", "es", enData)
 	applyToOtherLanguage("frontend", "fr", enData)
+	applyToOtherLanguage("frontend", "de", enData)
 	applyToOtherLanguage("frontend", "ja", enData)
 	applyToOtherLanguage("frontend", "ko", enData)
 	applyToOtherLanguage("frontend", "ru", enData)
-	applyToOtherLanguage("frontend", "zh", enData)
+	applyToOtherLanguage("frontend", "vi", enData)
 }
 
 func TestGenerateI18nBackend(t *testing.T) {
 	enData := parseEnData("backend")
 	writeI18nFile("backend", "en", enData)
 
-	applyToOtherLanguage("backend", "de", enData)
+	applyToOtherLanguage("backend", "zh", enData)
 	applyToOtherLanguage("backend", "es", enData)
 	applyToOtherLanguage("backend", "fr", enData)
+	applyToOtherLanguage("backend", "de", enData)
 	applyToOtherLanguage("backend", "ja", enData)
 	applyToOtherLanguage("backend", "ko", enData)
 	applyToOtherLanguage("backend", "ru", enData)
-	applyToOtherLanguage("backend", "zh", enData)
+	applyToOtherLanguage("backend", "vi", enData)
 }
