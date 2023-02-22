@@ -82,20 +82,20 @@ class ProviderEditPage extends React.Component {
     });
   }
 
-  getClientIdLabel() {
-    switch (this.state.provider.category) {
+  getClientIdLabel(provider) {
+    switch (provider.category) {
     case "Email":
       return Setting.getLabel(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip"));
     case "SMS":
-      if (this.state.provider.type === "Volc Engine SMS") {
+      if (provider.type === "Volc Engine SMS") {
         return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
-      } else if (this.state.provider.type === "Huawei Cloud SMS") {
+      } else if (provider.type === "Huawei Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
       }
     case "Captcha":
-      if (this.state.provider.type === "Aliyun Captcha") {
+      if (provider.type === "Aliyun Captcha") {
         return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Site key"), i18next.t("provider:Site key - Tooltip"));
@@ -105,20 +105,20 @@ class ProviderEditPage extends React.Component {
     }
   }
 
-  getClientSecretLabel() {
-    switch (this.state.provider.category) {
+  getClientSecretLabel(provider) {
+    switch (provider.category) {
     case "Email":
       return Setting.getLabel(i18next.t("login:Password"), i18next.t("login:Password - Tooltip"));
     case "SMS":
-      if (this.state.provider.type === "Volc Engine SMS") {
+      if (provider.type === "Volc Engine SMS") {
         return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:SecretAccessKey - Tooltip"));
-      } else if (this.state.provider.type === "Huawei Cloud SMS") {
+      } else if (provider.type === "Huawei Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:App secret"), i18next.t("provider:AppSecret - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
       }
     case "Captcha":
-      if (this.state.provider.type === "Aliyun Captcha") {
+      if (provider.type === "Aliyun Captcha") {
         return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:SecretAccessKey - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
@@ -416,7 +416,7 @@ class ProviderEditPage extends React.Component {
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {this.getClientIdLabel()}
+                  {this.getClientIdLabel(this.state.provider)}
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.clientId} onChange={e => {
@@ -426,7 +426,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {this.getClientSecretLabel()}
+                  {this.getClientSecretLabel(this.state.provider)}
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.clientSecret} onChange={e => {
