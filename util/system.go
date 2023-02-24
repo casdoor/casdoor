@@ -15,6 +15,8 @@
 package util
 
 import (
+	"encoding/json"
+	"github.com/go-resty/resty/v2"
 	"io/ioutil"
 	"os"
 	"runtime"
@@ -31,8 +33,6 @@ func GetCpuUsage() ([]float64, error) {
 	return usage, err
 }
 
-var fileDate, version string
-
 // get memory usage
 func GetMemoryUsage() (uint64, uint64, error) {
 	virtualMem, err := mem.VirtualMemory()
@@ -46,33 +46,82 @@ func GetMemoryUsage() (uint64, uint64, error) {
 	return m.TotalAlloc, virtualMem.Total, nil
 }
 
+type TagInfo struct {
+	TagName string `json:"tag_name"`
+	Commit  string `json:"body"`
+}
+
 // get github repo release version
-func GetGitRepoVersion() (string, error) {
+func GetVersionInfo() ([]*TagInfo, error) {
+	httpClient := resty.New()
+	req := httpClient.R()
+	req.Method = "GET"
+	req.URL = "https://api.github.com/repos/casdoor/casdoor/releases"
+	resp, err := req.Execute(req.Method, req.URL)
+	if err != nil || resp.StatusCode() != 200 {
+		return nil, err
+	}
+
+	var tags []*TagInfo
+	if err := json.Unmarshal(resp.Body(), &tags); err != nil {
+		return nil, err
+	}
+	for _, tag := range tags {
+		if len(tag.Commit) < 50 {
+			continue
+		}
+		tagCommit := tag.Commit[len(tag.Commit)-46 : len(tag.Commit)-6]
+		tag.Commit = tagCommit
+	}
+	return tags, nil
+}
+func GetRepoVersion() (string, string, string, error) {
+	var branchPath, commit string
 	pwd, err := os.Getwd()
 	if err != nil {
-		return "", err
+		return "", "", "", err
 	}
 
-	fileInfos, err := ioutil.ReadDir(pwd + "/.git/refs/heads")
-	for _, v := range fileInfos {
-		if v.Name() == "master" {
-			if v.ModTime().String() == fileDate {
-				return version, nil
-			} else {
-				fileDate = v.ModTime().String()
-				break
-			}
-		}
-	}
-
-	content, err := ioutil.ReadFile(pwd + "/.git/refs/heads/master")
+	path, err := ioutil.ReadFile(pwd + "/.git/HEAD")
 	if err != nil {
-		return "", err
+		return "", "", "", err
 	}
 
 	// Convert to full length
-	temp := string(content)
-	version = strings.ReplaceAll(temp, "\n", "")
+	temp := strings.ReplaceAll(string(path), "\n", "")
+	branchPath = temp[5:]
 
-	return version, nil
+	content, err := ioutil.ReadFile(pwd + "/.git/logs/" + branchPath)
+	if err != nil {
+		return "", "", "", err
+	}
+	logs := strings.Split(string(content), "\n")
+
+	tags, err := GetVersionInfo()
+	if err != nil {
+		return "", "", "", err
+	}
+	version, author, curcommit := "", "", ""
+	for i := len(logs) - 2; i >= 0; i-- {
+		tmp := strings.Split(logs[i], " ")
+		curcommit = tmp[1]
+		if commit == "" {
+			commit = tmp[1]
+		}
+		if author == "" {
+			author = tmp[2]
+		}
+		for _, tag := range tags {
+			if tag.Commit == curcommit {
+				version = tag.TagName
+			}
+		}
+		if version != "" {
+			break
+		}
+	}
+	if version == tags[0].TagName || version == "" {
+		commit = ""
+	}
+	return author, commit, version, err
 }

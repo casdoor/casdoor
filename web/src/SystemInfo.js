@@ -26,9 +26,11 @@ class SystemInfo extends React.Component {
       cpuUsage: [],
       memUsed: 0,
       memTotal: 0,
-      latestVersion: undefined,
+      latestVersion: "",
       intervalId: null,
-      href: "",
+      versionHerf: "",
+      commitHref: "",
+      curBranchCommit: "",
       loading: true,
     };
   }
@@ -59,9 +61,11 @@ class SystemInfo extends React.Component {
     });
 
     SystemBackend.getGitHubLatestReleaseVersion().then(res => {
-      const href = res && res.length >= 8 ? `https://github.com/casdoor/casdoor/commit/${res}` : "";
-      const versionText = res && res.length >= 8 ? res.substring(0, 8) : i18next.t("system:Unknown Version");
-      this.setState({latestVersion: versionText, href: href});
+      const commitHref = res.commit && res.author && res.commit.length >= 8 ? `https://github.com/${res.author}/casdoor/commit/${res.commit}` : "";
+      const commitTxt = res.commit && res.commit.length >= 8 ? res.commit.substring(0, 8) : "";
+      const versionText = res.version && res.version.length > 0 ? res.version : i18next.t("system:Unknown Version");
+      const versionHerf = res.version && res.version.length > 0 ? `https://github.com/casdoor/casdoor/releases/tag/${res.version}` : "";
+      this.setState({latestVersion: versionText, versionHerf: versionHerf, commitHref: commitHref, curBranchCommit: commitTxt});
     }).catch(err => {
       Setting.showMessage("error", `get latest commit version failed: ${err}`);
     });
@@ -91,64 +95,131 @@ class SystemInfo extends React.Component {
     );
 
     if (!Setting.isMobile()) {
-      return (
-        <Row>
-          <Col span={6}></Col>
-          <Col span={12}>
-            <Row gutter={[10, 10]}>
-              <Col span={12}>
-                <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                  {this.state.loading ? <Spin size="large" /> : CPUInfo}
-                </Card>
-              </Col>
-              <Col span={12}>
-                <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                  {this.state.loading ? <Spin size="large" /> : MemInfo}
-                </Card>
-              </Col>
-            </Row>
-            <Divider />
-            <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
-              <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
-              GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
-              <br />
-              {i18next.t("system:Version")}: <a href={this.state.href}>{this.state.latestVersion}</a>
-              <br />
-              {i18next.t("system:Official Website")}: <a href="https://casdoor.org/">casdoor.org</a>
-              <br />
-              {i18next.t("system:Community")}: <a href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">contact us</a>
-            </Card>
-          </Col>
-          <Col span={6}></Col>
-        </Row>
-      );
+      if (this.state.commitHref === "") {
+        return (
+          <Row>
+            <Col span={6}></Col>
+            <Col span={12}>
+              <Row gutter={[10, 10]}>
+                <Col span={12}>
+                  <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                    {this.state.loading ? <Spin size="large" /> : CPUInfo}
+                  </Card>
+                </Col>
+                <Col span={12}>
+                  <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                    {this.state.loading ? <Spin size="large" /> : MemInfo}
+                  </Card>
+                </Col>
+              </Row>
+              <Divider />
+              <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
+                <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
+                GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
+                <br />
+                {i18next.t("system:Version")}: <a href={this.state.versionHerf}>{this.state.latestVersion}</a>
+                <br />
+                {i18next.t("system:Official Website")}: <a href="https://casdoor.org/">casdoor.org</a>
+                <br />
+                {i18next.t("system:Community")}: <a href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">contact us</a>
+              </Card>
+            </Col>
+            <Col span={6}></Col>
+          </Row>
+        );
+      } else {
+        return (
+          <Row>
+            <Col span={6}></Col>
+            <Col span={12}>
+              <Row gutter={[10, 10]}>
+                <Col span={12}>
+                  <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                    {this.state.loading ? <Spin size="large" /> : CPUInfo}
+                  </Card>
+                </Col>
+                <Col span={12}>
+                  <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                    {this.state.loading ? <Spin size="large" /> : MemInfo}
+                  </Card>
+                </Col>
+              </Row>
+              <Divider />
+              <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
+                <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
+                GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
+                <br />
+                {i18next.t("system:Latest Commit")}: <a href={this.state.commitHref}>{this.state.curBranchCommit}</a>
+                <br />
+                {i18next.t("system:Based on Version")}: <a href={this.state.versionHerf}>{this.state.latestVersion}</a>
+                <br />
+                {i18next.t("system:Official Website")}: <a href="https://casdoor.org/">casdoor.org</a>
+                <br />
+                {i18next.t("system:Community")}: <a href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">contact us</a>
+              </Card>
+            </Col>
+            <Col span={6}></Col>
+          </Row>
+        );
+      }
     } else {
-      return (
-        <Row gutter={[16, 0]}>
-          <Col span={24}>
-            <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
-              {this.state.loading ? <Spin size="large" /> : CPUInfo}
-            </Card>
-          </Col>
-          <Col span={24}>
-            <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
-              {this.state.loading ? <Spin size="large" /> : MemInfo}
-            </Card>
-          </Col>
-          <Col span={24}>
-            <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
-              <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
-              GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
-              <br />
-              {i18next.t("system:Version")}: <a href={this.state.href}>{this.state.latestVersion}</a>
-              <br />
-              {i18next.t("system:Official Website")}: <a href="https://casdoor.org/">casdoor.org</a>
-              <br />
-              {i18next.t("system:Community")}: <a href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">contact us</a>
-            </Card>
-          </Col>
-        </Row>
-      );
+      if (this.state.commitHerf === "") {
+        return (
+          <Row gutter={[16, 0]}>
+            <Col span={24}>
+              <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
+                {this.state.loading ? <Spin size="large" /> : CPUInfo}
+              </Card>
+            </Col>
+            <Col span={24}>
+              <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
+                {this.state.loading ? <Spin size="large" /> : MemInfo}
+              </Card>
+            </Col>
+            <Col span={24}>
+              <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
+                <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
+                GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
+                <br />
+                {i18next.t("system:Version")}: <a href={this.state.versionHerf}>{this.state.latestVersion}</a>
+                <br />
+                {i18next.t("system:Official Website")}: <a href="https://casdoor.org/">casdoor.org</a>
+                <br />
+                {i18next.t("system:Community")}: <a href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">contact us</a>
+              </Card>
+            </Col>
+          </Row>
+        );
+      } else {
+        return (
+          <Row gutter={[16, 0]}>
+            <Col span={24}>
+              <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
+                {this.state.loading ? <Spin size="large" /> : CPUInfo}
+              </Card>
+            </Col>
+            <Col span={24}>
+              <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
+                {this.state.loading ? <Spin size="large" /> : MemInfo}
+              </Card>
+            </Col>
+            <Col span={24}>
+              <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
+                <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
+                GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
+                <br />
+                {i18next.t("system:Latest Commit")}: <a href={this.state.commitHref}>{this.state.curBranchCommit}</a>
+                <br />
+                {i18next.t("system:Based on Version")}: <a href={this.state.versionHerf}>{this.state.latestVersion}</a>
+                <br />
+                {i18next.t("system:Official Website")}: <a href="https://casdoor.org/">casdoor.org</a>
+                <br />
+                {i18next.t("system:Community")}: <a href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">contact us</a>
+              </Card>
+            </Col>
+          </Row>
+        );
+      }
     }
   }
 }
