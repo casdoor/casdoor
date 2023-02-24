@@ -31,7 +31,7 @@ func GetCpuUsage() ([]float64, error) {
 	return usage, err
 }
 
-var fileDate, version string
+var fileDate, commit, version string
 
 // get memory usage
 func GetMemoryUsage() (uint64, uint64, error) {
@@ -47,7 +47,7 @@ func GetMemoryUsage() (uint64, uint64, error) {
 }
 
 // get github repo release version
-func GetGitRepoVersion() (string, error) {
+func GetGitRepoCommit() (string, error) {
 	pwd, err := os.Getwd()
 	if err != nil {
 		return "", err
@@ -57,7 +57,7 @@ func GetGitRepoVersion() (string, error) {
 	for _, v := range fileInfos {
 		if v.Name() == "master" {
 			if v.ModTime().String() == fileDate {
-				return version, nil
+				return commit, nil
 			} else {
 				fileDate = v.ModTime().String()
 				break
@@ -72,7 +72,33 @@ func GetGitRepoVersion() (string, error) {
 
 	// Convert to full length
 	temp := string(content)
-	version = strings.ReplaceAll(temp, "\n", "")
+	commit = strings.ReplaceAll(temp, "\n", "")
 
-	return version, nil
+	return commit, nil
+}
+
+func GetVersionFromCommit(commit string) (string, error) {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	TagFileInfos, err := ioutil.ReadDir(pwd + "/.git/refs/tags")
+	if err != nil {
+		return "", err
+	}
+
+	for _, tagFile := range TagFileInfos {
+		content, err := ioutil.ReadFile(pwd + "/.git/refs/tags/" + tagFile.Name())
+		if err != nil {
+			return "", err
+		}
+		temp := string(content)
+		tagCommit := strings.ReplaceAll(temp, "\n", "")
+		if tagCommit == commit {
+			version = tagFile.Name()
+			return version, nil
+		}
+	}
+	return "", nil
 }
