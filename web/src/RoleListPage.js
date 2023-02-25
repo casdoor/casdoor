@@ -82,7 +82,7 @@ class RoleListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/roles/${text}`}>
+            <Link to={`/roles/${record.owner}/${record.name}`}>
               {text}
             </Link>
           );
