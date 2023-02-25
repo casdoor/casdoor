@@ -16,22 +16,22 @@ package sync
 
 import (
 	"fmt"
-	"log"
 
-	"github.com/2tvenom/myreplication"
+	"github.com/go-mysql-org/go-mysql/canal"
+	"github.com/go-mysql-org/go-mysql/mysql"
+	"github.com/go-mysql-org/go-mysql/replication"
+	"github.com/siddontang/go-log/log"
 	"github.com/xorm-io/xorm"
-	"github.com/xorm-io/xorm/schemas"
 )
 
 var (
-	dbTables        = make(map[string]*schemas.Table)
 	dataSourceName1 string
 	dataSourceName2 string
 	engin1          *xorm.Engine
 	engin2          *xorm.Engine
 )
 
-func InitConfig() {
+func InitConfig() *canal.Config {
 	// init dataSource
 	dataSourceName1 = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username1, password1, host1, port1, database1)
 	dataSourceName2 = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username2, password2, host2, port2, database2)
@@ -39,159 +39,124 @@ func InitConfig() {
 	// create engine
 	engin1, _ = CreateEngine(dataSourceName1)
 	engin2, _ = CreateEngine(dataSourceName2)
+	log.Info("init engine success…")
 
-	// create connection
-	log.Println("init sync success……")
+	// config canal
+	cfg := canal.NewDefaultConfig()
+	cfg.Addr = fmt.Sprintf("%s:%d", host1, port1)
+	cfg.Password = password1
+	cfg.User = username1
+	// We only care table canal_test in test db
+	cfg.Dump.TableDB = database1
+	//cfg.Dump.Tables = []string{"user"}
+	log.Info("config canal success…")
+	return cfg
 }
 
-func StartSync() {
-
+func StartBinlogSync() {
 	// init config
-	InitConfig()
+	config := InitConfig()
 
-	// start dump mysql1 binlog and reloading to mysql2
-	StartDumpBinlog(host1, port1, username1, password1, uint32(serverId1), engin2)
+	c, err := canal.NewCanal(config)
+	pos, err := c.GetMasterPos()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Register a handler to handle RowsEvent
+	c.SetEventHandler(&MyEventHandler{})
+
+	// Start canal
+	c.RunFrom(pos)
 }
 
-func StartDumpBinlog(host string, port int, username string, password string, serverId uint32, engin *xorm.Engine) {
-	newConnection := myreplication.NewConnection()
-	err := newConnection.ConnectAndAuth(host, port, username, password)
-
-	if err != nil {
-		panic("Client not connected and not autentificate to master server with error:" + err.Error())
-	}
-	//Get position and file name
-	pos, filename, err := newConnection.GetMasterStatus()
-
-	if err != nil {
-		panic("Master status fail: " + err.Error())
-	}
-
-	el, err := newConnection.StartBinlogDump(pos, filename, serverId)
-
-	if err != nil {
-		panic("Cant start bin log: " + err.Error())
-	}
-
-	if err != nil {
-		panic("cah: " + err.Error())
-	}
-
-	// get event chan
-	events := el.GetEventChan()
-
-	go ListenAndRelay(events, engin)
-
-	err = el.Start()
-	println(err.Error())
+type MyEventHandler struct {
+	canal.DummyEventHandler
 }
 
-func ListenAndRelay(events <-chan interface{}, engin *xorm.Engine) {
-	for {
-		event := <-events
-		//fmt.Println(event)
-		switch e := event.(type) {
-		case *myreplication.QueryEvent:
-			// Output query event
-			// BEGIN is to start the transaction, which is closed here
-			if e.GetQuery() != "BEGIN" {
-				_, err := engin.Exec(e.GetQuery())
-				if err != nil {
-					panic("exec sql error " + err.Error())
-				}
-				err = updateTable(engin)
-				if err != nil {
-					panic(err.Error())
-				}
-				log.Println("Query:", e.GetQuery())
-			}
-		case *myreplication.IntVarEvent:
-			//Output last insert_id  if statement based replication
-			println(e.GetValue())
-		case *myreplication.WriteEvent:
-			//Output Write (insert) event
-			log.Println("Write", e.GetTable())
-			//Rows loop
-			columnNames := GetColumns(dbTables[e.GetTable()].Columns())
-			for _, row := range e.GetRows() {
-				//Columns loop
-				columnVals := make([]string, len(row))
-				for j, col := range row {
-					//Output row number, column number, column type and column value
-					if IsChar(col.GetType()) {
-						columnVals[j] = fmt.Sprintf("'%v'", col.GetValue())
-					} else {
-						columnVals[j] = fmt.Sprintf("%v", col.GetValue())
-					}
-				}
-				strSql := GetInsertSql(e.GetSchema(), e.GetTable(), columnNames, columnVals)
-				_, err := engin.Exec(strSql)
-				if err != nil {
-					panic("exec sql error " + err.Error())
-				}
-				log.Println(strSql)
-			}
-		case *myreplication.DeleteEvent:
-			//Output delete event
-			log.Println("Delete", e.GetTable())
-			columnNames := GetColumns(dbTables[e.GetTable()].Columns())
-			for _, row := range e.GetRows() {
-				//Columns loop
-				columnVals := make([]string, len(row))
-				for j, col := range row {
-					if IsChar(col.GetType()) {
-						columnVals[j] = fmt.Sprintf("'%v'", col.GetValue())
-					} else {
-						columnVals[j] = fmt.Sprintf("%v", col.GetValue())
-					}
-				}
-				strSql := GetdeleteSql(e.GetSchema(), e.GetTable(), columnNames, columnVals)
-				_, err := engin.Exec(strSql)
-				if err != nil {
-					panic("exec sql error " + err.Error())
-				}
-				log.Println(strSql)
-			}
+func OnTableChanged(header *replication.EventHeader, schema string, table string) error {
+	log.Info("table changed event")
+	return nil
+}
 
-		case *myreplication.UpdateEvent:
-			//Output update event
-			println("Update", e.GetTable())
-			columnNames := GetColumns(dbTables[e.GetTable()].Columns())
-			// Output old
-			oldColumnValList := make([][]string, len(e.GetRows()))
-			for i, row := range e.GetRows() {
-				//Columns loop
-				oldColumnValList[i] = make([]string, len(row))
-				for j, col := range row {
-					if IsChar(col.GetType()) {
-						oldColumnValList[i][j] = fmt.Sprintf("'%v'", col.GetValue())
-					} else {
-						oldColumnValList[i][j] = fmt.Sprintf("%v", col.GetValue())
-					}
-				}
-			}
-			// Output new
-			newColumnValList := make([][]string, len(e.GetNewRows()))
-			for i, row := range e.GetNewRows() {
-				//Columns loop
-				newColumnValList[i] = make([]string, len(row))
-				for j, col := range row {
-					if IsChar(col.GetType()) {
-						newColumnValList[i][j] = fmt.Sprintf("'%v'", col.GetValue())
-					} else {
-						newColumnValList[i][j] = fmt.Sprintf("%v", col.GetValue())
-					}
-				}
-			}
-			strSql := GetUpdateSql(e.GetSchema(), e.GetTable(), columnNames, newColumnValList)
-			_, err := engin.Exec(strSql)
-			if err != nil {
-				panic("exec sql error " + err.Error())
-			}
-			log.Println(strSql)
-		case *myreplication.XidEvent:
-			fmt.Println("serverID : ", e.ServerId)
-		default:
+func (h *MyEventHandler) onDDL(header *replication.EventHeader, nextPos mysql.Position, queryEvent *replication.QueryEvent) error {
+	log.Info("into DDL event")
+	return nil
+}
+
+func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
+	length := len(e.Table.Columns)
+	var columnNames = make([]string, length)
+	var oldColumnValue = make([]string, length)
+	var newColumnValue = make([]string, length)
+	var isChar = make([]bool, len(e.Table.Columns))
+	for i, col := range e.Table.Columns {
+		columnNames[i] = col.Name
+		if col.Type <= 2 {
+			isChar[i] = false
+		} else {
+			isChar[i] = true
 		}
 	}
+	switch e.Action {
+	case canal.UpdateAction:
+		for i, row := range e.Rows {
+			for j, item := range row {
+				if i%2 == 0 {
+					if isChar[j] == true {
+						oldColumnValue[j] = fmt.Sprintf("'%s'", item)
+					} else {
+						oldColumnValue[j] = fmt.Sprintf("%d", item)
+					}
+				} else {
+					if isChar[j] == true {
+						newColumnValue[j] = fmt.Sprintf("'%s'", item)
+					} else {
+						newColumnValue[j] = fmt.Sprintf("%d", item)
+					}
+				}
+			}
+			if i%2 == 1 {
+				updateSql := GetUpdateSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue, oldColumnValue)
+				engin2.Exec(updateSql)
+				log.Info(updateSql)
+			}
+		}
+	case canal.DeleteAction:
+		for _, row := range e.Rows {
+			for j, item := range row {
+				if isChar[j] == true {
+					oldColumnValue[j] = fmt.Sprintf("'%s'", item)
+				} else {
+					oldColumnValue[j] = fmt.Sprintf("%d", item)
+				}
+			}
+			deleteSql := GetdeleteSql(e.Table.Schema, e.Table.Name, columnNames, oldColumnValue)
+			engin2.Exec(deleteSql)
+			log.Info(deleteSql)
+		}
+		log.Infof("%s %v\n", e.Table.Name, e.Rows)
+	case canal.InsertAction:
+		fmt.Println("Insert")
+		for _, row := range e.Rows {
+			for j, item := range row {
+				if isChar[j] == true {
+					newColumnValue[j] = fmt.Sprintf("'%s'", item)
+				} else {
+					newColumnValue[j] = fmt.Sprintf("%d", item)
+				}
+			}
+			insertSql := GetInsertSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue)
+			engin2.Exec(insertSql)
+			log.Info(insertSql)
+		}
+	default:
+		log.Infof("%v", e.String())
+	}
+	return nil
+}
+
+func (h *MyEventHandler) String() string {
+	return "MyEventHandler"
 }

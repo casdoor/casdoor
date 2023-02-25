@@ -18,57 +18,25 @@ import (
 	"bytes"
 	"log"
 
-	"github.com/2tvenom/myreplication"
 	"github.com/xorm-io/xorm"
-	"github.com/xorm-io/xorm/schemas"
 )
 
-func IsChar(mysqlType uint8) bool {
-	if mysqlType == myreplication.MYSQL_TYPE_DECIMAL ||
-		mysqlType == myreplication.MYSQL_TYPE_TINY ||
-		mysqlType == myreplication.MYSQL_TYPE_SHORT ||
-		mysqlType == myreplication.MYSQL_TYPE_LONG ||
-		mysqlType == myreplication.MYSQL_TYPE_FLOAT ||
-		mysqlType == myreplication.MYSQL_TYPE_DOUBLE ||
-		mysqlType == myreplication.MYSQL_TYPE_LONGLONG ||
-		mysqlType == myreplication.MYSQL_TYPE_INT24 {
-		return false
-	}
-	return true
-}
-
-func GetColumns(cols []*schemas.Column) []string {
-	columns := make([]string, len(cols))
-	for i, col := range cols {
-		columns[i] = col.Name
-	}
-	return columns
-}
-
-func GetUpdateSql(schemaName string, tableName string, columnNames []string, newColumnValList [][]string) string {
+func GetUpdateSql(schemaName string, tableName string, columnNames []string, newColumnVal []string, oldColumnVal []string) string {
 	var bt bytes.Buffer
-	bt.WriteString("replace into " + schemaName + "." + tableName + " (")
+	bt.WriteString("update " + schemaName + "." + tableName + " set ")
 	for i, columnName := range columnNames {
 		if i+1 < len(columnNames) {
-			bt.WriteString(columnName + ", ")
+			bt.WriteString(columnName + "=" + newColumnVal[i] + ", ")
 		} else {
-			bt.WriteString(columnName + ") values ")
+			bt.WriteString(columnName + "=" + newColumnVal[i] + " where ")
 		}
 	}
 
-	for i, row := range newColumnValList {
-		bt.WriteString("(")
-		for j, item := range row {
-			if j+1 < len(row) {
-				bt.WriteString(item + ",")
-			} else {
-				bt.WriteString(item + ")")
-			}
-		}
-		if i+1 < len(newColumnValList) {
-			bt.WriteString(",")
+	for i, columnName := range columnNames {
+		if i+1 < len(columnNames) {
+			bt.WriteString(columnName + "=" + oldColumnVal[i] + " and ")
 		} else {
-			bt.WriteString(";")
+			bt.WriteString(columnName + "=" + oldColumnVal[i] + ";")
 		}
 	}
 	return bt.String()
@@ -107,18 +75,6 @@ func GetdeleteSql(schemaName string, tableName string, columnNames []string, col
 	return bt.String()
 }
 
-func updateTable(engine *xorm.Engine) error {
-	tbs, err := engine.DBMetas()
-	if err != nil {
-		return err
-	}
-
-	for _, tb := range tbs {
-		dbTables[tb.Name] = tb
-	}
-	return nil
-}
-
 func CreateEngine(dataSourceName string) (*xorm.Engine, error) {
 	engine, err := xorm.NewEngine("mysql", dataSourceName)
 
@@ -128,13 +84,6 @@ func CreateEngine(dataSourceName string) (*xorm.Engine, error) {
 
 	// ping mysql
 	err = engine.Ping()
-	if err != nil {
-		panic(err)
-		return nil, err
-	}
-
-	// update table
-	err = updateTable(engine)
 	if err != nil {
 		panic(err)
 		return nil, err
