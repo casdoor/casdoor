@@ -92,7 +92,7 @@ export const OtherProviderInfo = {
       url: "https://www.huaweicloud.com/product/msgsms.html",
     },
     "Twilio SMS": {
-      logo: `${StaticBaseUrl}/img/social_twilio.png`,
+      logo: `${StaticBaseUrl}/img/social_twilio.svg`,
       url: "https://www.twilio.com/messaging",
     },
     "SmsBao SMS": {
@@ -216,7 +216,8 @@ export function getCountriesData(countryCodes = phoneNumber.getCountries()) {
         phone: phoneNumber.getCountryCallingCode(countryCode),
       };
     }
-  });
+  }).filter(item => item.name !== "")
+    .sort((a, b) => a.phone - b.phone);
 }
 
 export function countryFlag(country) {
