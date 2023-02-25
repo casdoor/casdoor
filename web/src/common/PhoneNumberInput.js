@@ -16,8 +16,6 @@ import {Select} from "antd";
 import * as Setting from "../Setting";
 import React from "react";
 
-const {Option} = Select;
-
 export default function PhoneNumberInput(props) {
   const {onChange, style, disabled} = props;
   const value = props.value ?? "CN";
@@ -37,22 +35,10 @@ export default function PhoneNumberInput(props) {
       dropdownMatchSelectWidth={false}
       optionLabelProp={"label"}
       onChange={handleOnChange}
-      filterOption={(input, option) =>
-        (option?.text ?? "").toLowerCase().includes(input.toLowerCase())
-      }
+      filterOption={(input, option) => (option?.text ?? "").toLowerCase().includes(input.toLowerCase())}
     >
       {
-        Setting.getCountriesData(countryCodes).map((country) => (
-          <Option key={country.code} value={country.code} label={`+${country.phone}`} text={`${country.name}, ${country.code}, ${country.phone}`} >
-            <div style={{display: "flex", justifyContent: "space-between"}}>
-              <div>
-                {Setting.countryFlag(country)}
-                {`${country.name}`}
-              </div>
-              {`+${country.phone}`}
-            </div>
-          </Option>
-        ))
+        Setting.getCountryCodeData(countryCodes).map((country) => Setting.getCountryCodeOption(country))
       }
     </Select>
   );

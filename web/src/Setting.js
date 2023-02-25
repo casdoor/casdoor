@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Checkbox, Form, Modal, Tag, Tooltip, message, theme} from "antd";
+import {Checkbox, Form, Modal, Select, Tag, Tooltip, message, theme} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -25,6 +25,8 @@ import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import * as phoneNumber from "libphonenumber-js";
 import * as path from "path-browserify";
+
+const {Option} = Select;
 
 export const ServerUrl = "";
 
@@ -206,7 +208,7 @@ export function initCountries() {
   return countries;
 }
 
-export function getCountriesData(countryCodes = phoneNumber.getCountries()) {
+export function getCountryCodeData(countryCodes = phoneNumber.getCountries()) {
   return countryCodes?.map((countryCode) => {
     if (phoneNumber.isSupportedCountry(countryCode)) {
       const name = initCountries().getName(countryCode, getLanguage());
@@ -220,7 +222,21 @@ export function getCountriesData(countryCodes = phoneNumber.getCountries()) {
     .sort((a, b) => a.phone - b.phone);
 }
 
-export function countryFlag(country) {
+export function getCountryCodeOption(country) {
+  return (
+    <Option key={country.code} value={country.code} label={`+${country.phone}`} text={`${country.name}, ${country.code}, ${country.phone}`} >
+      <div style={{display: "flex", justifyContent: "space-between", marginRight: "10px"}}>
+        <div>
+          {getCountryImage(country)}
+          {`${country.name}`}
+        </div>
+        {`+${country.phone}`}
+      </div>
+    </Option>
+  );
+}
+
+export function getCountryImage(country) {
   return <img src={`${StaticBaseUrl}/flag-icons/${country.code}.svg`} alt={country.name} height={20} style={{marginRight: 10}} />;
 }
 
