@@ -223,10 +223,6 @@ export function countryFlag(country) {
   return <img src={`${StaticBaseUrl}/flag-icons/${country.code}.svg`} alt={country.name} height={20} style={{marginRight: 10}} />;
 }
 
-export function getPhoneCodeFromCountryCode(countryCode) {
-  return phoneNumber.isSupportedCountry(countryCode) ? phoneNumber.getCountryCallingCode(countryCode) : "";
-}
-
 export function initServerUrl() {
   // const hostname = window.location.hostname;
   // if (hostname === "localhost") {

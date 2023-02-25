@@ -19,7 +19,7 @@ import React from "react";
 const {Option} = Select;
 
 export default function PhoneNumberInput(props) {
-  const {onChange, style, showSearch} = props;
+  const {onChange, style, disabled, showSearch} = props;
   const value = props.value ?? "CN";
   const countryCodes = props.countryCodes ?? [];
 
@@ -31,6 +31,7 @@ export default function PhoneNumberInput(props) {
     <Select
       virtual={false}
       style={style}
+      disabled={disabled}
       value={value}
       dropdownMatchSelectWidth={false}
       optionLabelProp={"label"}
