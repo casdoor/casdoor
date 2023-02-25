@@ -208,6 +208,10 @@ export function initCountries() {
   return countries;
 }
 
+export function getCountryCode(country) {
+  return phoneNumber.getCountryCallingCode(country);
+}
+
 export function getCountryCodeData(countryCodes = phoneNumber.getCountries()) {
   return countryCodes?.map((countryCode) => {
     if (phoneNumber.isSupportedCountry(countryCode)) {
