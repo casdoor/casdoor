@@ -19,7 +19,7 @@ import React from "react";
 const {Option} = Select;
 
 export default function PhoneNumberInput(props) {
-  const {onChange, style, disabled, showSearch} = props;
+  const {onChange, style, disabled} = props;
   const value = props.value ?? "CN";
   const countryCodes = props.countryCodes ?? [];
 
@@ -30,20 +30,20 @@ export default function PhoneNumberInput(props) {
   return (
     <Select
       virtual={false}
+      showSearch
       style={style}
       disabled={disabled}
       value={value}
       dropdownMatchSelectWidth={false}
       optionLabelProp={"label"}
-      showSearch={showSearch}
       onChange={handleOnChange}
       filterOption={(input, option) =>
-        (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+        (option?.text ?? "").toLowerCase().includes(input.toLowerCase())
       }
     >
       {
         Setting.getCountriesData(countryCodes).map((country) => (
-          <Option key={country.code} value={country.code} label={`+${country.phone}`} >
+          <Option key={country.code} value={country.code} label={`+${country.phone}`} text={`${country.name}, ${country.code}, ${country.phone}`} >
             <div style={{display: "flex", justifyContent: "space-between"}}>
               <div>
                 {Setting.countryFlag(country)}
