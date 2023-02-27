@@ -46,14 +46,15 @@ func InitConfig() *canal.Config {
 	cfg.Addr = fmt.Sprintf("%s:%d", host1, port1)
 	cfg.Password = password1
 	cfg.User = username1
-	// We only care table canal_test in test db
+	cfg.ServerID = uint32(serverId1)
+	// We only care table in database1
 	cfg.Dump.TableDB = database1
 	//cfg.Dump.Tables = []string{"user"}
 	log.Info("config canal success…")
 	return cfg
 }
 
-func StartBinlogSync() {
+func StartBinlogSync() error {
 	// init config
 	config := InitConfig()
 
@@ -61,7 +62,7 @@ func StartBinlogSync() {
 	pos, err := c.GetMasterPos()
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	// Register a handler to handle RowsEvent
@@ -69,6 +70,8 @@ func StartBinlogSync() {
 
 	// Start canal
 	c.RunFrom(pos)
+
+	return nil
 }
 
 type MyEventHandler struct {
@@ -88,9 +91,10 @@ func (h *MyEventHandler) onDDL(header *replication.EventHeader, nextPos mysql.Po
 func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 	length := len(e.Table.Columns)
 	var columnNames = make([]string, length)
-	var oldColumnValue = make([]string, length)
-	var newColumnValue = make([]string, length)
+	var oldColumnValue = make([]interface{}, length)
+	var newColumnValue = make([]interface{}, length)
 	var isChar = make([]bool, len(e.Table.Columns))
+
 	for i, col := range e.Table.Columns {
 		columnNames[i] = col.Name
 		if col.Type <= 2 {
@@ -99,57 +103,81 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 			isChar[i] = true
 		}
 	}
+
 	switch e.Action {
 	case canal.UpdateAction:
 		for i, row := range e.Rows {
 			for j, item := range row {
 				if i%2 == 0 {
 					if isChar[j] == true {
-						oldColumnValue[j] = fmt.Sprintf("'%s'", item)
+						oldColumnValue[j] = fmt.Sprintf("%s", item)
 					} else {
 						oldColumnValue[j] = fmt.Sprintf("%d", item)
 					}
 				} else {
 					if isChar[j] == true {
-						newColumnValue[j] = fmt.Sprintf("'%s'", item)
+						newColumnValue[j] = fmt.Sprintf("%s", item)
 					} else {
 						newColumnValue[j] = fmt.Sprintf("%d", item)
 					}
 				}
 			}
+
 			if i%2 == 1 {
-				updateSql := GetUpdateSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue, oldColumnValue)
-				engin2.Exec(updateSql)
-				log.Info(updateSql)
+				updateSql, args, err := GetUpdateSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue, oldColumnValue)
+				if err != nil {
+					return err
+				}
+
+				res, err := engin2.DB().Exec(updateSql, args...)
+				if err != nil {
+					return err
+				}
+				log.Info(updateSql, args, res)
 			}
 		}
 	case canal.DeleteAction:
 		for _, row := range e.Rows {
 			for j, item := range row {
 				if isChar[j] == true {
-					oldColumnValue[j] = fmt.Sprintf("'%s'", item)
+					oldColumnValue[j] = fmt.Sprintf("%s", item)
 				} else {
 					oldColumnValue[j] = fmt.Sprintf("%d", item)
 				}
 			}
-			deleteSql := GetdeleteSql(e.Table.Schema, e.Table.Name, columnNames, oldColumnValue)
-			engin2.Exec(deleteSql)
-			log.Info(deleteSql)
+
+			deleteSql, args, err := GetDeleteSql(e.Table.Schema, e.Table.Name, columnNames, oldColumnValue)
+			if err != nil {
+				return err
+			}
+
+			res, err := engin2.DB().Exec(deleteSql, args...)
+			if err != nil {
+				return err
+			}
+			log.Info(deleteSql, args, res)
 		}
-		log.Infof("%s %v\n", e.Table.Name, e.Rows)
 	case canal.InsertAction:
-		fmt.Println("Insert")
 		for _, row := range e.Rows {
 			for j, item := range row {
 				if isChar[j] == true {
-					newColumnValue[j] = fmt.Sprintf("'%s'", item)
+					newColumnValue[j] = fmt.Sprintf("%s", item)
 				} else {
 					newColumnValue[j] = fmt.Sprintf("%d", item)
 				}
 			}
-			insertSql := GetInsertSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue)
-			engin2.Exec(insertSql)
-			log.Info(insertSql)
+
+			insertSql, args, err := GetInsertSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue)
+
+			if err != nil {
+				return err
+			}
+
+			res, err := engin2.DB().Exec(insertSql, args...)
+			if err != nil {
+				return err
+			}
+			log.Info(insertSql, args, res)
 		}
 	default:
 		log.Infof("%v", e.String())

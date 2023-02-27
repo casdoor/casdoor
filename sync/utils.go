@@ -15,77 +15,56 @@
 package sync
 
 import (
-	"bytes"
 	"log"
 
+	"github.com/Masterminds/squirrel"
 	"github.com/xorm-io/xorm"
 )
 
-func GetUpdateSql(schemaName string, tableName string, columnNames []string, newColumnVal []string, oldColumnVal []string) string {
-	var bt bytes.Buffer
-	bt.WriteString("update " + schemaName + "." + tableName + " set ")
+func GetUpdateSql(schemaName string, tableName string, columnNames []string, newColumnVal []interface{}, oldColumnVal []interface{}) (string, []interface{}, error) {
+	updateSql := squirrel.Update(schemaName + "." + tableName)
 	for i, columnName := range columnNames {
-		if i+1 < len(columnNames) {
-			bt.WriteString(columnName + "=" + newColumnVal[i] + ", ")
-		} else {
-			bt.WriteString(columnName + "=" + newColumnVal[i] + " where ")
-		}
+		updateSql = updateSql.Set(columnName, newColumnVal[i])
 	}
 
 	for i, columnName := range columnNames {
-		if i+1 < len(columnNames) {
-			bt.WriteString(columnName + "=" + oldColumnVal[i] + " and ")
-		} else {
-			bt.WriteString(columnName + "=" + oldColumnVal[i] + ";")
-		}
+		updateSql = updateSql.Where(squirrel.Eq{columnName: oldColumnVal[i]})
 	}
-	return bt.String()
+
+	sql, args, err := updateSql.ToSql()
+	if err != nil {
+		return "", nil, err
+	}
+
+	return sql, args, nil
 }
 
-func GetInsertSql(schemaName string, tableName string, columnNames []string, columnValue []string) string {
-	var bt bytes.Buffer
-	bt.WriteString("insert into " + schemaName + "." + tableName + " (")
-	for i, columnName := range columnNames {
-		if i+1 < len(columnNames) {
-			bt.WriteString(columnName + ", ")
-		} else {
-			bt.WriteString(columnName + ") values (")
-		}
-	}
-	for i, val := range columnValue {
-		if i+1 < len(columnNames) {
-			bt.WriteString(val + ", ")
-		} else {
-			bt.WriteString(val + ");")
-		}
-	}
-	return bt.String()
+func GetInsertSql(schemaName string, tableName string, columnNames []string, columnValue []interface{}) (string, []interface{}, error) {
+	insertSql := squirrel.Insert(schemaName + "." + tableName).Columns(columnNames...).Values(columnValue...)
+
+	return insertSql.ToSql()
 }
 
-func GetdeleteSql(schemaName string, tableName string, columnNames []string, columnValue []string) string {
-	var bt bytes.Buffer
-	bt.WriteString("delete from " + schemaName + "." + tableName + " where ")
+func GetDeleteSql(schemaName string, tableName string, columnNames []string, columnValue []interface{}) (string, []interface{}, error) {
+	deleteSql := squirrel.Delete(schemaName + "." + tableName)
+
 	for i, columnName := range columnNames {
-		if i+1 < len(columnNames) {
-			bt.WriteString(columnName + " = " + columnValue[i] + " and ")
-		} else {
-			bt.WriteString(columnName + " = " + columnValue[i] + ";")
-		}
+		deleteSql = deleteSql.Where(squirrel.Eq{columnName: columnValue[i]})
 	}
-	return bt.String()
+
+	return deleteSql.ToSql()
 }
 
 func CreateEngine(dataSourceName string) (*xorm.Engine, error) {
 	engine, err := xorm.NewEngine("mysql", dataSourceName)
 
 	if err != nil {
-		log.Fatal("connection mysql fail……", err)
+		return nil, err
 	}
 
 	// ping mysql
 	err = engine.Ping()
 	if err != nil {
-		panic(err)
 		return nil, err
 	}
 
