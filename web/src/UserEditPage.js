@@ -311,7 +311,7 @@ class UserEditPage extends React.Component {
               <PhoneNumberInput
                 style={{width: "30%"}}
                 // disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
-                countryCode={this.state.user.countryCode}
+                value={this.state.user.countryCode}
                 onChange={(value) => {
                   this.updateUserField("countryCode", value);
                 }}
