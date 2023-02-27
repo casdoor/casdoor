@@ -26,7 +26,7 @@ import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {withRouter} from "react-router-dom";
-import PhoneNumberInput from "../common/PhoneNumberInput";
+import {PhoneNumberInput} from "../common/PhoneNumberInput";
 
 const formItemLayout = {
   labelCol: {
@@ -82,7 +82,7 @@ class SignupPage extends React.Component {
     this.form = React.createRef();
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     let applicationName = this.state.applicationName;
     const oAuthParams = Util.getOAuthGetParameters();
     if (oAuthParams !== null) {
@@ -98,6 +98,10 @@ class SignupPage extends React.Component {
       } else {
         Setting.showMessage("error", `Unknown application name: ${applicationName}`);
       }
+    } else {
+      this.setState({
+        countryCode: this.getApplicationObj().organizationObj.countryCodes?.[0],
+      });
     }
   }
 
@@ -111,6 +115,7 @@ class SignupPage extends React.Component {
         this.onUpdateApplication(application);
         this.setState({
           application: application,
+          countryCode: application?.organizationObj.countryCodes?.[0],
         });
 
         if (application !== null && application !== undefined) {
@@ -390,23 +395,12 @@ class SignupPage extends React.Component {
                     required: required,
                     message: i18next.t("signup:Please select your country code!"),
                   },
-                  {
-                    validator: (_, value) => {
-                      if (this.state.phone !== "" && !Setting.isValidPhone(this.state.phone, this.state.countryCode)) {
-                        this.setState({validPhone: false});
-                        return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
-                      }
-
-                      this.setState({validPhone: true});
-                      return Promise.resolve();
-                    },
-                  },
                 ]}
               >
                 <PhoneNumberInput
                   showSearsh={true}
                   style={{width: "35%"}}
-                  value={this.state.countryCode}
+                  countryCode={this.state.countryCode}
                   onChange={(value) => {this.setState({countryCode: value});}}
                   countryCodes={this.getApplicationObj().organizationObj.countryCodes}
                 />
@@ -456,6 +450,7 @@ class SignupPage extends React.Component {
               method={"signup"}
               onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
               application={application}
+              countryCode={this.state.countryCode}
             />
           </Form.Item>
         </React.Fragment>

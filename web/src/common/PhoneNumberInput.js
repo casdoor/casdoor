@@ -16,9 +16,8 @@ import {Select} from "antd";
 import * as Setting from "../Setting";
 import React from "react";
 
-export default function PhoneNumberInput(props) {
-  const {onChange, style, disabled} = props;
-  const value = props.value ?? "CN";
+export const PhoneNumberInput = (props) => {
+  const {onChange, style, disabled, countryCode} = props;
   const countryCodes = props.countryCodes ?? [];
 
   const handleOnChange = (e) => {
@@ -31,7 +30,7 @@ export default function PhoneNumberInput(props) {
       showSearch
       style={style}
       disabled={disabled}
-      value={value}
+      value={countryCode}
       dropdownMatchSelectWidth={false}
       optionLabelProp={"label"}
       onChange={handleOnChange}
@@ -42,4 +41,4 @@ export default function PhoneNumberInput(props) {
       }
     </Select>
   );
-}
+};

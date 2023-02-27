@@ -29,7 +29,7 @@ import SelectRegionBox from "./SelectRegionBox";
 import WebAuthnCredentialTable from "./WebauthnCredentialTable";
 import ManagedAccountTable from "./ManagedAccountTable";
 import PropertyTable from "./propertyTable";
-import PhoneNumberInput from "./common/PhoneNumberInput";
+import {PhoneNumberInput} from "./common/PhoneNumberInput";
 
 const {Option} = Select;
 
@@ -311,7 +311,7 @@ class UserEditPage extends React.Component {
               <PhoneNumberInput
                 style={{width: "30%"}}
                 // disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
-                value={this.state.user.countryCode}
+                countryCode={this.state.user.countryCode}
                 onChange={(value) => {
                   this.updateUserField("countryCode", value);
                 }}
