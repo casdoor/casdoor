@@ -98,10 +98,6 @@ class SignupPage extends React.Component {
       } else {
         Setting.showMessage("error", `Unknown application name: ${applicationName}`);
       }
-    } else {
-      this.setState({
-        countryCode: this.getApplicationObj().organizationObj.countryCodes?.[0],
-      });
     }
   }
 
@@ -115,7 +111,6 @@ class SignupPage extends React.Component {
         this.onUpdateApplication(application);
         this.setState({
           application: application,
-          countryCode: application?.organizationObj.countryCodes?.[0],
         });
 
         if (application !== null && application !== undefined) {
@@ -398,25 +393,23 @@ class SignupPage extends React.Component {
                 ]}
               >
                 <PhoneNumberInput
-                  showSearsh={true}
                   style={{width: "35%"}}
-                  countryCode={this.state.countryCode}
-                  onChange={(value) => {this.setState({countryCode: value});}}
                   countryCodes={this.getApplicationObj().organizationObj.countryCodes}
                 />
               </Form.Item>
               <Form.Item
                 name="phone"
                 key="phone"
+                dependencies={["countryCode"]}
                 noStyle
                 rules={[
                   {
                     required: required,
                     message: i18next.t("signup:Please input your phone number!"),
                   },
-                  {
+                  ({getFieldValue}) => ({
                     validator: (_, value) => {
-                      if (this.state.phone !== "" && !Setting.isValidPhone(this.state.phone, this.state.countryCode)) {
+                      if (value !== "" && !Setting.isValidPhone(value, getFieldValue("countryCode"))) {
                         this.setState({validPhone: false});
                         return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
                       }
@@ -424,7 +417,7 @@ class SignupPage extends React.Component {
                       this.setState({validPhone: true});
                       return Promise.resolve();
                     },
-                  },
+                  }),
                 ]}
               >
                 <Input
@@ -555,6 +548,7 @@ class SignupPage extends React.Component {
         initialValues={{
           application: application.name,
           organization: application.organization,
+          countryCode: application.organizationObj.countryCodes?.[0],
         }}
         size="large"
         layout={Setting.isMobile() ? "vertical" : "horizontal"}

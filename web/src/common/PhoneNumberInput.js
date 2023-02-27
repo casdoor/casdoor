@@ -17,11 +17,11 @@ import * as Setting from "../Setting";
 import React from "react";
 
 export const PhoneNumberInput = (props) => {
-  const {onChange, style, disabled, countryCode} = props;
+  const {onChange, style, disabled, value} = props;
   const countryCodes = props.countryCodes ?? [];
 
-  const handleOnChange = (e) => {
-    onChange?.(e);
+  const handleOnChange = (value) => {
+    onChange?.(value);
   };
 
   return (
@@ -30,7 +30,7 @@ export const PhoneNumberInput = (props) => {
       showSearch
       style={style}
       disabled={disabled}
-      value={countryCode}
+      value={value}
       dropdownMatchSelectWidth={false}
       optionLabelProp={"label"}
       onChange={handleOnChange}
