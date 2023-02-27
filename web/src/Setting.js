@@ -349,13 +349,15 @@ export function isValidEmail(email) {
 }
 
 export function isValidPhone(phone, countryCode = "") {
-  if (countryCode !== "") {
+  if (countryCode !== "" && countryCode !== "CN") {
     return phoneNumber.isValidPhoneNumber(phone, countryCode);
   }
 
-  // // https://learnku.com/articles/31543, `^s*$` filter empty email individually.
+  // https://learnku.com/articles/31543, `^s*$` filter empty email individually.
+  const phoneCnRegex = /^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/;
   const phoneRegex = /[0-9]{4,15}$/;
-  return phoneRegex.test(phone);
+
+  return countryCode === "CN" ? phoneCnRegex.test(phone) : phoneRegex.test(phone);
 }
 
 export function isValidInvoiceTitle(invoiceTitle) {
