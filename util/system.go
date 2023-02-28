@@ -16,11 +16,14 @@ package util
 
 import (
 	"io/ioutil"
+	"log"
 	"os"
 	"runtime"
 	"strings"
 	"time"
 
+	"encoding/json"
+	"github.com/go-resty/resty/v2"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/mem"
 )
@@ -44,8 +47,64 @@ func GetMemoryUsage() (uint64, uint64, error) {
 	return m.TotalAlloc, virtualMem.Total, nil
 }
 
+type TagInfo struct {
+	TagName       string `json:"tag_name"`
+	CommitMessage string `json:"body"`
+}
+
 // get github repo release version
-func GetGitRepoCommit() (string, error) {
+func GetVersionInfo() ([]*TagInfo, error) {
+	httpClient := resty.New()
+	req := httpClient.R()
+	req.Method = "GET"
+	req.URL = "https://api.github.com/repos/casdoor/casdoor/releases"
+	resp, err := req.Execute(req.Method, req.URL)
+	if err != nil || resp.StatusCode() != 200 {
+		return nil, err
+	}
+
+	var tags []*TagInfo
+	if err := json.Unmarshal(resp.Body(), &tags); err != nil {
+		return nil, err
+	}
+	return tags, nil
+}
+func GetLatestVersion() (string, error) {
+	tags, err := GetVersionInfo()
+	if err != nil {
+		return "", err
+	}
+	if len(tags) > 0 {
+		return tags[0].TagName, nil
+	} else {
+		return "", nil
+	}
+}
+func GetBasedonVersion() (string, error) {
+	materCommit, err := GetMasterCommit()
+	if err != nil {
+		return "", err
+	}
+
+	tags, err := GetVersionInfo()
+	if err != nil {
+		return "", err
+	}
+
+	for _, tag := range tags {
+		if len(tag.CommitMessage) < 50 {
+			continue
+		}
+		tagcommit := tag.CommitMessage[len(tag.CommitMessage)-46 : len(tag.CommitMessage)-6]
+		log.Println(tagcommit)
+		if tagcommit != materCommit {
+			continue
+		}
+		return tag.TagName, nil
+	}
+	return "", nil
+}
+func GetMasterCommit() (string, error) {
 	var fileDate, commit string
 	pwd, err := os.Getwd()
 	if err != nil {
@@ -75,34 +134,6 @@ func GetGitRepoCommit() (string, error) {
 
 	return commit, nil
 }
-
-func GetVersionFromCommit(commit string) (string, error) {
-	var version string
-	pwd, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-
-	TagFileInfos, err := ioutil.ReadDir(pwd + "/.git/refs/tags")
-	if err != nil {
-		return "", err
-	}
-
-	for _, tagFile := range TagFileInfos {
-		content, err := ioutil.ReadFile(pwd + "/.git/refs/tags/" + tagFile.Name())
-		if err != nil {
-			return "", err
-		}
-		temp := string(content)
-		tagCommit := strings.ReplaceAll(temp, "\n", "")
-		if tagCommit == commit {
-			version = tagFile.Name()
-			return version, nil
-		}
-	}
-	return "", nil
-}
-
 func GetCurBranchCommit() (string, error) {
 	var fileDate, commit, branchPath string
 	pwd, err := os.Getwd()
@@ -130,7 +161,10 @@ func GetCurBranchCommit() (string, error) {
 	// Convert to full length
 	temp := strings.ReplaceAll(string(path), "\n", "")
 	branchPath = temp[5:]
-
+	//在主分支直接返空
+	if len(branchPath) > 6 && branchPath[len(branchPath)-6:] == "master" {
+		return "", nil
+	}
 	content, err := ioutil.ReadFile(pwd + "/.git/" + branchPath)
 	if err != nil {
 		return "", err
