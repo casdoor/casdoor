@@ -46,7 +46,6 @@ func InitConfig() *canal.Config {
 	cfg.Addr = fmt.Sprintf("%s:%d", host1, port1)
 	cfg.Password = password1
 	cfg.User = username1
-	cfg.ServerID = uint32(serverId1)
 	// We only care table in database1
 	cfg.Dump.TableDB = database1
 	//cfg.Dump.Tables = []string{"user"}
