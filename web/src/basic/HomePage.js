@@ -61,8 +61,13 @@ class HomePage extends React.Component {
       }
     } else {
       this.state.applications.forEach(application => {
+        let homepageUrl = application.homepageUrl;
+        if (homepageUrl === "<custom-url>") {
+          homepageUrl = this.props.account.homepage;
+        }
+
         items.push({
-          link: application.homepageUrl, name: application.displayName, organizer: application.description, logo: application.logo, createdTime: "",
+          link: homepageUrl, name: application.displayName, organizer: application.description, logo: application.logo, createdTime: "",
         });
       });
     }

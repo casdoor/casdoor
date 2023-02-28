@@ -41,7 +41,7 @@ func IsPhoneValid(phone string, countryCode string) bool {
 }
 
 func IsPhoneAllowInRegin(countryCode string, allowRegions []string) bool {
-	return !ContainsString(allowRegions, countryCode)
+	return ContainsString(allowRegions, countryCode)
 }
 
 func GetE164Number(phone string, countryCode string) (string, bool) {

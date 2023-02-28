@@ -16,12 +16,10 @@ import {Button} from "antd";
 import React from "react";
 import i18next from "i18next";
 import {CaptchaModal} from "./CaptchaModal";
-import * as ProviderBackend from "../backend/ProviderBackend";
 import * as UserBackend from "../backend/UserBackend";
 
 export const CaptchaPreview = ({
   provider,
-  providerName,
   clientSecret,
   captchaType,
   subType,
@@ -41,9 +39,10 @@ export const CaptchaPreview = ({
     provider.providerUrl = providerUrl;
     if (clientSecret !== "***") {
       provider.clientSecret = clientSecret;
-      ProviderBackend.updateProvider(owner, providerName, provider).then(() => {
-        setOpen(true);
-      });
+      // ProviderBackend.updateProvider(owner, providerName, provider).then(() => {
+      //   setOpen(true);
+      // });
+      setOpen(true);
     } else {
       setOpen(true);
     }

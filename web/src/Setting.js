@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Checkbox, Form, Modal, Tag, Tooltip, message, theme} from "antd";
+import {Checkbox, Form, Modal, Select, Tag, Tooltip, message, theme} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -25,6 +25,8 @@ import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import * as phoneNumber from "libphonenumber-js";
 import * as path from "path-browserify";
+
+const {Option} = Select;
 
 export const ServerUrl = "";
 
@@ -92,7 +94,7 @@ export const OtherProviderInfo = {
       url: "https://www.huaweicloud.com/product/msgsms.html",
     },
     "Twilio SMS": {
-      logo: `${StaticBaseUrl}/img/social_twilio.png`,
+      logo: `${StaticBaseUrl}/img/social_twilio.svg`,
       url: "https://www.twilio.com/messaging",
     },
     "SmsBao SMS": {
@@ -206,7 +208,11 @@ export function initCountries() {
   return countries;
 }
 
-export function getCountriesData(countryCodes = phoneNumber.getCountries()) {
+export function getCountryCode(country) {
+  return phoneNumber.getCountryCallingCode(country);
+}
+
+export function getCountryCodeData(countryCodes = phoneNumber.getCountries()) {
   return countryCodes?.map((countryCode) => {
     if (phoneNumber.isSupportedCountry(countryCode)) {
       const name = initCountries().getName(countryCode, getLanguage());
@@ -216,15 +222,26 @@ export function getCountriesData(countryCodes = phoneNumber.getCountries()) {
         phone: phoneNumber.getCountryCallingCode(countryCode),
       };
     }
-  });
+  }).filter(item => item.name !== "")
+    .sort((a, b) => a.phone - b.phone);
 }
 
-export function countryFlag(country) {
+export function getCountryCodeOption(country) {
+  return (
+    <Option key={country.code} value={country.code} label={`+${country.phone}`} text={`${country.name}, ${country.code}, ${country.phone}`} >
+      <div style={{display: "flex", justifyContent: "space-between", marginRight: "10px"}}>
+        <div>
+          {getCountryImage(country)}
+          {`${country.name}`}
+        </div>
+        {`+${country.phone}`}
+      </div>
+    </Option>
+  );
+}
+
+export function getCountryImage(country) {
   return <img src={`${StaticBaseUrl}/flag-icons/${country.code}.svg`} alt={country.name} height={20} style={{marginRight: 10}} />;
-}
-
-export function getPhoneCodeFromCountryCode(countryCode) {
-  return phoneNumber.isSupportedCountry(countryCode) ? phoneNumber.getCountryCallingCode(countryCode) : "";
 }
 
 export function initServerUrl() {
@@ -332,13 +349,15 @@ export function isValidEmail(email) {
 }
 
 export function isValidPhone(phone, countryCode = "") {
-  if (countryCode !== "") {
+  if (countryCode !== "" && countryCode !== "CN") {
     return phoneNumber.isValidPhoneNumber(phone, countryCode);
   }
 
-  // // https://learnku.com/articles/31543, `^s*$` filter empty email individually.
+  // https://learnku.com/articles/31543, `^s*$` filter empty email individually.
+  const phoneCnRegex = /^1(3\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\d|9[0-35-9])\d{8}$/;
   const phoneRegex = /[0-9]{4,15}$/;
-  return phoneRegex.test(phone);
+
+  return countryCode === "CN" ? phoneCnRegex.test(phone) : phoneRegex.test(phone);
 }
 
 export function isValidInvoiceTitle(invoiceTitle) {
