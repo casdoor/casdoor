@@ -220,6 +220,18 @@ func (c *ApiController) DeleteUser() {
 		return
 	}
 
+	origin := object.GetUserByFields(user.Owner, user.Name)
+
+	if origin == nil {
+		c.ResponseError(fmt.Errorf("user %v/%v not found", user.Owner, user.Name))
+	}
+	origin.IsDeleted = true
+
+	if pass, err := checkPermissionForUpdateUser(origin.Id, origin, c); !pass {
+		c.ResponseError(err)
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.DeleteUser(&user))
 	c.ServeJSON()
 }
