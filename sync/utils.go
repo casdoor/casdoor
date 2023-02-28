@@ -57,7 +57,6 @@ func GetDeleteSql(schemaName string, tableName string, columnNames []string, col
 
 func CreateEngine(dataSourceName string) (*xorm.Engine, error) {
 	engine, err := xorm.NewEngine("mysql", dataSourceName)
-
 	if err != nil {
 		return nil, err
 	}

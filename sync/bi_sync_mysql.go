@@ -48,7 +48,7 @@ func InitConfig() *canal.Config {
 	cfg.User = username1
 	// We only care table in database1
 	cfg.Dump.TableDB = database1
-	//cfg.Dump.Tables = []string{"user"}
+	// cfg.Dump.Tables = []string{"user"}
 	log.Info("config canal success…")
 	return cfg
 }
@@ -59,7 +59,6 @@ func StartBinlogSync() error {
 
 	c, err := canal.NewCanal(config)
 	pos, err := c.GetMasterPos()
-
 	if err != nil {
 		return err
 	}
@@ -89,10 +88,10 @@ func (h *MyEventHandler) onDDL(header *replication.EventHeader, nextPos mysql.Po
 
 func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 	length := len(e.Table.Columns)
-	var columnNames = make([]string, length)
-	var oldColumnValue = make([]interface{}, length)
-	var newColumnValue = make([]interface{}, length)
-	var isChar = make([]bool, len(e.Table.Columns))
+	columnNames := make([]string, length)
+	oldColumnValue := make([]interface{}, length)
+	newColumnValue := make([]interface{}, length)
+	isChar := make([]bool, len(e.Table.Columns))
 
 	for i, col := range e.Table.Columns {
 		columnNames[i] = col.Name
@@ -167,7 +166,6 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 			}
 
 			insertSql, args, err := GetInsertSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue)
-
 			if err != nil {
 				return err
 			}
