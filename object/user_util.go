@@ -53,9 +53,11 @@ func GetUserByFields(organization string, field string) *User {
 	}
 
 	// check email
-	user = GetUserByField(organization, "email", field)
-	if user != nil {
-		return user
+	if strings.Contains(field, "@") {
+		user = GetUserByField(organization, "email", field)
+		if user != nil {
+			return user
+		}
 	}
 
 	// check phone
