@@ -139,7 +139,7 @@ class UserEditPage extends React.Component {
   }
 
   getCountryCode() {
-    return this.props.account.countryCode !== "" ? this.props.account.countryCode : "";
+    return this.props.account.countryCode;
   }
 
   renderAccountItem(accountItem) {
