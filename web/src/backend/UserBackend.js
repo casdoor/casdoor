@@ -109,7 +109,7 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
   }).then(res => res.json());
 }
 
-export function sendCode(checkType, checkId, checkKey, method, countryCode, dest, type, applicationId, checkUser = "") {
+export function sendCode(checkType, checkId, checkKey, method, countryCode = "", dest, type, applicationId, checkUser = "") {
   const formData = new FormData();
   formData.append("checkType", checkType);
   formData.append("checkId", checkId);

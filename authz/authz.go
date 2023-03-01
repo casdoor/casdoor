@@ -80,7 +80,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 p, built-in, *, *, *, *, *
 p, app, *, *, *, *, *
 p, *, *, POST, /api/signup, *, *
-p, *, *, POST, /api/get-email-and-phone, *, *
+p, *, *, GET, /api/get-email-and-phone, *, *
 p, *, *, POST, /api/login, *, *
 p, *, *, GET, /api/get-app-login, *, *
 p, *, *, POST, /api/logout, *, *
