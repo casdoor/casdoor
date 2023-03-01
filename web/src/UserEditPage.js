@@ -138,6 +138,10 @@ class UserEditPage extends React.Component {
     return this.isSelf() || Setting.isAdminUser(this.props.account);
   }
 
+  getCountryCode() {
+    return this.props.account.countryCode !== "" ? this.props.account.countryCode : "";
+  }
+
   renderAccountItem(accountItem) {
     if (!accountItem.visible) {
       return null;
@@ -296,7 +300,7 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={Setting.isMobile() ? 22 : 11} >
             {/* backend auto get the current user, so admin can not edit. Just self can reset*/}
-            {this.isSelf() ? <ResetModal application={this.state.application} account={this.props.account} disabled={disabled} buttonText={i18next.t("user:Reset Email...")} destType={"email"} /> : null}
+            {this.isSelf() ? <ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Email...")} destType={"email"} /> : null}
           </Col>
         </Row>
       );
@@ -326,7 +330,7 @@ class UserEditPage extends React.Component {
             </Input.Group>
           </Col>
           <Col span={Setting.isMobile() ? 24 : 11} >
-            {this.isSelf() ? (<ResetModal application={this.state.application} account={this.props.account} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
+            {this.isSelf() ? (<ResetModal application={this.state.application} countryCode={this.getCountryCode()} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
           </Col>
         </Row>
       );

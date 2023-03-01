@@ -209,7 +209,10 @@ export function initCountries() {
 }
 
 export function getCountryCode(country) {
-  return phoneNumber.getCountryCallingCode(country);
+  if (phoneNumber.isSupportedCountry(country)) {
+    return phoneNumber.getCountryCallingCode(country);
+  }
+  return "";
 }
 
 export function getCountryCodeData(countryCodes = phoneNumber.getCountries()) {
