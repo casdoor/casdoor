@@ -172,8 +172,8 @@ type Userinfo struct {
 	Sub         string `json:"sub"`
 	Iss         string `json:"iss"`
 	Aud         string `json:"aud"`
-	Name        string `json:"name,omitempty"`
-	DisplayName string `json:"preferred_username,omitempty"`
+	Name        string `json:"preferred_username,omitempty"`
+	DisplayName string `json:"name,omitempty"`
 	Email       string `json:"email,omitempty"`
 	Avatar      string `json:"picture,omitempty"`
 	Address     string `json:"address,omitempty"`
