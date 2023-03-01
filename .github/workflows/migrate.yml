@@ -1,0 +1,61 @@
+name: Migration Test
+
+on:
+  push:
+    paths:
+      - 'object/migrator**'
+  pull_request:
+    paths:
+      - 'object/migrator**'
+
+jobs:
+
+  db-migrator-test:
+    name: db-migrator-test
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: casdoor
+          MYSQL_ROOT_PASSWORD: 123456
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16.5'
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - name: pull casdoor-master-latest
+        run: |
+          sudo apt update
+          sudo apt install git
+          sudo apt install net-tools
+          sudo mkdir tmp
+          cd tmp
+          sudo git clone https://github.com/casdoor/casdoor.git
+          cd ..
+        working-directory: ./
+      - name: run casdoor-master-latest
+        run: |
+          sudo nohup go run main.go &
+          sudo sleep 2m
+        working-directory: ./tmp/casdoor
+      - name: stop casdoor-master-latest
+        run: |
+          sudo kill -9 `sudo netstat -anltp | grep 8000 | awk '{print $7}' | cut -d / -f 1`
+        working-directory: ./
+      - name: run casdoor-current-version
+        run: |
+          sudo nohup go run ./main.go &
+          sudo sleep 2m
+        working-directory: ./
+      - name: test port-8000
+        run: |
+          if [[ `sudo netstat -anltp | grep 8000 | awk '{print $7}'` == "" ]];then echo 'db-migrator-test fail' && exit 1;fi;
+          echo 'db-migrator-test pass'
+        working-directory: ./
