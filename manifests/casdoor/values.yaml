@@ -6,10 +6,30 @@ replicaCount: 1
 
 image:
   repository: casbin
-  name: casdoor-all-in-one
+  name: casdoor
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+
+# ref: https://casdoor.org/docs/basic/server-installation#via-ini-file
+config: |
+  appname = casdoor
+  httpport = {{ .Values.service.port }}
+  runmode = dev
+  SessionOn = true
+  copyrequestbody = true
+  driverName = sqlite
+  dataSourceName = "file:ent?mode=memory&cache=shared&_fk=1"
+  dbName = casdoor
+  redisEndpoint =
+  defaultStorageProvider = 
+  isCloudIntranet = false
+  authState = "casdoor"
+  socks5Proxy = ""
+  verificationCodeTimeout = 10
+  initScore = 2000
+  logPostOnly = true
+  origin = "https://door.casbin.com"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -37,9 +57,15 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+probe:
+  readiness:
+    enabled: true
+  liveness:
+    enabled: true
+
 service:
   type: ClusterIP
-  port: 80
+  port: 8000
 
 ingress:
   enabled: false
