@@ -56,6 +56,6 @@ jobs:
         working-directory: ./
       - name: test port-8000
         run: |
-          if [[ `sudo netstat -anltp | grep 8000 | awk '{print $7}'` == "" ]];then echo '😢😢😢migrate-test fail😢😢😢' && exit 1;fi;
-          echo '🚀🚀🚀migrate-test pass🚀🚀🚀'
+          if [[ `sudo netstat -anltp | grep 8000 | awk '{print $7}'` == "" ]];then echo 'migration-test fail' && exit 1;fi;
+          echo 'migration-test pass'
         working-directory: ./
