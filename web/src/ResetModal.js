@@ -25,7 +25,7 @@ export const ResetModal = (props) => {
   const [confirmLoading, setConfirmLoading] = React.useState(false);
   const [dest, setDest] = React.useState("");
   const [code, setCode] = React.useState("");
-  const {buttonText, destType, application, account} = props;
+  const {buttonText, destType, application, countryCode} = props;
 
   const showModal = () => {
     setVisible(true);
@@ -87,7 +87,7 @@ export const ResetModal = (props) => {
           <Row style={{width: "100%", marginBottom: "20px"}}>
             <Input
               addonBefore={destType === "email" ? i18next.t("user:New Email") : i18next.t("user:New phone")}
-              prefix={destType === "email" ? <React.Fragment><MailOutlined />&nbsp;&nbsp;</React.Fragment> : (<React.Fragment><PhoneOutlined />&nbsp;&nbsp;{`+${Setting.getCountryCode(account.countryCode)}`}&nbsp;</React.Fragment>)}
+              prefix={destType === "email" ? <React.Fragment><MailOutlined />&nbsp;&nbsp;</React.Fragment> : (<React.Fragment><PhoneOutlined />&nbsp;&nbsp;{countryCode !== "" ? "+" : null}{Setting.getCountryCode(countryCode)}&nbsp;</React.Fragment>)}
               placeholder={placeholder}
               onChange={e => setDest(e.target.value)}
             />
