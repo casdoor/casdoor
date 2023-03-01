@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/nyaruka/phonenumbers"
@@ -30,13 +29,7 @@ func (*Migrator_1_245_0_PR_1557) IsMigrationNeeded() bool {
 	exist, _ := adapter.Engine.IsTableExist("organization")
 
 	if exist {
-		sql := "select phone_prefix from organization"
-		results, _ := adapter.Engine.Query(sql)
-		if len(results) != 0 {
-			return true
-		}
-
-		return false
+		return true
 	}
 	return false
 }
@@ -90,15 +83,10 @@ func (*Migrator_1_245_0_PR_1557) DoMigration() *migrate.Migration {
 				sql := fmt.Sprintf("select phone_prefix from organization where owner='%s' and name='%s'", organization.Owner, organization.Name)
 				results, _ := engine.Query(sql)
 
-				var phonePrefix int
-				if len(results) != 0 && len(results[0]["phone_prefix"]) != 0 {
-					phonePrefix, err = strconv.Atoi(string(results[0]["phone_prefix"]))
-				}
+				phonePrefix := util.ParseInt(string(results[0]["phone_prefix"]))
+				organization.CountryCodes = []string{phonenumbers.GetRegionCodeForCountryCode(phonePrefix)}
 
-				if err != nil {
-					organization.CountryCodes = []string{phonenumbers.GetRegionCodeForCountryCode(phonePrefix)}
-					UpdateOrganization(util.GetId(organization.Owner, organization.Name), organization)
-				}
+				UpdateOrganization(util.GetId(organization.Owner, organization.Name), organization)
 			}
 			return err
 		},
