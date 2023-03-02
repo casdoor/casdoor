@@ -16,7 +16,7 @@ import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
-import {StyleProvider} from "@ant-design/cssinjs";
+import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
 import {BarsOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
 import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
@@ -712,16 +712,7 @@ class App extends Component {
 
   render() {
     return (
-      <React.Fragment>
-        {(this.state.account === undefined || this.state.account === null) ?
-          <Helmet>
-            <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
-          </Helmet> :
-          <Helmet>
-            <title>{this.state.account.organization?.displayName}</title>
-            <link rel="icon" href={this.state.account.organization?.favicon} />
-          </Helmet>
-        }
+      <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
         <ConfigProvider theme={{
           token: {
             colorPrimary: this.state.themeData.colorPrimary,
@@ -730,13 +721,21 @@ class App extends Component {
           },
           algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
         }}>
-          <StyleProvider hashPriority="high">
-            {
-              this.renderPage()
-            }
-          </StyleProvider>
+          {(this.state.account === undefined || this.state.account === null) ?
+            <Helmet>
+              <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
+            </Helmet> :
+            <Helmet>
+              <title>{this.state.account.organization?.displayName}</title>
+              <link rel="icon" href={this.state.account.organization?.favicon} />
+            </Helmet>
+          }
+
+          {
+            this.renderPage()
+          }
         </ConfigProvider>
-      </React.Fragment>
+      </StyleProvider>
     );
   }
 }
