@@ -197,3 +197,16 @@ func checkQuotaForUser(count int) error {
 	}
 	return nil
 }
+
+func checkSmsReceivers(smsForm SmsForm) []string {
+	var invalidReceivers []string
+	for idx, receiver := range smsForm.Receivers {
+		// The receiver phone format: E164 like +8613854673829 +441932567890
+		if !util.IsPhoneValid(receiver, "") {
+			invalidReceivers = append(invalidReceivers, receiver)
+		} else {
+			smsForm.Receivers[idx] = receiver
+		}
+	}
+	return invalidReceivers
+}

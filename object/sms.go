@@ -20,11 +20,23 @@ import (
 	"github.com/casdoor/go-sms-sender"
 )
 
-func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
+func getSmsClient(provider *Provider) (go_sms_sender.SmsClient, error) {
 	client, err := go_sms_sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.AppId)
+
 	if provider.Type == go_sms_sender.HuaweiCloud {
 		client, err = go_sms_sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.ProviderUrl, provider.AppId)
 	}
+	if err != nil {
+		return nil, err
+	}
+
+	return client, nil
+}
+
+func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
+
+	client, err := getSmsClient(provider)
+
 	if err != nil {
 		return err
 	}
@@ -34,7 +46,6 @@ func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 			phoneNumbers[i] = strings.TrimPrefix(number, "+")
 		}
 	}
-
 	params := map[string]string{}
 	if provider.Type == go_sms_sender.TencentCloud {
 		params["0"] = content
