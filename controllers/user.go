@@ -223,11 +223,11 @@ func (c *ApiController) DeleteUser() {
 	origin := object.GetUserByFields(user.Owner, user.Name)
 
 	if origin == nil {
-		c.ResponseError(fmt.Errorf("user %v/%v not found", user.Owner, user.Name))
+		c.ResponseError(fmt.Sprintf("user %v/%v not found", user.Owner, user.Name))
 	}
 	origin.IsDeleted = true
 
-	if pass, err := checkPermissionForUpdateUser(origin.Id, origin, c); !pass {
+	if pass, err := checkPermissionForUpdateUser(origin.Id, *origin, c); !pass {
 		c.ResponseError(err)
 		return
 	}
