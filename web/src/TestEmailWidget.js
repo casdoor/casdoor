@@ -19,7 +19,7 @@ export function sendTestEmail(provider, email) {
   testEmailProvider(provider, email)
     .then((res) => {
       if (res.status === "ok") {
-        Setting.showMessage("success", `${i18next.t("provider:Email sent successfully")}: ${res.msg}`);
+        Setting.showMessage("success", `${i18next.t("provider:Email sent successfully")}`);
       } else {
         Setting.showMessage("error", res.msg);
       }
