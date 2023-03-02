@@ -16,13 +16,12 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 
 export function sendTestSms(provider, phone) {
-  window.console.log(provider);
   testSmsProvider(provider, phone)
     .then((res) => {
       if (res.status === "ok") {
-        Setting.showMessage("success", `${i18next.t("general:SMS send Successfully")}`);
+        Setting.showMessage("success", `${i18next.t("provider:SMS send Successfully")}`);
       } else {
-        Setting.showMessage("error", `${i18next.t("general:SMS send Failed")}: ${res.msg}`);
+        Setting.showMessage("error", `${i18next.t("provider:SMS send Failed")}: ${res.msg}`);
       }
     })
     .catch(error => {
@@ -32,14 +31,11 @@ export function sendTestSms(provider, phone) {
 
 function testSmsProvider(provider, phone = "") {
   const SmsForm = {
-    title: provider.title,
     content: provider.content,
-    sender: provider.displayName,
     receivers: [phone],
-    provider: provider,
   };
 
-  return fetch(`${Setting.ServerUrl}/api/send-test-sms`, {
+  return fetch(`${Setting.ServerUrl}/api/send-sms?provider=` + provider.name, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(SmsForm),

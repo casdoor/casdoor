@@ -56,7 +56,6 @@ class ProviderEditPage extends React.Component {
   getProvider() {
     ProviderBackend.getProvider(this.state.owner, this.state.providerName)
       .then((provider) => {
-        window.console.log(provider);
         this.setState({
           provider: provider,
         });
@@ -100,17 +99,12 @@ class ProviderEditPage extends React.Component {
   }
 
   getCountryCodes() {
-    OrganizationBackend.getOrganizations("admin")
-      .then((res) => {
-        const countryCodes = [];
-        for (let i = 0; i < res.length; i++) {
-          res[i].countryCodes.forEach(item => {
-            countryCodes.push(item);
-          });
-        }
-        this.updateSmsField("countryCodes", countryCodes);
-        this.updateSmsField("countryCode", countryCodes[0]);
-      });
+    const smsObj = this.state.smsObj;
+    smsObj.countryCodes = this.props.account.organization.countryCodes;
+    smsObj.countryCode = smsObj.countryCodes[0];
+    this.setState({
+      smsObj: smsObj,
+    });
   }
 
   getClientIdLabel(provider) {

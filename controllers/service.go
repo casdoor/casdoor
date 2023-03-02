@@ -34,10 +34,9 @@ type EmailForm struct {
 }
 
 type SmsForm struct {
-	Content   string          `json:"content"`
-	Receivers []string        `json:"receivers"`
-	OrgId     string          `json:"organizationId"` // e.g. "admin/built-in"
-	Provider  object.Provider `json:"provider"`
+	Content   string   `json:"content"`
+	Receivers []string `json:"receivers"`
+	OrgId     string   `json:"organizationId"` // e.g. "admin/built-in"
 }
 
 // SendEmail
@@ -139,35 +138,6 @@ func (c *ApiController) SendSms() {
 	}
 
 	err = object.SendSms(provider, smsForm.Content, smsForm.Receivers...)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	c.ResponseOk()
-}
-
-// SendTestSms
-// @Title SendTestSms
-// @Tag Service API
-// @Description This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
-// @Param   smsForm    body   controllers.SmsForm    true           "Details of the sms request"
-// @Success 200 {object}  Response object
-// @router /api/send-test-sms [post]
-func (c *ApiController) SendTestSms() {
-	var smsForm SmsForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &smsForm)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	invalidReceivers := checkSmsReceivers(smsForm)
-
-	if len(invalidReceivers) != 0 {
-		c.ResponseError(fmt.Sprintf(c.T("service:Invalid phone receivers: %s"), invalidReceivers))
-		return
-	}
-	err = object.SendSms(&smsForm.Provider, smsForm.Content, smsForm.Receivers...)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

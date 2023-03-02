@@ -19,7 +19,7 @@ export function sendTestEmail(provider, email) {
   testEmailProvider(provider, email)
     .then((res) => {
       if (res.status === "ok") {
-        Setting.showMessage("success", "Successfully send email");
+        Setting.showMessage("success", `${i18next.t("provider:Email sent successfully")}: ${res.msg}`);
       } else {
         Setting.showMessage("error", res.msg);
       }
@@ -33,7 +33,7 @@ export function connectSmtpServer(provider) {
   testEmailProvider(provider)
     .then((res) => {
       if (res.status === "ok") {
-        Setting.showMessage("success", "Successfully connecting smtp server");
+        Setting.showMessage("success", "provider:SMTP connected successfully");
       } else {
         Setting.showMessage("error", res.msg);
       }
