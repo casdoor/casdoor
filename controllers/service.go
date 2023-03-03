@@ -130,15 +130,7 @@ func (c *ApiController) SendSms() {
 		return
 	}
 
-	var invalidReceivers []string
-	for idx, receiver := range smsForm.Receivers {
-		// The receiver phone format: E164 like +8613854673829 +441932567890
-		if !util.IsPhoneValid(receiver, "") {
-			invalidReceivers = append(invalidReceivers, receiver)
-		} else {
-			smsForm.Receivers[idx] = receiver
-		}
-	}
+	invalidReceivers := checkSmsReceivers(smsForm)
 
 	if len(invalidReceivers) != 0 {
 		c.ResponseError(fmt.Sprintf(c.T("service:Invalid phone receivers: %s"), invalidReceivers))
