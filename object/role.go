@@ -158,6 +158,9 @@ func GetRolesByUser(userId string) []*Role {
 	if err != nil {
 		panic(err)
 	}
+	for idx := range roles {
+		roles[idx].Users = nil
+	}
 
 	return roles
 }
