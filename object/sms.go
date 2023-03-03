@@ -44,6 +44,7 @@ func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 			phoneNumbers[i] = strings.TrimPrefix(number, "+")
 		}
 	}
+
 	params := map[string]string{}
 	if provider.Type == go_sms_sender.TencentCloud {
 		params["0"] = content
