@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ export function sendTestSms(provider, phone) {
       if (res.status === "ok") {
         Setting.showMessage("success", `${i18next.t("provider:SMS send Successfully")}`);
       } else {
-        Setting.showMessage("error", `${i18next.t("provider:SMS send Failed")}: ${res.msg}`);
+        Setting.showMessage("error", res.msg);
       }
     })
     .catch(error => {

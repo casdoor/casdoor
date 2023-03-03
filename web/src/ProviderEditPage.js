@@ -37,11 +37,6 @@ class ProviderEditPage extends React.Component {
       providerName: props.match.params.providerName,
       owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       provider: null,
-      smsObj: {
-        countryCodes: [],
-        countryCode: null,
-        phone: null,
-      },
       organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
@@ -50,7 +45,6 @@ class ProviderEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getOrganizations();
     this.getProvider();
-    this.getCountryCodes();
   }
 
   getProvider() {
@@ -80,14 +74,6 @@ class ProviderEditPage extends React.Component {
     return value;
   }
 
-  updateSmsField(key, value) {
-    const smsObj = this.state.smsObj;
-    smsObj[key] = value;
-    this.setState({
-      smsObj: smsObj,
-    });
-  }
-
   updateProviderField(key, value) {
     value = this.parseProviderField(key, value);
 
@@ -95,15 +81,6 @@ class ProviderEditPage extends React.Component {
     provider[key] = value;
     this.setState({
       provider: provider,
-    });
-  }
-
-  getCountryCodes() {
-    const smsObj = this.state.smsObj;
-    smsObj.countryCodes = this.props.account.organization.countryCodes;
-    smsObj.countryCode = smsObj.countryCodes[0];
-    this.setState({
-      smsObj: smsObj,
     });
   }
 
@@ -688,28 +665,28 @@ class ProviderEditPage extends React.Component {
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:SMS Test"), i18next.t("provider:SMS Test - Tooltip"))} :
                 </Col>
-                <Col span={6} >
+                <Col span={4} >
                   <Input.Group compact>
                     <PhoneNumberInput
                       style={{width: "30%"}}
-                      value={this.state.smsObj.countryCode}
+                      value={this.state.provider.content}
                       onChange={(value) => {
-                        this.updateSmsField("countryCode", value);
+                        this.updateProviderField("content", value);
                       }}
-                      countryCodes={this.state.smsObj.countryCodes}
+                      countryCodes={this.props.account.organization.countryCodes}
                     />
-                    <Input value={this.state.smsObj.phone}
+                    <Input value={this.state.provider.receiver}
                       style={{width: "70%"}}
                       placeholder = {i18next.t("user:Input your phone number")}
                       onChange={e => {
-                        this.updateSmsField("phone", e.target.value);
+                        this.updateProviderField("receiver", e.target.value);
                       }} />
                   </Input.Group>
                 </Col>
                 <Col span={2} >
                   <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
-                    disabled={!Setting.isValidPhone(this.state.smsObj.phone)}
-                    onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.smsObj.countryCode) + this.state.smsObj.phone)} >
+                    disabled={!Setting.isValidPhone(this.state.provider.receiver)}
+                    onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
                     {i18next.t("provider:SMS Send Test")}
                   </Button>
                 </Col>

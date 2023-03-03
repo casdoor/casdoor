@@ -34,9 +34,7 @@ func getSmsClient(provider *Provider) (go_sms_sender.SmsClient, error) {
 }
 
 func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
-
 	client, err := getSmsClient(provider)
-
 	if err != nil {
 		return err
 	}
