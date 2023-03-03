@@ -6,10 +6,18 @@
       "displayName": "",
       "websiteUrl": "",
       "favicon": "",
-      "passwordType": "",
-      "countryCodes": [""],
+      "passwordType": "plain",
+      "passwordSalt": "",
+      "countryCodes": ["US", "ES", "CN", "FR", "DE", "GB", "JP", "KR", "VN", "ID", "SG", "IN"],
       "defaultAvatar": "",
-      "tags": [""]
+      "defaultApplication": "",
+      "tags": [],
+      "languages": ["en", "zh", "es", "fr", "de", "ja", "ko", "ru", "vi"],
+      "masterPassword": "",
+      "initScore": 2000,
+      "enableSoftDeletion": false,
+      "isProfilePublic": true,
+      "accountItems": []
     }
   ],
   "applications": [

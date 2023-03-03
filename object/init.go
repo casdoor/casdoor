@@ -79,19 +79,21 @@ func initBuiltInOrganization() bool {
 	}
 
 	organization = &Organization{
-		Owner:         "admin",
-		Name:          "built-in",
-		CreatedTime:   util.GetCurrentTime(),
-		DisplayName:   "Built-in Organization",
-		WebsiteUrl:    "https://example.com",
-		Favicon:       fmt.Sprintf("%s/img/casbin/favicon.ico", conf.GetConfigString("staticBaseUrl")),
-		PasswordType:  "plain",
-		CountryCodes:  []string{"CN"},
-		DefaultAvatar: fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
-		Tags:          []string{},
-		Languages:     []string{"en", "zh", "es", "fr", "de", "ja", "ko", "ru", "vi"},
-		InitScore:     2000,
-		AccountItems:  getBuiltInAccountItems(),
+		Owner:              "admin",
+		Name:               "built-in",
+		CreatedTime:        util.GetCurrentTime(),
+		DisplayName:        "Built-in Organization",
+		WebsiteUrl:         "https://example.com",
+		Favicon:            fmt.Sprintf("%s/img/casbin/favicon.ico", conf.GetConfigString("staticBaseUrl")),
+		PasswordType:       "plain",
+		CountryCodes:       []string{"US", "ES", "CN", "FR", "DE", "GB", "JP", "KR", "VN", "ID", "SG", "IN"},
+		DefaultAvatar:      fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
+		Tags:               []string{},
+		Languages:          []string{"en", "zh", "es", "fr", "de", "ja", "ko", "ru", "vi"},
+		InitScore:          2000,
+		AccountItems:       getBuiltInAccountItems(),
+		EnableSoftDeletion: false,
+		IsProfilePublic:    false,
 	}
 	AddOrganization(organization)
 	return false
