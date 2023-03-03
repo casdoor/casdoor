@@ -31,7 +31,7 @@ export function sendTestSms(provider, phone) {
 
 function testSmsProvider(provider, phone = "") {
   const SmsForm = {
-    content: provider.content,
+    content: "123456",
     receivers: [phone],
   };
 
