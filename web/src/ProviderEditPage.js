@@ -598,7 +598,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Email Title"), i18next.t("provider:Email Title - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("provider:Email title"), i18next.t("provider:Email title - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.title} onChange={e => {
@@ -608,7 +608,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Email Content"), i18next.t("provider:Email Content - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("provider:Email content"), i18next.t("provider:Email content - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <TextArea autoSize={{minRows: 3, maxRows: 100}} value={this.state.provider.content} onChange={e => {
@@ -631,7 +631,7 @@ class ProviderEditPage extends React.Component {
                 <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
                   disabled={!Setting.isValidEmail(this.state.provider.receiver)}
                   onClick={() => ProviderEditTestEmail.sendTestEmail(this.state.provider, this.state.provider.receiver)} >
-                  {i18next.t("provider:Send Test Email")}
+                  {i18next.t("provider:Send Testing Email")}
                 </Button>
               </Row>
             </React.Fragment>
@@ -687,7 +687,7 @@ class ProviderEditPage extends React.Component {
                   <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
                     disabled={!Setting.isValidPhone(this.state.provider.receiver)}
                     onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
-                    {i18next.t("provider:SMS Send Test")}
+                    {i18next.t("provider:Send Testing SMS")}
                   </Button>
                 </Col>
               </Row>

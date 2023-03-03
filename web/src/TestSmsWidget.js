@@ -19,7 +19,7 @@ export function sendTestSms(provider, phone) {
   testSmsProvider(provider, phone)
     .then((res) => {
       if (res.status === "ok") {
-        Setting.showMessage("success", `${i18next.t("provider:SMS send Successfully")}`);
+        Setting.showMessage("success", `${i18next.t("provider:SMS sent successfully")}`);
       } else {
         Setting.showMessage("error", res.msg);
       }

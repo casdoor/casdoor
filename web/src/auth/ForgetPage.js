@@ -212,9 +212,7 @@ class ForgetPage extends React.Component {
               rules={[
                 {
                   required: true,
-                  message: i18next.t(
-                    "forget:Please input your application!"
-                  ),
+                  message: i18next.t("application:Please input your application!"),
                 },
               ]}
             />
@@ -224,9 +222,7 @@ class ForgetPage extends React.Component {
               rules={[
                 {
                   required: true,
-                  message: i18next.t(
-                    "forget:Please input your organization!"
-                  ),
+                  message: i18next.t("application:Please input your organization!"),
                 },
               ]}
             />
@@ -235,9 +231,7 @@ class ForgetPage extends React.Component {
               rules={[
                 {
                   required: true,
-                  message: i18next.t(
-                    "forget:Please input your username!"
-                  ),
+                  message: i18next.t("forget:Please input your username!"),
                   whitespace: true,
                 },
               ]}
@@ -287,9 +281,7 @@ class ForgetPage extends React.Component {
             rules={[
               {
                 required: true,
-                message: i18next.t(
-                  "forget:Please input your application!"
-                ),
+                message: i18next.t("application:Please input your application!"),
               },
             ]}
           />
@@ -299,9 +291,7 @@ class ForgetPage extends React.Component {
             rules={[
               {
                 required: true,
-                message: i18next.t(
-                  "forget:Please input your organization!"
-                ),
+                message: i18next.t("application:Please input your organization!"),
               },
             ]}
           />
@@ -327,9 +317,7 @@ class ForgetPage extends React.Component {
             rules={[
               {
                 required: true,
-                message: i18next.t(
-                  "code:Please input your verification code!"
-                ),
+                message: i18next.t("code:Please input your verification code!"),
               },
             ]}
           >
@@ -377,9 +365,7 @@ class ForgetPage extends React.Component {
               rules={[
                 {
                   required: true,
-                  message: i18next.t(
-                    "forget:Please input your application!"
-                  ),
+                  message: i18next.t("application:Please input your application!"),
                 },
               ]}
             />
@@ -389,9 +375,7 @@ class ForgetPage extends React.Component {
               rules={[
                 {
                   required: true,
-                  message: i18next.t(
-                    "forget:Please input your organization!"
-                  ),
+                  message: i18next.t("application:Please input your organization!"),
                 },
               ]}
             />
@@ -401,9 +385,7 @@ class ForgetPage extends React.Component {
               rules={[
                 {
                   required: true,
-                  message: i18next.t(
-                    "forget:Please input your password!"
-                  ),
+                  message: i18next.t("login:Please input your password!"),
                 },
               ]}
               hasFeedback
@@ -421,9 +403,7 @@ class ForgetPage extends React.Component {
               rules={[
                 {
                   required: true,
-                  message: i18next.t(
-                    "forget:Please confirm your password!"
-                  ),
+                  message: i18next.t("signup:Please confirm your password!"),
                 },
                 ({getFieldValue}) => ({
                   validator(rule, value) {
@@ -431,9 +411,7 @@ class ForgetPage extends React.Component {
                       return Promise.resolve();
                     }
                     return Promise.reject(
-                      i18next.t(
-                        "forget:Your confirmed password is inconsistent with the password!"
-                      )
+                      i18next.t("signup:Your confirmed password is inconsistent with the password!")
                     );
                   },
                 }),
@@ -497,11 +475,11 @@ class ForgetPage extends React.Component {
                         icon: <UserOutlined />,
                       },
                       {
-                        title: i18next.t("forget:Account"),
+                        title: i18next.t("forget:Verify"),
                         icon: <SolutionOutlined />,
                       },
                       {
-                        title: i18next.t("forget:Account"),
+                        title: i18next.t("forget:Reset"),
                         icon: <KeyOutlined />,
                       },
                     ]}
