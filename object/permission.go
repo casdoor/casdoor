@@ -245,6 +245,10 @@ func GetPermissionsByUser(userId string) []*Permission {
 		panic(err)
 	}
 
+	for i := range permissions {
+		permissions[i].Users = nil
+	}
+
 	return permissions
 }
 
