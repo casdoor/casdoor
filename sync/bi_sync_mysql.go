@@ -16,6 +16,7 @@ package sync
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/go-mysql-org/go-mysql/canal"
 	"github.com/go-mysql-org/go-mysql/mysql"
@@ -25,13 +26,17 @@ import (
 )
 
 var (
+	GTID            string
 	dataSourceName1 string
 	dataSourceName2 string
+	engin           *xorm.Engine
 	engin1          *xorm.Engine
 	engin2          *xorm.Engine
+	serverId1       uint32
+	serverId2       uint32
 )
 
-func InitConfig() *canal.Config {
+func InitConfig() (*canal.Config, *canal.Config) {
 	// init dataSource
 	dataSourceName1 = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username1, password1, host1, port1, database1)
 	dataSourceName2 = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username2, password2, host2, port2, database2)
@@ -39,36 +44,71 @@ func InitConfig() *canal.Config {
 	// create engine
 	engin1, _ = CreateEngine(dataSourceName1)
 	engin2, _ = CreateEngine(dataSourceName2)
-	log.Info("init engine success…")
 
-	// config canal
-	cfg := canal.NewDefaultConfig()
-	cfg.Addr = fmt.Sprintf("%s:%d", host1, port1)
-	cfg.Password = password1
-	cfg.User = username1
+	// get serverId
+	serverId1, _ = GetServerId(engin1)
+	serverId2, _ = GetServerId(engin2)
+
+	// config canal1
+	cfg1 := canal.NewDefaultConfig()
+	cfg1.Addr = fmt.Sprintf("%s:%d", host1, port1)
+	cfg1.Password = password1
+	cfg1.User = username1
 	// We only care table in database1
-	cfg.Dump.TableDB = database1
+	cfg1.Dump.TableDB = database1
+
+	// config canal2
+	cfg2 := canal.NewDefaultConfig()
+	cfg2.Addr = fmt.Sprintf("%s:%d", host2, port2)
+	cfg2.Password = password2
+	cfg2.User = username2
+	// We only care table in database2
+	cfg2.Dump.TableDB = database2
 	// cfg.Dump.Tables = []string{"user"}
 	log.Info("config canal success…")
-	return cfg
+	return cfg1, cfg2
 }
 
 func StartBinlogSync() error {
-	// init config
-	config := InitConfig()
+	var wg sync.WaitGroup
 
-	c, err := canal.NewCanal(config)
-	pos, err := c.GetMasterPos()
+	// init config
+	config1, config2 := InitConfig()
+
+	c1, err := canal.NewCanal(config1)
+	GTIDSet1, err := c1.GetMasterGTIDSet()
 	if err != nil {
 		return err
 	}
 
 	// Register a handler to handle RowsEvent
-	c.SetEventHandler(&MyEventHandler{})
+	c1.SetEventHandler(&MyEventHandler{})
 
-	// Start canal
-	c.RunFrom(pos)
+	// Start canal2
+	go func() {
+		err := c1.StartFromGTID(GTIDSet1)
+		if err != nil {
+			panic(err)
+		}
+	}()
+	wg.Add(1)
 
+	c2, err := canal.NewCanal(config2)
+	GTIDSet2, _ := c2.GetMasterGTIDSet()
+
+	// Register a handler to handle RowsEvent
+	c2.SetEventHandler(&MyEventHandler{})
+
+	// Start canal2
+	go func() {
+		err := c2.StartFromGTID(GTIDSet2)
+		if err != nil {
+			panic(err)
+		}
+	}()
+	wg.Add(1)
+
+	wg.Wait()
 	return nil
 }
 
@@ -76,8 +116,9 @@ type MyEventHandler struct {
 	canal.DummyEventHandler
 }
 
-func OnTableChanged(header *replication.EventHeader, schema string, table string) error {
-	log.Info("table changed event")
+func (h *MyEventHandler) OnGTID(header *replication.EventHeader, gtid mysql.GTIDSet) error {
+	log.Info("OnGTID: ", gtid.String())
+	GTID = gtid.String()
 	return nil
 }
 
@@ -87,6 +128,15 @@ func (h *MyEventHandler) onDDL(header *replication.EventHeader, nextPos mysql.Po
 }
 
 func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
+	log.Info("serverId: ", e.Header.ServerID)
+
+	if e.Header.ServerID == serverId2 {
+		engin = engin2
+	} else if e.Header.ServerID == serverId1 {
+		engin = engin1
+	}
+	// Set the next gtid of the target library to the gtid of the current target library to avoid loopbacks
+	engin.Exec(fmt.Sprintf("SET GTID_NEXT= '%s'", GTID))
 	length := len(e.Table.Columns)
 	columnNames := make([]string, length)
 	oldColumnValue := make([]interface{}, length)
@@ -101,9 +151,9 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 			isChar[i] = true
 		}
 	}
-
 	switch e.Action {
 	case canal.UpdateAction:
+		engin.Exec("BEGIN")
 		for i, row := range e.Rows {
 			for j, item := range row {
 				if i%2 == 0 {
@@ -120,21 +170,26 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 					}
 				}
 			}
-
 			if i%2 == 1 {
 				updateSql, args, err := GetUpdateSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue, oldColumnValue)
+
 				if err != nil {
 					return err
 				}
 
-				res, err := engin2.DB().Exec(updateSql, args...)
+				res, err := engin.DB().Exec(updateSql, args...)
+
 				if err != nil {
+					log.Info(err)
 					return err
 				}
 				log.Info(updateSql, args, res)
 			}
 		}
+		engin.Exec("COMMIT")
+		engin.Exec("SET GTID_NEXT='automatic'")
 	case canal.DeleteAction:
+		engin.Exec("BEGIN")
 		for _, row := range e.Rows {
 			for j, item := range row {
 				if isChar[j] == true {
@@ -149,13 +204,17 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 				return err
 			}
 
-			res, err := engin2.DB().Exec(deleteSql, args...)
+			res, err := engin.DB().Exec(deleteSql, args...)
 			if err != nil {
+				log.Info(err)
 				return err
 			}
 			log.Info(deleteSql, args, res)
 		}
+		engin.Exec("COMMIT")
+		engin.Exec("SET GTID_NEXT='automatic'")
 	case canal.InsertAction:
+		engin.Exec("BEGIN")
 		for _, row := range e.Rows {
 			for j, item := range row {
 				if isChar[j] == true {
@@ -170,12 +229,15 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 				return err
 			}
 
-			res, err := engin2.DB().Exec(insertSql, args...)
+			res, err := engin.DB().Exec(insertSql, args...)
 			if err != nil {
+				log.Info(err)
 				return err
 			}
 			log.Info(insertSql, args, res)
 		}
+		engin.Exec("COMMIT")
+		engin.Exec("SET GTID_NEXT='automatic'")
 	default:
 		log.Infof("%v", e.String())
 	}

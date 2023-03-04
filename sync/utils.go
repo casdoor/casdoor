@@ -15,7 +15,9 @@
 package sync
 
 import (
+	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/xorm-io/xorm"
@@ -69,4 +71,19 @@ func CreateEngine(dataSourceName string) (*xorm.Engine, error) {
 
 	log.Println("mysql connection success……")
 	return engine, nil
+}
+
+func GetServerId(engin *xorm.Engine) (uint32, error) {
+	res, err := engin.QueryInterface("SELECT @@server_id")
+	if err != nil {
+		return 0, err
+	}
+
+	for _, row := range res {
+		for _, item := range row {
+			serverId, _ := strconv.ParseUint(fmt.Sprintf("%s", item), 10, 32)
+			return uint32(serverId), nil
+		}
+	}
+	return 0, err
 }
