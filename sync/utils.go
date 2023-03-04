@@ -23,14 +23,14 @@ import (
 	"github.com/xorm-io/xorm"
 )
 
-func GetUpdateSql(schemaName string, tableName string, columnNames []string, newColumnVal []interface{}, oldColumnVal []interface{}) (string, []interface{}, error) {
+func GetUpdateSql(schemaName string, tableName string, columnNames []string, newColumnVal []interface{}, pkColumnNames []string, pkColumnValue []interface{}) (string, []interface{}, error) {
 	updateSql := squirrel.Update(schemaName + "." + tableName)
 	for i, columnName := range columnNames {
 		updateSql = updateSql.Set(columnName, newColumnVal[i])
 	}
 
-	for i, columnName := range columnNames {
-		updateSql = updateSql.Where(squirrel.Eq{columnName: oldColumnVal[i]})
+	for i, pkColumnName := range pkColumnNames {
+		updateSql = updateSql.Where(squirrel.Eq{pkColumnName: pkColumnValue[i]})
 	}
 
 	sql, args, err := updateSql.ToSql()
@@ -47,11 +47,11 @@ func GetInsertSql(schemaName string, tableName string, columnNames []string, col
 	return insertSql.ToSql()
 }
 
-func GetDeleteSql(schemaName string, tableName string, columnNames []string, columnValue []interface{}) (string, []interface{}, error) {
+func GetDeleteSql(schemaName string, tableName string, pkColumnNames []string, pkColumnValue []interface{}) (string, []interface{}, error) {
 	deleteSql := squirrel.Delete(schemaName + "." + tableName)
 
-	for i, columnName := range columnNames {
-		deleteSql = deleteSql.Where(squirrel.Eq{columnName: columnValue[i]})
+	for i, columnName := range pkColumnNames {
+		deleteSql = deleteSql.Where(squirrel.Eq{columnName: pkColumnValue[i]})
 	}
 
 	return deleteSql.ToSql()
@@ -86,4 +86,20 @@ func GetServerId(engin *xorm.Engine) (uint32, error) {
 		}
 	}
 	return 0, err
+}
+
+func GetPKColumnNames(columnNames []string, PKColumns []int) []string {
+	pkColumnNames := make([]string, len(PKColumns))
+	for i, index := range PKColumns {
+		pkColumnNames[i] = columnNames[index]
+	}
+	return pkColumnNames
+}
+
+func GetPKColumnValues(columnValues []interface{}, PKColumns []int) []interface{} {
+	pkColumnNames := make([]interface{}, len(PKColumns))
+	for i, index := range PKColumns {
+		pkColumnNames[i] = columnValues[index]
+	}
+	return pkColumnNames
 }

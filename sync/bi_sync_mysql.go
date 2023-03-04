@@ -16,6 +16,7 @@ package sync
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/go-mysql-org/go-mysql/canal"
@@ -130,9 +131,15 @@ func (h *MyEventHandler) onDDL(header *replication.EventHeader, nextPos mysql.Po
 func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 	log.Info("serverId: ", e.Header.ServerID)
 
-	if e.Header.ServerID == serverId2 {
+	if e.Header.ServerID == serverId1 {
 		engin = engin2
-	} else if e.Header.ServerID == serverId1 {
+		if strings.Contains(GTID, "92fcbc2d-aaa2-11ed-a1c2-00163e08698e") {
+			return nil
+		}
+	} else if e.Header.ServerID == serverId2 {
+		if strings.Contains(GTID, "a95cbaa8-aaac-11ed-b110-00163e1d3d4e") {
+			return nil
+		}
 		engin = engin1
 	}
 	// Set the next gtid of the target library to the gtid of the current target library to avoid loopbacks
@@ -151,6 +158,9 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 			isChar[i] = true
 		}
 	}
+	// get pk column name
+	pkColumnNames := GetPKColumnNames(columnNames, e.Table.PKColumns)
+
 	switch e.Action {
 	case canal.UpdateAction:
 		engin.Exec("BEGIN")
@@ -164,14 +174,19 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 					}
 				} else {
 					if isChar[j] == true {
-						newColumnValue[j] = fmt.Sprintf("%s", item)
+						if item == nil {
+							newColumnValue[j] = nil
+						} else {
+							newColumnValue[j] = fmt.Sprintf("%s", item)
+						}
 					} else {
 						newColumnValue[j] = fmt.Sprintf("%d", item)
 					}
 				}
 			}
 			if i%2 == 1 {
-				updateSql, args, err := GetUpdateSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue, oldColumnValue)
+				pkColumnValue := GetPKColumnValues(oldColumnValue, e.Table.PKColumns)
+				updateSql, args, err := GetUpdateSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue, pkColumnNames, pkColumnValue)
 
 				if err != nil {
 					return err
@@ -199,7 +214,8 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 				}
 			}
 
-			deleteSql, args, err := GetDeleteSql(e.Table.Schema, e.Table.Name, columnNames, oldColumnValue)
+			pkColumnValue := GetPKColumnValues(oldColumnValue, e.Table.PKColumns)
+			deleteSql, args, err := GetDeleteSql(e.Table.Schema, e.Table.Name, pkColumnNames, pkColumnValue)
 			if err != nil {
 				return err
 			}
@@ -218,7 +234,11 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 		for _, row := range e.Rows {
 			for j, item := range row {
 				if isChar[j] == true {
-					newColumnValue[j] = fmt.Sprintf("%s", item)
+					if item == nil {
+						newColumnValue[j] = nil
+					} else {
+						newColumnValue[j] = fmt.Sprintf("%s", item)
+					}
 				} else {
 					newColumnValue[j] = fmt.Sprintf("%d", item)
 				}
