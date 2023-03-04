@@ -15,6 +15,7 @@
 package util
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"os"
 	"runtime"
@@ -60,31 +61,6 @@ func GetVersionInfo() ([]*TagInfo, error) {
 	if err != nil || resp.StatusCode() != 200 {
 		return nil, err
 	}
-
-	fileInfos, err := ioutil.ReadDir(pwd + "/.git/refs/heads")
-	for _, v := range fileInfos {
-		if v.Name() == "master" {
-			if v.ModTime().String() == fileDate {
-				return commit, nil
-			} else {
-				fileDate = v.ModTime().String()
-				break
-			}
-		}
-	}
-
-	content, err := ioutil.ReadFile(pwd + "/.git/refs/heads/master")
-	if err != nil {
-		return "", err
-	}
-
-	// Convert to full length
-	temp := string(content)
-	commit = strings.ReplaceAll(temp, "\n", "")
-
-	return commit, nil
-}
-
 	var tags []*TagInfo
 	if err := json.Unmarshal(resp.Body(), &tags); err != nil {
 		return nil, err
