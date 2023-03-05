@@ -29,7 +29,7 @@ import SelectRegionBox from "./SelectRegionBox";
 import WebAuthnCredentialTable from "./WebauthnCredentialTable";
 import ManagedAccountTable from "./ManagedAccountTable";
 import PropertyTable from "./propertyTable";
-import {PhoneNumberInput} from "./common/PhoneNumberInput";
+import {CountryCodeSelect} from "./common/CountryCodeSelect";
 
 const {Option} = Select;
 
@@ -312,7 +312,7 @@ class UserEditPage extends React.Component {
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
             <Input.Group compact style={{width: "280Px"}}>
-              <PhoneNumberInput
+              <CountryCodeSelect
                 style={{width: "30%"}}
                 // disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
                 value={this.state.user.countryCode}
