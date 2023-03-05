@@ -86,8 +86,8 @@ func (captcha *AliyunCaptchaProvider) VerifyCaptcha(token, clientSecret string) 
 	}
 
 	type captchaResponse struct {
-		Code int    `json:"Code"`
-		Msg  string `json:"Msg"`
+		Code    string `json:"Code"`
+		Message string `json:"Message"`
 	}
 	captchaResp := &captchaResponse{}
 
@@ -96,8 +96,8 @@ func (captcha *AliyunCaptchaProvider) VerifyCaptcha(token, clientSecret string) 
 		return false, err
 	}
 
-	if captchaResp.Code != 100 {
-		return false, errors.New(captchaResp.Msg)
+	if captchaResp.Code != "100" {
+		return false, errors.New(captchaResp.Message)
 	}
 
 	return true, nil

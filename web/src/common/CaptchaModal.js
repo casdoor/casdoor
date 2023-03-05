@@ -19,60 +19,57 @@ import * as UserBackend from "../backend/UserBackend";
 import {CaptchaWidget} from "./CaptchaWidget";
 import {SafetyOutlined} from "@ant-design/icons";
 
-export const CaptchaModal = ({
-  owner,
-  name,
-  captchaType,
-  subType,
-  clientId,
-  clientId2,
-  clientSecret,
-  clientSecret2,
-  open,
-  onOk,
-  onCancel,
-  canCancel,
-}) => {
-  const [visible, setVisible] = React.useState(false);
+export const CaptchaModal = (props) => {
+  const {owner, name, visible, onOk, onCancel, isCurrentProvider} = props;
+
+  const [captchaType, setCaptchaType] = React.useState("none");
+  const [clientId, setClientId] = React.useState("");
+  const [clientSecret, setClientSecret] = React.useState("");
+  const [subType, setSubType] = React.useState("");
+  const [clientId2, setClientId2] = React.useState("");
+  const [clientSecret2, setClientSecret2] = React.useState("");
+
+  const [open, setOpen] = React.useState(false);
   const [captchaImg, setCaptchaImg] = React.useState("");
   const [captchaToken, setCaptchaToken] = React.useState("");
-  const [secret, setSecret] = React.useState(clientSecret);
-  const [secret2, setSecret2] = React.useState(clientSecret2);
+
   const defaultInputRef = React.useRef(null);
 
   useEffect(() => {
-    setVisible(() => {
-      if (open) {
-        getCaptchaFromBackend();
-      } else {
-        cleanUp();
-      }
-      return open;
-    });
-  }, [open]);
+    if (visible) {
+      loadCaptcha();
+    } else {
+      handleCancel();
+      setOpen(false);
+    }
+  }, [visible]);
 
   const handleOk = () => {
-    onOk?.(captchaType, captchaToken, secret);
+    onOk?.(captchaType, captchaToken, clientSecret);
   };
 
   const handleCancel = () => {
+    setCaptchaToken("");
     onCancel?.();
   };
 
-  const cleanUp = () => {
-    setCaptchaToken("");
-  };
-
-  const getCaptchaFromBackend = () => {
-    UserBackend.getCaptcha(owner, name, true).then((res) => {
-      if (captchaType === "Default") {
-        setSecret(res.captchaId);
+  const loadCaptcha = () => {
+    UserBackend.getCaptcha(owner, name, isCurrentProvider).then((res) => {
+      if (res.type === "none") {
+        handleOk();
+      } else if (res.type === "Default") {
+        setOpen(true);
+        setClientSecret(res.captchaId);
         setCaptchaImg(res.captchaImage);
-
-        defaultInputRef.current?.focus();
+        setCaptchaType("Default");
       } else {
-        setSecret(res.clientSecret);
-        setSecret2(res.clientSecret2);
+        setOpen(true);
+        setCaptchaType(res.type);
+        setClientId(res.clientId);
+        setClientSecret(res.clientSecret);
+        setSubType(res.subType);
+        setClientId2(res.clientId2);
+        setClientSecret2(res.clientSecret2);
       }
     });
   };
@@ -108,11 +105,11 @@ export const CaptchaModal = ({
     );
   };
 
-  const onSubmit = (token) => {
+  const onChange = (token) => {
     setCaptchaToken(token);
   };
 
-  const renderCheck = () => {
+  const renderCaptcha = () => {
     if (captchaType === "Default") {
       return renderDefaultCaptcha();
     } else {
@@ -123,10 +120,10 @@ export const CaptchaModal = ({
               captchaType={captchaType}
               subType={subType}
               siteKey={clientId}
-              clientSecret={secret}
-              onChange={onSubmit}
+              clientSecret={clientSecret}
+              onChange={onChange}
               clientId2={clientId2}
-              clientSecret2={secret2}
+              clientSecret2={clientSecret2}
             />
           </Row>
         </Col>
@@ -141,37 +138,35 @@ export const CaptchaModal = ({
       if (!regex.test(captchaToken)) {
         isOkDisabled = true;
       }
+    } else if (captchaToken === "") {
+      isOkDisabled = true;
     }
 
-    if (canCancel) {
-      return [
-        <Button key="cancel" onClick={handleCancel}>{i18next.t("user:Cancel")}</Button>,
-        <Button key="ok" disabled={isOkDisabled} type="primary" onClick={handleOk}>{i18next.t("user:OK")}</Button>,
-      ];
-    } else {
-      return [
-        <Button key="ok" disabled={isOkDisabled} type="primary" onClick={handleOk}>{i18next.t("user:OK")}</Button>,
-      ];
-    }
+    return [
+      <Button key="cancel" onClick={handleCancel}>{i18next.t("user:Cancel")}</Button>,
+      <Button key="ok" disabled={isOkDisabled} onClick={handleOk}>{i18next.t("user:OK")}</Button>,
+    ];
   };
 
   return (
-    <React.Fragment>
-      <Modal
-        closable={false}
-        maskClosable={false}
-        destroyOnClose={true}
-        title={i18next.t("general:Captcha")}
-        open={visible}
-        width={348}
-        footer={renderFooter()}
-      >
-        <div style={{marginTop: "20px", marginBottom: "50px"}}>
-          {
-            renderCheck()
-          }
-        </div>
-      </Modal>
-    </React.Fragment>
+    <Modal
+      closable={false}
+      maskClosable={false}
+      destroyOnClose={true}
+      title={i18next.t("general:Captcha")}
+      open={open}
+      okText={i18next.t("user:OK")}
+      cancelText={i18next.t("user:Cancel")}
+      width={350}
+      footer={renderFooter()}
+      onCancel={handleCancel}
+      onOk={handleOk}
+    >
+      <div style={{marginTop: "20px", marginBottom: "50px"}}>
+        {
+          renderCaptcha()
+        }
+      </div>
+    </Modal>
   );
 };

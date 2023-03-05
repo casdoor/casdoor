@@ -18,19 +18,9 @@ import i18next from "i18next";
 import {CaptchaModal} from "./CaptchaModal";
 import * as UserBackend from "../backend/UserBackend";
 
-export const CaptchaPreview = ({
-  provider,
-  clientSecret,
-  captchaType,
-  subType,
-  owner,
-  clientId,
-  name,
-  providerUrl,
-  clientId2,
-  clientSecret2,
-}) => {
-  const [open, setOpen] = React.useState(false);
+export const CaptchaPreview = (props) => {
+  const {owner, name, provider, captchaType, subType, clientId, clientSecret, clientId2, clientSecret2, providerUrl} = props;
+  const [visible, setVisible] = React.useState(false);
 
   const clickPreview = () => {
     provider.name = name;
@@ -42,13 +32,13 @@ export const CaptchaPreview = ({
       // ProviderBackend.updateProvider(owner, providerName, provider).then(() => {
       //   setOpen(true);
       // });
-      setOpen(true);
+      setVisible(true);
     } else {
-      setOpen(true);
+      setVisible(true);
     }
   };
 
-  const getButtonDisabled = () => {
+  const isButtonDisabled = () => {
     if (captchaType !== "Default") {
       if (!clientId || !clientSecret) {
         return true;
@@ -62,14 +52,14 @@ export const CaptchaPreview = ({
     return false;
   };
 
-  const onOk = (captchaType, captchaToken, secret) => {
-    UserBackend.verifyCaptcha(captchaType, captchaToken, secret).then(() => {
-      setOpen(false);
+  const onOk = (captchaType, captchaToken, clientSecret) => {
+    UserBackend.verifyCaptcha(captchaType, captchaToken, clientSecret).then(() => {
+      setVisible(false);
     });
   };
 
   const onCancel = () => {
-    setOpen(false);
+    setVisible(false);
   };
 
   return (
@@ -78,23 +68,17 @@ export const CaptchaPreview = ({
         style={{fontSize: 14}}
         type={"primary"}
         onClick={clickPreview}
-        disabled={getButtonDisabled()}
+        disabled={isButtonDisabled()}
       >
         {i18next.t("general:Preview")}
       </Button>
       <CaptchaModal
         owner={owner}
         name={name}
-        captchaType={captchaType}
-        subType={subType}
-        clientId={clientId}
-        clientId2={clientId2}
-        clientSecret={clientSecret}
-        clientSecret2={clientSecret2}
-        open={open}
+        visible={visible}
         onOk={onOk}
         onCancel={onCancel}
-        canCancel={true}
+        isCurrentProvider={true}
       />
     </React.Fragment>
   );

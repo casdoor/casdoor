@@ -14,7 +14,9 @@
 
 import React, {useEffect} from "react";
 
-export const CaptchaWidget = ({captchaType, subType, siteKey, clientSecret, onChange, clientId2, clientSecret2}) => {
+export const CaptchaWidget = (props) => {
+  const {captchaType, subType, siteKey, clientSecret, clientId2, clientSecret2, onChange} = props;
+
   const loadScript = (src) => {
     const tag = document.createElement("script");
     tag.async = false;
