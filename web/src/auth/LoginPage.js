@@ -82,13 +82,13 @@ class LoginPage extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.state.application && !prevState.application) {
-      const defaultCaptchaProviderItems = this.getDefaultCaptchaProviderItems(this.state.application);
+      const captchaProviderItems = this.getCaptchaProviderItems(this.state.application);
 
-      if (!defaultCaptchaProviderItems) {
+      if (!captchaProviderItems) {
         return;
       }
 
-      this.setState({enableCaptchaModal: defaultCaptchaProviderItems.some(providerItem => providerItem.rule === "Always")});
+      this.setState({enableCaptchaModal: captchaProviderItems.some(providerItem => providerItem.rule === "Always")});
     }
   }
 
@@ -262,13 +262,7 @@ class LoginPage extends React.Component {
     if (this.state.loginMethod === "password" && this.state.enableCaptchaModal) {
       this.setState({
         openCaptchaModal: true,
-        verifyCaptcha: (captchaType, captchaToken, secret) => {
-          values["captchaType"] = captchaType;
-          values["captchaToken"] = captchaToken;
-          values["clientSecret"] = secret;
-
-          this.login(values);
-        },
+        values: values,
       });
     } else {
       this.login(values);
@@ -290,8 +284,6 @@ class LoginPage extends React.Component {
           }
           Setting.showMessage("success", msg);
 
-          this.setState({openCaptchaModal: false});
-
           if (casParams.service !== "") {
             const st = res.data;
             const newUrl = new URL(casParams.service);
@@ -299,7 +291,6 @@ class LoginPage extends React.Component {
             window.location.href = newUrl.toString();
           }
         } else {
-          this.setState({openCaptchaModal: false});
           Setting.showMessage("error", `Failed to log in: ${res.msg}`);
         }
       });
@@ -338,7 +329,6 @@ class LoginPage extends React.Component {
               }
             }
           } else {
-            this.setState({openCaptchaModal: false});
             Setting.showMessage("error", `Failed to log in: ${res.msg}`);
           }
         });
@@ -549,7 +539,7 @@ class LoginPage extends React.Component {
     }
   }
 
-  getDefaultCaptchaProviderItems(application) {
+  getCaptchaProviderItems(application) {
     const providers = application?.providers;
 
     if (providers === undefined || providers === null) {
@@ -561,7 +551,7 @@ class LoginPage extends React.Component {
         return false;
       }
 
-      return providerItem.provider.category === "Captcha" && providerItem.provider.type === "Default";
+      return providerItem.provider.category === "Captcha";
     });
   }
 
@@ -570,22 +560,25 @@ class LoginPage extends React.Component {
       return null;
     }
 
-    const provider = this.getDefaultCaptchaProviderItems(application)
+    const provider = this.getCaptchaProviderItems(application)
       .filter(providerItem => providerItem.rule === "Always")
       .map(providerItem => providerItem.provider)[0];
 
     return <CaptchaModal
       owner={provider.owner}
       name={provider.name}
-      captchaType={provider.type}
-      subType={provider.subType}
-      clientId={provider.clientId}
-      clientId2={provider.clientId2}
-      clientSecret={provider.clientSecret}
-      clientSecret2={provider.clientSecret2}
-      open={this.state.openCaptchaModal}
-      onOk={(captchaType, captchaToken, secret) => this.state.verifyCaptcha?.(captchaType, captchaToken, secret)}
-      canCancel={false}
+      visible={this.state.openCaptchaModal}
+      onOk={(captchaType, captchaToken, clientSecret) => {
+        const values = this.state.values;
+        values["captchaType"] = captchaType;
+        values["captchaToken"] = captchaToken;
+        values["clientSecret"] = clientSecret;
+
+        this.login(values);
+        this.setState({openCaptchaModal: false});
+      }}
+      onCancel={() => this.setState({openCaptchaModal: false})}
+      isCurrentProvider={true}
     />;
   }
 

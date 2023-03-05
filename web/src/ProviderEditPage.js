@@ -813,17 +813,17 @@ class ProviderEditPage extends React.Component {
               </Col>
               <Col span={22} >
                 <CaptchaPreview
+                  owner={this.state.provider.owner}
+                  name={this.state.provider.name}
                   provider={this.state.provider}
                   providerName={this.state.providerName}
-                  clientSecret={this.state.provider.clientSecret}
                   captchaType={this.state.provider.type}
                   subType={this.state.provider.subType}
-                  owner={this.state.provider.owner}
                   clientId={this.state.provider.clientId}
-                  name={this.state.provider.name}
-                  providerUrl={this.state.provider.providerUrl}
+                  clientSecret={this.state.provider.clientSecret}
                   clientId2={this.state.provider.clientId2}
                   clientSecret2={this.state.provider.clientSecret2}
+                  providerUrl={this.state.provider.providerUrl}
                 />
               </Col>
             </Row>

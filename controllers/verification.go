@@ -51,8 +51,8 @@ func (c *ApiController) SendVerificationCode() {
 	dest := c.Ctx.Request.Form.Get("dest")
 	countryCode := c.Ctx.Request.Form.Get("countryCode")
 	checkType := c.Ctx.Request.Form.Get("checkType")
-	checkId := c.Ctx.Request.Form.Get("checkId")
-	checkKey := c.Ctx.Request.Form.Get("checkKey")
+	clientSecret := c.Ctx.Request.Form.Get("clientSecret")
+	captchaToken := c.Ctx.Request.Form.Get("captchaToken")
 	applicationId := c.Ctx.Request.Form.Get("applicationId")
 	method := c.Ctx.Request.Form.Get("method")
 	checkUser := c.Ctx.Request.Form.Get("checkUser")
@@ -76,15 +76,15 @@ func (c *ApiController) SendVerificationCode() {
 	}
 
 	if checkType != "none" {
-		if checkKey == "" {
-			c.ResponseError(c.T("general:Missing parameter") + ": checkKey.")
+		if captchaToken == "" {
+			c.ResponseError(c.T("general:Missing parameter") + ": captchaToken.")
 			return
 		}
 
 		if captchaProvider := captcha.GetCaptchaProvider(checkType); captchaProvider == nil {
 			c.ResponseError(c.T("general:don't support captchaProvider: ") + checkType)
 			return
-		} else if isHuman, err := captchaProvider.VerifyCaptcha(checkKey, checkId); err != nil {
+		} else if isHuman, err := captchaProvider.VerifyCaptcha(captchaToken, clientSecret); err != nil {
 			c.ResponseError(err.Error())
 			return
 		} else if !isHuman {
