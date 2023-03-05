@@ -24,7 +24,7 @@ import * as ProviderEditTestSms from "./TestSmsWidget";
 import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
-import {PhoneNumberInput} from "./common/PhoneNumberInput";
+import {CountryCodeSelect} from "./common/CountryCodeSelect";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -667,7 +667,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
                 <Col span={4} >
                   <Input.Group compact>
-                    <PhoneNumberInput
+                    <CountryCodeSelect
                       style={{width: "30%"}}
                       value={this.state.provider.content}
                       onChange={(value) => {
