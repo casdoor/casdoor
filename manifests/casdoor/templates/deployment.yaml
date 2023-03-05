@@ -13,10 +13,11 @@ spec:
       {{- include "casdoor.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        checksum/config: {{ tpl .Values.config . | toYaml | sha256sum }}
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       labels:
         {{- include "casdoor.selectorLabels" . | nindent 8 }}
     spec:
@@ -34,18 +35,25 @@ spec:
           image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           # command: ["sleep", "100000000"]
+          env:
+            - name: RUNNING_IN_DOCKER
+              value: "true"
           ports:
             - name: http
-              containerPort: 80
+              containerPort: {{ .Values.service.port }}
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
+          {{ if .Values.probe.liveness.enabled }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          {{ end }}
+          {{ if .Values.probe.readiness.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          {{ end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -60,7 +68,7 @@ spec:
                items:
                - key: app.conf
                  path: app.conf
-               name: casdoor-config
+               name: {{ printf "%s-config" (include "casdoor.fullname" .) }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

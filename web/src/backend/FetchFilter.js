@@ -51,7 +51,9 @@ window.fetch = async(url, option = {}) => {
 
   return new Promise((resolve, reject) => {
     originalFetch(url, option).then(res => {
-      responseFilters.forEach(filter => filter(res.clone()));
+      if (!url.startsWith("/api/get-organizations")) {
+        responseFilters.forEach(filter => filter(res.clone()));
+      }
       resolve(res);
     });
   });

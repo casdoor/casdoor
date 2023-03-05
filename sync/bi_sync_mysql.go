@@ -78,6 +78,7 @@ func StartBinlogSync() error {
 
 	c1, err := canal.NewCanal(config1)
 	GTIDSet1, err := c1.GetMasterGTIDSet()
+
 	if err != nil {
 		return err
 	}
@@ -144,6 +145,7 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 	}
 	// Set the next gtid of the target library to the gtid of the current target library to avoid loopbacks
 	engin.Exec(fmt.Sprintf("SET GTID_NEXT= '%s'", GTID))
+  
 	length := len(e.Table.Columns)
 	columnNames := make([]string, length)
 	oldColumnValue := make([]interface{}, length)
@@ -158,6 +160,7 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 			isChar[i] = true
 		}
 	}
+
 	// get pk column name
 	pkColumnNames := GetPKColumnNames(columnNames, e.Table.PKColumns)
 
@@ -195,7 +198,6 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 				res, err := engin.DB().Exec(updateSql, args...)
 
 				if err != nil {
-					log.Info(err)
 					return err
 				}
 				log.Info(updateSql, args, res)
@@ -216,13 +218,14 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 
 			pkColumnValue := GetPKColumnValues(oldColumnValue, e.Table.PKColumns)
 			deleteSql, args, err := GetDeleteSql(e.Table.Schema, e.Table.Name, pkColumnNames, pkColumnValue)
+
 			if err != nil {
 				return err
 			}
 
 			res, err := engin.DB().Exec(deleteSql, args...)
+      
 			if err != nil {
-				log.Info(err)
 				return err
 			}
 			log.Info(deleteSql, args, res)
@@ -250,8 +253,8 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 			}
 
 			res, err := engin.DB().Exec(insertSql, args...)
+      
 			if err != nil {
-				log.Info(err)
 				return err
 			}
 			log.Info(insertSql, args, res)

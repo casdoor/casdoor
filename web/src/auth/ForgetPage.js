@@ -24,8 +24,6 @@ import * as UserBackend from "../backend/UserBackend";
 import {CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../CustomGithubCorner";
 import {withRouter} from "react-router-dom";
-
-const {Step} = Steps;
 const {Option} = Select;
 
 class ForgetPage extends React.Component {
@@ -33,23 +31,21 @@ class ForgetPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      account: props.account,
       applicationName: props.applicationName ?? props.match.params?.applicationName,
       application: null,
       msg: null,
       userId: "",
       username: "",
       name: "",
-      email: "",
-      isFixed: false,
-      fixedContent: "",
-      token: "",
       phone: "",
-      emailCode: "",
-      phoneCode: "",
-      verifyType: null, // "email" or "phone"
+      email: "",
+      dest: "",
+      isVerifyTypeFixed: false,
+      verifyType: "", // "email", "phone"
       current: 0,
     };
+
+    this.form = React.createRef();
   }
 
   componentDidMount() {
@@ -88,72 +84,67 @@ class ForgetPage extends React.Component {
     switch (name) {
     case "step1":
       const username = forms.step1.getFieldValue("username");
-      AuthBackend.getEmailAndPhone({
-        application: forms.step1.getFieldValue("application"),
-        organization: forms.step1.getFieldValue("organization"),
-        username: username,
-      }).then((res) => {
-        if (res.status === "ok") {
-          const phone = res.data.phone;
-          const email = res.data.email;
-          const saveFields = () => {
-            if (this.state.isFixed) {
-              forms.step2.setFieldsValue({email: this.state.fixedContent});
-              this.setState({username: this.state.fixedContent});
+      AuthBackend.getEmailAndPhone(forms.step1.getFieldValue("organization"), username)
+        .then((res) => {
+          if (res.status === "ok") {
+            const phone = res.data.phone;
+            const email = res.data.email;
+
+            if (phone === "" && email === "") {
+              Setting.showMessage("error", "no verification method!");
+            } else {
+              this.setState({
+                name: res.data.name,
+                phone: phone,
+                email: email,
+              });
+
+              const saveFields = (type, dest, fixed) => {
+                this.setState({
+                  verifyType: type,
+                  isVerifyTypeFixed: fixed,
+                  dest: dest,
+                });
+              };
+
+              switch (res.data2) {
+              case "email":
+                saveFields("email", email, true);
+                break;
+              case "phone":
+                saveFields("phone", phone, true);
+                break;
+              case "username":
+                phone !== "" ? saveFields("phone", phone, false) : saveFields("email", email, false);
+              }
+
+              this.setState({
+                current: 1,
+              });
             }
-            this.setState({current: 1});
-          };
-          this.setState({phone: phone, email: email, username: res.data.name, name: res.data.name});
-
-          if (phone !== "" && email === "") {
-            this.setState({
-              verifyType: "phone",
-            });
-          } else if (phone === "" && email !== "") {
-            this.setState({
-              verifyType: "email",
-            });
+          } else {
+            Setting.showMessage("error", res.msg);
           }
-
-          switch (res.data2) {
-          case "email":
-            this.setState({isFixed: true, fixedContent: email, verifyType: "email"}, () => {saveFields();});
-            break;
-          case "phone":
-            this.setState({isFixed: true, fixedContent: phone, verifyType: "phone"}, () => {saveFields();});
-            break;
-          default:
-            saveFields();
-            break;
-          }
-        } else {
-          Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
-        }
-      });
+        });
       break;
     case "step2":
       const oAuthParams = Util.getOAuthGetParameters();
-      const login = () => {
-        AuthBackend.login({
-          application: forms.step2.getFieldValue("application"),
-          organization: forms.step2.getFieldValue("organization"),
-          username: this.state.username,
-          name: this.state.name,
-          code: forms.step2.getFieldValue("emailCode"),
-          type: "login",
-        }, oAuthParams).then(res => {
-          if (res.status === "ok") {
-            this.setState({current: 2, userId: res.data, username: res.data.split("/")[1]});
-          } else {
-            Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
-          }
-        });
-      };
-      if (this.state.verifyType === "email") {
-        this.setState({username: this.state.email}, () => {login();});
-      } else if (this.state.verifyType === "phone") {
-        this.setState({username: this.state.phone}, () => {login();});
-      }
+
+      AuthBackend.login({
+        application: forms.step2.getFieldValue("application"),
+        organization: forms.step2.getFieldValue("organization"),
+        username: forms.step2.getFieldValue("dest"),
+        name: this.state.name,
+        code: forms.step2.getFieldValue("code"),
+        type: "login",
+      }, oAuthParams).then(res => {
+        if (res.status === "ok") {
+          this.setState({current: 2, userId: res.data});
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
+      });
+
       break;
     default:
       break;
@@ -161,13 +152,13 @@ class ForgetPage extends React.Component {
   }
 
   onFinish(values) {
-    values.username = this.state.username;
+    values.username = this.state.name;
     values.userOwner = this.getApplicationObj()?.organizationObj.name;
     UserBackend.setPassword(values.userOwner, values.username, "", values?.newPassword).then(res => {
       if (res.status === "ok") {
         Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
       } else {
-        Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+        Setting.showMessage("error", res.msg);
       }
     });
   }
@@ -179,7 +170,7 @@ class ForgetPage extends React.Component {
 
     if (this.state.phone !== "") {
       options.push(
-        <Option key={"phone"} value={"phone"}>
+        <Option key={"phone"} value={this.state.phone} >
           &nbsp;&nbsp;{this.state.phone}
         </Option>
       );
@@ -187,7 +178,7 @@ class ForgetPage extends React.Component {
 
     if (this.state.email !== "") {
       options.push(
-        <Option key={"email"} value={"email"}>
+        <Option key={"email"} value={this.state.email} >
           &nbsp;&nbsp;{this.state.email}
         </Option>
       );
@@ -202,76 +193,64 @@ class ForgetPage extends React.Component {
         this.onFormFinish(name, info, forms);
       }}>
         {/* STEP 1: input username -> get email & phone */}
-        <Form
-          hidden={this.state.current !== 0}
-          ref={this.form}
-          name="step1"
-          // eslint-disable-next-line no-console
-          onFinishFailed={(errorInfo) => console.log(errorInfo)}
-          initialValues={{
-            application: application.name,
-            organization: application.organization,
-          }}
-          style={{width: "300px"}}
-          size="large"
-        >
-          <Form.Item
-            style={{height: 0, visibility: "hidden"}}
-            name="application"
-            rules={[
-              {
-                required: true,
-                message: i18next.t(
-                  "forget:Please input your application!"
-                ),
-              },
-            ]}
-          />
-          <Form.Item
-            style={{height: 0, visibility: "hidden"}}
-            name="organization"
-            rules={[
-              {
-                required: true,
-                message: i18next.t(
-                  "forget:Please input your organization!"
-                ),
-              },
-            ]}
-          />
-          <Form.Item
-            name="username"
-            rules={[
-              {
-                required: true,
-                message: i18next.t(
-                  "forget:Please input your username!"
-                ),
-                whitespace: true,
-              },
-            ]}
+        {this.state.current === 0 ?
+          <Form
+            ref={this.form}
+            name="step1"
+            // eslint-disable-next-line no-console
+            onFinishFailed={(errorInfo) => console.log(errorInfo)}
+            initialValues={{
+              application: application.name,
+              organization: application.organization,
+            }}
+            style={{width: "300px"}}
+            size="large"
           >
-            <Input
-              onChange={(e) => {
-                this.setState({
-                  username: e.target.value,
-                });
-              }}
-              prefix={<UserOutlined />}
-              placeholder={i18next.t("login:username, Email or phone")}
+            <Form.Item
+              hidden
+              name="application"
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("application:Please input your application!"),
+                },
+              ]}
             />
-          </Form.Item>
-          <br />
-          <Form.Item>
-            <Button block type="primary" htmlType="submit">
-              {i18next.t("forget:Next Step")}
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item
+              hidden
+              name="organization"
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("application:Please input your organization!"),
+                },
+              ]}
+            />
+            <Form.Item
+              name="username"
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("forget:Please input your username!"),
+                  whitespace: true,
+                },
+              ]}
+            >
+              <Input
+                prefix={<UserOutlined />}
+                placeholder={i18next.t("login:username, Email or phone")}
+              />
+            </Form.Item>
+            <br />
+            <Form.Item>
+              <Button block type="primary" htmlType="submit">
+                {i18next.t("forget:Next Step")}
+              </Button>
+            </Form.Item>
+          </Form> : null}
 
         {/* STEP 2: verify email or phone */}
-        <Form
-          hidden={this.state.current !== 1}
+        {this.state.current === 1 ? <Form
           ref={this.form}
           name="step2"
           onFinishFailed={(errorInfo) =>
@@ -281,9 +260,17 @@ class ForgetPage extends React.Component {
               errorInfo.outOfDate
             )
           }
+          onValuesChange={(changedValues, allValues) => {
+            const verifyType = changedValues.dest?.indexOf("@") === -1 ? "phone" : "email";
+            this.setState({
+              dest: changedValues.dest,
+              verifyType: verifyType,
+            });
+          }}
           initialValues={{
             application: application.name,
             organization: application.organization,
+            dest: this.state.dest,
           }}
           style={{width: "300px"}}
           size="large"
@@ -294,75 +281,51 @@ class ForgetPage extends React.Component {
             rules={[
               {
                 required: true,
-                message: i18next.t(
-                  "forget:Please input your application!"
-                ),
+                message: i18next.t("application:Please input your application!"),
               },
             ]}
           />
           <Form.Item
-            style={{height: 0, visibility: "hidden"}}
+            hidden
             name="organization"
             rules={[
               {
                 required: true,
-                message: i18next.t(
-                  "forget:Please input your organization!"
-                ),
+                message: i18next.t("application:Please input your organization!"),
               },
             ]}
           />
           <Form.Item
-            name="email" // use email instead of email/phone to adapt to RequestForm in account.go
+            name="dest"
             validateFirst
             hasFeedback
           >
             {
-              this.state.isFixed ? <Input disabled /> :
-                <Select virtual={false}
-                  key={this.state.verifyType}
-                  style={{textAlign: "left"}}
-                  defaultValue={this.state.verifyType}
-                  disabled={this.state.username === ""}
-                  placeholder={i18next.t("forget:Choose email or phone")}
-                  onChange={(value) => {
-                    this.setState({
-                      verifyType: value,
-                    });
-                  }}
-                >
-                  {
-                    this.renderOptions()
-                  }
-                </Select>
+              <Select virtual={false}
+                disabled={this.state.isVerifyTypeFixed}
+                style={{textAlign: "left"}}
+                placeholder={i18next.t("forget:Choose email or phone")}
+              >
+                {
+                  this.renderOptions()
+                }
+              </Select>
             }
           </Form.Item>
           <Form.Item
-            name="emailCode" // use emailCode instead of email/phoneCode to adapt to RequestForm in account.go
+            name="code"
             rules={[
               {
                 required: true,
-                message: i18next.t(
-                  "code:Please input your verification code!"
-                ),
+                message: i18next.t("code:Please input your verification code!"),
               },
             ]}
           >
-            {this.state.verifyType === "email" ? (
-              <SendCodeInput
-                disabled={this.state.username === "" || this.state.verifyType === ""}
-                method={"forget"}
-                onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(this.getApplicationObj()), this.state.name]}
-                application={application}
-              />
-            ) : (
-              <SendCodeInput
-                disabled={this.state.username === "" || this.state.verifyType === ""}
-                method={"forget"}
-                onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(this.getApplicationObj()), this.state.name]}
-                application={application}
-              />
-            )}
+            <SendCodeInput disabled={this.state.dest === ""}
+              method={"forget"}
+              onButtonClickArgs={[this.state.dest, this.state.verifyType, Setting.getApplicationName(this.getApplicationObj()), this.state.name]}
+              application={application}
+            />
           </Form.Item>
           <br />
           <Form.Item>
@@ -374,109 +337,99 @@ class ForgetPage extends React.Component {
               {i18next.t("forget:Next Step")}
             </Button>
           </Form.Item>
-        </Form>
+        </Form> : null}
 
         {/* STEP 3 */}
-        <Form
-          hidden={this.state.current !== 2}
-          ref={this.form}
-          name="step3"
-          onFinish={(values) => this.onFinish(values)}
-          onFinishFailed={(errorInfo) =>
-            this.onFinishFailed(
-              errorInfo.values,
-              errorInfo.errorFields,
-              errorInfo.outOfDate
-            )
-          }
-          initialValues={{
-            application: application.name,
-            organization: application.organization,
-          }}
-          style={{width: "300px"}}
-          size="large"
-        >
-          <Form.Item
-            style={{height: 0, visibility: "hidden"}}
-            name="application"
-            rules={[
-              {
-                required: true,
-                message: i18next.t(
-                  "forget:Please input your application!"
-                ),
-              },
-            ]}
-          />
-          <Form.Item
-            style={{height: 0, visibility: "hidden"}}
-            name="organization"
-            rules={[
-              {
-                required: true,
-                message: i18next.t(
-                  "forget:Please input your organization!"
-                ),
-              },
-            ]}
-          />
-          <Form.Item
-            name="newPassword"
-            hidden={this.state.current !== 2}
-            rules={[
-              {
-                required: true,
-                message: i18next.t(
-                  "forget:Please input your password!"
-                ),
-              },
-            ]}
-            hasFeedback
+        {this.state.current === 2 ?
+          <Form
+            ref={this.form}
+            name="step3"
+            onFinish={(values) => this.onFinish(values)}
+            onFinishFailed={(errorInfo) =>
+              this.onFinishFailed(
+                errorInfo.values,
+                errorInfo.errorFields,
+                errorInfo.outOfDate
+              )
+            }
+            initialValues={{
+              application: application.name,
+              organization: application.organization,
+            }}
+            style={{width: "300px"}}
+            size="large"
           >
-            <Input.Password
-              disabled={this.state.userId === ""}
-              prefix={<LockOutlined />}
-              placeholder={i18next.t("forget:Password")}
-            />
-          </Form.Item>
-          <Form.Item
-            name="confirm"
-            dependencies={["newPassword"]}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: i18next.t(
-                  "forget:Please confirm your password!"
-                ),
-              },
-              ({getFieldValue}) => ({
-                validator(rule, value) {
-                  if (!value || getFieldValue("newPassword") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    i18next.t(
-                      "forget:Your confirmed password is inconsistent with the password!"
-                    )
-                  );
+            <Form.Item
+              hidden
+              name="application"
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("application:Please input your application!"),
                 },
-              }),
-            ]}
-          >
-            <Input.Password
-              disabled={this.state.userId === ""}
-              prefix={<CheckCircleOutlined />}
-              placeholder={i18next.t("forget:Confirm")}
+              ]}
             />
-          </Form.Item>
-          <br />
-          <Form.Item hidden={this.state.current !== 2}>
-            <Button block type="primary" htmlType="submit" disabled={this.state.userId === ""}>
-              {i18next.t("forget:Change Password")}
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item
+              hidden
+              name="organization"
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("application:Please input your organization!"),
+                },
+              ]}
+            />
+            <Form.Item
+              name="newPassword"
+              hidden={this.state.current !== 2}
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("login:Please input your password!"),
+                },
+              ]}
+              hasFeedback
+            >
+              <Input.Password
+                disabled={this.state.userId === ""}
+                prefix={<LockOutlined />}
+                placeholder={i18next.t("forget:Password")}
+              />
+            </Form.Item>
+            <Form.Item
+              name="confirm"
+              dependencies={["newPassword"]}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("signup:Please confirm your password!"),
+                },
+                ({getFieldValue}) => ({
+                  validator(rule, value) {
+                    if (!value || getFieldValue("newPassword") === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      i18next.t("signup:Your confirmed password is inconsistent with the password!")
+                    );
+                  },
+                }),
+              ]}
+            >
+              <Input.Password
+                disabled={this.state.userId === ""}
+                prefix={<CheckCircleOutlined />}
+                placeholder={i18next.t("forget:Confirm")}
+              />
+            </Form.Item>
+            <br />
+            <Form.Item hidden={this.state.current !== 2}>
+              <Button block type="primary" htmlType="submit" disabled={this.state.userId === ""}>
+                {i18next.t("forget:Change Password")}
+              </Button>
+            </Form.Item>
+          </Form> : null}
       </Form.Provider>
     );
   }
@@ -516,6 +469,20 @@ class ForgetPage extends React.Component {
                 <Col span={24}>
                   <Steps
                     current={this.state.current}
+                    items={[
+                      {
+                        title: i18next.t("forget:Account"),
+                        icon: <UserOutlined />,
+                      },
+                      {
+                        title: i18next.t("forget:Verify"),
+                        icon: <SolutionOutlined />,
+                      },
+                      {
+                        title: i18next.t("forget:Reset"),
+                        icon: <KeyOutlined />,
+                      },
+                    ]}
                     style={{
                       width: "90%",
                       maxWidth: "500px",
@@ -523,24 +490,12 @@ class ForgetPage extends React.Component {
                       marginTop: "80px",
                     }}
                   >
-                    <Step
-                      title={i18next.t("forget:Account")}
-                      icon={<UserOutlined />}
-                    />
-                    <Step
-                      title={i18next.t("forget:Verify")}
-                      icon={<SolutionOutlined />}
-                    />
-                    <Step
-                      title={i18next.t("forget:Reset")}
-                      icon={<KeyOutlined />}
-                    />
                   </Steps>
                 </Col>
               </Row>
             </Col>
             <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-              <div style={{marginTop: "10px", textAlign: "center"}}>
+              <div style={{marginTop: "40px", textAlign: "center"}}>
                 {this.renderForm(application)}
               </div>
             </Col>

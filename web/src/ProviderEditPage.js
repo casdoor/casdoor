@@ -20,9 +20,11 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import {authConfig} from "./auth/Auth";
 import * as ProviderEditTestEmail from "./TestEmailWidget";
+import * as ProviderEditTestSms from "./TestSmsWidget";
 import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import {PhoneNumberInput} from "./common/PhoneNumberInput";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -82,20 +84,20 @@ class ProviderEditPage extends React.Component {
     });
   }
 
-  getClientIdLabel() {
-    switch (this.state.provider.category) {
+  getClientIdLabel(provider) {
+    switch (provider.category) {
     case "Email":
       return Setting.getLabel(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip"));
     case "SMS":
-      if (this.state.provider.type === "Volc Engine SMS") {
+      if (provider.type === "Volc Engine SMS") {
         return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
-      } else if (this.state.provider.type === "Huawei Cloud SMS") {
+      } else if (provider.type === "Huawei Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
       }
     case "Captcha":
-      if (this.state.provider.type === "Aliyun Captcha") {
+      if (provider.type === "Aliyun Captcha") {
         return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Site key"), i18next.t("provider:Site key - Tooltip"));
@@ -105,20 +107,20 @@ class ProviderEditPage extends React.Component {
     }
   }
 
-  getClientSecretLabel() {
-    switch (this.state.provider.category) {
+  getClientSecretLabel(provider) {
+    switch (provider.category) {
     case "Email":
       return Setting.getLabel(i18next.t("login:Password"), i18next.t("login:Password - Tooltip"));
     case "SMS":
-      if (this.state.provider.type === "Volc Engine SMS") {
+      if (provider.type === "Volc Engine SMS") {
         return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:SecretAccessKey - Tooltip"));
-      } else if (this.state.provider.type === "Huawei Cloud SMS") {
+      } else if (provider.type === "Huawei Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:App secret"), i18next.t("provider:AppSecret - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
       }
     case "Captcha":
-      if (this.state.provider.type === "Aliyun Captcha") {
+      if (provider.type === "Aliyun Captcha") {
         return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:SecretAccessKey - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
@@ -128,40 +130,52 @@ class ProviderEditPage extends React.Component {
     }
   }
 
-  getAppIdRow() {
-    let text, tooltip;
-    if (this.state.provider.category === "SMS" && this.state.provider.type === "Tencent Cloud SMS") {
-      text = i18next.t("provider:App ID");
-      tooltip = i18next.t("provider:App ID - Tooltip");
-    } else if (this.state.provider.type === "WeCom" && this.state.provider.subType === "Internal") {
-      text = i18next.t("provider:Agent ID");
-      tooltip = i18next.t("provider:Agent ID - Tooltip");
-    } else if (this.state.provider.type === "Infoflow") {
-      text = i18next.t("provider:Agent ID");
-      tooltip = i18next.t("provider:Agent ID - Tooltip");
-    } else if (this.state.provider.category === "SMS" && this.state.provider.type === "Volc Engine SMS") {
-      text = i18next.t("provider:SMS account");
-      tooltip = i18next.t("provider:SMS account - Tooltip");
-    } else if (this.state.provider.category === "SMS" && this.state.provider.type === "Huawei Cloud SMS") {
-      text = i18next.t("provider:Channel No.");
-      tooltip = i18next.t("provider:Channel No. - Tooltip");
-    } else if (this.state.provider.category === "Email" && this.state.provider.type === "SUBMAIL") {
-      text = i18next.t("provider:App ID");
-      tooltip = i18next.t("provider:App ID - Tooltip");
-    } else {
-      return null;
+  getAppIdRow(provider) {
+    let text = "";
+    let tooltip = "";
+
+    if (provider.category === "OAuth") {
+      if (provider.type === "WeCom" && provider.subType === "Internal") {
+        text = i18next.t("provider:Agent ID");
+        tooltip = i18next.t("provider:Agent ID - Tooltip");
+      } else if (provider.type === "Infoflow") {
+        text = i18next.t("provider:Agent ID");
+        tooltip = i18next.t("provider:Agent ID - Tooltip");
+      }
+    } else if (provider.category === "SMS") {
+      if (provider.type === "Tencent Cloud SMS") {
+        text = i18next.t("provider:App ID");
+        tooltip = i18next.t("provider:App ID - Tooltip");
+      } else if (provider.type === "Volc Engine SMS") {
+        text = i18next.t("provider:SMS account");
+        tooltip = i18next.t("provider:SMS account - Tooltip");
+      } else if (provider.type === "Huawei Cloud SMS") {
+        text = i18next.t("provider:Channel No.");
+        tooltip = i18next.t("provider:Channel No. - Tooltip");
+      }
+    } else if (provider.category === "Email") {
+      if (provider.type === "SUBMAIL") {
+        text = i18next.t("provider:App ID");
+        tooltip = i18next.t("provider:App ID - Tooltip");
+      }
     }
 
-    return <Row style={{marginTop: "20px"}} >
-      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-        {Setting.getLabel(text, tooltip)} :
-      </Col>
-      <Col span={22} >
-        <Input value={this.state.provider.appId} onChange={e => {
-          this.updateProviderField("appId", e.target.value);
-        }} />
-      </Col>
-    </Row>;
+    if (text === "" && tooltip === "") {
+      return null;
+    } else {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(text, tooltip)} :
+          </Col>
+          <Col span={22} >
+            <Input value={provider.appId} onChange={e => {
+              this.updateProviderField("appId", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      );
+    }
   }
 
   loadSamlConfiguration() {
@@ -404,7 +418,7 @@ class ProviderEditPage extends React.Component {
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {this.getClientIdLabel()}
+                  {this.getClientIdLabel(this.state.provider)}
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.clientId} onChange={e => {
@@ -414,7 +428,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {this.getClientSecretLabel()}
+                  {this.getClientSecretLabel(this.state.provider)}
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.clientSecret} onChange={e => {
@@ -584,7 +598,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Email Title"), i18next.t("provider:Email Title - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("provider:Email title"), i18next.t("provider:Email title - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.title} onChange={e => {
@@ -594,7 +608,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Email Content"), i18next.t("provider:Email Content - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("provider:Email content"), i18next.t("provider:Email content - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <TextArea autoSize={{minRows: 3, maxRows: 100}} value={this.state.provider.content} onChange={e => {
@@ -617,7 +631,7 @@ class ProviderEditPage extends React.Component {
                 <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
                   disabled={!Setting.isValidEmail(this.state.provider.receiver)}
                   onClick={() => ProviderEditTestEmail.sendTestEmail(this.state.provider, this.state.provider.receiver)} >
-                  {i18next.t("provider:Send Test Email")}
+                  {i18next.t("provider:Send Testing Email")}
                 </Button>
               </Row>
             </React.Fragment>
@@ -645,6 +659,36 @@ class ProviderEditPage extends React.Component {
                   <Input value={this.state.provider.templateCode} onChange={e => {
                     this.updateProviderField("templateCode", e.target.value);
                   }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:SMS Test"), i18next.t("provider:SMS Test - Tooltip"))} :
+                </Col>
+                <Col span={4} >
+                  <Input.Group compact>
+                    <PhoneNumberInput
+                      style={{width: "30%"}}
+                      value={this.state.provider.content}
+                      onChange={(value) => {
+                        this.updateProviderField("content", value);
+                      }}
+                      countryCodes={this.props.account.organization.countryCodes}
+                    />
+                    <Input value={this.state.provider.receiver}
+                      style={{width: "70%"}}
+                      placeholder = {i18next.t("user:Input your phone number")}
+                      onChange={e => {
+                        this.updateProviderField("receiver", e.target.value);
+                      }} />
+                  </Input.Group>
+                </Col>
+                <Col span={2} >
+                  <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
+                    disabled={!Setting.isValidPhone(this.state.provider.receiver)}
+                    onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
+                    {i18next.t("provider:Send Testing SMS")}
+                  </Button>
                 </Col>
               </Row>
             </React.Fragment>
@@ -750,7 +794,7 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           ) : null
         }
-        {this.getAppIdRow()}
+        {this.getAppIdRow(this.state.provider)}
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:Provider URL"), i18next.t("provider:Provider URL - Tooltip"))} :

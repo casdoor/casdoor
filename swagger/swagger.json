@@ -339,6 +339,42 @@
                 }
             }
         },
+        "/api/add-session": {
+            "post": {
+                "tags": [
+                    "Session API"
+                ],
+                "description": "Add session for one user in one application. If there are other existing sessions, join the session into the list.",
+                "operationId": "ApiController.AddSession",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id(organization/application/user) of session",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sessionId",
+                        "description": "sessionId to be added",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/add-syncer": {
             "post": {
                 "tags": [
@@ -889,13 +925,13 @@
                 "tags": [
                     "Session API"
                 ],
-                "description": "Delete session by userId",
+                "description": "Delete session for one user in one application.",
                 "operationId": "ApiController.DeleteSession",
                 "parameters": [
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id ( owner/name )(owner/name) of user.",
+                        "description": "The id(organization/application/user) of session",
                         "required": true,
                         "type": "string"
                     }
@@ -1233,7 +1269,7 @@
             }
         },
         "/api/get-email-and-phone": {
-            "post": {
+            "get": {
                 "tags": [
                     "User API"
                 ],
@@ -1306,7 +1342,7 @@
             }
         },
         "/api/get-ldap": {
-            "post": {
+            "get": {
                 "tags": [
                     "Account API"
                 ],
@@ -1322,7 +1358,7 @@
             }
         },
         "/api/get-ldaps": {
-            "post": {
+            "get": {
                 "tags": [
                     "Account API"
                 ],
@@ -1884,12 +1920,41 @@
                 }
             }
         },
+        "/api/get-session": {
+            "get": {
+                "tags": [
+                    "Session API"
+                ],
+                "description": "Get session for one user in one application.",
+                "operationId": "ApiController.GetSingleSession",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id(organization/application/user) of session",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/get-sessions": {
             "get": {
                 "tags": [
                     "Session API"
                 ],
-                "description": "Get organization user sessions",
+                "description": "Get organization user sessions.",
                 "operationId": "ApiController.GetSessions",
                 "parameters": [
                     {
@@ -2351,6 +2416,42 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/is-session-duplicated": {
+            "get": {
+                "tags": [
+                    "Session API"
+                ],
+                "description": "Check if there are other different sessions for one user in one application.",
+                "operationId": "ApiController.IsSessionDuplicated",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id(organization/application/user) of session",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sessionId",
+                        "description": "sessionId to be checked",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -3224,6 +3325,35 @@
                 }
             }
         },
+        "/api/update-session": {
+            "post": {
+                "tags": [
+                    "Session API"
+                ],
+                "description": "Update session for one user in one application.",
+                "operationId": "ApiController.UpdateSession",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id(organization/application/user) of session",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/update-syncer": {
             "post": {
                 "tags": [
@@ -3505,11 +3635,11 @@
         }
     },
     "definitions": {
-        "2346.0xc0001ce990.false": {
+        "2346.0xc000278ab0.false": {
             "title": "false",
             "type": "object"
         },
-        "2381.0xc0001ce9c0.false": {
+        "2381.0xc000278ae0.false": {
             "title": "false",
             "type": "object"
         },
@@ -3566,6 +3696,9 @@
                 "code": {
                     "type": "string"
                 },
+                "countryCode": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -3597,9 +3730,6 @@
                     "type": "string"
                 },
                 "phoneCode": {
-                    "type": "string"
-                },
-                "phonePrefix": {
                     "type": "string"
                 },
                 "provider": {
@@ -3636,10 +3766,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2346.0xc0001ce990.false"
+                    "$ref": "#/definitions/2346.0xc000278ab0.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2381.0xc0001ce9c0.false"
+                    "$ref": "#/definitions/2381.0xc000278ae0.false"
                 },
                 "msg": {
                     "type": "string"
@@ -4091,6 +4221,12 @@
                         "$ref": "#/definitions/object.AccountItem"
                     }
                 },
+                "countryCodes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "createdTime": {
                     "type": "string"
                 },
@@ -4135,9 +4271,6 @@
                     "type": "string"
                 },
                 "passwordType": {
-                    "type": "string"
-                },
-                "phonePrefix": {
                     "type": "string"
                 },
                 "tags": {
@@ -4904,6 +5037,9 @@
                     "type": "string"
                 },
                 "cloudfoundry": {
+                    "type": "string"
+                },
+                "countryCode": {
                     "type": "string"
                 },
                 "createdIp": {

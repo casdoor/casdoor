@@ -38,6 +38,7 @@ export const CaptchaModal = ({
   const [captchaToken, setCaptchaToken] = React.useState("");
   const [secret, setSecret] = React.useState(clientSecret);
   const [secret2, setSecret2] = React.useState(clientSecret2);
+  const defaultInputRef = React.useRef(null);
 
   useEffect(() => {
     setVisible(() => {
@@ -67,6 +68,8 @@ export const CaptchaModal = ({
       if (captchaType === "Default") {
         setSecret(res.captchaId);
         setCaptchaImg(res.captchaImage);
+
+        defaultInputRef.current?.focus();
       } else {
         setSecret(res.clientSecret);
         setSecret2(res.clientSecret2);
@@ -76,28 +79,31 @@ export const CaptchaModal = ({
 
   const renderDefaultCaptcha = () => {
     return (
-      <Col>
-        <Row
-          style={{
-            backgroundImage: `url('data:image/png;base64,${captchaImg}')`,
-            backgroundRepeat: "no-repeat",
-            height: "80px",
-            width: "200px",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-            marginBottom: 10,
-          }}
-        />
-        <Row>
-          <Input
-            autoFocus
-            value={captchaToken}
-            prefix={<SafetyOutlined />}
-            placeholder={i18next.t("general:Captcha")}
-            onPressEnter={handleOk}
-            onChange={(e) => setCaptchaToken(e.target.value)}
+      <Col style={{textAlign: "center"}}>
+        <div style={{display: "inline-block"}}>
+          <Row
+            style={{
+              backgroundImage: `url('data:image/png;base64,${captchaImg}')`,
+              backgroundRepeat: "no-repeat",
+              height: "80px",
+              width: "200px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+              marginBottom: "20px",
+            }}
           />
-        </Row>
+          <Row>
+            <Input
+              ref={defaultInputRef}
+              style={{width: "200px"}}
+              value={captchaToken}
+              prefix={<SafetyOutlined />}
+              placeholder={i18next.t("general:Captcha")}
+              onPressEnter={handleOk}
+              onChange={(e) => setCaptchaToken(e.target.value)}
+            />
+          </Row>
+        </div>
       </Col>
     );
   };
@@ -129,14 +135,22 @@ export const CaptchaModal = ({
   };
 
   const renderFooter = () => {
+    let isOkDisabled = false;
+    if (captchaType === "Default") {
+      const regex = /^\d{5}$/;
+      if (!regex.test(captchaToken)) {
+        isOkDisabled = true;
+      }
+    }
+
     if (canCancel) {
       return [
         <Button key="cancel" onClick={handleCancel}>{i18next.t("user:Cancel")}</Button>,
-        <Button key="ok" type="primary" onClick={handleOk}>{i18next.t("user:OK")}</Button>,
+        <Button key="ok" disabled={isOkDisabled} type="primary" onClick={handleOk}>{i18next.t("user:OK")}</Button>,
       ];
     } else {
       return [
-        <Button key="ok" type="primary" onClick={handleOk}>{i18next.t("user:OK")}</Button>,
+        <Button key="ok" disabled={isOkDisabled} type="primary" onClick={handleOk}>{i18next.t("user:OK")}</Button>,
       ];
     }
   };
@@ -152,7 +166,11 @@ export const CaptchaModal = ({
         width={348}
         footer={renderFooter()}
       >
-        {renderCheck()}
+        <div style={{marginTop: "20px", marginBottom: "50px"}}>
+          {
+            renderCheck()
+          }
+        </div>
       </Modal>
     </React.Fragment>
   );

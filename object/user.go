@@ -172,8 +172,8 @@ type Userinfo struct {
 	Sub         string `json:"sub"`
 	Iss         string `json:"iss"`
 	Aud         string `json:"aud"`
-	Name        string `json:"name,omitempty"`
-	DisplayName string `json:"preferred_username,omitempty"`
+	Name        string `json:"preferred_username,omitempty"`
+	DisplayName string `json:"name,omitempty"`
 	Email       string `json:"email,omitempty"`
 	Avatar      string `json:"picture,omitempty"`
 	Address     string `json:"address,omitempty"`
@@ -449,7 +449,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 	if len(columns) == 0 {
 		columns = []string{
 			"owner", "display_name", "avatar",
-			"location", "address", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "signup_application",
+			"location", "address", "country_code", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "signup_application",
 			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
 			"signin_wrong_times", "last_signin_wrong_time",
 		}
