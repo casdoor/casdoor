@@ -228,7 +228,7 @@ class LoginPage extends React.Component {
               Setting.goToLinkSoft(ths, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
             }
           } else {
-            Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
+            Setting.showMessage("error", `${i18next.t("application:Failed to log in")}: ${res.msg}`);
           }
         });
     } else {
@@ -291,7 +291,7 @@ class LoginPage extends React.Component {
             window.location.href = newUrl.toString();
           }
         } else {
-          Setting.showMessage("error", `Failed to log in: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("application:Failed to log in")}: ${res.msg}`);
         }
       });
     } else {
@@ -329,7 +329,7 @@ class LoginPage extends React.Component {
               }
             }
           } else {
-            Setting.showMessage("error", `Failed to log in: ${res.msg}`);
+            Setting.showMessage("error", `${i18next.t("application:Failed to log in")}: ${res.msg}`);
           }
         });
     }

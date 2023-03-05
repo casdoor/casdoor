@@ -38,6 +38,7 @@
     "Enable signin session - Tooltip": "Enable signin session - Tooltip",
     "Enable signup": "Habilitar nuevos registros",
     "Enable signup - Tooltip": "Habilitar nuevos registros - Tooltip",
+    "Failed to log in": "Failed to log in",
     "Failed to sign in": "Failed to sign in",
     "File uploaded successfully": "El archivo ha sido subido con éxito",
     "Follow organization theme": "Follow organization theme",
@@ -311,6 +312,7 @@
     "No account?": "¿No estás registrado?",
     "Or sign in with another account": "O inicia sesión con otra cuenta",
     "Password": "Contraseña",
+    "Password - Tooltip": "Password - Tooltip",
     "Please input your Email or Phone!": "Please input your Email or Phone!",
     "Please input your code!": "¡Por favor ingrese su código!",
     "Please input your password!": "¡Por favor ingrese su contraseña!",
@@ -653,6 +655,7 @@
     "The input is not valid Email!": "El valor ingresado no es un Email válido!",
     "The input is not valid Phone!": "El valor ingresado no es un Teléfono válido!",
     "Username": "Nombre de usuario",
+    "Username - Tooltip": "Username - Tooltip",
     "Your account has been created!": "¡Tu cuenta ha sido creada!",
     "Your confirmed password is inconsistent with the password!": "¡La confirmación de su contraseña es inconsistente!",
     "sign in now": "iniciar sesión ahora"

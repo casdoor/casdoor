@@ -38,6 +38,7 @@
     "Enable signin session - Tooltip": "Enable signin session - Tooltip",
     "Enable signup": "サインアップを有効にする",
     "Enable signup - Tooltip": "Whether to allow users to sign up",
+    "Failed to log in": "Failed to log in",
     "Failed to sign in": "Failed to sign in",
     "File uploaded successfully": "ファイルが正常にアップロードされました",
     "Follow organization theme": "Follow organization theme",
@@ -311,6 +312,7 @@
     "No account?": "アカウントがありませんか？",
     "Or sign in with another account": "または別のアカウントでサインイン",
     "Password": "パスワード",
+    "Password - Tooltip": "Password - Tooltip",
     "Please input your Email or Phone!": "Please input your Email or Phone!",
     "Please input your code!": "コードを入力してください！",
     "Please input your password!": "パスワードを入力してください！",
@@ -653,6 +655,7 @@
     "The input is not valid Email!": "入力されたメールアドレスが無効です！",
     "The input is not valid Phone!": "入力された電話番号が正しくありません！",
     "Username": "ユーザー名",
+    "Username - Tooltip": "Username - Tooltip",
     "Your account has been created!": "あなたのアカウントが作成されました！",
     "Your confirmed password is inconsistent with the password!": "確認されたパスワードがパスワードと一致していません！",
     "sign in now": "今すぐサインイン"
