@@ -78,14 +78,17 @@ func GetServerId(engin *xorm.Engine) (uint32, error) {
 	if err != nil {
 		return 0, err
 	}
+	serverId, _ := strconv.ParseUint(fmt.Sprintf("%s", res[0]["@@server_id"]), 10, 32)
+	return uint32(serverId), nil
+}
 
-	for _, row := range res {
-		for _, item := range row {
-			serverId, _ := strconv.ParseUint(fmt.Sprintf("%s", item), 10, 32)
-			return uint32(serverId), nil
-		}
+func GetServerUUID(engin *xorm.Engine) (string, error) {
+	res, err := engin.QueryString("show variables like 'server_uuid'")
+	if err != nil {
+		return "", err
 	}
-	return 0, err
+	serverUUID := fmt.Sprintf("%s", res[0]["Value"])
+	return serverUUID, err
 }
 
 func GetPKColumnNames(columnNames []string, PKColumns []int) []string {

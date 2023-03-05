@@ -35,6 +35,8 @@ var (
 	engin2          *xorm.Engine
 	serverId1       uint32
 	serverId2       uint32
+	serverUUID1     string
+	serverUUID2     string
 )
 
 func InitConfig() (*canal.Config, *canal.Config) {
@@ -49,6 +51,10 @@ func InitConfig() (*canal.Config, *canal.Config) {
 	// get serverId
 	serverId1, _ = GetServerId(engin1)
 	serverId2, _ = GetServerId(engin2)
+
+	// get server uuid
+	serverUUID1, _ = GetServerUUID(engin1)
+	serverUUID2, _ = GetServerUUID(engin2)
 
 	// config canal1
 	cfg1 := canal.NewDefaultConfig()
@@ -133,17 +139,19 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 
 	if e.Header.ServerID == serverId1 {
 		engin = engin2
-		if strings.Contains(GTID, "92fcbc2d-aaa2-11ed-a1c2-00163e08698e") {
+		if strings.Contains(GTID, serverUUID2) {
 			return nil
 		}
 	} else if e.Header.ServerID == serverId2 {
-		if strings.Contains(GTID, "a95cbaa8-aaac-11ed-b110-00163e1d3d4e") {
+		if strings.Contains(GTID, serverUUID1) {
 			return nil
 		}
 		engin = engin1
 	}
+
 	// Set the next gtid of the target library to the gtid of the current target library to avoid loopbacks
 	engin.Exec(fmt.Sprintf("SET GTID_NEXT= '%s'", GTID))
+
 	length := len(e.Table.Columns)
 	columnNames := make([]string, length)
 	oldColumnValue := make([]interface{}, length)
@@ -187,15 +195,12 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 			if i%2 == 1 {
 				pkColumnValue := GetPKColumnValues(oldColumnValue, e.Table.PKColumns)
 				updateSql, args, err := GetUpdateSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue, pkColumnNames, pkColumnValue)
-
 				if err != nil {
 					return err
 				}
 
 				res, err := engin.DB().Exec(updateSql, args...)
-
 				if err != nil {
-					log.Info(err)
 					return err
 				}
 				log.Info(updateSql, args, res)
@@ -222,7 +227,6 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 
 			res, err := engin.DB().Exec(deleteSql, args...)
 			if err != nil {
-				log.Info(err)
 				return err
 			}
 			log.Info(deleteSql, args, res)
@@ -251,7 +255,6 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 
 			res, err := engin.DB().Exec(insertSql, args...)
 			if err != nil {
-				log.Info(err)
 				return err
 			}
 			log.Info(insertSql, args, res)
