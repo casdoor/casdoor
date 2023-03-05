@@ -231,24 +231,20 @@ func (c *ApiController) DeleteUser() {
 // @Param   username    formData   string  true        "The username of the user"
 // @Param   organization    formData   string  true        "The organization of the user"
 // @Success 200 {object} controllers.Response The Response object
-// @router /get-email-and-phone [post]
+// @router /get-email-and-phone [get]
 func (c *ApiController) GetEmailAndPhone() {
-	var form RequestForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
+	organization := c.Ctx.Request.Form.Get("organization")
+	username := c.Ctx.Request.Form.Get("username")
 
-	user := object.GetUserByFields(form.Organization, form.Username)
+	user := object.GetUserByFields(organization, username)
 	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(form.Organization, form.Username)))
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(organization, username)))
 		return
 	}
 
 	respUser := object.User{Name: user.Name}
 	var contentType string
-	switch form.Username {
+	switch username {
 	case user.Email:
 		contentType = "email"
 		respUser.Email = user.Email
@@ -281,7 +277,7 @@ func (c *ApiController) SetPassword() {
 	newPassword := c.Ctx.Request.Form.Get("newPassword")
 
 	requestUserId := c.GetSessionUsername()
-	userId := fmt.Sprintf("%s/%s", userOwner, userName)
+	userId := util.GetId(userOwner, userName)
 
 	hasPermission, err := object.CheckUserPermission(requestUserId, userId, userOwner, true, c.GetAcceptLanguage())
 	if !hasPermission {
@@ -311,8 +307,7 @@ func (c *ApiController) SetPassword() {
 
 	targetUser.Password = newPassword
 	object.SetUserField(targetUser, "password", targetUser.Password)
-	c.Data["json"] = Response{Status: "ok"}
-	c.ServeJSON()
+	c.ResponseOk()
 }
 
 // CheckUserPassword

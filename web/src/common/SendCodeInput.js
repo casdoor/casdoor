@@ -22,7 +22,7 @@ import {CaptchaWidget} from "./CaptchaWidget";
 const {Search} = Input;
 
 export const SendCodeInput = (props) => {
-  const {disabled, textBefore, onChange, onButtonClickArgs, application, method} = props;
+  const {disabled, textBefore, onChange, onButtonClickArgs, application, method, countryCode} = props;
   const [visible, setVisible] = React.useState(false);
   const [key, setKey] = React.useState("");
   const [captchaImg, setCaptchaImg] = React.useState("");
@@ -53,7 +53,7 @@ export const SendCodeInput = (props) => {
   const handleOk = () => {
     setVisible(false);
     setButtonLoading(true);
-    UserBackend.sendCode(checkType, checkId, key, method, ...onButtonClickArgs).then(res => {
+    UserBackend.sendCode(checkType, checkId, key, method, countryCode, ...onButtonClickArgs).then(res => {
       setKey("");
       setButtonLoading(false);
       if (res) {
@@ -70,7 +70,7 @@ export const SendCodeInput = (props) => {
   const loadCaptcha = () => {
     UserBackend.getCaptcha(application.owner, application.name, false).then(res => {
       if (res.type === "none") {
-        UserBackend.sendCode("none", "", "", method, ...onButtonClickArgs).then(res => {
+        UserBackend.sendCode("none", "", "", method, countryCode, ...onButtonClickArgs).then(res => {
           if (res) {
             handleCountDown(60);
           }

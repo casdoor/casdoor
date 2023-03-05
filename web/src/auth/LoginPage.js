@@ -378,6 +378,13 @@ class LoginPage extends React.Component {
     }
 
     if (application.enablePassword) {
+      let loginWidth = 320;
+      if (Setting.getLanguage() === "fr") {
+        loginWidth += 10;
+      } else if (Setting.getLanguage() === "es") {
+        loginWidth += 40;
+      }
+
       return (
         <Form
           name="normal_login"
@@ -391,7 +398,7 @@ class LoginPage extends React.Component {
           onFinish={(values) => {
             this.onFinish(values);
           }}
-          style={{width: "300px"}}
+          style={{width: `${loginWidth}px`}}
           size="large"
           ref={this.form}
         >

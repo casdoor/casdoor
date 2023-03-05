@@ -188,7 +188,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 	checkDest := dest
 	organization := object.GetOrganizationByUser(user)
 	if destType == "phone" {
-		if object.HasUserByField(user.Owner, "phone", user.Phone) {
+		if object.HasUserByField(user.Owner, "phone", dest) {
 			c.ResponseError(c.T("check:Phone already exists"))
 			return
 		}
@@ -208,7 +208,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 			return
 		}
 	} else if destType == "email" {
-		if object.HasUserByField(user.Owner, "email", user.Email) {
+		if object.HasUserByField(user.Owner, "email", dest) {
 			c.ResponseError(c.T("check:Email already exists"))
 			return
 		}

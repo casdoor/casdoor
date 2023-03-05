@@ -211,6 +211,10 @@ func GetAccountItemByName(name string, organization *Organization) *AccountItem 
 }
 
 func CheckAccountItemModifyRule(accountItem *AccountItem, user *User, lang string) (bool, string) {
+	if accountItem == nil {
+		return true, ""
+	}
+
 	switch accountItem.ModifyRule {
 	case "Admin":
 		if user == nil || !user.IsAdmin && !user.IsGlobalAdmin {
