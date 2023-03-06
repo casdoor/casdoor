@@ -101,6 +101,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_smsbao.png`,
       url: "https://www.smsbao.com/",
     },
+    "SUBMAIL SMS": {
+      logo: `${StaticBaseUrl}/img/social_submail.svg`,
+      url: "https://www.mysubmail.com",
+    },
     "Mock SMS": {
       logo: `${StaticBaseUrl}/img/social_default.png`,
       url: "",
