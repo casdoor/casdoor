@@ -96,7 +96,7 @@ jobs:
 
       - name: Fetch Previous version
         id: get-previous-tag
-        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
+        uses: actions-ecosystem/action-get-latest-tag@v1
 
       - name: Release
         run: yarn global add semantic-release@17.4.4 && semantic-release
@@ -105,7 +105,7 @@ jobs:
 
       - name: Fetch Current version
         id: get-current-tag
-        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
+        uses: actions-ecosystem/action-get-latest-tag@v1
 
       - name: Decide Should_Push Or Not
         id: should_push
