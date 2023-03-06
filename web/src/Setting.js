@@ -887,6 +887,7 @@ export function getProviderTypeOptions(category) {
         {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
         {id: "Twilio SMS", name: "Twilio SMS"},
         {id: "SmsBao SMS", name: "SmsBao SMS"},
+        {id: "SUBMAIL SMS", name: "SUBMAIL SMS"},
       ]
     );
   } else if (category === "Storage") {
