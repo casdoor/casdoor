@@ -19,6 +19,8 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/go-mysql-org/go-mysql/canal"
+
 	"github.com/Masterminds/squirrel"
 	"github.com/xorm-io/xorm"
 )
@@ -105,4 +107,24 @@ func GetPKColumnValues(columnValues []interface{}, PKColumns []int) []interface{
 		pkColumnNames[i] = columnValues[index]
 	}
 	return pkColumnNames
+}
+
+func GetCanalConfig(username string, password string, host string, port int, database string) *canal.Config {
+	// config canal
+	cfg := canal.NewDefaultConfig()
+	cfg.Addr = fmt.Sprintf("%s:%d", host, port)
+	cfg.Password = password
+	cfg.User = username
+	// We only care table in database1
+	cfg.Dump.TableDB = database
+	return cfg
+}
+
+func GetMyEventHandler(username string, password string, host string, port int, database string) MyEventHandler {
+	var eventHandler MyEventHandler
+	eventHandler.dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username, password, host, port, database)
+	eventHandler.engine, _ = CreateEngine(eventHandler.dataSourceName)
+	eventHandler.serverId, _ = GetServerId(eventHandler.engine)
+	eventHandler.serverUUID, _ = GetServerUUID(eventHandler.engine)
+	return eventHandler
 }
