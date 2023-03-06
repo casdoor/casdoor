@@ -1,26 +1,29 @@
 name: Build
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
-
   go-tests:
     name: Running Go tests
     runs-on: ubuntu-latest
     services:
       mysql:
-          image: mysql:5.7
-          env:
-            MYSQL_DATABASE: casdoor
-            MYSQL_ROOT_PASSWORD: 123456
-          ports:
-              - 3306:3306
-          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: casdoor
+          MYSQL_ROOT_PASSWORD: 123456
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: '^1.16.5'
+          go-version: "^1.16.5"
       - name: Tests
         run: |
           go test -v $(go list ./...) -tags skipCi
@@ -29,7 +32,7 @@ jobs:
   frontend:
     name: Front-end
     runs-on: ubuntu-latest
-    needs: [ go-tests ]
+    needs: [go-tests]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -45,12 +48,12 @@ jobs:
   backend:
     name: Back-end
     runs-on: ubuntu-latest
-    needs: [ go-tests ]
+    needs: [go-tests]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: '^1.16.5'
+          go-version: "^1.16.5"
       - run: go version
       - name: Build
         run: |
@@ -60,16 +63,16 @@ jobs:
   linter:
     name: Go-Linter
     runs-on: ubuntu-latest
-    needs: [ go-tests ]
+    needs: [go-tests]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
-          go-version: '^1.16.5'
+          go-version: "^1.16.5"
 
       # gen a dummy config file
       - run: touch dummy.yml
-      
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -79,11 +82,11 @@ jobs:
   release-and-push:
     name: Release And Push
     runs-on: ubuntu-latest
-    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
-    needs: [ frontend, backend, linter ]
+    if: github.repository == 'weechip/casdoor' && github.event_name == 'push'
+    needs: [frontend, backend, linter]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Setup Node.js
@@ -134,27 +137,19 @@ jobs:
         with:
           version: latest
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v1
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
+      - name: Log in to Aliyun Container Registry
+        uses: docker/login-action@v2
+        if: github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          registry: registry.ap-southeast-1.aliyuncs.com
+          username: ${{ secrets.ALIYUNCONTAINERREGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUNCONTAINERREGISTRY_PASSWORD }}
 
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v3
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
+      - name: Push to Aliyun Container Registry
+        uses: docker/build-push-action@v4
+        if: github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           target: STANDARD
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
-
-      - name: Push All In One Version to Docker Hub
-        uses: docker/build-push-action@v3
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
-        with:
-          target: ALLINONE
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
+          tags: weechip/casdoor:${{steps.get-current-tag.outputs.tag }},weechip/casdoor:latest
