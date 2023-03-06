@@ -101,7 +101,7 @@ jobs:
       - name: Release
         run: yarn global add semantic-release@17.4.4 && semantic-release
         env:
-          GH_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
 
       - name: Fetch Current version
         id: get-current-tag
