@@ -11,7 +11,7 @@ require (
 	github.com/beego/beego v1.12.11
 	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin/v2 v2.30.1
-	github.com/casdoor/go-sms-sender v0.5.2
+	github.com/casdoor/go-sms-sender v0.6.1
 	github.com/casdoor/gomail/v2 v2.0.1
 	github.com/casdoor/oss v1.2.0
 	github.com/casdoor/xorm-adapter/v3 v3.0.4

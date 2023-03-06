@@ -101,6 +101,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_smsbao.png`,
       url: "https://www.smsbao.com/",
     },
+    "SUBMAIL SMS": {
+      logo: `${StaticBaseUrl}/img/social_submail.svg`,
+      url: "https://www.mysubmail.com",
+    },
     "Mock SMS": {
       logo: `${StaticBaseUrl}/img/social_default.png`,
       url: "",
@@ -887,6 +891,7 @@ export function getProviderTypeOptions(category) {
         {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
         {id: "Twilio SMS", name: "Twilio SMS"},
         {id: "SmsBao SMS", name: "SmsBao SMS"},
+        {id: "SUBMAIL SMS", name: "SUBMAIL SMS"},
       ]
     );
   } else if (category === "Storage") {
