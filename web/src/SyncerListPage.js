@@ -233,7 +233,7 @@ class SyncerListPage extends BaseListPage {
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.runSyncer(index)}>{i18next.t("general:Sync")}</Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/syncers/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
-                title={`Sure to delete syncer: ${record.name} ?`}
+                title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteSyncer(index)}
               >
                 <Button style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
