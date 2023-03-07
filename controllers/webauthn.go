@@ -21,8 +21,8 @@ import (
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-	"github.com/duo-labs/webauthn/protocol"
-	"github.com/duo-labs/webauthn/webauthn"
+	"github.com/go-webauthn/webauthn/protocol"
+	"github.com/go-webauthn/webauthn/webauthn"
 )
 
 // WebAuthnSignupBegin
