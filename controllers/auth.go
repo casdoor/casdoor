@@ -60,12 +60,12 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	userId := user.GetId()
 
 	allowed, err := object.CheckAccessPermission(userId, application)
-	if err != nil {
-		c.ResponseError(err.Error(), nil)
-		return
-	}
 	if !allowed {
-		c.ResponseError(c.T("auth:Unauthorized operation"))
+		if err != nil {
+			c.ResponseError(fmt.Sprintf("%s: %s", c.T("auth:Unauthorized operation"), err.Error()))
+		} else {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+		}
 		return
 	}
 
