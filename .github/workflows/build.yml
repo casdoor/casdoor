@@ -125,7 +125,6 @@ jobs:
               
           else
               echo ::set-output name=push::'false'
-              
           fi
 
       - name: Set up QEMU
