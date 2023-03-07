@@ -16,6 +16,7 @@ import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
+import {StyleProvider} from "@ant-design/cssinjs";
 import {BarsOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
 import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
@@ -729,9 +730,11 @@ class App extends Component {
           },
           algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
         }}>
-          {
-            this.renderPage()
-          }
+          <StyleProvider hashPriority="high">
+            {
+              this.renderPage()
+            }
+          </StyleProvider>
         </ConfigProvider>
       </React.Fragment>
     );

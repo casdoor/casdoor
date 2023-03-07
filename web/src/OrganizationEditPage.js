@@ -184,20 +184,19 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Supported country code"), i18next.t("general:Supported country code - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Supported country codes"), i18next.t("general:Supported country codes - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} mode={"multiple"} style={{width: "100%"}} value={this.state.organization.countryCodes ?? []}
-              options={Setting.getCountriesData().map(country => {
-                return Setting.getOption(
-                  <>
-                    {Setting.countryFlag(country)}
-                    {`${country.name} +${country.phone}`}
-                  </>,
-                  country.code);
-              })} onChange={value => {
+              onChange={value => {
                 this.updateOrganizationField("countryCodes", value);
-              }} />
+              }}
+              filterOption={(input, option) => (option?.text ?? "").toLowerCase().includes(input.toLowerCase())}
+            >
+              {
+                Setting.getCountryCodeData().map((country) => Setting.getCountryCodeOption(country))
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

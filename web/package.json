@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/cssinjs": "^1.5.6",
     "@ant-design/icons": "^4.7.0",
     "@craco/craco": "^6.4.5",
     "@crowdin/cli": "^3.7.10",

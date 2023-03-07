@@ -31,6 +31,16 @@ import (
 
 const AliyunCaptchaVerifyUrl = "http://afs.aliyuncs.com"
 
+type captchaSuccessResponse struct {
+	Code int    `json:"Code"`
+	Msg  string `json:"Msg"`
+}
+
+type captchaFailResponse struct {
+	Code    string `json:"Code"`
+	Message string `json:"Message"`
+}
+
 type AliyunCaptchaProvider struct{}
 
 func NewAliyunCaptchaProvider() *AliyunCaptchaProvider {
@@ -85,19 +95,20 @@ func (captcha *AliyunCaptchaProvider) VerifyCaptcha(token, clientSecret string) 
 		return false, err
 	}
 
-	type captchaResponse struct {
-		Code int    `json:"Code"`
-		Msg  string `json:"Msg"`
-	}
-	captchaResp := &captchaResponse{}
+	return handleCaptchaResponse(body)
+}
 
-	err = json.Unmarshal(body, captchaResp)
+func handleCaptchaResponse(body []byte) (bool, error) {
+	captchaResp := &captchaSuccessResponse{}
+	err := json.Unmarshal(body, captchaResp)
 	if err != nil {
-		return false, err
-	}
+		captchaFailResp := &captchaFailResponse{}
+		err = json.Unmarshal(body, captchaFailResp)
+		if err != nil {
+			return false, err
+		}
 
-	if captchaResp.Code != 100 {
-		return false, errors.New(captchaResp.Msg)
+		return false, errors.New(captchaFailResp.Message)
 	}
 
 	return true, nil

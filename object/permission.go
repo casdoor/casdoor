@@ -80,7 +80,6 @@ func (p *PermissionRule) GetRequest(adapterName string, permissionId string) ([]
 		if p.V5 != "" {
 			return nil, fmt.Errorf("too many parameters. The maximum parameter number cannot exceed %d", builtInAvailableField)
 		}
-		request = append(request, permissionId)
 		return request, nil
 	} else {
 		if p.V5 != "" {
@@ -243,6 +242,10 @@ func GetPermissionsByUser(userId string) []*Permission {
 	err := adapter.Engine.Where("users like ?", "%"+userId+"%").Find(&permissions)
 	if err != nil {
 		panic(err)
+	}
+
+	for i := range permissions {
+		permissions[i].Users = nil
 	}
 
 	return permissions

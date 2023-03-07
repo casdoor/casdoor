@@ -43,7 +43,7 @@ type Payment struct {
 	PayUrl    string `xorm:"varchar(2000)" json:"payUrl"`
 	ReturnUrl string `xorm:"varchar(1000)" json:"returnUrl"`
 	State     string `xorm:"varchar(100)" json:"state"`
-	Message   string `xorm:"varchar(1000)" json:"message"`
+	Message   string `xorm:"varchar(2000)" json:"message"`
 
 	PersonName    string `xorm:"varchar(100)" json:"personName"`
 	PersonIdCard  string `xorm:"varchar(100)" json:"personIdCard"`

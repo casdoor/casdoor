@@ -109,12 +109,13 @@ export function setPassword(userOwner, userName, oldPassword, newPassword) {
   }).then(res => res.json());
 }
 
-export function sendCode(checkType, checkId, checkKey, method, dest, type, applicationId, checkUser = "") {
+export function sendCode(checkType, captchaToken, clientSecret, method, countryCode = "", dest, type, applicationId, checkUser = "") {
   const formData = new FormData();
   formData.append("checkType", checkType);
-  formData.append("checkId", checkId);
-  formData.append("checkKey", checkKey);
+  formData.append("captchaToken", captchaToken);
+  formData.append("clientSecret", clientSecret);
   formData.append("method", method);
+  formData.append("countryCode", countryCode);
   formData.append("dest", dest);
   formData.append("type", type);
   formData.append("applicationId", applicationId);

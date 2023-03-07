@@ -20,6 +20,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -97,8 +98,11 @@ func (c *ApiController) SendEmail() {
 		return
 	}
 
+	code := "123456"
+	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
+	content := fmt.Sprintf(emailForm.Content, code)
 	for _, receiver := range emailForm.Receivers {
-		err = object.SendEmail(provider, emailForm.Title, emailForm.Content, receiver, emailForm.Sender)
+		err = object.SendEmail(provider, emailForm.Title, content, receiver, emailForm.Sender)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -130,18 +134,9 @@ func (c *ApiController) SendSms() {
 		return
 	}
 
-	var invalidReceivers []string
-	for idx, receiver := range smsForm.Receivers {
-		// The receiver phone format: E164 like +8613854673829 +441932567890
-		if !util.IsPhoneValid(receiver, "") {
-			invalidReceivers = append(invalidReceivers, receiver)
-		} else {
-			smsForm.Receivers[idx] = receiver
-		}
-	}
-
+	invalidReceivers := getInvalidSmsReceivers(smsForm)
 	if len(invalidReceivers) != 0 {
-		c.ResponseError(fmt.Sprintf(c.T("service:Invalid phone receivers: %s"), invalidReceivers))
+		c.ResponseError(fmt.Sprintf(c.T("service:Invalid phone receivers: %s"), strings.Join(invalidReceivers, ", ")))
 		return
 	}
 

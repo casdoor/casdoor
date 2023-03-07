@@ -36,11 +36,10 @@ export function signup(values) {
   }).then(res => res.json());
 }
 
-export function getEmailAndPhone(values) {
-  return fetch(`${authConfig.serverUrl}/api/get-email-and-phone`, {
-    method: "POST",
+export function getEmailAndPhone(organization, username) {
+  return fetch(`${authConfig.serverUrl}/api/get-email-and-phone?organization=${organization}&username=${username}`, {
+    method: "GET",
     credentials: "include",
-    body: JSON.stringify(values),
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },

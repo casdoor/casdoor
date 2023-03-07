@@ -20,8 +20,8 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
-	"github.com/duo-labs/webauthn/protocol"
-	"github.com/duo-labs/webauthn/webauthn"
+	"github.com/go-webauthn/webauthn/protocol"
+	"github.com/go-webauthn/webauthn/webauthn"
 )
 
 func GetWebAuthnObject(host string) *webauthn.WebAuthn {

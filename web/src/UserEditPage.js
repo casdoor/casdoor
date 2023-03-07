@@ -29,7 +29,7 @@ import SelectRegionBox from "./SelectRegionBox";
 import WebAuthnCredentialTable from "./WebauthnCredentialTable";
 import ManagedAccountTable from "./ManagedAccountTable";
 import PropertyTable from "./propertyTable";
-import PhoneNumberInput from "./common/PhoneNumberInput";
+import {CountryCodeSelect} from "./common/CountryCodeSelect";
 
 const {Option} = Select;
 
@@ -136,6 +136,10 @@ class UserEditPage extends React.Component {
 
   isSelfOrAdmin() {
     return this.isSelf() || Setting.isAdminUser(this.props.account);
+  }
+
+  getCountryCode() {
+    return this.props.account.countryCode;
   }
 
   renderAccountItem(accountItem) {
@@ -285,21 +289,14 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
-            {Setting.isLocalAdminUser(this.props.account) ?
-              (<Input value={this.state.user.email}
-                style={{width: "280Px"}}
-                disabled={disabled}
-                onChange={e => {
-                  this.updateUserField("email", e.target.value);
-                }} />) :
-              (<Select virtual={false} value={this.state.user.email}
-                style={{width: "280Px"}}
-                options={[Setting.getItem(this.state.user.email, this.state.user.email)]}
-                disabled={disabled}
-                onChange={e => {
-                  this.updateUserField("email", e.target.value);
-                }} />)
-            }
+            <Input
+              value={this.state.user.email}
+              style={{width: "280Px"}}
+              disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
+              onChange={e => {
+                this.updateUserField("email", e.target.value);
+              }}
+            />
           </Col>
           <Col span={Setting.isMobile() ? 22 : 11} >
             {/* backend auto get the current user, so admin can not edit. Just self can reset*/}
@@ -314,34 +311,26 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
-            {Setting.isLocalAdminUser(this.props.account) ?
-              <Input.Group compact style={{width: "280Px"}}>
-                <PhoneNumberInput
-                  style={{width: "30%"}}
-                  value={this.state.user.countryCode}
-                  onChange={(value) => {
-                    this.updateUserField("countryCode", value);
-                  }}
-                  countryCodes={this.state.application?.organizationObj.countryCodes}
-                />
-                <Input value={this.state.user.phone}
-                  style={{width: "70%"}}
-                  disabled={disabled}
-                  onChange={e => {
-                    this.updateUserField("phone", e.target.value);
-                  }} />
-              </Input.Group>
-              :
-              (<Select virtual={false} value={this.state.user.phone === "" ? null : `+${Setting.getPhoneCodeFromCountryCode(this.state.user.countryCode)} ${this.state.user.phone}`}
-                options={this.state.user.phone === "" ? null : [Setting.getItem(`+${Setting.getPhoneCodeFromCountryCode(this.state.user.countryCode)} ${this.state.user.phone}`, this.state.user.phone)]}
-                disabled={disabled}
-                style={{width: "280px"}}
+            <Input.Group compact style={{width: "280Px"}}>
+              <CountryCodeSelect
+                style={{width: "30%"}}
+                // disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
+                value={this.state.user.countryCode}
+                onChange={(value) => {
+                  this.updateUserField("countryCode", value);
+                }}
+                countryCodes={this.state.application?.organizationObj.countryCodes}
+              />
+              <Input value={this.state.user.phone}
+                style={{width: "70%"}}
+                disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
                 onChange={e => {
                   this.updateUserField("phone", e.target.value);
-                }} />)}
+                }} />
+            </Input.Group>
           </Col>
           <Col span={Setting.isMobile() ? 24 : 11} >
-            {this.isSelf() ? (<ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
+            {this.isSelf() ? (<ResetModal application={this.state.application} countryCode={this.getCountryCode()} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
           </Col>
         </Row>
       );

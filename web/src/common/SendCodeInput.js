@@ -12,29 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Button, Col, Input, Modal, Row} from "antd";
+import {Button, Input} from "antd";
 import React from "react";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import {SafetyOutlined} from "@ant-design/icons";
-import {CaptchaWidget} from "./CaptchaWidget";
+import {CaptchaModal} from "./CaptchaModal";
 
 const {Search} = Input;
 
 export const SendCodeInput = (props) => {
-  const {disabled, textBefore, onChange, onButtonClickArgs, application, method} = props;
+  const {disabled, textBefore, onChange, onButtonClickArgs, application, method, countryCode} = props;
   const [visible, setVisible] = React.useState(false);
-  const [key, setKey] = React.useState("");
-  const [captchaImg, setCaptchaImg] = React.useState("");
-  const [checkType, setCheckType] = React.useState("");
-  const [checkId, setCheckId] = React.useState("");
+
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
-  const [buttonDisabled, setButtonDisabled] = React.useState(true);
-  const [clientId, setClientId] = React.useState("");
-  const [subType, setSubType] = React.useState("");
-  const [clientId2, setClientId2] = React.useState("");
-  const [clientSecret2, setClientSecret2] = React.useState("");
 
   const handleCountDown = (leftTime = 60) => {
     let leftTimeSecond = leftTime;
@@ -50,11 +42,10 @@ export const SendCodeInput = (props) => {
     setTimeout(countDown, 1000);
   };
 
-  const handleOk = () => {
+  const handleOk = (captchaType, captchaToken, clintSecret) => {
     setVisible(false);
     setButtonLoading(true);
-    UserBackend.sendCode(checkType, checkId, key, method, ...onButtonClickArgs).then(res => {
-      setKey("");
+    UserBackend.sendCode(captchaType, captchaToken, clintSecret, method, countryCode, ...onButtonClickArgs).then(res => {
       setButtonLoading(false);
       if (res) {
         handleCountDown(60);
@@ -64,76 +55,6 @@ export const SendCodeInput = (props) => {
 
   const handleCancel = () => {
     setVisible(false);
-    setKey("");
-  };
-
-  const loadCaptcha = () => {
-    UserBackend.getCaptcha(application.owner, application.name, false).then(res => {
-      if (res.type === "none") {
-        UserBackend.sendCode("none", "", "", method, ...onButtonClickArgs).then(res => {
-          if (res) {
-            handleCountDown(60);
-          }
-        });
-      } else if (res.type === "Default") {
-        setCheckId(res.captchaId);
-        setCaptchaImg(res.captchaImage);
-        setCheckType("Default");
-        setVisible(true);
-      } else {
-        setCheckType(res.type);
-        setClientId(res.clientId);
-        setCheckId(res.clientSecret);
-        setVisible(true);
-        setSubType(res.subType);
-        setClientId2(res.clientId2);
-        setClientSecret2(res.clientSecret2);
-      }
-    });
-  };
-
-  const renderCaptcha = () => {
-    return (
-      <Col>
-        <Row
-          style={{
-            backgroundImage: `url('data:image/png;base64,${captchaImg}')`,
-            backgroundRepeat: "no-repeat",
-            height: "80px",
-            width: "200px",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-            marginBottom: 10,
-          }}
-        />
-        <Row>
-          <Input autoFocus value={key} prefix={<SafetyOutlined />} placeholder={i18next.t("general:Captcha")} onPressEnter={handleOk} onChange={e => setKey(e.target.value)} />
-        </Row>
-      </Col>
-    );
-  };
-
-  const onSubmit = (token) => {
-    setButtonDisabled(false);
-    setKey(token);
-  };
-
-  const renderCheck = () => {
-    if (checkType === "Default") {
-      return renderCaptcha();
-    } else {
-      return (
-        <CaptchaWidget
-          captchaType={checkType}
-          subType={subType}
-          siteKey={clientId}
-          clientSecret={checkId}
-          onChange={onSubmit}
-          clientId2={clientId2}
-          clientSecret2={clientSecret2}
-        />
-      );
-    }
   };
 
   return (
@@ -149,25 +70,16 @@ export const SendCodeInput = (props) => {
             {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending Code") : i18next.t("code:Send Code")}
           </Button>
         }
-        onSearch={loadCaptcha}
+        onSearch={() => setVisible(true)}
       />
-      <Modal
-        closable={false}
-        maskClosable={false}
-        destroyOnClose={true}
-        title={i18next.t("general:Captcha")}
-        open={visible}
-        okText={i18next.t("user:OK")}
-        cancelText={i18next.t("user:Cancel")}
+      <CaptchaModal
+        owner={application.owner}
+        name={application.name}
+        visible={visible}
         onOk={handleOk}
         onCancel={handleCancel}
-        okButtonProps={{disabled: key.length !== 5 && buttonDisabled}}
-        width={348}
-      >
-        {
-          renderCheck()
-        }
-      </Modal>
+        isCurrentProvider={false}
+      />
     </React.Fragment>
   );
 };

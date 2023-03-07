@@ -37,7 +37,7 @@ class OrganizationListPage extends BaseListPage {
       defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       defaultApplication: "",
       tags: [],
-      languages: ["en", "zh", "es", "fr", "de", "ja", "ko", "ru", "vi"],
+      languages: Setting.Countries.map(item => item.key),
       masterPassword: "",
       enableSoftDeletion: false,
       isProfilePublic: true,
