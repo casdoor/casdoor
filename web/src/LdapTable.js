@@ -158,7 +158,7 @@ class LdapTable extends React.Component {
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
                 onClick={() => Setting.goToLink(`/ldap/${record.id}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
-                title={`Sure to delete LDAP Config: ${record.serverName} ?`}
+                title={i18next.t("general:Sure to delete") + `: ${record.serverName} ?`}
                 onConfirm={() => this.deleteRow(table, index)}
               >
                 <Button style={{marginBottom: "10px"}}
