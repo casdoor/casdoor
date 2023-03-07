@@ -207,7 +207,7 @@ class ProviderListPage extends BaseListPage {
             <div>
               <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/providers/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
-                title={`Sure to delete provider: ${record.name} ?`}
+                title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteProvider(index)}
               >
                 <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
