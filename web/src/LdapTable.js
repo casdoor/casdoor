@@ -154,9 +154,9 @@ class LdapTable extends React.Component {
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
                 type="primary"
-                onClick={() => Setting.goToLink(`/ldap/sync/${record.id}`)}>{i18next.t("ldap:Sync")}</Button>
+                onClick={() => Setting.goToLink(`/ldap/sync/${record.owner}/${record.id}`)}>{i18next.t("ldap:Sync")}</Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
-                onClick={() => Setting.goToLink(`/ldap/${record.id}`)}>{i18next.t("general:Edit")}</Button>
+                onClick={() => Setting.goToLink(`/ldap/${record.owner}/${record.id}`)}>{i18next.t("general:Edit")}</Button>
               <Popconfirm
                 title={`Sure to delete LDAP Config: ${record.serverName} ?`}
                 onConfirm={() => this.deleteRow(table, index)}

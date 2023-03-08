@@ -24,8 +24,8 @@ export function getLdaps(owner) {
   }).then(res => res.json());
 }
 
-export function getLdap(id) {
-  return fetch(`${Setting.ServerUrl}/api/get-ldap?id=${id}`, {
+export function getLdap(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/get-ldap?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
     headers: {
