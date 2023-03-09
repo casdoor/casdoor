@@ -12,11 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !skipCi
+// +build !skipCi
+
 package util
 
 import (
+	"path"
+	"runtime"
 	"testing"
 
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,4 +38,49 @@ func TestGetMemoryUsage(t *testing.T) {
 	used, total, err := GetMemoryUsage()
 	assert.Nil(t, err)
 	t.Log(used, total)
+}
+
+func TestGetGitRepoVersion(t *testing.T) {
+	commit, version, err := GetGitRepoVersion()
+	assert.Nil(t, err)
+	t.Log(commit, version)
+}
+
+func TestGetVersion(t *testing.T) {
+	_, filename, _, _ := runtime.Caller(0)
+	rootPath := path.Dir(path.Dir(filename))
+	r, err := git.PlainOpen(rootPath)
+	if err != nil {
+		t.Log(err)
+	}
+	tags, err := r.Tags()
+	if err != nil {
+		t.Log(err)
+	}
+	tagMap := make(map[plumbing.Hash]string)
+	err = tags.ForEach(func(t *plumbing.Reference) error {
+		// This technique should work for both lightweight and annotated tags.
+		revHash, err := r.ResolveRevision(plumbing.Revision(t.Name()))
+		if err != nil {
+			return err
+		}
+		tagMap[*revHash] = t.Name().Short()
+		return nil
+	})
+
+	testHash := plumbing.NewHash("16b1d0e1f001c1162a263ed50c1a892c947d5783")
+	cIter, err := r.Log(&git.LogOptions{From: testHash})
+
+	releaseVersion := ""
+	// iterates over the commits
+	err = cIter.ForEach(func(c *object.Commit) error {
+		tag, ok := tagMap[c.Hash]
+		if ok {
+			if releaseVersion == "" {
+				releaseVersion = tag
+			}
+		}
+		return nil
+	})
+	assert.Equal(t, "v1.260.0", releaseVersion)
 }
