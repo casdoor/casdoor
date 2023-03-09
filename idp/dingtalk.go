@@ -171,16 +171,16 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		AvatarUrl:   dtUserInfo.AvatarUrl,
 	}
 
-    corpAccessToken := idp.getInnerAppAccessToken()
-    userId, err := idp.getUserId(userInfo.UnionId, corpAccessToken)
-    if err != nil {
+	corpAccessToken := idp.getInnerAppAccessToken()
+	userId, err := idp.getUserId(userInfo.UnionId, corpAccessToken)
+	if err != nil {
 		return nil, err
 	}
 
-    corpEmail, err := idp.getUserCorpEmail(userId, corpAccessToken)
-    if err == nil && corpEmail != "" {
-        userInfo.Email = corpEmail
-    }
+	corpEmail, err := idp.getUserCorpEmail(userId, corpAccessToken)
+	if err == nil && corpEmail != "" {
+		userInfo.Email = corpEmail
+	}
 
 	return &userInfo, nil
 }
@@ -211,12 +211,12 @@ func (idp *DingTalkIdProvider) postWithBody(body interface{}, url string) ([]byt
 
 func (idp *DingTalkIdProvider) getInnerAppAccessToken() string {
 	body := make(map[string]string)
-    body["appKey"] = idp.Config.ClientID
-    body["appSecret"] = idp.Config.ClientSecret
-    respBytes, err := idp.postWithBody(body, "https://api.dingtalk.com/v1.0/oauth2/accessToken")
-    if err != nil {
+	body["appKey"] = idp.Config.ClientID
+	body["appSecret"] = idp.Config.ClientSecret
+	respBytes, err := idp.postWithBody(body, "https://api.dingtalk.com/v1.0/oauth2/accessToken")
+	if err != nil {
 		log.Println(err.Error())
-    }
+	}
 
 	var data struct {
 		ExpireIn    int    `json:"expireIn"`
@@ -224,58 +224,58 @@ func (idp *DingTalkIdProvider) getInnerAppAccessToken() string {
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-        log.Println(err.Error())
+		log.Println(err.Error())
 	}
 	return data.AccessToken
 }
 
 func (idp *DingTalkIdProvider) getUserId(unionId string, accessToken string) (string, error) {
-    body := make(map[string]string)
-    body["unionid"] = unionId
-    respBytes, err := idp.postWithBody(body, "https://oapi.dingtalk.com/topapi/user/getbyunionid?access_token="+accessToken)
-    if err != nil {
-        return nil, err
-    }
+	body := make(map[string]string)
+	body["unionid"] = unionId
+	respBytes, err := idp.postWithBody(body, "https://oapi.dingtalk.com/topapi/user/getbyunionid?access_token="+accessToken)
+	if err != nil {
+		return nil, err
+	}
 
-    var data struct {
-        ErrCode    int    `json:"errcode"`
-        ErrMessage string `json:"errmsg"`
-        Result     struct {
-            UserId string `json:"userid"`
-        } `json:"result"`
-    }
-    err = json.Unmarshal(respBytes, &data)
-    if err != nil {
-        return nil, err
-    }
-    if data.ErrCode == 60121 {
-        return nil, fmt.Errorf("the user is not found in the organization where clientId and clientSecret belong")
-    } else if data.ErrCode != 0 {
-        return nil, fmt.Errorf(data.ErrMessage)
-    }
-    return data.Result.UserId, nil
+	var data struct {
+		ErrCode    int    `json:"errcode"`
+		ErrMessage string `json:"errmsg"`
+		Result     struct {
+			UserId string `json:"userid"`
+		} `json:"result"`
+	}
+	err = json.Unmarshal(respBytes, &data)
+	if err != nil {
+		return nil, err
+	}
+	if data.ErrCode == 60121 {
+		return nil, fmt.Errorf("the user is not found in the organization where clientId and clientSecret belong")
+	} else if data.ErrCode != 0 {
+		return nil, fmt.Errorf(data.ErrMessage)
+	}
+	return data.Result.UserId, nil
 }
 
 func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken string) (string, error) {
-    body := make(map[string]string)
-    body["userid"] = userId
-    respBytes, err := idp.postWithBody(body, "https://oapi.dingtalk.com/topapi/v2/user/get?access_token="+accessToken)
-    if err != nil {
-        return nil, err
-    }
+	body := make(map[string]string)
+	body["userid"] = userId
+	respBytes, err := idp.postWithBody(body, "https://oapi.dingtalk.com/topapi/v2/user/get?access_token="+accessToken)
+	if err != nil {
+		return nil, err
+	}
 
-    var data struct {
-        ErrMessage string `json:"errmsg"`
-        Result     struct {
-            Email   string `json:"email"`
-        } `json:"result"`
-    }
-    err = json.Unmarshal(respBytes, &data)
-    if err != nil {
-        return nil, err
-    }
-    if data.ErrMessage != "ok" {
-        return nil, fmt.Errorf(data.ErrMessage)
-    }
-    return data.Result.Email, nil
+	var data struct {
+		ErrMessage string `json:"errmsg"`
+		Result     struct {
+			Email string `json:"email"`
+		} `json:"result"`
+	}
+	err = json.Unmarshal(respBytes, &data)
+	if err != nil {
+		return nil, err
+	}
+	if data.ErrMessage != "ok" {
+		return nil, fmt.Errorf(data.ErrMessage)
+	}
+	return data.Result.Email, nil
 }
