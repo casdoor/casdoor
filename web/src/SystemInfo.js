@@ -59,8 +59,8 @@ class SystemInfo extends React.Component {
     });
 
     SystemBackend.getGitHubLatestReleaseVersion().then(res => {
-      const href = res && res.length >= 8 ? `https://github.com/casdoor/casdoor/commit/${res}` : "";
-      const versionText = res && res.length >= 8 ? res.substring(0, 8) : i18next.t("system:Unknown Version");
+      const href = res.version && res.version.length > 0 ? `https://github.com/casdoor/casdoor/releases/tag/${res.version}` : "";
+      const versionText = res.version && res.version.length > 0 ? res.version : i18next.t("system:Unknown Version");
       this.setState({latestVersion: versionText, href: href});
     }).catch(err => {
       Setting.showMessage("error", `get latest commit version failed: ${err}`);

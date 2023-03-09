@@ -15,12 +15,12 @@
 package util
 
 import (
-	"io/ioutil"
-	"os"
 	"runtime"
-	"strings"
 	"time"
 
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/mem"
 )
@@ -46,33 +46,50 @@ func GetMemoryUsage() (uint64, uint64, error) {
 	return m.TotalAlloc, virtualMem.Total, nil
 }
 
-// get github repo release version
-func GetGitRepoVersion() (string, error) {
-	pwd, err := os.Getwd()
+// get github current commit and repo release version
+func GetGitRepoVersion() (string, string, error) {
+	r, err := git.PlainOpen("../")
 	if err != nil {
-		return "", err
+		return "", "", err
+	}
+	ref, err := r.Head()
+	if err != nil {
+		return "", "", err
+	}
+	tags, err := r.Tags()
+	if err != nil {
+		return "", "", err
+	}
+	tagMap := make(map[plumbing.Hash]string)
+	err = tags.ForEach(func(t *plumbing.Reference) error {
+		// This technique should work for both lightweight and annotated tags.
+		revHash, err := r.ResolveRevision(plumbing.Revision(t.Name()))
+		if err != nil {
+			return err
+		}
+		tagMap[*revHash] = t.Name().Short()
+		return nil
+	})
+	if err != nil {
+		return "", "", err
 	}
 
-	fileInfos, err := ioutil.ReadDir(pwd + "/.git/refs/heads")
-	for _, v := range fileInfos {
-		if v.Name() == "master" {
-			if v.ModTime().String() == fileDate {
-				return version, nil
-			} else {
-				fileDate = v.ModTime().String()
-				break
+	cIter, err := r.Log(&git.LogOptions{From: ref.Hash()})
+
+	releaseVersion := ""
+	// iterates over the commits
+	err = cIter.ForEach(func(c *object.Commit) error {
+		tag, ok := tagMap[c.Hash]
+		if ok {
+			if releaseVersion == "" {
+				releaseVersion = tag
 			}
 		}
-	}
-
-	content, err := ioutil.ReadFile(pwd + "/.git/refs/heads/master")
+		return nil
+	})
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	// Convert to full length
-	temp := string(content)
-	version = strings.ReplaceAll(temp, "\n", "")
-
-	return version, nil
+	return ref.Hash().String(), releaseVersion, nil
 }
