@@ -278,3 +278,4 @@ func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken strin
 		return nil, fmt.Errorf(data.ErrMessage)
 	}
 	return data.Result.Email, nil
+}
