@@ -26,16 +26,26 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-// get cpu usage
-func GetCpuUsage() ([]float64, error) {
+type SystemInfo struct {
+	CpuUsage    []float64 `json:"cpuUsage"`
+	MemoryUsed  uint64    `json:"memoryUsed"`
+	MemoryTotal uint64    `json:"memoryTotal"`
+}
+
+type VersionInfo struct {
+	Version      string `json:"version"`
+	CommitId     string `json:"commitId"`
+	CommitOffset int    `json:"commitOffset"`
+}
+
+// getCpuUsage get cpu usage
+func getCpuUsage() ([]float64, error) {
 	usage, err := cpu.Percent(time.Second, true)
 	return usage, err
 }
 
-var fileDate, version string
-
-// get memory usage
-func GetMemoryUsage() (uint64, uint64, error) {
+// getMemoryUsage get memory usage
+func getMemoryUsage() (uint64, uint64, error) {
 	virtualMem, err := mem.VirtualMemory()
 	if err != nil {
 		return 0, 0, err
@@ -47,21 +57,46 @@ func GetMemoryUsage() (uint64, uint64, error) {
 	return m.TotalAlloc, virtualMem.Total, nil
 }
 
-// get github current commit and repo release version
-func GetGitRepoVersion() (int, string, string, error) {
+func GetSystemInfo() (*SystemInfo, error) {
+	cpuUsage, err := getCpuUsage()
+	if err != nil {
+		return nil, err
+	}
+
+	memoryUsed, memoryTotal, err := getMemoryUsage()
+	if err != nil {
+		return nil, err
+	}
+
+	res := &SystemInfo{
+		CpuUsage:    cpuUsage,
+		MemoryUsed:  memoryUsed,
+		MemoryTotal: memoryTotal,
+	}
+	return res, nil
+}
+
+// GetVersionInfo get git current commit and repo release version
+func GetVersionInfo() (*VersionInfo, error) {
+	res := &VersionInfo{
+		Version:      "",
+		CommitId:     "",
+		CommitOffset: -1,
+	}
+
 	_, filename, _, _ := runtime.Caller(0)
 	rootPath := path.Dir(path.Dir(filename))
 	r, err := git.PlainOpen(rootPath)
 	if err != nil {
-		return -1, "", "", err
+		return res, err
 	}
 	ref, err := r.Head()
 	if err != nil {
-		return -1, "", "", err
+		return res, err
 	}
 	tags, err := r.Tags()
 	if err != nil {
-		return -1, "", "", err
+		return res, err
 	}
 	tagMap := make(map[plumbing.Hash]string)
 	err = tags.ForEach(func(t *plumbing.Reference) error {
@@ -74,29 +109,34 @@ func GetGitRepoVersion() (int, string, string, error) {
 		return nil
 	})
 	if err != nil {
-		return -1, "", "", err
+		return res, err
 	}
 
 	cIter, err := r.Log(&git.LogOptions{From: ref.Hash()})
 
-	aheadCnt := 0
-	releaseVersion := ""
+	commitOffset := 0
+	version := ""
 	// iterates over the commits
 	err = cIter.ForEach(func(c *object.Commit) error {
 		tag, ok := tagMap[c.Hash]
 		if ok {
-			if releaseVersion == "" {
-				releaseVersion = tag
+			if version == "" {
+				version = tag
 			}
 		}
-		if releaseVersion == "" {
-			aheadCnt++
+		if version == "" {
+			commitOffset++
 		}
 		return nil
 	})
 	if err != nil {
-		return -1, "", "", err
+		return res, err
 	}
 
-	return aheadCnt, ref.Hash().String(), releaseVersion, nil
+	res = &VersionInfo{
+		Version:      version,
+		CommitId:     ref.Hash().String(),
+		CommitOffset: commitOffset,
+	}
+	return res, nil
 }

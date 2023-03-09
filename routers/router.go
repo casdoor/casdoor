@@ -225,5 +225,5 @@ func initAPI() {
 	beego.Router("/api/webauthn/signin/finish", &controllers.ApiController{}, "Post:WebAuthnSigninFinish")
 
 	beego.Router("/api/get-system-info", &controllers.ApiController{}, "GET:GetSystemInfo")
-	beego.Router("/api/get-release", &controllers.ApiController{}, "GET:GitRepoVersion")
+	beego.Router("/api/get-version-info", &controllers.ApiController{}, "GET:GetVersionInfo")
 }
