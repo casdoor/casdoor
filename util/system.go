@@ -48,20 +48,20 @@ func GetMemoryUsage() (uint64, uint64, error) {
 }
 
 // get github current commit and repo release version
-func GetGitRepoVersion() (string, string, error) {
+func GetGitRepoVersion() (int, string, string, error) {
 	_, filename, _, _ := runtime.Caller(0)
 	rootPath := path.Dir(path.Dir(filename))
 	r, err := git.PlainOpen(rootPath)
 	if err != nil {
-		return "", "", err
+		return -1, "", "", err
 	}
 	ref, err := r.Head()
 	if err != nil {
-		return "", "", err
+		return -1, "", "", err
 	}
 	tags, err := r.Tags()
 	if err != nil {
-		return "", "", err
+		return -1, "", "", err
 	}
 	tagMap := make(map[plumbing.Hash]string)
 	err = tags.ForEach(func(t *plumbing.Reference) error {
@@ -74,11 +74,12 @@ func GetGitRepoVersion() (string, string, error) {
 		return nil
 	})
 	if err != nil {
-		return "", "", err
+		return -1, "", "", err
 	}
 
 	cIter, err := r.Log(&git.LogOptions{From: ref.Hash()})
 
+	aheadCnt := 0
 	releaseVersion := ""
 	// iterates over the commits
 	err = cIter.ForEach(func(c *object.Commit) error {
@@ -88,11 +89,14 @@ func GetGitRepoVersion() (string, string, error) {
 				releaseVersion = tag
 			}
 		}
+		if releaseVersion == "" {
+			aheadCnt++
+		}
 		return nil
 	})
 	if err != nil {
-		return "", "", err
+		return -1, "", "", err
 	}
 
-	return ref.Hash().String(), releaseVersion, nil
+	return aheadCnt, ref.Hash().String(), releaseVersion, nil
 }

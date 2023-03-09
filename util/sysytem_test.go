@@ -41,15 +41,15 @@ func TestGetMemoryUsage(t *testing.T) {
 }
 
 func TestGetGitRepoVersion(t *testing.T) {
-	commit, version, err := GetGitRepoVersion()
+	aheadCnt, commit, version, err := GetGitRepoVersion()
 	assert.Nil(t, err)
-	t.Log(commit, version)
+	t.Log(aheadCnt, commit, version)
 }
 
 func TestGetVersion(t *testing.T) {
 	_, filename, _, _ := runtime.Caller(0)
-	rootPath := path.Dir(path.Dir(filename))
-	r, err := git.PlainOpen(rootPath)
+	root := path.Dir(path.Dir(filename))
+	r, err := git.PlainOpen(root)
 	if err != nil {
 		t.Log(err)
 	}
@@ -68,9 +68,10 @@ func TestGetVersion(t *testing.T) {
 		return nil
 	})
 
-	testHash := plumbing.NewHash("16b1d0e1f001c1162a263ed50c1a892c947d5783")
+	testHash := plumbing.NewHash("f8bc87eb4e5ba3256424cf14aafe0549f812f1cf")
 	cIter, err := r.Log(&git.LogOptions{From: testHash})
 
+	aheadCnt := 0
 	releaseVersion := ""
 	// iterates over the commits
 	err = cIter.ForEach(func(c *object.Commit) error {
@@ -80,7 +81,12 @@ func TestGetVersion(t *testing.T) {
 				releaseVersion = tag
 			}
 		}
+		if releaseVersion == "" {
+			aheadCnt++
+		}
 		return nil
 	})
-	assert.Equal(t, "v1.260.0", releaseVersion)
+
+	assert.Equal(t, 3, aheadCnt)
+	assert.Equal(t, "v1.257.0", releaseVersion)
 }

@@ -26,8 +26,9 @@ type SystemInfo struct {
 }
 
 type GitRepoInfo struct {
-	Commit  string `json:"commit"`
-	Version string `json:"version"`
+	AheadCnt int    `json:"ahead_cnt"`
+	Commit   string `json:"commit"`
+	Version  string `json:"version"`
 }
 
 // GetSystemInfo
@@ -76,15 +77,16 @@ func (c *ApiController) GetSystemInfo() {
 // @Success 200 {string} local latest version hash of casdoor
 // @router /get-release [get]
 func (c *ApiController) GitRepoVersion() {
-	commit, version, err := util.GetGitRepoVersion()
+	aheadCnt, commit, version, err := util.GetGitRepoVersion()
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
 	c.Data["json"] = GitRepoInfo{
-		Commit:  commit,
-		Version: version,
+		AheadCnt: aheadCnt,
+		Commit:   commit,
+		Version:  version,
 	}
 	c.ServeJSON()
 }
