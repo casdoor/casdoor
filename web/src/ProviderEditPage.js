@@ -24,7 +24,7 @@ import * as ProviderEditTestSms from "./TestSmsWidget";
 import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
-import {PhoneNumberInput} from "./common/PhoneNumberInput";
+import {CountryCodeSelect} from "./common/CountryCodeSelect";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -667,7 +667,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
                 <Col span={4} >
                   <Input.Group compact>
-                    <PhoneNumberInput
+                    <CountryCodeSelect
                       style={{width: "30%"}}
                       value={this.state.provider.content}
                       onChange={(value) => {
@@ -813,17 +813,17 @@ class ProviderEditPage extends React.Component {
               </Col>
               <Col span={22} >
                 <CaptchaPreview
+                  owner={this.state.provider.owner}
+                  name={this.state.provider.name}
                   provider={this.state.provider}
                   providerName={this.state.providerName}
-                  clientSecret={this.state.provider.clientSecret}
                   captchaType={this.state.provider.type}
                   subType={this.state.provider.subType}
-                  owner={this.state.provider.owner}
                   clientId={this.state.provider.clientId}
-                  name={this.state.provider.name}
-                  providerUrl={this.state.provider.providerUrl}
+                  clientSecret={this.state.provider.clientSecret}
                   clientId2={this.state.provider.clientId2}
                   clientSecret2={this.state.provider.clientSecret2}
+                  providerUrl={this.state.provider.providerUrl}
                 />
               </Col>
             </Row>

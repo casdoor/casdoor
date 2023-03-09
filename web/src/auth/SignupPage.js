@@ -26,7 +26,7 @@ import SelectRegionBox from "../SelectRegionBox";
 import CustomGithubCorner from "../CustomGithubCorner";
 import SelectLanguageBox from "../SelectLanguageBox";
 import {withRouter} from "react-router-dom";
-import {PhoneNumberInput} from "../common/PhoneNumberInput";
+import {CountryCodeSelect} from "../common/CountryCodeSelect";
 
 const formItemLayout = {
   labelCol: {
@@ -208,7 +208,6 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="username"
-          key="username"
           label={i18next.t("signup:Username")}
           rules={[
             {
@@ -227,7 +226,6 @@ class SignupPage extends React.Component {
           <React.Fragment>
             <Form.Item
               name="firstName"
-              key="firstName"
               label={i18next.t("general:First name")}
               rules={[
                 {
@@ -241,7 +239,6 @@ class SignupPage extends React.Component {
             </Form.Item>
             <Form.Item
               name="lastName"
-              key="lastName"
               label={i18next.t("general:Last name")}
               rules={[
                 {
@@ -260,7 +257,6 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="name"
-          key="name"
           label={(signupItem.rule === "Real name" || signupItem.rule === "First, last") ? i18next.t("general:Real name") : i18next.t("general:Display name")}
           rules={[
             {
@@ -277,7 +273,6 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="affiliation"
-          key="affiliation"
           label={i18next.t("user:Affiliation")}
           rules={[
             {
@@ -294,7 +289,6 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="idCard"
-          key="idCard"
           label={i18next.t("user:ID card")}
           rules={[
             {
@@ -316,7 +310,6 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="country_region"
-          key="region"
           label={i18next.t("user:Country/Region")}
           rules={[
             {
@@ -333,7 +326,6 @@ class SignupPage extends React.Component {
         <React.Fragment>
           <Form.Item
             name="email"
-            key="email"
             label={i18next.t("general:Email")}
             rules={[
               {
@@ -359,7 +351,6 @@ class SignupPage extends React.Component {
             signupItem.rule !== "No verification" &&
             <Form.Item
               name="emailCode"
-              key="emailCode"
               label={i18next.t("code:Email code")}
               rules={[{
                 required: required,
@@ -383,7 +374,6 @@ class SignupPage extends React.Component {
             <Input.Group compact>
               <Form.Item
                 name="countryCode"
-                key="countryCode"
                 noStyle
                 rules={[
                   {
@@ -392,14 +382,13 @@ class SignupPage extends React.Component {
                   },
                 ]}
               >
-                <PhoneNumberInput
+                <CountryCodeSelect
                   style={{width: "35%"}}
                   countryCodes={this.getApplicationObj().organizationObj.countryCodes}
                 />
               </Form.Item>
               <Form.Item
                 name="phone"
-                key="phone"
                 dependencies={["countryCode"]}
                 noStyle
                 rules={[
@@ -429,7 +418,6 @@ class SignupPage extends React.Component {
           </Form.Item>
           <Form.Item
             name="phoneCode"
-            key="phoneCode"
             label={i18next.t("code:Phone code")}
             rules={[
               {
@@ -443,7 +431,7 @@ class SignupPage extends React.Component {
               method={"signup"}
               onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
               application={application}
-              countryCode={this.state.countryCode}
+              countryCode={this.form.current?.getFieldValue("countryCode")}
             />
           </Form.Item>
         </React.Fragment>
@@ -452,7 +440,6 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="password"
-          key="password"
           label={i18next.t("general:Password")}
           rules={[
             {
@@ -470,7 +457,6 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="confirm"
-          key="confirm"
           label={i18next.t("signup:Confirm")}
           dependencies={["password"]}
           hasFeedback

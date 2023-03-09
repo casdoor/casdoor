@@ -98,7 +98,7 @@ class SessionListPage extends BaseListPage {
           return (
             <div>
               <Popconfirm
-                title={`Sure to delete session: ${record.name} ?`}
+                title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteSession(index)}
               >
                 <Button style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>

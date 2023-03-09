@@ -97,8 +97,7 @@ func (c *ApiController) GetLdapUser() {
 		})
 	}
 
-	c.Data["json"] = Response{Status: "ok", Data: resp}
-	c.ServeJSON()
+	c.ResponseOk(resp)
 }
 
 // GetLdaps
@@ -108,8 +107,7 @@ func (c *ApiController) GetLdapUser() {
 func (c *ApiController) GetLdaps() {
 	owner := c.Input().Get("owner")
 
-	c.Data["json"] = Response{Status: "ok", Data: object.GetLdaps(owner)}
-	c.ServeJSON()
+	c.ResponseOk(object.GetLdaps(owner))
 }
 
 // GetLdap
@@ -124,8 +122,8 @@ func (c *ApiController) GetLdap() {
 		return
 	}
 
-	c.Data["json"] = Response{Status: "ok", Data: object.GetLdap(id)}
-	c.ServeJSON()
+	_, name := util.GetOwnerAndNameFromId(id)
+	c.ResponseOk(object.GetLdap(name))
 }
 
 // AddLdap
@@ -159,8 +157,7 @@ func (c *ApiController) AddLdap() {
 		object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
 	}
 
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk(resp)
 }
 
 // UpdateLdap
@@ -187,8 +184,7 @@ func (c *ApiController) UpdateLdap() {
 		object.GetLdapAutoSynchronizer().StopAutoSync(ldap.Id)
 	}
 
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk(resp)
 }
 
 // DeleteLdap
@@ -204,8 +200,7 @@ func (c *ApiController) DeleteLdap() {
 	}
 
 	object.GetLdapAutoSynchronizer().StopAutoSync(ldap.Id)
-	c.Data["json"] = wrapActionResponse(object.DeleteLdap(&ldap))
-	c.ServeJSON()
+	c.ResponseOk(wrapActionResponse(object.DeleteLdap(&ldap)))
 }
 
 // SyncLdapUsers
@@ -225,11 +220,11 @@ func (c *ApiController) SyncLdapUsers() {
 	object.UpdateLdapSyncTime(ldapId)
 
 	exist, failed := object.SyncLdapUsers(owner, users, ldapId)
-	c.Data["json"] = &Response{Status: "ok", Data: &LdapSyncResp{
+
+	c.ResponseOk(&LdapSyncResp{
 		Exist:  *exist,
 		Failed: *failed,
-	}}
-	c.ServeJSON()
+	})
 }
 
 // CheckLdapUsersExist
@@ -246,6 +241,5 @@ func (c *ApiController) CheckLdapUsersExist() {
 	}
 
 	exist := object.CheckLdapUuidExist(owner, uuids)
-	c.Data["json"] = &Response{Status: "ok", Data: exist}
-	c.ServeJSON()
+	c.ResponseOk(exist)
 }

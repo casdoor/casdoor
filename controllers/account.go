@@ -246,19 +246,24 @@ func (c *ApiController) Signup() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /logout [get,post]
 func (c *ApiController) Logout() {
-	user := c.GetSessionUsername()
-
 	// https://openid.net/specs/openid-connect-rpinitiated-1_0-final.html
 	accessToken := c.Input().Get("id_token_hint")
 	redirectUri := c.Input().Get("post_logout_redirect_uri")
 	state := c.Input().Get("state")
 
-	if accessToken == "" && redirectUri == "" {
-		c.ClearUserSession()
-		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
-		owner, username := util.GetOwnerAndNameFromId(user)
+	user := c.GetSessionUsername()
 
+	if accessToken == "" && redirectUri == "" {
+		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
+		if user == "" {
+			c.ResponseOk()
+			return
+		}
+
+		c.ClearUserSession()
+		owner, username := util.GetOwnerAndNameFromId(user)
 		object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+
 		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 		application := c.GetSessionApplication()

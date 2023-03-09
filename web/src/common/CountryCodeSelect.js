@@ -16,7 +16,7 @@ import {Select} from "antd";
 import * as Setting from "../Setting";
 import React from "react";
 
-export const PhoneNumberInput = (props) => {
+export const CountryCodeSelect = (props) => {
   const {onChange, style, disabled, value} = props;
   const countryCodes = props.countryCodes ?? [];
 

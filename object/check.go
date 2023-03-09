@@ -380,7 +380,7 @@ func CheckToEnableCaptcha(application *Application) bool {
 		if providerItem.Provider == nil {
 			continue
 		}
-		if providerItem.Provider.Category == "Captcha" && providerItem.Provider.Type == "Default" {
+		if providerItem.Provider.Category == "Captcha" {
 			return providerItem.Rule == "Always"
 		}
 	}
