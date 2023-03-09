@@ -15,6 +15,8 @@
 package util
 
 import (
+	"path"
+	"runtime"
 	"testing"
 
 	"github.com/go-git/go-git/v5"
@@ -42,7 +44,9 @@ func TestGetGitRepoVersion(t *testing.T) {
 }
 
 func TestGetVersion(t *testing.T) {
-	r, err := git.PlainOpen("..")
+	_, filename, _, _ := runtime.Caller(0)
+	rootPath := path.Dir(path.Dir(filename))
+	r, err := git.PlainOpen(rootPath)
 	if err != nil {
 		t.Log(err)
 	}

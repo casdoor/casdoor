@@ -15,6 +15,7 @@
 package util
 
 import (
+	"path"
 	"runtime"
 	"time"
 
@@ -48,7 +49,9 @@ func GetMemoryUsage() (uint64, uint64, error) {
 
 // get github current commit and repo release version
 func GetGitRepoVersion() (string, string, error) {
-	r, err := git.PlainOpen("../")
+	_, filename, _, _ := runtime.Caller(0)
+	rootPath := path.Dir(path.Dir(filename))
+	r, err := git.PlainOpen(rootPath)
 	if err != nil {
 		return "", "", err
 	}
