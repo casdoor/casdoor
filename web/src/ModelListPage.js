@@ -14,12 +14,13 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Switch, Table} from "antd";
+import {Button, Switch, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ModelBackend from "./backend/ModelBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
+import PopconfirmModal from "./PopconfirmModal";
 
 class ModelListPage extends BaseListPage {
   newModel() {
@@ -142,12 +143,11 @@ class ModelListPage extends BaseListPage {
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary"
                 onClick={() => this.props.history.push(`/models/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
-              <Popconfirm
+              <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteModel(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
-              </Popconfirm>
+              </PopconfirmModal>
             </div>
           );
         },

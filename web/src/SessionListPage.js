@@ -16,9 +16,10 @@ import BaseListPage from "./BaseListPage";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table, Tag} from "antd";
+import {Table, Tag} from "antd";
 import React from "react";
 import * as SessionBackend from "./backend/SessionBackend";
+import PopconfirmModal from "./PopconfirmModal";
 
 class SessionListPage extends BaseListPage {
 
@@ -97,12 +98,11 @@ class SessionListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Popconfirm
+              <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteSession(index)}
               >
-                <Button style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
-              </Popconfirm>
+              </PopconfirmModal>
             </div>
           );
         },

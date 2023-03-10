@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Switch, Table, Upload} from "antd";
+import {Button, Switch, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -22,6 +22,7 @@ import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
+import PopconfirmModal from "./PopconfirmModal";
 
 class UserListPage extends BaseListPage {
   constructor(props) {
@@ -341,13 +342,12 @@ class UserListPage extends BaseListPage {
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/users/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
-              <Popconfirm
+              <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteUser(index)}
                 disabled={disabled}
               >
-                <Button disabled={disabled} style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
-              </Popconfirm>
+              </PopconfirmModal>
             </div>
           );
         },
