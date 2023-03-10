@@ -72,9 +72,11 @@ func GetSystemInfo() (*SystemInfo, error) {
 	return res, nil
 }
 
-var Commit = ""
-var Version = ""
-var Desc = ""
+var (
+	Commit  = ""
+	Version = ""
+	Desc    = ""
+)
 
 // GetVersionInfo get git current commit and repo release version
 func GetVersionInfo() (*VersionInfo, error) {
