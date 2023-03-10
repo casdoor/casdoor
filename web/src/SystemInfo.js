@@ -82,10 +82,7 @@ class SystemInfo extends React.Component {
       </div>;
 
     const link = this.state.versionInfo?.version !== "" ? `https://github.com/casdoor/casdoor/releases/tag/${this.state.versionInfo?.version}` : "";
-    let versionText = this.state.versionInfo?.version !== "" ? this.state.versionInfo?.version : i18next.t("system:Unknown Version");
-    if (this.state.versionInfo?.commitOffset > 0) {
-      versionText += ` (ahead+${this.state.versionInfo?.commitOffset})`;
-    }
+    const versionText = this.state.versionInfo?.desc !== "" ? this.state.versionInfo?.desc : i18next.t("system:Unknown Version");
 
     if (!Setting.isMobile()) {
       return (

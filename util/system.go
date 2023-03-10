@@ -15,13 +15,9 @@
 package util
 
 import (
-	"path"
 	"runtime"
 	"time"
 
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/mem"
 )
@@ -33,9 +29,9 @@ type SystemInfo struct {
 }
 
 type VersionInfo struct {
-	Version      string `json:"version"`
-	CommitId     string `json:"commitId"`
-	CommitOffset int    `json:"commitOffset"`
+	Version  string `json:"version"`
+	CommitId string `json:"commitId"`
+	Desc     string `json:"desc"`
 }
 
 // getCpuUsage get cpu usage
@@ -76,67 +72,15 @@ func GetSystemInfo() (*SystemInfo, error) {
 	return res, nil
 }
 
+var Commit = ""
+var Version = ""
+var Desc = ""
+
 // GetVersionInfo get git current commit and repo release version
 func GetVersionInfo() (*VersionInfo, error) {
-	res := &VersionInfo{
-		Version:      "",
-		CommitId:     "",
-		CommitOffset: -1,
-	}
-
-	_, filename, _, _ := runtime.Caller(0)
-	rootPath := path.Dir(path.Dir(filename))
-	r, err := git.PlainOpen(rootPath)
-	if err != nil {
-		return res, err
-	}
-	ref, err := r.Head()
-	if err != nil {
-		return res, err
-	}
-	tags, err := r.Tags()
-	if err != nil {
-		return res, err
-	}
-	tagMap := make(map[plumbing.Hash]string)
-	err = tags.ForEach(func(t *plumbing.Reference) error {
-		// This technique should work for both lightweight and annotated tags.
-		revHash, err := r.ResolveRevision(plumbing.Revision(t.Name()))
-		if err != nil {
-			return err
-		}
-		tagMap[*revHash] = t.Name().Short()
-		return nil
-	})
-	if err != nil {
-		return res, err
-	}
-
-	cIter, err := r.Log(&git.LogOptions{From: ref.Hash()})
-
-	commitOffset := 0
-	version := ""
-	// iterates over the commits
-	err = cIter.ForEach(func(c *object.Commit) error {
-		tag, ok := tagMap[c.Hash]
-		if ok {
-			if version == "" {
-				version = tag
-			}
-		}
-		if version == "" {
-			commitOffset++
-		}
-		return nil
-	})
-	if err != nil {
-		return res, err
-	}
-
-	res = &VersionInfo{
-		Version:      version,
-		CommitId:     ref.Hash().String(),
-		CommitOffset: commitOffset,
-	}
-	return res, nil
+	return &VersionInfo{
+		Version:  Version,
+		CommitId: Commit,
+		Desc:     Desc,
+	}, nil
 }
