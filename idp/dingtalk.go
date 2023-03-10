@@ -15,11 +15,9 @@
 package idp
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -234,7 +232,7 @@ func (idp *DingTalkIdProvider) getUserId(unionId string, accessToken string) (st
 	body["unionid"] = unionId
 	respBytes, err := idp.postWithBody(body, "https://oapi.dingtalk.com/topapi/user/getbyunionid?access_token="+accessToken)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	var data struct {
@@ -246,12 +244,12 @@ func (idp *DingTalkIdProvider) getUserId(unionId string, accessToken string) (st
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	if data.ErrCode == 60121 {
-		return nil, fmt.Errorf("the user is not found in the organization where clientId and clientSecret belong")
+		return "", fmt.Errorf("the user is not found in the organization where clientId and clientSecret belong")
 	} else if data.ErrCode != 0 {
-		return nil, fmt.Errorf(data.ErrMessage)
+		return "", fmt.Errorf(data.ErrMessage)
 	}
 	return data.Result.UserId, nil
 }
@@ -261,7 +259,7 @@ func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken strin
 	body["userid"] = userId
 	respBytes, err := idp.postWithBody(body, "https://oapi.dingtalk.com/topapi/v2/user/get?access_token="+accessToken)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	var data struct {
@@ -272,10 +270,10 @@ func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken strin
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	if data.ErrMessage != "ok" {
-		return nil, fmt.Errorf(data.ErrMessage)
+		return "", fmt.Errorf(data.ErrMessage)
 	}
 	return data.Result.Email, nil
 }
