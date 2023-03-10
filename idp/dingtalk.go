@@ -265,7 +265,7 @@ func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken strin
 	var data struct {
 		ErrMessage string `json:"errmsg"`
 		Result     struct {
-		  Email string `json:"email"`
+			Email string `json:"email"`
 		} `json:"result"`
 	}
 	err = json.Unmarshal(respBytes, &data)
