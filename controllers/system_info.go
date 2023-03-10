@@ -15,15 +15,8 @@
 package controllers
 
 import (
-	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
-
-type SystemInfo struct {
-	MemoryUsed  uint64    `json:"memory_used"`
-	MemoryTotal uint64    `json:"memory_total"`
-	CpuUsage    []float64 `json:"cpu_usage"`
-}
 
 // GetSystemInfo
 // @Title GetSystemInfo
@@ -33,50 +26,32 @@ type SystemInfo struct {
 // @Success 200 {object} object.SystemInfo The Response object
 // @router /get-system-info [get]
 func (c *ApiController) GetSystemInfo() {
-	id := c.GetString("id")
-	if id == "" {
-		id = c.GetSessionUsername()
-	}
-
-	user := object.GetUser(id)
-	if user == nil || !user.IsGlobalAdmin {
-		c.ResponseError(c.T("auth:Unauthorized operation"))
+	_, ok := c.RequireAdmin()
+	if !ok {
 		return
 	}
 
-	cpuUsage, err := util.GetCpuUsage()
+	systemInfo, err := util.GetSystemInfo()
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	memoryUsed, memoryTotal, err := util.GetMemoryUsage()
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	c.Data["json"] = SystemInfo{
-		CpuUsage:    cpuUsage,
-		MemoryUsed:  memoryUsed,
-		MemoryTotal: memoryTotal,
-	}
-	c.ServeJSON()
+	c.ResponseOk(systemInfo)
 }
 
-// GitRepoVersion
-// @Title GitRepoVersion
+// GetVersionInfo
+// @Title GetVersionInfo
 // @Tag System API
-// @Description get local github repo's latest release version info
-// @Success 200 {string} local latest version hash of casdoor
-// @router /get-release [get]
-func (c *ApiController) GitRepoVersion() {
-	version, err := util.GetGitRepoVersion()
+// @Description get local git repo's latest release version info
+// @Success 200 {string} local latest version hash of Casdoor
+// @router /get-version-info [get]
+func (c *ApiController) GetVersionInfo() {
+	versionInfo, err := util.GetVersionInfo()
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = version
-	c.ServeJSON()
+	c.ResponseOk(versionInfo)
 }

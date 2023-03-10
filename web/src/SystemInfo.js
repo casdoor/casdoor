@@ -23,31 +23,24 @@ class SystemInfo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      cpuUsage: [],
-      memUsed: 0,
-      memTotal: 0,
-      latestVersion: undefined,
+      systemInfo: {cpuUsage: [], memoryUsed: 0, memoryTotal: 0},
+      versionInfo: {},
       intervalId: null,
-      href: "",
       loading: true,
     };
   }
 
   UNSAFE_componentWillMount() {
-    SystemBackend.getSystemInfo(this.props.account?.owner, this.props.account?.name).then(res => {
+    SystemBackend.getSystemInfo().then(res => {
       this.setState({
-        cpuUsage: res.cpu_usage,
-        memUsed: res.memory_used,
-        memTotal: res.memory_total,
+        systemInfo: res.data,
         loading: false,
       });
 
       const id = setInterval(() => {
-        SystemBackend.getSystemInfo(this.props.account?.owner, this.props.account?.name).then(res => {
+        SystemBackend.getSystemInfo().then(res => {
           this.setState({
-            cpuUsage: res.cpu_usage,
-            memUsed: res.memory_used,
-            memTotal: res.memory_total,
+            systemInfo: res.data,
           });
         }).catch(error => {
           Setting.showMessage("error", `System info failed to get: ${error}`);
@@ -58,12 +51,12 @@ class SystemInfo extends React.Component {
       Setting.showMessage("error", `System info failed to get: ${error}`);
     });
 
-    SystemBackend.getGitHubLatestReleaseVersion().then(res => {
-      const href = res && res.length >= 8 ? `https://github.com/casdoor/casdoor/commit/${res}` : "";
-      const versionText = res && res.length >= 8 ? res.substring(0, 8) : i18next.t("system:Unknown Version");
-      this.setState({latestVersion: versionText, href: href});
+    SystemBackend.getVersionInfo().then(res => {
+      this.setState({
+        versionInfo: res.data,
+      });
     }).catch(err => {
-      Setting.showMessage("error", `get latest commit version failed: ${err}`);
+      Setting.showMessage("error", `Version info failed to get: ${err}`);
     });
   }
 
@@ -74,21 +67,25 @@ class SystemInfo extends React.Component {
   }
 
   render() {
-    const CPUInfo = this.state.cpuUsage?.length > 0 ?
-      this.state.cpuUsage.map((usage, i) => {
+    const cpuUi = this.state.systemInfo.cpuUsage?.length <= 0 ? i18next.t("system:Get CPU Usage Failed") :
+      this.state.systemInfo.cpuUsage.map((usage, i) => {
         return (
           <Progress key={i} percent={Number(usage.toFixed(1))} />
         );
-      }) : i18next.t("system:Get CPU Usage Failed");
+      });
 
-    const MemInfo = (
-      this.state.memUsed && this.state.memTotal && this.state.memTotal !== 0 ?
-        <div>
-          {Setting.getFriendlyFileSize(this.state.memUsed)} / {Setting.getFriendlyFileSize(this.state.memTotal)}
-          <br /> <br />
-          <Progress type="circle" percent={Number((Number(this.state.memUsed) / Number(this.state.memTotal) * 100).toFixed(2))} />
-        </div> : i18next.t("system:Get Memory Usage Failed")
-    );
+    const memUi = this.state.systemInfo.memoryUsed && this.state.systemInfo.memoryTotal && this.state.systemInfo.memoryTotal <= 0 ? i18next.t("system:Get Memory Usage Failed") :
+      <div>
+        {Setting.getFriendlyFileSize(this.state.systemInfo.memoryUsed)} / {Setting.getFriendlyFileSize(this.state.systemInfo.memoryTotal)}
+        <br /> <br />
+        <Progress type="circle" percent={Number((Number(this.state.systemInfo.memoryUsed) / Number(this.state.systemInfo.memoryTotal) * 100).toFixed(2))} />
+      </div>;
+
+    const link = this.state.versionInfo?.version !== "" ? `https://github.com/casdoor/casdoor/releases/tag/${this.state.versionInfo?.version}` : "";
+    let versionText = this.state.versionInfo?.version !== "" ? this.state.versionInfo?.version : i18next.t("system:Unknown Version");
+    if (this.state.versionInfo?.commitOffset > 0) {
+      versionText += ` (ahead+${this.state.versionInfo?.commitOffset})`;
+    }
 
     if (!Setting.isMobile()) {
       return (
@@ -98,25 +95,25 @@ class SystemInfo extends React.Component {
             <Row gutter={[10, 10]}>
               <Col span={12}>
                 <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                  {this.state.loading ? <Spin size="large" /> : CPUInfo}
+                  {this.state.loading ? <Spin size="large" /> : cpuUi}
                 </Card>
               </Col>
               <Col span={12}>
                 <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                  {this.state.loading ? <Spin size="large" /> : MemInfo}
+                  {this.state.loading ? <Spin size="large" /> : memUi}
                 </Card>
               </Col>
             </Row>
             <Divider />
             <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
               <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
-              GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
+              GitHub: <a target="_blank" rel="noreferrer" href="https://github.com/casdoor/casdoor">Casdoor</a>
               <br />
-              {i18next.t("system:Version")}: <a href={this.state.href}>{this.state.latestVersion}</a>
+              {i18next.t("system:Version")}: <a target="_blank" rel="noreferrer" href={link}>{versionText}</a>
               <br />
-              {i18next.t("system:Official Website")}: <a href="https://casdoor.org/">casdoor.org</a>
+              {i18next.t("system:Official Website")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org">https://casdoor.org</a>
               <br />
-              {i18next.t("system:Community")}: <a href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">contact us</a>
+              {i18next.t("system:Community")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">Get in Touch!</a>
             </Card>
           </Col>
           <Col span={6}></Col>
@@ -127,24 +124,24 @@ class SystemInfo extends React.Component {
         <Row gutter={[16, 0]}>
           <Col span={24}>
             <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
-              {this.state.loading ? <Spin size="large" /> : CPUInfo}
+              {this.state.loading ? <Spin size="large" /> : cpuUi}
             </Card>
           </Col>
           <Col span={24}>
             <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
-              {this.state.loading ? <Spin size="large" /> : MemInfo}
+              {this.state.loading ? <Spin size="large" /> : memUi}
             </Card>
           </Col>
           <Col span={24}>
             <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
               <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
-              GitHub: <a href="https://github.com/casdoor/casdoor">casdoor</a>
+              GitHub: <a target="_blank" rel="noreferrer" href="https://github.com/casdoor/casdoor">Casdoor</a>
               <br />
-              {i18next.t("system:Version")}: <a href={this.state.href}>{this.state.latestVersion}</a>
+              {i18next.t("system:Version")}: <a target="_blank" rel="noreferrer" href={link}>{versionText}</a>
               <br />
-              {i18next.t("system:Official Website")}: <a href="https://casdoor.org/">casdoor.org</a>
+              {i18next.t("system:Official Website")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org">https://casdoor.org</a>
               <br />
-              {i18next.t("system:Community")}: <a href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">contact us</a>
+              {i18next.t("system:Community")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">Get in Touch!</a>
             </Card>
           </Col>
         </Row>

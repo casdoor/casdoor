@@ -14,8 +14,8 @@
 
 import * as Setting from "../Setting";
 
-export function getSystemInfo(owner, name) {
-  return fetch(`${Setting.ServerUrl}/api/get-system-info?id=${owner}/${encodeURIComponent(name)}`, {
+export function getSystemInfo() {
+  return fetch(`${Setting.ServerUrl}/api/get-system-info`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -24,8 +24,8 @@ export function getSystemInfo(owner, name) {
   }).then(res => res.json());
 }
 
-export function getGitHubLatestReleaseVersion() {
-  return fetch(`${Setting.ServerUrl}/api/get-release`, {
+export function getVersionInfo() {
+  return fetch(`${Setting.ServerUrl}/api/get-version-info`, {
     method: "GET",
     credentials: "include",
     headers: {

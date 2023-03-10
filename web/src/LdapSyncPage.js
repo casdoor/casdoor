@@ -23,6 +23,7 @@ class LdapSyncPage extends React.Component {
     super(props);
     this.state = {
       ldapId: props.match.params.ldapId,
+      organizationName: props.match.params.organizationName,
       ldap: null,
       users: [],
       existUuids: [],
@@ -73,7 +74,7 @@ class LdapSyncPage extends React.Component {
   }
 
   getLdap() {
-    LdapBackend.getLdap(this.state.ldapId)
+    LdapBackend.getLdap(this.state.organizationName, this.state.ldapId)
       .then((res) => {
         if (res.status === "ok") {
           this.setState((prevState) => {
