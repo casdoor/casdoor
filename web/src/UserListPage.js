@@ -384,7 +384,7 @@ class UserListPage extends BaseListPage {
     const field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
-    if (this.state.organizationName === undefined) {
+    if (this.props.match.params.organizationName === undefined) {
       (Setting.isAdminUser(this.props.account) ? UserBackend.getGlobalUsers(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) : UserBackend.getUsers(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
         .then((res) => {
           if (res.status === "ok") {
@@ -413,7 +413,7 @@ class UserListPage extends BaseListPage {
           }
         });
     } else {
-      UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      UserBackend.getUsers(this.props.match.params.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
         .then((res) => {
           if (res.status === "ok") {
             this.setState({
