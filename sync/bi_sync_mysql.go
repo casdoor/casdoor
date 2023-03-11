@@ -26,12 +26,12 @@ import (
 	"github.com/xorm-io/xorm"
 )
 
-type MyEventHandler struct {
+type Database struct {
 	dataSourceName string
 	engine         *xorm.Engine
 	serverId       uint32
-	serverUUID     string
-	GTID           string
+	serverUuid     string
+	Gtid           string
 	canal.DummyEventHandler
 }
 
@@ -41,17 +41,17 @@ func StartCanal(cfg *canal.Config, username string, password string, host string
 		return err
 	}
 
-	GTIDSet, err := c.GetMasterGTIDSet()
+	gtidSet, err := c.GetMasterGTIDSet()
 	if err != nil {
 		return err
 	}
 
-	eventHandler := GetMyEventHandler(username, password, host, port, database)
+	db := createDatabase(username, password, host, port, database)
 	// Register a handler to handle RowsEvent
-	c.SetEventHandler(&eventHandler)
+	c.SetEventHandler(&db)
 
 	// Start replication
-	err = c.StartFromGTID(GTIDSet)
+	err = c.StartFromGTID(gtidSet)
 	if err != nil {
 		return err
 	}
@@ -61,8 +61,8 @@ func StartCanal(cfg *canal.Config, username string, password string, host string
 func StartBinlogSync() error {
 	var wg sync.WaitGroup
 	// init config
-	cfg1 := GetCanalConfig(username1, password1, host1, port1, database1)
-	cfg2 := GetCanalConfig(username2, password2, host2, port2, database2)
+	cfg1 := getCanalConfig(username1, password1, host1, port1, database1)
+	cfg2 := getCanalConfig(username2, password2, host2, port2, database2)
 
 	// start canal1 replication
 	go StartCanal(cfg1, username2, password2, host2, port2, database2)
@@ -76,25 +76,25 @@ func StartBinlogSync() error {
 	return nil
 }
 
-func (h *MyEventHandler) OnGTID(header *replication.EventHeader, gtid mysql.GTIDSet) error {
+func (h *Database) OnGTID(header *replication.EventHeader, gtid mysql.GTIDSet) error {
 	log.Info("OnGTID: ", gtid.String())
-	h.GTID = gtid.String()
+	h.Gtid = gtid.String()
 	return nil
 }
 
-func (h *MyEventHandler) onDDL(header *replication.EventHeader, nextPos mysql.Position, queryEvent *replication.QueryEvent) error {
+func (h *Database) onDDL(header *replication.EventHeader, nextPos mysql.Position, queryEvent *replication.QueryEvent) error {
 	log.Info("into DDL event")
 	return nil
 }
 
-func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
+func (h *Database) OnRow(e *canal.RowsEvent) error {
 	log.Info("serverId: ", e.Header.ServerID)
-	if strings.Contains(h.GTID, h.serverUUID) {
+	if strings.Contains(h.Gtid, h.serverUuid) {
 		return nil
 	}
 
 	// Set the next gtid of the target library to the gtid of the current target library to avoid loopbacks
-	h.engine.Exec(fmt.Sprintf("SET GTID_NEXT= '%s'", h.GTID))
+	h.engine.Exec(fmt.Sprintf("SET GTID_NEXT= '%s'", h.Gtid))
 	length := len(e.Table.Columns)
 	columnNames := make([]string, length)
 	oldColumnValue := make([]interface{}, length)
@@ -110,7 +110,7 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 		}
 	}
 	// get pk column name
-	pkColumnNames := GetPKColumnNames(columnNames, e.Table.PKColumns)
+	pkColumnNames := getPkColumnNames(columnNames, e.Table.PKColumns)
 
 	switch e.Action {
 	case canal.UpdateAction:
@@ -136,8 +136,8 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 				}
 			}
 			if i%2 == 1 {
-				pkColumnValue := GetPKColumnValues(oldColumnValue, e.Table.PKColumns)
-				updateSql, args, err := GetUpdateSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue, pkColumnNames, pkColumnValue)
+				pkColumnValue := getPkColumnValues(oldColumnValue, e.Table.PKColumns)
+				updateSql, args, err := getUpdateSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue, pkColumnNames, pkColumnValue)
 				if err != nil {
 					return err
 				}
@@ -162,8 +162,8 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 				}
 			}
 
-			pkColumnValue := GetPKColumnValues(oldColumnValue, e.Table.PKColumns)
-			deleteSql, args, err := GetDeleteSql(e.Table.Schema, e.Table.Name, pkColumnNames, pkColumnValue)
+			pkColumnValue := getPkColumnValues(oldColumnValue, e.Table.PKColumns)
+			deleteSql, args, err := getDeleteSql(e.Table.Schema, e.Table.Name, pkColumnNames, pkColumnValue)
 			if err != nil {
 				return err
 			}
@@ -191,7 +191,7 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 				}
 			}
 
-			insertSql, args, err := GetInsertSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue)
+			insertSql, args, err := getInsertSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue)
 			if err != nil {
 				return err
 			}
@@ -210,6 +210,6 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 	return nil
 }
 
-func (h *MyEventHandler) String() string {
-	return "MyEventHandler"
+func (h *Database) String() string {
+	return "Database"
 }

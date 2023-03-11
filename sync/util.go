@@ -25,7 +25,7 @@ import (
 	"github.com/xorm-io/xorm"
 )
 
-func GetUpdateSql(schemaName string, tableName string, columnNames []string, newColumnVal []interface{}, pkColumnNames []string, pkColumnValue []interface{}) (string, []interface{}, error) {
+func getUpdateSql(schemaName string, tableName string, columnNames []string, newColumnVal []interface{}, pkColumnNames []string, pkColumnValue []interface{}) (string, []interface{}, error) {
 	updateSql := squirrel.Update(schemaName + "." + tableName)
 	for i, columnName := range columnNames {
 		updateSql = updateSql.Set(columnName, newColumnVal[i])
@@ -43,13 +43,13 @@ func GetUpdateSql(schemaName string, tableName string, columnNames []string, new
 	return sql, args, nil
 }
 
-func GetInsertSql(schemaName string, tableName string, columnNames []string, columnValue []interface{}) (string, []interface{}, error) {
+func getInsertSql(schemaName string, tableName string, columnNames []string, columnValue []interface{}) (string, []interface{}, error) {
 	insertSql := squirrel.Insert(schemaName + "." + tableName).Columns(columnNames...).Values(columnValue...)
 
 	return insertSql.ToSql()
 }
 
-func GetDeleteSql(schemaName string, tableName string, pkColumnNames []string, pkColumnValue []interface{}) (string, []interface{}, error) {
+func getDeleteSql(schemaName string, tableName string, pkColumnNames []string, pkColumnValue []interface{}) (string, []interface{}, error) {
 	deleteSql := squirrel.Delete(schemaName + "." + tableName)
 
 	for i, columnName := range pkColumnNames {
@@ -59,7 +59,7 @@ func GetDeleteSql(schemaName string, tableName string, pkColumnNames []string, p
 	return deleteSql.ToSql()
 }
 
-func CreateEngine(dataSourceName string) (*xorm.Engine, error) {
+func createEngine(dataSourceName string) (*xorm.Engine, error) {
 	engine, err := xorm.NewEngine("mysql", dataSourceName)
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func CreateEngine(dataSourceName string) (*xorm.Engine, error) {
 	return engine, nil
 }
 
-func GetServerId(engin *xorm.Engine) (uint32, error) {
+func getServerId(engin *xorm.Engine) (uint32, error) {
 	res, err := engin.QueryInterface("SELECT @@server_id")
 	if err != nil {
 		return 0, err
@@ -84,16 +84,16 @@ func GetServerId(engin *xorm.Engine) (uint32, error) {
 	return uint32(serverId), nil
 }
 
-func GetServerUUID(engin *xorm.Engine) (string, error) {
+func getServerUuid(engin *xorm.Engine) (string, error) {
 	res, err := engin.QueryString("show variables like 'server_uuid'")
 	if err != nil {
 		return "", err
 	}
-	serverUUID := fmt.Sprintf("%s", res[0]["Value"])
-	return serverUUID, err
+	serverUuid := fmt.Sprintf("%s", res[0]["Value"])
+	return serverUuid, err
 }
 
-func GetPKColumnNames(columnNames []string, PKColumns []int) []string {
+func getPkColumnNames(columnNames []string, PKColumns []int) []string {
 	pkColumnNames := make([]string, len(PKColumns))
 	for i, index := range PKColumns {
 		pkColumnNames[i] = columnNames[index]
@@ -101,7 +101,7 @@ func GetPKColumnNames(columnNames []string, PKColumns []int) []string {
 	return pkColumnNames
 }
 
-func GetPKColumnValues(columnValues []interface{}, PKColumns []int) []interface{} {
+func getPkColumnValues(columnValues []interface{}, PKColumns []int) []interface{} {
 	pkColumnNames := make([]interface{}, len(PKColumns))
 	for i, index := range PKColumns {
 		pkColumnNames[i] = columnValues[index]
@@ -109,7 +109,7 @@ func GetPKColumnValues(columnValues []interface{}, PKColumns []int) []interface{
 	return pkColumnNames
 }
 
-func GetCanalConfig(username string, password string, host string, port int, database string) *canal.Config {
+func getCanalConfig(username string, password string, host string, port int, database string) *canal.Config {
 	// config canal
 	cfg := canal.NewDefaultConfig()
 	cfg.Addr = fmt.Sprintf("%s:%d", host, port)
@@ -120,11 +120,25 @@ func GetCanalConfig(username string, password string, host string, port int, dat
 	return cfg
 }
 
-func GetMyEventHandler(username string, password string, host string, port int, database string) MyEventHandler {
-	var eventHandler MyEventHandler
-	eventHandler.dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username, password, host, port, database)
-	eventHandler.engine, _ = CreateEngine(eventHandler.dataSourceName)
-	eventHandler.serverId, _ = GetServerId(eventHandler.engine)
-	eventHandler.serverUUID, _ = GetServerUUID(eventHandler.engine)
-	return eventHandler
+func createDatabase(username string, password string, host string, port int, database string) Database {
+	var db Database
+	var err error
+
+	db.dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username, password, host, port, database)
+	db.engine, err = createEngine(db.dataSourceName)
+	if err != nil {
+		panic(err)
+	}
+
+	db.serverId, err = getServerId(db.engine)
+	if err != nil {
+		panic(err)
+	}
+
+	db.serverUuid, err = getServerUuid(db.engine)
+	if err != nil {
+		panic(err)
+	}
+
+	return db
 }
