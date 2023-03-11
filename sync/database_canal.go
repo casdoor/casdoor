@@ -17,84 +17,32 @@ package sync
 import (
 	"fmt"
 	"strings"
-	"sync"
 
 	"github.com/go-mysql-org/go-mysql/canal"
 	"github.com/go-mysql-org/go-mysql/mysql"
 	"github.com/go-mysql-org/go-mysql/replication"
 	"github.com/siddontang/go-log/log"
-	"github.com/xorm-io/xorm"
 )
 
-type Database struct {
-	dataSourceName string
-	engine         *xorm.Engine
-	serverId       uint32
-	serverUuid     string
-	Gtid           string
-	canal.DummyEventHandler
-}
-
-func StartCanal(cfg *canal.Config, username string, password string, host string, port int, database string) error {
-	c, err := canal.NewCanal(cfg)
-	if err != nil {
-		return err
-	}
-
-	gtidSet, err := c.GetMasterGTIDSet()
-	if err != nil {
-		return err
-	}
-
-	db := createDatabase(username, password, host, port, database)
-	// Register a handler to handle RowsEvent
-	c.SetEventHandler(&db)
-
-	// Start replication
-	err = c.StartFromGTID(gtidSet)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func StartBinlogSync() error {
-	var wg sync.WaitGroup
-	// init config
-	cfg1 := getCanalConfig(username1, password1, host1, port1, database1)
-	cfg2 := getCanalConfig(username2, password2, host2, port2, database2)
-
-	// start canal1 replication
-	go StartCanal(cfg1, username2, password2, host2, port2, database2)
-	wg.Add(1)
-
-	// start canal2 replication
-	go StartCanal(cfg2, username1, password1, host1, port1, database1)
-	wg.Add(1)
-
-	wg.Wait()
-	return nil
-}
-
-func (h *Database) OnGTID(header *replication.EventHeader, gtid mysql.GTIDSet) error {
+func (db *Database) OnGTID(header *replication.EventHeader, gtid mysql.GTIDSet) error {
 	log.Info("OnGTID: ", gtid.String())
-	h.Gtid = gtid.String()
+	db.Gtid = gtid.String()
 	return nil
 }
 
-func (h *Database) onDDL(header *replication.EventHeader, nextPos mysql.Position, queryEvent *replication.QueryEvent) error {
+func (db *Database) onDDL(header *replication.EventHeader, nextPos mysql.Position, queryEvent *replication.QueryEvent) error {
 	log.Info("into DDL event")
 	return nil
 }
 
-func (h *Database) OnRow(e *canal.RowsEvent) error {
+func (db *Database) OnRow(e *canal.RowsEvent) error {
 	log.Info("serverId: ", e.Header.ServerID)
-	if strings.Contains(h.Gtid, h.serverUuid) {
+	if strings.Contains(db.Gtid, db.serverUuid) {
 		return nil
 	}
 
 	// Set the next gtid of the target library to the gtid of the current target library to avoid loopbacks
-	h.engine.Exec(fmt.Sprintf("SET GTID_NEXT= '%s'", h.Gtid))
+	db.engine.Exec(fmt.Sprintf("SET GTID_NEXT= '%s'", db.Gtid))
 	length := len(e.Table.Columns)
 	columnNames := make([]string, length)
 	oldColumnValue := make([]interface{}, length)
@@ -114,7 +62,7 @@ func (h *Database) OnRow(e *canal.RowsEvent) error {
 
 	switch e.Action {
 	case canal.UpdateAction:
-		h.engine.Exec("BEGIN")
+		db.engine.Exec("BEGIN")
 		for i, row := range e.Rows {
 			for j, item := range row {
 				if i%2 == 0 {
@@ -142,17 +90,17 @@ func (h *Database) OnRow(e *canal.RowsEvent) error {
 					return err
 				}
 
-				res, err := h.engine.DB().Exec(updateSql, args...)
+				res, err := db.engine.DB().Exec(updateSql, args...)
 				if err != nil {
 					return err
 				}
 				log.Info(updateSql, args, res)
 			}
 		}
-		h.engine.Exec("COMMIT")
-		h.engine.Exec("SET GTID_NEXT='automatic'")
+		db.engine.Exec("COMMIT")
+		db.engine.Exec("SET GTID_NEXT='automatic'")
 	case canal.DeleteAction:
-		h.engine.Exec("BEGIN")
+		db.engine.Exec("BEGIN")
 		for _, row := range e.Rows {
 			for j, item := range row {
 				if isChar[j] == true {
@@ -168,16 +116,16 @@ func (h *Database) OnRow(e *canal.RowsEvent) error {
 				return err
 			}
 
-			res, err := h.engine.DB().Exec(deleteSql, args...)
+			res, err := db.engine.DB().Exec(deleteSql, args...)
 			if err != nil {
 				return err
 			}
 			log.Info(deleteSql, args, res)
 		}
-		h.engine.Exec("COMMIT")
-		h.engine.Exec("SET GTID_NEXT='automatic'")
+		db.engine.Exec("COMMIT")
+		db.engine.Exec("SET GTID_NEXT='automatic'")
 	case canal.InsertAction:
-		h.engine.Exec("BEGIN")
+		db.engine.Exec("BEGIN")
 		for _, row := range e.Rows {
 			for j, item := range row {
 				if isChar[j] == true {
@@ -196,20 +144,20 @@ func (h *Database) OnRow(e *canal.RowsEvent) error {
 				return err
 			}
 
-			res, err := h.engine.DB().Exec(insertSql, args...)
+			res, err := db.engine.DB().Exec(insertSql, args...)
 			if err != nil {
 				return err
 			}
 			log.Info(insertSql, args, res)
 		}
-		h.engine.Exec("COMMIT")
-		h.engine.Exec("SET GTID_NEXT='automatic'")
+		db.engine.Exec("COMMIT")
+		db.engine.Exec("SET GTID_NEXT='automatic'")
 	default:
 		log.Infof("%v", e.String())
 	}
 	return nil
 }
 
-func (h *Database) String() string {
+func (db *Database) String() string {
 	return "Database"
 }

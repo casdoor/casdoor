@@ -19,8 +19,6 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/go-mysql-org/go-mysql/canal"
-
 	"github.com/Masterminds/squirrel"
 	"github.com/xorm-io/xorm"
 )
@@ -107,38 +105,4 @@ func getPkColumnValues(columnValues []interface{}, PKColumns []int) []interface{
 		pkColumnNames[i] = columnValues[index]
 	}
 	return pkColumnNames
-}
-
-func getCanalConfig(username string, password string, host string, port int, database string) *canal.Config {
-	// config canal
-	cfg := canal.NewDefaultConfig()
-	cfg.Addr = fmt.Sprintf("%s:%d", host, port)
-	cfg.Password = password
-	cfg.User = username
-	// We only care table in database1
-	cfg.Dump.TableDB = database
-	return cfg
-}
-
-func createDatabase(username string, password string, host string, port int, database string) Database {
-	var db Database
-	var err error
-
-	db.dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username, password, host, port, database)
-	db.engine, err = createEngine(db.dataSourceName)
-	if err != nil {
-		panic(err)
-	}
-
-	db.serverId, err = getServerId(db.engine)
-	if err != nil {
-		panic(err)
-	}
-
-	db.serverUuid, err = getServerUuid(db.engine)
-	if err != nil {
-		panic(err)
-	}
-
-	return db
 }
