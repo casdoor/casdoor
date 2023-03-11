@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Popconfirm, Table, Upload} from "antd";
+import {Button, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import copy from "copy-to-clipboard";
 import * as Setting from "./Setting";
@@ -21,6 +21,7 @@ import * as ResourceBackend from "./backend/ResourceBackend";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
 import BaseListPage from "./BaseListPage";
+import PopconfirmModal from "./PopconfirmModal";
 
 class ResourceListPage extends BaseListPage {
   constructor(props) {
@@ -244,15 +245,13 @@ class ResourceListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              {/* <Button style={{marginTop: '10px', marginBottom: '10px', marginRight: '10px'}} type="primary" onClick={() => this.props.history.push(`/resources/${record.name}`)}>{i18next.t("general:Edit")}</Button>*/}
-              <Popconfirm
+              <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteResource(index)}
                 okText={i18next.t("user:OK")}
                 cancelText={i18next.t("user:Cancel")}
               >
-                <Button type="primary" danger>{i18next.t("general:Delete")}</Button>
-              </Popconfirm>
+              </PopconfirmModal>
             </div>
           );
         },

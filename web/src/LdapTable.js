@@ -13,11 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Popconfirm, Row, Table} from "antd";
+import {Button, Col, Row, Table} from "antd";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import * as LdapBackend from "./backend/LdapBackend";
 import {Link} from "react-router-dom";
+import PopconfirmModal from "./PopconfirmModal";
 
 class LdapTable extends React.Component {
   constructor(props) {
@@ -157,17 +158,15 @@ class LdapTable extends React.Component {
                 {i18next.t("ldap:Sync")}
               </Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
-                onClick={() => Setting.goToLink(`/ldap/${record.owner}/${record.id}`)}>
-                {i18next.t("general:Edit")}
-              </Button>
-              <Popconfirm
+                type="primary"
+                onClick={() => Setting.goToLink(`/ldap/sync/${record.owner}/${record.id}`)}>{i18next.t("ldap:Sync")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
+                onClick={() => Setting.goToLink(`/ldap/${record.owner}/${record.id}`)}>{i18next.t("general:Edit")}</Button>
+              <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.serverName} ?`}
                 onConfirm={() => this.deleteRow(table, index)}
               >
-                <Button style={{marginBottom: "10px"}} type="primary" danger>
-                  {i18next.t("general:Delete")}
-                </Button>
-              </Popconfirm>
+              </PopconfirmModal>
             </div>
           );
         },
