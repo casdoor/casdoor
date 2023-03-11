@@ -83,7 +83,12 @@ class LdapEditPage extends React.Component {
       <Card size="small" title={
         <div>
           {i18next.t("ldap:Edit LDAP")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button type="primary" onClick={() => this.submitLdapEdit()}>{i18next.t("general:Save")}</Button>
+          <Button onClick={() => this.submitLdapEdit()}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitLdapEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          <Button style={{marginLeft: "20px"}}
+            onClick={() => Setting.goToLink(`/ldap/sync/${this.state.organizationName}/${this.state.ldapId}`)}>
+            {i18next.t("ldap:Sync")} LDAP
+          </Button>
         </div>
       } style={{marginLeft: "5px"}} type="inner">
         <Row style={{marginTop: "10px"}}>
@@ -190,14 +195,18 @@ class LdapEditPage extends React.Component {
     );
   }
 
-  submitLdapEdit() {
+  submitLdapEdit(willExist) {
     LddpBackend.updateLdap(this.state.ldap)
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", "Update LDAP server success");
-          this.setState((prevState) => {
-            prevState.ldap = res.data2;
+          this.setState({
+            organizationName: this.state.ldap.owner,
           });
+
+          if (willExist) {
+            this.props.history.push(`/organizations/${this.state.organizationName}`);
+          }
         } else {
           Setting.showMessage("error", res.msg);
         }
@@ -210,25 +219,13 @@ class LdapEditPage extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{width: "100%"}}>
-          <Col span={1}>
-          </Col>
-          <Col span={22}>
-            {
-              this.state.ldap !== null ? this.renderLdap() : null
-            }
-          </Col>
-          <Col span={1}>
-          </Col>
-        </Row>
-        <Row style={{margin: 10}}>
-          <Col span={2}>
-          </Col>
-          <Col span={18}>
-            <Button type="primary" size="large"
-              onClick={() => this.submitLdapEdit()}>{i18next.t("general:Save")}</Button>
-          </Col>
-        </Row>
+        {
+          this.state.ldap !== null ? this.renderLdap() : null
+        }
+        <div style={{marginTop: "20px", marginLeft: "40px"}}>
+          <Button size="large" onClick={() => this.submitLdapEdit()}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitLdapEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+        </div>
       </div>
     );
   }

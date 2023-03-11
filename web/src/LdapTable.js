@@ -152,17 +152,21 @@ class LdapTable extends React.Component {
         render: (text, record, index) => {
           return (
             <div>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary"
+                onClick={() => Setting.goToLink(`/ldap/sync/${record.owner}/${record.id}`)}>
+                {i18next.t("ldap:Sync")}
+              </Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
-                type="primary"
-                onClick={() => Setting.goToLink(`/ldap/sync/${record.owner}/${record.id}`)}>{i18next.t("ldap:Sync")}</Button>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
-                onClick={() => Setting.goToLink(`/ldap/${record.owner}/${record.id}`)}>{i18next.t("general:Edit")}</Button>
+                onClick={() => Setting.goToLink(`/ldap/${record.owner}/${record.id}`)}>
+                {i18next.t("general:Edit")}
+              </Button>
               <Popconfirm
                 title={i18next.t("general:Sure to delete") + `: ${record.serverName} ?`}
                 onConfirm={() => this.deleteRow(table, index)}
               >
-                <Button style={{marginBottom: "10px"}}
-                  type="primary" danger>{i18next.t("general:Delete")}</Button>
+                <Button style={{marginBottom: "10px"}} type="primary" danger>
+                  {i18next.t("general:Delete")}
+                </Button>
               </Popconfirm>
             </div>
           );

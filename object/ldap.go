@@ -160,12 +160,12 @@ func GetLdapConn(host string, port int, adminUser string, adminPasswd string) (*
 
 	err = conn.Bind(adminUser, adminPasswd)
 	if err != nil {
-		return nil, fmt.Errorf("fail to login Ldap server with [%s]", adminUser)
+		return nil, err
 	}
 
 	isAD, err := isMicrosoftAD(conn)
 	if err != nil {
-		return nil, fmt.Errorf("fail to get Ldap server type [%s]", adminUser)
+		return nil, err
 	}
 	return &ldapConn{Conn: conn, IsAD: isAD}, nil
 }
