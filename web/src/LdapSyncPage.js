@@ -81,40 +81,24 @@ class LdapSyncPage extends React.Component {
             prevState.ldap = res.data;
             return prevState;
           });
-          this.getLdapUser(res.data);
+          this.getLdapUser();
         } else {
           Setting.showMessage("error", res.msg);
         }
       });
   }
 
-  getLdapUser(ldap) {
-    LdapBackend.getLdapUser(ldap)
+  getLdapUser() {
+    LdapBackend.getLdapUser(this.state.organizationName, this.state.ldapId)
       .then((res) => {
         if (res.status === "ok") {
           this.setState((prevState) => {
             prevState.users = res.data.users;
+            prevState.existUuids = res.data2?.length > 0 ? res.data2 : [];
             return prevState;
           });
-          this.getExistUsers(ldap.owner, res.data.users);
         } else {
           Setting.showMessage("error", res.msg);
-        }
-      });
-  }
-
-  getExistUsers(owner, users) {
-    const uuidArray = [];
-    users.forEach(elem => {
-      uuidArray.push(elem.uuid);
-    });
-    LdapBackend.checkLdapUsersExist(owner, uuidArray)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState(prevState => {
-            prevState.existUuids = res.data?.length > 0 ? res.data : [];
-            return prevState;
-          });
         }
       });
   }
@@ -220,9 +204,14 @@ class LdapSyncPage extends React.Component {
                 title={"Please confirm to sync selected users"}
                 onConfirm={() => this.syncUsers()}
               >
-                <Button type="primary" size="small"
-                  style={{marginLeft: "10px"}}>{i18next.t("ldap:Sync")}</Button>
+                <Button type="primary" style={{marginLeft: "10px"}}>
+                  {i18next.t("ldap:Sync")}
+                </Button>
               </Popconfirm>
+              <Button style={{marginLeft: "20px"}}
+                onClick={() => Setting.goToLink(`/ldap/${this.state.organizationName}/${this.state.ldapId}`)}>
+                {i18next.t("general:Edit")} LDAP
+              </Button>
             </div>
           )}
           loading={users === null}
@@ -234,17 +223,20 @@ class LdapSyncPage extends React.Component {
   render() {
     return (
       <div>
-        <Row style={{width: "100%"}}>
-          <Col span={1}>
-          </Col>
+        <Row style={{width: "100%", justifyContent: "center"}}>
           <Col span={22}>
             {
               this.renderTable(this.state.users)
             }
           </Col>
-          <Col span={1}>
-          </Col>
         </Row>
+        <div style={{marginTop: "20px", marginLeft: "40px"}}>
+          <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => {
+            this.props.history.push(`/organizations/${this.state.organizationName}`);
+          }}>
+            {i18next.t("general:Save & Exit")}
+          </Button>
+        </div>
       </div>
     );
   }

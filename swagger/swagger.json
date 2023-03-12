@@ -636,14 +636,6 @@
                 }
             }
         },
-        "/api/check-ldap-users-exist": {
-            "post": {
-                "tags": [
-                    "Account API"
-                ],
-                "operationId": "ApiController.CheckLdapUserExist"
-            }
-        },
         "/api/check-user-password": {
             "post": {
                 "tags": [
@@ -1349,8 +1341,8 @@
                 "operationId": "ApiController.GetLdap"
             }
         },
-        "/api/get-ldap-user": {
-            "post": {
+        "/api/get-ldap-users": {
+            "get": {
                 "tags": [
                     "Account API"
                 ],
@@ -1831,20 +1823,6 @@
                         "schema": {
                             "$ref": "#/definitions/object.Record"
                         }
-                    }
-                }
-            }
-        },
-        "/api/get-release": {
-            "get": {
-                "tags": [
-                    "System API"
-                ],
-                "description": "get local github repo's latest release version info",
-                "operationId": "ApiController.GitRepoVersion",
-                "responses": {
-                    "200": {
-                        "description": "{string} local latest version hash of casdoor"
                     }
                 }
             }
@@ -2336,6 +2314,20 @@
                                 "$ref": "#/definitions/object.User"
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/api/get-version-info": {
+            "get": {
+                "tags": [
+                    "System API"
+                ],
+                "description": "get local git repo's latest release version info",
+                "operationId": "ApiController.GetVersionInfo",
+                "responses": {
+                    "200": {
+                        "description": "{string} local latest version hash of Casdoor"
                     }
                 }
             }
@@ -3635,11 +3627,11 @@
         }
     },
     "definitions": {
-        "2346.0xc000278ab0.false": {
+        "2268.0xc000528cf0.false": {
             "title": "false",
             "type": "object"
         },
-        "2381.0xc000278ae0.false": {
+        "2302.0xc000528d20.false": {
             "title": "false",
             "type": "object"
         },
@@ -3766,10 +3758,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2346.0xc000278ab0.false"
+                    "$ref": "#/definitions/2268.0xc000528cf0.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2381.0xc000278ae0.false"
+                    "$ref": "#/definitions/2302.0xc000528d20.false"
                 },
                 "msg": {
                     "type": "string"
