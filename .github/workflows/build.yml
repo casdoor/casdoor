@@ -112,19 +112,10 @@ jobs:
         run: |
           old_version=${{steps.get-previous-tag.outputs.tag}}
           new_version=${{steps.get-current-tag.outputs.tag }}
-
-          old_array=(${old_version//\./ })
-          new_array=(${new_version//\./ })
-
-          if [ ${old_array[0]} != ${new_array[0]} ]
-          then 
-              echo ::set-output name=push::'true'
-          elif [ ${old_array[1]} != ${new_array[1]} ]
-          then 
-              echo ::set-output name=push::'true'
-              
+          if [ "$old_version" == "$new_version" ]; then
+            echo "::set-output name=push::false"
           else
-              echo ::set-output name=push::'false'
+            echo "::set-output name=push::true"
           fi
 
       - name: Set up QEMU
@@ -150,7 +141,7 @@ jobs:
         with:
           context: .
           target: STANDARD
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: |
             ${{ secrets.ALIYUN_IMAGE_REGISTRY }}/weechip/casdoor:${{steps.get-current-tag.outputs.tag }}
