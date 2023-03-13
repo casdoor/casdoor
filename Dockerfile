@@ -9,6 +9,7 @@ FROM golang:1.17.5 AS BACK
 WORKDIR /go/src/casdoor
 COPY . .
 RUN ./build.sh
+RUN go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go | grep -oE  "v[0-9]+.[0-9]+.[0-9]+\s+[0-9a-f]+\s+[0-9]+" > version_info.txt
 
 
 FROM alpine:latest AS STANDARD
@@ -34,6 +35,7 @@ WORKDIR /
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/server_${BUILDX_ARCH} ./server
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/swagger ./swagger
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/conf/app.conf ./conf/app.conf
+COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/version_info.txt ./go/src/casdoor/version_info.txt
 COPY --from=FRONT --chown=$USER:$USER /web/build ./web/build
 
 ENTRYPOINT ["/server"]
@@ -61,6 +63,7 @@ COPY --from=BACK /go/src/casdoor/server_${BUILDX_ARCH} ./server
 COPY --from=BACK /go/src/casdoor/swagger ./swagger
 COPY --from=BACK /go/src/casdoor/docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
+COPY --from=BACK /go/src/casdoor/version_info.txt ./go/src/casdoor/version_info.txt
 COPY --from=FRONT /web/build ./web/build
 
 ENTRYPOINT ["/bin/bash"]
