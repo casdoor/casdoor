@@ -46,7 +46,6 @@ class LoginPage extends React.Component {
       username: null,
       validEmailOrPhone: false,
       validEmail: false,
-      validPhone: false,
       loginMethod: "password",
       enableCaptchaModal: false,
       openCaptchaModal: false,
@@ -427,16 +426,15 @@ class LoginPage extends React.Component {
                   {
                     validator: (_, value) => {
                       if (this.state.loginMethod === "verificationCode") {
-                        if (!Setting.isValidEmail(this.state.username) && !Setting.isValidPhone(this.state.username)) {
+                        if (!Setting.isValidEmail(value) && !Setting.isValidPhone(value)) {
                           this.setState({validEmailOrPhone: false});
                           return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
                         }
 
-                        if (Setting.isValidPhone(this.state.username)) {
-                          this.setState({validPhone: true});
-                        }
-                        if (Setting.isValidEmail(this.state.username)) {
+                        if (Setting.isValidEmail(value)) {
                           this.setState({validEmail: true});
+                        } else {
+                          this.setState({validEmail: false});
                         }
                       }
 
