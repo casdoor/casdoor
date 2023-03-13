@@ -17,84 +17,32 @@ package sync
 import (
 	"fmt"
 	"strings"
-	"sync"
 
 	"github.com/go-mysql-org/go-mysql/canal"
 	"github.com/go-mysql-org/go-mysql/mysql"
 	"github.com/go-mysql-org/go-mysql/replication"
 	"github.com/siddontang/go-log/log"
-	"github.com/xorm-io/xorm"
 )
 
-type MyEventHandler struct {
-	dataSourceName string
-	engine         *xorm.Engine
-	serverId       uint32
-	serverUUID     string
-	GTID           string
-	canal.DummyEventHandler
-}
-
-func StartCanal(cfg *canal.Config, username string, password string, host string, port int, database string) error {
-	c, err := canal.NewCanal(cfg)
-	if err != nil {
-		return err
-	}
-
-	GTIDSet, err := c.GetMasterGTIDSet()
-	if err != nil {
-		return err
-	}
-
-	eventHandler := GetMyEventHandler(username, password, host, port, database)
-	// Register a handler to handle RowsEvent
-	c.SetEventHandler(&eventHandler)
-
-	// Start replication
-	err = c.StartFromGTID(GTIDSet)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func StartBinlogSync() error {
-	var wg sync.WaitGroup
-	// init config
-	cfg1 := GetCanalConfig(username1, password1, host1, port1, database1)
-	cfg2 := GetCanalConfig(username2, password2, host2, port2, database2)
-
-	// start canal1 replication
-	go StartCanal(cfg1, username2, password2, host2, port2, database2)
-	wg.Add(1)
-
-	// start canal2 replication
-	go StartCanal(cfg2, username1, password1, host1, port1, database1)
-	wg.Add(1)
-
-	wg.Wait()
-	return nil
-}
-
-func (h *MyEventHandler) OnGTID(header *replication.EventHeader, gtid mysql.GTIDSet) error {
+func (db *Database) OnGTID(header *replication.EventHeader, gtid mysql.GTIDSet) error {
 	log.Info("OnGTID: ", gtid.String())
-	h.GTID = gtid.String()
+	db.Gtid = gtid.String()
 	return nil
 }
 
-func (h *MyEventHandler) onDDL(header *replication.EventHeader, nextPos mysql.Position, queryEvent *replication.QueryEvent) error {
+func (db *Database) onDDL(header *replication.EventHeader, nextPos mysql.Position, queryEvent *replication.QueryEvent) error {
 	log.Info("into DDL event")
 	return nil
 }
 
-func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
+func (db *Database) OnRow(e *canal.RowsEvent) error {
 	log.Info("serverId: ", e.Header.ServerID)
-	if strings.Contains(h.GTID, h.serverUUID) {
+	if strings.Contains(db.Gtid, db.serverUuid) {
 		return nil
 	}
 
 	// Set the next gtid of the target library to the gtid of the current target library to avoid loopbacks
-	h.engine.Exec(fmt.Sprintf("SET GTID_NEXT= '%s'", h.GTID))
+	db.engine.Exec(fmt.Sprintf("SET GTID_NEXT= '%s'", db.Gtid))
 	length := len(e.Table.Columns)
 	columnNames := make([]string, length)
 	oldColumnValue := make([]interface{}, length)
@@ -110,11 +58,11 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 		}
 	}
 	// get pk column name
-	pkColumnNames := GetPKColumnNames(columnNames, e.Table.PKColumns)
+	pkColumnNames := getPkColumnNames(columnNames, e.Table.PKColumns)
 
 	switch e.Action {
 	case canal.UpdateAction:
-		h.engine.Exec("BEGIN")
+		db.engine.Exec("BEGIN")
 		for i, row := range e.Rows {
 			for j, item := range row {
 				if i%2 == 0 {
@@ -136,23 +84,23 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 				}
 			}
 			if i%2 == 1 {
-				pkColumnValue := GetPKColumnValues(oldColumnValue, e.Table.PKColumns)
-				updateSql, args, err := GetUpdateSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue, pkColumnNames, pkColumnValue)
+				pkColumnValue := getPkColumnValues(oldColumnValue, e.Table.PKColumns)
+				updateSql, args, err := getUpdateSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue, pkColumnNames, pkColumnValue)
 				if err != nil {
 					return err
 				}
 
-				res, err := h.engine.DB().Exec(updateSql, args...)
+				res, err := db.engine.DB().Exec(updateSql, args...)
 				if err != nil {
 					return err
 				}
 				log.Info(updateSql, args, res)
 			}
 		}
-		h.engine.Exec("COMMIT")
-		h.engine.Exec("SET GTID_NEXT='automatic'")
+		db.engine.Exec("COMMIT")
+		db.engine.Exec("SET GTID_NEXT='automatic'")
 	case canal.DeleteAction:
-		h.engine.Exec("BEGIN")
+		db.engine.Exec("BEGIN")
 		for _, row := range e.Rows {
 			for j, item := range row {
 				if isChar[j] == true {
@@ -162,22 +110,22 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 				}
 			}
 
-			pkColumnValue := GetPKColumnValues(oldColumnValue, e.Table.PKColumns)
-			deleteSql, args, err := GetDeleteSql(e.Table.Schema, e.Table.Name, pkColumnNames, pkColumnValue)
+			pkColumnValue := getPkColumnValues(oldColumnValue, e.Table.PKColumns)
+			deleteSql, args, err := getDeleteSql(e.Table.Schema, e.Table.Name, pkColumnNames, pkColumnValue)
 			if err != nil {
 				return err
 			}
 
-			res, err := h.engine.DB().Exec(deleteSql, args...)
+			res, err := db.engine.DB().Exec(deleteSql, args...)
 			if err != nil {
 				return err
 			}
 			log.Info(deleteSql, args, res)
 		}
-		h.engine.Exec("COMMIT")
-		h.engine.Exec("SET GTID_NEXT='automatic'")
+		db.engine.Exec("COMMIT")
+		db.engine.Exec("SET GTID_NEXT='automatic'")
 	case canal.InsertAction:
-		h.engine.Exec("BEGIN")
+		db.engine.Exec("BEGIN")
 		for _, row := range e.Rows {
 			for j, item := range row {
 				if isChar[j] == true {
@@ -191,25 +139,25 @@ func (h *MyEventHandler) OnRow(e *canal.RowsEvent) error {
 				}
 			}
 
-			insertSql, args, err := GetInsertSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue)
+			insertSql, args, err := getInsertSql(e.Table.Schema, e.Table.Name, columnNames, newColumnValue)
 			if err != nil {
 				return err
 			}
 
-			res, err := h.engine.DB().Exec(insertSql, args...)
+			res, err := db.engine.DB().Exec(insertSql, args...)
 			if err != nil {
 				return err
 			}
 			log.Info(insertSql, args, res)
 		}
-		h.engine.Exec("COMMIT")
-		h.engine.Exec("SET GTID_NEXT='automatic'")
+		db.engine.Exec("COMMIT")
+		db.engine.Exec("SET GTID_NEXT='automatic'")
 	default:
 		log.Infof("%v", e.String())
 	}
 	return nil
 }
 
-func (h *MyEventHandler) String() string {
-	return "MyEventHandler"
+func (db *Database) String() string {
+	return "Database"
 }

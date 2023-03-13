@@ -118,13 +118,12 @@ func initAPI() {
 	beego.Router("/api/reset-email-or-phone", &controllers.ApiController{}, "POST:ResetEmailOrPhone")
 	beego.Router("/api/get-captcha", &controllers.ApiController{}, "GET:GetCaptcha")
 
-	beego.Router("/api/get-ldap-user", &controllers.ApiController{}, "POST:GetLdapUser")
+	beego.Router("/api/get-ldap-users", &controllers.ApiController{}, "GET:GetLdapUsers")
 	beego.Router("/api/get-ldaps", &controllers.ApiController{}, "GET:GetLdaps")
 	beego.Router("/api/get-ldap", &controllers.ApiController{}, "GET:GetLdap")
 	beego.Router("/api/add-ldap", &controllers.ApiController{}, "POST:AddLdap")
 	beego.Router("/api/update-ldap", &controllers.ApiController{}, "POST:UpdateLdap")
 	beego.Router("/api/delete-ldap", &controllers.ApiController{}, "POST:DeleteLdap")
-	beego.Router("/api/check-ldap-users-exist", &controllers.ApiController{}, "POST:CheckLdapUsersExist")
 	beego.Router("/api/sync-ldap-users", &controllers.ApiController{}, "POST:SyncLdapUsers")
 
 	beego.Router("/api/get-providers", &controllers.ApiController{}, "GET:GetProviders")
@@ -225,5 +224,5 @@ func initAPI() {
 	beego.Router("/api/webauthn/signin/finish", &controllers.ApiController{}, "Post:WebAuthnSigninFinish")
 
 	beego.Router("/api/get-system-info", &controllers.ApiController{}, "GET:GetSystemInfo")
-	beego.Router("/api/get-release", &controllers.ApiController{}, "GET:GitRepoVersion")
+	beego.Router("/api/get-version-info", &controllers.ApiController{}, "GET:GetVersionInfo")
 }

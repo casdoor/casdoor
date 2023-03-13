@@ -14,13 +14,14 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Table} from "antd";
+import {Button, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Provider from "./auth/Provider";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
+import PopconfirmModal from "./PopconfirmModal";
 
 class ProviderListPage extends BaseListPage {
   constructor(props) {
@@ -206,12 +207,11 @@ class ProviderListPage extends BaseListPage {
           return (
             <div>
               <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/providers/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
-              <Popconfirm
+              <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteProvider(index)}
               >
-                <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginBottom: "10px"}} type="primary" danger>{i18next.t("general:Delete")}</Button>
-              </Popconfirm>
+              </PopconfirmModal>
             </div>
           );
         },

@@ -14,10 +14,11 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Col, Popconfirm, Row, Table} from "antd";
+import {Button, Col, Row, Table} from "antd";
 import * as Setting from "./Setting";
 import * as LdapBackend from "./backend/LdapBackend";
 import i18next from "i18next";
+import PopconfirmModal from "./PopconfirmModal";
 
 class LdapListPage extends React.Component {
   constructor(props) {
@@ -139,13 +140,11 @@ class LdapListPage extends React.Component {
                 onClick={() => Setting.goToLink(`/ldap/sync/${record.id}`)}>{i18next.t("ldap:Sync")}</Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
                 onClick={() => Setting.goToLink(`/ldap/${record.id}`)}>{i18next.t("general:Edit")}</Button>
-              <Popconfirm
+              <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.serverName} ?`}
                 onConfirm={() => this.deleteLdap(index)}
               >
-                <Button style={{marginBottom: "10px"}}
-                  type="primary" danger>{i18next.t("general:Delete")}</Button>
-              </Popconfirm>
+              </PopconfirmModal>
             </div>
           );
         },

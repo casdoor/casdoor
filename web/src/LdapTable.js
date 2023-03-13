@@ -13,11 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Popconfirm, Row, Table} from "antd";
+import {Button, Col, Row, Table} from "antd";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import * as LdapBackend from "./backend/LdapBackend";
 import {Link} from "react-router-dom";
+import PopconfirmModal from "./PopconfirmModal";
 
 class LdapTable extends React.Component {
   constructor(props) {
@@ -57,14 +58,14 @@ class LdapTable extends React.Component {
     LdapBackend.addLdap(newLdap)
       .then((res) => {
         if (res.status === "ok") {
-          Setting.showMessage("success", "Add LDAP server success");
+          Setting.showMessage("success", i18next.t("general:Successfully added"));
           if (table === undefined) {
             table = [];
           }
           table = Setting.addRow(table, res.data2);
           this.updateTable(table);
         } else {
-          Setting.showMessage("error", res.msg);
+          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
         }
       }
       )
@@ -77,14 +78,13 @@ class LdapTable extends React.Component {
     LdapBackend.deleteLdap(table[i])
       .then((res) => {
         if (res.status === "ok") {
-          Setting.showMessage("success", "Delete LDAP server success");
+          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
           table = Setting.deleteRow(table, i);
           this.updateTable(table);
         } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
         }
-      }
-      )
+      })
       .catch(error => {
         Setting.showMessage("error", `Delete LDAP server failed: ${error}`);
       });
@@ -152,18 +152,19 @@ class LdapTable extends React.Component {
         render: (text, record, index) => {
           return (
             <div>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary"
+                onClick={() => Setting.goToLink(`/ldap/sync/${record.owner}/${record.id}`)}>
+                {i18next.t("ldap:Sync")}
+              </Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
-                type="primary"
-                onClick={() => Setting.goToLink(`/ldap/sync/${record.owner}/${record.id}`)}>{i18next.t("ldap:Sync")}</Button>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
-                onClick={() => Setting.goToLink(`/ldap/${record.owner}/${record.id}`)}>{i18next.t("general:Edit")}</Button>
-              <Popconfirm
+                onClick={() => Setting.goToLink(`/ldap/${record.owner}/${record.id}`)}>
+                {i18next.t("general:Edit")}
+              </Button>
+              <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.serverName} ?`}
                 onConfirm={() => this.deleteRow(table, index)}
               >
-                <Button style={{marginBottom: "10px"}}
-                  type="primary" danger>{i18next.t("general:Delete")}</Button>
-              </Popconfirm>
+              </PopconfirmModal>
             </div>
           );
         },

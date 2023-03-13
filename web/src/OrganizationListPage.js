@@ -14,12 +14,13 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Popconfirm, Switch, Table} from "antd";
+import {Button, Switch, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
+import PopconfirmModal from "./PopconfirmModal";
 
 class OrganizationListPage extends BaseListPage {
   newOrganization() {
@@ -226,13 +227,12 @@ class OrganizationListPage extends BaseListPage {
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/organizations/${record.name}/users`)}>{i18next.t("general:Users")}</Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/organizations/${record.name}`)}>{i18next.t("general:Edit")}</Button>
-              <Popconfirm
+              <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteOrganization(index)}
                 disabled={record.name === "built-in"}
               >
-                <Button style={{marginBottom: "10px"}} disabled={record.name === "built-in"} type="primary" danger>{i18next.t("general:Delete")}</Button>
-              </Popconfirm>
+              </PopconfirmModal>
             </div>
           );
         },

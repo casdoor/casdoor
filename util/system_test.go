@@ -29,21 +29,21 @@ import (
 )
 
 func TestGetCpuUsage(t *testing.T) {
-	usage, err := GetCpuUsage()
+	usage, err := getCpuUsage()
 	assert.Nil(t, err)
 	t.Log(usage)
 }
 
 func TestGetMemoryUsage(t *testing.T) {
-	used, total, err := GetMemoryUsage()
+	used, total, err := getMemoryUsage()
 	assert.Nil(t, err)
 	t.Log(used, total)
 }
 
 func TestGetGitRepoVersion(t *testing.T) {
-	aheadCnt, commit, version, err := GetGitRepoVersion()
+	versionInfo, err := GetVersionInfo()
 	assert.Nil(t, err)
-	t.Log(aheadCnt, commit, version)
+	t.Log(versionInfo)
 }
 
 func TestGetVersion(t *testing.T) {
