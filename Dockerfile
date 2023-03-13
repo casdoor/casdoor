@@ -7,12 +7,10 @@ RUN yarn install --frozen-lockfile --network-timeout 1000000 && yarn run build
 
 FROM golang:1.17.5 AS BACK
 WORKDIR /go/src/casdoor
-COPY . .
 RUN go env -w GOPROXY=https://goproxy.cn
+COPY . .
 RUN ./build.sh
-RUN go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go |  \
-    grep -oE  "v[0-9]+.[0-9]+.[0-9]+\s+[0-9a-f]+\s+[0-9]+" > version_info.txt
-
+RUN go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go | grep -oE  "v[0-9]+.[0-9]+.[0-9]+\s+[0-9a-f]+\s+[0-9]+" > version_info.txt
 
 FROM alpine:latest AS STANDARD
 LABEL MAINTAINER="https://casdoor.org/"
