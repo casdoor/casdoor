@@ -44,7 +44,7 @@ func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 
 	if provider.Type == sender.Aliyun {
 		for i, number := range phoneNumbers {
-			phoneNumbers[i] = strings.TrimPrefix(number, "+")
+			phoneNumbers[i] = strings.TrimPrefix(number, "+86")
 		}
 	}
 
