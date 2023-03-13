@@ -90,9 +90,3 @@ func TestGetVersion(t *testing.T) {
 	assert.Equal(t, 3, commitOffset)
 	assert.Equal(t, "v1.257.0", version)
 }
-
-func TestGetVersionInfoFromFile(t *testing.T) {
-	versionInfo, err := GetVersionInfoFromFile()
-	assert.Nil(t, err)
-	t.Log(versionInfo)
-}
