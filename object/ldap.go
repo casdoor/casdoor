@@ -33,6 +33,7 @@ type Ldap struct {
 	ServerName string `xorm:"varchar(100)" json:"serverName"`
 	Host       string `xorm:"varchar(100)" json:"host"`
 	Port       int    `json:"port"`
+	EnableSsl  bool   `xorm:"bool" json:"enableSsl"`
 	Admin      string `xorm:"varchar(100)" json:"admin"`
 	Passwd     string `xorm:"varchar(100)" json:"passwd"`
 	BaseDn     string `xorm:"varchar(100)" json:"baseDn"`
@@ -152,13 +153,19 @@ func isMicrosoftAD(Conn *goldap.Conn) (bool, error) {
 	return isMicrosoft, err
 }
 
-func GetLdapConn(host string, port int, adminUser string, adminPasswd string) (*ldapConn, error) {
-	conn, err := goldap.Dial("tcp", fmt.Sprintf("%s:%d", host, port))
+func (ldap *Ldap) GetLdapConn() (c *ldapConn, err error) {
+	var conn *goldap.Conn
+	if ldap.EnableSsl {
+		conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port), nil)
+	} else {
+		conn, err = goldap.Dial("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port))
+	}
+
 	if err != nil {
 		return nil, err
 	}
 
-	err = conn.Bind(adminUser, adminPasswd)
+	err = conn.Bind(ldap.Admin, ldap.Passwd)
 	if err != nil {
 		return nil, err
 	}
@@ -352,7 +359,7 @@ func UpdateLdap(ldap *Ldap) bool {
 	}
 
 	affected, err := adapter.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
-		"port", "admin", "passwd", "base_dn", "auto_sync").Update(ldap)
+		"port", "enable_ssl", "admin", "passwd", "base_dn", "auto_sync").Update(ldap)
 	if err != nil {
 		panic(err)
 	}

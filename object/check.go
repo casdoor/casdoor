@@ -196,7 +196,7 @@ func checkLdapUserPassword(user *User, password string, lang string) (*User, str
 	ldaps := GetLdaps(user.Owner)
 	ldapLoginSuccess := false
 	for _, ldapServer := range ldaps {
-		conn, err := GetLdapConn(ldapServer.Host, ldapServer.Port, ldapServer.Admin, ldapServer.Passwd)
+		conn, err := ldapServer.GetLdapConn()
 		if err != nil {
 			continue
 		}

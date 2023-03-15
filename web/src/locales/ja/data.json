@@ -288,6 +288,8 @@
     "CN": "CN",
     "Edit LDAP": "LDAP を編集",
     "Email": "Eメールアドレス",
+    "Enable SSL": "Enable SSL",
+    "Enable SSL - Tooltip": "Enable SSL - Tooltip",
     "Group Id": "グループ ID",
     "ID": "ID",
     "Last Sync": "前回の同期",

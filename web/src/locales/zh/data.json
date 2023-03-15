@@ -288,6 +288,8 @@
     "CN": "CN",
     "Edit LDAP": "编辑LDAP",
     "Email": "电子邮件",
+    "Enable SSL": "启用 SSL",
+    "Enable SSL - Tooltip": "启用 SSL",
     "Group Id": "组ID",
     "ID": "ID",
     "Last Sync": "最近同步",

@@ -288,6 +288,8 @@
     "CN": "KN",
     "Edit LDAP": "LDAP bearbeiten",
     "Email": "E-Mail",
+    "Enable SSL": "Enable SSL",
+    "Enable SSL - Tooltip": "Enable SSL - Tooltip",
     "Group Id": "Gruppen Id",
     "ID": "ID",
     "Last Sync": "Letzter Sync",

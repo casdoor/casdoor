@@ -288,6 +288,8 @@
     "CN": "КНР",
     "Edit LDAP": "Редактировать LDAP",
     "Email": "Почта",
+    "Enable SSL": "Enable SSL",
+    "Enable SSL - Tooltip": "Enable SSL - Tooltip",
     "Group Id": "ID группы",
     "ID": "ID",
     "Last Sync": "Последняя синхронизация",
