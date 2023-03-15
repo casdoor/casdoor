@@ -1,9 +1,7 @@
 {
   "account": {
-    "Email: %s": "Email: %s",
     "Get init score failed, error: %w": "Get init score failed, error: %w",
     "Invalid information": "Invalid information",
-    "Phone: %s": "Phone: %s",
     "Please sign out first before signing in": "Please sign out first before signing in",
     "Please sign out first before signing up": "Please sign out first before signing up",
     "The application does not allow to sign up new account": "The application does not allow to sign up new account"
@@ -137,6 +135,7 @@
     "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",
     "Unknown type": "Unknown type",
     "Wrong parameter": "Wrong parameter",
+    "Wrong verification code!": "Wrong verification code!",
     "You should verify your code in %d min!": "You should verify your code in %d min!",
     "the user does not exist, please sign up first": "the user does not exist, please sign up first"
   },

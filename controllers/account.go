@@ -129,8 +129,8 @@ func (c *ApiController) Signup() {
 
 	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && form.Email != "" {
 		checkResult := object.CheckVerificationCode(form.Email, form.EmailCode, c.GetAcceptLanguage())
-		if len(checkResult) != 0 {
-			c.ResponseError(c.T("account:Email: %s"), checkResult)
+		if checkResult.Code != object.VerificationSuccess {
+			c.ResponseError(checkResult.Msg)
 			return
 		}
 	}
@@ -139,8 +139,8 @@ func (c *ApiController) Signup() {
 	if application.IsSignupItemVisible("Phone") && form.Phone != "" {
 		checkPhone, _ = util.GetE164Number(form.Phone, form.CountryCode)
 		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode, c.GetAcceptLanguage())
-		if len(checkResult) != 0 {
-			c.ResponseError(c.T("account:Phone: %s"), checkResult)
+		if checkResult.Code != object.VerificationSuccess {
+			c.ResponseError(checkResult.Msg)
 			return
 		}
 	}

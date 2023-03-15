@@ -84,15 +84,13 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 		if email == "" {
 			if application.IsSignupItemRequired("Email") {
 				return i18n.Translate(lang, "check:Email cannot be empty")
-			} else {
-				return ""
 			}
-		}
-
-		if HasUserByField(organization.Name, "email", email) {
-			return i18n.Translate(lang, "check:Email already exists")
-		} else if !util.IsEmailValid(email) {
-			return i18n.Translate(lang, "check:Email is invalid")
+		} else {
+			if HasUserByField(organization.Name, "email", email) {
+				return i18n.Translate(lang, "check:Email already exists")
+			} else if !util.IsEmailValid(email) {
+				return i18n.Translate(lang, "check:Email is invalid")
+			}
 		}
 	}
 
@@ -100,17 +98,15 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 		if phone == "" {
 			if application.IsSignupItemRequired("Phone") {
 				return i18n.Translate(lang, "check:Phone cannot be empty")
-			} else {
-				return ""
 			}
-		}
-
-		if HasUserByField(organization.Name, "phone", phone) {
-			return i18n.Translate(lang, "check:Phone already exists")
-		} else if !util.IsPhoneAllowInRegin(countryCode, organization.CountryCodes) {
-			return i18n.Translate(lang, "check:Your region is not allow to signup by phone")
-		} else if !util.IsPhoneValid(phone, countryCode) {
-			return i18n.Translate(lang, "check:Phone number is invalid")
+		} else {
+			if HasUserByField(organization.Name, "phone", phone) {
+				return i18n.Translate(lang, "check:Phone already exists")
+			} else if !util.IsPhoneAllowInRegin(countryCode, organization.CountryCodes) {
+				return i18n.Translate(lang, "check:Your region is not allow to signup by phone")
+			} else if !util.IsPhoneValid(phone, countryCode) {
+				return i18n.Translate(lang, "check:Phone number is invalid")
+			}
 		}
 	}
 
