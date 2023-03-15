@@ -224,8 +224,8 @@ func (c *ApiController) ResetEmailOrPhone() {
 			return
 		}
 	}
-	if msg := object.CheckVerificationCode(checkDest, code, c.GetAcceptLanguage()); len(msg) != 0 {
-		c.ResponseError(msg)
+	if result := object.CheckVerificationCode(checkDest, code, c.GetAcceptLanguage()); result.Code != object.VerificationSuccess {
+		c.ResponseError(result.Msg)
 		return
 	}
 

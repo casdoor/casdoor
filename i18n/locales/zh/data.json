@@ -1,9 +1,7 @@
 {
   "account": {
-    "Email: %s": "邮件: %s",
     "Get init score failed, error: %w": "初始化分数失败: %w",
     "Invalid information": "无效信息",
-    "Phone: %s": "手机号: %s",
     "Please sign out first before signing in": "请在登录前先退出登录",
     "Please sign out first before signing up": "请在注册前先退出登录",
     "The application does not allow to sign up new account": "该应用不允许注册新用户"
@@ -137,6 +135,7 @@
     "Unable to get the phone modify rule.": "无法获取手机号修改规则",
     "Unknown type": "未知类型",
     "Wrong parameter": "参数错误",
+    "Wrong verification code!": "验证码错误!",
     "You should verify your code in %d min!": "请在 %d 分钟内输入正确验证码",
     "the user does not exist, please sign up first": "用户不存在，请先注册"
   },

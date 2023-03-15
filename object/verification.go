@@ -26,8 +26,16 @@ import (
 	"github.com/xorm-io/core"
 )
 
+type VerifyResult struct {
+	Code int
+	Msg  string
+}
+
 const (
-	wrongCode = "wrongCode"
+	VerificationSuccess int = 0
+	wrongCodeError          = 1
+	noRecordError           = 2
+	timeoutError            = 3
 )
 
 type VerificationRecord struct {
@@ -150,11 +158,11 @@ func getVerificationRecord(dest string) *VerificationRecord {
 	return &record
 }
 
-func CheckVerificationCode(dest, code, lang string) string {
+func CheckVerificationCode(dest, code, lang string) *VerifyResult {
 	record := getVerificationRecord(dest)
 
 	if record == nil {
-		return i18n.Translate(lang, "verification:Code has not been sent yet!")
+		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:Code has not been sent yet!")}
 	}
 
 	timeout, err := conf.GetConfigInt64("verificationCodeTimeout")
@@ -164,14 +172,14 @@ func CheckVerificationCode(dest, code, lang string) string {
 
 	now := time.Now().Unix()
 	if now-record.Time > timeout*60 {
-		return fmt.Sprintf(i18n.Translate(lang, "verification:You should verify your code in %d min!"), timeout)
+		return &VerifyResult{timeoutError, fmt.Sprintf(i18n.Translate(lang, "verification:You should verify your code in %d min!"), timeout)}
 	}
 
 	if record.Code != code {
-		return wrongCode
+		return &VerifyResult{wrongCodeError, i18n.Translate(lang, "verification:Wrong verification code!")}
 	}
 
-	return ""
+	return &VerifyResult{VerificationSuccess, ""}
 }
 
 func DisableVerificationCode(dest string) {
@@ -194,14 +202,14 @@ func CheckSigninCode(user *User, dest, code, lang string) string {
 	}
 
 	result := CheckVerificationCode(dest, code, lang)
-	switch result {
-	case "":
+	switch result.Code {
+	case VerificationSuccess:
 		resetUserSigninErrorTimes(user)
 		return ""
-	case wrongCode:
+	case wrongCodeError:
 		return recordSigninErrorInfo(user, lang)
 	default:
-		return result
+		return result.Msg
 	}
 }
 

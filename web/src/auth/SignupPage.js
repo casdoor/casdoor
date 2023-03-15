@@ -370,7 +370,7 @@ class SignupPage extends React.Component {
     } else if (signupItem.name === "Phone") {
       return (
         <React.Fragment>
-          <Form.Item label={i18next.t("general:Phone")} required>
+          <Form.Item label={i18next.t("general:Phone")} required={required}>
             <Input.Group compact>
               <Form.Item
                 name="countryCode"
@@ -398,6 +398,10 @@ class SignupPage extends React.Component {
                   },
                   ({getFieldValue}) => ({
                     validator: (_, value) => {
+                      if (!required && value === "") {
+                        return Promise.resolve();
+                      }
+
                       if (value !== "" && !Setting.isValidPhone(value, getFieldValue("countryCode"))) {
                         this.setState({validPhone: false});
                         return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
