@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/conf"
@@ -31,6 +32,11 @@ var (
 
 func StaticFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
+
+	if urlPath == "/.well-known/acme-challenge/filename" {
+		http.ServeContent(ctx.ResponseWriter, ctx.Request, "acme-challenge", time.Now(), strings.NewReader("content"))
+	}
+
 	if strings.HasPrefix(urlPath, "/api/") || strings.HasPrefix(urlPath, "/.well-known/") {
 		return
 	}
