@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select} from "antd";
+import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import {EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
 import * as LddpBackend from "./backend/LdapBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -144,6 +144,16 @@ class LdapEditPage extends React.Component {
               value={this.state.ldap.port} onChange={value => {
                 this.updateLdapField("port", value);
               }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
+            {Setting.getLabel(i18next.t("ldap:Enable SSL"), i18next.t("ldap:Enable SSL - Tooltip"))} :
+          </Col>
+          <Col span={21} >
+            <Switch checked={this.state.ldap.enableSsl} onChange={checked => {
+              this.updateLdapField("enableSsl", checked);
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>

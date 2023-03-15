@@ -76,7 +76,7 @@ func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) {
 
 		UpdateLdapSyncTime(ldap.Id)
 		// fetch all users
-		conn, err := GetLdapConn(ldap.Host, ldap.Port, ldap.Admin, ldap.Passwd)
+		conn, err := ldap.GetLdapConn()
 		if err != nil {
 			logs.Warning(fmt.Sprintf("autoSync failed for %s, error %s", ldap.Id, err))
 			continue

@@ -46,7 +46,7 @@ func (c *ApiController) GetLdapUsers() {
 	_, ldapId := util.GetOwnerAndNameFromId(id)
 	ldapServer := object.GetLdap(ldapId)
 
-	conn, err := object.GetLdapConn(ldapServer.Host, ldapServer.Port, ldapServer.Admin, ldapServer.Passwd)
+	conn, err := ldapServer.GetLdapConn()
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
