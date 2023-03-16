@@ -15,8 +15,13 @@
 package util
 
 import (
+	"bufio"
+	"fmt"
+	"os"
 	"path"
 	"runtime"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-git/go-git/v5"
@@ -136,6 +141,46 @@ func GetVersionInfo() (*VersionInfo, error) {
 	res = &VersionInfo{
 		Version:      version,
 		CommitId:     ref.Hash().String(),
+		CommitOffset: commitOffset,
+	}
+	return res, nil
+}
+
+func GetVersionInfoFromFile() (*VersionInfo, error) {
+	res := &VersionInfo{
+		Version:      "",
+		CommitId:     "",
+		CommitOffset: -1,
+	}
+
+	_, filename, _, _ := runtime.Caller(0)
+	rootPath := path.Dir(path.Dir(filename))
+	file, err := os.Open(path.Join(rootPath, "version_info.txt"))
+	if err != nil {
+		return res, err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	versionInfo := ""
+	for scanner.Scan() {
+		versionInfo = fmt.Sprintf("%s", scanner.Text())
+	}
+	split := strings.Split(versionInfo, " ")
+	version := split[0]
+	commitId := split[1]
+	commitOffset, err := strconv.Atoi(split[2])
+	if err != nil {
+		return res, err
+	}
+
+	if err := scanner.Err(); err != nil {
+		return res, err
+	}
+
+	res = &VersionInfo{
+		Version:      version,
+		CommitId:     commitId,
 		CommitOffset: commitOffset,
 	}
 	return res, nil
