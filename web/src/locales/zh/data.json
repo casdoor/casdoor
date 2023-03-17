@@ -315,7 +315,6 @@
     "No account?": "没有账号？",
     "Or sign in with another account": "或者，登录其他账号",
     "Password": "密码",
-    "Password - Tooltip": "密码",
     "Please input your Email or Phone!": "请输入您的Email或手机号!",
     "Please input your code!": "请输入您的验证码！",
     "Please input your password!": "请输入您的密码！",
@@ -658,7 +657,6 @@
     "The input is not valid Email!": "您输入的电子邮箱格式有误！",
     "The input is not valid Phone!": "您输入的手机号格式有误！",
     "Username": "用户名",
-    "Username - Tooltip": "唯一的用户名",
     "Your account has been created!": "您的账号已创建！",
     "Your confirmed password is inconsistent with the password!": "您两次输入的密码不一致！",
     "sign in now": "立即登录"

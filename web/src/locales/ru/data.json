@@ -315,7 +315,6 @@
     "No account?": "Нет учетной записи?",
     "Or sign in with another account": "Или войти с помощью другой учетной записи",
     "Password": "Пароль",
-    "Password - Tooltip": "Password - Tooltip",
     "Please input your Email or Phone!": "Please input your Email or Phone!",
     "Please input your code!": "Пожалуйста, введите ваш код!",
     "Please input your password!": "Пожалуйста, введите ваш пароль!",
@@ -658,7 +657,6 @@
     "The input is not valid Email!": "Ввод не является допустимым Email!",
     "The input is not valid Phone!": "Введен неверный телефон!",
     "Username": "Имя пользователя",
-    "Username - Tooltip": "Username - Tooltip",
     "Your account has been created!": "Ваша учетная запись была создана!",
     "Your confirmed password is inconsistent with the password!": "Подтвержденный пароль не соответствует паролю!",
     "sign in now": "войти сейчас"

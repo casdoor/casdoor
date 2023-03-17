@@ -136,3 +136,11 @@ func parseEnData(category string) *I18nData {
 
 	return &data
 }
+
+func applyToOtherLanguage(category string, language string, i18nData *I18nData) {
+	newData := readI18nFile(category, language)
+	println(newData)
+
+	applyData(i18nData, newData)
+	writeI18nFile(category, language, i18nData)
+}

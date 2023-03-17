@@ -315,7 +315,6 @@
     "No account?": "Pas de compte ?",
     "Or sign in with another account": "Ou connectez-vous avec un autre compte",
     "Password": "Mot de passe",
-    "Password - Tooltip": "Password - Tooltip",
     "Please input your Email or Phone!": "Please input your Email or Phone!",
     "Please input your code!": "Veuillez saisir votre code !",
     "Please input your password!": "Veuillez saisir votre mot de passe !",
@@ -658,7 +657,6 @@
     "The input is not valid Email!": "L'entrée n'est pas un email valide !",
     "The input is not valid Phone!": "L'entrée n'est pas un téléphone valide !",
     "Username": "Nom d'utilisateur",
-    "Username - Tooltip": "Username - Tooltip",
     "Your account has been created!": "Votre compte a été créé !",
     "Your confirmed password is inconsistent with the password!": "Votre mot de passe confirmé est incompatible avec le mot de passe !",
     "sign in now": "connectez-vous maintenant"

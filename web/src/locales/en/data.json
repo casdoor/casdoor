@@ -315,7 +315,6 @@
     "No account?": "No account?",
     "Or sign in with another account": "Or sign in with another account",
     "Password": "Password",
-    "Password - Tooltip": "Make sure the password is correct",
     "Please input your Email or Phone!": "Please input your Email or Phone!",
     "Please input your code!": "Please input your code!",
     "Please input your password!": "Please input your password!",
@@ -658,7 +657,6 @@
     "The input is not valid Email!": "The input is not valid Email!",
     "The input is not valid Phone!": "The input is not valid Phone!",
     "Username": "Username",
-    "Username - Tooltip": "Allowed characters include letters, numbers, underscores, and may not begin with a number",
     "Your account has been created!": "Your account has been created!",
     "Your confirmed password is inconsistent with the password!": "Your confirmed password is inconsistent with the password!",
     "sign in now": "sign in now"

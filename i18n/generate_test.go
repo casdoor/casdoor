@@ -17,22 +17,12 @@
 
 package i18n
 
-import (
-	"testing"
-)
-
-func applyToOtherLanguage(category string, language string, i18nData *I18nData) {
-	newData := readI18nFile(category, language)
-	println(newData)
-
-	applyData(i18nData, newData)
-	writeI18nFile(category, language, i18nData)
-}
+import "testing"
 
 func TestGenerateI18nFrontend(t *testing.T) {
 	enData := parseEnData("frontend")
-	writeI18nFile("frontend", "en", enData)
 
+	applyToOtherLanguage("frontend", "en", enData)
 	applyToOtherLanguage("frontend", "zh", enData)
 	applyToOtherLanguage("frontend", "es", enData)
 	applyToOtherLanguage("frontend", "fr", enData)
@@ -45,8 +35,8 @@ func TestGenerateI18nFrontend(t *testing.T) {
 
 func TestGenerateI18nBackend(t *testing.T) {
 	enData := parseEnData("backend")
-	writeI18nFile("backend", "en", enData)
 
+	applyToOtherLanguage("backend", "en", enData)
 	applyToOtherLanguage("backend", "zh", enData)
 	applyToOtherLanguage("backend", "es", enData)
 	applyToOtherLanguage("backend", "fr", enData)
