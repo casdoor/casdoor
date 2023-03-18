@@ -134,7 +134,7 @@
     "Please input your username!": "ユーザー名を入力してください！",
     "Reset": "Reset",
     "Retrieve password": "パスワードの取得",
-    "Unknown forget type: ": "Unknown forget type: ",
+    "Unknown forget type": "Unknown forget type",
     "Verify": "確認する"
   },
   "general": {
@@ -259,7 +259,7 @@
     "Swagger": "Swagger",
     "Sync": "Sync",
     "Syncers": "Syncers",
-    "SysInfo": "システム情報",
+    "System Info": "システム情報",
     "This is a read-only demo site!": "This is a read-only demo site!",
     "Timestamp": "タイムスタンプ",
     "Tokens": "トークン",

@@ -134,7 +134,7 @@
     "Please input your username!": "Пожалуйста, введите ваше имя пользователя!",
     "Reset": "Сбросить",
     "Retrieve password": "Получить пароль",
-    "Unknown forget type: ": "Unknown forget type: ",
+    "Unknown forget type": "Unknown forget type",
     "Verify": "Подтвердить"
   },
   "general": {
@@ -259,7 +259,7 @@
     "Swagger": "Swagger",
     "Sync": "Sync",
     "Syncers": "Синхронизаторы",
-    "SysInfo": "Информация о системе",
+    "System Info": "Информация о системе",
     "This is a read-only demo site!": "This is a read-only demo site!",
     "Timestamp": "Отметка времени",
     "Tokens": "Жетоны",

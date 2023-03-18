@@ -134,7 +134,7 @@
     "Please input your username!": "请输入您的用户名！",
     "Reset": "重置",
     "Retrieve password": "找回密码",
-    "Unknown forget type: ": "未知的忘记密码类型: ",
+    "Unknown forget type": "未知的忘记密码类型",
     "Verify": "验证"
   },
   "general": {
@@ -259,7 +259,7 @@
     "Swagger": "API文档",
     "Sync": "同步",
     "Syncers": "同步器",
-    "SysInfo": "系统信息",
+    "System Info": "系统信息",
     "This is a read-only demo site!": "这是一个只读演示站点！",
     "Timestamp": "时间戳",
     "Tokens": "令牌",

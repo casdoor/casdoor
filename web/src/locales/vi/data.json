@@ -134,7 +134,7 @@
     "Please input your username!": "Please input your username!",
     "Reset": "Reset",
     "Retrieve password": "Retrieve password",
-    "Unknown forget type: ": "Unknown forget type: ",
+    "Unknown forget type": "Unknown forget type",
     "Verify": "Verify"
   },
   "general": {
@@ -259,7 +259,7 @@
     "Swagger": "Swagger",
     "Sync": "Sync",
     "Syncers": "Syncers",
-    "SysInfo": "SysInfo",
+    "System Info": "System Info",
     "This is a read-only demo site!": "This is a read-only demo site!",
     "Timestamp": "Timestamp",
     "Tokens": "Tokens",

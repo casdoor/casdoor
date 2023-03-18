@@ -134,7 +134,7 @@
     "Please input your username!": "Veuillez entrer votre nom d'utilisateur !",
     "Reset": "Reset",
     "Retrieve password": "Récupérer le mot de passe",
-    "Unknown forget type: ": "Unknown forget type: ",
+    "Unknown forget type": "Unknown forget type",
     "Verify": "Vérifier"
   },
   "general": {
@@ -259,7 +259,7 @@
     "Swagger": "Swagger",
     "Sync": "Sync",
     "Syncers": "Synchronisateurs",
-    "SysInfo": "SysInfo",
+    "System Info": "System Info",
     "This is a read-only demo site!": "This is a read-only demo site!",
     "Timestamp": "Horodatage",
     "Tokens": "Jetons",

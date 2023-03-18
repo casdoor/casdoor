@@ -452,7 +452,7 @@ class App extends Component {
           "/payments"
         ));
 
-        res.push(Setting.getItem(<Link to="/sysinfo">{i18next.t("general:SysInfo")}</Link>,
+        res.push(Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>,
           "/sysinfo"
         ));
       }
