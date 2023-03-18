@@ -173,7 +173,7 @@ class SignupPage extends React.Component {
                   this.onUpdateAccount(account);
                   Setting.goToLinkSoft(this, this.getResultPath(application));
                 } else {
-                  Setting.showMessage("error", `Failed to sign in: ${res.msg}`);
+                  Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
                 }
               });
           } else {

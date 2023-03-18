@@ -40,7 +40,6 @@
     "Enable signin session - Tooltip": "Whether Casdoor maintains a session after logging into Casdoor from the application",
     "Enable signup": "Enable signup",
     "Enable signup - Tooltip": "Whether to allow users to register a new account",
-    "Failed to log in": "Failed to log in",
     "Failed to sign in": "Failed to sign in",
     "File uploaded successfully": "File uploaded successfully",
     "Follow organization theme": "Follow organization theme",

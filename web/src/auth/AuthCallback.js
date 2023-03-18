@@ -139,7 +139,7 @@ class AuthCallback extends React.Component {
             window.location.href = newUrl.toString();
           }
         } else {
-          Setting.showMessage("error", `Failed to log in: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
         }
       });
       return;

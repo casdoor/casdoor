@@ -40,7 +40,6 @@
     "Enable signin session - Tooltip": "从应用登录Casdoor后，Casdoor是否保持会话",
     "Enable signup": "启用注册",
     "Enable signup - Tooltip": "是否允许用户注册",
-    "Failed to log in": "登录失败",
     "Failed to sign in": "登录失败",
     "File uploaded successfully": "文件上传成功",
     "Follow organization theme": "使用组织主题",
