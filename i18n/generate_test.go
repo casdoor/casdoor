@@ -20,29 +20,29 @@ package i18n
 import "testing"
 
 func TestGenerateI18nFrontend(t *testing.T) {
-	enData := parseEnData("frontend")
+	data := parseAllWords("frontend")
 
-	applyToOtherLanguage("frontend", "en", enData)
-	applyToOtherLanguage("frontend", "zh", enData)
-	applyToOtherLanguage("frontend", "es", enData)
-	applyToOtherLanguage("frontend", "fr", enData)
-	applyToOtherLanguage("frontend", "de", enData)
-	applyToOtherLanguage("frontend", "ja", enData)
-	applyToOtherLanguage("frontend", "ko", enData)
-	applyToOtherLanguage("frontend", "ru", enData)
-	applyToOtherLanguage("frontend", "vi", enData)
+	applyToOtherLanguage("frontend", "en", data)
+	applyToOtherLanguage("frontend", "zh", data)
+	applyToOtherLanguage("frontend", "es", data)
+	applyToOtherLanguage("frontend", "fr", data)
+	applyToOtherLanguage("frontend", "de", data)
+	applyToOtherLanguage("frontend", "ja", data)
+	applyToOtherLanguage("frontend", "ko", data)
+	applyToOtherLanguage("frontend", "ru", data)
+	applyToOtherLanguage("frontend", "vi", data)
 }
 
 func TestGenerateI18nBackend(t *testing.T) {
-	enData := parseEnData("backend")
+	data := parseAllWords("backend")
 
-	applyToOtherLanguage("backend", "en", enData)
-	applyToOtherLanguage("backend", "zh", enData)
-	applyToOtherLanguage("backend", "es", enData)
-	applyToOtherLanguage("backend", "fr", enData)
-	applyToOtherLanguage("backend", "de", enData)
-	applyToOtherLanguage("backend", "ja", enData)
-	applyToOtherLanguage("backend", "ko", enData)
-	applyToOtherLanguage("backend", "ru", enData)
-	applyToOtherLanguage("backend", "vi", enData)
+	applyToOtherLanguage("backend", "en", data)
+	applyToOtherLanguage("backend", "zh", data)
+	applyToOtherLanguage("backend", "es", data)
+	applyToOtherLanguage("backend", "fr", data)
+	applyToOtherLanguage("backend", "de", data)
+	applyToOtherLanguage("backend", "ja", data)
+	applyToOtherLanguage("backend", "ko", data)
+	applyToOtherLanguage("backend", "ru", data)
+	applyToOtherLanguage("backend", "vi", data)
 }

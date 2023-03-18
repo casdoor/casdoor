@@ -99,7 +99,7 @@ func getAllFilePathsInFolder(folder string, fileSuffix string) []string {
 	return res
 }
 
-func parseEnData(category string) *I18nData {
+func parseAllWords(category string) *I18nData {
 	var paths []string
 	if category == "backend" {
 		paths = getAllFilePathsInFolder("../", ".go")
@@ -137,10 +137,10 @@ func parseEnData(category string) *I18nData {
 	return &data
 }
 
-func applyToOtherLanguage(category string, language string, i18nData *I18nData) {
-	newData := readI18nFile(category, language)
-	println(newData)
+func applyToOtherLanguage(category string, language string, newData *I18nData) {
+	oldData := readI18nFile(category, language)
+	println(oldData)
 
-	applyData(i18nData, newData)
-	writeI18nFile(category, language, i18nData)
+	applyData(newData, oldData)
+	writeI18nFile(category, language, newData)
 }
