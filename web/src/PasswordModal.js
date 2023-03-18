@@ -48,7 +48,7 @@ export const PasswordModal = (props) => {
     UserBackend.setPassword(user.owner, user.name, oldPassword, newPassword).then((res) => {
       setConfirmLoading(false);
       if (res.status === "ok") {
-        Setting.showMessage("success", i18next.t("user:Password Set"));
+        Setting.showMessage("success", i18next.t("user:Password set successfully"));
         setVisible(false);
       } else {Setting.showMessage("error", i18next.t(`user:${res.msg}`));}
     });

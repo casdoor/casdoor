@@ -51,7 +51,7 @@ export const ResetModal = (props) => {
     setConfirmLoading(true);
     UserBackend.resetEmailOrPhone(dest, destType, code).then(res => {
       if (res.status === "ok") {
-        Setting.showMessage("success", i18next.t("user:" + destType + " reset"));
+        Setting.showMessage("success", i18next.t("user:Email/phone reset successfully"));
         window.location.reload();
       } else {
         Setting.showMessage("error", i18next.t("user:" + res.msg));
