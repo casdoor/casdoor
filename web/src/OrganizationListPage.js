@@ -192,7 +192,7 @@ class OrganizationListPage extends BaseListPage {
         ...this.getColumnSearchProps("passwordSalt"),
       },
       {
-        title: i18next.t("organization:Default avatar"),
+        title: i18next.t("general:Default avatar"),
         dataIndex: "defaultAvatar",
         key: "defaultAvatar",
         width: "120px",
