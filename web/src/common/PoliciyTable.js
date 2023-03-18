@@ -139,7 +139,8 @@ class PolicyTable extends React.Component {
       if (res.status === "ok") {
         this.setState({editingIndex: "", oldPolicy: "", add: false});
         if (res.data !== "Affected") {
-          Setting.showMessage("info", i18next.t("adapter:Repeated policy rules"));
+          res.msg = i18next.t("adapter:Duplicated policy rules");
+          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
         } else {
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         }

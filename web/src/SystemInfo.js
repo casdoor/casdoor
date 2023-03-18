@@ -67,14 +67,14 @@ class SystemInfo extends React.Component {
   }
 
   render() {
-    const cpuUi = this.state.systemInfo.cpuUsage?.length <= 0 ? i18next.t("system:Get CPU Usage Failed") :
+    const cpuUi = this.state.systemInfo.cpuUsage?.length <= 0 ? i18next.t("system:Failed to get CPU usage") :
       this.state.systemInfo.cpuUsage.map((usage, i) => {
         return (
           <Progress key={i} percent={Number(usage.toFixed(1))} />
         );
       });
 
-    const memUi = this.state.systemInfo.memoryUsed && this.state.systemInfo.memoryTotal && this.state.systemInfo.memoryTotal <= 0 ? i18next.t("system:Get Memory Usage Failed") :
+    const memUi = this.state.systemInfo.memoryUsed && this.state.systemInfo.memoryTotal && this.state.systemInfo.memoryTotal <= 0 ? i18next.t("system:Failed to get memory usage") :
       <div>
         {Setting.getFriendlyFileSize(this.state.systemInfo.memoryUsed)} / {Setting.getFriendlyFileSize(this.state.systemInfo.memoryTotal)}
         <br /> <br />
@@ -82,7 +82,7 @@ class SystemInfo extends React.Component {
       </div>;
 
     const link = this.state.versionInfo?.version !== "" ? `https://github.com/casdoor/casdoor/releases/tag/${this.state.versionInfo?.version}` : "";
-    let versionText = this.state.versionInfo?.version !== "" ? this.state.versionInfo?.version : i18next.t("system:Unknown Version");
+    let versionText = this.state.versionInfo?.version !== "" ? this.state.versionInfo?.version : i18next.t("system:Unknown version");
     if (this.state.versionInfo?.commitOffset > 0) {
       versionText += ` (ahead+${this.state.versionInfo?.commitOffset})`;
     }
@@ -111,7 +111,7 @@ class SystemInfo extends React.Component {
               <br />
               {i18next.t("system:Version")}: <a target="_blank" rel="noreferrer" href={link}>{versionText}</a>
               <br />
-              {i18next.t("system:Official Website")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org">https://casdoor.org</a>
+              {i18next.t("system:Official website")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org">https://casdoor.org</a>
               <br />
               {i18next.t("system:Community")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">Get in Touch!</a>
             </Card>
@@ -139,7 +139,7 @@ class SystemInfo extends React.Component {
               <br />
               {i18next.t("system:Version")}: <a target="_blank" rel="noreferrer" href={link}>{versionText}</a>
               <br />
-              {i18next.t("system:Official Website")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org">https://casdoor.org</a>
+              {i18next.t("system:Official website")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org">https://casdoor.org</a>
               <br />
               {i18next.t("system:Community")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">Get in Touch!</a>
             </Card>

@@ -129,7 +129,7 @@ export function sendCode(checkType, captchaToken, clientSecret, method, countryC
     },
   }).then(res => res.json()).then(res => {
     if (res.status === "ok") {
-      Setting.showMessage("success", i18next.t("user:Code Sent"));
+      Setting.showMessage("success", i18next.t("user:Verification code sent"));
       return true;
     } else {
       Setting.showMessage("error", i18next.t("user:" + res.msg));

@@ -93,7 +93,7 @@ class LdapTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t("ldap:Server Name"),
+        title: i18next.t("ldap:Server name"),
         dataIndex: "serverName",
         key: "serverName",
         width: "160px",

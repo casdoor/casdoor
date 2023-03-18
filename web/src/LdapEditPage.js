@@ -117,7 +117,7 @@ class LdapEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
-            {Setting.getLabel(i18next.t("ldap:Server Name"), i18next.t("ldap:Server Name - Tooltip"))} :
+            {Setting.getLabel(i18next.t("ldap:Server name"), i18next.t("ldap:Server name - Tooltip"))} :
           </Col>
           <Col span={21}>
             <Input value={this.state.ldap.serverName} onChange={e => {
@@ -127,7 +127,7 @@ class LdapEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
-            {Setting.getLabel(i18next.t("ldap:Server Host"), i18next.t("ldap:Server Host - Tooltip"))} :
+            {Setting.getLabel(i18next.t("ldap:Server host"), i18next.t("ldap:Server host - Tooltip"))} :
           </Col>
           <Col span={21}>
             <Input value={this.state.ldap.host} onChange={e => {
@@ -137,7 +137,7 @@ class LdapEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
-            {Setting.getLabel(i18next.t("ldap:Server Port"), i18next.t("ldap:Server Port - Tooltip"))} :
+            {Setting.getLabel(i18next.t("ldap:Server port"), i18next.t("ldap:Server port - Tooltip"))} :
           </Col>
           <Col span={21}>
             <InputNumber min={0} max={65535} formatter={value => value.replace(/\$\s?|(,*)/g, "")}

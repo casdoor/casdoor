@@ -45,7 +45,7 @@ export const ResetModal = (props) => {
       return;
     }
     if (code === "") {
-      Setting.showMessage("error", i18next.t("code:Empty Code"));
+      Setting.showMessage("error", i18next.t("code:Empty code"));
       return;
     }
     setConfirmLoading(true);
@@ -77,7 +77,7 @@ export const ResetModal = (props) => {
         title={buttonText}
         open={visible}
         okText={buttonText}
-        cancelText={i18next.t("user:Cancel")}
+        cancelText={i18next.t("general:Cancel")}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
         onOk={handleOk}
@@ -94,7 +94,7 @@ export const ResetModal = (props) => {
           </Row>
           <Row style={{width: "100%", marginBottom: "20px"}}>
             <SendCodeInput
-              textBefore={i18next.t("code:Code You Received")}
+              textBefore={i18next.t("code:Code you received")}
               onChange={setCode}
               method={"reset"}
               onButtonClickArgs={[dest, destType, Setting.getApplicationName(application)]}

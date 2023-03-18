@@ -134,7 +134,7 @@ class ProductListPage extends BaseListPage {
         ...this.getColumnSearchProps("tag"),
       },
       {
-        title: i18next.t("product:Currency"),
+        title: i18next.t("payment:Currency"),
         dataIndex: "currency",
         key: "currency",
         width: "120px",

@@ -151,7 +151,7 @@ class LdapSyncPage extends React.Component {
         },
       },
       {
-        title: i18next.t("ldap:Group Id"),
+        title: i18next.t("ldap:Group ID"),
         dataIndex: "groupId",
         key: "groupId",
         width: "140px",

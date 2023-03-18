@@ -156,7 +156,7 @@ class RecordListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("record:Is Triggered"),
+        title: i18next.t("record:Is triggered"),
         dataIndex: "isTriggered",
         key: "isTriggered",
         width: "140px",

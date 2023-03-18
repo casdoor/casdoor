@@ -55,7 +55,7 @@ class LdapListPage extends React.Component {
   renderTable(ldaps) {
     const columns = [
       {
-        title: i18next.t("ldap:Server Name"),
+        title: i18next.t("ldap:Server name"),
         dataIndex: "serverName",
         key: "serverName",
         width: "200px",

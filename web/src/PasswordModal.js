@@ -66,7 +66,7 @@ export const PasswordModal = (props) => {
         title={i18next.t("user:Password")}
         open={visible}
         okText={i18next.t("user:Set Password")}
-        cancelText={i18next.t("user:Cancel")}
+        cancelText={i18next.t("general:Cancel")}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
         onOk={handleOk}

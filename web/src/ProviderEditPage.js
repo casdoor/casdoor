@@ -113,7 +113,7 @@ class ProviderEditPage extends React.Component {
       return Setting.getLabel(i18next.t("login:Password"), i18next.t("login:Password - Tooltip"));
     case "SMS":
       if (provider.type === "Volc Engine SMS") {
-        return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:SecretAccessKey - Tooltip"));
+        return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:Secret access key - Tooltip"));
       } else if (provider.type === "Huawei Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:App secret"), i18next.t("provider:AppSecret - Tooltip"));
       } else {
@@ -121,7 +121,7 @@ class ProviderEditPage extends React.Component {
       }
     case "Captcha":
       if (provider.type === "Aliyun Captcha") {
-        return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:SecretAccessKey - Tooltip"));
+        return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:Secret access key - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
       }
@@ -225,7 +225,7 @@ class ProviderEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.provider.owner} onChange={(value => {this.updateProviderField("owner", value);})}>
-              {Setting.isAdminUser(this.props.account) ? <Option key={"admin"} value={"admin"}>{i18next.t("provider:admin (share)")}</Option> : null}
+              {Setting.isAdminUser(this.props.account) ? <Option key={"admin"} value={"admin"}>{i18next.t("provider:admin (Shared)")}</Option> : null}
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -531,7 +531,7 @@ class ProviderEditPage extends React.Component {
             </Row>
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Path prefix"), i18next.t("provider:The prefix path of the file - Tooltip"))} :
+                {Setting.getLabel(i18next.t("provider:Path prefix"), i18next.t("provider:Path prefix - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <Input value={this.state.provider.pathPrefix} onChange={e => {
@@ -626,7 +626,7 @@ class ProviderEditPage extends React.Component {
                   }} />
                 </Col>
                 <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
-                  {i18next.t("provider:Test Connection")}
+                  {i18next.t("provider:Test SMTP Connection")}
                 </Button>
                 <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
                   disabled={!Setting.isValidEmail(this.state.provider.receiver)}
@@ -653,7 +653,7 @@ class ProviderEditPage extends React.Component {
               }
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Template Code"), i18next.t("provider:Template Code - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("provider:Template code"), i18next.t("provider:Template code - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.templateCode} onChange={e => {
@@ -720,9 +720,9 @@ class ProviderEditPage extends React.Component {
                   <Button type="primary" onClick={() => {
                     try {
                       this.loadSamlConfiguration();
-                      Setting.showMessage("success", i18next.t("provider:Parse Metadata successfully"));
+                      Setting.showMessage("success", i18next.t("provider:Parse metadata successfully"));
                     } catch (err) {
-                      Setting.showMessage("error", i18next.t("provider:Can not parse Metadata"));
+                      Setting.showMessage("error", i18next.t("provider:Can not parse metadata"));
                     }
                   }}>
                     {i18next.t("provider:Parse")}

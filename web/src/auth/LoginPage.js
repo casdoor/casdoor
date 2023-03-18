@@ -428,7 +428,7 @@ class LoginPage extends React.Component {
                       if (this.state.loginMethod === "verificationCode") {
                         if (!Setting.isValidEmail(value) && !Setting.isValidPhone(value)) {
                           this.setState({validEmailOrPhone: false});
-                          return Promise.reject(i18next.t("login:The input is not valid Email or Phone!"));
+                          return Promise.reject(i18next.t("login:The input is not valid Email or phone number!"));
                         }
 
                         if (Setting.isValidEmail(value)) {
@@ -721,7 +721,7 @@ class LoginPage extends React.Component {
                 const accessToken = res.data;
                 Setting.goToLink(`${oAuthParams.redirectUri}#${responseType}=${accessToken}?state=${oAuthParams.state}&token_type=bearer`);
               } else {
-                Setting.showMessage("success", i18next.t("login:Successfully logged in with webauthn credentials"));
+                Setting.showMessage("success", i18next.t("login:Successfully logged in with WebAuthn credentials"));
                 Setting.goToLink("/");
               }
             } else {
@@ -779,7 +779,7 @@ class LoginPage extends React.Component {
       {label: i18next.t("login:Password"), key: "password"},
     ];
     application.enableCodeSignin ? items.push({
-      label: i18next.t("login:Verification Code"),
+      label: i18next.t("login:Verification code"),
       key: "verificationCode",
     }) : null;
     application.enableWebAuthn ? items.push({label: i18next.t("login:WebAuthn"), key: "webAuthn"}) : null;

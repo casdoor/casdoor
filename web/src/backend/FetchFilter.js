@@ -28,7 +28,7 @@ const demoModeCallback = (res) => {
         title: i18next.t("general:This is a read-only demo site!"),
         icon: <ExclamationCircleFilled />,
         content: i18next.t("general:Go to writable demo site?"),
-        okText: i18next.t("user:OK"),
+        okText: i18next.t("general:OK"),
         cancelText: i18next.t("general:Cancel"),
         onOk() {
           Setting.openLink(`https://demo.casdoor.com${location.pathname}${location.search}?username=built-in/admin&password=123`);

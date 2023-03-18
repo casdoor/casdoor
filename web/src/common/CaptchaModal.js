@@ -143,8 +143,8 @@ export const CaptchaModal = (props) => {
     }
 
     return [
-      <Button key="cancel" onClick={handleCancel}>{i18next.t("user:Cancel")}</Button>,
-      <Button key="ok" disabled={isOkDisabled} type="primary" onClick={handleOk}>{i18next.t("user:OK")}</Button>,
+      <Button key="cancel" onClick={handleCancel}>{i18next.t("general:Cancel")}</Button>,
+      <Button key="ok" disabled={isOkDisabled} type="primary" onClick={handleOk}>{i18next.t("general:OK")}</Button>,
     ];
   };
 
@@ -155,8 +155,8 @@ export const CaptchaModal = (props) => {
       destroyOnClose={true}
       title={i18next.t("general:Captcha")}
       open={open}
-      okText={i18next.t("user:OK")}
-      cancelText={i18next.t("user:Cancel")}
+      okText={i18next.t("general:OK")}
+      cancelText={i18next.t("general:Cancel")}
       width={350}
       footer={renderFooter()}
       onCancel={handleCancel}

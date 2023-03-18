@@ -372,7 +372,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("application:Password ON"), i18next.t("application:Password ON - Tooltip"))} :
+            {Setting.getLabel(i18next.t("application:Enable password"), i18next.t("application:Enable password - Tooltip"))} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enablePassword} onChange={checked => {
@@ -432,7 +432,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("application:Enable link accounts that with the same email"), i18next.t("application:Enable link accounts that with the same email - Tooltip"))} :
+            {Setting.getLabel(i18next.t("application:Enable Email linking"), i18next.t("application:Enable Email linking - Tooltip"))} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enableLinkWithEmail} onChange={checked => {
@@ -563,7 +563,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:SAML Reply URL"), i18next.t("application:Redirect URL (Assertion Consumer Service POST Binding URL) - Tooltip"))} :
+            {Setting.getLabel(i18next.t("application:SAML reply URL"), i18next.t("application:Redirect URL (Assertion Consumer Service POST Binding URL) - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input prefix={<LinkOutlined />} value={this.state.application.samlReplyUrl} onChange={e => {
@@ -573,7 +573,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("application:Enable SAML compress"), i18next.t("application:Enable SAML compress - Tooltip"))} :
+            {Setting.getLabel(i18next.t("application:Enable SAML compression"), i18next.t("application:Enable SAML compression - Tooltip"))} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enableSamlCompress} onChange={checked => {

@@ -172,27 +172,6 @@ class ProviderTable extends React.Component {
           );
         },
       },
-      // {
-      //   title: i18next.t("provider:alertType"),
-      //   dataIndex: 'alertType',
-      //   key: 'alertType',
-      //   width: '120px',
-      //   render: (text, record, index) => {
-      //     return (
-      //       <Select virtual={false}  style={{width: '100%'}} value={text} onChange={(value => {
-      //         this.updateField(table, index, 'alertType', value);
-      //       })}>
-      //         {
-      //           [
-      //             {id: 'None', name: 'None'},
-      //             {id: 'Once', name: 'Once'},
-      //             {id: 'Always', name: 'Always'},
-      //           ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
-      //         }
-      //       </Select>
-      //     )
-      //   }
-      // },
       {
         title: i18next.t("application:Rule"),
         dataIndex: "rule",

@@ -248,8 +248,8 @@ class ResourceListPage extends BaseListPage {
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteResource(index)}
-                okText={i18next.t("user:OK")}
-                cancelText={i18next.t("user:Cancel")}
+                okText={i18next.t("general:OK")}
+                cancelText={i18next.t("general:Cancel")}
               >
               </PopconfirmModal>
             </div>
