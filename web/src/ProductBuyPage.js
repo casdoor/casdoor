@@ -155,8 +155,8 @@ class ProductBuyPage extends React.Component {
       text = i18next.t("product:Alipay");
     } else if (provider.type === "WeChat Pay") {
       text = i18next.t("product:WeChat Pay");
-    } else if (provider.type === "Paypal") {
-      text = i18next.t("product:Paypal");
+    } else if (provider.type === "PayPal") {
+      text = i18next.t("product:PayPal");
     }
 
     return (

@@ -237,7 +237,7 @@ const authInfo = {
     scope: "identity",
     endpoint: "https://www.patreon.com/oauth2/authorize",
   },
-  Paypal: {
+  PayPal: {
     scope: "openid%20profile%20email",
     endpoint: "https://www.sandbox.paypal.com/connect",
   },

@@ -672,6 +672,22 @@ export function getShortName(s) {
   return s.split("/").slice(-1)[0];
 }
 
+export function getNameAtLeast(s) {
+  s = getShortName(s);
+  if (s.length >= 6) {
+    return s;
+  }
+
+  return (
+    <React.Fragment>
+      &nbsp;
+      {s}
+      &nbsp;
+      &nbsp;
+    </React.Fragment>
+  );
+}
+
 export function getShortText(s, maxLength = 35) {
   if (s.length > maxLength) {
     return `${s.slice(0, maxLength)}...`;
@@ -851,7 +867,7 @@ export function getProviderTypeOptions(category) {
         {id: "OneDrive", name: "OneDrive"},
         {id: "Oura", name: "Oura"},
         {id: "Patreon", name: "Patreon"},
-        {id: "Paypal", name: "Paypal"},
+        {id: "PayPal", name: "PayPal"},
         {id: "SalesForce", name: "SalesForce"},
         {id: "Shopify", name: "Shopify"},
         {id: "Soundcloud", name: "Soundcloud"},

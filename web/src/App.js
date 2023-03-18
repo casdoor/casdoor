@@ -332,12 +332,12 @@ class App extends Component {
           {
             this.renderAvatar()
           }
-            &nbsp;
-            &nbsp;
-          {Setting.isMobile() ? null : Setting.getShortName(this.state.account.displayName)} &nbsp; <DownOutlined />
-            &nbsp;
-            &nbsp;
-            &nbsp;
+          &nbsp;
+          &nbsp;
+          {Setting.isMobile() ? null : Setting.getNameAtLeast(this.state.account.displayName)} &nbsp; <DownOutlined />
+          &nbsp;
+          &nbsp;
+          &nbsp;
         </div>
       </Dropdown>
     );
