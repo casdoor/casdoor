@@ -329,7 +329,7 @@
     "The input is not valid Email or phone number!": "¡La entrada no es un correo electrónico o número de teléfono válido!",
     "To access": "para acceder",
     "Verification code": "Código de verificación",
-    "WebAuthn": "WebAuthn (Autenticación Web)",
+    "WebAuthn": "WebAuthn",
     "sign up now": "Regístrate ahora",
     "username, Email or phone": "Nombre de usuario, correo electrónico o teléfono"
   },

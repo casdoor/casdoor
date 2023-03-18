@@ -165,10 +165,10 @@ class OAuthWidget extends React.Component {
           {
             linkedValue === "" ? (
               <a key={provider.displayName} href={user.id !== account.id ? null : Provider.getAuthUrl(application, provider, "link")}>
-                <Button style={{marginLeft: "20px", width: "100px"}} type="primary" disabled={user.id !== account.id}>{i18next.t("user:Link")}</Button>
+                <Button style={{marginLeft: "20px", width: "110px"}} type="primary" disabled={user.id !== account.id}>{i18next.t("user:Link")}</Button>
               </a>
             ) : (
-              <Button disabled={!providerItem.canUnlink && !account.isGlobalAdmin} style={{marginLeft: "20px", width: "100px"}} onClick={() => this.unlinkUser(provider.type)}>{i18next.t("user:Unlink")}</Button>
+              <Button disabled={!providerItem.canUnlink && !account.isGlobalAdmin} style={{marginLeft: "20px", width: "110px"}} onClick={() => this.unlinkUser(provider.type)}>{i18next.t("user:Unlink")}</Button>
             )
           }
         </Col>

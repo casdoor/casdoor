@@ -369,7 +369,7 @@ class LoginPage extends React.Component {
     if (application.enablePassword) {
       let loginWidth = 320;
       if (Setting.getLanguage() === "fr") {
-        loginWidth += 10;
+        loginWidth += 20;
       } else if (Setting.getLanguage() === "es") {
         loginWidth += 40;
       }
