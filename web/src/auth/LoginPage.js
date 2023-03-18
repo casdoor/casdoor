@@ -372,6 +372,8 @@ class LoginPage extends React.Component {
         loginWidth += 20;
       } else if (Setting.getLanguage() === "es") {
         loginWidth += 40;
+      } else if (Setting.getLanguage() === "ru") {
+        loginWidth += 10;
       }
 
       return (
