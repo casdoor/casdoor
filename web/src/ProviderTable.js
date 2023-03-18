@@ -65,7 +65,7 @@ class ProviderTable extends React.Component {
   renderTable(table) {
     let columns = [
       {
-        title: i18next.t("provider:Name"),
+        title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
         render: (text, record, index) => {

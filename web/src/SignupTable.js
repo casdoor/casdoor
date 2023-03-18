@@ -64,7 +64,7 @@ class SignupTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t("provider:Name"),
+        title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
         render: (text, record, index) => {
@@ -76,8 +76,8 @@ class SignupTable extends React.Component {
             {name: "Country/Region", displayName: i18next.t("user:Country/Region")},
             {name: "ID card", displayName: i18next.t("user:ID card")},
             {name: "Email", displayName: i18next.t("general:Email")},
-            {name: "Password", displayName: i18next.t("forget:Password")},
-            {name: "Confirm password", displayName: i18next.t("forget:Confirm")},
+            {name: "Password", displayName: i18next.t("general:Password")},
+            {name: "Confirm password", displayName: i18next.t("signup:Confirm")},
             {name: "Phone", displayName: i18next.t("general:Phone")},
             {name: "Agreement", displayName: i18next.t("signup:Agreement")},
           ];
@@ -104,7 +104,7 @@ class SignupTable extends React.Component {
         },
       },
       {
-        title: i18next.t("provider:Visible"),
+        title: i18next.t("organization:Visible"),
         dataIndex: "visible",
         key: "visible",
         width: "120px",

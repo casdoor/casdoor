@@ -143,7 +143,7 @@ class OrganizationListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: i18next.t("organization:Favicon"),
+        title: i18next.t("general:Favicon"),
         dataIndex: "favicon",
         key: "favicon",
         width: "50px",

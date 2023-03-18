@@ -393,7 +393,7 @@ class ForgetPage extends React.Component {
               <Input.Password
                 disabled={this.state.userId === ""}
                 prefix={<LockOutlined />}
-                placeholder={i18next.t("forget:Password")}
+                placeholder={i18next.t("general:Password")}
               />
             </Form.Item>
             <Form.Item
@@ -420,7 +420,7 @@ class ForgetPage extends React.Component {
               <Input.Password
                 disabled={this.state.userId === ""}
                 prefix={<CheckCircleOutlined />}
-                placeholder={i18next.t("forget:Confirm")}
+                placeholder={i18next.t("signup:Confirm")}
               />
             </Form.Item>
             <br />

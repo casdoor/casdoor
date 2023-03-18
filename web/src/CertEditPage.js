@@ -97,7 +97,7 @@ class CertEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("cert:Scope"), i18next.t("cert:Scope - Tooltip"))} :
+            {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("cert:Scope - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.cert.scope} onChange={(value => {
@@ -113,7 +113,7 @@ class CertEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("cert:Type"), i18next.t("cert:Type - Tooltip"))} :
+            {Setting.getLabel(i18next.t("provider:Type"), i18next.t("cert:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.cert.type} onChange={(value => {

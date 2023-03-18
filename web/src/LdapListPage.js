@@ -137,7 +137,7 @@ class LdapListPage extends React.Component {
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
                 type="primary"
-                onClick={() => Setting.goToLink(`/ldap/sync/${record.id}`)}>{i18next.t("ldap:Sync")}</Button>
+                onClick={() => Setting.goToLink(`/ldap/sync/${record.id}`)}>{i18next.t("general:Sync")}</Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}}
                 onClick={() => Setting.goToLink(`/ldap/${record.id}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal

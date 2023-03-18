@@ -111,7 +111,7 @@ class CertListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: i18next.t("cert:Scope"),
+        title: i18next.t("provider:Scope"),
         dataIndex: "scope",
         key: "scope",
         filterMultiple: false,
@@ -122,7 +122,7 @@ class CertListPage extends BaseListPage {
         sorter: true,
       },
       {
-        title: i18next.t("cert:Type"),
+        title: i18next.t("provider:Type"),
         dataIndex: "type",
         key: "type",
         filterMultiple: false,

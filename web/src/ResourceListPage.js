@@ -100,7 +100,7 @@ class ResourceListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("resource:Application"),
+        title: i18next.t("general:Application"),
         dataIndex: "application",
         key: "application",
         width: "80px",
@@ -115,7 +115,7 @@ class ResourceListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("resource:User"),
+        title: i18next.t("general:User"),
         dataIndex: "user",
         key: "user",
         width: "80px",
@@ -156,7 +156,7 @@ class ResourceListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("resource:Tag"),
+        title: i18next.t("user:Tag"),
         dataIndex: "tag",
         key: "tag",
         width: "80px",
@@ -171,7 +171,7 @@ class ResourceListPage extends BaseListPage {
       //   sorter: (a, b) => a.fileName.localeCompare(b.fileName),
       // },
       {
-        title: i18next.t("resource:Type"),
+        title: i18next.t("provider:Type"),
         dataIndex: "fileType",
         key: "fileType",
         width: "80px",
@@ -227,7 +227,7 @@ class ResourceListPage extends BaseListPage {
             <div>
               <Button type="normal" onClick={() => {
                 copy(record.url);
-                Setting.showMessage("success", i18next.t("resource:Link copied to clipboard successfully"));
+                Setting.showMessage("success", i18next.t("provider:Link copied to clipboard successfully"));
               }}
               >
                 {i18next.t("resource:Copy Link")}

@@ -63,7 +63,7 @@ export const PasswordModal = (props) => {
       </Button>
       <Modal
         maskClosable={false}
-        title={i18next.t("user:Password")}
+        title={i18next.t("general:Password")}
         open={visible}
         okText={i18next.t("user:Set Password")}
         cancelText={i18next.t("general:Cancel")}

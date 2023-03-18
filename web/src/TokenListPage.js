@@ -178,7 +178,7 @@ class TokenListPage extends BaseListPage {
         ...this.getColumnSearchProps("expiresIn"),
       },
       {
-        title: i18next.t("token:Scope"),
+        title: i18next.t("provider:Scope"),
         dataIndex: "scope",
         key: "scope",
         width: "110px",

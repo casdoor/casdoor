@@ -126,7 +126,7 @@ class ProductListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("product:Tag"),
+        title: i18next.t("user:Tag"),
         dataIndex: "tag",
         key: "tag",
         width: "160px",

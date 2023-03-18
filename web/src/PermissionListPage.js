@@ -175,7 +175,7 @@ class PermissionListPage extends BaseListPage {
         sorter: true,
       },
       {
-        title: i18next.t("permission:Resources"),
+        title: i18next.t("general:Resources"),
         dataIndex: "resources",
         key: "resources",
         // width: '100px',
@@ -270,7 +270,7 @@ class PermissionListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("permission:State"),
+        title: i18next.t("general:State"),
         dataIndex: "state",
         key: "state",
         filterMultiple: false,

@@ -324,7 +324,7 @@ class ProviderEditPage extends React.Component {
                 this.state.provider.type !== "WeCom" ? null : (
                   <Row style={{marginTop: "20px"}} >
                     <Col style={{marginTop: "5px"}} span={2}>
-                      {Setting.getLabel(i18next.t("provider:Method"), i18next.t("provider:Method - Tooltip"))} :
+                      {Setting.getLabel(i18next.t("general:Method"), i18next.t("provider:Method - Tooltip"))} :
                     </Col>
                     <Col span={22} >
                       <Select virtual={false} style={{width: "100%"}} value={this.state.provider.method} onChange={value => {

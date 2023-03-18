@@ -167,7 +167,7 @@ class PaymentListPage extends BaseListPage {
       //   ...this.getColumnSearchProps('displayName'),
       // },
       {
-        title: i18next.t("payment:Type"),
+        title: i18next.t("provider:Type"),
         dataIndex: "type",
         key: "type",
         width: "140px",
@@ -189,7 +189,7 @@ class PaymentListPage extends BaseListPage {
         ...this.getColumnSearchProps("productDisplayName"),
       },
       {
-        title: i18next.t("payment:Price"),
+        title: i18next.t("product:Price"),
         dataIndex: "price",
         key: "price",
         width: "120px",
@@ -205,7 +205,7 @@ class PaymentListPage extends BaseListPage {
         ...this.getColumnSearchProps("currency"),
       },
       {
-        title: i18next.t("payment:State"),
+        title: i18next.t("general:State"),
         dataIndex: "state",
         key: "state",
         width: "120px",

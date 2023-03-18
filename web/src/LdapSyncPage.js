@@ -160,21 +160,21 @@ class LdapSyncPage extends React.Component {
         onFilter: (value, record) => record.groupId.indexOf(value) === 0,
       },
       {
-        title: i18next.t("ldap:Email"),
+        title: i18next.t("general:Email"),
         dataIndex: "email",
         key: "email",
         width: "240px",
         sorter: (a, b) => a.email.localeCompare(b.email),
       },
       {
-        title: i18next.t("ldap:Phone"),
+        title: i18next.t("general:Phone"),
         dataIndex: "phone",
         key: "phone",
         width: "160px",
         sorter: (a, b) => a.phone.localeCompare(b.phone),
       },
       {
-        title: i18next.t("ldap:Address"),
+        title: i18next.t("user:Address"),
         dataIndex: "address",
         key: "address",
         sorter: (a, b) => a.address.localeCompare(b.address),
@@ -205,7 +205,7 @@ class LdapSyncPage extends React.Component {
                 onConfirm={() => this.syncUsers()}
               >
                 <Button type="primary" style={{marginLeft: "10px"}}>
-                  {i18next.t("ldap:Sync")}
+                  {i18next.t("general:Sync")}
                 </Button>
               </Popconfirm>
               <Button style={{marginLeft: "20px"}}

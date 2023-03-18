@@ -62,7 +62,7 @@ class WebhookHeaderTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t("webhook:Name"),
+        title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
         width: "250px",

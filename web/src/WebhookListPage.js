@@ -117,7 +117,7 @@ class WebhookListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("webhook:URL"),
+        title: i18next.t("general:URL"),
         dataIndex: "url",
         key: "url",
         width: "300px",
@@ -134,7 +134,7 @@ class WebhookListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("webhook:Method"),
+        title: i18next.t("general:Method"),
         dataIndex: "method",
         key: "method",
         width: "120px",

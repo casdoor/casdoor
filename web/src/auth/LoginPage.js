@@ -748,7 +748,7 @@ class LoginPage extends React.Component {
             <Input.Password
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
-              placeholder={i18next.t("login:Password")}
+              placeholder={i18next.t("general:Password")}
               disabled={!application.enablePassword}
             />
           </Form.Item>
@@ -778,7 +778,7 @@ class LoginPage extends React.Component {
   renderMethodChoiceBox() {
     const application = this.getApplicationObj();
     const items = [
-      {label: i18next.t("login:Password"), key: "password"},
+      {label: i18next.t("general:Password"), key: "password"},
     ];
     application.enableCodeSignin ? items.push({
       label: i18next.t("login:Verification code"),

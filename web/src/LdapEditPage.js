@@ -87,7 +87,7 @@ class LdapEditPage extends React.Component {
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitLdapEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           <Button style={{marginLeft: "20px"}}
             onClick={() => Setting.goToLink(`/ldap/sync/${this.state.organizationName}/${this.state.ldapId}`)}>
-            {i18next.t("ldap:Sync")} LDAP
+            {i18next.t("general:Sync")} LDAP
           </Button>
         </div>
       } style={{marginLeft: "5px"}} type="inner">
@@ -109,7 +109,7 @@ class LdapEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
-            {Setting.getLabel(i18next.t("ldap:ID"), i18next.t("general:ID - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:ID"), i18next.t("general:ID - Tooltip"))} :
           </Col>
           <Col span={21}>
             <Input value={this.state.ldap.id} disabled={true} />

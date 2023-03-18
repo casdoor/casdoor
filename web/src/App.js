@@ -672,9 +672,9 @@ class App extends Component {
 
     return (
       <React.Fragment>
-        {
-          this.renderBanner()
-        }
+        {/* { */}
+        {/*   this.renderBanner() */}
+        {/* } */}
         <FloatButton.BackTop />
         <CustomGithubCorner />
         {
