@@ -199,7 +199,7 @@ func Enforce(permissionRule *PermissionRule) bool {
 	permission := GetPermission(permissionRule.Id)
 	enforcer := getEnforcer(permission)
 
-	request, _ := permissionRule.GetRequest(builtInAdapter, permissionRule.Id)
+	request, _ := permissionRule.GetRequest(builtInAdapter)
 
 	allow, err := enforcer.Enforce(request...)
 	if err != nil {
@@ -211,7 +211,7 @@ func Enforce(permissionRule *PermissionRule) bool {
 func BatchEnforce(permissionRules []PermissionRule) []bool {
 	var requests [][]interface{}
 	for _, permissionRule := range permissionRules {
-		request, _ := permissionRule.GetRequest(builtInAdapter, permissionRule.Id)
+		request, _ := permissionRule.GetRequest(builtInAdapter)
 		requests = append(requests, request)
 	}
 	permission := GetPermission(permissionRules[0].Id)

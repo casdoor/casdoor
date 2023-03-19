@@ -65,7 +65,7 @@ func (p *Permission) GetId() string {
 	return util.GetId(p.Owner, p.Name)
 }
 
-func (p *PermissionRule) GetRequest(adapterName string, permissionId string) ([]interface{}, error) {
+func (p *PermissionRule) GetRequest(adapterName string) ([]interface{}, error) {
 	request := []interface{}{p.V0, p.V1, p.V2}
 
 	if p.V3 != "" {
