@@ -195,7 +195,7 @@ func (c *ApiController) UploadResource() {
 		}
 	}
 
-	fileUrl, objectKey, err := object.UploadFileSafe(provider, fullFilePath, fileBuffer)
+	fileUrl, objectKey, err := object.UploadFileSafe(provider, fullFilePath, fileBuffer, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

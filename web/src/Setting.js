@@ -38,7 +38,7 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
   {label: "Español", key: "es", country: "ES", alt: "Español"},
   {label: "Français", key: "fr", country: "FR", alt: "Français"},
   {label: "Deutsch", key: "de", country: "DE", alt: "Deutsch"},
-  {label: "Bahasa Indonesia", key: "id", country: "ID", alt: "Bahasa Indonesia"},
+  {label: "Indonesia", key: "id", country: "ID", alt: "Indonesia"},
   {label: "日本語", key: "ja", country: "JP", alt: "日本語"},
   {label: "한국어", key: "ko", country: "KR", alt: "한국어"},
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},

@@ -237,7 +237,7 @@ func (c *ApiController) Login() {
 	if form.Username != "" {
 		if form.Type == ResponseTypeLogin {
 			if c.GetSessionUsername() != "" {
-				c.ResponseError(c.T("account:Please sign out first before signing in"), c.GetSessionUsername())
+				c.ResponseError(c.T("account:Please sign out first"), c.GetSessionUsername())
 				return
 			}
 		}
@@ -308,7 +308,7 @@ func (c *ApiController) Login() {
 				}
 
 				if !isHuman {
-					c.ResponseError(c.T("auth:Turing test failed."))
+					c.ResponseError(c.T("verification:Turing test failed."))
 					return
 				}
 			}
@@ -368,7 +368,7 @@ func (c *ApiController) Login() {
 
 			idProvider := idp.GetIdProvider(provider.Type, provider.SubType, clientId, clientSecret, provider.AppId, form.RedirectUri, provider.Domain, provider.CustomAuthUrl, provider.CustomTokenUrl, provider.CustomUserInfoUrl)
 			if idProvider == nil {
-				c.ResponseError(fmt.Sprintf(c.T("auth:The provider type: %s is not supported"), provider.Type))
+				c.ResponseError(fmt.Sprintf(c.T("storage:The provider type: %s is not supported"), provider.Type))
 				return
 			}
 
@@ -410,7 +410,7 @@ func (c *ApiController) Login() {
 				// Sign in via OAuth (want to sign up but already have account)
 
 				if user.IsForbidden {
-					c.ResponseError(c.T("auth:The user is forbidden to sign in, please contact the administrator"))
+					c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
 				}
 
 				resp = c.HandleLoggedIn(application, user, &form)

@@ -103,7 +103,7 @@ type Captcha struct {
 // @router /signup [post]
 func (c *ApiController) Signup() {
 	if c.GetSessionUsername() != "" {
-		c.ResponseError(c.T("account:Please sign out first before signing up"), c.GetSessionUsername())
+		c.ResponseError(c.T("account:Please sign out first"), c.GetSessionUsername())
 		return
 	}
 
@@ -211,7 +211,7 @@ func (c *ApiController) Signup() {
 
 	affected := object.AddUser(user)
 	if !affected {
-		c.ResponseError(c.T("account:Invalid information"), util.StructToJson(user))
+		c.ResponseError(c.T("account:Failed to add user"), util.StructToJson(user))
 		return
 	}
 

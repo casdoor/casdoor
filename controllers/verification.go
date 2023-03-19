@@ -96,7 +96,7 @@ func (c *ApiController) SendVerificationCode() {
 	application := object.GetApplication(applicationId)
 	organization := object.GetOrganization(util.GetId(application.Owner, application.Organization))
 	if organization == nil {
-		c.ResponseError(c.T("verification:Organization does not exist"))
+		c.ResponseError(c.T("check:Organization does not exist"))
 		return
 	}
 
@@ -112,7 +112,7 @@ func (c *ApiController) SendVerificationCode() {
 	switch destType {
 	case "email":
 		if !util.IsEmailValid(dest) {
-			c.ResponseError(c.T("verification:Email is invalid"))
+			c.ResponseError(c.T("check:Email is invalid"))
 			return
 		}
 

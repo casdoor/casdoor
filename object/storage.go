@@ -106,11 +106,11 @@ func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 	return fileUrl, objectKey
 }
 
-func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, string, error) {
+func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer, lang string) (string, string, error) {
 	endpoint := getProviderEndpoint(provider)
 	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint)
 	if storageProvider == nil {
-		return "", "", fmt.Errorf("the provider type: %s is not supported", provider.Type)
+		return "", "", fmt.Errorf(i18n.Translate(lang, "storage:The provider type: %s is not supported"), provider.Type)
 	}
 
 	if provider.Domain == "" {
@@ -128,7 +128,7 @@ func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 	return fileUrl, objectKey, nil
 }
 
-func UploadFileSafe(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer) (string, string, error) {
+func UploadFileSafe(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer, lang string) (string, string, error) {
 	// check fullFilePath is there security issue
 	if strings.Contains(fullFilePath, "..") {
 		return "", "", fmt.Errorf("the fullFilePath: %s is not allowed", fullFilePath)
@@ -139,7 +139,7 @@ func UploadFileSafe(provider *Provider, fullFilePath string, fileBuffer *bytes.B
 	var err error
 	times := 0
 	for {
-		fileUrl, objectKey, err = uploadFile(provider, fullFilePath, fileBuffer)
+		fileUrl, objectKey, err = uploadFile(provider, fullFilePath, fileBuffer, lang)
 		if err != nil {
 			times += 1
 			if times >= 5 {

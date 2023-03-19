@@ -1,9 +1,8 @@
 {
   "account": {
+    "Failed to add user": "Failed to add user",
     "Get init score failed, error: %w": "Get init score failed, error: %w",
-    "Invalid information": "Invalid information",
-    "Please sign out first before signing in": "Please sign out first before signing in",
-    "Please sign out first before signing up": "Please sign out first before signing up",
+    "Please sign out first": "Please sign out first",
     "The application does not allow to sign up new account": "The application does not allow to sign up new account"
   },
   "auth": {
@@ -17,10 +16,7 @@
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
     "The application: %s does not exist": "The application: %s does not exist",
     "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
-    "The provider type: %s is not supported": "The provider type: %s is not supported",
     "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
-    "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
-    "Turing test failed.": "Turing test failed.",
     "Unauthorized operation": "Unauthorized operation",
     "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s"
   },
@@ -126,9 +122,7 @@
   },
   "verification": {
     "Code has not been sent yet!": "Code has not been sent yet!",
-    "Email is invalid": "Email is invalid",
     "Invalid captcha provider.": "Invalid captcha provider.",
-    "Organization does not exist": "Organization does not exist",
     "Phone number is invalid in your region %s": "Phone number is invalid in your region %s",
     "Turing test failed.": "Turing test failed.",
     "Unable to get the email modify rule.": "Unable to get the email modify rule.",

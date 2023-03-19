@@ -63,19 +63,19 @@ func getPermanentAvatarUrl(organization string, username string, url string, upl
 	uploadedFileUrl, _ := GetUploadFileUrl(defaultStorageProvider, fullFilePath, false)
 
 	if upload {
-		DownloadAndUpload(url, fullFilePath)
+		DownloadAndUpload(url, fullFilePath, "en")
 	}
 
 	return uploadedFileUrl
 }
 
-func DownloadAndUpload(url string, fullFilePath string) {
+func DownloadAndUpload(url string, fullFilePath string, lang string) {
 	fileBuffer, err := downloadFile(url)
 	if err != nil {
 		panic(err)
 	}
 
-	_, _, err = UploadFileSafe(defaultStorageProvider, fullFilePath, fileBuffer)
+	_, _, err = UploadFileSafe(defaultStorageProvider, fullFilePath, fileBuffer, lang)
 	if err != nil {
 		panic(err)
 	}
