@@ -268,6 +268,7 @@
     "Users": "Pengguna-pengguna",
     "Users under all organizations": "Pengguna di bawah semua organisasi",
     "Webhooks": "Webhooks",
+    "empty": "kosong",
     "{total} in total": "{total} secara keseluruhan"
   },
   "ldap": {

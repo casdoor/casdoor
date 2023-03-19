@@ -171,7 +171,7 @@
     "Failed to connect to server": "连接服务器失败",
     "Failed to delete": "删除失败",
     "Failed to save": "保存失败",
-    "Favicon": "组织Favicon",
+    "Favicon": "Favicon",
     "Favicon - Tooltip": "该组织所有Casdoor页面中所使用的Favicon图标URL",
     "First name": "名字",
     "Forget URL": "忘记密码URL",
@@ -268,6 +268,7 @@
     "Users": "用户",
     "Users under all organizations": "所有组织里的用户",
     "Webhooks": "Webhooks",
+    "empty": "无",
     "{total} in total": "{total} 总计"
   },
   "ldap": {

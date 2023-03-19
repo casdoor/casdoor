@@ -105,7 +105,7 @@ class AffiliationSelect extends React.Component {
                     this.updateUserField("affiliation", name);
                     this.updateUserField("score", id);
                   })}
-                  options={[Setting.getOption("(empty)", "")].concat(this.state.affiliationOptions.map((affiliationOption) => Setting.getOption(affiliationOption.name, affiliationOption.name))
+                  options={[Setting.getOption(`(${i18next.t("general:empty")})`, "")].concat(this.state.affiliationOptions.map((affiliationOption) => Setting.getOption(affiliationOption.name, affiliationOption.name))
                   )} />
               )
             }

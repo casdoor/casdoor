@@ -182,7 +182,7 @@ class ProductListPage extends BaseListPage {
         render: (text, record, index) => {
           const providers = text;
           if (providers.length === 0) {
-            return "(empty)";
+            return `(${i18next.t("general:empty")})`;
           }
 
           const half = Math.floor((providers.length + 1) / 2);
