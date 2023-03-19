@@ -20,6 +20,7 @@ import (
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/config"
+	"github.com/casbin/casbin/v2/log"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casdoor/casdoor/conf"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
@@ -50,27 +51,30 @@ func getEnforcer(permission *Permission) *casbin.Enforcer {
 		panic(err)
 	}
 
-	policyFilter := xormadapter.Filter{}
-
-	if !HasRoleDefinition(m) {
-		policyFilter.Ptype = []string{"p"}
-		err = adapter.LoadFilteredPolicy(m, policyFilter)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	enforcer, err := casbin.NewEnforcer(m, adapter)
+	// Init an enforcer instance without specifying a model or adapter.
+	// If you specify an adapter, it will load all policies, which is a
+	// heavy process that can slow down the application.
+	enforcer, err := casbin.NewEnforcer(&log.DefaultLogger{}, false)
 	if err != nil {
 		panic(err)
 	}
 
-	// load Policy with a specific Permission
-	policyFilter.V5 = []string{permission.GetId()}
+	enforcer.InitWithModelAndAdapter(m, nil)
+	enforcer.SetAdapter(adapter)
+
+	policyFilter := xormadapter.Filter{
+		V5: []string{permission.GetId()},
+	}
+
+	if !HasRoleDefinition(m) {
+		policyFilter.Ptype = []string{"p"}
+	}
+
 	err = enforcer.LoadFilteredPolicy(policyFilter)
 	if err != nil {
 		panic(err)
 	}
+
 	return enforcer
 }
 
