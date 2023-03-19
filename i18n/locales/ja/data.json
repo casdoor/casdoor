@@ -1,140 +1,140 @@
 {
   "account": {
-    "Failed to add user": "Failed to add user",
-    "Get init score failed, error: %w": "Get init score failed, error: %w",
-    "Please sign out first": "Please sign out first",
-    "The application does not allow to sign up new account": "The application does not allow to sign up new account"
+    "Failed to add user": "ユーザーの追加に失敗しました",
+    "Get init score failed, error: %w": "イニットスコアの取得に失敗しました。エラー：%w",
+    "Please sign out first": "最初にサインアウトしてください",
+    "The application does not allow to sign up new account": "アプリケーションは新しいアカウントの登録を許可しません"
   },
   "auth": {
-    "Challenge method should be S256": "Challenge method should be S256",
-    "Failed to create user, user information is invalid: %s": "Failed to create user, user information is invalid: %s",
-    "Failed to login in: %s": "Failed to login in: %s",
-    "Invalid token": "Invalid token",
-    "State expected: %s, but got: %s": "State expected: %s, but got: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support",
-    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
-    "The application: %s does not exist": "The application: %s does not exist",
-    "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
-    "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
-    "Unauthorized operation": "Unauthorized operation",
-    "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s"
+    "Challenge method should be S256": "チャレンジメソッドはS256である必要があります",
+    "Failed to create user, user information is invalid: %s": "ユーザーの作成に失敗しました。ユーザー情報が無効です：%s",
+    "Failed to login in: %s": "ログインできませんでした：%s",
+    "Invalid token": "無効なトークン",
+    "State expected: %s, but got: %s": "期待される状態： %s、実際には：%s",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "プロバイダーのアカウント：%s とユーザー名：%s（%s）が存在せず、新しいアカウントを %%s 経由でサインアップすることはできません。他の方法でサインアップしてください",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "プロバイダー名：%sとユーザー名：%s（%s）のアカウントは存在しません。新しいアカウントとしてサインアップすることはできません。 ITサポートに連絡してください",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "プロバイダのアカウント：%s とユーザー名：%s (%s) は既に別のアカウント：%s (%s) にリンクされています",
+    "The application: %s does not exist": "アプリケーション: %sは存在しません",
+    "The login method: login with password is not enabled for the application": "ログイン方法：パスワードでのログインはアプリケーションで有効になっていません",
+    "The provider: %s is not enabled for the application": "プロバイダー：%sはアプリケーションでは有効化されていません",
+    "Unauthorized operation": "不正操作",
+    "Unknown authentication type (not password or provider), form = %s": "不明な認証タイプ（パスワードまたはプロバイダーではない）フォーム=%s"
   },
   "cas": {
-    "Service %s and %s do not match": "Service %s and %s do not match"
+    "Service %s and %s do not match": "サービス%sと%sは一致しません"
   },
   "check": {
-    "Affiliation cannot be blank": "Affiliation cannot be blank",
-    "DisplayName cannot be blank": "DisplayName cannot be blank",
-    "DisplayName is not valid real name": "DisplayName is not valid real name",
-    "Email already exists": "Email already exists",
-    "Email cannot be empty": "Email cannot be empty",
-    "Email is invalid": "Email is invalid",
-    "Empty username.": "Empty username.",
-    "FirstName cannot be blank": "FirstName cannot be blank",
-    "LastName cannot be blank": "LastName cannot be blank",
-    "Ldap user name or password incorrect": "Ldap user name or password incorrect",
-    "Multiple accounts with same uid, please check your ldap server": "Multiple accounts with same uid, please check your ldap server",
-    "Organization does not exist": "Organization does not exist",
-    "Password must have at least 6 characters": "Password must have at least 6 characters",
-    "Phone already exists": "Phone already exists",
-    "Phone cannot be empty": "Phone cannot be empty",
-    "Phone number is invalid": "Phone number is invalid",
-    "Session outdated, please login again": "Session outdated, please login again",
-    "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
-    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.",
-    "Username already exists": "Username already exists",
-    "Username cannot be an email address": "Username cannot be an email address",
-    "Username cannot contain white spaces": "Username cannot contain white spaces",
-    "Username cannot start with a digit": "Username cannot start with a digit",
-    "Username is too long (maximum is 39 characters).": "Username is too long (maximum is 39 characters).",
-    "Username must have at least 2 characters": "Username must have at least 2 characters",
-    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
-    "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
-    "password or code is incorrect, you have %d remaining chances": "password or code is incorrect, you have %d remaining chances",
-    "unsupported password type: %s": "unsupported password type: %s"
+    "Affiliation cannot be blank": "所属は空白にできません",
+    "DisplayName cannot be blank": "表示名は空白にできません",
+    "DisplayName is not valid real name": "表示名は有効な実名ではありません",
+    "Email already exists": "メールは既に存在します",
+    "Email cannot be empty": "メールが空白にできません",
+    "Email is invalid": "電子メールは無効です",
+    "Empty username.": "空のユーザー名。",
+    "FirstName cannot be blank": "ファーストネームは空白にできません",
+    "LastName cannot be blank": "姓は空白にできません",
+    "Ldap user name or password incorrect": "Ldapのユーザー名またはパスワードが間違っています",
+    "Multiple accounts with same uid, please check your ldap server": "同じuidを持つ複数のアカウントがあります。あなたのLDAPサーバーを確認してください",
+    "Organization does not exist": "組織は存在しません",
+    "Password must have at least 6 characters": "パスワードは少なくとも6つの文字が必要です",
+    "Phone already exists": "電話はすでに存在しています",
+    "Phone cannot be empty": "電話は空っぽにできません",
+    "Phone number is invalid": "電話番号が無効です",
+    "Session outdated, please login again": "セッションが期限切れになりました。再度ログインしてください",
+    "The user is forbidden to sign in, please contact the administrator": "ユーザーはサインインできません。管理者に連絡してください",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "ユーザー名には英数字、アンダースコア、ハイフンしか含めることができません。連続したハイフンまたはアンダースコアは不可であり、ハイフンまたはアンダースコアで始まるまたは終わることもできません。",
+    "Username already exists": "ユーザー名はすでに存在しています",
+    "Username cannot be an email address": "ユーザー名には電子メールアドレスを使用できません",
+    "Username cannot contain white spaces": "ユーザ名にはスペースを含めることはできません",
+    "Username cannot start with a digit": "ユーザー名は数字で始めることはできません",
+    "Username is too long (maximum is 39 characters).": "ユーザー名が長すぎます（最大39文字）。",
+    "Username must have at least 2 characters": "ユーザー名は少なくとも2文字必要です",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "あなたは間違ったパスワードまたはコードを何度も入力しました。%d 分間待ってから再度お試しください",
+    "Your region is not allow to signup by phone": "あなたの地域は電話でサインアップすることができません",
+    "password or code is incorrect, you have %d remaining chances": "パスワードまたはコードが間違っています。あと%d回の試行機会があります",
+    "unsupported password type: %s": "サポートされていないパスワードタイプ：%s"
   },
   "general": {
-    "Missing parameter": "Missing parameter",
-    "Please login first": "Please login first",
-    "The user: %s doesn't exist": "The user: %s doesn't exist",
-    "don't support captchaProvider: ": "don't support captchaProvider: "
+    "Missing parameter": "不足しているパラメーター",
+    "Please login first": "最初にログインしてください",
+    "The user: %s doesn't exist": "そのユーザー：%sは存在しません",
+    "don't support captchaProvider: ": "captchaProviderをサポートしないでください"
   },
   "ldap": {
-    "Ldap server exist": "Ldap server exist"
+    "Ldap server exist": "LDAPサーバーは存在します"
   },
   "link": {
-    "Please link first": "Please link first",
-    "This application has no providers": "This application has no providers",
-    "This application has no providers of type": "This application has no providers of type",
-    "This provider can't be unlinked": "This provider can't be unlinked",
-    "You are not the global admin, you can't unlink other users": "You are not the global admin, you can't unlink other users",
-    "You can't unlink yourself, you are not a member of any application": "You can't unlink yourself, you are not a member of any application"
+    "Please link first": "最初にリンクしてください",
+    "This application has no providers": "このアプリケーションにはプロバイダーがありません",
+    "This application has no providers of type": "「このアプリケーションには、タイプのプロバイダーがありません」と翻訳されます",
+    "This provider can't be unlinked": "このプロバイダーはリンク解除できません",
+    "You are not the global admin, you can't unlink other users": "あなたはグローバル管理者ではありません、他のユーザーとのリンクを解除することはできません",
+    "You can't unlink yourself, you are not a member of any application": "あなたは自分自身をアンリンクすることはできません、あなたはどのアプリケーションのメンバーでもありません"
   },
   "organization": {
-    "Only admin can modify the %s.": "Only admin can modify the %s.",
-    "The %s is immutable.": "The %s is immutable.",
-    "Unknown modify rule %s.": "Unknown modify rule %s."
+    "Only admin can modify the %s.": "管理者のみが%sを変更できます。",
+    "The %s is immutable.": "%sは不変です。",
+    "Unknown modify rule %s.": "未知の変更ルール%s。"
   },
   "provider": {
-    "Invalid application id": "Invalid application id",
-    "the provider: %s does not exist": "the provider: %s does not exist"
+    "Invalid application id": "アプリケーションIDが無効です",
+    "the provider: %s does not exist": "プロバイダー%sは存在しません"
   },
   "resource": {
-    "User is nil for tag: avatar": "User is nil for tag: avatar",
-    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Username or fullFilePath is empty: username = %s, fullFilePath = %s"
+    "User is nil for tag: avatar": "ユーザーはタグ「アバター」に対してnilです",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "ユーザー名または完全なファイルパスが空です：ユーザー名 = %s、完全なファイルパス = %s"
   },
   "saml": {
-    "Application %s not found": "Application %s not found"
+    "Application %s not found": "アプリケーション%sは見つかりません"
   },
   "saml_sp": {
-    "provider %s's category is not SAML": "provider %s's category is not SAML"
+    "provider %s's category is not SAML": "プロバイダ %s のカテゴリはSAMLではありません"
   },
   "service": {
-    "Empty parameters for emailForm: %v": "Empty parameters for emailForm: %v",
-    "Invalid Email receivers: %s": "Invalid Email receivers: %s",
-    "Invalid phone receivers: %s": "Invalid phone receivers: %s"
+    "Empty parameters for emailForm: %v": "EmailFormの空のパラメーター：％v",
+    "Invalid Email receivers: %s": "無効な電子メール受信者：%s",
+    "Invalid phone receivers: %s": "電話受信者が無効です：%s"
   },
   "storage": {
-    "The objectKey: %s is not allowed": "The objectKey: %s is not allowed",
-    "The provider type: %s is not supported": "The provider type: %s is not supported"
+    "The objectKey: %s is not allowed": "オブジェクトキー %s は許可されていません",
+    "The provider type: %s is not supported": "プロバイダータイプ：%sはサポートされていません"
   },
   "token": {
-    "Empty clientId or clientSecret": "Empty clientId or clientSecret",
-    "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
-    "Invalid application or wrong clientSecret": "Invalid application or wrong clientSecret",
-    "Invalid client_id": "Invalid client_id",
-    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s doesn't exist in the allowed Redirect URI list",
-    "Token not found, invalid accessToken": "Token not found, invalid accessToken"
+    "Empty clientId or clientSecret": "クライアントIDまたはクライアントシークレットが空です",
+    "Grant_type: %s is not supported in this application": "grant_type：%sはこのアプリケーションでサポートされていません",
+    "Invalid application or wrong clientSecret": "無効なアプリケーションまたは誤ったクライアントシークレットです",
+    "Invalid client_id": "client_idが無効です",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "リダイレクトURI：%sは許可されたリダイレクトURIリストに存在しません",
+    "Token not found, invalid accessToken": "トークンが見つかりません。無効なアクセストークンです"
   },
   "user": {
-    "Display name cannot be empty": "Display name cannot be empty",
-    "New password cannot contain blank space.": "New password cannot contain blank space.",
-    "New password must have at least 6 characters": "New password must have at least 6 characters"
+    "Display name cannot be empty": "表示名は空にできません",
+    "New password cannot contain blank space.": "新しいパスワードにはスペースを含めることはできません。",
+    "New password must have at least 6 characters": "新しいパスワードは少なくとも6文字必要です"
   },
   "user_upload": {
-    "Failed to import users": "Failed to import users"
+    "Failed to import users": "ユーザーのインポートに失敗しました"
   },
   "util": {
-    "No application is found for userId: %s": "No application is found for userId: %s",
-    "No provider for category: %s is found for application: %s": "No provider for category: %s is found for application: %s",
-    "The provider: %s is not found": "The provider: %s is not found"
+    "No application is found for userId: %s": "ユーザーIDに対するアプリケーションが見つかりません： %s",
+    "No provider for category: %s is found for application: %s": "アプリケーション：%sのカテゴリ%sのプロバイダが見つかりません",
+    "The provider: %s is not found": "プロバイダー：%sが見つかりません"
   },
   "verification": {
-    "Code has not been sent yet!": "Code has not been sent yet!",
-    "Invalid captcha provider.": "Invalid captcha provider.",
-    "Phone number is invalid in your region %s": "Phone number is invalid in your region %s",
-    "Turing test failed.": "Turing test failed.",
-    "Unable to get the email modify rule.": "Unable to get the email modify rule.",
-    "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",
-    "Unknown type": "Unknown type",
-    "Wrong parameter": "Wrong parameter",
-    "Wrong verification code!": "Wrong verification code!",
-    "You should verify your code in %d min!": "You should verify your code in %d min!",
-    "the user does not exist, please sign up first": "the user does not exist, please sign up first"
+    "Code has not been sent yet!": "まだコードが送信されていません！",
+    "Invalid captcha provider.": "無効なCAPTCHAプロバイダー。",
+    "Phone number is invalid in your region %s": "電話番号はあなたの地域で無効です %s",
+    "Turing test failed.": "チューリングテストは失敗しました。",
+    "Unable to get the email modify rule.": "電子メール変更規則を取得できません。",
+    "Unable to get the phone modify rule.": "電話の変更ルールを取得できません。",
+    "Unknown type": "不明なタイプ",
+    "Wrong parameter": "誤ったパラメータ",
+    "Wrong verification code!": "誤った検証コードです！",
+    "You should verify your code in %d min!": "あなたは%d分であなたのコードを確認する必要があります！",
+    "the user does not exist, please sign up first": "ユーザーは存在しません。まず登録してください"
   },
   "webauthn": {
-    "Found no credentials for this user": "Found no credentials for this user",
-    "Please call WebAuthnSigninBegin first": "Please call WebAuthnSigninBegin first"
+    "Found no credentials for this user": "このユーザーの資格情報が見つかりませんでした",
+    "Please call WebAuthnSigninBegin first": "最初にWebAuthnSigninBeginを呼び出してください"
   }
 }

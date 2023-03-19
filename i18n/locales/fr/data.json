@@ -1,140 +1,140 @@
 {
   "account": {
-    "Failed to add user": "Failed to add user",
-    "Get init score failed, error: %w": "Get init score failed, error: %w",
-    "Please sign out first": "Please sign out first",
-    "The application does not allow to sign up new account": "The application does not allow to sign up new account"
+    "Failed to add user": "Échec d'ajout d'utilisateur",
+    "Get init score failed, error: %w": "Obtention du score initiale échouée, erreur : %w",
+    "Please sign out first": "Veuillez vous déconnecter en premier",
+    "The application does not allow to sign up new account": "L'application ne permet pas de créer un nouveau compte"
   },
   "auth": {
-    "Challenge method should be S256": "Challenge method should be S256",
-    "Failed to create user, user information is invalid: %s": "Failed to create user, user information is invalid: %s",
-    "Failed to login in: %s": "Failed to login in: %s",
-    "Invalid token": "Invalid token",
-    "State expected: %s, but got: %s": "State expected: %s, but got: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support",
-    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
-    "The application: %s does not exist": "The application: %s does not exist",
-    "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
-    "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
-    "Unauthorized operation": "Unauthorized operation",
-    "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s"
+    "Challenge method should be S256": "La méthode de défi doit être S256",
+    "Failed to create user, user information is invalid: %s": "Échec de la création de l'utilisateur, les informations utilisateur sont invalides : %s",
+    "Failed to login in: %s": "Échec de la connexion : %s",
+    "Invalid token": "Jeton invalide",
+    "State expected: %s, but got: %s": "État attendu : %s, mais obtenu : %s",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Le compte pour le fournisseur : %s et le nom d'utilisateur : %s (%s) n'existe pas et n'est pas autorisé à s'inscrire en tant que nouveau compte via %%s, veuillez utiliser une autre méthode pour vous inscrire",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Le compte pour le fournisseur : %s et le nom d'utilisateur : %s (%s) n'existe pas et n'est pas autorisé à s'inscrire comme nouveau compte, veuillez contacter votre support informatique",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Le compte du fournisseur : %s et le nom d'utilisateur : %s (%s) sont déjà liés à un autre compte : %s (%s)",
+    "The application: %s does not exist": "L'application : %s n'existe pas",
+    "The login method: login with password is not enabled for the application": "La méthode de connexion : connexion avec mot de passe n'est pas activée pour l'application",
+    "The provider: %s is not enabled for the application": "Le fournisseur :%s n'est pas activé pour l'application",
+    "Unauthorized operation": "Opération non autorisée",
+    "Unknown authentication type (not password or provider), form = %s": "Type d'authentification inconnu (pas de mot de passe ou de fournisseur), formulaire = %s"
   },
   "cas": {
-    "Service %s and %s do not match": "Service %s and %s do not match"
+    "Service %s and %s do not match": "Les services %s et %s ne correspondent pas"
   },
   "check": {
-    "Affiliation cannot be blank": "Affiliation cannot be blank",
-    "DisplayName cannot be blank": "DisplayName cannot be blank",
-    "DisplayName is not valid real name": "DisplayName is not valid real name",
-    "Email already exists": "Email already exists",
-    "Email cannot be empty": "Email cannot be empty",
-    "Email is invalid": "Email is invalid",
-    "Empty username.": "Empty username.",
-    "FirstName cannot be blank": "FirstName cannot be blank",
-    "LastName cannot be blank": "LastName cannot be blank",
-    "Ldap user name or password incorrect": "Ldap user name or password incorrect",
-    "Multiple accounts with same uid, please check your ldap server": "Multiple accounts with same uid, please check your ldap server",
-    "Organization does not exist": "Organization does not exist",
-    "Password must have at least 6 characters": "Password must have at least 6 characters",
-    "Phone already exists": "Phone already exists",
-    "Phone cannot be empty": "Phone cannot be empty",
-    "Phone number is invalid": "Phone number is invalid",
-    "Session outdated, please login again": "Session outdated, please login again",
-    "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
-    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.",
-    "Username already exists": "Username already exists",
-    "Username cannot be an email address": "Username cannot be an email address",
-    "Username cannot contain white spaces": "Username cannot contain white spaces",
-    "Username cannot start with a digit": "Username cannot start with a digit",
-    "Username is too long (maximum is 39 characters).": "Username is too long (maximum is 39 characters).",
-    "Username must have at least 2 characters": "Username must have at least 2 characters",
-    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
-    "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
-    "password or code is incorrect, you have %d remaining chances": "password or code is incorrect, you have %d remaining chances",
-    "unsupported password type: %s": "unsupported password type: %s"
+    "Affiliation cannot be blank": "Affiliation ne peut pas être vide",
+    "DisplayName cannot be blank": "Le nom d'affichage ne peut pas être vide",
+    "DisplayName is not valid real name": "DisplayName n'est pas un nom réel valide",
+    "Email already exists": "E-mail déjà existant",
+    "Email cannot be empty": "L'e-mail ne peut pas être vide",
+    "Email is invalid": "L'adresse e-mail est invalide",
+    "Empty username.": "Nom d'utilisateur vide.",
+    "FirstName cannot be blank": "Le prénom ne peut pas être laissé vide",
+    "LastName cannot be blank": "Le nom de famille ne peut pas être vide",
+    "Ldap user name or password incorrect": "Nom d'utilisateur ou mot de passe LDAP incorrect",
+    "Multiple accounts with same uid, please check your ldap server": "Plusieurs comptes avec le même identifiant d'utilisateur, veuillez vérifier votre serveur LDAP",
+    "Organization does not exist": "L'organisation n'existe pas",
+    "Password must have at least 6 characters": "Le mot de passe doit comporter au moins 6 caractères",
+    "Phone already exists": "Le téléphone existe déjà",
+    "Phone cannot be empty": "Le téléphone ne peut pas être vide",
+    "Phone number is invalid": "Le numéro de téléphone est invalide",
+    "Session outdated, please login again": "Session expirée, veuillez vous connecter à nouveau",
+    "The user is forbidden to sign in, please contact the administrator": "L'utilisateur est interdit de se connecter, veuillez contacter l'administrateur",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Le nom d'utilisateur ne peut contenir que des caractères alphanumériques, des traits soulignés ou des tirets, ne peut pas avoir de tirets ou de traits soulignés consécutifs et ne peut pas commencer ou se terminer par un tiret ou un trait souligné.",
+    "Username already exists": "Nom d'utilisateur existe déjà",
+    "Username cannot be an email address": "Nom d'utilisateur ne peut pas être une adresse e-mail",
+    "Username cannot contain white spaces": "Nom d'utilisateur ne peut pas contenir d'espaces blancs",
+    "Username cannot start with a digit": "Nom d'utilisateur ne peut pas commencer par un chiffre",
+    "Username is too long (maximum is 39 characters).": "Nom d'utilisateur est trop long (maximum de 39 caractères).",
+    "Username must have at least 2 characters": "Le nom d'utilisateur doit comporter au moins 2 caractères",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Vous avez entré le mauvais mot de passe ou code plusieurs fois, veuillez attendre %d minutes et réessayer",
+    "Your region is not allow to signup by phone": "Votre région n'est pas autorisée à s'inscrire par téléphone",
+    "password or code is incorrect, you have %d remaining chances": "Le mot de passe ou le code est incorrect, il vous reste %d chances",
+    "unsupported password type: %s": "Type de mot de passe non pris en charge : %s"
   },
   "general": {
-    "Missing parameter": "Missing parameter",
-    "Please login first": "Please login first",
-    "The user: %s doesn't exist": "The user: %s doesn't exist",
-    "don't support captchaProvider: ": "don't support captchaProvider: "
+    "Missing parameter": "Paramètre manquant",
+    "Please login first": "Veuillez d'abord vous connecter",
+    "The user: %s doesn't exist": "L'utilisateur : %s n'existe pas",
+    "don't support captchaProvider: ": "Ne pas prendre en charge la captchaProvider"
   },
   "ldap": {
-    "Ldap server exist": "Ldap server exist"
+    "Ldap server exist": "Le serveur LDAP existe"
   },
   "link": {
-    "Please link first": "Please link first",
-    "This application has no providers": "This application has no providers",
-    "This application has no providers of type": "This application has no providers of type",
-    "This provider can't be unlinked": "This provider can't be unlinked",
-    "You are not the global admin, you can't unlink other users": "You are not the global admin, you can't unlink other users",
-    "You can't unlink yourself, you are not a member of any application": "You can't unlink yourself, you are not a member of any application"
+    "Please link first": "Veuillez d'abord faire le lien",
+    "This application has no providers": "Cette application n'a aucun fournisseur",
+    "This application has no providers of type": "Cette application ne dispose d'aucun fournisseur de type",
+    "This provider can't be unlinked": "Ce fournisseur ne peut pas être dissocié",
+    "You are not the global admin, you can't unlink other users": "Vous n'êtes pas l'administrateur global, vous ne pouvez pas détacher d'autres utilisateurs",
+    "You can't unlink yourself, you are not a member of any application": "Vous ne pouvez pas vous désolidariser, car vous n'êtes membre d'aucune application"
   },
   "organization": {
-    "Only admin can modify the %s.": "Only admin can modify the %s.",
-    "The %s is immutable.": "The %s is immutable.",
-    "Unknown modify rule %s.": "Unknown modify rule %s."
+    "Only admin can modify the %s.": "Seul l'administrateur peut modifier le %s.",
+    "The %s is immutable.": "Le %s est immuable.",
+    "Unknown modify rule %s.": "Règle de modification inconnue %s."
   },
   "provider": {
-    "Invalid application id": "Invalid application id",
-    "the provider: %s does not exist": "the provider: %s does not exist"
+    "Invalid application id": "Identifiant d'application invalide",
+    "the provider: %s does not exist": "Le fournisseur : %s n'existe pas"
   },
   "resource": {
-    "User is nil for tag: avatar": "User is nil for tag: avatar",
-    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Username or fullFilePath is empty: username = %s, fullFilePath = %s"
+    "User is nil for tag: avatar": "L'utilisateur est nul pour la balise : avatar",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Nom d'utilisateur ou chemin complet du fichier est vide : nom d'utilisateur = %s, chemin complet du fichier = %s"
   },
   "saml": {
-    "Application %s not found": "Application %s not found"
+    "Application %s not found": "L'application %s n'a pas été trouvée"
   },
   "saml_sp": {
-    "provider %s's category is not SAML": "provider %s's category is not SAML"
+    "provider %s's category is not SAML": "La catégorie du fournisseur %s n'est pas SAML"
   },
   "service": {
-    "Empty parameters for emailForm: %v": "Empty parameters for emailForm: %v",
-    "Invalid Email receivers: %s": "Invalid Email receivers: %s",
-    "Invalid phone receivers: %s": "Invalid phone receivers: %s"
+    "Empty parameters for emailForm: %v": "Paramètres vides pour emailForm : %v",
+    "Invalid Email receivers: %s": "Destinataires d'e-mail invalides : %s",
+    "Invalid phone receivers: %s": "Destinataires de téléphone invalide : %s"
   },
   "storage": {
-    "The objectKey: %s is not allowed": "The objectKey: %s is not allowed",
-    "The provider type: %s is not supported": "The provider type: %s is not supported"
+    "The objectKey: %s is not allowed": "La clé d'objet : %s n'est pas autorisée",
+    "The provider type: %s is not supported": "Le type de fournisseur : %s n'est pas pris en charge"
   },
   "token": {
-    "Empty clientId or clientSecret": "Empty clientId or clientSecret",
-    "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
-    "Invalid application or wrong clientSecret": "Invalid application or wrong clientSecret",
-    "Invalid client_id": "Invalid client_id",
-    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s doesn't exist in the allowed Redirect URI list",
-    "Token not found, invalid accessToken": "Token not found, invalid accessToken"
+    "Empty clientId or clientSecret": "clientId ou clientSecret vide",
+    "Grant_type: %s is not supported in this application": "Type_de_subvention : %s n'est pas pris en charge dans cette application",
+    "Invalid application or wrong clientSecret": "Application invalide ou clientSecret incorrect",
+    "Invalid client_id": "Identifiant de client invalide",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "URI de redirection: %s n'existe pas dans la liste des URI de redirection autorisés",
+    "Token not found, invalid accessToken": "Jeton non trouvé, accessToken invalide"
   },
   "user": {
-    "Display name cannot be empty": "Display name cannot be empty",
-    "New password cannot contain blank space.": "New password cannot contain blank space.",
-    "New password must have at least 6 characters": "New password must have at least 6 characters"
+    "Display name cannot be empty": "Le nom d'affichage ne peut pas être vide",
+    "New password cannot contain blank space.": "Le nouveau mot de passe ne peut pas contenir d'espace.",
+    "New password must have at least 6 characters": "Le nouveau mot de passe doit comporter au moins 6 caractères"
   },
   "user_upload": {
-    "Failed to import users": "Failed to import users"
+    "Failed to import users": "Échec de l'importation des utilisateurs"
   },
   "util": {
-    "No application is found for userId: %s": "No application is found for userId: %s",
-    "No provider for category: %s is found for application: %s": "No provider for category: %s is found for application: %s",
-    "The provider: %s is not found": "The provider: %s is not found"
+    "No application is found for userId: %s": "Aucune application n'a été trouvée pour l'identifiant d'utilisateur : %s",
+    "No provider for category: %s is found for application: %s": "Aucun fournisseur pour la catégorie: %s n'est trouvé pour l'application: %s",
+    "The provider: %s is not found": "Le fournisseur : %s n'a pas été trouvé"
   },
   "verification": {
-    "Code has not been sent yet!": "Code has not been sent yet!",
-    "Invalid captcha provider.": "Invalid captcha provider.",
-    "Phone number is invalid in your region %s": "Phone number is invalid in your region %s",
-    "Turing test failed.": "Turing test failed.",
-    "Unable to get the email modify rule.": "Unable to get the email modify rule.",
-    "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",
-    "Unknown type": "Unknown type",
-    "Wrong parameter": "Wrong parameter",
-    "Wrong verification code!": "Wrong verification code!",
-    "You should verify your code in %d min!": "You should verify your code in %d min!",
-    "the user does not exist, please sign up first": "the user does not exist, please sign up first"
+    "Code has not been sent yet!": "Le code n'a pas encore été envoyé !",
+    "Invalid captcha provider.": "Fournisseur de captcha invalide.",
+    "Phone number is invalid in your region %s": "Le numéro de téléphone n'est pas valide dans votre région %s",
+    "Turing test failed.": "Le test de Turing a échoué.",
+    "Unable to get the email modify rule.": "Incapable d'obtenir la règle de modification de courriel.",
+    "Unable to get the phone modify rule.": "Impossible d'obtenir la règle de modification de téléphone.",
+    "Unknown type": "Type inconnu",
+    "Wrong parameter": "Mauvais paramètre",
+    "Wrong verification code!": "Mauvais code de vérification !",
+    "You should verify your code in %d min!": "Vous devriez vérifier votre code en %d min !",
+    "the user does not exist, please sign up first": "L'utilisateur n'existe pas, veuillez vous inscrire d'abord"
   },
   "webauthn": {
-    "Found no credentials for this user": "Found no credentials for this user",
-    "Please call WebAuthnSigninBegin first": "Please call WebAuthnSigninBegin first"
+    "Found no credentials for this user": "Aucune référence trouvée pour cet utilisateur",
+    "Please call WebAuthnSigninBegin first": "Veuillez d'abord appeler WebAuthnSigninBegin"
   }
 }

@@ -1,140 +1,140 @@
 {
   "account": {
-    "Failed to add user": "Failed to add user",
-    "Get init score failed, error: %w": "Get init score failed, error: %w",
-    "Please sign out first": "Please sign out first",
-    "The application does not allow to sign up new account": "The application does not allow to sign up new account"
+    "Failed to add user": "Không thể thêm người dùng",
+    "Get init score failed, error: %w": "Lấy điểm khởi đầu thất bại, lỗi: %w",
+    "Please sign out first": "Vui lòng đăng xuất trước",
+    "The application does not allow to sign up new account": "Ứng dụng không cho phép đăng ký tài khoản mới"
   },
   "auth": {
-    "Challenge method should be S256": "Challenge method should be S256",
-    "Failed to create user, user information is invalid: %s": "Failed to create user, user information is invalid: %s",
-    "Failed to login in: %s": "Failed to login in: %s",
-    "Invalid token": "Invalid token",
-    "State expected: %s, but got: %s": "State expected: %s, but got: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support",
-    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
-    "The application: %s does not exist": "The application: %s does not exist",
-    "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
-    "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
-    "Unauthorized operation": "Unauthorized operation",
-    "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s"
+    "Challenge method should be S256": "Phương pháp thách thức nên là S256",
+    "Failed to create user, user information is invalid: %s": "Không thể tạo người dùng, thông tin người dùng không hợp lệ: %s",
+    "Failed to login in: %s": "Đăng nhập không thành công: %s",
+    "Invalid token": "Mã thông báo không hợp lệ",
+    "State expected: %s, but got: %s": "Trạng thái dự kiến: %s, nhưng nhận được: %s",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Tài khoản cho nhà cung cấp: %s và tên người dùng: %s (%s) không tồn tại và không được phép đăng ký làm tài khoản mới qua %%s, vui lòng sử dụng cách khác để đăng ký",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Tài khoản cho nhà cung cấp: %s và tên người dùng: %s (%s) không tồn tại và không được phép đăng ký như một tài khoản mới, vui lòng liên hệ với bộ phận hỗ trợ công nghệ thông tin của bạn",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Tài khoản cho nhà cung cấp: %s và tên người dùng: %s (%s) đã được liên kết với tài khoản khác: %s (%s)",
+    "The application: %s does not exist": "Ứng dụng: %s không tồn tại",
+    "The login method: login with password is not enabled for the application": "Phương thức đăng nhập: đăng nhập bằng mật khẩu không được kích hoạt cho ứng dụng",
+    "The provider: %s is not enabled for the application": "Nhà cung cấp: %s không được kích hoạt cho ứng dụng",
+    "Unauthorized operation": "Hoạt động không được ủy quyền",
+    "Unknown authentication type (not password or provider), form = %s": "Loại xác thực không xác định (không phải mật khẩu hoặc nhà cung cấp), biểu mẫu = %s"
   },
   "cas": {
-    "Service %s and %s do not match": "Service %s and %s do not match"
+    "Service %s and %s do not match": "Dịch sang tiếng Việt: Dịch vụ %s và %s không khớp"
   },
   "check": {
-    "Affiliation cannot be blank": "Affiliation cannot be blank",
-    "DisplayName cannot be blank": "DisplayName cannot be blank",
-    "DisplayName is not valid real name": "DisplayName is not valid real name",
-    "Email already exists": "Email already exists",
-    "Email cannot be empty": "Email cannot be empty",
-    "Email is invalid": "Email is invalid",
-    "Empty username.": "Empty username.",
-    "FirstName cannot be blank": "FirstName cannot be blank",
-    "LastName cannot be blank": "LastName cannot be blank",
-    "Ldap user name or password incorrect": "Ldap user name or password incorrect",
-    "Multiple accounts with same uid, please check your ldap server": "Multiple accounts with same uid, please check your ldap server",
-    "Organization does not exist": "Organization does not exist",
-    "Password must have at least 6 characters": "Password must have at least 6 characters",
-    "Phone already exists": "Phone already exists",
-    "Phone cannot be empty": "Phone cannot be empty",
-    "Phone number is invalid": "Phone number is invalid",
-    "Session outdated, please login again": "Session outdated, please login again",
-    "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
-    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.",
-    "Username already exists": "Username already exists",
-    "Username cannot be an email address": "Username cannot be an email address",
-    "Username cannot contain white spaces": "Username cannot contain white spaces",
-    "Username cannot start with a digit": "Username cannot start with a digit",
-    "Username is too long (maximum is 39 characters).": "Username is too long (maximum is 39 characters).",
-    "Username must have at least 2 characters": "Username must have at least 2 characters",
-    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
-    "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
-    "password or code is incorrect, you have %d remaining chances": "password or code is incorrect, you have %d remaining chances",
-    "unsupported password type: %s": "unsupported password type: %s"
+    "Affiliation cannot be blank": "Tình trạng liên kết không thể để trống",
+    "DisplayName cannot be blank": "Tên hiển thị không thể để trống",
+    "DisplayName is not valid real name": "DisplayName không phải là tên thật hợp lệ",
+    "Email already exists": "Email đã tồn tại",
+    "Email cannot be empty": "Email không thể để trống",
+    "Email is invalid": "Địa chỉ email không hợp lệ",
+    "Empty username.": "Tên đăng nhập trống.",
+    "FirstName cannot be blank": "Tên không được để trống",
+    "LastName cannot be blank": "Họ không thể để trống",
+    "Ldap user name or password incorrect": "Tên người dùng hoặc mật khẩu Ldap không chính xác",
+    "Multiple accounts with same uid, please check your ldap server": "Nhiều tài khoản với cùng một uid, vui lòng kiểm tra máy chủ ldap của bạn",
+    "Organization does not exist": "Tổ chức không tồn tại",
+    "Password must have at least 6 characters": "Mật khẩu phải ít nhất 6 ký tự",
+    "Phone already exists": "Điện thoại đã tồn tại",
+    "Phone cannot be empty": "Điện thoại không thể để trống",
+    "Phone number is invalid": "Số điện thoại không hợp lệ",
+    "Session outdated, please login again": "Phiên làm việc hết hạn, vui lòng đăng nhập lại",
+    "The user is forbidden to sign in, please contact the administrator": "Người dùng bị cấm đăng nhập, vui lòng liên hệ với quản trị viên",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Tên người dùng chỉ có thể chứa các ký tự chữ và số, gạch dưới hoặc gạch ngang, không được có hai ký tự gạch dưới hoặc gạch ngang liền kề và không được bắt đầu hoặc kết thúc bằng dấu gạch dưới hoặc gạch ngang.",
+    "Username already exists": "Tên đăng nhập đã tồn tại",
+    "Username cannot be an email address": "Tên người dùng không thể là địa chỉ email",
+    "Username cannot contain white spaces": "Tên người dùng không thể chứa khoảng trắng",
+    "Username cannot start with a digit": "Tên người dùng không thể bắt đầu bằng chữ số",
+    "Username is too long (maximum is 39 characters).": "Tên đăng nhập quá dài (tối đa là 39 ký tự).",
+    "Username must have at least 2 characters": "Tên đăng nhập phải có ít nhất 2 ký tự",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Bạn đã nhập sai mật khẩu hoặc mã quá nhiều lần, vui lòng đợi %d phút và thử lại",
+    "Your region is not allow to signup by phone": "Vùng của bạn không được phép đăng ký bằng điện thoại",
+    "password or code is incorrect, you have %d remaining chances": "Mật khẩu hoặc mã không chính xác, bạn còn %d lần cơ hội",
+    "unsupported password type: %s": "Loại mật khẩu không được hỗ trợ: %s"
   },
   "general": {
-    "Missing parameter": "Missing parameter",
-    "Please login first": "Please login first",
-    "The user: %s doesn't exist": "The user: %s doesn't exist",
-    "don't support captchaProvider: ": "don't support captchaProvider: "
+    "Missing parameter": "Thiếu tham số",
+    "Please login first": "Vui lòng đăng nhập trước",
+    "The user: %s doesn't exist": "Người dùng: %s không tồn tại",
+    "don't support captchaProvider: ": "Không hỗ trợ captchaProvider:"
   },
   "ldap": {
-    "Ldap server exist": "Ldap server exist"
+    "Ldap server exist": "Máy chủ Ldap tồn tại"
   },
   "link": {
-    "Please link first": "Please link first",
-    "This application has no providers": "This application has no providers",
-    "This application has no providers of type": "This application has no providers of type",
-    "This provider can't be unlinked": "This provider can't be unlinked",
-    "You are not the global admin, you can't unlink other users": "You are not the global admin, you can't unlink other users",
-    "You can't unlink yourself, you are not a member of any application": "You can't unlink yourself, you are not a member of any application"
+    "Please link first": "Vui lòng kết nối trước tiên",
+    "This application has no providers": "Ứng dụng này không có nhà cung cấp",
+    "This application has no providers of type": "Ứng dụng này không có nhà cung cấp loại nào",
+    "This provider can't be unlinked": "Nhà cung cấp này không thể được tách ra",
+    "You are not the global admin, you can't unlink other users": "Bạn không phải là quản trị viên toàn cầu, bạn không thể hủy liên kết người dùng khác",
+    "You can't unlink yourself, you are not a member of any application": "Bạn không thể hủy liên kết của mình, bởi vì bạn không phải là thành viên của bất kỳ ứng dụng nào"
   },
   "organization": {
-    "Only admin can modify the %s.": "Only admin can modify the %s.",
-    "The %s is immutable.": "The %s is immutable.",
-    "Unknown modify rule %s.": "Unknown modify rule %s."
+    "Only admin can modify the %s.": "Chỉ những người quản trị mới có thể sửa đổi %s.",
+    "The %s is immutable.": "%s không thể thay đổi được.",
+    "Unknown modify rule %s.": "Quy tắc thay đổi không xác định %s."
   },
   "provider": {
-    "Invalid application id": "Invalid application id",
-    "the provider: %s does not exist": "the provider: %s does not exist"
+    "Invalid application id": "Sai ID ứng dụng",
+    "the provider: %s does not exist": "Nhà cung cấp: %s không tồn tại"
   },
   "resource": {
-    "User is nil for tag: avatar": "User is nil for tag: avatar",
-    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Username or fullFilePath is empty: username = %s, fullFilePath = %s"
+    "User is nil for tag: avatar": "Người dùng không có giá trị cho thẻ: hình đại diện",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Tên người dùng hoặc đường dẫn tệp đầy đủ trống: tên người dùng = %s, đường dẫn tệp đầy đủ = %s"
   },
   "saml": {
-    "Application %s not found": "Application %s not found"
+    "Application %s not found": "Ứng dụng %s không tìm thấy"
   },
   "saml_sp": {
-    "provider %s's category is not SAML": "provider %s's category is not SAML"
+    "provider %s's category is not SAML": "Danh mục của nhà cung cấp %s không phải là SAML"
   },
   "service": {
-    "Empty parameters for emailForm: %v": "Empty parameters for emailForm: %v",
-    "Invalid Email receivers: %s": "Invalid Email receivers: %s",
-    "Invalid phone receivers: %s": "Invalid phone receivers: %s"
+    "Empty parameters for emailForm: %v": "Tham số trống cho emailForm: %v",
+    "Invalid Email receivers: %s": "Người nhận Email không hợp lệ: %s",
+    "Invalid phone receivers: %s": "Người nhận điện thoại không hợp lệ: %s"
   },
   "storage": {
-    "The objectKey: %s is not allowed": "The objectKey: %s is not allowed",
-    "The provider type: %s is not supported": "The provider type: %s is not supported"
+    "The objectKey: %s is not allowed": "Khóa đối tượng: %s không được phép",
+    "The provider type: %s is not supported": "Loại nhà cung cấp: %s không được hỗ trợ"
   },
   "token": {
-    "Empty clientId or clientSecret": "Empty clientId or clientSecret",
-    "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
-    "Invalid application or wrong clientSecret": "Invalid application or wrong clientSecret",
-    "Invalid client_id": "Invalid client_id",
-    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s doesn't exist in the allowed Redirect URI list",
-    "Token not found, invalid accessToken": "Token not found, invalid accessToken"
+    "Empty clientId or clientSecret": "ClientId hoặc clientSecret trống",
+    "Grant_type: %s is not supported in this application": "Loại cấp phép: %s không được hỗ trợ trong ứng dụng này",
+    "Invalid application or wrong clientSecret": "Đơn đăng ký không hợp lệ hoặc sai clientSecret",
+    "Invalid client_id": "Client_id không hợp lệ",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Đường dẫn chuyển hướng URI: %s không tồn tại trong danh sách URI được phép chuyển hướng",
+    "Token not found, invalid accessToken": "Token không tìm thấy, accessToken không hợp lệ"
   },
   "user": {
-    "Display name cannot be empty": "Display name cannot be empty",
-    "New password cannot contain blank space.": "New password cannot contain blank space.",
-    "New password must have at least 6 characters": "New password must have at least 6 characters"
+    "Display name cannot be empty": "Tên hiển thị không thể trống",
+    "New password cannot contain blank space.": "Mật khẩu mới không thể chứa dấu trắng.",
+    "New password must have at least 6 characters": "Mật khẩu mới phải có ít nhất 6 ký tự"
   },
   "user_upload": {
-    "Failed to import users": "Failed to import users"
+    "Failed to import users": "Không thể nhập người dùng"
   },
   "util": {
-    "No application is found for userId: %s": "No application is found for userId: %s",
-    "No provider for category: %s is found for application: %s": "No provider for category: %s is found for application: %s",
-    "The provider: %s is not found": "The provider: %s is not found"
+    "No application is found for userId: %s": "Không tìm thấy ứng dụng cho ID người dùng: %s",
+    "No provider for category: %s is found for application: %s": "Không tìm thấy nhà cung cấp cho danh mục: %s cho ứng dụng: %s",
+    "The provider: %s is not found": "Nhà cung cấp: %s không được tìm thấy"
   },
   "verification": {
-    "Code has not been sent yet!": "Code has not been sent yet!",
-    "Invalid captcha provider.": "Invalid captcha provider.",
-    "Phone number is invalid in your region %s": "Phone number is invalid in your region %s",
-    "Turing test failed.": "Turing test failed.",
-    "Unable to get the email modify rule.": "Unable to get the email modify rule.",
-    "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",
-    "Unknown type": "Unknown type",
-    "Wrong parameter": "Wrong parameter",
-    "Wrong verification code!": "Wrong verification code!",
-    "You should verify your code in %d min!": "You should verify your code in %d min!",
-    "the user does not exist, please sign up first": "the user does not exist, please sign up first"
+    "Code has not been sent yet!": "Mã chưa được gửi đến!",
+    "Invalid captcha provider.": "Nhà cung cấp captcha không hợp lệ.",
+    "Phone number is invalid in your region %s": "Số điện thoại không hợp lệ trong vùng của bạn %s",
+    "Turing test failed.": "Kiểm định Turing thất bại.",
+    "Unable to get the email modify rule.": "Không thể lấy quy tắc sửa đổi email.",
+    "Unable to get the phone modify rule.": "Không thể thay đổi quy tắc trên điện thoại.",
+    "Unknown type": "Loại không xác định",
+    "Wrong parameter": "Tham số không đúng",
+    "Wrong verification code!": "Mã xác thực sai!",
+    "You should verify your code in %d min!": "Bạn nên kiểm tra mã của mình trong %d phút!",
+    "the user does not exist, please sign up first": "Người dùng không tồn tại, vui lòng đăng ký trước"
   },
   "webauthn": {
-    "Found no credentials for this user": "Found no credentials for this user",
-    "Please call WebAuthnSigninBegin first": "Please call WebAuthnSigninBegin first"
+    "Found no credentials for this user": "Không tìm thấy thông tin xác thực cho người dùng này",
+    "Please call WebAuthnSigninBegin first": "Vui lòng gọi WebAuthnSigninBegin trước"
   }
 }

@@ -1,140 +1,140 @@
 {
   "account": {
-    "Failed to add user": "Failed to add user",
-    "Get init score failed, error: %w": "Get init score failed, error: %w",
-    "Please sign out first": "Please sign out first",
-    "The application does not allow to sign up new account": "The application does not allow to sign up new account"
+    "Failed to add user": "사용자 추가 실패",
+    "Get init score failed, error: %w": "초기 점수 획득 실패, 오류: %w",
+    "Please sign out first": "먼저 로그아웃해주세요",
+    "The application does not allow to sign up new account": "이 응용 프로그램은 새로운 계정 가입을 허용하지 않습니다"
   },
   "auth": {
-    "Challenge method should be S256": "Challenge method should be S256",
-    "Failed to create user, user information is invalid: %s": "Failed to create user, user information is invalid: %s",
-    "Failed to login in: %s": "Failed to login in: %s",
-    "Invalid token": "Invalid token",
-    "State expected: %s, but got: %s": "State expected: %s, but got: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support",
-    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
-    "The application: %s does not exist": "The application: %s does not exist",
-    "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
-    "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
-    "Unauthorized operation": "Unauthorized operation",
-    "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s"
+    "Challenge method should be S256": "도전 방식은 S256이어야 합니다",
+    "Failed to create user, user information is invalid: %s": "사용자를 만들지 못했습니다. 사용자 정보가 잘못되었습니다: %s",
+    "Failed to login in: %s": "로그인에 실패했습니다.: %s",
+    "Invalid token": "유효하지 않은 토큰",
+    "State expected: %s, but got: %s": "예상한 상태: %s, 실제 상태: %s",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "제공자 계정: %s와 사용자 이름: %s (%s)은(는) 존재하지 않으며 %%s를 통해 새 계정으로 가입하는 것이 허용되지 않습니다. 다른 방법으로 가입하십시오",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "공급자 계정 %s과 사용자 이름 %s (%s)는 존재하지 않으며 새 계정으로 등록할 수 없습니다. IT 지원팀에 문의하십시오",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "공급자 계정 %s과 사용자 이름 %s(%s)는 이미 다른 계정 %s(%s)에 연결되어 있습니다",
+    "The application: %s does not exist": "해당 애플리케이션(%s)이 존재하지 않습니다",
+    "The login method: login with password is not enabled for the application": "어플리케이션에서는 암호를 사용한 로그인 방법이 활성화되어 있지 않습니다",
+    "The provider: %s is not enabled for the application": "제공자 %s은(는) 응용 프로그램에서 활성화되어 있지 않습니다",
+    "Unauthorized operation": "무단 조작",
+    "Unknown authentication type (not password or provider), form = %s": "알 수 없는 인증 유형(암호 또는 공급자가 아님), 폼 = %s"
   },
   "cas": {
-    "Service %s and %s do not match": "Service %s and %s do not match"
+    "Service %s and %s do not match": "서비스 %s와 %s는 일치하지 않습니다"
   },
   "check": {
-    "Affiliation cannot be blank": "Affiliation cannot be blank",
-    "DisplayName cannot be blank": "DisplayName cannot be blank",
-    "DisplayName is not valid real name": "DisplayName is not valid real name",
-    "Email already exists": "Email already exists",
-    "Email cannot be empty": "Email cannot be empty",
-    "Email is invalid": "Email is invalid",
-    "Empty username.": "Empty username.",
-    "FirstName cannot be blank": "FirstName cannot be blank",
-    "LastName cannot be blank": "LastName cannot be blank",
-    "Ldap user name or password incorrect": "Ldap user name or password incorrect",
-    "Multiple accounts with same uid, please check your ldap server": "Multiple accounts with same uid, please check your ldap server",
-    "Organization does not exist": "Organization does not exist",
-    "Password must have at least 6 characters": "Password must have at least 6 characters",
-    "Phone already exists": "Phone already exists",
-    "Phone cannot be empty": "Phone cannot be empty",
-    "Phone number is invalid": "Phone number is invalid",
-    "Session outdated, please login again": "Session outdated, please login again",
-    "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
-    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.",
-    "Username already exists": "Username already exists",
-    "Username cannot be an email address": "Username cannot be an email address",
-    "Username cannot contain white spaces": "Username cannot contain white spaces",
-    "Username cannot start with a digit": "Username cannot start with a digit",
-    "Username is too long (maximum is 39 characters).": "Username is too long (maximum is 39 characters).",
-    "Username must have at least 2 characters": "Username must have at least 2 characters",
-    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
-    "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
-    "password or code is incorrect, you have %d remaining chances": "password or code is incorrect, you have %d remaining chances",
-    "unsupported password type: %s": "unsupported password type: %s"
+    "Affiliation cannot be blank": "소속은 비워 둘 수 없습니다",
+    "DisplayName cannot be blank": "DisplayName는 비어 있을 수 없습니다",
+    "DisplayName is not valid real name": "DisplayName는 유효한 실제 이름이 아닙니다",
+    "Email already exists": "이메일이 이미 존재합니다",
+    "Email cannot be empty": "이메일은 비어 있을 수 없습니다",
+    "Email is invalid": "이메일이 유효하지 않습니다",
+    "Empty username.": "빈 사용자 이름.",
+    "FirstName cannot be blank": "이름은 공백일 수 없습니다",
+    "LastName cannot be blank": "성은 비어 있을 수 없습니다",
+    "Ldap user name or password incorrect": "LDAP 사용자 이름 또는 암호가 잘못되었습니다",
+    "Multiple accounts with same uid, please check your ldap server": "동일한 UID를 가진 여러 계정이 있습니다. LDAP 서버를 확인해주세요",
+    "Organization does not exist": "조직은 존재하지 않습니다",
+    "Password must have at least 6 characters": "암호는 적어도 6자 이상이어야 합니다",
+    "Phone already exists": "전화기는 이미 존재합니다",
+    "Phone cannot be empty": "전화는 비워 둘 수 없습니다",
+    "Phone number is invalid": "전화번호가 유효하지 않습니다",
+    "Session outdated, please login again": "세션이 만료되었습니다. 다시 로그인해주세요",
+    "The user is forbidden to sign in, please contact the administrator": "사용자는 로그인이 금지되어 있습니다. 관리자에게 문의하십시오",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "사용자 이름은 알파벳, 숫자, 밑줄 또는 하이픈만 포함할 수 있으며, 연속된 하이픈 또는 밑줄을 가질 수 없으며, 하이픈 또는 밑줄로 시작하거나 끝날 수 없습니다.",
+    "Username already exists": "사용자 이름이 이미 존재합니다",
+    "Username cannot be an email address": "사용자 이름은 이메일 주소가 될 수 없습니다",
+    "Username cannot contain white spaces": "사용자 이름에는 공백이 포함될 수 없습니다",
+    "Username cannot start with a digit": "사용자 이름은 숫자로 시작할 수 없습니다",
+    "Username is too long (maximum is 39 characters).": "사용자 이름이 너무 깁니다 (최대 39자).",
+    "Username must have at least 2 characters": "사용자 이름은 적어도 2개의 문자가 있어야 합니다",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "올바르지 않은 비밀번호나 코드를 여러 번 입력했습니다. %d분 동안 기다리신 후 다시 시도해주세요",
+    "Your region is not allow to signup by phone": "당신의 지역은 전화로 가입할 수 없습니다",
+    "password or code is incorrect, you have %d remaining chances": "암호 또는 코드가 올바르지 않습니다. %d번의 기회가 남아 있습니다",
+    "unsupported password type: %s": "지원되지 않는 암호 유형: %s"
   },
   "general": {
-    "Missing parameter": "Missing parameter",
-    "Please login first": "Please login first",
-    "The user: %s doesn't exist": "The user: %s doesn't exist",
-    "don't support captchaProvider: ": "don't support captchaProvider: "
+    "Missing parameter": "누락된 매개변수",
+    "Please login first": "먼저 로그인 하십시오",
+    "The user: %s doesn't exist": "사용자 %s는 존재하지 않습니다",
+    "don't support captchaProvider: ": "CaptchaProvider를 지원하지 마세요"
   },
   "ldap": {
-    "Ldap server exist": "Ldap server exist"
+    "Ldap server exist": "LDAP 서버가 존재합니다"
   },
   "link": {
-    "Please link first": "Please link first",
-    "This application has no providers": "This application has no providers",
-    "This application has no providers of type": "This application has no providers of type",
-    "This provider can't be unlinked": "This provider can't be unlinked",
-    "You are not the global admin, you can't unlink other users": "You are not the global admin, you can't unlink other users",
-    "You can't unlink yourself, you are not a member of any application": "You can't unlink yourself, you are not a member of any application"
+    "Please link first": "먼저 링크해주세요",
+    "This application has no providers": "이 애플리케이션에는 제공자가 없습니다",
+    "This application has no providers of type": "이 응용 프로그램은 타입의 공급자가 없습니다",
+    "This provider can't be unlinked": "이 공급자는 연결이 해제될 수 없습니다",
+    "You are not the global admin, you can't unlink other users": "당신은 전역 관리자가 아니므로 다른 사용자와의 연결을 해제할 수 없습니다",
+    "You can't unlink yourself, you are not a member of any application": "당신은 어떤 애플리케이션의 회원이 아니기 때문에 스스로 링크를 해제할 수 없습니다"
   },
   "organization": {
-    "Only admin can modify the %s.": "Only admin can modify the %s.",
-    "The %s is immutable.": "The %s is immutable.",
-    "Unknown modify rule %s.": "Unknown modify rule %s."
+    "Only admin can modify the %s.": "관리자만 %s을(를) 수정할 수 있습니다.",
+    "The %s is immutable.": "%s 는 변경할 수 없습니다.",
+    "Unknown modify rule %s.": "미확인 수정 규칙 %s."
   },
   "provider": {
-    "Invalid application id": "Invalid application id",
-    "the provider: %s does not exist": "the provider: %s does not exist"
+    "Invalid application id": "잘못된 애플리케이션 ID입니다",
+    "the provider: %s does not exist": "제공자 %s가 존재하지 않습니다"
   },
   "resource": {
-    "User is nil for tag: avatar": "User is nil for tag: avatar",
-    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Username or fullFilePath is empty: username = %s, fullFilePath = %s"
+    "User is nil for tag: avatar": "사용자는 아바타 태그에 대해 nil입니다",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "사용자 이름 또는 전체 파일 경로가 비어 있습니다: 사용자 이름 = %s, 전체 파일 경로 = %s"
   },
   "saml": {
-    "Application %s not found": "Application %s not found"
+    "Application %s not found": "어플리케이션 %s을(를) 찾을 수 없습니다"
   },
   "saml_sp": {
-    "provider %s's category is not SAML": "provider %s's category is not SAML"
+    "provider %s's category is not SAML": "제공 업체 %s의 카테고리는 SAML이 아닙니다"
   },
   "service": {
-    "Empty parameters for emailForm: %v": "Empty parameters for emailForm: %v",
-    "Invalid Email receivers: %s": "Invalid Email receivers: %s",
-    "Invalid phone receivers: %s": "Invalid phone receivers: %s"
+    "Empty parameters for emailForm: %v": "이메일 형식의 빈 매개 변수: %v",
+    "Invalid Email receivers: %s": "잘못된 이메일 수신자: %s",
+    "Invalid phone receivers: %s": "잘못된 전화 수신자: %s"
   },
   "storage": {
-    "The objectKey: %s is not allowed": "The objectKey: %s is not allowed",
-    "The provider type: %s is not supported": "The provider type: %s is not supported"
+    "The objectKey: %s is not allowed": "객체 키 : %s 는 허용되지 않습니다",
+    "The provider type: %s is not supported": "제공자 유형: %s은/는 지원되지 않습니다"
   },
   "token": {
-    "Empty clientId or clientSecret": "Empty clientId or clientSecret",
-    "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
-    "Invalid application or wrong clientSecret": "Invalid application or wrong clientSecret",
-    "Invalid client_id": "Invalid client_id",
-    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s doesn't exist in the allowed Redirect URI list",
-    "Token not found, invalid accessToken": "Token not found, invalid accessToken"
+    "Empty clientId or clientSecret": "클라이언트 ID 또는 클라이언트 비밀번호가 비어 있습니다",
+    "Grant_type: %s is not supported in this application": "그랜트 유형: %s은(는) 이 어플리케이션에서 지원되지 않습니다",
+    "Invalid application or wrong clientSecret": "잘못된 어플리케이션 또는 올바르지 않은 클라이언트 시크릿입니다",
+    "Invalid client_id": "잘못된 클라이언트 ID입니다",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "허용된 Redirect URI 목록에서 %s이(가) 존재하지 않습니다",
+    "Token not found, invalid accessToken": "토큰을 찾을 수 없습니다. 잘못된 액세스 토큰입니다"
   },
   "user": {
-    "Display name cannot be empty": "Display name cannot be empty",
-    "New password cannot contain blank space.": "New password cannot contain blank space.",
-    "New password must have at least 6 characters": "New password must have at least 6 characters"
+    "Display name cannot be empty": "디스플레이 이름은 비어 있을 수 없습니다",
+    "New password cannot contain blank space.": "새 비밀번호에는 공백이 포함될 수 없습니다.",
+    "New password must have at least 6 characters": "새로운 비밀번호는 최소 6자 이상이어야 합니다"
   },
   "user_upload": {
-    "Failed to import users": "Failed to import users"
+    "Failed to import users": "사용자 가져오기를 실패했습니다"
   },
   "util": {
-    "No application is found for userId: %s": "No application is found for userId: %s",
-    "No provider for category: %s is found for application: %s": "No provider for category: %s is found for application: %s",
-    "The provider: %s is not found": "The provider: %s is not found"
+    "No application is found for userId: %s": "어플리케이션을 찾을 수 없습니다. userId: %s",
+    "No provider for category: %s is found for application: %s": "어플리케이션 %s에서 %s 카테고리를 위한 공급자가 찾을 수 없습니다",
+    "The provider: %s is not found": "제공자: %s를 찾을 수 없습니다"
   },
   "verification": {
-    "Code has not been sent yet!": "Code has not been sent yet!",
-    "Invalid captcha provider.": "Invalid captcha provider.",
-    "Phone number is invalid in your region %s": "Phone number is invalid in your region %s",
-    "Turing test failed.": "Turing test failed.",
-    "Unable to get the email modify rule.": "Unable to get the email modify rule.",
-    "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",
-    "Unknown type": "Unknown type",
-    "Wrong parameter": "Wrong parameter",
-    "Wrong verification code!": "Wrong verification code!",
-    "You should verify your code in %d min!": "You should verify your code in %d min!",
-    "the user does not exist, please sign up first": "the user does not exist, please sign up first"
+    "Code has not been sent yet!": "코드는 아직 전송되지 않았습니다!",
+    "Invalid captcha provider.": "잘못된 captcha 제공자입니다.",
+    "Phone number is invalid in your region %s": "전화 번호가 당신의 지역 %s에서 유효하지 않습니다",
+    "Turing test failed.": "튜링 테스트 실패.",
+    "Unable to get the email modify rule.": "이메일 수정 규칙을 가져올 수 없습니다.",
+    "Unable to get the phone modify rule.": "전화 수정 규칙을 가져올 수 없습니다.",
+    "Unknown type": "알 수 없는 유형",
+    "Wrong parameter": "잘못된 매개 변수입니다",
+    "Wrong verification code!": "잘못된 인증 코드입니다!",
+    "You should verify your code in %d min!": "당신은 %d분 안에 코드를 검증해야 합니다!",
+    "the user does not exist, please sign up first": "사용자가 존재하지 않습니다. 먼저 회원 가입 해주세요"
   },
   "webauthn": {
-    "Found no credentials for this user": "Found no credentials for this user",
-    "Please call WebAuthnSigninBegin first": "Please call WebAuthnSigninBegin first"
+    "Found no credentials for this user": "이 사용자의 자격 증명을 찾을 수 없습니다",
+    "Please call WebAuthnSigninBegin first": "WebAuthnSigninBegin을 먼저 호출해주세요"
   }
 }

@@ -1,140 +1,140 @@
 {
   "account": {
-    "Failed to add user": "Failed to add user",
-    "Get init score failed, error: %w": "Get init score failed, error: %w",
-    "Please sign out first": "Please sign out first",
-    "The application does not allow to sign up new account": "The application does not allow to sign up new account"
+    "Failed to add user": "Не удалось добавить пользователя",
+    "Get init score failed, error: %w": "Не удалось получить исходный балл, ошибка: %w",
+    "Please sign out first": "Пожалуйста, сначала выйдите из системы",
+    "The application does not allow to sign up new account": "Приложение не позволяет зарегистрироваться новому аккаунту"
   },
   "auth": {
-    "Challenge method should be S256": "Challenge method should be S256",
-    "Failed to create user, user information is invalid: %s": "Failed to create user, user information is invalid: %s",
-    "Failed to login in: %s": "Failed to login in: %s",
-    "Invalid token": "Invalid token",
-    "State expected: %s, but got: %s": "State expected: %s, but got: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support",
-    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
-    "The application: %s does not exist": "The application: %s does not exist",
-    "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
-    "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
-    "Unauthorized operation": "Unauthorized operation",
-    "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s"
+    "Challenge method should be S256": "Метод испытаний должен быть S256",
+    "Failed to create user, user information is invalid: %s": "Не удалось создать пользователя, информация о пользователе недействительна: %s",
+    "Failed to login in: %s": "Не удалось войти в систему: %s",
+    "Invalid token": "Недействительный токен",
+    "State expected: %s, but got: %s": "Ожидался статус: %s, но получен: %s",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Аккаунт провайдера: %s и имя пользователя: %s (%s) не существует и не может быть зарегистрирован через %%s, пожалуйста, используйте другой способ регистрации",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Аккаунт для провайдера: %s и имя пользователя: %s (%s) не существует и не может быть зарегистрирован как новый аккаунт. Пожалуйста, обратитесь в службу поддержки IT",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Аккаунт поставщика: %s и имя пользователя: %s (%s) уже связаны с другим аккаунтом: %s (%s)",
+    "The application: %s does not exist": "Приложение: %s не существует",
+    "The login method: login with password is not enabled for the application": "Метод входа: вход с паролем не включен для приложения",
+    "The provider: %s is not enabled for the application": "Провайдер: %s не включен для приложения",
+    "Unauthorized operation": "Несанкционированная операция",
+    "Unknown authentication type (not password or provider), form = %s": "Неизвестный тип аутентификации (не пароль и не провайдер), форма = %s"
   },
   "cas": {
-    "Service %s and %s do not match": "Service %s and %s do not match"
+    "Service %s and %s do not match": "Сервисы %s и %s не совпадают"
   },
   "check": {
-    "Affiliation cannot be blank": "Affiliation cannot be blank",
-    "DisplayName cannot be blank": "DisplayName cannot be blank",
-    "DisplayName is not valid real name": "DisplayName is not valid real name",
-    "Email already exists": "Email already exists",
-    "Email cannot be empty": "Email cannot be empty",
-    "Email is invalid": "Email is invalid",
-    "Empty username.": "Empty username.",
-    "FirstName cannot be blank": "FirstName cannot be blank",
-    "LastName cannot be blank": "LastName cannot be blank",
-    "Ldap user name or password incorrect": "Ldap user name or password incorrect",
-    "Multiple accounts with same uid, please check your ldap server": "Multiple accounts with same uid, please check your ldap server",
-    "Organization does not exist": "Organization does not exist",
-    "Password must have at least 6 characters": "Password must have at least 6 characters",
-    "Phone already exists": "Phone already exists",
-    "Phone cannot be empty": "Phone cannot be empty",
-    "Phone number is invalid": "Phone number is invalid",
-    "Session outdated, please login again": "Session outdated, please login again",
-    "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
-    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.",
-    "Username already exists": "Username already exists",
-    "Username cannot be an email address": "Username cannot be an email address",
-    "Username cannot contain white spaces": "Username cannot contain white spaces",
-    "Username cannot start with a digit": "Username cannot start with a digit",
-    "Username is too long (maximum is 39 characters).": "Username is too long (maximum is 39 characters).",
-    "Username must have at least 2 characters": "Username must have at least 2 characters",
-    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
-    "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
-    "password or code is incorrect, you have %d remaining chances": "password or code is incorrect, you have %d remaining chances",
-    "unsupported password type: %s": "unsupported password type: %s"
+    "Affiliation cannot be blank": "Принадлежность не может быть пустым значением",
+    "DisplayName cannot be blank": "Имя отображения не может быть пустым",
+    "DisplayName is not valid real name": "DisplayName не является действительным именем",
+    "Email already exists": "Электронная почта уже существует",
+    "Email cannot be empty": "Электронная почта не может быть пустой",
+    "Email is invalid": "Адрес электронной почты недействительный",
+    "Empty username.": "Пустое имя пользователя.",
+    "FirstName cannot be blank": "Имя не может быть пустым",
+    "LastName cannot be blank": "Фамилия не может быть пустой",
+    "Ldap user name or password incorrect": "Неправильное имя пользователя или пароль Ldap",
+    "Multiple accounts with same uid, please check your ldap server": "Множественные учетные записи с тем же UID. Пожалуйста, проверьте свой сервер LDAP",
+    "Organization does not exist": "Организация не существует",
+    "Password must have at least 6 characters": "Пароль должен содержать не менее 6 символов",
+    "Phone already exists": "Телефон уже существует",
+    "Phone cannot be empty": "Телефон не может быть пустым",
+    "Phone number is invalid": "Номер телефона является недействительным",
+    "Session outdated, please login again": "Сессия устарела, пожалуйста, войдите снова",
+    "The user is forbidden to sign in, please contact the administrator": "Пользователю запрещен вход, пожалуйста, обратитесь к администратору",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Имя пользователя может состоять только из буквенно-цифровых символов, нижних подчеркиваний или дефисов, не может содержать последовательные дефисы или подчеркивания, а также не может начинаться или заканчиваться на дефис или подчеркивание.",
+    "Username already exists": "Имя пользователя уже существует",
+    "Username cannot be an email address": "Имя пользователя не может быть адресом электронной почты",
+    "Username cannot contain white spaces": "Имя пользователя не может содержать пробелы",
+    "Username cannot start with a digit": "Имя пользователя не может начинаться с цифры",
+    "Username is too long (maximum is 39 characters).": "Имя пользователя слишком длинное (максимальная длина - 39 символов).",
+    "Username must have at least 2 characters": "Имя пользователя должно содержать не менее 2 символов",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Вы ввели неправильный пароль или код слишком много раз, пожалуйста, подождите %d минут и попробуйте снова",
+    "Your region is not allow to signup by phone": "Ваш регион не разрешает регистрацию по телефону",
+    "password or code is incorrect, you have %d remaining chances": "Неправильный пароль или код, у вас осталось %d попыток",
+    "unsupported password type: %s": "неподдерживаемый тип пароля: %s"
   },
   "general": {
-    "Missing parameter": "Missing parameter",
-    "Please login first": "Please login first",
-    "The user: %s doesn't exist": "The user: %s doesn't exist",
-    "don't support captchaProvider: ": "don't support captchaProvider: "
+    "Missing parameter": "Отсутствующий параметр",
+    "Please login first": "Пожалуйста, сначала войдите в систему",
+    "The user: %s doesn't exist": "Пользователь %s не существует",
+    "don't support captchaProvider: ": "не поддерживайте captchaProvider:"
   },
   "ldap": {
-    "Ldap server exist": "Ldap server exist"
+    "Ldap server exist": "LDAP-сервер существует"
   },
   "link": {
-    "Please link first": "Please link first",
-    "This application has no providers": "This application has no providers",
-    "This application has no providers of type": "This application has no providers of type",
-    "This provider can't be unlinked": "This provider can't be unlinked",
-    "You are not the global admin, you can't unlink other users": "You are not the global admin, you can't unlink other users",
-    "You can't unlink yourself, you are not a member of any application": "You can't unlink yourself, you are not a member of any application"
+    "Please link first": "Пожалуйста, сначала установите ссылку",
+    "This application has no providers": "Это приложение не имеет провайдеров",
+    "This application has no providers of type": "Это приложение не имеет провайдеров данного типа",
+    "This provider can't be unlinked": "Этот провайдер не может быть отсоединен",
+    "You are not the global admin, you can't unlink other users": "Вы не являетесь глобальным администратором, вы не можете отсоединять других пользователей",
+    "You can't unlink yourself, you are not a member of any application": "Вы не можете отвязаться, так как вы не являетесь участником никакого приложения"
   },
   "organization": {
-    "Only admin can modify the %s.": "Only admin can modify the %s.",
-    "The %s is immutable.": "The %s is immutable.",
-    "Unknown modify rule %s.": "Unknown modify rule %s."
+    "Only admin can modify the %s.": "Только администратор может изменять %s.",
+    "The %s is immutable.": "%s неизменяемый.",
+    "Unknown modify rule %s.": "Неизвестное изменение правила %s."
   },
   "provider": {
-    "Invalid application id": "Invalid application id",
-    "the provider: %s does not exist": "the provider: %s does not exist"
+    "Invalid application id": "Неверный идентификатор приложения",
+    "the provider: %s does not exist": "провайдер: %s не существует"
   },
   "resource": {
-    "User is nil for tag: avatar": "User is nil for tag: avatar",
-    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Username or fullFilePath is empty: username = %s, fullFilePath = %s"
+    "User is nil for tag: avatar": "Пользователь равен нулю для тега: аватар",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Имя пользователя или полный путь к файлу пусты: имя_пользователя = %s, полный_путь_к_файлу = %s"
   },
   "saml": {
-    "Application %s not found": "Application %s not found"
+    "Application %s not found": "Приложение %s не найдено"
   },
   "saml_sp": {
-    "provider %s's category is not SAML": "provider %s's category is not SAML"
+    "provider %s's category is not SAML": "категория провайдера %s не является SAML"
   },
   "service": {
-    "Empty parameters for emailForm: %v": "Empty parameters for emailForm: %v",
-    "Invalid Email receivers: %s": "Invalid Email receivers: %s",
-    "Invalid phone receivers: %s": "Invalid phone receivers: %s"
+    "Empty parameters for emailForm: %v": "Пустые параметры для emailForm: %v",
+    "Invalid Email receivers: %s": "Некорректные получатели электронной почты: %s",
+    "Invalid phone receivers: %s": "Некорректные получатели телефонных звонков: %s"
   },
   "storage": {
-    "The objectKey: %s is not allowed": "The objectKey: %s is not allowed",
-    "The provider type: %s is not supported": "The provider type: %s is not supported"
+    "The objectKey: %s is not allowed": "Объект «objectKey: %s» не разрешен",
+    "The provider type: %s is not supported": "Тип поставщика: %s не поддерживается"
   },
   "token": {
-    "Empty clientId or clientSecret": "Empty clientId or clientSecret",
-    "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
-    "Invalid application or wrong clientSecret": "Invalid application or wrong clientSecret",
-    "Invalid client_id": "Invalid client_id",
-    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s doesn't exist in the allowed Redirect URI list",
-    "Token not found, invalid accessToken": "Token not found, invalid accessToken"
+    "Empty clientId or clientSecret": "Пустой идентификатор клиента или секрет клиента",
+    "Grant_type: %s is not supported in this application": "Тип предоставления: %s не поддерживается в данном приложении",
+    "Invalid application or wrong clientSecret": "Недействительное приложение или неправильный clientSecret",
+    "Invalid client_id": "Недействительный идентификатор клиента",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "URI перенаправления: %s не существует в списке разрешенных URI перенаправления",
+    "Token not found, invalid accessToken": "Токен не найден, недействительный accessToken"
   },
   "user": {
-    "Display name cannot be empty": "Display name cannot be empty",
-    "New password cannot contain blank space.": "New password cannot contain blank space.",
-    "New password must have at least 6 characters": "New password must have at least 6 characters"
+    "Display name cannot be empty": "Отображаемое имя не может быть пустым",
+    "New password cannot contain blank space.": "Новый пароль не может содержать пробелы.",
+    "New password must have at least 6 characters": "Новый пароль должен содержать не менее 6 символов"
   },
   "user_upload": {
-    "Failed to import users": "Failed to import users"
+    "Failed to import users": "Не удалось импортировать пользователей"
   },
   "util": {
-    "No application is found for userId: %s": "No application is found for userId: %s",
-    "No provider for category: %s is found for application: %s": "No provider for category: %s is found for application: %s",
-    "The provider: %s is not found": "The provider: %s is not found"
+    "No application is found for userId: %s": "Не найдено заявки для пользователя с идентификатором: %s",
+    "No provider for category: %s is found for application: %s": "Нет поставщика для категории: %s для приложения: %s",
+    "The provider: %s is not found": "Поставщик: %s не найден"
   },
   "verification": {
-    "Code has not been sent yet!": "Code has not been sent yet!",
-    "Invalid captcha provider.": "Invalid captcha provider.",
-    "Phone number is invalid in your region %s": "Phone number is invalid in your region %s",
-    "Turing test failed.": "Turing test failed.",
-    "Unable to get the email modify rule.": "Unable to get the email modify rule.",
-    "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",
-    "Unknown type": "Unknown type",
-    "Wrong parameter": "Wrong parameter",
-    "Wrong verification code!": "Wrong verification code!",
-    "You should verify your code in %d min!": "You should verify your code in %d min!",
-    "the user does not exist, please sign up first": "the user does not exist, please sign up first"
+    "Code has not been sent yet!": "Код еще не был отправлен!",
+    "Invalid captcha provider.": "Недействительный поставщик CAPTCHA.",
+    "Phone number is invalid in your region %s": "Номер телефона недействителен в вашем регионе %s",
+    "Turing test failed.": "Тест Тьюринга не удался.",
+    "Unable to get the email modify rule.": "Невозможно получить правило изменения электронной почты.",
+    "Unable to get the phone modify rule.": "Невозможно получить правило изменения телефона.",
+    "Unknown type": "Неизвестный тип",
+    "Wrong parameter": "Неправильный параметр",
+    "Wrong verification code!": "Неправильный код подтверждения!",
+    "You should verify your code in %d min!": "Вы должны проверить свой код через %d минут!",
+    "the user does not exist, please sign up first": "Пользователь не существует, пожалуйста, сначала зарегистрируйтесь"
   },
   "webauthn": {
-    "Found no credentials for this user": "Found no credentials for this user",
-    "Please call WebAuthnSigninBegin first": "Please call WebAuthnSigninBegin first"
+    "Found no credentials for this user": "Не найдено учетных данных для этого пользователя",
+    "Please call WebAuthnSigninBegin first": "Пожалуйста, сначала вызовите WebAuthnSigninBegin"
   }
 }
