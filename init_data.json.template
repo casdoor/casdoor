@@ -12,7 +12,7 @@
       "defaultAvatar": "",
       "defaultApplication": "",
       "tags": [],
-      "languages": ["en", "zh", "es", "fr", "de", "ja", "ko", "ru", "vi"],
+      "languages": ["en", "zh", "es", "fr", "de", "id", "ja", "ko", "ru", "vi"],
       "masterPassword": "",
       "initScore": 2000,
       "enableSoftDeletion": false,

@@ -18,6 +18,7 @@ import zh from "./locales/zh/data.json";
 import es from "./locales/es/data.json";
 import fr from "./locales/fr/data.json";
 import de from "./locales/de/data.json";
+import id from "./locales/id/data.json";
 import ja from "./locales/ja/data.json";
 import ko from "./locales/ko/data.json";
 import ru from "./locales/ru/data.json";
@@ -31,6 +32,7 @@ const resources = {
   es: es,
   fr: fr,
   de: de,
+  id: id,
   ja: ja,
   ko: ko,
   ru: ru,
@@ -65,6 +67,9 @@ function initLanguage() {
         break;
       case "de":
         language = "de";
+        break;
+      case "id":
+        language = "id";
         break;
       case "ja":
         language = "ja";
