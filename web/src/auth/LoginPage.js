@@ -204,6 +204,14 @@ class LoginPage extends React.Component {
     }
   }
 
+  sendPopupData(redirectUri, data) {
+    const params = new URLSearchParams(this.props.location.search);
+    if (params.get("popup") === "1") {
+      const message = {type: "loginSuccess", data};
+      window.opener.postMessage(message, redirectUri);
+    }
+  }
+
   postCodeLoginAction(res) {
     const application = this.getApplicationObj();
     const ths = this;
@@ -243,6 +251,7 @@ class LoginPage extends React.Component {
         }
       } else {
         Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+        this.sendPopupData(oAuthParams.redirectUri, {code: code, state: oAuthParams.state});
       }
     }
   }
