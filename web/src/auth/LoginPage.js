@@ -650,7 +650,7 @@ class LoginPage extends React.Component {
 
     if (params.get("popup") === "1") {
       window.addEventListener("beforeunload", () => {
-        this.sendPopupData({type: "windowClosed"}, params.get("redirectUri"));
+        this.sendPopupData({type: "windowClosed"}, params.get("redirect_uri"));
       });
     }
 
