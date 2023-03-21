@@ -132,7 +132,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: -1
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
@@ -192,6 +192,7 @@ jobs:
         uses: docker/build-push-action@v3
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
+          context: .
           target: STANDARD
           platforms: linux/amd64,linux/arm64
           push: true
@@ -201,6 +202,7 @@ jobs:
         uses: docker/build-push-action@v3
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
+          context: .
           target: ALLINONE
           platforms: linux/amd64,linux/arm64
           push: true
