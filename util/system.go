@@ -161,11 +161,11 @@ func GetVersionInfoFromFile() (*VersionInfo, error) {
 	}
 	defer file.Close()
 
-	// 逐行读取文件内容
+	// Read file contents line by line
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
-		// 使用正则表达式匹配字符串
+		// Use regular expressions to match strings
 		re := regexp.MustCompile(`\{([^{}]+)\}`)
 		versionInfo := scanner.Text()
 		matches := re.FindStringSubmatch(versionInfo)
