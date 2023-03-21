@@ -204,10 +204,9 @@ class LoginPage extends React.Component {
     }
   }
 
-  sendPopupData(redirectUri, data) {
+  sendPopupData(message, redirectUri) {
     const params = new URLSearchParams(this.props.location.search);
     if (params.get("popup") === "1") {
-      const message = {type: "loginSuccess", data};
       window.opener.postMessage(message, redirectUri);
     }
   }
@@ -251,7 +250,7 @@ class LoginPage extends React.Component {
         }
       } else {
         Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
-        this.sendPopupData(oAuthParams.redirectUri, {code: code, state: oAuthParams.state});
+        this.sendPopupData({type: "loginSuccess", data: {code: code, state: oAuthParams.state}}, oAuthParams.redirectUri);
       }
     }
   }
@@ -647,6 +646,12 @@ class LoginPage extends React.Component {
       const values = {};
       values["application"] = application.name;
       this.onFinish(values);
+    }
+
+    if (params.get("popup") === "1") {
+      window.addEventListener("beforeunload", () => {
+        this.sendPopupData({type: "windowClosed"}, params.get("redirectUri"));
+      });
     }
 
     if (application.enableAutoSignin) {
