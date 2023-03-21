@@ -8,12 +8,8 @@ RUN yarn install --frozen-lockfile --network-timeout 1000000 && yarn run build
 FROM golang:1.17.5 AS BACK
 WORKDIR /go/src/casdoor
 COPY . .
-RUN ls -al
 RUN ./build.sh
 RUN go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go > version_info.txt
-RUN cat version_info.txt
-RUN go test -v -run TestFromFile ./util/system_test.go ./util/system.go
-
 
 FROM alpine:latest AS STANDARD
 LABEL MAINTAINER="https://casdoor.org/"
