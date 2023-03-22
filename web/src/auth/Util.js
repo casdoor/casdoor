@@ -54,12 +54,6 @@ export function renderMessageLarge(ths, msg) {
             }}>
               Back
             </Button>,
-            // <Button key="home" onClick={() => Setting.goToLinkSoft(ths, "/")}>
-            //   Home
-            // </Button>,
-            // <Button type="primary" key="signup" onClick={() => Setting.goToLinkSoft(ths, "/signup")}>
-            //   Sign Up
-            // </Button>,
           ]}
         >
         </Result>
@@ -71,7 +65,7 @@ export function renderMessageLarge(ths, msg) {
 }
 
 function getRefinedValue(value) {
-  return (value === null) ? "" : value;
+  return value ?? "";
 }
 
 export function getCasParameters(params) {
@@ -100,7 +94,7 @@ export function getOAuthGetParameters(params) {
   const relayState = getRefinedValue(queries.get("RelayState"));
   const noRedirect = getRefinedValue(queries.get("noRedirect"));
 
-  if ((clientId === undefined || clientId === null || clientId === "") && (samlRequest === "" || samlRequest === undefined)) {
+  if (clientId === "" && samlRequest === "") {
     // login
     return null;
   } else {

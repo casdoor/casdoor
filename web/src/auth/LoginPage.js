@@ -101,7 +101,6 @@ class LoginPage extends React.Component {
             application: res.data,
           });
         } else {
-          // Setting.showMessage("error", res.msg);
           this.onUpdateApplication(null);
           this.setState({
             application: res.data,
@@ -183,24 +182,18 @@ class LoginPage extends React.Component {
   }
 
   populateOauthValues(values) {
-    const oAuthParams = Util.getOAuthGetParameters();
-    if (oAuthParams !== null && oAuthParams.responseType !== null && oAuthParams.responseType !== "") {
-      values["type"] = oAuthParams.responseType;
-    } else {
-      values["type"] = this.state.type;
-    }
-
-    if (oAuthParams !== null) {
-      values["samlRequest"] = oAuthParams.samlRequest;
-    }
-
-    if (values["samlRequest"] !== null && values["samlRequest"] !== "" && values["samlRequest"] !== undefined) {
-      values["type"] = "saml";
-      values["relayState"] = oAuthParams.relayState;
-    }
-
     if (this.getApplicationObj()?.organization) {
       values["organization"] = this.getApplicationObj().organization;
+    }
+
+    const oAuthParams = Util.getOAuthGetParameters();
+
+    values["type"] = oAuthParams?.responseType ?? this.state.type;
+
+    if (oAuthParams?.samlRequest) {
+      values["samlRequest"] = oAuthParams.samlRequest;
+      values["type"] = "saml";
+      values["relayState"] = oAuthParams.relayState;
     }
   }
 
@@ -297,7 +290,6 @@ class LoginPage extends React.Component {
       // OAuth
       const oAuthParams = Util.getOAuthGetParameters();
       this.populateOauthValues(values);
-
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
           if (res.status === "ok") {
@@ -648,9 +640,6 @@ class LoginPage extends React.Component {
 
     return (
       <div>
-        {/* {*/}
-        {/*  JSON.stringify(silentSignin)*/}
-        {/* }*/}
         <div style={{fontSize: 16, textAlign: "left"}}>
           {i18next.t("login:Continue with")}&nbsp;:
         </div>
@@ -842,9 +831,6 @@ class LoginPage extends React.Component {
                   {
                     Setting.renderLogo(application)
                   }
-                  {/* {*/}
-                  {/*  this.state.clientId !== null ? "Redirect" : null*/}
-                  {/* }*/}
                   <SelectLanguageBox languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
                   {
                     this.renderSignedInBox()

@@ -101,12 +101,13 @@ function getSigninButton(type) {
 
 function getSamlUrl(provider, location) {
   const params = new URLSearchParams(location.search);
-  const clientId = params.get("client_id");
-  const application = params.get("state");
+  const clientId = params.get("client_id") ?? "";
+  const state = params.get("state");
   const realRedirectUri = params.get("redirect_uri");
   const redirectUri = `${window.location.origin}/callback/saml`;
   const providerName = provider.name;
-  const relayState = `${clientId}&${application}&${providerName}&${realRedirectUri}&${redirectUri}`;
+
+  const relayState = `${clientId}&${state}&${providerName}&${realRedirectUri}&${redirectUri}`;
   AuthBackend.getSamlLogin(`${provider.owner}/${providerName}`, btoa(relayState)).then((res) => {
     if (res.data2 === "POST") {
       document.write(res.data);

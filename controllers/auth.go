@@ -334,7 +334,13 @@ func (c *ApiController) Login() {
 			util.SafeGoroutine(func() { object.AddRecord(record) })
 		}
 	} else if form.Provider != "" {
-		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+		var application *object.Application
+		if form.ClientId != "" {
+			application = object.GetApplicationByClientId(form.ClientId)
+		} else {
+			application = object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+		}
+
 		if application == nil {
 			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), form.Application))
 			return
