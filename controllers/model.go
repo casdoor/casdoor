@@ -38,8 +38,8 @@ func (c *ApiController) GetModels() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetModels(owner)
-		c.ServeJSON()
+		models := object.GetModels(owner)
+		c.ResponseOk(models)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetModelCount(owner, field, value)))
@@ -58,8 +58,8 @@ func (c *ApiController) GetModels() {
 func (c *ApiController) GetModel() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetModel(id)
-	c.ServeJSON()
+	model := object.GetModel(id)
+	c.ResponseOk(model)
 }
 
 // UpdateModel
@@ -80,8 +80,8 @@ func (c *ApiController) UpdateModel() {
 		return
 	}
 
-	c.Data["json"] = wrapErrorResponse(object.UpdateModelWithCheck(id, &model))
-	c.ServeJSON()
+	response := wrapErrorResponse(object.UpdateModelWithCheck(id, &model))
+	c.ResponseOk(response)
 }
 
 // AddModel
@@ -99,8 +99,8 @@ func (c *ApiController) AddModel() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddModel(&model))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddModel(&model))
+	c.ResponseOk(response)
 }
 
 // DeleteModel
@@ -118,6 +118,6 @@ func (c *ApiController) DeleteModel() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteModel(&model))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteModel(&model))
+	c.ResponseOk(response)
 }

@@ -344,8 +344,7 @@ func (c *ApiController) GetAccount() {
 		Data:   object.GetMaskedUser(user),
 		Data2:  organization,
 	}
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk(resp)
 }
 
 // GetUserinfo
@@ -365,8 +364,7 @@ func (c *ApiController) GetUserinfo() {
 	host := c.Ctx.Request.Host
 	userInfo := object.GetUserInfo(user, scope, aud, host)
 
-	c.Data["json"] = userInfo
-	c.ServeJSON()
+	c.ResponseOk(userInfo)
 }
 
 // GetCaptcha ...

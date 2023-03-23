@@ -50,8 +50,8 @@ func (c *ApiController) GetResources() {
 	}
 
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetResources(owner, user)
-		c.ServeJSON()
+		resources := object.GetResources(owner, user)
+		c.ResponseOk(resources)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetResourceCount(owner, user, field, value)))
@@ -67,8 +67,8 @@ func (c *ApiController) GetResources() {
 func (c *ApiController) GetResource() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetResource(id)
-	c.ServeJSON()
+	resource := object.GetResource(id)
+	c.ResponseOk(resource)
 }
 
 // UpdateResource
@@ -85,8 +85,8 @@ func (c *ApiController) UpdateResource() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateResource(id, &resource))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdateResource(id, &resource))
+	c.ResponseOk(response)
 }
 
 // AddResource
@@ -101,8 +101,8 @@ func (c *ApiController) AddResource() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddResource(&resource))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddResource(&resource))
+	c.ResponseOk(response)
 }
 
 // DeleteResource
@@ -128,8 +128,8 @@ func (c *ApiController) DeleteResource() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteResource(&resource))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteResource(&resource))
+	c.ResponseOk(response)
 }
 
 // UploadResource

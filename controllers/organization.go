@@ -38,8 +38,8 @@ func (c *ApiController) GetOrganizations() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedOrganizations(object.GetOrganizations(owner))
-		c.ServeJSON()
+		organizations := object.GetMaskedOrganizations(object.GetOrganizations(owner))
+		c.ResponseOk(organizations)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetOrganizationCount(owner, field, value)))
@@ -58,8 +58,8 @@ func (c *ApiController) GetOrganizations() {
 func (c *ApiController) GetOrganization() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetMaskedOrganization(object.GetOrganization(id))
-	c.ServeJSON()
+	organization := object.GetMaskedOrganization(object.GetOrganization(id))
+	c.ResponseOk(organization)
 }
 
 // UpdateOrganization ...
@@ -79,9 +79,8 @@ func (c *ApiController) UpdateOrganization() {
 		c.ResponseError(err.Error())
 		return
 	}
-
-	c.Data["json"] = wrapActionResponse(object.UpdateOrganization(id, &organization))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdateOrganization(id, &organization))
+	c.ResponseOk(response)
 }
 
 // AddOrganization ...
@@ -105,8 +104,8 @@ func (c *ApiController) AddOrganization() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddOrganization(&organization))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddOrganization(&organization))
+	c.ResponseOk(response)
 }
 
 // DeleteOrganization ...
@@ -124,8 +123,8 @@ func (c *ApiController) DeleteOrganization() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteOrganization(&organization))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteOrganization(&organization))
+	c.ResponseOk(response)
 }
 
 // GetDefaultApplication ...

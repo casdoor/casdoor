@@ -38,8 +38,8 @@ func (c *ApiController) GetRoles() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetRoles(owner)
-		c.ServeJSON()
+		roles := object.GetRoles(owner)
+		c.ResponseOk(roles)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetRoleCount(owner, field, value)))
@@ -58,8 +58,8 @@ func (c *ApiController) GetRoles() {
 func (c *ApiController) GetRole() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetRole(id)
-	c.ServeJSON()
+	role := object.GetRole(id)
+	c.ResponseOk(role)
 }
 
 // UpdateRole
@@ -80,8 +80,8 @@ func (c *ApiController) UpdateRole() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateRole(id, &role))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdateRole(id, &role))
+	c.ResponseOk(response)
 }
 
 // AddRole
@@ -99,8 +99,8 @@ func (c *ApiController) AddRole() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddRole(&role))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddRole(&role))
+	c.ResponseOk(response)
 }
 
 // DeleteRole
@@ -118,6 +118,6 @@ func (c *ApiController) DeleteRole() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteRole(&role))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteRole(&role))
+	c.ResponseOk(response)
 }

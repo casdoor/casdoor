@@ -38,8 +38,8 @@ func (c *ApiController) GetSessions() {
 	sortOrder := c.Input().Get("sortOrder")
 	owner := c.Input().Get("owner")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetSessions(owner)
-		c.ServeJSON()
+		sessions := object.GetSessions(owner)
+		c.ResponseOk(sessions)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetSessionCount(owner, field, value)))
@@ -58,8 +58,8 @@ func (c *ApiController) GetSessions() {
 func (c *ApiController) GetSingleSession() {
 	id := c.Input().Get("sessionPkId")
 
-	c.Data["json"] = object.GetSingleSession(id)
-	c.ServeJSON()
+	session := object.GetSingleSession(id)
+	c.ResponseOk(session)
 }
 
 // UpdateSession
@@ -77,8 +77,8 @@ func (c *ApiController) UpdateSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateSession(util.GetSessionId(session.Owner, session.Name, session.Application), &session))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdateSession(util.GetSessionId(session.Owner, session.Name, session.Application), &session))
+	c.ResponseOk(response)
 }
 
 // AddSession
@@ -97,8 +97,8 @@ func (c *ApiController) AddSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddSession(&session))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddSession(&session))
+	c.ResponseOk(response)
 }
 
 // DeleteSession
@@ -116,8 +116,8 @@ func (c *ApiController) DeleteSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetSessionId(session.Owner, session.Name, session.Application)))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteSession(util.GetSessionId(session.Owner, session.Name, session.Application)))
+	c.ResponseOk(response)
 }
 
 // IsSessionDuplicated
@@ -133,7 +133,6 @@ func (c *ApiController) IsSessionDuplicated() {
 	sessionId := c.Input().Get("sessionId")
 
 	isUserSessionDuplicated := object.IsSessionDuplicated(id, sessionId)
-	c.Data["json"] = &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
-
-	c.ServeJSON()
+	response := &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
+	c.ResponseOk(response)
 }

@@ -38,8 +38,8 @@ func (c *ApiController) GetSyncers() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetSyncers(owner)
-		c.ServeJSON()
+		syncers := object.GetSyncers(owner)
+		c.ResponseOk(syncers)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetSyncerCount(owner, field, value)))
@@ -57,9 +57,8 @@ func (c *ApiController) GetSyncers() {
 // @router /get-syncer [get]
 func (c *ApiController) GetSyncer() {
 	id := c.Input().Get("id")
-
-	c.Data["json"] = object.GetSyncer(id)
-	c.ServeJSON()
+	syncer := object.GetSyncer(id)
+	c.ResponseOk(syncer)
 }
 
 // UpdateSyncer
@@ -80,8 +79,8 @@ func (c *ApiController) UpdateSyncer() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateSyncer(id, &syncer))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdateSyncer(id, &syncer))
+	c.ResponseOk(response)
 }
 
 // AddSyncer
@@ -99,8 +98,8 @@ func (c *ApiController) AddSyncer() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddSyncer(&syncer))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddSyncer(&syncer))
+	c.ResponseOk(response)
 }
 
 // DeleteSyncer
@@ -117,9 +116,8 @@ func (c *ApiController) DeleteSyncer() {
 		c.ResponseError(err.Error())
 		return
 	}
-
-	c.Data["json"] = wrapActionResponse(object.DeleteSyncer(&syncer))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteSyncer(&syncer))
+	c.ResponseOk(response)
 }
 
 // RunSyncer

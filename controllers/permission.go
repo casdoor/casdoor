@@ -38,8 +38,8 @@ func (c *ApiController) GetPermissions() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetPermissions(owner)
-		c.ServeJSON()
+		permissions := object.GetPermissions(owner)
+		c.ResponseOk(permissions)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetPermissionCount(owner, field, value)))
@@ -89,8 +89,8 @@ func (c *ApiController) GetPermissionsByRole() {
 func (c *ApiController) GetPermission() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetPermission(id)
-	c.ServeJSON()
+	permission := object.GetPermission(id)
+	c.ResponseOk(permission)
 }
 
 // UpdatePermission
@@ -111,8 +111,8 @@ func (c *ApiController) UpdatePermission() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdatePermission(id, &permission))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdatePermission(id, &permission))
+	c.ResponseOk(response)
 }
 
 // AddPermission
@@ -130,8 +130,8 @@ func (c *ApiController) AddPermission() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddPermission(&permission))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddPermission(&permission))
+	c.ResponseOk(response)
 }
 
 // DeletePermission
@@ -149,6 +149,6 @@ func (c *ApiController) DeletePermission() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeletePermission(&permission))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeletePermission(&permission))
+	c.ResponseOk(response)
 }

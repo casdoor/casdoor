@@ -39,8 +39,8 @@ func (c *ApiController) GetPayments() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetPayments(owner)
-		c.ServeJSON()
+		payments := object.GetPayments(owner)
+		c.ResponseOk(payments)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetPaymentCount(owner, field, value)))
@@ -77,8 +77,8 @@ func (c *ApiController) GetUserPayments() {
 func (c *ApiController) GetPayment() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetPayment(id)
-	c.ServeJSON()
+	payment := object.GetPayment(id)
+	c.ResponseOk(payment)
 }
 
 // UpdatePayment
@@ -99,8 +99,8 @@ func (c *ApiController) UpdatePayment() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdatePayment(id, &payment))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdatePayment(id, &payment))
+	c.ResponseOk(response)
 }
 
 // AddPayment
@@ -118,8 +118,8 @@ func (c *ApiController) AddPayment() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddPayment(&payment))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddPayment(&payment))
+	c.ResponseOk(response)
 }
 
 // DeletePayment
@@ -137,8 +137,8 @@ func (c *ApiController) DeletePayment() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeletePayment(&payment))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeletePayment(&payment))
+	c.ResponseOk(response)
 }
 
 // NotifyPayment

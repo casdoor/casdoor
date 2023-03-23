@@ -40,8 +40,8 @@ func (c *ApiController) GetTokens() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetTokens(owner)
-		c.ServeJSON()
+		tokens := object.GetTokens(owner)
+		c.ResponseOk(tokens)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetTokenCount(owner, field, value)))
@@ -60,8 +60,8 @@ func (c *ApiController) GetTokens() {
 func (c *ApiController) GetToken() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetToken(id)
-	c.ServeJSON()
+	token := object.GetToken(id)
+	c.ResponseOk(token)
 }
 
 // UpdateToken
@@ -82,8 +82,8 @@ func (c *ApiController) UpdateToken() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateToken(id, &token))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdateToken(id, &token))
+	c.ResponseOk(response)
 }
 
 // AddToken
@@ -101,8 +101,8 @@ func (c *ApiController) AddToken() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddToken(&token))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddToken(&token))
+	c.ResponseOk(response)
 }
 
 // DeleteToken
@@ -120,8 +120,8 @@ func (c *ApiController) DeleteToken() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteToken(&token))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteToken(&token))
+	c.ResponseOk(response)
 }
 
 // GetOAuthCode
@@ -154,8 +154,8 @@ func (c *ApiController) GetOAuthCode() {
 	}
 	host := c.Ctx.Request.Host
 
-	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, host, c.GetAcceptLanguage())
-	c.ServeJSON()
+	oauthCode := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, host, c.GetAcceptLanguage())
+	c.ResponseOk(oauthCode)
 }
 
 // GetOAuthToken
@@ -205,9 +205,9 @@ func (c *ApiController) GetOAuthToken() {
 	}
 	host := c.Ctx.Request.Host
 
-	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
+	oauthToken := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
+	c.ResponseOk(oauthToken)
 	c.SetTokenErrorHttpStatus()
-	c.ServeJSON()
 }
 
 // RefreshToken
@@ -243,9 +243,9 @@ func (c *ApiController) RefreshToken() {
 		}
 	}
 
-	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+	token := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+	c.ResponseOk(token)
 	c.SetTokenErrorHttpStatus()
-	c.ServeJSON()
 }
 
 // IntrospectToken
@@ -270,27 +270,28 @@ func (c *ApiController) IntrospectToken() {
 		clientSecret = c.Input().Get("client_secret")
 		if clientId == "" || clientSecret == "" {
 			c.ResponseError(c.T("token:Empty clientId or clientSecret"))
-			c.Data["json"] = &object.TokenError{
+			tokenError := &object.TokenError{
 				Error: object.InvalidRequest,
 			}
+			c.ResponseOk(tokenError)
 			c.SetTokenErrorHttpStatus()
-			c.ServeJSON()
 			return
 		}
 	}
 	application := object.GetApplicationByClientId(clientId)
 	if application == nil || application.ClientSecret != clientSecret {
 		c.ResponseError(c.T("token:Invalid application or wrong clientSecret"))
-		c.Data["json"] = &object.TokenError{
+		tokenError := &object.TokenError{
 			Error: object.InvalidClient,
 		}
+		c.ResponseOk(tokenError)
 		c.SetTokenErrorHttpStatus()
 		return
 	}
 	token := object.GetTokenByTokenAndApplication(tokenValue, application.Name)
 	if token == nil {
-		c.Data["json"] = &object.IntrospectionResponse{Active: false}
-		c.ServeJSON()
+		response := &object.IntrospectionResponse{Active: false}
+		c.ResponseOk(response)
 		return
 	}
 	jwtToken, err := object.ParseJwtTokenByApplication(tokenValue, application)
@@ -298,12 +299,12 @@ func (c *ApiController) IntrospectToken() {
 		// and token revoked case. but we not implement
 		// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
 		// refs: https://tools.ietf.org/html/rfc7009
-		c.Data["json"] = &object.IntrospectionResponse{Active: false}
-		c.ServeJSON()
+		response := &object.IntrospectionResponse{Active: false}
+		c.ResponseOk(response)
 		return
 	}
 
-	c.Data["json"] = &object.IntrospectionResponse{
+	response := &object.IntrospectionResponse{
 		Active:    true,
 		Scope:     jwtToken.Scope,
 		ClientId:  clientId,
@@ -317,5 +318,5 @@ func (c *ApiController) IntrospectToken() {
 		Iss:       jwtToken.Issuer,
 		Jti:       jwtToken.Id,
 	}
-	c.ServeJSON()
+	c.ResponseOk(response)
 }

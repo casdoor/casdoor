@@ -51,8 +51,7 @@ func (c *ApiController) WebAuthnSignupBegin() {
 		return
 	}
 	c.SetSession("registration", *sessionData)
-	c.Data["json"] = options
-	c.ServeJSON()
+	c.ResponseOk(options)
 }
 
 // WebAuthnSignupFinish
@@ -115,8 +114,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 		return
 	}
 	c.SetSession("authentication", *sessionData)
-	c.Data["json"] = options
-	c.ServeJSON()
+	c.ResponseOk(options)
 }
 
 // WebAuthnSigninFinish
@@ -150,6 +148,5 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	var form RequestForm
 	form.Type = responseType
 	resp := c.HandleLoggedIn(application, user, &form)
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk(resp)
 }

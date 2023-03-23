@@ -43,8 +43,8 @@ func (c *ApiController) GetRecords() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetRecords()
-		c.ServeJSON()
+		records := object.GetRecords()
+		c.ResponseOk(records)
 	} else {
 		limit := util.ParseInt(limit)
 		filterRecord := &object.Record{Organization: organization}
@@ -71,8 +71,8 @@ func (c *ApiController) GetRecordsByFilter() {
 		return
 	}
 
-	c.Data["json"] = object.GetRecordsByField(record)
-	c.ServeJSON()
+	records := object.GetRecordsByField(record)
+	c.ResponseOk(records)
 }
 
 // AddRecord
@@ -90,6 +90,6 @@ func (c *ApiController) AddRecord() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddRecord(&record))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddRecord(&record))
+	c.ResponseOk(response)
 }

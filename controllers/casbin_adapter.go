@@ -58,8 +58,8 @@ func (c *ApiController) UpdateCasbinAdapter() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateCasbinAdapter(id, &casbinAdapter))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdateCasbinAdapter(id, &casbinAdapter))
+	c.ResponseOk(response)
 }
 
 func (c *ApiController) AddCasbinAdapter() {
@@ -70,8 +70,8 @@ func (c *ApiController) AddCasbinAdapter() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddCasbinAdapter(&casbinAdapter))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddCasbinAdapter(&casbinAdapter))
+	c.ResponseOk(response)
 }
 
 func (c *ApiController) DeleteCasbinAdapter() {
@@ -82,8 +82,8 @@ func (c *ApiController) DeleteCasbinAdapter() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteCasbinAdapter(&casbinAdapter))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteCasbinAdapter(&casbinAdapter))
+	c.ResponseOk(response)
 }
 
 func (c *ApiController) SyncPolicies() {
@@ -114,8 +114,8 @@ func (c *ApiController) UpdatePolicy() {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.Data["json"] = wrapActionResponse(affected)
-	c.ServeJSON()
+	response := wrapActionResponse(affected)
+	c.ResponseOk(response)
 }
 
 func (c *ApiController) AddPolicy() {
@@ -133,8 +133,8 @@ func (c *ApiController) AddPolicy() {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.Data["json"] = wrapActionResponse(affected)
-	c.ServeJSON()
+	response := wrapActionResponse(affected)
+	c.ResponseOk(response)
 }
 
 func (c *ApiController) RemovePolicy() {
@@ -152,6 +152,6 @@ func (c *ApiController) RemovePolicy() {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.Data["json"] = wrapActionResponse(affected)
-	c.ServeJSON()
+	response := wrapActionResponse(affected)
+	c.ResponseOk(response)
 }

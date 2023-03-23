@@ -39,8 +39,8 @@ func (c *ApiController) GetProducts() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetProducts(owner)
-		c.ServeJSON()
+		products := object.GetProducts(owner)
+		c.ResponseOk(products)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetProductCount(owner, field, value)))
@@ -62,8 +62,7 @@ func (c *ApiController) GetProduct() {
 	product := object.GetProduct(id)
 	object.ExtendProductWithProviders(product)
 
-	c.Data["json"] = product
-	c.ServeJSON()
+	c.ResponseOk(product)
 }
 
 // UpdateProduct
@@ -84,8 +83,8 @@ func (c *ApiController) UpdateProduct() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateProduct(id, &product))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdateProduct(id, &product))
+	c.ResponseOk(response)
 }
 
 // AddProduct
@@ -103,8 +102,8 @@ func (c *ApiController) AddProduct() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddProduct(&product))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddProduct(&product))
+	c.ResponseOk(response)
 }
 
 // DeleteProduct
@@ -122,8 +121,8 @@ func (c *ApiController) DeleteProduct() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteProduct(&product))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteProduct(&product))
+	c.ResponseOk(response)
 }
 
 // BuyProduct

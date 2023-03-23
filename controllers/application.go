@@ -49,8 +49,8 @@ func (c *ApiController) GetApplications() {
 			applications = object.GetOrganizationApplications(owner, organization)
 		}
 
-		c.Data["json"] = object.GetMaskedApplications(applications, userId)
-		c.ServeJSON()
+		maskedApplications := object.GetMaskedApplications(applications, userId)
+		c.ResponseOk(maskedApplications)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetApplicationCount(owner, field, value)))
@@ -70,8 +70,8 @@ func (c *ApiController) GetApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetMaskedApplication(object.GetApplication(id), userId)
-	c.ServeJSON()
+	application := object.GetMaskedApplication(object.GetApplication(id), userId)
+	c.ResponseOk(application)
 }
 
 // GetUserApplication
@@ -90,8 +90,8 @@ func (c *ApiController) GetUserApplication() {
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedApplication(object.GetApplicationByUser(user), userId)
-	c.ServeJSON()
+	application := object.GetMaskedApplication(object.GetApplicationByUser(user), userId)
+	c.ResponseOk(application)
 }
 
 // GetOrganizationApplications
@@ -120,8 +120,8 @@ func (c *ApiController) GetOrganizationApplications() {
 	if limit == "" || page == "" {
 		var applications []*object.Application
 		applications = object.GetOrganizationApplications(owner, organization)
-		c.Data["json"] = object.GetMaskedApplications(applications, userId)
-		c.ServeJSON()
+		maskedApplications := object.GetMaskedApplications(applications, userId)
+		c.ResponseOk(maskedApplications)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetOrganizationApplicationCount(owner, organization, field, value)))
@@ -148,8 +148,8 @@ func (c *ApiController) UpdateApplication() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateApplication(id, &application))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdateApplication(id, &application))
+	c.ResponseOk(response)
 }
 
 // AddApplication
@@ -173,8 +173,8 @@ func (c *ApiController) AddApplication() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddApplication(&application))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddApplication(&application))
+	c.ResponseOk(response)
 }
 
 // DeleteApplication
@@ -192,6 +192,6 @@ func (c *ApiController) DeleteApplication() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteApplication(&application))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteApplication(&application))
+	c.ResponseOk(response)
 }

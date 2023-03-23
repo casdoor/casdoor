@@ -38,8 +38,8 @@ func (c *ApiController) GetGlobalUsers() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedUsers(object.GetGlobalUsers())
-		c.ServeJSON()
+		users := object.GetMaskedUsers(object.GetGlobalUsers())
+		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGlobalUserCount(field, value)))
@@ -65,8 +65,8 @@ func (c *ApiController) GetUsers() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedUsers(object.GetUsers(owner))
-		c.ServeJSON()
+		users := object.GetMaskedUsers(object.GetUsers(owner))
+		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetUserCount(owner, field, value)))
@@ -121,8 +121,8 @@ func (c *ApiController) GetUser() {
 
 	object.ExtendUserWithRolesAndPermissions(user)
 
-	c.Data["json"] = object.GetMaskedUser(user)
-	c.ServeJSON()
+	maskedUser := object.GetMaskedUser(user)
+	c.ResponseOk(maskedUser)
 }
 
 // UpdateUser
@@ -170,8 +170,8 @@ func (c *ApiController) UpdateUser() {
 		object.UpdateUserToOriginalDatabase(&user)
 	}
 
-	c.Data["json"] = wrapActionResponse(affected)
-	c.ServeJSON()
+	response := wrapActionResponse(affected)
+	c.ResponseOk(response)
 }
 
 // AddUser
@@ -201,8 +201,8 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddUser(&user))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddUser(&user))
+	c.ResponseOk(response)
 }
 
 // DeleteUser
@@ -220,8 +220,8 @@ func (c *ApiController) DeleteUser() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteUser(&user))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteUser(&user))
+	c.ResponseOk(response)
 }
 
 // GetEmailAndPhone
@@ -344,8 +344,8 @@ func (c *ApiController) GetSortedUsers() {
 	sorter := c.Input().Get("sorter")
 	limit := util.ParseInt(c.Input().Get("limit"))
 
-	c.Data["json"] = object.GetMaskedUsers(object.GetSortedUsers(owner, sorter, limit))
-	c.ServeJSON()
+	users := object.GetMaskedUsers(object.GetSortedUsers(owner, sorter, limit))
+	c.ResponseOk(users)
 }
 
 // GetUserCount
@@ -367,6 +367,5 @@ func (c *ApiController) GetUserCount() {
 		count = object.GetOnlineUserCount(owner, util.ParseInt(isOnline))
 	}
 
-	c.Data["json"] = count
-	c.ServeJSON()
+	c.ResponseOk(count)
 }

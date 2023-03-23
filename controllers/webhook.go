@@ -38,8 +38,8 @@ func (c *ApiController) GetWebhooks() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetWebhooks(owner)
-		c.ServeJSON()
+		webhooks := object.GetWebhooks(owner)
+		c.ResponseOk(webhooks)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetWebhookCount(owner, field, value)))
@@ -58,8 +58,8 @@ func (c *ApiController) GetWebhooks() {
 func (c *ApiController) GetWebhook() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetWebhook(id)
-	c.ServeJSON()
+	webhook := object.GetWebhook(id)
+	c.ResponseOk(webhook)
 }
 
 // UpdateWebhook
@@ -80,8 +80,8 @@ func (c *ApiController) UpdateWebhook() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateWebhook(id, &webhook))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdateWebhook(id, &webhook))
+	c.ResponseOk(response)
 }
 
 // AddWebhook
@@ -99,8 +99,8 @@ func (c *ApiController) AddWebhook() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddWebhook(&webhook))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddWebhook(&webhook))
+	c.ResponseOk(response)
 }
 
 // DeleteWebhook
@@ -118,6 +118,6 @@ func (c *ApiController) DeleteWebhook() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteWebhook(&webhook))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteWebhook(&webhook))
+	c.ResponseOk(response)
 }

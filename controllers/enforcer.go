@@ -28,8 +28,8 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
-	c.Data["json"] = object.Enforce(&permissionRule)
-	c.ServeJSON()
+	enforce := object.Enforce(&permissionRule)
+	c.ResponseOk(enforce)
 }
 
 func (c *ApiController) BatchEnforce() {
@@ -40,8 +40,8 @@ func (c *ApiController) BatchEnforce() {
 		return
 	}
 
-	c.Data["json"] = object.BatchEnforce(permissionRules)
-	c.ServeJSON()
+	enforce := object.BatchEnforce(permissionRules)
+	c.ResponseOk(enforce)
 }
 
 func (c *ApiController) GetAllObjects() {
@@ -51,8 +51,8 @@ func (c *ApiController) GetAllObjects() {
 		return
 	}
 
-	c.Data["json"] = object.GetAllObjects(userId)
-	c.ServeJSON()
+	objects := object.GetAllObjects(userId)
+	c.ResponseOk(objects)
 }
 
 func (c *ApiController) GetAllActions() {
@@ -62,8 +62,8 @@ func (c *ApiController) GetAllActions() {
 		return
 	}
 
-	c.Data["json"] = object.GetAllActions(userId)
-	c.ServeJSON()
+	actions := object.GetAllActions(userId)
+	c.ResponseOk(actions)
 }
 
 func (c *ApiController) GetAllRoles() {
@@ -73,6 +73,6 @@ func (c *ApiController) GetAllRoles() {
 		return
 	}
 
-	c.Data["json"] = object.GetAllRoles(userId)
-	c.ServeJSON()
+	roles := object.GetAllRoles(userId)
+	c.ResponseOk(roles)
 }

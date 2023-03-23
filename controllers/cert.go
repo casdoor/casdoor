@@ -38,8 +38,8 @@ func (c *ApiController) GetCerts() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedCerts(object.GetCerts(owner))
-		c.ServeJSON()
+		certs := object.GetMaskedCerts(object.GetCerts(owner))
+		c.ResponseOk(certs)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetCertCount(owner, field, value)))
@@ -58,8 +58,8 @@ func (c *ApiController) GetCerts() {
 func (c *ApiController) GetCert() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetMaskedCert(object.GetCert(id))
-	c.ServeJSON()
+	cert := object.GetMaskedCert(object.GetCert(id))
+	c.ResponseOk(cert)
 }
 
 // UpdateCert
@@ -80,8 +80,8 @@ func (c *ApiController) UpdateCert() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateCert(id, &cert))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdateCert(id, &cert))
+	c.ResponseOk(response)
 }
 
 // AddCert
@@ -99,8 +99,8 @@ func (c *ApiController) AddCert() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddCert(&cert))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddCert(&cert))
+	c.ResponseOk(response)
 }
 
 // DeleteCert
@@ -118,6 +118,6 @@ func (c *ApiController) DeleteCert() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteCert(&cert))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteCert(&cert))
+	c.ResponseOk(response)
 }

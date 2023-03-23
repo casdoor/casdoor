@@ -38,8 +38,8 @@ func (c *ApiController) GetProviders() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedProviders(object.GetProviders(owner))
-		c.ServeJSON()
+		providers := object.GetMaskedProviders(object.GetProviders(owner))
+		c.ResponseOk(providers)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetProviderCount(owner, field, value)))
@@ -62,8 +62,8 @@ func (c *ApiController) GetGlobalProviders() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedProviders(object.GetGlobalProviders())
-		c.ServeJSON()
+		providers := object.GetMaskedProviders(object.GetGlobalProviders())
+		c.ResponseOk(providers)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGlobalProviderCount(field, value)))
@@ -81,8 +81,8 @@ func (c *ApiController) GetGlobalProviders() {
 // @router /get-provider [get]
 func (c *ApiController) GetProvider() {
 	id := c.Input().Get("id")
-	c.Data["json"] = object.GetMaskedProvider(object.GetProvider(id))
-	c.ServeJSON()
+	provider := object.GetMaskedProvider(object.GetProvider(id))
+	c.ResponseOk(provider)
 }
 
 // UpdateProvider
@@ -103,8 +103,8 @@ func (c *ApiController) UpdateProvider() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateProvider(id, &provider))
-	c.ServeJSON()
+	response := wrapActionResponse(object.UpdateProvider(id, &provider))
+	c.ResponseOk(response)
 }
 
 // AddProvider
@@ -128,8 +128,8 @@ func (c *ApiController) AddProvider() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddProvider(&provider))
-	c.ServeJSON()
+	response := wrapActionResponse(object.AddProvider(&provider))
+	c.ResponseOk(response)
 }
 
 // DeleteProvider
@@ -147,6 +147,6 @@ func (c *ApiController) DeleteProvider() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteProvider(&provider))
-	c.ServeJSON()
+	response := wrapActionResponse(object.DeleteProvider(&provider))
+	c.ResponseOk(response)
 }

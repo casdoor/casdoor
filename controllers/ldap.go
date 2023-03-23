@@ -149,8 +149,7 @@ func (c *ApiController) AddLdap() {
 		object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
 	}
 
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk(resp)
 }
 
 // UpdateLdap
@@ -174,8 +173,8 @@ func (c *ApiController) UpdateLdap() {
 		object.GetLdapAutoSynchronizer().StopAutoSync(ldap.Id)
 	}
 
-	c.Data["json"] = wrapActionResponse(affected)
-	c.ServeJSON()
+	response := wrapActionResponse(affected)
+	c.ResponseOk(response)
 }
 
 // DeleteLdap
@@ -194,8 +193,8 @@ func (c *ApiController) DeleteLdap() {
 
 	object.GetLdapAutoSynchronizer().StopAutoSync(ldap.Id)
 
-	c.Data["json"] = wrapActionResponse(affected)
-	c.ServeJSON()
+	response := wrapActionResponse(affected)
+	c.ResponseOk(response)
 }
 
 // SyncLdapUsers

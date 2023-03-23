@@ -139,8 +139,7 @@ func (c *RootController) CasP3ServiceAndProxyValidate() {
 	}
 	// everything is ok, send the response
 	if format == "json" {
-		c.Data["json"] = serviceResponse
-		c.ServeJSON()
+		c.ResponseOk(serviceResponse)
 	} else {
 		c.Data["xml"] = serviceResponse
 		c.ServeXML()
@@ -177,8 +176,7 @@ func (c *RootController) CasProxy() {
 	}
 
 	if format == "json" {
-		c.Data["json"] = serviceResponse
-		c.ServeJSON()
+		c.ResponseOk(serviceResponse)
 	} else {
 		c.Data["xml"] = serviceResponse
 		c.ServeXML()
@@ -242,8 +240,7 @@ func (c *RootController) sendCasProxyResponseErr(code, msg, format string) {
 		},
 	}
 	if format == "json" {
-		c.Data["json"] = serviceResponse
-		c.ServeJSON()
+		c.ResponseOk(serviceResponse)
 	} else {
 		c.Data["xml"] = serviceResponse
 		c.ServeXML()
@@ -260,8 +257,7 @@ func (c *RootController) sendCasAuthenticationResponseErr(code, msg, format stri
 	}
 
 	if format == "json" {
-		c.Data["json"] = serviceResponse
-		c.ServeJSON()
+		c.ResponseOk(serviceResponse)
 	} else {
 		c.Data["xml"] = serviceResponse
 		c.ServeXML()
