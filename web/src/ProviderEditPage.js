@@ -484,7 +484,7 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "Adfs" && this.state.provider.type !== "Casdoor" && this.state.provider.type !== "Okta" ? null : (
+          this.state.provider.type !== "Adfs" && this.state.provider.type !== "AzureAD" && this.state.provider.type !== "Casdoor" && this.state.provider.type !== "Okta" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>
                 {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :

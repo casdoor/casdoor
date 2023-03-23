@@ -378,6 +378,12 @@ export function getAuthUrl(application, provider, method) {
   const state = Util.getStateFromQueryParams(application.name, provider.name, method, isShortState);
   const codeChallenge = "P3S-a7dr8bgM4bF6vOyiKkKETDl16rcAzao9F8UIL1Y"; // SHA256(Base64-URL-encode("casdoor-verifier"))
 
+  if (provider.type === "AzureAD") {
+    if (provider.domain !== "") {
+      endpoint = endpoint.replace("common", provider.domain);
+    }
+  }
+
   if (provider.type === "Google" || provider.type === "GitHub" || provider.type === "QQ" || provider.type === "Facebook"
     || provider.type === "Weibo" || provider.type === "Gitee" || provider.type === "LinkedIn" || provider.type === "GitLab" || provider.type === "AzureAD"
     || provider.type === "Slack" || provider.type === "Line" || provider.type === "Amazon" || provider.type === "Auth0" || provider.type === "BattleNet"
