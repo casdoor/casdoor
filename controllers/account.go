@@ -50,6 +50,7 @@ type RequestForm struct {
 	Region       string `json:"region"`
 
 	Application string `json:"application"`
+	ClientId    string `json:"clientId"`
 	Provider    string `json:"provider"`
 	Code        string `json:"code"`
 	State       string `json:"state"`

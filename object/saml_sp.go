@@ -36,13 +36,11 @@ func ParseSamlResponse(samlResponse string, providerType string) (string, error)
 		return "", err
 	}
 	assertionInfo, err := sp.RetrieveAssertionInfo(samlResponse)
-	if err != nil {
-		panic(err)
-	}
-	return assertionInfo.NameID, nil
+
+	return assertionInfo.NameID, err
 }
 
-func GenerateSamlLoginUrl(id, relayState, lang string) (string, string, error) {
+func GenerateSamlLoginUrl(id, relayState, lang string) (auth string, method string, err error) {
 	provider := GetProvider(id)
 	if provider.Category != "SAML" {
 		return "", "", fmt.Errorf(i18n.Translate(lang, "saml_sp:provider %s's category is not SAML"), provider.Name)
@@ -51,8 +49,7 @@ func GenerateSamlLoginUrl(id, relayState, lang string) (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
-	auth := ""
-	method := ""
+
 	if provider.EnableSignAuthnRequest {
 		post, err := sp.BuildAuthBodyPost(relayState)
 		if err != nil {
