@@ -43,21 +43,20 @@ export function renderMessage(msg) {
 export function renderMessageLarge(ths, msg) {
   if (msg !== null) {
     return (
-      <div style={{display: "inline"}}>
-        <Result
-          status="error"
-          title="There was a problem signing you in.."
-          subTitle={msg}
-          extra={[
-            <Button type="primary" key="back" onClick={() => {
-              window.history.go(-2);
-            }}>
+      <Result
+        style={{margin: "0px auto"}}
+        status="error"
+        title="There was a problem signing you in.."
+        subTitle={msg}
+        extra={[
+          <Button type="primary" key="back" onClick={() => {
+            window.history.go(-2);
+          }}>
               Back
-            </Button>,
-          ]}
-        >
-        </Result>
-      </div>
+          </Button>,
+        ]}
+      >
+      </Result>
     );
   } else {
     return null;
