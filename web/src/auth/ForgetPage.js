@@ -32,7 +32,6 @@ class ForgetPage extends React.Component {
     this.state = {
       classes: props,
       applicationName: props.applicationName ?? props.match.params?.applicationName,
-      application: null,
       msg: null,
       userId: "",
       username: "",
@@ -49,7 +48,7 @@ class ForgetPage extends React.Component {
   }
 
   componentDidMount() {
-    if (this.getApplicationObj() === null) {
+    if (this.getApplicationObj() === undefined) {
       if (this.state.applicationName !== undefined) {
         this.getApplication();
       } else {
@@ -66,14 +65,11 @@ class ForgetPage extends React.Component {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
         this.onUpdateApplication(application);
-        this.setState({
-          application: application,
-        });
       });
   }
 
   getApplicationObj() {
-    return this.props.application ?? this.state.application;
+    return this.props.application;
   }
 
   onUpdateApplication(application) {
@@ -436,6 +432,9 @@ class ForgetPage extends React.Component {
 
   render() {
     const application = this.getApplicationObj();
+    if (application === undefined) {
+      return null;
+    }
     if (application === null) {
       return Util.renderMessageLarge(this, this.state.msg);
     }
