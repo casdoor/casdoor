@@ -40,7 +40,7 @@ class SelfLoginButton extends React.Component {
     };
 
     const SelfLoginButton = createButton(config);
-    return <SelfLoginButton text={this.getAccountShowName()} onClick={() => this.props.onClick()} align={"center"} />;
+    return <SelfLoginButton text={this.getAccountShowName()} onClick={this.props.onClick} align={"center"} />;
   }
 }
 

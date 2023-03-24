@@ -65,8 +65,7 @@ class SignupPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      applicationName: props.match.params?.applicationName ?? authConfig.appName,
-      application: null,
+      applicationName: props.match?.params?.applicationName ?? authConfig.appName,
       email: "",
       phone: "",
       countryCode: "",
@@ -83,20 +82,17 @@ class SignupPage extends React.Component {
   }
 
   componentDidMount() {
-    let applicationName = this.state.applicationName;
     const oAuthParams = Util.getOAuthGetParameters();
     if (oAuthParams !== null) {
-      applicationName = oAuthParams.state;
-      this.setState({applicationName: oAuthParams.state});
       const signinUrl = window.location.href.replace("/signup/oauth/authorize", "/login/oauth/authorize");
       sessionStorage.setItem("signinUrl", signinUrl);
     }
 
-    if (this.getApplicationObj() === null) {
-      if (applicationName !== undefined) {
-        this.getApplication(applicationName);
+    if (this.getApplicationObj() === undefined) {
+      if (this.state.applicationName !== null) {
+        this.getApplication(this.state.applicationName);
       } else {
-        Setting.showMessage("error", `Unknown application name: ${applicationName}`);
+        Setting.showMessage("error", `Unknown application name: ${this.state.applicationName}`);
       }
     }
   }
@@ -109,9 +105,6 @@ class SignupPage extends React.Component {
     ApplicationBackend.getApplication("admin", applicationName)
       .then((application) => {
         this.onUpdateApplication(application);
-        this.setState({
-          application: application,
-        });
 
         if (application !== null && application !== undefined) {
           Setting.getTermsOfUseContent(application.termsOfUse, res => {
@@ -134,7 +127,7 @@ class SignupPage extends React.Component {
   }
 
   getApplicationObj() {
-    return this.props.application ?? this.state.application;
+    return this.props.application;
   }
 
   onUpdateAccount(account) {
@@ -596,7 +589,7 @@ class SignupPage extends React.Component {
 
   render() {
     const application = this.getApplicationObj();
-    if (application === null) {
+    if (application === undefined || application === null) {
       return null;
     }
 
