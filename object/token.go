@@ -613,7 +613,8 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 	nullUser := &User{
 		Owner: application.Owner,
 		Id:    application.GetId(),
-		Name:  fmt.Sprintf("app/%s", application.Name),
+		Name:  application.Name,
+		Type:  "application",
 	}
 
 	accessToken, _, tokenName, err := generateJwtToken(application, nullUser, "", scope, host)
