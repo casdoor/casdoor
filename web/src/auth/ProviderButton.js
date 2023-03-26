@@ -44,58 +44,58 @@ import * as AuthBackend from "./AuthBackend";
 import {getEvent} from "./Util";
 import {Modal} from "antd";
 
-function getSigninButton(type) {
-  const text = i18next.t("login:Sign in with {type}").replace("{type}", type);
-  if (type === "GitHub") {
+function getSigninButton(provider) {
+  const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.type);
+  if (provider.type === "GitHub") {
     return <GithubLoginButton text={text} align={"center"} />;
-  } else if (type === "Google") {
+  } else if (provider.type === "Google") {
     return <GoogleLoginButton text={text} align={"center"} />;
-  } else if (type === "QQ") {
+  } else if (provider.type === "QQ") {
     return <QqLoginButton text={text} align={"center"} />;
-  } else if (type === "Facebook") {
+  } else if (provider.type === "Facebook") {
     return <FacebookLoginButton text={text} align={"center"} />;
-  } else if (type === "Weibo") {
+  } else if (provider.type === "Weibo") {
     return <WeiboLoginButton text={text} align={"center"} />;
-  } else if (type === "Gitee") {
+  } else if (provider.type === "Gitee") {
     return <GiteeLoginButton text={text} align={"center"} />;
-  } else if (type === "WeChat") {
+  } else if (provider.type === "WeChat") {
     return <WechatLoginButton text={text} align={"center"} />;
-  } else if (type === "DingTalk") {
+  } else if (provider.type === "DingTalk") {
     return <DingTalkLoginButton text={text} align={"center"} />;
-  } else if (type === "LinkedIn") {
+  } else if (provider.type === "LinkedIn") {
     return <LinkedInLoginButton text={text} align={"center"} />;
-  } else if (type === "WeCom") {
+  } else if (provider.type === "WeCom") {
     return <WeComLoginButton text={text} align={"center"} />;
-  } else if (type === "Lark") {
+  } else if (provider.type === "Lark") {
     return <LarkLoginButton text={text} align={"center"} />;
-  } else if (type === "GitLab") {
+  } else if (provider.type === "GitLab") {
     return <GitLabLoginButton text={text} align={"center"} />;
-  } else if (type === "Adfs") {
+  } else if (provider.type === "Adfs") {
     return <AdfsLoginButton text={text} align={"center"} />;
-  } else if (type === "Casdoor") {
+  } else if (provider.type === "Casdoor") {
     return <CasdoorLoginButton text={text} align={"center"} />;
-  } else if (type === "Baidu") {
+  } else if (provider.type === "Baidu") {
     return <BaiduLoginButton text={text} align={"center"} />;
-  } else if (type === "Alipay") {
+  } else if (provider.type === "Alipay") {
     return <AlipayLoginButton text={text} align={"center"} />;
-  } else if (type === "Infoflow") {
+  } else if (provider.type === "Infoflow") {
     return <InfoflowLoginButton text={text} align={"center"} />;
-  } else if (type === "Apple") {
+  } else if (provider.type === "Apple") {
     return <AppleLoginButton text={text} align={"center"} />;
-  } else if (type === "AzureAD") {
+  } else if (provider.type === "AzureAD") {
     return <AzureADLoginButton text={text} align={"center"} />;
-  } else if (type === "Slack") {
+  } else if (provider.type === "Slack") {
     return <SlackLoginButton text={text} align={"center"} />;
-  } else if (type === "Steam") {
+  } else if (provider.type === "Steam") {
     return <SteamLoginButton text={text} align={"center"} />;
-  } else if (type === "Bilibili") {
+  } else if (provider.type === "Bilibili") {
     return <BilibiliLoginButton text={text} align={"center"} />;
-  } else if (type === "Okta") {
+  } else if (provider.type === "Okta") {
     return <OktaLoginButton text={text} align={"center"} />;
-  } else if (type === "Douyin") {
+  } else if (provider.type === "Douyin") {
     return <DouyinLoginButton text={text} align={"center"} />;
   } else {
-    return <LoginButton key={type} type={type} />;
+    return <LoginButton key={provider.type} type={provider.type} url={getProviderLogoURL(provider)} />;
   }
 }
 
@@ -154,7 +154,6 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         </a>
       );
     }
-
   } else if (provider.type === "Custom") {
     // style definition
     const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.displayName);
@@ -182,14 +181,27 @@ export function renderProviderLogo(provider, application, width, margin, size, l
       );
     }
   } else {
-    return (
-      <div key={provider.displayName} style={{marginBottom: "10px"}}>
-        <a href={Provider.getAuthUrl(application, provider, "signup")}>
-          {
-            getSigninButton(provider.type)
-          }
-        </a>
-      </div>
-    );
+    // big button, for disable password signin
+    if (provider.category === "SAML") {
+      return (
+        <div key={provider.displayName} style={{marginBottom: "10px"}}>
+          <a onClick={() => getSamlUrl(provider, location)}>
+            {
+              getSigninButton(provider)
+            }
+          </a>
+        </div>
+      );
+    } else {
+      return (
+        <div key={provider.displayName} style={{marginBottom: "10px"}}>
+          <a href={Provider.getAuthUrl(application, provider, "signup")}>
+            {
+              getSigninButton(provider)
+            }
+          </a>
+        </div>
+      );
+    }
   }
 }
