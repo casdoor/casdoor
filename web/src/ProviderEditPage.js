@@ -134,14 +134,14 @@ class ProviderEditPage extends React.Component {
     if (type === "WeCom" || type === "Infoflow") {
       return (
         [
-          {id: "Internal", name: "Internal"},
-          {id: "Third-party", name: "Third-party"},
+          {id: "Internal", name: i18next.t("provider:Internal")},
+          {id: "Third-party", name: i18next.t("provider:Third-party")},
         ]
       );
     } else if (type === "Aliyun Captcha") {
       return [
-        {id: "nc", name: "Sliding Validation"},
-        {id: "ic", name: "Intelligent Validation"},
+        {id: "nc", name: i18next.t("provider:Sliding Validation")},
+        {id: "ic", name: i18next.t("provider:Intelligent Validation")},
       ];
     } else {
       return [];
@@ -349,7 +349,10 @@ class ProviderEditPage extends React.Component {
                         this.updateProviderField("method", value);
                       }}>
                         {
-                          [{name: "Normal"}, {name: "Silent"}].map((method, index) => <Option key={index} value={method.name}>{method.name}</Option>)
+                          [
+                            {id: "Normal", name: i18next.t("provider:Normal")},
+                            {id: "Silent", name: i18next.t("provider:Silent")},
+                          ].map((method, index) => <Option key={index} value={method.name}>{method.name}</Option>)
                         }
                       </Select>
                     </Col>
