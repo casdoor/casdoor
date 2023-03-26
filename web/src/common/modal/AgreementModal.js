@@ -65,7 +65,7 @@ export function isAgreementRequired(application) {
 function initDefaultValue(application) {
   const agreementItem = application.signupItems.find(item => item.name === "Agreement");
 
-  return isAgreementRequired(application) && agreementItem.rule === "Default True";
+  return isAgreementRequired(application) && agreementItem.rule === "Signin (Default True)";
 }
 
 export function renderAgreementFormItem(application, required, layout, ths) {

@@ -110,7 +110,7 @@ class ProviderEditPage extends React.Component {
   getClientSecretLabel(provider) {
     switch (provider.category) {
     case "Email":
-      return Setting.getLabel(i18next.t("login:Password"), i18next.t("login:Password - Tooltip"));
+      return Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"));
     case "SMS":
       if (provider.type === "Volc Engine SMS") {
         return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:Secret access key - Tooltip"));

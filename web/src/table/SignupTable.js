@@ -172,25 +172,25 @@ class SignupTable extends React.Component {
           let options = [];
           if (record.name === "ID") {
             options = [
-              {id: "Random", name: i18next.t("general:Random")},
-              {id: "Incremental", name: i18next.t("general:Incremental")},
+              {id: "Random", name: i18next.t("application:Random")},
+              {id: "Incremental", name: i18next.t("application:Incremental")},
             ];
           } else if (record.name === "Display name") {
             options = [
-              {id: "None", name: i18next.t("general:None")},
-              {id: "Real name", name: i18next.t("general:Real name")},
-              {id: "First, last", name: i18next.t("general:First, last")},
+              {id: "None", name: i18next.t("application:None")},
+              {id: "Real name", name: i18next.t("application:Real name")},
+              {id: "First, last", name: i18next.t("application:First, last")},
             ];
           } else if (record.name === "Email") {
             options = [
-              {id: "Normal", name: i18next.t("general:Normal")},
-              {id: "No verification", name: i18next.t("general:No verification")},
+              {id: "Normal", name: i18next.t("application:Normal")},
+              {id: "No verification", name: i18next.t("application:No verification")},
             ];
           } else if (record.name === "Agreement") {
             options = [
-              {id: "None", name: i18next.t("general:Only signup")},
-              {id: "Signin", name: i18next.t("general:Signin")},
-              {id: "Default True", name: i18next.t("general:Signin (Default True)")},
+              {id: "None", name: i18next.t("application:Only signup")},
+              {id: "Signin", name: i18next.t("application:Signin")},
+              {id: "Signin (Default True)", name: i18next.t("application:Signin (Default True)")},
             ];
           }
 
