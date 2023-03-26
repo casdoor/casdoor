@@ -15,13 +15,12 @@
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
 import {Button, Col, Row, Select, Switch, Table, Tooltip} from "antd";
-import * as Setting from "./Setting";
+import * as Setting from "../Setting";
 import i18next from "i18next";
-import * as Provider from "./auth/Provider";
 
 const {Option} = Select;
 
-class ProviderTable extends React.Component {
+class SignupTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -39,7 +38,7 @@ class ProviderTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {name: Setting.getNewRowNameForTable(table, "Please select a provider"), canSignUp: true, canSignIn: true, canUnlink: true, alertType: "None", rule: "None"};
+    const row = {name: Setting.getNewRowNameForTable(table, "Please select a signup item"), visible: true, required: true, rule: "None"};
     if (table === undefined) {
       table = [];
     }
@@ -63,94 +62,82 @@ class ProviderTable extends React.Component {
   }
 
   renderTable(table) {
-    let columns = [
+    const columns = [
       {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
         render: (text, record, index) => {
+          const items = [
+            {name: "Username", displayName: i18next.t("signup:Username")},
+            {name: "ID", displayName: i18next.t("general:ID")},
+            {name: "Display name", displayName: i18next.t("general:Display name")},
+            {name: "Affiliation", displayName: i18next.t("user:Affiliation")},
+            {name: "Country/Region", displayName: i18next.t("user:Country/Region")},
+            {name: "ID card", displayName: i18next.t("user:ID card")},
+            {name: "Email", displayName: i18next.t("general:Email")},
+            {name: "Password", displayName: i18next.t("general:Password")},
+            {name: "Confirm password", displayName: i18next.t("signup:Confirm")},
+            {name: "Phone", displayName: i18next.t("general:Phone")},
+            {name: "Agreement", displayName: i18next.t("signup:Agreement")},
+          ];
+
+          const getItemDisplayName = (text) => {
+            const item = items.filter(item => item.name === text);
+            if (item.length === 0) {
+              return "";
+            }
+            return item[0].displayName;
+          };
+
           return (
             <Select virtual={false} style={{width: "100%"}}
-              value={text}
+              value={getItemDisplayName(text)}
               onChange={value => {
                 this.updateField(table, index, "name", value);
-                const provider = Setting.getArrayItem(this.props.providers, "name", value);
-                this.updateField(table, index, "provider", provider);
               }} >
               {
-                Setting.getDeduplicatedArray(this.props.providers, table, "name").map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
+                Setting.getDeduplicatedArray(items, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.displayName}</Option>)
               }
             </Select>
           );
         },
       },
       {
-        title: i18next.t("provider:Category"),
-        dataIndex: "category",
-        key: "category",
-        width: "100px",
-        render: (text, record, index) => {
-          const provider = Setting.getArrayItem(this.props.providers, "name", record.name);
-          return provider?.category;
-        },
-      },
-      {
-        title: i18next.t("provider:Type"),
-        dataIndex: "type",
-        key: "type",
-        width: "80px",
-        render: (text, record, index) => {
-          const provider = Setting.getArrayItem(this.props.providers, "name", record.name);
-          return Provider.getProviderLogoWidget(provider);
-        },
-      },
-      {
-        title: i18next.t("provider:Can signup"),
-        dataIndex: "canSignUp",
-        key: "canSignUp",
+        title: i18next.t("organization:Visible"),
+        dataIndex: "visible",
+        key: "visible",
         width: "120px",
         render: (text, record, index) => {
-          if (record.provider?.category !== "OAuth") {
+          if (record.name === "ID") {
             return null;
           }
 
           return (
             <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, "canSignUp", checked);
+              this.updateField(table, index, "visible", checked);
+              if (!checked) {
+                this.updateField(table, index, "required", false);
+              } else {
+                this.updateField(table, index, "required", true);
+              }
             }} />
           );
         },
       },
       {
-        title: i18next.t("provider:Can signin"),
-        dataIndex: "canSignIn",
-        key: "canSignIn",
+        title: i18next.t("provider:Required"),
+        dataIndex: "required",
+        key: "required",
         width: "120px",
         render: (text, record, index) => {
-          if (record.provider?.category !== "OAuth") {
+          if (!record.visible) {
             return null;
           }
 
           return (
             <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, "canSignIn", checked);
-            }} />
-          );
-        },
-      },
-      {
-        title: i18next.t("provider:Can unlink"),
-        dataIndex: "canUnlink",
-        key: "canUnlink",
-        width: "120px",
-        render: (text, record, index) => {
-          if (record.provider?.category !== "OAuth") {
-            return null;
-          }
-
-          return (
-            <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, "canUnlink", checked);
+              this.updateField(table, index, "required", checked);
             }} />
           );
         },
@@ -161,7 +148,11 @@ class ProviderTable extends React.Component {
         key: "prompted",
         width: "120px",
         render: (text, record, index) => {
-          if (record.provider?.category !== "OAuth") {
+          if (record.name === "ID") {
+            return null;
+          }
+
+          if (record.visible && record.name !== "Country/Region") {
             return null;
           }
 
@@ -176,21 +167,41 @@ class ProviderTable extends React.Component {
         title: i18next.t("application:Rule"),
         dataIndex: "rule",
         key: "rule",
-        width: "100px",
+        width: "155px",
         render: (text, record, index) => {
-          if (record.provider?.category !== "Captcha") {
+          let options = [];
+          if (record.name === "ID") {
+            options = [
+              {id: "Random", name: i18next.t("general:Random")},
+              {id: "Incremental", name: i18next.t("general:Incremental")},
+            ];
+          } else if (record.name === "Display name") {
+            options = [
+              {id: "None", name: i18next.t("general:None")},
+              {id: "Real name", name: i18next.t("general:Real name")},
+              {id: "First, last", name: i18next.t("general:First, last")},
+            ];
+          } else if (record.name === "Email") {
+            options = [
+              {id: "Normal", name: i18next.t("general:Normal")},
+              {id: "No verification", name: i18next.t("general:No verification")},
+            ];
+          } else if (record.name === "Agreement") {
+            options = [
+              {id: "None", name: i18next.t("general:Only signup")},
+              {id: "Signin", name: i18next.t("general:Signin")},
+              {id: "Default True", name: i18next.t("general:Signin (Default True)")},
+            ];
+          }
+
+          if (options.length === 0) {
             return null;
           }
+
           return (
-            <Select virtual={false} style={{width: "100%"}}
-              value={text}
-              defaultValue="None"
-              onChange={value => {
-                this.updateField(table, index, "rule", value);
-              }} >
-              <Option key="None" value="None">{i18next.t("application:None")}</Option>
-              <Option key="Always" value="Always">{i18next.t("application:Always")}</Option>
-            </Select>
+            <Select virtual={false} style={{width: "100%"}} value={text} onChange={(value => {
+              this.updateField(table, index, "rule", value);
+            })} options={options.map(item => Setting.getOption(item.name, item.id))} />
           );
         },
       },
@@ -215,10 +226,6 @@ class ProviderTable extends React.Component {
         },
       },
     ];
-
-    if (!this.props.application.enableSignUp) {
-      columns = columns.filter(column => column.key !== "canSignUp");
-    }
 
     return (
       <Table scroll={{x: "max-content"}} rowKey="name" columns={columns} dataSource={table} size="middle" bordered pagination={false}
@@ -247,4 +254,4 @@ class ProviderTable extends React.Component {
   }
 }
 
-export default ProviderTable;
+export default SignupTable;

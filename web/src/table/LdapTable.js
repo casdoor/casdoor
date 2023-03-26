@@ -14,11 +14,11 @@
 
 import React from "react";
 import {Button, Col, Row, Table} from "antd";
-import * as Setting from "./Setting";
+import * as Setting from "../Setting";
 import i18next from "i18next";
-import * as LdapBackend from "./backend/LdapBackend";
+import * as LdapBackend from "../backend/LdapBackend";
 import {Link} from "react-router-dom";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "../PopconfirmModal";
 
 class LdapTable extends React.Component {
   constructor(props) {

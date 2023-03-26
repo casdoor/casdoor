@@ -19,12 +19,12 @@ import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import {authConfig} from "./auth/Auth";
-import * as ProviderEditTestEmail from "./TestEmailWidget";
-import * as ProviderEditTestSms from "./TestSmsWidget";
+import * as ProviderEditTestEmail from "./common/TestEmailWidget";
+import * as ProviderEditTestSms from "./common/TestSmsWidget";
 import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
-import {CountryCodeSelect} from "./common/CountryCodeSelect";
+import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -127,6 +127,24 @@ class ProviderEditPage extends React.Component {
       }
     default:
       return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
+    }
+  }
+
+  getProviderSubTypeOptions(type) {
+    if (type === "WeCom" || type === "Infoflow") {
+      return (
+        [
+          {id: "Internal", name: "Internal"},
+          {id: "Third-party", name: "Third-party"},
+        ]
+      );
+    } else if (type === "Aliyun Captcha") {
+      return [
+        {id: "nc", name: "Sliding Validation"},
+        {id: "ic", name: "Intelligent Validation"},
+      ];
+    } else {
+      return [];
     }
   }
 
@@ -315,7 +333,7 @@ class ProviderEditPage extends React.Component {
                     this.updateProviderField("subType", value);
                   }}>
                     {
-                      Setting.getProviderSubTypeOptions(this.state.provider.type).map((providerSubType, index) => <Option key={index} value={providerSubType.id}>{providerSubType.name}</Option>)
+                      this.getProviderSubTypeOptions(this.state.provider.type).map((providerSubType, index) => <Option key={index} value={providerSubType.id}>{providerSubType.name}</Option>)
                     }
                   </Select>
                 </Col>

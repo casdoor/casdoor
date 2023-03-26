@@ -25,9 +25,9 @@ import * as ResourceBackend from "./backend/ResourceBackend";
 import SignupPage from "./auth/SignupPage";
 import LoginPage from "./auth/LoginPage";
 import i18next from "i18next";
-import UrlTable from "./UrlTable";
-import ProviderTable from "./ProviderTable";
-import SignupTable from "./SignupTable";
+import UrlTable from "./table/UrlTable";
+import ProviderTable from "./table/ProviderTable";
+import SignupTable from "./table/SignupTable";
 import PromptPage from "./auth/PromptPage";
 import copy from "copy-to-clipboard";
 

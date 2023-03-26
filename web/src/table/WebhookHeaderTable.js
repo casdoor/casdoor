@@ -14,13 +14,11 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Input, Row, Select, Switch, Table, Tooltip} from "antd";
-import * as Setting from "./Setting";
+import {Button, Col, Input, Row, Table, Tooltip} from "antd";
+import * as Setting from "../Setting";
 import i18next from "i18next";
 
-const {Option} = Select;
-
-class SyncerTableColumnTable extends React.Component {
+class WebhookHeaderTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,7 +36,7 @@ class SyncerTableColumnTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {name: `column${table.length}`, type: "string", values: []};
+    const row = {name: `header-${table.length}`, value: `value-${table.length}`};
     if (table === undefined) {
       table = [];
     }
@@ -64,9 +62,10 @@ class SyncerTableColumnTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t("syncer:Column name"),
+        title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
+        width: "250px",
         render: (text, record, index) => {
           return (
             <Input value={text} onChange={e => {
@@ -76,45 +75,13 @@ class SyncerTableColumnTable extends React.Component {
         },
       },
       {
-        title: i18next.t("syncer:Column type"),
-        dataIndex: "type",
-        key: "type",
+        title: i18next.t("webhook:Value"),
+        dataIndex: "value",
+        key: "value",
         render: (text, record, index) => {
           return (
-            <Select virtual={false} style={{width: "100%"}} value={text} onChange={(value => {this.updateField(table, index, "type", value);})}>
-              {
-                ["string", "integer", "boolean"]
-                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
-              }
-            </Select>
-          );
-        },
-      },
-      {
-        title: i18next.t("syncer:Casdoor column"),
-        dataIndex: "casdoorName",
-        key: "casdoorName",
-        render: (text, record, index) => {
-          return (
-            <Select virtual={false} style={{width: "100%"}} value={text} onChange={(value => {this.updateField(table, index, "casdoorName", value);})}>
-              {
-                ["Name", "CreatedTime", "UpdatedTime", "Id", "Type", "Password", "PasswordSalt", "DisplayName", "FirstName", "LastName", "Avatar", "PermanentAvatar",
-                  "Email", "EmailVerified", "Phone", "Location", "Address", "Affiliation", "Title", "IdCardType", "IdCard", "Homepage", "Bio", "Tag", "Region",
-                  "Language", "Gender", "Birthday", "Education", "Score", "Ranking", "IsDefaultAvatar", "IsOnline", "IsAdmin", "IsGlobalAdmin", "IsForbidden", "IsDeleted", "CreatedIp"]
-                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
-              }
-            </Select>
-          );
-        },
-      },
-      {
-        title: i18next.t("syncer:Is hashed"),
-        dataIndex: "isHashed",
-        key: "isHashed",
-        render: (text, record, index) => {
-          return (
-            <Switch checked={text} onChange={checked => {
-              this.updateField(table, index, "isHashed", checked);
+            <Input value={text} onChange={e => {
+              this.updateField(table, index, "value", e.target.value);
             }} />
           );
         },
@@ -168,4 +135,4 @@ class SyncerTableColumnTable extends React.Component {
   }
 }
 
-export default SyncerTableColumnTable;
+export default WebhookHeaderTable;

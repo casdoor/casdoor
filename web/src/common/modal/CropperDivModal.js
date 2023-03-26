@@ -15,12 +15,12 @@
 import React, {useEffect, useState} from "react";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
-import * as Setting from "./Setting";
+import * as Setting from "../../Setting";
 import {Button, Col, Modal, Row, Select} from "antd";
 import i18next from "i18next";
-import * as ResourceBackend from "./backend/ResourceBackend";
+import * as ResourceBackend from "../../backend/ResourceBackend";
 
-export const CropperDiv = (props) => {
+export const CropperDivModal = (props) => {
   const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState([]);
   const [image, setImage] = useState("");
@@ -60,7 +60,7 @@ export const CropperDiv = (props) => {
       // Setting.showMessage("success", "uploading...");
       const extension = image.substring(image.indexOf("/") + 1, image.indexOf(";base64"));
       const fullFilePath = `avatar/${user.owner}/${user.name}.${extension}`;
-      ResourceBackend.uploadResource(user.owner, user.name, "avatar", "CropperDiv", fullFilePath, blob)
+      ResourceBackend.uploadResource(user.owner, user.name, "avatar", "CropperDivModal", fullFilePath, blob)
         .then((res) => {
           if (res.status === "ok") {
             window.location.href = window.location.pathname;
@@ -187,4 +187,4 @@ export const CropperDiv = (props) => {
   );
 };
 
-export default CropperDiv;
+export default CropperDivModal;

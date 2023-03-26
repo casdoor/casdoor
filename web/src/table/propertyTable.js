@@ -16,7 +16,7 @@ import React from "react";
 import {Button, Input, Table} from "antd";
 import i18next from "i18next";
 import {DeleteOutlined} from "@ant-design/icons";
-import * as Setting from "./Setting";
+import * as Setting from "../Setting";
 
 class PropertyTable extends React.Component {
   constructor(props) {

@@ -13,12 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import * as Setting from "./Setting";
+import * as Setting from "../../Setting";
 import {Select} from "antd";
 
 const {Option} = Select;
 
-class SelectRegionBox extends React.Component {
+class RegionSelect extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -59,4 +59,4 @@ class SelectRegionBox extends React.Component {
   }
 }
 
-export default SelectRegionBox;
+export default RegionSelect;

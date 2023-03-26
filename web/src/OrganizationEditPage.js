@@ -21,8 +21,8 @@ import * as Setting from "./Setting";
 import * as Conf from "./Conf";
 import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
-import LdapTable from "./LdapTable";
-import AccountTable from "./AccountTable";
+import LdapTable from "./table/LdapTable";
+import AccountTable from "./table/AccountTable";
 import ThemeEditor from "./common/theme/ThemeEditor";
 
 const {Option} = Select;

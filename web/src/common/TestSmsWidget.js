@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as Setting from "./Setting";
+import * as Setting from "../Setting";
 import i18next from "i18next";
 
 export function sendTestSms(provider, phone) {

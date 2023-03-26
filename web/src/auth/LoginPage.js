@@ -24,12 +24,13 @@ import * as Provider from "./Provider";
 import * as ProviderButton from "./ProviderButton";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
+import * as AgreementModal from "../common/modal/AgreementModal";
 import SelfLoginButton from "./SelfLoginButton";
 import i18next from "i18next";
-import CustomGithubCorner from "../CustomGithubCorner";
+import CustomGithubCorner from "../common/CustomGithubCorner";
 import {SendCodeInput} from "../common/SendCodeInput";
-import SelectLanguageBox from "../SelectLanguageBox";
-import {CaptchaModal} from "../common/CaptchaModal";
+import LanguageSelect from "../common/select/LanguageSelect";
+import {CaptchaModal} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 
 class LoginPage extends React.Component {
@@ -135,12 +136,6 @@ class LoginPage extends React.Component {
       ApplicationBackend.getApplication("admin", this.state.applicationName)
         .then((application) => {
           this.onUpdateApplication(application);
-
-          if (application !== null && application !== undefined) {
-            Setting.getTermsOfUseContent(application.termsOfUse, res => {
-              this.setState({termsOfUseContent: res});
-            });
-          }
         });
     } else {
       OrganizationBackend.getDefaultApplication("admin", this.state.owner)
@@ -151,12 +146,6 @@ class LoginPage extends React.Component {
             this.setState({
               applicationName: res.data.name,
             });
-
-            if (application !== null && application !== undefined) {
-              Setting.getTermsOfUseContent(application.termsOfUse, res => {
-                this.setState({termsOfUseContent: res});
-              });
-            }
           } else {
             this.onUpdateApplication(null);
             Setting.showMessage("error", res.msg);
@@ -470,25 +459,17 @@ class LoginPage extends React.Component {
               this.renderPasswordOrCodeInput()
             }
           </Row>
-          <Form.Item>
-            {
-              Setting.isAgreementRequired(application) ?
-                Setting.renderAgreement(true, () => {
-                  this.setState({
-                    isTermsOfUseVisible: true,
-                  });
-                }, true, {}, Setting.isDefaultTrue(application)) : (
-                  <Form.Item name="autoSignin" valuePropName="checked" noStyle>
-                    <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
-                      {i18next.t("login:Auto sign in")}
-                    </Checkbox>
-                  </Form.Item>
-                )
-            }
+          <div style={{display: "inline-flex", justifyContent: "space-between", width: "320px", marginBottom: AgreementModal.isAgreementRequired(application) ? "5px" : "25px"}}>
+            <Form.Item name="autoSignin" valuePropName="checked" noStyle>
+              <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
+                {i18next.t("login:Auto sign in")}
+              </Checkbox>
+            </Form.Item>
             {
               Setting.renderForgetLink(application, i18next.t("login:Forgot password?"))
             }
-          </Form.Item>
+          </div>
+          {AgreementModal.isAgreementRequired(application) ? AgreementModal.renderAgreementFormItem(application, true, {}, this) : null}
           <Form.Item>
             <Button
               type="primary"
@@ -833,25 +814,12 @@ class LoginPage extends React.Component {
                   {
                     Setting.renderLogo(application)
                   }
-                  <SelectLanguageBox languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
+                  <LanguageSelect languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
                   {
                     this.renderSignedInBox()
                   }
                   {
                     this.renderForm(application)
-                  }
-                  {
-                    Setting.renderModal(this.state.isTermsOfUseVisible, () => {
-                      this.form.current.setFieldsValue({agreement: true});
-                      this.setState({
-                        isTermsOfUseVisible: false,
-                      });
-                    }, () => {
-                      this.form.current.setFieldsValue({agreement: false});
-                      this.setState({
-                        isTermsOfUseVisible: false,
-                      });
-                    }, this.state.termsOfUseContent)
                   }
                 </div>
               </div>

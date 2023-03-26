@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {Select} from "antd";
-import * as Setting from "../Setting";
+import * as Setting from "../../Setting";
 import React from "react";
 
 export const CountryCodeSelect = (props) => {

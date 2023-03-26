@@ -15,8 +15,8 @@
 import React from "react";
 import {Button, Table} from "antd";
 import i18next from "i18next";
-import * as UserWebauthnBackend from "./backend/UserWebauthnBackend";
-import * as Setting from "./Setting";
+import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
+import * as Setting from "../Setting";
 
 class WebAuthnCredentialTable extends React.Component {
   deleteRow(table, i) {

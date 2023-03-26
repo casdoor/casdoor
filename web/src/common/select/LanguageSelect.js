@@ -13,9 +13,9 @@
 // limitations under the License.
 
 import React from "react";
-import * as Setting from "./Setting";
+import * as Setting from "../../Setting";
 import {Dropdown} from "antd";
-import "./App.less";
+import "../../App.less";
 import {GlobalOutlined} from "@ant-design/icons";
 
 function flagIcon(country, alt) {
@@ -24,7 +24,7 @@ function flagIcon(country, alt) {
   );
 }
 
-class SelectLanguageBox extends React.Component {
+class LanguageSelect extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -63,4 +63,4 @@ class SelectLanguageBox extends React.Component {
   }
 }
 
-export default SelectLanguageBox;
+export default LanguageSelect;

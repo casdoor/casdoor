@@ -1,4 +1,4 @@
-// Copyright 2022 The Casdoor Authors. All Rights Reserved.
+// Copyright 2021 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,36 +14,22 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Input, Row, Select, Table, Tooltip} from "antd";
-import * as Setting from "./Setting";
+import {Button, Col, Input, Row, Select, Switch, Table, Tooltip} from "antd";
+import * as Setting from "../Setting";
 import i18next from "i18next";
 
 const {Option} = Select;
 
-class ManagedAccountTable extends React.Component {
+class SyncerTableColumnTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
-      managedAccounts: this.props.table !== null ? this.props.table.map((item, index) => {
-        item.key = index;
-        return item;
-      }) : [],
     };
   }
 
-  count = this.props.table?.length ?? 0;
-
   updateTable(table) {
-    this.setState({
-      managedAccounts: table,
-    });
-
-    this.props.onUpdateTable([...table].map((item) => {
-      const newItem = Setting.deepCopy(item);
-      delete newItem.key;
-      return newItem;
-    }));
+    this.props.onUpdateTable(table);
   }
 
   updateField(table, index, key, value) {
@@ -52,12 +38,10 @@ class ManagedAccountTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {key: this.count, application: "", username: "", password: ""};
-    if (table === undefined || table === null) {
+    const row = {name: `column${table.length}`, type: "string", values: []};
+    if (table === undefined) {
       table = [];
     }
-
-    this.count += 1;
     table = Setting.addRow(table, row);
     this.updateTable(table);
   }
@@ -80,46 +64,57 @@ class ManagedAccountTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t("general:Application"),
-        dataIndex: "application",
-        key: "application",
+        title: i18next.t("syncer:Column name"),
+        dataIndex: "name",
+        key: "name",
         render: (text, record, index) => {
-          const items = this.props.applications;
           return (
-            <Select virtual={false} style={{width: "100%"}}
-              value={text}
-              onChange={value => {
-                this.updateField(table, index, "application", value);
-              }} >
+            <Input value={text} onChange={e => {
+              this.updateField(table, index, "name", e.target.value);
+            }} />
+          );
+        },
+      },
+      {
+        title: i18next.t("syncer:Column type"),
+        dataIndex: "type",
+        key: "type",
+        render: (text, record, index) => {
+          return (
+            <Select virtual={false} style={{width: "100%"}} value={text} onChange={(value => {this.updateField(table, index, "type", value);})}>
               {
-                items.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
+                ["string", "integer", "boolean"]
+                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
           );
         },
       },
       {
-        title: i18next.t("signup:Username"),
-        dataIndex: "username",
-        key: "username",
-        width: "420px",
+        title: i18next.t("syncer:Casdoor column"),
+        dataIndex: "casdoorName",
+        key: "casdoorName",
         render: (text, record, index) => {
           return (
-            <Input defaultValue={text} onChange={e => {
-              this.updateField(table, index, "username", e.target.value);
-            }} />
+            <Select virtual={false} style={{width: "100%"}} value={text} onChange={(value => {this.updateField(table, index, "casdoorName", value);})}>
+              {
+                ["Name", "CreatedTime", "UpdatedTime", "Id", "Type", "Password", "PasswordSalt", "DisplayName", "FirstName", "LastName", "Avatar", "PermanentAvatar",
+                  "Email", "EmailVerified", "Phone", "Location", "Address", "Affiliation", "Title", "IdCardType", "IdCard", "Homepage", "Bio", "Tag", "Region",
+                  "Language", "Gender", "Birthday", "Education", "Score", "Ranking", "IsDefaultAvatar", "IsOnline", "IsAdmin", "IsGlobalAdmin", "IsForbidden", "IsDeleted", "CreatedIp"]
+                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
+              }
+            </Select>
           );
         },
       },
       {
-        title: i18next.t("general:Password"),
-        dataIndex: "password",
-        key: "password",
-        width: "420px",
+        title: i18next.t("syncer:Is hashed"),
+        dataIndex: "isHashed",
+        key: "isHashed",
         render: (text, record, index) => {
           return (
-            <Input defaultValue={text} onChange={e => {
-              this.updateField(table, index, "password", e.target.value);
+            <Switch checked={text} onChange={checked => {
+              this.updateField(table, index, "isHashed", checked);
             }} />
           );
         },
@@ -147,7 +142,7 @@ class ManagedAccountTable extends React.Component {
     ];
 
     return (
-      <Table scroll={{x: "max-content"}} rowKey="key" columns={columns} dataSource={table} size="middle" bordered pagination={false}
+      <Table rowKey="index" columns={columns} dataSource={table} size="middle" bordered pagination={false}
         title={() => (
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -164,7 +159,7 @@ class ManagedAccountTable extends React.Component {
         <Row style={{marginTop: "20px"}} >
           <Col span={24}>
             {
-              this.renderTable(this.state.managedAccounts)
+              this.renderTable(this.props.table)
             }
           </Col>
         </Row>
@@ -173,4 +168,4 @@ class ManagedAccountTable extends React.Component {
   }
 }
 
-export default ManagedAccountTable;
+export default SyncerTableColumnTable;

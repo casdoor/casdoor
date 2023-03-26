@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2022 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,33 +13,51 @@
 // limitations under the License.
 
 import React from "react";
-import {DeleteOutlined, DownOutlined, LinkOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Input, Row, Table, Tooltip} from "antd";
-import * as Setting from "./Setting";
+import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
+import {Button, Col, Input, Row, Select, Table, Tooltip} from "antd";
+import * as Setting from "../Setting";
 import i18next from "i18next";
 
-class UrlTable extends React.Component {
+const {Option} = Select;
+
+class ManagedAccountTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
+      managedAccounts: this.props.table !== null ? this.props.table.map((item, index) => {
+        item.key = index;
+        return item;
+      }) : [],
     };
   }
 
+  count = this.props.table?.length ?? 0;
+
   updateTable(table) {
-    this.props.onUpdateTable(table);
+    this.setState({
+      managedAccounts: table,
+    });
+
+    this.props.onUpdateTable([...table].map((item) => {
+      const newItem = Setting.deepCopy(item);
+      delete newItem.key;
+      return newItem;
+    }));
   }
 
-  updateField(table, index, value) {
-    table[index] = value;
+  updateField(table, index, key, value) {
+    table[index][key] = value;
     this.updateTable(table);
   }
 
   addRow(table) {
-    const row = "";
-    if (table === undefined) {
+    const row = {key: this.count, application: "", username: "", password: ""};
+    if (table === undefined || table === null) {
       table = [];
     }
+
+    this.count += 1;
     table = Setting.addRow(table, row);
     this.updateTable(table);
   }
@@ -62,13 +80,46 @@ class UrlTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t("application:Redirect URL"),
-        dataIndex: "id",
-        key: "id",
+        title: i18next.t("general:Application"),
+        dataIndex: "application",
+        key: "application",
+        render: (text, record, index) => {
+          const items = this.props.applications;
+          return (
+            <Select virtual={false} style={{width: "100%"}}
+              value={text}
+              onChange={value => {
+                this.updateField(table, index, "application", value);
+              }} >
+              {
+                items.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
+              }
+            </Select>
+          );
+        },
+      },
+      {
+        title: i18next.t("signup:Username"),
+        dataIndex: "username",
+        key: "username",
+        width: "420px",
         render: (text, record, index) => {
           return (
-            <Input prefix={<LinkOutlined />} value={text} onChange={e => {
-              this.updateField(table, index, e.target.value);
+            <Input defaultValue={text} onChange={e => {
+              this.updateField(table, index, "username", e.target.value);
+            }} />
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Password"),
+        dataIndex: "password",
+        key: "password",
+        width: "420px",
+        render: (text, record, index) => {
+          return (
+            <Input defaultValue={text} onChange={e => {
+              this.updateField(table, index, "password", e.target.value);
             }} />
           );
         },
@@ -96,7 +147,7 @@ class UrlTable extends React.Component {
     ];
 
     return (
-      <Table rowKey="index" columns={columns} dataSource={table.map((row, i) => ({id: row, index: i}))} size="middle" bordered pagination={false}
+      <Table scroll={{x: "max-content"}} rowKey="key" columns={columns} dataSource={table} size="middle" bordered pagination={false}
         title={() => (
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -113,7 +164,7 @@ class UrlTable extends React.Component {
         <Row style={{marginTop: "20px"}} >
           <Col span={24}>
             {
-              this.renderTable(this.props.table)
+              this.renderTable(this.state.managedAccounts)
             }
           </Col>
         </Row>
@@ -122,4 +173,4 @@ class UrlTable extends React.Component {
   }
 }
 
-export default UrlTable;
+export default ManagedAccountTable;

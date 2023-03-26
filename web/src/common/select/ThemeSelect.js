@@ -13,9 +13,9 @@
 // limitations under the License.
 
 import React from "react";
-import * as Setting from "./Setting";
+import * as Setting from "../../Setting";
 import {Dropdown} from "antd";
-import "./App.less";
+import "../../App.less";
 import i18next from "i18next";
 import {CheckOutlined} from "@ant-design/icons";
 import {CompactTheme, DarkTheme, Light} from "antd-token-previewer/es/icons";
@@ -34,7 +34,7 @@ function getIcon(themeKey) {
   }
 }
 
-class SelectThemeBox extends React.Component {
+class ThemeSelect extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -91,4 +91,4 @@ class SelectThemeBox extends React.Component {
   }
 }
 
-export default SelectThemeBox;
+export default ThemeSelect;
