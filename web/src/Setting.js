@@ -704,7 +704,7 @@ export function getProviderLogoURL(provider) {
     if (provider.type === "Custom") {
       return provider.customLogo;
     }
-    return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
+    return `${StaticBaseUrl}/buttons/${provider.type.toLowerCase()}.svg`;
   } else {
     const info = OtherProviderInfo[provider.category][provider.type];
     // avoid crash when provider is not found

@@ -99,7 +99,7 @@ function getSigninButton(provider) {
   }
 }
 
-function getSamlUrl(provider, location) {
+function goToSamlUrl(provider, location) {
   const params = new URLSearchParams(location.search);
   const clientId = params.get("client_id") ?? "";
   const state = params.get("state");
@@ -149,7 +149,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
       }
     } else if (provider.category === "SAML") {
       return (
-        <a key={provider.displayName} onClick={() => getSamlUrl(provider, location)}>
+        <a key={provider.displayName} onClick={() => goToSamlUrl(provider, location)}>
           <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
         </a>
       );
@@ -172,7 +172,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
       );
     } else if (provider.category === "SAML") {
       return (
-        <a key={provider.displayName} onClick={() => getSamlUrl(provider, location)} style={customAStyle}>
+        <a key={provider.displayName} onClick={() => goToSamlUrl(provider, location)} style={customAStyle}>
           <button style={customButtonStyle}>
             <img width={26} src={getProviderLogoURL(provider)} alt={provider.displayName} style={customImgStyle} />
             <span style={customSpanStyle}>{text}</span>
@@ -185,7 +185,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
     if (provider.category === "SAML") {
       return (
         <div key={provider.displayName} style={{marginBottom: "10px"}}>
-          <a onClick={() => getSamlUrl(provider, location)}>
+          <a onClick={() => goToSamlUrl(provider, location)}>
             {
               getSigninButton(provider)
             }
