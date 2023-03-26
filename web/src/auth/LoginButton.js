@@ -14,11 +14,10 @@
 
 import i18next from "i18next";
 import {createButton} from "react-social-login-buttons";
-import {StaticBaseUrl} from "../Setting";
 
-function LoginButton({type, align = "center", style = {background: "#ffffff", color: "#000000"}, activeStyle = {background: "#ededee"}}) {
+function LoginButton({type, logoUrl, align = "center", style = {background: "#ffffff", color: "#000000"}, activeStyle = {background: "#ededee"}}) {
   function Icon({width = 24, height = 24, color}) {
-    return <img src={`${StaticBaseUrl}/buttons/${type.toLowerCase()}.svg`} alt={`Sign in with ${type}`} style={{width: width, height: height}} />;
+    return <img src={logoUrl} alt={`Sign in with ${type}`} style={{width: width, height: height}} />;
   }
   const config = {
     text: `Sign in with ${type}`,
