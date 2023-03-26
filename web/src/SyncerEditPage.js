@@ -19,7 +19,7 @@ import * as SyncerBackend from "./backend/SyncerBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import SyncerTableColumnTable from "./SyncerTableColumnTable";
+import SyncerTableColumnTable from "./table/SyncerTableColumnTable";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
@@ -80,6 +80,97 @@ class SyncerEditPage extends React.Component {
     });
   }
 
+  getSyncerTableColumns(syncer) {
+    switch (syncer.type) {
+    case "Keycloak":
+      return [
+        {
+          "name": "ID",
+          "type": "string",
+          "casdoorName": "Id",
+          "isHashed": true,
+          "values": [
+
+          ],
+        },
+        {
+          "name": "USERNAME",
+          "type": "string",
+          "casdoorName": "Name",
+          "isHashed": true,
+          "values": [
+
+          ],
+        },
+        {
+          "name": "LAST_NAME+FIRST_NAME",
+          "type": "string",
+          "casdoorName": "DisplayName",
+          "isHashed": true,
+          "values": [
+
+          ],
+        },
+        {
+          "name": "EMAIL",
+          "type": "string",
+          "casdoorName": "Email",
+          "isHashed": true,
+          "values": [
+
+          ],
+        },
+        {
+          "name": "EMAIL_VERIFIED",
+          "type": "boolean",
+          "casdoorName": "EmailVerified",
+          "isHashed": true,
+          "values": [
+
+          ],
+        },
+        {
+          "name": "FIRST_NAME",
+          "type": "string",
+          "casdoorName": "FirstName",
+          "isHashed": true,
+          "values": [
+
+          ],
+        },
+        {
+          "name": "LAST_NAME",
+          "type": "string",
+          "casdoorName": "LastName",
+          "isHashed": true,
+          "values": [
+
+          ],
+        },
+        {
+          "name": "CREATED_TIMESTAMP",
+          "type": "string",
+          "casdoorName": "CreatedTime",
+          "isHashed": true,
+          "values": [
+
+          ],
+        },
+        {
+          "name": "ENABLED",
+          "type": "boolean",
+          "casdoorName": "IsForbidden",
+          "isHashed": true,
+          "values": [
+
+          ],
+        },
+      ];
+    default:
+      return [];
+    }
+  }
+
   renderSyncer() {
     return (
       <Card size="small" title={
@@ -120,7 +211,7 @@ class SyncerEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} value={this.state.syncer.type} onChange={(value => {
               this.updateSyncerField("type", value);
               const syncer = this.state.syncer;
-              syncer["tableColumns"] = Setting.getSyncerTableColumns(this.state.syncer);
+              syncer["tableColumns"] = this.getSyncerTableColumns(this.state.syncer);
               syncer.table = (value === "Keycloak") ? "user_entity" : this.state.syncer.table;
               this.setState({
                 syncer: syncer,

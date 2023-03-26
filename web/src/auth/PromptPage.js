@@ -19,9 +19,9 @@ import * as UserBackend from "../backend/UserBackend";
 import * as AuthBackend from "./AuthBackend";
 import * as Setting from "../Setting";
 import i18next from "i18next";
-import AffiliationSelect from "../common/AffiliationSelect";
+import AffiliationSelect from "../common/select/AffiliationSelect";
 import OAuthWidget from "../common/OAuthWidget";
-import SelectRegionBox from "../SelectRegionBox";
+import RegionSelect from "../common/select/RegionSelect";
 import {withRouter} from "react-router-dom";
 
 class PromptPage extends React.Component {
@@ -151,7 +151,7 @@ class PromptPage extends React.Component {
                       </span>
                     </Col>
                     <Col >
-                      <SelectRegionBox defaultValue={this.state.user.region} onChange={(value) => {
+                      <RegionSelect defaultValue={this.state.user.region} onChange={(value) => {
                         this.updateUserFieldWithoutSubmit("region", value);
                       }} />
                     </Col>

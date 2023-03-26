@@ -17,7 +17,7 @@ import React from "react";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import {SafetyOutlined} from "@ant-design/icons";
-import {CaptchaModal} from "./CaptchaModal";
+import {CaptchaModal} from "./modal/CaptchaModal";
 
 const {Search} = Input;
 

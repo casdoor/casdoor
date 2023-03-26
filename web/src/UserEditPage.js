@@ -18,18 +18,18 @@ import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import CropperDiv from "./CropperDiv.js";
+import CropperDivModal from "./common/modal/CropperDivModal.js";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
-import PasswordModal from "./PasswordModal";
-import ResetModal from "./ResetModal";
-import AffiliationSelect from "./common/AffiliationSelect";
+import PasswordModal from "./common/modal/PasswordModal";
+import ResetModal from "./common/modal/ResetModal";
+import AffiliationSelect from "./common/select/AffiliationSelect";
 import OAuthWidget from "./common/OAuthWidget";
 import SamlWidget from "./common/SamlWidget";
-import SelectRegionBox from "./SelectRegionBox";
-import WebAuthnCredentialTable from "./WebauthnCredentialTable";
-import ManagedAccountTable from "./ManagedAccountTable";
-import PropertyTable from "./propertyTable";
-import {CountryCodeSelect} from "./common/CountryCodeSelect";
+import RegionSelect from "./common/select/RegionSelect";
+import WebAuthnCredentialTable from "./table/WebauthnCredentialTable";
+import ManagedAccountTable from "./table/ManagedAccountTable";
+import PropertyTable from "./table/propertyTable";
+import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 
 const {Option} = Select;
 
@@ -253,7 +253,7 @@ class UserEditPage extends React.Component {
               </Col>
             </Row>
             <Row style={{marginTop: "20px"}}>
-              <CropperDiv buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} user={this.state.user} organization={this.state.organizations.find(organization => organization.name === this.state.organizationName)} />
+              <CropperDivModal buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} user={this.state.user} organization={this.state.organizations.find(organization => organization.name === this.state.organizationName)} />
             </Row>
           </Col>
         </Row>
@@ -341,7 +341,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:Country/Region"), i18next.t("user:Country/Region - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <SelectRegionBox defaultValue={this.state.user.region} onChange={(value) => {
+            <RegionSelect defaultValue={this.state.user.region} onChange={(value) => {
               this.updateUserField("region", value);
             }} />
           </Col>

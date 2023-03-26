@@ -13,12 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
+import {DeleteOutlined, DownOutlined, LinkOutlined, UpOutlined} from "@ant-design/icons";
 import {Button, Col, Input, Row, Table, Tooltip} from "antd";
-import * as Setting from "./Setting";
+import * as Setting from "../Setting";
 import i18next from "i18next";
 
-class WebhookHeaderTable extends React.Component {
+class UrlTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -30,13 +30,13 @@ class WebhookHeaderTable extends React.Component {
     this.props.onUpdateTable(table);
   }
 
-  updateField(table, index, key, value) {
-    table[index][key] = value;
+  updateField(table, index, value) {
+    table[index] = value;
     this.updateTable(table);
   }
 
   addRow(table) {
-    const row = {name: `header-${table.length}`, value: `value-${table.length}`};
+    const row = "";
     if (table === undefined) {
       table = [];
     }
@@ -62,26 +62,13 @@ class WebhookHeaderTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: i18next.t("general:Name"),
-        dataIndex: "name",
-        key: "name",
-        width: "250px",
+        title: i18next.t("application:Redirect URL"),
+        dataIndex: "id",
+        key: "id",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
-              this.updateField(table, index, "name", e.target.value);
-            }} />
-          );
-        },
-      },
-      {
-        title: i18next.t("webhook:Value"),
-        dataIndex: "value",
-        key: "value",
-        render: (text, record, index) => {
-          return (
-            <Input value={text} onChange={e => {
-              this.updateField(table, index, "value", e.target.value);
+            <Input prefix={<LinkOutlined />} value={text} onChange={e => {
+              this.updateField(table, index, e.target.value);
             }} />
           );
         },
@@ -109,7 +96,7 @@ class WebhookHeaderTable extends React.Component {
     ];
 
     return (
-      <Table rowKey="index" columns={columns} dataSource={table} size="middle" bordered pagination={false}
+      <Table rowKey="index" columns={columns} dataSource={table.map((row, i) => ({id: row, index: i}))} size="middle" bordered pagination={false}
         title={() => (
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -135,4 +122,4 @@ class WebhookHeaderTable extends React.Component {
   }
 }
 
-export default WebhookHeaderTable;
+export default UrlTable;

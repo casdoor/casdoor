@@ -15,9 +15,9 @@
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
 import {Button, Col, Row, Select, Switch, Table, Tooltip} from "antd";
-import * as Setting from "./Setting";
+import * as Setting from "../Setting";
 import i18next from "i18next";
-import * as Provider from "./auth/Provider";
+import * as Provider from "../auth/Provider";
 
 const {Option} = Select;
 

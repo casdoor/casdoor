@@ -15,7 +15,7 @@
 import {Button} from "antd";
 import React from "react";
 import i18next from "i18next";
-import {CaptchaModal} from "./CaptchaModal";
+import {CaptchaModal} from "./modal/CaptchaModal";
 import * as UserBackend from "../backend/UserBackend";
 
 export const CaptchaPreview = (props) => {

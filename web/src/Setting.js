@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Checkbox, Form, Modal, Select, Tag, Tooltip, message, theme} from "antd";
+import {Select, Tag, Tooltip, message, theme} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -552,10 +552,6 @@ export function addRow(array, row, position = "end") {
   return position === "end" ? [...array, row] : [row, ...array];
 }
 
-export function prependRow(array, row) {
-  return [row, ...array];
-}
-
 export function deleteRow(array, i) {
   // return array = array.slice(0, i).concat(array.slice(i + 1));
   return [...array.slice(0, i), ...array.slice(i + 1)];
@@ -583,76 +579,6 @@ export function trim(str, ch) {
 export function isMobile() {
   // return getIsMobileView();
   return isMobileDevice;
-}
-
-export function getTermsOfUseContent(url, setTermsOfUseContent) {
-  fetch(url, {
-    method: "GET",
-  }).then(r => {
-    r.text().then(setTermsOfUseContent);
-  });
-}
-
-export function isAgreementRequired(application) {
-  if (application) {
-    const agreementItem = application.signupItems.find(item => item.name === "Agreement");
-    if (!agreementItem || agreementItem.rule === "None" || !agreementItem.rule) {
-      return false;
-    }
-    if (agreementItem.required) {
-      return true;
-    }
-  }
-  return false;
-}
-
-export function isDefaultTrue(application) {
-  const agreementItem = application.signupItems.find(item => item.name === "Agreement");
-
-  return isAgreementRequired(application) && agreementItem.rule === "Signin (Default True)";
-}
-
-export function renderAgreement(required, onClick, noStyle, layout, initialValue) {
-  return (
-    <Form.Item
-      name="agreement"
-      key="agreement"
-      valuePropName="checked"
-      rules={[
-        {
-          required: required,
-          message: i18next.t("signup:Please accept the agreement!"),
-        },
-      ]}
-      {...layout}
-      noStyle={noStyle}
-      initialValue={initialValue}
-    >
-      <Checkbox style={{float: "left"}}>
-        {i18next.t("signup:Accept")}&nbsp;
-        <a onClick={onClick}>
-          {i18next.t("signup:Terms of Use")}
-        </a>
-      </Checkbox>
-    </Form.Item>
-  );
-}
-
-export function renderModal(isOpen, onOk, onCancel, doc) {
-  return (
-    <Modal
-      title={i18next.t("signup:Terms of Use")}
-      open={isOpen}
-      width={"55vw"}
-      closable={false}
-      okText={i18next.t("signup:Accept")}
-      cancelText={i18next.t("signup:Decline")}
-      onOk={onOk}
-      onCancel={onCancel}
-    >
-      <iframe title={"terms"} style={{border: 0, width: "100%", height: "60vh"}} srcDoc={doc} />
-    </Modal>
-  );
 }
 
 export function getFormattedDate(date) {
@@ -731,14 +657,6 @@ export function getAvatarColor(s) {
   return colorList[hash % 4];
 }
 
-export function getLogo(theme) {
-  if (theme === "Dark") {
-    return `${StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
-  } else {
-    return `${StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
-  }
-}
-
 export function getLanguageText(text) {
   if (!text.includes("|")) {
     return text;
@@ -761,11 +679,6 @@ export function getLanguage() {
 export function setLanguage(language) {
   localStorage.setItem("language", language);
   i18next.changeLanguage(language);
-}
-
-export function setTheme(themeKey) {
-  localStorage.setItem("theme", themeKey);
-  dispatchEvent(new Event("changeTheme"));
 }
 
 export function getAcceptLanguage() {
@@ -943,24 +856,6 @@ export function getProviderTypeOptions(category) {
       {id: "GEETEST", name: "GEETEST"},
       {id: "Cloudflare Turnstile", name: "Cloudflare Turnstile"},
     ]);
-  } else {
-    return [];
-  }
-}
-
-export function getProviderSubTypeOptions(type) {
-  if (type === "WeCom" || type === "Infoflow") {
-    return (
-      [
-        {id: "Internal", name: "Internal"},
-        {id: "Third-party", name: "Third-party"},
-      ]
-    );
-  } else if (type === "Aliyun Captcha") {
-    return [
-      {id: "nc", name: "Sliding Validation"},
-      {id: "ic", name: "Intelligent Validation"},
-    ];
   } else {
     return [];
   }
@@ -1237,96 +1132,5 @@ export function inIframe() {
     return window !== window.parent;
   } catch (e) {
     return true;
-  }
-}
-
-export function getSyncerTableColumns(syncer) {
-  switch (syncer.type) {
-  case "Keycloak":
-    return [
-      {
-        "name": "ID",
-        "type": "string",
-        "casdoorName": "Id",
-        "isHashed": true,
-        "values": [
-
-        ],
-      },
-      {
-        "name": "USERNAME",
-        "type": "string",
-        "casdoorName": "Name",
-        "isHashed": true,
-        "values": [
-
-        ],
-      },
-      {
-        "name": "LAST_NAME+FIRST_NAME",
-        "type": "string",
-        "casdoorName": "DisplayName",
-        "isHashed": true,
-        "values": [
-
-        ],
-      },
-      {
-        "name": "EMAIL",
-        "type": "string",
-        "casdoorName": "Email",
-        "isHashed": true,
-        "values": [
-
-        ],
-      },
-      {
-        "name": "EMAIL_VERIFIED",
-        "type": "boolean",
-        "casdoorName": "EmailVerified",
-        "isHashed": true,
-        "values": [
-
-        ],
-      },
-      {
-        "name": "FIRST_NAME",
-        "type": "string",
-        "casdoorName": "FirstName",
-        "isHashed": true,
-        "values": [
-
-        ],
-      },
-      {
-        "name": "LAST_NAME",
-        "type": "string",
-        "casdoorName": "LastName",
-        "isHashed": true,
-        "values": [
-
-        ],
-      },
-      {
-        "name": "CREATED_TIMESTAMP",
-        "type": "string",
-        "casdoorName": "CreatedTime",
-        "isHashed": true,
-        "values": [
-
-        ],
-      },
-      {
-        "name": "ENABLED",
-        "type": "boolean",
-        "casdoorName": "IsForbidden",
-        "isHashed": true,
-        "values": [
-
-        ],
-      },
-    ];
-  default:
-    return [];
   }
 }

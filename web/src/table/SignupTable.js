@@ -15,7 +15,7 @@
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
 import {Button, Col, Row, Select, Switch, Table, Tooltip} from "antd";
-import * as Setting from "./Setting";
+import * as Setting from "../Setting";
 import i18next from "i18next";
 
 const {Option} = Select;
@@ -172,25 +172,25 @@ class SignupTable extends React.Component {
           let options = [];
           if (record.name === "ID") {
             options = [
-              {id: "Random", name: "Random"},
-              {id: "Incremental", name: "Incremental"},
+              {id: "Random", name: i18next.t("application:Random")},
+              {id: "Incremental", name: i18next.t("application:Incremental")},
             ];
           } else if (record.name === "Display name") {
             options = [
-              {id: "None", name: "None"},
-              {id: "Real name", name: "Real name"},
-              {id: "First, last", name: "First, last"},
+              {id: "None", name: i18next.t("application:None")},
+              {id: "Real name", name: i18next.t("application:Real name")},
+              {id: "First, last", name: i18next.t("application:First, last")},
             ];
           } else if (record.name === "Email") {
             options = [
-              {id: "Normal", name: "Normal"},
-              {id: "No verification", name: "No verification"},
+              {id: "Normal", name: i18next.t("application:Normal")},
+              {id: "No verification", name: i18next.t("application:No verification")},
             ];
           } else if (record.name === "Agreement") {
             options = [
-              {id: "None", name: "None"},
-              {id: "Signin", name: "Signin"},
-              {id: "Signin (Default True)", name: "Signin (Default True)"},
+              {id: "None", name: i18next.t("application:Only signup")},
+              {id: "Signin", name: i18next.t("application:Signin")},
+              {id: "Signin (Default True)", name: i18next.t("application:Signin (Default True)")},
             ];
           }
 

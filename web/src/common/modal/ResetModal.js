@@ -15,9 +15,9 @@
 import {Button, Col, Input, Modal, Row} from "antd";
 import i18next from "i18next";
 import React from "react";
-import * as Setting from "./Setting";
-import * as UserBackend from "./backend/UserBackend";
-import {SendCodeInput} from "./common/SendCodeInput";
+import * as Setting from "../../Setting";
+import * as UserBackend from "../../backend/UserBackend";
+import {SendCodeInput} from "../SendCodeInput";
 import {MailOutlined, PhoneOutlined} from "@ant-design/icons";
 
 export const ResetModal = (props) => {

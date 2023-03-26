@@ -15,8 +15,8 @@
 import {Button, Col, Input, Modal, Row} from "antd";
 import i18next from "i18next";
 import React from "react";
-import * as UserBackend from "./backend/UserBackend";
-import * as Setting from "./Setting";
+import * as UserBackend from "../../backend/UserBackend";
+import * as Setting from "../../Setting";
 
 export const PasswordModal = (props) => {
   const [visible, setVisible] = React.useState(false);

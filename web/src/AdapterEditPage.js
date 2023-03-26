@@ -21,7 +21,7 @@ import i18next from "i18next";
 
 import "codemirror/lib/codemirror.css";
 import * as ModelBackend from "./backend/ModelBackend";
-import PolicyTable from "./common/PoliciyTable";
+import PolicyTable from "./table/PoliciyTable";
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/javascript/javascript");
 

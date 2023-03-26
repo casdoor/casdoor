@@ -15,8 +15,8 @@
 import {Button, Col, Input, Modal, Row} from "antd";
 import i18next from "i18next";
 import React, {useEffect} from "react";
-import * as UserBackend from "../backend/UserBackend";
-import {CaptchaWidget} from "./CaptchaWidget";
+import * as UserBackend from "../../backend/UserBackend";
+import {CaptchaWidget} from "../CaptchaWidget";
 import {SafetyOutlined} from "@ant-design/icons";
 
 export const CaptchaModal = (props) => {

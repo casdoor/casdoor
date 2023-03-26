@@ -19,7 +19,7 @@ import * as WebhookBackend from "./backend/WebhookBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import WebhookHeaderTable from "./WebhookHeaderTable";
+import WebhookHeaderTable from "./table/WebhookHeaderTable";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
