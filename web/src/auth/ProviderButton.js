@@ -95,7 +95,7 @@ function getSigninButton(provider) {
   } else if (provider.type === "Douyin") {
     return <DouyinLoginButton text={text} align={"center"} />;
   } else {
-    return <LoginButton key={provider.type} type={provider.type} url={getProviderLogoURL(provider)} />;
+    return <LoginButton key={provider.type} type={provider.type} logoUrl={getProviderLogoURL(provider)} />;
   }
 }
 
