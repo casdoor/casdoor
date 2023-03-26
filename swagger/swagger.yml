@@ -1340,19 +1340,13 @@ paths:
     get:
       tags:
       - System API
-      description: get user's system info
+      description: get system info like CPU and memory usage
       operationId: ApiController.GetSystemInfo
-      parameters:
-      - in: query
-        name: id
-        description: The id ( owner/name ) of the user
-        required: true
-        type: string
       responses:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/object.SystemInfo'
+            $ref: '#/definitions/util.SystemInfo'
   /api/get-token:
     get:
       tags:
@@ -1515,11 +1509,13 @@ paths:
     get:
       tags:
       - System API
-      description: get local git repo's latest release version info
+      description: get version info like Casdoor release version and commit ID
       operationId: ApiController.GetVersionInfo
       responses:
         "200":
-          description: '{string} local latest version hash of Casdoor'
+          description: The Response object
+          schema:
+            $ref: '#/definitions/util.VersionInfo'
   /api/get-webhook:
     get:
       tags:
@@ -2288,6 +2284,17 @@ paths:
       tags:
       - Resource API
       operationId: ApiController.UploadResource
+  /api/user:
+    get:
+      tags:
+      - Account API
+      description: return Laravel compatible user information according to OAuth 2.0
+      operationId: ApiController.UserInfo2
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/LaravelResponse'
   /api/userinfo:
     get:
       tags:
@@ -2374,11 +2381,14 @@ paths:
           schema:
             $ref: '#/definitions/Response'
 definitions:
-  2268.0xc000528cf0.false:
+  2306.0xc0000a7410.false:
     title: "false"
     type: object
-  2302.0xc000528d20.false:
+  2340.0xc0000a7440.false:
     title: "false"
+    type: object
+  LaravelResponse:
+    title: LaravelResponse
     type: object
   Response:
     title: Response
@@ -2412,6 +2422,8 @@ definitions:
       captchaToken:
         type: string
       captchaType:
+        type: string
+      clientId:
         type: string
       clientSecret:
         type: string
@@ -2464,9 +2476,9 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/2268.0xc000528cf0.false'
+        $ref: '#/definitions/2306.0xc0000a7410.false'
       data2:
-        $ref: '#/definitions/2302.0xc000528d20.false'
+        $ref: '#/definitions/2340.0xc0000a7440.false'
       msg:
         type: string
       name:
@@ -3183,9 +3195,6 @@ definitions:
         type: string
       user:
         type: string
-  object.SystemInfo:
-    title: SystemInfo
-    type: object
   object.TableColumn:
     title: TableColumn
     type: object
@@ -3617,6 +3626,32 @@ definitions:
   protocol.CredentialCreationResponse:
     title: CredentialCreationResponse
     type: object
+  util.SystemInfo:
+    title: SystemInfo
+    type: object
+    properties:
+      cpuUsage:
+        type: array
+        items:
+          type: number
+          format: double
+      memoryTotal:
+        type: integer
+        format: int64
+      memoryUsed:
+        type: integer
+        format: int64
+  util.VersionInfo:
+    title: VersionInfo
+    type: object
+    properties:
+      commitId:
+        type: string
+      commitOffset:
+        type: integer
+        format: int64
+      version:
+        type: string
   webauthn.Credential:
     title: Credential
     type: object

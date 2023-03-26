@@ -21,9 +21,8 @@ import (
 // GetSystemInfo
 // @Title GetSystemInfo
 // @Tag System API
-// @Description get user's system info
-// @Param   id     query    string  true        "The id ( owner/name ) of the user"
-// @Success 200 {object} object.SystemInfo The Response object
+// @Description get system info like CPU and memory usage
+// @Success 200 {object} util.SystemInfo The Response object
 // @router /get-system-info [get]
 func (c *ApiController) GetSystemInfo() {
 	_, ok := c.RequireAdmin()
@@ -43,8 +42,8 @@ func (c *ApiController) GetSystemInfo() {
 // GetVersionInfo
 // @Title GetVersionInfo
 // @Tag System API
-// @Description get local git repo's latest release version info
-// @Success 200 {string} local latest version hash of Casdoor
+// @Description get version info like Casdoor release version and commit ID
+// @Success 200 {object} util.VersionInfo The Response object
 // @router /get-version-info [get]
 func (c *ApiController) GetVersionInfo() {
 	versionInfo, err := util.GetVersionInfo()
