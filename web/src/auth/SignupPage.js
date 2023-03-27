@@ -386,11 +386,11 @@ class SignupPage extends React.Component {
                   },
                   ({getFieldValue}) => ({
                     validator: (_, value) => {
-                      if (!required && value === "") {
+                      if (!required && !value) {
                         return Promise.resolve();
                       }
 
-                      if (value !== "" && !Setting.isValidPhone(value, getFieldValue("countryCode"))) {
+                      if (value && !Setting.isValidPhone(value, getFieldValue("countryCode"))) {
                         this.setState({validPhone: false});
                         return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
                       }
