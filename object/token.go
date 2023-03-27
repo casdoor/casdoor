@@ -51,7 +51,7 @@ type Token struct {
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	User         string `xorm:"varchar(100)" json:"user"`
 
-	Code          string `xorm:"varchar(100)" json:"code"`
+	Code          string `xorm:"varchar(100) index" json:"code"`
 	AccessToken   string `xorm:"mediumtext" json:"accessToken"`
 	RefreshToken  string `xorm:"mediumtext" json:"refreshToken"`
 	ExpiresIn     int    `json:"expiresIn"`
@@ -362,7 +362,8 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	}
 
 	token.CodeIsUsed = true
-	updateUsedByCode(token)
+	go updateUsedByCode(token)
+
 	tokenWrapper := &TokenWrapper{
 		AccessToken:  token.AccessToken,
 		IdToken:      token.AccessToken,
