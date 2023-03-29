@@ -61,8 +61,8 @@ func (idp *CustomIdProvider) GetToken(code string) (*oauth2.Token, error) {
 
 type CustomUserInfo struct {
 	Id          string `json:"sub"`
-	Name        string `json:"name"`
-	DisplayName string `json:"preferred_username"`
+	Name        string `json:"preferred_username,omitempty"`
+	DisplayName string `json:"name"`
 	Email       string `json:"email"`
 	AvatarUrl   string `json:"picture"`
 	Status      string `json:"status"`
