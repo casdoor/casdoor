@@ -86,18 +86,27 @@ func NewSamlResponse(user *User, host string, certificate string, destination st
 	authnStatement.CreateElement("saml:AuthnContext").CreateElement("saml:AuthnContextClassRef").SetText("urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport")
 
 	attributes := assertion.CreateElement("saml:AttributeStatement")
+
 	email := attributes.CreateElement("saml:Attribute")
 	email.CreateAttr("Name", "Email")
 	email.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	email.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.Email)
+
 	name := attributes.CreateElement("saml:Attribute")
 	name.CreateAttr("Name", "Name")
 	name.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	name.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.Name)
+
 	displayName := attributes.CreateElement("saml:Attribute")
 	displayName.CreateAttr("Name", "DisplayName")
 	displayName.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
+
+	roles := attributes.CreateElement("saml:Attribute")
+	roles.CreateAttr("Name", "Roles")
+	roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
+	ExtendUserWithRolesAndPermissions(user)
+	roles.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.getRolesString())
 
 	return samlResponse, nil
 }
