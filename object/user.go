@@ -622,14 +622,6 @@ func (user *User) GetId() string {
 	return fmt.Sprintf("%s/%s", user.Owner, user.Name)
 }
 
-func (user *User) getRolesString() string {
-	roles := []string{}
-	for _, role := range user.Roles {
-		roles = append(roles, role.Name)
-	}
-	return strings.Join(roles, ",")
-}
-
 func isUserIdGlobalAdmin(userId string) bool {
 	return strings.HasPrefix(userId, "built-in/")
 }
