@@ -106,7 +106,9 @@ func NewSamlResponse(user *User, host string, certificate string, destination st
 	roles.CreateAttr("Name", "Roles")
 	roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	ExtendUserWithRolesAndPermissions(user)
-	roles.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.getRolesString())
+	for _, role := range user.Roles {
+		roles.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(role.Name)
+	}
 
 	return samlResponse, nil
 }
