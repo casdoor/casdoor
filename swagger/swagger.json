@@ -2171,6 +2171,12 @@
                         "name": "phone",
                         "description": "The phone of the user",
                         "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "description": "The userId of the user",
+                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -3638,11 +3644,11 @@
         }
     },
     "definitions": {
-        "2306.0xc0000a7410.false": {
+        "2306.0xc0003a4480.false": {
             "title": "false",
             "type": "object"
         },
-        "2340.0xc0000a7440.false": {
+        "2340.0xc0003a44b0.false": {
             "title": "false",
             "type": "object"
         },
@@ -3776,10 +3782,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/2306.0xc0000a7410.false"
+                    "$ref": "#/definitions/2306.0xc0003a4480.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/2340.0xc0000a7440.false"
+                    "$ref": "#/definitions/2340.0xc0003a44b0.false"
                 },
                 "msg": {
                     "type": "string"
