@@ -88,7 +88,7 @@ type GothIdProvider struct {
 	Session  goth.Session
 }
 
-func NewGothIdProvider(providerType string, clientId string, clientSecret string, redirectUrl string) *GothIdProvider {
+func NewGothIdProvider(providerType string, clientId string, clientSecret string, redirectUrl string, hostUrl string) *GothIdProvider {
 	var idp GothIdProvider
 	switch providerType {
 	case "Amazon":
@@ -102,8 +102,13 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 			Session:  &apple.Session{},
 		}
 	case "AzureAD":
+		domain := "common"
+		if hostUrl != "" {
+			domain = hostUrl
+		}
+
 		idp = GothIdProvider{
-			Provider: azureadv2.New(clientId, clientSecret, redirectUrl, azureadv2.ProviderOptions{Tenant: "common"}),
+			Provider: azureadv2.New(clientId, clientSecret, redirectUrl, azureadv2.ProviderOptions{Tenant: azureadv2.TenantType(domain)}),
 			Session:  &azureadv2.Session{},
 		}
 	case "Auth0":

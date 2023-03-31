@@ -90,7 +90,7 @@ func GetIdProvider(typ string, subType string, clientId string, clientSecret str
 	} else if typ == "Douyin" {
 		return NewDouyinIdProvider(clientId, clientSecret, redirectUrl)
 	} else if isGothSupport(typ) {
-		return NewGothIdProvider(typ, clientId, clientSecret, redirectUrl)
+		return NewGothIdProvider(typ, clientId, clientSecret, redirectUrl, hostUrl)
 	} else if typ == "Bilibili" {
 		return NewBilibiliIdProvider(clientId, clientSecret, redirectUrl)
 	}
