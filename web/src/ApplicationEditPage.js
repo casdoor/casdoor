@@ -867,6 +867,8 @@ class ApplicationEditPage extends React.Component {
 
   submitApplicationEdit(willExist) {
     const application = Setting.deepCopy(this.state.application);
+    application.providers = application.providers?.filter(provider => this.state.providers.map(provider => provider.name).includes(provider.name));
+
     ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
       .then((res) => {
         if (res.status === "ok") {
