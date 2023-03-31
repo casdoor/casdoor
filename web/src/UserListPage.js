@@ -70,6 +70,7 @@ class UserListPage extends BaseListPage {
     UserBackend.addUser(newUser)
       .then((res) => {
         if (res.status === "ok") {
+          sessionStorage.setItem("userListUrl", window.location.pathname);
           this.props.history.push({pathname: `/users/${newUser.owner}/${newUser.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
@@ -341,7 +342,10 @@ class UserListPage extends BaseListPage {
           const disabled = (record.owner === this.props.account.owner && record.name === this.props.account.name);
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/users/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => {
+                sessionStorage.setItem("userListUrl", window.location.pathname);
+                this.props.history.push(`/users/${record.owner}/${record.name}`);
+              }}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteUser(index)}
@@ -402,6 +406,8 @@ class UserListPage extends BaseListPage {
             const users = res.data;
             if (users.length > 0) {
               this.getOrganization(users[0].owner);
+            } else {
+              this.getOrganization(this.state.organizationName);
             }
           } else {
             if (Setting.isResponseDenied(res)) {
@@ -430,6 +436,8 @@ class UserListPage extends BaseListPage {
             const users = res.data;
             if (users.length > 0) {
               this.getOrganization(users[0].owner);
+            } else {
+              this.getOrganization(this.state.organizationName);
             }
           } else {
             if (Setting.isResponseDenied(res)) {

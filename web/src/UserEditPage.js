@@ -614,7 +614,7 @@ class UserEditPage extends React.Component {
     );
   }
 
-  submitUserEdit(willExist) {
+  submitUserEdit(needExit) {
     const user = Setting.deepCopy(this.state.user);
     UserBackend.updateUser(this.state.organizationName, this.state.userName, user)
       .then((res) => {
@@ -626,13 +626,18 @@ class UserEditPage extends React.Component {
           });
 
           if (this.props.history !== undefined) {
-            if (willExist) {
-              this.props.history.push("/users");
+            if (needExit) {
+              const userListUrl = sessionStorage.getItem("userListUrl");
+              if (userListUrl !== null) {
+                this.props.history.push(userListUrl);
+              } else {
+                this.props.history.push("/users");
+              }
             } else {
               this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
             }
           } else {
-            if (willExist) {
+            if (needExit) {
               if (this.state.returnUrl) {
                 window.location.href = this.state.returnUrl;
               }
