@@ -55,11 +55,10 @@ export function getUserApplication(owner, name) {
 }
 
 export function updateApplication(owner, name, application) {
-  const newApplication = Setting.deepCopy(application);
   return fetch(`${Setting.ServerUrl}/api/update-application?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
-    body: JSON.stringify(newApplication),
+    body: JSON.stringify(application),
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
