@@ -135,10 +135,12 @@ class App extends Component {
       this.setState({selectedMenuKey: "/applications"});
     } else if (uri.includes("/resources")) {
       this.setState({selectedMenuKey: "/resources"});
-    } else if (uri.includes("/tokens")) {
-      this.setState({selectedMenuKey: "/tokens"});
     } else if (uri.includes("/records")) {
       this.setState({selectedMenuKey: "/records"});
+    } else if (uri.includes("/tokens")) {
+      this.setState({selectedMenuKey: "/tokens"});
+    } else if (uri.includes("/sessions")) {
+      this.setState({selectedMenuKey: "/sessions"});
     } else if (uri.includes("/webhooks")) {
       this.setState({selectedMenuKey: "/webhooks"});
     } else if (uri.includes("/syncers")) {
