@@ -45,7 +45,7 @@ class SystemInfo extends React.Component {
         }).catch(error => {
           Setting.showMessage("error", `System info failed to get: ${error}`);
         });
-      }, 1000 * 3);
+      }, 1000 * 2);
       this.setState({intervalId: id});
     }).catch(error => {
       Setting.showMessage("error", `System info failed to get: ${error}`);
