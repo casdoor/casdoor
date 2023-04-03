@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package controllers
+package ldap
 
 import (
 	"fmt"
@@ -20,76 +20,78 @@ import (
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
-	"github.com/forestmgy/ldapserver"
+	ldap "github.com/forestmgy/ldapserver"
 	"github.com/lor00x/goldap/message"
 )
 
 func StartLdapServer() {
-	server := ldapserver.NewServer()
-	routes := ldapserver.NewRouteMux()
+	server := ldap.NewServer()
+	routes := ldap.NewRouteMux()
 
 	routes.Bind(handleBind)
 	routes.Search(handleSearch).Label(" SEARCH****")
 
 	server.Handle(routes)
-	server.ListenAndServe("0.0.0.0:" + conf.GetConfigString("ldapServerPort"))
+	err := server.ListenAndServe("0.0.0.0:" + conf.GetConfigString("ldapServerPort"))
+	if err != nil {
+		panic(err)
+	}
 }
 
-func handleBind(w ldapserver.ResponseWriter, m *ldapserver.Message) {
+func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 	r := m.GetBindRequest()
-	res := ldapserver.NewBindResponse(ldapserver.LDAPResultSuccess)
+	res := ldap.NewBindResponse(ldap.LDAPResultSuccess)
 
 	if r.AuthenticationChoice() == "simple" {
-		bindusername, bindorg, err := object.GetNameAndOrgFromDN(string(r.Name()))
+		bindUsername, bindOrg, err := getNameAndOrgFromDN(string(r.Name()))
 		if err != "" {
 			log.Printf("Bind failed ,ErrMsg=%s", err)
-			res.SetResultCode(ldapserver.LDAPResultInvalidDNSyntax)
+			res.SetResultCode(ldap.LDAPResultInvalidDNSyntax)
 			res.SetDiagnosticMessage("bind failed ErrMsg: " + err)
 			w.Write(res)
 			return
 		}
-		bindpassword := string(r.AuthenticationSimple())
-		binduser, err := object.CheckUserPassword(bindorg, bindusername, bindpassword, "en")
+
+		bindPassword := string(r.AuthenticationSimple())
+		bindUser, err := object.CheckUserPassword(object.CasdoorOrganization, bindUsername, bindPassword, "en")
 		if err != "" {
 			log.Printf("Bind failed User=%s, Pass=%#v, ErrMsg=%s", string(r.Name()), r.Authentication(), err)
-			res.SetResultCode(ldapserver.LDAPResultInvalidCredentials)
+			res.SetResultCode(ldap.LDAPResultInvalidCredentials)
 			res.SetDiagnosticMessage("invalid credentials ErrMsg: " + err)
 			w.Write(res)
 			return
 		}
-		if bindorg == "built-in" {
+
+		if bindOrg == "built-in" || bindUser.IsGlobalAdmin {
 			m.Client.IsGlobalAdmin, m.Client.IsOrgAdmin = true, true
-		} else if binduser.IsAdmin {
+		} else if bindUser.IsAdmin {
 			m.Client.IsOrgAdmin = true
 		}
+
 		m.Client.IsAuthenticated = true
-		m.Client.UserName = bindusername
-		m.Client.OrgName = bindorg
+		m.Client.UserName = bindUsername
+		m.Client.OrgName = bindOrg
 	} else {
-		res.SetResultCode(ldapserver.LDAPResultAuthMethodNotSupported)
+		res.SetResultCode(ldap.LDAPResultAuthMethodNotSupported)
 		res.SetDiagnosticMessage("Authentication method not supported,Please use Simple Authentication")
 	}
 	w.Write(res)
 }
 
-func handleSearch(w ldapserver.ResponseWriter, m *ldapserver.Message) {
-	res := ldapserver.NewSearchResultDoneResponse(ldapserver.LDAPResultSuccess)
+func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
+	res := ldap.NewSearchResultDoneResponse(ldap.LDAPResultSuccess)
 	if !m.Client.IsAuthenticated {
-		res.SetResultCode(ldapserver.LDAPResultUnwillingToPerform)
+		res.SetResultCode(ldap.LDAPResultUnwillingToPerform)
 		w.Write(res)
 		return
 	}
+
 	r := m.GetSearchRequest()
 	if r.FilterString() == "(objectClass=*)" {
 		w.Write(res)
 		return
 	}
-	name, org, errCode := object.GetUserNameAndOrgFromBaseDnAndFilter(string(r.BaseObject()), r.FilterString())
-	if errCode != ldapserver.LDAPResultSuccess {
-		res.SetResultCode(errCode)
-		w.Write(res)
-		return
-	}
+
 	// Handle Stop Signal (server stop / client disconnected / Abandoned request....)
 	select {
 	case <-m.Done:
@@ -97,16 +99,17 @@ func handleSearch(w ldapserver.ResponseWriter, m *ldapserver.Message) {
 		return
 	default:
 	}
-	users, errCode := object.GetFilteredUsers(m, name, org)
-	if errCode != ldapserver.LDAPResultSuccess {
-		res.SetResultCode(errCode)
+
+	users, code := GetFilteredUsers(m)
+	if code != ldap.LDAPResultSuccess {
+		res.SetResultCode(code)
 		w.Write(res)
 		return
 	}
-	for i := 0; i < len(users); i++ {
-		user := users[i]
+
+	for _, user := range users {
 		dn := fmt.Sprintf("cn=%s,%s", user.Name, string(r.BaseObject()))
-		e := ldapserver.NewSearchResultEntry(dn)
+		e := ldap.NewSearchResultEntry(dn)
 		e.AddAttribute("cn", message.AttributeValue(user.Name))
 		e.AddAttribute("uid", message.AttributeValue(user.Name))
 		e.AddAttribute("email", message.AttributeValue(user.Email))
@@ -116,23 +119,4 @@ func handleSearch(w ldapserver.ResponseWriter, m *ldapserver.Message) {
 		w.Write(e)
 	}
 	w.Write(res)
-}
-
-// get user password with hash type prefix
-// TODO not handle salt yet
-// @return {md5}5f4dcc3b5aa765d61d8327deb882cf99
-func getUserPasswordWithType(user *object.User) string {
-	org := object.GetOrganizationByUser(user)
-	if org.PasswordType == "" || org.PasswordType == "plain" {
-		return user.Password
-	}
-	prefix := org.PasswordType
-	if prefix == "salt" {
-		prefix = "sha256"
-	} else if prefix == "md5-salt" {
-		prefix = "md5"
-	} else if prefix == "pbkdf2-salt" {
-		prefix = "pbkdf2"
-	}
-	return fmt.Sprintf("{%s}%s", prefix, user.Password)
 }
