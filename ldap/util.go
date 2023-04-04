@@ -26,11 +26,22 @@ import (
 )
 
 func getNameAndOrgFromDN(DN string) (string, string, string) {
-	DNValue := strings.Split(DN, ",")
-	if len(DNValue) == 1 || strings.ToLower(DNValue[0])[0] != 'c' || strings.ToLower(DNValue[1])[0] != 'o' {
+	DNFields := strings.Split(DN, ",")
+	params := make(map[string]string, len(DNFields))
+	for _, field := range DNFields {
+		if strings.Contains(field, "=") {
+			k := strings.Split(field, "=")
+			params[k[0]] = k[1]
+		}
+	}
+
+	if params["cn"] == "" {
 		return "", "", "please use Admin Name format like cn=xxx,ou=xxx,dc=example,dc=com"
 	}
-	return DNValue[0][3:], DNValue[1][3:], ""
+	if params["ou"] == "" {
+		return params["cn"], object.CasdoorOrganization, ""
+	}
+	return params["cn"], params["ou"], ""
 }
 
 func getNameAndOrgFromFilter(baseDN, filter string) (string, string, int) {
