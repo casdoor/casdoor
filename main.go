@@ -23,7 +23,7 @@ import (
 	_ "github.com/beego/beego/session/redis"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/casdoor/controllers"
+	"github.com/casdoor/casdoor/ldap"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/routers"
@@ -81,7 +81,7 @@ func main() {
 	// logs.SetLevel(logs.LevelInformational)
 	logs.SetLogFuncCall(false)
 
-	go controllers.StartLdapServer()
+	go ldap.StartLdapServer()
 
 	beego.Run(fmt.Sprintf(":%v", port))
 }

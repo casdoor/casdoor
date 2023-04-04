@@ -115,7 +115,7 @@ func LdapUsersToLdapRespUsers(users []ldapUser) []LdapRespUser {
 }
 
 func isMicrosoftAD(Conn *goldap.Conn) (bool, error) {
-	SearchFilter := "(objectclass=*)"
+	SearchFilter := "(objectClass=*)"
 	SearchAttributes := []string{"vendorname", "vendorversion", "isGlobalCatalogReady", "forestFunctionality"}
 
 	searchReq := goldap.NewSearchRequest("",
@@ -126,7 +126,7 @@ func isMicrosoftAD(Conn *goldap.Conn) (bool, error) {
 		return false, err
 	}
 	if len(searchResult.Entries) == 0 {
-		return false, errors.New("no result")
+		return false, nil
 	}
 	isMicrosoft := false
 	var ldapServerType ldapServerType

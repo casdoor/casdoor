@@ -9,18 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-          image: mysql:5.7
-          env:
-            MYSQL_DATABASE: casdoor
-            MYSQL_ROOT_PASSWORD: 123456
-          ports:
-              - 3306:3306
-          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: casdoor
+          MYSQL_ROOT_PASSWORD: 123456
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
         with:
           go-version: '^1.16.5'
+          cache-dependency-path: ./go.mod
       - name: Tests
         run: |
           go test -v $(go list ./...) -tags skipCi
@@ -31,14 +32,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ go-tests ]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
-      # cache
-      - uses: c-hive/gha-yarn-cache@v2
-        with:
-          directory: ./web
+          cache: 'yarn'
+          cache-dependency-path: ./web/yarn.lock
       - run: yarn install && CI=false yarn run build
         working-directory: ./web
 
@@ -47,10 +46,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ go-tests ]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
         with:
           go-version: '^1.16.5'
+          cache-dependency-path: ./go.mod
       - run: go version
       - name: Build
         run: |
@@ -63,13 +63,14 @@ jobs:
     needs: [ go-tests ]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version: '^1.16.5'
+          cache-dependency-path: ./go.mod
 
       # gen a dummy config file
       - run: touch dummy.yml
-      
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
@@ -82,35 +83,35 @@ jobs:
     needs: [ go-tests ]
     services:
       mysql:
-          image: mysql:5.7
-          env:
-            MYSQL_DATABASE: casdoor
-            MYSQL_ROOT_PASSWORD: 123456
-          ports:
-              - 3306:3306
-          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: casdoor
+          MYSQL_ROOT_PASSWORD: 123456
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
         with:
           go-version: '^1.16.5'
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 16    
-      - name: back start
+          cache-dependency-path: ./go.mod
+      - name: start backend
         run: nohup go run ./main.go &
         working-directory: ./
-      - name: front install
-        run: yarn install
-        working-directory: ./web
-      - name: front start
-        run: nohup yarn start &
-        working-directory: ./web  
-      - uses: cypress-io/github-action@v4
+      - uses: actions/setup-node@v3
         with:
-          working-directory: ./web
+          node-version: 16
+          cache: 'yarn'
+          cache-dependency-path: ./web/yarn.lock
+      - run: yarn install
+        working-directory: ./web
+      - uses: cypress-io/github-action@v5
+        with:
+          start: yarn start
           wait-on: 'http://localhost:7001'
           wait-on-timeout: 180
+          working-directory: ./web
 
       - uses: actions/upload-artifact@v3
         if: failure()
@@ -121,7 +122,7 @@ jobs:
         if: always()
         with:
           name: cypress-videos
-          path: ./web/cypress/videos    
+          path: ./web/cypress/videos
 
   release-and-push:
     name: Release And Push
@@ -130,11 +131,11 @@ jobs:
     needs: [ frontend, backend, linter, e2e ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: -1
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
 
@@ -166,10 +167,10 @@ jobs:
           elif [ ${old_array[1]} != ${new_array[1]} ]
           then 
               echo ::set-output name=push::'true'
-              
+          
           else
               echo ::set-output name=push::'false'
-              
+          
           fi
 
       - name: Set up QEMU
