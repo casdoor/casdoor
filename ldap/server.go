@@ -34,7 +34,7 @@ func StartLdapServer() {
 	server.Handle(routes)
 	err := server.ListenAndServe("0.0.0.0:" + conf.GetConfigString("ldapServerPort"))
 	if err != nil {
-		panic(err)
+		return
 	}
 }
 
