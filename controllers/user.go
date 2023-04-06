@@ -95,13 +95,13 @@ func (c *ApiController) GetUser() {
 
 	owner := c.Input().Get("owner")
 	if owner == "" {
-		owner, _ = util.GetOwnerAndNameFromId(id)
+		owner = util.GetOwnerFromId(id)
 	}
 
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", owner))
 	if !organization.IsProfilePublic {
 		requestUserId := c.GetSessionUsername()
-		hasPermission, err := object.CheckUserPermission(requestUserId, id, owner, false, c.GetAcceptLanguage())
+		hasPermission, err := object.CheckUserPermission(requestUserId, id, false, c.GetAcceptLanguage())
 		if !hasPermission {
 			c.ResponseError(err.Error())
 			return
@@ -276,14 +276,34 @@ func (c *ApiController) SetPassword() {
 	userName := c.Ctx.Request.Form.Get("userName")
 	oldPassword := c.Ctx.Request.Form.Get("oldPassword")
 	newPassword := c.Ctx.Request.Form.Get("newPassword")
+	code := c.Ctx.Request.Form.Get("code")
 
-	requestUserId := c.GetSessionUsername()
+	if strings.Contains(newPassword, " ") {
+		c.ResponseError(c.T("user:New password cannot contain blank space."))
+		return
+	}
+	if len(newPassword) <= 5 {
+		c.ResponseError(c.T("user:New password must have at least 6 characters"))
+		return
+	}
+
 	userId := util.GetId(userOwner, userName)
 
-	hasPermission, err := object.CheckUserPermission(requestUserId, userId, userOwner, true, c.GetAcceptLanguage())
-	if !hasPermission {
-		c.ResponseError(err.Error())
+	requestUserId := c.GetSessionUsername()
+	if requestUserId == "" && code == "" {
 		return
+	} else if code == "" {
+		hasPermission, err := object.CheckUserPermission(requestUserId, userId, true, c.GetAcceptLanguage())
+		if !hasPermission {
+			c.ResponseError(err.Error())
+			return
+		}
+	} else {
+		if code != c.GetSession("verifiedCode") {
+			c.ResponseError("")
+			return
+		}
+		c.SetSession("verifiedCode", "")
 	}
 
 	targetUser := object.GetUser(userId)
@@ -294,16 +314,6 @@ func (c *ApiController) SetPassword() {
 			c.ResponseError(msg)
 			return
 		}
-	}
-
-	if strings.Contains(newPassword, " ") {
-		c.ResponseError(c.T("user:New password cannot contain blank space."))
-		return
-	}
-
-	if len(newPassword) <= 5 {
-		c.ResponseError(c.T("user:New password must have at least 6 characters"))
-		return
 	}
 
 	targetUser.Password = newPassword

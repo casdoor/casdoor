@@ -246,33 +246,14 @@ func (c *ApiController) Login() {
 		var msg string
 
 		if form.Password == "" {
-			var verificationCodeType string
-			var checkResult string
-
-			if form.Name != "" {
-				user = object.GetUserByFields(form.Organization, form.Name)
-			}
-
-			// check result through Email or Phone
-			var checkDest string
-			if strings.Contains(form.Username, "@") {
-				verificationCodeType = "email"
-				if user != nil && util.GetMaskedEmail(user.Email) == form.Username {
-					form.Username = user.Email
-				}
-				checkDest = form.Username
-			} else {
-				verificationCodeType = "phone"
-				if user != nil && util.GetMaskedPhone(user.Phone) == form.Username {
-					form.Username = user.Phone
-				}
-			}
-
 			if user = object.GetUserByFields(form.Organization, form.Username); user == nil {
 				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(form.Organization, form.Username)))
 				return
 			}
-			if verificationCodeType == "phone" {
+
+			verificationCodeType := object.GetVerifyType(form.Username)
+			var checkDest string
+			if verificationCodeType == object.VerifyTypePhone {
 				form.CountryCode = user.GetCountryCode(form.CountryCode)
 				var ok bool
 				if checkDest, ok = util.GetE164Number(form.Username, form.CountryCode); !ok {
@@ -281,7 +262,8 @@ func (c *ApiController) Login() {
 				}
 			}
 
-			checkResult = object.CheckSigninCode(user, checkDest, form.Code, c.GetAcceptLanguage())
+			// check result through Email or Phone
+			checkResult := object.CheckSigninCode(user, checkDest, form.Code, c.GetAcceptLanguage())
 			if len(checkResult) != 0 {
 				c.ResponseError(fmt.Sprintf("%s - %s", verificationCodeType, checkResult))
 				return

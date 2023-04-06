@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
@@ -36,6 +37,11 @@ const (
 	wrongCodeError          = 1
 	noRecordError           = 2
 	timeoutError            = 3
+)
+
+const (
+	VerifyTypePhone = "phone"
+	VerifyTypeEmail = "email"
 )
 
 type VerificationRecord struct {
@@ -210,6 +216,14 @@ func CheckSigninCode(user *User, dest, code, lang string) string {
 		return recordSigninErrorInfo(user, lang)
 	default:
 		return result.Msg
+	}
+}
+
+func GetVerifyType(username string) (verificationCodeType string) {
+	if strings.Contains(username, "@") {
+		return VerifyTypeEmail
+	} else {
+		return VerifyTypeEmail
 	}
 }
 
