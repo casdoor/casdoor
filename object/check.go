@@ -250,10 +250,12 @@ func filterField(field string) bool {
 	return reFieldWhiteList.MatchString(field)
 }
 
-func CheckUserPermission(requestUserId, userId, userOwner string, strict bool, lang string) (bool, error) {
+func CheckUserPermission(requestUserId, userId string, strict bool, lang string) (bool, error) {
 	if requestUserId == "" {
 		return false, fmt.Errorf(i18n.Translate(lang, "general:Please login first"))
 	}
+
+	userOwner := util.GetOwnerFromId(userId)
 
 	if userId != "" {
 		targetUser := GetUser(userId)

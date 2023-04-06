@@ -33,9 +33,8 @@ class ForgetPage extends React.Component {
       classes: props,
       applicationName: props.applicationName ?? props.match.params?.applicationName,
       msg: null,
-      userId: "",
-      username: "",
       name: "",
+      username: "",
       phone: "",
       email: "",
       dest: "",
@@ -86,7 +85,7 @@ class ForgetPage extends React.Component {
             const phone = res.data.phone;
             const email = res.data.email;
 
-            if (phone === "" && email === "") {
+            if (!phone && !email) {
               Setting.showMessage("error", "no verification method!");
             } else {
               this.setState({
@@ -124,18 +123,16 @@ class ForgetPage extends React.Component {
         });
       break;
     case "step2":
-      const oAuthParams = Util.getOAuthGetParameters();
-
-      AuthBackend.login({
+      UserBackend.verifyCode({
         application: forms.step2.getFieldValue("application"),
         organization: forms.step2.getFieldValue("organization"),
         username: forms.step2.getFieldValue("dest"),
         name: this.state.name,
         code: forms.step2.getFieldValue("code"),
         type: "login",
-      }, oAuthParams).then(res => {
+      }).then(res => {
         if (res.status === "ok") {
-          this.setState({current: 2, userId: res.data});
+          this.setState({current: 2, code: forms.step2.getFieldValue("code")});
         } else {
           Setting.showMessage("error", res.msg);
         }
@@ -150,7 +147,7 @@ class ForgetPage extends React.Component {
   onFinish(values) {
     values.username = this.state.name;
     values.userOwner = this.getApplicationObj()?.organizationObj.name;
-    UserBackend.setPassword(values.userOwner, values.username, "", values?.newPassword).then(res => {
+    UserBackend.setPassword(values.userOwner, values.username, "", values?.newPassword, this.state.code).then(res => {
       if (res.status === "ok") {
         Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
       } else {
@@ -387,7 +384,6 @@ class ForgetPage extends React.Component {
               hasFeedback
             >
               <Input.Password
-                disabled={this.state.userId === ""}
                 prefix={<LockOutlined />}
                 placeholder={i18next.t("general:Password")}
               />
@@ -414,14 +410,13 @@ class ForgetPage extends React.Component {
               ]}
             >
               <Input.Password
-                disabled={this.state.userId === ""}
                 prefix={<CheckCircleOutlined />}
                 placeholder={i18next.t("signup:Confirm")}
               />
             </Form.Item>
             <br />
             <Form.Item hidden={this.state.current !== 2}>
-              <Button block type="primary" htmlType="submit" disabled={this.state.userId === ""}>
+              <Button block type="primary" htmlType="submit">
                 {i18next.t("forget:Change Password")}
               </Button>
             </Form.Item>

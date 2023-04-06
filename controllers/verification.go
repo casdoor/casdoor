@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -110,7 +111,7 @@ func (c *ApiController) SendVerificationCode() {
 	sendResp := errors.New("invalid dest type")
 
 	switch destType {
-	case "email":
+	case object.VerifyTypeEmail:
 		if !util.IsEmailValid(dest) {
 			c.ResponseError(c.T("check:Email is invalid"))
 			return
@@ -132,7 +133,7 @@ func (c *ApiController) SendVerificationCode() {
 
 		provider := application.GetEmailProvider()
 		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, remoteAddr, dest)
-	case "phone":
+	case object.VerifyTypePhone:
 		if method == LoginVerification || method == ForgetVerification {
 			if user != nil && util.GetMaskedPhone(user.Phone) == dest {
 				dest = user.Phone
@@ -187,7 +188,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 
 	checkDest := dest
 	organization := object.GetOrganizationByUser(user)
-	if destType == "phone" {
+	if destType == object.VerifyTypePhone {
 		if object.HasUserByField(user.Owner, "phone", dest) {
 			c.ResponseError(c.T("check:Phone already exists"))
 			return
@@ -207,7 +208,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), user.CountryCode))
 			return
 		}
-	} else if destType == "email" {
+	} else if destType == object.VerifyTypeEmail {
 		if object.HasUserByField(user.Owner, "email", dest) {
 			c.ResponseError(c.T("check:Email already exists"))
 			return
@@ -230,10 +231,10 @@ func (c *ApiController) ResetEmailOrPhone() {
 	}
 
 	switch destType {
-	case "email":
+	case object.VerifyTypeEmail:
 		user.Email = dest
 		object.SetUserField(user, "email", user.Email)
-	case "phone":
+	case object.VerifyTypePhone:
 		user.Phone = dest
 		object.SetUserField(user, "phone", user.Phone)
 	default:
@@ -242,6 +243,60 @@ func (c *ApiController) ResetEmailOrPhone() {
 	}
 
 	object.DisableVerificationCode(checkDest)
+	c.ResponseOk()
+}
+
+// VerifyCode
+// @Tag Account API
+// @Title VerifyCode
+// @router /api/verify-code [post]
+func (c *ApiController) VerifyCode() {
+	var form RequestForm
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	var user *object.User
+	if form.Name != "" {
+		user = object.GetUserByFields(form.Organization, form.Name)
+	}
+
+	var checkDest string
+	if strings.Contains(form.Username, "@") {
+		if user != nil && util.GetMaskedEmail(user.Email) == form.Username {
+			form.Username = user.Email
+		}
+		checkDest = form.Username
+	} else {
+		if user != nil && util.GetMaskedPhone(user.Phone) == form.Username {
+			form.Username = user.Phone
+		}
+	}
+
+	if user = object.GetUserByFields(form.Organization, form.Username); user == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(form.Organization, form.Username)))
+		return
+	}
+
+	verificationCodeType := object.GetVerifyType(form.Username)
+	if verificationCodeType == object.VerifyTypePhone {
+		form.CountryCode = user.GetCountryCode(form.CountryCode)
+		var ok bool
+		if checkDest, ok = util.GetE164Number(form.Username, form.CountryCode); !ok {
+			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), form.CountryCode))
+			return
+		}
+	}
+
+	if result := object.CheckVerificationCode(checkDest, form.Code, c.GetAcceptLanguage()); result.Code != object.VerificationSuccess {
+		c.ResponseError(result.Msg)
+		return
+	}
+	object.DisableVerificationCode(checkDest)
+	c.SetSession("verifiedCode", form.Code)
+
 	c.ResponseOk()
 }
 

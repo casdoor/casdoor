@@ -108,6 +108,7 @@ p, *, *, POST, /api/set-password, *, *
 p, *, *, POST, /api/send-verification-code, *, *
 p, *, *, GET, /api/get-captcha, *, *
 p, *, *, POST, /api/verify-captcha, *, *
+p, *, *, POST, /api/verify-code, *, *
 p, *, *, POST, /api/reset-email-or-phone, *, *
 p, *, *, POST, /api/upload-resource, *, *
 p, *, *, GET, /.well-known/openid-configuration, *, *

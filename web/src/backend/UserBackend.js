@@ -93,12 +93,16 @@ export function getAffiliationOptions(url, code) {
   }).then(res => res.json());
 }
 
-export function setPassword(userOwner, userName, oldPassword, newPassword) {
+export function setPassword(userOwner, userName, oldPassword, newPassword, code = "") {
   const formData = new FormData();
   formData.append("userOwner", userOwner);
   formData.append("userName", userName);
   formData.append("oldPassword", oldPassword);
   formData.append("newPassword", newPassword);
+  if (code) {
+    formData.append("code", code);
+  }
+
   return fetch(`${Setting.ServerUrl}/api/set-password`, {
     method: "POST",
     credentials: "include",
@@ -187,4 +191,15 @@ export function getCaptcha(owner, name, isCurrentProvider) {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json()).then(res => res.data);
+}
+
+export function verifyCode(values) {
+  return fetch(`${Setting.ServerUrl}/api/verify-code`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(values),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
 }
