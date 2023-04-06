@@ -352,7 +352,7 @@ class ProviderEditPage extends React.Component {
                           [
                             {id: "Normal", name: i18next.t("provider:Normal")},
                             {id: "Silent", name: i18next.t("provider:Silent")},
-                          ].map((method, index) => <Option key={index} value={method.name}>{method.name}</Option>)
+                          ].map((method, index) => <Option key={index} value={method.id}>{method.name}</Option>)
                         }
                       </Select>
                     </Col>
