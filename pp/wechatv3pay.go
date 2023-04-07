@@ -41,6 +41,10 @@ func NewWechatPaymentProviderV3(appId string, mchId string, mchCertSerialNumber 
 	if err != nil {
 		panic(err)
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 	pp.ClientV3 = clientV3
 	return pp
 }
