@@ -30,7 +30,7 @@ type WechatPaymentProviderV3 struct {
 }
 
 func NewWechatPaymentProviderV3(appId string, mchId string, mchCertSerialNumber string, apiV3Key string, privateKey string) *WechatPaymentProviderV3 {
-	pp := &WechatPaymentProviderV3{appId: appId}
+	pp := &WechatPaymentProviderV3{ appId: appId }
 
 	clientV3, err := wechat.NewClientV3(mchId, mchCertSerialNumber, apiV3Key, privateKey)
 	if err != nil {
