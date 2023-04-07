@@ -28,9 +28,11 @@ func GetPaymentProvider(typ string, appId string, clientSecret string, host stri
 	} else if typ == "GC" {
 		return NewGcPaymentProvider(appId, clientSecret, host)
 	}
-	//, mchId string, mchCertSerialNumber string
+
+	// , mchId string, mchCertSerialNumber string
 	// else if typ == "WeChat Pay" {
 	//	 return NewWechatPaymentProviderV3(appId, mchId, mchCertSerialNumber, clientSecret, appPrivateKey)
 	// }
+
 	return nil
 }
