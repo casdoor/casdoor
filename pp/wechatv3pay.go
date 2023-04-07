@@ -26,7 +26,7 @@ import (
 
 type WechatPaymentProviderV3 struct {
 	ClientV3 *wechat.ClientV3
-	appId string
+	appId    string
 }
 
 func NewWechatPaymentProviderV3(appId string, mchId string, mchCertSerialNumber string, apiV3Key string, privateKey string) *WechatPaymentProviderV3 {
