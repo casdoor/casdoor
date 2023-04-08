@@ -21,7 +21,7 @@ export const AgreementModal = (props) => {
   const [doc, setDoc] = useState("");
 
   useEffect(() => {
-    getTermsOfUseContent(application.termsOfUseUrl).then((data) => {
+    getTermsOfUseContent(application.termsOfUse).then((data) => {
       setDoc(data);
     });
   }, []);
