@@ -823,8 +823,8 @@ class ProviderEditPage extends React.Component {
                   {Setting.getLabel("appId", "appId")} :
                 </Col>
                 <Col span={22} >
-                  <Input value={this.state.provider.clientId2} onChange={e => {
-                    this.updateProviderField("clientId2", e.target.value);
+                  <Input value={this.state.provider.clientId} onChange={e => {
+                    this.updateProviderField("clientId", e.target.value);
                   }} />
                 </Col>
               </Row>
