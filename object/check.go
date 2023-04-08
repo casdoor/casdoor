@@ -342,7 +342,8 @@ func CheckUsername(username string, lang string) string {
 	return ""
 }
 
-func CheckUpdateUser(oldUser *User, user *User, lang string) string {
+func CheckUpdateUser(oldUser, user *User, lang string) string {
+
 	if user.DisplayName == "" {
 		return i18n.Translate(lang, "user:Display name cannot be empty")
 	}
