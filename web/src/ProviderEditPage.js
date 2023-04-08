@@ -815,6 +815,22 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           ) : null
         }
+        {
+          this.state.provider.category === "Payment" && this.state.provider.type === "WeChat Pay" ? (
+            <div>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={2}>
+                  {Setting.getLabel("appId", "appId")} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.clientId2} onChange={e => {
+                    this.updateProviderField("clientId2", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            </div>
+          ) : null
+        }
         {this.getAppIdRow(this.state.provider)}
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
