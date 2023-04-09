@@ -32,6 +32,7 @@ class ChatListPage extends BaseListPage {
       updatedTime: moment().format(),
       organization: this.props.account.owner,
       displayName: `New Chat - ${randomName}`,
+      type: "Single",
       user1: `${this.props.account.owner}/${this.props.account.name}`,
       user2: "",
       users: [`${this.props.account.owner}/${this.props.account.name}`],
@@ -133,6 +134,22 @@ class ChatListPage extends BaseListPage {
         // width: '100px',
         sorter: true,
         ...this.getColumnSearchProps("displayName"),
+      },
+      {
+        title: i18next.t("provider:Type"),
+        dataIndex: "type",
+        key: "type",
+        width: "110px",
+        sorter: true,
+        filterMultiple: false,
+        filters: [
+          {text: "Single", value: "Single"},
+          {text: "Group", value: "Group"},
+          {text: "AI", value: "AI"},
+        ],
+        render: (text, record, index) => {
+          return i18next.t(`chat:${text}`);
+        },
       },
       {
         title: i18next.t("chat:User1"),
