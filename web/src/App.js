@@ -629,7 +629,7 @@ class App extends Component {
           }
         </Header>
         <Content style={{display: "flex", flexDirection: "column"}} >
-          {Setting.isMobile() ?
+          {(Setting.isMobile() || window.location.pathname === "/chat") ?
             this.renderRouter() :
             <Card className="content-warp-card">
               {this.renderRouter()}

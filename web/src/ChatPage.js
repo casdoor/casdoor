@@ -22,7 +22,7 @@ import * as MessageBackend from "./backend/MessageBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 
-class ChatListPage extends BaseListPage {
+class ChatPage extends BaseListPage {
   newChat() {
     const randomName = Setting.getRandomName();
     return {
@@ -77,7 +77,7 @@ class ChatListPage extends BaseListPage {
 
   renderTable(chats) {
     return (
-      <div style={{display: "flex", height: "calc(100vh - 197px)"}}>
+      <div style={{display: "flex", height: "calc(100vh - 140px)"}}>
         <div style={{width: "250px", height: "100%", backgroundColor: "lightblue"}}>
           <ChatMenu chats={this.state.data} onSelect={(i) => {
             const chat = chats[i];
@@ -136,4 +136,4 @@ class ChatListPage extends BaseListPage {
   }
 }
 
-export default ChatListPage;
+export default ChatPage;
