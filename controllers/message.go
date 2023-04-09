@@ -37,8 +37,17 @@ func (c *ApiController) GetMessages() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+	chat := c.Input().Get("chat")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedMessages(object.GetMessages(owner))
+		var messages []*object.Message
+		if chat == "" {
+			messages = object.GetMessages(owner)
+		} else {
+			messages = object.GetChatMessages(chat)
+		}
+
+		c.Data["json"] = object.GetMaskedMessages(messages)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)

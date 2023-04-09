@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Col, Row} from "antd";
-// import React from "react";
-import moment from "moment";
 import React from "react";
+import moment from "moment";
 import ChatMenu from "./ChatMenu";
+import ChatBox from "./ChatBox";
 import * as Setting from "./Setting";
 import * as ChatBackend from "./backend/ChatBackend";
+import * as MessageBackend from "./backend/MessageBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 
@@ -77,14 +77,17 @@ class ChatListPage extends BaseListPage {
 
   renderTable(chats) {
     return (
-      <Row style={{marginTop: "10px"}} >
-        <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-          <ChatMenu chats={this.state.data} />
-        </Col>
-        <Col span={22} >
-          222
-        </Col>
-      </Row>
+      <div style={{display: "flex", height: "calc(100vh - 197px)"}}>
+        <div style={{width: "250px", height: "100%", backgroundColor: "lightblue"}}>
+          <ChatMenu chats={this.state.data} onSelect={(i) => {
+            const chat = chats[i];
+            this.getMessages(chat.name);
+          }} />
+        </div>
+        <div style={{flex: 1, height: "100%", backgroundColor: "lightgreen"}}>
+          <ChatBox messages={this.state.messages} account={this.props.account} />
+        </div>
+      </div>
     );
   }
 
@@ -122,6 +125,15 @@ class ChatListPage extends BaseListPage {
         }
       });
   };
+
+  getMessages(chatName) {
+    MessageBackend.getChatMessages(chatName)
+      .then((messages) => {
+        this.setState({
+          messages: messages,
+        });
+      });
+  }
 }
 
 export default ChatListPage;

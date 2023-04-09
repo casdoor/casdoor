@@ -27,7 +27,7 @@ type Message struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	Organization string `xorm:"varchar(100)" json:"organization"`
-	Chat         string `xorm:"varchar(100)" json:"chat"`
+	Chat         string `xorm:"varchar(100) index" json:"chat"`
 	Author       string `xorm:"varchar(100)" json:"author"`
 	Text         string `xorm:"mediumtext" json:"text"`
 }
@@ -60,6 +60,16 @@ func GetMessageCount(owner, field, value string) int {
 func GetMessages(owner string) []*Message {
 	messages := []*Message{}
 	err := adapter.Engine.Desc("created_time").Find(&messages, &Message{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return messages
+}
+
+func GetChatMessages(chat string) []*Message {
+	messages := []*Message{}
+	err := adapter.Engine.Desc("created_time").Find(&messages, &Message{Chat: chat})
 	if err != nil {
 		panic(err)
 	}

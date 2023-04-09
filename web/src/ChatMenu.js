@@ -14,13 +14,14 @@
 
 import React from "react";
 import {Menu} from "antd";
-import {MailOutlined} from "@ant-design/icons";
+import {LayoutOutlined} from "@ant-design/icons";
 
 class ChatMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       openKeys: ["0"],
+      selectedKeys: ["0-0"],
     };
   }
 
@@ -36,19 +37,37 @@ class ChatMenu extends React.Component {
     return Object.keys(categories).map((category, index) => {
       return {
         key: `${index}`,
-        icon: <MailOutlined />,
+        icon: <LayoutOutlined />,
         label: category,
-        children: categories[category].map((chat) => ({
-          key: chat.id,
-          label: chat.displayName,
-        })),
+        children: categories[category].map((chat, chatIndex) => {
+          const globalChatIndex = chats.indexOf(chat);
+          return {
+            key: `${index}-${chatIndex}`,
+            dataIndex: globalChatIndex,
+            label: chat.displayName,
+          };
+        }),
       };
     });
   }
 
-  // 处理菜单展开事件
+  onSelect = (info) => {
+    const [categoryIndex, chatIndex] = info.selectedKeys[0].split("-").map(Number);
+    const selectedItem = this.chatsToItems(this.props.chats)[categoryIndex].children[chatIndex];
+    this.setState({selectedKeys: [`${categoryIndex}-${chatIndex}`]});
+
+    if (this.props.onSelect) {
+      this.props.onSelect(selectedItem.dataIndex);
+    }
+  };
+
+  getRootSubmenuKeys(items) {
+    return items.map((item, index) => `${index}`);
+  }
+
   onOpenChange = (keys) => {
-    const rootSubmenuKeys = this.props.chats.map((_, index) => `${index}`);
+    const items = this.chatsToItems(this.props.chats);
+    const rootSubmenuKeys = this.getRootSubmenuKeys(items);
     const latestOpenKey = keys.find((key) => this.state.openKeys.indexOf(key) === -1);
 
     if (rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
@@ -65,10 +84,9 @@ class ChatMenu extends React.Component {
       <Menu
         mode="inline"
         openKeys={this.state.openKeys}
+        selectedKeys={this.state.selectedKeys}
         onOpenChange={this.onOpenChange}
-        style={{
-          width: 256,
-        }}
+        onSelect={this.onSelect}
         items={items}
       />
     );
