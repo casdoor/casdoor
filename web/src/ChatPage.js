@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import {Spin} from "antd";
 import moment from "moment";
 import ChatMenu from "./ChatMenu";
 import ChatBox from "./ChatBox";
@@ -76,18 +77,20 @@ class ChatPage extends BaseListPage {
   }
 
   renderTable(chats) {
-    return (
-      <div style={{display: "flex", height: "calc(100vh - 140px)"}}>
-        <div style={{width: "250px", height: "100%", backgroundColor: "lightblue"}}>
-          <ChatMenu chats={this.state.data} onSelect={(i) => {
-            const chat = chats[i];
-            this.getMessages(chat.name);
-          }} />
+    return (this.state.loading) ? <Spin size="large" style={{marginLeft: "50%", marginTop: "10%"}} /> : (
+      (
+        <div style={{display: "flex", height: "calc(100vh - 140px)"}}>
+          <div style={{width: "250px", height: "100%", backgroundColor: "lightblue"}}>
+            <ChatMenu chats={chats} onSelect={(i) => {
+              const chat = chats[i];
+              this.getMessages(chat.name);
+            }} />
+          </div>
+          <div style={{flex: 1, height: "100%", backgroundColor: "lightgreen"}}>
+            <ChatBox messages={this.state.messages} account={this.props.account} />
+          </div>
         </div>
-        <div style={{flex: 1, height: "100%", backgroundColor: "lightgreen"}}>
-          <ChatBox messages={this.state.messages} account={this.props.account} />
-        </div>
-      </div>
+      )
     );
   }
 

@@ -49,27 +49,38 @@ class ChatBox extends React.Component {
         <List
           style={{maxHeight: "calc(100vh - 140px)", overflowY: "auto"}}
           itemLayout="horizontal"
-          dataSource={this.props.messages}
-          renderItem={(item, index) => (
-            <List.Item style={{
-              backgroundColor: index % 2 === 0 ? "white" : "rgb(247,247,248)",
-              borderBottom: "1px solid rgb(229, 229, 229)",
-              position: "relative",
-            }}>
-              <div style={{width: "800px", margin: "0 auto", position: "relative"}}>
-                <List.Item.Meta
-                  avatar={<Avatar style={{width: "30px", height: "30px", borderRadius: "3px"}} src={item.author === `${this.props.account.owner}/${this.props.account.name}` ? this.props.account.avatar : "https://cdn.casbin.com/casdoor/resource/built-in/admin/gpt.png"} />}
-                  title={<div style={{fontSize: "16px", fontWeight: "normal", lineHeight: "24px", marginTop: "-15px", marginLeft: "5px", marginRight: "80px"}}>{item.text}</div>}
-                />
-                <div style={{position: "absolute", top: "0px", right: "0px"}}
-                >
-                  <CopyOutlined style={{color: "rgb(172,172,190)", margin: "5px"}} />
-                  <LikeOutlined style={{color: "rgb(172,172,190)", margin: "5px"}} />
-                  <DislikeOutlined style={{color: "rgb(172,172,190)", margin: "5px"}} />
+          dataSource={this.props.messages === undefined ? undefined : [...this.props.messages, {}]}
+          renderItem={(item, index) => {
+            if (Object.keys(item).length === 0 && item.constructor === Object) {
+              return <List.Item style={{
+                height: "160px",
+                backgroundColor: index % 2 === 0 ? "white" : "rgb(247,247,248)",
+                borderBottom: "1px solid rgb(229, 229, 229)",
+                position: "relative",
+              }} />;
+            }
+
+            return (
+              <List.Item style={{
+                backgroundColor: index % 2 === 0 ? "white" : "rgb(247,247,248)",
+                borderBottom: "1px solid rgb(229, 229, 229)",
+                position: "relative",
+              }}>
+                <div style={{width: "800px", margin: "0 auto", position: "relative"}}>
+                  <List.Item.Meta
+                    avatar={<Avatar style={{width: "30px", height: "30px", borderRadius: "3px"}} src={item.author === `${this.props.account.owner}/${this.props.account.name}` ? this.props.account.avatar : "https://cdn.casbin.com/casdoor/resource/built-in/admin/gpt.png"} />}
+                    title={<div style={{fontSize: "16px", fontWeight: "normal", lineHeight: "24px", marginTop: "-15px", marginLeft: "5px", marginRight: "80px"}}>{item.text}</div>}
+                  />
+                  <div style={{position: "absolute", top: "0px", right: "0px"}}
+                  >
+                    <CopyOutlined style={{color: "rgb(172,172,190)", margin: "5px"}} />
+                    <LikeOutlined style={{color: "rgb(172,172,190)", margin: "5px"}} />
+                    <DislikeOutlined style={{color: "rgb(172,172,190)", margin: "5px"}} />
+                  </div>
                 </div>
-              </div>
-            </List.Item>
-          )}
+              </List.Item>
+            );
+          }}
         />
         <div style={{
           position: "absolute",

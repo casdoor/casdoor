@@ -19,8 +19,12 @@ import {LayoutOutlined} from "@ant-design/icons";
 class ChatMenu extends React.Component {
   constructor(props) {
     super(props);
+
+    const items = this.chatsToItems(this.props.chats);
+    const openKeys = items.map((item) => item.key);
+
     this.state = {
-      openKeys: ["0"],
+      openKeys: openKeys,
       selectedKeys: ["0-0"],
     };
   }
