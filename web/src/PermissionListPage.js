@@ -139,7 +139,7 @@ class PermissionListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("users"),
         render: (text, record, index) => {
-          return Setting.getTags(text);
+          return Setting.getTags(text, "users");
         },
       },
       {
@@ -150,7 +150,7 @@ class PermissionListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("roles"),
         render: (text, record, index) => {
-          return Setting.getTags(text);
+          return Setting.getTags(text, "roles");
         },
       },
       {
