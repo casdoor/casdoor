@@ -13,30 +13,103 @@
 // limitations under the License.
 
 import React from "react";
-import {Avatar, List} from "antd";
-import {CopyOutlined, DislikeOutlined, LikeOutlined} from "@ant-design/icons";
+import {Avatar, Input, List} from "antd";
+import {CopyOutlined, DislikeOutlined, LikeOutlined, SendOutlined} from "@ant-design/icons";
+import * as Setting from "./Setting";
+
+const {TextArea} = Input;
 
 class ChatBox extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      inputValue: "",
+    };
+  }
+
+  handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+
+      if (this.state.inputValue !== "") {
+        this.send(this.state.inputValue);
+        this.setState({inputValue: ""});
+      }
+    }
+  };
+
+  send = (text) => {
+    Setting.showMessage("success", text);
+    this.setState({inputValue: ""});
+  };
+
   render() {
     return (
-      <List
-        itemLayout="horizontal"
-        dataSource={this.props.messages}
-        renderItem={(item, index) => (
-          <List.Item style={{backgroundColor: index % 2 === 0 ? "white" : "rgb(247,247,248)", borderBottom: "1px solid rgb(229, 229, 229)", position: "relative"}}>
-            <List.Item.Meta
-              avatar={<Avatar style={{width: "30px", height: "30px", borderRadius: "3px"}} src={item.author === `${this.props.account.owner}/${this.props.account.name}` ? this.props.account.avatar : "https://cdn.casbin.com/casdoor/resource/built-in/admin/gpt.png"} />}
-              title={<div style={{fontSize: "16px", fontWeight: "normal", lineHeight: "24px", marginTop: "-15px", marginLeft: "5px", marginRight: "70px"}}>{item.text}</div>}
+      <div>
+        <List
+          itemLayout="horizontal"
+          dataSource={this.props.messages}
+          renderItem={(item, index) => (
+            <List.Item style={{backgroundColor: index % 2 === 0 ? "white" : "rgb(247,247,248)", borderBottom: "1px solid rgb(229, 229, 229)", position: "relative"}}>
+              <List.Item.Meta
+                avatar={<Avatar style={{width: "30px", height: "30px", borderRadius: "3px"}} src={item.author === `${this.props.account.owner}/${this.props.account.name}` ? this.props.account.avatar : "https://cdn.casbin.com/casdoor/resource/built-in/admin/gpt.png"} />}
+                title={<div style={{fontSize: "16px", fontWeight: "normal", lineHeight: "24px", marginTop: "-15px", marginLeft: "5px", marginRight: "70px"}}>{item.text}</div>}
+              />
+              <div style={{position: "absolute", top: "10px", right: "10px"}}
+              >
+                <CopyOutlined style={{color: "rgb(172,172,190)", margin: "5px"}} />
+                <LikeOutlined style={{color: "rgb(172,172,190)", margin: "5px"}} />
+                <DislikeOutlined style={{color: "rgb(172,172,190)", margin: "5px"}} />
+              </div>
+            </List.Item>
+          )}
+        />
+        <div
+          style={{
+            position: "fixed",
+            bottom: "100px",
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            backgroundColor: "white",
+          }}
+        >
+          <div style={{position: "relative", width: "770px", marginLeft: "-315px"}}>
+            <TextArea
+              placeholder={"Send a message..."}
+              autoSize
+              value={this.state.inputValue}
+              onChange={(e) => this.setState({inputValue: e.target.value})}
+              onKeyDown={this.handleKeyDown}
+              style={{
+                fontSize: "16px",
+                fontWeight: "normal",
+                lineHeight: "24px",
+                width: "770px",
+                height: "48px",
+                borderRadius: "6px",
+                borderColor: "rgb(229,229,229)",
+                boxShadow: "0 0 15px rgba(0, 0, 0, 0.1)",
+                paddingLeft: "17px",
+                paddingRight: "17px",
+                paddingTop: "12px",
+                paddingBottom: "12px",
+              }}
+              suffix={<SendOutlined style={{color: "rgb(210,210,217"}} onClick={() => this.send(this.state.inputValue)} />}
+              autoComplete="off"
             />
-            <div style={{position: "absolute", top: "10px", right: "10px"}}
-            >
-              <CopyOutlined style={{color: "rgb(172,172,190)", margin: "5px"}} />
-              <LikeOutlined style={{color: "rgb(172,172,190)", margin: "5px"}} />
-              <DislikeOutlined style={{color: "rgb(172,172,190)", margin: "5px"}} />
-            </div>
-          </List.Item>
-        )}
-      />
+            <SendOutlined
+              style={{
+                color: this.state.inputValue === "" ? "rgb(210,210,217)" : "rgb(142,142,160)",
+                position: "absolute",
+                bottom: "17px",
+                right: "17px",
+              }}
+              onClick={() => this.send(this.state.inputValue)}
+            />
+          </div>
+        </div>
+      </div>
     );
   }
 }
