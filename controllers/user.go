@@ -138,10 +138,6 @@ func (c *ApiController) UpdateUser() {
 	id := c.Input().Get("id")
 	columnsStr := c.Input().Get("columns")
 
-	if id == "" {
-		id = c.GetSessionUsername()
-	}
-
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
@@ -149,8 +145,25 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
-	if msg := object.CheckUpdateUser(object.GetUser(id), &user, c.GetAcceptLanguage()); msg != "" {
+	if id == "" {
+		id = c.GetSessionUsername()
+		if id == "" {
+			c.ResponseError(c.T("general:Missing parameter"))
+			return
+		}
+	}
+	oldUser := object.GetUser(id)
+	if oldUser == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), id))
+		return
+	}
+
+	if msg := object.CheckUpdateUser(oldUser, &user, c.GetAcceptLanguage()); msg != "" {
 		c.ResponseError(msg)
+		return
+	}
+	if pass, err := checkPermissionForUpdateUser(oldUser, &user, c); !pass {
+		c.ResponseError(err)
 		return
 	}
 
@@ -160,11 +173,6 @@ func (c *ApiController) UpdateUser() {
 	}
 
 	isGlobalAdmin := c.IsGlobalAdmin()
-
-	if pass, err := checkPermissionForUpdateUser(id, user, c); !pass {
-		c.ResponseError(err)
-		return
-	}
 
 	affected := object.UpdateUser(id, &user, columns, isGlobalAdmin)
 	if affected {

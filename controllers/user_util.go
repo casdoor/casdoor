@@ -20,8 +20,7 @@ import (
 	"github.com/casdoor/casdoor/object"
 )
 
-func checkPermissionForUpdateUser(userId string, newUser object.User, c *ApiController) (bool, string) {
-	oldUser := object.GetUser(userId)
+func checkPermissionForUpdateUser(oldUser, newUser *object.User, c *ApiController) (bool, string) {
 	organization := object.GetOrganizationByUser(oldUser)
 	var itemsChanged []*object.AccountItem
 
