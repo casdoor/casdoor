@@ -191,12 +191,15 @@ func CheckPassword(user *User, password string, lang string) string {
 func checkLdapUserPassword(user *User, password string, lang string) (*User, string) {
 	ldaps := GetLdaps(user.Owner)
 	ldapLoginSuccess := false
+
 	for _, ldapServer := range ldaps {
 		conn, err := ldapServer.GetLdapConn()
 		if err != nil {
 			continue
 		}
-		SearchFilter := fmt.Sprintf("(&(objectClass=posixAccount)(uid=%s))", user.Name)
+
+		SearchFilter := fmt.Sprintf("(&%s(uid=%s))", ldapServer.Filter, user.Name)
+
 		searchReq := goldap.NewSearchRequest(ldapServer.BaseDn,
 			goldap.ScopeWholeSubtree, goldap.NeverDerefAliases, 0, 0, false,
 			SearchFilter, []string{}, nil)
@@ -207,7 +210,8 @@ func checkLdapUserPassword(user *User, password string, lang string) (*User, str
 
 		if len(searchResult.Entries) == 0 {
 			continue
-		} else if len(searchResult.Entries) > 1 {
+		}
+		if len(searchResult.Entries) > 1 {
 			return nil, i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server")
 		}
 

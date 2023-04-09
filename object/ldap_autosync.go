@@ -82,7 +82,7 @@ func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) {
 			continue
 		}
 
-		users, err := conn.GetLdapUsers(ldap.BaseDn)
+		users, err := conn.GetLdapUsers(ldap)
 		if err != nil {
 			logs.Warning(fmt.Sprintf("autoSync failed for %s, error %s", ldap.Id, err))
 			continue

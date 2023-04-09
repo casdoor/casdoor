@@ -32,11 +32,12 @@ type Ldap struct {
 
 	ServerName string `xorm:"varchar(100)" json:"serverName"`
 	Host       string `xorm:"varchar(100)" json:"host"`
-	Port       int    `json:"port"`
+	Port       int    `xorm:"int" json:"port"`
 	EnableSsl  bool   `xorm:"bool" json:"enableSsl"`
 	Admin      string `xorm:"varchar(100)" json:"admin"`
 	Passwd     string `xorm:"varchar(100)" json:"passwd"`
 	BaseDn     string `xorm:"varchar(100)" json:"baseDn"`
+	Filter     string `xorm:"varchar(200)" json:"filter"`
 
 	AutoSync int    `json:"autoSync"`
 	LastSync string `xorm:"varchar(100)" json:"lastSync"`
@@ -213,27 +214,23 @@ func (ldap *Ldap) GetLdapConn() (c *ldapConn, err error) {
 //	return groupMap, nil
 //}
 
-func (l *ldapConn) GetLdapUsers(baseDn string) ([]ldapUser, error) {
-	SearchFilter := "(objectClass=posixAccount)"
-	SearchAttributes := []string{
-		"uidNumber", "uid", "cn", "gidNumber", "entryUUID", "mail", "email",
-		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
-	}
-	SearchFilterMsAD := "(objectClass=user)"
-	SearchAttributesMsAD := []string{
-		"uidNumber", "sAMAccountName", "cn", "gidNumber", "entryUUID", "mail", "email",
-		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
-	}
-	var searchReq *goldap.SearchRequest
+func (l *ldapConn) GetLdapUsers(ldapServer *Ldap) ([]ldapUser, error) {
+	var SearchAttributes []string
 	if l.IsAD {
-		searchReq = goldap.NewSearchRequest(baseDn,
-			goldap.ScopeWholeSubtree, goldap.NeverDerefAliases, 0, 0, false,
-			SearchFilterMsAD, SearchAttributesMsAD, nil)
+		SearchAttributes = []string{
+			"uidNumber", "sAMAccountName", "cn", "gidNumber", "entryUUID", "mail", "email",
+			"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
+		}
 	} else {
-		searchReq = goldap.NewSearchRequest(baseDn,
-			goldap.ScopeWholeSubtree, goldap.NeverDerefAliases, 0, 0, false,
-			SearchFilter, SearchAttributes, nil)
+		SearchAttributes = []string{
+			"uidNumber", "uid", "cn", "gidNumber", "entryUUID", "mail", "email",
+			"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
+		}
 	}
+
+	searchReq := goldap.NewSearchRequest(ldapServer.BaseDn, goldap.ScopeWholeSubtree, goldap.NeverDerefAliases,
+		0, 0, false,
+		ldapServer.Filter, SearchAttributes, nil)
 	searchResult, err := l.Conn.SearchWithPaging(searchReq, 100)
 	if err != nil {
 		return nil, err
@@ -244,44 +241,43 @@ func (l *ldapConn) GetLdapUsers(baseDn string) ([]ldapUser, error) {
 	}
 
 	var ldapUsers []ldapUser
-
 	for _, entry := range searchResult.Entries {
-		var ldapUserItem ldapUser
+		var user ldapUser
 		for _, attribute := range entry.Attributes {
 			switch attribute.Name {
 			case "uidNumber":
-				ldapUserItem.UidNumber = attribute.Values[0]
+				user.UidNumber = attribute.Values[0]
 			case "uid":
-				ldapUserItem.Uid = attribute.Values[0]
+				user.Uid = attribute.Values[0]
 			case "sAMAccountName":
-				ldapUserItem.Uid = attribute.Values[0]
+				user.Uid = attribute.Values[0]
 			case "cn":
-				ldapUserItem.Cn = attribute.Values[0]
+				user.Cn = attribute.Values[0]
 			case "gidNumber":
-				ldapUserItem.GidNumber = attribute.Values[0]
+				user.GidNumber = attribute.Values[0]
 			case "entryUUID":
-				ldapUserItem.Uuid = attribute.Values[0]
+				user.Uuid = attribute.Values[0]
 			case "objectGUID":
-				ldapUserItem.Uuid = attribute.Values[0]
+				user.Uuid = attribute.Values[0]
 			case "mail":
-				ldapUserItem.Mail = attribute.Values[0]
+				user.Mail = attribute.Values[0]
 			case "email":
-				ldapUserItem.Email = attribute.Values[0]
+				user.Email = attribute.Values[0]
 			case "emailAddress":
-				ldapUserItem.EmailAddress = attribute.Values[0]
+				user.EmailAddress = attribute.Values[0]
 			case "telephoneNumber":
-				ldapUserItem.TelephoneNumber = attribute.Values[0]
+				user.TelephoneNumber = attribute.Values[0]
 			case "mobile":
-				ldapUserItem.Mobile = attribute.Values[0]
+				user.Mobile = attribute.Values[0]
 			case "mobileTelephoneNumber":
-				ldapUserItem.MobileTelephoneNumber = attribute.Values[0]
+				user.MobileTelephoneNumber = attribute.Values[0]
 			case "registeredAddress":
-				ldapUserItem.RegisteredAddress = attribute.Values[0]
+				user.RegisteredAddress = attribute.Values[0]
 			case "postalAddress":
-				ldapUserItem.PostalAddress = attribute.Values[0]
+				user.PostalAddress = attribute.Values[0]
 			}
 		}
-		ldapUsers = append(ldapUsers, ldapUserItem)
+		ldapUsers = append(ldapUsers, user)
 	}
 
 	return ldapUsers, nil
@@ -359,7 +355,7 @@ func UpdateLdap(ldap *Ldap) bool {
 	}
 
 	affected, err := adapter.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
-		"port", "enable_ssl", "admin", "passwd", "base_dn", "auto_sync").Update(ldap)
+		"port", "enable_ssl", "admin", "passwd", "base_dn", "filter", "auto_sync").Update(ldap)
 	if err != nil {
 		panic(err)
 	}

@@ -168,6 +168,16 @@ class LdapEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
+            {Setting.getLabel(i18next.t("ldap:Filter"), i18next.t("ldap:Filter - Tooltip"))} :
+          </Col>
+          <Col span={21}>
+            <Input value={this.state.ldap.filter} onChange={e => {
+              this.updateLdapField("filter", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
             {Setting.getLabel(i18next.t("ldap:Admin"), i18next.t("ldap:Admin - Tooltip"))} :
           </Col>
           <Col span={21}>

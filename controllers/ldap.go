@@ -65,7 +65,7 @@ func (c *ApiController) GetLdapUsers() {
 	//	})
 	//}
 
-	users, err := conn.GetLdapUsers(ldapServer.BaseDn)
+	users, err := conn.GetLdapUsers(ldapServer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
