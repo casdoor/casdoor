@@ -44,6 +44,10 @@ import SyncerListPage from "./SyncerListPage";
 import SyncerEditPage from "./SyncerEditPage";
 import CertListPage from "./CertListPage";
 import CertEditPage from "./CertEditPage";
+import ChatEditPage from "./ChatEditPage";
+import ChatListPage from "./ChatListPage";
+import MessageEditPage from "./MessageEditPage";
+import MessageListPage from "./MessageListPage";
 import ProductListPage from "./ProductListPage";
 import ProductEditPage from "./ProductEditPage";
 import ProductBuyPage from "./ProductBuyPage";
@@ -147,6 +151,10 @@ class App extends Component {
       this.setState({selectedMenuKey: "/syncers"});
     } else if (uri.includes("/certs")) {
       this.setState({selectedMenuKey: "/certs"});
+    } else if (uri.includes("/chats")) {
+      this.setState({selectedMenuKey: "/chats"});
+    } else if (uri.includes("/messages")) {
+      this.setState({selectedMenuKey: "/messages"});
     } else if (uri.includes("/products")) {
       this.setState({selectedMenuKey: "/products"});
     } else if (uri.includes("/payments")) {
@@ -415,6 +423,14 @@ class App extends Component {
         "/providers"
       ));
 
+      res.push(Setting.getItem(<Link to="/chats">{i18next.t("general:Chats")}</Link>,
+        "/chats"
+      ));
+
+      res.push(Setting.getItem(<Link to="/messages">{i18next.t("general:Messages")}</Link>,
+        "/messages"
+      ));
+
       res.push(Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>,
         "/resources"
       ));
@@ -529,6 +545,10 @@ class App extends Component {
         <Route exact path="/syncers/:syncerName" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/certs" render={(props) => this.renderLoginIfNotLoggedIn(<CertListPage account={this.state.account} {...props} />)} />
         <Route exact path="/certs/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/chats" render={(props) => this.renderLoginIfNotLoggedIn(<ChatListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/chats/:chatName" render={(props) => this.renderLoginIfNotLoggedIn(<ChatEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/messages" render={(props) => this.renderLoginIfNotLoggedIn(<MessageListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/messages/:messageName" render={(props) => this.renderLoginIfNotLoggedIn(<MessageEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/products" render={(props) => this.renderLoginIfNotLoggedIn(<ProductListPage account={this.state.account} {...props} />)} />
         <Route exact path="/products/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/products/:productName/buy" render={(props) => this.renderLoginIfNotLoggedIn(<ProductBuyPage account={this.state.account} {...props} />)} />
