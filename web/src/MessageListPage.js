@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,35 +14,34 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Switch, Table} from "antd";
+import {Button, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
-import * as RoleBackend from "./backend/RoleBackend";
+import * as MessageBackend from "./backend/MessageBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./PopconfirmModal";
 
-class RoleListPage extends BaseListPage {
-  newRole() {
+class MessageListPage extends BaseListPage {
+  newMessage() {
     const randomName = Setting.getRandomName();
     return {
-      owner: this.props.account.owner,
-      name: `role_${randomName}`,
+      owner: "admin", // this.props.account.messagename,
+      name: `message_${randomName}`,
       createdTime: moment().format(),
-      displayName: `New Role - ${randomName}`,
-      users: [],
-      roles: [],
-      domains: [],
-      isEnabled: true,
+      organization: this.props.account.owner,
+      chat: "",
+      author: `${this.props.account.owner}/${this.props.account.name}`,
+      text: "",
     };
   }
 
-  addRole() {
-    const newRole = this.newRole();
-    RoleBackend.addRole(newRole)
+  addMessage() {
+    const newMessage = this.newMessage();
+    MessageBackend.addMessage(newMessage)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/roles/${newRole.owner}/${newRole.name}`, mode: "add"});
+          this.props.history.push({pathname: `/messages/${newMessage.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -53,8 +52,8 @@ class RoleListPage extends BaseListPage {
       });
   }
 
-  deleteRole(i) {
-    RoleBackend.deleteRole(this.state.data[i])
+  deleteMessage(i) {
+    MessageBackend.deleteMessage(this.state.data[i])
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully deleted"));
@@ -67,35 +66,19 @@ class RoleListPage extends BaseListPage {
         }
       })
       .catch(error => {
-
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
-  renderTable(roles) {
+  renderTable(messages) {
     const columns = [
       {
-        title: i18next.t("general:Name"),
-        dataIndex: "name",
-        key: "name",
-        width: "150px",
-        fixed: "left",
-        sorter: true,
-        ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/roles/${record.owner}/${record.name}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
         title: i18next.t("general:Organization"),
-        dataIndex: "owner",
-        key: "owner",
-        width: "120px",
+        dataIndex: "organization",
+        key: "organization",
+        width: "150px",
         sorter: true,
-        ...this.getColumnSearchProps("owner"),
+        ...this.getColumnSearchProps("organization"),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -105,66 +88,70 @@ class RoleListPage extends BaseListPage {
         },
       },
       {
+        title: i18next.t("general:Name"),
+        dataIndex: "name",
+        key: "name",
+        width: "120px",
+        fixed: "left",
+        sorter: true,
+        ...this.getColumnSearchProps("name"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/messages/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
         title: i18next.t("general:Created time"),
         dataIndex: "createdTime",
         key: "createdTime",
-        width: "160px",
+        width: "150px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         },
       },
       {
-        title: i18next.t("general:Display name"),
-        dataIndex: "displayName",
-        key: "displayName",
-        width: "200px",
-        sorter: true,
-        ...this.getColumnSearchProps("displayName"),
-      },
-      {
-        title: i18next.t("role:Sub users"),
-        dataIndex: "users",
-        key: "users",
-        // width: '100px',
-        sorter: true,
-        ...this.getColumnSearchProps("users"),
-        render: (text, record, index) => {
-          return Setting.getTags(text, "users");
-        },
-      },
-      {
-        title: i18next.t("role:Sub roles"),
-        dataIndex: "roles",
-        key: "roles",
-        // width: '100px',
-        sorter: true,
-        ...this.getColumnSearchProps("roles"),
-        render: (text, record, index) => {
-          return Setting.getTags(text, "roles");
-        },
-      },
-      {
-        title: i18next.t("role:Sub domains"),
-        dataIndex: "domains",
-        key: "domains",
-        sorter: true,
-        ...this.getColumnSearchProps("domains"),
-        render: (text, record, index) => {
-          return Setting.getTags(text);
-        },
-      },
-      {
-        title: i18next.t("general:Is enabled"),
-        dataIndex: "isEnabled",
-        key: "isEnabled",
+        title: i18next.t("message:Chat"),
+        dataIndex: "chat",
+        key: "chat",
         width: "120px",
+        fixed: "left",
         sorter: true,
+        ...this.getColumnSearchProps("chat"),
         render: (text, record, index) => {
           return (
-            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+            <Link to={`/chats/${text}`}>
+              {text}
+            </Link>
           );
         },
+      },
+      {
+        title: i18next.t("message:Author"),
+        dataIndex: "author",
+        key: "author",
+        width: "120px",
+        fixed: "left",
+        sorter: true,
+        ...this.getColumnSearchProps("author"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/users/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("message:Text"),
+        dataIndex: "text",
+        key: "text",
+        // width: '100px',
+        sorter: true,
+        ...this.getColumnSearchProps("text"),
       },
       {
         title: i18next.t("general:Action"),
@@ -175,10 +162,10 @@ class RoleListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/roles/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/messages/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
-                onConfirm={() => this.deleteRole(index)}
+                onConfirm={() => this.deleteMessage(index)}
               >
               </PopconfirmModal>
             </div>
@@ -196,11 +183,11 @@ class RoleListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={roles} rowKey="name" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={messages} rowKey="name" size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
-              {i18next.t("general:Roles")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button type="primary" size="small" onClick={this.addRole.bind(this)}>{i18next.t("general:Add")}</Button>
+              {i18next.t("general:Messages")}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button type="primary" size="small" onClick={this.addMessage.bind(this)}>{i18next.t("general:Add")}</Button>
             </div>
           )}
           loading={this.state.loading}
@@ -213,12 +200,15 @@ class RoleListPage extends BaseListPage {
   fetch = (params = {}) => {
     let field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
-    if (params.type !== undefined && params.type !== null) {
+    if (params.category !== undefined && params.category !== null) {
+      field = "category";
+      value = params.category;
+    } else if (params.type !== undefined && params.type !== null) {
       field = "type";
       value = params.type;
     }
     this.setState({loading: true});
-    RoleBackend.getRoles(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    MessageBackend.getMessages("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
@@ -243,4 +233,4 @@ class RoleListPage extends BaseListPage {
   };
 }
 
-export default RoleListPage;
+export default MessageListPage;

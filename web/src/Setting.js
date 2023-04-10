@@ -1070,18 +1070,28 @@ export function getTagColor(s) {
   return "processing";
 }
 
-export function getTags(tags) {
+export function getTags(tags, urlPrefix = null) {
   const res = [];
   if (!tags) {
     return res;
   }
 
   tags.forEach((tag, i) => {
-    res.push(
-      <Tag color={getTagColor(tag)}>
-        {tag}
-      </Tag>
-    );
+    if (urlPrefix === null) {
+      res.push(
+        <Tag color={getTagColor(tag)}>
+          {tag}
+        </Tag>
+      );
+    } else {
+      res.push(
+        <Link to={`/${urlPrefix}/${tag}`}>
+          <Tag color={getTagColor(tag)}>
+            {tag}
+          </Tag>
+        </Link>
+      );
+    }
   });
   return res;
 }
