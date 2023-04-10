@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Select, Tag, Tooltip, message, theme} from "antd";
+import {Col, Row, Select, Tag, Tooltip, message, theme} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -44,6 +44,22 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
   {label: "TiếngViệt", key: "vn", country: "VN", alt: "TiếngViệt"},
 ];
+
+export const FormRow = ({children, marginTop}) => (
+  <Row style={{marginTop: marginTop || "20px", display: "flex"}}>{children}</Row>
+);
+
+export const FormCol = ({label, tooltip, minWidth, flex, span, children}) => (
+  <Col style={{marginTop: "5px", minWidth: minWidth || (i18next.language === "es" ? "200px" : "140px"), flex: flex || 1}} span={span || (isMobile() ? 22 : 2)}>
+    {getLabel(label, tooltip)} :
+  </Col>
+);
+
+export const FormCol2 = ({span, children, marginTop}) => (
+  <Col style={{marginTop: marginTop, flex: 2}} span={span || 22}>
+    {children}
+  </Col>
+);
 
 export function getThemeData(organization, application) {
   if (application?.themeData?.isEnabled) {
