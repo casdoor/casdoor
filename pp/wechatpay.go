@@ -29,20 +29,20 @@ type WechatPaymentProvider struct {
 	appId    string
 }
 
-func NewWechatPaymentProvider(appId string, mchId string, mchCertSerialNumber string, apiV3Key string, privateKey string) *WechatPaymentProvider {
+func NewWechatPaymentProvider(appId string, mchId string, mchCertSerialNumber string, apiV3Key string, privateKey string) (*WechatPaymentProvider, error) {
 	pp := &WechatPaymentProvider{appId: appId}
 
 	clientV3, err := wechat.NewClientV3(mchId, mchCertSerialNumber, apiV3Key, privateKey)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	err = clientV3.AutoVerifySign()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	pp.ClientV3 = clientV3
-	return pp
+	return pp, nil
 }
 
 func (pp *WechatPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error) {
