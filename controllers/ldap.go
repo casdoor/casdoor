@@ -80,10 +80,11 @@ func (c *ApiController) GetLdapUsers() {
 			Cn:        user.Cn,
 			GroupId:   user.GidNumber,
 			// GroupName: groupsMap[user.GidNumber].Cn,
-			Uuid:    user.Uuid,
-			Email:   util.GetMaxLenStr(user.Mail, user.Email, user.EmailAddress),
-			Phone:   util.GetMaxLenStr(user.TelephoneNumber, user.Mobile, user.MobileTelephoneNumber),
-			Address: util.GetMaxLenStr(user.RegisteredAddress, user.PostalAddress),
+			Uuid:        user.Uuid,
+			DisplayName: user.DisplayName,
+			Email:       util.GetMaxLenStr(user.Mail, user.Email, user.EmailAddress),
+			Phone:       util.GetMaxLenStr(user.TelephoneNumber, user.Mobile, user.MobileTelephoneNumber),
+			Address:     util.GetMaxLenStr(user.RegisteredAddress, user.PostalAddress),
 		})
 		uuids = append(uuids, user.Uuid)
 	}

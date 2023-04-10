@@ -60,6 +60,7 @@ type ldapUser struct {
 	GidNumber string
 	// Gcn                   string
 	Uuid                  string
+	DisplayName           string
 	Mail                  string
 	Email                 string
 	EmailAddress          string
@@ -76,10 +77,11 @@ type LdapRespUser struct {
 	Cn        string `json:"cn"`
 	GroupId   string `json:"groupId"`
 	// GroupName string `json:"groupName"`
-	Uuid    string `json:"uuid"`
-	Email   string `json:"email"`
-	Phone   string `json:"phone"`
-	Address string `json:"address"`
+	Uuid        string `json:"uuid"`
+	DisplayName string `json:"displayName"`
+	Email       string `json:"email"`
+	Phone       string `json:"phone"`
+	Address     string `json:"address"`
 }
 
 type ldapServerType struct {
@@ -102,14 +104,15 @@ func LdapUsersToLdapRespUsers(users []ldapUser) []LdapRespUser {
 	res := make([]LdapRespUser, 0)
 	for _, user := range users {
 		res = append(res, LdapRespUser{
-			UidNumber: user.UidNumber,
-			Uid:       user.Uid,
-			Cn:        user.Cn,
-			GroupId:   user.GidNumber,
-			Uuid:      user.Uuid,
-			Email:     returnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
-			Phone:     returnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
-			Address:   returnAnyNotEmpty(user.PostalAddress, user.RegisteredAddress),
+			UidNumber:   user.UidNumber,
+			Uid:         user.Uid,
+			Cn:          user.Cn,
+			GroupId:     user.GidNumber,
+			Uuid:        user.Uuid,
+			DisplayName: user.DisplayName,
+			Email:       returnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
+			Phone:       returnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
+			Address:     returnAnyNotEmpty(user.PostalAddress, user.RegisteredAddress),
 		})
 	}
 	return res
@@ -218,12 +221,12 @@ func (l *ldapConn) GetLdapUsers(ldapServer *Ldap) ([]ldapUser, error) {
 	var SearchAttributes []string
 	if l.IsAD {
 		SearchAttributes = []string{
-			"uidNumber", "sAMAccountName", "cn", "gidNumber", "entryUUID", "mail", "email",
+			"uidNumber", "sAMAccountName", "cn", "gidNumber", "entryUUID", "displayName", "mail", "email",
 			"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
 		}
 	} else {
 		SearchAttributes = []string{
-			"uidNumber", "uid", "cn", "gidNumber", "entryUUID", "mail", "email",
+			"uidNumber", "uid", "cn", "gidNumber", "entryUUID", "displayName", "mail", "email",
 			"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
 		}
 	}
@@ -259,6 +262,8 @@ func (l *ldapConn) GetLdapUsers(ldapServer *Ldap) ([]ldapUser, error) {
 				user.Uuid = attribute.Values[0]
 			case "objectGUID":
 				user.Uuid = attribute.Values[0]
+			case "displayName":
+				user.DisplayName = attribute.Values[0]
 			case "mail":
 				user.Mail = attribute.Values[0]
 			case "email":
@@ -413,22 +418,27 @@ func SyncLdapUsers(owner string, users []LdapRespUser, ldapId string) (*[]LdapRe
 			}
 		}
 
-		if !found && !AddUser(&User{
-			Owner:       owner,
-			Name:        buildLdapUserName(user.Uid, user.UidNumber),
-			CreatedTime: util.GetCurrentTime(),
-			DisplayName: user.Cn,
-			Avatar:      organization.DefaultAvatar,
-			Email:       user.Email,
-			Phone:       user.Phone,
-			Address:     []string{user.Address},
-			Affiliation: affiliation,
-			Tag:         tag,
-			Score:       beego.AppConfig.DefaultInt("initScore", 2000),
-			Ldap:        user.Uuid,
-		}) {
-			failedUsers = append(failedUsers, user)
-			continue
+		if !found {
+			newUser := &User{
+				Owner:       owner,
+				Name:        buildLdapUserName(&user),
+				CreatedTime: util.GetCurrentTime(),
+				DisplayName: user.DisplayName,
+				Avatar:      organization.DefaultAvatar,
+				Email:       user.Email,
+				Phone:       user.Phone,
+				Address:     []string{user.Address},
+				Affiliation: affiliation,
+				Tag:         tag,
+				Score:       beego.AppConfig.DefaultInt("initScore", 2000),
+				Ldap:        user.Uuid,
+			}
+
+			affected := AddUser(newUser)
+			if !affected {
+				failedUsers = append(failedUsers, user)
+				continue
+			}
 		}
 	}
 
@@ -473,21 +483,21 @@ func CheckLdapUuidExist(owner string, uuids []string) []string {
 	return existUuids
 }
 
-func buildLdapUserName(uid, uidNum string) string {
+func buildLdapUserName(user *LdapRespUser) string {
 	var result User
-	uidWithNumber := fmt.Sprintf("%s_%s", uid, uidNum)
+	uidWithNumber := fmt.Sprintf("%s_%s", user.Uid, user.UidNumber)
 
-	has, err := adapter.Engine.Where("name = ? or name = ?", uid, uidWithNumber).Get(&result)
+	has, err := adapter.Engine.Where("name = ? or name = ?", user.Uid, uidWithNumber).Get(&result)
 	if err != nil {
 		panic(err)
 	}
 
 	if has {
-		if result.Name == uid {
+		if result.Name == user.Uid {
 			return uidWithNumber
 		}
 		return fmt.Sprintf("%s_%s", uidWithNumber, randstr.Hex(6))
 	}
 
-	return uid
+	return user.Uid
 }

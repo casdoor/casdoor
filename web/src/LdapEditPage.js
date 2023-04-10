@@ -168,7 +168,7 @@ class LdapEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
-            {Setting.getLabel(i18next.t("ldap:Filter"), i18next.t("ldap:Filter - Tooltip"))} :
+            {Setting.getLabel(i18next.t("ldap:Search Filter"), i18next.t("ldap:Search Filter - Tooltip"))} :
           </Col>
           <Col span={21}>
             <Input value={this.state.ldap.filter} onChange={e => {
