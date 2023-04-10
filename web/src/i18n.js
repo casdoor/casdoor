@@ -80,8 +80,8 @@ function initLanguage() {
       case "ru":
         language = "ru";
         break;
-      case "vi":
-        language = "vi";
+      case "vn":
+        language = "vn";
         break;
       default:
         language = Conf.DefaultLanguage;
