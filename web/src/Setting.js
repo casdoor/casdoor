@@ -800,6 +800,7 @@ export function getProviderTypeOptions(category) {
         {id: "Yahoo", name: "Yahoo"},
         {id: "Yammer", name: "Yammer"},
         {id: "Yandex", name: "Yandex"},
+        {id: "Zalo", name: "Zalo"},
         {id: "Zoom", name: "Zoom"},
         {id: "Custom", name: "Custom"},
       ]
