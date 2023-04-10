@@ -24,13 +24,13 @@ import (
 	"github.com/go-pay/gopay/wechat/v3"
 )
 
-type WechatPaymentProviderV3 struct {
+type WechatPaymentProvider struct {
 	ClientV3 *wechat.ClientV3
 	appId    string
 }
 
-func NewWechatPaymentProviderV3(appId string, mchId string, mchCertSerialNumber string, apiV3Key string, privateKey string) *WechatPaymentProviderV3 {
-	pp := &WechatPaymentProviderV3{appId: appId}
+func NewWechatPaymentProvider(appId string, mchId string, mchCertSerialNumber string, apiV3Key string, privateKey string) *WechatPaymentProvider {
+	pp := &WechatPaymentProvider{appId: appId}
 
 	clientV3, err := wechat.NewClientV3(mchId, mchCertSerialNumber, apiV3Key, privateKey)
 	if err != nil {
@@ -45,7 +45,7 @@ func NewWechatPaymentProviderV3(appId string, mchId string, mchCertSerialNumber 
 	return pp
 }
 
-func (pp *WechatPaymentProviderV3) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error) {
+func (pp *WechatPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error) {
 	// pp.Client.DebugSwitch = gopay.DebugOn
 
 	bm := gopay.BodyMap{}
@@ -69,7 +69,7 @@ func (pp *WechatPaymentProviderV3) Pay(providerName string, productName string, 
 	return payUrl, nil
 }
 
-func (pp *WechatPaymentProviderV3) Notify(request *http.Request, body []byte, authorityPublicKey string) (string, string, float64, string, string, error) {
+func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string) (string, string, float64, string, string, error) {
 	bm, err := wechat.V3ParseNotifyToBodyMap(request)
 	if err != nil {
 		return "", "", 0, "", "", err
@@ -97,6 +97,6 @@ func (pp *WechatPaymentProviderV3) Notify(request *http.Request, body []byte, au
 	return productDisplayName, paymentName, price, productName, providerName, nil
 }
 
-func (pp *WechatPaymentProviderV3) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {
+func (pp *WechatPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {
 	return "", nil
 }
