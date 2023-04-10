@@ -256,7 +256,11 @@ func (p *Provider) getPaymentProvider() (pp.PaymentProvider, *Cert, error) {
 		}
 	}
 
-	pProvider := pp.GetPaymentProvider(p.Type, p.ClientId, p.ClientSecret, p.Host, cert.Certificate, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey)
+	pProvider, err := pp.GetPaymentProvider(p.Type, p.ClientId, p.ClientSecret, p.Host, cert.Certificate, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey, p.ClientId2)
+	if err != nil {
+		return nil, cert, err
+	}
+
 	if pProvider == nil {
 		return nil, cert, fmt.Errorf("the payment provider type: %s is not supported", p.Type)
 	}
