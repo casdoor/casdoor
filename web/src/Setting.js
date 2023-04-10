@@ -42,7 +42,7 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
   {label: "日本語", key: "ja", country: "JP", alt: "日本語"},
   {label: "한국어", key: "ko", country: "KR", alt: "한국어"},
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
-  {label: "TiếngViệt", key: "vi", country: "VI", alt: "TiếngViệt"},
+  {label: "TiếngViệt", key: "vn", country: "VN", alt: "TiếngViệt"},
 ];
 
 export function getThemeData(organization, application) {
