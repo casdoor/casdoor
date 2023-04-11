@@ -22,11 +22,23 @@ type PaymentProvider interface {
 	GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error)
 }
 
-func GetPaymentProvider(typ string, appId string, clientSecret string, host string, appCertificate string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string) PaymentProvider {
+func GetPaymentProvider(typ string, appId string, clientSecret string, host string, appCertificate string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string, clientId2 string) (PaymentProvider, error) {
 	if typ == "Alipay" {
-		return NewAlipayPaymentProvider(appId, appCertificate, appPrivateKey, authorityPublicKey, authorityRootPublicKey)
+		newAlipayPaymentProvider, err := NewAlipayPaymentProvider(appId, appCertificate, appPrivateKey, authorityPublicKey, authorityRootPublicKey)
+		if err != nil {
+			return nil, err
+		}
+		return newAlipayPaymentProvider, nil
 	} else if typ == "GC" {
-		return NewGcPaymentProvider(appId, clientSecret, host)
+		return NewGcPaymentProvider(appId, clientSecret, host), nil
+	} else if typ == "WeChat Pay" {
+		// appId, mchId, mchCertSerialNumber, apiV3Key, privateKey
+		newWechatPaymentProvider, err := NewWechatPaymentProvider(clientId2, appId, authorityPublicKey, clientSecret, appPrivateKey)
+		if err != nil {
+			return nil, err
+		}
+		return newWechatPaymentProvider, nil
 	}
-	return nil
+
+	return nil, nil
 }

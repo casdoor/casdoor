@@ -23,7 +23,7 @@ require (
 	github.com/go-mysql-org/go-mysql v1.7.0
 	github.com/go-pay/gopay v1.5.72
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/go-webauthn/webauthn v0.8.2
+	github.com/go-webauthn/webauthn v0.5.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.3.0
