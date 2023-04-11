@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Input, InputNumber, Radio, Row, Select, Switch} from "antd";
+import {Button, Card, Input, InputNumber, Radio, Select, Switch} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
@@ -24,7 +24,7 @@ import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./table/LdapTable";
 import AccountTable from "./table/AccountTable";
 import ThemeEditor from "./common/theme/ThemeEditor";
-import {FormCol, FormCol2, FormRow} from "./Setting";
+import {Col, Col2, Row} from "./Setting";
 
 const {Option} = Select;
 
@@ -106,79 +106,79 @@ class OrganizationEditPage extends React.Component {
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteOrganization()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
-        <FormRow marginTop="10px">
-          <FormCol label={i18next.t("general:Name")} tooltip={i18next.t("general:Name - Tooltip")}>
-          </FormCol>
-          <FormCol2>
+        <Row marginTop="10px">
+          <Col label={i18next.t("general:Name")} tooltip={i18next.t("general:Name - Tooltip")}>
+          </Col>
+          <Col2>
             <Input value={this.state.organization.name} disabled={this.state.organization.name === "built-in"} onChange={e => {
               this.updateOrganizationField("name", e.target.value);
             }} />
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("general:Display name")} tooltip={i18next.t("general:Display name - Tooltip")}>
-          </FormCol>
-          <FormCol2>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("general:Display name")} tooltip={i18next.t("general:Display name - Tooltip")}>
+          </Col>
+          <Col2>
             <Input value={this.state.organization.name} disabled={this.state.organization.name === "built-in"} onChange={e => {
               this.updateOrganizationField("name", e.target.value);
             }} />
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("general:Favicon")} tooltip={i18next.t("general:Favicon - Tooltip")}>
-          </FormCol>
-          <FormCol2>
-            <FormRow>
-              <FormCol label={i18next.t("general:URL")} tooltip={i18next.t("general:URL - Tooltip")} minWidth={70}>
-              </FormCol>
-              <FormCol2 span={23}>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("general:Favicon")} tooltip={i18next.t("general:Favicon - Tooltip")}>
+          </Col>
+          <Col2>
+            <Row>
+              <Col label={i18next.t("general:URL")} tooltip={i18next.t("general:URL - Tooltip")} minWidth={70}>
+              </Col>
+              <Col2 span={23}>
                 <Input prefix={<LinkOutlined />} value={this.state.organization.favicon} onChange={e => {
                   this.updateOrganizationField("favicon", e.target.value);
                 }} />
-              </FormCol2>
-            </FormRow>
-            <FormRow>
-              <FormCol label={i18next.t("general:Preview")} span={(Setting.isMobile()) ? 22 : 1} minWidth={70}>
-              </FormCol>
-              <FormCol2>
+              </Col2>
+            </Row>
+            <Row>
+              <Col label={i18next.t("general:Preview")} span={(Setting.isMobile()) ? 22 : 1} minWidth={70}>
+              </Col>
+              <Col2>
                 <a target="_blank" rel="noreferrer" href={this.state.organization.favicon}>
                   <img src={this.state.organization.favicon} alt={this.state.organization.favicon} height={90} style={{marginBottom: "20px"}} />
                 </a>
-              </FormCol2>
-            </FormRow>
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("organization:Website URL")} tooltip={i18next.t("organization:Website URL - Tooltip")}>
-          </FormCol>
-          <FormCol2>
+              </Col2>
+            </Row>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("organization:Website URL")} tooltip={i18next.t("organization:Website URL - Tooltip")}>
+          </Col>
+          <Col2>
             <Input prefix={<LinkOutlined />} value={this.state.organization.websiteUrl} onChange={e => {
               this.updateOrganizationField("websiteUrl", e.target.value);
             }} />
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("general:Password type")} tooltip={i18next.t("general:Password type - Tooltip")}>
-          </FormCol>
-          <FormCol2>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("general:Password type")} tooltip={i18next.t("general:Password type - Tooltip")}>
+          </Col>
+          <Col2>
             <Select virtual={false} style={{width: "100%"}} value={this.state.organization.passwordType} onChange={(value => {this.updateOrganizationField("passwordType", value);})}
               options={["plain", "salt", "md5-salt", "bcrypt", "pbkdf2-salt", "argon2id"].map(item => Setting.getOption(item, item))}
             />
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("general:Password salt")} tooltip={i18next.t("general:Password salt - Tooltip")}>
-          </FormCol>
-          <FormCol2>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("general:Password salt")} tooltip={i18next.t("general:Password salt - Tooltip")}>
+          </Col>
+          <Col2>
             <Input value={this.state.organization.passwordSalt} onChange={e => {
               this.updateOrganizationField("passwordSalt", e.target.value);
             }} />
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("general:Supported country codes")} tooltip={i18next.t("general:Supported country codes - Tooltip")}>
-          </FormCol>
-          <FormCol2>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("general:Supported country codes")} tooltip={i18next.t("general:Supported country codes - Tooltip")}>
+          </Col>
+          <Col2>
             <Select virtual={false} mode={"multiple"} style={{width: "100%"}} value={this.state.organization.countryCodes ?? []}
               onChange={value => {
                 this.updateOrganizationField("countryCodes", value);
@@ -189,65 +189,65 @@ class OrganizationEditPage extends React.Component {
                 Setting.getCountryCodeData().map((country) => Setting.getCountryCodeOption(country))
               }
             </Select>
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("general:Default avatar")} tooltip={i18next.t("general:Default avatar - Tooltip")}>
-          </FormCol>
-          <FormCol2>
-            <FormRow>
-              <FormCol label={i18next.t("general:URL")} tooltip={i18next.t("general:URL - Tooltip")} minWidth={70}>
-              </FormCol>
-              <FormCol2 span={23}>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("general:Default avatar")} tooltip={i18next.t("general:Default avatar - Tooltip")}>
+          </Col>
+          <Col2>
+            <Row>
+              <Col label={i18next.t("general:URL")} tooltip={i18next.t("general:URL - Tooltip")} minWidth={70}>
+              </Col>
+              <Col2 span={23}>
                 <Input prefix={<LinkOutlined />} value={this.state.organization.defaultAvatar} onChange={e => {
                   this.updateOrganizationField("defaultAvatar", e.target.value);
                 }} />
-              </FormCol2>
-            </FormRow>
-            <FormRow>
-              <FormCol label={i18next.t("general:Preview")} span={(Setting.isMobile()) ? 22 : 1} minWidth={70}>
-              </FormCol>
-              <FormCol2>
+              </Col2>
+            </Row>
+            <Row>
+              <Col label={i18next.t("general:Preview")} span={(Setting.isMobile()) ? 22 : 1} minWidth={70}>
+              </Col>
+              <Col2>
                 <a target="_blank" rel="noreferrer" href={this.state.organization.defaultAvatar}>
                   <img src={this.state.organization.defaultAvatar} alt={this.state.organization.defaultAvatar} height={90} style={{marginBottom: "20px"}} />
                 </a>
-              </FormCol2>
-            </FormRow>
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("general:Default application")} tooltip={i18next.t("general:Default application - Tooltip")}>
-          </FormCol>
-          <FormCol2>
+              </Col2>
+            </Row>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("general:Default application")} tooltip={i18next.t("general:Default application - Tooltip")}>
+          </Col>
+          <Col2>
             <Select virtual={false} style={{width: "100%"}} value={this.state.organization.defaultApplication} onChange={(value => {this.updateOrganizationField("defaultApplication", value);})}
               options={this.state.applications?.map((item) => Setting.getOption(item.name, item.name))}
             />
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("organization:Tags")} tooltip={i18next.t("organization:Tags - Tooltip")}>
-          </FormCol>
-          <FormCol2>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("organization:Tags")} tooltip={i18next.t("organization:Tags - Tooltip")}>
+          </Col>
+          <Col2>
             <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.organization.tags} onChange={(value => {this.updateOrganizationField("tags", value);})}>
               {
                 this.state.organization.tags?.map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("general:Master password")} tooltip={i18next.t("general:Master password - Tooltip")}>
-          </FormCol>
-          <FormCol2>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("general:Master password")} tooltip={i18next.t("general:Master password - Tooltip")}>
+          </Col>
+          <Col2>
             <Input value={this.state.organization.masterPassword} onChange={e => {
               this.updateOrganizationField("masterPassword", e.target.value);
             }} />
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("general:Languages")} tooltip={i18next.t("general:Languages - Tooltip")}>
-          </FormCol>
-          <FormCol2>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("general:Languages")} tooltip={i18next.t("general:Languages - Tooltip")}>
+          </Col>
+          <Col2>
             <Select virtual={false} mode="tags" style={{width: "100%"}}
               options={Setting.Countries.map((item) => {
                 return Setting.getOption(item.label, item.key);
@@ -257,51 +257,51 @@ class OrganizationEditPage extends React.Component {
                 this.updateOrganizationField("languages", value);
               })} >
             </Select>
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("organization:Init score")} tooltip={i18next.t("organization:Init score - Tooltip")} span={(Setting.isMobile()) ? 19 : 2}>
-          </FormCol>
-          <FormCol2 span={4}>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("organization:Init score")} tooltip={i18next.t("organization:Init score - Tooltip")} span={(Setting.isMobile()) ? 19 : 2}>
+          </Col>
+          <Col2 span={4}>
             <InputNumber value={this.state.organization.initScore} onChange={value => {
               this.updateOrganizationField("initScore", value);
             }} />
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("organization:Soft deletion")} tooltip={i18next.t("organization:Soft deletion - Tooltip")} span={(Setting.isMobile()) ? 19 : 2}>
-          </FormCol>
-          <FormCol2 span={1}>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("organization:Soft deletion")} tooltip={i18next.t("organization:Soft deletion - Tooltip")} span={(Setting.isMobile()) ? 19 : 2}>
+          </Col>
+          <Col2 span={1}>
             <Switch checked={this.state.organization.enableSoftDeletion} onChange={checked => {
               this.updateOrganizationField("enableSoftDeletion", checked);
             }} />
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("organization:Is profile public")} tooltip={i18next.t("organization:Is profile public - Tooltip")} span={(Setting.isMobile()) ? 19 : 2}>
-          </FormCol>
-          <FormCol2 span={1}>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("organization:Is profile public")} tooltip={i18next.t("organization:Is profile public - Tooltip")} span={(Setting.isMobile()) ? 19 : 2}>
+          </Col>
+          <Col2 span={1}>
             <Switch checked={this.state.organization.isProfilePublic} onChange={checked => {
               this.updateOrganizationField("isProfilePublic", checked);
             }} />
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("organization:Account items")} tooltip={i18next.t("organization:Account items - Tooltip")} >
-          </FormCol>
-          <FormCol2>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("organization:Account items")} tooltip={i18next.t("organization:Account items - Tooltip")} >
+          </Col>
+          <Col2>
             <AccountTable
               title={i18next.t("organization:Account items")}
               table={this.state.organization.accountItems}
               onUpdateTable={(value) => {this.updateOrganizationField("accountItems", value);}}
             />
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("theme:Theme")} tooltip={i18next.t("theme:Theme - Tooltip")} >
-          </FormCol>
-          <FormCol2 marginTop={"5px"}>
-            <Row>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("theme:Theme")} tooltip={i18next.t("theme:Theme - Tooltip")} >
+          </Col>
+          <Col2 marginTop={"5px"}>
+            <Row marginTop={"0px"} display={"inline"}>
               <Radio.Group value={this.state.organization.themeData?.isEnabled ?? false} onChange={e => {
                 const {_, ...theme} = this.state.organization.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
                 this.updateOrganizationField("themeData", {...theme, isEnabled: e.target.value});
@@ -312,19 +312,19 @@ class OrganizationEditPage extends React.Component {
             </Row>
             {
               this.state.organization.themeData?.isEnabled ?
-                <Row style={{marginTop: "20px"}}>
+                <Row display={"inline"}>
                   <ThemeEditor themeData={this.state.organization.themeData} onThemeChange={(_, nextThemeData) => {
                     const {isEnabled} = this.state.organization.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
                     this.updateOrganizationField("themeData", {...nextThemeData, isEnabled});
                   }} />
                 </Row> : null
             }
-          </FormCol2>
-        </FormRow>
-        <FormRow>
-          <FormCol label={i18next.t("general:LDAPs")} tooltip={i18next.t("general:LDAPs - Tooltip")} >
-          </FormCol>
-          <FormCol2>
+          </Col2>
+        </Row>
+        <Row>
+          <Col label={i18next.t("general:LDAPs")} tooltip={i18next.t("general:LDAPs - Tooltip")} >
+          </Col>
+          <Col2>
             <LdapTable
               title={i18next.t("general:LDAPs")}
               table={this.state.ldaps}
@@ -333,8 +333,8 @@ class OrganizationEditPage extends React.Component {
                 this.setState({ldaps: value});
               }}
             />
-          </FormCol2>
-        </FormRow>
+          </Col2>
+        </Row>
       </Card>
     );
   }
