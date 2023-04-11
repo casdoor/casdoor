@@ -112,6 +112,7 @@ class AdapterEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} value={this.state.adapter.organization} onChange={(value => {
               this.getModels(value);
               this.updateAdapterField("organization", value);
+              this.updateAdapterField("owner", value);
             })}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
@@ -266,7 +267,7 @@ class AdapterEditPage extends React.Component {
 
   submitAdapterEdit(willExist) {
     const adapter = Setting.deepCopy(this.state.adapter);
-    AdapterBackend.updateAdapter(this.state.adapter.owner, this.state.adapterName, adapter)
+    AdapterBackend.updateAdapter(this.state.owner, this.state.adapterName, adapter)
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
