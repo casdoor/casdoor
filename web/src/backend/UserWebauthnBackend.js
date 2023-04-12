@@ -71,8 +71,12 @@ export function deleteUserWebAuthnCredential(credentialID) {
   }).then(res => res.json());
 }
 
-// Base64 to ArrayBuffer
+// Base64URL to ArrayBuffer
 export function webAuthnBufferDecode(value) {
+  value = value.replace(/-/g, "+").replace(/_/g, "/");
+  while (value.length % 4) {
+    value += "=";
+  }
   return Uint8Array.from(atob(value), c => c.charCodeAt(0));
 }
 
