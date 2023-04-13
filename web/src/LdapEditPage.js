@@ -183,7 +183,7 @@ class LdapEditPage extends React.Component {
           <Col span={21}>
             <Select value={this.state.ldap.filterFields ?? []} style={{width: "100%"}} mode={"multiple"} options={[
               {value: "uid", label: "uid"},
-              {value: "mail", label: "email"},
+              {value: "mail", label: "Email"},
               {value: "mobile", label: "mobile"},
             ].map((item) => Setting.getOption(item.label, item.value))} onChange={value => {
               this.updateLdapField("filterFields", value);
@@ -192,11 +192,11 @@ class LdapEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
-            {Setting.getLabel(i18next.t("ldap:Admin"), i18next.t("ldap:Admin - Tooltip"))} :
+            {Setting.getLabel(i18next.t("ldap:Admin Username"), i18next.t("ldap:Admin Username - Tooltip"))} :
           </Col>
           <Col span={21}>
-            <Input value={this.state.ldap.admin} onChange={e => {
-              this.updateLdapField("admin", e.target.value);
+            <Input value={this.state.ldap.username} onChange={e => {
+              this.updateLdapField("username", e.target.value);
             }} />
           </Col>
         </Row>
@@ -206,9 +206,9 @@ class LdapEditPage extends React.Component {
           </Col>
           <Col span={21}>
             <Input.Password
-              iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} value={this.state.ldap.passwd}
+              iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} value={this.state.ldap.password}
               onChange={e => {
-                this.updateLdapField("passwd", e.target.value);
+                this.updateLdapField("password", e.target.value);
               }}
             />
           </Col>

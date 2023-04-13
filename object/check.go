@@ -226,7 +226,7 @@ func checkLdapUserPassword(user *User, password string, lang string) string {
 		if !hit {
 			return "user not exist"
 		}
-		return i18n.Translate(lang, "check:Ldap user name or password incorrect")
+		return i18n.Translate(lang, "check:LDAP user name or password incorrect")
 	}
 	return ""
 }
@@ -245,7 +245,7 @@ func CheckUserPassword(organization string, username string, password string, la
 		// ONLY for ldap users
 		if msg := checkLdapUserPassword(user, password, lang); msg != "" {
 			if msg == "user not exist" {
-				return nil, fmt.Sprintf(i18n.Translate(lang, "check:The user: %s doesn't exist in ldap server"), username)
+				return nil, fmt.Sprintf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
 			}
 			return nil, msg
 		}
