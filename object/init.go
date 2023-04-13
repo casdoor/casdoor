@@ -112,7 +112,7 @@ func initBuiltInUser() {
 		Id:                util.GenerateId(),
 		Type:              "normal-user",
 		Password:          "123",
-		DisplayName:       "Username",
+		DisplayName:       "Admin",
 		Avatar:            fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
 		Email:             "admin@example.com",
 		Phone:             "12345678910",
