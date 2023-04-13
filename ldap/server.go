@@ -110,12 +110,11 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	for _, user := range users {
 		dn := fmt.Sprintf("cn=%s,%s", user.Name, string(r.BaseObject()))
 		e := ldap.NewSearchResultEntry(dn)
-		e.AddAttribute("cn", message.AttributeValue(user.Name))
-		e.AddAttribute("uid", message.AttributeValue(user.Name))
-		e.AddAttribute("email", message.AttributeValue(user.Email))
-		e.AddAttribute("mobile", message.AttributeValue(user.Phone))
-		e.AddAttribute("userPassword", message.AttributeValue(getUserPasswordWithType(user)))
-		// e.AddAttribute("postalAddress", message.AttributeValue(user.Address[0]))
+
+		for _, attr := range r.Attributes() {
+			e.AddAttribute(message.AttributeDescription(attr), getAttribute(string(attr), user))
+		}
+
 		w.Write(e)
 	}
 	w.Write(res)
