@@ -303,9 +303,9 @@ func SyncLdapUsers(owner string, respUsers []LdapRespUser, ldapId string) (*[]Ld
 		if !found {
 			newUser := &User{
 				Owner:       owner,
-				Name:        buildLdapUserName(&respUser),
+				Name:        respUser.buildLdapUserName(),
 				CreatedTime: util.GetCurrentTime(),
-				DisplayName: respUser.DisplayName,
+				DisplayName: respUser.buildLdapDisplayName(),
 				Avatar:      organization.DefaultAvatar,
 				Email:       respUser.Email,
 				Phone:       respUser.Phone,
@@ -349,7 +349,7 @@ func CheckLdapUuidExist(owner string, uuids []string) []string {
 	return existUuids
 }
 
-func buildLdapUserName(ldapUser *LdapRespUser) string {
+func (ldapUser *LdapRespUser) buildLdapUserName() string {
 	user := User{}
 	uidWithNumber := fmt.Sprintf("%s_%s", ldapUser.Uid, ldapUser.UidNumber)
 	has, err := adapter.Engine.Where("name = ? or name = ?", ldapUser.Uid, uidWithNumber).Get(&user)
@@ -365,6 +365,14 @@ func buildLdapUserName(ldapUser *LdapRespUser) string {
 	}
 
 	return ldapUser.Uid
+}
+
+func (ldapUser *LdapRespUser) buildLdapDisplayName() string {
+	if ldapUser.DisplayName != "" {
+		return ldapUser.DisplayName
+	}
+
+	return ldapUser.Cn
 }
 
 func (ldap *Ldap) buildFilterString(user *User) string {

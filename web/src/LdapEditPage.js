@@ -192,7 +192,7 @@ class LdapEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
-            {Setting.getLabel(i18next.t("ldap:Admin Username"), i18next.t("ldap:Admin Username - Tooltip"))} :
+            {Setting.getLabel(i18next.t("ldap:Admin"), i18next.t("ldap:Admin - Tooltip"))} :
           </Col>
           <Col span={21}>
             <Input value={this.state.ldap.username} onChange={e => {
