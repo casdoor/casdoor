@@ -159,8 +159,8 @@
       "serverName": "",
       "host": "",
       "port": 389,
-      "admin": "",
-      "passwd": "",
+      "username": "",
+      "password": "",
       "baseDn": "",
       "autoSync": 0,
       "lastSync": ""
