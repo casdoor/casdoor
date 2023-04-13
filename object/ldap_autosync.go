@@ -112,3 +112,10 @@ func (l *LdapAutoSynchronizer) LdapAutoSynchronizerStartUpAll() {
 		}
 	}
 }
+
+func UpdateLdapSyncTime(ldapId string) {
+	_, err := adapter.Engine.ID(ldapId).Update(&Ldap{LastSync: util.GetCurrentTime()})
+	if err != nil {
+		panic(err)
+	}
+}

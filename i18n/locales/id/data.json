@@ -42,6 +42,7 @@
     "Phone number is invalid": "Nomor telepon tidak valid",
     "Session outdated, please login again": "Sesi kedaluwarsa, silakan masuk lagi",
     "The user is forbidden to sign in, please contact the administrator": "Pengguna dilarang masuk, silakan hubungi administrator",
+    "The user: %s doesn't exist in ldap server": "The user: %s doesn't exist in ldap server",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Nama pengguna hanya bisa menggunakan karakter alfanumerik, garis bawah atau tanda hubung, tidak boleh memiliki dua tanda hubung atau garis bawah berurutan, dan tidak boleh diawali atau diakhiri dengan tanda hubung atau garis bawah.",
     "Username already exists": "Nama pengguna sudah ada",
     "Username cannot be an email address": "Username tidak bisa menjadi alamat email",

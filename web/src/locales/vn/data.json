@@ -308,6 +308,8 @@
     "Edit LDAP": "Chỉnh sửa LDAP",
     "Enable SSL": "Kích hoạt SSL",
     "Enable SSL - Tooltip": "Có nên kích hoạt SSL hay không?",
+    "Filter fields": "Filter fields",
+    "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "Nhóm ID",
     "Last Sync": "Đồng bộ lần cuối",
     "Search Filter": "Search Filter",

@@ -16,13 +16,9 @@ package object
 
 import (
 	"errors"
-	"fmt"
-	"strings"
 
-	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
-	"github.com/thanhpk/randstr"
 )
 
 type Ldap struct {
@@ -30,20 +26,21 @@ type Ldap struct {
 	Owner       string `xorm:"varchar(100)" json:"owner"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	ServerName string `xorm:"varchar(100)" json:"serverName"`
-	Host       string `xorm:"varchar(100)" json:"host"`
-	Port       int    `xorm:"int" json:"port"`
-	EnableSsl  bool   `xorm:"bool" json:"enableSsl"`
-	Admin      string `xorm:"varchar(100)" json:"admin"`
-	Passwd     string `xorm:"varchar(100)" json:"passwd"`
-	BaseDn     string `xorm:"varchar(100)" json:"baseDn"`
-	Filter     string `xorm:"varchar(200)" json:"filter"`
+	ServerName   string   `xorm:"varchar(100)" json:"serverName"`
+	Host         string   `xorm:"varchar(100)" json:"host"`
+	Port         int      `xorm:"int" json:"port"`
+	EnableSsl    bool     `xorm:"bool" json:"enableSsl"`
+	Admin        string   `xorm:"varchar(100)" json:"admin"`
+	Passwd       string   `xorm:"varchar(100)" json:"passwd"`
+	BaseDn       string   `xorm:"varchar(100)" json:"baseDn"`
+	Filter       string   `xorm:"varchar(200)" json:"filter"`
+	FilterFields []string `xorm:"varchar(100)" json:"filterFields"`
 
 	AutoSync int    `json:"autoSync"`
 	LastSync string `xorm:"varchar(100)" json:"lastSync"`
 }
 
-type ldapConn struct {
+type LdapConn struct {
 	Conn *goldap.Conn
 	IsAD bool
 }
@@ -84,103 +81,6 @@ type LdapRespUser struct {
 	Address     string `json:"address"`
 }
 
-type ldapServerType struct {
-	Vendorname           string
-	Vendorversion        string
-	IsGlobalCatalogReady string
-	ForestFunctionality  string
-}
-
-func LdapUsersToLdapRespUsers(users []ldapUser) []LdapRespUser {
-	returnAnyNotEmpty := func(strs ...string) string {
-		for _, str := range strs {
-			if str != "" {
-				return str
-			}
-		}
-		return ""
-	}
-
-	res := make([]LdapRespUser, 0)
-	for _, user := range users {
-		res = append(res, LdapRespUser{
-			UidNumber:   user.UidNumber,
-			Uid:         user.Uid,
-			Cn:          user.Cn,
-			GroupId:     user.GidNumber,
-			Uuid:        user.Uuid,
-			DisplayName: user.DisplayName,
-			Email:       returnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
-			Phone:       returnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
-			Address:     returnAnyNotEmpty(user.PostalAddress, user.RegisteredAddress),
-		})
-	}
-	return res
-}
-
-func isMicrosoftAD(Conn *goldap.Conn) (bool, error) {
-	SearchFilter := "(objectClass=*)"
-	SearchAttributes := []string{"vendorname", "vendorversion", "isGlobalCatalogReady", "forestFunctionality"}
-
-	searchReq := goldap.NewSearchRequest("",
-		goldap.ScopeBaseObject, goldap.NeverDerefAliases, 0, 0, false,
-		SearchFilter, SearchAttributes, nil)
-	searchResult, err := Conn.Search(searchReq)
-	if err != nil {
-		return false, err
-	}
-	if len(searchResult.Entries) == 0 {
-		return false, nil
-	}
-	isMicrosoft := false
-	var ldapServerType ldapServerType
-	for _, entry := range searchResult.Entries {
-		for _, attribute := range entry.Attributes {
-			switch attribute.Name {
-			case "vendorname":
-				ldapServerType.Vendorname = attribute.Values[0]
-			case "vendorversion":
-				ldapServerType.Vendorversion = attribute.Values[0]
-			case "isGlobalCatalogReady":
-				ldapServerType.IsGlobalCatalogReady = attribute.Values[0]
-			case "forestFunctionality":
-				ldapServerType.ForestFunctionality = attribute.Values[0]
-			}
-		}
-	}
-	if ldapServerType.Vendorname == "" &&
-		ldapServerType.Vendorversion == "" &&
-		ldapServerType.IsGlobalCatalogReady == "TRUE" &&
-		ldapServerType.ForestFunctionality != "" {
-		isMicrosoft = true
-	}
-	return isMicrosoft, err
-}
-
-func (ldap *Ldap) GetLdapConn() (c *ldapConn, err error) {
-	var conn *goldap.Conn
-	if ldap.EnableSsl {
-		conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port), nil)
-	} else {
-		conn, err = goldap.Dial("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port))
-	}
-
-	if err != nil {
-		return nil, err
-	}
-
-	err = conn.Bind(ldap.Admin, ldap.Passwd)
-	if err != nil {
-		return nil, err
-	}
-
-	isAD, err := isMicrosoftAD(conn)
-	if err != nil {
-		return nil, err
-	}
-	return &ldapConn{Conn: conn, IsAD: isAD}, nil
-}
-
 //FIXME: The Base DN does not necessarily contain the Group
 //func (l *ldapConn) GetLdapGroups(baseDn string) (map[string]ldapGroup, error) {
 //	SearchFilter := "(objectClass=posixGroup)"
@@ -217,18 +117,15 @@ func (ldap *Ldap) GetLdapConn() (c *ldapConn, err error) {
 //	return groupMap, nil
 //}
 
-func (l *ldapConn) GetLdapUsers(ldapServer *Ldap) ([]ldapUser, error) {
-	var SearchAttributes []string
+func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]ldapUser, error) {
+	SearchAttributes := []string{
+		"uidNumber", "cn", "sn", "gidNumber", "entryUUID", "displayName", "mail", "email",
+		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
+	}
 	if l.IsAD {
-		SearchAttributes = []string{
-			"uidNumber", "sAMAccountName", "cn", "gidNumber", "entryUUID", "displayName", "mail", "email",
-			"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
-		}
+		SearchAttributes = append(SearchAttributes, "sAMAccountName")
 	} else {
-		SearchAttributes = []string{
-			"uidNumber", "uid", "cn", "gidNumber", "entryUUID", "displayName", "mail", "email",
-			"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
-		}
+		SearchAttributes = append(SearchAttributes, "uid")
 	}
 
 	searchReq := goldap.NewSearchRequest(ldapServer.BaseDn, goldap.ScopeWholeSubtree, goldap.NeverDerefAliases,
@@ -360,7 +257,7 @@ func UpdateLdap(ldap *Ldap) bool {
 	}
 
 	affected, err := adapter.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
-		"port", "enable_ssl", "admin", "passwd", "base_dn", "filter", "auto_sync").Update(ldap)
+		"port", "enable_ssl", "admin", "passwd", "base_dn", "filter", "filter_fields", "auto_sync").Update(ldap)
 	if err != nil {
 		panic(err)
 	}
@@ -375,129 +272,4 @@ func DeleteLdap(ldap *Ldap) bool {
 	}
 
 	return affected != 0
-}
-
-func SyncLdapUsers(owner string, users []LdapRespUser, ldapId string) (*[]LdapRespUser, *[]LdapRespUser) {
-	var existUsers []LdapRespUser
-	var failedUsers []LdapRespUser
-	var uuids []string
-
-	for _, user := range users {
-		uuids = append(uuids, user.Uuid)
-	}
-
-	existUuids := CheckLdapUuidExist(owner, uuids)
-
-	organization := getOrganization("admin", owner)
-	ldap := GetLdap(ldapId)
-
-	var dc []string
-	for _, basedn := range strings.Split(ldap.BaseDn, ",") {
-		if strings.Contains(basedn, "dc=") {
-			dc = append(dc, basedn[3:])
-		}
-	}
-	affiliation := strings.Join(dc, ".")
-
-	var ou []string
-	for _, admin := range strings.Split(ldap.Admin, ",") {
-		if strings.Contains(admin, "ou=") {
-			ou = append(ou, admin[3:])
-		}
-	}
-	tag := strings.Join(ou, ".")
-
-	for _, user := range users {
-		found := false
-		if len(existUuids) > 0 {
-			for _, existUuid := range existUuids {
-				if user.Uuid == existUuid {
-					existUsers = append(existUsers, user)
-					found = true
-				}
-			}
-		}
-
-		if !found {
-			newUser := &User{
-				Owner:       owner,
-				Name:        buildLdapUserName(&user),
-				CreatedTime: util.GetCurrentTime(),
-				DisplayName: user.DisplayName,
-				Avatar:      organization.DefaultAvatar,
-				Email:       user.Email,
-				Phone:       user.Phone,
-				Address:     []string{user.Address},
-				Affiliation: affiliation,
-				Tag:         tag,
-				Score:       beego.AppConfig.DefaultInt("initScore", 2000),
-				Ldap:        user.Uuid,
-			}
-
-			affected := AddUser(newUser)
-			if !affected {
-				failedUsers = append(failedUsers, user)
-				continue
-			}
-		}
-	}
-
-	return &existUsers, &failedUsers
-}
-
-func UpdateLdapSyncTime(ldapId string) {
-	_, err := adapter.Engine.ID(ldapId).Update(&Ldap{LastSync: util.GetCurrentTime()})
-	if err != nil {
-		panic(err)
-	}
-}
-
-func CheckLdapUuidExist(owner string, uuids []string) []string {
-	var results []User
-	var existUuids []string
-	existUuidSet := make(map[string]struct{})
-
-	//whereStr := ""
-	//for i, uuid := range uuids {
-	//	if i == 0 {
-	//		whereStr = fmt.Sprintf("'%s'", uuid)
-	//	} else {
-	//		whereStr = fmt.Sprintf(",'%s'", uuid)
-	//	}
-	//}
-
-	err := adapter.Engine.Where(fmt.Sprintf("ldap IN (%s) AND owner = ?", "'"+strings.Join(uuids, "','")+"'"), owner).Find(&results)
-	if err != nil {
-		panic(err)
-	}
-
-	if len(results) > 0 {
-		for _, result := range results {
-			existUuidSet[result.Ldap] = struct{}{}
-		}
-	}
-
-	for uuid := range existUuidSet {
-		existUuids = append(existUuids, uuid)
-	}
-	return existUuids
-}
-
-func buildLdapUserName(user *LdapRespUser) string {
-	var result User
-	uidWithNumber := fmt.Sprintf("%s_%s", user.Uid, user.UidNumber)
-
-	has, err := adapter.Engine.Where("name = ? or name = ?", user.Uid, uidWithNumber).Get(&result)
-	if err != nil {
-		panic(err)
-	}
-
-	if has {
-		if result.Name == user.Uid {
-			return uidWithNumber
-		}
-		return fmt.Sprintf("%s_%s", uidWithNumber, randstr.Hex(6))
-	}
-
-	return user.Uid
 }

@@ -308,6 +308,8 @@
     "Edit LDAP": "Modifier LDAP",
     "Enable SSL": "Activer SSL",
     "Enable SSL - Tooltip": "Que ce soit pour activer SSL",
+    "Filter fields": "Filter fields",
+    "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "Identifiant de groupe",
     "Last Sync": "Dernière synchronisation",
     "Search Filter": "Search Filter",

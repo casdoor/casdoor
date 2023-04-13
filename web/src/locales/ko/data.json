@@ -308,6 +308,8 @@
     "Edit LDAP": "LDAP 수정",
     "Enable SSL": "SSL 활성화",
     "Enable SSL - Tooltip": "SSL을 활성화할지 여부를 결정하십시오",
+    "Filter fields": "Filter fields",
+    "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "그룹 ID",
     "Last Sync": "마지막 동기화",
     "Search Filter": "Search Filter",

@@ -308,6 +308,8 @@
     "Edit LDAP": "LDAPを編集",
     "Enable SSL": "SSL を有効にする",
     "Enable SSL - Tooltip": "SSLを有効にするかどうか",
+    "Filter fields": "Filter fields",
+    "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "グループID",
     "Last Sync": "最後の同期",
     "Search Filter": "Search Filter",

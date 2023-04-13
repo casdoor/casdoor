@@ -42,6 +42,7 @@
     "Phone number is invalid": "電話番号が無効です",
     "Session outdated, please login again": "セッションが期限切れになりました。再度ログインしてください",
     "The user is forbidden to sign in, please contact the administrator": "ユーザーはサインインできません。管理者に連絡してください",
+    "The user: %s doesn't exist in ldap server": "The user: %s doesn't exist in ldap server",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "ユーザー名には英数字、アンダースコア、ハイフンしか含めることができません。連続したハイフンまたはアンダースコアは不可であり、ハイフンまたはアンダースコアで始まるまたは終わることもできません。",
     "Username already exists": "ユーザー名はすでに存在しています",
     "Username cannot be an email address": "ユーザー名には電子メールアドレスを使用できません",

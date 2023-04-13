@@ -308,6 +308,8 @@
     "Edit LDAP": "Изменить LDAP",
     "Enable SSL": "Включить SSL",
     "Enable SSL - Tooltip": "Перевод: Следует ли включать SSL",
+    "Filter fields": "Filter fields",
+    "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "Идентификатор группы",
     "Last Sync": "Последняя синхронизация",
     "Search Filter": "Search Filter",

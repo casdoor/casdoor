@@ -308,6 +308,8 @@
     "Edit LDAP": "编辑LDAP",
     "Enable SSL": "启用SSL",
     "Enable SSL - Tooltip": "是否启用SSL",
+    "Filter fields": "过滤字段",
+    "Filter fields - Tooltip": "使用ldap用户登录Casdoor时, 用于搜索ldap服务器中该用户的字段 - Tooltip",
     "Group ID": "组ID",
     "Last Sync": "最近同步",
     "Search Filter": "Search Filter",

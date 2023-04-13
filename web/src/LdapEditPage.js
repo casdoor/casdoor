@@ -178,6 +178,20 @@ class LdapEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
+            {Setting.getLabel(i18next.t("ldap:Filter fields"), i18next.t("ldap:Filter fields - Tooltip"))} :
+          </Col>
+          <Col span={21}>
+            <Select value={this.state.ldap.filterFields ?? []} style={{width: "100%"}} mode={"multiple"} options={[
+              {value: "uid", label: "uid"},
+              {value: "mail", label: "email"},
+              {value: "mobile", label: "mobile"},
+            ].map((item) => Setting.getOption(item.label, item.value))} onChange={value => {
+              this.updateLdapField("filterFields", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
             {Setting.getLabel(i18next.t("ldap:Admin"), i18next.t("ldap:Admin - Tooltip"))} :
           </Col>
           <Col span={21}>

@@ -42,6 +42,7 @@
     "Phone number is invalid": "Die Telefonnummer ist ungültig",
     "Session outdated, please login again": "Sitzung abgelaufen, bitte erneut anmelden",
     "The user is forbidden to sign in, please contact the administrator": "Dem Benutzer ist der Zugang verboten, bitte kontaktieren Sie den Administrator",
+    "The user: %s doesn't exist in ldap server": "The user: %s doesn't exist in ldap server",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Der Benutzername darf nur alphanumerische Zeichen, Unterstriche oder Bindestriche enthalten, keine aufeinanderfolgenden Bindestriche oder Unterstriche haben und darf nicht mit einem Bindestrich oder Unterstrich beginnen oder enden.",
     "Username already exists": "Benutzername existiert bereits",
     "Username cannot be an email address": "Benutzername kann keine E-Mail-Adresse sein",

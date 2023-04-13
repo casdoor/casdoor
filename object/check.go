@@ -188,9 +188,10 @@ func CheckPassword(user *User, password string, lang string) string {
 	}
 }
 
-func checkLdapUserPassword(user *User, password string, lang string) (*User, string) {
+func checkLdapUserPassword(user *User, password string, lang string) string {
 	ldaps := GetLdaps(user.Owner)
 	ldapLoginSuccess := false
+	hit := false
 
 	for _, ldapServer := range ldaps {
 		conn, err := ldapServer.GetLdapConn()
@@ -198,23 +199,22 @@ func checkLdapUserPassword(user *User, password string, lang string) (*User, str
 			continue
 		}
 
-		SearchFilter := fmt.Sprintf("(&%s(uid=%s))", ldapServer.Filter, user.Name)
+		searchReq := goldap.NewSearchRequest(ldapServer.BaseDn, goldap.ScopeWholeSubtree, goldap.NeverDerefAliases,
+			0, 0, false, ldapServer.buildFilterString(user), []string{}, nil)
 
-		searchReq := goldap.NewSearchRequest(ldapServer.BaseDn,
-			goldap.ScopeWholeSubtree, goldap.NeverDerefAliases, 0, 0, false,
-			SearchFilter, []string{}, nil)
 		searchResult, err := conn.Conn.Search(searchReq)
 		if err != nil {
-			return nil, err.Error()
+			return err.Error()
 		}
 
 		if len(searchResult.Entries) == 0 {
 			continue
 		}
 		if len(searchResult.Entries) > 1 {
-			return nil, i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server")
+			return i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server")
 		}
 
+		hit = true
 		dn := searchResult.Entries[0].DN
 		if err := conn.Conn.Bind(dn, password); err == nil {
 			ldapLoginSuccess = true
@@ -223,9 +223,12 @@ func checkLdapUserPassword(user *User, password string, lang string) (*User, str
 	}
 
 	if !ldapLoginSuccess {
-		return nil, i18n.Translate(lang, "check:Ldap user name or password incorrect")
+		if !hit {
+			return "user not exist"
+		}
+		return i18n.Translate(lang, "check:Ldap user name or password incorrect")
 	}
-	return user, ""
+	return ""
 }
 
 func CheckUserPassword(organization string, username string, password string, lang string) (*User, string) {
@@ -240,10 +243,14 @@ func CheckUserPassword(organization string, username string, password string, la
 
 	if user.Ldap != "" {
 		// ONLY for ldap users
-		return checkLdapUserPassword(user, password, lang)
+		if msg := checkLdapUserPassword(user, password, lang); msg != "" {
+			if msg == "user not exist" {
+				return nil, fmt.Sprintf(i18n.Translate(lang, "check:The user: %s doesn't exist in ldap server"), username)
+			}
+			return nil, msg
+		}
 	} else {
-		msg := CheckPassword(user, password, lang)
-		if msg != "" {
+		if msg := CheckPassword(user, password, lang); msg != "" {
 			return nil, msg
 		}
 	}
