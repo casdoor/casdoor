@@ -64,6 +64,7 @@ COPY --from=BACK /go/src/casdoor/docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
 COPY --from=BACK /go/src/casdoor/version_info.txt ./go/src/casdoor/version_info.txt
 COPY --from=FRONT /web/build ./web/build
+RUN mkdir tempFiles
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["/docker-entrypoint.sh"]
