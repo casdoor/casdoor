@@ -339,7 +339,7 @@ func (c *ApiController) Login() {
 		userInfo := &idp.UserInfo{}
 		if provider.Category == "SAML" {
 			// SAML
-			userInfo.Id, err = object.ParseSamlResponse(form.SamlResponse, provider.Type)
+			userInfo.Id, err = object.ParseSamlResponse(form.SamlResponse, provider, c.Ctx.Request.Host)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -546,7 +546,7 @@ func (c *ApiController) Login() {
 func (c *ApiController) GetSamlLogin() {
 	providerId := c.Input().Get("id")
 	relayState := c.Input().Get("relayState")
-	authURL, method, err := object.GenerateSamlLoginUrl(providerId, relayState, c.GetAcceptLanguage())
+	authURL, method, err := object.GenerateSamlRequest(providerId, relayState, c.Ctx.Request.Host, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 	}
