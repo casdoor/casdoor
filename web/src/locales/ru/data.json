@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "Выход",
     "My Account": "Мой аккаунт",
     "Sign Up": "Зарегистрироваться"
@@ -117,6 +118,19 @@
     "Scope - Tooltip": "Сценарии использования сертификата",
     "Type - Tooltip": "Тип сертификата"
   },
+  "chat": {
+    "AI": "AI",
+    "Edit Chat": "Edit Chat",
+    "Group": "Group",
+    "Message count": "Message count",
+    "New Chat": "New Chat",
+    "Single": "Single",
+    "User1": "User1",
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
+  },
   "code": {
     "Code you received": "Код, который вы получили",
     "Email code": "Электронный код письма",
@@ -159,6 +173,7 @@
     "Cert": "Сертификат",
     "Cert - Tooltip": "Сертификат открытого ключа, который требуется проверить клиентским SDK, соответствующим этому приложению",
     "Certs": "сертификаты",
+    "Chats": "Chats",
     "Click to Upload": "Нажмите, чтобы загрузить",
     "Client IP": "Клиентский IP",
     "Close": "Близко",
@@ -203,6 +218,7 @@
     "Master password": "Главный пароль",
     "Master password - Tooltip": "Можно использовать для входа в учетные записи всех пользователей этой организации, что удобно для администраторов, чтобы войти в качестве этого пользователя и решить технические проблемы",
     "Menu": "Меню",
+    "Messages": "Messages",
     "Method": "Метод",
     "Model": "Модель",
     "Model - Tooltip": "Модель контроля доступа Casbin",
@@ -269,6 +285,7 @@
     "URL": "URL",
     "URL - Tooltip": "Ссылка URL",
     "Up": "Вверх",
+    "Updated time": "Updated time",
     "User": "Пользователь",
     "User - Tooltip": "Убедитесь, что имя пользователя правильное",
     "User containers": "Пользовательские пулы",
@@ -293,8 +310,12 @@
     "Edit LDAP": "Изменить LDAP",
     "Enable SSL": "Включить SSL",
     "Enable SSL - Tooltip": "Перевод: Следует ли включать SSL",
+    "Filter fields": "Filter fields",
+    "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "Идентификатор группы",
     "Last Sync": "Последняя синхронизация",
+    "Search Filter": "Search Filter",
+    "Search Filter - Tooltip": "Search Filter - Tooltip",
     "Server": "Сервер",
     "Server host": "Хост сервера",
     "Server host - Tooltip": "Адрес сервера LDAP",
@@ -330,6 +351,16 @@
     "WebAuthn": "WebAuthn",
     "sign up now": "Зарегистрируйтесь сейчас",
     "username, Email or phone": "имя пользователя, электронная почта или телефон"
+  },
+  "message": {
+    "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
+    "Chat": "Chat",
+    "Chat - Tooltip": "Chat - Tooltip",
+    "Edit Message": "Edit Message",
+    "New Message": "New Message",
+    "Text": "Text",
+    "Text - Tooltip": "Text - Tooltip"
   },
   "model": {
     "Edit Model": "Редактировать модель",

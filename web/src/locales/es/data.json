@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "Cierre de sesión",
     "My Account": "Mi cuenta",
     "Sign Up": "Registrarse"
@@ -117,6 +118,19 @@
     "Scope - Tooltip": "Escenarios de uso del certificado",
     "Type - Tooltip": "Tipo de certificado"
   },
+  "chat": {
+    "AI": "AI",
+    "Edit Chat": "Edit Chat",
+    "Group": "Group",
+    "Message count": "Message count",
+    "New Chat": "New Chat",
+    "Single": "Single",
+    "User1": "User1",
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
+  },
   "code": {
     "Code you received": "Código que recibió",
     "Email code": "Código de correo electrónico",
@@ -159,6 +173,7 @@
     "Cert": "ificado",
     "Cert - Tooltip": "El certificado de clave pública que necesita ser verificado por el SDK del cliente correspondiente a esta aplicación",
     "Certs": "Certificaciones",
+    "Chats": "Chats",
     "Click to Upload": "Haz clic para cargar",
     "Client IP": "Dirección IP del cliente",
     "Close": "Cerca",
@@ -203,6 +218,7 @@
     "Master password": "Contraseña maestra",
     "Master password - Tooltip": "Se puede usar para iniciar sesión en todos los usuarios de esta organización, lo que hace conveniente que los administradores inicien sesión como este usuario para resolver problemas técnicos",
     "Menu": "Menú",
+    "Messages": "Messages",
     "Method": "Método",
     "Model": "Modelo",
     "Model - Tooltip": "Modelo de control de acceso Casbin",
@@ -269,6 +285,7 @@
     "URL": "Dirección URL",
     "URL - Tooltip": "Enlace de URL",
     "Up": "Arriba",
+    "Updated time": "Updated time",
     "User": "Usuario",
     "User - Tooltip": "Asegúrate de que el nombre de usuario sea correcto",
     "User containers": "Piscinas de usuarios",
@@ -293,8 +310,12 @@
     "Edit LDAP": "Editar LDAP",
     "Enable SSL": "Habilitar SSL",
     "Enable SSL - Tooltip": "Si se habilita SSL",
+    "Filter fields": "Filter fields",
+    "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "Identificador de grupo",
     "Last Sync": "Última sincronización",
+    "Search Filter": "Search Filter",
+    "Search Filter - Tooltip": "Search Filter - Tooltip",
     "Server": "Servidor",
     "Server host": "Anfitrión del servidor",
     "Server host - Tooltip": "Dirección del servidor LDAP",
@@ -330,6 +351,16 @@
     "WebAuthn": "WebAuthn",
     "sign up now": "Regístrate ahora",
     "username, Email or phone": "Nombre de usuario, correo electrónico o teléfono"
+  },
+  "message": {
+    "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
+    "Chat": "Chat",
+    "Chat - Tooltip": "Chat - Tooltip",
+    "Edit Message": "Edit Message",
+    "New Message": "New Message",
+    "Text": "Text",
+    "Text - Tooltip": "Text - Tooltip"
   },
   "model": {
     "Edit Model": "Editar modelo",

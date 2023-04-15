@@ -24,6 +24,16 @@ export function getMessages(owner, page = "", pageSize = "", field = "", value =
   }).then(res => res.json());
 }
 
+export function getChatMessages(chat) {
+  return fetch(`${Setting.ServerUrl}/api/get-messages?chat=${chat}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function getMessage(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-message?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",

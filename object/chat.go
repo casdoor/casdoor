@@ -29,6 +29,8 @@ type Chat struct {
 
 	Organization string   `xorm:"varchar(100)" json:"organization"`
 	DisplayName  string   `xorm:"varchar(100)" json:"displayName"`
+	Type         string   `xorm:"varchar(100)" json:"type"`
+	Category     string   `xorm:"varchar(100)" json:"category"`
 	User1        string   `xorm:"varchar(100)" json:"user1"`
 	User2        string   `xorm:"varchar(100)" json:"user2"`
 	Users        []string `xorm:"varchar(100)" json:"users"`

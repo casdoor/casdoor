@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "ログアウト",
     "My Account": "マイアカウント",
     "Sign Up": "新規登録"
@@ -117,6 +118,19 @@
     "Scope - Tooltip": "証明書の使用シナリオ",
     "Type - Tooltip": "証明書の種類"
   },
+  "chat": {
+    "AI": "AI",
+    "Edit Chat": "Edit Chat",
+    "Group": "Group",
+    "Message count": "Message count",
+    "New Chat": "New Chat",
+    "Single": "Single",
+    "User1": "User1",
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
+  },
   "code": {
     "Code you received": "受け取ったコード",
     "Email code": "メールコード",
@@ -159,6 +173,7 @@
     "Cert": "証明書",
     "Cert - Tooltip": "このアプリケーションに対応するクライアントSDKによって検証する必要がある公開鍵証明書",
     "Certs": "証明書",
+    "Chats": "Chats",
     "Click to Upload": "アップロードするにはクリックしてください",
     "Client IP": "クライアントIP",
     "Close": "閉じる",
@@ -203,6 +218,7 @@
     "Master password": "マスターパスワード",
     "Master password - Tooltip": "この組織のすべてのユーザーにログインするために使用でき、管理者が技術的な問題を解決するためにこのユーザーとしてログインするのに便利です",
     "Menu": "メニュー",
+    "Messages": "Messages",
     "Method": "方法",
     "Model": "モデル",
     "Model - Tooltip": "カスビンアクセスコントロールモデル",
@@ -269,6 +285,7 @@
     "URL": "URL",
     "URL - Tooltip": "URLリンク",
     "Up": "アップ",
+    "Updated time": "Updated time",
     "User": "ユーザー",
     "User - Tooltip": "ユーザー名が正しいことを確認してください",
     "User containers": "ユーザープール",
@@ -293,8 +310,12 @@
     "Edit LDAP": "LDAPを編集",
     "Enable SSL": "SSL を有効にする",
     "Enable SSL - Tooltip": "SSLを有効にするかどうか",
+    "Filter fields": "Filter fields",
+    "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "グループID",
     "Last Sync": "最後の同期",
+    "Search Filter": "Search Filter",
+    "Search Filter - Tooltip": "Search Filter - Tooltip",
     "Server": "サーバー",
     "Server host": "サーバーホスト",
     "Server host - Tooltip": "LDAPサーバーのアドレス",
@@ -330,6 +351,16 @@
     "WebAuthn": "WebAuthn",
     "sign up now": "今すぐサインアップ",
     "username, Email or phone": "ユーザー名、メールアドレス、または電話番号"
+  },
+  "message": {
+    "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
+    "Chat": "Chat",
+    "Chat - Tooltip": "Chat - Tooltip",
+    "Edit Message": "Edit Message",
+    "New Message": "New Message",
+    "Text": "Text",
+    "Text - Tooltip": "Text - Tooltip"
   },
   "model": {
     "Edit Model": "編集モデル",

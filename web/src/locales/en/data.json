@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "Logout",
     "My Account": "My Account",
     "Sign Up": "Sign Up"
@@ -117,6 +118,19 @@
     "Scope - Tooltip": "Usage scenarios of the certificate",
     "Type - Tooltip": "Type of certificate"
   },
+  "chat": {
+    "AI": "AI",
+    "Edit Chat": "Edit Chat",
+    "Group": "Group",
+    "Message count": "Message count",
+    "New Chat": "New Chat",
+    "Single": "Single",
+    "User1": "User1",
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
+  },
   "code": {
     "Code you received": "Code you received",
     "Email code": "Email code",
@@ -159,6 +173,7 @@
     "Cert": "Cert",
     "Cert - Tooltip": "The public key certificate that needs to be verified by the client SDK corresponding to this application",
     "Certs": "Certs",
+    "Chats": "Chats",
     "Click to Upload": "Click to Upload",
     "Client IP": "Client IP",
     "Close": "Close",
@@ -203,6 +218,7 @@
     "Master password": "Master password",
     "Master password - Tooltip": "Can be used to log in to all users under this organization, making it convenient for administrators to log in as this user to solve technical issues",
     "Menu": "Menu",
+    "Messages": "Messages",
     "Method": "Method",
     "Model": "Model",
     "Model - Tooltip": "Casbin access control model",
@@ -269,6 +285,7 @@
     "URL": "URL",
     "URL - Tooltip": "URL link",
     "Up": "Up",
+    "Updated time": "Updated time",
     "User": "User",
     "User - Tooltip": "Make sure the username is correct",
     "User containers": "User pools",
@@ -293,8 +310,12 @@
     "Edit LDAP": "Edit LDAP",
     "Enable SSL": "Enable SSL",
     "Enable SSL - Tooltip": "Whether to enable SSL",
+    "Filter fields": "Filter fields",
+    "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "Group ID",
     "Last Sync": "Last Sync",
+    "Search Filter": "Search Filter",
+    "Search Filter - Tooltip": "Search Filter - Tooltip",
     "Server": "Server",
     "Server host": "Server host",
     "Server host - Tooltip": "LDAP server address",
@@ -330,6 +351,16 @@
     "WebAuthn": "WebAuthn",
     "sign up now": "sign up now",
     "username, Email or phone": "username, Email or phone"
+  },
+  "message": {
+    "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
+    "Chat": "Chat",
+    "Chat - Tooltip": "Chat - Tooltip",
+    "Edit Message": "Edit Message",
+    "New Message": "New Message",
+    "Text": "Text",
+    "Text - Tooltip": "Text - Tooltip"
   },
   "model": {
     "Edit Model": "Edit Model",

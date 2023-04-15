@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "聊天 & 消息",
     "Logout": "登出",
     "My Account": "我的账户",
     "Sign Up": "注册"
@@ -117,6 +118,19 @@
     "Scope - Tooltip": "公钥证书的使用场景",
     "Type - Tooltip": "公钥证书的类型"
   },
+  "chat": {
+    "AI": "AI",
+    "Edit Chat": "编辑聊天",
+    "Group": "群聊",
+    "Message count": "消息个数",
+    "New Chat": "添加聊天",
+    "Single": "单聊",
+    "User1": "用户1",
+    "User1 - Tooltip": "当聊天类型为单聊时，该值为聊天的发起者；当聊天类型为群聊时，该值为群主",
+    "User2": "用户2",
+    "User2 - Tooltip": "当聊天类型为单聊时，该值为聊天的对象；当聊天类型为群聊时，该值为管理员",
+    "Users - Tooltip": "能够接收到聊天消息的所有用户"
+  },
   "code": {
     "Code you received": "验证码",
     "Email code": "邮箱验证码",
@@ -159,6 +173,7 @@
     "Cert": "证书",
     "Cert - Tooltip": "该应用所对应的客户端SDK需要验证的公钥证书",
     "Certs": "证书",
+    "Chats": "聊天",
     "Click to Upload": "点击上传",
     "Client IP": "客户端IP",
     "Close": "关闭",
@@ -203,6 +218,7 @@
     "Master password": "万能密码",
     "Master password - Tooltip": "可用来登录该组织下的所有用户，方便管理员以该用户身份登录，以解决技术问题",
     "Menu": "目录",
+    "Messages": "消息",
     "Method": "方法",
     "Model": "模型",
     "Model - Tooltip": "Casbin的访问控制模型",
@@ -269,6 +285,7 @@
     "URL": "链接",
     "URL - Tooltip": "URL链接",
     "Up": "上移",
+    "Updated time": "更新时间",
     "User": "用户",
     "User - Tooltip": "请确保用户名正确",
     "User containers": "用户池",
@@ -293,8 +310,12 @@
     "Edit LDAP": "编辑LDAP",
     "Enable SSL": "启用SSL",
     "Enable SSL - Tooltip": "是否启用SSL",
+    "Filter fields": "过滤字段",
+    "Filter fields - Tooltip": "使用ldap用户登录Casdoor时, 用于搜索ldap服务器中该用户的字段 - Tooltip",
     "Group ID": "组ID",
     "Last Sync": "最近同步",
+    "Search Filter": "Search Filter",
+    "Search Filter - Tooltip": "Search Filter - Tooltip",
     "Server": "服务器",
     "Server host": "域名",
     "Server host - Tooltip": "LDAP服务器地址",
@@ -330,6 +351,16 @@
     "WebAuthn": "WebAuthn",
     "sign up now": "立即注册",
     "username, Email or phone": "用户名、Email或手机号"
+  },
+  "message": {
+    "Author": "作者",
+    "Author - Tooltip": "发出消息的用户",
+    "Chat": "聊天",
+    "Chat - Tooltip": "消息所属的聊天ID",
+    "Edit Message": "编辑消息",
+    "New Message": "添加消息",
+    "Text": "内容",
+    "Text - Tooltip": "消息的内容"
   },
   "model": {
     "Edit Model": "编辑模型",

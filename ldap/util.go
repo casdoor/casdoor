@@ -21,6 +21,7 @@ import (
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
+	"github.com/lor00x/goldap/message"
 
 	ldap "github.com/forestmgy/ldapserver"
 )
@@ -68,6 +69,7 @@ func getUsername(filter string) string {
 
 func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) {
 	r := m.GetSearchRequest()
+
 	name, org, code := getNameAndOrgFromFilter(string(r.BaseObject()), r.FilterString())
 	if code != ldap.LDAPResultSuccess {
 		return nil, code
@@ -113,4 +115,21 @@ func getUserPasswordWithType(user *object.User) string {
 		prefix = "pbkdf2"
 	}
 	return fmt.Sprintf("{%s}%s", prefix, user.Password)
+}
+
+func getAttribute(attributeName string, user *object.User) message.AttributeValue {
+	switch attributeName {
+	case "cn":
+		return message.AttributeValue(user.Name)
+	case "uid":
+		return message.AttributeValue(user.Name)
+	case "email":
+		return message.AttributeValue(user.Email)
+	case "mobile":
+		return message.AttributeValue(user.Phone)
+	case "userPassword":
+		return message.AttributeValue(getUserPasswordWithType(user))
+	default:
+		return ""
+	}
 }

@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "Keluar",
     "My Account": "Akun Saya",
     "Sign Up": "Mendaftar"
@@ -117,6 +118,19 @@
     "Scope - Tooltip": "Skema penggunaan sertifikat:",
     "Type - Tooltip": "Jenis sertifikat"
   },
+  "chat": {
+    "AI": "AI",
+    "Edit Chat": "Edit Chat",
+    "Group": "Group",
+    "Message count": "Message count",
+    "New Chat": "New Chat",
+    "Single": "Single",
+    "User1": "User1",
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
+  },
   "code": {
     "Code you received": "Kode yang kamu terima",
     "Email code": "Kode email",
@@ -159,6 +173,7 @@
     "Cert": "Sertifikat",
     "Cert - Tooltip": "Sertifikat kunci publik yang perlu diverifikasi oleh SDK klien yang sesuai dengan aplikasi ini",
     "Certs": "Sertifikat",
+    "Chats": "Chats",
     "Click to Upload": "Klik untuk Mengunggah",
     "Client IP": "IP klien",
     "Close": "Tutup",
@@ -203,6 +218,7 @@
     "Master password": "Kata sandi utama",
     "Master password - Tooltip": "Dapat digunakan untuk masuk ke semua pengguna di bawah organisasi ini, sehingga memudahkan administrator untuk masuk sebagai pengguna ini untuk menyelesaikan masalah teknis",
     "Menu": "Daftar makanan",
+    "Messages": "Messages",
     "Method": "Metode",
     "Model": "Model",
     "Model - Tooltip": "Model kontrol akses Casbin",
@@ -269,6 +285,7 @@
     "URL": "URL",
     "URL - Tooltip": "Tautan URL",
     "Up": "Ke atas",
+    "Updated time": "Updated time",
     "User": "Pengguna",
     "User - Tooltip": "Pastikan username-nya benar",
     "User containers": "User pools",
@@ -293,8 +310,12 @@
     "Edit LDAP": "Mengedit LDAP",
     "Enable SSL": "Aktifkan SSL",
     "Enable SSL - Tooltip": "Apakah untuk mengaktifkan SSL?",
+    "Filter fields": "Filter fields",
+    "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "ID grup",
     "Last Sync": "Terakhir Sinkronisasi",
+    "Search Filter": "Search Filter",
+    "Search Filter - Tooltip": "Search Filter - Tooltip",
     "Server": "Server",
     "Server host": "Hewan Server",
     "Server host - Tooltip": "Alamat server LDAP",
@@ -330,6 +351,16 @@
     "WebAuthn": "WebAuthn",
     "sign up now": "Daftar sekarang",
     "username, Email or phone": "nama pengguna, Email atau nomor telepon"
+  },
+  "message": {
+    "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
+    "Chat": "Chat",
+    "Chat - Tooltip": "Chat - Tooltip",
+    "Edit Message": "Edit Message",
+    "New Message": "New Message",
+    "Text": "Text",
+    "Text - Tooltip": "Text - Tooltip"
   },
   "model": {
     "Edit Model": "Mengedit Model",

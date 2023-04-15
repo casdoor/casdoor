@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "로그아웃",
     "My Account": "내 계정",
     "Sign Up": "가입하기"
@@ -117,6 +118,19 @@
     "Scope - Tooltip": "인증서의 사용 시나리오",
     "Type - Tooltip": "증명서 유형"
   },
+  "chat": {
+    "AI": "AI",
+    "Edit Chat": "Edit Chat",
+    "Group": "Group",
+    "Message count": "Message count",
+    "New Chat": "New Chat",
+    "Single": "Single",
+    "User1": "User1",
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
+  },
   "code": {
     "Code you received": "받은 코드",
     "Email code": "이메일 코드",
@@ -159,6 +173,7 @@
     "Cert": "인증서",
     "Cert - Tooltip": "이 응용 프로그램에 해당하는 클라이언트 SDK에서 확인해야 하는 공개 키 인증서",
     "Certs": "증명서",
+    "Chats": "Chats",
     "Click to Upload": "클릭하여 업로드하세요",
     "Client IP": "고객 IP",
     "Close": "닫다",
@@ -203,6 +218,7 @@
     "Master password": "마스터 비밀번호",
     "Master password - Tooltip": "이 조직의 모든 사용자에게 로그인하는 데 사용될 수 있으며, 이 사용자로 로그인하여 기술 문제를 해결하는 관리자에게 편리합니다",
     "Menu": "메뉴",
+    "Messages": "Messages",
     "Method": "방법",
     "Model": "모델",
     "Model - Tooltip": "Casbin 접근 제어 모델",
@@ -269,6 +285,7 @@
     "URL": "URL",
     "URL - Tooltip": "URL 링크",
     "Up": "위로",
+    "Updated time": "Updated time",
     "User": "사용자",
     "User - Tooltip": "사용자 이름이 정확한지 확인하세요",
     "User containers": "사용자 풀",
@@ -293,8 +310,12 @@
     "Edit LDAP": "LDAP 수정",
     "Enable SSL": "SSL 활성화",
     "Enable SSL - Tooltip": "SSL을 활성화할지 여부를 결정하십시오",
+    "Filter fields": "Filter fields",
+    "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "그룹 ID",
     "Last Sync": "마지막 동기화",
+    "Search Filter": "Search Filter",
+    "Search Filter - Tooltip": "Search Filter - Tooltip",
     "Server": "서버",
     "Server host": "서버 호스트",
     "Server host - Tooltip": "LDAP 서버 주소",
@@ -330,6 +351,16 @@
     "WebAuthn": "WebAuthn",
     "sign up now": "지금 가입하세요",
     "username, Email or phone": "유저명, 이메일 또는 전화번호"
+  },
+  "message": {
+    "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
+    "Chat": "Chat",
+    "Chat - Tooltip": "Chat - Tooltip",
+    "Edit Message": "Edit Message",
+    "New Message": "New Message",
+    "Text": "Text",
+    "Text - Tooltip": "Text - Tooltip"
   },
   "model": {
     "Edit Model": "편집 형태 모델",

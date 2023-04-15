@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "Đăng xuất",
     "My Account": "Tài khoản của tôi",
     "Sign Up": "Đăng ký"
@@ -117,6 +118,19 @@
     "Scope - Tooltip": "Các kịch bản sử dụng của giấy chứng nhận",
     "Type - Tooltip": "Loại chứng chỉ"
   },
+  "chat": {
+    "AI": "AI",
+    "Edit Chat": "Edit Chat",
+    "Group": "Group",
+    "Message count": "Message count",
+    "New Chat": "New Chat",
+    "Single": "Single",
+    "User1": "User1",
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
+  },
   "code": {
     "Code you received": "Mã bạn nhận được",
     "Email code": "Mã email",
@@ -159,6 +173,7 @@
     "Cert": "Chứng chỉ",
     "Cert - Tooltip": "Chứng chỉ khóa công khai cần được xác minh bởi SDK khách hàng tương ứng với ứng dụng này",
     "Certs": "Chứng chỉ",
+    "Chats": "Chats",
     "Click to Upload": "Nhấp để tải lên",
     "Client IP": "Địa chỉ IP của khách hàng",
     "Close": "Đóng lại",
@@ -203,6 +218,7 @@
     "Master password": "Mật khẩu chính",
     "Master password - Tooltip": "Có thể được sử dụng để đăng nhập vào tất cả các người dùng trong tổ chức này, giúp cho quản trị viên dễ dàng đăng nhập với tư cách người dùng này để giải quyết các vấn đề kỹ thuật",
     "Menu": "Thực đơn",
+    "Messages": "Messages",
     "Method": "Phương pháp",
     "Model": "Mô hình",
     "Model - Tooltip": "Mô hình kiểm soát truy cập Casbin",
@@ -269,6 +285,7 @@
     "URL": "URL",
     "URL - Tooltip": "Đường dẫn URL",
     "Up": "Lên",
+    "Updated time": "Updated time",
     "User": "Người dùng",
     "User - Tooltip": "Hãy đảm bảo tên đăng nhập chính xác",
     "User containers": "Nhóm người dùng",
@@ -293,8 +310,12 @@
     "Edit LDAP": "Chỉnh sửa LDAP",
     "Enable SSL": "Kích hoạt SSL",
     "Enable SSL - Tooltip": "Có nên kích hoạt SSL hay không?",
+    "Filter fields": "Filter fields",
+    "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "Nhóm ID",
     "Last Sync": "Đồng bộ lần cuối",
+    "Search Filter": "Search Filter",
+    "Search Filter - Tooltip": "Search Filter - Tooltip",
     "Server": "Máy chủ",
     "Server host": "Máy chủ chủ động",
     "Server host - Tooltip": "Địa chỉ máy chủ LDAP",
@@ -330,6 +351,16 @@
     "WebAuthn": "WebAuthn",
     "sign up now": "Đăng ký ngay bây giờ",
     "username, Email or phone": "Tên đăng nhập, Email hoặc điện thoại"
+  },
+  "message": {
+    "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
+    "Chat": "Chat",
+    "Chat - Tooltip": "Chat - Tooltip",
+    "Edit Message": "Edit Message",
+    "New Message": "New Message",
+    "Text": "Text",
+    "Text - Tooltip": "Text - Tooltip"
   },
   "model": {
     "Edit Model": "Chỉnh sửa mô hình",

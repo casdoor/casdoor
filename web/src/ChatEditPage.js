@@ -126,7 +126,33 @@ class ChatEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("chat:User1"), i18next.t("general:User1 - Tooltip"))} :
+            {Setting.getLabel(i18next.t("provider:Type"), i18next.t("provider:Type - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} value={this.state.chat.type} onChange={(value => {
+              this.updateChatField("type", value);
+            })}
+            options={[
+              {value: "Single", name: i18next.t("chat:Single")},
+              {value: "Group", name: i18next.t("chat:Group")},
+              {value: "AI", name: i18next.t("chat:AI")},
+            ].map((item) => Setting.getOption(item.name, item.value))}
+            />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Category"), i18next.t("provider:Category - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.chat.category} onChange={e => {
+              this.updateChatField("category", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("chat:User1"), i18next.t("chat:User1 - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.chat.user1} onChange={(value => {this.updateChatField("user1", value);})}
@@ -136,7 +162,7 @@ class ChatEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("chat:User2"), i18next.t("general:User2 - Tooltip"))} :
+            {Setting.getLabel(i18next.t("chat:User2"), i18next.t("chat:User2 - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.chat.user2} onChange={(value => {this.updateChatField("user2", value);})}
@@ -146,7 +172,7 @@ class ChatEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("chat:Sub users"), i18next.t("chat:Sub users - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Users"), i18next.t("chat:Users - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select mode="tags" style={{width: "100%"}} value={this.state.chat.users}
