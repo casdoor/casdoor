@@ -22,7 +22,7 @@ import id from "./locales/id/data.json";
 import ja from "./locales/ja/data.json";
 import ko from "./locales/ko/data.json";
 import ru from "./locales/ru/data.json";
-import vn from "./locales/vn/data.json";
+import vi from "./locales/vi/data.json";
 import * as Conf from "./Conf";
 import {initReactI18next} from "react-i18next";
 
@@ -36,7 +36,7 @@ const resources = {
   ja: ja,
   ko: ko,
   ru: ru,
-  vn: vn,
+  vi: vi,
 };
 
 function initLanguage() {
@@ -80,8 +80,8 @@ function initLanguage() {
       case "ru":
         language = "ru";
         break;
-      case "vn":
-        language = "vn";
+      case "vi":
+        language = "vi";
         break;
       default:
         language = Conf.DefaultLanguage;
