@@ -80,13 +80,28 @@ class ChatPage extends BaseListPage {
     return (this.state.loading) ? <Spin size="large" style={{marginLeft: "50%", marginTop: "10%"}} /> : (
       (
         <div style={{display: "flex", height: "calc(100vh - 140px)"}}>
-          <div style={{width: "250px", height: "100%", backgroundColor: "lightblue"}}>
+          <div style={{width: "250px", height: "100%", backgroundColor: "white", borderRight: "1px solid rgb(245,245,245)"}}>
             <ChatMenu chats={chats} onSelect={(i) => {
               const chat = chats[i];
               this.getMessages(chat.name);
             }} />
           </div>
-          <div style={{flex: 1, height: "100%", backgroundColor: "lightgreen"}}>
+          <div style={{flex: 1, height: "100%", backgroundColor: "white", position: "relative"}}>
+            <div style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: "url(https://cdn.casbin.org/img/casdoor-logo_1185x256.png)",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "200px auto",
+              backgroundBlendMode: "luminosity",
+              filter: "grayscale(80%) brightness(140%) contrast(90%)",
+              opacity: 0.5,
+            }}>
+            </div>
             <ChatBox messages={this.state.messages} account={this.props.account} />
           </div>
         </div>
