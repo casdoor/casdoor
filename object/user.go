@@ -515,7 +515,10 @@ func AddUser(user *User) bool {
 	user.UpdateUserHash()
 	user.PreHash = user.Hash
 
-	user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, false)
+	updated := user.refreshAvatar()
+	if updated && user.PermanentAvatar != "*" {
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, false)
+	}
 
 	user.Ranking = GetUserCount(user.Owner, "", "") + 1
 
