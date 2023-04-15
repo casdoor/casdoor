@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "로그아웃",
     "My Account": "내 계정",
     "Sign Up": "가입하기"
@@ -118,13 +119,17 @@
     "Type - Tooltip": "증명서 유형"
   },
   "chat": {
+    "AI": "AI",
     "Edit Chat": "Edit Chat",
+    "Group": "Group",
     "Message count": "Message count",
     "New Chat": "New Chat",
-    "Sub users": "Sub users",
-    "Sub users - Tooltip": "Sub users - Tooltip",
+    "Single": "Single",
     "User1": "User1",
-    "User2": "User2"
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
   },
   "code": {
     "Code you received": "받은 코드",
@@ -160,7 +165,6 @@
     "Application": "응용 프로그램",
     "Applications": "응용 프로그램",
     "Applications that require authentication": "인증이 필요한 애플리케이션들",
-    "Author - Tooltip": "Author - Tooltip",
     "Avatar": "아바타",
     "Avatar - Tooltip": "사용자를 위한 공개 아바타 이미지",
     "Back Home": "집으로 돌아오기",
@@ -287,8 +291,6 @@
     "User containers": "사용자 풀",
     "User type": "사용자 유형",
     "User type - Tooltip": "사용자가 속한 태그는 기본적으로 \"보통 사용자\"로 설정됩니다",
-    "User1 - Tooltip": "User1 - Tooltip",
-    "User2 - Tooltip": "User2 - Tooltip",
     "Users": "사용자들",
     "Users under all organizations": "모든 조직의 사용자",
     "Webhooks": "Webhooks",
@@ -352,6 +354,7 @@
   },
   "message": {
     "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
     "Chat": "Chat",
     "Chat - Tooltip": "Chat - Tooltip",
     "Edit Message": "Edit Message",

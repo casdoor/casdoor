@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "Đăng xuất",
     "My Account": "Tài khoản của tôi",
     "Sign Up": "Đăng ký"
@@ -118,13 +119,17 @@
     "Type - Tooltip": "Loại chứng chỉ"
   },
   "chat": {
+    "AI": "AI",
     "Edit Chat": "Edit Chat",
+    "Group": "Group",
     "Message count": "Message count",
     "New Chat": "New Chat",
-    "Sub users": "Sub users",
-    "Sub users - Tooltip": "Sub users - Tooltip",
+    "Single": "Single",
     "User1": "User1",
-    "User2": "User2"
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
   },
   "code": {
     "Code you received": "Mã bạn nhận được",
@@ -160,7 +165,6 @@
     "Application": "Ứng dụng",
     "Applications": "Ứng dụng",
     "Applications that require authentication": "Các ứng dụng yêu cầu xác thực",
-    "Author - Tooltip": "Author - Tooltip",
     "Avatar": "Ảnh đại diện",
     "Avatar - Tooltip": "Ảnh đại diện công khai cho người dùng",
     "Back Home": "Trở về nhà",
@@ -287,8 +291,6 @@
     "User containers": "Nhóm người dùng",
     "User type": "Loại người dùng",
     "User type - Tooltip": "Các thẻ mà người dùng thuộc vào, mặc định là \"người dùng bình thường\"",
-    "User1 - Tooltip": "User1 - Tooltip",
-    "User2 - Tooltip": "User2 - Tooltip",
     "Users": "Người dùng",
     "Users under all organizations": "Người dùng trong tất cả các tổ chức",
     "Webhooks": "Webhooks",
@@ -352,6 +354,7 @@
   },
   "message": {
     "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
     "Chat": "Chat",
     "Chat - Tooltip": "Chat - Tooltip",
     "Edit Message": "Edit Message",

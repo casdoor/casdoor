@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "聊天 & 消息",
     "Logout": "登出",
     "My Account": "我的账户",
     "Sign Up": "注册"
@@ -118,13 +119,17 @@
     "Type - Tooltip": "公钥证书的类型"
   },
   "chat": {
-    "Edit Chat": "Edit Chat",
-    "Message count": "Message count",
-    "New Chat": "New Chat",
-    "Sub users": "Sub users",
-    "Sub users - Tooltip": "Sub users - Tooltip",
-    "User1": "User1",
-    "User2": "User2"
+    "AI": "AI",
+    "Edit Chat": "编辑聊天",
+    "Group": "群聊",
+    "Message count": "消息个数",
+    "New Chat": "添加聊天",
+    "Single": "单聊",
+    "User1": "用户1",
+    "User1 - Tooltip": "当聊天类型为单聊时，该值为聊天的发起者；当聊天类型为群聊时，该值为群主",
+    "User2": "用户2",
+    "User2 - Tooltip": "当聊天类型为单聊时，该值为聊天的对象；当聊天类型为群聊时，该值为管理员",
+    "Users - Tooltip": "能够接收到聊天消息的所有用户"
   },
   "code": {
     "Code you received": "验证码",
@@ -160,7 +165,6 @@
     "Application": "应用",
     "Applications": "应用",
     "Applications that require authentication": "需要认证和鉴权的应用",
-    "Author - Tooltip": "Author - Tooltip",
     "Avatar": "头像",
     "Avatar - Tooltip": "公开展示的用户头像",
     "Back Home": "返回到首页",
@@ -169,7 +173,7 @@
     "Cert": "证书",
     "Cert - Tooltip": "该应用所对应的客户端SDK需要验证的公钥证书",
     "Certs": "证书",
-    "Chats": "Chats",
+    "Chats": "聊天",
     "Click to Upload": "点击上传",
     "Client IP": "客户端IP",
     "Close": "关闭",
@@ -214,7 +218,7 @@
     "Master password": "万能密码",
     "Master password - Tooltip": "可用来登录该组织下的所有用户，方便管理员以该用户身份登录，以解决技术问题",
     "Menu": "目录",
-    "Messages": "Messages",
+    "Messages": "消息",
     "Method": "方法",
     "Model": "模型",
     "Model - Tooltip": "Casbin的访问控制模型",
@@ -281,14 +285,12 @@
     "URL": "链接",
     "URL - Tooltip": "URL链接",
     "Up": "上移",
-    "Updated time": "Updated time",
+    "Updated time": "更新时间",
     "User": "用户",
     "User - Tooltip": "请确保用户名正确",
     "User containers": "用户池",
     "User type": "用户类型",
     "User type - Tooltip": "用户所属的标签，默认为\"normal-user\"",
-    "User1 - Tooltip": "User1 - Tooltip",
-    "User2 - Tooltip": "User2 - Tooltip",
     "Users": "用户",
     "Users under all organizations": "所有组织里的用户",
     "Webhooks": "Webhooks",
@@ -351,13 +353,14 @@
     "username, Email or phone": "用户名、Email或手机号"
   },
   "message": {
-    "Author": "Author",
-    "Chat": "Chat",
-    "Chat - Tooltip": "Chat - Tooltip",
-    "Edit Message": "Edit Message",
-    "New Message": "New Message",
-    "Text": "Text",
-    "Text - Tooltip": "Text - Tooltip"
+    "Author": "作者",
+    "Author - Tooltip": "发出消息的用户",
+    "Chat": "聊天",
+    "Chat - Tooltip": "消息所属的聊天ID",
+    "Edit Message": "编辑消息",
+    "New Message": "添加消息",
+    "Text": "内容",
+    "Text - Tooltip": "消息的内容"
   },
   "model": {
     "Edit Model": "编辑模型",

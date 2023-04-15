@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "ログアウト",
     "My Account": "マイアカウント",
     "Sign Up": "新規登録"
@@ -118,13 +119,17 @@
     "Type - Tooltip": "証明書の種類"
   },
   "chat": {
+    "AI": "AI",
     "Edit Chat": "Edit Chat",
+    "Group": "Group",
     "Message count": "Message count",
     "New Chat": "New Chat",
-    "Sub users": "Sub users",
-    "Sub users - Tooltip": "Sub users - Tooltip",
+    "Single": "Single",
     "User1": "User1",
-    "User2": "User2"
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
   },
   "code": {
     "Code you received": "受け取ったコード",
@@ -160,7 +165,6 @@
     "Application": "アプリケーション",
     "Applications": "アプリケーション",
     "Applications that require authentication": "認証が必要なアプリケーション",
-    "Author - Tooltip": "Author - Tooltip",
     "Avatar": "アバター",
     "Avatar - Tooltip": "ユーザーのパブリックアバター画像",
     "Back Home": "帰宅",
@@ -287,8 +291,6 @@
     "User containers": "ユーザープール",
     "User type": "ユーザータイプ",
     "User type - Tooltip": "ユーザーが属するタグは、デフォルトでは「通常ユーザー」となります",
-    "User1 - Tooltip": "User1 - Tooltip",
-    "User2 - Tooltip": "User2 - Tooltip",
     "Users": "ユーザー",
     "Users under all organizations": "すべての組織のユーザー",
     "Webhooks": "Webhooks",
@@ -352,6 +354,7 @@
   },
   "message": {
     "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
     "Chat": "Chat",
     "Chat - Tooltip": "Chat - Tooltip",
     "Edit Message": "Edit Message",

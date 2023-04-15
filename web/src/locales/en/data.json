@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "Logout",
     "My Account": "My Account",
     "Sign Up": "Sign Up"
@@ -118,13 +119,17 @@
     "Type - Tooltip": "Type of certificate"
   },
   "chat": {
+    "AI": "AI",
     "Edit Chat": "Edit Chat",
+    "Group": "Group",
     "Message count": "Message count",
     "New Chat": "New Chat",
-    "Sub users": "Sub users",
-    "Sub users - Tooltip": "Sub users - Tooltip",
+    "Single": "Single",
     "User1": "User1",
-    "User2": "User2"
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
   },
   "code": {
     "Code you received": "Code you received",
@@ -160,7 +165,6 @@
     "Application": "Application",
     "Applications": "Applications",
     "Applications that require authentication": "Applications that require authentication",
-    "Author - Tooltip": "Author - Tooltip",
     "Avatar": "Avatar",
     "Avatar - Tooltip": "Public avatar image for the user",
     "Back Home": "Back Home",
@@ -287,8 +291,6 @@
     "User containers": "User pools",
     "User type": "User type",
     "User type - Tooltip": "Tags that the user belongs to, defaulting to \"normal-user\"",
-    "User1 - Tooltip": "User1 - Tooltip",
-    "User2 - Tooltip": "User2 - Tooltip",
     "Users": "Users",
     "Users under all organizations": "Users under all organizations",
     "Webhooks": "Webhooks",
@@ -352,6 +354,7 @@
   },
   "message": {
     "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
     "Chat": "Chat",
     "Chat - Tooltip": "Chat - Tooltip",
     "Edit Message": "Edit Message",

@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "Выход",
     "My Account": "Мой аккаунт",
     "Sign Up": "Зарегистрироваться"
@@ -118,13 +119,17 @@
     "Type - Tooltip": "Тип сертификата"
   },
   "chat": {
+    "AI": "AI",
     "Edit Chat": "Edit Chat",
+    "Group": "Group",
     "Message count": "Message count",
     "New Chat": "New Chat",
-    "Sub users": "Sub users",
-    "Sub users - Tooltip": "Sub users - Tooltip",
+    "Single": "Single",
     "User1": "User1",
-    "User2": "User2"
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
   },
   "code": {
     "Code you received": "Код, который вы получили",
@@ -160,7 +165,6 @@
     "Application": "Приложение",
     "Applications": "Приложения",
     "Applications that require authentication": "Приложения, которые требуют аутентификации",
-    "Author - Tooltip": "Author - Tooltip",
     "Avatar": "Аватар",
     "Avatar - Tooltip": "Публичное изображение аватара пользователя",
     "Back Home": "Домой",
@@ -287,8 +291,6 @@
     "User containers": "Пользовательские пулы",
     "User type": "Тип пользователя",
     "User type - Tooltip": "Теги, к которым принадлежит пользователь, по умолчанию \"обычный пользователь\"",
-    "User1 - Tooltip": "User1 - Tooltip",
-    "User2 - Tooltip": "User2 - Tooltip",
     "Users": "Пользователи",
     "Users under all organizations": "Пользователи всех организаций",
     "Webhooks": "Webhooks",
@@ -352,6 +354,7 @@
   },
   "message": {
     "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
     "Chat": "Chat",
     "Chat - Tooltip": "Chat - Tooltip",
     "Edit Message": "Edit Message",

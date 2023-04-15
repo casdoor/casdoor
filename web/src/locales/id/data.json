@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "Keluar",
     "My Account": "Akun Saya",
     "Sign Up": "Mendaftar"
@@ -118,13 +119,17 @@
     "Type - Tooltip": "Jenis sertifikat"
   },
   "chat": {
+    "AI": "AI",
     "Edit Chat": "Edit Chat",
+    "Group": "Group",
     "Message count": "Message count",
     "New Chat": "New Chat",
-    "Sub users": "Sub users",
-    "Sub users - Tooltip": "Sub users - Tooltip",
+    "Single": "Single",
     "User1": "User1",
-    "User2": "User2"
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
   },
   "code": {
     "Code you received": "Kode yang kamu terima",
@@ -160,7 +165,6 @@
     "Application": "Aplikasi",
     "Applications": "Aplikasi",
     "Applications that require authentication": "Aplikasi yang memerlukan autentikasi",
-    "Author - Tooltip": "Author - Tooltip",
     "Avatar": "Avatar",
     "Avatar - Tooltip": "Gambar avatar publik untuk pengguna",
     "Back Home": "Kembali ke Rumah",
@@ -287,8 +291,6 @@
     "User containers": "User pools",
     "User type": "Jenis pengguna",
     "User type - Tooltip": "Tag yang dimiliki oleh pengguna, defaultnya adalah \"normal-user\"",
-    "User1 - Tooltip": "User1 - Tooltip",
-    "User2 - Tooltip": "User2 - Tooltip",
     "Users": "Pengguna-pengguna",
     "Users under all organizations": "Pengguna di bawah semua organisasi",
     "Webhooks": "Webhooks",
@@ -352,6 +354,7 @@
   },
   "message": {
     "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
     "Chat": "Chat",
     "Chat - Tooltip": "Chat - Tooltip",
     "Edit Message": "Edit Message",

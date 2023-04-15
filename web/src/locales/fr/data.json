@@ -1,5 +1,6 @@
 {
   "account": {
+    "Chats & Messages": "Chats & Messages",
     "Logout": "Déconnexion",
     "My Account": "Mon Compte",
     "Sign Up": "S'inscrire"
@@ -118,13 +119,17 @@
     "Type - Tooltip": "Type de certificat"
   },
   "chat": {
+    "AI": "AI",
     "Edit Chat": "Edit Chat",
+    "Group": "Group",
     "Message count": "Message count",
     "New Chat": "New Chat",
-    "Sub users": "Sub users",
-    "Sub users - Tooltip": "Sub users - Tooltip",
+    "Single": "Single",
     "User1": "User1",
-    "User2": "User2"
+    "User1 - Tooltip": "User1 - Tooltip",
+    "User2": "User2",
+    "User2 - Tooltip": "User2 - Tooltip",
+    "Users - Tooltip": "Users - Tooltip"
   },
   "code": {
     "Code you received": "Le code que vous avez reçu",
@@ -160,7 +165,6 @@
     "Application": "Application",
     "Applications": "Applications",
     "Applications that require authentication": "Applications qui nécessitent une authentification",
-    "Author - Tooltip": "Author - Tooltip",
     "Avatar": "Avatar",
     "Avatar - Tooltip": "Image d'avatar public pour l'utilisateur",
     "Back Home": "Retour à la maison",
@@ -287,8 +291,6 @@
     "User containers": "Piscines d'utilisateurs",
     "User type": "Type d'utilisateur",
     "User type - Tooltip": "Balises auxquelles l'utilisateur appartient, avec une valeur par défaut \"utilisateur-normal\"",
-    "User1 - Tooltip": "User1 - Tooltip",
-    "User2 - Tooltip": "User2 - Tooltip",
     "Users": "Utilisateurs",
     "Users under all organizations": "Utilisateurs sous toutes les organisations",
     "Webhooks": "Webhooks",
@@ -352,6 +354,7 @@
   },
   "message": {
     "Author": "Author",
+    "Author - Tooltip": "Author - Tooltip",
     "Chat": "Chat",
     "Chat - Tooltip": "Chat - Tooltip",
     "Edit Message": "Edit Message",
