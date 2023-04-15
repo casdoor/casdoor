@@ -131,6 +131,7 @@ func buildSpCertificateStore(provider *Provider, samlResponse string) (dsig.Memo
 	}
 	return certStore, nil
 }
+
 func getCertificateFromSamlResponse(samlResponse string, providerType string) string {
 	de, err := base64.StdEncoding.DecodeString(samlResponse)
 	if err != nil {
