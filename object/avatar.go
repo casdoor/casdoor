@@ -80,3 +80,21 @@ func DownloadAndUpload(url string, fullFilePath string, lang string) {
 		panic(err)
 	}
 }
+
+func getPermanentAvatarUrlFromBuffer(organization string, username string, fileBuffer *bytes.Buffer, ext string, upload bool) string {
+	if defaultStorageProvider == nil {
+		return ""
+	}
+
+	fullFilePath := fmt.Sprintf("/avatar/%s/%s%s", organization, username, ext)
+	uploadedFileUrl, _ := GetUploadFileUrl(defaultStorageProvider, fullFilePath, false)
+
+	if upload {
+		_, _, err := UploadFileSafe(defaultStorageProvider, fullFilePath, fileBuffer, "en")
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return uploadedFileUrl
+}

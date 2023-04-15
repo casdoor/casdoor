@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/casdoor/casdoor/proxy"
@@ -35,5 +36,24 @@ func TestSyncPermanentAvatars(t *testing.T) {
 		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
 		updateUserColumn("permanent_avatar", user)
 		fmt.Printf("[%d/%d]: Update user: [%s]'s permanent avatar: %s\n", i, len(users), user.GetId(), user.PermanentAvatar)
+	}
+}
+
+func TestUpdateAvatars(t *testing.T) {
+	InitConfig()
+	InitDefaultStorageProvider()
+	proxy.InitHttpClient()
+
+	users := GetUsers("casdoor")
+	for _, user := range users {
+		if strings.HasPrefix(user.Avatar, "http") {
+			continue
+		}
+
+		updated := user.refreshAvatar()
+		if updated {
+			user.PermanentAvatar = "*"
+			UpdateUser(user.GetId(), user, []string{"avatar"}, true)
+		}
 	}
 }
