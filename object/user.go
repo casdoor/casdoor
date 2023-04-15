@@ -48,6 +48,7 @@ type User struct {
 	EmailVerified     bool     `json:"emailVerified"`
 	Phone             string   `xorm:"varchar(20) index" json:"phone"`
 	CountryCode       string   `xorm:"varchar(6)" json:"countryCode"`
+	Region            string   `xorm:"varchar(100)" json:"region"`
 	Location          string   `xorm:"varchar(100)" json:"location"`
 	Address           []string `json:"address"`
 	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
@@ -57,7 +58,6 @@ type User struct {
 	Homepage          string   `xorm:"varchar(100)" json:"homepage"`
 	Bio               string   `xorm:"varchar(100)" json:"bio"`
 	Tag               string   `xorm:"varchar(100)" json:"tag"`
-	Region            string   `xorm:"varchar(100)" json:"region"`
 	Language          string   `xorm:"varchar(100)" json:"language"`
 	Gender            string   `xorm:"varchar(100)" json:"gender"`
 	Birthday          string   `xorm:"varchar(100)" json:"birthday"`
@@ -449,7 +449,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 	if len(columns) == 0 {
 		columns = []string{
 			"owner", "display_name", "avatar",
-			"location", "address", "country_code", "region", "language", "affiliation", "title", "homepage", "bio", "score", "tag", "signup_application",
+			"location", "address", "country_code", "region", "language", "affiliation", "title", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
 			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
 			"signin_wrong_times", "last_signin_wrong_time",
 		}

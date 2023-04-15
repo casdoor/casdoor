@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Result, Row, Select, Spin, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Result, Row, Select, Spin, Switch} from "antd";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -110,9 +110,9 @@ class UserEditPage extends React.Component {
   }
 
   parseUserField(key, value) {
-    // if ([].includes(key)) {
-    //   value = Setting.myParseInt(value);
-    // }
+    if (["score", "karma", "ranking"].includes(key)) {
+      value = Setting.myParseInt(value);
+    }
     return value;
   }
 
@@ -360,6 +360,19 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
+    } else if (accountItem.name === "Address") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Address"), i18next.t("user:Address - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.address} onChange={e => {
+              this.updateUserField("address", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      );
     } else if (accountItem.name === "Affiliation") {
       return (
         (this.state.application === null || this.state.user === null) ? null : (
@@ -375,6 +388,32 @@ class UserEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.user.title} onChange={e => {
               this.updateUserField("title", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "ID card type") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:ID card type"), i18next.t("user:ID card type - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.idCardType} onChange={e => {
+              this.updateUserField("idCardType", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "ID card") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:ID card"), i18next.t("user:ID card - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.idCard} onChange={e => {
+              this.updateUserField("idCard", e.target.value);
             }} />
           </Col>
         </Row>
@@ -428,6 +467,97 @@ class UserEditPage extends React.Component {
                 }} />
               )
             }
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Language") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Language"), i18next.t("user:Language - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.language} onChange={e => {
+              this.updateUserField("language", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Gender") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Gender"), i18next.t("user:Gender - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.gender} onChange={e => {
+              this.updateUserField("gender", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Birthday") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Birthday"), i18next.t("user:Birthday - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.birthday} onChange={e => {
+              this.updateUserField("birthday", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Education") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Education"), i18next.t("user:Education - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.education} onChange={e => {
+              this.updateUserField("education", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Score") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Score"), i18next.t("user:Score - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber value={this.state.user.score} onChange={value => {
+              this.updateUserField("score", value);
+            }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Karma") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Karma"), i18next.t("user:Karma - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber value={this.state.user.karma} onChange={value => {
+              this.updateUserField("karma", value);
+            }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Ranking") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Ranking"), i18next.t("user:Ranking - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber value={this.state.user.ranking} onChange={value => {
+              this.updateUserField("ranking", value);
+            }} />
           </Col>
         </Row>
       );
