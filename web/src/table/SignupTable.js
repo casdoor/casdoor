@@ -186,6 +186,11 @@ class SignupTable extends React.Component {
               {id: "Normal", name: i18next.t("application:Normal")},
               {id: "No verification", name: i18next.t("application:No verification")},
             ];
+          } else if (record.name === "Phone") {
+            options = [
+              {id: "Normal", name: i18next.t("application:Normal")},
+              {id: "No verification", name: i18next.t("application:No verification")},
+            ];
           } else if (record.name === "Agreement") {
             options = [
               {id: "None", name: i18next.t("application:Only signup")},

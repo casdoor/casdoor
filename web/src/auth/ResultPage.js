@@ -68,7 +68,7 @@ class ResultPage extends React.Component {
               if (linkInStorage !== null && linkInStorage !== "") {
                 Setting.goToLink(linkInStorage);
               } else {
-                Setting.redirectToLoginPage(application);
+                Setting.redirectToLoginPage(application, this.props.history);
               }
             }}>
               {i18next.t("login:Sign In")}
