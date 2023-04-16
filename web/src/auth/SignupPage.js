@@ -408,24 +408,27 @@ class SignupPage extends React.Component {
               </Form.Item>
             </Input.Group>
           </Form.Item>
-          <Form.Item
-            name="phoneCode"
-            label={i18next.t("code:Phone code")}
-            rules={[
-              {
-                required: required,
-                message: i18next.t("code:Please input your phone verification code!"),
-              },
-            ]}
-          >
-            <SendCodeInput
-              disabled={!this.state.validPhone}
-              method={"signup"}
-              onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
-              application={application}
-              countryCode={this.form.current?.getFieldValue("countryCode")}
-            />
-          </Form.Item>
+          {
+            signupItem.rule !== "No verification" &&
+            <Form.Item
+              name="phoneCode"
+              label={i18next.t("code:Phone code")}
+              rules={[
+                {
+                  required: required,
+                  message: i18next.t("code:Please input your phone verification code!"),
+                },
+              ]}
+            >
+              <SendCodeInput
+                disabled={!this.state.validPhone}
+                method={"signup"}
+                onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
+                application={application}
+                countryCode={this.form.current?.getFieldValue("countryCode")}
+              />
+            </Form.Item>
+          }
         </React.Fragment>
       );
     } else if (signupItem.name === "Password") {
