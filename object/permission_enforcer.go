@@ -130,7 +130,7 @@ func getGroupingPolicies(permission *Permission) [][]string {
 		for _, subUser := range roleObj.Users {
 			if domainExist {
 				for _, domain := range permission.Domains {
-					groupingPolicies = append(groupingPolicies, []string{subUser, domain, role, "", "", permissionId})
+					groupingPolicies = append(groupingPolicies, []string{subUser, role, domain, "", "", permissionId})
 				}
 			} else {
 				groupingPolicies = append(groupingPolicies, []string{subUser, role, "", "", "", permissionId})
@@ -140,7 +140,7 @@ func getGroupingPolicies(permission *Permission) [][]string {
 		for _, subRole := range roleObj.Roles {
 			if domainExist {
 				for _, domain := range permission.Domains {
-					groupingPolicies = append(groupingPolicies, []string{subRole, domain, role, "", "", permissionId})
+					groupingPolicies = append(groupingPolicies, []string{subRole, role, domain, "", "", permissionId})
 				}
 			} else {
 				groupingPolicies = append(groupingPolicies, []string{subRole, role, "", "", "", permissionId})
