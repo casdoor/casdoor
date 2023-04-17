@@ -268,7 +268,7 @@ func SyncLdapUsers(owner string, respUsers []LdapRespUser, ldapId string) (*[]Ld
 		uuids = append(uuids, user.Uuid)
 	}
 
-	existUuids := GetLdapUuid(owner, uuids)
+	existUuids := GetExistUuids(owner, uuids)
 
 	organization := getOrganization("admin", owner)
 	ldap := GetLdap(ldapId)
@@ -327,7 +327,7 @@ func SyncLdapUsers(owner string, respUsers []LdapRespUser, ldapId string) (*[]Ld
 	return &existUsers, &failedUsers
 }
 
-func GetLdapUuid(owner string, uuids []string) []string {
+func GetExistUuids(owner string, uuids []string) []string {
 	var users []User
 	var existUuids []string
 	existUuidSet := make(map[string]struct{})
