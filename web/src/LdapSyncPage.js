@@ -139,22 +139,35 @@ class LdapSyncPage extends React.Component {
         dataIndex: "cn",
         key: "cn",
         sorter: (a, b) => a.cn.localeCompare(b.cn),
+        render: (text, record, index) => {
+          return (<div style={{display: "flex", justifyContent: "space-between"}}>
+            <div>
+              {text}
+            </div>
+            {this.state.existUuids.includes(record.uuid) ?
+              Setting.getTag("green", i18next.t("ldap:synced")) :
+              Setting.getTag("red", i18next.t("ldap:unsynced"))
+            }
+          </div>);
+        },
       },
       {
-        title: i18next.t("ldap:Uid"),
+        title: "Uid",
         dataIndex: "uid",
         key: "uid",
         sorter: (a, b) => a.uid.localeCompare(b.uid),
         render: (text, record, index) => {
           return (
-            <Link to={`/users/${this.state.organizationName}/${text}`}>
-              {text}
-            </Link>
+            this.state.existUuids.includes(record.uuid) ?
+              <Link to={`/users/${this.state.organizationName}/${text}`}>
+                {text}
+              </Link> :
+              text
           );
         },
       },
       {
-        title: i18next.t("ldap:UidNumber"),
+        title: "UidNumber",
         dataIndex: "uidNumber",
         key: "uidNumber",
         sorter: (a, b) => a.uidNumber.localeCompare(b.uidNumber),
