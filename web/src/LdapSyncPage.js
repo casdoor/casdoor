@@ -13,10 +13,11 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Popconfirm, Row, Table} from "antd";
+import {Button, Popconfirm, Table} from "antd";
 import * as Setting from "./Setting";
 import * as LdapBackend from "./backend/LdapBackend";
 import i18next from "i18next";
+import {Link} from "react-router-dom";
 
 class LdapSyncPage extends React.Component {
   constructor(props) {
@@ -77,9 +78,8 @@ class LdapSyncPage extends React.Component {
     LdapBackend.getLdap(this.state.organizationName, this.state.ldapId)
       .then((res) => {
         if (res.status === "ok") {
-          this.setState((prevState) => {
-            prevState.ldap = res.data;
-            return prevState;
+          this.setState({
+            ldap: res.data,
           });
           this.getLdapUser();
         } else {
@@ -139,22 +139,46 @@ class LdapSyncPage extends React.Component {
         dataIndex: "cn",
         key: "cn",
         sorter: (a, b) => a.cn.localeCompare(b.cn),
+        render: (text, record, index) => {
+          return (<div style={{display: "flex", justifyContent: "space-between"}}>
+            <div>
+              {text}
+            </div>
+            {this.state.existUuids.includes(record.uuid) ?
+              Setting.getTag("green", i18next.t("ldap:synced")) :
+              Setting.getTag("red", i18next.t("ldap:unsynced"))
+            }
+          </div>);
+        },
       },
       {
-        title: i18next.t("ldap:UidNumber / Uid"),
+        title: "Uid",
+        dataIndex: "uid",
+        key: "uid",
+        sorter: (a, b) => a.uid.localeCompare(b.uid),
+        render: (text, record, index) => {
+          return (
+            this.state.existUuids.includes(record.uuid) ?
+              <Link to={`/users/${this.state.organizationName}/${text}`}>
+                {text}
+              </Link> :
+              text
+          );
+        },
+      },
+      {
+        title: "UidNumber",
         dataIndex: "uidNumber",
         key: "uidNumber",
-        width: "200px",
         sorter: (a, b) => a.uidNumber.localeCompare(b.uidNumber),
         render: (text, record, index) => {
-          return `${text} / ${record.uid}`;
+          return text;
         },
       },
       {
         title: i18next.t("ldap:Group ID"),
         dataIndex: "groupId",
         key: "groupId",
-        width: "140px",
         sorter: (a, b) => a.groupId.localeCompare(b.groupId),
         filters: this.buildFilter(this.state.users, "groupId"),
         onFilter: (value, record) => record.groupId.indexOf(value) === 0,
@@ -163,14 +187,12 @@ class LdapSyncPage extends React.Component {
         title: i18next.t("general:Email"),
         dataIndex: "email",
         key: "email",
-        width: "240px",
         sorter: (a, b) => a.email.localeCompare(b.email),
       },
       {
         title: i18next.t("general:Phone"),
         dataIndex: "phone",
         key: "phone",
-        width: "160px",
         sorter: (a, b) => a.phone.localeCompare(b.phone),
       },
       {
@@ -183,9 +205,8 @@ class LdapSyncPage extends React.Component {
 
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
-        this.setState(prevState => {
-          prevState.selectedUsers = selectedRows;
-          return prevState;
+        this.setState({
+          selectedUsers: selectedRows,
         });
       },
       getCheckboxProps: record => ({
@@ -194,42 +215,36 @@ class LdapSyncPage extends React.Component {
     };
 
     return (
-      <div>
-        <Table rowSelection={rowSelection} columns={columns} dataSource={users} rowKey="uuid" bordered
-          pagination={{defaultPageSize: 10, showQuickJumper: true, showSizeChanger: true}}
-          title={() => (
-            <div>
-              <span>{this.state.ldap?.serverName}</span>
-              <Popconfirm placement={"right"}
-                title={"Please confirm to sync selected users"}
-                onConfirm={() => this.syncUsers()}
-              >
-                <Button type="primary" style={{marginLeft: "10px"}}>
-                  {i18next.t("general:Sync")}
-                </Button>
-              </Popconfirm>
-              <Button style={{marginLeft: "20px"}}
-                onClick={() => Setting.goToLink(`/ldap/${this.state.organizationName}/${this.state.ldapId}`)}>
-                {i18next.t("general:Edit")} LDAP
+      <Table rowSelection={rowSelection} columns={columns} dataSource={users} rowKey="uuid" bordered size="small"
+        pagination={{defaultPageSize: 10, showQuickJumper: true, showSizeChanger: true}}
+        title={() => (
+          <div>
+            {this.state.ldap?.serverName}
+            <Popconfirm placement={"right"} disabled={this.state.selectedUsers.length === 0}
+              title={"Please confirm to sync selected users"}
+              onConfirm={() => this.syncUsers()}
+            >
+              <Button type="primary" style={{marginLeft: "10px"}} disabled={this.state.selectedUsers.length === 0}>
+                {i18next.t("general:Sync")}
               </Button>
-            </div>
-          )}
-          loading={users === null}
-        />
-      </div>
+            </Popconfirm>
+            <Button style={{marginLeft: "20px"}}
+              onClick={() => Setting.goToLink(`/ldap/${this.state.organizationName}/${this.state.ldapId}`)}>
+              {i18next.t("general:Edit")} LDAP
+            </Button>
+          </div>
+        )}
+        loading={users === null}
+      />
     );
   }
 
   render() {
     return (
       <div>
-        <Row style={{width: "100%", justifyContent: "center"}}>
-          <Col span={22}>
-            {
-              this.renderTable(this.state.users)
-            }
-          </Col>
-        </Row>
+        {
+          this.renderTable(this.state.users)
+        }
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => {
             this.props.history.push(`/organizations/${this.state.organizationName}`);
