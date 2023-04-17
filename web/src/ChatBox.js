@@ -15,7 +15,6 @@
 import React from "react";
 import {Avatar, Input, List} from "antd";
 import {CopyOutlined, DislikeOutlined, LikeOutlined, SendOutlined} from "@ant-design/icons";
-import * as Setting from "./Setting";
 
 const {TextArea} = Input;
 
@@ -25,6 +24,14 @@ class ChatBox extends React.Component {
     this.state = {
       inputValue: "",
     };
+
+    this.listContainerRef = React.createRef();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.messages !== this.props.messages) {
+      this.scrollToListItem(this.props.messages.length);
+    }
   }
 
   handleKeyDown = (e) => {
@@ -38,21 +45,43 @@ class ChatBox extends React.Component {
     }
   };
 
+  scrollToListItem(index) {
+    const listContainerElement = this.listContainerRef.current;
+
+    if (!listContainerElement) {
+      return;
+    }
+
+    const targetItem = listContainerElement.querySelector(
+      `#chatbox-list-item-${index}`
+    );
+
+    if (!targetItem) {
+      return;
+    }
+
+    const scrollDistance = targetItem.offsetTop - listContainerElement.offsetTop;
+
+    listContainerElement.scrollTo({
+      top: scrollDistance,
+      behavior: "smooth",
+    });
+  }
+
   send = (text) => {
-    Setting.showMessage("success", text);
+    this.props.sendMessage(text);
     this.setState({inputValue: ""});
   };
 
   renderList() {
     return (
-      <div style={{position: "relative"}}>
+      <div ref={this.listContainerRef} style={{position: "relative", maxHeight: "calc(100vh - 140px)", overflowY: "auto"}}>
         <List
-          style={{maxHeight: "calc(100vh - 140px)", overflowY: "auto"}}
           itemLayout="horizontal"
           dataSource={this.props.messages === undefined ? undefined : [...this.props.messages, {}]}
           renderItem={(item, index) => {
             if (Object.keys(item).length === 0 && item.constructor === Object) {
-              return <List.Item style={{
+              return <List.Item id={`chatbox-list-item-${index}`} style={{
                 height: "160px",
                 backgroundColor: index % 2 === 0 ? "white" : "rgb(247,247,248)",
                 borderBottom: "1px solid rgb(229, 229, 229)",
@@ -61,7 +90,7 @@ class ChatBox extends React.Component {
             }
 
             return (
-              <List.Item style={{
+              <List.Item id={`chatbox-list-item-${index}`} style={{
                 backgroundColor: index % 2 === 0 ? "white" : "rgb(247,247,248)",
                 borderBottom: "1px solid rgb(229, 229, 229)",
                 position: "relative",

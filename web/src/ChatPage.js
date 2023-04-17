@@ -42,13 +42,59 @@ class ChatPage extends BaseListPage {
     };
   }
 
-  addChat() {
-    const newChat = this.newChat();
-    ChatBackend.addChat(newChat)
+  // addChat() {
+  //   const newChat = this.newChat();
+  //   ChatBackend.addChat(newChat)
+  //     .then((res) => {
+  //       if (res.status === "ok") {
+  //         this.props.history.push({pathname: `/chats/${newChat.name}`, mode: "add"});
+  //         Setting.showMessage("success", i18next.t("general:Successfully added"));
+  //       } else {
+  //         Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
+  //       }
+  //     })
+  //     .catch(error => {
+  //       Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+  //     });
+  // }
+  //
+  // deleteChat(i) {
+  //   ChatBackend.deleteChat(this.state.data[i])
+  //     .then((res) => {
+  //       if (res.status === "ok") {
+  //         Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+  //         this.setState({
+  //           data: Setting.deleteRow(this.state.data, i),
+  //           pagination: {total: this.state.pagination.total - 1},
+  //         });
+  //       } else {
+  //         Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+  //       }
+  //     })
+  //     .catch(error => {
+  //       Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+  //     });
+  // }
+
+  newMessage(text) {
+    const randomName = Setting.getRandomName();
+    return {
+      owner: "admin", // this.props.account.messagename,
+      name: `message_${randomName}`,
+      createdTime: moment().format(),
+      organization: this.props.account.owner,
+      chat: this.state.chatName,
+      author: `${this.props.account.owner}/${this.props.account.name}`,
+      text: text,
+    };
+  }
+
+  sendMessage(text) {
+    const newMessage = this.newMessage(text);
+    MessageBackend.addMessage(newMessage)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/chats/${newChat.name}`, mode: "add"});
-          Setting.showMessage("success", i18next.t("general:Successfully added"));
+          this.getMessages(this.state.chatName);
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
         }
@@ -58,21 +104,14 @@ class ChatPage extends BaseListPage {
       });
   }
 
-  deleteChat(i) {
-    ChatBackend.deleteChat(this.state.data[i])
-      .then((res) => {
-        if (res.status === "ok") {
-          Setting.showMessage("success", i18next.t("general:Successfully deleted"));
-          this.setState({
-            data: Setting.deleteRow(this.state.data, i),
-            pagination: {total: this.state.pagination.total - 1},
-          });
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+  getMessages(chatName) {
+    MessageBackend.getChatMessages(chatName)
+      .then((messages) => {
+        this.setState({
+          messages: messages,
+        });
+
+        Setting.scrollToDiv(`chatbox-list-item-${messages.length}`);
       });
   }
 
@@ -84,6 +123,9 @@ class ChatPage extends BaseListPage {
             <ChatMenu chats={chats} onSelect={(i) => {
               const chat = chats[i];
               this.getMessages(chat.name);
+              this.setState({
+                chatName: chat.name,
+              });
             }} />
           </div>
           <div style={{flex: 1, height: "100%", backgroundColor: "white", position: "relative"}}>
@@ -102,7 +144,7 @@ class ChatPage extends BaseListPage {
               opacity: 0.5,
             }}>
             </div>
-            <ChatBox messages={this.state.messages} account={this.props.account} />
+            <ChatBox messages={this.state.messages} sendMessage={(text) => {this.sendMessage(text);}} account={this.props.account} />
           </div>
         </div>
       )
@@ -133,6 +175,15 @@ class ChatPage extends BaseListPage {
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
           });
+
+          const chats = res.data;
+          if (this.state.chatName === undefined && chats.length > 0) {
+            const chat = chats[0];
+            this.getMessages(chat.name);
+            this.setState({
+              chatName: chat.name,
+            });
+          }
         } else {
           if (Setting.isResponseDenied(res)) {
             this.setState({
@@ -143,15 +194,6 @@ class ChatPage extends BaseListPage {
         }
       });
   };
-
-  getMessages(chatName) {
-    MessageBackend.getChatMessages(chatName)
-      .then((messages) => {
-        this.setState({
-          messages: messages,
-        });
-      });
-  }
 }
 
 export default ChatPage;

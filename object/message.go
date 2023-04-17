@@ -69,7 +69,7 @@ func GetMessages(owner string) []*Message {
 
 func GetChatMessages(chat string) []*Message {
 	messages := []*Message{}
-	err := adapter.Engine.Desc("created_time").Find(&messages, &Message{Chat: chat})
+	err := adapter.Engine.Asc("created_time").Find(&messages, &Message{Chat: chat})
 	if err != nil {
 		panic(err)
 	}
