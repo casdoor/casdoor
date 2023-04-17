@@ -18,6 +18,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"net"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
@@ -43,6 +44,26 @@ type OidcDiscovery struct {
 	EndSessionEndpoint                     string   `json:"end_session_endpoint"`
 }
 
+func isIpAddress(host string) bool {
+	// Attempt to split the host and port, ignoring the error
+	hostWithoutPort, _, err := net.SplitHostPort(host)
+	if err != nil {
+		// If an error occurs, it might be because there's no port
+		// In that case, use the original host string
+		hostWithoutPort = host
+	}
+
+	// Attempt to parse the host as an IP address (both IPv4 and IPv6)
+	ip := net.ParseIP(hostWithoutPort)
+	if ip != nil {
+		// The host is an IP address
+		return true
+	}
+
+	// The host is not an IP address
+	return false
+}
+
 func getOriginFromHost(host string) (string, string) {
 	origin := conf.GetConfigString("origin")
 	if origin != "" {
@@ -51,6 +72,8 @@ func getOriginFromHost(host string) (string, string) {
 
 	protocol := "https://"
 	if strings.HasPrefix(host, "localhost") {
+		protocol = "http://"
+	} else if isIpAddress(host) {
 		protocol = "http://"
 	}
 

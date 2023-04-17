@@ -137,7 +137,7 @@ func (c *ApiController) Signup() {
 	}
 
 	var checkPhone string
-	if application.IsSignupItemVisible("Phone") && form.Phone != "" {
+	if application.IsSignupItemVisible("Phone") && application.GetSignupItemRule("Phone") != "No verification" && form.Phone != "" {
 		checkPhone, _ = util.GetE164Number(form.Phone, form.CountryCode)
 		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode, c.GetAcceptLanguage())
 		if checkResult.Code != object.VerificationSuccess {

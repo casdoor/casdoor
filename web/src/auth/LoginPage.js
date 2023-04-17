@@ -787,11 +787,11 @@ class LoginPage extends React.Component {
     }
 
     const visibleOAuthProviderItems = application.providers.filter(providerItem => this.isProviderVisible(providerItem));
-    if (this.props.application === undefined && !application.enablePassword && visibleOAuthProviderItems.length === 1) {
+    if (this.props.preview !== "auto" && !application.enablePassword && visibleOAuthProviderItems.length === 1) {
       Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signup"));
       return (
-        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-          <Spin size="large" tip={i18next.t("login:Signing in...")} style={{paddingTop: "10%"}} />
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%"}}>
+          <Spin size="large" tip={i18next.t("login:Signing in...")} />
         </div>
       );
     }

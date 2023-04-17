@@ -131,6 +131,12 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 		if user.DisplayName == "" {
 			user.DisplayName = userInfo.DisplayName
 		}
+	} else if user.DisplayName == "" {
+		if userInfo.Username != "" {
+			user.DisplayName = userInfo.Username
+		} else {
+			user.DisplayName = userInfo.Id
+		}
 	}
 	if userInfo.Email != "" {
 		propertyName := fmt.Sprintf("oauth_%s_email", providerType)

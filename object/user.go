@@ -15,10 +15,12 @@
 package object
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/xorm-io/core"
@@ -513,7 +515,10 @@ func AddUser(user *User) bool {
 	user.UpdateUserHash()
 	user.PreHash = user.Hash
 
-	user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, false)
+	updated := user.refreshAvatar()
+	if updated && user.PermanentAvatar != "*" {
+		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, false)
+	}
 
 	user.Ranking = GetUserCount(user.Owner, "", "") + 1
 
@@ -692,4 +697,41 @@ func userChangeTrigger(oldName string, newName string) error {
 	}
 
 	return session.Commit()
+}
+
+func (user *User) refreshAvatar() bool {
+	var err error
+	var fileBuffer *bytes.Buffer
+	var ext string
+
+	// Gravatar + Identicon
+	if strings.Contains(user.Avatar, "Gravatar") && user.Email != "" {
+		client := proxy.ProxyHttpClient
+		has, err := hasGravatar(client, user.Email)
+		if err != nil {
+			panic(err)
+		}
+
+		if has {
+			fileBuffer, ext, err = getGravatarFileBuffer(client, user.Email)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+
+	if fileBuffer == nil && strings.Contains(user.Avatar, "Identicon") {
+		fileBuffer, ext, err = getIdenticonFileBuffer(user.Name)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	if fileBuffer != nil {
+		avatarUrl := getPermanentAvatarUrlFromBuffer(user.Owner, user.Name, fileBuffer, ext, true)
+		user.Avatar = avatarUrl
+		return true
+	}
+
+	return false
 }
