@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
@@ -220,7 +221,10 @@ func UpdateProvider(id string, provider *Provider) bool {
 	if provider.ClientSecret2 == "***" {
 		session = session.Omit("client_secret2")
 	}
+
 	provider.Endpoint = util.GetEndPoint(provider.Endpoint)
+	provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
+
 	affected, err := session.Update(provider)
 	if err != nil {
 		panic(err)
@@ -231,6 +235,8 @@ func UpdateProvider(id string, provider *Provider) bool {
 
 func AddProvider(provider *Provider) bool {
 	provider.Endpoint = util.GetEndPoint(provider.Endpoint)
+	provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
+
 	affected, err := adapter.Engine.Insert(provider)
 	if err != nil {
 		panic(err)
