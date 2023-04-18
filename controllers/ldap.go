@@ -89,7 +89,7 @@ func (c *ApiController) GetLdapUsers() {
 		uuids = append(uuids, user.Uuid)
 	}
 
-	existUuids := object.CheckLdapUuidExist(ldapServer.Owner, uuids)
+	existUuids := object.GetExistUuids(ldapServer.Owner, uuids)
 
 	c.ResponseOk(resp, existUuids)
 }

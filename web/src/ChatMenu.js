@@ -47,7 +47,7 @@ class ChatMenu extends React.Component {
           const globalChatIndex = chats.indexOf(chat);
           return {
             key: `${index}-${chatIndex}`,
-            dataIndex: globalChatIndex,
+            index: globalChatIndex,
             label: chat.displayName,
           };
         }),
@@ -61,7 +61,7 @@ class ChatMenu extends React.Component {
     this.setState({selectedKeys: [`${categoryIndex}-${chatIndex}`]});
 
     if (this.props.onSelect) {
-      this.props.onSelect(selectedItem.dataIndex);
+      this.props.onSelect(selectedItem.index);
     }
   };
 

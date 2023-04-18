@@ -268,7 +268,7 @@ func SyncLdapUsers(owner string, respUsers []LdapRespUser, ldapId string) (*[]Ld
 		uuids = append(uuids, user.Uuid)
 	}
 
-	existUuids := CheckLdapUuidExist(owner, uuids)
+	existUuids := GetExistUuids(owner, uuids)
 
 	organization := getOrganization("admin", owner)
 	ldap := GetLdap(ldapId)
@@ -327,18 +327,18 @@ func SyncLdapUsers(owner string, respUsers []LdapRespUser, ldapId string) (*[]Ld
 	return &existUsers, &failedUsers
 }
 
-func CheckLdapUuidExist(owner string, uuids []string) []string {
-	var results []User
+func GetExistUuids(owner string, uuids []string) []string {
+	var users []User
 	var existUuids []string
 	existUuidSet := make(map[string]struct{})
 
-	err := adapter.Engine.Where(fmt.Sprintf("ldap IN (%s) AND owner = ?", "'"+strings.Join(uuids, "','")+"'"), owner).Find(&results)
+	err := adapter.Engine.Where(fmt.Sprintf("ldap IN (%s) AND owner = ?", "'"+strings.Join(uuids, "','")+"'"), owner).Find(&users)
 	if err != nil {
 		panic(err)
 	}
 
-	if len(results) > 0 {
-		for _, result := range results {
+	if len(users) > 0 {
+		for _, result := range users {
 			existUuidSet[result.Ldap] = struct{}{}
 		}
 	}
