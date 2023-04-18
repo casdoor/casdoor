@@ -324,6 +324,11 @@ paths:
       tags:
       - GetWebhookEventType API
       operationId: ApiController.GetWebhookEventType
+  /api/api/captcha/status:
+    get:
+      tags:
+      - GetCaptchaStatus API
+      operationId: ApiController.GetCaptchaStatus
   /api/api/reset-email-or-phone:
     post:
       tags:

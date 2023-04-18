@@ -25,6 +25,7 @@
     "Copy prompt page URL": "프롬프트 페이지 URL을 복사하세요",
     "Copy signin page URL": "사인인 페이지 URL 복사",
     "Copy signup page URL": "가입 페이지 URL을 복사하세요",
+    "Dynamic": "다이나믹",
     "Edit Application": "앱 편집하기",
     "Enable Email linking": "이메일 링크 사용 가능하도록 설정하기",
     "Enable Email linking - Tooltip": "3rd-party 로그인 공급자를 사용할 때, 만약 조직 내에 동일한 이메일을 사용하는 사용자가 있다면, 3rd-party 로그인 방법은 자동으로 해당 사용자와 연동됩니다",

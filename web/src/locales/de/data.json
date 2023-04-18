@@ -25,6 +25,7 @@
     "Copy prompt page URL": "URL der Prompt-Seite kopieren",
     "Copy signin page URL": "URL der Anmeldeseite kopieren",
     "Copy signup page URL": "URL der Anmeldeseite kopieren",
+    "Dynamic": "Dynamisch",
     "Edit Application": "Anwendung bearbeiten",
     "Enable Email linking": "E-Mail-Verknüpfung aktivieren",
     "Enable Email linking - Tooltip": "Bei der Verwendung von Drittanbietern zur Anmeldung wird, wenn es in der Organisation einen Benutzer mit der gleichen E-Mail gibt, automatisch die Drittanbieter-Anmelde-Methode mit diesem Benutzer verbunden",

@@ -25,6 +25,7 @@
     "Copy prompt page URL": "Copiar URL de la página del prompt",
     "Copy signin page URL": "Copiar la URL de la página de inicio de sesión",
     "Copy signup page URL": "Copiar URL de la página de registro",
+    "Dynamic": "Dinámico",
     "Edit Application": "Editar solicitud",
     "Enable Email linking": "Habilitar enlace de correo electrónico",
     "Enable Email linking - Tooltip": "Cuando se utilizan proveedores externos de inicio de sesión, si hay un usuario en la organización con el mismo correo electrónico, el método de inicio de sesión externo se asociará automáticamente con ese usuario",

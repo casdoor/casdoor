@@ -498,6 +498,14 @@
         "/api/api/get-webhook-event": {
             "get": {
                 "tags": [
+                    "GetCaptchaStatus API"
+                ],
+                "operationId": "ApiController.GetCaptchaStatus"
+            }
+        },
+        "/api/api/captcha/status": {
+            "get": {
+                "tags": [
                     "GetWebhookEventType API"
                 ],
                 "operationId": "ApiController.GetWebhookEventType"

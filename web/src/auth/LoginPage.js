@@ -81,7 +81,11 @@ class LoginPage extends React.Component {
     if (prevProps.application !== this.props.application) {
       const captchaProviderItems = this.getCaptchaProviderItems(this.props.application);
       if (captchaProviderItems) {
-        this.setState({enableCaptchaModal: captchaProviderItems.some(providerItem => providerItem.rule === "Always")});
+        if (captchaProviderItems.some(providerItem => providerItem.rule === "Always")) {
+          this.setState({enableCaptchaModal: true});
+        } else if (captchaProviderItems.every(providerItem => providerItem.rule === "None")) {
+          this.setState({enableCaptchaModal: false});
+        }
       }
 
       if (this.props.account && this.props.account.owner === this.props.application?.organization) {
@@ -108,6 +112,25 @@ class LoginPage extends React.Component {
         }
       }
     }
+  }
+
+  checkCaptchaStatus(values) {
+    AuthBackend.getCaptchaStatus(values)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            enableCaptchaModal: res.data,
+          });
+          if (res.data) {
+            this.setState({
+              openCaptchaModal: true,
+              values: values,
+            });
+            return null;
+          }
+        }
+        this.login(values);
+      });
   }
 
   getApplicationLogin() {
@@ -255,8 +278,10 @@ class LoginPage extends React.Component {
       this.signInWithWebAuthn(username, values);
       return;
     }
-
-    if (this.state.loginMethod === "password" && this.state.enableCaptchaModal) {
+    const captchaProviderItems = this.getCaptchaProviderItems(this.props.application);
+    if (captchaProviderItems.some(providerItem => providerItem.rule === "Dynamic") && !captchaProviderItems.some(providerItem => providerItem.rule === "Always")) {
+      this.checkCaptchaStatus(values);
+    } else if (this.state.loginMethod === "password" && this.state.enableCaptchaModal) {
       this.setState({
         openCaptchaModal: true,
         values: values,
@@ -547,10 +572,12 @@ class LoginPage extends React.Component {
     if (!this.state.enableCaptchaModal) {
       return null;
     }
-
-    const provider = this.getCaptchaProviderItems(application)
-      .filter(providerItem => providerItem.rule === "Always")
-      .map(providerItem => providerItem.provider)[0];
+    const captchaProviderItems = this.getCaptchaProviderItems(application);
+    const alwaysProviderItems = captchaProviderItems.filter(providerItem => providerItem.rule === "Always");
+    const dynamicProviderItems = captchaProviderItems.filter(providerItem => providerItem.rule === "Dynamic");
+    const provider = alwaysProviderItems.length > 0
+      ? alwaysProviderItems[0].provider
+      : dynamicProviderItems[0].provider;
 
     return <CaptchaModal
       owner={provider.owner}

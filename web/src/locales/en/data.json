@@ -25,6 +25,7 @@
     "Copy prompt page URL": "Copy prompt page URL",
     "Copy signin page URL": "Copy signin page URL",
     "Copy signup page URL": "Copy signup page URL",
+    "Dynamic": "Dynamic",
     "Edit Application": "Edit Application",
     "Enable Email linking": "Enable Email linking",
     "Enable Email linking - Tooltip": "When using 3rd-party providers to log in, if there is a user in the organization with the same Email, the 3rd-party login method will be automatically associated with that user",

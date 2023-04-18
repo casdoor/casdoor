@@ -282,7 +282,7 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			if object.CheckToEnableCaptcha(application) {
+			if object.CheckToEnableCaptcha(application, form.Organization, form.Username) {
 				isHuman, err := captcha.VerifyCaptchaByCaptchaType(form.CaptchaType, form.CaptchaToken, form.ClientSecret)
 				if err != nil {
 					c.ResponseError(err.Error())
@@ -608,5 +608,29 @@ func (c *ApiController) GetWebhookEventType() {
 	}
 	c.Data["json"] = resp
 	wechatScanType = ""
+	c.ServeJSON()
+}
+
+// GetCaptchaStatus
+// @Title GetCaptchaStatus
+// @Tag Token API
+// @Description Get Login Error Counts
+// @Param   id     query    string  true        "The id ( owner/name ) of user"
+// @Success 200 {object} controllers.Response The Response object
+// @router /api/captcha/status [get]
+func (c *ApiController) GetCaptchaStatus() {
+	organization := c.Input().Get("organization")
+	userId := c.Input().Get("user_id")
+	user := object.GetUserByFields(organization, userId)
+	var captchaEnabled bool
+	if user != nil && user.SigninWrongTimes >= object.SigninWrongTimesLimit {
+		captchaEnabled = true
+	}
+	resp := &Response{
+		Status: "ok",
+		Msg:    "",
+		Data:   captchaEnabled,
+	}
+	c.Data["json"] = resp
 	c.ServeJSON()
 }

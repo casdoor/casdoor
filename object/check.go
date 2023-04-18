@@ -380,7 +380,7 @@ func CheckUpdateUser(oldUser, user *User, lang string) string {
 	return ""
 }
 
-func CheckToEnableCaptcha(application *Application) bool {
+func CheckToEnableCaptcha(application *Application, organization, username string) bool {
 	if len(application.Providers) == 0 {
 		return false
 	}
@@ -390,6 +390,10 @@ func CheckToEnableCaptcha(application *Application) bool {
 			continue
 		}
 		if providerItem.Provider.Category == "Captcha" {
+			if providerItem.Rule == "Dynamic" {
+				user := GetUserByFields(organization, username)
+				return user != nil && user.SigninWrongTimes >= SigninWrongTimesLimit
+			}
 			return providerItem.Rule == "Always"
 		}
 	}
