@@ -33,7 +33,7 @@ func GetPaymentProvider(typ string, appId string, clientSecret string, host stri
 		return NewGcPaymentProvider(appId, clientSecret, host), nil
 	} else if typ == "WeChat Pay" {
 		// appId, mchId, mchCertSerialNumber, apiV3Key, privateKey
-		newWechatPaymentProvider, err := NewWechatPaymentProvider(clientId2, appId, authorityPublicKey, clientSecret, appPrivateKey)
+		newWechatPaymentProvider, err := NewWechatPaymentProvider(clientId2, appId, appCertificate, clientSecret, appPrivateKey)
 		if err != nil {
 			return nil, err
 		}
