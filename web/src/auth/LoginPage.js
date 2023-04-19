@@ -31,6 +31,7 @@ import CustomGithubCorner from "../common/CustomGithubCorner";
 import {SendCodeInput} from "../common/SendCodeInput";
 import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal} from "../common/modal/CaptchaModal";
+import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 
 class LoginPage extends React.Component {
@@ -47,7 +48,7 @@ class LoginPage extends React.Component {
       validEmailOrPhone: false,
       validEmail: false,
       loginMethod: "password",
-      enableCaptchaModal: false,
+      enableCaptchaModal: CaptchaRule.Never,
       openCaptchaModal: false,
       verifyCaptcha: undefined,
       samlResponse: "",
@@ -82,9 +83,11 @@ class LoginPage extends React.Component {
       const captchaProviderItems = this.getCaptchaProviderItems(this.props.application);
       if (captchaProviderItems) {
         if (captchaProviderItems.some(providerItem => providerItem.rule === "Always")) {
-          this.setState({enableCaptchaModal: true});
-        } else if (captchaProviderItems.every(providerItem => providerItem.rule === "None")) {
-          this.setState({enableCaptchaModal: false});
+          this.setState({enableCaptchaModal: CaptchaRule.Always});
+        } else if (captchaProviderItems.some(providerItem => providerItem.rule === "Dynamic")) {
+          this.setState({enableCaptchaModal: CaptchaRule.Dynamic});
+        } else {
+          this.setState({enableCaptchaModal: CaptchaRule.Never});
         }
       }
 
@@ -118,9 +121,6 @@ class LoginPage extends React.Component {
     AuthBackend.getCaptchaStatus(values)
       .then((res) => {
         if (res.status === "ok") {
-          this.setState({
-            enableCaptchaModal: res.data,
-          });
           if (res.data) {
             this.setState({
               openCaptchaModal: true,
@@ -278,17 +278,19 @@ class LoginPage extends React.Component {
       this.signInWithWebAuthn(username, values);
       return;
     }
-    const captchaProviderItems = this.getCaptchaProviderItems(this.props.application);
-    if (captchaProviderItems.some(providerItem => providerItem.rule === "Dynamic") && !captchaProviderItems.some(providerItem => providerItem.rule === "Always")) {
-      this.checkCaptchaStatus(values);
-    } else if (this.state.loginMethod === "password" && this.state.enableCaptchaModal) {
-      this.setState({
-        openCaptchaModal: true,
-        values: values,
-      });
-    } else {
-      this.login(values);
+    if (this.state.loginMethod === "password") {
+      if (this.state.enableCaptchaModal === CaptchaRule.Always) {
+        this.setState({
+          openCaptchaModal: true,
+          values: values,
+        });
+        return;
+      } else if (this.state.enableCaptchaModal === CaptchaRule.Dynamic) {
+        this.checkCaptchaStatus(values);
+        return;
+      }
     }
+    this.login(values);
   }
 
   login(values) {
@@ -569,7 +571,7 @@ class LoginPage extends React.Component {
   }
 
   renderCaptchaModal(application) {
-    if (!this.state.enableCaptchaModal) {
+    if (this.state.enableCaptchaModal === CaptchaRule.Never) {
       return null;
     }
     const captchaProviderItems = this.getCaptchaProviderItems(application);

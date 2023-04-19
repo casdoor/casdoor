@@ -170,3 +170,9 @@ export const CaptchaModal = (props) => {
     </Modal>
   );
 };
+
+export const CaptchaRule = {
+  Always: "Always",
+  Never: "Never",
+  Dynamic: "Dynamic",
+};
