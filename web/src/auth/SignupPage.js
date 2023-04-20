@@ -66,7 +66,7 @@ class SignupPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      applicationName: props.match?.params?.applicationName ?? authConfig.appName,
+      applicationName: props.match?.params?.applicationName ?? null,
       email: "",
       phone: "",
       countryCode: "",
@@ -92,8 +92,11 @@ class SignupPage extends React.Component {
     if (this.getApplicationObj() === undefined) {
       if (this.state.applicationName !== null) {
         this.getApplication(this.state.applicationName);
+      } else if (oAuthParams !== null) {
+        this.getApplicationLogin(oAuthParams);
       } else {
         Setting.showMessage("error", `Unknown application name: ${this.state.applicationName}`);
+        this.onUpdateApplication(null);
       }
     }
   }
@@ -106,6 +109,21 @@ class SignupPage extends React.Component {
     ApplicationBackend.getApplication("admin", applicationName)
       .then((application) => {
         this.onUpdateApplication(application);
+      });
+  }
+
+  getApplicationLogin(oAuthParams) {
+    AuthBackend.getApplicationLogin(oAuthParams)
+      .then((res) => {
+        if (res.status === "ok") {
+          const application = res.data;
+          this.onUpdateApplication(application);
+        } else {
+          this.onUpdateApplication(null);
+          this.setState({
+            msg: res.msg,
+          });
+        }
       });
   }
 
@@ -178,11 +196,7 @@ class SignupPage extends React.Component {
   }
 
   isProviderVisible(providerItem) {
-    if (this.state.mode === "signup") {
-      return Setting.isProviderVisibleForSignUp(providerItem);
-    } else {
-      return Setting.isProviderVisibleForSignIn(providerItem);
-    }
+    return Setting.isProviderVisibleForSignUp(providerItem);
   }
 
   renderFormItem(application, signupItem) {
