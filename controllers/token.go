@@ -153,7 +153,6 @@ func (c *ApiController) GetOAuthCode() {
 		return
 	}
 	host := c.Ctx.Request.Host
-	
 	//Security verification
 	//If the permissions are not determined, then this interface may be exploited with only the username, so that any user's code can be obtained in exchange for access_token to log in to the application
 	//Recommendation:This interface can only be called as an intranet service or intercepted using tools such as iptable
@@ -168,11 +167,10 @@ func (c *ApiController) GetOAuthCode() {
 		c.ResponseError(c.T("client_id is invalid"))
 		return
 	}
-	if clientSecret != "" && application.ClientSecret != clientSecret {
+	if application.ClientSecret != clientSecret {
 		c.ResponseError(c.T("client_secret is invalid"))
 		return
 	}
-	
 	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, host, c.GetAcceptLanguage())
 	c.ServeJSON()
 }
