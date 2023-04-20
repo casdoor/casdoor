@@ -380,6 +380,8 @@
     "Is profile public - Tooltip": "Sau khi đóng lại, chỉ các quản trị viên toàn cầu hoặc người dùng trong cùng tổ chức mới có thể truy cập trang hồ sơ người dùng",
     "Modify rule": "Sửa đổi quy tắc",
     "New Organization": "Tổ chức mới",
+    "Properties": "Đặc tính",
+    "Properties - Tooltip": "Thuộc tính của tổ chức",
     "Soft deletion": "Xóa mềm",
     "Soft deletion - Tooltip": "Khi được bật, việc xóa người dùng sẽ không hoàn toàn loại bỏ họ khỏi cơ sở dữ liệu. Thay vào đó, họ sẽ được đánh dấu là đã bị xóa",
     "Tags": "Thẻ",

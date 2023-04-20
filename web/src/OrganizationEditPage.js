@@ -24,6 +24,7 @@ import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./table/LdapTable";
 import AccountTable from "./table/AccountTable";
 import ThemeEditor from "./common/theme/ThemeEditor";
+import PropertyTable from "./table/propertyTable";
 
 const {Option} = Select;
 
@@ -302,6 +303,14 @@ class OrganizationEditPage extends React.Component {
             <Switch checked={this.state.organization.isProfilePublic} onChange={checked => {
               this.updateOrganizationField("isProfilePublic", checked);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:Properties"), i18next.t("organization:Properties - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <PropertyTable properties={this.state.organization.properties} onUpdateTable={(value) => {this.updateOrganizationField("properties", value);}} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

@@ -380,6 +380,8 @@
     "Is profile public - Tooltip": "关闭后只有全局管理员或同组织用户才能访问用户主页",
     "Modify rule": "修改规则",
     "New Organization": "添加组织",
+    "Properties": "属性",
+    "Properties - Tooltip": "組織的屬性",
     "Soft deletion": "软删除",
     "Soft deletion - Tooltip": "启用后，删除一个用户时不会在数据库彻底清除，只会标记为已删除状态",
     "Tags": "标签集合",

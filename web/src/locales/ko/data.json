@@ -380,6 +380,8 @@
     "Is profile public - Tooltip": "닫힌 후에는 전역 관리자 또는 동일한 조직의 사용자만 사용자 프로필 페이지에 액세스할 수 있습니다",
     "Modify rule": "규칙 수정",
     "New Organization": "새로운 조직",
+    "Properties": "특성",
+    "Properties - Tooltip": "조직의 속성",
     "Soft deletion": "소프트 삭제",
     "Soft deletion - Tooltip": "사용 가능한 경우, 사용자 삭제 시 데이터베이스에서 완전히 삭제되지 않습니다. 대신 삭제됨으로 표시됩니다",
     "Tags": "태그",

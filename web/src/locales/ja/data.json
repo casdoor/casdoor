@@ -380,6 +380,8 @@
     "Is profile public - Tooltip": "閉鎖された後、グローバル管理者または同じ組織のユーザーだけがユーザーのプロファイルページにアクセスできます",
     "Modify rule": "ルールを変更する",
     "New Organization": "新しい組織",
+    "Properties": "特性",
+    "Properties - Tooltip": "組織の特性",
     "Soft deletion": "ソフト削除",
     "Soft deletion - Tooltip": "有効になっている場合、ユーザーを削除しても完全にデータベースから削除されません。代わりに、削除されたとマークされます",
     "Tags": "タグ",

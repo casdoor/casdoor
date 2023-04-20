@@ -380,6 +380,8 @@
     "Is profile public - Tooltip": "Setelah ditutup, hanya administrator global atau pengguna di organisasi yang sama yang dapat mengakses halaman profil pengguna",
     "Modify rule": "Mengubah aturan",
     "New Organization": "Organisasi baru",
+    "Properties": "Properti",
+    "Properties - Tooltip": "Properti organisasi",
     "Soft deletion": "Penghapusan lunak",
     "Soft deletion - Tooltip": "Ketika diaktifkan, menghapus pengguna tidak akan sepenuhnya menghapus mereka dari database. Sebaliknya, mereka akan ditandai sebagai dihapus",
     "Tags": "Tag-tag",

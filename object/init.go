@@ -94,6 +94,7 @@ func initBuiltInOrganization() bool {
 		AccountItems:       getBuiltInAccountItems(),
 		EnableSoftDeletion: false,
 		IsProfilePublic:    false,
+		Properties:         make(map[string]string),
 	}
 	AddOrganization(organization)
 	return false

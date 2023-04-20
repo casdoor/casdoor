@@ -380,6 +380,8 @@
     "Is profile public - Tooltip": "Nach der Schließung können nur globale Administratoren oder Benutzer in der gleichen Organisation auf die Profilseite des Benutzers zugreifen",
     "Modify rule": "Regel ändern",
     "New Organization": "Neue Organisation",
+    "Properties": "Eigenschaften",
+    "Properties - Tooltip": "Eigenschaften der Organisation",
     "Soft deletion": "Softe Löschung",
     "Soft deletion - Tooltip": "Wenn aktiviert, werden gelöschte Benutzer nicht vollständig aus der Datenbank entfernt. Stattdessen werden sie als gelöscht markiert",
     "Tags": "Tags",

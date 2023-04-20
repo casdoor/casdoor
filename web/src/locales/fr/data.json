@@ -380,6 +380,8 @@
     "Is profile public - Tooltip": "Après sa fermeture, seuls les administrateurs mondiaux ou les utilisateurs de la même organisation peuvent accéder à la page de profil de l'utilisateur",
     "Modify rule": "Modifier la règle",
     "New Organization": "Nouvelle organisation",
+    "Properties": "Propriétés",
+    "Properties - Tooltip": "Propriétés de l'organisation",
     "Soft deletion": "Suppression douce",
     "Soft deletion - Tooltip": "Lorsqu'elle est activée, la suppression d'utilisateurs ne les retirera pas complètement de la base de données. Au lieu de cela, ils seront marqués comme supprimés",
     "Tags": "Étiquettes",

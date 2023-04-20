@@ -180,6 +180,7 @@ func initDefinedOrganization(organization *Organization) {
 	}
 	organization.CreatedTime = util.GetCurrentTime()
 	organization.AccountItems = getBuiltInAccountItems()
+	organization.Properties = make(map[string]string)
 
 	AddOrganization(organization)
 }

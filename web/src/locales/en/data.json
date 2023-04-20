@@ -380,6 +380,8 @@
     "Is profile public - Tooltip": "After being closed, only global administrators or users in the same organization can access the user's profile page",
     "Modify rule": "Modify rule",
     "New Organization": "New Organization",
+    "Properties": "Properties",
+    "Properties - Tooltip": "Properties of the organization",
     "Soft deletion": "Soft deletion",
     "Soft deletion - Tooltip": "When enabled, deleting users will not completely remove them from the database. Instead, they will be marked as deleted",
     "Tags": "Tags",
