@@ -161,6 +161,7 @@ func (c *ApiController) GetOAuthCode() {
 	// Recommendation:This interface can only be called as an intranet service or intercepted using tools such as iptable/nginx
 	// Or perform session operations after user authorization
 	clientSecret := c.Input().Get("client_secret")
+
 	if clientId == "" || clientSecret == "" {
 		c.ResponseError(c.T("client_id or client_secret required"))
 		return
