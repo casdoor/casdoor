@@ -157,10 +157,12 @@ func checkSigninErrorTimes(user *User, lang string) string {
 	return ""
 }
 
-func CheckPassword(user *User, password string, lang string) string {
+func CheckPassword(user *User, password string, lang string, enableCaptcha bool) string {
 	// check the login error times
-	if msg := checkSigninErrorTimes(user, lang); msg != "" {
-		return msg
+	if !enableCaptcha {
+		if msg := checkSigninErrorTimes(user, lang); msg != "" {
+			return msg
+		}
 	}
 
 	organization := GetOrganizationByUser(user)
@@ -182,7 +184,7 @@ func CheckPassword(user *User, password string, lang string) string {
 			return ""
 		}
 
-		return recordSigninErrorInfo(user, lang)
+		return recordSigninErrorInfo(user, lang, enableCaptcha)
 	} else {
 		return fmt.Sprintf(i18n.Translate(lang, "check:unsupported password type: %s"), organization.PasswordType)
 	}
@@ -231,7 +233,7 @@ func checkLdapUserPassword(user *User, password string, lang string) string {
 	return ""
 }
 
-func CheckUserPassword(organization string, username string, password string, lang string) (*User, string) {
+func CheckUserPassword(organization string, username string, password string, lang string, enableCaptcha bool) (*User, string) {
 	user := GetUserByFields(organization, username)
 	if user == nil || user.IsDeleted == true {
 		return nil, fmt.Sprintf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username))
@@ -250,7 +252,7 @@ func CheckUserPassword(organization string, username string, password string, la
 			return nil, msg
 		}
 	} else {
-		if msg := CheckPassword(user, password, lang); msg != "" {
+		if msg := CheckPassword(user, password, lang, enableCaptcha); msg != "" {
 			return nil, msg
 		}
 	}

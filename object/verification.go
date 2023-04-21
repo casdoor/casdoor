@@ -213,7 +213,7 @@ func CheckSigninCode(user *User, dest, code, lang string) string {
 		resetUserSigninErrorTimes(user)
 		return ""
 	case wrongCodeError:
-		return recordSigninErrorInfo(user, lang)
+		return recordSigninErrorInfo(user, lang, false)
 	default:
 		return result.Msg
 	}

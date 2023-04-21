@@ -281,8 +281,8 @@ func (c *ApiController) Login() {
 				c.ResponseError(c.T("auth:The login method: login with password is not enabled for the application"))
 				return
 			}
-
-			if object.CheckToEnableCaptcha(application, form.Organization, form.Username) {
+			var enableCaptcha bool
+			if enableCaptcha = object.CheckToEnableCaptcha(application, form.Organization, form.Username); enableCaptcha {
 				isHuman, err := captcha.VerifyCaptchaByCaptchaType(form.CaptchaType, form.CaptchaToken, form.ClientSecret)
 				if err != nil {
 					c.ResponseError(err.Error())
@@ -296,7 +296,7 @@ func (c *ApiController) Login() {
 			}
 
 			password := form.Password
-			user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage())
+			user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage(), enableCaptcha)
 		}
 
 		if msg != "" {
@@ -626,11 +626,5 @@ func (c *ApiController) GetCaptchaStatus() {
 	if user != nil && user.SigninWrongTimes >= object.SigninWrongTimesLimit {
 		captchaEnabled = true
 	}
-	resp := &Response{
-		Status: "ok",
-		Msg:    "",
-		Data:   captchaEnabled,
-	}
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk(captchaEnabled)
 }

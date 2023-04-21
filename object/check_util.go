@@ -45,9 +45,11 @@ func resetUserSigninErrorTimes(user *User) {
 	UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, user.IsGlobalAdmin)
 }
 
-func recordSigninErrorInfo(user *User, lang string) string {
+func recordSigninErrorInfo(user *User, lang string, enableCaptcha bool) string {
 	// increase failed login count
-	user.SigninWrongTimes++
+	if user.SigninWrongTimes < SigninWrongTimesLimit {
+		user.SigninWrongTimes++
+	}
 
 	if user.SigninWrongTimes >= SigninWrongTimesLimit {
 		// record the latest failed login time
@@ -57,10 +59,9 @@ func recordSigninErrorInfo(user *User, lang string) string {
 	// update user
 	UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, user.IsGlobalAdmin)
 	leftChances := SigninWrongTimesLimit - user.SigninWrongTimes
-	if leftChances > 0 {
+	if leftChances >= 0 || enableCaptcha {
 		return fmt.Sprintf(i18n.Translate(lang, "check:password or code is incorrect, you have %d remaining chances"), leftChances)
 	}
-
 	// don't show the chance error message if the user has no chance left
 	return fmt.Sprintf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), int(LastSignWrongTimeDuration.Minutes()))
 }
