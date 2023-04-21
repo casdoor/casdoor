@@ -630,7 +630,7 @@ class UserEditPage extends React.Component {
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Properties"), i18next.t("user:Properties - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Properties"), i18next.t("general:Properties - Tooltip"))} :
           </Col>
           <Col span={22} >
             <PropertyTable properties={this.state.user.properties} onUpdateTable={(value) => {this.updateUserField("properties", value);}} />

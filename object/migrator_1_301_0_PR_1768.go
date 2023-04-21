@@ -19,14 +19,14 @@ import (
 	"github.com/xorm-io/xorm/migrate"
 )
 
-type Migrator_1_Add_Orgainzation_Prop struct{}
+type Migrator_1_301_0_PR_1768 struct{}
 
-func (*Migrator_1_Add_Orgainzation_Prop) IsMigrationNeeded() bool {
+func (*Migrator_1_301_0_PR_1768) IsMigrationNeeded() bool {
 	exist, _ := adapter.Engine.IsTableExist("organization")
 	return exist
 }
 
-func (*Migrator_1_Add_Orgainzation_Prop) DoMigration() *migrate.Migration {
+func (*Migrator_1_301_0_PR_1768) DoMigration() *migrate.Migration {
 	migration := migrate.Migration{
 		ID: "20230420MigrateOrganization--Create a new field 'properties' for table `organization`",
 		Migrate: func(engine *xorm.Engine) error {
