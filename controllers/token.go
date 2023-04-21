@@ -130,6 +130,7 @@ func (c *ApiController) DeleteToken() {
 // @Description get OAuth code
 // @Param   user_id     query    string  true        "The id ( owner/name ) of user"
 // @Param   client_id     query    string  true        "OAuth client id"
+// @Param   client_secret     query    string  true        "OAuth client secret"
 // @Param   response_type     query    string  true        "OAuth response type"
 // @Param   redirect_uri     query    string  true        "OAuth redirect URI"
 // @Param   scope     query    string  true        "OAuth scope"
@@ -153,9 +154,11 @@ func (c *ApiController) GetOAuthCode() {
 		return
 	}
 	host := c.Ctx.Request.Host
-	//Security verification
-	//If the permissions are not determined, then this interface may be exploited with only the username, so that any user's code can be obtained in exchange for access_token to log in to the application
-	//Recommendation:This interface can only be called as an intranet service or intercepted using tools such as iptable
+
+	//Security verification, there are significant safety hazards
+	//If the permissions are not determined, Anyone who only knows the username and clientId can get the code of any other user through this interface,
+	//and then exchange the access_token by code from the application's callback address to log in to the application;
+	//Recommendation:This interface can only be called as an intranet service or intercepted using tools such as iptable/nginx
 	//Or perform session operations after user authorization
 	clientSecret := c.Input().Get("client_secret")
 	if clientId == "" || clientSecret == "" {
