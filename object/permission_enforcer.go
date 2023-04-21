@@ -29,7 +29,10 @@ import (
 func getEnforcer(permission *Permission) *casbin.Enforcer {
 	tableName := "permission_rule"
 	if len(permission.Adapter) != 0 {
-		tableName = permission.Adapter
+		adapterObj := getCasbinAdapter(permission.Owner, permission.Adapter)
+		if adapterObj != nil && adapterObj.Table != "" {
+			tableName = adapterObj.Table
+		}
 	}
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	driverName := conf.GetConfigString("driverName")

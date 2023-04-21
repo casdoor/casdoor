@@ -51,6 +51,12 @@ func StaticFilter(ctx *context.Context) {
 		path += urlPath
 	}
 
+	path2 := strings.TrimLeft(path, "web/build/images/")
+	if util.FileExist(path2) {
+		http.ServeFile(ctx.ResponseWriter, ctx.Request, path2)
+		return
+	}
+
 	if !util.FileExist(path) {
 		path = "web/build/index.html"
 	}
