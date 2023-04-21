@@ -24,7 +24,6 @@ import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import * as phoneNumber from "libphonenumber-js";
-import * as path from "path-browserify";
 
 const {Option} = Select;
 
@@ -888,7 +887,7 @@ export function getLoginLink(application) {
   } else if (authConfig.appName === application.name) {
     url = "/login";
   } else if (application.signinUrl === "") {
-    url = path.join(application.homepageUrl, "/login");
+    url = trim(application.homepageUrl, "/") + "/login";
   } else {
     url = application.signinUrl;
   }
@@ -902,10 +901,11 @@ export function renderLoginLink(application, text) {
 
 export function redirectToLoginPage(application, history) {
   const loginLink = getLoginLink(application);
-  if (loginLink.indexOf("http") === 0 || loginLink.indexOf("https") === 0) {
-    window.location.replace(loginLink);
+  if (loginLink.startsWith("http://") || loginLink.startsWith("https://")) {
+    goToLink(loginLink);
+  } else {
+    history.push(loginLink);
   }
-  history.push(loginLink);
 }
 
 function renderLink(url, text, onClick) {
