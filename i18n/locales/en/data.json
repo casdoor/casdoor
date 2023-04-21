@@ -53,6 +53,7 @@
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
     "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
     "password or code is incorrect, you have %d remaining chances": "password or code is incorrect, you have %d remaining chances",
+    "password or code is incorrect": "password or code is incorrect",
     "unsupported password type: %s": "unsupported password type: %s"
   },
   "general": {

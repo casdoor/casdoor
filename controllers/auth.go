@@ -296,7 +296,12 @@ func (c *ApiController) Login() {
 			}
 
 			password := form.Password
-			user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage(), enableCaptcha)
+			if enableCaptcha {
+				user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage(), object.WithEnableCaptcha())
+			} else {
+				user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage())
+			}
+
 		}
 
 		if msg != "" {

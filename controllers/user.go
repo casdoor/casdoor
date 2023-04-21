@@ -317,7 +317,7 @@ func (c *ApiController) SetPassword() {
 	targetUser := object.GetUser(userId)
 
 	if oldPassword != "" {
-		msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage(), false)
+		msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
 		if msg != "" {
 			c.ResponseError(msg)
 			return
@@ -341,7 +341,7 @@ func (c *ApiController) CheckUserPassword() {
 		return
 	}
 
-	_, msg := object.CheckUserPassword(user.Owner, user.Name, user.Password, c.GetAcceptLanguage(), false)
+	_, msg := object.CheckUserPassword(user.Owner, user.Name, user.Password, c.GetAcceptLanguage())
 	if msg == "" {
 		c.ResponseOk()
 	} else {

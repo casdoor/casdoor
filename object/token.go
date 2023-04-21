@@ -561,7 +561,7 @@ func GetPasswordToken(application *Application, username string, password string
 			ErrorDescription: "the user does not exist",
 		}
 	}
-	msg := CheckPassword(user, password, "en", false)
+	msg := CheckPassword(user, password, "en")
 	if msg != "" {
 		return nil, &TokenError{
 			Error:            InvalidGrant,
