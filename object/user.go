@@ -657,10 +657,9 @@ func userChangeTrigger(oldName string, newName string) error {
 	for _, role := range roles {
 		for j, u := range role.Users {
 			// u = organization/username
-			split := strings.Split(u, "/")
-			if split[1] == oldName {
-				split[1] = newName
-				role.Users[j] = split[0] + "/" + split[1]
+			owner, name := util.GetOwnerAndNameFromId(u)
+			if name == oldName {
+				role.Users[j] = util.GetId(owner, newName)
 			}
 		}
 		_, err = session.Where("name=?", role.Name).And("owner=?", role.Owner).Update(role)
@@ -677,10 +676,9 @@ func userChangeTrigger(oldName string, newName string) error {
 	for _, permission := range permissions {
 		for j, u := range permission.Users {
 			// u = organization/username
-			split := strings.Split(u, "/")
-			if split[1] == oldName {
-				split[1] = newName
-				permission.Users[j] = split[0] + "/" + split[1]
+			owner, name := util.GetOwnerAndNameFromId(u)
+			if name == oldName {
+				permission.Users[j] = util.GetId(owner, newName)
 			}
 		}
 		_, err = session.Where("name=?", permission.Name).And("owner=?", permission.Owner).Update(permission)
