@@ -82,8 +82,8 @@ class ChatMenu extends React.Component {
                     }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (this.props.onDelete) {
-                        this.props.onDelete(globalChatIndex);
+                      if (this.props.onDeleteChat) {
+                        this.props.onDeleteChat(globalChatIndex);
                       }
                     }}
                   />
@@ -101,8 +101,8 @@ class ChatMenu extends React.Component {
     const selectedItem = this.chatsToItems(this.props.chats)[categoryIndex].children[chatIndex];
     this.setState({selectedKeys: [`${categoryIndex}-${chatIndex}`]});
 
-    if (this.props.onSelect) {
-      this.props.onSelect(selectedItem.index);
+    if (this.props.onSelectChat) {
+      this.props.onSelectChat(selectedItem.index);
     }
   };
 
@@ -147,7 +147,7 @@ class ChatMenu extends React.Component {
           onMouseUp={(e) => {
             e.currentTarget.style.borderColor = "rgba(89,54,213,0.6)";
           }}
-          onClick={this.props.onNewChat}
+          onClick={this.props.onAddChat}
         >
           New Chat
         </Button>

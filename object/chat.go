@@ -135,6 +135,10 @@ func DeleteChat(chat *Chat) bool {
 		panic(err)
 	}
 
+	if affected != 0 {
+		return DeleteChatMessages(chat.Name)
+	}
+
 	return affected != 0
 }
 

@@ -143,6 +143,15 @@ func DeleteMessage(message *Message) bool {
 	return affected != 0
 }
 
+func DeleteChatMessages(chat string) bool {
+	affected, err := adapter.Engine.Delete(&Message{Chat: chat})
+	if err != nil {
+		panic(err)
+	}
+
+	return affected != 0
+}
+
 func (p *Message) GetId() string {
 	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
 }
