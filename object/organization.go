@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/casdoor/casdoor/cred"
 	"github.com/casdoor/casdoor/i18n"
@@ -299,18 +298,16 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 	for i, u := range role.Users {
 		// u = organization/username
-		split := strings.Split(u, "/")
-		if split[0] == oldName {
-			split[0] = newName
-			role.Users[i] = split[0] + "/" + split[1]
+		owner, name := util.GetOwnerAndNameFromId(u)
+		if name == oldName {
+			role.Users[i] = util.GetId(owner, newName)
 		}
 	}
 	for i, u := range role.Roles {
 		// u = organization/username
-		split := strings.Split(u, "/")
-		if split[0] == oldName {
-			split[0] = newName
-			role.Roles[i] = split[0] + "/" + split[1]
+		owner, name := util.GetOwnerAndNameFromId(u)
+		if name == oldName {
+			role.Roles[i] = util.GetId(owner, newName)
 		}
 	}
 	role.Owner = newName
@@ -326,18 +323,16 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 	for i, u := range permission.Users {
 		// u = organization/username
-		split := strings.Split(u, "/")
-		if split[0] == oldName {
-			split[0] = newName
-			permission.Users[i] = split[0] + "/" + split[1]
+		owner, name := util.GetOwnerAndNameFromId(u)
+		if name == oldName {
+			permission.Users[i] = util.GetId(owner, newName)
 		}
 	}
 	for i, u := range permission.Roles {
 		// u = organization/username
-		split := strings.Split(u, "/")
-		if split[0] == oldName {
-			split[0] = newName
-			permission.Roles[i] = split[0] + "/" + split[1]
+		owner, name := util.GetOwnerAndNameFromId(u)
+		if name == oldName {
+			permission.Roles[i] = util.GetId(owner, newName)
 		}
 	}
 	permission.Owner = newName
