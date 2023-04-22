@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import {Menu} from "antd";
-import {LayoutOutlined} from "@ant-design/icons";
+import {Button, Menu} from "antd";
+import {DeleteOutlined, LayoutOutlined, PlusOutlined} from "@ant-design/icons";
 
 class ChatMenu extends React.Component {
   constructor(props) {
@@ -38,6 +38,7 @@ class ChatMenu extends React.Component {
       categories[chat.category].push(chat);
     });
 
+    const selectedKeys = this.state === undefined ? [] : this.state.selectedKeys;
     return Object.keys(categories).map((category, index) => {
       return {
         key: `${index}`,
@@ -45,10 +46,50 @@ class ChatMenu extends React.Component {
         label: category,
         children: categories[category].map((chat, chatIndex) => {
           const globalChatIndex = chats.indexOf(chat);
+          const isSelected = selectedKeys.includes(`${index}-${chatIndex}`);
           return {
             key: `${index}-${chatIndex}`,
             index: globalChatIndex,
-            label: chat.displayName,
+            label: (
+              <div
+                className="menu-item-container"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                {chat.displayName}
+                {isSelected && (
+                  <DeleteOutlined
+                    className="menu-item-delete-icon"
+                    style={{
+                      visibility: "visible",
+                      color: "inherit",
+                      transition: "color 0.3s",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "rgba(89,54,213,0.6)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "inherit";
+                    }}
+                    onMouseDown={(e) => {
+                      e.currentTarget.style.color = "rgba(89,54,213,0.4)";
+                    }}
+                    onMouseUp={(e) => {
+                      e.currentTarget.style.color = "rgba(89,54,213,0.6)";
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (this.props.onDelete) {
+                        this.props.onDelete(globalChatIndex);
+                      }
+                    }}
+                  />
+                )}
+              </div>
+            ),
           };
         }),
       };
@@ -85,14 +126,40 @@ class ChatMenu extends React.Component {
     const items = this.chatsToItems(this.props.chats);
 
     return (
-      <Menu
-        mode="inline"
-        openKeys={this.state.openKeys}
-        selectedKeys={this.state.selectedKeys}
-        onOpenChange={this.onOpenChange}
-        onSelect={this.onSelect}
-        items={items}
-      />
+      <>
+        <Button
+          icon={<PlusOutlined />}
+          style={{
+            width: "calc(100% - 8px)",
+            height: "40px",
+            margin: "4px",
+            borderColor: "rgb(229,229,229)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "rgba(89,54,213,0.6)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "rgba(0, 0, 0, 0.1)";
+          }}
+          onMouseDown={(e) => {
+            e.currentTarget.style.borderColor = "rgba(89,54,213,0.4)";
+          }}
+          onMouseUp={(e) => {
+            e.currentTarget.style.borderColor = "rgba(89,54,213,0.6)";
+          }}
+          onClick={this.props.onNewChat}
+        >
+          New Chat
+        </Button>
+        <Menu
+          mode="inline"
+          openKeys={this.state.openKeys}
+          selectedKeys={this.state.selectedKeys}
+          onOpenChange={this.onOpenChange}
+          onSelect={this.onSelect}
+          items={items}
+        />
+      </>
     );
   }
 }

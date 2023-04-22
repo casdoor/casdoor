@@ -125,6 +125,8 @@ class ProviderEditPage extends React.Component {
       } else {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
       }
+    case "AI":
+      return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
     default:
       return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
     }
@@ -278,17 +280,20 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "Alipay");
               } else if (value === "Captcha") {
                 this.updateProviderField("type", "Default");
+              } else if (value === "AI") {
+                this.updateProviderField("type", "OpenAI API - GPT");
               }
             })}>
               {
                 [
-                  {id: "OAuth", name: "OAuth"},
+                  {id: "AI", name: "AI"},
+                  {id: "Captcha", name: "Captcha"},
                   {id: "Email", name: "Email"},
+                  {id: "OAuth", name: "OAuth"},
+                  {id: "Payment", name: "Payment"},
+                  {id: "SAML", name: "SAML"},
                   {id: "SMS", name: "SMS"},
                   {id: "Storage", name: "Storage"},
-                  {id: "SAML", name: "SAML"},
-                  {id: "Payment", name: "Payment"},
-                  {id: "Captcha", name: "Captcha"},
                 ]
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
@@ -437,16 +442,20 @@ class ProviderEditPage extends React.Component {
         {
           this.state.provider.category === "Captcha" && this.state.provider.type === "Default" ? null : (
             <React.Fragment>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {this.getClientIdLabel(this.state.provider)}
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.clientId} onChange={e => {
-                    this.updateProviderField("clientId", e.target.value);
-                  }} />
-                </Col>
-              </Row>
+              {
+                this.state.provider.category === "AI" ? null : (
+                  <Row style={{marginTop: "20px"}} >
+                    <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {this.getClientIdLabel(this.state.provider)}
+                    </Col>
+                    <Col span={22} >
+                      <Input value={this.state.provider.clientId} onChange={e => {
+                        this.updateProviderField("clientId", e.target.value);
+                      }} />
+                    </Col>
+                  </Row>
+                )
+              }
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {this.getClientSecretLabel(this.state.provider)}

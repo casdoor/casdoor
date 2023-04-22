@@ -204,6 +204,12 @@ export const OtherProviderInfo = {
       url: "https://www.cloudflare.com/products/turnstile/",
     },
   },
+  AI: {
+    "OpenAI API - GPT": {
+      logo: `${StaticBaseUrl}/img/social_openai.svg`,
+      url: "https://platform.openai.com",
+    },
+  },
 };
 
 export function initCountries() {
@@ -854,6 +860,10 @@ export function getProviderTypeOptions(category) {
       {id: "Aliyun Captcha", name: "Aliyun Captcha"},
       {id: "GEETEST", name: "GEETEST"},
       {id: "Cloudflare Turnstile", name: "Cloudflare Turnstile"},
+    ]);
+  } else if (category === "AI") {
+    return ([
+      {id: "OpenAI API - GPT", name: "OpenAI API - GPT"},
     ]);
   } else {
     return [];
