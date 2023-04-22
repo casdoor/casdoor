@@ -25,6 +25,7 @@ import SelfForgetPage from "./auth/SelfForgetPage";
 import ForgetPage from "./auth/ForgetPage";
 import PromptPage from "./auth/PromptPage";
 import CasLogout from "./auth/CasLogout";
+import {authConfig} from "./auth/Auth";
 
 class EntryPage extends React.Component {
   constructor(props) {
@@ -71,7 +72,7 @@ class EntryPage extends React.Component {
       <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${this.state.application?.formBackgroundUrl})`}}>
         <Spin size="large" spinning={this.state.application === undefined} tip={i18next.t("login:Loading")} style={{margin: "0 auto"}} />
         <Switch>
-          <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+          <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} applicationName={authConfig.appName} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/login/:owner" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />

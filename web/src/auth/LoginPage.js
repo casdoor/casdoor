@@ -147,7 +147,6 @@ class LoginPage extends React.Component {
           });
         }
       });
-    return null;
   }
 
   getApplication() {
@@ -600,33 +599,20 @@ class LoginPage extends React.Component {
   }
 
   renderFooter(application) {
-    if (this.state.mode === "signup") {
-      return (
-        <div style={{float: "right"}}>
-          {i18next.t("signup:Have account?")}&nbsp;
-          {
-            Setting.renderLoginLink(application, i18next.t("signup:sign in now"))
-          }
-        </div>
-      );
-    } else {
-      return (
-        <React.Fragment>
-          <span style={{float: "right"}}>
-            {
-              !application.enableSignUp ? null : (
-                <React.Fragment>
-                  {i18next.t("login:No account?")}&nbsp;
-                  {
-                    Setting.renderSignupLink(application, i18next.t("login:sign up now"))
-                  }
-                </React.Fragment>
-              )
-            }
-          </span>
-        </React.Fragment>
-      );
-    }
+    return (
+      <span style={{float: "right"}}>
+        {
+          !application.enableSignUp ? null : (
+            <React.Fragment>
+              {i18next.t("login:No account?")}&nbsp;
+              {
+                Setting.renderSignupLink(application, i18next.t("login:sign up now"))
+              }
+            </React.Fragment>
+          )
+        }
+      </span>
+    );
   }
 
   sendSilentSigninData(data) {
@@ -775,13 +761,9 @@ class LoginPage extends React.Component {
 
   renderMethodChoiceBox() {
     const application = this.getApplicationObj();
-    const items = [
-      {label: i18next.t("general:Password"), key: "password"},
-    ];
-    application.enableCodeSignin ? items.push({
-      label: i18next.t("login:Verification code"),
-      key: "verificationCode",
-    }) : null;
+    const items = [];
+    items.push({label: i18next.t("general:Password"), key: "password"});
+    application.enableCodeSignin ? items.push({label: i18next.t("login:Verification code"), key: "verificationCode"}) : null;
     application.enableWebAuthn ? items.push({label: i18next.t("login:WebAuthn"), key: "webAuthn"}) : null;
 
     if (application.enableCodeSignin || application.enableWebAuthn) {
