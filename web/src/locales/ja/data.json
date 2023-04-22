@@ -25,6 +25,7 @@
     "Copy prompt page URL": "プロンプトページのURLをコピーしてください",
     "Copy signin page URL": "サインインページのURLをコピーしてください",
     "Copy signup page URL": "サインアップページのURLをコピーしてください",
+    "Dynamic": "Dynamic",
     "Edit Application": "アプリケーションを編集する",
     "Enable Email linking": "イーメールリンクの有効化",
     "Enable Email linking - Tooltip": "組織内に同じメールアドレスを持つユーザーがいる場合、サードパーティのログイン方法は自動的にそのユーザーに関連付けられます",

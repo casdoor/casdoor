@@ -25,6 +25,7 @@
     "Copy prompt page URL": "Copier l'URL de la page de l'invite",
     "Copy signin page URL": "Copier l'URL de la page de connexion",
     "Copy signup page URL": "Copiez l'URL de la page d'inscription",
+    "Dynamic": "Dynamic",
     "Edit Application": "Modifier l'application",
     "Enable Email linking": "Autoriser la liaison de courrier électronique",
     "Enable Email linking - Tooltip": "Lorsque l'on utilise des fournisseurs tiers pour se connecter, s'il y a un utilisateur dans l'organisation avec la même adresse e-mail, la méthode de connexion tierce sera automatiquement associée à cet utilisateur",

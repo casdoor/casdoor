@@ -52,6 +52,7 @@
     "Username must have at least 2 characters": "Имя пользователя должно содержать не менее 2 символов",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Вы ввели неправильный пароль или код слишком много раз, пожалуйста, подождите %d минут и попробуйте снова",
     "Your region is not allow to signup by phone": "Ваш регион не разрешает регистрацию по телефону",
+    "password or code is incorrect": "password or code is incorrect",
     "password or code is incorrect, you have %d remaining chances": "Неправильный пароль или код, у вас осталось %d попыток",
     "unsupported password type: %s": "неподдерживаемый тип пароля: %s"
   },

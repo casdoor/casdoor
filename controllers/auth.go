@@ -281,8 +281,8 @@ func (c *ApiController) Login() {
 				c.ResponseError(c.T("auth:The login method: login with password is not enabled for the application"))
 				return
 			}
-
-			if object.CheckToEnableCaptcha(application) {
+			var enableCaptcha bool
+			if enableCaptcha = object.CheckToEnableCaptcha(application, form.Organization, form.Username); enableCaptcha {
 				isHuman, err := captcha.VerifyCaptchaByCaptchaType(form.CaptchaType, form.CaptchaToken, form.ClientSecret)
 				if err != nil {
 					c.ResponseError(err.Error())
@@ -296,7 +296,8 @@ func (c *ApiController) Login() {
 			}
 
 			password := form.Password
-			user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage())
+			user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage(), enableCaptcha)
+
 		}
 
 		if msg != "" {
@@ -609,4 +610,22 @@ func (c *ApiController) GetWebhookEventType() {
 	c.Data["json"] = resp
 	wechatScanType = ""
 	c.ServeJSON()
+}
+
+// GetCaptchaStatus
+// @Title GetCaptchaStatus
+// @Tag Token API
+// @Description Get Login Error Counts
+// @Param   id     query    string  true        "The id ( owner/name ) of user"
+// @Success 200 {object} controllers.Response The Response object
+// @router /api/get-captcha-status [get]
+func (c *ApiController) GetCaptchaStatus() {
+	organization := c.Input().Get("organization")
+	userId := c.Input().Get("user_id")
+	user := object.GetUserByFields(organization, userId)
+	var captchaEnabled bool
+	if user != nil && user.SigninWrongTimes >= object.SigninWrongTimesLimit {
+		captchaEnabled = true
+	}
+	c.ResponseOk(captchaEnabled)
 }

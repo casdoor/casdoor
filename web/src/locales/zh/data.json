@@ -25,6 +25,7 @@
     "Copy prompt page URL": "复制提醒页面URL",
     "Copy signin page URL": "复制登录页面URL",
     "Copy signup page URL": "复制注册页面URL",
+    "Dynamic": "动态开启",
     "Edit Application": "编辑应用",
     "Enable Email linking": "自动关联邮箱相同的账号",
     "Enable Email linking - Tooltip": "使用第三方授权登录时，如果组织中存在与授权用户邮箱相同的用户，会自动关联该第三方登录方式到该用户",
