@@ -52,6 +52,7 @@
     "Username must have at least 2 characters": "Nama pengguna harus memiliki setidaknya 2 karakter",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Anda telah memasukkan kata sandi atau kode yang salah terlalu banyak kali, mohon tunggu selama %d menit dan coba lagi",
     "Your region is not allow to signup by phone": "Wilayah Anda tidak diizinkan untuk mendaftar melalui telepon",
+    "password or code is incorrect": "password or code is incorrect",
     "password or code is incorrect, you have %d remaining chances": "Kata sandi atau kode salah, Anda memiliki %d kesempatan tersisa",
     "unsupported password type: %s": "jenis sandi tidak didukung: %s"
   },

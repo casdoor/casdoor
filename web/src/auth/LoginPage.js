@@ -31,6 +31,7 @@ import CustomGithubCorner from "../common/CustomGithubCorner";
 import {SendCodeInput} from "../common/SendCodeInput";
 import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal} from "../common/modal/CaptchaModal";
+import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 
 class LoginPage extends React.Component {
@@ -47,7 +48,7 @@ class LoginPage extends React.Component {
       validEmailOrPhone: false,
       validEmail: false,
       loginMethod: "password",
-      enableCaptchaModal: false,
+      enableCaptchaModal: CaptchaRule.Never,
       openCaptchaModal: false,
       verifyCaptcha: undefined,
       samlResponse: "",
@@ -81,7 +82,13 @@ class LoginPage extends React.Component {
     if (prevProps.application !== this.props.application) {
       const captchaProviderItems = this.getCaptchaProviderItems(this.props.application);
       if (captchaProviderItems) {
-        this.setState({enableCaptchaModal: captchaProviderItems.some(providerItem => providerItem.rule === "Always")});
+        if (captchaProviderItems.some(providerItem => providerItem.rule === "Always")) {
+          this.setState({enableCaptchaModal: CaptchaRule.Always});
+        } else if (captchaProviderItems.some(providerItem => providerItem.rule === "Dynamic")) {
+          this.setState({enableCaptchaModal: CaptchaRule.Dynamic});
+        } else {
+          this.setState({enableCaptchaModal: CaptchaRule.Never});
+        }
       }
 
       if (this.props.account && this.props.account.owner === this.props.application?.organization) {
@@ -108,6 +115,22 @@ class LoginPage extends React.Component {
         }
       }
     }
+  }
+
+  checkCaptchaStatus(values) {
+    AuthBackend.getCaptchaStatus(values)
+      .then((res) => {
+        if (res.status === "ok") {
+          if (res.data) {
+            this.setState({
+              openCaptchaModal: true,
+              values: values,
+            });
+            return null;
+          }
+        }
+        this.login(values);
+      });
   }
 
   getApplicationLogin() {
@@ -255,15 +278,19 @@ class LoginPage extends React.Component {
       this.signInWithWebAuthn(username, values);
       return;
     }
-
-    if (this.state.loginMethod === "password" && this.state.enableCaptchaModal) {
-      this.setState({
-        openCaptchaModal: true,
-        values: values,
-      });
-    } else {
-      this.login(values);
+    if (this.state.loginMethod === "password") {
+      if (this.state.enableCaptchaModal === CaptchaRule.Always) {
+        this.setState({
+          openCaptchaModal: true,
+          values: values,
+        });
+        return;
+      } else if (this.state.enableCaptchaModal === CaptchaRule.Dynamic) {
+        this.checkCaptchaStatus(values);
+        return;
+      }
     }
+    this.login(values);
   }
 
   login(values) {
@@ -544,13 +571,15 @@ class LoginPage extends React.Component {
   }
 
   renderCaptchaModal(application) {
-    if (!this.state.enableCaptchaModal) {
+    if (this.state.enableCaptchaModal === CaptchaRule.Never) {
       return null;
     }
-
-    const provider = this.getCaptchaProviderItems(application)
-      .filter(providerItem => providerItem.rule === "Always")
-      .map(providerItem => providerItem.provider)[0];
+    const captchaProviderItems = this.getCaptchaProviderItems(application);
+    const alwaysProviderItems = captchaProviderItems.filter(providerItem => providerItem.rule === "Always");
+    const dynamicProviderItems = captchaProviderItems.filter(providerItem => providerItem.rule === "Dynamic");
+    const provider = alwaysProviderItems.length > 0
+      ? alwaysProviderItems[0].provider
+      : dynamicProviderItems[0].provider;
 
     return <CaptchaModal
       owner={provider.owner}

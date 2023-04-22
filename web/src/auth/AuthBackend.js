@@ -139,3 +139,13 @@ export function getWechatMessageEvent() {
     },
   }).then(res => res.json());
 }
+
+export function getCaptchaStatus(values) {
+  return fetch(`${Setting.ServerUrl}/api/get-captcha-status?organization=${values["organization"]}&user_id=${values["username"]}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

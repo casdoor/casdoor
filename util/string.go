@@ -259,3 +259,11 @@ func maskString(str string) string {
 		return fmt.Sprintf("%c%s%c", str[0], strings.Repeat("*", len(str)-2), str[len(str)-1])
 	}
 }
+
+// GetEndPoint remove scheme from url
+func GetEndPoint(endpoint string) string {
+	for _, prefix := range []string{"https://", "http://"} {
+		endpoint = strings.TrimPrefix(endpoint, prefix)
+	}
+	return endpoint
+}

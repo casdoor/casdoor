@@ -52,6 +52,7 @@
     "Username must have at least 2 characters": "ユーザー名は少なくとも2文字必要です",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "あなたは間違ったパスワードまたはコードを何度も入力しました。%d 分間待ってから再度お試しください",
     "Your region is not allow to signup by phone": "あなたの地域は電話でサインアップすることができません",
+    "password or code is incorrect": "password or code is incorrect",
     "password or code is incorrect, you have %d remaining chances": "パスワードまたはコードが間違っています。あと%d回の試行機会があります",
     "unsupported password type: %s": "サポートされていないパスワードタイプ：%s"
   },
