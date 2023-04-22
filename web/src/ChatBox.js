@@ -13,8 +13,9 @@
 // limitations under the License.
 
 import React from "react";
-import {Avatar, Input, List} from "antd";
+import {Avatar, Input, List, Spin} from "antd";
 import {CopyOutlined, DislikeOutlined, LikeOutlined, SendOutlined} from "@ant-design/icons";
+import i18next from "i18next";
 
 const {TextArea} = Input;
 
@@ -29,7 +30,7 @@ class ChatBox extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.messages !== this.props.messages) {
+    if (prevProps.messages !== this.props.messages && this.props.messages !== null) {
       this.scrollToListItem(this.props.messages.length);
     }
   }
@@ -74,11 +75,19 @@ class ChatBox extends React.Component {
   };
 
   renderList() {
+    if (this.props.messages === undefined || this.props.messages === null) {
+      return (
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <Spin size="large" tip={i18next.t("login:Loading")} style={{paddingTop: "20%"}} />
+        </div>
+      );
+    }
+
     return (
       <div ref={this.listContainerRef} style={{position: "relative", maxHeight: "calc(100vh - 140px)", overflowY: "auto"}}>
         <List
           itemLayout="horizontal"
-          dataSource={this.props.messages === undefined ? undefined : [...this.props.messages, {}]}
+          dataSource={[...this.props.messages, {}]}
           renderItem={(item, index) => {
             if (Object.keys(item).length === 0 && item.constructor === Object) {
               return <List.Item id={`chatbox-list-item-${index}`} style={{
