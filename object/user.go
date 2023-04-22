@@ -663,7 +663,7 @@ func userChangeTrigger(oldName string, newName string) error {
 				role.Users[j] = split[0] + "/" + split[1]
 			}
 		}
-		_, err = session.Where("name=?", role.Name).Update(role)
+		_, err = session.Where("name=?", role.Name).And("owner=?", role.Owner).Update(role)
 		if err != nil {
 			return err
 		}
@@ -683,7 +683,7 @@ func userChangeTrigger(oldName string, newName string) error {
 				permission.Users[j] = split[0] + "/" + split[1]
 			}
 		}
-		_, err = session.Where("name=?", permission.Name).Update(permission)
+		_, err = session.Where("name=?", permission.Name).And("owner=?", permission.Owner).Update(permission)
 		if err != nil {
 			return err
 		}
