@@ -324,7 +324,7 @@ paths:
       tags:
       - GetWebhookEventType API
       operationId: ApiController.GetWebhookEventType
-  /api/api/captcha/status:
+  /api/api/get-captcha-status:
     get:
       tags:
       - GetCaptchaStatus API

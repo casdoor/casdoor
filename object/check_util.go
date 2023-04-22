@@ -22,18 +22,6 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 )
 
-type CheckPassWordOptions struct {
-	enableCaptcha bool
-}
-
-type CheckPassWordOptionFunc func(*CheckPassWordOptions)
-
-func WithEnableCaptcha() CheckPassWordOptionFunc {
-	return func(ops *CheckPassWordOptions) {
-		ops.enableCaptcha = true
-	}
-}
-
 var reRealName *regexp.Regexp
 
 func init() {
@@ -57,7 +45,11 @@ func resetUserSigninErrorTimes(user *User) {
 	UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, user.IsGlobalAdmin)
 }
 
-func recordSigninErrorInfo(user *User, lang string, enableCaptcha bool) string {
+func recordSigninErrorInfo(user *User, lang string, options ...bool) string {
+	enableCaptcha := false
+	if len(options) > 0 {
+		enableCaptcha = options[0]
+	}
 	// increase failed login count
 	if user.SigninWrongTimes < SigninWrongTimesLimit {
 		user.SigninWrongTimes++
@@ -71,10 +63,10 @@ func recordSigninErrorInfo(user *User, lang string, enableCaptcha bool) string {
 	// update user
 	UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, user.IsGlobalAdmin)
 	leftChances := SigninWrongTimesLimit - user.SigninWrongTimes
-	if leftChances > 0 {
-		return fmt.Sprintf(i18n.Translate(lang, "check:password or code is incorrect, you have %d remaining chances"), leftChances)
-	} else if enableCaptcha {
+	if leftChances == 0 && enableCaptcha {
 		return fmt.Sprint(i18n.Translate(lang, "check:password or code is incorrect"))
+	} else if leftChances >= 0 {
+		return fmt.Sprintf(i18n.Translate(lang, "check:password or code is incorrect, you have %d remaining chances"), leftChances)
 	}
 	// don't show the chance error message if the user has no chance left
 	return fmt.Sprintf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), int(LastSignWrongTimeDuration.Minutes()))

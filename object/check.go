@@ -157,13 +157,13 @@ func checkSigninErrorTimes(user *User, lang string) string {
 	return ""
 }
 
-func CheckPassword(user *User, password string, lang string, optFuncs ...CheckPassWordOptionFunc) string {
-	options := CheckPassWordOptions{}
-	for _, optFunc := range optFuncs {
-		optFunc(&options)
+func CheckPassword(user *User, password string, lang string, options ...bool) string {
+	enableCaptcha := false
+	if len(options) > 0 {
+		enableCaptcha = options[0]
 	}
 	// check the login error times
-	if !options.enableCaptcha {
+	if !enableCaptcha {
 		if msg := checkSigninErrorTimes(user, lang); msg != "" {
 			return msg
 		}
@@ -188,7 +188,7 @@ func CheckPassword(user *User, password string, lang string, optFuncs ...CheckPa
 			return ""
 		}
 
-		return recordSigninErrorInfo(user, lang, options.enableCaptcha)
+		return recordSigninErrorInfo(user, lang, enableCaptcha)
 	} else {
 		return fmt.Sprintf(i18n.Translate(lang, "check:unsupported password type: %s"), organization.PasswordType)
 	}
@@ -237,10 +237,10 @@ func checkLdapUserPassword(user *User, password string, lang string) string {
 	return ""
 }
 
-func CheckUserPassword(organization string, username string, password string, lang string, optFuncs ...CheckPassWordOptionFunc) (*User, string) {
-	options := CheckPassWordOptions{}
-	for _, optFunc := range optFuncs {
-		optFunc(&options)
+func CheckUserPassword(organization string, username string, password string, lang string, options ...bool) (*User, string) {
+	enableCaptcha := false
+	if len(options) > 0 {
+		enableCaptcha = options[0]
 	}
 	user := GetUserByFields(organization, username)
 	if user == nil || user.IsDeleted == true {
@@ -260,16 +260,9 @@ func CheckUserPassword(organization string, username string, password string, la
 			return nil, msg
 		}
 	} else {
-		if options.enableCaptcha {
-			if msg := CheckPassword(user, password, lang, WithEnableCaptcha()); msg != "" {
-				return nil, msg
-			}
-		} else {
-			if msg := CheckPassword(user, password, lang); msg != "" {
-				return nil, msg
-			}
+		if msg := CheckPassword(user, password, lang, enableCaptcha); msg != "" {
+			return nil, msg
 		}
-
 	}
 	return user, ""
 }

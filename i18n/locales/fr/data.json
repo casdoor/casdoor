@@ -52,6 +52,7 @@
     "Username must have at least 2 characters": "Le nom d'utilisateur doit comporter au moins 2 caractères",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Vous avez entré le mauvais mot de passe ou code plusieurs fois, veuillez attendre %d minutes et réessayer",
     "Your region is not allow to signup by phone": "Votre région n'est pas autorisée à s'inscrire par téléphone",
+    "password or code is incorrect": "password or code is incorrect",
     "password or code is incorrect, you have %d remaining chances": "Le mot de passe ou le code est incorrect, il vous reste %d chances",
     "unsupported password type: %s": "Type de mot de passe non pris en charge : %s"
   },

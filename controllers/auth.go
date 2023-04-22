@@ -296,11 +296,7 @@ func (c *ApiController) Login() {
 			}
 
 			password := form.Password
-			if enableCaptcha {
-				user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage(), object.WithEnableCaptcha())
-			} else {
-				user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage())
-			}
+			user, msg = object.CheckUserPassword(form.Organization, form.Username, password, c.GetAcceptLanguage(), enableCaptcha)
 
 		}
 
@@ -622,7 +618,7 @@ func (c *ApiController) GetWebhookEventType() {
 // @Description Get Login Error Counts
 // @Param   id     query    string  true        "The id ( owner/name ) of user"
 // @Success 200 {object} controllers.Response The Response object
-// @router /api/captcha/status [get]
+// @router /api/get-captcha-status [get]
 func (c *ApiController) GetCaptchaStatus() {
 	organization := c.Input().Get("organization")
 	userId := c.Input().Get("user_id")

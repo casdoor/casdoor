@@ -503,7 +503,7 @@
                 "operationId": "ApiController.GetCaptchaStatus"
             }
         },
-        "/api/api/captcha/status": {
+        "/api/api/get-captcha-status": {
             "get": {
                 "tags": [
                     "GetWebhookEventType API"

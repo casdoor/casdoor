@@ -52,6 +52,7 @@
     "Username must have at least 2 characters": "사용자 이름은 적어도 2개의 문자가 있어야 합니다",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "올바르지 않은 비밀번호나 코드를 여러 번 입력했습니다. %d분 동안 기다리신 후 다시 시도해주세요",
     "Your region is not allow to signup by phone": "당신의 지역은 전화로 가입할 수 없습니다",
+    "password or code is incorrect": "password or code is incorrect",
     "password or code is incorrect, you have %d remaining chances": "암호 또는 코드가 올바르지 않습니다. %d번의 기회가 남아 있습니다",
     "unsupported password type: %s": "지원되지 않는 암호 유형: %s"
   },

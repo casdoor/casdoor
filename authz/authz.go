@@ -90,7 +90,7 @@ p, *, *, GET, /api/userinfo, *, *
 p, *, *, GET, /api/user, *, *
 p, *, *, POST, /api/webhook, *, *
 p, *, *, GET, /api/get-webhook-event, *, *
-p, *, *, GET, /api/captcha/status, *, *
+p, *, *, GET, /api/get-captcha-status, *, *
 p, *, *, *, /api/login/oauth, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-organization-applications, *, *
