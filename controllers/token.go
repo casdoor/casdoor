@@ -124,40 +124,6 @@ func (c *ApiController) DeleteToken() {
 	c.ServeJSON()
 }
 
-// GetOAuthCode
-// @Title GetOAuthCode
-// @Tag Token API
-// @Description get OAuth code
-// @Param   user_id     query    string  true        "The id ( owner/name ) of user"
-// @Param   client_id     query    string  true        "OAuth client id"
-// @Param   response_type     query    string  true        "OAuth response type"
-// @Param   redirect_uri     query    string  true        "OAuth redirect URI"
-// @Param   scope     query    string  true        "OAuth scope"
-// @Param   state     query    string  true        "OAuth state"
-// @Success 200 {object} object.TokenWrapper The Response object
-// @router /login/oauth/code [post]
-func (c *ApiController) GetOAuthCode() {
-	userId := c.Input().Get("user_id")
-	clientId := c.Input().Get("client_id")
-	responseType := c.Input().Get("response_type")
-	redirectUri := c.Input().Get("redirect_uri")
-	scope := c.Input().Get("scope")
-	state := c.Input().Get("state")
-	nonce := c.Input().Get("nonce")
-
-	challengeMethod := c.Input().Get("code_challenge_method")
-	codeChallenge := c.Input().Get("code_challenge")
-
-	if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
-		c.ResponseError(c.T("auth:Challenge method should be S256"))
-		return
-	}
-	host := c.Ctx.Request.Host
-
-	c.Data["json"] = object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, host, c.GetAcceptLanguage())
-	c.ServeJSON()
-}
-
 // GetOAuthToken
 // @Title GetOAuthToken
 // @Tag Token API
