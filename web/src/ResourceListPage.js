@@ -21,7 +21,7 @@ import * as ResourceBackend from "./backend/ResourceBackend";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
 import BaseListPage from "./BaseListPage";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class ResourceListPage extends BaseListPage {
   constructor(props) {

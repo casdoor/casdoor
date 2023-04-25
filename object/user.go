@@ -425,7 +425,7 @@ func GetLastUser(owner string) *User {
 	return nil
 }
 
-func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) bool {
+func UpdateUser(id string, user *User, columns []string, isAdmin bool) bool {
 	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	oldUser := getUser(owner, name)
 	if oldUser == nil {
@@ -456,7 +456,7 @@ func UpdateUser(id string, user *User, columns []string, isGlobalAdmin bool) boo
 			"signin_wrong_times", "last_signin_wrong_time",
 		}
 	}
-	if isGlobalAdmin {
+	if isAdmin {
 		columns = append(columns, "name", "email", "phone", "country_code")
 	}
 

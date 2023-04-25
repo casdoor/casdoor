@@ -18,7 +18,7 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as LdapBackend from "../backend/LdapBackend";
 import {Link} from "react-router-dom";
-import PopconfirmModal from "../PopconfirmModal";
+import PopconfirmModal from "../common/modal/PopconfirmModal";
 
 class LdapTable extends React.Component {
   constructor(props) {

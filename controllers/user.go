@@ -162,7 +162,9 @@ func (c *ApiController) UpdateUser() {
 		c.ResponseError(msg)
 		return
 	}
-	if pass, err := checkPermissionForUpdateUser(oldUser, &user, c); !pass {
+
+	isAdmin := c.IsAdmin()
+	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, c.GetAcceptLanguage()); !pass {
 		c.ResponseError(err)
 		return
 	}
@@ -172,9 +174,7 @@ func (c *ApiController) UpdateUser() {
 		columns = strings.Split(columnsStr, ",")
 	}
 
-	isGlobalAdmin := c.IsGlobalAdmin()
-
-	affected := object.UpdateUser(id, &user, columns, isGlobalAdmin)
+	affected := object.UpdateUser(id, &user, columns, isAdmin)
 	if affected {
 		object.UpdateUserToOriginalDatabase(&user)
 	}

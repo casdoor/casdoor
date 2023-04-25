@@ -19,7 +19,7 @@ import {Link} from "react-router-dom";
 import {Table, Tag} from "antd";
 import React from "react";
 import * as SessionBackend from "./backend/SessionBackend";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class SessionListPage extends BaseListPage {
 

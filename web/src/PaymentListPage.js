@@ -21,7 +21,7 @@ import * as PaymentBackend from "./backend/PaymentBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import * as Provider from "./auth/Provider";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class PaymentListPage extends BaseListPage {
   newPayment() {

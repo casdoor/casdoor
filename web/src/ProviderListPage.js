@@ -21,7 +21,7 @@ import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Provider from "./auth/Provider";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class ProviderListPage extends BaseListPage {
   constructor(props) {
