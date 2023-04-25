@@ -33,3 +33,13 @@ export function getVersionInfo() {
     },
   }).then(res => res.json());
 }
+
+export function getPrometheusInfo() {
+  return fetch(`${Setting.ServerUrl}/api/get-prometheus-info `, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
