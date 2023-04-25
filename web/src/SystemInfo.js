@@ -17,6 +17,7 @@ import * as SystemBackend from "./backend/SystemInfo";
 import React from "react";
 import * as Setting from "./Setting";
 import i18next from "i18next";
+import PrometheusInfoTable from "./table/PrometheusInfoTable";
 
 class SystemInfo extends React.Component {
 
@@ -25,6 +26,7 @@ class SystemInfo extends React.Component {
     this.state = {
       systemInfo: {cpuUsage: [], memoryUsed: 0, memoryTotal: 0},
       versionInfo: {},
+      prometheusInfo: {apiThroughput: [], apiLatency: [], totalThroughput: 0},
       intervalId: null,
       loading: true,
     };
@@ -44,6 +46,11 @@ class SystemInfo extends React.Component {
           });
         }).catch(error => {
           Setting.showMessage("error", `System info failed to get: ${error}`);
+        });
+        SystemBackend.getPrometheusInfo().then(res => {
+          this.setState({
+            prometheusInfo: res.data,
+          });
         });
       }, 1000 * 2);
       this.setState({intervalId: id});
@@ -80,7 +87,10 @@ class SystemInfo extends React.Component {
         <br /> <br />
         <Progress type="circle" percent={Number((Number(this.state.systemInfo.memoryUsed) / Number(this.state.systemInfo.memoryTotal) * 100).toFixed(2))} />
       </div>;
-
+    const latencyUi = this.state.prometheusInfo.apiLatency.length <= 0 ? <Spin size="large" /> :
+      <PrometheusInfoTable prometheusInfo={this.state.prometheusInfo} table={"latency"} />;
+    const throughputUi = this.state.prometheusInfo.apiLatency.length <= 0 ? <Spin size="large" /> :
+      <PrometheusInfoTable prometheusInfo={this.state.prometheusInfo} table={"throughput"} />;
     const link = this.state.versionInfo?.version !== "" ? `https://github.com/casdoor/casdoor/releases/tag/${this.state.versionInfo?.version}` : "";
     let versionText = this.state.versionInfo?.version !== "" ? this.state.versionInfo?.version : i18next.t("system:Unknown version");
     if (this.state.versionInfo?.commitOffset > 0) {
@@ -101,6 +111,16 @@ class SystemInfo extends React.Component {
               <Col span={12}>
                 <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
                   {this.state.loading ? <Spin size="large" /> : memUi}
+                </Card>
+              </Col>
+              <Col span={24}>
+                <Card title={i18next.t("system:API Latency")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                  {this.state.loading ? <Spin size="large" /> : latencyUi}
+                </Card>
+              </Col>
+              <Col span={24}>
+                <Card title={i18next.t("system:API Throughput")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                  {this.state.loading ? <Spin size="large" /> : throughputUi}
                 </Card>
               </Col>
             </Row>

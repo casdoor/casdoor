@@ -36,6 +36,8 @@ require (
 	github.com/markbates/goth v1.75.2
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/nyaruka/phonenumbers v1.1.5
+	github.com/prometheus/client_golang v1.7.0
+	github.com/prometheus/client_model v0.2.0
 	github.com/qiangmzsx/string-adapter/v2 v2.1.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/russellhaering/gosaml2 v0.6.0
