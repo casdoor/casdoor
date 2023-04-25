@@ -1202,7 +1202,7 @@
         "/api/get-account": {
             "get": {
                 "tags": [
-                    "AuthForm API"
+                    "Account API"
                 ],
                 "description": "get the details of the current account",
                 "operationId": "ApiController.GetAccount",
@@ -2766,7 +2766,7 @@
                     },
                     {
                         "in": "body",
-                        "name": "forms",
+                        "name": "form",
                         "description": "Login information",
                         "required": true,
                         "schema": {
@@ -3762,7 +3762,7 @@
         "/api/user": {
             "get": {
                 "tags": [
-                    "AuthForm API"
+                    "Account API"
                 ],
                 "description": "return Laravel compatible user information according to OAuth 2.0",
                 "operationId": "ApiController.UserInfo2",
@@ -3779,7 +3779,7 @@
         "/api/userinfo": {
             "get": {
                 "tags": [
-                    "AuthForm API"
+                    "Account API"
                 ],
                 "description": "return user information according to OIDC standards",
                 "operationId": "ApiController.UserInfo",
@@ -3909,11 +3909,11 @@
         }
     },
     "definitions": {
-        "1184.0xc0003ad2f0.false": {
+        "1184.0xc000416930.false": {
             "title": "false",
             "type": "object"
         },
-        "1218.0xc0003ad320.false": {
+        "1218.0xc000416960.false": {
             "title": "false",
             "type": "object"
         },
@@ -3931,17 +3931,37 @@
         },
         "controllers.EmailForm": {
             "title": "EmailForm",
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "receivers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sender": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
         },
         "controllers.Response": {
             "title": "Response",
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1184.0xc0003ad2f0.false"
+                    "$ref": "#/definitions/1184.0xc000416930.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/1218.0xc0003ad320.false"
+                    "$ref": "#/definitions/1218.0xc000416960.false"
                 },
                 "msg": {
                     "type": "string"
@@ -3959,7 +3979,21 @@
         },
         "controllers.SmsForm": {
             "title": "SmsForm",
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "organizationId": {
+                    "type": "string"
+                },
+                "receivers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
         },
         "jose.JSONWebKey": {
             "title": "JSONWebKey",

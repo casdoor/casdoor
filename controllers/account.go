@@ -280,7 +280,7 @@ func (c *ApiController) Logout() {
 
 // GetAccount
 // @Title GetAccount
-// @Tag AuthForm API
+// @Tag Account API
 // @Description get the details of the current account
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-account [get]
@@ -315,7 +315,7 @@ func (c *ApiController) GetAccount() {
 // GetUserinfo
 // UserInfo
 // @Title UserInfo
-// @Tag AuthForm API
+// @Tag Account API
 // @Description return user information according to OIDC standards
 // @Success 200 {object} object.Userinfo The Response object
 // @router /userinfo [get]
@@ -336,7 +336,7 @@ func (c *ApiController) GetUserinfo() {
 // GetUserinfo2
 // LaravelResponse
 // @Title UserInfo2
-// @Tag AuthForm API
+// @Tag Account API
 // @Description return Laravel compatible user information according to OAuth 2.0
 // @Success 200 {object} LaravelResponse The Response object
 // @router /user [get]
