@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/forms"
 	"strconv"
 
 	"github.com/casdoor/casdoor/conf"
@@ -198,7 +199,7 @@ func checkQuotaForUser(count int) error {
 	return nil
 }
 
-func getInvalidSmsReceivers(smsForm SmsForm) []string {
+func getInvalidSmsReceivers(smsForm forms.SmsForm) []string {
 	var invalidReceivers []string
 	for _, receiver := range smsForm.Receivers {
 		// The receiver phone format: E164 like +8613854673829 +441932567890

@@ -20,7 +20,7 @@ import * as Setting from "./Setting";
 import * as PermissionBackend from "./backend/PermissionBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class PermissionListPage extends BaseListPage {
   newPermission() {

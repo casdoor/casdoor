@@ -20,7 +20,7 @@ import * as Setting from "./Setting";
 import * as ModelBackend from "./backend/ModelBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class ModelListPage extends BaseListPage {
   newModel() {

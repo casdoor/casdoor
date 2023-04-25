@@ -41,18 +41,41 @@ type SessionData struct {
 }
 
 func (c *ApiController) IsGlobalAdmin() bool {
+	isGlobalAdmin, _ := c.isGlobalAdmin()
+
+	return isGlobalAdmin
+}
+
+func (c *ApiController) IsAdmin() bool {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+
+	return isGlobalAdmin || user.IsAdmin
+}
+
+func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
 	username := c.GetSessionUsername()
 	if strings.HasPrefix(username, "app/") {
 		// e.g., "app/app-casnode"
-		return true
+		return true, nil
 	}
 
-	user := object.GetUser(username)
+	user := c.getCurrentUser()
 	if user == nil {
-		return false
+		return false, nil
 	}
 
-	return user.Owner == "built-in" || user.IsGlobalAdmin
+	return user.Owner == "built-in" || user.IsGlobalAdmin, user
+}
+
+func (c *ApiController) getCurrentUser() *object.User {
+	var user *object.User
+	userId := c.GetSessionUsername()
+	if userId == "" {
+		user = nil
+	} else {
+		user = object.GetUser(userId)
+	}
+	return user
 }
 
 // GetSessionUsername ...

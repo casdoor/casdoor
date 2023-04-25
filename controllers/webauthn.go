@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/casdoor/casdoor/forms"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-webauthn/webauthn/protocol"
@@ -147,7 +148,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 
 	application := object.GetApplicationByUser(user)
-	var form RequestForm
+	var form forms.AuthForm
 	form.Type = responseType
 	resp := c.HandleLoggedIn(application, user, &form)
 	c.Data["json"] = resp

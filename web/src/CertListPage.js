@@ -20,7 +20,7 @@ import * as Setting from "./Setting";
 import * as CertBackend from "./backend/CertBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class CertListPage extends BaseListPage {
   newCert() {

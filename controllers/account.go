@@ -21,6 +21,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/casdoor/casdoor/forms"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -33,44 +34,6 @@ const (
 	ResponseTypeSaml    = "saml"
 	ResponseTypeCas     = "cas"
 )
-
-type RequestForm struct {
-	Type string `json:"type"`
-
-	Organization string `json:"organization"`
-	Username     string `json:"username"`
-	Password     string `json:"password"`
-	Name         string `json:"name"`
-	FirstName    string `json:"firstName"`
-	LastName     string `json:"lastName"`
-	Email        string `json:"email"`
-	Phone        string `json:"phone"`
-	Affiliation  string `json:"affiliation"`
-	IdCard       string `json:"idCard"`
-	Region       string `json:"region"`
-
-	Application string `json:"application"`
-	ClientId    string `json:"clientId"`
-	Provider    string `json:"provider"`
-	Code        string `json:"code"`
-	State       string `json:"state"`
-	RedirectUri string `json:"redirectUri"`
-	Method      string `json:"method"`
-
-	EmailCode   string `json:"emailCode"`
-	PhoneCode   string `json:"phoneCode"`
-	CountryCode string `json:"countryCode"`
-
-	AutoSignin bool `json:"autoSignin"`
-
-	RelayState   string `json:"relayState"`
-	SamlRequest  string `json:"samlRequest"`
-	SamlResponse string `json:"samlResponse"`
-
-	CaptchaType  string `json:"captchaType"`
-	CaptchaToken string `json:"captchaToken"`
-	ClientSecret string `json:"clientSecret"`
-}
 
 type Response struct {
 	Status string      `json:"status"`
@@ -108,7 +71,7 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	var form RequestForm
+	var form forms.AuthForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -122,7 +85,7 @@ func (c *ApiController) Signup() {
 	}
 
 	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", form.Organization))
-	msg := object.CheckUserSignup(application, organization, form.Username, form.Password, form.Name, form.FirstName, form.LastName, form.Email, form.Phone, form.CountryCode, form.Affiliation, c.GetAcceptLanguage())
+	msg := object.CheckUserSignup(application, organization, &form, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
 		return
@@ -317,7 +280,7 @@ func (c *ApiController) Logout() {
 
 // GetAccount
 // @Title GetAccount
-// @Tag Account API
+// @Tag AuthForm API
 // @Description get the details of the current account
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-account [get]
@@ -352,7 +315,7 @@ func (c *ApiController) GetAccount() {
 // GetUserinfo
 // UserInfo
 // @Title UserInfo
-// @Tag Account API
+// @Tag AuthForm API
 // @Description return user information according to OIDC standards
 // @Success 200 {object} object.Userinfo The Response object
 // @router /userinfo [get]
@@ -373,7 +336,7 @@ func (c *ApiController) GetUserinfo() {
 // GetUserinfo2
 // LaravelResponse
 // @Title UserInfo2
-// @Tag Account API
+// @Tag AuthForm API
 // @Description return Laravel compatible user information according to OAuth 2.0
 // @Success 200 {object} LaravelResponse The Response object
 // @router /user [get]

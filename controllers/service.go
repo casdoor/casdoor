@@ -20,25 +20,12 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/casdoor/casdoor/forms"
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
-
-type EmailForm struct {
-	Title     string   `json:"title"`
-	Content   string   `json:"content"`
-	Sender    string   `json:"sender"`
-	Receivers []string `json:"receivers"`
-	Provider  string   `json:"provider"`
-}
-
-type SmsForm struct {
-	Content   string   `json:"content"`
-	Receivers []string `json:"receivers"`
-	OrgId     string   `json:"organizationId"` // e.g. "admin/built-in"
-}
 
 // SendEmail
 // @Title SendEmail
@@ -50,7 +37,7 @@ type SmsForm struct {
 // @Success 200 {object}  Response object
 // @router /api/send-email [post]
 func (c *ApiController) SendEmail() {
-	var emailForm EmailForm
+	var emailForm forms.EmailForm
 
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &emailForm)
 	if err != nil {
@@ -127,7 +114,7 @@ func (c *ApiController) SendSms() {
 		return
 	}
 
-	var smsForm SmsForm
+	var smsForm forms.SmsForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &smsForm)
 	if err != nil {
 		c.ResponseError(err.Error())

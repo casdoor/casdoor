@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/forms"
 	"regexp"
 	"strings"
 	"time"
@@ -42,86 +43,86 @@ func init() {
 	reFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
 }
 
-func CheckUserSignup(application *Application, organization *Organization, username string, password string, displayName string, firstName string, lastName string, email string, phone string, countryCode string, affiliation string, lang string) string {
+func CheckUserSignup(application *Application, organization *Organization, form *forms.AuthForm, lang string) string {
 	if organization == nil {
 		return i18n.Translate(lang, "check:Organization does not exist")
 	}
 
 	if application.IsSignupItemVisible("Username") {
-		if len(username) <= 1 {
+		if len(form.Username) <= 1 {
 			return i18n.Translate(lang, "check:Username must have at least 2 characters")
 		}
-		if unicode.IsDigit(rune(username[0])) {
+		if unicode.IsDigit(rune(form.Username[0])) {
 			return i18n.Translate(lang, "check:Username cannot start with a digit")
 		}
-		if util.IsEmailValid(username) {
+		if util.IsEmailValid(form.Username) {
 			return i18n.Translate(lang, "check:Username cannot be an email address")
 		}
-		if reWhiteSpace.MatchString(username) {
+		if reWhiteSpace.MatchString(form.Username) {
 			return i18n.Translate(lang, "check:Username cannot contain white spaces")
 		}
 
-		if msg := CheckUsername(username, lang); msg != "" {
+		if msg := CheckUsername(form.Username, lang); msg != "" {
 			return msg
 		}
 
-		if HasUserByField(organization.Name, "name", username) {
+		if HasUserByField(organization.Name, "name", form.Username) {
 			return i18n.Translate(lang, "check:Username already exists")
 		}
-		if HasUserByField(organization.Name, "email", email) {
+		if HasUserByField(organization.Name, "email", form.Email) {
 			return i18n.Translate(lang, "check:Email already exists")
 		}
-		if HasUserByField(organization.Name, "phone", phone) {
+		if HasUserByField(organization.Name, "phone", form.Phone) {
 			return i18n.Translate(lang, "check:Phone already exists")
 		}
 	}
 
-	if len(password) <= 5 {
+	if len(form.Password) <= 5 {
 		return i18n.Translate(lang, "check:Password must have at least 6 characters")
 	}
 
 	if application.IsSignupItemVisible("Email") {
-		if email == "" {
+		if form.Email == "" {
 			if application.IsSignupItemRequired("Email") {
 				return i18n.Translate(lang, "check:Email cannot be empty")
 			}
 		} else {
-			if HasUserByField(organization.Name, "email", email) {
+			if HasUserByField(organization.Name, "email", form.Email) {
 				return i18n.Translate(lang, "check:Email already exists")
-			} else if !util.IsEmailValid(email) {
+			} else if !util.IsEmailValid(form.Email) {
 				return i18n.Translate(lang, "check:Email is invalid")
 			}
 		}
 	}
 
 	if application.IsSignupItemVisible("Phone") {
-		if phone == "" {
+		if form.Phone == "" {
 			if application.IsSignupItemRequired("Phone") {
 				return i18n.Translate(lang, "check:Phone cannot be empty")
 			}
 		} else {
-			if HasUserByField(organization.Name, "phone", phone) {
+			if HasUserByField(organization.Name, "phone", form.Phone) {
 				return i18n.Translate(lang, "check:Phone already exists")
-			} else if !util.IsPhoneAllowInRegin(countryCode, organization.CountryCodes) {
+			} else if !util.IsPhoneAllowInRegin(form.CountryCode, organization.CountryCodes) {
 				return i18n.Translate(lang, "check:Your region is not allow to signup by phone")
-			} else if !util.IsPhoneValid(phone, countryCode) {
+			} else if !util.IsPhoneValid(form.Phone, form.CountryCode) {
 				return i18n.Translate(lang, "check:Phone number is invalid")
 			}
 		}
 	}
 
 	if application.IsSignupItemVisible("Display name") {
-		if application.GetSignupItemRule("Display name") == "First, last" && (firstName != "" || lastName != "") {
-			if firstName == "" {
+		if application.GetSignupItemRule("Display name") == "First, last" && (form.FirstName != "" || form.LastName != "") {
+			if form.FirstName == "" {
 				return i18n.Translate(lang, "check:FirstName cannot be blank")
-			} else if lastName == "" {
+			} else if form.LastName == "" {
 				return i18n.Translate(lang, "check:LastName cannot be blank")
 			}
 		} else {
-			if displayName == "" {
+			if form.Name == "" {
 				return i18n.Translate(lang, "check:DisplayName cannot be blank")
 			} else if application.GetSignupItemRule("Display name") == "Real name" {
-				if !isValidRealName(displayName) {
+				if !isValidRealName(form.Name) {
 					return i18n.Translate(lang, "check:DisplayName is not valid real name")
 				}
 			}
@@ -129,7 +130,7 @@ func CheckUserSignup(application *Application, organization *Organization, usern
 	}
 
 	if application.IsSignupItemVisible("Affiliation") {
-		if affiliation == "" {
+		if form.Affiliation == "" {
 			return i18n.Translate(lang, "check:Affiliation cannot be blank")
 		}
 	}

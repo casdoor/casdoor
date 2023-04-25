@@ -28,6 +28,7 @@ import (
 
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/forms"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
@@ -56,7 +57,7 @@ func tokenToResponse(token *object.Token) *Response {
 }
 
 // HandleLoggedIn ...
-func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *RequestForm) (resp *Response) {
+func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *forms.AuthForm) (resp *Response) {
 	userId := user.GetId()
 
 	allowed, err := object.CheckAccessPermission(userId, application)
@@ -221,13 +222,13 @@ func isProxyProviderType(providerType string) bool {
 // @Param nonce     query    string  false nonce
 // @Param code_challenge_method   query    string  false code_challenge_method
 // @Param code_challenge          query    string  false code_challenge
-// @Param   form   body   controllers.RequestForm  true        "Login information"
+// @Param   forms   body   controllers.AuthForm  true        "Login information"
 // @Success 200 {object} Response The Response object
 // @router /login [post]
 func (c *ApiController) Login() {
 	resp := &Response{}
 
-	var form RequestForm
+	var form forms.AuthForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -493,7 +494,7 @@ func (c *ApiController) Login() {
 				resp = &Response{Status: "error", Msg: fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(application.Organization, userInfo.Id))}
 			}
 			// resp = &Response{Status: "ok", Msg: "", Data: res}
-		} else { // form.Method != "signup"
+		} else { // forms.Method != "signup"
 			userId := c.GetSessionUsername()
 			if userId == "" {
 				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(application.Organization, userInfo.Id)), userInfo)
@@ -535,7 +536,7 @@ func (c *ApiController) Login() {
 			record.User = user.Name
 			util.SafeGoroutine(func() { object.AddRecord(record) })
 		} else {
-			c.ResponseError(fmt.Sprintf(c.T("auth:Unknown authentication type (not password or provider), form = %s"), util.StructToJson(form)))
+			c.ResponseError(fmt.Sprintf(c.T("auth:Unknown authentication type (not password or provider), forms = %s"), util.StructToJson(form)))
 			return
 		}
 	}
