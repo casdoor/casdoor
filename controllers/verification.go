@@ -170,7 +170,7 @@ func (c *ApiController) VerifyCaptcha() {
 }
 
 // ResetEmailOrPhone ...
-// @Tag Verification API
+// @Tag Account API
 // @Title ResetEmailOrPhone
 // @router /api/reset-email-or-phone [post]
 func (c *ApiController) ResetEmailOrPhone() {

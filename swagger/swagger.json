@@ -588,7 +588,7 @@
         "/api/api/reset-email-or-phone": {
             "post": {
                 "tags": [
-                    "Verification API"
+                    "Account API"
                 ],
                 "operationId": "ApiController.ResetEmailOrPhone"
             }
@@ -3909,11 +3909,11 @@
         }
     },
     "definitions": {
-        "1183.0xc0004def30.false": {
+        "1183.0xc000455050.false": {
             "title": "false",
             "type": "object"
         },
-        "1217.0xc0004def60.false": {
+        "1217.0xc000455080.false": {
             "title": "false",
             "type": "object"
         },
@@ -3958,10 +3958,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1183.0xc0004def30.false"
+                    "$ref": "#/definitions/1183.0xc000455050.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/1217.0xc0004def60.false"
+                    "$ref": "#/definitions/1217.0xc000455080.false"
                 },
                 "msg": {
                     "type": "string"
