@@ -15,8 +15,9 @@
 package forms
 
 import (
-	"github.com/casdoor/casdoor/i18n"
 	"strings"
+
+	"github.com/casdoor/casdoor/i18n"
 )
 
 type VerificationForm struct {
