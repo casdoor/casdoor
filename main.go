@@ -84,5 +84,5 @@ func main() {
 	go ldap.StartLdapServer()
 	go object.ClearThroughputPerSecond()
 
-	beego.RunWithMiddleWares(fmt.Sprintf(":%v", port), routers.PrometheusMiddleWare)
+	beego.Run(fmt.Sprintf(":%v", port))
 }
