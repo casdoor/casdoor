@@ -380,7 +380,7 @@ paths:
   /api/api/reset-email-or-phone:
     post:
       tags:
-      - AuthForm API
+      - Verification API
       operationId: ApiController.ResetEmailOrPhone
   /api/api/send-email:
     post:
@@ -441,7 +441,7 @@ paths:
   /api/api/verify-code:
     post:
       tags:
-      - AuthForm API
+      - Verification API
       operationId: ApiController.VerifyCode
   /api/api/webhook:
     post:
@@ -2555,10 +2555,10 @@ paths:
           schema:
             $ref: '#/definitions/Response'
 definitions:
-  1184.0xc000416930.false:
+  1183.0xc0004def30.false:
     title: "false"
     type: object
-  1218.0xc000416960.false:
+  1217.0xc0004def60.false:
     title: "false"
     type: object
   LaravelResponse:
@@ -2591,9 +2591,9 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/1184.0xc000416930.false'
+        $ref: '#/definitions/1183.0xc0004def30.false'
       data2:
-        $ref: '#/definitions/1218.0xc000416960.false'
+        $ref: '#/definitions/1217.0xc0004def60.false'
       msg:
         type: string
       name:

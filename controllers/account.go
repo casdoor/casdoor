@@ -21,7 +21,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/casdoor/casdoor/forms"
+	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -71,28 +71,28 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	var form forms.AuthForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
+	var authForm form.AuthForm
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+	application := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
 	if !application.EnableSignUp {
 		c.ResponseError(c.T("account:The application does not allow to sign up new account"))
 		return
 	}
 
-	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", form.Organization))
-	msg := object.CheckUserSignup(application, organization, &form, c.GetAcceptLanguage())
+	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", authForm.Organization))
+	msg := object.CheckUserSignup(application, organization, &authForm, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
 		return
 	}
 
-	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && form.Email != "" {
-		checkResult := object.CheckVerificationCode(form.Email, form.EmailCode, c.GetAcceptLanguage())
+	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && authForm.Email != "" {
+		checkResult := object.CheckVerificationCode(authForm.Email, authForm.EmailCode, c.GetAcceptLanguage())
 		if checkResult.Code != object.VerificationSuccess {
 			c.ResponseError(checkResult.Msg)
 			return
@@ -100,9 +100,9 @@ func (c *ApiController) Signup() {
 	}
 
 	var checkPhone string
-	if application.IsSignupItemVisible("Phone") && application.GetSignupItemRule("Phone") != "No verification" && form.Phone != "" {
-		checkPhone, _ = util.GetE164Number(form.Phone, form.CountryCode)
-		checkResult := object.CheckVerificationCode(checkPhone, form.PhoneCode, c.GetAcceptLanguage())
+	if application.IsSignupItemVisible("Phone") && application.GetSignupItemRule("Phone") != "No verification" && authForm.Phone != "" {
+		checkPhone, _ = util.GetE164Number(authForm.Phone, authForm.CountryCode)
+		checkResult := object.CheckVerificationCode(checkPhone, authForm.PhoneCode, c.GetAcceptLanguage())
 		if checkResult.Code != object.VerificationSuccess {
 			c.ResponseError(checkResult.Msg)
 			return
@@ -111,7 +111,7 @@ func (c *ApiController) Signup() {
 
 	id := util.GenerateId()
 	if application.GetSignupItemRule("ID") == "Incremental" {
-		lastUser := object.GetLastUser(form.Organization)
+		lastUser := object.GetLastUser(authForm.Organization)
 
 		lastIdInt := -1
 		if lastUser != nil {
@@ -121,7 +121,7 @@ func (c *ApiController) Signup() {
 		id = strconv.Itoa(lastIdInt + 1)
 	}
 
-	username := form.Username
+	username := authForm.Username
 	if !application.IsSignupItemVisible("Username") {
 		username = id
 	}
@@ -133,21 +133,21 @@ func (c *ApiController) Signup() {
 	}
 
 	user := &object.User{
-		Owner:             form.Organization,
+		Owner:             authForm.Organization,
 		Name:              username,
 		CreatedTime:       util.GetCurrentTime(),
 		Id:                id,
 		Type:              "normal-user",
-		Password:          form.Password,
-		DisplayName:       form.Name,
+		Password:          authForm.Password,
+		DisplayName:       authForm.Name,
 		Avatar:            organization.DefaultAvatar,
-		Email:             form.Email,
-		Phone:             form.Phone,
-		CountryCode:       form.CountryCode,
+		Email:             authForm.Email,
+		Phone:             authForm.Phone,
+		CountryCode:       authForm.CountryCode,
 		Address:           []string{},
-		Affiliation:       form.Affiliation,
-		IdCard:            form.IdCard,
-		Region:            form.Region,
+		Affiliation:       authForm.Affiliation,
+		IdCard:            authForm.IdCard,
+		Region:            authForm.Region,
 		Score:             initScore,
 		IsAdmin:           false,
 		IsGlobalAdmin:     false,
@@ -166,10 +166,10 @@ func (c *ApiController) Signup() {
 	}
 
 	if application.GetSignupItemRule("Display name") == "First, last" {
-		if form.FirstName != "" || form.LastName != "" {
-			user.DisplayName = fmt.Sprintf("%s %s", form.FirstName, form.LastName)
-			user.FirstName = form.FirstName
-			user.LastName = form.LastName
+		if authForm.FirstName != "" || authForm.LastName != "" {
+			user.DisplayName = fmt.Sprintf("%s %s", authForm.FirstName, authForm.LastName)
+			user.FirstName = authForm.FirstName
+			user.LastName = authForm.LastName
 		}
 	}
 
@@ -186,7 +186,7 @@ func (c *ApiController) Signup() {
 		c.SetSessionUsername(user.GetId())
 	}
 
-	object.DisableVerificationCode(form.Email)
+	object.DisableVerificationCode(authForm.Email)
 	object.DisableVerificationCode(checkPhone)
 
 	record := object.NewRecord(c.Ctx)

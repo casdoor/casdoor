@@ -22,7 +22,7 @@ import (
 	"unicode"
 
 	"github.com/casdoor/casdoor/cred"
-	"github.com/casdoor/casdoor/forms"
+	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
@@ -43,7 +43,7 @@ func init() {
 	reFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
 }
 
-func CheckUserSignup(application *Application, organization *Organization, form *forms.AuthForm, lang string) string {
+func CheckUserSignup(application *Application, organization *Organization, form *form.AuthForm, lang string) string {
 	if organization == nil {
 		return i18n.Translate(lang, "check:Organization does not exist")
 	}
