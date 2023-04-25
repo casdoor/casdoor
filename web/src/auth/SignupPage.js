@@ -66,7 +66,7 @@ class SignupPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      applicationName: props.match?.params?.applicationName ?? null,
+      applicationName: (props.applicationName ?? props.match?.params?.applicationName) ?? null,
       email: "",
       phone: "",
       countryCode: "",
