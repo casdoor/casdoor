@@ -182,8 +182,10 @@ func wrapErrorResponse(err error) *Response {
 }
 
 func (c *ApiController) Finish() {
-	startTime := c.Ctx.Input.GetData("startTime").(time.Time)
-	latency := time.Since(startTime).Milliseconds()
-	object.APILatency.WithLabelValues(c.Ctx.Input.Method(), c.Ctx.Input.URL()).Observe(float64(latency))
+	if strings.HasPrefix(c.Ctx.Input.URL(), "/api") {
+		startTime := c.Ctx.Input.GetData("startTime").(time.Time)
+		latency := time.Since(startTime).Milliseconds()
+		object.APILatency.WithLabelValues(c.Ctx.Input.Method(), c.Ctx.Input.URL()).Observe(float64(latency))
+	}
 	c.Controller.Finish()
 }
