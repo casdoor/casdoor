@@ -177,6 +177,10 @@ func (c *ApiController) UpdateUser() {
 	affected := object.UpdateUser(id, &user, columns, isAdmin)
 	if affected {
 		object.UpdateUserToOriginalDatabase(&user)
+
+		if isAdmin && oldUser.GetId() == c.GetSessionUsername() {
+			c.SetSessionUsername(user.GetId())
+		}
 	}
 
 	c.Data["json"] = wrapActionResponse(affected)
