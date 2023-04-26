@@ -48,6 +48,9 @@ func (c *ApiController) IsGlobalAdmin() bool {
 
 func (c *ApiController) IsAdmin() bool {
 	isGlobalAdmin, user := c.isGlobalAdmin()
+	if user == nil {
+		return false
+	}
 
 	return isGlobalAdmin || user.IsAdmin
 }
