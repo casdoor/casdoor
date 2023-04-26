@@ -18,10 +18,10 @@ func recordSystemInfo(systemInfo *util.SystemInfo) {
 	object.MemoryUsage.WithLabelValues("memoryTotal").Set(float64(systemInfo.MemoryTotal))
 }
 
-func PrometheusBeforeFilter(ctx *context.Context) {
+func PrometheusFilter(ctx *context.Context) {
 	method := ctx.Input.Method()
-	endpoint := ctx.Input.URL()
-	if strings.HasPrefix(endpoint, "/api/metrics") {
+	path := ctx.Input.URL()
+	if strings.HasPrefix(path, "/api/metrics") {
 		systemInfo, err := util.GetSystemInfo()
 		if err == nil {
 			recordSystemInfo(systemInfo)
@@ -29,9 +29,9 @@ func PrometheusBeforeFilter(ctx *context.Context) {
 		return
 	}
 
-	if strings.HasPrefix(endpoint, "/api") {
+	if strings.HasPrefix(path, "/api") {
 		ctx.Input.SetData("startTime", time.Now())
 		object.TotalThroughput.Inc()
-		object.APIThroughput.WithLabelValues(endpoint, method).Inc()
+		object.ApiThroughput.WithLabelValues(path, method).Inc()
 	}
 }

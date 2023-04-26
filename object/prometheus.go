@@ -24,8 +24,8 @@ import (
 )
 
 type PrometheusInfo struct {
-	APIThroughput   []GaugeVecInfo     `json:"apiThroughput"`
-	APILatency      []HistogramVecInfo `json:"apiLatency"`
+	ApiThroughput   []GaugeVecInfo     `json:"apiThroughput"`
+	ApiLatency      []HistogramVecInfo `json:"apiLatency"`
 	TotalThroughput float64            `json:"totalThroughput"`
 }
 
@@ -43,12 +43,12 @@ type HistogramVecInfo struct {
 }
 
 var (
-	APIThroughput = promauto.NewGaugeVec(prometheus.GaugeOpts{
+	ApiThroughput = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "casdoor_api_throughput",
 		Help: "The throughput of each api access",
 	}, []string{"path", "method"})
 
-	APILatency = promauto.NewHistogramVec(prometheus.HistogramOpts{
+	ApiLatency = promauto.NewHistogramVec(prometheus.HistogramOpts{
 		Name: "casdoor_api_latency",
 		Help: "API processing latency in milliseconds",
 	}, []string{"path", "method"})
@@ -73,7 +73,7 @@ func ClearThroughputPerSecond() {
 	// Clear the throughput every second
 	ticker := time.NewTicker(time.Second)
 	for range ticker.C {
-		APIThroughput.Reset()
+		ApiThroughput.Reset()
 		TotalThroughput.Set(0)
 	}
 }
@@ -87,9 +87,9 @@ func GetPrometheusInfo() (*PrometheusInfo, error) {
 	for _, metricFamily := range metricFamilies {
 		switch metricFamily.GetName() {
 		case "casdoor_api_throughput":
-			res.APIThroughput = getGaugeVecInfo(metricFamily)
+			res.ApiThroughput = getGaugeVecInfo(metricFamily)
 		case "casdoor_api_latency":
-			res.APILatency = getHistogramVecInfo(metricFamily)
+			res.ApiLatency = getHistogramVecInfo(metricFamily)
 		case "casdoor_total_throughput":
 			res.TotalThroughput = metricFamily.GetMetric()[0].GetGauge().GetValue()
 		}
