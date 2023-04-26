@@ -178,7 +178,7 @@ func (c *ApiController) UpdateUser() {
 	if affected {
 		object.UpdateUserToOriginalDatabase(&user)
 
-		if isAdmin && oldUser.GetId() == c.GetSessionUsername() {
+		if oldUser.GetId() == c.GetSessionUsername() {
 			c.SetSessionUsername(user.GetId())
 		}
 	}
