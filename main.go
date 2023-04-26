@@ -60,6 +60,7 @@ func main() {
 	beego.InsertFilter("*", beego.BeforeRouter, routers.CorsFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AuthzFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
+	beego.InsertFilter("*", beego.BeforeRouter, routers.PrometheusBeforeFilter)
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
 	beego.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
