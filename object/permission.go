@@ -239,7 +239,7 @@ func DeletePermission(permission *Permission) bool {
 
 func GetPermissionsByUser(userId string) []*Permission {
 	permissions := []*Permission{}
-	err := adapter.Engine.Where("users like ?", "%"+userId+"%").Find(&permissions)
+	err := adapter.Engine.Where("users like ?", "%"+userId+"\"%").Find(&permissions)
 	if err != nil {
 		panic(err)
 	}
@@ -253,7 +253,7 @@ func GetPermissionsByUser(userId string) []*Permission {
 
 func GetPermissionsByRole(roleId string) []*Permission {
 	permissions := []*Permission{}
-	err := adapter.Engine.Where("roles like ?", "%"+roleId+"%").Find(&permissions)
+	err := adapter.Engine.Where("roles like ?", "%"+roleId+"\"%").Find(&permissions)
 	if err != nil {
 		panic(err)
 	}

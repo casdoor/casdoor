@@ -153,7 +153,7 @@ func (role *Role) GetId() string {
 
 func GetRolesByUser(userId string) []*Role {
 	roles := []*Role{}
-	err := adapter.Engine.Where("users like ?", "%"+userId+"%").Find(&roles)
+	err := adapter.Engine.Where("users like ?", "%"+userId+"\"%").Find(&roles)
 	if err != nil {
 		panic(err)
 	}
