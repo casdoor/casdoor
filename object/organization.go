@@ -216,7 +216,7 @@ func CheckAccountItemModifyRule(accountItem *AccountItem, isAdmin bool, lang str
 
 	switch accountItem.ModifyRule {
 	case "Admin":
-		if isAdmin {
+		if !isAdmin {
 			return false, fmt.Sprintf(i18n.Translate(lang, "organization:Only admin can modify the %s."), accountItem.Name)
 		}
 	case "Immutable":
