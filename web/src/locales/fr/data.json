@@ -701,14 +701,20 @@
     "Table primary key - Tooltip": "Clé primaire de la table, telle que l'id"
   },
   "system": {
+    "API Latency": "Retard API",
+    "API Throughput": "Débit API",
     "About Casdoor": "À propos de Casdoor",
     "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "Une plateforme de gestion d'identité et d'accès (IAM) / d'authentification unique (SSO) avec une interface utilisateur web prenant en charge OAuth 2.0, OIDC, SAML et CAS",
     "CPU Usage": "Utilisation du processeur",
     "Community": "Communauté",
+    "Count": "Comptage",
     "Failed to get CPU usage": "Echec de récupération de l'utilisation du processeur (CPU)",
     "Failed to get memory usage": "Échec de l'obtention de l'utilisation de la mémoire",
+    "Latency": "Retard",
     "Memory Usage": "Utilisation de la mémoire",
     "Official website": "Site web officiel",
+    "Throughput": "Débit",
+    "Total Throughput": "Débit total",
     "Unknown version": "Version inconnue",
     "Version": " Version"
   },

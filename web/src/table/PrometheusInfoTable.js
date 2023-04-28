@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Table} from "antd";
+import i18next from "i18next";
 
 class PrometheusInfoTable extends React.Component {
   constructor(props) {
@@ -25,39 +26,39 @@ class PrometheusInfoTable extends React.Component {
   render() {
     const latencyColumns = [
       {
-        title: "Name",
+        title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
       },
       {
-        title: "Method",
+        title: i18next.t("general:Method"),
         dataIndex: "method",
         key: "method",
       },
       {
-        title: "Count",
+        title: i18next.t("system:Count"),
         dataIndex: "count",
         key: "count",
       },
       {
-        title: "Latency(ms)",
+        title: i18next.t("system:Latency") + "(ms)",
         dataIndex: "latency",
         key: "latency",
       },
     ];
     const throughputColumns = [
       {
-        title: "Name",
+        title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
       },
       {
-        title: "Method",
+        title: i18next.t("general:Method"),
         dataIndex: "method",
         key: "method",
       },
       {
-        title: "Throughput",
+        title: i18next.t("system:Throughput"),
         dataIndex: "throughput",
         key: "throughput",
       },
@@ -71,7 +72,7 @@ class PrometheusInfoTable extends React.Component {
     } else if (this.state.table === "throughput") {
       return (
         <div style={{height: "300px", overflow: "auto"}}>
-            Total Throughput: {this.props.prometheusInfo.totalThroughput}
+          {i18next.t("system:Total Throughput")}: {this.props.prometheusInfo.totalThroughput}
           <Table columns={throughputColumns} dataSource={this.props.prometheusInfo.apiThroughput} pagination={false} />
         </div>
       );
