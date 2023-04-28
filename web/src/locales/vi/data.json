@@ -168,6 +168,7 @@
     "Applications that require authentication": "Các ứng dụng yêu cầu xác thực",
     "Avatar": "Ảnh đại diện",
     "Avatar - Tooltip": "Ảnh đại diện công khai cho người dùng",
+    "Back": "Back",
     "Back Home": "Trở về nhà",
     "Cancel": "Hủy bỏ",
     "Captcha": "Captcha",
@@ -280,6 +281,7 @@
     "Sync": "Đồng bộ hoá",
     "Syncers": "Đồng bộ hóa",
     "System Info": "Thông tin hệ thống",
+    "There was a problem signing you in..": "There was a problem signing you in..",
     "This is a read-only demo site!": "Đây là trang web giới thiệu chỉ có chức năng đọc!",
     "Timestamp": "Đánh dấu thời gian",
     "Tokens": "Mã thông báo",
@@ -701,6 +703,8 @@
     "Table primary key - Tooltip": "Khóa chính của bảng, ví dụ như id"
   },
   "system": {
+    "API Latency": "API Latency",
+    "API Throughput": "API Throughput",
     "About Casdoor": "Về Casdoor",
     "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "Một nền tảng Quản lý Danh tính và Truy cập (IAM) / Đăng nhập Một lần (SSO) với giao diện người dùng web hỗ trợ OAuth 2.0, OIDC, SAML và CAS",
     "CPU Usage": "Sử dụng CPU",

@@ -168,6 +168,7 @@
     "Applications that require authentication": "Aplicaciones que requieren autenticación",
     "Avatar": "Avatar",
     "Avatar - Tooltip": "Imagen de avatar pública para el usuario",
+    "Back": "Back",
     "Back Home": "Regreso a casa",
     "Cancel": "Cancelar",
     "Captcha": "Captcha",
@@ -280,6 +281,7 @@
     "Sync": "Sincronización",
     "Syncers": "Sincronizadores",
     "System Info": "Información del Sistema",
+    "There was a problem signing you in..": "There was a problem signing you in..",
     "This is a read-only demo site!": "¡Este es un sitio de demostración solo de lectura!",
     "Timestamp": "Marca de tiempo",
     "Tokens": "Tokens",
@@ -701,6 +703,8 @@
     "Table primary key - Tooltip": "Clave primaria de la tabla, como id"
   },
   "system": {
+    "API Latency": "API Latency",
+    "API Throughput": "API Throughput",
     "About Casdoor": "Sobre Casdoor",
     "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "Una plataforma de Gestión de Identidades y Accesos (IAM) / Single-Sign-On (SSO) con una interfaz web que admite OAuth 2.0, OIDC, SAML y CAS",
     "CPU Usage": "Uso de la CPU",

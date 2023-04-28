@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Alert, Button, Result} from "antd";
+import i18next from "i18next";
 import {getWechatMessageEvent} from "./AuthBackend";
 import * as Setting from "../Setting";
 import * as Provider from "./Provider";
@@ -23,13 +24,13 @@ export function renderMessage(msg) {
     return (
       <div style={{display: "inline"}}>
         <Alert
-          message="Login Error"
+          message={i18next.t("application:Failed to sign in")}
           showIcon
           description={msg}
           type="error"
           action={
             <Button size="small" type="primary" danger>
-              Detail
+              {i18next.t("product:Detail")}
             </Button>
           }
         />
@@ -46,13 +47,13 @@ export function renderMessageLarge(ths, msg) {
       <Result
         style={{margin: "0px auto"}}
         status="error"
-        title="There was a problem signing you in.."
+        title={i18next.t("general:There was a problem signing you in..")}
         subTitle={msg}
         extra={[
           <Button type="primary" key="back" onClick={() => {
             window.history.go(-2);
           }}>
-              Back
+            {i18next.t("general:Back")}
           </Button>,
         ]}
       >
