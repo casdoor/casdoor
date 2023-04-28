@@ -703,16 +703,20 @@
     "Table primary key - Tooltip": "表主键，如id等"
   },
   "system": {
-    "API Latency": "API延迟",
-    "API Throughput": "API吞吐量",
+    "API Latency": "API 延迟",
+    "API Throughput": "API 吞吐量",
     "About Casdoor": "关于Casdoor",
     "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "一个支持OAuth 2.0、OIDC、SAML和CAS的Web UI优先的身份和访问管理（IAM）/单点登录（SSO）平台",
     "CPU Usage": "CPU使用率",
     "Community": "社区",
+    "Count": "次数",
     "Failed to get CPU usage": "获取CPU使用率失败",
     "Failed to get memory usage": "获取内存使用率失败",
+    "Latency": "延迟",
     "Memory Usage": "内存使用率",
     "Official website": "官方网站",
+    "Throughput": "吞吐量",
+    "Total Throughput": "总吞吐量",
     "Unknown version": "未知版本",
     "Version": "版本"
   },

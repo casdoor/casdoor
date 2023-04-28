@@ -36,8 +36,8 @@ type GaugeVecInfo struct {
 }
 
 type HistogramVecInfo struct {
-	Name    string `json:"name"`
 	Method  string `json:"method"`
+	Name    string `json:"name"`
 	Count   uint64 `json:"count"`
 	Latency string `json:"latency"`
 }

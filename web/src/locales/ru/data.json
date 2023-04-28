@@ -703,16 +703,20 @@
     "Table primary key - Tooltip": "Идентификатор (id) - основной ключ таблицы"
   },
   "system": {
-    "API Latency": "API Latency",
-    "API Throughput": "API Throughput",
+    "API Latency": "Задержка API",
+    "API Throughput": "Пропускная способность API",
     "About Casdoor": "Об Casdoor",
     "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "Платформа управления идентификацией и доступом (IAM) / единый вход в систему (SSO) с веб-интерфейсом, поддерживающая OAuth 2.0, OIDC, SAML и CAS",
     "CPU Usage": "Использование ЦПУ",
     "Community": "Сообщество",
+    "Count": "Количество",
     "Failed to get CPU usage": "Не удалось получить использование процессора",
     "Failed to get memory usage": "Не удалось получить использование памяти",
+    "Latency": "Задержка",
     "Memory Usage": "Использование памяти",
     "Official website": "Официальный веб-сайт",
+    "Throughput": "Пропускная способность",
+    "Total Throughput": "Общая пропускная способность",
     "Unknown version": "Неизвестная версия",
     "Version": "Версия"
   },

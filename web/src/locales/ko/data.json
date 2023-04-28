@@ -703,16 +703,20 @@
     "Table primary key - Tooltip": "테이블의 기본 키, 예를 들어 id"
   },
   "system": {
-    "API Latency": "API Latency",
-    "API Throughput": "API Throughput",
+    "API Latency": "API 지연",
+    "API Throughput": "API 처리량",
     "About Casdoor": "카스도어에 대해",
     "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "웹 UI를 지원하는 ID 및 액세스 관리 (IAM) / 단일 사인온 (SSO) 플랫폼으로 OAuth 2.0, OIDC, SAML 및 CAS를 지원합니다",
     "CPU Usage": "CPU 사용량",
     "Community": "커뮤니티",
+    "Count": "카운트",
     "Failed to get CPU usage": "CPU 사용률을 얻지 못했습니다",
     "Failed to get memory usage": "메모리 사용률을 가져오는 데 실패했습니다",
+    "Latency": "지연",
     "Memory Usage": "메모리 사용량",
     "Official website": "공식 웹사이트",
+    "Throughput": "처리량",
+    "Total Throughput": "총 처리량",
     "Unknown version": "알 수 없는 버전",
     "Version": "버전"
   },

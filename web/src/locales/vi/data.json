@@ -703,16 +703,20 @@
     "Table primary key - Tooltip": "Khóa chính của bảng, ví dụ như id"
   },
   "system": {
-    "API Latency": "API Latency",
-    "API Throughput": "API Throughput",
+    "API Latency": "Độ trễ API",
+    "API Throughput": "Thông lượng API",
     "About Casdoor": "Về Casdoor",
     "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "Một nền tảng Quản lý Danh tính và Truy cập (IAM) / Đăng nhập Một lần (SSO) với giao diện người dùng web hỗ trợ OAuth 2.0, OIDC, SAML và CAS",
     "CPU Usage": "Sử dụng CPU",
     "Community": "Cộng đồng",
+    "Count": "Đếm",
     "Failed to get CPU usage": "Không thể lấy được thông tin sử dụng CPU",
     "Failed to get memory usage": "Không thể lấy được thông tin về sử dụng bộ nhớ",
+    "Latency": "Trì hoãn",
     "Memory Usage": "Sử dụng bộ nhớ",
     "Official website": "Trang web chính thức",
+    "Throughput": "Thông lượng",
+    "Total Throughput": "Tổng thông lượng",
     "Unknown version": "Phiên bản không rõ",
     "Version": "Phiên bản"
   },
