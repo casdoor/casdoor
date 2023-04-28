@@ -189,7 +189,7 @@ func (c *ApiController) Finish() {
 		startTime := c.Ctx.Input.GetData("startTime")
 		if startTime != nil {
 			latency := time.Since(startTime.(time.Time)).Milliseconds()
-			object.ApiLatency.WithLabelValues(c.Ctx.Input.Method(), c.Ctx.Input.URL()).Observe(float64(latency))
+			object.ApiLatency.WithLabelValues(c.Ctx.Input.URL(), c.Ctx.Input.Method()).Observe(float64(latency))
 		}
 	}
 	c.Controller.Finish()
