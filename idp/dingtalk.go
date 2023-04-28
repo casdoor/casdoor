@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -125,8 +126,8 @@ type DingTalkUserResponse struct {
 	UnionId   string `json:"unionId"`
 	AvatarUrl string `json:"avatarUrl"`
 	Email     string `json:"email"`
-	Errmsg    string `json:"message"`
-	Errcode   string `json:"code"`
+	Mobile    string `json:"mobile"`
+	StateCode string `json:"stateCode"`
 }
 
 // GetUserInfo Use  access_token to get UserInfo
@@ -156,8 +157,9 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		return nil, err
 	}
 
-	if dtUserInfo.Errmsg != "" {
-		return nil, fmt.Errorf("userIdResp.Errcode = %s, userIdResp.Errmsg = %s", dtUserInfo.Errcode, dtUserInfo.Errmsg)
+	countryCode, err := util.GetCountryCode(dtUserInfo.StateCode, dtUserInfo.Mobile)
+	if err != nil {
+		return nil, err
 	}
 
 	userInfo := UserInfo{
@@ -166,6 +168,8 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		DisplayName: dtUserInfo.Nick,
 		UnionId:     dtUserInfo.UnionId,
 		Email:       dtUserInfo.Email,
+		Phone:       dtUserInfo.Mobile,
+		CountryCode: countryCode,
 		AvatarUrl:   dtUserInfo.AvatarUrl,
 	}
 
