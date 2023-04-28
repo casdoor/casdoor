@@ -334,7 +334,7 @@ class LoginPage extends React.Component {
             } else if (responseType === "code") {
               this.postCodeLoginAction(res);
             } else if (responseType === "token" || responseType === "id_token") {
-              const amendatoryResponseType = responseType === "token" ? "access_toke" : responseType;
+              const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
               const accessToken = res.data;
               Setting.goToLink(`${oAuthParams.redirectUri}#${amendatoryResponseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
             } else if (responseType === "saml") {
