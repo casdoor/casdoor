@@ -49,7 +49,7 @@ type Organization struct {
 	PasswordType       string     `xorm:"varchar(100)" json:"passwordType"`
 	PasswordSalt       string     `xorm:"varchar(100)" json:"passwordSalt"`
 	CountryCodes       []string   `xorm:"varchar(200)"  json:"countryCodes"`
-	DefaultAvatar      string     `xorm:"varchar(100)" json:"defaultAvatar"`
+	DefaultAvatar      string     `xorm:"varchar(200)" json:"defaultAvatar"`
 	DefaultApplication string     `xorm:"varchar(100)" json:"defaultApplication"`
 	Tags               []string   `xorm:"mediumtext" json:"tags"`
 	Languages          []string   `xorm:"varchar(255)" json:"languages"`
