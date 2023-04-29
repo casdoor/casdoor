@@ -179,9 +179,15 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		return nil, err
 	}
 
-	corpEmail, err := idp.getUserCorpEmail(userId, corpAccessToken)
-	if err == nil && corpEmail != "" {
-		userInfo.Email = corpEmail
+	corpEmail, jobNumber, err := idp.getUserCorpEmail(userId, corpAccessToken)
+	if err == nil {
+		if corpEmail != "" {
+			userInfo.Email = corpEmail
+		}
+
+		if jobNumber != "" {
+			userInfo.Username = jobNumber
+		}
 	}
 
 	return &userInfo, nil
@@ -251,33 +257,34 @@ func (idp *DingTalkIdProvider) getUserId(unionId string, accessToken string) (st
 		return "", err
 	}
 	if data.ErrCode == 60121 {
-		return "", fmt.Errorf("the user is not found in the organization where clientId and clientSecret belong")
+		return "", fmt.Errorf("该应用只允许本企业内部用户登录，您不属于该企业，无法登录")
 	} else if data.ErrCode != 0 {
 		return "", fmt.Errorf(data.ErrMessage)
 	}
 	return data.Result.UserId, nil
 }
 
-func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken string) (string, error) {
+func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken string) (string, string, error) {
 	body := make(map[string]string)
 	body["userid"] = userId
 	respBytes, err := idp.postWithBody(body, "https://oapi.dingtalk.com/topapi/v2/user/get?access_token="+accessToken)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	var data struct {
 		ErrMessage string `json:"errmsg"`
 		Result     struct {
-			Email string `json:"email"`
+			Email     string `json:"email"`
+			JobNumber string `json:"job_number"`
 		} `json:"result"`
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	if data.ErrMessage != "ok" {
-		return "", fmt.Errorf(data.ErrMessage)
+		return "", "", fmt.Errorf(data.ErrMessage)
 	}
-	return data.Result.Email, nil
+	return data.Result.Email, data.Result.JobNumber, nil
 }
