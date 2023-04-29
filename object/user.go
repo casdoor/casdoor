@@ -156,7 +156,8 @@ type User struct {
 	Zoom            string `xorm:"zoom varchar(100)" json:"zoom"`
 	Custom          string `xorm:"custom varchar(100)" json:"custom"`
 
-	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
+	WebauthnCredentials      []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
+	TwoFactorAuthentications []TwoFactorProps      `xorm:"twoFactorAuthentications" json:"twoFactorAuthentications"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`

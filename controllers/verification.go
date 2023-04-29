@@ -31,6 +31,7 @@ const (
 	ResetVerification  = "reset"
 	LoginVerification  = "login"
 	ForgetVerification = "forget"
+	TFAVerification    = "tfa"
 )
 
 // SendVerificationCode ...
@@ -122,12 +123,17 @@ func (c *ApiController) SendVerificationCode() {
 		}
 
 		provider := application.GetSmsProvider()
-		if phone, ok := util.GetE164Number(vform.Dest, vform.CountryCode); !ok {
+		ok := false
+		if vform.Dest, ok = util.GetE164Number(vform.Dest, vform.CountryCode); !ok {
 			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), vform.CountryCode))
 			return
 		} else {
-			sendResp = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, phone)
+			sendResp = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, vform.Dest)
 		}
+	}
+
+	if vform.Method == TFAVerification {
+		c.SetSession("tfa_dest", vform.Dest)
 	}
 
 	if sendResp != nil {

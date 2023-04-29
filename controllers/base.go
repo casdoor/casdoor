@@ -168,6 +168,32 @@ func (c *ApiController) SetSessionData(s *SessionData) {
 	c.SetSession("SessionData", util.StructToJson(s))
 }
 
+func (c *ApiController) setTfaSessionData(data *object.TwoFactorSessionData) {
+	c.SetSession(object.TwoFactorSessionUserId, data.UserId)
+	c.SetSession(object.TwoFactorSessionEnableSession, data.EnableSession)
+	c.SetSession(object.TwoFactorSessionAutoSignIn, data.AutoSignIn)
+}
+
+func (c *ApiController) getTfaSessionData() *object.TwoFactorSessionData {
+	userId := c.GetSession(object.TwoFactorSessionUserId).(string)
+	enableSession := c.GetSession(object.TwoFactorSessionEnableSession).(bool)
+	autoSignIn := c.GetSession(object.TwoFactorSessionAutoSignIn).(bool)
+	data := &object.TwoFactorSessionData{
+		UserId:        userId,
+		EnableSession: enableSession,
+		AutoSignIn:    autoSignIn,
+	}
+	return data
+}
+
+func (c *ApiController) setExpireForSession() {
+	timestamp := time.Now().Unix()
+	timestamp += 3600 * 24
+	c.SetSessionData(&SessionData{
+		ExpireTime: timestamp,
+	})
+}
+
 func wrapActionResponse(affected bool) *Response {
 	if affected {
 		return &Response{Status: "ok", Msg: "", Data: "Affected"}

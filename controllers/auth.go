@@ -24,7 +24,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
@@ -133,11 +132,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 	// if user did not check auto signin
 	if resp.Status == "ok" && !form.AutoSignin {
-		timestamp := time.Now().Unix()
-		timestamp += 3600 * 24
-		c.SetSessionData(&SessionData{
-			ExpireTime: timestamp,
-		})
+		c.setExpireForSession()
 	}
 
 	if resp.Status == "ok" && user.Owner == object.CasdoorOrganization && application.Name == object.CasdoorApplication {
