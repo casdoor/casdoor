@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Result, Row, Select, Spin, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -30,6 +30,9 @@ import WebAuthnCredentialTable from "./table/WebauthnCredentialTable";
 import ManagedAccountTable from "./table/ManagedAccountTable";
 import PropertyTable from "./table/propertyTable";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
+import {twoFactorRemoveTotp} from "./backend/TwoFactorAuthBackend";
+import {CheckCircleOutlined} from "@ant-design/icons";
 
 const {Option} = Select;
 
@@ -688,6 +691,50 @@ class UserEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+      );
+    } else if (accountItem.name === "Two-factor authentication") {
+      return (
+        !this.isSelfOrAdmin() ? null : (
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {Setting.getLabel(i18next.t("two-factor:Two-factor authentication"), i18next.t("two-factor:Two-factor authentication - Tooltip "))} :
+            </Col>
+            <Col span={(Setting.isMobile()) ? 22 : 2} >
+              <Space>
+                {this.state.user.totpSecret !== "" &&
+                  <Tag icon={<CheckCircleOutlined />} color="success">Totp</Tag>}
+                {this.state.user.totpSecret !== "" ? null : <Button type={"default"} onClick={() => {
+                  Setting.goToLink(`/set-totp/${this.state.application.owner}/${this.state.user.signupApplication}/${this.state.user.owner}/${this.state.user.name}`);
+                }}>{i18next.t("two-factor:Setup")}</Button>}
+                {this.state.user.totpSecret !== "" &&
+                <PopconfirmModal
+                  title={i18next.t("two-factor:Are you sure to delete?")}
+                  onConfirm={() => {
+                    this.setState({
+                      twoFactorRemoveTotpLoading: true,
+                    });
+                    twoFactorRemoveTotp({
+                      userId: this.state.user.owner + "/" + this.state.user.name,
+                    }).then((res) => {
+                      if (res.status === "ok") {
+                        Setting.showMessage("success", i18next.t("two-factor:Removed successfully"));
+                        this.updateUserField("totpSecret", "");
+                      } else {
+                        Setting.showMessage("error", i18next.t("two-factor:Removed failed"));
+                      }
+                    }).finally(() => {
+                      this.setState({
+                        twoFactorRemoveTotpLoading: false,
+                      });
+                    });
+                  }}
+                >
+                </PopconfirmModal>
+                }
+              </Space>
+            </Col>
+          </Row>
+        )
       );
     } else if (accountItem.name === "WebAuthn credentials") {
       return (
