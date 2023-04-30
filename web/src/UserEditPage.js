@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
+import {Button, Card, Col, Input, InputNumber, Result, Row, Select, Spin, Switch, Tag} from "antd";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -35,6 +35,8 @@ import {twoFactorRemoveTotp} from "./backend/TwoFactorAuthBackend";
 import {CheckCircleOutlined} from "@ant-design/icons";
 
 const {Option} = Select;
+const SmsType = "sms";
+const TotpType = "app";
 
 class UserEditPage extends React.Component {
   constructor(props) {
@@ -144,6 +146,36 @@ class UserEditPage extends React.Component {
   getCountryCode() {
     return this.props.account.countryCode;
   }
+
+  getTFA(type = "") {
+    if (!(this.state.user.twoFactorAuth?.length > 0)) {
+      return null;
+    }
+    if (type === "") {
+      return this.state.user.twoFactorAuth;
+    }
+    return this.state.user.twoFactorAuth.filter(tfaProps => tfaProps.type === type);
+  }
+
+  deleteTFA = () => {
+    this.setState({
+      twoFactorRemoveTotpLoading: true,
+    });
+    twoFactorRemoveTotp({
+      userId: this.state.user.owner + "/" + this.state.user.name,
+    }).then((res) => {
+      if (res.status === "ok") {
+        Setting.showMessage("success", i18next.t("two-factor:Removed successfully"));
+        this.updateUserField("totpSecret", "");
+      } else {
+        Setting.showMessage("error", i18next.t("two-factor:Removed failed"));
+      }
+    }).finally(() => {
+      this.setState({
+        twoFactorRemoveTotpLoading: false,
+      });
+    });
+  };
 
   renderAccountItem(accountItem) {
     if (!accountItem.visible) {
@@ -696,42 +728,36 @@ class UserEditPage extends React.Component {
       return (
         !this.isSelfOrAdmin() ? null : (
           <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            <Col style={{marginTop: "5px"}} span={Setting.isMobile() ? 22 : 2}>
               {Setting.getLabel(i18next.t("two-factor:Two-factor authentication"), i18next.t("two-factor:Two-factor authentication - Tooltip "))} :
             </Col>
-            <Col span={(Setting.isMobile()) ? 22 : 2} >
-              <Space>
-                {this.state.user.totpSecret !== "" &&
-                  <Tag icon={<CheckCircleOutlined />} color="success">Totp</Tag>}
-                {this.state.user.totpSecret !== "" ? null : <Button type={"default"} onClick={() => {
-                  Setting.goToLink(`/set-totp/${this.state.application.owner}/${this.state.user.signupApplication}/${this.state.user.owner}/${this.state.user.name}`);
-                }}>{i18next.t("two-factor:Setup")}</Button>}
-                {this.state.user.totpSecret !== "" &&
-                <PopconfirmModal
-                  title={i18next.t("two-factor:Are you sure to delete?")}
-                  onConfirm={() => {
-                    this.setState({
-                      twoFactorRemoveTotpLoading: true,
-                    });
-                    twoFactorRemoveTotp({
-                      userId: this.state.user.owner + "/" + this.state.user.name,
-                    }).then((res) => {
-                      if (res.status === "ok") {
-                        Setting.showMessage("success", i18next.t("two-factor:Removed successfully"));
-                        this.updateUserField("totpSecret", "");
-                      } else {
-                        Setting.showMessage("error", i18next.t("two-factor:Removed failed"));
-                      }
-                    }).finally(() => {
-                      this.setState({
-                        twoFactorRemoveTotpLoading: false,
-                      });
-                    });
-                  }}
+            <Col span={22} >
+              <Card title="Two-factor methods">
+                <Card type="inner" title="SMS/Text message" extra={<a href="#">More</a>}>
+                  {this.getTFA(SmsType) === null ?
+                    <Button type={"default"} onClick={() => {
+                      Setting.goToLink("/two_factor_authentication/setup");
+                    }}>
+                      {i18next.t("two-factor:Setup")}
+                    </Button> :
+                    <Tag icon={<CheckCircleOutlined />} color="success">Enabled</Tag>}
+                  {this.getTFA(SmsType) === null ? null :
+                    <PopconfirmModal
+                      title={i18next.t("two-factor:Are you sure to delete?")}
+                      onConfirm={() => this.deleteTFA()}
+                    >
+                    </PopconfirmModal>
+                  }
+                </Card>
+                <Card style={{marginTop: 16}}
+                  type="inner"
+                  title="Authenticator app"
+                  extra={<a href="#">More</a>}
                 >
-                </PopconfirmModal>
-                }
-              </Space>
+                  {this.getTFA(TotpType)}
+                        TOTP developing...
+                </Card>
+              </Card>
             </Col>
           </Row>
         )

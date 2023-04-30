@@ -13,49 +13,26 @@
 // limitations under the License.
 
 import React, {useState} from "react";
-import {Button, Col, Input, Row, Spin, Steps} from "antd";
-import * as ApplicationBackend from "../backend/ApplicationBackend";
+import {Button, Col, Input, Result, Row, Steps} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
-import * as UserBackend from "../backend/UserBackend";
+import * as TwoFactorBackend from "../backend/TwoFactorAuthBackend";
 import {CheckOutlined, CopyOutlined, KeyOutlined, UserOutlined} from "@ant-design/icons";
-
 import QRCode from "qrcode.react";
-import {useFormik} from "formik";
+
 import copy from "copy-to-clipboard";
-import CustomGithubCorner from "../common/CustomGithubCorner";
 
 const {Step} = Steps;
 
 function CheckPassword({user, onSuccess, onFail}) {
-  const formik = useFormik({
-    initialValues: {
-      password: "",
-    },
-    onSubmit: ({password}) => {
-      const data = {...user, password};
-      UserBackend.checkUserPassword(data).then(res => {
-        if (res.status === "ok") {
-          onSuccess(res);
-        } else {
-          onFail(res);
-        }
-      }
-      ).finally(() => {
-        formik.setSubmitting(false);
-      });
-    },
-  });
-
   return (
-    <form style={{width: "300px"}} onSubmit={formik.handleSubmit}>
+    <form style={{width: "300px"}} >
       <Input
-        onChange={formik.handleChange("password")}
         prefix={<UserOutlined />}
         placeholder={i18next.t("two-factor:Password")}
         type="password"
       />
-      <Button style={{marginTop: 24}} loading={formik.isSubmitting} block
+      <Button style={{marginTop: 24}}
         type="primary" htmlType="submit">
         {i18next.t("two-factor:Next step")}
       </Button>
@@ -64,27 +41,8 @@ function CheckPassword({user, onSuccess, onFail}) {
 }
 
 function VerityTotp({totp, onSuccess, onFail}) {
-  const formik = useFormik(
-    {
-      initialValues: {
-        passcode: "",
-      },
-      onSubmit: ({passcode}) => {
-        const data = {secret: totp.secret, passcode};
-        UserBackend.twoFactorSetupVerityTotp(data).then(res => {
-          if (res.status === "ok") {
-            onSuccess(res);
-          } else {
-            onFail(res);
-          }
-        }
-        ).finally(() => {
-          formik.setSubmitting(false);
-        });
-      },
-    });
   return (
-    <form style={{width: "300px"}} onSubmit={formik.handleSubmit}>
+    <form style={{width: "300px"}} >
       <QRCode value={totp.url} size={200} />
       <Row type="flex" justify="center" align="middle" >
         <Col>{Setting.getLabel(i18next.t("two-factor:Two-factor secret"), i18next.t("two-factor:Two-factor secret - Tooltip"))} :</Col>
@@ -98,12 +56,11 @@ function VerityTotp({totp, onSuccess, onFail}) {
       </Row>
       <Input
         style={{marginTop: 24}}
-        onChange={formik.handleChange("passcode")}
         prefix={<UserOutlined />}
         placeholder={i18next.t("two-factor:Passcode")}
         type="text"
       />
-      <Button style={{marginTop: 24}} loading={formik.isSubmitting} block
+      <Button style={{marginTop: 24}} block
         type="primary"
         htmlType="submit">
         {i18next.t("two-factor:Next step")}
@@ -121,7 +78,7 @@ function EnableTotp({user, totp, onSuccess, onFail}) {
       recoveryCode: totp.recoveryCode,
     };
     setLoading(true);
-    UserBackend.twoFactorEnableTotp(data).then(res => {
+    TwoFactorBackend.twoFactorEnable(data).then(res => {
       if (res.status === "ok") {
         onSuccess(res);
       } else {
@@ -153,30 +110,9 @@ class TotpPage extends React.Component {
     super(props);
     this.state = {
       account: props.account,
-      owner: props.match.params.owner,
-      organization: props.match.params.organization,
-      organizationOwner: props.match.params.organizationOwner,
-      userOwner: props.match.params.userOwner,
-      userName: props.match.params.userName,
-      application: null,
       current: 0,
       totp: null,
     };
-  }
-
-  componentDidMount() {
-    this.getApplication();
-  }
-
-  getApplication() {
-    ApplicationBackend.getApplication(this.state.organizationOwner,
-      this.state.organization).then(
-      (application) => {
-        this.setState({
-          application: application,
-        });
-      }
-    );
   }
 
   getUser() {
@@ -196,7 +132,7 @@ class TotpPage extends React.Component {
       return <CheckPassword
         user={this.getUser()}
         onSuccess={() => {
-          UserBackend.twoFactorSetupInitTotp({
+          TwoFactorBackend.twoFactorSetupInitiate({
             userId: this.getUserId(),
           }).then((res) => {
             if (res.status === "ok") {
@@ -242,9 +178,15 @@ class TotpPage extends React.Component {
   }
 
   render() {
-    const application = this.state.application;
-    if (!application) {
-      return <Spin />;
+    if (!this.props.account) {
+      return (
+        <Result
+          status="403"
+          title="403 Unauthorized"
+          subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
+          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
+        />
+      );
     }
 
     return (
@@ -252,10 +194,7 @@ class TotpPage extends React.Component {
         <Col span={24} style={{justifyContent: "center"}}>
           <Row>
             <Col span={24}>
-              <div style={{marginTop: "80px", marginBottom: "10px", textAlign: "center"}}>
-                {Setting.renderHelmet(application)}
-                <CustomGithubCorner />
-                {Setting.renderLogo(application)}</div>
+
             </Col>
           </Row>
           <Row>

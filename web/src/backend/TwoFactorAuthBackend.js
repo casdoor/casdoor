@@ -14,7 +14,7 @@
 
 import * as Setting from "../Setting";
 
-export function twoFactorSetupInitiateTotp(values) {
+export function twoFactorSetupInitiate(values) {
   const formData = new FormData();
   formData.append("userId", values.userId);
   return fetch(`${Setting.ServerUrl}/api/two-factor/setup/initiate`, {
@@ -24,7 +24,7 @@ export function twoFactorSetupInitiateTotp(values) {
   }).then(res => res.json());
 }
 
-export function twoFactorSetupVerityTotp(values) {
+export function twoFactorSetupVerity(values) {
   const formData = new FormData();
   formData.append("passcode", values.passcode);
   return fetch(`${Setting.ServerUrl}/api/two-factor/setup/verity`, {
@@ -34,7 +34,7 @@ export function twoFactorSetupVerityTotp(values) {
   }).then(res => res.json());
 }
 
-export function twoFactorEnableTotp(values) {
+export function twoFactorEnable(values) {
   const formData = new FormData();
   formData.append("userId", values.userId);
   return fetch(`${Setting.ServerUrl}/api/two-factor/setup/enable`, {

@@ -99,7 +99,7 @@ func (c *ApiController) TwoFactorSetupEnable() {
 		return
 	}
 
-	if !object.SetUserField(user, "two_factor_authentications", string(props)) {
+	if !object.SetUserField(user, "two_factor_auth", string(props)) {
 		c.ResponseError("Failed to enable two factor authentication")
 		return
 	}
