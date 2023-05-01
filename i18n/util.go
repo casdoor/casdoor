@@ -74,13 +74,12 @@ func applyData(data1 *I18nData, data2 *I18nData) {
 }
 
 func Translate(lang string, error string) string {
-	parts := strings.SplitN(error, ":", 2)
-	if !strings.Contains(error, ":") || len(parts) != 2 {
+	tokens := strings.SplitN(error, ":", 2)
+	if !strings.Contains(error, ":") || len(tokens) != 2 {
 		return "Translate Error: " + error
 	}
-	if langMap[lang] != nil {
-		return langMap[lang][parts[0]][parts[1]]
-	} else {
+
+	if langMap[lang] == nil {
 		file, _ := f.ReadFile("locales/" + lang + "/data.json")
 		data := I18nData{}
 		err := util.JsonToStruct(string(file), &data)
@@ -88,6 +87,11 @@ func Translate(lang string, error string) string {
 			panic(err)
 		}
 		langMap[lang] = data
-		return langMap[lang][parts[0]][parts[1]]
 	}
+
+	res := langMap[lang][tokens[0]][tokens[1]]
+	if res == "" {
+		res = tokens[1]
+	}
+	return res
 }
