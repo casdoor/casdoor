@@ -117,7 +117,7 @@ export function getOAuthGetParameters(params) {
 
 export function getStateFromQueryParams(applicationName, providerName, method, isShortState) {
   let query = window.location.search;
-  query = `${query}&application=${applicationName}&provider=${providerName}&method=${method}`;
+  query = `${query}&application=${encodeURIComponent(applicationName)}&provider=${encodeURIComponent(providerName)}&method=${method}`;
   if (method === "link") {
     query = `${query}&from=${window.location.pathname}`;
   }
