@@ -128,7 +128,7 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 	if providerName != "" {
 		provider := object.GetProvider(util.GetId("admin", providerName))
 		if provider == nil {
-			c.ResponseError(c.T("util:The provider: %s is not found"), providerName)
+			c.ResponseError(fmt.Sprintf(c.T("util:The provider: %s is not found"), providerName))
 			return nil, nil, false
 		}
 		return provider, nil, true

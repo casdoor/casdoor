@@ -17,6 +17,7 @@ package ai
 import (
 	"context"
 	"fmt"
+	"io"
 	"strings"
 	"time"
 
@@ -72,4 +73,44 @@ func QueryAnswerSafe(authToken string, question string) string {
 	}
 
 	return res
+}
+
+func QueryAnswerStream(authToken string, question string, writer io.Writer, builder *strings.Builder) error {
+	client := getProxyClientFromToken(authToken)
+
+	ctx := context.Background()
+
+	respStream, err := client.CreateCompletionStream(
+		ctx,
+		openai.CompletionRequest{
+			Model:     openai.GPT3TextDavinci003,
+			Prompt:    question,
+			MaxTokens: 50,
+			Stream:    true,
+		},
+	)
+	if err != nil {
+		return err
+	}
+	defer respStream.Close()
+
+	for {
+		completion, streamErr := respStream.Recv()
+		if streamErr != nil {
+			if streamErr == io.EOF {
+				break
+			}
+			return streamErr
+		}
+
+		// Write the streamed data as Server-Sent Events
+		if _, err := fmt.Fprintf(writer, "data: %s\n\n", completion.Choices[0].Text); err != nil {
+			return err
+		}
+
+		// Append the response to the strings.Builder
+		builder.WriteString(completion.Choices[0].Text)
+	}
+
+	return nil
 }

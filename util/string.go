@@ -20,6 +20,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
@@ -139,6 +140,16 @@ func GenerateSimpleTimeId() string {
 	t := tm.Format("20060102150405")
 
 	return t
+}
+
+func GetRandomName() string {
+	rand.Seed(time.Now().UnixNano())
+	const charset = "0123456789abcdefghijklmnopqrstuvwxyz"
+	result := make([]byte, 6)
+	for i := range result {
+		result[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(result)
 }
 
 func GetId(owner, name string) string {

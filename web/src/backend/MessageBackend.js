@@ -44,6 +44,16 @@ export function getMessage(owner, name) {
   }).then(res => res.json());
 }
 
+export function getMessageAnswer(owner, name, onMessage, onError) {
+  const source = new EventSource(`${Setting.ServerUrl}/api/get-message-answer?id=${owner}/${encodeURIComponent(name)}`);
+  source.onmessage = function(event) {
+    onMessage(event.data);
+  };
+  source.onerror = function(error) {
+    onError(error);
+  };
+}
+
 export function updateMessage(owner, name, message) {
   const newMessage = Setting.deepCopy(message);
   return fetch(`${Setting.ServerUrl}/api/update-message?id=${owner}/${encodeURIComponent(name)}`, {
