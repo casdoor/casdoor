@@ -85,7 +85,7 @@ func QueryAnswerStream(authToken string, question string, writer io.Writer, buil
 		openai.CompletionRequest{
 			Model:     openai.GPT3TextDavinci003,
 			Prompt:    question,
-			MaxTokens: 50,
+			MaxTokens: 3000,
 			Stream:    true,
 		},
 	)

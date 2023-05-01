@@ -28,6 +28,7 @@ type Message struct {
 
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	Chat         string `xorm:"varchar(100) index" json:"chat"`
+	ReplyTo      string `xorm:"varchar(100) index" json:"replyTo"`
 	Author       string `xorm:"varchar(100)" json:"author"`
 	Text         string `xorm:"mediumtext" json:"text"`
 }

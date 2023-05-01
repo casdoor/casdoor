@@ -45,13 +45,20 @@ export function getMessage(owner, name) {
 }
 
 export function getMessageAnswer(owner, name, onMessage, onError) {
-  const source = new EventSource(`${Setting.ServerUrl}/api/get-message-answer?id=${owner}/${encodeURIComponent(name)}`);
-  source.onmessage = function(event) {
-    onMessage(event.data);
-  };
-  source.onerror = function(error) {
-    onError(error);
-  };
+  const eventSource = new EventSource(`${Setting.ServerUrl}/api/get-message-answer?id=${owner}/${encodeURIComponent(name)}`);
+
+  eventSource.addEventListener("message", (e) => {
+    onMessage(e.data);
+  });
+
+  eventSource.addEventListener("myerror", (e) => {
+    onError(e.data);
+    eventSource.close();
+  });
+
+  eventSource.addEventListener("end", (e) => {
+    eventSource.close();
+  });
 }
 
 export function updateMessage(owner, name, message) {

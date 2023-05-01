@@ -56,6 +56,7 @@ class ChatPage extends BaseListPage {
       createdTime: moment().format(),
       organization: this.props.account.owner,
       chat: this.state.chatName,
+      replyTo: "",
       author: `${this.props.account.owner}/${this.props.account.name}`,
       text: text,
     };
@@ -82,6 +83,31 @@ class ChatPage extends BaseListPage {
         this.setState({
           messages: messages,
         });
+
+        if (messages.length > 0) {
+          const lastMessage = messages[messages.length - 1];
+          if (lastMessage.author === "AI" && lastMessage.replyTo !== "" && lastMessage.text === "") {
+            let text = "";
+            MessageBackend.getMessageAnswer(lastMessage.owner, lastMessage.name, (data) => {
+              const lastMessage2 = Setting.deepCopy(lastMessage);
+              text += data;
+              lastMessage2.text = text;
+              messages[messages.length - 1] = lastMessage2;
+              this.setState({
+                messages: messages,
+              });
+            }, (error) => {
+              Setting.showMessage("error", `${i18next.t("general:Failed to get answer")}: ${error}`);
+
+              const lastMessage2 = Setting.deepCopy(lastMessage);
+              lastMessage2.text = `#ERROR#: ${error}`;
+              messages[messages.length - 1] = lastMessage2;
+              this.setState({
+                messages: messages,
+              });
+            });
+          }
+        }
 
         Setting.scrollToDiv(`chatbox-list-item-${messages.length}`);
       });

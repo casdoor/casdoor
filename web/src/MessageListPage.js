@@ -31,6 +31,7 @@ class MessageListPage extends BaseListPage {
       createdTime: moment().format(),
       organization: this.props.account.owner,
       chat: "",
+      replyTo: "",
       author: `${this.props.account.owner}/${this.props.account.name}`,
       text: "",
     };

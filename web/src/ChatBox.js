@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Avatar, Input, List, Spin} from "antd";
+import {Alert, Avatar, Input, List, Spin} from "antd";
 import {CopyOutlined, DislikeOutlined, LikeOutlined, SendOutlined} from "@ant-design/icons";
 import i18next from "i18next";
 
@@ -107,7 +107,15 @@ class ChatBox extends React.Component {
                 <div style={{width: "800px", margin: "0 auto", position: "relative"}}>
                   <List.Item.Meta
                     avatar={<Avatar style={{width: "30px", height: "30px", borderRadius: "3px"}} src={item.author === `${this.props.account.owner}/${this.props.account.name}` ? this.props.account.avatar : "https://cdn.casbin.com/casdoor/resource/built-in/admin/gpt.png"} />}
-                    title={<div style={{fontSize: "16px", fontWeight: "normal", lineHeight: "24px", marginTop: "-15px", marginLeft: "5px", marginRight: "80px"}}>{item.text}</div>}
+                    title={
+                      <div style={{fontSize: "16px", fontWeight: "normal", lineHeight: "24px", marginTop: "-15px", marginLeft: "5px", marginRight: "80px"}}>
+                        {
+                          !item.text.includes("#ERROR#") ? item.text : (
+                            <Alert message={item.text.slice("#ERROR#: ".length)} type="error" showIcon />
+                          )
+                        }
+                      </div>
+                    }
                   />
                   <div style={{position: "absolute", top: "0px", right: "0px"}}
                   >
