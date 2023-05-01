@@ -175,7 +175,7 @@ class ChatPage extends BaseListPage {
 
     return (
       <div style={{display: "flex", height: "calc(100vh - 140px)"}}>
-        <div style={{width: "250px", height: "100%", backgroundColor: "white", borderRight: "1px solid rgb(245,245,245)"}}>
+        <div style={{width: "250px", height: "100%", backgroundColor: "white", borderRight: "1px solid rgb(245,245,245)", borderBottom: "1px solid rgb(245,245,245)"}}>
           <ChatMenu ref={this.menu} chats={chats} onSelectChat={onSelectChat} onAddChat={onAddChat} onDeleteChat={onDeleteChat} />
         </div>
         <div style={{flex: 1, height: "100%", backgroundColor: "white", position: "relative"}}>
@@ -194,6 +194,7 @@ class ChatPage extends BaseListPage {
                 backgroundBlendMode: "luminosity",
                 filter: "grayscale(80%) brightness(140%) contrast(90%)",
                 opacity: 0.5,
+                pointerEvents: "none",
               }}>
               </div>
             )
@@ -217,7 +218,7 @@ class ChatPage extends BaseListPage {
     if (setLoading) {
       this.setState({loading: true});
     }
-    ChatBackend.getChats("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    ChatBackend.getChats("admin", params.pagination.current, -1, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
