@@ -120,7 +120,7 @@ class ChatPage extends BaseListPage {
           if (j < 0) {
             this.setState({
               chatName: undefined,
-              messages: undefined,
+              messages: [],
               data: data,
             });
           } else {
@@ -180,7 +180,7 @@ class ChatPage extends BaseListPage {
         </div>
         <div style={{flex: 1, height: "100%", backgroundColor: "white", position: "relative"}}>
           {
-            this.state.messages === null ? null : (
+            (this.state.messages === undefined || this.state.messages === null) ? null : (
               <div style={{
                 position: "absolute",
                 top: -50,
@@ -224,6 +224,7 @@ class ChatPage extends BaseListPage {
           this.setState({
             loading: false,
             data: res.data,
+            messages: [],
             pagination: {
               ...params.pagination,
               total: res.data2,
@@ -242,7 +243,7 @@ class ChatPage extends BaseListPage {
           }
 
           if (!setLoading) {
-            this.menu.current.setSelectedKeyToNewChat();
+            this.menu.current.setSelectedKeyToNewChat(chats);
           }
         } else {
           if (Setting.isResponseDenied(res)) {

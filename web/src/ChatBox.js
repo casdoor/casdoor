@@ -30,7 +30,7 @@ class ChatBox extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.messages !== this.props.messages && this.props.messages !== null) {
+    if (prevProps.messages !== this.props.messages && this.props.messages !== undefined && this.props.messages !== null) {
       this.scrollToListItem(this.props.messages.length);
     }
   }
