@@ -177,8 +177,8 @@ func GetProvider(id string) *Provider {
 	return getProvider(owner, name)
 }
 
-func GetDefaultCaptchaProvider() *Provider {
-	provider := Provider{Owner: "admin", Category: "Captcha"}
+func getDefaultAiProvider() *Provider {
+	provider := Provider{Owner: "admin", Category: "AI"}
 	existed, err := adapter.Engine.Get(&provider)
 	if err != nil {
 		panic(err)

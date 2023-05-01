@@ -121,6 +121,13 @@ func UpdateChat(id string, chat *Chat) bool {
 }
 
 func AddChat(chat *Chat) bool {
+	if chat.Type == "AI" && chat.User2 == "" {
+		provider := getDefaultAiProvider()
+		if provider != nil {
+			chat.User2 = provider.Name
+		}
+	}
+
 	affected, err := adapter.Engine.Insert(chat)
 	if err != nil {
 		panic(err)
