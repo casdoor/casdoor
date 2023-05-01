@@ -110,6 +110,12 @@ class ChatMenu extends React.Component {
     return items.map((item, index) => `${index}`);
   }
 
+  setSelectedKeyToNewChat() {
+    this.setState({
+      selectedKeys: ["0-0"],
+    });
+  }
+
   onOpenChange = (keys) => {
     const items = this.chatsToItems(this.props.chats);
     const rootSubmenuKeys = this.getRootSubmenuKeys(items);

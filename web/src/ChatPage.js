@@ -24,6 +24,12 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 
 class ChatPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+
+    this.menu = React.createRef();
+  }
+
   newChat(chat) {
     const randomName = Setting.getRandomName();
     return {
@@ -94,7 +100,7 @@ class ChatPage extends BaseListPage {
           this.getMessages(newChat.name);
 
           const {pagination} = this.state;
-          this.fetch({pagination});
+          this.fetch({pagination}, false);
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
         }
@@ -135,6 +141,10 @@ class ChatPage extends BaseListPage {
       });
   }
 
+  getCurrentChat() {
+    return this.state.data.filter(chat => chat.name === this.state.chatName)[0];
+  }
+
   renderTable(chats) {
     const onSelectChat = (i) => {
       const chat = chats[i];
@@ -146,7 +156,7 @@ class ChatPage extends BaseListPage {
     };
 
     const onAddChat = () => {
-      const chat = this.state.data.filter(chat => chat.name === this.state.chatName)[0];
+      const chat = this.getCurrentChat();
       this.addChat(chat);
     };
 
@@ -166,7 +176,7 @@ class ChatPage extends BaseListPage {
     return (
       <div style={{display: "flex", height: "calc(100vh - 140px)"}}>
         <div style={{width: "250px", height: "100%", backgroundColor: "white", borderRight: "1px solid rgb(245,245,245)"}}>
-          <ChatMenu chats={chats} onSelectChat={onSelectChat} onAddChat={onAddChat} onDeleteChat={onDeleteChat} />
+          <ChatMenu ref={this.menu} chats={chats} onSelectChat={onSelectChat} onAddChat={onAddChat} onDeleteChat={onDeleteChat} />
         </div>
         <div style={{flex: 1, height: "100%", backgroundColor: "white", position: "relative"}}>
           {
@@ -194,7 +204,7 @@ class ChatPage extends BaseListPage {
     );
   }
 
-  fetch = (params = {}) => {
+  fetch = (params = {}, setLoading = true) => {
     let field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
     if (params.category !== undefined && params.category !== null) {
@@ -204,7 +214,9 @@ class ChatPage extends BaseListPage {
       field = "type";
       value = params.type;
     }
-    this.setState({loading: true});
+    if (setLoading) {
+      this.setState({loading: true});
+    }
     ChatBackend.getChats("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
@@ -226,6 +238,10 @@ class ChatPage extends BaseListPage {
             this.setState({
               chatName: chat.name,
             });
+          }
+
+          if (!setLoading) {
+            this.menu.current.setSelectedKeyToNewChat();
           }
         } else {
           if (Setting.isResponseDenied(res)) {
