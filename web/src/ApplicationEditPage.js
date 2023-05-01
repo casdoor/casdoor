@@ -767,7 +767,15 @@ class ApplicationEditPage extends React.Component {
   renderSignupSigninPreview() {
     const themeData = this.state.application.themeData ?? Conf.ThemeDefault;
     let signUpUrl = `/signup/${this.state.application.name}`;
-    const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
+
+    let redirectUri;
+    if (this.state.application.redirectUris.length !== 0) {
+      redirectUri = this.state.application.redirectUris[0];
+    } else {
+      redirectUri = "\"ERROR: You must specify at least one Redirect URL in 'Redirect URLs'\"";
+    }
+
+    const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${redirectUri}&scope=read&state=casdoor`;
     const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "97%", width: "100%", background: "rgba(0,0,0,0.4)"};
     if (!this.state.application.enablePassword) {
       signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");
