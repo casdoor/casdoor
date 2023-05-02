@@ -14,26 +14,15 @@
 
 package ai
 
-import (
-	"testing"
+import "github.com/pkoukk/tiktoken-go"
 
-	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/proxy"
-	"github.com/sashabaranov/go-openai"
-)
-
-func TestRun(t *testing.T) {
-	object.InitConfig()
-	proxy.InitHttpClient()
-
-	text, err := queryAnswer("", "hi", 5)
+func getTokenSize(model string, prompt string) (int, error) {
+	tkm, err := tiktoken.EncodingForModel(model)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
-	println(text)
-}
-
-func TestToken(t *testing.T) {
-	println(getTokenSize(openai.GPT3TextDavinci003, ""))
+	token := tkm.Encode(prompt, nil, nil)
+	res := len(token)
+	return res, nil
 }

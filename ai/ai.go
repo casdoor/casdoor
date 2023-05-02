@@ -80,12 +80,22 @@ func QueryAnswerStream(authToken string, question string, writer io.Writer, buil
 
 	ctx := context.Background()
 
+	// https://platform.openai.com/tokenizer
+	// https://github.com/pkoukk/tiktoken-go#available-encodings
+	promptTokens, err := getTokenSize(openai.GPT3TextDavinci003, question)
+	if err != nil {
+		return err
+	}
+
+	// https://platform.openai.com/docs/models/gpt-3-5
+	maxTokens := 4097 - promptTokens
+
 	respStream, err := client.CreateCompletionStream(
 		ctx,
 		openai.CompletionRequest{
 			Model:     openai.GPT3TextDavinci003,
 			Prompt:    question,
-			MaxTokens: 3000,
+			MaxTokens: maxTokens,
 			Stream:    true,
 		},
 	)
