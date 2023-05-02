@@ -15,24 +15,20 @@
 import React, {useState} from "react";
 import i18next from "i18next";
 import {Button, Input} from "antd";
-import * as Setting from "../Setting";
-import {twoFactorAuthTotp, twoFactorRecoverTotp} from "../backend/TfaBackend";
+import {twoFactorAuthRecover, twoFactorAuthVerify} from "../backend/TfaBackend";
+import {SmsTfaType} from "./TfaSetupPage";
+import {TfaSmsVerifyForm} from "./TfaVerifyForms";
 
 export const NextTwoFactor = "nextTwoFactor";
 
-export function VerityTotp({onSuccess, onFail}) {
+export function TfaAuthVerityForm({tfaProps, application, onSuccess, onFail}) {
   const [loading, setLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [passcode, setPasscode] = useState("");
+  const [type, setType] = useState(tfaProps.type);
   const [recoveryCode, setRecoveryCode] = useState("");
-  const verity = () => {
-    if (passcode.length === 0) {
-      Setting.showMessage("error", i18next.t("two-factor:Enter passcode"));
-      return;
-    }
 
+  const verity = ({passcode}) => {
     setLoading(true);
-    twoFactorAuthTotp({passcode}).then((res) => {
+    twoFactorAuthVerify({passcode, type}).then((res) => {
       if (res.status === "ok") {
         onSuccess();
       } else {
@@ -46,12 +42,8 @@ export function VerityTotp({onSuccess, onFail}) {
   };
 
   const recover = () => {
-    if (recoveryCode.length === 0) {
-      Setting.showMessage("error", i18next.t("two-factor:Enter recovery code"));
-      return;
-    }
     setLoading(true);
-    twoFactorRecoverTotp({recoveryCode}).then(res => {
+    twoFactorAuthRecover({recoveryCode}).then(res => {
       if (res.status === "ok") {
         onSuccess();
       } else {
@@ -64,32 +56,28 @@ export function VerityTotp({onSuccess, onFail}) {
     });
   };
 
-  switch (currentStep) {
-  case 0:
+  switch (type) {
+  case SmsTfaType:
     return (
       <div style={{width: 300}}>
-        <div style={{marginBottom: 24, textAlign: "center", fontSize: "28px"}}>{i18next.t(
-          "two-factor:Two-factor authentication")}</div>
-        <div style={{marginBottom: 24}}>{i18next.t(
-          "two-factor:Two-factor authentication description")}</div>
-        <Input placeholder={i18next.t("two-factor:Passcode")}
-          style={{marginBottom: 24}} type={"passcode"} size={"large"}
-          onChange={event => setPasscode(event.target.value)} />
-        <Button style={{width: "100%"}} size={"large"} loading={loading}
-          type={"primary"} onClick={() => {
-            verity();
-          }}>{i18next.t("two-factor:Verity")}</Button>
+        <div style={{marginBottom: 24, textAlign: "center", fontSize: "28px"}}>
+          {i18next.t("two-factor:Two-factor authentication")}
+        </div>
+        <div style={{marginBottom: 24}}>
+          {i18next.t("two-factor:Two-factor authentication description")}
+        </div>
+        <TfaSmsVerifyForm onFinish={verity} application={application} />
         <span style={{float: "right"}}>
           {i18next.t("two-factor:Have problems?")}
           <a onClick={() => {
-            setCurrentStep(1);
+            setType(1);
           }}>
             {i18next.t("two-factor:Use a recovery code")}
           </a>
         </span>
       </div>
     );
-  case 1:
+  case "recovery":
     return (
       <div style={{width: 300}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "28px"}}>{i18next.t(

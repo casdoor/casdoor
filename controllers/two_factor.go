@@ -23,7 +23,7 @@ func (c *ApiController) TwoFactorSetupInitiate() {
 		return
 	}
 
-	twoFactorUtil := object.GetTwoFactorUtil(authType)
+	twoFactorUtil := object.GetTwoFactorUtil(authType, nil)
 	if twoFactorUtil == nil {
 		c.ResponseError("Invalid auth type")
 	}
@@ -62,13 +62,13 @@ func (c *ApiController) TwoFactorSetupVerity() {
 		c.ResponseError("missing auth type or passcode")
 		return
 	}
-	twoFactorUtil := object.GetTwoFactorUtil(authType)
+	twoFactorUtil := object.GetTwoFactorUtil(authType, nil)
 
-	ok := twoFactorUtil.Verify(c.Ctx, passcode)
-	if ok {
-		c.ResponseOk(http.StatusText(http.StatusOK))
+	err := twoFactorUtil.SetupVerify(c.Ctx, passcode)
+	if err != nil {
+		c.ResponseError(err.Error())
 	} else {
-		c.ResponseError(http.StatusText(http.StatusUnauthorized))
+		c.ResponseOk(http.StatusText(http.StatusOK))
 	}
 }
 
@@ -89,7 +89,7 @@ func (c *ApiController) TwoFactorSetupEnable() {
 		return
 	}
 
-	twoFactor := object.GetTwoFactorUtil(authType)
+	twoFactor := object.GetTwoFactorUtil(authType, nil)
 	err := twoFactor.Enable(c.Ctx, user)
 
 	if err != nil {
@@ -116,19 +116,60 @@ func (c *ApiController) TwoFactorAuthVerity() {
 		return
 	}
 
-	twoFactorUtil := object.GetTwoFactorUtil(authType)
 	user := object.GetUser(totpSessionData.UserId)
 	if user == nil {
 		c.ResponseError("User does not exist")
 		return
 	}
 
-	ok := twoFactorUtil.Verify(c.Ctx, passcode)
-	if ok {
+	twoFactorUtil := object.GetTwoFactorUtil(authType, user.GetPreferTwoFactor())
+	err := twoFactorUtil.Verify(passcode)
+	if err != nil {
+		c.ResponseError(http.StatusText(http.StatusUnauthorized))
+	} else {
 		if totpSessionData.EnableSession {
 			c.SetSessionUsername(totpSessionData.UserId)
 		}
 		if !totpSessionData.AutoSignIn {
+			c.setExpireForSession()
+		}
+		c.ResponseOk(http.StatusText(http.StatusOK))
+	}
+}
+
+// TwoFactorAuthRecover
+// @Title TwoFactorAuthRecover
+// @Tag Totp API
+// @Description recover two-factor authentication
+// @param	recoveryCode	form	string	true	"recovery code"
+// @Success 200 {object}  Response object
+// @router /two-factor/auth/recover [post]
+func (c *ApiController) TwoFactorAuthRecover() {
+	authType := c.Ctx.Request.Form.Get("type")
+	recoveryCode := c.Ctx.Request.Form.Get("recoveryCode")
+
+	tfaSessionData := c.getTfaSessionData()
+	if tfaSessionData == nil {
+		c.ResponseError(http.StatusText(http.StatusBadRequest))
+		return
+	}
+
+	user := object.GetUser(tfaSessionData.UserId)
+	if user == nil {
+		c.ResponseError("User does not exist")
+		return
+	}
+
+	ok, err := object.RecoverTfs(user, recoveryCode, authType)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if ok {
+		if tfaSessionData.EnableSession {
+			c.SetSessionUsername(tfaSessionData.UserId)
+		}
+		if !tfaSessionData.AutoSignIn {
 			c.setExpireForSession()
 		}
 		c.ResponseOk(http.StatusText(http.StatusOK))

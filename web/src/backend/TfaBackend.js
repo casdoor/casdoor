@@ -58,20 +58,21 @@ export function twoFactorRemoveTotp(values) {
   }).then(res => res.json());
 }
 
-export function twoFactorAuthTotp(values) {
+export function twoFactorAuthVerify(values) {
   const formData = new FormData();
+  formData.append("type", values.type);
   formData.append("passcode", values.passcode);
-  return fetch(`${Setting.ServerUrl}/api/two-factor/auth`, {
+  return fetch(`${Setting.ServerUrl}/api/two-factor/auth/verity`, {
     method: "POST",
     credentials: "include",
     body: formData,
   }).then(res => res.json());
 }
 
-export function twoFactorRecoverTotp(values) {
+export function twoFactorAuthRecover(values) {
   const formData = new FormData();
   formData.append("recoveryCode", values.recoveryCode);
-  return fetch(`${Setting.ServerUrl}/api/two-factor/auth/totp/recover`, {
+  return fetch(`${Setting.ServerUrl}/api/two-factor/auth/recover`, {
     method: "POST",
     credentials: "include",
     body: formData,

@@ -33,6 +33,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal} from "../common/modal/CaptchaModal";
 import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
+import {NextTwoFactor, TfaAuthVerityForm} from "./TfaAuthVerifyForm";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -323,7 +324,7 @@ class LoginPage extends React.Component {
       this.populateOauthValues(values);
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
-          if (res.status === "ok") {
+          const callback = () => {
             const responseType = values["type"];
 
             if (responseType === "login") {
@@ -350,6 +351,23 @@ class LoginPage extends React.Component {
                 Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
               }
             }
+          };
+          if (res.status === "ok") {
+            callback();
+          } else if (res.status === NextTwoFactor) {
+            this.setState({
+              getVerityTotp: () => {
+                return (
+                  <TfaAuthVerityForm
+                    tfaProps={res.data}
+                    application={this.getApplicationObj()}
+                    onFail={() => {
+                      Setting.showMessage("error", i18next.t("two-factor:Verification failed"));
+                    }}
+                    onSuccess={() => callback()}
+                  />);
+              },
+            });
           } else {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
           }
@@ -629,6 +647,10 @@ class LoginPage extends React.Component {
       return null;
     }
 
+    if (this.state.this.state.getVerityTotp !== undefined) {
+      return null;
+    }
+
     const application = this.getApplicationObj();
     if (this.props.account.owner !== application?.organization) {
       return null;
@@ -827,12 +849,9 @@ class LoginPage extends React.Component {
                     Setting.renderLogo(application)
                   }
                   <LanguageSelect languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
-                  {
-                    this.renderSignedInBox()
-                  }
-                  {
-                    this.renderForm(application)
-                  }
+                  {this.state.getVerityTotp !== undefined ? null : this.renderSignedInBox()}
+                  {this.state.getVerityTotp !== undefined ? null : this.renderForm(application)}
+                  {this.state.getVerityTotp !== undefined ? this.state.getVerityTotp() : null}
                 </div>
               </div>
             </div>

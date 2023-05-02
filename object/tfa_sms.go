@@ -1,6 +1,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/beego/beego/context"
@@ -11,16 +12,19 @@ type SmsTFA struct {
 	Config *TfaProps
 }
 
-func (tfa *SmsTFA) Verify(ctx *context.Context, passCode string) bool {
+func (tfa *SmsTFA) SetupVerify(ctx *context.Context, passCode string) error {
 	dest := ctx.Input.CruSession.Get("tfa_dest").(string)
 	if result := CheckVerificationCode(dest, passCode, "en"); result.Code != VerificationSuccess {
-		return false
+		return errors.New(result.Msg)
 	}
-	return true
+	return nil
 }
 
-func (tfa *SmsTFA) GetProps() *TfaProps {
-	return tfa.Config
+func (tfa *SmsTFA) Verify(passCode string) error {
+	if result := CheckVerificationCode(tfa.Config.Secret, passCode, "en"); result.Code != VerificationSuccess {
+		return errors.New(result.Msg)
+	}
+	return nil
 }
 
 func (tfa *SmsTFA) Initiate(ctx *context.Context, name string, secret string) (*TfaProps, error) {
@@ -52,12 +56,12 @@ func (tfa *SmsTFA) Enable(ctx *context.Context, user *User) error {
 	tfa.Config.Secret = secret.(string)
 	tfa.Config.RecoveryCodes = recoveryCodes.([]string)
 
-	for i, twoFactorProps := range user.TwoFactorAuth {
-		if twoFactorProps.AuthType == tfa.GetProps().AuthType {
+	for i, twoFactorProp := range user.TwoFactorAuth {
+		if twoFactorProp.AuthType == SmsType {
 			user.TwoFactorAuth = append(user.TwoFactorAuth[:i], user.TwoFactorAuth[i+1:]...)
 		}
 	}
-	user.TwoFactorAuth = append(user.TwoFactorAuth, tfa.GetProps())
+	user.TwoFactorAuth = append(user.TwoFactorAuth, tfa.Config)
 
 	affected := UpdateUser(user.GetId(), user, []string{"two_factor_auth"}, user.IsAdminUser())
 	if !affected {
@@ -67,10 +71,13 @@ func (tfa *SmsTFA) Enable(ctx *context.Context, user *User) error {
 	return nil
 }
 
-func NewSmsTwoFactor(authType string) *SmsTFA {
+func NewSmsTwoFactor(config *TfaProps) *SmsTFA {
+	if config == nil {
+		config = &TfaProps{
+			AuthType: SmsType,
+		}
+	}
 	return &SmsTFA{
-		Config: &TfaProps{
-			AuthType: authType,
-		},
+		Config: config,
 	}
 }

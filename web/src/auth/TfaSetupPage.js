@@ -17,12 +17,10 @@ import {Button, Col, Form, Input, Result, Row, Steps} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as TwoFactorBackend from "../backend/TfaBackend";
-import {CheckOutlined, CopyOutlined, KeyOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
-import QRCode from "qrcode.react";
+import {CheckOutlined, KeyOutlined, UserOutlined} from "@ant-design/icons";
 
-import copy from "copy-to-clipboard";
 import * as UserBackend from "../backend/UserBackend";
-import {SendCodeInput} from "../common/SendCodeInput";
+import {TfaSmsVerifyForm, TfaTotpVerifyForm} from "./TfaVerifyForms";
 
 const {Step} = Steps;
 export const SmsTfaType = "sms";
@@ -77,7 +75,7 @@ function CheckPasswordForm({user, onSuccess, onFail}) {
   );
 }
 
-function VerityTFAForm({tfaProps, application, onSuccess, onFail}) {
+export function TfaVerityForm({tfaProps, application, onSuccess, onFail}) {
   const [form] = Form.useForm();
 
   const onFinish = ({passcode}) => {
@@ -100,117 +98,15 @@ function VerityTFAForm({tfaProps, application, onSuccess, onFail}) {
   };
 
   if (tfaProps.type === SmsTfaType) {
-    const [dest, setDest] = React.useState("");
-
-    return (
-      <Form
-        form={form}
-        style={{width: "300px"}}
-        onFinish={onFinish}
-      >
-        <Form.Item
-          name="dest"
-          rules={[{required: true, message: i18next.t("login:Please input your Phone or email!")}]}
-        >
-          <Input
-            onChange={(e) => {setDest(e.target.value);}}
-            prefix={<LockOutlined />}
-            placeholder={i18next.t("general:Phone or email")}
-          />
-        </Form.Item>
-        <Form.Item
-          name="passcode"
-          rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
-        >
-          <SendCodeInput
-            method={"tfa"}
-            onButtonClickArgs={[dest, "email", Setting.getApplicationName(application)]}
-            application={application}
-          />
-        </Form.Item>
-        <Form.Item>
-          <Button
-            style={{marginTop: 24}}
-            loading={false}
-            block
-            type="primary"
-            htmlType="submit"
-          >
-            {i18next.t("two-factor:Next step")}
-          </Button>
-        </Form.Item>
-      </Form>
-    );
+    return <TfaSmsVerifyForm onFinish={onFinish} application={application} />;
   } else if (tfaProps.type === TotpTfaType) {
-    return (
-      <Form
-        form={form}
-        style={{width: "300px"}}
-        onFinish={onFinish}
-      >
-        <Row type="flex" justify="center" align="middle">
-          <Col>
-            <QRCode value={tfaProps.url} size={200} />
-          </Col>
-        </Row>
-
-        <Row type="flex" justify="center" align="middle">
-          <Col>
-            {Setting.getLabel(
-              i18next.t("two-factor:Two-factor secret"),
-              i18next.t("two-factor:Two-factor secret - Tooltip")
-            )}
-              :
-          </Col>
-          <Col>
-            <Input value={tfaProps.secret} />
-          </Col>
-          <Col>
-            <Button
-              type="primary"
-              shape="round"
-              icon={<CopyOutlined />}
-              onClick={() => {
-                copy(`${tfaProps.secret}`);
-                Setting.showMessage(
-                  "success",
-                  i18next.t("two-factor:Two-factor secret to clipboard successfully")
-                );
-              }}
-            />
-          </Col>
-        </Row>
-
-        <Form.Item
-          name="passcode"
-          rules={[{required: true, message: "Please input your passcode"}]}
-        >
-          <Input
-            style={{marginTop: 24}}
-            prefix={<UserOutlined />}
-            placeholder={i18next.t("two-factor:Passcode")}
-          />
-        </Form.Item>
-
-        <Form.Item>
-          <Button
-            style={{marginTop: 24}}
-            loading={false}
-            block
-            type="primary"
-            htmlType="submit"
-          >
-            {i18next.t("two-factor:Next step")}
-          </Button>
-        </Form.Item>
-      </Form>
-    );
+    return <TfaTotpVerifyForm onFinish={onFinish} tfaProps={tfaProps} />;
   } else {
     return <div></div>;
   }
 }
 
-function EnableTFAForm({userId, tfaProps, onSuccess, onFail}) {
+function EnableTfaForm({userId, tfaProps, onSuccess, onFail}) {
   const [loading, setLoading] = useState(false);
   const requestEnableTotp = () => {
     const data = {
@@ -299,7 +195,7 @@ class TfaSetupPage extends React.Component {
         }}
       />;
     case 1:
-      return <VerityTFAForm tfaProps={{type: this.state.type, ...this.state.TFAProps}}
+      return <TfaVerityForm tfaProps={{type: this.state.type, ...this.state.TFAProps}}
         application={this.getApplication()}
         onSuccess={() => {
           this.setState({
@@ -311,7 +207,7 @@ class TfaSetupPage extends React.Component {
         }}
       />;
     case 2:
-      return <EnableTFAForm userId={this.getUserId()} tfaProps={{type: this.state.type, ...this.state.TFAProps}}
+      return <EnableTfaForm userId={this.getUserId()} tfaProps={{type: this.state.type, ...this.state.TFAProps}}
         onSuccess={() => {
           Setting.showMessage("success", i18next.t("two-factor:Enabled successfully"));
           Setting.goToLinkSoft(this, "/account");

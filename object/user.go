@@ -402,6 +402,12 @@ func GetMaskedUser(user *User) *User {
 			manageAccount.Password = "***"
 		}
 	}
+
+	if user.TwoFactorAuth != nil {
+		for i, props := range user.TwoFactorAuth {
+			user.TwoFactorAuth[i] = GetMaskedProps(props)
+		}
+	}
 	return user
 }
 
@@ -733,4 +739,21 @@ func (user *User) refreshAvatar() bool {
 	}
 
 	return false
+}
+
+func (user *User) IsEnableTwoFactor() bool {
+	return len(user.TwoFactorAuth) > 0
+}
+
+func (user *User) GetPreferTwoFactor() *TfaProps {
+	if len(user.TwoFactorAuth) == 1 {
+		return GetMaskedProps(user.TwoFactorAuth[0])
+	}
+
+	for _, v := range user.TwoFactorAuth {
+		if v.IsPreferred == true {
+			return GetMaskedProps(v)
+		}
+	}
+	return nil
 }
