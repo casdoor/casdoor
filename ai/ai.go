@@ -25,7 +25,7 @@ import (
 )
 
 func queryAnswer(authToken string, question string, timeout int) (string, error) {
-	//fmt.Printf("Question: %s\n", question)
+	// fmt.Printf("Question: %s\n", question)
 
 	client := getProxyClientFromToken(authToken)
 
@@ -45,13 +45,12 @@ func queryAnswer(authToken string, question string, timeout int) (string, error)
 		},
 	)
 	if err != nil {
-		//fmt.Printf("%s\n", err.Error())
 		return "", err
 	}
 
 	res := resp.Choices[0].Message.Content
 	res = strings.Trim(res, "\n")
-	//fmt.Printf("Answer: %s\n\n", res)
+	// fmt.Printf("Answer: %s\n\n", res)
 	return res, nil
 }
 
@@ -104,6 +103,7 @@ func QueryAnswerStream(authToken string, question string, writer io.Writer, buil
 	}
 	defer respStream.Close()
 
+	isLeadingReturn := true
 	for {
 		completion, streamErr := respStream.Recv()
 		if streamErr != nil {
@@ -113,13 +113,22 @@ func QueryAnswerStream(authToken string, question string, writer io.Writer, buil
 			return streamErr
 		}
 
+		data := completion.Choices[0].Text
+		if isLeadingReturn && len(data) != 0 {
+			if strings.Count(data, "\n") == len(data) {
+				continue
+			} else {
+				isLeadingReturn = false
+			}
+		}
+
 		// Write the streamed data as Server-Sent Events
-		if _, err := fmt.Fprintf(writer, "data: %s\n\n", completion.Choices[0].Text); err != nil {
+		if _, err = fmt.Fprintf(writer, "data: %s\n\n", data); err != nil {
 			return err
 		}
 
 		// Append the response to the strings.Builder
-		builder.WriteString(completion.Choices[0].Text)
+		builder.WriteString(data)
 	}
 
 	return nil

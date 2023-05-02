@@ -89,6 +89,10 @@ class ChatPage extends BaseListPage {
           if (lastMessage.author === "AI" && lastMessage.replyTo !== "" && lastMessage.text === "") {
             let text = "";
             MessageBackend.getMessageAnswer(lastMessage.owner, lastMessage.name, (data) => {
+              if (data === "") {
+                data = "\n";
+              }
+
               const lastMessage2 = Setting.deepCopy(lastMessage);
               text += data;
               lastMessage2.text = text;

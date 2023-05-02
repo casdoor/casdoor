@@ -74,6 +74,16 @@ class ChatBox extends React.Component {
     this.setState({inputValue: ""});
   };
 
+  renderText(text) {
+    const lines = text.split("\n").map((line, index) => (
+      <React.Fragment key={index}>
+        {line}
+        <br />
+      </React.Fragment>
+    ));
+    return <div>{lines}</div>;
+  }
+
   renderList() {
     if (this.props.messages === undefined || this.props.messages === null) {
       return (
@@ -110,7 +120,7 @@ class ChatBox extends React.Component {
                     title={
                       <div style={{fontSize: "16px", fontWeight: "normal", lineHeight: "24px", marginTop: "-15px", marginLeft: "5px", marginRight: "80px"}}>
                         {
-                          !item.text.includes("#ERROR#") ? item.text : (
+                          !item.text.includes("#ERROR#") ? this.renderText(item.text) : (
                             <Alert message={item.text.slice("#ERROR#: ".length)} type="error" showIcon />
                           )
                         }
