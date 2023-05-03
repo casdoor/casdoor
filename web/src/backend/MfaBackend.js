@@ -71,6 +71,7 @@ export function twoFactorAuthVerify(values) {
 
 export function twoFactorAuthRecover(values) {
   const formData = new FormData();
+  formData.append("id", values.id);
   formData.append("recoveryCode", values.recoveryCode);
   return fetch(`${Setting.ServerUrl}/api/mfa/auth/recover`, {
     method: "POST",

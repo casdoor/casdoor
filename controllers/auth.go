@@ -540,7 +540,7 @@ func (c *ApiController) Login() {
 			record.User = user.Name
 			util.SafeGoroutine(func() { object.AddRecord(record) })
 		} else {
-			c.ResponseError(fmt.Sprintf(c.T("auth:Unknown authentication type (not password or provider), authForm = %s"), util.StructToJson(authForm)))
+			c.ResponseError(fmt.Sprintf(c.T("auth:Unknown authentication type (not password or provider), form = %s"), util.StructToJson(authForm)))
 			return
 		}
 	}

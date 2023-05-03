@@ -41,9 +41,9 @@ export function MfaAuthVerifyForm({mfaProps, application, onSuccess, onFail}) {
     });
   };
 
-  const recover = () => {
+  const recover = (id) => {
     setLoading(true);
-    twoFactorAuthRecover({recoveryCode}).then(res => {
+    twoFactorAuthRecover({recoveryCode, id}).then(res => {
       if (res.status === "ok") {
         onSuccess();
       } else {
@@ -60,7 +60,7 @@ export function MfaAuthVerifyForm({mfaProps, application, onSuccess, onFail}) {
   case SmsMfaType:
     return (
       <div style={{width: 300, height: 350}}>
-        <div style={{marginBottom: 24, textAlign: "center", fontSize: "28px"}}>
+        <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
           {i18next.t("mfa:Two-factor authentication")}
         </div>
         <div style={{marginBottom: 24}}>
@@ -84,7 +84,7 @@ export function MfaAuthVerifyForm({mfaProps, application, onSuccess, onFail}) {
   case "recovery":
     return (
       <div style={{width: 300, height: 350}}>
-        <div style={{marginBottom: 24, textAlign: "center", fontSize: "28px"}}>
+        <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
           {i18next.t("mfa:Two-factor recover")}
         </div>
         <div style={{marginBottom: 24}}>
@@ -98,7 +98,7 @@ export function MfaAuthVerifyForm({mfaProps, application, onSuccess, onFail}) {
         />
         <Button style={{width: "100%", marginBottom: 20}} size={"large"} loading={loading}
           type={"primary"} onClick={() => {
-            recover();
+            recover(mfaProps.id);
           }}>{i18next.t("mfa:Verify")}
         </Button>
         <span style={{float: "right"}}>

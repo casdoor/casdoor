@@ -197,12 +197,12 @@ class MfaSetupPage extends React.Component {
                 mfaProps: res.data,
               });
             } else {
-              Setting.showMessage("error", i18next.t("tfa:initiate failed"));
+              Setting.showMessage("error", i18next.t("mfa:initiate failed"));
             }
           });
         }}
         onFail={(res) => {
-          Setting.showMessage("error", i18next.t("tfa:initiate failed"));
+          Setting.showMessage("error", i18next.t("mfa:initiate failed"));
         }}
       />;
     case 1:
@@ -249,7 +249,7 @@ class MfaSetupPage extends React.Component {
           <Row>
             <Col span={24}>
               <div style={{textAlign: "center", fontSize: "28px"}}>
-                {i18next.t("mfa:Protect your account with mfa authentication")}</div>
+                {i18next.t("mfa:Protect your account with two-factor authentication")}</div>
               <div style={{textAlign: "center", fontSize: "16px", marginTop: "10px"}}>{i18next.t("mfa:Each time you sign in to your Account, you'll need your password and a authentication code")}</div>
             </Col>
           </Row>

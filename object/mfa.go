@@ -68,12 +68,12 @@ func GetTwoFactorUtil(providerType string, config *MfaProps) TwoFactorInterface 
 	return nil
 }
 
-func RecoverTfs(user *User, recoveryCode string, authType string) (bool, error) {
+func RecoverTfs(user *User, recoveryCode string, id string) (bool, error) {
 	hit := false
 	twoFactor := &MfaProps{}
 
 	for _, twoFactorProp := range user.TwoFactorAuth {
-		if twoFactorProp.AuthType == authType {
+		if twoFactorProp.Id == id {
 			twoFactor = twoFactorProp
 		}
 	}

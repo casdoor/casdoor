@@ -30,11 +30,11 @@ const (
 	MfaSmsRecoveryCodesSession = "mfa_recovery_codes"
 )
 
-type SmsTFA struct {
+type SmsMfa struct {
 	Config *MfaProps
 }
 
-func (mfa *SmsTFA) SetupVerify(ctx *context.Context, passCode string) error {
+func (mfa *SmsMfa) SetupVerify(ctx *context.Context, passCode string) error {
 	dest := ctx.Input.CruSession.Get(MfaSmsDestSession).(string)
 	if result := CheckVerificationCode(dest, passCode, "en"); result.Code != VerificationSuccess {
 		return errors.New(result.Msg)
@@ -42,14 +42,14 @@ func (mfa *SmsTFA) SetupVerify(ctx *context.Context, passCode string) error {
 	return nil
 }
 
-func (mfa *SmsTFA) Verify(passCode string) error {
+func (mfa *SmsMfa) Verify(passCode string) error {
 	if result := CheckVerificationCode(mfa.Config.Secret, passCode, "en"); result.Code != VerificationSuccess {
 		return errors.New(result.Msg)
 	}
 	return nil
 }
 
-func (mfa *SmsTFA) Initiate(ctx *context.Context, name string, secret string) (*MfaProps, error) {
+func (mfa *SmsMfa) Initiate(ctx *context.Context, name string, secret string) (*MfaProps, error) {
 	recoveryCode, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func (mfa *SmsTFA) Initiate(ctx *context.Context, name string, secret string) (*
 	return &twoFactorProps, nil
 }
 
-func (mfa *SmsTFA) Enable(ctx *context.Context, user *User) error {
+func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 	dest := ctx.Input.CruSession.Get(MfaSmsDestSession)
 	recoveryCodes := ctx.Input.CruSession.Get(MfaSmsRecoveryCodesSession)
 
@@ -102,13 +102,13 @@ func (mfa *SmsTFA) Enable(ctx *context.Context, user *User) error {
 	return nil
 }
 
-func NewSmsTwoFactor(config *MfaProps) *SmsTFA {
+func NewSmsTwoFactor(config *MfaProps) *SmsMfa {
 	if config == nil {
 		config = &MfaProps{
 			AuthType: SmsType,
 		}
 	}
-	return &SmsTFA{
+	return &SmsMfa{
 		Config: config,
 	}
 }

@@ -743,7 +743,7 @@ class UserEditPage extends React.Component {
                     <Tag icon={<CheckCircleOutlined />} color="success">Enabled</Tag>}
                   {this.getMfa(SmsMfaType) === null ? null :
                     <PopconfirmModal
-                      title={i18next.t("mfa:Are you sure to delete?")}
+                      title={i18next.t("general:Sure to delete") + "?"}
                       onConfirm={() => this.deleteMfa(SmsMfaType)}
                     >
                     </PopconfirmModal>

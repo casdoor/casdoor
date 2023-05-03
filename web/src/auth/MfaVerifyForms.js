@@ -22,9 +22,6 @@ import QRCode from "qrcode.react";
 import copy from "copy-to-clipboard";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 
-export const AuthVerify = "authVerify";
-export const SetupVerify = "setupVerify";
-
 export const MfaSmsVerifyForm = ({mfaProps, application, onFinish}) => {
   const [dest, setDest] = React.useState(mfaProps?.secret ?? "");
   const [form] = Form.useForm();
@@ -60,7 +57,7 @@ export const MfaSmsVerifyForm = ({mfaProps, application, onFinish}) => {
           <Form.Item
             name="dest"
             noStyle
-            rules={[{required: true, message: i18next.t("login:Please input your Phone or email!")}]}
+            rules={[{required: true, message: i18next.t("login:Please input your Email or Phone!")}]}
           >
             <Input
               style={{width: "70%"}}
