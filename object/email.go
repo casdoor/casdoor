@@ -45,9 +45,7 @@ func SendEmail(provider *Provider, title string, content string, dest string, se
 	message.SetHeader("Subject", title)
 	message.SetBody("text/html", content)
 
-	if provider.Type == "Mailtrap" {
-		message.SkipUsernameCheck = true
-	}
+	message.SkipUsernameCheck = true
 
 	return dialer.DialAndSend(message)
 }
