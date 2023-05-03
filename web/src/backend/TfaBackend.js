@@ -17,6 +17,7 @@ import * as Setting from "../Setting";
 export function twoFactorSetupInitiate(values) {
   const formData = new FormData();
   formData.append("userId", values.userId);
+  formData.append("type", values.type);
   return fetch(`${Setting.ServerUrl}/api/two-factor/setup/initiate`, {
     method: "POST",
     credentials: "include",
@@ -26,6 +27,7 @@ export function twoFactorSetupInitiate(values) {
 
 export function twoFactorSetupVerity(values) {
   const formData = new FormData();
+  formData.append("type", values.type);
   formData.append("passcode", values.passcode);
   return fetch(`${Setting.ServerUrl}/api/two-factor/setup/verity`, {
     method: "POST",
@@ -34,8 +36,9 @@ export function twoFactorSetupVerity(values) {
   }).then(res => res.json());
 }
 
-export function twoFactorEnable(values) {
+export function twoFactorSetupEnable(values) {
   const formData = new FormData();
+  formData.append("type", values.type);
   formData.append("userId", values.userId);
   return fetch(`${Setting.ServerUrl}/api/two-factor/setup/enable`, {
     method: "POST",
@@ -46,9 +49,10 @@ export function twoFactorEnable(values) {
 
 export function twoFactorRemoveTotp(values) {
   const formData = new FormData();
+  formData.append("type", values.type);
   formData.append("userId", values.userId);
-  return fetch(`${Setting.ServerUrl}/api/two-factor/`, {
-    method: "POST",
+  return fetch(`${Setting.ServerUrl}/api/two-factor`, {
+    method: "DELETE",
     credentials: "include",
     body: formData,
   }).then(res => res.json());

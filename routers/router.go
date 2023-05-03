@@ -242,7 +242,7 @@ func initAPI() {
 	beego.Router("/api/two-factor/setup/verity", &controllers.ApiController{}, "Post:TwoFactorSetupVerity")
 	beego.Router("/api/two-factor/setup/enable", &controllers.ApiController{}, "POST:TwoFactorSetupEnable")
 	beego.Router("/api/two-factor/auth/verity", &controllers.ApiController{}, "Post:TwoFactorAuthVerity")
-	beego.Router("/api/two-factor/delete", &controllers.ApiController{}, "POST:TwoFactorDelete")
+	beego.Router("/api/two-factor", &controllers.ApiController{}, "DELETE:TwoFactorDelete")
 
 	beego.Router("/api/get-system-info", &controllers.ApiController{}, "GET:GetSystemInfo")
 	beego.Router("/api/get-version-info", &controllers.ApiController{}, "GET:GetVersionInfo")

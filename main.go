@@ -15,8 +15,11 @@
 package main
 
 import (
+	"encoding/gob"
 	"flag"
 	"fmt"
+
+	"github.com/google/uuid"
 
 	"github.com/beego/beego"
 	"github.com/beego/beego/logs"
@@ -84,6 +87,9 @@ func main() {
 
 	go ldap.StartLdapServer()
 	go object.ClearThroughputPerSecond()
+
+	gob.Register(uuid.UUID{})
+	gob.Register([]uuid.UUID{})
 
 	beego.Run(fmt.Sprintf(":%v", port))
 }

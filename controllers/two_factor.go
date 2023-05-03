@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/beego/beego"
@@ -19,7 +17,7 @@ import (
 func (c *ApiController) TwoFactorSetupInitiate() {
 	userId := c.Ctx.Request.Form.Get("userId")
 	authType := c.Ctx.Request.Form.Get("type")
-	application := c.Ctx.Request.Form.Get("application")
+
 	if len(userId) == 0 {
 		c.ResponseError(http.StatusText(http.StatusBadRequest))
 		return
@@ -36,9 +34,9 @@ func (c *ApiController) TwoFactorSetupInitiate() {
 	}
 
 	issuer := beego.AppConfig.String("appname")
-	accountName := fmt.Sprintf("%s/%s", application, user.Name)
+	accountName := user.GetId()
 
-	twoFactorProps, err := twoFactorUtil.Initiate(issuer, accountName)
+	twoFactorProps, err := twoFactorUtil.Initiate(c.Ctx, issuer, accountName)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -59,6 +57,11 @@ func (c *ApiController) TwoFactorSetupInitiate() {
 func (c *ApiController) TwoFactorSetupVerity() {
 	authType := c.Ctx.Request.Form.Get("type")
 	passcode := c.Ctx.Request.Form.Get("passcode")
+
+	if authType == "" || passcode == "" {
+		c.ResponseError("missing auth type or passcode")
+		return
+	}
 	twoFactorUtil := object.GetTwoFactorUtil(authType)
 
 	ok := twoFactorUtil.Verify(c.Ctx, passcode)
@@ -87,20 +90,10 @@ func (c *ApiController) TwoFactorSetupEnable() {
 	}
 
 	twoFactor := object.GetTwoFactorUtil(authType)
-	err := twoFactor.Enable(c.Ctx)
+	err := twoFactor.Enable(c.Ctx, user)
 
 	if err != nil {
 		c.ResponseError(err.Error())
-		return
-	}
-
-	props, err := json.Marshal(twoFactor.GetProps())
-	if err != nil {
-		return
-	}
-
-	if !object.SetUserField(user, "two_factor_auth", string(props)) {
-		c.ResponseError("Failed to enable two factor authentication")
 		return
 	}
 
@@ -150,8 +143,9 @@ func (c *ApiController) TwoFactorAuthVerity() {
 // @Description: Remove Totp
 // @param	userId	form	string	true	"Id of user"
 // @Success 200 {object}  Response object
-// @router /two-factor/delete [post]
+// @router /two-factor/ [delete]
 func (c *ApiController) TwoFactorDelete() {
+	authType := c.Ctx.Request.Form.Get("type")
 	userId := c.Ctx.Request.Form.Get("userId")
 	user := object.GetUser(userId)
 	if user == nil {
@@ -159,6 +153,15 @@ func (c *ApiController) TwoFactorDelete() {
 		return
 	}
 
-	object.SetUserField(user, "totp_secret", "")
-	c.ResponseOk(http.StatusText(http.StatusOK))
+	twoFactorProps := user.TwoFactorAuth[:0]
+	i := 0
+	for _, twoFactorProp := range twoFactorProps {
+		if twoFactorProp.AuthType != authType {
+			twoFactorProps[i] = twoFactorProp
+			i++
+		}
+	}
+	user.TwoFactorAuth = twoFactorProps
+	object.UpdateUser(userId, user, []string{"two_factor_auth"}, user.IsAdminUser())
+	c.ResponseOk(user.TwoFactorAuth)
 }

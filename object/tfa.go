@@ -2,7 +2,6 @@ package object
 
 import (
 	"github.com/beego/beego/context"
-	"github.com/google/uuid"
 )
 
 type TwoFactorSessionData struct {
@@ -11,18 +10,18 @@ type TwoFactorSessionData struct {
 	AutoSignIn    bool
 }
 
-type TFAProps struct {
-	AuthType      string      `json:"type" form:"type"`
-	Secret        string      `json:"secret"`
-	URL           string      `json:"url,omitempty"`
-	RecoveryCodes []uuid.UUID `json:"recoveryCodes,omitempty"`
+type TfaProps struct {
+	AuthType      string   `json:"type,omitempty" form:"type"`
+	Secret        string   `json:"secret,omitempty"`
+	URL           string   `json:"url,omitempty"`
+	RecoveryCodes []string `json:"recoveryCodes,omitempty"`
 }
 
 type TwoFactorInterface interface {
 	Verify(ctx *context.Context, passCode string) bool
-	Initiate(secret string, name string) (*TFAProps, error)
-	GetProps() *TFAProps
-	Enable(ctx *context.Context) error
+	Initiate(ctx *context.Context, name1 string, name2 string) (*TfaProps, error)
+	GetProps() *TfaProps
+	Enable(ctx *context.Context, user *User) error
 }
 
 const (

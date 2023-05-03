@@ -16,7 +16,7 @@ import React, {useState} from "react";
 import i18next from "i18next";
 import {Button, Input} from "antd";
 import * as Setting from "../Setting";
-import {twoFactorAuthTotp, twoFactorRecoverTotp} from "../backend/TwoFactorAuthBackend";
+import {twoFactorAuthTotp, twoFactorRecoverTotp} from "../backend/TfaBackend";
 
 export const NextTwoFactor = "nextTwoFactor";
 
@@ -93,9 +93,11 @@ export function VerityTotp({onSuccess, onFail}) {
     return (
       <div style={{width: 300}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "28px"}}>{i18next.t(
-          "two-factor:Two-factor recover")}</div>
+          "two-factor:Two-factor recover")}
+        </div>
         <div style={{marginBottom: 24}}>{i18next.t(
-          "two-factor:Two-factor recover description")}</div>
+          "two-factor:Two-factor recover description")}
+        </div>
         <Input placeholder={i18next.t("two-factor:Recovery code")}
           style={{marginBottom: 24}} type={"passcode"} size={"large"}
           onChange={event => setRecoveryCode(event.target.value)} />
