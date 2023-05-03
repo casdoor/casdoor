@@ -88,6 +88,7 @@ func (c *ApiController) TwoFactorSetupEnable() {
 
 	twoFactor := object.GetTwoFactorUtil(authType)
 	err := twoFactor.Enable(c.Ctx)
+
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

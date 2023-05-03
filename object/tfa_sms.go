@@ -40,6 +40,7 @@ func (tfa SmsTwoFactor) Enable(ctx *context.Context) error {
 	recoveryCodes := ctx.Input.CruSession.Get("tfa_recovery_codes")
 	if secret == nil || recoveryCodes == nil {
 		return fmt.Errorf("two-factor authentication secret or recovery codes is nil")
+
 	}
 
 	tfa.Config.AuthType = SmsType
