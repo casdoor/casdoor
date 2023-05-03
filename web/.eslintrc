@@ -82,6 +82,12 @@
       }
     ],
     "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
+    "react/no-unknown-property": [
+      "error",
+      {
+        "ignore": ["css"]
+      }
+    ],
     "unused-imports/no-unused-imports": "error",
     "unused-imports/no-unused-vars": [
       "error",
@@ -98,7 +104,6 @@
     "no-console": "error",
     "eqeqeq": "error",
     "keyword-spacing": "error",
-
     "react/prop-types": "off",
     "react/display-name": "off",
     "react/react-in-jsx-scope": "off",
