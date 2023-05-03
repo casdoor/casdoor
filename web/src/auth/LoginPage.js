@@ -33,7 +33,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal} from "../common/modal/CaptchaModal";
 import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
-import {NextTwoFactor, TfaAuthVerityForm} from "./TfaAuthVerifyForm";
+import {MfaAuthVerifyForm, NextTwoFactor} from "./MfaAuthVerifyForm";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -356,13 +356,13 @@ class LoginPage extends React.Component {
             callback();
           } else if (res.status === NextTwoFactor) {
             this.setState({
-              getVerityTotp: () => {
+              getVerifyTotp: () => {
                 return (
-                  <TfaAuthVerityForm
-                    tfaProps={res.data}
+                  <MfaAuthVerifyForm
+                    mfaProps={res.data}
                     application={this.getApplicationObj()}
                     onFail={() => {
-                      Setting.showMessage("error", i18next.t("two-factor:Verification failed"));
+                      Setting.showMessage("error", i18next.t("mfa:Verification failed"));
                     }}
                     onSuccess={() => callback()}
                   />);
@@ -647,7 +647,7 @@ class LoginPage extends React.Component {
       return null;
     }
 
-    if (this.state.this.state.getVerityTotp !== undefined) {
+    if (this.state.this.state.getVerifyTotp !== undefined) {
       return null;
     }
 
@@ -849,9 +849,9 @@ class LoginPage extends React.Component {
                     Setting.renderLogo(application)
                   }
                   <LanguageSelect languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
-                  {this.state.getVerityTotp !== undefined ? null : this.renderSignedInBox()}
-                  {this.state.getVerityTotp !== undefined ? null : this.renderForm(application)}
-                  {this.state.getVerityTotp !== undefined ? this.state.getVerityTotp() : null}
+                  {this.state.getVerifyTotp !== undefined ? null : this.renderSignedInBox()}
+                  {this.state.getVerifyTotp !== undefined ? null : this.renderForm(application)}
+                  {this.state.getVerifyTotp !== undefined ? this.state.getVerifyTotp() : null}
                 </div>
               </div>
             </div>

@@ -67,3 +67,21 @@ func GetCountryCode(prefix string, phone string) (string, error) {
 
 	return countryCode, nil
 }
+
+func GetCountryCodeFromE164Number(phone string) (string, error) {
+	if phone == "" {
+		return "", nil
+	}
+
+	phoneNumber, err := phonenumbers.Parse(phone, "")
+	if err != nil {
+		return "", err
+	}
+
+	countryCode := phonenumbers.GetRegionCodeForNumber(phoneNumber)
+	if countryCode == "" {
+		return "", fmt.Errorf("country code not found for phone: %s", phone)
+	}
+
+	return countryCode, nil
+}

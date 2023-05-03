@@ -15,18 +15,18 @@
 import React, {useState} from "react";
 import i18next from "i18next";
 import {Button, Input} from "antd";
-import {twoFactorAuthRecover, twoFactorAuthVerify} from "../backend/TfaBackend";
-import {SmsTfaType} from "./TfaSetupPage";
-import {TfaSmsVerifyForm} from "./TfaVerifyForms";
+import {twoFactorAuthRecover, twoFactorAuthVerify} from "../backend/MfaBackend";
+import {SmsMfaType} from "./MfaSetupPage";
+import {MfaSmsVerifyForm} from "./MfaVerifyForms";
 
 export const NextTwoFactor = "nextTwoFactor";
 
-export function TfaAuthVerityForm({tfaProps, application, onSuccess, onFail}) {
+export function MfaAuthVerifyForm({mfaProps, application, onSuccess, onFail}) {
   const [loading, setLoading] = useState(false);
-  const [type, setType] = useState(tfaProps.type);
+  const [type, setType] = useState(mfaProps.type);
   const [recoveryCode, setRecoveryCode] = useState("");
 
-  const verity = ({passcode}) => {
+  const verify = ({passcode}) => {
     setLoading(true);
     twoFactorAuthVerify({passcode, type}).then((res) => {
       if (res.status === "ok") {
@@ -57,42 +57,58 @@ export function TfaAuthVerityForm({tfaProps, application, onSuccess, onFail}) {
   };
 
   switch (type) {
-  case SmsTfaType:
+  case SmsMfaType:
     return (
-      <div style={{width: 300}}>
+      <div style={{width: 300, height: 350}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "28px"}}>
-          {i18next.t("two-factor:Two-factor authentication")}
+          {i18next.t("mfa:Two-factor authentication")}
         </div>
         <div style={{marginBottom: 24}}>
-          {i18next.t("two-factor:Two-factor authentication description")}
+          {i18next.t("mfa:Two-factor authentication description")}
         </div>
-        <TfaSmsVerifyForm onFinish={verity} application={application} />
+        <MfaSmsVerifyForm
+          mfaProps={mfaProps}
+          onFinish={verify}
+          application={application}
+        />
         <span style={{float: "right"}}>
-          {i18next.t("two-factor:Have problems?")}
+          {i18next.t("mfa:Have problems?")}
           <a onClick={() => {
-            setType(1);
+            setType("recovery");
           }}>
-            {i18next.t("two-factor:Use a recovery code")}
+            {i18next.t("mfa:Use a recovery code")}
           </a>
         </span>
       </div>
     );
   case "recovery":
     return (
-      <div style={{width: 300}}>
-        <div style={{marginBottom: 24, textAlign: "center", fontSize: "28px"}}>{i18next.t(
-          "two-factor:Two-factor recover")}
+      <div style={{width: 300, height: 350}}>
+        <div style={{marginBottom: 24, textAlign: "center", fontSize: "28px"}}>
+          {i18next.t("mfa:Two-factor recover")}
         </div>
-        <div style={{marginBottom: 24}}>{i18next.t(
-          "two-factor:Two-factor recover description")}
+        <div style={{marginBottom: 24}}>
+          {i18next.t("mfa:Two-factor recover description")}
         </div>
-        <Input placeholder={i18next.t("two-factor:Recovery code")}
-          style={{marginBottom: 24}} type={"passcode"} size={"large"}
-          onChange={event => setRecoveryCode(event.target.value)} />
-        <Button style={{width: "100%"}} size={"large"} loading={loading}
+        <Input placeholder={i18next.t("mfa:Recovery code")}
+          style={{marginBottom: 24}}
+          type={"passcode"}
+          size={"large"}
+          onChange={event => setRecoveryCode(event.target.value)}
+        />
+        <Button style={{width: "100%", marginBottom: 20}} size={"large"} loading={loading}
           type={"primary"} onClick={() => {
             recover();
-          }}>{i18next.t("two-factor:Verity")}</Button>
+          }}>{i18next.t("mfa:Verify")}
+        </Button>
+        <span style={{float: "right"}}>
+          {i18next.t("mfa:Have problems?")}
+          <a onClick={() => {
+            setType(mfaProps.type);
+          }}>
+            {i18next.t("mfa:Use SMS verification code")}
+          </a>
+        </span>
       </div>
     );
   default:

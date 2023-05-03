@@ -31,9 +31,9 @@ import ManagedAccountTable from "./table/ManagedAccountTable";
 import PropertyTable from "./table/propertyTable";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import {twoFactorRemoveTotp} from "./backend/TfaBackend";
+import {twoFactorRemoveTotp} from "./backend/MfaBackend";
 import {CheckCircleOutlined} from "@ant-design/icons";
-import {SmsTfaType, TotpTfaType} from "./auth/TfaSetupPage";
+import {SmsMfaType, TotpMfaType} from "./auth/MfaSetupPage";
 
 const {Option} = Select;
 
@@ -146,17 +146,17 @@ class UserEditPage extends React.Component {
     return this.props.account.countryCode;
   }
 
-  getTfa(type = "") {
+  getMfa(type = "") {
     if (!(this.state.user.twoFactorAuth?.length > 0)) {
       return null;
     }
     if (type === "") {
       return this.state.user.twoFactorAuth;
     }
-    return this.state.user.twoFactorAuth.filter(tfaProps => tfaProps.type === type);
+    return this.state.user.twoFactorAuth.filter(mfaProps => mfaProps.type === type);
   }
 
-  deleteTfa = (type) => {
+  deleteMfa = (type) => {
     this.setState({
       twoFactorRemoveTotpLoading: true,
     });
@@ -165,10 +165,10 @@ class UserEditPage extends React.Component {
       userId: this.state.user.owner + "/" + this.state.user.name,
     }).then((res) => {
       if (res.status === "ok") {
-        Setting.showMessage("success", i18next.t("two-factor:Removed successfully"));
+        Setting.showMessage("success", i18next.t("mfa:Removed successfully"));
         this.updateUserField("twoFactorAuth", res.data);
       } else {
-        Setting.showMessage("error", i18next.t("two-factor:Removed failed"));
+        Setting.showMessage("error", i18next.t("mfa:Removed failed"));
       }
     }).finally(() => {
       this.setState({
@@ -729,22 +729,22 @@ class UserEditPage extends React.Component {
         !this.isSelfOrAdmin() ? null : (
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={Setting.isMobile() ? 22 : 2}>
-              {Setting.getLabel(i18next.t("two-factor:Two-factor authentication"), i18next.t("two-factor:Two-factor authentication - Tooltip "))} :
+              {Setting.getLabel(i18next.t("mfa:Two-factor authentication"), i18next.t("mfa:Two-factor authentication - Tooltip "))} :
             </Col>
             <Col span={22} >
               <Card title="Two-factor methods">
-                <Card type="inner" title="SMS/Text message" extra={<a href="#">More</a>}>
-                  {this.getTfa(SmsTfaType) === null ?
+                <Card type="inner" title="SMS/Text message">
+                  {this.getMfa(SmsMfaType) === null ?
                     <Button type={"default"} onClick={() => {
                       Setting.goToLink("/two_factor_authentication/setup");
                     }}>
-                      {i18next.t("two-factor:Setup")}
+                      {i18next.t("mfa:Setup")}
                     </Button> :
                     <Tag icon={<CheckCircleOutlined />} color="success">Enabled</Tag>}
-                  {this.getTfa(SmsTfaType) === null ? null :
+                  {this.getMfa(SmsMfaType) === null ? null :
                     <PopconfirmModal
-                      title={i18next.t("two-factor:Are you sure to delete?")}
-                      onConfirm={() => this.deleteTfa(SmsTfaType)}
+                      title={i18next.t("mfa:Are you sure to delete?")}
+                      onConfirm={() => this.deleteMfa(SmsMfaType)}
                     >
                     </PopconfirmModal>
                   }
@@ -752,9 +752,8 @@ class UserEditPage extends React.Component {
                 <Card style={{marginTop: 16}}
                   type="inner"
                   title="Authenticator app"
-                  extra={<a href="#">More</a>}
                 >
-                  {this.getTfa(TotpTfaType)}
+                  {this.getMfa(TotpMfaType)}
                         TOTP developing...
                 </Card>
               </Card>

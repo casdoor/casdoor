@@ -16,15 +16,16 @@ import React, {useState} from "react";
 import {Button, Col, Form, Input, Result, Row, Steps} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
-import * as TwoFactorBackend from "../backend/TfaBackend";
+import * as TwoFactorBackend from "../backend/MfaBackend";
 import {CheckOutlined, KeyOutlined, UserOutlined} from "@ant-design/icons";
 
 import * as UserBackend from "../backend/UserBackend";
-import {TfaSmsVerifyForm, TfaTotpVerifyForm} from "./TfaVerifyForms";
+import {MfaSmsVerifyForm, MfaTotpVerifyForm} from "./MfaVerifyForms";
+import * as ApplicationBackend from "../backend/ApplicationBackend";
 
 const {Step} = Steps;
-export const SmsTfaType = "sms";
-export const TotpTfaType = "app";
+export const SmsMfaType = "sms";
+export const TotpMfaType = "app";
 
 function CheckPasswordForm({user, onSuccess, onFail}) {
   const [form] = Form.useForm();
@@ -47,7 +48,7 @@ function CheckPasswordForm({user, onSuccess, onFail}) {
   return (
     <Form
       form={form}
-      style={{width: "300px"}}
+      style={{width: "300px", marginTop: "20px"}}
       onFinish={onFinish}
     >
       <Form.Item
@@ -56,7 +57,7 @@ function CheckPasswordForm({user, onSuccess, onFail}) {
       >
         <Input.Password
           prefix={<UserOutlined />}
-          placeholder={i18next.t("two-factor:Password")}
+          placeholder={i18next.t("mfa:Password")}
         />
       </Form.Item>
 
@@ -68,20 +69,20 @@ function CheckPasswordForm({user, onSuccess, onFail}) {
           type="primary"
           htmlType="submit"
         >
-          {i18next.t("two-factor:Next step")}
+          {i18next.t("mfa:Next step")}
         </Button>
       </Form.Item>
     </Form>
   );
 }
 
-export function TfaVerityForm({tfaProps, application, onSuccess, onFail}) {
+export function MfaVerifyForm({mfaProps, application, onSuccess, onFail}) {
   const [form] = Form.useForm();
 
   const onFinish = ({passcode}) => {
-    const type = tfaProps.type;
+    const type = mfaProps.type;
     const data = {passcode, type};
-    TwoFactorBackend.twoFactorSetupVerity(data)
+    TwoFactorBackend.twoFactorSetupVerify(data)
       .then((res) => {
         if (res.status === "ok") {
           onSuccess(res);
@@ -97,20 +98,20 @@ export function TfaVerityForm({tfaProps, application, onSuccess, onFail}) {
       });
   };
 
-  if (tfaProps.type === SmsTfaType) {
-    return <TfaSmsVerifyForm onFinish={onFinish} application={application} />;
-  } else if (tfaProps.type === TotpTfaType) {
-    return <TfaTotpVerifyForm onFinish={onFinish} tfaProps={tfaProps} />;
+  if (mfaProps.type === SmsMfaType) {
+    return <MfaSmsVerifyForm onFinish={onFinish} application={application} />;
+  } else if (mfaProps.type === TotpMfaType) {
+    return <MfaTotpVerifyForm onFinish={onFinish} mfaProps={mfaProps} />;
   } else {
     return <div></div>;
   }
 }
 
-function EnableTfaForm({userId, tfaProps, onSuccess, onFail}) {
+function EnableMfaForm({userId, mfaProps, onSuccess, onFail}) {
   const [loading, setLoading] = useState(false);
   const requestEnableTotp = () => {
     const data = {
-      type: tfaProps.type,
+      type: mfaProps.type,
       userId: userId,
     };
     setLoading(true);
@@ -129,34 +130,44 @@ function EnableTfaForm({userId, tfaProps, onSuccess, onFail}) {
   return (
     <div style={{width: "400px"}}>
       <p>{i18next.t(
-        "two-factor:Please save this recovery code. Once your device cannot provide an authentication code, you can reset two-factor authentication by this recovery code")}</p>
+        "mfa:Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code")}</p>
       <br />
-      <code style={{fontStyle: "solid"}}>{tfaProps.recoveryCodes[0]}</code>
+      <code style={{fontStyle: "solid"}}>{mfaProps.recoveryCodes[0]}</code>
       <Button style={{marginTop: 24}} loading={loading} onClick={() => {
         requestEnableTotp();
       }} block type="primary">
-        {i18next.t("two-factor:Enable")}
+        {i18next.t("mfa:Enable")}
       </Button>
     </div>
   );
 }
 
-class TfaSetupPage extends React.Component {
+class MfaSetupPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       account: props.account,
       current: 0,
-      type: props.type ?? SmsTfaType,
-      tfaProps: null,
+      type: props.type ?? SmsMfaType,
+      mfaProps: null,
     };
   }
 
+  componentDidMount() {
+    this.getApplication();
+  }
+
   getApplication() {
-    return {
-      owner: "admin",
-      name: this.state.account.signupApplication,
-    };
+    ApplicationBackend.getApplication("admin", this.state.account.signupApplication)
+      .then((application) => {
+        if (application !== null) {
+          this.setState({
+            application: application,
+          });
+        } else {
+          Setting.showMessage("error", i18next.t("mfa:Failed to get application"));
+        }
+      });
   }
 
   getUser() {
@@ -183,7 +194,7 @@ class TfaSetupPage extends React.Component {
             if (res.status === "ok") {
               this.setState({
                 current: this.state.current + 1,
-                TFAProps: res.data,
+                mfaProps: res.data,
               });
             } else {
               Setting.showMessage("error", i18next.t("tfa:initiate failed"));
@@ -195,8 +206,8 @@ class TfaSetupPage extends React.Component {
         }}
       />;
     case 1:
-      return <TfaVerityForm tfaProps={{type: this.state.type, ...this.state.TFAProps}}
-        application={this.getApplication()}
+      return <MfaVerifyForm mfaProps={{type: this.state.type, ...this.state.mfaProps}}
+        application={this.state.application}
         onSuccess={() => {
           this.setState({
             current: this.state.current + 1,
@@ -207,9 +218,9 @@ class TfaSetupPage extends React.Component {
         }}
       />;
     case 2:
-      return <EnableTfaForm userId={this.getUserId()} tfaProps={{type: this.state.type, ...this.state.TFAProps}}
+      return <EnableMfaForm userId={this.getUserId()} mfaProps={{type: this.state.type, ...this.state.mfaProps}}
         onSuccess={() => {
-          Setting.showMessage("success", i18next.t("two-factor:Enabled successfully"));
+          Setting.showMessage("success", i18next.t("mfa:Enabled successfully"));
           Setting.goToLinkSoft(this, "/account");
         }}
         onFail={(res) => {
@@ -238,8 +249,8 @@ class TfaSetupPage extends React.Component {
           <Row>
             <Col span={24}>
               <div style={{textAlign: "center", fontSize: "28px"}}>
-                {i18next.t("two-factor:Protect your account with two-factor authentication")}</div>
-              <div style={{textAlign: "center", fontSize: "16px", marginTop: "10px"}}>{i18next.t("two-factor:Each time you sign in to your Account, you'll need your password and a authentication code")}</div>
+                {i18next.t("mfa:Protect your account with mfa authentication")}</div>
+              <div style={{textAlign: "center", fontSize: "16px", marginTop: "10px"}}>{i18next.t("mfa:Each time you sign in to your Account, you'll need your password and a authentication code")}</div>
             </Col>
           </Row>
           <Row>
@@ -250,9 +261,9 @@ class TfaSetupPage extends React.Component {
                 margin: "auto",
                 marginTop: "80px",
               }} >
-                <Step title={i18next.t("two-factor:Verify Password")} icon={<UserOutlined />} />
-                <Step title={i18next.t("two-factor:Verify Code")} icon={<KeyOutlined />} />
-                <Step title={i18next.t("two-factor:Enable")} icon={<CheckOutlined />} />
+                <Step title={i18next.t("mfa:Verify Password")} icon={<UserOutlined />} />
+                <Step title={i18next.t("mfa:Verify Code")} icon={<KeyOutlined />} />
+                <Step title={i18next.t("mfa:Enable")} icon={<CheckOutlined />} />
               </Steps>
             </Col>
           </Row>
@@ -265,4 +276,4 @@ class TfaSetupPage extends React.Component {
   }
 }
 
-export default TfaSetupPage;
+export default MfaSetupPage;

@@ -157,7 +157,7 @@ type User struct {
 	Custom          string `xorm:"custom varchar(100)" json:"custom"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
-	TwoFactorAuth       []*TfaProps           `json:"twoFactorAuth"`
+	TwoFactorAuth       []*MfaProps           `json:"twoFactorAuth"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
@@ -745,14 +745,22 @@ func (user *User) IsEnableTwoFactor() bool {
 	return len(user.TwoFactorAuth) > 0
 }
 
-func (user *User) GetPreferTwoFactor() *TfaProps {
+func (user *User) GetPreferTwoFactor(masked bool) *MfaProps {
 	if len(user.TwoFactorAuth) == 1 {
-		return GetMaskedProps(user.TwoFactorAuth[0])
+		if masked {
+			return GetMaskedProps(user.TwoFactorAuth[0])
+		} else {
+			return user.TwoFactorAuth[0]
+		}
 	}
 
 	for _, v := range user.TwoFactorAuth {
 		if v.IsPreferred == true {
-			return GetMaskedProps(v)
+			if masked {
+				return GetMaskedProps(v)
+			} else {
+				return v
+			}
 		}
 	}
 	return nil

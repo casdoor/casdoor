@@ -1,3 +1,17 @@
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package controllers
 
 import (
@@ -13,7 +27,7 @@ import (
 // @Description setup totp
 // @param userId	form	string	true	" "<owner>/<name>" of user"
 // @Success 200 {object}   The Response object
-// @router /two-factor/setup/initiate [post]
+// @router /mfa/setup/initiate [post]
 func (c *ApiController) TwoFactorSetupInitiate() {
 	userId := c.Ctx.Request.Form.Get("userId")
 	authType := c.Ctx.Request.Form.Get("type")
@@ -46,15 +60,15 @@ func (c *ApiController) TwoFactorSetupInitiate() {
 	c.ResponseOk(resp)
 }
 
-// TwoFactorSetupVerity
-// @Title TwoFactorSetupVerity
+// TwoFactorSetupVerify
+// @Title TwoFactorSetupVerify
 // @Tag Two-Factor API
-// @Description setup verity totp
+// @Description setup verify totp
 // @param	secret		form	string	true	"totp secret"
 // @param	passcode	form 	string 	true	"totp passcode"
 // @Success 200 {object}  Response object
-// @router /two-factor/setup/totp/verity [post]
-func (c *ApiController) TwoFactorSetupVerity() {
+// @router /mfa/setup/totp/verify [post]
+func (c *ApiController) TwoFactorSetupVerify() {
 	authType := c.Ctx.Request.Form.Get("type")
 	passcode := c.Ctx.Request.Form.Get("passcode")
 
@@ -79,7 +93,7 @@ func (c *ApiController) TwoFactorSetupVerity() {
 // @param	userId		form	string	true	"Id of user"
 // @param  	secret		form	string	true	"totp secret"
 // @Success 200 {object}  Response object
-// @router /two-factor/setup/enable [post]
+// @router /mfa/setup/enable [post]
 func (c *ApiController) TwoFactorSetupEnable() {
 	userId := c.Ctx.Request.Form.Get("userId")
 	authType := c.Ctx.Request.Form.Get("type")
@@ -100,17 +114,17 @@ func (c *ApiController) TwoFactorSetupEnable() {
 	c.ResponseOk(http.StatusText(http.StatusOK))
 }
 
-// TwoFactorAuthVerity
-// @Title TwoFactorAuthVerity
+// TwoFactorAuthVerify
+// @Title TwoFactorAuthVerify
 // @Tag Totp API
 // @Description Auth Totp
 // @param	passcode	form	string	true	"totp passcode"
 // @Success 200 {object}  Response object
-// @router /two-factor/auth/verity [post]
-func (c *ApiController) TwoFactorAuthVerity() {
+// @router /mfa/auth/verify [post]
+func (c *ApiController) TwoFactorAuthVerify() {
 	authType := c.Ctx.Request.Form.Get("type")
 	passcode := c.Ctx.Request.Form.Get("passcode")
-	totpSessionData := c.getTfaSessionData()
+	totpSessionData := c.getMfaSessionData()
 	if totpSessionData == nil {
 		c.ResponseError(http.StatusText(http.StatusBadRequest))
 		return
@@ -122,7 +136,7 @@ func (c *ApiController) TwoFactorAuthVerity() {
 		return
 	}
 
-	twoFactorUtil := object.GetTwoFactorUtil(authType, user.GetPreferTwoFactor())
+	twoFactorUtil := object.GetTwoFactorUtil(authType, user.GetPreferTwoFactor(false))
 	err := twoFactorUtil.Verify(passcode)
 	if err != nil {
 		c.ResponseError(http.StatusText(http.StatusUnauthorized))
@@ -133,6 +147,8 @@ func (c *ApiController) TwoFactorAuthVerity() {
 		if !totpSessionData.AutoSignIn {
 			c.setExpireForSession()
 		}
+		c.SetSession(object.TwoFactorSessionUserId, "")
+
 		c.ResponseOk(http.StatusText(http.StatusOK))
 	}
 }
@@ -140,15 +156,15 @@ func (c *ApiController) TwoFactorAuthVerity() {
 // TwoFactorAuthRecover
 // @Title TwoFactorAuthRecover
 // @Tag Totp API
-// @Description recover two-factor authentication
+// @Description recover mfa authentication
 // @param	recoveryCode	form	string	true	"recovery code"
 // @Success 200 {object}  Response object
-// @router /two-factor/auth/recover [post]
+// @router /mfa/auth/recover [post]
 func (c *ApiController) TwoFactorAuthRecover() {
 	authType := c.Ctx.Request.Form.Get("type")
 	recoveryCode := c.Ctx.Request.Form.Get("recoveryCode")
 
-	tfaSessionData := c.getTfaSessionData()
+	tfaSessionData := c.getMfaSessionData()
 	if tfaSessionData == nil {
 		c.ResponseError(http.StatusText(http.StatusBadRequest))
 		return
@@ -172,6 +188,8 @@ func (c *ApiController) TwoFactorAuthRecover() {
 		if !tfaSessionData.AutoSignIn {
 			c.setExpireForSession()
 		}
+		c.SetSession(object.TwoFactorSessionUserId, "")
+
 		c.ResponseOk(http.StatusText(http.StatusOK))
 	} else {
 		c.ResponseError(http.StatusText(http.StatusUnauthorized))
@@ -184,7 +202,7 @@ func (c *ApiController) TwoFactorAuthRecover() {
 // @Description: Remove Totp
 // @param	userId	form	string	true	"Id of user"
 // @Success 200 {object}  Response object
-// @router /two-factor/ [delete]
+// @router /mfa/ [delete]
 func (c *ApiController) TwoFactorDelete() {
 	authType := c.Ctx.Request.Form.Get("type")
 	userId := c.Ctx.Request.Form.Get("userId")

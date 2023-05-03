@@ -238,12 +238,12 @@ func initAPI() {
 	beego.Router("/api/webauthn/signin/begin", &controllers.ApiController{}, "Get:WebAuthnSigninBegin")
 	beego.Router("/api/webauthn/signin/finish", &controllers.ApiController{}, "Post:WebAuthnSigninFinish")
 
-	beego.Router("/api/two-factor/setup/initiate", &controllers.ApiController{}, "POST:TwoFactorSetupInitiate")
-	beego.Router("/api/two-factor/setup/verity", &controllers.ApiController{}, "Post:TwoFactorSetupVerity")
-	beego.Router("/api/two-factor/setup/enable", &controllers.ApiController{}, "POST:TwoFactorSetupEnable")
-	beego.Router("/api/two-factor/auth/verity", &controllers.ApiController{}, "Post:TwoFactorAuthVerity")
-	beego.Router("/api/two-factor/auth/recover", &controllers.ApiController{}, "Post:TwoFactorAuthRecover")
-	beego.Router("/api/two-factor", &controllers.ApiController{}, "DELETE:TwoFactorDelete")
+	beego.Router("/api/mfa/setup/initiate", &controllers.ApiController{}, "POST:TwoFactorSetupInitiate")
+	beego.Router("/api/mfa/setup/verify", &controllers.ApiController{}, "Post:TwoFactorSetupVerify")
+	beego.Router("/api/mfa/setup/enable", &controllers.ApiController{}, "POST:TwoFactorSetupEnable")
+	beego.Router("/api/mfa/auth/verify", &controllers.ApiController{}, "Post:TwoFactorAuthVerify")
+	beego.Router("/api/mfa/auth/recover", &controllers.ApiController{}, "Post:TwoFactorAuthRecover")
+	beego.Router("/api/mfa", &controllers.ApiController{}, "DELETE:TwoFactorDelete")
 
 	beego.Router("/api/get-system-info", &controllers.ApiController{}, "GET:GetSystemInfo")
 	beego.Router("/api/get-version-info", &controllers.ApiController{}, "GET:GetVersionInfo")

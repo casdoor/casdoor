@@ -123,7 +123,7 @@ p, *, *, GET, /api/get-release, *, *
 p, *, *, GET, /api/get-default-application, *, *
 p, *, *, GET, /api/get-prometheus-info, *, *
 p, *, *, *, /api/metrics, *, *
-p, *, *, POST, /api/two-factor/auth/verity, *, *
+p, *, *, POST, /api/mfa/auth/verify, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

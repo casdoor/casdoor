@@ -27,11 +27,12 @@ import (
 )
 
 const (
-	SignupVerification = "signup"
-	ResetVerification  = "reset"
-	LoginVerification  = "login"
-	ForgetVerification = "forget"
-	TFAVerification    = "tfa"
+	SignupVerification   = "signup"
+	ResetVerification    = "reset"
+	LoginVerification    = "login"
+	ForgetVerification   = "forget"
+	MfaSetupVerification = "mfaSetup"
+	MfaAuthVerification  = "mfaAuth"
 )
 
 // SendVerificationCode ...
@@ -79,6 +80,11 @@ func (c *ApiController) SendVerificationCode() {
 		user = object.GetUser(util.GetId(owner, vform.CheckUser))
 	}
 
+	// totpSessionData != nil, means method is MfaSetupVerification
+	if totpSessionData := c.getMfaSessionData(); totpSessionData != nil {
+		user = object.GetUser(totpSessionData.UserId)
+	}
+
 	sendResp := errors.New("invalid dest type")
 
 	switch vform.Type {
@@ -100,6 +106,11 @@ func (c *ApiController) SendVerificationCode() {
 			}
 		} else if vform.Method == ResetVerification {
 			user = c.getCurrentUser()
+		} else if vform.Method == MfaAuthVerification {
+			mfaProps := user.GetPreferTwoFactor(false)
+			if user != nil && util.GetMaskedEmail(mfaProps.Secret) == vform.Dest {
+				vform.Dest = mfaProps.Secret
+			}
 		}
 
 		provider := application.GetEmailProvider()
@@ -120,6 +131,13 @@ func (c *ApiController) SendVerificationCode() {
 			if user = c.getCurrentUser(); user != nil {
 				vform.CountryCode = user.GetCountryCode(vform.CountryCode)
 			}
+		} else if vform.Method == MfaAuthVerification {
+			mfaProps := user.GetPreferTwoFactor(false)
+			if user != nil && util.GetMaskedPhone(mfaProps.Secret) == vform.Dest {
+				vform.Dest = mfaProps.Secret
+			}
+
+			vform.CountryCode = mfaProps.CountryCode
 		}
 
 		provider := application.GetSmsProvider()
@@ -132,8 +150,8 @@ func (c *ApiController) SendVerificationCode() {
 		}
 	}
 
-	if vform.Method == TFAVerification {
-		c.SetSession("tfa_dest", vform.Dest)
+	if vform.Method == MfaSetupVerification {
+		c.SetSession(object.MfaSmsDestSession, vform.Dest)
 	}
 
 	if sendResp != nil {

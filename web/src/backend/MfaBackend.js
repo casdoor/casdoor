@@ -18,18 +18,18 @@ export function twoFactorSetupInitiate(values) {
   const formData = new FormData();
   formData.append("userId", values.userId);
   formData.append("type", values.type);
-  return fetch(`${Setting.ServerUrl}/api/two-factor/setup/initiate`, {
+  return fetch(`${Setting.ServerUrl}/api/mfa/setup/initiate`, {
     method: "POST",
     credentials: "include",
     body: formData,
   }).then(res => res.json());
 }
 
-export function twoFactorSetupVerity(values) {
+export function twoFactorSetupVerify(values) {
   const formData = new FormData();
   formData.append("type", values.type);
   formData.append("passcode", values.passcode);
-  return fetch(`${Setting.ServerUrl}/api/two-factor/setup/verity`, {
+  return fetch(`${Setting.ServerUrl}/api/mfa/setup/verify`, {
     method: "POST",
     credentials: "include",
     body: formData,
@@ -40,7 +40,7 @@ export function twoFactorSetupEnable(values) {
   const formData = new FormData();
   formData.append("type", values.type);
   formData.append("userId", values.userId);
-  return fetch(`${Setting.ServerUrl}/api/two-factor/setup/enable`, {
+  return fetch(`${Setting.ServerUrl}/api/mfa/setup/enable`, {
     method: "POST",
     credentials: "include",
     body: formData,
@@ -51,7 +51,7 @@ export function twoFactorRemoveTotp(values) {
   const formData = new FormData();
   formData.append("type", values.type);
   formData.append("userId", values.userId);
-  return fetch(`${Setting.ServerUrl}/api/two-factor`, {
+  return fetch(`${Setting.ServerUrl}/api/mfa`, {
     method: "DELETE",
     credentials: "include",
     body: formData,
@@ -62,7 +62,7 @@ export function twoFactorAuthVerify(values) {
   const formData = new FormData();
   formData.append("type", values.type);
   formData.append("passcode", values.passcode);
-  return fetch(`${Setting.ServerUrl}/api/two-factor/auth/verity`, {
+  return fetch(`${Setting.ServerUrl}/api/mfa/auth/verify`, {
     method: "POST",
     credentials: "include",
     body: formData,
@@ -72,7 +72,7 @@ export function twoFactorAuthVerify(values) {
 export function twoFactorAuthRecover(values) {
   const formData = new FormData();
   formData.append("recoveryCode", values.recoveryCode);
-  return fetch(`${Setting.ServerUrl}/api/two-factor/auth/recover`, {
+  return fetch(`${Setting.ServerUrl}/api/mfa/auth/recover`, {
     method: "POST",
     credentials: "include",
     body: formData,

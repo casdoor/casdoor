@@ -1057,6 +1057,10 @@ export function getMaskedEmail(email) {
   return `${username}@${domainTokens.join(".")}`;
 }
 
+export function IsEmail(s) {
+  return s.includes("@");
+}
+
 export function getArrayItem(array, key, value) {
   const res = array.filter(item => item[key] === value)[0];
   return res;

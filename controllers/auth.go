@@ -71,8 +71,8 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 	if form.Type == ResponseTypeLogin {
 		if user.IsEnableTwoFactor() {
-			c.setTfaSessionData(&object.TwoFactorSessionData{UserId: userId, EnableSession: true, AutoSignIn: form.AutoSignin})
-			resp = &Response{Status: object.NextTwoFactor, Data: user.GetPreferTwoFactor()}
+			c.setMfaSessionData(&object.TwoFactorSessionData{UserId: userId, EnableSession: true, AutoSignIn: form.AutoSignin})
+			resp = &Response{Status: object.NextTwoFactor, Data: user.GetPreferTwoFactor(true)}
 			return
 		}
 
