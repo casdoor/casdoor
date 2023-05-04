@@ -18,7 +18,11 @@ import * as ModelBackend from "./backend/ModelBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import TextArea from "antd/es/input/TextArea";
+
+import {Controlled as CodeMirror} from "react-codemirror2";
+import "codemirror/lib/codemirror.css";
+
+require("codemirror/mode/properties/properties");
 
 const {Option} = Select;
 
@@ -135,9 +139,15 @@ class ModelEditPage extends React.Component {
             {Setting.getLabel(i18next.t("model:Model text"), i18next.t("model:Model text - Tooltip"))} :
           </Col>
           <Col span={22}>
-            <TextArea rows={10} value={this.state.model.modelText} onChange={e => {
-              this.updateModelField("modelText", e.target.value);
-            }} />
+            <div style={{width: "100%"}} >
+              <CodeMirror
+                value={this.state.model.modelText}
+                options={{mode: "properties", theme: "default"}}
+                onBeforeChange={(editor, data, value) => {
+                  this.updateModelField("modelText", value);
+                }}
+              />
+            </div>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
