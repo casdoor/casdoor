@@ -282,7 +282,7 @@ class ProductListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    ProductBackend.getProducts("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    ProductBackend.getProducts("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

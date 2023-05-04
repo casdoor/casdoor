@@ -47,7 +47,7 @@ class AdapterEditPage extends React.Component {
   }
 
   getAdapter() {
-    AdapterBackend.getAdapter(this.state.owner, this.state.adapterName)
+    AdapterBackend.getAdapter("admin", this.state.adapterName)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

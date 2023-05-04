@@ -49,7 +49,7 @@ class ModelEditPage extends React.Component {
           model: model,
         });
 
-        this.getModels(model.owner);
+        this.getModels(model.organization);
       });
   }
 

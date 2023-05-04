@@ -134,7 +134,7 @@ class SessionListPage extends BaseListPage {
       value = params.contentType;
     }
     this.setState({loading: true});
-    SessionBackend.getSessions("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    SessionBackend.getSessions("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

@@ -410,7 +410,7 @@ class App extends Component {
       ));
     }
 
-    if (Setting.isAdminUser(this.state.account)) {
+    if (Setting.isLocalAdminUser(this.state.account)) {
       res.push(Setting.getItem(<Link to="/models">{i18next.t("general:Models")}</Link>,
         "/models"
       ));
@@ -446,7 +446,7 @@ class App extends Component {
       ));
     }
 
-    if (Setting.isAdminUser(this.state.account)) {
+    if (Setting.isLocalAdminUser(this.state.account)) {
       res.push(Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>,
         "/tokens"
       ));

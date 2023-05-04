@@ -26,7 +26,7 @@ class ModelListPage extends BaseListPage {
   newModel() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "built-in",
+      owner: "admin",
       name: `model_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Model - ${randomName}`,
@@ -187,7 +187,7 @@ class ModelListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    ModelBackend.getModels("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    ModelBackend.getModels("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
