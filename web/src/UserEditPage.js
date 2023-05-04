@@ -180,6 +180,12 @@ class UserEditPage extends React.Component {
       disabled = true;
     }
 
+    if (accountItem.name === "Organization" || accountItem.name === "Name") {
+      if (this.state.user.owner === "built-in" && this.state.user.name === "admin") {
+        disabled = true;
+      }
+    }
+
     if (accountItem.name === "Organization") {
       return (
         <Row style={{marginTop: "10px"}} >
