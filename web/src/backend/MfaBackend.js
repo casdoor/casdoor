@@ -49,7 +49,7 @@ export function twoFactorSetupEnable(values) {
 
 export function twoFactorRemoveTotp(values) {
   const formData = new FormData();
-  formData.append("type", values.type);
+  formData.append("type", values.id);
   formData.append("userId", values.userId);
   return fetch(`${Setting.ServerUrl}/api/mfa`, {
     method: "DELETE",

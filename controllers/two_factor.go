@@ -203,7 +203,7 @@ func (c *ApiController) TwoFactorAuthRecover() {
 // @Success 200 {object}  Response object
 // @router /mfa/ [delete]
 func (c *ApiController) TwoFactorDelete() {
-	authType := c.Ctx.Request.Form.Get("type")
+	id := c.Ctx.Request.Form.Get("id")
 	userId := c.Ctx.Request.Form.Get("userId")
 	user := object.GetUser(userId)
 	if user == nil {
@@ -214,7 +214,7 @@ func (c *ApiController) TwoFactorDelete() {
 	twoFactorProps := user.TwoFactorAuth[:0]
 	i := 0
 	for _, twoFactorProp := range twoFactorProps {
-		if twoFactorProp.AuthType != authType {
+		if twoFactorProp.Id != id {
 			twoFactorProps[i] = twoFactorProp
 			i++
 		}

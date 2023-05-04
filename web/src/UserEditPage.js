@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Result, Row, Select, Spin, Switch, Tag} from "antd";
+import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Spin, Switch, Tag} from "antd";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -68,6 +68,7 @@ class UserEditPage extends React.Component {
         if (data.status === null || data.status !== "error") {
           this.setState({
             user: data,
+            twoFactorAuth: data?.twoFactorAuth,
           });
         }
         this.setState({
@@ -147,32 +148,52 @@ class UserEditPage extends React.Component {
   }
 
   getMfa(type = "") {
-    if (!(this.state.user.twoFactorAuth?.length > 0)) {
+    if (!(this.state.twoFactorAuth?.length > 0)) {
       return null;
     }
     if (type === "") {
-      return this.state.user.twoFactorAuth;
+      return this.state.twoFactorAuth;
     }
-    return this.state.user.twoFactorAuth.filter(mfaProps => mfaProps.type === type);
+    return this.state.twoFactorAuth.filter(mfaProps => mfaProps.type === type);
   }
 
-  deleteMfa = (type) => {
+  loadMore = (table, type) => {
+    return <div
+      style={{
+        textAlign: "center",
+        marginTop: 12,
+        height: 32,
+        lineHeight: "32px",
+      }}
+    >
+      <Button onClick={() => {
+        this.setState({
+          twoFactorAuth: Setting.addRow(table, {"type": type}),
+        });
+      }}>{i18next.t("general:Add")}</Button>
+    </div>;
+  };
+
+  deleteMfa = (id) => {
     this.setState({
-      twoFactorRemoveTotpLoading: true,
+      RemoveTwoFactorLoading: true,
     });
+
     twoFactorRemoveTotp({
-      type: type,
+      id: id,
       userId: this.state.user.owner + "/" + this.state.user.name,
     }).then((res) => {
       if (res.status === "ok") {
         Setting.showMessage("success", i18next.t("mfa:Removed successfully"));
-        this.updateUserField("twoFactorAuth", res.data);
+        this.setState({
+          twoFactorAuth: res.data,
+        });
       } else {
         Setting.showMessage("error", i18next.t("mfa:Removed failed"));
       }
     }).finally(() => {
       this.setState({
-        twoFactorRemoveTotpLoading: false,
+        RemoveTwoFactorLoading: false,
       });
     });
   };
@@ -734,20 +755,33 @@ class UserEditPage extends React.Component {
             <Col span={22} >
               <Card title="Two-factor methods">
                 <Card type="inner" title="SMS/Text message">
-                  {this.getMfa(SmsMfaType) === null ?
-                    <Button type={"default"} onClick={() => {
-                      Setting.goToLink("/two_factor_authentication/setup");
-                    }}>
-                      {i18next.t("mfa:Setup")}
-                    </Button> :
-                    <Tag icon={<CheckCircleOutlined />} color="success">Enabled</Tag>}
-                  {this.getMfa(SmsMfaType) === null ? null :
-                    <PopconfirmModal
-                      title={i18next.t("general:Sure to delete") + "?"}
-                      onConfirm={() => this.deleteMfa(SmsMfaType)}
-                    >
-                    </PopconfirmModal>
-                  }
+                  <List
+                    itemLayout="horizontal"
+                    dataSource={this.getMfa(SmsMfaType)}
+                    loadMore={this.loadMore(this.state.twoFactorAuth, SmsMfaType)}
+                    renderItem={(item, index) => (
+                      <List.Item>
+                        <div>
+                          {item?.id === undefined ?
+                            <Button type={"default"} onClick={() => {
+                              Setting.goToLink("/two_factor_authentication/setup");
+                            }}>
+                              {i18next.t("mfa:Setup")}
+                            </Button> :
+                            <Tag icon={<CheckCircleOutlined />} color="success">Enabled</Tag>
+                          }
+                          {item.secret}
+                        </div>
+                        {item?.id === undefined ? null :
+                          <PopconfirmModal
+                            title={i18next.t("general:Sure to delete") + "?"}
+                            onConfirm={() => this.deleteMfa(item.id)}
+                          >
+                          </PopconfirmModal>
+                        }
+                      </List.Item>
+                    )}
+                  />
                 </Card>
                 <Card style={{marginTop: 16}}
                   type="inner"

@@ -88,7 +88,7 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 	mfa.Config.RecoveryCodes = recoveryCodes.([]string)
 
 	for i, twoFactorProp := range user.TwoFactorAuth {
-		if twoFactorProp.AuthType == SmsType {
+		if twoFactorProp.Secret == mfa.Config.Secret {
 			user.TwoFactorAuth = append(user.TwoFactorAuth[:i], user.TwoFactorAuth[i+1:]...)
 		}
 	}

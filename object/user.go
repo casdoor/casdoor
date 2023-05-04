@@ -746,22 +746,29 @@ func (user *User) IsEnableTwoFactor() bool {
 }
 
 func (user *User) GetPreferTwoFactor(masked bool) *MfaProps {
-	if len(user.TwoFactorAuth) == 1 {
-		if masked {
-			return GetMaskedProps(user.TwoFactorAuth[0])
-		} else {
-			return user.TwoFactorAuth[0]
-		}
+	if len(user.TwoFactorAuth) == 0 {
+		return nil
 	}
 
-	for _, v := range user.TwoFactorAuth {
-		if v.IsPreferred == true {
-			if masked {
+	if masked {
+		if len(user.TwoFactorAuth) == 1 {
+			return GetMaskedProps(user.TwoFactorAuth[0])
+		}
+		for _, v := range user.TwoFactorAuth {
+			if v.IsPreferred == true {
 				return GetMaskedProps(v)
-			} else {
+			}
+		}
+		return GetMaskedProps(user.TwoFactorAuth[0])
+	} else {
+		if len(user.TwoFactorAuth) == 1 {
+			return user.TwoFactorAuth[0]
+		}
+		for _, v := range user.TwoFactorAuth {
+			if v.IsPreferred == true {
 				return v
 			}
 		}
+		return user.TwoFactorAuth[0]
 	}
-	return nil
 }
