@@ -15,11 +15,11 @@
 package controllers
 
 import (
-	"github.com/casdoor/casdoor/util"
 	"net/http"
 
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 // TwoFactorSetupInitiate
