@@ -24,11 +24,9 @@ import (
 
 func getDialer(provider *Provider) *gomail.Dialer {
 	dialer := &gomail.Dialer{}
+	dialer = gomail.NewDialer(provider.Host, provider.Port, provider.ClientId, provider.ClientSecret)
 	if provider.Type == "SUBMAIL" {
-		dialer = gomail.NewDialer(provider.Host, provider.Port, provider.AppId, provider.ClientSecret)
 		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-	} else {
-		dialer = gomail.NewDialer(provider.Host, provider.Port, provider.ClientId, provider.ClientSecret)
 	}
 
 	dialer.SSL = !provider.DisableSsl
@@ -40,14 +38,23 @@ func SendEmail(provider *Provider, title string, content string, dest string, se
 	dialer := getDialer(provider)
 
 	message := gomail.NewMessage()
-	message.SetAddressHeader("From", provider.ClientId, sender)
+
+	fromAddress := provider.ClientId2
+	if fromAddress == "" {
+		fromAddress = provider.ClientId
+	}
+
+	fromName := provider.ClientSecret2
+	if fromName == "" {
+		fromName = sender
+	}
+
+	message.SetAddressHeader("From", fromAddress, fromName)
 	message.SetHeader("To", dest)
 	message.SetHeader("Subject", title)
 	message.SetBody("text/html", content)
 
-	if provider.Type == "Mailtrap" {
-		message.SkipUsernameCheck = true
-	}
+	message.SkipUsernameCheck = true
 
 	return dialer.DialAndSend(message)
 }

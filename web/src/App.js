@@ -62,7 +62,6 @@ import * as Conf from "./Conf";
 
 import * as Auth from "./auth/Auth";
 import EntryPage from "./EntryPage";
-import ResultPage from "./auth/ResultPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import LanguageSelect from "./common/select/LanguageSelect";
@@ -518,8 +517,6 @@ class App extends Component {
   renderRouter() {
     return (
       <Switch>
-        <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)} />
-        <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)} />
         <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)} />
         <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)} />
         <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)} />
@@ -667,6 +664,7 @@ class App extends Component {
         window.location.pathname.startsWith("/login") ||
         window.location.pathname.startsWith("/forget") ||
         window.location.pathname.startsWith("/prompt") ||
+        window.location.pathname.startsWith("/result") ||
         window.location.pathname.startsWith("/cas") ||
         window.location.pathname.startsWith("/auto-signup");
   }
