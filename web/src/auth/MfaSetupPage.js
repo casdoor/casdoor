@@ -76,12 +76,12 @@ function CheckPasswordForm({user, onSuccess, onFail}) {
   );
 }
 
-export function MfaVerifyForm({mfaProps, application, onSuccess, onFail}) {
+export function MfaVerifyForm({mfaProps, application, user, onSuccess, onFail}) {
   const [form] = Form.useForm();
 
   const onFinish = ({passcode}) => {
     const type = mfaProps.type;
-    const data = {passcode, type};
+    const data = {passcode, type, ...user};
     TwoFactorBackend.twoFactorSetupVerify(data)
       .then((res) => {
         if (res.status === "ok") {
@@ -107,12 +107,12 @@ export function MfaVerifyForm({mfaProps, application, onSuccess, onFail}) {
   }
 }
 
-function EnableMfaForm({userId, mfaProps, onSuccess, onFail}) {
+function EnableMfaForm({user, mfaProps, onSuccess, onFail}) {
   const [loading, setLoading] = useState(false);
   const requestEnableTotp = () => {
     const data = {
       type: mfaProps.type,
-      userId: userId,
+      ...user,
     };
     setLoading(true);
     TwoFactorBackend.twoFactorSetupEnable(data).then(res => {
@@ -177,10 +177,6 @@ class MfaSetupPage extends React.Component {
     };
   }
 
-  getUserId() {
-    return this.state.account.owner + "/" + this.state.account.name;
-  }
-
   renderStep() {
     switch (this.state.current) {
     case 0:
@@ -188,8 +184,8 @@ class MfaSetupPage extends React.Component {
         user={this.getUser()}
         onSuccess={() => {
           TwoFactorBackend.twoFactorSetupInitiate({
-            userId: this.getUserId(),
             type: this.state.type,
+            ...this.getUser(),
           }).then((res) => {
             if (res.status === "ok") {
               this.setState({
@@ -206,8 +202,10 @@ class MfaSetupPage extends React.Component {
         }}
       />;
     case 1:
-      return <MfaVerifyForm mfaProps={{type: this.state.type, ...this.state.mfaProps}}
+      return <MfaVerifyForm
+        mfaProps={{type: this.state.type, ...this.state.mfaProps}}
         application={this.state.application}
+        user={this.getUser()}
         onSuccess={() => {
           this.setState({
             current: this.state.current + 1,
@@ -218,7 +216,7 @@ class MfaSetupPage extends React.Component {
         }}
       />;
     case 2:
-      return <EnableMfaForm userId={this.getUserId()} mfaProps={{type: this.state.type, ...this.state.mfaProps}}
+      return <EnableMfaForm user={this.getUser()} mfaProps={{type: this.state.type, ...this.state.mfaProps}}
         onSuccess={() => {
           Setting.showMessage("success", i18next.t("mfa:Enabled successfully"));
           Setting.goToLinkSoft(this, "/account");

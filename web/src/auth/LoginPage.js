@@ -324,7 +324,7 @@ class LoginPage extends React.Component {
       this.populateOauthValues(values);
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
-          const callback = () => {
+          const callback = (res) => {
             const responseType = values["type"];
 
             if (responseType === "login") {
@@ -360,11 +360,13 @@ class LoginPage extends React.Component {
                 return (
                   <MfaAuthVerifyForm
                     mfaProps={res.data}
+                    formValues={values}
+                    oAuthParams={oAuthParams}
                     application={this.getApplicationObj()}
                     onFail={() => {
                       Setting.showMessage("error", i18next.t("mfa:Verification failed"));
                     }}
-                    onSuccess={() => callback()}
+                    onSuccess={(res) => callback(res)}
                   />);
               },
             });
@@ -644,10 +646,6 @@ class LoginPage extends React.Component {
   renderSignedInBox() {
     if (this.props.account === undefined || this.props.account === null) {
       this.sendSilentSigninData("user-not-logged-in");
-      return null;
-    }
-
-    if (this.state.this.state.getVerifyTotp !== undefined) {
       return null;
     }
 

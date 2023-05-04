@@ -60,7 +60,7 @@ export const MfaSmsVerifyForm = ({mfaProps, application, onFinish}) => {
             rules={[{required: true, message: i18next.t("login:Please input your Email or Phone!")}]}
           >
             <Input
-              style={{width: "70%"}}
+              style={{width: Setting.IsEmail(dest) ? "100% " : "70%"}}
               onChange={(e) => {setDest(e.target.value);}}
               prefix={<LockOutlined />}
               placeholder={i18next.t("general:Phone or email")}

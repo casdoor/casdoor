@@ -68,7 +68,7 @@ class UserEditPage extends React.Component {
         if (data.status === null || data.status !== "error") {
           this.setState({
             user: data,
-            twoFactorAuth: data?.twoFactorAuth,
+            twoFactorAuth: data?.twoFactorAuth ?? [],
           });
         }
         this.setState({
@@ -149,7 +149,7 @@ class UserEditPage extends React.Component {
 
   getMfa(type = "") {
     if (!(this.state.twoFactorAuth?.length > 0)) {
-      return null;
+      return [];
     }
     if (type === "") {
       return this.state.twoFactorAuth;
@@ -181,7 +181,8 @@ class UserEditPage extends React.Component {
 
     twoFactorRemoveTotp({
       id: id,
-      userId: this.state.user.owner + "/" + this.state.user.name,
+      owner: this.state.user.owner,
+      name: this.state.user.name,
     }).then((res) => {
       if (res.status === "ok") {
         Setting.showMessage("success", i18next.t("mfa:Removed successfully"));

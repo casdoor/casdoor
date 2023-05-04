@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"github.com/casdoor/casdoor/util"
 	"net/http"
 
 	"github.com/beego/beego"
@@ -29,8 +30,10 @@ import (
 // @Success 200 {object}   The Response object
 // @router /mfa/setup/initiate [post]
 func (c *ApiController) TwoFactorSetupInitiate() {
-	userId := c.Ctx.Request.Form.Get("userId")
+	owner := c.Ctx.Request.Form.Get("owner")
+	name := c.Ctx.Request.Form.Get("name")
 	authType := c.Ctx.Request.Form.Get("type")
+	userId := util.GetId(owner, name)
 
 	if len(userId) == 0 {
 		c.ResponseError(http.StatusText(http.StatusBadRequest))
@@ -95,9 +98,11 @@ func (c *ApiController) TwoFactorSetupVerify() {
 // @Success 200 {object}  Response object
 // @router /mfa/setup/enable [post]
 func (c *ApiController) TwoFactorSetupEnable() {
-	userId := c.Ctx.Request.Form.Get("userId")
+	owner := c.Ctx.Request.Form.Get("owner")
+	name := c.Ctx.Request.Form.Get("name")
 	authType := c.Ctx.Request.Form.Get("type")
-	user := object.GetUser(userId)
+
+	user := object.GetUser(util.GetId(owner, name))
 	if user == nil {
 		c.ResponseError("User doesn't exist")
 		return
@@ -113,88 +118,6 @@ func (c *ApiController) TwoFactorSetupEnable() {
 	c.ResponseOk(http.StatusText(http.StatusOK))
 }
 
-// TwoFactorAuthVerify
-// @Title TwoFactorAuthVerify
-// @Tag Totp API
-// @Description Auth Totp
-// @param	passcode	form	string	true	"totp passcode"
-// @Success 200 {object}  Response object
-// @router /mfa/auth/verify [post]
-func (c *ApiController) TwoFactorAuthVerify() {
-	authType := c.Ctx.Request.Form.Get("type")
-	passcode := c.Ctx.Request.Form.Get("passcode")
-	totpSessionData := c.getMfaSessionData()
-	if totpSessionData == nil {
-		c.ResponseError(http.StatusText(http.StatusBadRequest))
-		return
-	}
-
-	user := object.GetUser(totpSessionData.UserId)
-	if user == nil {
-		c.ResponseError("User does not exist")
-		return
-	}
-
-	twoFactorUtil := object.GetTwoFactorUtil(authType, user.GetPreferTwoFactor(false))
-	err := twoFactorUtil.Verify(passcode)
-	if err != nil {
-		c.ResponseError(http.StatusText(http.StatusUnauthorized))
-	} else {
-		if totpSessionData.EnableSession {
-			c.SetSessionUsername(totpSessionData.UserId)
-		}
-		if !totpSessionData.AutoSignIn {
-			c.setExpireForSession()
-		}
-		c.SetSession(object.TwoFactorSessionUserId, "")
-
-		c.ResponseOk(http.StatusText(http.StatusOK))
-	}
-}
-
-// TwoFactorAuthRecover
-// @Title TwoFactorAuthRecover
-// @Tag Totp API
-// @Description recover mfa authentication
-// @param	recoveryCode	form	string	true	"recovery code"
-// @Success 200 {object}  Response object
-// @router /mfa/auth/recover [post]
-func (c *ApiController) TwoFactorAuthRecover() {
-	authType := c.Ctx.Request.Form.Get("type")
-	recoveryCode := c.Ctx.Request.Form.Get("recoveryCode")
-
-	tfaSessionData := c.getMfaSessionData()
-	if tfaSessionData == nil {
-		c.ResponseError(http.StatusText(http.StatusBadRequest))
-		return
-	}
-
-	user := object.GetUser(tfaSessionData.UserId)
-	if user == nil {
-		c.ResponseError("User does not exist")
-		return
-	}
-
-	ok, err := object.RecoverTfs(user, recoveryCode, authType)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	if ok {
-		if tfaSessionData.EnableSession {
-			c.SetSessionUsername(tfaSessionData.UserId)
-		}
-		if !tfaSessionData.AutoSignIn {
-			c.setExpireForSession()
-		}
-		c.SetSession(object.TwoFactorSessionUserId, "")
-
-		c.ResponseOk(http.StatusText(http.StatusOK))
-	} else {
-		c.ResponseError(http.StatusText(http.StatusUnauthorized))
-	}
-}
-
 // TwoFactorDelete
 // @Title TwoFactorDelete
 // @Tag Two-Factor API
@@ -204,7 +127,10 @@ func (c *ApiController) TwoFactorAuthRecover() {
 // @router /mfa/ [delete]
 func (c *ApiController) TwoFactorDelete() {
 	id := c.Ctx.Request.Form.Get("id")
-	userId := c.Ctx.Request.Form.Get("userId")
+	owner := c.Ctx.Request.Form.Get("owner")
+	name := c.Ctx.Request.Form.Get("name")
+	userId := util.GetId(owner, name)
+
 	user := object.GetUser(userId)
 	if user == nil {
 		c.ResponseError("User doesn't exist")

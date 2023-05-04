@@ -48,7 +48,7 @@ export function getEmailAndPhone(organization, username) {
 
 export function oAuthParamsToQuery(oAuthParams) {
   // login
-  if (oAuthParams === null) {
+  if (oAuthParams === null || oAuthParams === undefined) {
     return "";
   }
 

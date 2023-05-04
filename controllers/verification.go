@@ -80,9 +80,9 @@ func (c *ApiController) SendVerificationCode() {
 		user = object.GetUser(util.GetId(owner, vform.CheckUser))
 	}
 
-	// totpSessionData != nil, means method is MfaSetupVerification
-	if totpSessionData := c.getMfaSessionData(); totpSessionData != nil {
-		user = object.GetUser(totpSessionData.UserId)
+	// mfaSessionData != nil, means method is MfaSetupVerification
+	if mfaSessionData := c.getMfaSessionData(); mfaSessionData != nil {
+		user = object.GetUser(mfaSessionData.UserId)
 	}
 
 	sendResp := errors.New("invalid dest type")

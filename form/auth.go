@@ -50,4 +50,8 @@ type AuthForm struct {
 	CaptchaType  string `json:"captchaType"`
 	CaptchaToken string `json:"captchaToken"`
 	ClientSecret string `json:"clientSecret"`
+
+	MfaType      string `json:"mfaType"`
+	Passcode     string `json:"passcode"`
+	RecoveryCode string `json:"recoveryCode"`
 }

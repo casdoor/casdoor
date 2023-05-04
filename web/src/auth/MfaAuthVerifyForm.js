@@ -15,22 +15,25 @@
 import React, {useState} from "react";
 import i18next from "i18next";
 import {Button, Input} from "antd";
-import {twoFactorAuthRecover, twoFactorAuthVerify} from "../backend/MfaBackend";
+import * as AuthBackend from "./AuthBackend";
 import {SmsMfaType} from "./MfaSetupPage";
 import {MfaSmsVerifyForm} from "./MfaVerifyForms";
 
 export const NextTwoFactor = "nextTwoFactor";
 
-export function MfaAuthVerifyForm({mfaProps, application, onSuccess, onFail}) {
+export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, application, onSuccess, onFail}) {
+  formValues.password = "";
+  formValues.username = "";
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState(mfaProps.type);
   const [recoveryCode, setRecoveryCode] = useState("");
 
   const verify = ({passcode}) => {
     setLoading(true);
-    twoFactorAuthVerify({passcode, type}).then((res) => {
+    const values = {...formValues, passcode, mfaType: type};
+    AuthBackend.login(values, oAuthParams).then((res) => {
       if (res.status === "ok") {
-        onSuccess();
+        onSuccess(res);
       } else {
         onFail(res.msg);
       }
@@ -41,9 +44,9 @@ export function MfaAuthVerifyForm({mfaProps, application, onSuccess, onFail}) {
     });
   };
 
-  const recover = (id) => {
+  const recover = () => {
     setLoading(true);
-    twoFactorAuthRecover({recoveryCode, id}).then(res => {
+    AuthBackend.login({...formValues, recoveryCode}, oAuthParams).then(res => {
       if (res.status === "ok") {
         onSuccess();
       } else {
@@ -98,7 +101,7 @@ export function MfaAuthVerifyForm({mfaProps, application, onSuccess, onFail}) {
         />
         <Button style={{width: "100%", marginBottom: 20}} size={"large"} loading={loading}
           type={"primary"} onClick={() => {
-            recover(mfaProps.id);
+            recover();
           }}>{i18next.t("mfa:Verify")}
         </Button>
         <span style={{float: "right"}}>

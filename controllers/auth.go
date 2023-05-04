@@ -69,13 +69,13 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		return
 	}
 
-	if form.Type == ResponseTypeLogin {
-		if user.IsEnableTwoFactor() {
-			c.setMfaSessionData(&object.TwoFactorSessionData{UserId: userId, EnableSession: true, AutoSignIn: form.AutoSignin})
-			resp = &Response{Status: object.NextTwoFactor, Data: user.GetPreferTwoFactor(true)}
-			return
-		}
+	if form.Password != "" && user.IsEnableTwoFactor() {
+		c.setMfaSessionData(&object.TwoFactorSessionData{UserId: userId})
+		resp = &Response{Status: object.NextTwoFactor, Data: user.GetPreferTwoFactor(true), Data2: form}
+		return
+	}
 
+	if form.Type == ResponseTypeLogin {
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 		resp = &Response{Status: "ok", Msg: "", Data: userId}
@@ -299,7 +299,6 @@ func (c *ApiController) Login() {
 
 			password := authForm.Password
 			user, msg = object.CheckUserPassword(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage(), enableCaptcha)
-
 		}
 
 		if msg != "" {
@@ -523,6 +522,38 @@ func (c *ApiController) Login() {
 				resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
 			}
 		}
+	} else if c.getMfaSessionData() != nil {
+		mfaSession := c.getMfaSessionData()
+		user := object.GetUser(mfaSession.UserId)
+
+		if authForm.Passcode != "" {
+			twoFactorUtil := object.GetTwoFactorUtil(authForm.MfaType, user.GetPreferTwoFactor(false))
+			err = twoFactorUtil.Verify(authForm.Passcode)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
+		if authForm.RecoveryCode != "" {
+			err = object.RecoverTfs(user, authForm.RecoveryCode)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
+
+		application := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+		if application == nil {
+			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+			return
+		}
+
+		resp = c.HandleLoggedIn(application, user, &authForm)
+
+		record := object.NewRecord(c.Ctx)
+		record.Organization = application.Organization
+		record.User = user.Name
+		util.SafeGoroutine(func() { object.AddRecord(record) })
 	} else {
 		if c.GetSessionUsername() != "" {
 			// user already signed in to Casdoor, so let the user click the avatar button to do the quick sign-in

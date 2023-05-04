@@ -23,9 +23,7 @@ import (
 )
 
 type TwoFactorSessionData struct {
-	UserId        string
-	EnableSession bool
-	AutoSignIn    bool
+	UserId string
 }
 
 type MfaProps struct {
@@ -51,10 +49,10 @@ const (
 )
 
 const (
-	TwoFactorSessionUserId        = "TwoFactorSessionUserId"
-	TwoFactorSessionEnableSession = "TwoFactorSessionEnableSession"
-	TwoFactorSessionAutoSignIn    = "TwoFactorSessionAutoSignIn"
-	NextTwoFactor                 = "nextTwoFactor"
+	TwoFactorSessionUserId      = "TwoFactorSessionUserId"
+	TwoFactorSessionApplication = "TwoFactorSessionApplication"
+	TwoFactorSessionForm        = "TwoFactorSessionForm"
+	NextTwoFactor               = "nextTwoFactor"
 )
 
 func GetTwoFactorUtil(providerType string, config *MfaProps) TwoFactorInterface {
@@ -68,17 +66,12 @@ func GetTwoFactorUtil(providerType string, config *MfaProps) TwoFactorInterface 
 	return nil
 }
 
-func RecoverTfs(user *User, recoveryCode string, id string) (bool, error) {
+func RecoverTfs(user *User, recoveryCode string) error {
 	hit := false
-	twoFactor := &MfaProps{}
 
-	for _, twoFactorProp := range user.TwoFactorAuth {
-		if twoFactorProp.Id == id {
-			twoFactor = twoFactorProp
-		}
-	}
+	twoFactor := user.GetPreferTwoFactor(false)
 	if len(twoFactor.RecoveryCodes) == 0 {
-		return false, fmt.Errorf("")
+		return fmt.Errorf("do not have recovery codes")
 	}
 
 	for i, code := range twoFactor.RecoveryCodes {
@@ -89,13 +82,14 @@ func RecoverTfs(user *User, recoveryCode string, id string) (bool, error) {
 		}
 	}
 	if !hit {
-		return false, fmt.Errorf("")
+		return fmt.Errorf("recovery code not found")
 	}
+
 	affected := UpdateUser(user.GetId(), user, []string{"two_factor_auth"}, user.IsAdminUser())
 	if !affected {
-		return false, fmt.Errorf("")
+		return fmt.Errorf("")
 	}
-	return true, nil
+	return nil
 }
 
 func GetMaskedProps(props *MfaProps) *MfaProps {
