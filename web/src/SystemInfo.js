@@ -33,14 +33,14 @@ class SystemInfo extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
-    SystemBackend.getSystemInfo().then(res => {
+    SystemBackend.getSystemInfo("").then(res => {
       this.setState({
         systemInfo: res.data,
         loading: false,
       });
 
       const id = setInterval(() => {
-        SystemBackend.getSystemInfo().then(res => {
+        SystemBackend.getSystemInfo("").then(res => {
           this.setState({
             systemInfo: res.data,
           });

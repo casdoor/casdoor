@@ -55,8 +55,8 @@ func GetMaskedCerts(certs []*Cert) []*Cert {
 }
 
 func GetCertCount(owner, field, value string) int {
-	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Cert{})
+	session := GetSession("", -1, -1, field, value, "", "")
+	count, err := session.Where("owner = ? or owner = ? ", "admin", owner).Count(&Cert{})
 	if err != nil {
 		panic(err)
 	}
@@ -66,7 +66,7 @@ func GetCertCount(owner, field, value string) int {
 
 func GetCerts(owner string) []*Cert {
 	certs := []*Cert{}
-	err := adapter.Engine.Desc("created_time").Find(&certs, &Cert{Owner: owner})
+	err := adapter.Engine.Where("owner = ? or owner = ? ", "admin", owner).Desc("created_time").Find(&certs, &Cert{})
 	if err != nil {
 		panic(err)
 	}
@@ -76,7 +76,38 @@ func GetCerts(owner string) []*Cert {
 
 func GetPaginationCerts(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Cert {
 	certs := []*Cert{}
-	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
+	err := session.Where("owner = ? or owner = ? ", "admin", owner).Find(&certs)
+	if err != nil {
+		panic(err)
+	}
+
+	return certs
+}
+
+func GetGlobalCertsCount(field, value string) int {
+	session := GetSession("", -1, -1, field, value, "", "")
+	count, err := session.Count(&Cert{})
+	if err != nil {
+		panic(err)
+	}
+
+	return int(count)
+}
+
+func GetGlobleCerts() []*Cert {
+	certs := []*Cert{}
+	err := adapter.Engine.Desc("created_time").Find(&certs)
+	if err != nil {
+		panic(err)
+	}
+
+	return certs
+}
+
+func GetPaginationGlobalCerts(offset, limit int, field, value, sortField, sortOrder string) []*Cert {
+	certs := []*Cert{}
+	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&certs)
 	if err != nil {
 		panic(err)

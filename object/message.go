@@ -48,9 +48,9 @@ func GetMaskedMessages(messages []*Message) []*Message {
 	return messages
 }
 
-func GetMessageCount(owner, field, value string) int {
+func GetMessageCount(owner, organization, field, value string) int {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Message{})
+	count, err := session.Count(&Message{Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -78,10 +78,10 @@ func GetChatMessages(chat string) []*Message {
 	return messages
 }
 
-func GetPaginationMessages(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Message {
+func GetPaginationMessages(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Message {
 	messages := []*Message{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&messages)
+	err := session.Find(&messages, &Message{Organization: organization})
 	if err != nil {
 		panic(err)
 	}

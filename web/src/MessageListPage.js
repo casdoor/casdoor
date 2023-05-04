@@ -209,7 +209,7 @@ class MessageListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    MessageBackend.getMessages("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    MessageBackend.getMessages("admin", Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

@@ -31,13 +31,14 @@ func (c *ApiController) GetCasbinAdapters() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+	organization := c.Input().Get("organization")
 	if limit == "" || page == "" {
-		adapters := object.GetCasbinAdapters(owner)
+		adapters := object.GetCasbinAdapters(owner, organization)
 		c.ResponseOk(adapters)
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetCasbinAdapterCount(owner, field, value)))
-		adapters := object.GetPaginationCasbinAdapters(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetCasbinAdapterCount(owner, organization, field, value)))
+		adapters := object.GetPaginationCasbinAdapters(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		c.ResponseOk(adapters, paginator.Nums())
 	}
 }

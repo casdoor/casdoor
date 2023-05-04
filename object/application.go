@@ -109,7 +109,7 @@ func GetApplications(owner string) []*Application {
 
 func GetOrganizationApplications(owner string, organization string) []*Application {
 	applications := []*Application{}
-	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner, Organization: organization})
+	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -131,7 +131,7 @@ func GetPaginationApplications(owner string, offset, limit int, field, value, so
 func GetPaginationOrganizationApplications(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
 	applications := []*Application{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&applications, &Application{Owner: owner, Organization: organization})
+	err := session.Find(&applications, &Application{Organization: organization})
 	if err != nil {
 		panic(err)
 	}

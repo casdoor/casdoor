@@ -141,7 +141,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		c.setExpireForSession()
 	}
 
-	if resp.Status == "ok" && user.Owner == object.CasdoorOrganization && application.Name == object.CasdoorApplication {
+	if resp.Status == "ok" {
 		object.AddSession(&object.Session{
 			Owner:       user.Owner,
 			Name:        user.Name,

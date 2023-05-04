@@ -27,7 +27,7 @@ class ProductListPage extends BaseListPage {
   newProduct() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "admin",
+      owner: this.props.account.owner,
       name: `product_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Product - ${randomName}`,
@@ -93,6 +93,14 @@ class ProductListPage extends BaseListPage {
             </Link>
           );
         },
+      },
+      {
+        title: i18next.t("general:Organization"),
+        dataIndex: "owner",
+        key: "owner",
+        width: "150px",
+        sorter: true,
+        ...this.getColumnSearchProps("organization"),
       },
       {
         title: i18next.t("general:Created time"),
@@ -282,7 +290,7 @@ class ProductListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    ProductBackend.getProducts("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    ProductBackend.getProducts(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
