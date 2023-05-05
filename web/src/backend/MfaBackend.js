@@ -53,7 +53,7 @@ export function MfaSetupEnable(values) {
 
 export function DeleteMfa(values) {
   const formData = new FormData();
-  formData.append("type", values.id);
+  formData.append("id", values.id);
   formData.append("owner", values.owner);
   formData.append("name", values.name);
   return fetch(`${Setting.ServerUrl}/api/delete-mfa`, {
@@ -61,4 +61,16 @@ export function DeleteMfa(values) {
     credentials: "include",
     body: formData,
   }).then(res => res.json());
+}
+
+export function SetPreferredMfa(values) {
+  const formData = new FormData();
+  formData.append("id", values.id);
+  formData.append("owner", values.owner);
+  formData.append("name", values.name);
+  return fetch(`${Setting.ServerUrl}/api/set-preferred-mfa`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  }).then((res) => res.json());
 }

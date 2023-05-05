@@ -755,7 +755,7 @@ func (user *User) GetPreferMfa(masked bool) *MfaProps {
 			return GetMaskedProps(user.MultiFactorAuths[0])
 		}
 		for _, v := range user.MultiFactorAuths {
-			if v.IsPreferred == true {
+			if v.IsPreferred {
 				return GetMaskedProps(v)
 			}
 		}
@@ -765,7 +765,7 @@ func (user *User) GetPreferMfa(masked bool) *MfaProps {
 			return user.MultiFactorAuths[0]
 		}
 		for _, v := range user.MultiFactorAuths {
-			if v.IsPreferred == true {
+			if v.IsPreferred {
 				return v
 			}
 		}

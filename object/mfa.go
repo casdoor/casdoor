@@ -27,9 +27,9 @@ type MfaSessionData struct {
 }
 
 type MfaProps struct {
-	Id            string   `json:"id,omitempty"`
-	IsPreferred   bool     `json:"isPreferred,omitempty"`
-	AuthType      string   `json:"type,omitempty" form:"type"`
+	Id            string   `json:"id"`
+	IsPreferred   bool     `json:"isPreferred"`
+	AuthType      string   `json:"type" form:"type"`
 	Secret        string   `json:"secret,omitempty"`
 	CountryCode   string   `json:"countryCode,omitempty"`
 	URL           string   `json:"url,omitempty"`
@@ -91,13 +91,13 @@ func RecoverTfs(user *User, recoveryCode string) error {
 
 func GetMaskedProps(props *MfaProps) *MfaProps {
 	maskedProps := &MfaProps{
-		AuthType:    SmsType,
+		AuthType:    props.AuthType,
 		Id:          props.Id,
 		IsPreferred: props.IsPreferred,
 	}
 
 	if props.AuthType == SmsType {
-		if props.CountryCode != "" {
+		if !util.IsEmailValid(props.Secret) {
 			maskedProps.Secret = util.GetMaskedPhone(props.Secret)
 		} else {
 			maskedProps.Secret = util.GetMaskedEmail(props.Secret)

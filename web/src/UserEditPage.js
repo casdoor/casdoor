@@ -34,6 +34,7 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 import {DeleteMfa} from "./backend/MfaBackend";
 import {CheckCircleOutlined} from "@ant-design/icons";
 import {SmsMfaType} from "./auth/MfaSetupPage";
+import * as MfaBackend from "./backend/MfaBackend";
 
 const {Option} = Select;
 
@@ -782,11 +783,34 @@ class UserEditPage extends React.Component {
                           {item.secret}
                         </div>
                         {item?.id === undefined ? null :
-                          <PopconfirmModal
-                            title={i18next.t("general:Sure to delete") + "?"}
-                            onConfirm={() => this.deleteMfa(item.id)}
-                          >
-                          </PopconfirmModal>
+                          <div>
+                            {item.isPreferred ?
+                              <Tag icon={<CheckCircleOutlined />} color="blue" style={{marginRight: 20}} >
+                                {i18next.t("mfa:preferred")}
+                              </Tag> :
+                              <Button type="primary" style={{marginRight: 20}} onClick={() => {
+                                const values = {
+                                  owner: this.state.user.owner,
+                                  name: this.state.user.name,
+                                  id: item.id,
+                                };
+                                MfaBackend.SetPreferredMfa(values).then((res) => {
+                                  if (res.status === "ok") {
+                                    this.setState({
+                                      multiFactorAuths: res.data,
+                                    });
+                                  }
+                                });
+                              }}>
+                                {i18next.t("mfa:Set preferred")}
+                              </Button>
+                            }
+                            <PopconfirmModal
+                              title={i18next.t("general:Sure to delete") + "?"}
+                              onConfirm={() => this.deleteMfa(item.id)}
+                            >
+                            </PopconfirmModal>
+                          </div>
                         }
                       </List.Item>
                     )}

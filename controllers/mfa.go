@@ -142,15 +142,49 @@ func (c *ApiController) DeleteMfa() {
 		return
 	}
 
-	twoFactorProps := user.MultiFactorAuths[:0]
+	mfaProps := user.MultiFactorAuths[:0]
 	i := 0
-	for _, twoFactorProp := range twoFactorProps {
-		if twoFactorProp.Id != id {
-			twoFactorProps[i] = twoFactorProp
+	for _, mfaProp := range mfaProps {
+		if mfaProp.Id != id {
+			mfaProps[i] = mfaProp
 			i++
 		}
 	}
-	user.MultiFactorAuths = twoFactorProps
+	user.MultiFactorAuths = mfaProps
+	object.UpdateUser(userId, user, []string{"multi_factor_auths"}, user.IsAdminUser())
+	c.ResponseOk(user.MultiFactorAuths)
+}
+
+// SetPreferredMfa
+// @Title SetPreferredMfa
+// @Tag MFA API
+// @Description: Set specific Mfa Preferred
+// @param owner	form	string	true	"owner of user"
+// @param name	form	string	true	"name of user"
+// @param id	form	string	true	"id of user's MFA props"
+// @Success 200 {object}  Response object
+// @router /set-preferred-mfa [post]
+func (c *ApiController) SetPreferredMfa() {
+	id := c.Ctx.Request.Form.Get("id")
+	owner := c.Ctx.Request.Form.Get("owner")
+	name := c.Ctx.Request.Form.Get("name")
+	userId := util.GetId(owner, name)
+
+	user := object.GetUser(userId)
+	if user == nil {
+		c.ResponseError("User doesn't exist")
+		return
+	}
+
+	mfaProps := user.MultiFactorAuths
+	for i, mfaProp := range user.MultiFactorAuths {
+		if mfaProp.Id == id {
+			mfaProps[i].IsPreferred = true
+		} else {
+			mfaProps[i].IsPreferred = false
+		}
+	}
+
 	object.UpdateUser(userId, user, []string{"multi_factor_auths"}, user.IsAdminUser())
 	c.ResponseOk(user.MultiFactorAuths)
 }
