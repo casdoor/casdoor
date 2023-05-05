@@ -1,0 +1,6 @@
+{
+  "Edit Model": "Mengedit Model",
+  "Model text": "Teks Model",
+  "Model text - Tooltip": "Model kontrol akses Casbin, termasuk model bawaan seperti ACL, RBAC, ABAC, RESTful, dll. Anda juga dapat membuat model kustom. Untuk informasi lebih lanjut, silakan kunjungi situs web Casbin",
+  "New Model": "Model baru"
+}

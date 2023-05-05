@@ -1,0 +1,9 @@
+{
+  "Duplicated policy rules": "Reglas de políticas duplicadas",
+  "Edit Adapter": "Editar adaptador",
+  "Failed to sync policies": "Error al sincronizar políticas",
+  "New Adapter": "Nuevo adaptador",
+  "Policies": "Políticas",
+  "Policies - Tooltip": "Reglas de política de Casbin",
+  "Sync policies successfully": "Sincronizar políticas correctamente"
+}

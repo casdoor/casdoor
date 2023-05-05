@@ -1,0 +1,22 @@
+{
+  "Bit size": "Ukuran bit",
+  "Bit size - Tooltip": "Panjang kunci rahasia",
+  "Certificate": "Sertifikat",
+  "Certificate - Tooltip": "Sertifikat kunci publik, digunakan untuk mendekripsi tanda tangan JWT pada Access Token. Sertifikat ini biasanya perlu diimplementasikan pada sisi SDK Casdoor (yaitu aplikasi) untuk memecahkan JWT",
+  "Certificate copied to clipboard successfully": "Sertifikat berhasil disalin ke clipboard",
+  "Copy certificate": "Salin sertifikat",
+  "Copy private key": "Salin kunci pribadi",
+  "Crypto algorithm": "Algoritma kriptografi",
+  "Crypto algorithm - Tooltip": "Algoritma enkripsi yang digunakan oleh sertifikat",
+  "Download certificate": "Unduh sertifikat",
+  "Download private key": "Unduh kunci pribadi",
+  "Edit Cert": "Mengedit Sertifikat",
+  "Expire in years": "Kedaluwarsa dalam tahun-tahun",
+  "Expire in years - Tooltip": "Masa berlaku sertifikat, dalam tahun",
+  "New Cert": "Sertifikat Baru",
+  "Private key": "Kunci pribadi",
+  "Private key - Tooltip": "Kunci pribadi yang sesuai dengan sertifikat kunci publik",
+  "Private key copied to clipboard successfully": "Kunci pribadi berhasil disalin ke clipboard",
+  "Scope - Tooltip": "Skema penggunaan sertifikat:",
+  "Type - Tooltip": "Jenis sertifikat"
+}

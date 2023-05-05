@@ -1,0 +1,20 @@
+{
+  "Account items": "Articles de compte",
+  "Account items - Tooltip": "Éléments de la page des paramètres personnels",
+  "Edit Organization": "Modifier l'organisation",
+  "Follow global theme": "Suivre le thème global",
+  "Init score": "Score initial",
+  "Init score - Tooltip": "Points de score initiaux décernés aux utilisateurs lors de leur inscription",
+  "Is profile public": "Est-ce que le profil est public ?",
+  "Is profile public - Tooltip": "Après sa fermeture, seuls les administrateurs mondiaux ou les utilisateurs de la même organisation peuvent accéder à la page de profil de l'utilisateur",
+  "Modify rule": "Modifier la règle",
+  "New Organization": "Nouvelle organisation",
+  "Soft deletion": "Suppression douce",
+  "Soft deletion - Tooltip": "Lorsqu'elle est activée, la suppression d'utilisateurs ne les retirera pas complètement de la base de données. Au lieu de cela, ils seront marqués comme supprimés",
+  "Tags": "Étiquettes",
+  "Tags - Tooltip": "Collection d'étiquettes disponibles pour les utilisateurs à choisir",
+  "View rule": "Vue de la règle",
+  "Visible": "Visible",
+  "Website URL": "URL du site web",
+  "Website URL - Tooltip": "L'URL de la page d'accueil de l'organisation. Ce champ n'est pas utilisé dans Casdoor"
+}

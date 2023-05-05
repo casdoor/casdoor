@@ -1,0 +1,14 @@
+{
+  "Content type": "Loại nội dung",
+  "Content type - Tooltip": "Loại nội dung",
+  "Edit Webhook": "Chỉnh sửa Webhook",
+  "Events": "Sự kiện",
+  "Events - Tooltip": "Sự kiện",
+  "Headers": "Tiêu đề",
+  "Headers - Tooltip": "Tiêu đề HTTP (cặp key-value)",
+  "Is user extended": "Người dùng có được mở rộng không?",
+  "Is user extended - Tooltip": "Có nên bao gồm các trường mở rộng của người dùng trong định dạng JSON không?",
+  "Method - Tooltip": "Phương thức HTTP",
+  "New Webhook": "Webhook mới",
+  "Value": "Giá trị"
+}

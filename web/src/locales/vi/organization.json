@@ -1,0 +1,20 @@
+{
+  "Account items": "Mục tài khoản",
+  "Account items - Tooltip": "Các mục trong trang Cài đặt cá nhân",
+  "Edit Organization": "Chỉnh sửa tổ chức",
+  "Follow global theme": "Theo chủ đề toàn cầu",
+  "Init score": "Điểm khởi tạo",
+  "Init score - Tooltip": "Điểm số ban đầu được trao cho người dùng khi đăng ký",
+  "Is profile public": "Hồ sơ có công khai không?",
+  "Is profile public - Tooltip": "Sau khi đóng lại, chỉ các quản trị viên toàn cầu hoặc người dùng trong cùng tổ chức mới có thể truy cập trang hồ sơ người dùng",
+  "Modify rule": "Sửa đổi quy tắc",
+  "New Organization": "Tổ chức mới",
+  "Soft deletion": "Xóa mềm",
+  "Soft deletion - Tooltip": "Khi được bật, việc xóa người dùng sẽ không hoàn toàn loại bỏ họ khỏi cơ sở dữ liệu. Thay vào đó, họ sẽ được đánh dấu là đã bị xóa",
+  "Tags": "Thẻ",
+  "Tags - Tooltip": "Bộ sưu tập các thẻ có sẵn cho người dùng lựa chọn",
+  "View rule": "Xem quy tắc",
+  "Visible": "Rõ ràng",
+  "Website URL": "Địa chỉ trang web",
+  "Website URL - Tooltip": "Địa chỉ trang chủ của tổ chức. Trường này không được sử dụng trong Casdoor"
+}

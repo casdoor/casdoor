@@ -1,0 +1,18 @@
+{
+  "API Latency": "API Latency",
+  "API Throughput": "API Throughput",
+  "About Casdoor": "Tentang Casdoor",
+  "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "Platform Identitas dan Akses Manajemen (IAM) / Single-Sign-On (SSO) dengan antarmuka web yang mendukung OAuth 2.0, OIDC, SAML, dan CAS",
+  "CPU Usage": "Penggunaan CPU",
+  "Community": "Komunitas",
+  "Count": "Kiraan",
+  "Failed to get CPU usage": "Gagal mendapatkan penggunaan CPU",
+  "Failed to get memory usage": "Gagal mendapatkan penggunaan memori",
+  "Latency": "Latency",
+  "Memory Usage": "Penggunaan Memori",
+  "Official website": "Situs web resmi",
+  "Throughput": "Melalui",
+  "Total Throughput": "Jumlah Keluaran",
+  "Unknown version": "Versi tidak diketahui",
+  "Version": "Versi"
+}

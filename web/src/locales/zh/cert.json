@@ -1,0 +1,22 @@
+{
+  "Bit size": "位大小",
+  "Bit size - Tooltip": "秘钥长度",
+  "Certificate": "证书",
+  "Certificate - Tooltip": "公钥证书，用于解密Access Token的JWT签名，该证书通常需要部署到Casdoor SDK测（即应用）来解析JWT",
+  "Certificate copied to clipboard successfully": "证书已成功复制到剪贴板",
+  "Copy certificate": "复制证书",
+  "Copy private key": "复制私钥",
+  "Crypto algorithm": "加密算法",
+  "Crypto algorithm - Tooltip": "公钥证书所使用的加密算法",
+  "Download certificate": "下载证书",
+  "Download private key": "下载私钥",
+  "Edit Cert": "编辑证书",
+  "Expire in years": "有效期（年）",
+  "Expire in years - Tooltip": "公钥证书的有效期，以年为单位",
+  "New Cert": "添加证书",
+  "Private key": "私钥",
+  "Private key - Tooltip": "公钥证书对应的私钥",
+  "Private key copied to clipboard successfully": "私钥已成功复制到剪贴板",
+  "Scope - Tooltip": "公钥证书的使用场景",
+  "Type - Tooltip": "公钥证书的类型"
+}

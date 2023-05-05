@@ -1,0 +1,14 @@
+{
+  "Content type": "コンテンツタイプ",
+  "Content type - Tooltip": "コンテンツタイプ",
+  "Edit Webhook": "Webhookを編集",
+  "Events": "イベント",
+  "Events - Tooltip": "イベント",
+  "Headers": "ヘッダー",
+  "Headers - Tooltip": "HTTPヘッダー（キー値ペア）",
+  "Is user extended": "ユーザーが拡張されましたか？",
+  "Is user extended - Tooltip": "ユーザーの拡張フィールドをJSONに含めるかどうか",
+  "Method - Tooltip": "HTTPメソッド",
+  "New Webhook": "新しいWebhook",
+  "Value": "値"
+}

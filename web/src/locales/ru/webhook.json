@@ -1,0 +1,14 @@
+{
+  "Content type": "Тип содержания",
+  "Content type - Tooltip": "Тип содержимого",
+  "Edit Webhook": "Редактировать вэбхук",
+  "Events": "События",
+  "Events - Tooltip": "События",
+  "Headers": "Заголовки",
+  "Headers - Tooltip": "HTTP заголовки (пары «ключ-значение»)",
+  "Is user extended": "Расширен ли пользователь?",
+  "Is user extended - Tooltip": "Нужно ли включать расширенные поля пользователя в формате JSON?",
+  "Method - Tooltip": "Метод HTTP",
+  "New Webhook": "Новый вебхук",
+  "Value": "Значение"
+}

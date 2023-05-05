@@ -1,0 +1,20 @@
+{
+  "Account items": "Account items",
+  "Account items - Tooltip": "Items in the Personal settings page",
+  "Edit Organization": "Edit Organization",
+  "Follow global theme": "Follow global theme",
+  "Init score": "Init score",
+  "Init score - Tooltip": "Initial score points awarded to users upon registration",
+  "Is profile public": "Is profile public",
+  "Is profile public - Tooltip": "After being closed, only global administrators or users in the same organization can access the user's profile page",
+  "Modify rule": "Modify rule",
+  "New Organization": "New Organization",
+  "Soft deletion": "Soft deletion",
+  "Soft deletion - Tooltip": "When enabled, deleting users will not completely remove them from the database. Instead, they will be marked as deleted",
+  "Tags": "Tags",
+  "Tags - Tooltip": "Collection of tags available for users to choose from",
+  "View rule": "View rule",
+  "Visible": "Visible",
+  "Website URL": "Website URL",
+  "Website URL - Tooltip": "The homepage URL of the organization. This field is not used in Casdoor"
+}

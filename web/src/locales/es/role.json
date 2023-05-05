@@ -1,0 +1,10 @@
+{
+  "Edit Role": "Editar Rol",
+  "New Role": "Nuevo rol",
+  "Sub domains": "Subdominios",
+  "Sub domains - Tooltip": "Dominios incluidos en el rol actual",
+  "Sub roles": "Roles secundarios",
+  "Sub roles - Tooltip": "Roles incluidos en el rol actual",
+  "Sub users": "Subusuarios",
+  "Sub users - Tooltip": "Usuarios incluidos en el rol actual"
+}

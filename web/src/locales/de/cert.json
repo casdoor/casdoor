@@ -1,0 +1,22 @@
+{
+  "Bit size": "Bitgröße",
+  "Bit size - Tooltip": "Länge des Secret-Keys",
+  "Certificate": "Zertifikat",
+  "Certificate - Tooltip": "Public-Key-Zertifikat, das zum Entschlüsseln der JWT-Signatur des Access Tokens verwendet wird. Dieses Zertifikat muss normalerweise auf der Casdoor SDK-Seite (d. h. der Anwendung) bereitgestellt werden, um das JWT zu parsen",
+  "Certificate copied to clipboard successfully": "Zertifikat in die Zwischenablage kopiert",
+  "Copy certificate": "Kopieren Sie das Zertifikat",
+  "Copy private key": "Private-Key kopieren",
+  "Crypto algorithm": "Kryptoalgorithmus",
+  "Crypto algorithm - Tooltip": "Verschlüsselungsalgorithmus, der vom Zertifikat verwendet wird",
+  "Download certificate": "Zertifikat herunterladen",
+  "Download private key": "Private-Key herunterladen",
+  "Edit Cert": "Edit Cert - Zertifikat bearbeiten",
+  "Expire in years": "Ablaufzeit in Jahren",
+  "Expire in years - Tooltip": "Gültigkeitsdauer des Zertifikats in Jahren",
+  "New Cert": "Neues Zertifikat",
+  "Private key": "Private-Key",
+  "Private key - Tooltip": "Privater Schlüssel, der zum öffentlichen Schlüsselzertifikat gehört",
+  "Private key copied to clipboard successfully": "Private-Key wurde erfolgreich in die Zwischenablage kopiert",
+  "Scope - Tooltip": "Nutzungsszenarien des Zertifikats",
+  "Type - Tooltip": "Art des Zertifikats"
+}

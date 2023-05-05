@@ -1,0 +1,22 @@
+{
+  "Bit size": "Kích cỡ bit",
+  "Bit size - Tooltip": "Độ dài khóa bí mật",
+  "Certificate": "Giấy chứng nhận",
+  "Certificate - Tooltip": "Chứng chỉ khóa công khai, được sử dụng để giải mã chữ ký JWT của Mã Token Truy cập. Chứng chỉ này thường cần được triển khai trên phía SDK Casdoor (tức là ứng dụng) để phân tích cú pháp JWT",
+  "Certificate copied to clipboard successfully": "Chứng chỉ đã được sao chép vào bộ nhớ tạm thành công",
+  "Copy certificate": "Bản sao chứng chỉ",
+  "Copy private key": "Sao chép khóa riêng tư",
+  "Crypto algorithm": "Thuật toán mật mã",
+  "Crypto algorithm - Tooltip": "Thuật toán mã hóa được sử dụng bởi chứng chỉ",
+  "Download certificate": "Tải xuống chứng chỉ",
+  "Download private key": "Tải xuống khóa riêng tư",
+  "Edit Cert": "Chỉnh sửa chứng chỉ",
+  "Expire in years": "Hết hạn trong những năm",
+  "Expire in years - Tooltip": "Thời hạn hiệu lực của chứng chỉ, tính bằng năm",
+  "New Cert": "Chứng chỉ mới",
+  "Private key": "Khóa bí mật",
+  "Private key - Tooltip": "Khóa riêng tương ứng với chứng thư khóa công khai",
+  "Private key copied to clipboard successfully": "Khóa riêng tư đã được sao chép thành công vào clipboard",
+  "Scope - Tooltip": "Các kịch bản sử dụng của giấy chứng nhận",
+  "Type - Tooltip": "Loại chứng chỉ"
+}

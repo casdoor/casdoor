@@ -1,0 +1,22 @@
+{
+  "Bit size": "Размер бита",
+  "Bit size - Tooltip": "Длина секретного ключа",
+  "Certificate": "Сертификат",
+  "Certificate - Tooltip": "Сертификат открытого ключа, используется для расшифровки подписи JWT токена доступа. Этот сертификат обычно должен быть развернут на стороне Casdoor SDK (то есть приложения), чтобы распарсить JWT",
+  "Certificate copied to clipboard successfully": "Сертификат успешно скопирован в буфер обмена",
+  "Copy certificate": "Скопировать сертификат",
+  "Copy private key": "Копировать закрытый ключ",
+  "Crypto algorithm": "Шифровальный алгоритм криптовалюты",
+  "Crypto algorithm - Tooltip": "Алгоритм шифрования, используемый сертификатом",
+  "Download certificate": "Скачать сертификат",
+  "Download private key": "Скачать приватный ключ",
+  "Edit Cert": "Редактировать сертификат",
+  "Expire in years": "Истечение в годах",
+  "Expire in years - Tooltip": "Срок действия сертификата, в годах",
+  "New Cert": "Новый сертификат",
+  "Private key": "Частный ключ",
+  "Private key - Tooltip": "Приватный ключ, соответствующий сертификату открытого ключа",
+  "Private key copied to clipboard successfully": "Приватный ключ успешно скопирован в буфер обмена",
+  "Scope - Tooltip": "Сценарии использования сертификата",
+  "Type - Tooltip": "Тип сертификата"
+}

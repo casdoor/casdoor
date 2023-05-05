@@ -1,0 +1,14 @@
+{
+  "Content type": "内容类型",
+  "Content type - Tooltip": "内容类型",
+  "Edit Webhook": "编辑Webhook",
+  "Events": "事件",
+  "Events - Tooltip": "事件",
+  "Headers": "协议头",
+  "Headers - Tooltip": "HTTP协议头（键值对）",
+  "Is user extended": "扩展用户字段",
+  "Is user extended - Tooltip": "是否在JSON里加入用户的扩展字段",
+  "Method - Tooltip": "HTTP方法",
+  "New Webhook": "添加Webhook",
+  "Value": "值"
+}

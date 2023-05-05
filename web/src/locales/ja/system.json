@@ -1,0 +1,18 @@
+{
+  "API Latency": "API遅延",
+  "API Throughput": "APIスループット",
+  "About Casdoor": "Casdoorについて",
+  "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "ウェブUIを備えたアイデンティティおよびアクセス管理（IAM）/シングルサインオン（SSO）プラットフォームで、OAuth 2.0、OIDC、SAML、およびCASをサポートしています",
+  "CPU Usage": "CPU使用率",
+  "Community": "コミュニティ",
+  "Count": "カウント",
+  "Failed to get CPU usage": "CPU使用率を取得できませんでした",
+  "Failed to get memory usage": "メモリ使用量を取得できませんでした",
+  "Latency": "遅延",
+  "Memory Usage": "メモリ使用量",
+  "Official website": "公式ウェブサイト",
+  "Throughput": "スループット",
+  "Total Throughput": "総スループット",
+  "Unknown version": "不明なバージョン",
+  "Version": "バージョン"
+}

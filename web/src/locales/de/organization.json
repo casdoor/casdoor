@@ -1,0 +1,20 @@
+{
+  "Account items": "Konto Items",
+  "Account items - Tooltip": "Elemente auf der persönlichen Einstellungsseite",
+  "Edit Organization": "Organisation bearbeiten",
+  "Follow global theme": "Folge dem globalen Theme",
+  "Init score": "Initialer Score",
+  "Init score - Tooltip": "Anfangspunkte, die Benutzern bei der Registrierung vergeben werden",
+  "Is profile public": "Ist das Profil öffentlich?",
+  "Is profile public - Tooltip": "Nach der Schließung können nur globale Administratoren oder Benutzer in der gleichen Organisation auf die Profilseite des Benutzers zugreifen",
+  "Modify rule": "Regel ändern",
+  "New Organization": "Neue Organisation",
+  "Soft deletion": "Softe Löschung",
+  "Soft deletion - Tooltip": "Wenn aktiviert, werden gelöschte Benutzer nicht vollständig aus der Datenbank entfernt. Stattdessen werden sie als gelöscht markiert",
+  "Tags": "Tags",
+  "Tags - Tooltip": "Sammlung von Tags, die für Benutzer zur Auswahl zur Verfügung stehen",
+  "View rule": "Ansichtsregel",
+  "Visible": "Sichtbar",
+  "Website URL": "Website-URL",
+  "Website URL - Tooltip": "Die Homepage-URL der Organisation. Dieses Feld wird in Casdoor nicht verwendet"
+}

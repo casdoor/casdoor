@@ -1,0 +1,22 @@
+{
+  "Bit size": "ビットサイズ",
+  "Bit size - Tooltip": "秘密鍵の長さ",
+  "Certificate": "証明書 ",
+  "Certificate - Tooltip": "アクセストークンのJWT署名を復号化するために使用される公開鍵証明書。この証明書は通常、Casdoor SDK側（つまり、アプリケーション）に展開する必要があります",
+  "Certificate copied to clipboard successfully": "証明書はクリップボードに正常にコピーされました",
+  "Copy certificate": "コピー証明書",
+  "Copy private key": "秘密鍵をコピーする",
+  "Crypto algorithm": "暗号アルゴリズム",
+  "Crypto algorithm - Tooltip": "認証書で使用される暗号化アルゴリズム",
+  "Download certificate": "証明書をダウンロードする",
+  "Download private key": "プライベートキーをダウンロードする",
+  "Edit Cert": "編集認証書",
+  "Expire in years": "年で期限切れになる",
+  "Expire in years - Tooltip": "証明書の有効期間、年数で",
+  "New Cert": "新しい証明書",
+  "Private key": "プライベートキー",
+  "Private key - Tooltip": "公開鍵証明書に対応する秘密鍵",
+  "Private key copied to clipboard successfully": "プライベートキーが正常にクリップボードにコピーされました",
+  "Scope - Tooltip": "証明書の使用シナリオ",
+  "Type - Tooltip": "証明書の種類"
+}

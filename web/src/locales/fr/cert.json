@@ -1,0 +1,22 @@
+{
+  "Bit size": "Taille de bit",
+  "Bit size - Tooltip": "Longueur de la clé secrète",
+  "Certificate": "Certificat",
+  "Certificate - Tooltip": "Certificat de clé publique, utilisé pour décrypter la signature JWT du jeton d'accès. Ce certificat doit généralement être déployé du côté du SDK Casdoor (c'est-à-dire de l'application) pour analyser le JWT",
+  "Certificate copied to clipboard successfully": "Certificat copié avec succès dans le presse-papiers",
+  "Copy certificate": "Copie du certificat",
+  "Copy private key": "Copier la clé privée",
+  "Crypto algorithm": "Algorithme de cryptographie",
+  "Crypto algorithm - Tooltip": "Algorithme de chiffrement utilisé par le certificat",
+  "Download certificate": "Télécharger le certificat",
+  "Download private key": "Téléchargez la clé privée",
+  "Edit Cert": "Correction de certificat",
+  "Expire in years": "Expire en années",
+  "Expire in years - Tooltip": "Période de validité du certificat, en années",
+  "New Cert": "ificat- Nouveau Certificat",
+  "Private key": "Clé privée",
+  "Private key - Tooltip": "Clé privée correspondant au certificat de clé publique",
+  "Private key copied to clipboard successfully": "Clé privée copiée dans le presse-papiers avec succès",
+  "Scope - Tooltip": "Scénarios d'utilisation du certificat",
+  "Type - Tooltip": "Type de certificat"
+}

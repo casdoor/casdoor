@@ -1,0 +1,10 @@
+{
+  "Author": "作者",
+  "Author - Tooltip": "发出消息的用户",
+  "Chat": "聊天",
+  "Chat - Tooltip": "消息所属的聊天ID",
+  "Edit Message": "编辑消息",
+  "New Message": "添加消息",
+  "Text": "内容",
+  "Text - Tooltip": "消息的内容"
+}

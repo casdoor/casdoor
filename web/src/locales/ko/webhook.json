@@ -1,0 +1,14 @@
+{
+  "Content type": "콘텐츠 유형",
+  "Content type - Tooltip": "콘텐츠 유형",
+  "Edit Webhook": "Webhook 편집",
+  "Events": "이벤트",
+  "Events - Tooltip": "이벤트",
+  "Headers": "헤더들",
+  "Headers - Tooltip": "HTTP 헤더 (키-값 쌍)",
+  "Is user extended": "사용자가 확장되었습니까?",
+  "Is user extended - Tooltip": "사용자의 확장 필드를 JSON에 포함할지 여부",
+  "Method - Tooltip": "HTTP 방법",
+  "New Webhook": "새로운 웹훅",
+  "Value": "가치"
+}

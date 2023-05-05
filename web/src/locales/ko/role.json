@@ -1,0 +1,10 @@
+{
+  "Edit Role": "역할 편집",
+  "New Role": "새로운 역할",
+  "Sub domains": "하위 도메인",
+  "Sub domains - Tooltip": "현재 역할에 포함된 도메인",
+  "Sub roles": "서브 역할",
+  "Sub roles - Tooltip": "현재 역할에 포함된 역할",
+  "Sub users": "하위 사용자들",
+  "Sub users - Tooltip": "현재 역할에 포함 된 사용자"
+}

@@ -1,0 +1,18 @@
+{
+  "API Latency": "API Latency",
+  "API Throughput": "API Throughput",
+  "About Casdoor": "About Casdoor",
+  "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS",
+  "CPU Usage": "CPU Usage",
+  "Community": "Community",
+  "Count": "Count",
+  "Failed to get CPU usage": "Failed to get CPU usage",
+  "Failed to get memory usage": "Failed to get memory usage",
+  "Latency": "Latency",
+  "Memory Usage": "Memory Usage",
+  "Official website": "Official website",
+  "Throughput": "Throughput",
+  "Total Throughput": "Total Throughput",
+  "Unknown version": "Unknown version",
+  "Version": "Version"
+}

@@ -1,0 +1,20 @@
+{
+  "Account items": "Item akun",
+  "Account items - Tooltip": "Item pada halaman pengaturan personal",
+  "Edit Organization": "Edit Organisasi",
+  "Follow global theme": "Ikuti tema global",
+  "Init score": "Skor awal",
+  "Init score - Tooltip": "Poin skor awal diberikan kepada pengguna saat pendaftaran",
+  "Is profile public": "Apakah profilnya publik?",
+  "Is profile public - Tooltip": "Setelah ditutup, hanya administrator global atau pengguna di organisasi yang sama yang dapat mengakses halaman profil pengguna",
+  "Modify rule": "Mengubah aturan",
+  "New Organization": "Organisasi baru",
+  "Soft deletion": "Penghapusan lunak",
+  "Soft deletion - Tooltip": "Ketika diaktifkan, menghapus pengguna tidak akan sepenuhnya menghapus mereka dari database. Sebaliknya, mereka akan ditandai sebagai dihapus",
+  "Tags": "Tag-tag",
+  "Tags - Tooltip": "Kumpulan tag yang tersedia bagi pengguna untuk dipilih",
+  "View rule": "Aturan tampilan",
+  "Visible": "Terlihat",
+  "Website URL": "URL situs web",
+  "Website URL - Tooltip": "URL halaman utama organisasi. Bidang ini tidak digunakan di Casdoor"
+}

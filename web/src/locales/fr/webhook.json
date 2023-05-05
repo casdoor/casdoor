@@ -1,0 +1,14 @@
+{
+  "Content type": "Type de contenu",
+  "Content type - Tooltip": "Type de contenu",
+  "Edit Webhook": "Modifier le Webhook",
+  "Events": "Événements",
+  "Events - Tooltip": "Événements",
+  "Headers": "En-têtes",
+  "Headers - Tooltip": "En-têtes HTTP (paires clé-valeur)",
+  "Is user extended": "Est-ce que l'utilisateur est étendu ?",
+  "Is user extended - Tooltip": "Faut-il inclure les champs étendus de l'utilisateur dans le JSON ?",
+  "Method - Tooltip": "Méthode HTTP",
+  "New Webhook": "Nouveau webhook",
+  "Value": "Valeur"
+}

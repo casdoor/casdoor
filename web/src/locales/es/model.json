@@ -1,0 +1,6 @@
+{
+  "Edit Model": "Editar modelo",
+  "Model text": "Texto modelo",
+  "Model text - Tooltip": "Modelo de control de acceso Casbin, incluyendo modelos integrados como ACL, RBAC, ABAC, RESTful, etc. También puede crear modelos personalizados. Para obtener más información, visite el sitio web de Casbin",
+  "New Model": "Nuevo modelo"
+}

@@ -1,0 +1,10 @@
+{
+  "Edit Role": "编辑角色",
+  "New Role": "添加角色",
+  "Sub domains": "包含域",
+  "Sub domains - Tooltip": "当前角色所包含的子域",
+  "Sub roles": "包含角色",
+  "Sub roles - Tooltip": "当前角色所包含的子角色",
+  "Sub users": "包含用户",
+  "Sub users - Tooltip": "当前角色所包含的子用户"
+}

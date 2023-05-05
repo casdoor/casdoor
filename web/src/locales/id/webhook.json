@@ -1,0 +1,14 @@
+{
+  "Content type": "Jenis konten",
+  "Content type - Tooltip": "Tipe konten",
+  "Edit Webhook": "Mengedit Webhook",
+  "Events": "Acara-acara",
+  "Events - Tooltip": "Acara-acara",
+  "Headers": "Headers",
+  "Headers - Tooltip": "Header HTTP (pasangan kunci-nilai)",
+  "Is user extended": "Apakah pengguna diperpanjang?",
+  "Is user extended - Tooltip": "Apakah akan menyertakan bidang-bidang tambahan pengguna dalam JSON?",
+  "Method - Tooltip": "Metode HTTP",
+  "New Webhook": "Webhook Baru",
+  "Value": "Nilai"
+}

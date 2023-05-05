@@ -1,0 +1,9 @@
+{
+  "Duplicated policy rules": "복제된 정책 규칙들",
+  "Edit Adapter": "편집 어댑터 수정하기",
+  "Failed to sync policies": "정책 동기화 실패했습니다",
+  "New Adapter": "새로운 어댑터",
+  "Policies": "정책",
+  "Policies - Tooltip": "Casbin 정책 규칙",
+  "Sync policies successfully": "정책을 성공적으로 동기화했습니다"
+}

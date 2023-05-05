@@ -1,0 +1,20 @@
+{
+  "Account items": "个人页设置项",
+  "Account items - Tooltip": "用户的个人设置页面中可配置的选项",
+  "Edit Organization": "编辑组织",
+  "Follow global theme": "使用全局默认主题",
+  "Init score": "初始积分",
+  "Init score - Tooltip": "用户注册后所拥有的初始积分",
+  "Is profile public": "是否公开用户个人页",
+  "Is profile public - Tooltip": "关闭后只有全局管理员或同组织用户才能访问用户主页",
+  "Modify rule": "修改规则",
+  "New Organization": "添加组织",
+  "Soft deletion": "软删除",
+  "Soft deletion - Tooltip": "启用后，删除一个用户时不会在数据库彻底清除，只会标记为已删除状态",
+  "Tags": "标签集合",
+  "Tags - Tooltip": "可供用户选择的标签集合",
+  "View rule": "查看规则",
+  "Visible": "是否可见",
+  "Website URL": "主页地址",
+  "Website URL - Tooltip": "组织的主页地址URL，该字段在Casdoor平台中未被使用"
+}

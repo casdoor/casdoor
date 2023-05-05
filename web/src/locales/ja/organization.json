@@ -1,0 +1,20 @@
+{
+  "Account items": "アカウントアイテム",
+  "Account items - Tooltip": "個人設定ページのアイテム",
+  "Edit Organization": "組織の編集",
+  "Follow global theme": "グローバルテーマに従ってください",
+  "Init score": "イニットスコア",
+  "Init score - Tooltip": "登録時にユーザーに与えられる初期スコアポイント",
+  "Is profile public": "プロフィールは公開されていますか？",
+  "Is profile public - Tooltip": "閉鎖された後、グローバル管理者または同じ組織のユーザーだけがユーザーのプロファイルページにアクセスできます",
+  "Modify rule": "ルールを変更する",
+  "New Organization": "新しい組織",
+  "Soft deletion": "ソフト削除",
+  "Soft deletion - Tooltip": "有効になっている場合、ユーザーを削除しても完全にデータベースから削除されません。代わりに、削除されたとマークされます",
+  "Tags": "タグ",
+  "Tags - Tooltip": "ユーザーが選択できるタグのコレクション",
+  "View rule": "ビュールール",
+  "Visible": "見える",
+  "Website URL": "ウェブサイトのURL",
+  "Website URL - Tooltip": "組織のホームページのURL。このフィールドはCasdoorでは使用されません"
+}

@@ -1,0 +1,6 @@
+{
+  "Edit Model": "Chỉnh sửa mô hình",
+  "Model text": "Văn bản mẫu",
+  "Model text - Tooltip": "Mô hình kiểm soát truy cập Casbin, bao gồm các mô hình tích hợp như ACL, RBAC, ABAC, RESTful, v.v. Bạn cũng có thể tạo các mô hình tùy chỉnh. Để biết thêm thông tin, vui lòng truy cập trang web Casbin",
+  "New Model": "Mô hình mới"
+}

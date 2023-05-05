@@ -1,0 +1,9 @@
+{
+  "Duplicated policy rules": "重复的策略",
+  "Edit Adapter": "编辑适配器",
+  "Failed to sync policies": "同步策略失败",
+  "New Adapter": "添加适配器",
+  "Policies": "策略",
+  "Policies - Tooltip": "Casbin策略规则",
+  "Sync policies successfully": "同步策略成功"
+}

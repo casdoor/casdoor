@@ -1,0 +1,22 @@
+{
+  "Bit size": "비트 크기",
+  "Bit size - Tooltip": "비밀 키 길이",
+  "Certificate": "증명서",
+  "Certificate - Tooltip": "액세스 토큰의 JWT 서명을 해독하는 데 사용되는 공개 키 인증서입니다. 이 인증서는 보통 Casdoor SDK 측 (즉, 어플리케이션)에 배치되어 JWT를 구문 분석하는 데 사용됩니다",
+  "Certificate copied to clipboard successfully": "인증서가 클립보드에 성공적으로 복사되었습니다",
+  "Copy certificate": "인증서 복사",
+  "Copy private key": "개인 키 복사",
+  "Crypto algorithm": "암호화 알고리즘",
+  "Crypto algorithm - Tooltip": "인증서에서 사용되는 암호화 알고리즘",
+  "Download certificate": "인증서 다운로드",
+  "Download private key": "개인 키 다운로드",
+  "Edit Cert": "편집 인증서",
+  "Expire in years": "년에 만료되다",
+  "Expire in years - Tooltip": "인증서의 유효 기간, 연 단위로 표시합니다",
+  "New Cert": "새로운 인증서",
+  "Private key": "개인 키",
+  "Private key - Tooltip": "공개 키 인증서에 해당하는 개인 키",
+  "Private key copied to clipboard successfully": "개인 키가 클립 보드에 성공적으로 복사되었습니다",
+  "Scope - Tooltip": "인증서의 사용 시나리오",
+  "Type - Tooltip": "증명서 유형"
+}

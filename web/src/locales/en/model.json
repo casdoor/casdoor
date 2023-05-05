@@ -1,0 +1,6 @@
+{
+  "Edit Model": "Edit Model",
+  "Model text": "Model text",
+  "Model text - Tooltip": "Casbin access control model, including built-in models like ACL, RBAC, ABAC, RESTful, etc. You can also create custom models. For more information, please visit the Casbin website",
+  "New Model": "New Model"
+}

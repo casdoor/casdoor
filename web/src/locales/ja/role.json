@@ -1,0 +1,10 @@
+{
+  "Edit Role": "役割の編集",
+  "New Role": "新しい役割",
+  "Sub domains": "サブドメイン",
+  "Sub domains - Tooltip": "現在の役割に含まれるドメイン",
+  "Sub roles": "サブロール",
+  "Sub roles - Tooltip": "現在の役割に含まれる役割",
+  "Sub users": "サブユーザー",
+  "Sub users - Tooltip": "現在の役割に含まれるユーザー"
+}

@@ -1,0 +1,10 @@
+{
+  "Edit Role": "Chỉnh sửa vai trò",
+  "New Role": "Vai trò mới",
+  "Sub domains": "Các phân miền con",
+  "Sub domains - Tooltip": "Các lĩnh vực được bao gồm trong vai trò hiện tại",
+  "Sub roles": "Các vai trò phụ",
+  "Sub roles - Tooltip": "Các vai trò bao gồm trong vai trò hiện tại",
+  "Sub users": "Người dùng trong phụ",
+  "Sub users - Tooltip": "Người dùng được bao gồm trong vai trò hiện tại"
+}
