@@ -12,70 +12,83 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {Component} from "react";
+import React, {Component, Suspense} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
 import {BarsOutlined, CommentOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
-import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
+// import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
+import {FloatButton, Layout} from "antd";
+const Alert = React.lazy(() => import("antd/es/alert"));
+const Avatar = React.lazy(() => import("antd/es/avatar"));
+const Button = React.lazy(() => import("antd/es/button"));
+const Card = React.lazy(() => import("antd/es/card"));
+const ConfigProvider = React.lazy(() => import("antd/es/config-provider"));
+const Drawer = React.lazy(() => import("antd/es/drawer"));
+const Dropdown = React.lazy(() => import("antd/es/dropdown"));
+// const FloatButton = React.lazy(() => import("antd/es/float-button"));
+// const Layout = React.lazy(() => import("antd/es/layout"));
+const Menu = React.lazy(() => import("antd/es/menu"));
+const Result = React.lazy(() => import("antd/es/result"));
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
-import OrganizationListPage from "./OrganizationListPage";
-import OrganizationEditPage from "./OrganizationEditPage";
-import UserListPage from "./UserListPage";
-import UserEditPage from "./UserEditPage";
-import RoleListPage from "./RoleListPage";
-import RoleEditPage from "./RoleEditPage";
-import PermissionListPage from "./PermissionListPage";
-import PermissionEditPage from "./PermissionEditPage";
-import ProviderListPage from "./ProviderListPage";
-import ProviderEditPage from "./ProviderEditPage";
-import ApplicationListPage from "./ApplicationListPage";
-import ApplicationEditPage from "./ApplicationEditPage";
-import ResourceListPage from "./ResourceListPage";
-import LdapEditPage from "./LdapEditPage";
-import LdapSyncPage from "./LdapSyncPage";
-import TokenListPage from "./TokenListPage";
-import TokenEditPage from "./TokenEditPage";
-import RecordListPage from "./RecordListPage";
-import WebhookListPage from "./WebhookListPage";
-import WebhookEditPage from "./WebhookEditPage";
-import SyncerListPage from "./SyncerListPage";
-import SyncerEditPage from "./SyncerEditPage";
-import CertListPage from "./CertListPage";
-import CertEditPage from "./CertEditPage";
-import ChatListPage from "./ChatListPage";
-import ChatEditPage from "./ChatEditPage";
-import ChatPage from "./ChatPage";
-import MessageEditPage from "./MessageEditPage";
-import MessageListPage from "./MessageListPage";
-import ProductListPage from "./ProductListPage";
-import ProductEditPage from "./ProductEditPage";
-import ProductBuyPage from "./ProductBuyPage";
-import PaymentListPage from "./PaymentListPage";
-import PaymentEditPage from "./PaymentEditPage";
-import PaymentResultPage from "./PaymentResultPage";
-import AccountPage from "./account/AccountPage";
-import HomePage from "./basic/HomePage";
-import CustomGithubCorner from "./common/CustomGithubCorner";
+const OrganizationListPage = React.lazy(() => import("./OrganizationListPage"));
+const OrganizationEditPage = React.lazy(() => import("./OrganizationEditPage"));
+const UserListPage = React.lazy(() => import("./UserListPage"));
+const UserEditPage = React.lazy(() => import("./UserEditPage"));
+const RoleListPage = React.lazy(() => import("./RoleListPage"));
+const RoleEditPage = React.lazy(() => import("./RoleEditPage"));
+const PermissionListPage = React.lazy(() => import("./PermissionListPage"));
+const PermissionEditPage = React.lazy(() => import("./PermissionEditPage"));
+const ProviderListPage = React.lazy(() => import("./ProviderListPage"));
+const ProviderEditPage = React.lazy(() => import("./ProviderEditPage"));
+const ApplicationListPage = React.lazy(() => import("./ApplicationListPage"));
+const ApplicationEditPage = React.lazy(() => import("./ApplicationEditPage"));
+const ResourceListPage = React.lazy(() => import("./ResourceListPage"));
+const LdapEditPage = React.lazy(() => import("./LdapEditPage"));
+const LdapSyncPage = React.lazy(() => import("./LdapSyncPage"));
+const TokenListPage = React.lazy(() => import("./TokenListPage"));
+const TokenEditPage = React.lazy(() => import("./TokenEditPage"));
+const WebhookListPage = React.lazy(() => import("./WebhookListPage"));
+const WebhookEditPage = React.lazy(() => import("./WebhookEditPage"));
+const SyncerListPage = React.lazy(() => import("./SyncerListPage"));
+const SyncerEditPage = React.lazy(() => import("./SyncerEditPage"));
+const CertListPage = React.lazy(() => import("./CertListPage"));
+const CertEditPage = React.lazy(() => import("./CertEditPage"));
+const ChatListPage = React.lazy(() => import("./ChatListPage"));
+const ChatEditPage = React.lazy(() => import("./ChatEditPage"));
+const ChatPage = React.lazy(() => import("./ChatPage"));
+const MessageEditPage = React.lazy(() => import("./MessageEditPage"));
+const MessageListPage = React.lazy(() => import("./MessageListPage"));
+const ProductListPage = React.lazy(() => import("./ProductListPage"));
+const ProductEditPage = React.lazy(() => import("./ProductEditPage"));
+const ProductBuyPage = React.lazy(() => import("./ProductBuyPage"));
+const PaymentListPage = React.lazy(() => import("./PaymentListPage"));
+const PaymentEditPage = React.lazy(() => import("./PaymentEditPage"));
+const PaymentResultPage = React.lazy(() => import("./PaymentResultPage"));
+const RecordListPage = React.lazy(() => import("./RecordListPage"));
+const AccountPage = React.lazy(() => import("./account/AccountPage"));
+const HomePage = React.lazy(() => import("./basic/HomePage"));
+const CustomGithubCorner = React.lazy(() => import("./common/CustomGithubCorner"));
 import * as Conf from "./Conf";
 
 import * as Auth from "./auth/Auth";
-import EntryPage from "./EntryPage";
+const EntryPage = React.lazy(() => import("./EntryPage"));
+const ResultPage = React.lazy(() => import("./auth/ResultPage"));
 import * as AuthBackend from "./auth/AuthBackend";
-import AuthCallback from "./auth/AuthCallback";
-import LanguageSelect from "./common/select/LanguageSelect";
+const AuthCallback = React.lazy(() => import("./auth/AuthCallback"));
+const LanguageSelect = React.lazy(() => import("./common/select/LanguageSelect"));
 import i18next from "i18next";
-import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
-import SamlCallback from "./auth/SamlCallback";
-import ModelListPage from "./ModelListPage";
-import ModelEditPage from "./ModelEditPage";
-import SystemInfo from "./SystemInfo";
-import AdapterListPage from "./AdapterListPage";
-import AdapterEditPage from "./AdapterEditPage";
+const OdicDiscoveryPage = React.lazy(() => import("./auth/OidcDiscoveryPage"));
+const SamlCallback = React.lazy(() => import("./auth/SamlCallback"));
+const ModelListPage = React.lazy(() => import("./ModelListPage"));
+const ModelEditPage = React.lazy(() => import("./ModelEditPage"));
+const SystemInfo = React.lazy(() => import("./SystemInfo"));
+const AdapterListPage = React.lazy(() => import("./AdapterListPage"));
+const AdapterEditPage = React.lazy(() => import("./AdapterEditPage"));
 import {withTranslation} from "react-i18next";
-import ThemeSelect from "./common/select/ThemeSelect";
-import SessionListPage from "./SessionListPage";
+const ThemeSelect = React.lazy(() => import("./common/select/ThemeSelect"));
+const SessionListPage = React.lazy(() => import("./SessionListPage"));
 
 const {Header, Footer, Content} = Layout;
 
@@ -515,7 +528,10 @@ class App extends Component {
 
   renderRouter() {
     return (
+
       <Switch>
+        <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)} />
+        <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)} />
         <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)} />
         <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)} />
         <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)} />
@@ -662,7 +678,6 @@ class App extends Component {
         window.location.pathname.startsWith("/login") ||
         window.location.pathname.startsWith("/forget") ||
         window.location.pathname.startsWith("/prompt") ||
-        window.location.pathname.startsWith("/result") ||
         window.location.pathname.startsWith("/cas") ||
         window.location.pathname.startsWith("/auto-signup");
   }
@@ -757,15 +772,20 @@ class App extends Component {
           },
           algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
         }}>
-          <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
-            {
-              this.renderPage()
-            }
-          </StyleProvider>
+          <Suspense fallback={<p><i>Loading...</i></p>}>
+            <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
+
+              {
+
+                this.renderPage()
+
+              }
+            </StyleProvider>
+          </Suspense>
         </ConfigProvider>
       </React.Fragment>
     );
   }
 }
-
+// const ns = ["account", "adapter", "application", "cert", "chat", "code", "forget", "general", "ldap", "login", "message", "model", "organization", "payment", "permission", "product", "provider", "record", "resource", "role", "signup", "syncer", "system", "theme", "token", "user", "webhook"];
 export default withRouter(withTranslation()(App));
