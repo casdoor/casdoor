@@ -752,15 +752,15 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
-    } else if (accountItem.name === "Two-factor authentication") {
+    } else if (accountItem.name === "Multi-factor authentication") {
       return (
         !this.isSelfOrAdmin() ? null : (
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={Setting.isMobile() ? 22 : 2}>
-              {Setting.getLabel(i18next.t("mfa:Two-factor authentication"), i18next.t("mfa:Two-factor authentication - Tooltip "))} :
+              {Setting.getLabel(i18next.t("mfa:Multi-factor authentication"), i18next.t("mfa:Multi-factor authentication - Tooltip "))} :
             </Col>
             <Col span={22} >
-              <Card title={i18next.t("mfa:Two-factor methods")}>
+              <Card title={i18next.t("mfa:Multi-factor methods")}>
                 <Card type="inner" title={i18next.t("mfa:SMS/Email message")}>
                   <List
                     itemLayout="horizontal"

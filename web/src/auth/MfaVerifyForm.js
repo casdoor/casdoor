@@ -112,8 +112,8 @@ export const MfaTotpVerifyForm = ({mfaProps, onFinish}) => {
       <Row type="flex" justify="center" align="middle">
         <Col>
           {Setting.getLabel(
-            i18next.t("mfa:Two-factor secret"),
-            i18next.t("mfa:Two-factor secret - Tooltip")
+            i18next.t("mfa:Multi-factor secret"),
+            i18next.t("mfa:Multi-factor secret - Tooltip")
           )}
         :
         </Col>
@@ -129,7 +129,7 @@ export const MfaTotpVerifyForm = ({mfaProps, onFinish}) => {
               copy(`${mfaProps.secret}`);
               Setting.showMessage(
                 "success",
-                i18next.t("mfa:Two-factor secret to clipboard successfully")
+                i18next.t("mfa:Multi-factor secret to clipboard successfully")
               );
             }}
           />

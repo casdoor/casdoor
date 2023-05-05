@@ -100,7 +100,7 @@ class AccountTable extends React.Component {
       {name: "Is global admin", label: i18next.t("user:Is global admin")},
       {name: "Is forbidden", label: i18next.t("user:Is forbidden")},
       {name: "Is deleted", label: i18next.t("user:Is deleted")},
-      {name: "Two-factor authentication", label: i18next.t("user:Two-factor authentication")},
+      {name: "Multi-factor authentication", label: i18next.t("user:Multi-factor authentication")},
       {name: "WebAuthn credentials", label: i18next.t("user:WebAuthn credentials")},
       {name: "Managed accounts", label: i18next.t("user:Managed accounts")},
     ];

@@ -64,10 +64,10 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
     return (
       <div style={{width: 300, height: 350}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
-          {i18next.t("mfa:Two-factor authentication")}
+          {i18next.t("mfa:Multi-factor authentication")}
         </div>
         <div style={{marginBottom: 24}}>
-          {i18next.t("mfa:Two-factor authentication description")}
+          {i18next.t("mfa:Multi-factor authentication description")}
         </div>
         <MfaSmsVerifyForm
           mfaProps={mfaProps}
@@ -88,10 +88,10 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
     return (
       <div style={{width: 300, height: 350}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
-          {i18next.t("mfa:Two-factor recover")}
+          {i18next.t("mfa:Multi-factor recover")}
         </div>
         <div style={{marginBottom: 24}}>
-          {i18next.t("mfa:Two-factor recover description")}
+          {i18next.t("mfa:Multi-factor recover description")}
         </div>
         <Input placeholder={i18next.t("mfa:Recovery code")}
           style={{marginBottom: 24}}

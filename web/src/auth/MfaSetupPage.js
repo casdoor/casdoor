@@ -245,7 +245,7 @@ class MfaSetupPage extends React.Component {
           <Row>
             <Col span={24}>
               <div style={{textAlign: "center", fontSize: "28px"}}>
-                {i18next.t("mfa:Protect your account with two-factor authentication")}</div>
+                {i18next.t("mfa:Protect your account with Multi-factor authentication")}</div>
               <div style={{textAlign: "center", fontSize: "16px", marginTop: "10px"}}>{i18next.t("mfa:Each time you sign in to your Account, you'll need your password and a authentication code")}</div>
             </Col>
           </Row>
