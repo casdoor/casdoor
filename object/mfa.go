@@ -74,9 +74,8 @@ func RecoverTfs(user *User, recoveryCode string) error {
 		return fmt.Errorf("do not have recovery codes")
 	}
 
-	for i, code := range twoFactor.RecoveryCodes {
+	for _, code := range twoFactor.RecoveryCodes {
 		if code == recoveryCode {
-			twoFactor.RecoveryCodes[i] = ""
 			hit = true
 			break
 		}
