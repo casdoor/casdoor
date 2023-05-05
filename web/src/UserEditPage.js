@@ -185,12 +185,12 @@ class UserEditPage extends React.Component {
       name: this.state.user.name,
     }).then((res) => {
       if (res.status === "ok") {
-        Setting.showMessage("success", i18next.t("mfa:Removed successfully"));
+        Setting.showMessage("success", i18next.t("general:Successfully deleted"));
         this.setState({
           multiFactorAuths: res.data,
         });
       } else {
-        Setting.showMessage("error", i18next.t("mfa:Removed failed"));
+        Setting.showMessage("error", i18next.t("general:Failed to delete"));
       }
     }).finally(() => {
       this.setState({
@@ -760,8 +760,8 @@ class UserEditPage extends React.Component {
               {Setting.getLabel(i18next.t("mfa:Two-factor authentication"), i18next.t("mfa:Two-factor authentication - Tooltip "))} :
             </Col>
             <Col span={22} >
-              <Card title="Two-factor methods">
-                <Card type="inner" title="SMS/Text message">
+              <Card title={i18next.t("mfa:Two-factor methods")}>
+                <Card type="inner" title={i18next.t("mfa:SMS/Email message")}>
                   <List
                     itemLayout="horizontal"
                     dataSource={this.getMfaProps(SmsMfaType)}
@@ -775,7 +775,9 @@ class UserEditPage extends React.Component {
                             }}>
                               {i18next.t("mfa:Setup")}
                             </Button> :
-                            <Tag icon={<CheckCircleOutlined />} color="success">Enabled</Tag>
+                            <Tag icon={<CheckCircleOutlined />} color="success">
+                              {i18next.t("general:Enabled")}
+                            </Tag>
                           }
                           {item.secret}
                         </div>

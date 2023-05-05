@@ -87,7 +87,7 @@ export const MfaSmsVerifyForm = ({mfaProps, application, onFinish}) => {
           type="primary"
           htmlType="submit"
         >
-          {i18next.t("mfa:Next step")}
+          {i18next.t("forget:Next Step")}
         </Button>
       </Form.Item>
     </Form>
@@ -155,7 +155,7 @@ export const MfaTotpVerifyForm = ({mfaProps, onFinish}) => {
           type="primary"
           htmlType="submit"
         >
-          {i18next.t("mfa:Next step")}
+          {i18next.t("forget:Next Step")}
         </Button>
       </Form.Item>
     </Form>

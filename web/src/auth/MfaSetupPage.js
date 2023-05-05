@@ -53,11 +53,11 @@ function CheckPasswordForm({user, onSuccess, onFail}) {
     >
       <Form.Item
         name="password"
-        rules={[{required: true, message: "Please input your password"}]}
+        rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
       >
         <Input.Password
           prefix={<LockOutlined />}
-          placeholder={i18next.t("mfa:Password")}
+          placeholder={i18next.t("general:Password")}
         />
       </Form.Item>
 
@@ -69,7 +69,7 @@ function CheckPasswordForm({user, onSuccess, onFail}) {
           type="primary"
           htmlType="submit"
         >
-          {i18next.t("mfa:Next step")}
+          {i18next.t("forget:Next Step")}
         </Button>
       </Form.Item>
     </Form>
@@ -128,14 +128,13 @@ function EnableMfaForm({user, mfaProps, onSuccess, onFail}) {
 
   return (
     <div style={{width: "400px"}}>
-      <p>{i18next.t(
-        "mfa:Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code")}</p>
+      <p>{i18next.t("mfa:Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code")}</p>
       <br />
       <code style={{fontStyle: "solid"}}>{mfaProps.recoveryCodes[0]}</code>
       <Button style={{marginTop: 24}} loading={loading} onClick={() => {
         requestEnableTotp();
       }} block type="primary">
-        {i18next.t("mfa:Enable")}
+        {i18next.t("general:Enable")}
       </Button>
     </div>
   );
@@ -192,12 +191,12 @@ class MfaSetupPage extends React.Component {
                 mfaProps: res.data,
               });
             } else {
-              Setting.showMessage("error", i18next.t("mfa:initiate failed"));
+              Setting.showMessage("error", i18next.t("mfa:Failed to initiate MFA"));
             }
           });
         }}
         onFail={(res) => {
-          Setting.showMessage("error", i18next.t("mfa:initiate failed"));
+          Setting.showMessage("error", i18next.t("mfa:Failed to initiate MFA"));
         }}
       />;
     case 1:
@@ -211,17 +210,17 @@ class MfaSetupPage extends React.Component {
           });
         }}
         onFail={(res) => {
-          Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+          Setting.showMessage("error", i18next.t("general:Failed to verify"));
         }}
       />;
     case 2:
       return <EnableMfaForm user={this.getUser()} mfaProps={{type: this.state.type, ...this.state.mfaProps}}
         onSuccess={() => {
-          Setting.showMessage("success", i18next.t("mfa:Enabled successfully"));
+          Setting.showMessage("success", i18next.t("general:Enabled successfully"));
           Setting.goToLinkSoft(this, "/account");
         }}
         onFail={(res) => {
-          Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+          Setting.showMessage("error", `${i18next.t("general:Failed to enable")}: ${res.msg}`);
         }} />;
     default:
       return null;
@@ -260,7 +259,7 @@ class MfaSetupPage extends React.Component {
               }} >
                 <Step title={i18next.t("mfa:Verify Password")} icon={<UserOutlined />} />
                 <Step title={i18next.t("mfa:Verify Code")} icon={<KeyOutlined />} />
-                <Step title={i18next.t("mfa:Enable")} icon={<CheckOutlined />} />
+                <Step title={i18next.t("general:Enable")} icon={<CheckOutlined />} />
               </Steps>
             </Col>
           </Row>

@@ -102,7 +102,7 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
         <Button style={{width: "100%", marginBottom: 20}} size={"large"} loading={loading}
           type={"primary"} onClick={() => {
             recover();
-          }}>{i18next.t("mfa:Verify")}
+          }}>{i18next.t("forget:Verify")}
         </Button>
         <span style={{float: "right"}}>
           {i18next.t("mfa:Have problems?")}

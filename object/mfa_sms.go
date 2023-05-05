@@ -17,6 +17,7 @@ package object
 import (
 	"errors"
 	"fmt"
+
 	"github.com/casdoor/casdoor/util"
 
 	"github.com/beego/beego/context"

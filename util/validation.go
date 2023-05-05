@@ -16,9 +16,10 @@ package util
 
 import (
 	"fmt"
-	"github.com/nyaruka/phonenumbers"
 	"net/mail"
 	"regexp"
+
+	"github.com/nyaruka/phonenumbers"
 )
 
 var rePhone *regexp.Regexp

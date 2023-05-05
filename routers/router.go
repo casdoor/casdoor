@@ -239,7 +239,7 @@ func initAPI() {
 	beego.Router("/api/webauthn/signin/finish", &controllers.ApiController{}, "Post:WebAuthnSigninFinish")
 
 	beego.Router("/api/mfa/setup/initiate", &controllers.ApiController{}, "POST:MfaSetupInitiate")
-	beego.Router("/api/mfa/setup/verify", &controllers.ApiController{}, "Post:MfaSetupVerify")
+	beego.Router("/api/mfa/setup/verify", &controllers.ApiController{}, "POST:MfaSetupVerify")
 	beego.Router("/api/mfa/setup/enable", &controllers.ApiController{}, "POST:MfaSetupEnable")
 	beego.Router("/api/delete-mfa", &controllers.ApiController{}, "POST:DeleteMfa")
 

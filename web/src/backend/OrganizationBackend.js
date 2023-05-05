@@ -35,10 +35,11 @@ export function getOrganization(owner, name) {
 }
 
 export function updateOrganization(owner, name, organization) {
+  const newOrganization = Setting.deepCopy(organization);
   return fetch(`${Setting.ServerUrl}/api/update-organization?id=${owner}/${encodeURIComponent(name)}`, {
     method: "POST",
     credentials: "include",
-    body: JSON.stringify(organization),
+    body: JSON.stringify(newOrganization),
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
