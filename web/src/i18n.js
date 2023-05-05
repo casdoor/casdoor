@@ -13,32 +13,9 @@
 // limitations under the License.
 
 import i18n from "i18next";
-import en from "./locales/en/data.json";
-import zh from "./locales/zh/data.json";
-import es from "./locales/es/data.json";
-import fr from "./locales/fr/data.json";
-import de from "./locales/de/data.json";
-import id from "./locales/id/data.json";
-import ja from "./locales/ja/data.json";
-import ko from "./locales/ko/data.json";
-import ru from "./locales/ru/data.json";
-import vi from "./locales/vi/data.json";
 import * as Conf from "./Conf";
 import {initReactI18next} from "react-i18next";
-
-const resources = {
-  en: en,
-  zh: zh,
-  es: es,
-  fr: fr,
-  de: de,
-  id: id,
-  ja: ja,
-  ko: ko,
-  ru: ru,
-  vi: vi,
-};
-
+import resourcesToBackend from "i18next-resources-to-backend";
 function initLanguage() {
   let language = localStorage.getItem("language");
   if (language === undefined || language === null || language === "") {
@@ -92,18 +69,17 @@ function initLanguage() {
   return language;
 }
 
-i18n.use(initReactI18next).init({
-  lng: initLanguage(),
+i18n.use(resourcesToBackend((language, namespace) => import(`./locales/${language}/${namespace}.json`)))
+  .use(initReactI18next).init({
+    lng: initLanguage(),
 
-  resources: resources,
+    keySeparator: false,
 
-  keySeparator: false,
-
-  interpolation: {
-    escapeValue: true,
-  },
-  // debug: true,
-  saveMissing: true,
-});
+    interpolation: {
+      escapeValue: true,
+    },
+    debug: true,
+    saveMissing: true,
+  });
 
 export default i18n;

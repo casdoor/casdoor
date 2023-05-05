@@ -787,5 +787,5 @@ class App extends Component {
     );
   }
 }
-// const ns = ["account", "adapter", "application", "cert", "chat", "code", "forget", "general", "ldap", "login", "message", "model", "organization", "payment", "permission", "product", "provider", "record", "resource", "role", "signup", "syncer", "system", "theme", "token", "user", "webhook"];
-export default withRouter(withTranslation()(App));
+const Appnamespace = ["account", "adapter", "application", "cert", "chat", "code", "forget", "general", "ldap", "login", "message", "model", "organization", "payment", "permission", "product", "provider", "record", "resource", "role", "signup", "syncer", "system", "theme", "token", "user", "webhook"];
+export default withRouter(withTranslation(Appnamespace)(App));
