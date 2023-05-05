@@ -23,6 +23,14 @@
   "cas": {
     "Service %s and %s do not match": "Service %s und %s stimmen nicht überein"
   },
+  "chat": {
+    "The chat type must be \\\"AI\\\"": "The chat type must be \\\"AI\\\"",
+    "The chat: %s is not found": "The chat: %s is not found",
+    "The message is invalid": "The message is invalid",
+    "The message: %s is not found": "The message: %s is not found",
+    "The provider: %s is invalid": "The provider: %s is invalid",
+    "The provider: %s is not found": "The provider: %s is not found"
+  },
   "check": {
     "Affiliation cannot be blank": "Zugehörigkeit darf nicht leer sein",
     "DisplayName cannot be blank": "Anzeigename kann nicht leer sein",
@@ -130,7 +138,6 @@
     "Unable to get the email modify rule.": "Nicht in der Lage, die E-Mail-Änderungsregel zu erhalten.",
     "Unable to get the phone modify rule.": "Nicht in der Lage, die Telefon-Änderungsregel zu erhalten.",
     "Unknown type": "Unbekannter Typ",
-    "Wrong parameter": "Falscher Parameter",
     "Wrong verification code!": "Falscher Bestätigungscode!",
     "You should verify your code in %d min!": "Du solltest deinen Code in %d Minuten verifizieren!",
     "the user does not exist, please sign up first": "Der Benutzer existiert nicht, bitte zuerst anmelden"

@@ -23,6 +23,14 @@
   "cas": {
     "Service %s and %s do not match": "Service %s and %s do not match"
   },
+  "chat": {
+    "The chat type must be \\\"AI\\\"": "The chat type must be \\\"AI\\\"",
+    "The chat: %s is not found": "The chat: %s is not found",
+    "The message is invalid": "The message is invalid",
+    "The message: %s is not found": "The message: %s is not found",
+    "The provider: %s is invalid": "The provider: %s is invalid",
+    "The provider: %s is not found": "The provider: %s is not found"
+  },
   "check": {
     "Affiliation cannot be blank": "Affiliation cannot be blank",
     "DisplayName cannot be blank": "DisplayName cannot be blank",
@@ -130,7 +138,6 @@
     "Unable to get the email modify rule.": "Unable to get the email modify rule.",
     "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",
     "Unknown type": "Unknown type",
-    "Wrong parameter": "Wrong parameter",
     "Wrong verification code!": "Wrong verification code!",
     "You should verify your code in %d min!": "You should verify your code in %d min!",
     "the user does not exist, please sign up first": "the user does not exist, please sign up first"

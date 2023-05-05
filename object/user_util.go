@@ -265,6 +265,13 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		itemsChanged = append(itemsChanged, item)
 	}
 
+	oldUserTwoFactorAuthJson, _ := json.Marshal(oldUser.MultiFactorAuths)
+	newUserTwoFactorAuthJson, _ := json.Marshal(newUser.MultiFactorAuths)
+	if string(oldUserTwoFactorAuthJson) != string(newUserTwoFactorAuthJson) {
+		item := GetAccountItemByName("Multi-factor authentication", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
 	if oldUser.IsAdmin != newUser.IsAdmin {
 		item := GetAccountItemByName("Is admin", organization)
 		itemsChanged = append(itemsChanged, item)

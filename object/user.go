@@ -157,6 +157,7 @@ type User struct {
 	Custom          string `xorm:"custom varchar(100)" json:"custom"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
+	MultiFactorAuths    []*MfaProps           `json:"multiFactorAuths"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
@@ -399,6 +400,12 @@ func GetMaskedUser(user *User) *User {
 	if user.ManagedAccounts != nil {
 		for _, manageAccount := range user.ManagedAccounts {
 			manageAccount.Password = "***"
+		}
+	}
+
+	if user.MultiFactorAuths != nil {
+		for i, props := range user.MultiFactorAuths {
+			user.MultiFactorAuths[i] = GetMaskedProps(props)
 		}
 	}
 	return user
@@ -732,4 +739,36 @@ func (user *User) refreshAvatar() bool {
 	}
 
 	return false
+}
+
+func (user *User) IsMfaEnabled() bool {
+	return len(user.MultiFactorAuths) > 0
+}
+
+func (user *User) GetPreferMfa(masked bool) *MfaProps {
+	if len(user.MultiFactorAuths) == 0 {
+		return nil
+	}
+
+	if masked {
+		if len(user.MultiFactorAuths) == 1 {
+			return GetMaskedProps(user.MultiFactorAuths[0])
+		}
+		for _, v := range user.MultiFactorAuths {
+			if v.IsPreferred {
+				return GetMaskedProps(v)
+			}
+		}
+		return GetMaskedProps(user.MultiFactorAuths[0])
+	} else {
+		if len(user.MultiFactorAuths) == 1 {
+			return user.MultiFactorAuths[0]
+		}
+		for _, v := range user.MultiFactorAuths {
+			if v.IsPreferred {
+				return v
+			}
+		}
+		return user.MultiFactorAuths[0]
+	}
 }

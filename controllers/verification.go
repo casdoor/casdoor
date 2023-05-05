@@ -27,10 +27,12 @@ import (
 )
 
 const (
-	SignupVerification = "signup"
-	ResetVerification  = "reset"
-	LoginVerification  = "login"
-	ForgetVerification = "forget"
+	SignupVerification   = "signup"
+	ResetVerification    = "reset"
+	LoginVerification    = "login"
+	ForgetVerification   = "forget"
+	MfaSetupVerification = "mfaSetup"
+	MfaAuthVerification  = "mfaAuth"
 )
 
 // SendVerificationCode ...
@@ -78,6 +80,11 @@ func (c *ApiController) SendVerificationCode() {
 		user = object.GetUser(util.GetId(owner, vform.CheckUser))
 	}
 
+	// mfaSessionData != nil, means method is MfaSetupVerification
+	if mfaSessionData := c.getMfaSessionData(); mfaSessionData != nil {
+		user = object.GetUser(mfaSessionData.UserId)
+	}
+
 	sendResp := errors.New("invalid dest type")
 
 	switch vform.Type {
@@ -99,6 +106,11 @@ func (c *ApiController) SendVerificationCode() {
 			}
 		} else if vform.Method == ResetVerification {
 			user = c.getCurrentUser()
+		} else if vform.Method == MfaAuthVerification {
+			mfaProps := user.GetPreferMfa(false)
+			if user != nil && util.GetMaskedEmail(mfaProps.Secret) == vform.Dest {
+				vform.Dest = mfaProps.Secret
+			}
 		}
 
 		provider := application.GetEmailProvider()
@@ -119,6 +131,13 @@ func (c *ApiController) SendVerificationCode() {
 			if user = c.getCurrentUser(); user != nil {
 				vform.CountryCode = user.GetCountryCode(vform.CountryCode)
 			}
+		} else if vform.Method == MfaAuthVerification {
+			mfaProps := user.GetPreferMfa(false)
+			if user != nil && util.GetMaskedPhone(mfaProps.Secret) == vform.Dest {
+				vform.Dest = mfaProps.Secret
+			}
+
+			vform.CountryCode = mfaProps.CountryCode
 		}
 
 		provider := application.GetSmsProvider()
@@ -128,6 +147,11 @@ func (c *ApiController) SendVerificationCode() {
 		} else {
 			sendResp = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, phone)
 		}
+	}
+
+	if vform.Method == MfaSetupVerification {
+		c.SetSession(object.MfaSmsCountryCodeSession, vform.CountryCode)
+		c.SetSession(object.MfaSmsDestSession, vform.Dest)
 	}
 
 	if sendResp != nil {

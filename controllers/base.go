@@ -168,6 +168,30 @@ func (c *ApiController) SetSessionData(s *SessionData) {
 	c.SetSession("SessionData", util.StructToJson(s))
 }
 
+func (c *ApiController) setMfaSessionData(data *object.MfaSessionData) {
+	c.SetSession(object.MfaSessionUserId, data.UserId)
+}
+
+func (c *ApiController) getMfaSessionData() *object.MfaSessionData {
+	userId := c.GetSession(object.MfaSessionUserId)
+	if userId == nil {
+		return nil
+	}
+
+	data := &object.MfaSessionData{
+		UserId: userId.(string),
+	}
+	return data
+}
+
+func (c *ApiController) setExpireForSession() {
+	timestamp := time.Now().Unix()
+	timestamp += 3600 * 24
+	c.SetSessionData(&SessionData{
+		ExpireTime: timestamp,
+	})
+}
+
 func wrapActionResponse(affected bool) *Response {
 	if affected {
 		return &Response{Status: "ok", Msg: "", Data: "Affected"}

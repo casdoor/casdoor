@@ -21,10 +21,8 @@ import {CaptchaModal} from "./modal/CaptchaModal";
 
 const {Search} = Input;
 
-export const SendCodeInput = (props) => {
-  const {disabled, textBefore, onChange, onButtonClickArgs, application, method, countryCode} = props;
+export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonClickArgs, application, method, countryCode}) => {
   const [visible, setVisible] = React.useState(false);
-
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
 
@@ -62,6 +60,7 @@ export const SendCodeInput = (props) => {
       <Search
         addonBefore={textBefore}
         disabled={disabled}
+        value={value}
         prefix={<SafetyOutlined />}
         placeholder={i18next.t("code:Enter your code")}
         onChange={e => onChange(e.target.value)}

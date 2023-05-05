@@ -203,3 +203,11 @@ export function verifyCode(values) {
     },
   }).then(res => res.json());
 }
+
+export function checkUserPassword(values) {
+  return fetch(`${Setting.ServerUrl}/api/check-user-password`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(values),
+  }).then(res => res.json());
+}

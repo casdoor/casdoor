@@ -77,7 +77,7 @@ func getObject(ctx *context.Context) (string, string) {
 		body := ctx.Input.RequestBody
 
 		if len(body) == 0 {
-			return "", ""
+			return ctx.Request.Form.Get("owner"), ctx.Request.Form.Get("name")
 		}
 
 		var obj Object
