@@ -14,7 +14,7 @@
 
 import {Button, Col, Form, Input, Row} from "antd";
 import i18next from "i18next";
-import {CopyOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
+import {CopyOutlined, UserOutlined} from "@ant-design/icons";
 import {SendCodeInput} from "../common/SendCodeInput";
 import * as Setting from "../Setting";
 import React from "react";
@@ -62,7 +62,7 @@ export const MfaSmsVerifyForm = ({mfaProps, application, onFinish}) => {
             <Input
               style={{width: Setting.IsEmail(dest) ? "100% " : "70%"}}
               onChange={(e) => {setDest(e.target.value);}}
-              prefix={<LockOutlined />}
+              prefix={<UserOutlined />}
               placeholder={i18next.t("general:Phone or email")}
             />
           </Form.Item>

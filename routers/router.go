@@ -238,10 +238,10 @@ func initAPI() {
 	beego.Router("/api/webauthn/signin/begin", &controllers.ApiController{}, "Get:WebAuthnSigninBegin")
 	beego.Router("/api/webauthn/signin/finish", &controllers.ApiController{}, "Post:WebAuthnSigninFinish")
 
-	beego.Router("/api/mfa/setup/initiate", &controllers.ApiController{}, "POST:TwoFactorSetupInitiate")
-	beego.Router("/api/mfa/setup/verify", &controllers.ApiController{}, "Post:TwoFactorSetupVerify")
-	beego.Router("/api/mfa/setup/enable", &controllers.ApiController{}, "POST:TwoFactorSetupEnable")
-	beego.Router("/api/mfa", &controllers.ApiController{}, "DELETE:TwoFactorDelete")
+	beego.Router("/api/mfa/setup/initiate", &controllers.ApiController{}, "POST:MfaSetupInitiate")
+	beego.Router("/api/mfa/setup/verify", &controllers.ApiController{}, "Post:MfaSetupVerify")
+	beego.Router("/api/mfa/setup/enable", &controllers.ApiController{}, "POST:MfaSetupEnable")
+	beego.Router("/api/delete-mfa", &controllers.ApiController{}, "POST:DeleteMfa")
 
 	beego.Router("/api/get-system-info", &controllers.ApiController{}, "GET:GetSystemInfo")
 	beego.Router("/api/get-version-info", &controllers.ApiController{}, "GET:GetVersionInfo")

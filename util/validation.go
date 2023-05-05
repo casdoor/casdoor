@@ -16,10 +16,9 @@ package util
 
 import (
 	"fmt"
+	"github.com/nyaruka/phonenumbers"
 	"net/mail"
 	"regexp"
-
-	"github.com/nyaruka/phonenumbers"
 )
 
 var rePhone *regexp.Regexp
@@ -59,28 +58,13 @@ func GetCountryCode(prefix string, phone string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	countryCode := phonenumbers.GetRegionCodeForNumber(phoneNumber)
-	if countryCode == "" {
-		return "", fmt.Errorf("country code not found for phone prefix: %s", prefix)
-	}
-
-	return countryCode, nil
-}
-
-func GetCountryCodeFromE164Number(phone string) (string, error) {
-	if phone == "" {
-		return "", nil
-	}
-
-	phoneNumber, err := phonenumbers.Parse(phone, "")
 	if err != nil {
 		return "", err
 	}
 
 	countryCode := phonenumbers.GetRegionCodeForNumber(phoneNumber)
 	if countryCode == "" {
-		return "", fmt.Errorf("country code not found for phone: %s", phone)
+		return "", fmt.Errorf("country code not found for phone prefix: %s", prefix)
 	}
 
 	return countryCode, nil

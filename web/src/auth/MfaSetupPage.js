@@ -16,11 +16,11 @@ import React, {useState} from "react";
 import {Button, Col, Form, Input, Result, Row, Steps} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
-import * as TwoFactorBackend from "../backend/MfaBackend";
-import {CheckOutlined, KeyOutlined, UserOutlined} from "@ant-design/icons";
+import * as MfaBackend from "../backend/MfaBackend";
+import {CheckOutlined, KeyOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 
 import * as UserBackend from "../backend/UserBackend";
-import {MfaSmsVerifyForm, MfaTotpVerifyForm} from "./MfaVerifyForms";
+import {MfaSmsVerifyForm, MfaTotpVerifyForm} from "./MfaVerifyForm";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 
 const {Step} = Steps;
@@ -56,7 +56,7 @@ function CheckPasswordForm({user, onSuccess, onFail}) {
         rules={[{required: true, message: "Please input your password"}]}
       >
         <Input.Password
-          prefix={<UserOutlined />}
+          prefix={<LockOutlined />}
           placeholder={i18next.t("mfa:Password")}
         />
       </Form.Item>
@@ -80,9 +80,8 @@ export function MfaVerifyForm({mfaProps, application, user, onSuccess, onFail}) 
   const [form] = Form.useForm();
 
   const onFinish = ({passcode}) => {
-    const type = mfaProps.type;
-    const data = {passcode, type, ...user};
-    TwoFactorBackend.twoFactorSetupVerify(data)
+    const data = {passcode, type: mfaProps.type, ...user};
+    MfaBackend.MfaSetupVerify(data)
       .then((res) => {
         if (res.status === "ok") {
           onSuccess(res);
@@ -115,7 +114,7 @@ function EnableMfaForm({user, mfaProps, onSuccess, onFail}) {
       ...user,
     };
     setLoading(true);
-    TwoFactorBackend.twoFactorSetupEnable(data).then(res => {
+    MfaBackend.MfaSetupEnable(data).then(res => {
       if (res.status === "ok") {
         onSuccess(res);
       } else {
@@ -183,7 +182,7 @@ class MfaSetupPage extends React.Component {
       return <CheckPasswordForm
         user={this.getUser()}
         onSuccess={() => {
-          TwoFactorBackend.twoFactorSetupInitiate({
+          MfaBackend.MfaSetupInitiate({
             type: this.state.type,
             ...this.getUser(),
           }).then((res) => {
@@ -203,7 +202,7 @@ class MfaSetupPage extends React.Component {
       />;
     case 1:
       return <MfaVerifyForm
-        mfaProps={{type: this.state.type, ...this.state.mfaProps}}
+        mfaProps={{...this.state.mfaProps}}
         application={this.state.application}
         user={this.getUser()}
         onSuccess={() => {

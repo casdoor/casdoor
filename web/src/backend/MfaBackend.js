@@ -14,7 +14,7 @@
 
 import * as Setting from "../Setting";
 
-export function twoFactorSetupInitiate(values) {
+export function MfaSetupInitiate(values) {
   const formData = new FormData();
   formData.append("owner", values.owner);
   formData.append("name", values.name);
@@ -26,7 +26,7 @@ export function twoFactorSetupInitiate(values) {
   }).then(res => res.json());
 }
 
-export function twoFactorSetupVerify(values) {
+export function MfaSetupVerify(values) {
   const formData = new FormData();
   formData.append("owner", values.owner);
   formData.append("name", values.name);
@@ -39,7 +39,7 @@ export function twoFactorSetupVerify(values) {
   }).then(res => res.json());
 }
 
-export function twoFactorSetupEnable(values) {
+export function MfaSetupEnable(values) {
   const formData = new FormData();
   formData.append("type", values.type);
   formData.append("owner", values.owner);
@@ -51,17 +51,14 @@ export function twoFactorSetupEnable(values) {
   }).then(res => res.json());
 }
 
-export function twoFactorRemoveTotp(values) {
+export function DeleteMfa(values) {
   const formData = new FormData();
   formData.append("type", values.id);
   formData.append("owner", values.owner);
   formData.append("name", values.name);
-  return fetch(`${Setting.ServerUrl}/api/mfa`, {
-    method: "DELETE",
+  return fetch(`${Setting.ServerUrl}/api/delete-mfa`, {
+    method: "POST",
     credentials: "include",
     body: formData,
   }).then(res => res.json());
-}
-
-export class twoFactorAuthVerify {
 }

@@ -33,7 +33,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal} from "../common/modal/CaptchaModal";
 import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
-import {MfaAuthVerifyForm, NextTwoFactor} from "./MfaAuthVerifyForm";
+import {MfaAuthVerifyForm, NextMfa} from "./MfaAuthVerifyForm";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -354,7 +354,7 @@ class LoginPage extends React.Component {
           };
           if (res.status === "ok") {
             callback();
-          } else if (res.status === NextTwoFactor) {
+          } else if (res.status === NextMfa) {
             this.setState({
               getVerifyTotp: () => {
                 return (

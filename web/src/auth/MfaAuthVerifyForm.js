@@ -17,9 +17,9 @@ import i18next from "i18next";
 import {Button, Input} from "antd";
 import * as AuthBackend from "./AuthBackend";
 import {SmsMfaType} from "./MfaSetupPage";
-import {MfaSmsVerifyForm} from "./MfaVerifyForms";
+import {MfaSmsVerifyForm} from "./MfaVerifyForm";
 
-export const NextTwoFactor = "nextTwoFactor";
+export const NextMfa = "NextMfa";
 
 export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, application, onSuccess, onFail}) {
   formValues.password = "";

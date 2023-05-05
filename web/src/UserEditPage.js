@@ -31,9 +31,9 @@ import ManagedAccountTable from "./table/ManagedAccountTable";
 import PropertyTable from "./table/propertyTable";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import {twoFactorRemoveTotp} from "./backend/MfaBackend";
+import {DeleteMfa} from "./backend/MfaBackend";
 import {CheckCircleOutlined} from "@ant-design/icons";
-import {SmsMfaType, TotpMfaType} from "./auth/MfaSetupPage";
+import {SmsMfaType} from "./auth/MfaSetupPage";
 
 const {Option} = Select;
 
@@ -68,7 +68,7 @@ class UserEditPage extends React.Component {
         if (data.status === null || data.status !== "error") {
           this.setState({
             user: data,
-            twoFactorAuth: data?.twoFactorAuth ?? [],
+            multiFactorAuths: data?.multiFactorAuths ?? [],
           });
         }
         this.setState({
@@ -147,14 +147,14 @@ class UserEditPage extends React.Component {
     return this.props.account.countryCode;
   }
 
-  getMfa(type = "") {
-    if (!(this.state.twoFactorAuth?.length > 0)) {
+  getMfaProps(type = "") {
+    if (!(this.state.multiFactorAuths?.length > 0)) {
       return [];
     }
     if (type === "") {
-      return this.state.twoFactorAuth;
+      return this.state.multiFactorAuths;
     }
-    return this.state.twoFactorAuth.filter(mfaProps => mfaProps.type === type);
+    return this.state.multiFactorAuths.filter(mfaProps => mfaProps.type === type);
   }
 
   loadMore = (table, type) => {
@@ -168,7 +168,7 @@ class UserEditPage extends React.Component {
     >
       <Button onClick={() => {
         this.setState({
-          twoFactorAuth: Setting.addRow(table, {"type": type}),
+          multiFactorAuths: Setting.addRow(table, {"type": type}),
         });
       }}>{i18next.t("general:Add")}</Button>
     </div>;
@@ -176,10 +176,10 @@ class UserEditPage extends React.Component {
 
   deleteMfa = (id) => {
     this.setState({
-      RemoveTwoFactorLoading: true,
+      RemoveMfaLoading: true,
     });
 
-    twoFactorRemoveTotp({
+    DeleteMfa({
       id: id,
       owner: this.state.user.owner,
       name: this.state.user.name,
@@ -187,14 +187,14 @@ class UserEditPage extends React.Component {
       if (res.status === "ok") {
         Setting.showMessage("success", i18next.t("mfa:Removed successfully"));
         this.setState({
-          twoFactorAuth: res.data,
+          multiFactorAuths: res.data,
         });
       } else {
         Setting.showMessage("error", i18next.t("mfa:Removed failed"));
       }
     }).finally(() => {
       this.setState({
-        RemoveTwoFactorLoading: false,
+        RemoveMfaLoading: false,
       });
     });
   };
@@ -764,14 +764,14 @@ class UserEditPage extends React.Component {
                 <Card type="inner" title="SMS/Text message">
                   <List
                     itemLayout="horizontal"
-                    dataSource={this.getMfa(SmsMfaType)}
-                    loadMore={this.loadMore(this.state.twoFactorAuth, SmsMfaType)}
+                    dataSource={this.getMfaProps(SmsMfaType)}
+                    loadMore={this.loadMore(this.state.multiFactorAuths, SmsMfaType)}
                     renderItem={(item, index) => (
                       <List.Item>
                         <div>
                           {item?.id === undefined ?
                             <Button type={"default"} onClick={() => {
-                              Setting.goToLink("/two_factor_authentication/setup");
+                              Setting.goToLink("/mfa-authentication/setup");
                             }}>
                               {i18next.t("mfa:Setup")}
                             </Button> :
@@ -789,13 +789,6 @@ class UserEditPage extends React.Component {
                       </List.Item>
                     )}
                   />
-                </Card>
-                <Card style={{marginTop: 16}}
-                  type="inner"
-                  title="Authenticator app"
-                >
-                  {this.getMfa(TotpMfaType)}
-                        TOTP developing...
                 </Card>
               </Card>
             </Col>

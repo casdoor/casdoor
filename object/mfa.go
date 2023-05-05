@@ -22,7 +22,7 @@ import (
 	"github.com/beego/beego/context"
 )
 
-type TwoFactorSessionData struct {
+type MfaSessionData struct {
 	UserId string
 }
 
@@ -36,7 +36,7 @@ type MfaProps struct {
 	RecoveryCodes []string `json:"recoveryCodes,omitempty"`
 }
 
-type TwoFactorInterface interface {
+type MfaInterface interface {
 	SetupVerify(ctx *context.Context, passCode string) error
 	Verify(passCode string) error
 	Initiate(ctx *context.Context, name1 string, name2 string) (*MfaProps, error)
@@ -49,13 +49,11 @@ const (
 )
 
 const (
-	TwoFactorSessionUserId      = "TwoFactorSessionUserId"
-	TwoFactorSessionApplication = "TwoFactorSessionApplication"
-	TwoFactorSessionForm        = "TwoFactorSessionForm"
-	NextTwoFactor               = "nextTwoFactor"
+	MfaSessionUserId = "MfaSessionUserId"
+	NextMfa          = "NextMfa"
 )
 
-func GetTwoFactorUtil(providerType string, config *MfaProps) TwoFactorInterface {
+func GetMfaUtil(providerType string, config *MfaProps) MfaInterface {
 	switch providerType {
 	case SmsType:
 		return NewSmsTwoFactor(config)
@@ -69,7 +67,7 @@ func GetTwoFactorUtil(providerType string, config *MfaProps) TwoFactorInterface 
 func RecoverTfs(user *User, recoveryCode string) error {
 	hit := false
 
-	twoFactor := user.GetPreferTwoFactor(false)
+	twoFactor := user.GetPreferMfa(false)
 	if len(twoFactor.RecoveryCodes) == 0 {
 		return fmt.Errorf("do not have recovery codes")
 	}

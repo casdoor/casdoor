@@ -107,7 +107,7 @@ func (c *ApiController) SendVerificationCode() {
 		} else if vform.Method == ResetVerification {
 			user = c.getCurrentUser()
 		} else if vform.Method == MfaAuthVerification {
-			mfaProps := user.GetPreferTwoFactor(false)
+			mfaProps := user.GetPreferMfa(false)
 			if user != nil && util.GetMaskedEmail(mfaProps.Secret) == vform.Dest {
 				vform.Dest = mfaProps.Secret
 			}
@@ -132,7 +132,7 @@ func (c *ApiController) SendVerificationCode() {
 				vform.CountryCode = user.GetCountryCode(vform.CountryCode)
 			}
 		} else if vform.Method == MfaAuthVerification {
-			mfaProps := user.GetPreferTwoFactor(false)
+			mfaProps := user.GetPreferMfa(false)
 			if user != nil && util.GetMaskedPhone(mfaProps.Secret) == vform.Dest {
 				vform.Dest = mfaProps.Secret
 			}
@@ -141,16 +141,16 @@ func (c *ApiController) SendVerificationCode() {
 		}
 
 		provider := application.GetSmsProvider()
-		ok := false
-		if vform.Dest, ok = util.GetE164Number(vform.Dest, vform.CountryCode); !ok {
+		if phone, ok := util.GetE164Number(vform.Dest, vform.CountryCode); !ok {
 			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), vform.CountryCode))
 			return
 		} else {
-			sendResp = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, vform.Dest)
+			sendResp = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, phone)
 		}
 	}
 
 	if vform.Method == MfaSetupVerification {
+		c.SetSession(object.MfaSmsCountryCodeSession, vform.CountryCode)
 		c.SetSession(object.MfaSmsDestSession, vform.Dest)
 	}
 

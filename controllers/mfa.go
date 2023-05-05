@@ -22,14 +22,16 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-// TwoFactorSetupInitiate
-// @Title TwoFactorSetupInitiate
-// @Tag Two-Factor API
-// @Description setup totp
-// @param userId	form	string	true	" "<owner>/<name>" of user"
+// MfaSetupInitiate
+// @Title MfaSetupInitiate
+// @Tag MFA API
+// @Description setup MFA
+// @param owner	form	string	true	"owner of user"
+// @param name	form	string	true	"name of user"
+// @param type	form	string	true	"MFA auth type"
 // @Success 200 {object}   The Response object
 // @router /mfa/setup/initiate [post]
-func (c *ApiController) TwoFactorSetupInitiate() {
+func (c *ApiController) MfaSetupInitiate() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
 	authType := c.Ctx.Request.Form.Get("type")
@@ -40,8 +42,8 @@ func (c *ApiController) TwoFactorSetupInitiate() {
 		return
 	}
 
-	twoFactorUtil := object.GetTwoFactorUtil(authType, nil)
-	if twoFactorUtil == nil {
+	MfaUtil := object.GetMfaUtil(authType, nil)
+	if MfaUtil == nil {
 		c.ResponseError("Invalid auth type")
 	}
 	user := object.GetUser(userId)
@@ -53,25 +55,25 @@ func (c *ApiController) TwoFactorSetupInitiate() {
 	issuer := beego.AppConfig.String("appname")
 	accountName := user.GetId()
 
-	twoFactorProps, err := twoFactorUtil.Initiate(c.Ctx, issuer, accountName)
+	mfaProps, err := MfaUtil.Initiate(c.Ctx, issuer, accountName)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	resp := twoFactorProps
+	resp := mfaProps
 	c.ResponseOk(resp)
 }
 
-// TwoFactorSetupVerify
-// @Title TwoFactorSetupVerify
-// @Tag Two-Factor API
+// MfaSetupVerify
+// @Title MfaSetupVerify
+// @Tag MFA API
 // @Description setup verify totp
-// @param	secret		form	string	true	"totp secret"
-// @param	passcode	form 	string 	true	"totp passcode"
+// @param	secret		form	string	true	"MFA secret"
+// @param	passcode	form 	string 	true	"MFA passcode"
 // @Success 200 {object}  Response object
-// @router /mfa/setup/totp/verify [post]
-func (c *ApiController) TwoFactorSetupVerify() {
+// @router /mfa/setup/verify [post]
+func (c *ApiController) MfaSetupVerify() {
 	authType := c.Ctx.Request.Form.Get("type")
 	passcode := c.Ctx.Request.Form.Get("passcode")
 
@@ -79,9 +81,9 @@ func (c *ApiController) TwoFactorSetupVerify() {
 		c.ResponseError("missing auth type or passcode")
 		return
 	}
-	twoFactorUtil := object.GetTwoFactorUtil(authType, nil)
+	MfaUtil := object.GetMfaUtil(authType, nil)
 
-	err := twoFactorUtil.SetupVerify(c.Ctx, passcode)
+	err := MfaUtil.SetupVerify(c.Ctx, passcode)
 	if err != nil {
 		c.ResponseError(err.Error())
 	} else {
@@ -89,15 +91,16 @@ func (c *ApiController) TwoFactorSetupVerify() {
 	}
 }
 
-// TwoFactorSetupEnable
-// @Title TwoFactorSetupEnable
-// @Tag Two-Factor API
+// MfaSetupEnable
+// @Title MfaSetupEnable
+// @Tag MFA API
 // @Description enable totp
-// @param	userId		form	string	true	"Id of user"
-// @param  	secret		form	string	true	"totp secret"
+// @param owner	form	string	true	"owner of user"
+// @param name	form	string	true	"name of user"
+// @param type	form	string	true	"MFA auth type"
 // @Success 200 {object}  Response object
 // @router /mfa/setup/enable [post]
-func (c *ApiController) TwoFactorSetupEnable() {
+func (c *ApiController) MfaSetupEnable() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
 	authType := c.Ctx.Request.Form.Get("type")
@@ -108,7 +111,7 @@ func (c *ApiController) TwoFactorSetupEnable() {
 		return
 	}
 
-	twoFactor := object.GetTwoFactorUtil(authType, nil)
+	twoFactor := object.GetMfaUtil(authType, nil)
 	err := twoFactor.Enable(c.Ctx, user)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -118,14 +121,16 @@ func (c *ApiController) TwoFactorSetupEnable() {
 	c.ResponseOk(http.StatusText(http.StatusOK))
 }
 
-// TwoFactorDelete
-// @Title TwoFactorDelete
-// @Tag Two-Factor API
-// @Description: Remove Totp
-// @param	userId	form	string	true	"Id of user"
+// DeleteMfa
+// @Title DeleteMfa
+// @Tag MFA API
+// @Description: Delete MFA
+// @param owner	form	string	true	"owner of user"
+// @param name	form	string	true	"name of user"
+// @param id	form	string	true	"id of user's MFA props"
 // @Success 200 {object}  Response object
-// @router /mfa/ [delete]
-func (c *ApiController) TwoFactorDelete() {
+// @router /delete-mfa/ [post]
+func (c *ApiController) DeleteMfa() {
 	id := c.Ctx.Request.Form.Get("id")
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
@@ -137,7 +142,7 @@ func (c *ApiController) TwoFactorDelete() {
 		return
 	}
 
-	twoFactorProps := user.TwoFactorAuth[:0]
+	twoFactorProps := user.MultiFactorAuths[:0]
 	i := 0
 	for _, twoFactorProp := range twoFactorProps {
 		if twoFactorProp.Id != id {
@@ -145,7 +150,7 @@ func (c *ApiController) TwoFactorDelete() {
 			i++
 		}
 	}
-	user.TwoFactorAuth = twoFactorProps
-	object.UpdateUser(userId, user, []string{"two_factor_auth"}, user.IsAdminUser())
-	c.ResponseOk(user.TwoFactorAuth)
+	user.MultiFactorAuths = twoFactorProps
+	object.UpdateUser(userId, user, []string{"multi_factor_auths"}, user.IsAdminUser())
+	c.ResponseOk(user.MultiFactorAuths)
 }

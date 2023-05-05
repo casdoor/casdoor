@@ -168,18 +168,18 @@ func (c *ApiController) SetSessionData(s *SessionData) {
 	c.SetSession("SessionData", util.StructToJson(s))
 }
 
-func (c *ApiController) setMfaSessionData(data *object.TwoFactorSessionData) {
-	c.SetSession(object.TwoFactorSessionUserId, data.UserId)
+func (c *ApiController) setMfaSessionData(data *object.MfaSessionData) {
+	c.SetSession(object.MfaSessionUserId, data.UserId)
 }
 
-func (c *ApiController) getMfaSessionData() *object.TwoFactorSessionData {
-	userId := c.GetSession(object.TwoFactorSessionUserId).(string)
-	if userId == "" {
+func (c *ApiController) getMfaSessionData() *object.MfaSessionData {
+	userId := c.GetSession(object.MfaSessionUserId)
+	if userId == nil {
 		return nil
 	}
 
-	data := &object.TwoFactorSessionData{
-		UserId: userId,
+	data := &object.MfaSessionData{
+		UserId: userId.(string),
 	}
 	return data
 }

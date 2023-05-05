@@ -69,9 +69,9 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		return
 	}
 
-	if form.Password != "" && user.IsEnableTwoFactor() {
-		c.setMfaSessionData(&object.TwoFactorSessionData{UserId: userId})
-		resp = &Response{Status: object.NextTwoFactor, Data: user.GetPreferTwoFactor(true), Data2: form}
+	if form.Password != "" && user.IsMfaEnabled() {
+		c.setMfaSessionData(&object.MfaSessionData{UserId: userId})
+		resp = &Response{Status: object.NextMfa, Data: user.GetPreferMfa(true)}
 		return
 	}
 
@@ -527,8 +527,8 @@ func (c *ApiController) Login() {
 		user := object.GetUser(mfaSession.UserId)
 
 		if authForm.Passcode != "" {
-			twoFactorUtil := object.GetTwoFactorUtil(authForm.MfaType, user.GetPreferTwoFactor(false))
-			err = twoFactorUtil.Verify(authForm.Passcode)
+			MfaUtil := object.GetMfaUtil(authForm.MfaType, user.GetPreferMfa(false))
+			err = MfaUtil.Verify(authForm.Passcode)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
