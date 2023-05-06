@@ -57,11 +57,18 @@ func getNameAndOrgFromFilter(baseDN, filter string) (string, string, int) {
 func getUsername(filter string) string {
 	nameIndex := strings.Index(filter, "cn=")
 	if nameIndex == -1 {
-		return "*"
+		nameIndex = strings.Index(filter, "uid=")
+		if nameIndex == -1 {
+			return "*"
+		} else {
+			nameIndex += 4
+		}
+	} else {
+		nameIndex += 3
 	}
 
 	var name string
-	for i := nameIndex + 3; filter[i] != ')'; i++ {
+	for i := nameIndex; filter[i] != ')'; i++ {
 		name = name + string(filter[i])
 	}
 	return name
@@ -124,6 +131,8 @@ func getAttribute(attributeName string, user *object.User) message.AttributeValu
 	case "uid":
 		return message.AttributeValue(user.Name)
 	case "email":
+		return message.AttributeValue(user.Email)
+	case "mail":
 		return message.AttributeValue(user.Email)
 	case "mobile":
 		return message.AttributeValue(user.Phone)
