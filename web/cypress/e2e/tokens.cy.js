@@ -7,7 +7,6 @@ describe('Test tokens', () => {
         add: ".ant-table-title > div > .ant-btn"	
       };
     it("test records", () => {
-        cy.visit("http://localhost:7001");
         cy.visit("http://localhost:7001/tokens");
         cy.url().should("eq", "http://localhost:7001/tokens");
         cy.get(selector.add,{timeout:10000}).click();	
