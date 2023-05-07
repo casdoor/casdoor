@@ -37,7 +37,7 @@ type SmsMfa struct {
 func (mfa *SmsMfa) SetupVerify(ctx *context.Context, passCode string) error {
 	dest := ctx.Input.CruSession.Get(MfaSmsDestSession).(string)
 	countryCode := ctx.Input.CruSession.Get(MfaSmsCountryCodeSession).(string)
-	if countryCode != "" {
+	if !util.IsEmailValid(dest) {
 		dest, _ = util.GetE164Number(dest, countryCode)
 	}
 
