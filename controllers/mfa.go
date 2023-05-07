@@ -186,5 +186,9 @@ func (c *ApiController) SetPreferredMfa() {
 	}
 
 	object.UpdateUser(userId, user, []string{"multi_factor_auths"}, user.IsAdminUser())
-	c.ResponseOk(user.MultiFactorAuths)
+
+	for i, mfaProp := range mfaProps {
+		mfaProps[i] = object.GetMaskedProps(mfaProp)
+	}
+	c.ResponseOk(mfaProps)
 }
