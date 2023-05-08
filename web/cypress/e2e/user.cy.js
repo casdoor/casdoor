@@ -1,6 +1,5 @@
 describe('Test User', () => {
     beforeEach(()=>{
-        cy.visit("http://localhost:7001");
         cy.login();
     })
     it("test user", () => {

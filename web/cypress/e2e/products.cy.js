@@ -1,6 +1,5 @@
 describe('Test products', () => {
     beforeEach(()=>{
-        cy.visit("http://localhost:7001");
         cy.login();
     })
     const selector = {

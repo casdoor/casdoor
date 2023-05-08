@@ -1,6 +1,5 @@
 describe('Test tokens', () => {
     beforeEach(()=>{
-        cy.visit("http://localhost:7001");
         cy.login();
     })
     const selector = {

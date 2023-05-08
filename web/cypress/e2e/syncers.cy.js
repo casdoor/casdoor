@@ -1,6 +1,5 @@
 describe('Test syncers', () => {
     beforeEach(()=>{
-        cy.visit("http://localhost:7001");
         cy.login();
     })
     const selector = {

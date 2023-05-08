@@ -7,6 +7,7 @@ describe('Test webhooks', () => {
         add: ".ant-table-title > div > .ant-btn"
       };
     it("test webhooks", () => {
+
         cy.visit("http://localhost:7001/webhooks");
         cy.url().should("eq", "http://localhost:7001/webhooks");
         cy.get(selector.add,{timeout:10000}).click();
