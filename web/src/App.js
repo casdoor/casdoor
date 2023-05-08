@@ -475,11 +475,13 @@ class App extends Component {
         res.push(Setting.getItem(<Link to="/payments">{i18next.t("general:Payments")}</Link>,
           "/payments"
         ));
-
-        res.push(Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>,
-          "/sysinfo"
-        ));
       }
+
+    }
+    if (Setting.isAdminUser(this.state.account)) {
+      res.push(Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>,
+        "/sysinfo"
+      ));
       res.push(Setting.getItem(<a target="_blank" rel="noreferrer"
         href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>{i18next.t("general:Swagger")}</a>,
       "/swagger"

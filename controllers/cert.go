@@ -48,6 +48,30 @@ func (c *ApiController) GetCerts() {
 	}
 }
 
+// GetGlobleCerts
+// @Title GetGlobleCerts
+// @Tag Cert API
+// @Description get globle certs
+// @Success 200 {array} object.Cert The Response object
+// @router /get-globle-certs [get]
+func (c *ApiController) GetGlobleCerts() {
+	limit := c.Input().Get("pageSize")
+	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
+	if limit == "" || page == "" {
+		c.Data["json"] = object.GetMaskedCerts(object.GetGlobleCerts())
+		c.ServeJSON()
+	} else {
+		limit := util.ParseInt(limit)
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGlobalCertsCount(field, value)))
+		certs := object.GetMaskedCerts(object.GetPaginationGlobalCerts(paginator.Offset(), limit, field, value, sortField, sortOrder))
+		c.ResponseOk(certs, paginator.Nums())
+	}
+}
+
 // GetCert
 // @Title GetCert
 // @Tag Cert API

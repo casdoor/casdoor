@@ -27,13 +27,13 @@ class PaymentListPage extends BaseListPage {
   newPayment() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "admin",
+      owner: this.props.account.owner,
       name: `payment_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Payment - ${randomName}`,
       provider: "provider_pay_paypal",
       type: "PayPal",
-      organization: "built-in",
+      organization: this.props.account.owner,
       user: "admin",
       productName: "computer-1",
       productDisplayName: "A notebook computer",
@@ -265,7 +265,7 @@ class PaymentListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    PaymentBackend.getPayments("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    PaymentBackend.getPayments(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

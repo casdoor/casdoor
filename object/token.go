@@ -91,9 +91,9 @@ type IntrospectionResponse struct {
 	Jti       string   `json:"jti,omitempty"`
 }
 
-func GetTokenCount(owner, field, value string) int {
+func GetTokenCount(owner, organization, field, value string) int {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Token{})
+	count, err := session.Count(&Token{Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -101,9 +101,9 @@ func GetTokenCount(owner, field, value string) int {
 	return int(count)
 }
 
-func GetTokens(owner string) []*Token {
+func GetTokens(owner string, organization string) []*Token {
 	tokens := []*Token{}
-	err := adapter.Engine.Desc("created_time").Find(&tokens, &Token{Owner: owner})
+	err := adapter.Engine.Desc("created_time").Find(&tokens, &Token{Owner: owner, Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -111,10 +111,10 @@ func GetTokens(owner string) []*Token {
 	return tokens
 }
 
-func GetPaginationTokens(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Token {
+func GetPaginationTokens(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Token {
 	tokens := []*Token{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&tokens)
+	err := session.Find(&tokens, &Token{Organization: organization})
 	if err != nil {
 		panic(err)
 	}

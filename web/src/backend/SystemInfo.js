@@ -14,8 +14,8 @@
 
 import * as Setting from "../Setting";
 
-export function getSystemInfo(owner) {
-  return fetch(`${Setting.ServerUrl}/api/get-system-info?owner=${owner}`, {
+export function getSystemInfo() {
+  return fetch(`${Setting.ServerUrl}/api/get-system-info`, {
     method: "GET",
     credentials: "include",
     headers: {

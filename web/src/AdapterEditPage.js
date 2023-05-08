@@ -60,7 +60,7 @@ class AdapterEditPage extends React.Component {
   }
 
   getOrganizations() {
-    OrganizationBackend.getOrganizations("admin")
+    OrganizationBackend.getOrganizations(this.state.organizationName)
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
@@ -109,7 +109,7 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.adapter.organization} onChange={(value => {
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.adapter.organization} onChange={(value => {
               this.getModels(value);
               this.updateAdapterField("organization", value);
               this.updateAdapterField("owner", value);

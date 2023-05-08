@@ -41,7 +41,7 @@ class ModelListPage extends BaseListPage {
   newModel() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "admin",
+      owner: this.props.account.owner,
       name: `model_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Model - ${randomName}`,
@@ -202,7 +202,7 @@ class ModelListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    ModelBackend.getModels("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    ModelBackend.getModels(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

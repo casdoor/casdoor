@@ -33,7 +33,7 @@ class PaymentResultPage extends React.Component {
   }
 
   getPayment() {
-    PaymentBackend.getPayment("admin", this.state.paymentName)
+    PaymentBackend.getPayment(this.props.account.owner, this.state.paymentName)
       .then((payment) => {
         this.setState({
           payment: payment,

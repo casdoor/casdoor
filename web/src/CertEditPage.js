@@ -30,6 +30,7 @@ class CertEditPage extends React.Component {
       classes: props,
       certName: props.match.params.certName,
       cert: null,
+      organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -39,7 +40,7 @@ class CertEditPage extends React.Component {
   }
 
   getCert() {
-    CertBackend.getCert("admin", this.state.certName)
+    CertBackend.getCert(this.props.account.owner, this.state.certName)
       .then((cert) => {
         this.setState({
           cert: cert,
@@ -75,6 +76,19 @@ class CertEditPage extends React.Component {
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteCert()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.cert.owner} onChange={(value => {this.updateCertField("owner", value);})}>
+              {Setting.isAdminUser(this.props.account) ? <Option key={"admin"} value={"admin"}>{i18next.t("cert:admin (Shared)")}</Option> : null}
+              {
+                this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
         <Row style={{marginTop: "10px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :

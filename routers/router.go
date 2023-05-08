@@ -184,6 +184,7 @@ func initAPI() {
 	beego.Router("/api/run-syncer", &controllers.ApiController{}, "GET:RunSyncer")
 
 	beego.Router("/api/get-certs", &controllers.ApiController{}, "GET:GetCerts")
+	beego.Router("/api/get-globle-certs", &controllers.ApiController{}, "GET:GetGlobleCerts")
 	beego.Router("/api/get-cert", &controllers.ApiController{}, "GET:GetCert")
 	beego.Router("/api/update-cert", &controllers.ApiController{}, "POST:UpdateCert")
 	beego.Router("/api/add-cert", &controllers.ApiController{}, "POST:AddCert")

@@ -210,6 +210,7 @@ class ProviderListPage extends BaseListPage {
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteProvider(index)}
+                disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)}
               >
               </PopconfirmModal>
             </div>
@@ -253,7 +254,7 @@ class ProviderListPage extends BaseListPage {
     }
     this.setState({loading: true});
     (Setting.isAdminUser(this.props.account) ? ProviderBackend.getGlobalProviders(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
-      : ProviderBackend.getProviders("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
+      : ProviderBackend.getProviders(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
