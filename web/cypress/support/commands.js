@@ -38,4 +38,5 @@ Cypress.Commands.add('login', ()=>{
       }).then((Response) => {
         expect(Response).property("body").property("status").to.equal("ok");
       });
+    cy.wait(1000)
 })
