@@ -353,7 +353,7 @@ class LoginPage extends React.Component {
             }
           };
           if (res.status === "ok") {
-            callback();
+            callback(res);
           } else if (res.status === NextMfa) {
             this.setState({
               getVerifyTotp: () => {
