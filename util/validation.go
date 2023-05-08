@@ -59,6 +59,9 @@ func GetCountryCode(prefix string, phone string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if err != nil {
+		return "", err
+	}
 
 	countryCode := phonenumbers.GetRegionCodeForNumber(phoneNumber)
 	if countryCode == "" {

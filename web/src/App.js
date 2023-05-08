@@ -62,7 +62,6 @@ import * as Conf from "./Conf";
 
 import * as Auth from "./auth/Auth";
 import EntryPage from "./EntryPage";
-import ResultPage from "./auth/ResultPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import LanguageSelect from "./common/select/LanguageSelect";
@@ -77,6 +76,7 @@ import AdapterEditPage from "./AdapterEditPage";
 import {withTranslation} from "react-i18next";
 import ThemeSelect from "./common/select/ThemeSelect";
 import SessionListPage from "./SessionListPage";
+import MfaSetupPage from "./auth/MfaSetupPage";
 
 const {Header, Footer, Content} = Layout;
 
@@ -517,8 +517,6 @@ class App extends Component {
   renderRouter() {
     return (
       <Switch>
-        <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)} />
-        <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)} />
         <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)} />
         <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)} />
         <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)} />
@@ -563,6 +561,7 @@ class App extends Component {
         <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/payments/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)} />
         <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/mfa-authentication/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} {...props} />)} />
         <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
         <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
         <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
@@ -665,6 +664,7 @@ class App extends Component {
         window.location.pathname.startsWith("/login") ||
         window.location.pathname.startsWith("/forget") ||
         window.location.pathname.startsWith("/prompt") ||
+        window.location.pathname.startsWith("/result") ||
         window.location.pathname.startsWith("/cas") ||
         window.location.pathname.startsWith("/auto-signup");
   }

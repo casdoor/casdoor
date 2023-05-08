@@ -132,6 +132,34 @@ class ProviderEditPage extends React.Component {
     }
   }
 
+  getClientId2Label(provider) {
+    switch (provider.category) {
+    case "Email":
+      return Setting.getLabel(i18next.t("provider:From address"), i18next.t("provider:From address - Tooltip"));
+    default:
+      if (provider.type === "Aliyun Captcha") {
+        return Setting.getLabel(i18next.t("provider:Scene"), i18next.t("provider:Scene - Tooltip"));
+      } else if (provider.type === "WeChat Pay") {
+        return Setting.getLabel(i18next.t("provider:App ID"), i18next.t("provider:App ID - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client ID 2"), i18next.t("provider:Client ID 2 - Tooltip"));
+      }
+    }
+  }
+
+  getClientSecret2Label(provider) {
+    switch (provider.category) {
+    case "Email":
+      return Setting.getLabel(i18next.t("provider:From name"), i18next.t("provider:From name - Tooltip"));
+    default:
+      if (provider.type === "Aliyun Captcha") {
+        return Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client secret 2"), i18next.t("provider:Client secret 2 - Tooltip"));
+      }
+    }
+  }
+
   getProviderSubTypeOptions(type) {
     if (type === "WeCom" || type === "Infoflow") {
       return (
@@ -446,7 +474,7 @@ class ProviderEditPage extends React.Component {
                 this.state.provider.category === "AI" ? null : (
                   <Row style={{marginTop: "20px"}} >
                     <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                      {this.getClientIdLabel(this.state.provider)}
+                      {this.getClientIdLabel(this.state.provider)} :
                     </Col>
                     <Col span={22} >
                       <Input value={this.state.provider.clientId} onChange={e => {
@@ -458,7 +486,7 @@ class ProviderEditPage extends React.Component {
               }
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {this.getClientSecretLabel(this.state.provider)}
+                  {this.getClientSecretLabel(this.state.provider)} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.clientSecret} onChange={e => {
@@ -470,15 +498,11 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "WeChat" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" ? null : (
+          this.state.provider.category !== "Email" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {this.state.provider.type === "Aliyun Captcha"
-                    ? Setting.getLabel(i18next.t("provider:Scene"), i18next.t("provider:Scene - Tooltip"))
-                    : this.state.provider.type === "WeChat Pay"
-                      ? Setting.getLabel("appId", "appId")
-                      : Setting.getLabel(i18next.t("provider:Client ID 2"), i18next.t("provider:Client ID 2 - Tooltip"))}
+                  {this.getClientId2Label(this.state.provider)} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.clientId2} onChange={e => {
@@ -490,9 +514,7 @@ class ProviderEditPage extends React.Component {
                 this.state.provider.type === "WeChat Pay" ? null : (
                   <Row style={{marginTop: "20px"}} >
                     <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                      {this.state.provider.type === "Aliyun Captcha"
-                        ? Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"))
-                        : Setting.getLabel(i18next.t("provider:Client secret 2"), i18next.t("provider:Client secret 2 - Tooltip"))}
+                      {this.getClientSecret2Label(this.state.provider)} :
                     </Col>
                     <Col span={22} >
                       <Input value={this.state.provider.clientSecret2} onChange={e => {

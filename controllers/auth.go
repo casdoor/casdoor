@@ -24,7 +24,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
@@ -67,6 +66,12 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	}
 	if !allowed {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	if form.Password != "" && user.IsMfaEnabled() {
+		c.setMfaSessionData(&object.MfaSessionData{UserId: userId})
+		resp = &Response{Status: object.NextMfa, Data: user.GetPreferMfa(true)}
 		return
 	}
 
@@ -133,11 +138,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 	// if user did not check auto signin
 	if resp.Status == "ok" && !form.AutoSignin {
-		timestamp := time.Now().Unix()
-		timestamp += 3600 * 24
-		c.SetSessionData(&SessionData{
-			ExpireTime: timestamp,
-		})
+		c.setExpireForSession()
 	}
 
 	if resp.Status == "ok" && user.Owner == object.CasdoorOrganization && application.Name == object.CasdoorApplication {
@@ -298,7 +299,6 @@ func (c *ApiController) Login() {
 
 			password := authForm.Password
 			user, msg = object.CheckUserPassword(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage(), enableCaptcha)
-
 		}
 
 		if msg != "" {
@@ -522,6 +522,38 @@ func (c *ApiController) Login() {
 				resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
 			}
 		}
+	} else if c.getMfaSessionData() != nil {
+		mfaSession := c.getMfaSessionData()
+		user := object.GetUser(mfaSession.UserId)
+
+		if authForm.Passcode != "" {
+			MfaUtil := object.GetMfaUtil(authForm.MfaType, user.GetPreferMfa(false))
+			err = MfaUtil.Verify(authForm.Passcode)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
+		if authForm.RecoveryCode != "" {
+			err = object.RecoverTfs(user, authForm.RecoveryCode)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
+
+		application := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+		if application == nil {
+			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+			return
+		}
+
+		resp = c.HandleLoggedIn(application, user, &authForm)
+
+		record := object.NewRecord(c.Ctx)
+		record.Organization = application.Organization
+		record.User = user.Name
+		util.SafeGoroutine(func() { object.AddRecord(record) })
 	} else {
 		if c.GetSessionUsername() != "" {
 			// user already signed in to Casdoor, so let the user click the avatar button to do the quick sign-in
@@ -539,7 +571,7 @@ func (c *ApiController) Login() {
 			record.User = user.Name
 			util.SafeGoroutine(func() { object.AddRecord(record) })
 		} else {
-			c.ResponseError(fmt.Sprintf(c.T("auth:Unknown authentication type (not password or provider), authForm = %s"), util.StructToJson(authForm)))
+			c.ResponseError(fmt.Sprintf(c.T("auth:Unknown authentication type (not password or provider), form = %s"), util.StructToJson(authForm)))
 			return
 		}
 	}

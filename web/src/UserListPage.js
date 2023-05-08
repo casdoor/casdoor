@@ -339,7 +339,7 @@ class UserListPage extends BaseListPage {
         width: "190px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
-          const disabled = (record.owner === this.props.account.owner && record.name === this.props.account.name);
+          const disabled = (record.owner === this.props.account.owner && record.name === this.props.account.name) || (record.owner === "built-in" && record.name === "admin");
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => {

@@ -33,6 +33,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal} from "../common/modal/CaptchaModal";
 import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
+import {MfaAuthVerifyForm, NextMfa} from "./MfaAuthVerifyForm";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -323,7 +324,7 @@ class LoginPage extends React.Component {
       this.populateOauthValues(values);
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
-          if (res.status === "ok") {
+          const callback = (res) => {
             const responseType = values["type"];
 
             if (responseType === "login") {
@@ -350,6 +351,25 @@ class LoginPage extends React.Component {
                 Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
               }
             }
+          };
+          if (res.status === "ok") {
+            callback();
+          } else if (res.status === NextMfa) {
+            this.setState({
+              getVerifyTotp: () => {
+                return (
+                  <MfaAuthVerifyForm
+                    mfaProps={res.data}
+                    formValues={values}
+                    oAuthParams={oAuthParams}
+                    application={this.getApplicationObj()}
+                    onFail={() => {
+                      Setting.showMessage("error", i18next.t("mfa:Verification failed"));
+                    }}
+                    onSuccess={(res) => callback(res)}
+                  />);
+              },
+            });
           } else {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
           }
@@ -827,12 +847,9 @@ class LoginPage extends React.Component {
                     Setting.renderLogo(application)
                   }
                   <LanguageSelect languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
-                  {
-                    this.renderSignedInBox()
-                  }
-                  {
-                    this.renderForm(application)
-                  }
+                  {this.state.getVerifyTotp !== undefined ? null : this.renderSignedInBox()}
+                  {this.state.getVerifyTotp !== undefined ? null : this.renderForm(application)}
+                  {this.state.getVerifyTotp !== undefined ? this.state.getVerifyTotp() : null}
                 </div>
               </div>
             </div>

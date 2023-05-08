@@ -61,6 +61,51 @@ class AccountTable extends React.Component {
     this.updateTable(table);
   }
 
+  getItems = () => {
+    return [
+      {name: "Organization", label: i18next.t("general:Organization")},
+      {name: "ID", label: i18next.t("general:ID")},
+      {name: "Name", label: i18next.t("general:Name")},
+      {name: "Display name", label: i18next.t("general:Display name")},
+      {name: "Avatar", label: i18next.t("general:Avatar")},
+      {name: "User type", label: i18next.t("general:User type")},
+      {name: "Password", label: i18next.t("general:Password")},
+      {name: "Email", label: i18next.t("general:Email")},
+      {name: "Phone", label: i18next.t("general:Phone")},
+      {name: "Country code", label: i18next.t("user:Country code")},
+      {name: "Country/Region", label: i18next.t("user:Country/Region")},
+      {name: "Location", label: i18next.t("user:Location")},
+      {name: "Address", label: i18next.t("user:Address")},
+      {name: "Affiliation", label: i18next.t("user:Affiliation")},
+      {name: "Title", label: i18next.t("user:Title")},
+      {name: "ID card type", label: i18next.t("user:ID card type")},
+      {name: "ID card", label: i18next.t("user:ID card")},
+      {name: "Homepage", label: i18next.t("user:Homepage")},
+      {name: "Bio", label: i18next.t("user:Bio")},
+      {name: "Tag", label: i18next.t("user:Tag")},
+      {name: "Language", label: i18next.t("user:Language")},
+      {name: "Gender", label: i18next.t("user:Gender")},
+      {name: "Birthday", label: i18next.t("user:Birthday")},
+      {name: "Education", label: i18next.t("user:Education")},
+      {name: "Score", label: i18next.t("user:Score")},
+      {name: "Karma", label: i18next.t("user:Karma")},
+      {name: "Ranking", label: i18next.t("user:Ranking")},
+      {name: "Signup application", label: i18next.t("general:Signup application")},
+      {name: "Roles", label: i18next.t("general:Roles")},
+      {name: "Permissions", label: i18next.t("general:Permissions")},
+      {name: "3rd-party logins", label: i18next.t("user:3rd-party logins")},
+      {name: "Properties", label: i18next.t("user:Properties")},
+      {name: "Is online", label: i18next.t("user:Is online")},
+      {name: "Is admin", label: i18next.t("user:Is admin")},
+      {name: "Is global admin", label: i18next.t("user:Is global admin")},
+      {name: "Is forbidden", label: i18next.t("user:Is forbidden")},
+      {name: "Is deleted", label: i18next.t("user:Is deleted")},
+      {name: "Multi-factor authentication", label: i18next.t("user:Multi-factor authentication")},
+      {name: "WebAuthn credentials", label: i18next.t("user:WebAuthn credentials")},
+      {name: "Managed accounts", label: i18next.t("user:Managed accounts")},
+    ];
+  };
+
   renderTable(table) {
     const columns = [
       {
@@ -68,65 +113,14 @@ class AccountTable extends React.Component {
         dataIndex: "name",
         key: "name",
         render: (text, record, index) => {
-          const items = [
-            {name: "Organization", displayName: i18next.t("general:Organization")},
-            {name: "ID", displayName: i18next.t("general:ID")},
-            {name: "Name", displayName: i18next.t("general:Name")},
-            {name: "Display name", displayName: i18next.t("general:Display name")},
-            {name: "Avatar", displayName: i18next.t("general:Avatar")},
-            {name: "User type", displayName: i18next.t("general:User type")},
-            {name: "Password", displayName: i18next.t("general:Password")},
-            {name: "Email", displayName: i18next.t("general:Email")},
-            {name: "Phone", displayName: i18next.t("general:Phone")},
-            {name: "Country code", displayName: i18next.t("user:Country code")},
-            {name: "Country/Region", displayName: i18next.t("user:Country/Region")},
-            {name: "Location", displayName: i18next.t("user:Location")},
-            {name: "Address", displayName: i18next.t("user:Address")},
-            {name: "Affiliation", displayName: i18next.t("user:Affiliation")},
-            {name: "Title", displayName: i18next.t("user:Title")},
-            {name: "ID card type", displayName: i18next.t("user:ID card type")},
-            {name: "ID card", displayName: i18next.t("user:ID card")},
-            {name: "Homepage", displayName: i18next.t("user:Homepage")},
-            {name: "Bio", displayName: i18next.t("user:Bio")},
-            {name: "Tag", displayName: i18next.t("user:Tag")},
-            {name: "Language", displayName: i18next.t("user:Language")},
-            {name: "Gender", displayName: i18next.t("user:Gender")},
-            {name: "Birthday", displayName: i18next.t("user:Birthday")},
-            {name: "Education", displayName: i18next.t("user:Education")},
-            {name: "Score", displayName: i18next.t("user:Score")},
-            {name: "Karma", displayName: i18next.t("user:Karma")},
-            {name: "Ranking", displayName: i18next.t("user:Ranking")},
-            {name: "Signup application", displayName: i18next.t("general:Signup application")},
-            {name: "Roles", displayName: i18next.t("general:Roles")},
-            {name: "Permissions", displayName: i18next.t("general:Permissions")},
-            {name: "3rd-party logins", displayName: i18next.t("user:3rd-party logins")},
-            {name: "Properties", displayName: i18next.t("user:Properties")},
-            {name: "Is online", displayName: i18next.t("user:Is online")},
-            {name: "Is admin", displayName: i18next.t("user:Is admin")},
-            {name: "Is global admin", displayName: i18next.t("user:Is global admin")},
-            {name: "Is forbidden", displayName: i18next.t("user:Is forbidden")},
-            {name: "Is deleted", displayName: i18next.t("user:Is deleted")},
-            {name: "WebAuthn credentials", displayName: i18next.t("user:WebAuthn credentials")},
-            {name: "Managed accounts", displayName: i18next.t("user:Managed accounts")},
-          ];
-
-          const getItemDisplayName = (text) => {
-            const item = items.filter(item => item.name === text);
-            if (item.length === 0) {
-              return "";
-            }
-            return item[0].displayName;
-          };
-
+          const items = this.getItems();
           return (
             <Select virtual={false} style={{width: "100%"}}
-              value={getItemDisplayName(text)}
+              options={Setting.getDeduplicatedArray(items, table, "name").map(item => Setting.getOption(item.label, item.name))}
+              value={text}
               onChange={value => {
                 this.updateField(table, index, "name", value);
               }} >
-              {
-                Setting.getDeduplicatedArray(items, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.displayName}</Option>)
-              }
             </Select>
           );
         },

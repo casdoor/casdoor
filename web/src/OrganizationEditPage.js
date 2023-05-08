@@ -362,6 +362,8 @@ class OrganizationEditPage extends React.Component {
 
   submitOrganizationEdit(willExist) {
     const organization = Setting.deepCopy(this.state.organization);
+    organization.accountItems = organization.accountItems?.filter(accountItem => accountItem.name !== "Please select an account item");
+
     OrganizationBackend.updateOrganization(this.state.organization.owner, this.state.organizationName, organization)
       .then((res) => {
         if (res.status === "ok") {

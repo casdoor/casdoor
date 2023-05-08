@@ -158,6 +158,11 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
+	if oldUser.Owner == "built-in" && oldUser.Name == "admin" && (user.Owner != "built-in" || user.Name != "admin") {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
 	if msg := object.CheckUpdateUser(oldUser, &user, c.GetAcceptLanguage()); msg != "" {
 		c.ResponseError(msg)
 		return
@@ -229,6 +234,11 @@ func (c *ApiController) DeleteUser() {
 		return
 	}
 
+	if user.Owner == "built-in" && user.Name == "admin" {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.DeleteUser(&user))
 	c.ServeJSON()
 }
@@ -285,6 +295,11 @@ func (c *ApiController) SetPassword() {
 	oldPassword := c.Ctx.Request.Form.Get("oldPassword")
 	newPassword := c.Ctx.Request.Form.Get("newPassword")
 	code := c.Ctx.Request.Form.Get("code")
+
+	//if userOwner == "built-in" && userName == "admin" {
+	//	c.ResponseError(c.T("auth:Unauthorized operation"))
+	//	return
+	//}
 
 	if strings.Contains(newPassword, " ") {
 		c.ResponseError(c.T("user:New password cannot contain blank space."))

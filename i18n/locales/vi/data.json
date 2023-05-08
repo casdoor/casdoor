@@ -23,6 +23,14 @@
   "cas": {
     "Service %s and %s do not match": "Dịch sang tiếng Việt: Dịch vụ %s và %s không khớp"
   },
+  "chat": {
+    "The chat type must be \\\"AI\\\"": "The chat type must be \\\"AI\\\"",
+    "The chat: %s is not found": "The chat: %s is not found",
+    "The message is invalid": "The message is invalid",
+    "The message: %s is not found": "The message: %s is not found",
+    "The provider: %s is invalid": "The provider: %s is invalid",
+    "The provider: %s is not found": "The provider: %s is not found"
+  },
   "check": {
     "Affiliation cannot be blank": "Tình trạng liên kết không thể để trống",
     "DisplayName cannot be blank": "Tên hiển thị không thể để trống",
@@ -130,7 +138,6 @@
     "Unable to get the email modify rule.": "Không thể lấy quy tắc sửa đổi email.",
     "Unable to get the phone modify rule.": "Không thể thay đổi quy tắc trên điện thoại.",
     "Unknown type": "Loại không xác định",
-    "Wrong parameter": "Tham số không đúng",
     "Wrong verification code!": "Mã xác thực sai!",
     "You should verify your code in %d min!": "Bạn nên kiểm tra mã của mình trong %d phút!",
     "the user does not exist, please sign up first": "Người dùng không tồn tại, vui lòng đăng ký trước"
