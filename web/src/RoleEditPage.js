@@ -111,7 +111,7 @@ class RoleEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.role.owner} onChange={(value => {this.updateRoleField("owner", value);})}
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.role.owner} onChange={(value => {this.updateRoleField("owner", value);})}
               options={this.state.organizations.map((organization) => Setting.getOption(organization.name, organization.name))
               } />
           </Col>

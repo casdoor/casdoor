@@ -40,7 +40,7 @@ class ProductBuyPage extends React.Component {
       return;
     }
 
-    ProductBackend.getProduct("admin", this.state.productName)
+    ProductBackend.getProduct(this.props.account.owner, this.state.productName)
       .then((product) => {
         this.setState({
           product: product,

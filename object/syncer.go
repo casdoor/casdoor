@@ -55,9 +55,9 @@ type Syncer struct {
 	Adapter *Adapter `xorm:"-" json:"-"`
 }
 
-func GetSyncerCount(owner, field, value string) int {
+func GetSyncerCount(owner, organization, field, value string) int {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Syncer{})
+	count, err := session.Count(&Syncer{Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -75,10 +75,20 @@ func GetSyncers(owner string) []*Syncer {
 	return syncers
 }
 
-func GetPaginationSyncers(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Syncer {
+func GetOrganizationSyncers(owner, organization string) []*Syncer {
+	syncers := []*Syncer{}
+	err := adapter.Engine.Desc("created_time").Find(&syncers, &Syncer{Owner: owner, Organization: organization})
+	if err != nil {
+		panic(err)
+	}
+
+	return syncers
+}
+
+func GetPaginationSyncers(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Syncer {
 	syncers := []*Syncer{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&syncers)
+	err := session.Find(&syncers, &Syncer{Organization: organization})
 	if err != nil {
 		panic(err)
 	}

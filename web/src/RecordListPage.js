@@ -175,7 +175,7 @@ class RecordListPage extends BaseListPage {
     ];
 
     if (Setting.isLocalAdminUser(this.props.account)) {
-      columns = columns.filter(column => column.key !== "name" && column.key !== "organization");
+      columns = columns.filter(column => column.key !== "name");
     }
 
     const paginationProps = {

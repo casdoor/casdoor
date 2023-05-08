@@ -94,7 +94,7 @@ class TokenEditPage extends React.Component {
             {i18next.t("general:Organization")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.token.organization} onChange={e => {
+            <Input disabled={!Setting.isAdminUser(this.props.account)} value={this.state.token.organization} onChange={e => {
               this.updateTokenField("organization", e.target.value);
             }} />
           </Col>

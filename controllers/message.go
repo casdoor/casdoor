@@ -41,7 +41,7 @@ func (c *ApiController) GetMessages() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	chat := c.Input().Get("chat")
-
+	organization := c.Input().Get("organization")
 	if limit == "" || page == "" {
 		var messages []*object.Message
 		if chat == "" {
@@ -54,8 +54,8 @@ func (c *ApiController) GetMessages() {
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetMessageCount(owner, field, value)))
-		messages := object.GetMaskedMessages(object.GetPaginationMessages(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetMessageCount(owner, organization, field, value)))
+		messages := object.GetMaskedMessages(object.GetPaginationMessages(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder))
 		c.ResponseOk(messages, paginator.Nums())
 	}
 }

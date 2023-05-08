@@ -46,9 +46,9 @@ type CasbinAdapter struct {
 	Adapter *xormadapter.Adapter `xorm:"-" json:"-"`
 }
 
-func GetCasbinAdapterCount(owner, field, value string) int {
+func GetCasbinAdapterCount(owner, organization, field, value string) int {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&CasbinAdapter{})
+	count, err := session.Count(&CasbinAdapter{Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -56,9 +56,9 @@ func GetCasbinAdapterCount(owner, field, value string) int {
 	return int(count)
 }
 
-func GetCasbinAdapters(owner string) []*CasbinAdapter {
+func GetCasbinAdapters(owner string, organization string) []*CasbinAdapter {
 	adapters := []*CasbinAdapter{}
-	err := adapter.Engine.Where("owner = ?", owner).Find(&adapters)
+	err := adapter.Engine.Where("owner = ? and organization = ?", owner, organization).Find(&adapters)
 	if err != nil {
 		panic(err)
 	}
@@ -66,10 +66,10 @@ func GetCasbinAdapters(owner string) []*CasbinAdapter {
 	return adapters
 }
 
-func GetPaginationCasbinAdapters(owner string, page, limit int, field, value, sort, order string) []*CasbinAdapter {
+func GetPaginationCasbinAdapters(owner, organization string, page, limit int, field, value, sort, order string) []*CasbinAdapter {
 	session := GetSession(owner, page, limit, field, value, sort, order)
 	adapters := []*CasbinAdapter{}
-	err := session.Find(&adapters)
+	err := session.Find(&adapters, &CasbinAdapter{Organization: organization})
 	if err != nil {
 		panic(err)
 	}

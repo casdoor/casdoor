@@ -42,9 +42,9 @@ type Webhook struct {
 	IsEnabled      bool      `json:"isEnabled"`
 }
 
-func GetWebhookCount(owner, field, value string) int {
+func GetWebhookCount(owner, organization, field, value string) int {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Webhook{})
+	count, err := session.Count(&Webhook{Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -52,9 +52,9 @@ func GetWebhookCount(owner, field, value string) int {
 	return int(count)
 }
 
-func GetWebhooks(owner string) []*Webhook {
+func GetWebhooks(owner string, organization string) []*Webhook {
 	webhooks := []*Webhook{}
-	err := adapter.Engine.Desc("created_time").Find(&webhooks, &Webhook{Owner: owner})
+	err := adapter.Engine.Desc("created_time").Find(&webhooks, &Webhook{Owner: owner, Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -62,10 +62,10 @@ func GetWebhooks(owner string) []*Webhook {
 	return webhooks
 }
 
-func GetPaginationWebhooks(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Webhook {
+func GetPaginationWebhooks(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Webhook {
 	webhooks := []*Webhook{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&webhooks)
+	err := session.Find(&webhooks, &Webhook{Organization: organization})
 	if err != nil {
 		panic(err)
 	}

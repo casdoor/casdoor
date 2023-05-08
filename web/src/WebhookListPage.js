@@ -29,7 +29,7 @@ class WebhookListPage extends BaseListPage {
       owner: "admin", // this.props.account.webhookname,
       name: `webhook_${randomName}`,
       createdTime: moment().format(),
-      organization: "built-in",
+      organization: this.props.account.owner,
       url: "https://example.com/callback",
       method: "POST",
       contentType: "application/json",
@@ -240,7 +240,7 @@ class WebhookListPage extends BaseListPage {
       value = params.contentType;
     }
     this.setState({loading: true});
-    WebhookBackend.getWebhooks("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    WebhookBackend.getWebhooks("admin", Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
