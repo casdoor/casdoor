@@ -31,6 +31,7 @@ import (
 // @router /get-chats [get]
 func (c *ApiController) GetChats() {
 	owner := c.Input().Get("owner")
+	owner = "admin"
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
 	field := c.Input().Get("field")

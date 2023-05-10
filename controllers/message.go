@@ -107,9 +107,9 @@ func (c *ApiController) GetMessageAnswer() {
 		return
 	}
 
-	chatId := util.GetId(message.Owner, message.Chat)
+	chatId := util.GetId("admin", message.Chat)
 	chat := object.GetChat(chatId)
-	if chat == nil {
+	if chat == nil || chat.Organization != message.Organization {
 		c.ResponseErrorStream(fmt.Sprintf(c.T("chat:The chat: %s is not found"), chatId))
 		return
 	}
@@ -144,11 +144,17 @@ func (c *ApiController) GetMessageAnswer() {
 	authToken := provider.ClientSecret
 	question := questionMessage.Text
 	var stringBuilder strings.Builder
+
+	fmt.Printf("Question: [%s]\n", questionMessage.Text)
+	fmt.Printf("Answer: [")
+
 	err := ai.QueryAnswerStream(authToken, question, c.Ctx.ResponseWriter, &stringBuilder)
 	if err != nil {
 		c.ResponseErrorStream(err.Error())
 		return
 	}
+
+	fmt.Printf("]\n")
 
 	event := fmt.Sprintf("event: end\ndata: %s\n\n", "end")
 	_, err = c.Ctx.ResponseWriter.Write([]byte(event))
@@ -157,9 +163,6 @@ func (c *ApiController) GetMessageAnswer() {
 	}
 
 	answer := stringBuilder.String()
-
-	fmt.Printf("Question: [%s]\n", questionMessage.Text)
-	fmt.Printf("Answer: [%s]\n", answer)
 
 	message.Text = answer
 	object.UpdateMessage(message.GetId(), message)
@@ -202,10 +205,18 @@ func (c *ApiController) AddMessage() {
 		return
 	}
 
+	var chat *object.Chat
+	if message.Chat != "" {
+		chatId := util.GetId("admin", message.Chat)
+		chat = object.GetChat(chatId)
+		if chat == nil || chat.Organization != message.Organization {
+			c.ResponseError(fmt.Sprintf(c.T("chat:The chat: %s is not found"), chatId))
+			return
+		}
+	}
+
 	affected := object.AddMessage(&message)
 	if affected {
-		chatId := util.GetId(message.Owner, message.Chat)
-		chat := object.GetChat(chatId)
 		if chat != nil && chat.Type == "AI" {
 			answerMessage := &object.Message{
 				Owner:        message.Owner,
