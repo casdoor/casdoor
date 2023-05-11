@@ -236,6 +236,17 @@ func (c *ApiController) UploadResource() {
 		user.Avatar = fileUrl
 		object.UpdateUser(user.GetId(), user, []string{"avatar"}, false)
 	case "termsOfUse":
+		user := object.GetUserNoCheck(util.GetId(owner, username))
+		if user == nil {
+			c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(owner, username)))
+			return
+		}
+
+		if !user.IsAdminUser() {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+
 		_, applicationId := util.GetOwnerAndNameFromIdNoCheck(strings.TrimRight(fullFilePath, ".html"))
 		applicationObj := object.GetApplication(applicationId)
 		applicationObj.TermsOfUse = fileUrl
