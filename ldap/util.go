@@ -74,6 +74,15 @@ func getUsername(filter string) string {
 	return name
 }
 
+func stringInSlice(value string, list []string) bool {
+	for _, item := range list {
+		if item == value {
+			return true
+		}
+	}
+	return false
+}
+
 func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) {
 	r := m.GetSearchRequest()
 
@@ -94,13 +103,32 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 			return nil, ldap.LDAPResultInsufficientAccessRights
 		}
 	} else {
-		hasPermission, err := object.CheckUserPermission(fmt.Sprintf("%s/%s", m.Client.OrgName, m.Client.UserName), fmt.Sprintf("%s/%s", org, name), true, "en")
+		requestUserId := util.GetId(m.Client.OrgName, m.Client.UserName)
+		userId := util.GetId(org, name)
+
+		hasPermission, err := object.CheckUserPermission(requestUserId, userId, true, "en")
 		if !hasPermission {
 			log.Printf("ErrMsg = %v", err.Error())
 			return nil, ldap.LDAPResultInsufficientAccessRights
 		}
-		user := object.GetUser(util.GetId(org, name))
-		filteredUsers = append(filteredUsers, user)
+
+		user := object.GetUser(userId)
+		if user != nil {
+			filteredUsers = append(filteredUsers, user)
+			return filteredUsers, ldap.LDAPResultSuccess
+		}
+
+		organization := object.GetOrganization(util.GetId("admin", org))
+		if organization == nil {
+			return nil, ldap.LDAPResultNoSuchObject
+		}
+
+		if !stringInSlice(name, organization.Tags) {
+			return nil, ldap.LDAPResultNoSuchObject
+		}
+
+		users := object.GetUsersByTag(org, name)
+		filteredUsers = append(filteredUsers, users...)
 		return filteredUsers, ldap.LDAPResultSuccess
 	}
 }
@@ -130,12 +158,16 @@ func getAttribute(attributeName string, user *object.User) message.AttributeValu
 		return message.AttributeValue(user.Name)
 	case "uid":
 		return message.AttributeValue(user.Name)
+	case "displayname":
+		return message.AttributeValue(user.DisplayName)
 	case "email":
 		return message.AttributeValue(user.Email)
 	case "mail":
 		return message.AttributeValue(user.Email)
 	case "mobile":
 		return message.AttributeValue(user.Phone)
+	case "title":
+		return message.AttributeValue(user.Tag)
 	case "userPassword":
 		return message.AttributeValue(getUserPasswordWithType(user))
 	default:

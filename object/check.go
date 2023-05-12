@@ -282,6 +282,10 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 	if userId != "" {
 		targetUser := GetUser(userId)
 		if targetUser == nil {
+			if strings.HasPrefix(requestUserId, "built-in/") {
+				return true, nil
+			}
+
 			return false, fmt.Errorf(i18n.Translate(lang, "general:The user: %s doesn't exist"), userId)
 		}
 

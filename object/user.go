@@ -250,6 +250,16 @@ func GetUsers(owner string) []*User {
 	return users
 }
 
+func GetUsersByTag(owner string, tag string) []*User {
+	users := []*User{}
+	err := adapter.Engine.Desc("created_time").Find(&users, &User{Owner: owner, Tag: tag})
+	if err != nil {
+		panic(err)
+	}
+
+	return users
+}
+
 func GetSortedUsers(owner string, sorter string, limit int) []*User {
 	users := []*User{}
 	err := adapter.Engine.Desc(sorter).Limit(limit, 0).Find(&users, &User{Owner: owner})
