@@ -106,6 +106,7 @@ class ApplicationEditPage extends React.Component {
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
       samlMetadata: null,
       isAuthorized: true,
+      apps: [],
     };
   }
 
@@ -115,6 +116,16 @@ class ApplicationEditPage extends React.Component {
     this.getCerts();
     this.getProviders();
     this.getSamlMetadata();
+    this.getApplications();
+  }
+
+  getApplications() {
+    ApplicationBackend.getApplications("admin", "0", 100000)
+      .then((application) => {
+        this.setState({
+          apps: application.data,
+        });
+      });
   }
 
   getApplication() {
@@ -217,6 +228,22 @@ class ApplicationEditPage extends React.Component {
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
+
+        <Row style={{marginTop: "10px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {/* {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} : */}
+            继承父级模板 :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.application.parentId} onChange={(value => {this.updateApplicationField("parentId", value);})}>
+              <Option key="" value="">Empty</Option>
+              {
+                this.state.apps.map((organization, index) => <Option key={index} value={organization.owner + "/" + organization.name}>{organization.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+
         <Row style={{marginTop: "10px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :

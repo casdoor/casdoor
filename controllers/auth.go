@@ -176,6 +176,14 @@ func (c *ApiController) GetApplicationLogin() {
 	if msg != "" {
 		c.ResponseError(msg, application)
 	} else {
+		if application.ParentId != "" {
+			parent := object.GetApplication(application.ParentId)
+			if parent != nil {
+				parent.ClientId = application.ClientId
+				parent.ClientSecret = application.ClientSecret
+				application = parent
+			}
+		}
 		c.ResponseOk(application)
 	}
 }

@@ -76,6 +76,7 @@ type Application struct {
 	FormOffset           int        `json:"formOffset"`
 	FormSideHtml         string     `xorm:"mediumtext" json:"formSideHtml"`
 	FormBackgroundUrl    string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
+	ParentId             string     `xorm:"varchar(100)" json:"parentId"`
 }
 
 func GetApplicationCount(owner, field, value string) int {
