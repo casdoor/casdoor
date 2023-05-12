@@ -21,26 +21,30 @@ import (
 )
 
 func (c *ApiController) Enforce() {
-	var permissionRule object.PermissionRule
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissionRule)
+	permissionId := c.Input().Get("permissionId")
+
+	var request object.CasbinRequest
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = object.Enforce(&permissionRule)
+	c.Data["json"] = object.Enforce(permissionId, &request)
 	c.ServeJSON()
 }
 
 func (c *ApiController) BatchEnforce() {
-	var permissionRules []object.PermissionRule
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissionRules)
+	permissionId := c.Input().Get("permissionId")
+
+	var requests []object.CasbinRequest
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = object.BatchEnforce(permissionRules)
+	c.Data["json"] = object.BatchEnforce(permissionId, &requests)
 	c.ServeJSON()
 }
 

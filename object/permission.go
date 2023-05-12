@@ -15,8 +15,6 @@
 package object
 
 import (
-	"fmt"
-
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -63,30 +61,6 @@ const (
 
 func (p *Permission) GetId() string {
 	return util.GetId(p.Owner, p.Name)
-}
-
-func (p *PermissionRule) GetRequest(adapterName string, permissionId string) ([]interface{}, error) {
-	request := []interface{}{p.V0, p.V1, p.V2}
-
-	if p.V3 != "" {
-		request = append(request, p.V3)
-	}
-
-	if p.V4 != "" {
-		request = append(request, p.V4)
-	}
-
-	if adapterName == builtInAdapter {
-		if p.V5 != "" {
-			return nil, fmt.Errorf("too many parameters. The maximum parameter number cannot exceed %d", builtInAvailableField)
-		}
-		return request, nil
-	} else {
-		if p.V5 != "" {
-			request = append(request, p.V5)
-		}
-		return request, nil
-	}
 }
 
 func GetPermissionCount(owner, field, value string) int {
@@ -264,6 +238,16 @@ func GetPermissionsByRole(roleId string) []*Permission {
 func GetPermissionsBySubmitter(owner string, submitter string) []*Permission {
 	permissions := []*Permission{}
 	err := adapter.Engine.Desc("created_time").Find(&permissions, &Permission{Owner: owner, Submitter: submitter})
+	if err != nil {
+		panic(err)
+	}
+
+	return permissions
+}
+
+func GetPermissionsByModel(owner string, model string) []*Permission {
+	permissions := []*Permission{}
+	err := adapter.Engine.Desc("created_time").Find(&permissions, &Permission{Owner: owner, Model: model})
 	if err != nil {
 		panic(err)
 	}
