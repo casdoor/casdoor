@@ -18,10 +18,12 @@ import (
 	"encoding/json"
 
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 func (c *ApiController) Enforce() {
 	permissionId := c.Input().Get("permissionId")
+	modelId := c.Input().Get("modelId")
 
 	var request object.CasbinRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
@@ -30,12 +32,25 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
-	c.Data["json"] = object.Enforce(permissionId, &request)
-	c.ServeJSON()
+	if permissionId != "" {
+		c.Data["json"] = object.Enforce(permissionId, &request)
+		c.ServeJSON()
+	} else {
+		owner, modelName := util.GetOwnerAndNameFromId(modelId)
+		permissions := object.GetPermissionsByModel(owner, modelName)
+
+		res := []bool{}
+		for _, permission := range permissions {
+			res = append(res, object.Enforce(permission.GetId(), &request))
+		}
+		c.Data["json"] = res
+		c.ServeJSON()
+	}
 }
 
 func (c *ApiController) BatchEnforce() {
 	permissionId := c.Input().Get("permissionId")
+	modelId := c.Input().Get("modelId")
 
 	var requests []object.CasbinRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
@@ -44,8 +59,20 @@ func (c *ApiController) BatchEnforce() {
 		return
 	}
 
-	c.Data["json"] = object.BatchEnforce(permissionId, &requests)
-	c.ServeJSON()
+	if permissionId != "" {
+		c.Data["json"] = object.BatchEnforce(permissionId, &requests)
+		c.ServeJSON()
+	} else {
+		owner, modelName := util.GetOwnerAndNameFromId(modelId)
+		permissions := object.GetPermissionsByModel(owner, modelName)
+
+		res := [][]bool{}
+		for _, permission := range permissions {
+			res = append(res, object.BatchEnforce(permission.GetId(), &requests))
+		}
+		c.Data["json"] = res
+		c.ServeJSON()
+	}
 }
 
 func (c *ApiController) GetAllObjects() {
