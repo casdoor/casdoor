@@ -671,6 +671,27 @@ class ApplicationEditPage extends React.Component {
             </Popover>
           </Col>
         </Row>
+        <Row>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Form CSS Mobile"), i18next.t("application:Form CSS Mobile - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <Popover placement="right" content={
+              <div style={{width: "900px", height: "300px"}} >
+                <CodeMirror value={this.state.application.formCssMobile === "" ? template : this.state.application.formCssMobile}
+                  options={{mode: "css", theme: "material-darker"}}
+                  onBeforeChange={(editor, data, value) => {
+                    this.updateApplicationField("formCssMobile", value);
+                  }}
+                />
+              </div>
+            } title={i18next.t("application:Form CSS Mobile - Edit")} trigger="click">
+              <Input value={this.state.application.formCssMobile} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("formCssMobile", e.target.value);
+              }} />
+            </Popover>
+          </Col>
+        </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:Form position"), i18next.t("application:Form position - Tooltip"))} :
