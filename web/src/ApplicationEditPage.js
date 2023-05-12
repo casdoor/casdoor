@@ -106,7 +106,7 @@ class ApplicationEditPage extends React.Component {
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
       samlMetadata: null,
       isAuthorized: true,
-      apps: [],
+      applications: [],
     };
   }
 
@@ -120,10 +120,10 @@ class ApplicationEditPage extends React.Component {
   }
 
   getApplications() {
-    ApplicationBackend.getApplications("admin", "0", 100000)
-      .then((application) => {
+    ApplicationBackend.getApplicationsByOrganization("admin", this.state.owner)
+      .then((applications) => {
         this.setState({
-          apps: application.data,
+          applications: applications,
         });
       });
   }
@@ -238,7 +238,7 @@ class ApplicationEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.application.parentId} onChange={(value => {this.updateApplicationField("parentId", value);})}>
               <Option key="" value="">Empty</Option>
               {
-                this.state.apps.map((organization, index) => <Option key={index} value={organization.owner + "/" + organization.name}>{organization.name}</Option>)
+                this.state.applications.map((application, index) => <Option key={index} value={application.owner + "/" + application.name}>{application.name}</Option>)
               }
             </Select>
           </Col>
