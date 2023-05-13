@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"net/http"
 	"strings"
 	"time"
 
@@ -78,7 +79,10 @@ func QueryAnswerStream(authToken string, question string, writer io.Writer, buil
 	client := getProxyClientFromToken(authToken)
 
 	ctx := context.Background()
-
+	flusher, ok := writer.(http.Flusher)
+	if !ok {
+		return fmt.Errorf("writer does not implement http.Flusher")
+	}
 	// https://platform.openai.com/tokenizer
 	// https://github.com/pkoukk/tiktoken-go#available-encodings
 	promptTokens, err := getTokenSize(openai.GPT3TextDavinci003, question)
@@ -128,7 +132,7 @@ func QueryAnswerStream(authToken string, question string, writer io.Writer, buil
 		if _, err = fmt.Fprintf(writer, "data: %s\n\n", data); err != nil {
 			return err
 		}
-
+		flusher.Flush()
 		// Append the response to the strings.Builder
 		builder.WriteString(data)
 	}
