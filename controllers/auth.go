@@ -181,6 +181,15 @@ func (c *ApiController) GetApplicationLogin() {
 			if parent != nil {
 				parent.ClientId = application.ClientId
 				parent.ClientSecret = application.ClientSecret
+				if application.IsUseDisplayName {
+					parent.DisplayName = application.DisplayName
+				}
+				if application.IsUseHomepageUrl {
+					parent.HomepageUrl = application.HomepageUrl
+				}
+				if application.IsUseRedirectUris {
+					parent.RedirectUris = application.RedirectUris
+				}
 				application = parent
 			}
 		}

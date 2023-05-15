@@ -77,6 +77,9 @@ type Application struct {
 	FormSideHtml         string     `xorm:"mediumtext" json:"formSideHtml"`
 	FormBackgroundUrl    string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
 	ParentId             string     `xorm:"varchar(100)" json:"parentId"`
+	IsUseDisplayName     bool       `xorm:"bool" json:"isUseDisplayName"`
+	IsUseHomepageUrl     bool       `xorm:"bool" json:"isUseHomepageUrl"`
+	IsUseRedirectUris    bool       `xorm:"bool" json:"isUseRedirectUris"`
 }
 
 func GetApplicationCount(owner, field, value string) int {
