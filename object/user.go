@@ -169,6 +169,7 @@ type User struct {
 	SigninWrongTimes    int    `json:"signinWrongTimes"`
 
 	ManagedAccounts []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
+	PasswordType    string           `xorm:"varchar(100)" json:"passwordType"`
 }
 
 type Userinfo struct {
