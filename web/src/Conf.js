@@ -28,3 +28,5 @@ export const ThemeDefault = {
   borderRadius: 6,
   isCompact: false,
 };
+
+export const CustomFooter = null;
