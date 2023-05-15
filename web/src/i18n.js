@@ -23,7 +23,7 @@ import ja from "./locales/ja/data.json";
 import ko from "./locales/ko/data.json";
 import ru from "./locales/ru/data.json";
 import vi from "./locales/vi/data.json";
-import pt from "./locales/pt-br/data.json";
+import pt from "./locales/pt/data.json";
 import * as Conf from "./Conf";
 import {initReactI18next} from "react-i18next";
 
@@ -38,7 +38,7 @@ const resources = {
   ko: ko,
   ru: ru,
   vi: vi,
-  pt: pt
+  pt: pt,
 };
 
 function initLanguage() {
