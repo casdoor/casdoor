@@ -175,7 +175,7 @@ class ApplicationListPage extends BaseListPage {
         // width: '600px',
         render: (text, record, index) => {
           const providers = text;
-          if (providers.length === 0) {
+          if (providers === null || providers.length === 0) {
             return `(${i18next.t("general:empty")})`;
           }
 

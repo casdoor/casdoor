@@ -559,7 +559,7 @@ class LoginPage extends React.Component {
           </div>
           <br />
           {
-            application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
+            application.providers?.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
               return ProviderButton.renderProviderLogo(providerItem.provider, application, 40, 10, "big", this.props.location);
             })
           }
@@ -818,7 +818,7 @@ class LoginPage extends React.Component {
       );
     }
 
-    const visibleOAuthProviderItems = application.providers.filter(providerItem => this.isProviderVisible(providerItem));
+    const visibleOAuthProviderItems = (application.providers === null) ? [] : application.providers.filter(providerItem => this.isProviderVisible(providerItem));
     if (this.props.preview !== "auto" && !application.enablePassword && visibleOAuthProviderItems.length === 1) {
       Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signup"));
       return (

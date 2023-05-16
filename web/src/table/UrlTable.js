@@ -60,6 +60,10 @@ class UrlTable extends React.Component {
   }
 
   renderTable(table) {
+    if (table === null) {
+      return null;
+    }
+
     const columns = [
       {
         title: i18next.t("application:Redirect URL"),

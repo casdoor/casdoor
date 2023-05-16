@@ -325,19 +325,19 @@ export function isSignupItemPrompted(signupItem) {
 }
 
 export function getAllPromptedProviderItems(application) {
-  return application.providers.filter(providerItem => isProviderPrompted(providerItem));
+  return application.providers?.filter(providerItem => isProviderPrompted(providerItem));
 }
 
 export function getAllPromptedSignupItems(application) {
-  return application.signupItems.filter(signupItem => isSignupItemPrompted(signupItem));
+  return application.signupItems?.filter(signupItem => isSignupItemPrompted(signupItem));
 }
 
 export function getSignupItem(application, itemName) {
   const signupItems = application.signupItems?.filter(signupItem => signupItem.name === itemName);
-  if (signupItems.length === 0) {
-    return null;
+  if (signupItems?.length > 0) {
+    return signupItems[0];
   }
-  return signupItems[0];
+  return null;
 }
 
 export function isValidPersonName(personName) {
@@ -409,12 +409,12 @@ export function isAffiliationPrompted(application) {
 
 export function hasPromptPage(application) {
   const providerItems = getAllPromptedProviderItems(application);
-  if (providerItems.length !== 0) {
+  if (providerItems?.length > 0) {
     return true;
   }
 
   const signupItems = getAllPromptedSignupItems(application);
-  if (signupItems.length !== 0) {
+  if (signupItems?.length > 0) {
     return true;
   }
 
