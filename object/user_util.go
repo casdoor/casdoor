@@ -77,13 +77,17 @@ func GetUserByFields(organization string, field string) *User {
 }
 
 func SetUserField(user *User, field string, value string) bool {
+	bean := make(map[string]interface{})
 	if field == "password" {
 		organization := GetOrganizationByUser(user)
 		user.UpdateUserPassword(organization)
-		value = user.Password
+		bean[strings.ToLower(field)] = user.Password
+		bean["password_type"] = user.PasswordType
+	} else {
+		bean[strings.ToLower(field)] = value
 	}
 
-	affected, err := adapter.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(map[string]interface{}{strings.ToLower(field): value})
+	affected, err := adapter.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(bean)
 	if err != nil {
 		panic(err)
 	}
