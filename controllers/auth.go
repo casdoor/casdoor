@@ -312,6 +312,11 @@ func (c *ApiController) Login() {
 
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
+			organization := object.GetOrganizationByUser(user)
+			if user != nil && organization.HasRequiredMfa() && !user.IsMfaEnabled() {
+				resp.Msg = object.RequiredMfa
+			}
+
 			record := object.NewRecord(c.Ctx)
 			record.Organization = application.Organization
 			record.User = user.Name

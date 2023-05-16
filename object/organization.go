@@ -38,6 +38,11 @@ type ThemeData struct {
 	IsEnabled    bool   `xorm:"bool" json:"isEnabled"`
 }
 
+type MfaItem struct {
+	Name string `json:"name"`
+	Rule string `json:"rule"`
+}
+
 type Organization struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -59,6 +64,7 @@ type Organization struct {
 	EnableSoftDeletion bool       `json:"enableSoftDeletion"`
 	IsProfilePublic    bool       `json:"isProfilePublic"`
 
+	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	AccountItems []*AccountItem `xorm:"varchar(3000)" json:"accountItems"`
 }
 
@@ -407,4 +413,13 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 
 	return session.Commit()
+}
+
+func (org *Organization) HasRequiredMfa() bool {
+	for _, item := range org.MfaItems {
+		if item.Rule == "Required" {
+			return true
+		}
+	}
+	return false
 }
