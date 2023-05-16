@@ -175,7 +175,11 @@ func CheckPassword(user *User, password string, lang string, options ...bool) st
 		return i18n.Translate(lang, "check:Organization does not exist")
 	}
 
-	credManager := cred.GetCredManager(user.PasswordType)
+	passwordType := user.PasswordType
+	if passwordType == "" {
+		passwordType = organization.PasswordType
+	}
+	credManager := cred.GetCredManager(passwordType)
 	if credManager != nil {
 		if organization.MasterPassword != "" {
 			if credManager.IsPasswordCorrect(password, organization.MasterPassword, "", organization.PasswordSalt) {
