@@ -33,7 +33,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal} from "../common/modal/CaptchaModal";
 import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
-import {MfaAuthVerifyForm, NextMfa} from "./MfaAuthVerifyForm";
+import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./MfaAuthVerifyForm";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -224,22 +224,25 @@ class LoginPage extends React.Component {
     }
   }
 
-  postCodeLoginAction(res) {
+  postCodeLoginAction(resp) {
     const application = this.getApplicationObj();
     const ths = this;
     const oAuthParams = Util.getOAuthGetParameters();
-    const code = res.data;
+    const code = resp.data;
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
     const noRedirect = oAuthParams.noRedirect;
-    if (Setting.hasPromptPage(application)) {
-      AuthBackend.getAccount("")
-        .then((res) => {
-          let account = null;
-          if (res.status === "ok") {
-            account = res.data;
-            account.organization = res.data2;
 
+    if (Setting.hasPromptPage(application) || resp.msg === RequiredMfa) {
+      AuthBackend.getAccount()
+        .then((res) => {
+          if (res.status === "ok") {
+            const account = res.data;
+            account.organization = res.data2;
             this.onUpdateAccount(account);
+
+            if (resp.msg === RequiredMfa) {
+              Setting.goToLink(`/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}&promptType=mfa`);
+            }
 
             if (Setting.isPromptAnswered(account, application)) {
               Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
@@ -328,10 +331,20 @@ class LoginPage extends React.Component {
             const responseType = values["type"];
 
             if (responseType === "login") {
-              Setting.showMessage("success", i18next.t("application:Logged in successfully"));
-
-              const link = Setting.getFromLink();
-              Setting.goToLink(link);
+              if (res.msg === RequiredMfa) {
+                AuthBackend.getAccount().then((res) => {
+                  if (res.status === "ok") {
+                    const account = res.data;
+                    account.organization = res.data2;
+                    this.onUpdateAccount(account);
+                  }
+                });
+                Setting.goToLink(`/prompt/${this.getApplicationObj().name}?promptType=mfa`);
+              } else {
+                Setting.showMessage("success", i18next.t("application:Logged in successfully"));
+                const link = Setting.getFromLink();
+                Setting.goToLink(link);
+              }
             } else if (responseType === "code") {
               this.postCodeLoginAction(res);
             } else if (responseType === "token" || responseType === "id_token") {
@@ -352,6 +365,7 @@ class LoginPage extends React.Component {
               }
             }
           };
+
           if (res.status === "ok") {
             callback(res);
           } else if (res.status === NextMfa) {

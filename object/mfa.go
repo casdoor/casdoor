@@ -51,6 +51,7 @@ const (
 const (
 	MfaSessionUserId = "MfaSessionUserId"
 	NextMfa          = "NextMfa"
+	RequiredMfa      = "RequiredMfa"
 )
 
 func GetMfaUtil(providerType string, config *MfaProps) MfaInterface {
