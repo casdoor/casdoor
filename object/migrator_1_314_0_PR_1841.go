@@ -20,9 +20,9 @@ import (
 	"github.com/xorm-io/xorm/migrate"
 )
 
-type Migrator_1_314_0_PR_1838 struct{}
+type Migrator_1_314_0_PR_1841 struct{}
 
-func (*Migrator_1_314_0_PR_1838) IsMigrationNeeded() bool {
+func (*Migrator_1_314_0_PR_1841) IsMigrationNeeded() bool {
 	users := []*User{}
 
 	err := adapter.Engine.Table("user").Find(&users)
@@ -39,7 +39,7 @@ func (*Migrator_1_314_0_PR_1838) IsMigrationNeeded() bool {
 	return true
 }
 
-func (*Migrator_1_314_0_PR_1838) DoMigration() *migrate.Migration {
+func (*Migrator_1_314_0_PR_1841) DoMigration() *migrate.Migration {
 	migration := migrate.Migration{
 		ID: "20230515MigrateUser--Create a new field 'passwordType' for table `user`",
 		Migrate: func(engine *xorm.Engine) error {
