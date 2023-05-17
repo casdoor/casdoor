@@ -224,6 +224,9 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours) * time.Hour)
+	if application.RefreshExpireInHours == 0 {
+		refreshExpireTime = expireTime
+	}
 
 	user = refineUser(user)
 
