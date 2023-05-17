@@ -45,7 +45,7 @@ class CertListPage extends BaseListPage {
     CertBackend.addCert(newCert)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/certs/${newCert.name}`, mode: "add"});
+          this.props.history.push({pathname: `/certs/${newCert.owner}/${newCert.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -86,7 +86,7 @@ class CertListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/certs/${text}`}>
+            <Link to={`/certs/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -176,7 +176,7 @@ class CertListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/certs/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/certs/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)}
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}

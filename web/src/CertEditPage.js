@@ -15,6 +15,7 @@
 import React from "react";
 import {Button, Card, Col, Input, InputNumber, Row, Select} from "antd";
 import * as CertBackend from "./backend/CertBackend";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import copy from "copy-to-clipboard";
@@ -29,6 +30,7 @@ class CertEditPage extends React.Component {
     this.state = {
       classes: props,
       certName: props.match.params.certName,
+      owner: props.match.params.organizationName,
       cert: null,
       organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
@@ -36,14 +38,24 @@ class CertEditPage extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
+    this.getOrganizations();
     this.getCert();
   }
 
   getCert() {
-    CertBackend.getCert(this.props.account.owner, this.state.certName)
+    CertBackend.getCert(this.state.owner, this.state.certName)
       .then((cert) => {
         this.setState({
           cert: cert,
+        });
+      });
+  }
+
+  getOrganizations() {
+    OrganizationBackend.getOrganizations("admin")
+      .then((res) => {
+        this.setState({
+          organizations: (res.msg === undefined) ? res : [],
         });
       });
   }
@@ -82,7 +94,7 @@ class CertEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.cert.owner} onChange={(value => {this.updateCertField("owner", value);})}>
-              {Setting.isAdminUser(this.props.account) ? <Option key={"admin"} value={"admin"}>{i18next.t("provider:admin (Shared)")}</Option> : null}
+              {Setting.isAdminUser(this.props.account) ? <Option key={"admin"} value={"admin"}>{i18next.t("cert:admin (Shared)")}</Option> : null}
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -230,7 +242,7 @@ class CertEditPage extends React.Component {
 
   submitCertEdit(willExist) {
     const cert = Setting.deepCopy(this.state.cert);
-    CertBackend.updateCert(this.state.cert.owner, this.state.certName, cert)
+    CertBackend.updateCert(this.state.owner, this.state.certName, cert)
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
@@ -241,7 +253,7 @@ class CertEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/certs");
           } else {
-            this.props.history.push(`/certs/${this.state.cert.name}`);
+            this.props.history.push(`/certs/${this.state.cert.owner}/${this.state.cert.name}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
