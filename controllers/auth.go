@@ -417,8 +417,15 @@ func (c *ApiController) Login() {
 			} else if provider.Category == "OAuth" {
 				// Sign up via OAuth
 				if application.EnableLinkWithEmail {
-					// find user that has the same email
-					user = object.GetUserByField(application.Organization, "email", userInfo.Email)
+					if userInfo.Email != "" {
+						// Find existing user with Email
+						user = object.GetUserByField(application.Organization, "email", userInfo.Email)
+					}
+
+					if user == nil && userInfo.Phone != "" {
+						// Find existing user with phone number
+						user = object.GetUserByField(application.Organization, "phone", userInfo.Phone)
+					}
 				}
 
 				if user == nil || user.IsDeleted {
