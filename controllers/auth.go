@@ -416,22 +416,22 @@ func (c *ApiController) Login() {
 				util.SafeGoroutine(func() { object.AddRecord(record) })
 			} else if provider.Category == "OAuth" {
 				// Sign up via OAuth
-				if !application.EnableSignUp {
-					c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support"), provider.Type, userInfo.Username, userInfo.DisplayName))
-					return
-				}
-
-				if !providerItem.CanSignUp {
-					c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up"), provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
-					return
-				}
-
 				if application.EnableLinkWithEmail {
 					// find user that has the same email
 					user = object.GetUserByField(application.Organization, "email", userInfo.Email)
 				}
 
 				if user == nil || user.IsDeleted {
+					if !application.EnableSignUp {
+						c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support"), provider.Type, userInfo.Username, userInfo.DisplayName))
+						return
+					}
+
+					if !providerItem.CanSignUp {
+						c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up"), provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
+						return
+					}
+
 					// Handle username conflicts
 					tmpUser := object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Username))
 					if tmpUser != nil {
