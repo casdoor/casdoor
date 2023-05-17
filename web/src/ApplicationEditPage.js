@@ -112,7 +112,6 @@ class ApplicationEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getApplication();
     this.getOrganizations();
-    this.getCerts();
     this.getProviders();
     this.getSamlMetadata();
   }
@@ -126,6 +125,8 @@ class ApplicationEditPage extends React.Component {
         this.setState({
           application: application,
         });
+
+        this.getCerts(application.organization);
       });
   }
 
@@ -144,8 +145,8 @@ class ApplicationEditPage extends React.Component {
       });
   }
 
-  getCerts() {
-    CertBackend.getCerts(this.props.account.owner)
+  getCerts(owner) {
+    CertBackend.getCerts(owner)
       .then((res) => {
         this.setState({
           certs: (res.msg === undefined) ? res : [],
