@@ -259,16 +259,12 @@ func LdapUsersToLdapRespUsers(users []ldapUser) []LdapRespUser {
 	return res
 }
 
-func SyncLdapUsers(owner string, respUsers []LdapRespUser, ldapId string) (*[]LdapRespUser, *[]LdapRespUser) {
-	var existUsers []LdapRespUser
-	var failedUsers []LdapRespUser
+func SyncLdapUsers(owner string, syncUsers []LdapRespUser, ldapId string) (existUsers []LdapRespUser, failedUsers []LdapRespUser, err error) {
 	var uuids []string
 
-	for _, user := range respUsers {
+	for _, user := range syncUsers {
 		uuids = append(uuids, user.Uuid)
 	}
-
-	existUuids := GetExistUuids(owner, uuids)
 
 	organization := getOrganization("admin", owner)
 	ldap := GetLdap(ldapId)
@@ -289,12 +285,19 @@ func SyncLdapUsers(owner string, respUsers []LdapRespUser, ldapId string) (*[]Ld
 	}
 	tag := strings.Join(ou, ".")
 
-	for _, respUser := range respUsers {
+	for _, syncUser := range syncUsers {
+		if syncUser.Uuid == "" {
+			failedUsers = append(failedUsers, syncUser)
+			err = errors.New("uuid of user being synced is empty")
+			continue
+		}
+
+		existUuids := GetExistUuids(owner, uuids)
 		found := false
 		if len(existUuids) > 0 {
 			for _, existUuid := range existUuids {
-				if respUser.Uuid == existUuid {
-					existUsers = append(existUsers, respUser)
+				if syncUser.Uuid == existUuid {
+					existUsers = append(existUsers, syncUser)
 					found = true
 				}
 			}
@@ -303,49 +306,39 @@ func SyncLdapUsers(owner string, respUsers []LdapRespUser, ldapId string) (*[]Ld
 		if !found {
 			newUser := &User{
 				Owner:       owner,
-				Name:        respUser.buildLdapUserName(),
+				Name:        syncUser.buildLdapUserName(),
 				CreatedTime: util.GetCurrentTime(),
-				DisplayName: respUser.buildLdapDisplayName(),
+				DisplayName: syncUser.buildLdapDisplayName(),
 				Avatar:      organization.DefaultAvatar,
-				Email:       respUser.Email,
-				Phone:       respUser.Phone,
-				Address:     []string{respUser.Address},
+				Email:       syncUser.Email,
+				Phone:       syncUser.Phone,
+				Address:     []string{syncUser.Address},
 				Affiliation: affiliation,
 				Tag:         tag,
 				Score:       beego.AppConfig.DefaultInt("initScore", 2000),
-				Ldap:        respUser.Uuid,
+				Ldap:        syncUser.Uuid,
 			}
 
 			affected := AddUser(newUser)
 			if !affected {
-				failedUsers = append(failedUsers, respUser)
+				failedUsers = append(failedUsers, syncUser)
 				continue
 			}
 		}
 	}
 
-	return &existUsers, &failedUsers
+	return existUsers, failedUsers, err
 }
 
 func GetExistUuids(owner string, uuids []string) []string {
-	var users []User
 	var existUuids []string
-	existUuidSet := make(map[string]struct{})
 
-	err := adapter.Engine.Where(fmt.Sprintf("ldap IN (%s) AND owner = ?", "'"+strings.Join(uuids, "','")+"'"), owner).Find(&users)
+	err := adapter.Engine.Table("user").Where("owner = ?", owner).Cols("ldap").
+		In("ldap", uuids).Select("DISTINCT ldap").Find(&existUuids)
 	if err != nil {
 		panic(err)
 	}
 
-	if len(users) > 0 {
-		for _, result := range users {
-			existUuidSet[result.Ldap] = struct{}{}
-		}
-	}
-
-	for uuid := range existUuidSet {
-		existUuids = append(existUuids, uuid)
-	}
 	return existUuids
 }
 

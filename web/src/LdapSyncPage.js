@@ -94,7 +94,7 @@ class LdapSyncPage extends React.Component {
         if (res.status === "ok") {
           this.setState((prevState) => {
             prevState.users = res.data.users;
-            prevState.existUuids = res.data2?.length > 0 ? res.data2 : [];
+            prevState.existUuids = res.data2?.length > 0 ? res.data2.filter(uuid => uuid !== "") : [];
             return prevState;
           });
         } else {
@@ -210,7 +210,7 @@ class LdapSyncPage extends React.Component {
         });
       },
       getCheckboxProps: record => ({
-        disabled: this.state.existUuids.indexOf(record.uuid) !== -1,
+        disabled: this.state.existUuids.indexOf(record.uuid) !== -1 || record.uidNumber === "",
       }),
     };
 
