@@ -235,6 +235,16 @@ func GetPermissionsByRole(roleId string) []*Permission {
 	return permissions
 }
 
+func GetPermissionsByResource(resourceId string) []*Permission {
+	permissions := []*Permission{}
+	err := adapter.Engine.Where("resources like ?", "%"+resourceId+"\"%").Find(&permissions)
+	if err != nil {
+		panic(err)
+	}
+
+	return permissions
+}
+
 func GetPermissionsBySubmitter(owner string, submitter string) []*Permission {
 	permissions := []*Permission{}
 	err := adapter.Engine.Desc("created_time").Find(&permissions, &Permission{Owner: owner, Submitter: submitter})
