@@ -259,7 +259,7 @@ class WebhookEditPage extends React.Component {
               }} >
               {
                 (
-                  ["signup", "login", "logout", "add-user", "update-user", "add-organization", "update-organization", "add-provider", "update-provider", "update-subscription"].map((option, index) => {
+                  ["signup", "login", "logout", "add-user", "update-user", "delete-user", "add-organization", "update-organization", "delete-organization", "add-application", "update-application", "delete-application", "add-provider", "update-provider", "delete-provider", "update-subscription"].map((option, index) => {
                     return (
                       <Option key={option} value={option}>{option}</Option>
                     );
