@@ -37,8 +37,8 @@ func (c *ApiController) Enforce() {
 		c.Data["json"] = object.Enforce(permissionId, &request)
 		c.ServeJSON()
 		return
-	} 
-	
+	}
+
 	permissions := make([]*object.Permission, 0)
 	res := []bool{}
 
