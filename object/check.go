@@ -321,6 +321,10 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 }
 
 func CheckAccessPermission(userId string, application *Application) (bool, error) {
+	if userId == "built-in/admin" {
+		return true, nil
+	}
+
 	permissions := GetPermissions(application.Organization)
 	allowed := true
 	var err error
