@@ -23,10 +23,20 @@ import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class CertListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    this.setState({
+      owner: Setting.isAdminUser(this.props.account) ? "admin" : this.props.account.owner,
+    });
+  }
+
   newCert() {
     const randomName = Setting.getRandomName();
     return {
-      owner: this.props.account.owner, // this.props.account.certname,
+      owner: this.state.owner,
       name: `cert_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Cert - ${randomName}`,
