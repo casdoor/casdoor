@@ -16,6 +16,9 @@ package object
 
 import (
 	"fmt"
+	"strconv"
+
+	"github.com/casdoor/casdoor/conf"
 
 	"github.com/casdoor/casdoor/cred"
 	"github.com/casdoor/casdoor/i18n"
@@ -422,4 +425,12 @@ func (org *Organization) HasRequiredMfa() bool {
 		}
 	}
 	return false
+}
+
+func (org *Organization) GetInitScore() (int, error) {
+	if org != nil {
+		return org.InitScore, nil
+	} else {
+		return strconv.Atoi(conf.GetConfigString("initScore"))
+	}
 }

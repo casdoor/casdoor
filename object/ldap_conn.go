@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 	"github.com/thanhpk/randstr"
@@ -35,35 +34,26 @@ type LdapConn struct {
 //	Cn        string
 //}
 
-type ldapUser struct {
-	UidNumber string
-	Uid       string
-	Cn        string
-	GidNumber string
+type LdapUser struct {
+	UidNumber string `json:"uidNumber"`
+	Uid       string `json:"uid"`
+	Cn        string `json:"cn"`
+	GidNumber string `json:"gidNumber"`
 	// Gcn                   string
-	Uuid                  string
-	DisplayName           string
+	Uuid                  string `json:"uuid"`
+	DisplayName           string `json:"displayName"`
 	Mail                  string
-	Email                 string
+	Email                 string `json:"email"`
 	EmailAddress          string
 	TelephoneNumber       string
 	Mobile                string
 	MobileTelephoneNumber string
 	RegisteredAddress     string
 	PostalAddress         string
-}
 
-type LdapRespUser struct {
-	UidNumber string `json:"uidNumber"`
-	Uid       string `json:"uid"`
-	Cn        string `json:"cn"`
-	GroupId   string `json:"groupId"`
-	// GroupName string `json:"groupName"`
-	Uuid        string `json:"uuid"`
-	DisplayName string `json:"displayName"`
-	Email       string `json:"email"`
-	Phone       string `json:"phone"`
-	Address     string `json:"address"`
+	GroupId string `json:"groupId"`
+	Phone   string `json:"phone"`
+	Address string `json:"address"`
 }
 
 func (ldap *Ldap) GetLdapConn() (c *LdapConn, err error) {
@@ -136,7 +126,7 @@ func isMicrosoftAD(Conn *goldap.Conn) (bool, error) {
 	return isMicrosoft, err
 }
 
-func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]ldapUser, error) {
+func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 	SearchAttributes := []string{
 		"uidNumber", "cn", "sn", "gidNumber", "entryUUID", "displayName", "mail", "email",
 		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
@@ -159,9 +149,9 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]ldapUser, error) {
 		return nil, errors.New("no result")
 	}
 
-	var ldapUsers []ldapUser
+	var ldapUsers []LdapUser
 	for _, entry := range searchResult.Entries {
-		var user ldapUser
+		var user LdapUser
 		for _, attribute := range entry.Attributes {
 			switch attribute.Name {
 			case "uidNumber":
@@ -241,27 +231,26 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]ldapUser, error) {
 //		return groupMap, nil
 //	}
 
-func LdapUsersToLdapRespUsers(users []ldapUser) []LdapRespUser {
-	res := make([]LdapRespUser, 0)
-	for _, user := range users {
-		res = append(res, LdapRespUser{
-			UidNumber:   user.UidNumber,
-			Uid:         user.Uid,
-			Cn:          user.Cn,
-			GroupId:     user.GidNumber,
-			Uuid:        user.Uuid,
-			DisplayName: user.DisplayName,
-			Email:       util.ReturnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
-			Phone:       util.ReturnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
-			Address:     util.ReturnAnyNotEmpty(user.PostalAddress, user.RegisteredAddress),
-		})
+func AutoAdjustLdapUser(users []LdapUser) []LdapUser {
+	res := make([]LdapUser, len(users))
+	for i, user := range users {
+		res[i] = LdapUser{
+			UidNumber:         user.UidNumber,
+			Uid:               user.Uid,
+			Cn:                user.Cn,
+			GroupId:           user.GidNumber,
+			Uuid:              user.GetLdapUuid(),
+			DisplayName:       user.DisplayName,
+			Email:             util.ReturnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
+			Mobile:            util.ReturnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
+			RegisteredAddress: util.ReturnAnyNotEmpty(user.PostalAddress, user.RegisteredAddress),
+		}
 	}
 	return res
 }
 
-func SyncLdapUsers(owner string, syncUsers []LdapRespUser, ldapId string) (existUsers []LdapRespUser, failedUsers []LdapRespUser, err error) {
+func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUsers []LdapUser, failedUsers []LdapUser, err error) {
 	var uuids []string
-
 	for _, user := range syncUsers {
 		uuids = append(uuids, user.Uuid)
 	}
@@ -286,12 +275,6 @@ func SyncLdapUsers(owner string, syncUsers []LdapRespUser, ldapId string) (exist
 	tag := strings.Join(ou, ".")
 
 	for _, syncUser := range syncUsers {
-		if syncUser.Uuid == "" {
-			failedUsers = append(failedUsers, syncUser)
-			err = errors.New("uuid of user being synced is empty")
-			continue
-		}
-
 		existUuids := GetExistUuids(owner, uuids)
 		found := false
 		if len(existUuids) > 0 {
@@ -304,6 +287,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapRespUser, ldapId string) (exist
 		}
 
 		if !found {
+			score, _ := organization.GetInitScore()
 			newUser := &User{
 				Owner:       owner,
 				Name:        syncUser.buildLdapUserName(),
@@ -315,7 +299,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapRespUser, ldapId string) (exist
 				Address:     []string{syncUser.Address},
 				Affiliation: affiliation,
 				Tag:         tag,
-				Score:       beego.AppConfig.DefaultInt("initScore", 2000),
+				Score:       score,
 				Ldap:        syncUser.Uuid,
 			}
 
@@ -342,7 +326,7 @@ func GetExistUuids(owner string, uuids []string) []string {
 	return existUuids
 }
 
-func (ldapUser *LdapRespUser) buildLdapUserName() string {
+func (ldapUser *LdapUser) buildLdapUserName() string {
 	user := User{}
 	uidWithNumber := fmt.Sprintf("%s_%s", ldapUser.Uid, ldapUser.UidNumber)
 	has, err := adapter.Engine.Where("name = ? or name = ?", ldapUser.Uid, uidWithNumber).Get(&user)
@@ -357,12 +341,27 @@ func (ldapUser *LdapRespUser) buildLdapUserName() string {
 		return fmt.Sprintf("%s_%s", uidWithNumber, randstr.Hex(6))
 	}
 
-	return ldapUser.Uid
+	if ldapUser.Uid != "" {
+		return ldapUser.Uid
+	}
+
+	return ldapUser.Cn
 }
 
-func (ldapUser *LdapRespUser) buildLdapDisplayName() string {
+func (ldapUser *LdapUser) buildLdapDisplayName() string {
 	if ldapUser.DisplayName != "" {
 		return ldapUser.DisplayName
+	}
+
+	return ldapUser.Cn
+}
+
+func (ldapUser *LdapUser) GetLdapUuid() string {
+	if ldapUser.Uuid != "" {
+		return ldapUser.Uuid
+	}
+	if ldapUser.Uid != "" {
+		return ldapUser.Uid
 	}
 
 	return ldapUser.Cn
