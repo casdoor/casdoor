@@ -15,9 +15,8 @@
 package object
 
 import (
-	"github.com/xorm-io/core"
-
 	"github.com/casdoor/casdoor/util"
+	"github.com/xorm-io/core"
 )
 
 type Permission struct {
