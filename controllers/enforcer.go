@@ -24,6 +24,7 @@ import (
 func (c *ApiController) Enforce() {
 	permissionId := c.Input().Get("permissionId")
 	modelId := c.Input().Get("modelId")
+	resourceId := c.Input().Get("resourceId")
 
 	var request object.CasbinRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
@@ -35,17 +36,24 @@ func (c *ApiController) Enforce() {
 	if permissionId != "" {
 		c.Data["json"] = object.Enforce(permissionId, &request)
 		c.ServeJSON()
-	} else {
-		owner, modelName := util.GetOwnerAndNameFromId(modelId)
-		permissions := object.GetPermissionsByModel(owner, modelName)
+		return
+	} 
+	
+	permissions := make([]*object.Permission, 0)
+	res := []bool{}
 
-		res := []bool{}
-		for _, permission := range permissions {
-			res = append(res, object.Enforce(permission.GetId(), &request))
-		}
-		c.Data["json"] = res
-		c.ServeJSON()
+	if modelId != "" {
+		owner, modelName := util.GetOwnerAndNameFromId(modelId)
+		permissions = object.GetPermissionsByModel(owner, modelName)
+	} else {
+		permissions = object.GetPermissionsByResource(resourceId)
 	}
+
+	for _, permission := range permissions {
+		res = append(res, object.Enforce(permission.GetId(), &request))
+	}
+	c.Data["json"] = res
+	c.ServeJSON()
 }
 
 func (c *ApiController) BatchEnforce() {

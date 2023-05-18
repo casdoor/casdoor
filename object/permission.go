@@ -15,8 +15,9 @@
 package object
 
 import (
-	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 type Permission struct {
@@ -228,6 +229,16 @@ func GetPermissionsByUser(userId string) []*Permission {
 func GetPermissionsByRole(roleId string) []*Permission {
 	permissions := []*Permission{}
 	err := adapter.Engine.Where("roles like ?", "%"+roleId+"\"%").Find(&permissions)
+	if err != nil {
+		panic(err)
+	}
+
+	return permissions
+}
+
+func GetPermissionsByResource(resourceId string) []*Permission {
+	permissions := []*Permission{}
+	err := adapter.Engine.Where("resources like ?", "%"+resourceId+"\"%").Find(&permissions)
 	if err != nil {
 		panic(err)
 	}
