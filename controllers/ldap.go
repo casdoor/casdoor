@@ -86,7 +86,10 @@ func (c *ApiController) GetLdapUsers() {
 			Phone:       util.GetMaxLenStr(user.TelephoneNumber, user.Mobile, user.MobileTelephoneNumber),
 			Address:     util.GetMaxLenStr(user.RegisteredAddress, user.PostalAddress),
 		})
-		uuids = append(uuids, user.Uuid)
+
+		if user.Uuid != "" {
+			uuids = append(uuids, user.Uuid)
+		}
 	}
 
 	existUuids := object.GetExistUuids(ldapServer.Owner, uuids)
@@ -215,10 +218,10 @@ func (c *ApiController) SyncLdapUsers() {
 
 	object.UpdateLdapSyncTime(ldapId)
 
-	exist, failed := object.SyncLdapUsers(owner, users, ldapId)
+	exist, failed, _ := object.SyncLdapUsers(owner, users, ldapId)
 
 	c.ResponseOk(&LdapSyncResp{
-		Exist:  *exist,
-		Failed: *failed,
+		Exist:  exist,
+		Failed: failed,
 	})
 }

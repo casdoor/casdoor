@@ -242,6 +242,7 @@ class LoginPage extends React.Component {
 
             if (resp.msg === RequiredMfa) {
               Setting.goToLink(`/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}&promptType=mfa`);
+              return;
             }
 
             if (Setting.isPromptAnswered(account, application)) {
