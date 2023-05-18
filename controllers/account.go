@@ -189,6 +189,29 @@ func (c *ApiController) Signup() {
 	object.DisableVerificationCode(authForm.Email)
 	object.DisableVerificationCode(checkPhone)
 
+	signupFromPricing := len(authForm.Plan) > 0 && len(authForm.Pricing) > 0
+
+	if signupFromPricing {
+		selectedPlan := object.GetPlan(fmt.Sprintf("%s/%s", organization.Name, authForm.Plan))
+		selectedPricing := object.GetPricing(fmt.Sprintf("%s/%s", organization.Name, authForm.Pricing))
+
+		valid := selectedPlan != nil && selectedPricing != nil && selectedPricing.IsEnabled
+		planBelongToPricing := false
+		if valid {
+			for _, pricingPlan := range selectedPricing.Plans {
+				if strings.Contains(pricingPlan, selectedPlan.Name) {
+					planBelongToPricing = true
+					break
+				}
+			}
+		}
+
+		if planBelongToPricing {
+			newSubscription := object.NewSubscription(organization.Name, user.Name, selectedPlan.Name, selectedPricing.TrialDuration)
+			object.AddSubscription(newSubscription)
+		}
+	}
+
 	record := object.NewRecord(c.Ctx)
 	record.Organization = application.Organization
 	record.User = user.Name

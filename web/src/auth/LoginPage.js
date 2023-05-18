@@ -437,6 +437,7 @@ class LoginPage extends React.Component {
         <Form
           name="normal_login"
           initialValues={{
+
             organization: application.organization,
             application: application.name,
             autoSignin: true,

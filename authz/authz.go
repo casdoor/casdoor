@@ -124,6 +124,9 @@ p, *, *, GET, /api/get-release, *, *
 p, *, *, GET, /api/get-default-application, *, *
 p, *, *, GET, /api/get-prometheus-info, *, *
 p, *, *, *, /api/metrics, *, *
+p, *, *, GET, /api/get-subscriptions, *, *
+p, *, *, GET, /api/get-pricing, *, *
+p, *, *, GET, /api/get-plan, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

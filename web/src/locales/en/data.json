@@ -253,6 +253,8 @@
     "Phone": "Phone",
     "Phone - Tooltip": "Phone number",
     "Phone or email": "Phone or email",
+    "Plans": "Plans",
+    "Pricings": "Pricings",
     "Preview": "Preview",
     "Preview - Tooltip": "Preview the configured effects",
     "Products": "Products",
@@ -281,6 +283,7 @@
     "Sorry, you do not have permission to access this page or logged in status invalid.": "Sorry, you do not have permission to access this page or logged in status invalid.",
     "State": "State",
     "State - Tooltip": "State",
+    "Subscriptions": "Subscriptions",
     "Successfully added": "Successfully added",
     "Successfully deleted": "Successfully deleted",
     "Successfully saved": "Successfully saved",
@@ -884,5 +887,37 @@
     "Method - Tooltip": "HTTP method",
     "New Webhook": "New Webhook",
     "Value": "Value"
+  },
+  "plan": {
+    "Sub roles - Tooltip": "Role included in the current plane",
+    "PricePerMonth": "Price per month",
+    "PricePerYear": "Price per year",
+    "PerMonth": "per month"
+  },
+  "pricing": {
+    "Sub plans": "Sub plans",
+    "Sub plans  - Tooltip": "Plans included in the current pricing",
+    "Has trial": "Has trial",
+    "Has trial - Tooltip": "Availability of the trial period after choosing a plan",
+    "Trial duration": "Trial duration",
+    "Trial duration - Tooltip": "Trial duration period",
+    "Getting started" : "Getting started",
+    "Copy pricing page URL": "Copy pricing page URL",
+    "pricing page URL copied to clipboard successfully, please paste it into the incognito window or another browser" : "pricing page URL copied to clipboard successfully, please paste it into the incognito window or another browser",
+    "days trial available!": "days trial available!",
+    "Free": "Free"
+
+  },
+  "subscription": {
+    "Duration": "Duration",
+    "Duration - Tooltip": "Subscription duration",
+    "Start Date": "Start Date",
+    "Start Date - Tooltip": "Start Date",
+    "End Date": "End Date",
+    "End Date - Tooltip": "End Date",
+    "Sub users": "Sub users",
+    "Sub users - Tooltip": "Sub users",
+    "Sub plan": "Sub plan",
+    "Sub plan - Tooltip": "Sub plan"
   }
 }
