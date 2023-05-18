@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
@@ -113,14 +112,6 @@ func (c *ApiController) RequireAdmin() (string, bool) {
 		return "", true
 	}
 	return user.Owner, true
-}
-
-func getInitScore(organization *object.Organization) (int, error) {
-	if organization != nil {
-		return organization.InitScore, nil
-	} else {
-		return strconv.Atoi(conf.GetConfigString("initScore"))
-	}
 }
 
 func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, *object.User, bool) {
