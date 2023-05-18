@@ -19,7 +19,6 @@ import (
 	"strconv"
 
 	"github.com/casdoor/casdoor/conf"
-
 	"github.com/casdoor/casdoor/cred"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
