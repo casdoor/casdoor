@@ -26,9 +26,6 @@ import dayjs from "dayjs";
 class SubscriptionEditPage extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
-    console.log("orgName:");
-    console.log(props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName);
     this.state = {
       classes: props,
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
@@ -69,7 +66,6 @@ class SubscriptionEditPage extends React.Component {
   }
 
   getUsers(organizationName) {
-    console.log(organizationName);
     UserBackend.getUsers(organizationName)
       .then((res) => {
         this.setState({
