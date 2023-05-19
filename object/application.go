@@ -150,7 +150,7 @@ func getProviderMap(owner string) map[string]*Provider {
 			UpdateProvider(provider.Owner+"/"+provider.Name, provider)
 		}
 
-		m[provider.Name] = GetMaskedProvider(provider)
+		m[provider.Name] = GetMaskedProvider(provider, true)
 	}
 	return m
 }
