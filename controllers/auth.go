@@ -335,7 +335,7 @@ func (c *ApiController) Login() {
 			return
 		}
 
-		organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", application.Organization))
+		organization := object.GetOrganization(util.GetId("admin", application.Organization))
 		provider := object.GetProvider(util.GetId("admin", authForm.Provider))
 		providerItem := application.GetProviderItem(provider.Name)
 		if !providerItem.IsProviderVisible() {
@@ -396,7 +396,7 @@ func (c *ApiController) Login() {
 		if authForm.Method == "signup" {
 			user := &object.User{}
 			if provider.Category == "SAML" {
-				user = object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Id))
+				user = object.GetUser(util.GetId(application.Organization, userInfo.Id))
 			} else if provider.Category == "OAuth" {
 				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
 			}
@@ -440,7 +440,7 @@ func (c *ApiController) Login() {
 					}
 
 					// Handle username conflicts
-					tmpUser := object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Username))
+					tmpUser := object.GetUser(util.GetId(application.Organization, userInfo.Username))
 					if tmpUser != nil {
 						uid, err := uuid.NewRandom()
 						if err != nil {

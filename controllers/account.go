@@ -84,7 +84,7 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", authForm.Organization))
+	organization := object.GetOrganization(util.GetId("admin", authForm.Organization))
 	msg := object.CheckUserSignup(application, organization, &authForm, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)

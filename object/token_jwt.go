@@ -233,7 +233,7 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 	_, originBackend := getOriginFromHost(host)
 
 	name := util.GenerateId()
-	jti := fmt.Sprintf("%s/%s", application.Owner, name)
+	jti := util.GetId(application.Owner, name)
 
 	claims := Claims{
 		User:      user,
