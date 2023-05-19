@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,19 @@
 // limitations under the License.
 
 import React from "react";
-import {DeleteOutlined, DownOutlined, LinkOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Input, Row, Table, Tooltip} from "antd";
+import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
+import {Button, Col, Row, Select, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
-class UrlTable extends React.Component {
+const {Option} = Select;
+
+const MfaItems = [
+  {name: "Phone"},
+  {name: "Email"},
+];
+
+class MfaTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -30,13 +37,13 @@ class UrlTable extends React.Component {
     this.props.onUpdateTable(table);
   }
 
-  updateField(table, index, value) {
-    table[index] = value;
+  updateField(table, index, key, value) {
+    table[index][key] = value;
     this.updateTable(table);
   }
 
   addRow(table) {
-    const row = "";
+    const row = {name: Setting.getNewRowNameForTable(table, "Please select a MFA method"), rule: "Optional"};
     if (table === undefined) {
       table = [];
     }
@@ -60,20 +67,44 @@ class UrlTable extends React.Component {
   }
 
   renderTable(table) {
-    if (table === null) {
-      return null;
-    }
-
     const columns = [
       {
-        title: i18next.t("application:Redirect URL"),
-        dataIndex: "id",
-        key: "id",
+        title: i18next.t("general:Name"),
+        dataIndex: "name",
+        key: "name",
         render: (text, record, index) => {
           return (
-            <Input prefix={<LinkOutlined />} value={text} onChange={e => {
-              this.updateField(table, index, e.target.value);
-            }} />
+            <Select virtual={false} style={{width: "100%"}}
+              value={text}
+              onChange={value => {
+                this.updateField(table, index, "name", value);
+              }} >
+              {
+                Setting.getDeduplicatedArray(MfaItems, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
+              }
+            </Select>
+          );
+        },
+      },
+      {
+        title: i18next.t("application:Rule"),
+        dataIndex: "rule",
+        key: "rule",
+        width: "100px",
+        render: (text, record, index) => {
+          return (
+            <Select virtual={false} style={{width: "100%"}}
+              value={text}
+              defaultValue="Optional"
+              options={[
+                {value: "Optional", label: i18next.t("organization:Optional")},
+                {value: "Required", label: i18next.t("organization:Required")}].map((item) =>
+                Setting.getOption(item.label, item.value))
+              }
+              onChange={value => {
+                this.updateField(table, index, "rule", value);
+              }} >
+            </Select>
           );
         },
       },
@@ -100,7 +131,7 @@ class UrlTable extends React.Component {
     ];
 
     return (
-      <Table rowKey="index" columns={columns} dataSource={table.map((row, i) => ({id: row, index: i}))} size="middle" bordered pagination={false}
+      <Table scroll={{x: "max-content"}} rowKey="name" columns={columns} dataSource={table} size="middle" bordered pagination={false}
         title={() => (
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -126,4 +157,4 @@ class UrlTable extends React.Component {
   }
 }
 
-export default UrlTable;
+export default MfaTable;

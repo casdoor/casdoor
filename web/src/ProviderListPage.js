@@ -112,6 +112,9 @@ class ProviderListPage extends BaseListPage {
         width: "150px",
         sorter: true,
         ...this.getColumnSearchProps("organization"),
+        render: (text, record, index) => {
+          return (text !== "admin") ? text : i18next.t("provider:admin (Shared)");
+        },
       },
       {
         title: i18next.t("general:Created time"),

@@ -23,16 +23,19 @@ import AffiliationSelect from "../common/select/AffiliationSelect";
 import OAuthWidget from "../common/OAuthWidget";
 import RegionSelect from "../common/select/RegionSelect";
 import {withRouter} from "react-router-dom";
+import MfaSetupPage from "./MfaSetupPage";
 
 class PromptPage extends React.Component {
   constructor(props) {
     super(props);
+    const params = new URLSearchParams(this.props.location.search);
     this.state = {
       classes: props,
       type: props.type,
       applicationName: props.applicationName ?? (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
       user: null,
+      promptType: params.get("promptType"),
     };
   }
 
@@ -225,6 +228,26 @@ class PromptPage extends React.Component {
       });
   }
 
+  renderPromptProvider(application) {
+    return <>
+      {this.renderContent(application)}
+      <div style={{marginTop: "50px"}}>
+        <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
+      </div>;
+    </>;
+  }
+
+  renderPromptMfa() {
+    return <MfaSetupPage
+      applicationName={this.getApplicationObj().name}
+      account={this.props.account}
+      current={1}
+      isAuthenticated={true}
+      isPromptPage={true}
+      redirectUri={this.getRedirectUrl()}
+    />;
+  }
+
   render() {
     const application = this.getApplicationObj();
     if (application === null) {
@@ -259,12 +282,7 @@ class PromptPage extends React.Component {
             {
               Setting.renderLogo(application)
             }
-            {
-              this.renderContent(application)
-            }
-            <div style={{marginTop: "50px"}}>
-              <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
-            </div>
+            {this.state.promptType !== "mfa" ? this.renderPromptProvider(application) : this.renderPromptMfa(application)}
           </div>
         </Card>
       </div>

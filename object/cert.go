@@ -134,6 +134,24 @@ func getCert(owner string, name string) *Cert {
 	}
 }
 
+func getCertByName(name string) *Cert {
+	if name == "" {
+		return nil
+	}
+
+	cert := Cert{Name: name}
+	existed, err := adapter.Engine.Get(&cert)
+	if err != nil {
+		panic(err)
+	}
+
+	if existed {
+		return &cert
+	} else {
+		return nil
+	}
+}
+
 func GetCert(id string) *Cert {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getCert(owner, name)
@@ -189,7 +207,7 @@ func (p *Cert) GetId() string {
 
 func getCertByApplication(application *Application) *Cert {
 	if application.Cert != "" {
-		return getCert("admin", application.Cert)
+		return getCertByName(application.Cert)
 	} else {
 		return GetDefaultCert()
 	}

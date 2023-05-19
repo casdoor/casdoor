@@ -175,7 +175,11 @@ func CheckPassword(user *User, password string, lang string, options ...bool) st
 		return i18n.Translate(lang, "check:Organization does not exist")
 	}
 
-	credManager := cred.GetCredManager(organization.PasswordType)
+	passwordType := user.PasswordType
+	if passwordType == "" {
+		passwordType = organization.PasswordType
+	}
+	credManager := cred.GetCredManager(passwordType)
 	if credManager != nil {
 		if organization.MasterPassword != "" {
 			if credManager.IsPasswordCorrect(password, organization.MasterPassword, "", organization.PasswordSalt) {
@@ -317,6 +321,10 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 }
 
 func CheckAccessPermission(userId string, application *Application) (bool, error) {
+	if userId == "built-in/admin" {
+		return true, nil
+	}
+
 	permissions := GetPermissions(application.Organization)
 	allowed := true
 	var err error

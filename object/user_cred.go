@@ -35,5 +35,6 @@ func (user *User) UpdateUserPassword(organization *Organization) {
 	if credManager != nil {
 		hashedPassword := credManager.GetHashedPassword(user.Password, user.PasswordSalt, organization.PasswordSalt)
 		user.Password = hashedPassword
+		user.PasswordType = organization.PasswordType
 	}
 }

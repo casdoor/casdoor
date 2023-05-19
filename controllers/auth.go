@@ -312,6 +312,11 @@ func (c *ApiController) Login() {
 
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
+			organization := object.GetOrganizationByUser(user)
+			if user != nil && organization.HasRequiredMfa() && !user.IsMfaEnabled() {
+				resp.Msg = object.RequiredMfa
+			}
+
 			record := object.NewRecord(c.Ctx)
 			record.Organization = application.Organization
 			record.User = user.Name
@@ -330,7 +335,7 @@ func (c *ApiController) Login() {
 			return
 		}
 
-		organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", application.Organization))
+		organization := object.GetOrganization(util.GetId("admin", application.Organization))
 		provider := object.GetProvider(util.GetId("admin", authForm.Provider))
 		providerItem := application.GetProviderItem(provider.Name)
 		if !providerItem.IsProviderVisible() {
@@ -391,7 +396,7 @@ func (c *ApiController) Login() {
 		if authForm.Method == "signup" {
 			user := &object.User{}
 			if provider.Category == "SAML" {
-				user = object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Id))
+				user = object.GetUser(util.GetId(application.Organization, userInfo.Id))
 			} else if provider.Category == "OAuth" {
 				user = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
 			}
@@ -411,24 +416,31 @@ func (c *ApiController) Login() {
 				util.SafeGoroutine(func() { object.AddRecord(record) })
 			} else if provider.Category == "OAuth" {
 				// Sign up via OAuth
-				if !application.EnableSignUp {
-					c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support"), provider.Type, userInfo.Username, userInfo.DisplayName))
-					return
-				}
-
-				if !providerItem.CanSignUp {
-					c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up"), provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
-					return
-				}
-
 				if application.EnableLinkWithEmail {
-					// find user that has the same email
-					user = object.GetUserByField(application.Organization, "email", userInfo.Email)
+					if userInfo.Email != "" {
+						// Find existing user with Email
+						user = object.GetUserByField(application.Organization, "email", userInfo.Email)
+					}
+
+					if user == nil && userInfo.Phone != "" {
+						// Find existing user with phone number
+						user = object.GetUserByField(application.Organization, "phone", userInfo.Phone)
+					}
 				}
 
 				if user == nil || user.IsDeleted {
+					if !application.EnableSignUp {
+						c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support"), provider.Type, userInfo.Username, userInfo.DisplayName))
+						return
+					}
+
+					if !providerItem.CanSignUp {
+						c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up"), provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
+						return
+					}
+
 					// Handle username conflicts
-					tmpUser := object.GetUser(fmt.Sprintf("%s/%s", application.Organization, userInfo.Username))
+					tmpUser := object.GetUser(util.GetId(application.Organization, userInfo.Username))
 					if tmpUser != nil {
 						uid, err := uuid.NewRandom()
 						if err != nil {
@@ -442,7 +454,7 @@ func (c *ApiController) Login() {
 
 					properties := map[string]string{}
 					properties["no"] = strconv.Itoa(object.GetUserCount(application.Organization, "", "") + 2)
-					initScore, err := getInitScore(organization)
+					initScore, err := organization.GetInitScore()
 					if err != nil {
 						c.ResponseError(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err).Error())
 						return

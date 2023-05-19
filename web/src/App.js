@@ -550,7 +550,7 @@ class App extends Component {
         <Route exact path="/syncers" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerListPage account={this.state.account} {...props} />)} />
         <Route exact path="/syncers/:syncerName" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/certs" render={(props) => this.renderLoginIfNotLoggedIn(<CertListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/certs/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/certs/:organizationName/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/chats" render={(props) => this.renderLoginIfNotLoggedIn(<ChatListPage account={this.state.account} {...props} />)} />
         <Route exact path="/chats/:chatName" render={(props) => this.renderLoginIfNotLoggedIn(<ChatEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/chat" render={(props) => this.renderLoginIfNotLoggedIn(<ChatPage account={this.state.account} {...props} />)} />
@@ -651,7 +651,13 @@ class App extends Component {
             textAlign: "center",
           }
         }>
-            Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
+          {
+            Conf.CustomFooter !== null ? Conf.CustomFooter : (
+              <React.Fragment>
+                Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
+              </React.Fragment>
+            )
+          }
         </Footer>
       </React.Fragment>
     );

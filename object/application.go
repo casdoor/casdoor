@@ -150,7 +150,7 @@ func getProviderMap(owner string) map[string]*Provider {
 			UpdateProvider(provider.Owner+"/"+provider.Name, provider)
 		}
 
-		m[provider.Name] = GetMaskedProvider(provider)
+		m[provider.Name] = GetMaskedProvider(provider, true)
 	}
 	return m
 }
@@ -326,6 +326,12 @@ func UpdateApplication(id string, application *Application) bool {
 }
 
 func AddApplication(application *Application) bool {
+	if application.Owner == "" {
+		application.Owner = "admin"
+	}
+	if application.Organization == "" {
+		application.Organization = "built-in"
+	}
 	if application.ClientId == "" {
 		application.ClientId = util.GenerateClientId()
 	}

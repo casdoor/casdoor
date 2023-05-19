@@ -112,7 +112,6 @@ class ApplicationEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getApplication();
     this.getOrganizations();
-    this.getCerts();
     this.getProviders();
     this.getSamlMetadata();
   }
@@ -126,6 +125,8 @@ class ApplicationEditPage extends React.Component {
         this.setState({
           application: application,
         });
+
+        this.getCerts(application.organization);
       });
   }
 
@@ -144,8 +145,8 @@ class ApplicationEditPage extends React.Component {
       });
   }
 
-  getCerts() {
-    CertBackend.getCerts(this.props.account.owner)
+  getCerts(owner) {
+    CertBackend.getCerts(owner)
       .then((res) => {
         this.setState({
           certs: (res.msg === undefined) ? res : [],
@@ -790,7 +791,7 @@ class ApplicationEditPage extends React.Component {
     let signUpUrl = `/signup/${this.state.application.name}`;
 
     let redirectUri;
-    if (this.state.application.redirectUris.length !== 0) {
+    if (this.state.application.redirectUris?.length > 0) {
       redirectUri = this.state.application.redirectUris[0];
     } else {
       redirectUri = "\"ERROR: You must specify at least one Redirect URL in 'Redirect URLs'\"";

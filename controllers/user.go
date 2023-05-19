@@ -98,7 +98,7 @@ func (c *ApiController) GetUser() {
 		owner = util.GetOwnerFromId(id)
 	}
 
-	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", owner))
+	organization := object.GetOrganization(util.GetId("admin", owner))
 	if !organization.IsProfilePublic {
 		requestUserId := c.GetSessionUsername()
 		hasPermission, err := object.CheckUserPermission(requestUserId, id, false, c.GetAcceptLanguage())

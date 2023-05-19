@@ -70,7 +70,11 @@ type Provider struct {
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
 }
 
-func GetMaskedProvider(provider *Provider) *Provider {
+func GetMaskedProvider(provider *Provider, isMaskEnabled bool) *Provider {
+	if !isMaskEnabled {
+		return provider
+	}
+
 	if provider == nil {
 		return nil
 	}
@@ -88,9 +92,13 @@ func GetMaskedProvider(provider *Provider) *Provider {
 	return provider
 }
 
-func GetMaskedProviders(providers []*Provider) []*Provider {
+func GetMaskedProviders(providers []*Provider, isMaskEnabled bool) []*Provider {
+	if !isMaskEnabled {
+		return providers
+	}
+
 	for _, provider := range providers {
-		provider = GetMaskedProvider(provider)
+		provider = GetMaskedProvider(provider, isMaskEnabled)
 	}
 	return providers
 }
@@ -310,7 +318,7 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 			continue
 		}
 		if provider.Provider.Category == "Captcha" {
-			return GetCaptchaProviderByOwnerName(fmt.Sprintf("%s/%s", provider.Provider.Owner, provider.Provider.Name), lang)
+			return GetCaptchaProviderByOwnerName(util.GetId(provider.Provider.Owner, provider.Provider.Name), lang)
 		}
 	}
 	return nil, nil
