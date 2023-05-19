@@ -90,7 +90,7 @@ func initBuiltInOrganization() bool {
 		CountryCodes:       []string{"US", "ES", "CN", "FR", "DE", "GB", "JP", "KR", "VN", "ID", "SG", "IN"},
 		DefaultAvatar:      fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
 		Tags:               []string{},
-		Languages:          []string{"en", "zh", "es", "fr", "de", "id", "ja", "ko", "ru", "vi"},
+		Languages:          []string{"en", "zh", "es", "fr", "de", "id", "ja", "ko", "ru", "vi", "pt"},
 		InitScore:          2000,
 		AccountItems:       getBuiltInAccountItems(),
 		EnableSoftDeletion: false,
