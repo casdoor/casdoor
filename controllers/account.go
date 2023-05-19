@@ -192,24 +192,7 @@ func (c *ApiController) Signup() {
 	signupFromPricing := len(authForm.Plan) > 0 && len(authForm.Pricing) > 0
 
 	if signupFromPricing {
-		selectedPlan := object.GetPlan(fmt.Sprintf("%s/%s", organization.Name, authForm.Plan))
-		selectedPricing := object.GetPricing(fmt.Sprintf("%s/%s", organization.Name, authForm.Pricing))
-
-		valid := selectedPlan != nil && selectedPricing != nil && selectedPricing.IsEnabled
-		planBelongToPricing := false
-		if valid {
-			for _, pricingPlan := range selectedPricing.Plans {
-				if strings.Contains(pricingPlan, selectedPlan.Name) {
-					planBelongToPricing = true
-					break
-				}
-			}
-		}
-
-		if planBelongToPricing {
-			newSubscription := object.NewSubscription(organization.Name, user.Name, selectedPlan.Name, selectedPricing.TrialDuration)
-			object.AddSubscription(newSubscription)
-		}
+		object.Subscribe(organization.Name, user.Name, authForm.Plan, authForm.Pricing)
 	}
 
 	record := object.NewRecord(c.Ctx)

@@ -1410,7 +1410,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/object.PlanWithOptions'
+            $ref: '#/definitions/object.Plan'
   /api/get-plans:
     get:
       tags:
@@ -3556,34 +3556,8 @@ definitions:
         format: double
       role:
         type: string
-  object.PlanWithOptions:
-    title: PlanWithOptions
-    type: object
-    properties:
-      createdTime:
-        type: string
-      currency:
-        type: string
-      description:
-        type: string
-      displayName:
-        type: string
-      name:
-        type: string
       options:
         type: array
-        items:
-          type: string
-      owner:
-        type: string
-      pricePerMonth:
-        type: number
-        format: double
-      pricePerYear:
-        type: number
-        format: double
-      role:
-        type: string
   object.Pricing:
     title: Pricing
     type: object

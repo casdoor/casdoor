@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -124,4 +125,23 @@ func DeletePricing(pricing *Pricing) bool {
 
 func (pricing *Pricing) GetId() string {
 	return fmt.Sprintf("%s/%s", pricing.Owner, pricing.Name)
+}
+
+func (pricing *Pricing) HasPlan(owner string, plan string) bool {
+	selectedPlan := GetPlan(fmt.Sprintf("%s/%s", owner, plan))
+
+	if selectedPlan == nil {
+		return false
+	}
+
+	result := false
+
+	for _, pricingPlan := range pricing.Plans {
+		if strings.Contains(pricingPlan, selectedPlan.Name) {
+			result = true
+			break
+		}
+	}
+
+	return result
 }
