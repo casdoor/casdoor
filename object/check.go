@@ -211,7 +211,7 @@ func checkLdapUserPassword(user *User, password string, lang string) string {
 		}
 
 		searchReq := goldap.NewSearchRequest(ldapServer.BaseDn, goldap.ScopeWholeSubtree, goldap.NeverDerefAliases,
-			0, 0, false, ldapServer.buildFilterString(user), []string{}, nil)
+			0, 0, false, ldapServer.buildAuthFilterString(user), []string{}, nil)
 
 		searchResult, err := conn.Conn.Search(searchReq)
 		if err != nil {

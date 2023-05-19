@@ -367,7 +367,7 @@ func (ldapUser *LdapUser) GetLdapUuid() string {
 	return ldapUser.Cn
 }
 
-func (ldap *Ldap) buildFilterString(user *User) string {
+func (ldap *Ldap) buildAuthFilterString(user *User) string {
 	if len(ldap.FilterFields) == 0 {
 		return fmt.Sprintf("(&%s(uid=%s))", ldap.Filter, user.Name)
 	}
@@ -384,6 +384,8 @@ func (ldap *Ldap) buildFilterString(user *User) string {
 func (user *User) getFieldFromLdapAttribute(attribute string) string {
 	switch attribute {
 	case "uid":
+		return user.Name
+	case "sAMAccountName":
 		return user.Name
 	case "mail":
 		return user.Email
