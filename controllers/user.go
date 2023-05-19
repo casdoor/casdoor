@@ -97,7 +97,7 @@ func (c *ApiController) GetUser() {
 	var userFromUserId *object.User
 	if userId != "" && owner != "" {
 		userFromUserId = object.GetUserByUserId(owner, userId)
-		id = userFromUserId.Owner + "/" + userFromUserId.Name
+		id = util.GetId(userFromUserId.Owner, userFromUserId.Name)
 	}
 
 	if owner == "" {
