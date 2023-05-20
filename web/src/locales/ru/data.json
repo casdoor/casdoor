@@ -253,6 +253,8 @@
     "Phone": "Телефон",
     "Phone - Tooltip": "Номер телефона",
     "Phone or email": "Phone or email",
+    "Plans": "Планы",
+    "Pricings": "Тарифы",
     "Preview": "Предварительный просмотр",
     "Preview - Tooltip": "Предварительный просмотр настроенных эффектов",
     "Products": "Продукты",
@@ -281,6 +283,7 @@
     "Sorry, you do not have permission to access this page or logged in status invalid.": "К сожалению, у вас нет разрешения на доступ к этой странице или ваш статус входа недействителен.",
     "State": "Государство",
     "State - Tooltip": "Государство",
+    "Subscriptions": "Подписки",
     "Successfully added": "Успешно добавлено",
     "Successfully deleted": "Успешно удалено",
     "Successfully saved": "Успешно сохранено",
@@ -884,5 +887,36 @@
     "Method - Tooltip": "Метод HTTP",
     "New Webhook": "Новый вебхук",
     "Value": "Значение"
+  },
+  "plan": {
+    "Sub roles - Tooltip": "Роль, включенная в текущий план",
+    "PricePerMonth": "Цена за месяц",
+    "PricePerYear": "Цена за год",
+    "PerMonth": "в месяц"
+  },
+  "pricing": {
+    "Sub plans": "Тарифные планы",
+    "Sub plans - Tooltip": "Планы, включенные в прайслист",
+    "Has trial": "Есть пробный период",
+    "Has trial - Tooltip": "Наличие пробного периода после выбора плана",
+    "Trial duration": "Продолжительность пробного периода",
+    "Trial duration - Tooltip": "Продолжительность пробного периода",
+    "Getting started": "Выьрать план",
+    "Copy pricing page URL": "Скопировать URL прайс-листа",
+    "pricing page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "URL страницы прайс-листа успешно скопирован в буфер обмена, пожалуйста, вставьте его в режиме инкогнито или другом браузере",
+    "days trial available!": "дней пробного периода доступно!",
+    "Free": "Бесплатно"
+  },
+  "subscription": {
+    "Duration": "Продолжительность",
+    "Duration - Tooltip": "Продолжительность подписки",
+    "Start Date": "Дата начала",
+    "Start Date - Tooltip": "Дата начала",
+    "End Date": "Дата окончания",
+    "End Date - Tooltip": "Дата окончания",
+    "Sub users": "Пользователь подписки",
+    "Sub users - Tooltip": "Пользователь которому офомлена подписка",
+    "Sub plan": "План подписки",
+    "Sub plan - Tooltip": "План подписки"
   }
 }

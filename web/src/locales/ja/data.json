@@ -253,6 +253,8 @@
     "Phone": "電話",
     "Phone - Tooltip": "電話番号",
     "Phone or email": "Phone or email",
+    "Plans": "プラン",
+    "Pricings": "価格設定",
     "Preview": "プレビュー",
     "Preview - Tooltip": "構成されたエフェクトをプレビューする",
     "Products": "製品",
@@ -281,6 +283,7 @@
     "Sorry, you do not have permission to access this page or logged in status invalid.": "申し訳ありませんが、このページにアクセスする権限がありません、またはログイン状態が無効です。",
     "State": "州",
     "State - Tooltip": "状態",
+    "Subscriptions": "サブスクリプション",
     "Successfully added": "正常に追加されました",
     "Successfully deleted": "正常に削除されました",
     "Successfully saved": "成功的に保存されました",
@@ -884,5 +887,36 @@
     "Method - Tooltip": "HTTPメソッド",
     "New Webhook": "新しいWebhook",
     "Value": "値"
+  },
+  "plan": {
+    "Sub roles - Tooltip": "現在のプランに含まれるロール",
+    "PricePerMonth": "月額料金",
+    "PricePerYear": "年間料金",
+    "PerMonth": "月毎"
+  },
+  "pricing": {
+    "Sub plans": "追加プラン",
+    "Sub plans - Tooltip": "現在の価格設定に含まれるプラン",
+    "Has trial": "トライアル期間あり",
+    "Has trial - Tooltip": "プラン選択後のトライアル期間の有無",
+    "Trial duration": "トライアル期間の長さ",
+    "Trial duration - Tooltip": "トライアル期間の長さ",
+    "Getting started": "はじめる",
+    "Copy pricing page URL": "価格ページのURLをコピー",
+    "pricing page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "価格ページのURLが正常にクリップボードにコピーされました。シークレットウィンドウや別のブラウザに貼り付けてください。",
+    "days trial available!": "日間のトライアルが利用可能です！",
+    "Free": "無料"
+  },
+  "subscription": {
+    "Duration": "期間",
+    "Duration - Tooltip": "購読の期間",
+    "Start Date": "開始日",
+    "Start Date - Tooltip": "開始日",
+    "End Date": "終了日",
+    "End Date - Tooltip": "終了日",
+    "Sub users": "購読ユーザー",
+    "Sub users - Tooltip": "購読ユーザー",
+    "Sub plan": "購読プラン",
+    "Sub plan - Tooltip": "購読プラン"
   }
 }

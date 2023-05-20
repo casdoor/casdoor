@@ -253,6 +253,8 @@
     "Phone": "手机号",
     "Phone - Tooltip": "手机号",
     "Phone or email": "手机或邮箱",
+    "Plans": "计划",
+    "Pricings": "定价",
     "Preview": "预览",
     "Preview - Tooltip": "可预览所配置的效果",
     "Products": "商品",
@@ -281,6 +283,7 @@
     "Sorry, you do not have permission to access this page or logged in status invalid.": "抱歉，您无权访问该页面或登录状态失效",
     "State": "状态",
     "State - Tooltip": "状态",
+    "Subscriptions": "订阅",
     "Successfully added": "添加成功",
     "Successfully deleted": "删除成功",
     "Successfully saved": "保存成功",
@@ -884,5 +887,36 @@
     "Method - Tooltip": "HTTP方法",
     "New Webhook": "添加Webhook",
     "Value": "值"
+  },
+  "plan": {
+    "Sub roles - Tooltip": "当前计划中包含的角色",
+    "PricePerMonth": "每月价格",
+    "PricePerYear": "每年价格",
+    "PerMonth": "每月"
+  },
+  "pricing": {
+    "Sub plans": "附加计划",
+    "Sub plans - Tooltip": "包含在当前定价中的计划",
+    "Has trial": "有试用期",
+    "Has trial - Tooltip": "选择计划后是否有试用期",
+    "Trial duration": "试用期时长",
+    "Trial duration - Tooltip": "试用期时长",
+    "Getting started": "开始使用",
+    "Copy pricing page URL": "复制定价页面链接",
+    "pricing page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "定价页面链接已成功复制到剪贴板，请粘贴到隐身窗口或其他浏览器中",
+    "days trial available!": "天试用期可用！",
+    "Free": "免费"
+  },
+  "subscription": {
+    "Duration": "订阅时长",
+    "Duration - Tooltip": "订阅时长",
+    "Start Date": "开始日期",
+    "Start Date - Tooltip": "开始日期",
+    "End Date": "结束日期",
+    "End Date - Tooltip": "结束日期",
+    "Sub users": "订阅用户",
+    "Sub users - Tooltip": "订阅用户",
+    "Sub plan": "订阅计划",
+    "Sub plan - Tooltip": "订阅计划"
   }
 }

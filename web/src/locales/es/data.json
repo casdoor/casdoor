@@ -253,6 +253,8 @@
     "Phone": "Teléfono",
     "Phone - Tooltip": "Número de teléfono",
     "Phone or email": "Phone or email",
+    "Plans": "Planes",
+    "Pricings": "Precios",
     "Preview": "Avance",
     "Preview - Tooltip": "Vista previa de los efectos configurados",
     "Products": "Productos",
@@ -281,6 +283,7 @@
     "Sorry, you do not have permission to access this page or logged in status invalid.": "Lo siento, no tiene permiso para acceder a esta página o su estado de inicio de sesión es inválido.",
     "State": "Estado",
     "State - Tooltip": "Estado",
+    "Subscriptions": "Suscripciones",
     "Successfully added": "Éxito al agregar",
     "Successfully deleted": "Éxito en la eliminación",
     "Successfully saved": "Guardado exitosamente",
@@ -884,5 +887,36 @@
     "Method - Tooltip": "Método HTTP",
     "New Webhook": "Nuevo Webhook",
     "Value": "Valor"
+  },
+  "plan": {
+    "Sub roles - Tooltip": "Rol incluido en el plan actual",
+    "PricePerMonth": "Precio por mes",
+    "PricePerYear": "Precio por año",
+    "PerMonth": "por mes"
+  },
+  "pricing": {
+    "Sub plans": "Planes adicionales",
+    "Sub plans - Tooltip": "Planes incluidos en la tarifa actual",
+    "Has trial": "Tiene período de prueba",
+    "Has trial - Tooltip": "Disponibilidad del período de prueba después de elegir un plan",
+    "Trial duration": "Duración del período de prueba",
+    "Trial duration - Tooltip": "Duración del período de prueba",
+    "Getting started": "Empezar",
+    "Copy pricing page URL": "Copiar URL de la página de precios",
+    "pricing page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "URL de la página de precios copiada correctamente al portapapeles, péguela en una ventana de incógnito u otro navegador",
+    "days trial available!": "días de prueba disponibles",
+    "Free": "Gratis"
+  },
+  "subscription": {
+    "Duration": "Duración",
+    "Duration - Tooltip": "Duración de la suscripción",
+    "Start Date": "Fecha de inicio",
+    "Start Date - Tooltip": "Fecha de inicio",
+    "End Date": "Fecha de finalización",
+    "End Date - Tooltip": "Fecha de finalización",
+    "Sub users": "Usuarios de la suscripción",
+    "Sub users - Tooltip": "Usuarios de la suscripción",
+    "Sub plan": "Plan de suscripción",
+    "Sub plan - Tooltip": "Plan de suscripción"
   }
 }
