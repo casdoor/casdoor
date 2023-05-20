@@ -189,9 +189,8 @@ func (c *ApiController) Signup() {
 	object.DisableVerificationCode(authForm.Email)
 	object.DisableVerificationCode(checkPhone)
 
-	signupFromPricing := len(authForm.Plan) > 0 && len(authForm.Pricing) > 0
-
-	if signupFromPricing {
+	isSignupFromPricing := authForm.Plan != "" && authForm.Pricing != ""
+	if isSignupFromPricing {
 		object.Subscribe(organization.Name, user.Name, authForm.Plan, authForm.Pricing)
 	}
 
