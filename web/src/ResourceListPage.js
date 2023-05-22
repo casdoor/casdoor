@@ -100,6 +100,21 @@ class ResourceListPage extends BaseListPage {
         },
       },
       {
+        title: i18next.t("general:Organization"),
+        dataIndex: "owner",
+        key: "owner",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("owner"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
         title: i18next.t("general:Application"),
         dataIndex: "application",
         key: "application",
@@ -288,7 +303,7 @@ class ResourceListPage extends BaseListPage {
     const field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
-    ResourceBackend.getResources("admin", this.props.account.name, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    ResourceBackend.getResources(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, this.props.account.name, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
