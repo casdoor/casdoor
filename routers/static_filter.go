@@ -101,6 +101,7 @@ type gzipResponseWriter struct {
 func (w gzipResponseWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
 }
+
 func makeGzipResponse(w http.ResponseWriter, r *http.Request, path string) {
 	if !enableGzip || !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
 		http.ServeFile(w, r, path)
