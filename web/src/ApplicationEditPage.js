@@ -511,7 +511,9 @@ class ApplicationEditPage extends React.Component {
                 />
               </div>
             } title={i18next.t("provider:Signup HTML - Edit")} trigger="click">
-              <Button>{i18next.t("general:Edit")}</Button>
+              <Input value={this.state.application.signupHtml} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("signupHtml", e.target.value);
+              }} />
             </Popover>
           </Col>
         </Row>
@@ -531,7 +533,9 @@ class ApplicationEditPage extends React.Component {
                 />
               </div>
             } title={i18next.t("provider:Signin HTML - Edit")} trigger="click">
-              <Button>{i18next.t("general:Edit")}</Button>
+              <Input value={this.state.application.signinHtml} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("signinHtml", e.target.value);
+              }} />
             </Popover>
           </Col>
         </Row>
@@ -647,7 +651,7 @@ class ApplicationEditPage extends React.Component {
             </Row>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
+        <Row>
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:Form CSS"), i18next.t("application:Form CSS - Tooltip"))} :
           </Col>
@@ -662,11 +666,13 @@ class ApplicationEditPage extends React.Component {
                 />
               </div>
             } title={i18next.t("application:Form CSS - Edit")} trigger="click">
-              <Button>{i18next.t("general:Edit")}</Button>
+              <Input value={this.state.application.formCss} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("formCss", e.target.value);
+              }} />
             </Popover>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
+        <Row>
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:Form CSS Mobile"), i18next.t("application:Form CSS Mobile - Tooltip"))} :
           </Col>
@@ -681,7 +687,9 @@ class ApplicationEditPage extends React.Component {
                 />
               </div>
             } title={i18next.t("application:Form CSS Mobile - Edit")} trigger="click">
-              <Button>{i18next.t("general:Edit")}</Button>
+              <Input value={this.state.application.formCssMobile} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("formCssMobile", e.target.value);
+              }} />
             </Popover>
           </Col>
         </Row>
@@ -716,7 +724,9 @@ class ApplicationEditPage extends React.Component {
                       />
                     </div>
                   } title={i18next.t("application:Side panel HTML - Edit")} trigger="click">
-                    <Button>{i18next.t("general:Edit")}</Button>
+                    <Input value={this.state.application.formSideHtml} style={{marginBottom: "10px"}} onChange={e => {
+                      this.updateApplicationField("formSideHtml", e.target.value);
+                    }} />
                   </Popover>
                 </Col>
               </Row>
