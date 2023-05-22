@@ -330,8 +330,22 @@ class LoginPage extends React.Component {
             if (responseType === "login") {
               Setting.showMessage("success", i18next.t("application:Logged in successfully"));
 
-              const link = Setting.getFromLink();
-              Setting.goToLink(link);
+              AuthBackend.getAccount("")
+                .then((res) => {
+                  let account = null;
+                  if (res.status === "ok") {
+                    account = res.data;
+
+                    if (account.passwordChangeRequired) {
+                      Setting.goToLink("/changePassword");
+                    } else {
+                      const link = Setting.getFromLink();
+                      Setting.goToLink(link);
+                    }
+                  } else {
+                    Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+                  }
+                });
             } else if (responseType === "code") {
               this.postCodeLoginAction(res);
             } else if (responseType === "token" || responseType === "id_token") {

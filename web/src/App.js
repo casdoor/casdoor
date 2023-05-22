@@ -77,6 +77,7 @@ import {withTranslation} from "react-i18next";
 import ThemeSelect from "./common/select/ThemeSelect";
 import SessionListPage from "./SessionListPage";
 import MfaSetupPage from "./auth/MfaSetupPage";
+import ChangePasswordPage from "./ChangePasswordPage";
 
 const {Header, Footer, Content} = Layout;
 
@@ -566,6 +567,7 @@ class App extends Component {
         <Route exact path="/mfa-authentication/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} {...props} />)} />
         <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
         <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
+        <Route exact path="/changePassword" render={(props) => this.renderLoginIfNotLoggedIn(<ChangePasswordPage account={this.state.account} {...props} />)} />
         <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
           extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
       </Switch>
