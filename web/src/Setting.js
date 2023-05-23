@@ -24,6 +24,7 @@ import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import * as phoneNumber from "libphonenumber-js";
+import moment from "moment";
 
 const {Option} = Select;
 
@@ -592,9 +593,8 @@ export function getFormattedDate(date) {
     return null;
   }
 
-  date = date.replace("T", " ");
-  date = date.replace("+08:00", " ");
-  return date;
+  const m = moment(date).local();
+  return m.format("YYYY-MM-DD HH:mm:ss");
 }
 
 export function getFormattedDateShort(date) {
