@@ -38,7 +38,7 @@ type Application struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	DisplayName         string          `xorm:"varchar(100)" json:"displayName"`
-	Logo                string          `xorm:"varchar(100)" json:"logo"`
+	Logo                string          `xorm:"varchar(200)" json:"logo"`
 	HomepageUrl         string          `xorm:"varchar(100)" json:"homepageUrl"`
 	Description         string          `xorm:"varchar(100)" json:"description"`
 	Organization        string          `xorm:"varchar(100)" json:"organization"`
