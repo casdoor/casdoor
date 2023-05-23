@@ -40,7 +40,7 @@ func (c *ApiController) Enforce() {
 	}
 
 	permissions := make([]*object.Permission, 0)
-	res := []bool{}
+	var res []bool
 
 	if modelId != "" {
 		owner, modelName := util.GetOwnerAndNameFromId(modelId)

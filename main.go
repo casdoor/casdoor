@@ -27,7 +27,6 @@ import (
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/routers"
-	_ "github.com/casdoor/casdoor/routers"
 	"github.com/casdoor/casdoor/util"
 )
 
