@@ -248,7 +248,7 @@ func CheckUserPassword(organization string, username string, password string, la
 		enableCaptcha = options[0]
 	}
 	user := GetUserByFields(organization, username)
-	if user == nil || user.IsDeleted == true {
+	if user == nil || user.IsDeleted {
 		return nil, fmt.Sprintf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username))
 	}
 

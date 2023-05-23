@@ -55,13 +55,8 @@ func isIpAddress(host string) bool {
 
 	// Attempt to parse the host as an IP address (both IPv4 and IPv6)
 	ip := net.ParseIP(hostWithoutPort)
-	if ip != nil {
-		// The host is an IP address
-		return true
-	}
-
-	// The host is not an IP address
-	return false
+	// if host is not nil is an IP address else is not an IP address
+	return ip != nil
 }
 
 func getOriginFromHost(host string) (string, string) {

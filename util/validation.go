@@ -25,7 +25,7 @@ import (
 var rePhone *regexp.Regexp
 
 func init() {
-	rePhone, _ = regexp.Compile("(\\d{3})\\d*(\\d{4})")
+	rePhone, _ = regexp.Compile(`(\d{3})\d*(\d{4})`)
 }
 
 func IsEmailValid(email string) bool {
