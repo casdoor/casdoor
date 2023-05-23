@@ -26,10 +26,10 @@ func ReadXlsxFile(fileId string) [][]string {
 		panic(err)
 	}
 
-	var res [][]string
+	res := [][]string{}
 	for _, sheet := range file.Sheets {
 		for _, row := range sheet.Rows {
-			var line []string
+			line := []string{}
 			for _, cell := range row.Cells {
 				text := cell.String()
 				line = append(line, text)

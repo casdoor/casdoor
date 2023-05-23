@@ -118,7 +118,7 @@ func (c *ApiController) GetOrganizationApplications() {
 	}
 
 	if limit == "" || page == "" {
-		var applications = object.GetOrganizationApplications(owner, organization)
+		applications := object.GetOrganizationApplications(owner, organization)
 		c.Data["json"] = object.GetMaskedApplications(applications, userId)
 		c.ServeJSON()
 	} else {
