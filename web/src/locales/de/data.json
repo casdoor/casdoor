@@ -253,6 +253,8 @@
     "Phone": "Telefon",
     "Phone - Tooltip": "Telefonnummer",
     "Phone or email": "Phone or email",
+    "Plans": "Pläne",
+    "Pricings": "Preise",
     "Preview": "Vorschau",
     "Preview - Tooltip": "Vorschau der konfigurierten Effekte",
     "Products": "Produkte",
@@ -281,6 +283,7 @@
     "Sorry, you do not have permission to access this page or logged in status invalid.": "Es tut uns leid, aber Sie haben keine Berechtigung, auf diese Seite zuzugreifen, oder Sie sind nicht angemeldet.",
     "State": "Bundesland / Staat",
     "State - Tooltip": "Bundesland",
+    "Subscriptions": "Abonnements",
     "Successfully added": "Erfolgreich hinzugefügt",
     "Successfully deleted": "Erfolgreich gelöscht",
     "Successfully saved": "Erfolgreich gespeichert",
@@ -884,5 +887,36 @@
     "Method - Tooltip": "HTTP Methode",
     "New Webhook": "Neue Webhook",
     "Value": "Wert"
+  },
+  "plan": {
+    "Sub roles - Tooltip": "Rolle im aktuellen Plan enthalten",
+    "PricePerMonth": "Preis pro Monat",
+    "PricePerYear": "Preis pro Jahr",
+    "PerMonth": "pro Monat"
+  },
+  "pricing": {
+    "Sub plans": "Zusatzpläne",
+    "Sub plans - Tooltip": "Pläne im aktuellen Preismodell enthalten",
+    "Has trial": "Testphase verfügbar",
+    "Has trial - Tooltip": "Verfügbarkeit der Testphase nach Auswahl eines Plans",
+    "Trial duration": "Testphase Dauer",
+    "Trial duration - Tooltip": "Dauer der Testphase",
+    "Getting started": "Loslegen",
+    "Copy pricing page URL": "Preisseite URL kopieren",
+    "pricing page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "Preisseite URL erfolgreich in die Zwischenablage kopiert. Bitte fügen Sie sie in ein Inkognito-Fenster oder einen anderen Browser ein.",
+    "days trial available!": "Tage Testphase verfügbar!",
+    "Free": "Kostenlos"
+  },
+  "subscription": {
+    "Duration": "Laufzeit",
+    "Duration - Tooltip": "Laufzeit des Abonnements",
+    "Start Date": "Startdatum",
+    "Start Date - Tooltip": "Startdatum",
+    "End Date": "Enddatum",
+    "End Date - Tooltip": "Enddatum",
+    "Sub users": "Abonnenten",
+    "Sub users - Tooltip": "Abonnenten",
+    "Sub plan": "Abonnementplan",
+    "Sub plan - Tooltip": "Abonnementplan"
   }
 }

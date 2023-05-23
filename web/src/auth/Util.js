@@ -86,7 +86,13 @@ export function getOAuthGetParameters(params) {
   const responseType = getRefinedValue(queries.get("response_type"));
   const redirectUri = getRefinedValue(queries.get("redirect_uri"));
   const scope = getRefinedValue(queries.get("scope"));
-  const state = getRefinedValue(queries.get("state"));
+
+  let state = getRefinedValue(queries.get("state"));
+  if (state.startsWith("/auth/oauth2/login.php?wantsurl=")) {
+    // state contains URL param encoding for Moodle, URLSearchParams automatically decoded it, so here encode it again
+    state = encodeURIComponent(state);
+  }
+
   const nonce = getRefinedValue(queries.get("nonce"));
   const challengeMethod = getRefinedValue(queries.get("code_challenge_method"));
   const codeChallenge = getRefinedValue(queries.get("code_challenge"));
