@@ -253,6 +253,8 @@
     "Phone": "Điện thoại",
     "Phone - Tooltip": "Số điện thoại",
     "Phone or email": "Phone or email",
+    "Plans": "Kế hoạch",
+    "Pricings": "Bảng giá",
     "Preview": "Xem trước",
     "Preview - Tooltip": "Xem trước các hiệu ứng đã cấu hình",
     "Products": "Sản phẩm",
@@ -281,6 +283,7 @@
     "Sorry, you do not have permission to access this page or logged in status invalid.": "Xin lỗi, bạn không có quyền truy cập trang này hoặc trạng thái đăng nhập không hợp lệ.",
     "State": "Nhà nước",
     "State - Tooltip": "Trạng thái",
+    "Subscriptions": "Đăng ký",
     "Successfully added": "Đã thêm thành công",
     "Successfully deleted": "Đã xóa thành công",
     "Successfully saved": "Thành công đã được lưu lại",
@@ -884,5 +887,36 @@
     "Method - Tooltip": "Phương thức HTTP",
     "New Webhook": "Webhook mới",
     "Value": "Giá trị"
+  },
+  "plan": {
+    "Sub roles - Tooltip": "Vai trò bao gồm trong kế hoạch hiện tại",
+    "PricePerMonth": "Giá mỗi tháng",
+    "PricePerYear": "Giá mỗi năm",
+    "PerMonth": "mỗi tháng"
+  },
+  "pricing": {
+    "Sub plans": "Kế hoạch phụ",
+    "Sub plans - Tooltip": "Các kế hoạch bao gồm trong bảng giá hiện tại",
+    "Has trial": "Có thời gian thử nghiệm",
+    "Has trial - Tooltip": "Khả dụng thời gian thử nghiệm sau khi chọn kế hoạch",
+    "Trial duration": "Thời gian thử nghiệm",
+    "Trial duration - Tooltip": "Thời gian thử nghiệm",
+    "Getting started": "Bắt đầu",
+    "Copy pricing page URL": "Sao chép URL trang bảng giá",
+    "pricing page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "URL trang bảng giá đã được sao chép vào clipboard thành công, vui lòng dán vào cửa sổ ẩn danh hoặc trình duyệt khác",
+    "days trial available!": "ngày dùng thử có sẵn!",
+    "Free": "Miễn phí"
+  },
+  "subscription": {
+    "Duration": "Thời lượng",
+    "Duration - Tooltip": "Thời lượng đăng ký",
+    "Start Date": "Ngày bắt đầu",
+    "Start Date - Tooltip": "Ngày bắt đầu",
+    "End Date": "Ngày kết thúc",
+    "End Date - Tooltip": "Ngày kết thúc",
+    "Sub users": "Người dùng đăng ký",
+    "Sub users - Tooltip": "Người dùng đăng ký",
+    "Sub plan": "Kế hoạch đăng ký",
+    "Sub plan - Tooltip": "Kế hoạch đăng ký"
   }
 }

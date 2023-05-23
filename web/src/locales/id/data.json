@@ -253,6 +253,8 @@
     "Phone": "Telepon",
     "Phone - Tooltip": "Nomor telepon",
     "Phone or email": "Phone or email",
+    "Plans": "Rencana",
+    "Pricings": "Harga",
     "Preview": "Tinjauan",
     "Preview - Tooltip": "Mengawali pratinjau efek yang sudah dikonfigurasi",
     "Products": "Produk",
@@ -281,6 +283,7 @@
     "Sorry, you do not have permission to access this page or logged in status invalid.": "Maaf, Anda tidak memiliki izin untuk mengakses halaman ini atau status masuk tidak valid.",
     "State": "Negara",
     "State - Tooltip": "Negara",
+    "Subscriptions": "Langganan",
     "Successfully added": "Berhasil ditambahkan",
     "Successfully deleted": "Berhasil dihapus",
     "Successfully saved": "Berhasil disimpan",
@@ -884,5 +887,36 @@
     "Method - Tooltip": "Metode HTTP",
     "New Webhook": "Webhook Baru",
     "Value": "Nilai"
+  },
+  "plan": {
+    "Sub roles - Tooltip": "Peran yang termasuk dalam rencana saat ini",
+    "PricePerMonth": "Harga per bulan",
+    "PricePerYear": "Harga per tahun",
+    "PerMonth": "per bulan"
+  },
+  "pricing": {
+    "Sub plans": "Rencana Tambahan",
+    "Sub plans - Tooltip": "Rencana yang termasuk dalam harga saat ini",
+    "Has trial": "Mempunyai periode percobaan",
+    "Has trial - Tooltip": "Ketersediaan periode percobaan setelah memilih rencana",
+    "Trial duration": "Durasi percobaan",
+    "Trial duration - Tooltip": "Durasi periode percobaan",
+    "Getting started": "Mulai",
+    "Copy pricing page URL": "Salin URL halaman harga",
+    "pricing page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "URL halaman harga berhasil disalin ke clipboard, silakan tempelkan ke dalam jendela mode penyamaran atau browser lainnya",
+    "days trial available!": "hari percobaan tersedia!",
+    "Free": "Gratis"
+  },
+  "subscription": {
+    "Duration": "Durasi",
+    "Duration - Tooltip": "Durasi langganan",
+    "Start Date": "Tanggal Mulai",
+    "Start Date - Tooltip": "Tanggal Mulai",
+    "End Date": "Tanggal Berakhir",
+    "End Date - Tooltip": "Tanggal Berakhir",
+    "Sub users": "Pengguna Langganan",
+    "Sub users - Tooltip": "Pengguna Langganan",
+    "Sub plan": "Rencana Langganan",
+    "Sub plan - Tooltip": "Rencana Langganan"
   }
 }
