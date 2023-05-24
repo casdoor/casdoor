@@ -87,11 +87,12 @@ function getRedirectUri() {
     return "";
   }
 
-  const res = token.split("&")[0];
+  let res = token.split("&")[0];
   if (!res) {
     return "";
   }
 
+  res = decodeURIComponent(res);
   return res;
 }
 
