@@ -67,7 +67,7 @@ func (pp *AlipayPaymentProvider) Pay(providerName string, productName string, pa
 	return payUrl, nil
 }
 
-func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string) (string, string, float64, string, string, error) {
+func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, apiKey string) (string, string, float64, string, string, error) {
 	bm, err := alipay.ParseNotifyToBodyMap(request)
 	if err != nil {
 		return "", "", 0, "", "", err

@@ -23,3 +23,11 @@ func getPriceString(price float64) string {
 	priceString := strings.TrimRight(strings.TrimRight(fmt.Sprintf("%.2f", price), "0"), ".")
 	return priceString
 }
+
+func getAttachString(strs ...string) string {
+	return strings.Join(strs, "|")
+}
+
+func getInfoFromAttach(concatenatedStr string) []string {
+	return strings.Split(concatenatedStr, "|")
+}

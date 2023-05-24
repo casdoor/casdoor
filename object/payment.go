@@ -152,45 +152,45 @@ func DeletePayment(payment *Payment) bool {
 	return affected != 0
 }
 
-func notifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string) (*Payment, error) {
+func notifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string) (*Payment, string, error) {
 	payment := getPayment(owner, paymentName)
 	if payment == nil {
-		return nil, fmt.Errorf("the payment: %s does not exist", paymentName)
+		return nil, "", fmt.Errorf("the payment: %s does not exist", paymentName)
 	}
 
 	product := getProduct(owner, productName)
 	if product == nil {
-		return nil, fmt.Errorf("the product: %s does not exist", productName)
+		return nil, "", fmt.Errorf("the product: %s does not exist", productName)
 	}
 
 	provider, err := product.getProvider(providerName)
 	if err != nil {
-		return payment, err
+		return payment, "", err
 	}
 
 	pProvider, cert, err := provider.getPaymentProvider()
 	if err != nil {
-		return payment, err
+		return payment, "", err
 	}
 
-	productDisplayName, paymentName, price, productName, providerName, err := pProvider.Notify(request, body, cert.AuthorityPublicKey)
+	productDisplayName, paymentName, price, productName, providerName, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, provider.ClientSecret)
 	if err != nil {
-		return payment, err
+		return payment, "", err
 	}
 
 	if productDisplayName != "" && productDisplayName != product.DisplayName {
-		return nil, fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", productDisplayName, product.DisplayName)
+		return nil, "", fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", productDisplayName, product.DisplayName)
 	}
 
 	if price != product.Price {
-		return nil, fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", price, product.Price)
+		return nil, "", fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", price, product.Price)
 	}
 
-	return payment, nil
+	return payment, provider.Type, nil
 }
 
-func NotifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string) bool {
-	payment, err := notifyPayment(request, body, owner, providerName, productName, paymentName)
+func NotifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string) (bool, string) {
+	payment, providerType, err := notifyPayment(request, body, owner, providerName, productName, paymentName)
 
 	if payment != nil {
 		if err != nil {
@@ -204,7 +204,7 @@ func NotifyPayment(request *http.Request, body []byte, owner string, providerNam
 	}
 
 	ok := err == nil
-	return ok
+	return ok, providerType
 }
 
 func invoicePayment(payment *Payment) (string, error) {

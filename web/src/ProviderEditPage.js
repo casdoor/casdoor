@@ -468,7 +468,7 @@ class ProviderEditPage extends React.Component {
                   {this.state.provider.type === "Aliyun Captcha"
                     ? Setting.getLabel(i18next.t("provider:Scene"), i18next.t("provider:Scene - Tooltip"))
                     : this.state.provider.type === "WeChat Pay"
-                      ? Setting.getLabel("appId", "appId")
+                      ? Setting.getLabel("Mch ID", "Mch ID")
                       : Setting.getLabel(i18next.t("provider:Client ID 2"), i18next.t("provider:Client ID 2 - Tooltip"))}
                 </Col>
                 <Col span={22} >
@@ -819,6 +819,20 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             </React.Fragment>
+          ) : null
+        }
+        {
+          this.state.provider.type === "WeChat Pay" ? (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel("MchSerialNo", "MchSerialNo")} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.provider.clientSecret2} onChange={e => {
+                  this.updateProviderField("clientSecret2", e.target.value);
+                }} />
+              </Col>
+            </Row>
           ) : null
         }
         {

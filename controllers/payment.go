@@ -21,6 +21,8 @@ import (
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
+	"github.com/go-pay/gopay"
+	"github.com/go-pay/gopay/wechat/v3"
 )
 
 // GetPayments
@@ -156,14 +158,30 @@ func (c *ApiController) NotifyPayment() {
 
 	body := c.Ctx.Input.RequestBody
 
-	ok := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName)
+	ok, providerType := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName)
 	if ok {
-		_, err := c.Ctx.ResponseWriter.Write([]byte("success"))
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
+		switch providerType {
+		case "Alipay":
+			_, err := c.Ctx.ResponseWriter.Write([]byte("success"))
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		case "WeChat Pay":
+			c.Data["json"] = &wechat.V3NotifyRsp{Code: gopay.SUCCESS, Message: "成功"}
+			c.ServeJSON()
 		}
 	} else {
+		switch providerType {
+		case "Alipay":
+			_, err := c.Ctx.ResponseWriter.Write([]byte("fail"))
+			if err != nil {
+				c.ResponseError(err.Error())
+			}
+		case "WeChat Pay":
+			c.Data["json"] = &wechat.V3NotifyRsp{Code: gopay.FAIL, Message: "失败"}
+			c.ServeJSON()
+		}
 		panic(fmt.Errorf("NotifyPayment() failed: %v", ok))
 	}
 }

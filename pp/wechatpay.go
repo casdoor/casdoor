@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/casdoor/casdoor/util"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/wechat/v3"
 )
@@ -29,7 +28,7 @@ type WechatPaymentProvider struct {
 	appId    string
 }
 
-func NewWechatPaymentProvider(appId string, mchId string, mchCertSerialNumber string, apiV3Key string, privateKey string) (*WechatPaymentProvider, error) {
+func NewWechatPaymentProvider(appId string, mchId string, cert string, mchCertSerialNumber string, apiV3Key string, privateKey string) (*WechatPaymentProvider, error) {
 	pp := &WechatPaymentProvider{appId: appId}
 
 	clientV3, err := wechat.NewClientV3(mchId, mchCertSerialNumber, apiV3Key, privateKey)
@@ -37,11 +36,9 @@ func NewWechatPaymentProvider(appId string, mchId string, mchCertSerialNumber st
 		return nil, err
 	}
 
-	err = clientV3.AutoVerifySign()
-	if err != nil {
-		return nil, err
-	}
-	pp.ClientV3 = clientV3
+	//err = clientV3.AutoVerifySign()
+	pp.ClientV3 = clientV3.SetPlatformCert([]byte(cert), mchCertSerialNumber)
+
 	return pp, nil
 }
 
@@ -50,37 +47,42 @@ func (pp *WechatPaymentProvider) Pay(providerName string, productName string, pa
 
 	bm := gopay.BodyMap{}
 
-	bm.Set("providerName", providerName)
-	bm.Set("productName", productName)
+	bm.Set("attach", getAttachString(productDisplayName, productName, providerName))
 
-	bm.Set("return_url", returnUrl)
+	//bm.Set("return_url", returnUrl)
+	bm.Set("appid", pp.appId)
+	bm.Set("description", productDisplayName)
 	bm.Set("notify_url", notifyUrl)
 
-	bm.Set("body", productDisplayName)
 	bm.Set("out_trade_no", paymentName)
-	bm.Set("total_fee", getPriceString(price))
+	bm.SetBodyMap("amount", func(bm gopay.BodyMap) {
+		bm.Set("total", int(price*100))
+		bm.Set("currency", "CNY")
+	})
 
-	wechatRsp, err := pp.ClientV3.V3TransactionJsapi(context.Background(), bm)
+	wxRsp, err := pp.ClientV3.V3TransactionNative(context.Background(), bm)
 	if err != nil {
 		return "", err
 	}
-
-	payUrl := fmt.Sprintf("https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect", pp.appId, wechatRsp.Response.PrepayId)
-	return payUrl, nil
-}
-
-func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string) (string, string, float64, string, string, error) {
-	bm, err := wechat.V3ParseNotifyToBodyMap(request)
-	if err != nil {
-		return "", "", 0, "", "", err
+	if wxRsp.Code != wechat.Success {
+		return "", fmt.Errorf("%s", wxRsp.Error)
 	}
 
-	providerName := bm.Get("providerName")
-	productName := bm.Get("productName")
+	return wxRsp.Response.CodeUrl, nil
+}
 
-	productDisplayName := bm.Get("body")
-	paymentName := bm.Get("out_trade_no")
-	price := util.ParseFloat(bm.Get("total_fee"))
+func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, apiKey string) (string, string, float64, string, string, error) {
+	// bm, err := wechat.V3ParseNotifyToBodyMap(request)
+	// if err != nil {
+	// 	return "", "", 0, "", "", err
+	// }
+
+	// providerName := bm.Get("providerName")
+	// productName := bm.Get("productName")
+
+	// productDisplayName := bm.Get("body")
+	// paymentName := bm.Get("out_trade_no")
+	// price := util.ParseFloat(bm.Get("total_fee"))
 
 	notifyReq, err := wechat.V3ParseNotify(request)
 	if err != nil {
@@ -88,11 +90,21 @@ func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, auth
 	}
 
 	cert := pp.ClientV3.WxPublicKey()
-
 	err = notifyReq.VerifySignByPK(cert)
 	if err != nil {
 		return "", "", 0, "", "", err
 	}
+
+	result, err := notifyReq.DecryptCipherText(apiKey)
+
+	info := getInfoFromAttach(result.Attach)
+	if len(info) != 3 {
+		return "", "", 0, "", "", fmt.Errorf("get attach failed")
+	}
+
+	productDisplayName, productName, providerName := info[0], info[1], info[2]
+	paymentName := result.OutTradeNo
+	price := float64(result.Amount.PayerTotal) / 100
 
 	return productDisplayName, paymentName, price, productName, providerName, nil
 }

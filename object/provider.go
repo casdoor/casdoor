@@ -263,7 +263,7 @@ func (p *Provider) getPaymentProvider() (pp.PaymentProvider, *Cert, error) {
 		}
 	}
 
-	pProvider, err := pp.GetPaymentProvider(p.Type, p.ClientId, p.ClientSecret, p.Host, cert.Certificate, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey, p.ClientId2)
+	pProvider, err := pp.GetPaymentProvider(p.Type, p.ClientId, p.ClientSecret, p.Host, cert.Certificate, p.ClientSecret2, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey, p.ClientId2)
 	if err != nil {
 		return nil, cert, err
 	}
