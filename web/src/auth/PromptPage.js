@@ -254,9 +254,10 @@ class PromptPage extends React.Component {
       return null;
     }
 
-    if (!Setting.hasPromptPage(application)) {
+    if (!Setting.hasPromptPage(application) && this.state.promptType !== "mfa") {
       return (
         <Result
+          style={{display: "flex", flex: "1 1 0%", justifyContent: "center", flexDirection: "column"}}
           status="error"
           title={i18next.t("application:Sign Up Error")}
           subTitle={i18next.t("application:You are unexpected to see this prompt page")}
