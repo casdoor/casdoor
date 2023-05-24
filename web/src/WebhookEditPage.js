@@ -28,6 +28,20 @@ require("codemirror/mode/javascript/javascript");
 
 const {Option} = Select;
 
+const applicationTemplate = {
+  owner: "admin", // this.props.account.applicationName,
+  name: "application_123",
+  organization: "built-in",
+  createdTime: "2022-01-01T01:03:42+08:00",
+  displayName: "New Application - 123",
+  logo: `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`,
+  enablePassword: true,
+  enableSignUp: true,
+  enableSigninSession: false,
+  enableCodeSignin: false,
+  enableSamlCompress: false,
+};
+
 const previewTemplate = {
   "id": 9078,
   "owner": "built-in",
@@ -37,9 +51,10 @@ const previewTemplate = {
   "clientIp": "159.89.126.192",
   "user": "admin",
   "method": "POST",
-  "requestUri": "/api/login",
+  "requestUri": "/api/add-application",
   "action": "login",
   "isTriggered": false,
+  "object": JSON.stringify(applicationTemplate),
 };
 
 const userTemplate = {
@@ -49,7 +64,7 @@ const userTemplate = {
   "updatedTime": "",
   "id": "9eb20f79-3bb5-4e74-99ac-39e3b9a171e8",
   "type": "normal-user",
-  "password": "123",
+  "password": "***",
   "passwordSalt": "",
   "displayName": "Admin",
   "avatar": "https://cdn.casbin.com/usercontent/admin/avatar/1596241359.png",
@@ -161,7 +176,7 @@ class WebhookEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.webhook.organization} onChange={(value => {this.updateWebhookField("organization", value);})}>
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.webhook.organization} onChange={(value => {this.updateWebhookField("organization", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -244,7 +259,7 @@ class WebhookEditPage extends React.Component {
               }} >
               {
                 (
-                  ["signup", "login", "logout", "add-user", "update-user", "delete-user", "add-organization", "update-organization", "delete-organization", "add-application", "update-application", "delete-application", "add-provider", "update-provider", "delete-provider"].map((option, index) => {
+                  ["signup", "login", "logout", "add-user", "update-user", "delete-user", "add-organization", "update-organization", "delete-organization", "add-application", "update-application", "delete-application", "add-provider", "update-provider", "delete-provider", "update-subscription"].map((option, index) => {
                     return (
                       <Option key={option} value={option}>{option}</Option>
                     );

@@ -22,7 +22,7 @@ import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class UserListPage extends BaseListPage {
   constructor(props) {
@@ -339,7 +339,7 @@ class UserListPage extends BaseListPage {
         width: "190px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
-          const disabled = (record.owner === this.props.account.owner && record.name === this.props.account.name);
+          const disabled = (record.owner === this.props.account.owner && record.name === this.props.account.name) || (record.owner === "built-in" && record.name === "admin");
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => {

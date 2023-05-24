@@ -21,7 +21,7 @@ import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Provider from "./auth/Provider";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class ProviderListPage extends BaseListPage {
   constructor(props) {
@@ -111,7 +111,10 @@ class ProviderListPage extends BaseListPage {
         key: "owner",
         width: "150px",
         sorter: true,
-        ...this.getColumnSearchProps("owner"),
+        ...this.getColumnSearchProps("organization"),
+        render: (text, record, index) => {
+          return (text !== "admin") ? text : i18next.t("provider:admin (Shared)");
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -210,6 +213,7 @@ class ProviderListPage extends BaseListPage {
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteProvider(index)}
+                disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)}
               >
               </PopconfirmModal>
             </div>
@@ -227,7 +231,7 @@ class ProviderListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={providers} rowKey="name" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={providers} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Providers")}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -253,7 +257,7 @@ class ProviderListPage extends BaseListPage {
     }
     this.setState({loading: true});
     (Setting.isAdminUser(this.props.account) ? ProviderBackend.getGlobalProviders(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
-      : ProviderBackend.getProviders(this.state.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
+      : ProviderBackend.getProviders(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

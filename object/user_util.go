@@ -15,6 +15,7 @@
 package object
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -76,13 +77,17 @@ func GetUserByFields(organization string, field string) *User {
 }
 
 func SetUserField(user *User, field string, value string) bool {
+	bean := make(map[string]interface{})
 	if field == "password" {
 		organization := GetOrganizationByUser(user)
 		user.UpdateUserPassword(organization)
-		value = user.Password
+		bean[strings.ToLower(field)] = user.Password
+		bean["password_type"] = user.PasswordType
+	} else {
+		bean[strings.ToLower(field)] = value
 	}
 
-	affected, err := adapter.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(map[string]interface{}{strings.ToLower(field): value})
+	affected, err := adapter.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(bean)
 	if err != nil {
 		panic(err)
 	}
@@ -179,6 +184,123 @@ func ClearUserOAuthProperties(user *User, providerType string) bool {
 	return affected != 0
 }
 
+func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang string) (bool, string) {
+	organization := GetOrganizationByUser(oldUser)
+	var itemsChanged []*AccountItem
+
+	if oldUser.Owner != newUser.Owner {
+		item := GetAccountItemByName("Organization", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Name != newUser.Name {
+		item := GetAccountItemByName("Name", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Id != newUser.Id {
+		item := GetAccountItemByName("ID", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.DisplayName != newUser.DisplayName {
+		item := GetAccountItemByName("Display name", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Avatar != newUser.Avatar {
+		item := GetAccountItemByName("Avatar", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Type != newUser.Type {
+		item := GetAccountItemByName("User type", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	// The password is *** when not modified
+	if oldUser.Password != newUser.Password && newUser.Password != "***" {
+		item := GetAccountItemByName("Password", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Email != newUser.Email {
+		item := GetAccountItemByName("Email", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Phone != newUser.Phone {
+		item := GetAccountItemByName("Phone", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.CountryCode != newUser.CountryCode {
+		item := GetAccountItemByName("Country code", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Region != newUser.Region {
+		item := GetAccountItemByName("Country/Region", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Location != newUser.Location {
+		item := GetAccountItemByName("Location", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Affiliation != newUser.Affiliation {
+		item := GetAccountItemByName("Affiliation", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Title != newUser.Title {
+		item := GetAccountItemByName("Title", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Homepage != newUser.Homepage {
+		item := GetAccountItemByName("Homepage", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Bio != newUser.Bio {
+		item := GetAccountItemByName("Bio", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.Tag != newUser.Tag {
+		item := GetAccountItemByName("Tag", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.SignupApplication != newUser.SignupApplication {
+		item := GetAccountItemByName("Signup application", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	oldUserPropertiesJson, _ := json.Marshal(oldUser.Properties)
+	newUserPropertiesJson, _ := json.Marshal(newUser.Properties)
+	if string(oldUserPropertiesJson) != string(newUserPropertiesJson) {
+		item := GetAccountItemByName("Properties", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	oldUserTwoFactorAuthJson, _ := json.Marshal(oldUser.MultiFactorAuths)
+	newUserTwoFactorAuthJson, _ := json.Marshal(newUser.MultiFactorAuths)
+	if string(oldUserTwoFactorAuthJson) != string(newUserTwoFactorAuthJson) {
+		item := GetAccountItemByName("Multi-factor authentication", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.IsAdmin != newUser.IsAdmin {
+		item := GetAccountItemByName("Is admin", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.IsGlobalAdmin != newUser.IsGlobalAdmin {
+		item := GetAccountItemByName("Is global admin", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.IsForbidden != newUser.IsForbidden {
+		item := GetAccountItemByName("Is forbidden", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+	if oldUser.IsDeleted != newUser.IsDeleted {
+		item := GetAccountItemByName("Is deleted", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	for i := range itemsChanged {
+		if pass, err := CheckAccountItemModifyRule(itemsChanged[i], isAdmin, lang); !pass {
+			return pass, err
+		}
+	}
+	return true, ""
+}
+
 func (user *User) GetCountryCode(countryCode string) string {
 	if countryCode != "" {
 		return countryCode
@@ -192,4 +314,12 @@ func (user *User) GetCountryCode(countryCode string) string {
 		return org.CountryCodes[0]
 	}
 	return ""
+}
+
+func (user *User) IsAdminUser() bool {
+	if user == nil {
+		return false
+	}
+
+	return user.IsAdmin || user.IsGlobalAdmin
 }

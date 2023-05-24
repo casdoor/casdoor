@@ -21,7 +21,7 @@ import * as Setting from "./Setting";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class ApplicationListPage extends BaseListPage {
   constructor(props) {
@@ -65,6 +65,7 @@ class ApplicationListPage extends BaseListPage {
       redirectUris: ["http://localhost:9000/callback"],
       tokenFormat: "JWT",
       expireInHours: 24 * 7,
+      refreshExpireInHours: 24 * 7,
       formOffset: 2,
     };
   }
@@ -175,7 +176,7 @@ class ApplicationListPage extends BaseListPage {
         // width: '600px',
         render: (text, record, index) => {
           const providers = text;
-          if (providers.length === 0) {
+          if (providers === null || providers.length === 0) {
             return `(${i18next.t("general:empty")})`;
           }
 
@@ -254,7 +255,7 @@ class ApplicationListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={applications} rowKey="name" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={applications} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Applications")}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -273,7 +274,7 @@ class ApplicationListPage extends BaseListPage {
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
     (Setting.isAdminUser(this.props.account) ? ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) :
-      ApplicationBackend.getApplicationsByOrganization("admin", this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
+      ApplicationBackend.getApplicationsByOrganization("admin", this.props.account.organization.name, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

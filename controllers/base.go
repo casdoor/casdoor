@@ -41,18 +41,44 @@ type SessionData struct {
 }
 
 func (c *ApiController) IsGlobalAdmin() bool {
-	username := c.GetSessionUsername()
-	if strings.HasPrefix(username, "app/") {
-		// e.g., "app/app-casnode"
-		return true
-	}
+	isGlobalAdmin, _ := c.isGlobalAdmin()
 
-	user := object.GetUser(username)
-	if user == nil {
+	return isGlobalAdmin
+}
+
+func (c *ApiController) IsAdmin() bool {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	if !isGlobalAdmin && user == nil {
 		return false
 	}
 
-	return user.Owner == "built-in" || user.IsGlobalAdmin
+	return isGlobalAdmin || user.IsAdmin
+}
+
+func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
+	username := c.GetSessionUsername()
+	if strings.HasPrefix(username, "app/") {
+		// e.g., "app/app-casnode"
+		return true, nil
+	}
+
+	user := c.getCurrentUser()
+	if user == nil {
+		return false, nil
+	}
+
+	return user.Owner == "built-in" || user.IsGlobalAdmin, user
+}
+
+func (c *ApiController) getCurrentUser() *object.User {
+	var user *object.User
+	userId := c.GetSessionUsername()
+	if userId == "" {
+		user = nil
+	} else {
+		user = object.GetUser(userId)
+	}
+	return user
 }
 
 // GetSessionUsername ...
@@ -142,6 +168,30 @@ func (c *ApiController) SetSessionData(s *SessionData) {
 	c.SetSession("SessionData", util.StructToJson(s))
 }
 
+func (c *ApiController) setMfaSessionData(data *object.MfaSessionData) {
+	c.SetSession(object.MfaSessionUserId, data.UserId)
+}
+
+func (c *ApiController) getMfaSessionData() *object.MfaSessionData {
+	userId := c.GetSession(object.MfaSessionUserId)
+	if userId == nil {
+		return nil
+	}
+
+	data := &object.MfaSessionData{
+		UserId: userId.(string),
+	}
+	return data
+}
+
+func (c *ApiController) setExpireForSession() {
+	timestamp := time.Now().Unix()
+	timestamp += 3600 * 24
+	c.SetSessionData(&SessionData{
+		ExpireTime: timestamp,
+	})
+}
+
 func wrapActionResponse(affected bool) *Response {
 	if affected {
 		return &Response{Status: "ok", Msg: "", Data: "Affected"}
@@ -156,4 +206,15 @@ func wrapErrorResponse(err error) *Response {
 	} else {
 		return &Response{Status: "error", Msg: err.Error()}
 	}
+}
+
+func (c *ApiController) Finish() {
+	if strings.HasPrefix(c.Ctx.Input.URL(), "/api") {
+		startTime := c.Ctx.Input.GetData("startTime")
+		if startTime != nil {
+			latency := time.Since(startTime.(time.Time)).Milliseconds()
+			object.ApiLatency.WithLabelValues(c.Ctx.Input.URL(), c.Ctx.Input.Method()).Observe(float64(latency))
+		}
+	}
+	c.Controller.Finish()
 }

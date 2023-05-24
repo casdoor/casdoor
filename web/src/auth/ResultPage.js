@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Result, Spin} from "antd";
+import {Button, Card, Result, Spin} from "antd";
 import i18next from "i18next";
 import {authConfig} from "./Auth";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
@@ -44,10 +44,15 @@ class ResultPage extends React.Component {
 
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
+        this.onUpdateApplication(application);
         this.setState({
           application: application,
         });
       });
+  }
+
+  onUpdateApplication(application) {
+    this.props.onUpdateApplication(application);
   }
 
   render() {
@@ -62,27 +67,37 @@ class ResultPage extends React.Component {
     }
 
     return (
-      <div>
-        {
-          Setting.renderHelmet(application)
-        }
-        <Result
-          status="success"
-          title={i18next.t("signup:Your account has been created!")}
-          subTitle={i18next.t("signup:Please click the below button to sign in")}
-          extra={[
-            <Button type="primary" key="login" onClick={() => {
-              const linkInStorage = sessionStorage.getItem("signinUrl");
-              if (linkInStorage !== null && linkInStorage !== "") {
-                Setting.goToLink(linkInStorage);
-              } else {
-                Setting.redirectToLoginPage(application, this.props.history);
-              }
-            }}>
-              {i18next.t("login:Sign In")}
-            </Button>,
-          ]}
-        />
+      <div style={{display: "flex", flex: "1", justifyContent: "center"}}>
+        <Card>
+          <div style={{marginTop: "30px", marginBottom: "30px", textAlign: "center"}}>
+            {
+              Setting.renderHelmet(application)
+            }
+            {
+              Setting.renderLogo(application)
+            }
+            {
+              Setting.renderHelmet(application)
+            }
+            <Result
+              status="success"
+              title={i18next.t("signup:Your account has been created!")}
+              subTitle={i18next.t("signup:Please click the below button to sign in")}
+              extra={[
+                <Button type="primary" key="login" onClick={() => {
+                  const linkInStorage = sessionStorage.getItem("signinUrl");
+                  if (linkInStorage !== null && linkInStorage !== "") {
+                    Setting.goToLink(linkInStorage);
+                  } else {
+                    Setting.redirectToLoginPage(application, this.props.history);
+                  }
+                }}>
+                  {i18next.t("login:Sign In")}
+                </Button>,
+              ]}
+            />
+          </div>
+        </Card>
       </div>
     );
   }

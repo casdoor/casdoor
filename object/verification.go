@@ -33,10 +33,10 @@ type VerifyResult struct {
 }
 
 const (
-	VerificationSuccess int = 0
-	wrongCodeError          = 1
-	noRecordError           = 2
-	timeoutError            = 3
+	VerificationSuccess = iota
+	wrongCodeError
+	noRecordError
+	timeoutError
 )
 
 const (

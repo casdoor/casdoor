@@ -125,8 +125,38 @@ class ProviderEditPage extends React.Component {
       } else {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
       }
+    case "AI":
+      return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
     default:
       return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
+    }
+  }
+
+  getClientId2Label(provider) {
+    switch (provider.category) {
+    case "Email":
+      return Setting.getLabel(i18next.t("provider:From address"), i18next.t("provider:From address - Tooltip"));
+    default:
+      if (provider.type === "Aliyun Captcha") {
+        return Setting.getLabel(i18next.t("provider:Scene"), i18next.t("provider:Scene - Tooltip"));
+      } else if (provider.type === "WeChat Pay") {
+        return Setting.getLabel(i18next.t("provider:App ID"), i18next.t("provider:App ID - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client ID 2"), i18next.t("provider:Client ID 2 - Tooltip"));
+      }
+    }
+  }
+
+  getClientSecret2Label(provider) {
+    switch (provider.category) {
+    case "Email":
+      return Setting.getLabel(i18next.t("provider:From name"), i18next.t("provider:From name - Tooltip"));
+    default:
+      if (provider.type === "Aliyun Captcha") {
+        return Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client secret 2"), i18next.t("provider:Client secret 2 - Tooltip"));
+      }
     }
   }
 
@@ -278,17 +308,20 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "Alipay");
               } else if (value === "Captcha") {
                 this.updateProviderField("type", "Default");
+              } else if (value === "AI") {
+                this.updateProviderField("type", "OpenAI API - GPT");
               }
             })}>
               {
                 [
-                  {id: "OAuth", name: "OAuth"},
+                  {id: "AI", name: "AI"},
+                  {id: "Captcha", name: "Captcha"},
                   {id: "Email", name: "Email"},
+                  {id: "OAuth", name: "OAuth"},
+                  {id: "Payment", name: "Payment"},
+                  {id: "SAML", name: "SAML"},
                   {id: "SMS", name: "SMS"},
                   {id: "Storage", name: "Storage"},
-                  {id: "SAML", name: "SAML"},
-                  {id: "Payment", name: "Payment"},
-                  {id: "Captcha", name: "Captcha"},
                 ]
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
@@ -437,19 +470,23 @@ class ProviderEditPage extends React.Component {
         {
           this.state.provider.category === "Captcha" && this.state.provider.type === "Default" ? null : (
             <React.Fragment>
+              {
+                this.state.provider.category === "AI" ? null : (
+                  <Row style={{marginTop: "20px"}} >
+                    <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {this.getClientIdLabel(this.state.provider)} :
+                    </Col>
+                    <Col span={22} >
+                      <Input value={this.state.provider.clientId} onChange={e => {
+                        this.updateProviderField("clientId", e.target.value);
+                      }} />
+                    </Col>
+                  </Row>
+                )
+              }
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {this.getClientIdLabel(this.state.provider)}
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.clientId} onChange={e => {
-                    this.updateProviderField("clientId", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {this.getClientSecretLabel(this.state.provider)}
+                  {this.getClientSecretLabel(this.state.provider)} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.clientSecret} onChange={e => {
@@ -461,7 +498,7 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "WeChat" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" ? null : (
+          this.state.provider.category !== "Email" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -470,6 +507,7 @@ class ProviderEditPage extends React.Component {
                     : this.state.provider.type === "WeChat Pay"
                       ? Setting.getLabel("Mch ID", "Mch ID")
                       : Setting.getLabel(i18next.t("provider:Client ID 2"), i18next.t("provider:Client ID 2 - Tooltip"))}
+                  {this.getClientId2Label(this.state.provider)} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.clientId2} onChange={e => {
@@ -481,9 +519,7 @@ class ProviderEditPage extends React.Component {
                 this.state.provider.type === "WeChat Pay" ? null : (
                   <Row style={{marginTop: "20px"}} >
                     <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                      {this.state.provider.type === "Aliyun Captcha"
-                        ? Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"))
-                        : Setting.getLabel(i18next.t("provider:Client secret 2"), i18next.t("provider:Client secret 2 - Tooltip"))}
+                      {this.getClientSecret2Label(this.state.provider)} :
                     </Col>
                     <Col span={22} >
                       <Input value={this.state.provider.clientSecret2} onChange={e => {

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Result, Row, Select, Spin, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Spin, Switch, Tag} from "antd";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -30,6 +30,11 @@ import WebAuthnCredentialTable from "./table/WebauthnCredentialTable";
 import ManagedAccountTable from "./table/ManagedAccountTable";
 import PropertyTable from "./table/propertyTable";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
+import {DeleteMfa} from "./backend/MfaBackend";
+import {CheckCircleOutlined} from "@ant-design/icons";
+import {SmsMfaType} from "./auth/MfaSetupPage";
+import * as MfaBackend from "./backend/MfaBackend";
 
 const {Option} = Select;
 
@@ -64,6 +69,7 @@ class UserEditPage extends React.Component {
         if (data.status === null || data.status !== "error") {
           this.setState({
             user: data,
+            multiFactorAuths: data?.multiFactorAuths ?? [],
           });
         }
         this.setState({
@@ -142,6 +148,58 @@ class UserEditPage extends React.Component {
     return this.props.account.countryCode;
   }
 
+  getMfaProps(type = "") {
+    if (!(this.state.multiFactorAuths?.length > 0)) {
+      return [];
+    }
+    if (type === "") {
+      return this.state.multiFactorAuths;
+    }
+    return this.state.multiFactorAuths.filter(mfaProps => mfaProps.type === type);
+  }
+
+  loadMore = (table, type) => {
+    return <div
+      style={{
+        textAlign: "center",
+        marginTop: 12,
+        height: 32,
+        lineHeight: "32px",
+      }}
+    >
+      <Button onClick={() => {
+        this.setState({
+          multiFactorAuths: Setting.addRow(table, {"type": type}),
+        });
+      }}>{i18next.t("general:Add")}</Button>
+    </div>;
+  };
+
+  deleteMfa = (id) => {
+    this.setState({
+      RemoveMfaLoading: true,
+    });
+
+    DeleteMfa({
+      id: id,
+      owner: this.state.user.owner,
+      name: this.state.user.name,
+    }).then((res) => {
+      if (res.status === "ok") {
+        Setting.showMessage("success", i18next.t("general:Successfully deleted"));
+        this.setState({
+          multiFactorAuths: res.data,
+        });
+      } else {
+        Setting.showMessage("error", i18next.t("general:Failed to delete"));
+      }
+    }).finally(() => {
+      this.setState({
+        RemoveMfaLoading: false,
+      });
+    });
+  };
+
   renderAccountItem(accountItem) {
     if (!accountItem.visible) {
       return null;
@@ -178,6 +236,12 @@ class UserEditPage extends React.Component {
       }
     } else if (accountItem.modifyRule === "Immutable") {
       disabled = true;
+    }
+
+    if (accountItem.name === "Organization" || accountItem.name === "Name") {
+      if (this.state.user.owner === "built-in" && this.state.user.name === "admin") {
+        disabled = true;
+      }
     }
 
     if (accountItem.name === "Organization") {
@@ -688,6 +752,74 @@ class UserEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+      );
+    } else if (accountItem.name === "Multi-factor authentication") {
+      return (
+        !this.isSelfOrAdmin() ? null : (
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={Setting.isMobile() ? 22 : 2}>
+              {Setting.getLabel(i18next.t("mfa:Multi-factor authentication"), i18next.t("mfa:Multi-factor authentication - Tooltip "))} :
+            </Col>
+            <Col span={22} >
+              <Card title={i18next.t("mfa:Multi-factor methods")}>
+                <Card type="inner" title={i18next.t("mfa:SMS/Email message")}>
+                  <List
+                    itemLayout="horizontal"
+                    dataSource={this.getMfaProps(SmsMfaType)}
+                    loadMore={this.loadMore(this.state.multiFactorAuths, SmsMfaType)}
+                    renderItem={(item, index) => (
+                      <List.Item>
+                        <div>
+                          {item?.id === undefined ?
+                            <Button type={"default"} onClick={() => {
+                              Setting.goToLink("/mfa-authentication/setup");
+                            }}>
+                              {i18next.t("mfa:Setup")}
+                            </Button> :
+                            <Tag icon={<CheckCircleOutlined />} color="success">
+                              {i18next.t("general:Enabled")}
+                            </Tag>
+                          }
+                          {item.secret}
+                        </div>
+                        {item?.id === undefined ? null :
+                          <div>
+                            {item.isPreferred ?
+                              <Tag icon={<CheckCircleOutlined />} color="blue" style={{marginRight: 20}} >
+                                {i18next.t("mfa:preferred")}
+                              </Tag> :
+                              <Button type="primary" style={{marginRight: 20}} onClick={() => {
+                                const values = {
+                                  owner: this.state.user.owner,
+                                  name: this.state.user.name,
+                                  id: item.id,
+                                };
+                                MfaBackend.SetPreferredMfa(values).then((res) => {
+                                  if (res.status === "ok") {
+                                    this.setState({
+                                      multiFactorAuths: res.data,
+                                    });
+                                  }
+                                });
+                              }}>
+                                {i18next.t("mfa:Set preferred")}
+                              </Button>
+                            }
+                            <PopconfirmModal
+                              title={i18next.t("general:Sure to delete") + "?"}
+                              onConfirm={() => this.deleteMfa(item.id)}
+                            >
+                            </PopconfirmModal>
+                          </div>
+                        }
+                      </List.Item>
+                    )}
+                  />
+                </Card>
+              </Card>
+            </Col>
+          </Row>
+        )
       );
     } else if (accountItem.name === "WebAuthn credentials") {
       return (

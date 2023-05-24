@@ -27,7 +27,6 @@ import (
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/routers"
-	_ "github.com/casdoor/casdoor/routers"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -59,6 +58,7 @@ func main() {
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AutoSigninFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.CorsFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AuthzFilter)
+	beego.InsertFilter("*", beego.BeforeRouter, routers.PrometheusFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
@@ -82,6 +82,7 @@ func main() {
 	logs.SetLogFuncCall(false)
 
 	go ldap.StartLdapServer()
+	go object.ClearThroughputPerSecond()
 
 	beego.Run(fmt.Sprintf(":%v", port))
 }

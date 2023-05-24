@@ -1,6 +1,5 @@
 describe('Test roles', () => {
     beforeEach(()=>{
-        cy.visit("http://localhost:7001");
         cy.login();
     })
     it("test role", () => {

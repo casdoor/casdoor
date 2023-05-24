@@ -14,8 +14,8 @@
 
 import * as Setting from "../Setting";
 
-export function getMessages(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-messages?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+export function getMessages(owner, organization, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-messages?owner=${owner}&organization=${organization}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -42,6 +42,23 @@ export function getMessage(owner, name) {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
   }).then(res => res.json());
+}
+
+export function getMessageAnswer(owner, name, onMessage, onError) {
+  const eventSource = new EventSource(`${Setting.ServerUrl}/api/get-message-answer?id=${owner}/${encodeURIComponent(name)}`);
+
+  eventSource.addEventListener("message", (e) => {
+    onMessage(e.data);
+  });
+
+  eventSource.addEventListener("myerror", (e) => {
+    onError(e.data);
+    eventSource.close();
+  });
+
+  eventSource.addEventListener("end", (e) => {
+    eventSource.close();
+  });
 }
 
 export function updateMessage(owner, name, message) {

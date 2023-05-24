@@ -23,6 +23,14 @@
   "cas": {
     "Service %s and %s do not match": "サービス%sと%sは一致しません"
   },
+  "chat": {
+    "The chat type must be \\\"AI\\\"": "The chat type must be \\\"AI\\\"",
+    "The chat: %s is not found": "The chat: %s is not found",
+    "The message is invalid": "The message is invalid",
+    "The message: %s is not found": "The message: %s is not found",
+    "The provider: %s is invalid": "The provider: %s is invalid",
+    "The provider: %s is not found": "The provider: %s is not found"
+  },
   "check": {
     "Affiliation cannot be blank": "所属は空白にできません",
     "DisplayName cannot be blank": "表示名は空白にできません",
@@ -130,7 +138,6 @@
     "Unable to get the email modify rule.": "電子メール変更規則を取得できません。",
     "Unable to get the phone modify rule.": "電話の変更ルールを取得できません。",
     "Unknown type": "不明なタイプ",
-    "Wrong parameter": "誤ったパラメータ",
     "Wrong verification code!": "誤った検証コードです！",
     "You should verify your code in %d min!": "あなたは%d分であなたのコードを確認する必要があります！",
     "the user does not exist, please sign up first": "ユーザーは存在しません。まず登録してください"

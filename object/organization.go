@@ -16,8 +16,9 @@ package object
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/cred"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
@@ -39,6 +40,11 @@ type ThemeData struct {
 	IsEnabled    bool   `xorm:"bool" json:"isEnabled"`
 }
 
+type MfaItem struct {
+	Name string `json:"name"`
+	Rule string `json:"rule"`
+}
+
 type Organization struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -50,7 +56,7 @@ type Organization struct {
 	PasswordType       string     `xorm:"varchar(100)" json:"passwordType"`
 	PasswordSalt       string     `xorm:"varchar(100)" json:"passwordSalt"`
 	CountryCodes       []string   `xorm:"varchar(200)"  json:"countryCodes"`
-	DefaultAvatar      string     `xorm:"varchar(100)" json:"defaultAvatar"`
+	DefaultAvatar      string     `xorm:"varchar(200)" json:"defaultAvatar"`
 	DefaultApplication string     `xorm:"varchar(100)" json:"defaultApplication"`
 	Tags               []string   `xorm:"mediumtext" json:"tags"`
 	Languages          []string   `xorm:"varchar(255)" json:"languages"`
@@ -60,6 +66,7 @@ type Organization struct {
 	EnableSoftDeletion bool       `json:"enableSoftDeletion"`
 	IsProfilePublic    bool       `json:"isProfilePublic"`
 
+	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	AccountItems []*AccountItem `xorm:"varchar(3000)" json:"accountItems"`
 }
 
@@ -210,14 +217,14 @@ func GetAccountItemByName(name string, organization *Organization) *AccountItem 
 	return nil
 }
 
-func CheckAccountItemModifyRule(accountItem *AccountItem, user *User, lang string) (bool, string) {
+func CheckAccountItemModifyRule(accountItem *AccountItem, isAdmin bool, lang string) (bool, string) {
 	if accountItem == nil {
 		return true, ""
 	}
 
 	switch accountItem.ModifyRule {
 	case "Admin":
-		if user == nil || !user.IsAdmin && !user.IsGlobalAdmin {
+		if !isAdmin {
 			return false, fmt.Sprintf(i18n.Translate(lang, "organization:Only admin can modify the %s."), accountItem.Name)
 		}
 	case "Immutable":
@@ -299,18 +306,16 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 	for i, u := range role.Users {
 		// u = organization/username
-		split := strings.Split(u, "/")
-		if split[0] == oldName {
-			split[0] = newName
-			role.Users[i] = split[0] + "/" + split[1]
+		owner, name := util.GetOwnerAndNameFromId(u)
+		if name == oldName {
+			role.Users[i] = util.GetId(owner, newName)
 		}
 	}
 	for i, u := range role.Roles {
 		// u = organization/username
-		split := strings.Split(u, "/")
-		if split[0] == oldName {
-			split[0] = newName
-			role.Roles[i] = split[0] + "/" + split[1]
+		owner, name := util.GetOwnerAndNameFromId(u)
+		if name == oldName {
+			role.Roles[i] = util.GetId(owner, newName)
 		}
 	}
 	role.Owner = newName
@@ -326,18 +331,16 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 	for i, u := range permission.Users {
 		// u = organization/username
-		split := strings.Split(u, "/")
-		if split[0] == oldName {
-			split[0] = newName
-			permission.Users[i] = split[0] + "/" + split[1]
+		owner, name := util.GetOwnerAndNameFromId(u)
+		if name == oldName {
+			permission.Users[i] = util.GetId(owner, newName)
 		}
 	}
 	for i, u := range permission.Roles {
 		// u = organization/username
-		split := strings.Split(u, "/")
-		if split[0] == oldName {
-			split[0] = newName
-			permission.Roles[i] = split[0] + "/" + split[1]
+		owner, name := util.GetOwnerAndNameFromId(u)
+		if name == oldName {
+			permission.Roles[i] = util.GetId(owner, newName)
 		}
 	}
 	permission.Owner = newName
@@ -412,4 +415,21 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 
 	return session.Commit()
+}
+
+func (org *Organization) HasRequiredMfa() bool {
+	for _, item := range org.MfaItems {
+		if item.Rule == "Required" {
+			return true
+		}
+	}
+	return false
+}
+
+func (org *Organization) GetInitScore() (int, error) {
+	if org != nil {
+		return org.InitScore, nil
+	} else {
+		return strconv.Atoi(conf.GetConfigString("initScore"))
+	}
 }

@@ -25,10 +25,7 @@ type Migrator_1_235_0_PR_1530 struct{}
 func (*Migrator_1_235_0_PR_1530) IsMigrationNeeded() bool {
 	exist, _ := adapter.Engine.IsTableExist("casbin_rule")
 
-	if exist {
-		return true
-	}
-	return false
+	return exist
 }
 
 func (*Migrator_1_235_0_PR_1530) DoMigration() *migrate.Migration {

@@ -20,7 +20,7 @@ import * as Setting from "./Setting";
 import * as RoleBackend from "./backend/RoleBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class RoleListPage extends BaseListPage {
   newRole() {
@@ -196,7 +196,7 @@ class RoleListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={roles} rowKey="name" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={roles} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Roles")}&nbsp;&nbsp;&nbsp;&nbsp;

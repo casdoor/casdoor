@@ -13,8 +13,9 @@
 // limitations under the License.
 
 import React from "react";
-import {Avatar, Input, List} from "antd";
+import {Alert, Avatar, Input, List, Spin} from "antd";
 import {CopyOutlined, DislikeOutlined, LikeOutlined, SendOutlined} from "@ant-design/icons";
+import i18next from "i18next";
 
 const {TextArea} = Input;
 
@@ -29,7 +30,7 @@ class ChatBox extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.messages !== this.props.messages) {
+    if (prevProps.messages !== this.props.messages && this.props.messages !== undefined && this.props.messages !== null) {
       this.scrollToListItem(this.props.messages.length);
     }
   }
@@ -73,12 +74,30 @@ class ChatBox extends React.Component {
     this.setState({inputValue: ""});
   };
 
+  renderText(text) {
+    const lines = text.split("\n").map((line, index) => (
+      <React.Fragment key={index}>
+        {line}
+        <br />
+      </React.Fragment>
+    ));
+    return <div>{lines}</div>;
+  }
+
   renderList() {
+    if (this.props.messages === undefined || this.props.messages === null) {
+      return (
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <Spin size="large" tip={i18next.t("login:Loading")} style={{paddingTop: "20%"}} />
+        </div>
+      );
+    }
+
     return (
       <div ref={this.listContainerRef} style={{position: "relative", maxHeight: "calc(100vh - 140px)", overflowY: "auto"}}>
         <List
           itemLayout="horizontal"
-          dataSource={this.props.messages === undefined ? undefined : [...this.props.messages, {}]}
+          dataSource={[...this.props.messages, {}]}
           renderItem={(item, index) => {
             if (Object.keys(item).length === 0 && item.constructor === Object) {
               return <List.Item id={`chatbox-list-item-${index}`} style={{
@@ -98,7 +117,15 @@ class ChatBox extends React.Component {
                 <div style={{width: "800px", margin: "0 auto", position: "relative"}}>
                   <List.Item.Meta
                     avatar={<Avatar style={{width: "30px", height: "30px", borderRadius: "3px"}} src={item.author === `${this.props.account.owner}/${this.props.account.name}` ? this.props.account.avatar : "https://cdn.casbin.com/casdoor/resource/built-in/admin/gpt.png"} />}
-                    title={<div style={{fontSize: "16px", fontWeight: "normal", lineHeight: "24px", marginTop: "-15px", marginLeft: "5px", marginRight: "80px"}}>{item.text}</div>}
+                    title={
+                      <div style={{fontSize: "16px", fontWeight: "normal", lineHeight: "24px", marginTop: "-15px", marginLeft: "5px", marginRight: "80px"}}>
+                        {
+                          !item.text.includes("#ERROR#") ? this.renderText(item.text) : (
+                            <Alert message={item.text.slice("#ERROR#: ".length)} type="error" showIcon />
+                          )
+                        }
+                      </div>
+                    }
                   />
                   <div style={{position: "absolute", top: "0px", right: "0px"}}
                   >

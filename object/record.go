@@ -47,7 +47,8 @@ type Record struct {
 	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
 	Action       string `xorm:"varchar(1000)" json:"action"`
 
-	ExtendedUser *User `xorm:"-" json:"extendedUser"`
+	Object       string `xorm:"-" json:"object"`
+	ExtendedUser *User  `xorm:"-" json:"extendedUser"`
 
 	IsTriggered bool `json:"isTriggered"`
 }
@@ -60,6 +61,11 @@ func NewRecord(ctx *context.Context) *Record {
 		requestUri = requestUri[0:1000]
 	}
 
+	object := ""
+	if ctx.Input.RequestBody != nil && len(ctx.Input.RequestBody) != 0 {
+		object = string(ctx.Input.RequestBody)
+	}
+
 	record := Record{
 		Name:        util.GenerateId(),
 		CreatedTime: util.GetCurrentTime(),
@@ -68,6 +74,7 @@ func NewRecord(ctx *context.Context) *Record {
 		Method:      ctx.Request.Method,
 		RequestUri:  requestUri,
 		Action:      action,
+		Object:      object,
 		IsTriggered: false,
 	}
 	return &record
@@ -159,7 +166,7 @@ func SendWebhooks(record *Record) error {
 
 		if matched {
 			if webhook.IsUserExtended {
-				user := getUser(record.Organization, record.User)
+				user := GetMaskedUser(getUser(record.Organization, record.User))
 				record.ExtendedUser = user
 			}
 

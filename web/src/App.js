@@ -44,6 +44,12 @@ import SyncerListPage from "./SyncerListPage";
 import SyncerEditPage from "./SyncerEditPage";
 import CertListPage from "./CertListPage";
 import CertEditPage from "./CertEditPage";
+import SubscriptionListPage from "./SubscriptionListPage";
+import SubscriptionEditPage from "./SubscriptionEditPage";
+import PricingListPage from "./PricingListPage";
+import PricingEditPage from "./PricingEditPage";
+import PlanListPage from "./PlanListPage";
+import PlanEditPage from "./PlanEditPage";
 import ChatListPage from "./ChatListPage";
 import ChatEditPage from "./ChatEditPage";
 import ChatPage from "./ChatPage";
@@ -62,7 +68,6 @@ import * as Conf from "./Conf";
 
 import * as Auth from "./auth/Auth";
 import EntryPage from "./EntryPage";
-import ResultPage from "./auth/ResultPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
 import LanguageSelect from "./common/select/LanguageSelect";
@@ -77,6 +82,7 @@ import AdapterEditPage from "./AdapterEditPage";
 import {withTranslation} from "react-i18next";
 import ThemeSelect from "./common/select/ThemeSelect";
 import SessionListPage from "./SessionListPage";
+import MfaSetupPage from "./auth/MfaSetupPage";
 
 const {Header, Footer, Content} = Layout;
 
@@ -168,6 +174,12 @@ class App extends Component {
       this.setState({selectedMenuKey: "/result"});
     } else if (uri.includes("/sysinfo")) {
       this.setState({selectedMenuKey: "/sysinfo"});
+    } else if (uri.includes("/subscriptions")) {
+      this.setState({selectedMenuKey: "/subscriptions"});
+    } else if (uri.includes("/plans")) {
+      this.setState({selectedMenuKey: "/plans"});
+    } else if (uri.includes("/pricings")) {
+      this.setState({selectedMenuKey: "/pricings"});
     } else {
       this.setState({selectedMenuKey: -1});
     }
@@ -335,6 +347,8 @@ class App extends Component {
     const onClick = (e) => {
       if (e.key === "/account") {
         this.props.history.push("/account");
+      } else if (e.key === "/subscription") {
+        this.props.history.push("/subscription");
       } else if (e.key === "/chat") {
         this.props.history.push("/chat");
       } else if (e.key === "/logout") {
@@ -410,7 +424,7 @@ class App extends Component {
       ));
     }
 
-    if (Setting.isAdminUser(this.state.account)) {
+    if (Setting.isLocalAdminUser(this.state.account)) {
       res.push(Setting.getItem(<Link to="/models">{i18next.t("general:Models")}</Link>,
         "/models"
       ));
@@ -444,9 +458,22 @@ class App extends Component {
       res.push(Setting.getItem(<Link to="/records">{i18next.t("general:Records")}</Link>,
         "/records"
       ));
+
+      res.push(Setting.getItem(<Link to="/plans">{i18next.t("general:Plans")}</Link>,
+        "/plans"
+      ));
+
+      res.push(Setting.getItem(<Link to="/pricings">{i18next.t("general:Pricings")}</Link>,
+        "/pricings"
+      ));
+
+      res.push(Setting.getItem(<Link to="/subscriptions">{i18next.t("general:Subscriptions")}</Link>,
+        "/subscriptions"
+      ));
+
     }
 
-    if (Setting.isAdminUser(this.state.account)) {
+    if (Setting.isLocalAdminUser(this.state.account)) {
       res.push(Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>,
         "/tokens"
       ));
@@ -468,6 +495,7 @@ class App extends Component {
       ));
 
       if (Conf.EnableExtraPages) {
+
         res.push(Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>,
           "/products"
         ));
@@ -475,11 +503,13 @@ class App extends Component {
         res.push(Setting.getItem(<Link to="/payments">{i18next.t("general:Payments")}</Link>,
           "/payments"
         ));
-
-        res.push(Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>,
-          "/sysinfo"
-        ));
       }
+
+    }
+    if (Setting.isAdminUser(this.state.account)) {
+      res.push(Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>,
+        "/sysinfo"
+      ));
       res.push(Setting.getItem(<a target="_blank" rel="noreferrer"
         href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>{i18next.t("general:Swagger")}</a>,
       "/swagger"
@@ -517,8 +547,6 @@ class App extends Component {
   renderRouter() {
     return (
       <Switch>
-        <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)} />
-        <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...props} />)} />
         <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)} />
         <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)} />
         <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)} />
@@ -550,12 +578,18 @@ class App extends Component {
         <Route exact path="/syncers" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerListPage account={this.state.account} {...props} />)} />
         <Route exact path="/syncers/:syncerName" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/certs" render={(props) => this.renderLoginIfNotLoggedIn(<CertListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/certs/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/certs/:organizationName/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/chats" render={(props) => this.renderLoginIfNotLoggedIn(<ChatListPage account={this.state.account} {...props} />)} />
         <Route exact path="/chats/:chatName" render={(props) => this.renderLoginIfNotLoggedIn(<ChatEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/chat" render={(props) => this.renderLoginIfNotLoggedIn(<ChatPage account={this.state.account} {...props} />)} />
         <Route exact path="/messages" render={(props) => this.renderLoginIfNotLoggedIn(<MessageListPage account={this.state.account} {...props} />)} />
         <Route exact path="/messages/:messageName" render={(props) => this.renderLoginIfNotLoggedIn(<MessageEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/plans" render={(props) => this.renderLoginIfNotLoggedIn(<PlanListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/plan/:organizationName/:planName" render={(props) => this.renderLoginIfNotLoggedIn(<PlanEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/pricings" render={(props) => this.renderLoginIfNotLoggedIn(<PricingListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/pricing/:organizationName/:pricingName" render={(props) => this.renderLoginIfNotLoggedIn(<PricingEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/subscriptions" render={(props) => this.renderLoginIfNotLoggedIn(<SubscriptionListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/subscription/:organizationName/:subscriptionName" render={(props) => this.renderLoginIfNotLoggedIn(<SubscriptionEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/products" render={(props) => this.renderLoginIfNotLoggedIn(<ProductListPage account={this.state.account} {...props} />)} />
         <Route exact path="/products/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/products/:productName/buy" render={(props) => this.renderLoginIfNotLoggedIn(<ProductBuyPage account={this.state.account} {...props} />)} />
@@ -563,6 +597,7 @@ class App extends Component {
         <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/payments/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)} />
         <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/mfa-authentication/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} {...props} />)} />
         <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
         <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
         <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
@@ -650,7 +685,13 @@ class App extends Component {
             textAlign: "center",
           }
         }>
-            Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
+          {
+            Conf.CustomFooter !== null ? Conf.CustomFooter : (
+              <React.Fragment>
+                Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
+              </React.Fragment>
+            )
+          }
         </Footer>
       </React.Fragment>
     );
@@ -665,8 +706,10 @@ class App extends Component {
         window.location.pathname.startsWith("/login") ||
         window.location.pathname.startsWith("/forget") ||
         window.location.pathname.startsWith("/prompt") ||
+        window.location.pathname.startsWith("/result") ||
         window.location.pathname.startsWith("/cas") ||
-        window.location.pathname.startsWith("/auto-signup");
+        window.location.pathname.startsWith("/auto-signup") ||
+        window.location.pathname.startsWith("/select-plan");
   }
 
   renderPage() {

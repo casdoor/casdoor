@@ -112,7 +112,6 @@ class ApplicationEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getApplication();
     this.getOrganizations();
-    this.getCerts();
     this.getProviders();
     this.getSamlMetadata();
   }
@@ -126,6 +125,8 @@ class ApplicationEditPage extends React.Component {
         this.setState({
           application: application,
         });
+
+        this.getCerts(application.organization);
       });
   }
 
@@ -144,8 +145,8 @@ class ApplicationEditPage extends React.Component {
       });
   }
 
-  getCerts() {
-    CertBackend.getCerts("admin")
+  getCerts(owner) {
+    CertBackend.getCerts(owner)
       .then((res) => {
         this.setState({
           certs: (res.msg === undefined) ? res : [],
@@ -671,6 +672,27 @@ class ApplicationEditPage extends React.Component {
             </Popover>
           </Col>
         </Row>
+        <Row>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Form CSS Mobile"), i18next.t("application:Form CSS Mobile - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <Popover placement="right" content={
+              <div style={{width: "900px", height: "300px"}} >
+                <CodeMirror value={this.state.application.formCssMobile === "" ? template : this.state.application.formCssMobile}
+                  options={{mode: "css", theme: "material-darker"}}
+                  onBeforeChange={(editor, data, value) => {
+                    this.updateApplicationField("formCssMobile", value);
+                  }}
+                />
+              </div>
+            } title={i18next.t("application:Form CSS Mobile - Edit")} trigger="click">
+              <Input value={this.state.application.formCssMobile} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("formCssMobile", e.target.value);
+              }} />
+            </Popover>
+          </Col>
+        </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:Form position"), i18next.t("application:Form position - Tooltip"))} :
@@ -767,7 +789,15 @@ class ApplicationEditPage extends React.Component {
   renderSignupSigninPreview() {
     const themeData = this.state.application.themeData ?? Conf.ThemeDefault;
     let signUpUrl = `/signup/${this.state.application.name}`;
-    const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${this.state.application.redirectUris[0]}&scope=read&state=casdoor`;
+
+    let redirectUri;
+    if (this.state.application.redirectUris?.length > 0) {
+      redirectUri = this.state.application.redirectUris[0];
+    } else {
+      redirectUri = "\"ERROR: You must specify at least one Redirect URL in 'Redirect URLs'\"";
+    }
+
+    const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${redirectUri}&scope=read&state=casdoor`;
     const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "97%", width: "100%", background: "rgba(0,0,0,0.4)"};
     if (!this.state.application.enablePassword) {
       signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");

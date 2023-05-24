@@ -67,6 +67,7 @@ func getBuiltInAccountItems() []*AccountItem {
 		{Name: "Is global admin", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 		{Name: "Is forbidden", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 		{Name: "Is deleted", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
+		{Name: "Multi-factor authentication", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "WebAuthn credentials", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "Managed accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 	}
@@ -89,7 +90,7 @@ func initBuiltInOrganization() bool {
 		CountryCodes:       []string{"US", "ES", "CN", "FR", "DE", "GB", "JP", "KR", "VN", "ID", "SG", "IN"},
 		DefaultAvatar:      fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
 		Tags:               []string{},
-		Languages:          []string{"en", "zh", "es", "fr", "de", "id", "ja", "ko", "ru", "vi"},
+		Languages:          []string{"en", "zh", "es", "fr", "de", "id", "ja", "ko", "ru", "vi", "pt"},
 		InitScore:          2000,
 		AccountItems:       getBuiltInAccountItems(),
 		EnableSoftDeletion: false,

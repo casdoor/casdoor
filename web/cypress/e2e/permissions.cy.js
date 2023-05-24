@@ -1,6 +1,5 @@
 describe('Test permissions', () => {
     beforeEach(()=>{
-        cy.visit("http://localhost:7001");
         cy.login();
     })
     it("test permissions", () => {

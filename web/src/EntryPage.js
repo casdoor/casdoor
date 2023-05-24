@@ -16,6 +16,8 @@ import React from "react";
 import {Redirect, Route, Switch} from "react-router-dom";
 import {Spin} from "antd";
 import i18next from "i18next";
+import * as ApplicationBackend from "./backend/ApplicationBackend";
+import PricingPage from "./pricing/PricingPage";
 import * as Setting from "./Setting";
 import * as Conf from "./Conf";
 import SignupPage from "./auth/SignupPage";
@@ -24,13 +26,16 @@ import LoginPage from "./auth/LoginPage";
 import SelfForgetPage from "./auth/SelfForgetPage";
 import ForgetPage from "./auth/ForgetPage";
 import PromptPage from "./auth/PromptPage";
+import ResultPage from "./auth/ResultPage";
 import CasLogout from "./auth/CasLogout";
+import {authConfig} from "./auth/Auth";
 
 class EntryPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       application: undefined,
+      pricing: undefined,
     };
   }
 
@@ -53,10 +58,6 @@ class EntryPage extends React.Component {
     }
   }
 
-  getApplicationObj() {
-    return this.state.application || null;
-  }
-
   render() {
     const onUpdateApplication = (application) => {
       this.setState({
@@ -67,11 +68,25 @@ class EntryPage extends React.Component {
       this.props.updataThemeData(themeData);
     };
 
+    const onUpdatePricing = (pricing) => {
+      this.setState({
+        pricing: pricing,
+      });
+
+      ApplicationBackend.getApplication("admin", pricing.application)
+        .then((application) => {
+          const themeData = application !== null ? Setting.getThemeData(application.organizationObj, application) : Conf.ThemeDefault;
+          this.props.updataThemeData(themeData);
+        });
+    };
+
     return (
-      <div className="loginBackground" style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${this.state.application?.formBackgroundUrl})`}}>
-        <Spin size="large" spinning={this.state.application === undefined} tip={i18next.t("login:Loading")} style={{margin: "0 auto"}} />
+      <div className="loginBackground"
+        style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${this.state.application?.formBackgroundUrl})`}}>
+        <Spin size="large" spinning={this.state.application === undefined && this.state.pricing === undefined} tip={i18next.t("login:Loading")}
+          style={{margin: "0 auto"}} />
         <Switch>
-          <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+          <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} applicationName={authConfig.appName} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/login/:owner" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
@@ -83,8 +98,11 @@ class EntryPage extends React.Component {
           <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+          <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+          <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage {...this.props} application={this.state.application} type={"cas"} mode={"signin"} onUpdateApplication={onUpdateApplication} {...props} />);}} />
+          <Route exact path="/select-plan/:pricingName" render={(props) => this.renderHomeIfLoggedIn(<PricingPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />)} />
         </Switch>
       </div>
     );

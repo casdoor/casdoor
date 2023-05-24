@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Alert, Button, Result} from "antd";
+import i18next from "i18next";
 import {getWechatMessageEvent} from "./AuthBackend";
 import * as Setting from "../Setting";
 import * as Provider from "./Provider";
@@ -23,13 +24,13 @@ export function renderMessage(msg) {
     return (
       <div style={{display: "inline"}}>
         <Alert
-          message="Login Error"
+          message={i18next.t("application:Failed to sign in")}
           showIcon
           description={msg}
           type="error"
           action={
             <Button size="small" type="primary" danger>
-              Detail
+              {i18next.t("product:Detail")}
             </Button>
           }
         />
@@ -46,13 +47,13 @@ export function renderMessageLarge(ths, msg) {
       <Result
         style={{margin: "0px auto"}}
         status="error"
-        title="There was a problem signing you in.."
+        title={i18next.t("general:There was a problem signing you in..")}
         subTitle={msg}
         extra={[
           <Button type="primary" key="back" onClick={() => {
             window.history.go(-2);
           }}>
-              Back
+            {i18next.t("general:Back")}
           </Button>,
         ]}
       >
@@ -79,13 +80,39 @@ export function getCasParameters(params) {
   };
 }
 
+function getRedirectUri() {
+  const fullUrl = window.location.href;
+  const token = fullUrl.split("redirect_uri=")[1];
+  if (!token) {
+    return "";
+  }
+
+  const res = token.split("&")[0];
+  if (!res) {
+    return "";
+  }
+
+  return res;
+}
+
 export function getOAuthGetParameters(params) {
   const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
   const clientId = getRefinedValue(queries.get("client_id"));
   const responseType = getRefinedValue(queries.get("response_type"));
-  const redirectUri = getRefinedValue(queries.get("redirect_uri"));
+
+  let redirectUri = getRedirectUri();
+  if (redirectUri === "") {
+    redirectUri = getRefinedValue(queries.get("redirect_uri"));
+  }
+
   const scope = getRefinedValue(queries.get("scope"));
-  const state = getRefinedValue(queries.get("state"));
+
+  let state = getRefinedValue(queries.get("state"));
+  if (state.startsWith("/auth/oauth2/login.php?wantsurl=")) {
+    // state contains URL param encoding for Moodle, URLSearchParams automatically decoded it, so here encode it again
+    state = encodeURIComponent(state);
+  }
+
   const nonce = getRefinedValue(queries.get("nonce"));
   const challengeMethod = getRefinedValue(queries.get("code_challenge_method"));
   const codeChallenge = getRefinedValue(queries.get("code_challenge"));
@@ -116,7 +143,7 @@ export function getOAuthGetParameters(params) {
 
 export function getStateFromQueryParams(applicationName, providerName, method, isShortState) {
   let query = window.location.search;
-  query = `${query}&application=${applicationName}&provider=${providerName}&method=${method}`;
+  query = `${query}&application=${encodeURIComponent(applicationName)}&provider=${encodeURIComponent(providerName)}&method=${method}`;
   if (method === "link") {
     query = `${query}&from=${window.location.pathname}`;
   }

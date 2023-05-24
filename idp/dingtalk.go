@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
 
@@ -125,8 +126,8 @@ type DingTalkUserResponse struct {
 	UnionId   string `json:"unionId"`
 	AvatarUrl string `json:"avatarUrl"`
 	Email     string `json:"email"`
-	Errmsg    string `json:"message"`
-	Errcode   string `json:"code"`
+	Mobile    string `json:"mobile"`
+	StateCode string `json:"stateCode"`
 }
 
 // GetUserInfo Use  access_token to get UserInfo
@@ -156,8 +157,9 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		return nil, err
 	}
 
-	if dtUserInfo.Errmsg != "" {
-		return nil, fmt.Errorf("userIdResp.Errcode = %s, userIdResp.Errmsg = %s", dtUserInfo.Errcode, dtUserInfo.Errmsg)
+	countryCode, err := util.GetCountryCode(dtUserInfo.StateCode, dtUserInfo.Mobile)
+	if err != nil {
+		return nil, err
 	}
 
 	userInfo := UserInfo{
@@ -166,6 +168,8 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		DisplayName: dtUserInfo.Nick,
 		UnionId:     dtUserInfo.UnionId,
 		Email:       dtUserInfo.Email,
+		Phone:       dtUserInfo.Mobile,
+		CountryCode: countryCode,
 		AvatarUrl:   dtUserInfo.AvatarUrl,
 	}
 
@@ -175,9 +179,19 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		return nil, err
 	}
 
-	corpEmail, err := idp.getUserCorpEmail(userId, corpAccessToken)
-	if err == nil && corpEmail != "" {
-		userInfo.Email = corpEmail
+	corpMobile, corpEmail, jobNumber, err := idp.getUserCorpEmail(userId, corpAccessToken)
+	if err == nil {
+		if corpMobile != "" {
+			userInfo.Phone = corpMobile
+		}
+
+		if corpEmail != "" {
+			userInfo.Email = corpEmail
+		}
+
+		if jobNumber != "" {
+			userInfo.Username = jobNumber
+		}
 	}
 
 	return &userInfo, nil
@@ -247,33 +261,36 @@ func (idp *DingTalkIdProvider) getUserId(unionId string, accessToken string) (st
 		return "", err
 	}
 	if data.ErrCode == 60121 {
-		return "", fmt.Errorf("the user is not found in the organization where clientId and clientSecret belong")
+		return "", fmt.Errorf("该应用只允许本企业内部用户登录，您不属于该企业，无法登录")
 	} else if data.ErrCode != 0 {
 		return "", fmt.Errorf(data.ErrMessage)
 	}
 	return data.Result.UserId, nil
 }
 
-func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken string) (string, error) {
+func (idp *DingTalkIdProvider) getUserCorpEmail(userId string, accessToken string) (string, string, string, error) {
+	// https://open.dingtalk.com/document/isvapp/query-user-details
 	body := make(map[string]string)
 	body["userid"] = userId
 	respBytes, err := idp.postWithBody(body, "https://oapi.dingtalk.com/topapi/v2/user/get?access_token="+accessToken)
 	if err != nil {
-		return "", err
+		return "", "", "", err
 	}
 
 	var data struct {
 		ErrMessage string `json:"errmsg"`
 		Result     struct {
-			Email string `json:"email"`
+			Mobile    string `json:"mobile"`
+			Email     string `json:"email"`
+			JobNumber string `json:"job_number"`
 		} `json:"result"`
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-		return "", err
+		return "", "", "", err
 	}
 	if data.ErrMessage != "ok" {
-		return "", fmt.Errorf(data.ErrMessage)
+		return "", "", "", fmt.Errorf(data.ErrMessage)
 	}
-	return data.Result.Email, nil
+	return data.Result.Mobile, data.Result.Email, data.Result.JobNumber, nil
 }

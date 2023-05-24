@@ -18,30 +18,69 @@ import (
 	"encoding/json"
 
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 )
 
 func (c *ApiController) Enforce() {
-	var permissionRule object.PermissionRule
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissionRule)
+	permissionId := c.Input().Get("permissionId")
+	modelId := c.Input().Get("modelId")
+	resourceId := c.Input().Get("resourceId")
+
+	var request object.CasbinRequest
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = object.Enforce(&permissionRule)
+	if permissionId != "" {
+		c.Data["json"] = object.Enforce(permissionId, &request)
+		c.ServeJSON()
+		return
+	}
+
+	permissions := make([]*object.Permission, 0)
+	res := []bool{}
+
+	if modelId != "" {
+		owner, modelName := util.GetOwnerAndNameFromId(modelId)
+		permissions = object.GetPermissionsByModel(owner, modelName)
+	} else {
+		permissions = object.GetPermissionsByResource(resourceId)
+	}
+
+	for _, permission := range permissions {
+		res = append(res, object.Enforce(permission.GetId(), &request))
+	}
+	c.Data["json"] = res
 	c.ServeJSON()
 }
 
 func (c *ApiController) BatchEnforce() {
-	var permissionRules []object.PermissionRule
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permissionRules)
+	permissionId := c.Input().Get("permissionId")
+	modelId := c.Input().Get("modelId")
+
+	var requests []object.CasbinRequest
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = object.BatchEnforce(permissionRules)
-	c.ServeJSON()
+	if permissionId != "" {
+		c.Data["json"] = object.BatchEnforce(permissionId, &requests)
+		c.ServeJSON()
+	} else {
+		owner, modelName := util.GetOwnerAndNameFromId(modelId)
+		permissions := object.GetPermissionsByModel(owner, modelName)
+
+		res := [][]bool{}
+		for _, permission := range permissions {
+			res = append(res, object.BatchEnforce(permission.GetId(), &requests))
+		}
+		c.Data["json"] = res
+		c.ServeJSON()
+	}
 }
 
 func (c *ApiController) GetAllObjects() {

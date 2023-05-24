@@ -32,6 +32,7 @@ class ProductEditPage extends React.Component {
       productName: props.match.params.productName,
       product: null,
       providers: [],
+      organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -42,7 +43,7 @@ class ProductEditPage extends React.Component {
   }
 
   getProduct() {
-    ProductBackend.getProduct("admin", this.state.productName)
+    ProductBackend.getProduct(this.props.account.owner, this.state.productName)
       .then((product) => {
         this.setState({
           product: product,
@@ -51,7 +52,7 @@ class ProductEditPage extends React.Component {
   }
 
   getPaymentProviders() {
-    ProviderBackend.getProviders("admin")
+    ProviderBackend.getProviders(this.props.account.owner)
       .then((res) => {
         this.setState({
           providers: res.filter(provider => provider.category === "Payment"),
@@ -104,6 +105,18 @@ class ProductEditPage extends React.Component {
             <Input value={this.state.product.displayName} onChange={e => {
               this.updateProductField("displayName", e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.product.owner} onChange={(value => {this.updateProductField("owner", value);})}>
+              {
+                this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

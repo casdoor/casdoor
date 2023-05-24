@@ -27,6 +27,8 @@ type UserInfo struct {
 	DisplayName string
 	UnionId     string
 	Email       string
+	Phone       string
+	CountryCode string
 	AvatarUrl   string
 }
 

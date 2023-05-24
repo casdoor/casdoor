@@ -20,7 +20,7 @@ import * as Setting from "./Setting";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import PopconfirmModal from "./PopconfirmModal";
+import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class OrganizationListPage extends BaseListPage {
   newOrganization() {
@@ -63,6 +63,7 @@ class OrganizationListPage extends BaseListPage {
         {name: "Roles", visible: true, viewRule: "Public", modifyRule: "Immutable"},
         {name: "Permissions", visible: true, viewRule: "Public", modifyRule: "Immutable"},
         {name: "3rd-party logins", visible: true, viewRule: "Self", modifyRule: "Self"},
+        {Name: "Multi-factor authentication", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
         {name: "Properties", visible: false, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Is admin", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Is global admin", visible: true, viewRule: "Admin", modifyRule: "Admin"},

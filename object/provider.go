@@ -70,7 +70,11 @@ type Provider struct {
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
 }
 
-func GetMaskedProvider(provider *Provider) *Provider {
+func GetMaskedProvider(provider *Provider, isMaskEnabled bool) *Provider {
+	if !isMaskEnabled {
+		return provider
+	}
+
 	if provider == nil {
 		return nil
 	}
@@ -78,16 +82,23 @@ func GetMaskedProvider(provider *Provider) *Provider {
 	if provider.ClientSecret != "" {
 		provider.ClientSecret = "***"
 	}
-	if provider.ClientSecret2 != "" {
-		provider.ClientSecret2 = "***"
+
+	if provider.Category != "Email" {
+		if provider.ClientSecret2 != "" {
+			provider.ClientSecret2 = "***"
+		}
 	}
 
 	return provider
 }
 
-func GetMaskedProviders(providers []*Provider) []*Provider {
+func GetMaskedProviders(providers []*Provider, isMaskEnabled bool) []*Provider {
+	if !isMaskEnabled {
+		return providers
+	}
+
 	for _, provider := range providers {
-		provider = GetMaskedProvider(provider)
+		provider = GetMaskedProvider(provider, isMaskEnabled)
 	}
 	return providers
 }
@@ -177,8 +188,8 @@ func GetProvider(id string) *Provider {
 	return getProvider(owner, name)
 }
 
-func GetDefaultCaptchaProvider() *Provider {
-	provider := Provider{Owner: "admin", Category: "Captcha"}
+func getDefaultAiProvider() *Provider {
+	provider := Provider{Owner: "admin", Category: "AI"}
 	existed, err := adapter.Engine.Get(&provider)
 	if err != nil {
 		panic(err)
@@ -307,7 +318,7 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 			continue
 		}
 		if provider.Provider.Category == "Captcha" {
-			return GetCaptchaProviderByOwnerName(fmt.Sprintf("%s/%s", provider.Provider.Owner, provider.Provider.Name), lang)
+			return GetCaptchaProviderByOwnerName(util.GetId(provider.Provider.Owner, provider.Provider.Name), lang)
 		}
 	}
 	return nil, nil

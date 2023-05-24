@@ -77,7 +77,7 @@ func getObject(ctx *context.Context) (string, string) {
 		body := ctx.Input.RequestBody
 
 		if len(body) == 0 {
-			return "", ""
+			return ctx.Request.Form.Get("owner"), ctx.Request.Form.Get("name")
 		}
 
 		var obj Object
@@ -125,7 +125,11 @@ func AuthzFilter(ctx *context.Context) {
 	subOwner, subName := getSubject(ctx)
 	method := ctx.Request.Method
 	urlPath := getUrlPath(ctx.Request.URL.Path)
-	objOwner, objName := getObject(ctx)
+
+	objOwner, objName := "", ""
+	if urlPath != "/api/get-app-login" {
+		objOwner, objName = getObject(ctx)
+	}
 
 	if strings.HasPrefix(urlPath, "/api/notify-payment") {
 		urlPath = "/api/notify-payment"

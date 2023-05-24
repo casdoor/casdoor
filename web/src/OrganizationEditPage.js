@@ -24,6 +24,7 @@ import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./table/LdapTable";
 import AccountTable from "./table/AccountTable";
 import ThemeEditor from "./common/theme/ThemeEditor";
+import MfaTable from "./table/MfaTable";
 
 const {Option} = Select;
 
@@ -201,6 +202,22 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Languages"), i18next.t("general:Languages - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="tags" style={{width: "100%"}}
+              options={Setting.Countries.map((item) => {
+                return Setting.getOption(item.label, item.key);
+              })}
+              value={this.state.organization.languages ?? []}
+              onChange={(value => {
+                this.updateOrganizationField("languages", value);
+              })} >
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Default avatar"), i18next.t("general:Default avatar - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -259,22 +276,6 @@ class OrganizationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Languages"), i18next.t("general:Languages - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: "100%"}}
-              options={Setting.Countries.map((item) => {
-                return Setting.getOption(item.label, item.key);
-              })}
-              value={this.state.organization.languages ?? []}
-              onChange={(value => {
-                this.updateOrganizationField("languages", value);
-              })} >
-            </Select>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("organization:Init score"), i18next.t("organization:Init score - Tooltip"))} :
           </Col>
@@ -313,6 +314,18 @@ class OrganizationEditPage extends React.Component {
               title={i18next.t("organization:Account items")}
               table={this.state.organization.accountItems}
               onUpdateTable={(value) => {this.updateOrganizationField("accountItems", value);}}
+            />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:MFA items"), i18next.t("general:MFA items - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <MfaTable
+              title={i18next.t("general:MFA items")}
+              table={this.state.organization.mfaItems ?? []}
+              onUpdateTable={(value) => {this.updateOrganizationField("mfaItems", value);}}
             />
           </Col>
         </Row>
@@ -362,6 +375,8 @@ class OrganizationEditPage extends React.Component {
 
   submitOrganizationEdit(willExist) {
     const organization = Setting.deepCopy(this.state.organization);
+    organization.accountItems = organization.accountItems?.filter(accountItem => accountItem.name !== "Please select an account item");
+
     OrganizationBackend.updateOrganization(this.state.organization.owner, this.state.organizationName, organization)
       .then((res) => {
         if (res.status === "ok") {

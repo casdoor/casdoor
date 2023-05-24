@@ -29,8 +29,6 @@ export const THEMES = {
   comic: `${Setting.StaticBaseUrl}/img/theme_comic.svg`,
 };
 
-Object.values(THEMES).map(value => new Image().src = value);
-
 const themeTypes = {
   default: "Default", // i18next.t("theme:Default")
   dark: "Dark",       // i18next.t("theme:Dark")

@@ -23,7 +23,8 @@ import (
 
 type LdapResp struct {
 	// Groups []LdapRespGroup `json:"groups"`
-	Users []object.LdapRespUser `json:"users"`
+	Users      []object.LdapUser `json:"users"`
+	ExistUuids []string          `json:"existUuids"`
 }
 
 //type LdapRespGroup struct {
@@ -32,8 +33,8 @@ type LdapResp struct {
 //}
 
 type LdapSyncResp struct {
-	Exist  []object.LdapRespUser `json:"exist"`
-	Failed []object.LdapRespUser `json:"failed"`
+	Exist  []object.LdapUser `json:"exist"`
+	Failed []object.LdapUser `json:"failed"`
 }
 
 // GetLdapUsers
@@ -71,27 +72,17 @@ func (c *ApiController) GetLdapUsers() {
 		return
 	}
 
-	var resp LdapResp
 	uuids := make([]string, len(users))
-	for _, user := range users {
-		resp.Users = append(resp.Users, object.LdapRespUser{
-			UidNumber: user.UidNumber,
-			Uid:       user.Uid,
-			Cn:        user.Cn,
-			GroupId:   user.GidNumber,
-			// GroupName: groupsMap[user.GidNumber].Cn,
-			Uuid:        user.Uuid,
-			DisplayName: user.DisplayName,
-			Email:       util.GetMaxLenStr(user.Mail, user.Email, user.EmailAddress),
-			Phone:       util.GetMaxLenStr(user.TelephoneNumber, user.Mobile, user.MobileTelephoneNumber),
-			Address:     util.GetMaxLenStr(user.RegisteredAddress, user.PostalAddress),
-		})
-		uuids = append(uuids, user.Uuid)
+	for i, user := range users {
+		uuids[i] = user.GetLdapUuid()
 	}
-
 	existUuids := object.GetExistUuids(ldapServer.Owner, uuids)
 
-	c.ResponseOk(resp, existUuids)
+	resp := LdapResp{
+		Users:      object.AutoAdjustLdapUser(users),
+		ExistUuids: existUuids,
+	}
+	c.ResponseOk(resp)
 }
 
 // GetLdaps
@@ -206,7 +197,7 @@ func (c *ApiController) DeleteLdap() {
 func (c *ApiController) SyncLdapUsers() {
 	owner := c.Input().Get("owner")
 	ldapId := c.Input().Get("ldapId")
-	var users []object.LdapRespUser
+	var users []object.LdapUser
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &users)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -215,10 +206,10 @@ func (c *ApiController) SyncLdapUsers() {
 
 	object.UpdateLdapSyncTime(ldapId)
 
-	exist, failed := object.SyncLdapUsers(owner, users, ldapId)
+	exist, failed, _ := object.SyncLdapUsers(owner, users, ldapId)
 
 	c.ResponseOk(&LdapSyncResp{
-		Exist:  *exist,
-		Failed: *failed,
+		Exist:  exist,
+		Failed: failed,
 	})
 }

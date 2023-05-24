@@ -38,7 +38,7 @@ type Application struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	DisplayName         string          `xorm:"varchar(100)" json:"displayName"`
-	Logo                string          `xorm:"varchar(100)" json:"logo"`
+	Logo                string          `xorm:"varchar(200)" json:"logo"`
 	HomepageUrl         string          `xorm:"varchar(100)" json:"homepageUrl"`
 	Description         string          `xorm:"varchar(100)" json:"description"`
 	Organization        string          `xorm:"varchar(100)" json:"organization"`
@@ -72,6 +72,7 @@ type Application struct {
 	SigninHtml           string     `xorm:"mediumtext" json:"signinHtml"`
 	ThemeData            *ThemeData `xorm:"json" json:"themeData"`
 	FormCss              string     `xorm:"text" json:"formCss"`
+	FormCssMobile        string     `xorm:"text" json:"formCssMobile"`
 	FormOffset           int        `json:"formOffset"`
 	FormSideHtml         string     `xorm:"mediumtext" json:"formSideHtml"`
 	FormBackgroundUrl    string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
@@ -109,7 +110,7 @@ func GetApplications(owner string) []*Application {
 
 func GetOrganizationApplications(owner string, organization string) []*Application {
 	applications := []*Application{}
-	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner, Organization: organization})
+	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -131,7 +132,7 @@ func GetPaginationApplications(owner string, offset, limit int, field, value, so
 func GetPaginationOrganizationApplications(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
 	applications := []*Application{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&applications, &Application{Owner: owner, Organization: organization})
+	err := session.Find(&applications, &Application{Organization: organization})
 	if err != nil {
 		panic(err)
 	}
@@ -144,12 +145,12 @@ func getProviderMap(owner string) map[string]*Provider {
 	m := map[string]*Provider{}
 	for _, provider := range providers {
 		// Get QRCode only once
-		if provider.Type == "WeChat" && provider.DisableSsl == true && provider.Content == "" {
+		if provider.Type == "WeChat" && provider.DisableSsl && provider.Content == "" {
 			provider.Content, _ = idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2)
 			UpdateProvider(provider.Owner+"/"+provider.Name, provider)
 		}
 
-		m[provider.Name] = GetMaskedProvider(provider)
+		m[provider.Name] = GetMaskedProvider(provider, true)
 	}
 	return m
 }
@@ -325,6 +326,12 @@ func UpdateApplication(id string, application *Application) bool {
 }
 
 func AddApplication(application *Application) bool {
+	if application.Owner == "" {
+		application.Owner = "admin"
+	}
+	if application.Organization == "" {
+		application.Organization = "built-in"
+	}
 	if application.ClientId == "" {
 		application.ClientId = util.GenerateClientId()
 	}

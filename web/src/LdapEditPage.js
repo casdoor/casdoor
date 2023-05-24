@@ -185,6 +185,7 @@ class LdapEditPage extends React.Component {
               {value: "uid", label: "uid"},
               {value: "mail", label: "Email"},
               {value: "mobile", label: "mobile"},
+              {value: "sAMAccountName", label: "sAMAccountName"},
             ].map((item) => Setting.getOption(item.label, item.value))} onChange={value => {
               this.updateLdapField("filterFields", value);
             }} />

@@ -80,7 +80,7 @@ func (c *ApiController) GetUsers() {
 // @Title GetUser
 // @Tag User API
 // @Description get user
-// @Param   id     query    string  true        "The id ( owner/name ) of the user"
+// @Param   id     query    string  false        "The id ( owner/name ) of the user"
 // @Param   owner  query    string  false        "The owner of the user"
 // @Param   email  query    string  false 	     "The email of the user"
 // @Param   phone  query    string  false 	     "The phone of the user"
@@ -92,13 +92,19 @@ func (c *ApiController) GetUser() {
 	email := c.Input().Get("email")
 	phone := c.Input().Get("phone")
 	userId := c.Input().Get("userId")
-
 	owner := c.Input().Get("owner")
+
+	var userFromUserId *object.User
+	if userId != "" && owner != "" {
+		userFromUserId = object.GetUserByUserId(owner, userId)
+		id = util.GetId(userFromUserId.Owner, userFromUserId.Name)
+	}
+
 	if owner == "" {
 		owner = util.GetOwnerFromId(id)
 	}
 
-	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", owner))
+	organization := object.GetOrganization(util.GetId("admin", owner))
 	if !organization.IsProfilePublic {
 		requestUserId := c.GetSessionUsername()
 		hasPermission, err := object.CheckUserPermission(requestUserId, id, false, c.GetAcceptLanguage())
@@ -115,7 +121,7 @@ func (c *ApiController) GetUser() {
 	case phone != "":
 		user = object.GetUserByPhone(owner, phone)
 	case userId != "":
-		user = object.GetUserByUserId(owner, userId)
+		user = userFromUserId
 	default:
 		user = object.GetUser(id)
 	}
@@ -158,11 +164,18 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
+	if oldUser.Owner == "built-in" && oldUser.Name == "admin" && (user.Owner != "built-in" || user.Name != "admin") {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
 	if msg := object.CheckUpdateUser(oldUser, &user, c.GetAcceptLanguage()); msg != "" {
 		c.ResponseError(msg)
 		return
 	}
-	if pass, err := checkPermissionForUpdateUser(oldUser, &user, c); !pass {
+
+	isAdmin := c.IsAdmin()
+	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, c.GetAcceptLanguage()); !pass {
 		c.ResponseError(err)
 		return
 	}
@@ -172,9 +185,7 @@ func (c *ApiController) UpdateUser() {
 		columns = strings.Split(columnsStr, ",")
 	}
 
-	isGlobalAdmin := c.IsGlobalAdmin()
-
-	affected := object.UpdateUser(id, &user, columns, isGlobalAdmin)
+	affected := object.UpdateUser(id, &user, columns, isAdmin)
 	if affected {
 		object.UpdateUserToOriginalDatabase(&user)
 	}
@@ -226,6 +237,11 @@ func (c *ApiController) DeleteUser() {
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if user.Owner == "built-in" && user.Name == "admin" {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
 		return
 	}
 
@@ -285,6 +301,11 @@ func (c *ApiController) SetPassword() {
 	oldPassword := c.Ctx.Request.Form.Get("oldPassword")
 	newPassword := c.Ctx.Request.Form.Get("newPassword")
 	code := c.Ctx.Request.Form.Get("code")
+
+	//if userOwner == "built-in" && userName == "admin" {
+	//	c.ResponseError(c.T("auth:Unauthorized operation"))
+	//	return
+	//}
 
 	if strings.Contains(newPassword, " ") {
 		c.ResponseError(c.T("user:New password cannot contain blank space."))

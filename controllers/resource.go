@@ -21,6 +21,7 @@ import (
 	"io"
 	"mime"
 	"path/filepath"
+	"strings"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -235,10 +236,21 @@ func (c *ApiController) UploadResource() {
 		user.Avatar = fileUrl
 		object.UpdateUser(user.GetId(), user, []string{"avatar"}, false)
 	case "termsOfUse":
-		applicationId := fmt.Sprintf("admin/%s", parent)
-		app := object.GetApplication(applicationId)
-		app.TermsOfUse = fileUrl
-		object.UpdateApplication(applicationId, app)
+		user := object.GetUserNoCheck(util.GetId(owner, username))
+		if user == nil {
+			c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(owner, username)))
+			return
+		}
+
+		if !user.IsAdminUser() {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+
+		_, applicationId := util.GetOwnerAndNameFromIdNoCheck(strings.TrimRight(fullFilePath, ".html"))
+		applicationObj := object.GetApplication(applicationId)
+		applicationObj.TermsOfUse = fileUrl
+		object.UpdateApplication(applicationId, applicationObj)
 	}
 
 	c.ResponseOk(fileUrl, objectKey)
