@@ -80,11 +80,31 @@ export function getCasParameters(params) {
   };
 }
 
+function getRedirectUri() {
+  const fullUrl = window.location.href;
+  const token = fullUrl.split("redirect_uri=")[1];
+  if (!token) {
+    return "";
+  }
+
+  const res = token.split("&")[0];
+  if (!res) {
+    return "";
+  }
+
+  return res;
+}
+
 export function getOAuthGetParameters(params) {
   const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
   const clientId = getRefinedValue(queries.get("client_id"));
   const responseType = getRefinedValue(queries.get("response_type"));
-  const redirectUri = getRefinedValue(queries.get("redirect_uri"));
+
+  let redirectUri = getRedirectUri();
+  if (redirectUri === "") {
+    redirectUri = getRefinedValue(queries.get("redirect_uri"));
+  }
+
   const scope = getRefinedValue(queries.get("scope"));
 
   let state = getRefinedValue(queries.get("state"));
