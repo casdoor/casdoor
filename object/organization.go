@@ -16,7 +16,9 @@ package object
 
 import (
 	"fmt"
+	"strconv"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/cred"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
@@ -36,6 +38,11 @@ type ThemeData struct {
 	BorderRadius int    `xorm:"int" json:"borderRadius"`
 	IsCompact    bool   `xorm:"bool" json:"isCompact"`
 	IsEnabled    bool   `xorm:"bool" json:"isEnabled"`
+}
+
+type MfaItem struct {
+	Name string `json:"name"`
+	Rule string `json:"rule"`
 }
 
 type Organization struct {
@@ -59,6 +66,7 @@ type Organization struct {
 	EnableSoftDeletion bool       `json:"enableSoftDeletion"`
 	IsProfilePublic    bool       `json:"isProfilePublic"`
 
+	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	AccountItems []*AccountItem `xorm:"varchar(3000)" json:"accountItems"`
 }
 
@@ -407,4 +415,21 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 
 	return session.Commit()
+}
+
+func (org *Organization) HasRequiredMfa() bool {
+	for _, item := range org.MfaItems {
+		if item.Rule == "Required" {
+			return true
+		}
+	}
+	return false
+}
+
+func (org *Organization) GetInitScore() (int, error) {
+	if org != nil {
+		return org.InitScore, nil
+	} else {
+		return strconv.Atoi(conf.GetConfigString("initScore"))
+	}
 }

@@ -15,8 +15,6 @@
 package routers
 
 import (
-	"fmt"
-
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -50,7 +48,7 @@ func getUserByClientIdSecret(ctx *context.Context) string {
 		return ""
 	}
 
-	return fmt.Sprintf("%s/%s", application.Organization, application.Name)
+	return util.GetId(application.Organization, application.Name)
 }
 
 func RecordMessage(ctx *context.Context) {

@@ -38,7 +38,7 @@ type Application struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	DisplayName         string          `xorm:"varchar(100)" json:"displayName"`
-	Logo                string          `xorm:"varchar(100)" json:"logo"`
+	Logo                string          `xorm:"varchar(200)" json:"logo"`
 	HomepageUrl         string          `xorm:"varchar(100)" json:"homepageUrl"`
 	Description         string          `xorm:"varchar(100)" json:"description"`
 	Organization        string          `xorm:"varchar(100)" json:"organization"`
@@ -145,12 +145,12 @@ func getProviderMap(owner string) map[string]*Provider {
 	m := map[string]*Provider{}
 	for _, provider := range providers {
 		// Get QRCode only once
-		if provider.Type == "WeChat" && provider.DisableSsl == true && provider.Content == "" {
+		if provider.Type == "WeChat" && provider.DisableSsl && provider.Content == "" {
 			provider.Content, _ = idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2)
 			UpdateProvider(provider.Owner+"/"+provider.Name, provider)
 		}
 
-		m[provider.Name] = GetMaskedProvider(provider)
+		m[provider.Name] = GetMaskedProvider(provider, true)
 	}
 	return m
 }
@@ -326,6 +326,12 @@ func UpdateApplication(id string, application *Application) bool {
 }
 
 func AddApplication(application *Application) bool {
+	if application.Owner == "" {
+		application.Owner = "admin"
+	}
+	if application.Organization == "" {
+		application.Organization = "built-in"
+	}
 	if application.ClientId == "" {
 		application.ClientId = util.GenerateClientId()
 	}

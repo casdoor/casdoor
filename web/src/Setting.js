@@ -24,6 +24,7 @@ import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import * as phoneNumber from "libphonenumber-js";
+import moment from "moment";
 
 const {Option} = Select;
 
@@ -42,6 +43,7 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
   {label: "한국어", key: "ko", country: "KR", alt: "한국어"},
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
   {label: "TiếngViệt", key: "vi", country: "VN", alt: "TiếngViệt"},
+  {label: "Português", key: "pt", country: "BR", alt: "Português"},
 ];
 
 export function getThemeData(organization, application) {
@@ -325,19 +327,19 @@ export function isSignupItemPrompted(signupItem) {
 }
 
 export function getAllPromptedProviderItems(application) {
-  return application.providers.filter(providerItem => isProviderPrompted(providerItem));
+  return application.providers?.filter(providerItem => isProviderPrompted(providerItem));
 }
 
 export function getAllPromptedSignupItems(application) {
-  return application.signupItems.filter(signupItem => isSignupItemPrompted(signupItem));
+  return application.signupItems?.filter(signupItem => isSignupItemPrompted(signupItem));
 }
 
 export function getSignupItem(application, itemName) {
   const signupItems = application.signupItems?.filter(signupItem => signupItem.name === itemName);
-  if (signupItems.length === 0) {
-    return null;
+  if (signupItems?.length > 0) {
+    return signupItems[0];
   }
-  return signupItems[0];
+  return null;
 }
 
 export function isValidPersonName(personName) {
@@ -409,12 +411,12 @@ export function isAffiliationPrompted(application) {
 
 export function hasPromptPage(application) {
   const providerItems = getAllPromptedProviderItems(application);
-  if (providerItems.length !== 0) {
+  if (providerItems?.length > 0) {
     return true;
   }
 
   const signupItems = getAllPromptedSignupItems(application);
-  if (signupItems.length !== 0) {
+  if (signupItems?.length > 0) {
     return true;
   }
 
@@ -591,9 +593,8 @@ export function getFormattedDate(date) {
     return null;
   }
 
-  date = date.replace("T", " ");
-  date = date.replace("+08:00", " ");
-  return date;
+  const m = moment(date).local();
+  return m.format("YYYY-MM-DD HH:mm:ss");
 }
 
 export function getFormattedDateShort(date) {

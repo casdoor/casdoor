@@ -84,7 +84,7 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", authForm.Organization))
+	organization := object.GetOrganization(util.GetId("admin", authForm.Organization))
 	msg := object.CheckUserSignup(application, organization, &authForm, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
@@ -126,7 +126,7 @@ func (c *ApiController) Signup() {
 		username = id
 	}
 
-	initScore, err := getInitScore(organization)
+	initScore, err := organization.GetInitScore()
 	if err != nil {
 		c.ResponseError(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err).Error())
 		return
@@ -188,6 +188,11 @@ func (c *ApiController) Signup() {
 
 	object.DisableVerificationCode(authForm.Email)
 	object.DisableVerificationCode(checkPhone)
+
+	isSignupFromPricing := authForm.Plan != "" && authForm.Pricing != ""
+	if isSignupFromPricing {
+		object.Subscribe(organization.Name, user.Name, authForm.Plan, authForm.Pricing)
+	}
 
 	record := object.NewRecord(c.Ctx)
 	record.Organization = application.Organization

@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
@@ -115,12 +114,25 @@ func (c *ApiController) RequireAdmin() (string, bool) {
 	return user.Owner, true
 }
 
-func getInitScore(organization *object.Organization) (int, error) {
-	if organization != nil {
-		return organization.InitScore, nil
-	} else {
-		return strconv.Atoi(conf.GetConfigString("initScore"))
+// IsMaskedEnabled ...
+func (c *ApiController) IsMaskedEnabled() (bool, bool) {
+	isMaskEnabled := true
+	withSecret := c.Input().Get("withSecret")
+	if withSecret == "1" {
+		isMaskEnabled = false
+
+		if conf.IsDemoMode() {
+			c.ResponseError(c.T("general:this operation is not allowed in demo mode"))
+			return false, isMaskEnabled
+		}
+
+		_, ok := c.RequireAdmin()
+		if !ok {
+			return false, isMaskEnabled
+		}
 	}
+
+	return true, isMaskEnabled
 }
 
 func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, *object.User, bool) {

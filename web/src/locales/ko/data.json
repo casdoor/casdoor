@@ -253,6 +253,8 @@
     "Phone": "전화기",
     "Phone - Tooltip": "전화 번호",
     "Phone or email": "Phone or email",
+    "Plans": "플랜",
+    "Pricings": "가격",
     "Preview": "미리보기",
     "Preview - Tooltip": "구성된 효과를 미리보기합니다",
     "Products": "제품들",
@@ -281,6 +283,7 @@
     "Sorry, you do not have permission to access this page or logged in status invalid.": "죄송합니다. 이 페이지에 접근할 권한이 없거나 로그인 상태가 유효하지 않습니다.",
     "State": "주",
     "State - Tooltip": "국가",
+    "Subscriptions": "구독",
     "Successfully added": "성공적으로 추가되었습니다",
     "Successfully deleted": "성공적으로 삭제되었습니다",
     "Successfully saved": "성공적으로 저장되었습니다",
@@ -884,5 +887,36 @@
     "Method - Tooltip": "HTTP 방법",
     "New Webhook": "새로운 웹훅",
     "Value": "가치"
+  },
+  "plan": {
+    "Sub roles - Tooltip": "현재 플랜에 포함된 역할",
+    "PricePerMonth": "월별 가격",
+    "PricePerYear": "연간 가격",
+    "PerMonth": "월"
+  },
+  "pricing": {
+    "Sub plans": "추가 플랜",
+    "Sub plans - Tooltip": "현재 가격 책정에 포함된 플랜",
+    "Has trial": "무료 체험 가능",
+    "Has trial - Tooltip": "플랜 선택 후 체험 기간의 가용 여부",
+    "Trial duration": "체험 기간",
+    "Trial duration - Tooltip": "체험 기간의 기간",
+    "Getting started": "시작하기",
+    "Copy pricing page URL": "가격 페이지 URL 복사",
+    "pricing page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "가격 페이지 URL이 클립보드에 성공적으로 복사되었습니다. 시크릿 창이나 다른 브라우저에 붙여넣기해주세요.",
+    "days trial available!": "일 무료 체험 가능!",
+    "Free": "무료"
+  },
+  "subscription": {
+    "Duration": "기간",
+    "Duration - Tooltip": "구독 기간",
+    "Start Date": "시작일",
+    "Start Date - Tooltip": "시작일",
+    "End Date": "종료일",
+    "End Date - Tooltip": "종료일",
+    "Sub users": "구독 사용자",
+    "Sub users - Tooltip": "구독 사용자",
+    "Sub plan": "구독 플랜",
+    "Sub plan - Tooltip": "구독 플랜"
   }
 }

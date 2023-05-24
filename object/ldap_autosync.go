@@ -87,11 +87,13 @@ func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) {
 			logs.Warning(fmt.Sprintf("autoSync failed for %s, error %s", ldap.Id, err))
 			continue
 		}
-		existed, failed := SyncLdapUsers(ldap.Owner, LdapUsersToLdapRespUsers(users), ldap.Id)
-		if len(*failed) != 0 {
-			logs.Warning(fmt.Sprintf("ldap autosync,%d new users,but %d user failed during :", len(users)-len(*existed)-len(*failed), len(*failed)), *failed)
+
+		existed, failed, err := SyncLdapUsers(ldap.Owner, AutoAdjustLdapUser(users), ldap.Id)
+		if len(failed) != 0 {
+			logs.Warning(fmt.Sprintf("ldap autosync,%d new users,but %d user failed during :", len(users)-len(existed)-len(failed), len(failed)), failed)
+			logs.Warning(err.Error())
 		} else {
-			logs.Info(fmt.Sprintf("ldap autosync success, %d new users, %d existing users", len(users)-len(*existed), len(*existed)))
+			logs.Info(fmt.Sprintf("ldap autosync success, %d new users, %d existing users", len(users)-len(existed), len(existed)))
 		}
 	}
 }

@@ -15,7 +15,6 @@
 package object
 
 import (
-	"github.com/xorm-io/core"
 	"github.com/xorm-io/xorm"
 	"github.com/xorm-io/xorm/migrate"
 )
@@ -52,32 +51,15 @@ func (*Migrator_1_314_0_PR_1841) DoMigration() *migrate.Migration {
 				return err
 			}
 
-			users := []*User{}
 			organizations := []*Organization{}
-
-			err = tx.Table("user").Find(&users)
-			if err != nil {
-				return err
-			}
-
 			err = tx.Table("organization").Find(&organizations)
 			if err != nil {
 				return err
 			}
 
-			passwordTypes := make(map[string]string)
-			for _, org := range organizations {
-				passwordTypes[org.Name] = org.PasswordType
-			}
-
-			columns := []string{
-				"password_type",
-			}
-
-			for _, u := range users {
-				u.PasswordType = passwordTypes[u.Owner]
-
-				_, err := tx.ID(core.PK{u.Owner, u.Name}).Cols(columns...).Update(u)
+			for _, organization := range organizations {
+				user := &User{PasswordType: organization.PasswordType}
+				_, err = tx.Where("owner = ?", organization.Name).Cols("password_type").Update(user)
 				if err != nil {
 					return err
 				}

@@ -80,7 +80,7 @@ func (c *ApiController) GetUsers() {
 // @Title GetUser
 // @Tag User API
 // @Description get user
-// @Param   id     query    string  true        "The id ( owner/name ) of the user"
+// @Param   id     query    string  false        "The id ( owner/name ) of the user"
 // @Param   owner  query    string  false        "The owner of the user"
 // @Param   email  query    string  false 	     "The email of the user"
 // @Param   phone  query    string  false 	     "The phone of the user"
@@ -92,13 +92,19 @@ func (c *ApiController) GetUser() {
 	email := c.Input().Get("email")
 	phone := c.Input().Get("phone")
 	userId := c.Input().Get("userId")
-
 	owner := c.Input().Get("owner")
+
+	var userFromUserId *object.User
+	if userId != "" && owner != "" {
+		userFromUserId = object.GetUserByUserId(owner, userId)
+		id = util.GetId(userFromUserId.Owner, userFromUserId.Name)
+	}
+
 	if owner == "" {
 		owner = util.GetOwnerFromId(id)
 	}
 
-	organization := object.GetOrganization(fmt.Sprintf("%s/%s", "admin", owner))
+	organization := object.GetOrganization(util.GetId("admin", owner))
 	if !organization.IsProfilePublic {
 		requestUserId := c.GetSessionUsername()
 		hasPermission, err := object.CheckUserPermission(requestUserId, id, false, c.GetAcceptLanguage())
@@ -115,7 +121,7 @@ func (c *ApiController) GetUser() {
 	case phone != "":
 		user = object.GetUserByPhone(owner, phone)
 	case userId != "":
-		user = object.GetUserByUserId(owner, userId)
+		user = userFromUserId
 	default:
 		user = object.GetUser(id)
 	}

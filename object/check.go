@@ -211,7 +211,7 @@ func checkLdapUserPassword(user *User, password string, lang string) string {
 		}
 
 		searchReq := goldap.NewSearchRequest(ldapServer.BaseDn, goldap.ScopeWholeSubtree, goldap.NeverDerefAliases,
-			0, 0, false, ldapServer.buildFilterString(user), []string{}, nil)
+			0, 0, false, ldapServer.buildAuthFilterString(user), []string{}, nil)
 
 		searchResult, err := conn.Conn.Search(searchReq)
 		if err != nil {
@@ -248,7 +248,7 @@ func CheckUserPassword(organization string, username string, password string, la
 		enableCaptcha = options[0]
 	}
 	user := GetUserByFields(organization, username)
-	if user == nil || user.IsDeleted == true {
+	if user == nil || user.IsDeleted {
 		return nil, fmt.Sprintf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username))
 	}
 
@@ -321,6 +321,10 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 }
 
 func CheckAccessPermission(userId string, application *Application) (bool, error) {
+	if userId == "built-in/admin" {
+		return true, nil
+	}
+
 	permissions := GetPermissions(application.Organization)
 	allowed := true
 	var err error

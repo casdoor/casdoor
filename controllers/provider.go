@@ -37,13 +37,19 @@ func (c *ApiController) GetProviders() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
+	ok, isMaskEnabled := c.IsMaskedEnabled()
+	if !ok {
+		return
+	}
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedProviders(object.GetProviders(owner))
+		c.Data["json"] = object.GetMaskedProviders(object.GetProviders(owner), isMaskEnabled)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetProviderCount(owner, field, value)))
-		providers := object.GetMaskedProviders(object.GetPaginationProviders(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
+		providers := object.GetMaskedProviders(object.GetPaginationProviders(owner, paginator.Offset(), limit, field, value, sortField, sortOrder), isMaskEnabled)
 		c.ResponseOk(providers, paginator.Nums())
 	}
 }
@@ -61,13 +67,19 @@ func (c *ApiController) GetGlobalProviders() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
+	ok, isMaskEnabled := c.IsMaskedEnabled()
+	if !ok {
+		return
+	}
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedProviders(object.GetGlobalProviders())
+		c.Data["json"] = object.GetMaskedProviders(object.GetGlobalProviders(), isMaskEnabled)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGlobalProviderCount(field, value)))
-		providers := object.GetMaskedProviders(object.GetPaginationGlobalProviders(paginator.Offset(), limit, field, value, sortField, sortOrder))
+		providers := object.GetMaskedProviders(object.GetPaginationGlobalProviders(paginator.Offset(), limit, field, value, sortField, sortOrder), isMaskEnabled)
 		c.ResponseOk(providers, paginator.Nums())
 	}
 }
@@ -81,7 +93,13 @@ func (c *ApiController) GetGlobalProviders() {
 // @router /get-provider [get]
 func (c *ApiController) GetProvider() {
 	id := c.Input().Get("id")
-	c.Data["json"] = object.GetMaskedProvider(object.GetProvider(id))
+
+	ok, isMaskEnabled := c.IsMaskedEnabled()
+	if !ok {
+		return
+	}
+
+	c.Data["json"] = object.GetMaskedProvider(object.GetProvider(id), isMaskEnabled)
 	c.ServeJSON()
 }
 

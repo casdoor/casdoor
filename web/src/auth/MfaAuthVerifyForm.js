@@ -20,6 +20,7 @@ import {SmsMfaType} from "./MfaSetupPage";
 import {MfaSmsVerifyForm} from "./MfaVerifyForm";
 
 export const NextMfa = "NextMfa";
+export const RequiredMfa = "RequiredMfa";
 
 export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, application, onSuccess, onFail}) {
   formValues.password = "";
