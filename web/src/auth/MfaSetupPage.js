@@ -78,6 +78,7 @@ function CheckPasswordForm({user, onSuccess, onFail}) {
 
 export function MfaVerifyForm({mfaProps, application, user, onSuccess, onFail}) {
   const [form] = Form.useForm();
+  mfaProps = mfaProps ?? {type: ""};
 
   const onFinish = ({passcode}) => {
     const data = {passcode, type: mfaProps.type, ...user};
@@ -97,9 +98,9 @@ export function MfaVerifyForm({mfaProps, application, user, onSuccess, onFail}) 
       });
   };
 
-  if (mfaProps?.type === SmsMfaType) {
+  if (mfaProps.type === SmsMfaType) {
     return <MfaSmsVerifyForm onFinish={onFinish} application={application} />;
-  } else if (mfaProps?.type === TotpMfaType) {
+  } else if (mfaProps.type === TotpMfaType) {
     return <MfaTotpVerifyForm onFinish={onFinish} mfaProps={mfaProps} />;
   } else {
     return <div></div>;
@@ -160,7 +161,7 @@ class MfaSetupPage extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevState.isAuthenticated === true && this.state.mfaProps === null) {
+    if (this.state.isAuthenticated === true && this.state.mfaProps === null) {
       MfaBackend.MfaSetupInitiate({
         type: this.state.type,
         ...this.getUser(),
