@@ -23,12 +23,21 @@ import (
 	"github.com/go-pay/gopay/wechat/v3"
 )
 
+const (
+	wechatPayNotifySuccess = `{"Code": "SUCCESS", "Message": "成功"}`
+	wechatPayNotifyFail    = `{"Code": "FAIL", "Message": "失败"}`
+)
+
 type WechatPaymentProvider struct {
 	ClientV3 *wechat.ClientV3
 	appId    string
 }
 
 func NewWechatPaymentProvider(appId string, mchId string, cert string, mchCertSerialNumber string, apiV3Key string, privateKey string) (*WechatPaymentProvider, error) {
+	if appId == "" && mchId == "" && cert == "" && mchCertSerialNumber == "" && apiV3Key == "" && privateKey == "" {
+		return &WechatPaymentProvider{}, nil
+	}
+
 	pp := &WechatPaymentProvider{appId: appId}
 
 	clientV3, err := wechat.NewClientV3(mchId, mchCertSerialNumber, apiV3Key, privateKey)
@@ -36,8 +45,11 @@ func NewWechatPaymentProvider(appId string, mchId string, cert string, mchCertSe
 		return nil, err
 	}
 
-	//err = clientV3.AutoVerifySign()
-	pp.ClientV3 = clientV3.SetPlatformCert([]byte(cert), mchCertSerialNumber)
+	platformCert, serialNo, err := clientV3.GetAndSelectNewestCert()
+	if err != nil {
+		return nil, err
+	}
+	pp.ClientV3 = clientV3.SetPlatformCert([]byte(platformCert), serialNo)
 
 	return pp, nil
 }
@@ -49,7 +61,6 @@ func (pp *WechatPaymentProvider) Pay(providerName string, productName string, pa
 
 	bm.Set("attach", getAttachString(productDisplayName, productName, providerName))
 
-	//bm.Set("return_url", returnUrl)
 	bm.Set("appid", pp.appId)
 	bm.Set("description", productDisplayName)
 	bm.Set("notify_url", notifyUrl)
@@ -72,18 +83,6 @@ func (pp *WechatPaymentProvider) Pay(providerName string, productName string, pa
 }
 
 func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, apiKey string) (string, string, float64, string, string, error) {
-	// bm, err := wechat.V3ParseNotifyToBodyMap(request)
-	// if err != nil {
-	// 	return "", "", 0, "", "", err
-	// }
-
-	// providerName := bm.Get("providerName")
-	// productName := bm.Get("productName")
-
-	// productDisplayName := bm.Get("body")
-	// paymentName := bm.Get("out_trade_no")
-	// price := util.ParseFloat(bm.Get("total_fee"))
-
 	notifyReq, err := wechat.V3ParseNotify(request)
 	if err != nil {
 		panic(err)
@@ -96,19 +95,29 @@ func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, auth
 	}
 
 	result, err := notifyReq.DecryptCipherText(apiKey)
-
-	info := getInfoFromAttach(result.Attach)
-	if len(info) != 3 {
-		return "", "", 0, "", "", fmt.Errorf("get attach failed")
+	if err != nil {
+		return "", "", 0, "", "", err
 	}
 
-	productDisplayName, productName, providerName := info[0], info[1], info[2]
 	paymentName := result.OutTradeNo
 	price := float64(result.Amount.PayerTotal) / 100
+
+	productDisplayName, productName, providerName, err := getInfoFromAttach(result.Attach)
+	if err != nil {
+		return "", "", 0, "", "", err
+	}
 
 	return productDisplayName, paymentName, price, productName, providerName, nil
 }
 
 func (pp *WechatPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {
 	return "", nil
+}
+
+func (pp *WechatPaymentProvider) GetResponseError(ok bool) string {
+	if ok {
+		return wechatPayNotifySuccess
+	} else {
+		return wechatPayNotifyFail
+	}
 }

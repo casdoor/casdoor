@@ -329,3 +329,11 @@ func (pp *GcPaymentProvider) GetInvoice(paymentName string, personName string, p
 
 	return invoiceRespInfo.Url, nil
 }
+
+func (pp *GcPaymentProvider) GetResponseError(ok bool) string {
+	if ok {
+		return "success"
+	} else {
+		return "fail"
+	}
+}

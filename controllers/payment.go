@@ -20,9 +20,8 @@ import (
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
-	"github.com/go-pay/gopay"
-	"github.com/go-pay/gopay/wechat/v3"
 )
 
 // GetPayments
@@ -147,7 +146,7 @@ func (c *ApiController) DeletePayment() {
 // @Title NotifyPayment
 // @Tag Payment API
 // @Description notify payment
-// @Param   body    body   object.Payment  true        "The details of the payment"
+// @Param   body    body   object.Payment  false        "The details of the payment"
 // @Success 200 {object} controllers.Response The Response object
 // @router /notify-payment [post]
 func (c *ApiController) NotifyPayment() {
@@ -159,29 +158,16 @@ func (c *ApiController) NotifyPayment() {
 	body := c.Ctx.Input.RequestBody
 
 	ok, providerType := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName)
-	if ok {
-		switch providerType {
-		case "Alipay":
-			_, err := c.Ctx.ResponseWriter.Write([]byte("success"))
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-		case "WeChat Pay":
-			c.Data["json"] = &wechat.V3NotifyRsp{Code: gopay.SUCCESS, Message: "成功"}
-			c.ServeJSON()
-		}
-	} else {
-		switch providerType {
-		case "Alipay":
-			_, err := c.Ctx.ResponseWriter.Write([]byte("fail"))
-			if err != nil {
-				c.ResponseError(err.Error())
-			}
-		case "WeChat Pay":
-			c.Data["json"] = &wechat.V3NotifyRsp{Code: gopay.FAIL, Message: "失败"}
-			c.ServeJSON()
-		}
+	pProvider, err := pp.GetPaymentProvider(providerType, "", "", "", "", "", "", "", "", "")
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+	responseStr := pProvider.GetResponseError(ok)
+	_, err = c.Ctx.ResponseWriter.Write([]byte(responseStr))
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+	if !ok {
 		panic(fmt.Errorf("NotifyPayment() failed: %v", ok))
 	}
 }

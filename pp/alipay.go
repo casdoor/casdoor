@@ -24,6 +24,11 @@ import (
 	"github.com/go-pay/gopay/alipay"
 )
 
+const (
+	alipayNotifySuccess = "success"
+	alipayNotifyFail    = "fail"
+)
+
 type AlipayPaymentProvider struct {
 	Client *alipay.Client
 }
@@ -93,4 +98,12 @@ func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, auth
 
 func (pp *AlipayPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {
 	return "", nil
+}
+
+func (pp *AlipayPaymentProvider) GetResponseError(ok bool) string {
+	if ok {
+		return alipayNotifySuccess
+	} else {
+		return alipayNotifyFail
+	}
 }

@@ -28,6 +28,10 @@ func getAttachString(strs ...string) string {
 	return strings.Join(strs, "|")
 }
 
-func getInfoFromAttach(concatenatedStr string) []string {
-	return strings.Split(concatenatedStr, "|")
+func getInfoFromAttach(concatenatedStr string) (string, string, string, error) {
+	info := strings.Split(concatenatedStr, "|")
+	if len(info) != 3 {
+		return "", "", "", fmt.Errorf("get attach failed")
+	}
+	return info[0], info[1], info[2], nil
 }

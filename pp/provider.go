@@ -20,6 +20,7 @@ type PaymentProvider interface {
 	Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error)
 	Notify(request *http.Request, body []byte, authorityPublicKey string, apiKey string) (string, string, float64, string, string, error)
 	GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error)
+	GetResponseError(ok bool) string
 }
 
 func GetPaymentProvider(typ string, appId string, clientSecret string, host string, appCertificate string, certSerialNo string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string, clientId2 string) (PaymentProvider, error) {
@@ -33,7 +34,7 @@ func GetPaymentProvider(typ string, appId string, clientSecret string, host stri
 		return NewGcPaymentProvider(appId, clientSecret, host), nil
 	} else if typ == "WeChat Pay" {
 		// appId, mchId, mchCert, mchCertSerialNumber, apiV3Key, privateKey
-		newWechatPaymentProvider, err := NewWechatPaymentProvider(appId, clientId2, appCertificate, certSerialNo, clientSecret, appPrivateKey)
+		newWechatPaymentProvider, err := NewWechatPaymentProvider(clientId2, appId, appCertificate, certSerialNo, clientSecret, appPrivateKey)
 		if err != nil {
 			return nil, err
 		}
