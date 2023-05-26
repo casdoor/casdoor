@@ -57,7 +57,7 @@ class UserEditPage extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.getUser();
-    this.getOrganizations();
+    // this.getOrganizations();
     this.getApplicationsByOrganization(this.state.organizationName);
     this.getUserApplication();
     this.setReturnUrl();
@@ -71,6 +71,8 @@ class UserEditPage extends React.Component {
             user: data,
             multiFactorAuths: data?.multiFactorAuths ?? [],
           });
+          // eslint-disable-next-line react/no-direct-mutation-state
+          this.state.user = data;
         }
         this.setState({
           loading: false,

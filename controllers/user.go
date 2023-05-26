@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/beego/beego/utils/pagination"
@@ -342,6 +343,26 @@ func (c *ApiController) SetPassword() {
 		if msg != "" {
 			c.ResponseError(msg)
 			return
+		}
+	}
+
+	organization := object.GetOrganizationByUser(targetUser)
+	pwdtype := organization.PasswordComplexity
+	if pwdtype == 0 && len(newPassword) <= 5 {
+		c.ResponseError(c.T("user:New password must have at least 6 characters"))
+		return
+	} else if pwdtype == 1 {
+		regex := regexp.MustCompile("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+$")
+		if regex.MatchString(newPassword) {
+			c.ResponseError(c.T("user: The password must contain uppercase letters, lowercase letters, and numbers."))
+			return
+		}
+	} else if pwdtype == 2 {
+		for i := 1; i < len(newPassword); i++ {
+			if newPassword[i] == newPassword[i-1] {
+				c.ResponseError(c.T("user: The password must not contain consecutive numbers or letters."))
+				return
+			}
 		}
 	}
 

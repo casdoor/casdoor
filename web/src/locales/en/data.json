@@ -311,7 +311,14 @@
     "Users under all organizations": "Users under all organizations",
     "Webhooks": "Webhooks",
     "empty": "empty",
-    "{total} in total": "{total} in total"
+    "{total} in total": "{total} in total",
+    "Password complexity": "password complexity",
+    "Password complexity - Tooltip": "The login passwords for members within the organization must adhere to the specified criteria."
+  },
+  "pwdtype": {
+    "type 1": "The password length must be at least 6 characters.",
+    "type 2": "The password must contain uppercase letters, lowercase letters, and numbers.",
+    "type 3": "The password must not contain consecutive numbers or letters."
   },
   "ldap": {
     "Admin": "Admin",

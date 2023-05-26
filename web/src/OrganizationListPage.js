@@ -33,6 +33,7 @@ class OrganizationListPage extends BaseListPage {
       websiteUrl: "https://door.casdoor.com",
       favicon: `${Setting.StaticBaseUrl}/img/favicon.png`,
       passwordType: "plain",
+      passwordComplexity: 0, // 0 "密码长度至少为6位" 1 "密码包含大写、小写字母和数字" 2 "密码不能包含连续数字、字母"
       PasswordSalt: "",
       countryCodes: ["CN"],
       defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,

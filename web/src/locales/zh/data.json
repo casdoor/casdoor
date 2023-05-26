@@ -311,7 +311,14 @@
     "Users under all organizations": "所有组织里的用户",
     "Webhooks": "Webhooks",
     "empty": "无",
-    "{total} in total": "{total} 总计"
+    "{total} in total": "{total} 总计",
+    "Password complexity": "密码复杂度",
+    "Password complexity - Tooltip": "组织中的成员的登录密码必须符合的规范"
+  },
+  "pwdtype": {
+    "type 1": "密码长度至少为6位",
+    "type 2": "密码包含大写、小写字母和数字",
+    "type 3": "密码不能包含连续数字、字母"
   },
   "ldap": {
     "Admin": "管理员",

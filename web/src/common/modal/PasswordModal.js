@@ -17,6 +17,7 @@ import i18next from "i18next";
 import React from "react";
 import * as UserBackend from "../../backend/UserBackend";
 import * as Setting from "../../Setting";
+import * as OrganizationBackend from "../../backend/OrganizationBackend";
 
 export const PasswordModal = (props) => {
   const [visible, setVisible] = React.useState(false);
@@ -45,12 +46,36 @@ export const PasswordModal = (props) => {
       return;
     }
     setConfirmLoading(true);
-    UserBackend.setPassword(user.owner, user.name, oldPassword, newPassword).then((res) => {
-      setConfirmLoading(false);
-      if (res.status === "ok") {
-        Setting.showMessage("success", i18next.t("user:Password set successfully"));
-        setVisible(false);
-      } else {Setting.showMessage("error", i18next.t(`user:${res.msg}`));}
+    OrganizationBackend.getOrganizations("admin").then((res) => {
+      const organizations = (res.msg === undefined) ? res : [];
+      const organization = organizations[0];
+      const pwdtype = Number(organization["passwordComplexity"]);
+      if (pwdtype === 0 && newPassword.length < 6) {
+        Setting.showMessage("error", i18next.t("pwdtype:type 1"));
+        setConfirmLoading(false);
+        return ;
+      } else if (pwdtype === 1) {
+        const reg = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+$");
+        if (!reg.test(newPassword)) {
+          Setting.showMessage("error", i18next.t("pwdtype:type 2"));
+          setConfirmLoading(false);
+          return ;
+        }
+      } else if (pwdtype === 2) {
+        const reg = new RegExp("/(.)\\1/");
+        if (reg.test(newPassword)) {
+          Setting.showMessage("error", i18next.t("pwdtype:type 3"));
+        }
+        setConfirmLoading(false);
+        return ;
+      }
+      UserBackend.setPassword(user.owner, user.name, oldPassword, newPassword).then((res) => {
+        setConfirmLoading(false);
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("user:Password set successfully"));
+          setVisible(false);
+        } else {Setting.showMessage("error", i18next.t(`user:${res.msg}`));}
+      });
     });
   };
 
