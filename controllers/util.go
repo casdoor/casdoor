@@ -92,7 +92,11 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 		return nil, false
 	}
 
-	user := object.GetUser(userId)
+	user, err := object.GetUser(userId)
+	if err != nil {
+		panic(err)
+	}
+
 	if user == nil {
 		c.ClearUserSession()
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
@@ -138,7 +142,11 @@ func (c *ApiController) IsMaskedEnabled() (bool, bool) {
 func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, *object.User, bool) {
 	providerName := c.Input().Get("provider")
 	if providerName != "" {
-		provider := object.GetProvider(util.GetId("admin", providerName))
+		provider, err := object.GetProvider(util.GetId("admin", providerName))
+		if err != nil {
+			panic(err)
+		}
+
 		if provider == nil {
 			c.ResponseError(fmt.Sprintf(c.T("util:The provider: %s is not found"), providerName))
 			return nil, nil, false
@@ -151,13 +159,21 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 		return nil, nil, false
 	}
 
-	application, user := object.GetApplicationByUserId(userId)
+	application, user, err := object.GetApplicationByUserId(userId)
+	if err != nil {
+		panic(err)
+	}
+
 	if application == nil {
 		c.ResponseError(fmt.Sprintf(c.T("util:No application is found for userId: %s"), userId))
 		return nil, nil, false
 	}
 
-	provider := application.GetProviderByCategory(category)
+	provider, err := application.GetProviderByCategory(category)
+	if err != nil {
+		panic(err)
+	}
+
 	if provider == nil {
 		c.ResponseError(fmt.Sprintf(c.T("util:No provider for category: %s is found for application: %s"), category, application.Name))
 		return nil, nil, false

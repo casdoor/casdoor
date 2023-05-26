@@ -154,7 +154,11 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		}
 	}
 
-	user := object.GetUser(util.GetId(subOwner, subName))
+	user, err := object.GetUser(util.GetId(subOwner, subName))
+	if err != nil {
+		panic(err)
+	}
+
 	if user != nil && user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
 		return true
 	}

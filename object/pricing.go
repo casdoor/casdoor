@@ -42,96 +42,97 @@ type Pricing struct {
 	State string `xorm:"varchar(100)" json:"state"`
 }
 
-func GetPricingCount(owner, field, value string) int {
+func GetPricingCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Pricing{})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Pricing{})
 }
 
-func GetPricings(owner string) []*Pricing {
+func GetPricings(owner string) ([]*Pricing, error) {
 	pricings := []*Pricing{}
 	err := adapter.Engine.Desc("created_time").Find(&pricings, &Pricing{Owner: owner})
 	if err != nil {
-		panic(err)
+		return pricings, err
 	}
-	return pricings
+
+	return pricings, nil
 }
 
-func GetPaginatedPricings(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Pricing {
+func GetPaginatedPricings(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Pricing, error) {
 	pricings := []*Pricing{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&pricings)
 	if err != nil {
-		panic(err)
+		return pricings, err
 	}
-	return pricings
+	return pricings, nil
 }
 
-func getPricing(owner, name string) *Pricing {
+func getPricing(owner, name string) (*Pricing, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	pricing := Pricing{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&pricing)
 	if err != nil {
-		panic(err)
+		return &pricing, err
 	}
 	if existed {
-		return &pricing
+		return &pricing, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetPricing(id string) *Pricing {
+func GetPricing(id string) (*Pricing, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getPricing(owner, name)
 }
 
-func UpdatePricing(id string, pricing *Pricing) bool {
+func UpdatePricing(id string, pricing *Pricing) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getPricing(owner, name) == nil {
-		return false
+	if p, err := getPricing(owner, name); err != nil {
+		return false, err
+	} else if p == nil {
+		return false, nil
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(pricing)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddPricing(pricing *Pricing) bool {
+func AddPricing(pricing *Pricing) (bool, error) {
 	affected, err := adapter.Engine.Insert(pricing)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeletePricing(pricing *Pricing) bool {
+func DeletePricing(pricing *Pricing) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{pricing.Owner, pricing.Name}).Delete(pricing)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (pricing *Pricing) GetId() string {
 	return fmt.Sprintf("%s/%s", pricing.Owner, pricing.Name)
 }
 
-func (pricing *Pricing) HasPlan(owner string, plan string) bool {
-	selectedPlan := GetPlan(fmt.Sprintf("%s/%s", owner, plan))
+func (pricing *Pricing) HasPlan(owner string, plan string) (bool, error) {
+	selectedPlan, err := GetPlan(fmt.Sprintf("%s/%s", owner, plan))
+	if err != nil {
+		return false, err
+	}
 
 	if selectedPlan == nil {
-		return false
+		return false, nil
 	}
 
 	result := false
@@ -143,5 +144,5 @@ func (pricing *Pricing) HasPlan(owner string, plan string) bool {
 		}
 	}
 
-	return result
+	return result, nil
 }

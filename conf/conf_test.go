@@ -87,7 +87,7 @@ func TestGetConfBool(t *testing.T) {
 	assert.Nil(t, err)
 	for _, scenery := range scenarios {
 		t.Run(scenery.description, func(t *testing.T) {
-			actual, err := GetConfigBool(scenery.input)
+			actual := GetConfigBool(scenery.input)
 			assert.Nil(t, err)
 			assert.Equal(t, scenery.expected, actual)
 		})

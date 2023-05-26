@@ -44,7 +44,11 @@ func AutoSigninFilter(ctx *context.Context) {
 		}
 
 		userId := util.GetId(token.Organization, token.User)
-		application, _ := object.GetApplicationByUserId(fmt.Sprintf("app/%s", token.Application))
+		application, _, err := object.GetApplicationByUserId(fmt.Sprintf("app/%s", token.Application))
+		if err != nil {
+			panic(err)
+		}
+
 		setSessionUser(ctx, userId)
 		setSessionOidc(ctx, token.Scope, application.ClientId)
 		return

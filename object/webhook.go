@@ -42,100 +42,102 @@ type Webhook struct {
 	IsEnabled      bool      `json:"isEnabled"`
 }
 
-func GetWebhookCount(owner, organization, field, value string) int {
+func GetWebhookCount(owner, organization, field, value string) (int, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Webhook{Organization: organization})
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
-	return int(count)
+	return int(count), nil
 }
 
-func GetWebhooks(owner string, organization string) []*Webhook {
+func GetWebhooks(owner string, organization string) ([]*Webhook, error) {
 	webhooks := []*Webhook{}
 	err := adapter.Engine.Desc("created_time").Find(&webhooks, &Webhook{Owner: owner, Organization: organization})
 	if err != nil {
-		panic(err)
+		return webhooks, err
 	}
 
-	return webhooks
+	return webhooks, nil
 }
 
-func GetPaginationWebhooks(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Webhook {
+func GetPaginationWebhooks(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) ([]*Webhook, error) {
 	webhooks := []*Webhook{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&webhooks, &Webhook{Organization: organization})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return webhooks
+	return webhooks, nil
 }
 
-func getWebhooksByOrganization(organization string) []*Webhook {
+func getWebhooksByOrganization(organization string) ([]*Webhook, error) {
 	webhooks := []*Webhook{}
 	err := adapter.Engine.Desc("created_time").Find(&webhooks, &Webhook{Organization: organization})
 	if err != nil {
-		panic(err)
+		return webhooks, err
 	}
 
-	return webhooks
+	return webhooks, nil
 }
 
-func getWebhook(owner string, name string) *Webhook {
+func getWebhook(owner string, name string) (*Webhook, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	webhook := Webhook{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&webhook)
 	if err != nil {
-		panic(err)
+		return &webhook, err
 	}
 
 	if existed {
-		return &webhook
+		return &webhook, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetWebhook(id string) *Webhook {
+func GetWebhook(id string) (*Webhook, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getWebhook(owner, name)
 }
 
-func UpdateWebhook(id string, webhook *Webhook) bool {
+func UpdateWebhook(id string, webhook *Webhook) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getWebhook(owner, name) == nil {
-		return false
+	if w, err := getWebhook(owner, name); err != nil {
+		return false, err
+	} else if w == nil {
+		return false, nil
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(webhook)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddWebhook(webhook *Webhook) bool {
+func AddWebhook(webhook *Webhook) (bool, error) {
 	affected, err := adapter.Engine.Insert(webhook)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteWebhook(webhook *Webhook) bool {
+func DeleteWebhook(webhook *Webhook) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{webhook.Owner, webhook.Name}).Delete(&Webhook{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (p *Webhook) GetId() string {

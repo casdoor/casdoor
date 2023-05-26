@@ -40,21 +40,35 @@ func (c *ApiController) GetApplications() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	organization := c.Input().Get("organization")
-
+	var err error
 	if limit == "" || page == "" {
 		var applications []*object.Application
 		if organization == "" {
-			applications = object.GetApplications(owner)
+			applications, err = object.GetApplications(owner)
 		} else {
-			applications = object.GetOrganizationApplications(owner, organization)
+			applications, err = object.GetOrganizationApplications(owner, organization)
+		}
+
+		if err != nil {
+			panic(err)
 		}
 
 		c.Data["json"] = object.GetMaskedApplications(applications, userId)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetApplicationCount(owner, field, value)))
-		applications := object.GetMaskedApplications(object.GetPaginationApplications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder), userId)
+		count, err := object.GetApplicationCount(owner, field, value)
+		if err != nil {
+			panic(err)
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, int64(count))
+		app, err := object.GetPaginationApplications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			panic(err)
+		}
+
+		applications := object.GetMaskedApplications(app, userId)
 		c.ResponseOk(applications, paginator.Nums())
 	}
 }
@@ -69,8 +83,12 @@ func (c *ApiController) GetApplications() {
 func (c *ApiController) GetApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
+	app, err := object.GetApplication(id)
+	if err != nil {
+		panic(err)
+	}
 
-	c.Data["json"] = object.GetMaskedApplication(object.GetApplication(id), userId)
+	c.Data["json"] = object.GetMaskedApplication(app, userId)
 	c.ServeJSON()
 }
 
@@ -84,13 +102,22 @@ func (c *ApiController) GetApplication() {
 func (c *ApiController) GetUserApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
-	user := object.GetUser(id)
+	user, err := object.GetUser(id)
+	if err != nil {
+		panic(err)
+	}
+
 	if user == nil {
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), id))
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedApplication(object.GetApplicationByUser(user), userId)
+	app, err := object.GetApplicationByUser(user)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Data["json"] = object.GetMaskedApplication(app, userId)
 	c.ServeJSON()
 }
 
@@ -118,13 +145,30 @@ func (c *ApiController) GetOrganizationApplications() {
 	}
 
 	if limit == "" || page == "" {
-		applications := object.GetOrganizationApplications(owner, organization)
+		applications, err := object.GetOrganizationApplications(owner, organization)
+		if err != nil {
+			panic(err)
+		}
+
 		c.Data["json"] = object.GetMaskedApplications(applications, userId)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetOrganizationApplicationCount(owner, organization, field, value)))
-		applications := object.GetMaskedApplications(object.GetPaginationOrganizationApplications(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder), userId)
+
+		count, err := object.GetOrganizationApplicationCount(owner, organization, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		app, err := object.GetPaginationOrganizationApplications(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		applications := object.GetMaskedApplications(app, userId)
 		c.ResponseOk(applications, paginator.Nums())
 	}
 }
@@ -166,8 +210,13 @@ func (c *ApiController) AddApplication() {
 		return
 	}
 
-	count := object.GetApplicationCount("", "", "")
-	if err := checkQuotaForApplication(count); err != nil {
+	count, err := object.GetApplicationCount("", "", "")
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if err := checkQuotaForApplication(int(count)); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}

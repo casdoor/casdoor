@@ -18,21 +18,29 @@ import (
 	"github.com/casdoor/casdoor/xlsx"
 )
 
-func getPermissionMap(owner string) map[string]*Permission {
+func getPermissionMap(owner string) (map[string]*Permission, error) {
 	m := map[string]*Permission{}
 
-	permissions := GetPermissions(owner)
+	permissions, err := GetPermissions(owner)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, permission := range permissions {
 		m[permission.GetId()] = permission
 	}
 
-	return m
+	return m, err
 }
 
-func UploadPermissions(owner string, fileId string) bool {
+func UploadPermissions(owner string, fileId string) (bool, error) {
 	table := xlsx.ReadXlsxFile(fileId)
 
-	oldUserMap := getPermissionMap(owner)
+	oldUserMap, err := getPermissionMap(owner)
+	if err != nil {
+		return false, err
+	}
+
 	newPermissions := []*Permission{}
 	for index, line := range table {
 		if index == 0 || parseLineItem(&line, 0) == "" {
@@ -71,7 +79,7 @@ func UploadPermissions(owner string, fileId string) bool {
 	}
 
 	if len(newPermissions) == 0 {
-		return false
+		return false, nil
 	}
-	return AddPermissionsInBatch(newPermissions)
+	return AddPermissionsInBatch(newPermissions), nil
 }

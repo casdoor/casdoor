@@ -273,7 +273,10 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsWithoutThirdIdp)
 	}
 
-	cert := getCertByApplication(application)
+	cert, err := getCertByApplication(application)
+	if err != nil {
+		return "", "", "", err
+	}
 
 	// RSA private key
 	key, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(cert.PrivateKey))
@@ -316,5 +319,10 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 }
 
 func ParseJwtTokenByApplication(token string, application *Application) (*Claims, error) {
-	return ParseJwtToken(token, getCertByApplication(application))
+	cert, err := getCertByApplication(application)
+	if err != nil {
+		return nil, err
+	}
+
+	return ParseJwtToken(token, cert)
 }

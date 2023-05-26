@@ -221,7 +221,11 @@ func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token) {
 		panic(err)
 	}
 
-	application := getApplication(token.Owner, token.Application)
+	application, err := getApplication(token.Owner, token.Application)
+	if err != nil {
+		panic(err)
+	}
+
 	return affected != 0, application, &token
 }
 
@@ -249,7 +253,11 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		return fmt.Sprintf(i18n.Translate(lang, "token:Grant_type: %s is not supported in this application"), responseType), nil
 	}
 
-	application := GetApplicationByClientId(clientId)
+	application, err := GetApplicationByClientId(clientId)
+	if err != nil {
+		panic(err)
+	}
+
 	if application == nil {
 		return i18n.Translate(lang, "token:Invalid client_id"), nil
 	}
@@ -264,7 +272,11 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 }
 
 func GetOAuthCode(userId string, clientId string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, host string, lang string) *Code {
-	user := GetUser(userId)
+	user, err := GetUser(userId)
+	if err != nil {
+		panic(err)
+	}
+
 	if user == nil {
 		return &Code{
 			Message: fmt.Sprintf("general:The user: %s doesn't exist", userId),
@@ -286,7 +298,10 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		}
 	}
 
-	ExtendUserWithRolesAndPermissions(user)
+	err = ExtendUserWithRolesAndPermissions(user)
+	if err != nil {
+		panic(err)
+	}
 	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, nonce, scope, host)
 	if err != nil {
 		panic(err)
@@ -322,7 +337,11 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 }
 
 func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string) interface{} {
-	application := GetApplicationByClientId(clientId)
+	application, err := GetApplicationByClientId(clientId)
+	if err != nil {
+		panic(err)
+	}
+
 	if application == nil {
 		return &TokenError{
 			Error:            InvalidClient,
@@ -384,7 +403,11 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			ErrorDescription: "grant_type should be refresh_token",
 		}
 	}
-	application := GetApplicationByClientId(clientId)
+	application, err := GetApplicationByClientId(clientId)
+	if err != nil {
+		panic(err)
+	}
+
 	if application == nil {
 		return &TokenError{
 			Error:            InvalidClient,
@@ -407,7 +430,11 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		}
 	}
 
-	cert := getCertByApplication(application)
+	cert, err := getCertByApplication(application)
+	if err != nil {
+		panic(err)
+	}
+
 	_, err = ParseJwtToken(refreshToken, cert)
 	if err != nil {
 		return &TokenError{
@@ -416,7 +443,11 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		}
 	}
 	// generate a new token
-	user := getUser(application.Organization, token.User)
+	user, err := getUser(application.Organization, token.User)
+	if err != nil {
+		panic(err)
+	}
+
 	if user.IsForbidden {
 		return &TokenError{
 			Error:            InvalidGrant,
@@ -424,7 +455,10 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		}
 	}
 
-	ExtendUserWithRolesAndPermissions(user)
+	err = ExtendUserWithRolesAndPermissions(user)
+	if err != nil {
+		panic(err)
+	}
 	newAccessToken, newRefreshToken, tokenName, err := generateJwtToken(application, user, "", scope, host)
 	if err != nil {
 		return &TokenError{
@@ -554,7 +588,11 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 // GetPasswordToken
 // Resource Owner Password Credentials flow
 func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, *TokenError) {
-	user := getUser(application.Organization, username)
+	user, err := getUser(application.Organization, username)
+	if err != nil {
+		panic(err)
+	}
+
 	if user == nil {
 		return nil, &TokenError{
 			Error:            InvalidGrant,
@@ -575,7 +613,11 @@ func GetPasswordToken(application *Application, username string, password string
 		}
 	}
 
-	ExtendUserWithRolesAndPermissions(user)
+	err = ExtendUserWithRolesAndPermissions(user)
+	if err != nil {
+		panic(err)
+	}
+
 	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", scope, host)
 	if err != nil {
 		return nil, &TokenError{
@@ -646,7 +688,10 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 // GetTokenByUser
 // Implicit flow
 func GetTokenByUser(application *Application, user *User, scope string, host string) (*Token, error) {
-	ExtendUserWithRolesAndPermissions(user)
+	err := ExtendUserWithRolesAndPermissions(user)
+	if err != nil {
+		panic(err)
+	}
 	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", scope, host)
 	if err != nil {
 		return nil, err
@@ -680,7 +725,11 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 			ErrorDescription: "the application does not support wechat mini program",
 		}
 	}
-	provider := GetProvider(util.GetId("admin", mpProvider.Name))
+	provider, err := GetProvider(util.GetId("admin", mpProvider.Name))
+	if err != nil {
+		panic(err)
+	}
+
 	mpIdp := idp.NewWeChatMiniProgramIdProvider(provider.ClientId, provider.ClientSecret)
 	session, err := mpIdp.GetSessionByCode(code)
 	if err != nil {
@@ -696,7 +745,11 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 			ErrorDescription: "the wechat mini program session is invalid",
 		}
 	}
-	user := getUserByWechatId(openId, unionId)
+	user, err := getUserByWechatId(openId, unionId)
+	if err != nil {
+		panic(err)
+	}
+
 	if user == nil {
 		if !application.EnableSignUp {
 			return nil, &TokenError{
@@ -730,10 +783,17 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 				UserPropertiesWechatUnionId: unionId,
 			},
 		}
-		AddUser(user)
+		_, err = AddUser(user)
+		if err != nil {
+			panic(err)
+		}
 	}
 
-	ExtendUserWithRolesAndPermissions(user)
+	err = ExtendUserWithRolesAndPermissions(user)
+	if err != nil {
+		panic(err)
+	}
+
 	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", host)
 	if err != nil {
 		return nil, &TokenError{

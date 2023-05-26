@@ -38,13 +38,30 @@ func (c *ApiController) GetSyncers() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	organization := c.Input().Get("organization")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetOrganizationSyncers(owner, organization)
+		organizationSyncers, err := object.GetOrganizationSyncers(owner, organization)
+		if err != nil {
+			panic(err)
+		}
+
+		c.Data["json"] = organizationSyncers
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetSyncerCount(owner, organization, field, value)))
-		syncers := object.GetPaginationSyncers(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetSyncerCount(owner, organization, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		syncers, err := object.GetPaginationSyncers(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(syncers, paginator.Nums())
 	}
 }
@@ -59,7 +76,12 @@ func (c *ApiController) GetSyncers() {
 func (c *ApiController) GetSyncer() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetSyncer(id)
+	syncer, err := object.GetSyncer(id)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Data["json"] = syncer
 	c.ServeJSON()
 }
 
@@ -132,7 +154,11 @@ func (c *ApiController) DeleteSyncer() {
 // @router /run-syncer [get]
 func (c *ApiController) RunSyncer() {
 	id := c.Input().Get("id")
-	syncer := object.GetSyncer(id)
+	syncer, err := object.GetSyncer(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	object.RunSyncer(syncer)
 

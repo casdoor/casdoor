@@ -34,8 +34,7 @@ func (c *ApiController) Enforce() {
 	}
 
 	if permissionId != "" {
-		c.Data["json"] = object.Enforce(permissionId, &request)
-		c.ServeJSON()
+		c.ResponseOk(object.Enforce(permissionId, &request))
 		return
 	}
 
@@ -44,9 +43,15 @@ func (c *ApiController) Enforce() {
 
 	if modelId != "" {
 		owner, modelName := util.GetOwnerAndNameFromId(modelId)
-		permissions = object.GetPermissionsByModel(owner, modelName)
+		permissions, err = object.GetPermissionsByModel(owner, modelName)
+		if err != nil {
+			panic(err)
+		}
 	} else {
-		permissions = object.GetPermissionsByResource(resourceId)
+		permissions, err = object.GetPermissionsByResource(resourceId)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	for _, permission := range permissions {
@@ -63,8 +68,7 @@ func (c *ApiController) BatchEnforce() {
 	var requests []object.CasbinRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
 	if err != nil {
-		c.ResponseError(err.Error())
-		return
+		panic(err)
 	}
 
 	if permissionId != "" {
@@ -72,14 +76,17 @@ func (c *ApiController) BatchEnforce() {
 		c.ServeJSON()
 	} else {
 		owner, modelName := util.GetOwnerAndNameFromId(modelId)
-		permissions := object.GetPermissionsByModel(owner, modelName)
+		permissions, err := object.GetPermissionsByModel(owner, modelName)
+		if err != nil {
+			panic(err)
+		}
 
 		res := [][]bool{}
 		for _, permission := range permissions {
 			res = append(res, object.BatchEnforce(permission.GetId(), &requests))
 		}
-		c.Data["json"] = res
-		c.ServeJSON()
+
+		c.ResponseOk(res)
 	}
 }
 
@@ -90,8 +97,7 @@ func (c *ApiController) GetAllObjects() {
 		return
 	}
 
-	c.Data["json"] = object.GetAllObjects(userId)
-	c.ServeJSON()
+	c.ResponseOk(object.GetAllObjects(userId))
 }
 
 func (c *ApiController) GetAllActions() {
@@ -101,8 +107,7 @@ func (c *ApiController) GetAllActions() {
 		return
 	}
 
-	c.Data["json"] = object.GetAllActions(userId)
-	c.ServeJSON()
+	c.ResponseOk(object.GetAllActions(userId))
 }
 
 func (c *ApiController) GetAllRoles() {
@@ -112,6 +117,5 @@ func (c *ApiController) GetAllRoles() {
 		return
 	}
 
-	c.Data["json"] = object.GetAllRoles(userId)
-	c.ServeJSON()
+	c.ResponseOk(object.GetAllRoles(userId))
 }

@@ -16,46 +16,74 @@ package object
 
 import "fmt"
 
-func getDbSyncerForUser(user *User) *Syncer {
-	syncers := GetSyncers("admin")
+func getDbSyncerForUser(user *User) (*Syncer, error) {
+	syncers, err := GetSyncers("admin")
+	if err != nil {
+		return nil, err
+	}
+
 	for _, syncer := range syncers {
 		if syncer.Organization == user.Owner && syncer.IsEnabled && syncer.Type == "Database" {
-			return syncer
+			return syncer, nil
 		}
 	}
-	return nil
+	return nil, nil
 }
 
-func getEnabledSyncerForOrganization(organization string) *Syncer {
-	syncers := GetSyncers("admin")
+func getEnabledSyncerForOrganization(organization string) (*Syncer, error) {
+	syncers, err := GetSyncers("admin")
+	if err != nil {
+		return nil, err
+	}
+
 	for _, syncer := range syncers {
 		if syncer.Organization == organization && syncer.IsEnabled {
-			return syncer
+			return syncer, nil
 		}
 	}
-	return nil
+	return nil, nil
 }
 
-func AddUserToOriginalDatabase(user *User) {
-	syncer := getEnabledSyncerForOrganization(user.Owner)
+func AddUserToOriginalDatabase(user *User) error {
+	syncer, err := getEnabledSyncerForOrganization(user.Owner)
+	if err != nil {
+		return err
+	}
+
 	if syncer == nil {
-		return
+		return nil
 	}
 
 	updatedOUser := syncer.createOriginalUserFromUser(user)
-	syncer.addUser(updatedOUser)
-	fmt.Printf("Add from user to oUser: %v\n", updatedOUser)
-}
-
-func UpdateUserToOriginalDatabase(user *User) {
-	syncer := getEnabledSyncerForOrganization(user.Owner)
-	if syncer == nil {
-		return
+	_, err = syncer.addUser(updatedOUser)
+	if err != nil {
+		return err
 	}
 
-	newUser := GetUser(user.GetId())
+	fmt.Printf("Add from user to oUser: %v\n", updatedOUser)
+	return nil
+}
+
+func UpdateUserToOriginalDatabase(user *User) error {
+	syncer, err := getEnabledSyncerForOrganization(user.Owner)
+	if err != nil {
+		return err
+	}
+	if syncer == nil {
+		return nil
+	}
+
+	newUser, err := GetUser(user.GetId())
+	if err != nil {
+		return err
+	}
 
 	updatedOUser := syncer.createOriginalUserFromUser(newUser)
-	syncer.updateUser(updatedOUser)
+	_, err = syncer.updateUser(updatedOUser)
+	if err != nil {
+		return err
+	}
+
 	fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
+	return nil
 }

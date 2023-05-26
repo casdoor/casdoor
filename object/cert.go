@@ -47,137 +47,138 @@ func GetMaskedCert(cert *Cert) *Cert {
 	return cert
 }
 
-func GetMaskedCerts(certs []*Cert) []*Cert {
+func GetMaskedCerts(certs []*Cert, err error) ([]*Cert, error) {
+	if err != nil {
+		return nil, err
+	}
+
 	for _, cert := range certs {
 		cert = GetMaskedCert(cert)
 	}
-	return certs
+	return certs, nil
 }
 
-func GetCertCount(owner, field, value string) int {
+func GetCertCount(owner, field, value string) (int64, error) {
 	session := GetSession("", -1, -1, field, value, "", "")
-	count, err := session.Where("owner = ? or owner = ? ", "admin", owner).Count(&Cert{})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Where("owner = ? or owner = ? ", "admin", owner).Count(&Cert{})
 }
 
-func GetCerts(owner string) []*Cert {
+func GetCerts(owner string) ([]*Cert, error) {
 	certs := []*Cert{}
 	err := adapter.Engine.Where("owner = ? or owner = ? ", "admin", owner).Desc("created_time").Find(&certs, &Cert{})
 	if err != nil {
-		panic(err)
+		return certs, err
 	}
 
-	return certs
+	return certs, nil
 }
 
-func GetPaginationCerts(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Cert {
+func GetPaginationCerts(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Cert, error) {
 	certs := []*Cert{}
 	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Where("owner = ? or owner = ? ", "admin", owner).Find(&certs)
 	if err != nil {
-		panic(err)
+		return certs, err
 	}
 
-	return certs
+	return certs, nil
 }
 
-func GetGlobalCertsCount(field, value string) int {
+func GetGlobalCertsCount(field, value string) (int, error) {
 	session := GetSession("", -1, -1, field, value, "", "")
 	count, err := session.Count(&Cert{})
 	if err != nil {
-		panic(err)
+		return int(count), err
 	}
 
-	return int(count)
+	return int(count), nil
 }
 
-func GetGlobleCerts() []*Cert {
+func GetGlobleCerts() ([]*Cert, error) {
 	certs := []*Cert{}
 	err := adapter.Engine.Desc("created_time").Find(&certs)
 	if err != nil {
-		panic(err)
+		return certs, err
 	}
 
-	return certs
+	return certs, nil
 }
 
-func GetPaginationGlobalCerts(offset, limit int, field, value, sortField, sortOrder string) []*Cert {
+func GetPaginationGlobalCerts(offset, limit int, field, value, sortField, sortOrder string) ([]*Cert, error) {
 	certs := []*Cert{}
 	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&certs)
 	if err != nil {
-		panic(err)
+		return certs, err
 	}
 
-	return certs
+	return certs, nil
 }
 
-func getCert(owner string, name string) *Cert {
+func getCert(owner string, name string) (*Cert, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	cert := Cert{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&cert)
 	if err != nil {
-		panic(err)
+		return &cert, err
 	}
 
 	if existed {
-		return &cert
+		return &cert, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func getCertByName(name string) *Cert {
+func getCertByName(name string) (*Cert, error) {
 	if name == "" {
-		return nil
+		return nil, nil
 	}
 
 	cert := Cert{Name: name}
 	existed, err := adapter.Engine.Get(&cert)
 	if err != nil {
-		panic(err)
+		return &cert, nil
 	}
 
 	if existed {
-		return &cert
+		return &cert, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetCert(id string) *Cert {
+func GetCert(id string) (*Cert, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getCert(owner, name)
 }
 
-func UpdateCert(id string, cert *Cert) bool {
+func UpdateCert(id string, cert *Cert) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getCert(owner, name) == nil {
-		return false
+	if c, err := getCert(owner, name); err != nil {
+		return false, err
+	} else if c == nil {
+		return false, nil
 	}
 
 	if name != cert.Name {
 		err := certChangeTrigger(name, cert.Name)
 		if err != nil {
-			return false
+			return false, nil
 		}
 	}
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(cert)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddCert(cert *Cert) bool {
+func AddCert(cert *Cert) (bool, error) {
 	if cert.Certificate == "" || cert.PrivateKey == "" {
 		certificate, privateKey := generateRsaKeys(cert.BitSize, cert.ExpireInYears, cert.Name, cert.Owner)
 		cert.Certificate = certificate
@@ -186,26 +187,26 @@ func AddCert(cert *Cert) bool {
 
 	affected, err := adapter.Engine.Insert(cert)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteCert(cert *Cert) bool {
+func DeleteCert(cert *Cert) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{cert.Owner, cert.Name}).Delete(&Cert{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (p *Cert) GetId() string {
 	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
 }
 
-func getCertByApplication(application *Application) *Cert {
+func getCertByApplication(application *Application) (*Cert, error) {
 	if application.Cert != "" {
 		return getCertByName(application.Cert)
 	} else {
@@ -213,7 +214,7 @@ func getCertByApplication(application *Application) *Cert {
 	}
 }
 
-func GetDefaultCert() *Cert {
+func GetDefaultCert() (*Cert, error) {
 	return getCert("admin", "cert-built-in")
 }
 

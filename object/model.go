@@ -32,56 +32,56 @@ type Model struct {
 	IsEnabled bool   `json:"isEnabled"`
 }
 
-func GetModelCount(owner, field, value string) int {
+func GetModelCount(owner, field, value string) (int, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Model{})
 	if err != nil {
-		panic(err)
+		return int(count), err
 	}
 
-	return int(count)
+	return int(count), nil
 }
 
-func GetModels(owner string) []*Model {
+func GetModels(owner string) ([]*Model, error) {
 	models := []*Model{}
 	err := adapter.Engine.Desc("created_time").Find(&models, &Model{Owner: owner})
 	if err != nil {
-		panic(err)
+		return models, err
 	}
 
-	return models
+	return models, nil
 }
 
-func GetPaginationModels(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Model {
+func GetPaginationModels(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Model, error) {
 	models := []*Model{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&models)
 	if err != nil {
-		panic(err)
+		return models, err
 	}
 
-	return models
+	return models, nil
 }
 
-func getModel(owner string, name string) *Model {
+func getModel(owner string, name string) (*Model, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	m := Model{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&m)
 	if err != nil {
-		panic(err)
+		return &m, err
 	}
 
 	if existed {
-		return &m
+		return &m, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetModel(id string) *Model {
+func GetModel(id string) (*Model, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getModel(owner, name)
 }
@@ -92,48 +92,53 @@ func UpdateModelWithCheck(id string, modelObj *Model) error {
 	if err != nil {
 		return err
 	}
-	UpdateModel(id, modelObj)
+	_, err = UpdateModel(id, modelObj)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
 
-func UpdateModel(id string, modelObj *Model) bool {
+func UpdateModel(id string, modelObj *Model) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getModel(owner, name) == nil {
-		return false
+	if m, err := getModel(owner, name); err != nil {
+		return false, err
+	} else if m == nil {
+		return false, nil
 	}
 
 	if name != modelObj.Name {
 		err := modelChangeTrigger(name, modelObj.Name)
 		if err != nil {
-			return false
+			return false, err
 		}
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(modelObj)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, err
 }
 
-func AddModel(model *Model) bool {
+func AddModel(model *Model) (bool, error) {
 	affected, err := adapter.Engine.Insert(model)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteModel(model *Model) bool {
+func DeleteModel(model *Model) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{model.Owner, model.Name}).Delete(&Model{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (model *Model) GetId() string {

@@ -37,109 +37,115 @@ type Plan struct {
 	Options []string `xorm:"-" json:"options"`
 }
 
-func GetPlanCount(owner, field, value string) int {
+func GetPlanCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Plan{})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Plan{})
 }
 
-func GetPlans(owner string) []*Plan {
+func GetPlans(owner string) ([]*Plan, error) {
 	plans := []*Plan{}
 	err := adapter.Engine.Desc("created_time").Find(&plans, &Plan{Owner: owner})
 	if err != nil {
-		panic(err)
+		return plans, err
 	}
-	return plans
+	return plans, nil
 }
 
-func GetPaginatedPlans(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Plan {
+func GetPaginatedPlans(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Plan, error) {
 	plans := []*Plan{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&plans)
 	if err != nil {
-		panic(err)
+		return plans, err
 	}
-	return plans
+	return plans, nil
 }
 
-func getPlan(owner, name string) *Plan {
+func getPlan(owner, name string) (*Plan, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	plan := Plan{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&plan)
 	if err != nil {
-		panic(err)
+		return &plan, err
 	}
 	if existed {
-		return &plan
+		return &plan, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetPlan(id string) *Plan {
+func GetPlan(id string) (*Plan, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getPlan(owner, name)
 }
 
-func UpdatePlan(id string, plan *Plan) bool {
+func UpdatePlan(id string, plan *Plan) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getPlan(owner, name) == nil {
-		return false
+	if p, err := getPlan(owner, name); err != nil {
+		return false, err
+	} else if p == nil {
+		return false, nil
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(plan)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddPlan(plan *Plan) bool {
+func AddPlan(plan *Plan) (bool, error) {
 	affected, err := adapter.Engine.Insert(plan)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeletePlan(plan *Plan) bool {
+func DeletePlan(plan *Plan) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{plan.Owner, plan.Name}).Delete(plan)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (plan *Plan) GetId() string {
 	return fmt.Sprintf("%s/%s", plan.Owner, plan.Name)
 }
 
-func Subscribe(owner string, user string, plan string, pricing string) *Subscription {
-	selectedPricing := GetPricing(fmt.Sprintf("%s/%s", owner, pricing))
+func Subscribe(owner string, user string, plan string, pricing string) (*Subscription, error) {
+	selectedPricing, err := GetPricing(fmt.Sprintf("%s/%s", owner, pricing))
+	if err != nil {
+		return nil, err
+	}
 
 	valid := selectedPricing != nil && selectedPricing.IsEnabled
 
 	if !valid {
-		return nil
+		return nil, nil
 	}
 
-	planBelongToPricing := selectedPricing.HasPlan(owner, plan)
+	planBelongToPricing, err := selectedPricing.HasPlan(owner, plan)
+	if err != nil {
+		return nil, err
+	}
 
 	if planBelongToPricing {
 		newSubscription := NewSubscription(owner, user, plan, selectedPricing.TrialDuration)
-		affected := AddSubscription(newSubscription)
+		affected, err := AddSubscription(newSubscription)
+		if err != nil {
+			return nil, err
+		}
 
 		if affected {
-			return newSubscription
+			return newSubscription, nil
 		}
 	}
-	return nil
+	return nil, nil
 }

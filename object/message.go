@@ -144,13 +144,13 @@ func DeleteMessage(message *Message) bool {
 	return affected != 0
 }
 
-func DeleteChatMessages(chat string) bool {
+func DeleteChatMessages(chat string) (bool, error) {
 	affected, err := adapter.Engine.Delete(&Message{Chat: chat})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (p *Message) GetId() string {

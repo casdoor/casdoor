@@ -27,13 +27,21 @@ func TestSyncPermanentAvatars(t *testing.T) {
 	InitDefaultStorageProvider()
 	proxy.InitHttpClient()
 
-	users := GetGlobalUsers()
+	users, err := GetGlobalUsers()
+	if err != nil {
+		panic(err)
+	}
+
 	for i, user := range users {
 		if user.Avatar == "" {
 			continue
 		}
 
-		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
+		user.PermanentAvatar, err = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
+		if err != nil {
+			panic(err)
+		}
+
 		updateUserColumn("permanent_avatar", user)
 		fmt.Printf("[%d/%d]: Update user: [%s]'s permanent avatar: %s\n", i, len(users), user.GetId(), user.PermanentAvatar)
 	}
@@ -44,16 +52,27 @@ func TestUpdateAvatars(t *testing.T) {
 	InitDefaultStorageProvider()
 	proxy.InitHttpClient()
 
-	users := GetUsers("casdoor")
+	users, err := GetUsers("casdoor")
+	if err != nil {
+		panic(err)
+	}
+
 	for _, user := range users {
 		if strings.HasPrefix(user.Avatar, "http") {
 			continue
 		}
 
-		updated := user.refreshAvatar()
+		updated, err := user.refreshAvatar()
+		if err != nil {
+			panic(err)
+		}
+
 		if updated {
 			user.PermanentAvatar = "*"
-			UpdateUser(user.GetId(), user, []string{"avatar"}, true)
+			_, err = UpdateUser(user.GetId(), user, []string{"avatar"}, true)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 }

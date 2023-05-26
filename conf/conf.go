@@ -16,7 +16,6 @@ package conf
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"runtime"
 	"strconv"
@@ -73,14 +72,13 @@ func GetConfigString(key string) string {
 	return res
 }
 
-func GetConfigBool(key string) (bool, error) {
+func GetConfigBool(key string) bool {
 	value := GetConfigString(key)
 	if value == "true" {
-		return true, nil
-	} else if value == "false" {
-		return false, nil
+		return true
+	} else {
+		return false
 	}
-	return false, fmt.Errorf("value %s cannot be converted into bool", value)
 }
 
 func GetConfigInt64(key string) (int64, error) {

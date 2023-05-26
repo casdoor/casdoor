@@ -108,7 +108,12 @@ func (c *ApiController) GetMessageAnswer() {
 	}
 
 	chatId := util.GetId("admin", message.Chat)
-	chat := object.GetChat(chatId)
+	chat, err := object.GetChat(chatId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if chat == nil || chat.Organization != message.Organization {
 		c.ResponseErrorStream(fmt.Sprintf(c.T("chat:The chat: %s is not found"), chatId))
 		return
@@ -126,7 +131,12 @@ func (c *ApiController) GetMessageAnswer() {
 	}
 
 	providerId := util.GetId(chat.Owner, chat.User2)
-	provider := object.GetProvider(providerId)
+	provider, err := object.GetProvider(providerId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if provider == nil {
 		c.ResponseErrorStream(fmt.Sprintf(c.T("chat:The provider: %s is not found"), providerId))
 		return
@@ -148,7 +158,7 @@ func (c *ApiController) GetMessageAnswer() {
 	fmt.Printf("Question: [%s]\n", questionMessage.Text)
 	fmt.Printf("Answer: [")
 
-	err := ai.QueryAnswerStream(authToken, question, c.Ctx.ResponseWriter, &stringBuilder)
+	err = ai.QueryAnswerStream(authToken, question, c.Ctx.ResponseWriter, &stringBuilder)
 	if err != nil {
 		c.ResponseErrorStream(err.Error())
 		return
@@ -208,7 +218,12 @@ func (c *ApiController) AddMessage() {
 	var chat *object.Chat
 	if message.Chat != "" {
 		chatId := util.GetId("admin", message.Chat)
-		chat = object.GetChat(chatId)
+		chat, err = object.GetChat(chatId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		if chat == nil || chat.Organization != message.Organization {
 			c.ResponseError(fmt.Sprintf(c.T("chat:The chat: %s is not found"), chatId))
 			return

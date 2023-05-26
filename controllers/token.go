@@ -245,7 +245,11 @@ func (c *ApiController) IntrospectToken() {
 			return
 		}
 	}
-	application := object.GetApplicationByClientId(clientId)
+	application, err := object.GetApplicationByClientId(clientId)
+	if err != nil {
+		panic(err)
+	}
+
 	if application == nil || application.ClientSecret != clientSecret {
 		c.ResponseError(c.T("token:Invalid application or wrong clientSecret"))
 		c.Data["json"] = &object.TokenError{

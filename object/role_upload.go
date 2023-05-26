@@ -18,21 +18,29 @@ import (
 	"github.com/casdoor/casdoor/xlsx"
 )
 
-func getRoleMap(owner string) map[string]*Role {
+func getRoleMap(owner string) (map[string]*Role, error) {
 	m := map[string]*Role{}
 
-	roles := GetRoles(owner)
+	roles, err := GetRoles(owner)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, role := range roles {
 		m[role.GetId()] = role
 	}
 
-	return m
+	return m, nil
 }
 
-func UploadRoles(owner string, fileId string) bool {
+func UploadRoles(owner string, fileId string) (bool, error) {
 	table := xlsx.ReadXlsxFile(fileId)
 
-	oldUserMap := getRoleMap(owner)
+	oldUserMap, err := getRoleMap(owner)
+	if err != nil {
+		return false, err
+	}
+
 	newRoles := []*Role{}
 	for index, line := range table {
 		if index == 0 || parseLineItem(&line, 0) == "" {
@@ -57,7 +65,7 @@ func UploadRoles(owner string, fileId string) bool {
 	}
 
 	if len(newRoles) == 0 {
-		return false
+		return false, nil
 	}
-	return AddRolesInBatch(newRoles)
+	return AddRolesInBatch(newRoles), nil
 }
