@@ -16,6 +16,7 @@ package idp
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -83,7 +84,7 @@ func (idp *CasdoorIdProvider) GetToken(code string) (*oauth2.Token, error) {
 
 	// check if token is expired
 	if pToken.ExpiresIn <= 0 {
-		return nil, fmt.Errorf("%s", pToken.AccessToken)
+		return nil, errors.New(pToken.AccessToken)
 	}
 	token := &oauth2.Token{
 		AccessToken: pToken.AccessToken,

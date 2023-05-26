@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -156,15 +155,15 @@ func (c *ApiController) NotifyPayment() {
 
 	body := c.Ctx.Input.RequestBody
 
-	ok := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName)
-	if ok {
-		_, err := c.Ctx.ResponseWriter.Write([]byte("success"))
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-	} else {
-		panic(fmt.Errorf("NotifyPayment() failed: %v", ok))
+	err, errorResponse := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName)
+
+	_, err2 := c.Ctx.ResponseWriter.Write([]byte(errorResponse))
+	if err2 != nil {
+		panic(err2)
+	}
+
+	if err != nil {
+		panic(err)
 	}
 }
 

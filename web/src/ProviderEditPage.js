@@ -856,7 +856,7 @@ class ProviderEditPage extends React.Component {
           this.state.provider.type === "WeChat Pay" ? (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel("cert", "cert")} :
+                {Setting.getLabel(i18next.t("general:Cert"), i18next.t("general:Cert - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <Input value={this.state.provider.cert} onChange={e => {
