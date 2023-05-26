@@ -64,7 +64,6 @@ type Organization struct {
 	MasterPassword     string     `xorm:"varchar(100)" json:"masterPassword"`
 	InitScore          int        `json:"initScore"`
 	EnableSoftDeletion bool       `json:"enableSoftDeletion"`
-	SelectMethod       string     `json:"selectMethod"`
 	IsProfilePublic    bool       `json:"isProfilePublic"`
 
 	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`

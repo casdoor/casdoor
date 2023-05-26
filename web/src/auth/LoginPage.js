@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Button, Checkbox, Col, Form, Input, Result, Row, Spin, Tabs} from "antd";
-import {LockOutlined, UserOutlined} from "@ant-design/icons";
+import {ArrowLeftOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
 import OrganizationSelect from "../common/select/OrganizationSelect";
 import * as Conf from "../Conf";
@@ -58,11 +58,9 @@ class LoginPage extends React.Component {
       redirectUrl: "",
       isTermsOfUseVisible: false,
       termsOfUseContent: "",
-      selectMethod: new URLSearchParams(props.location.search).get("select_method") ?? null,
+      selectMethod: new URLSearchParams(props.location?.search).get("select_method") ?? null,
     };
 
-    // eslint-disable-next-line no-console
-    console.log(props.match);
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
       this.state.owner = props.match?.params?.owner;
       this.state.applicationName = props.match?.params?.casApplicationName;
@@ -820,21 +818,21 @@ class LoginPage extends React.Component {
   }
 
   renderLoginPanel(application) {
-    const selectMethod = application.organizationObj.selectMethod;
+    const selectMethod = application.selectMethod;
 
     if (this.isOrganizationChoiceBoxVisible(selectMethod)) {
       return this.renderOrganizationChoiceBox(selectMethod);
+    }
+
+    if (this.state.getVerifyTotp !== undefined) {
+      return this.state.getVerifyTotp();
     } else {
-      if (this.state.getVerifyTotp !== undefined) {
-        return this.state.getVerifyTotp();
-      } else {
-        return (
-          <React.Fragment>
-            {this.renderSignedInBox()}
-            {this.renderForm(application)}
-          </React.Fragment>
-        );
-      }
+      return (
+        <React.Fragment>
+          {this.renderSignedInBox()}
+          {this.renderForm(application)}
+        </React.Fragment>
+      );
     }
   }
 
@@ -849,7 +847,7 @@ class LoginPage extends React.Component {
             <p style={{fontSize: "large"}}>
               {i18next.t("login:Please select an organization to sign in")}
             </p>
-            <OrganizationSelect style={{width: "100%"}}
+            <OrganizationSelect style={{width: "70%"}}
               onSelect={(value) => {
                 Setting.goToLink(`/login/${value}?select_method=closed`);
               }} />
@@ -861,9 +859,22 @@ class LoginPage extends React.Component {
             <p style={{fontSize: "large"}}>
               {i18next.t("login:Please type an organization to sign in")}
             </p>
-            <Input style={{width: "100%"}} onPressEnter={(e) => {
-              Setting.goToLink(`/login/${e.target.value}?select_method=closed`);
-            }} />
+            <Form
+              name="basic"
+              onFinish={(values) => {Setting.goToLink(`/login/${values.organizationName}?select_method=closed`);}}
+            >
+              <Form.Item
+                name="organizationName"
+                rules={[{required: true, message: i18next.t("login:Please input your organization name!")}]}
+              >
+                <Input style={{width: "70%"}} onPressEnter={(e) => {
+                  Setting.goToLink(`/login/${e.target.value}?select_method=closed`);
+                }} />
+              </Form.Item>
+              <Button type="primary" htmlType="submit">
+                {i18next.t("general:Confirm")}
+              </Button>
+            </Form>
           </div>
         );
       default:
@@ -872,7 +883,7 @@ class LoginPage extends React.Component {
     };
 
     return (
-      <div style={{height: 300}}>
+      <div style={{height: 300, width: 300}}>
         {renderChoiceBox()}
       </div>
     );
@@ -882,11 +893,24 @@ class LoginPage extends React.Component {
     if (this.state.selectMethod === "closed") {
       return false;
     }
-    if (this.props.match.path === "/login" || this.props.match.path === "/login/:owner") {
+
+    const path = this.props.match?.path;
+    if (path === "/login" || path === "/login/:owner") {
       return selectMethod === "select" || selectMethod === "input";
     }
 
     return false;
+  }
+
+  renderBackButton() {
+    if (this.state.selectMethod === "closed") {
+      return (
+        <Button type="text" size="large" icon={<ArrowLeftOutlined />}
+          style={{top: "65px", left: "15px", position: "absolute"}}
+          onClick={() => history.back()}>
+        </Button>
+      );
+    }
   }
 
   render() {
@@ -936,6 +960,9 @@ class LoginPage extends React.Component {
                   }
                   {
                     Setting.renderLogo(application)
+                  }
+                  {
+                    this.renderBackButton()
                   }
                   <LanguageSelect languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
                   {
