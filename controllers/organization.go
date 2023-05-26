@@ -38,8 +38,8 @@ func (c *ApiController) GetOrganizations() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedOrganizations(object.GetOrganizations(owner))
-		c.ServeJSON()
+		organizations := object.GetMaskedOrganizations(object.GetOrganizations(owner))
+		c.ResponseOk(organizations)
 	} else {
 		limit := util.ParseInt(limit)
 		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetOrganizationCount(owner, field, value)))
@@ -147,4 +147,17 @@ func (c *ApiController) GetDefaultApplication() {
 
 	maskedApplication := object.GetMaskedApplication(application, userId)
 	c.ResponseOk(maskedApplication)
+}
+
+// GetOrganizationNames ...
+// @Title GetOrganizationNames
+// @Tag Organization API
+// @Param   owner     query    string    true   "owner"
+// @Description get all organization names
+// @Success 200 {array} object.Organization The Response object
+// @router /get-organization-names [get]
+func (c *ApiController) GetOrganizationNames() {
+	owner := c.Input().Get("owner")
+	organizationNames := object.GetOrganizations(owner, "name")
+	c.ResponseOk(organizationNames)
 }

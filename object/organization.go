@@ -64,6 +64,7 @@ type Organization struct {
 	MasterPassword     string     `xorm:"varchar(100)" json:"masterPassword"`
 	InitScore          int        `json:"initScore"`
 	EnableSoftDeletion bool       `json:"enableSoftDeletion"`
+	SelectMethod       string     `json:"selectMethod"`
 	IsProfilePublic    bool       `json:"isProfilePublic"`
 
 	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
@@ -80,8 +81,16 @@ func GetOrganizationCount(owner, field, value string) int {
 	return int(count)
 }
 
-func GetOrganizations(owner string) []*Organization {
+func GetOrganizations(owner string, fields ...string) []*Organization {
 	organizations := []*Organization{}
+	if fields != nil {
+		err := adapter.Engine.Table("organization").Cols(fields...).Find(&organizations)
+		if err != nil {
+			panic(err)
+		}
+		return organizations
+	}
+
 	err := adapter.Engine.Desc("created_time").Find(&organizations, &Organization{Owner: owner})
 	if err != nil {
 		panic(err)

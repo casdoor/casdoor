@@ -16,6 +16,7 @@ import React from "react";
 import {Button, Checkbox, Col, Form, Input, Result, Row, Spin, Tabs} from "antd";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
+import OrganizationSelect from "../common/select/OrganizationSelect";
 import * as Conf from "../Conf";
 import * as AuthBackend from "./AuthBackend";
 import * as OrganizationBackend from "../backend/OrganizationBackend";
@@ -57,8 +58,11 @@ class LoginPage extends React.Component {
       redirectUrl: "",
       isTermsOfUseVisible: false,
       termsOfUseContent: "",
+      selectMethod: new URLSearchParams(props.location.search).get("select_method") ?? null,
     };
 
+    // eslint-disable-next-line no-console
+    console.log(props.match);
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
       this.state.owner = props.match?.params?.owner;
       this.state.applicationName = props.match?.params?.casApplicationName;
@@ -815,6 +819,76 @@ class LoginPage extends React.Component {
     }
   }
 
+  renderLoginPanel(application) {
+    const selectMethod = application.organizationObj.selectMethod;
+
+    if (this.isOrganizationChoiceBoxVisible(selectMethod)) {
+      return this.renderOrganizationChoiceBox(selectMethod);
+    } else {
+      if (this.state.getVerifyTotp !== undefined) {
+        return this.state.getVerifyTotp();
+      } else {
+        return (
+          <React.Fragment>
+            {this.renderSignedInBox()}
+            {this.renderForm(application)}
+          </React.Fragment>
+        );
+      }
+    }
+  }
+
+  renderOrganizationChoiceBox(selectMethod) {
+    const renderChoiceBox = () => {
+      switch (selectMethod) {
+      case "closed":
+        return null;
+      case "select":
+        return (
+          <div>
+            <p style={{fontSize: "large"}}>
+              {i18next.t("login:Please select an organization to sign in")}
+            </p>
+            <OrganizationSelect style={{width: "100%"}}
+              onSelect={(value) => {
+                Setting.goToLink(`/login/${value}?select_method=closed`);
+              }} />
+          </div>
+        );
+      case "input":
+        return (
+          <div>
+            <p style={{fontSize: "large"}}>
+              {i18next.t("login:Please type an organization to sign in")}
+            </p>
+            <Input style={{width: "100%"}} onPressEnter={(e) => {
+              Setting.goToLink(`/login/${e.target.value}?select_method=closed`);
+            }} />
+          </div>
+        );
+      default:
+        return null;
+      }
+    };
+
+    return (
+      <div style={{height: 300}}>
+        {renderChoiceBox()}
+      </div>
+    );
+  }
+
+  isOrganizationChoiceBoxVisible(selectMethod) {
+    if (this.state.selectMethod === "closed") {
+      return false;
+    }
+    if (this.props.match.path === "/login" || this.props.match.path === "/login/:owner") {
+      return selectMethod === "select" || selectMethod === "input";
+    }
+
+    return false;
+  }
+
   render() {
     const application = this.getApplicationObj();
     if (application === undefined) {
@@ -864,9 +938,9 @@ class LoginPage extends React.Component {
                     Setting.renderLogo(application)
                   }
                   <LanguageSelect languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
-                  {this.state.getVerifyTotp !== undefined ? null : this.renderSignedInBox()}
-                  {this.state.getVerifyTotp !== undefined ? null : this.renderForm(application)}
-                  {this.state.getVerifyTotp !== undefined ? this.state.getVerifyTotp() : null}
+                  {
+                    this.renderLoginPanel(application)
+                  }
                 </div>
               </div>
             </div>
