@@ -90,6 +90,16 @@ func GetOrganizations(owner string) []*Organization {
 	return organizations
 }
 
+func GetOrganizationsByFields(owner string, fields ...string) []*Organization {
+	organizations := []*Organization{}
+	err := adapter.Engine.Desc("created_time").Cols(fields...).Find(&organizations, &Organization{Owner: owner})
+	if err != nil {
+		panic(err)
+	}
+
+	return organizations
+}
+
 func GetPaginationOrganizations(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Organization {
 	organizations := []*Organization{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)

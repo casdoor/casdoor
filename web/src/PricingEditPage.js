@@ -178,7 +178,7 @@ class PricingEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("pricing:Sub plans"), i18next.t("Pricing:Sub plans - Tooltip"))} :
+            {Setting.getLabel(i18next.t("pricing:Sub plans"), i18next.t("pricing:Sub plans - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select mode="tags" style={{width: "100%"}} value={this.state.pricing.plans}

@@ -127,6 +127,7 @@ p, *, *, *, /api/metrics, *, *
 p, *, *, GET, /api/get-subscriptions, *, *
 p, *, *, GET, /api/get-pricing, *, *
 p, *, *, GET, /api/get-plan, *, *
+p, *, *, GET, /api/get-organization-names, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

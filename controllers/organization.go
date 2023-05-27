@@ -148,3 +148,16 @@ func (c *ApiController) GetDefaultApplication() {
 	maskedApplication := object.GetMaskedApplication(application, userId)
 	c.ResponseOk(maskedApplication)
 }
+
+// GetOrganizationNames ...
+// @Title GetOrganizationNames
+// @Tag Organization API
+// @Param   owner     query    string    true   "owner"
+// @Description get all organization names
+// @Success 200 {array} object.Organization The Response object
+// @router /get-organization-names [get]
+func (c *ApiController) GetOrganizationNames() {
+	owner := c.Input().Get("owner")
+	organizationNames := object.GetOrganizationsByFields(owner, "name")
+	c.ResponseOk(organizationNames)
+}
