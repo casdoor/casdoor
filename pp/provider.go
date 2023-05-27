@@ -23,7 +23,7 @@ type PaymentProvider interface {
 	GetResponseError(err error) string
 }
 
-func GetPaymentProvider(typ string, clientId string, clientSecret string, host string, appCertificate string, certSerialNo string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string, clientId2 string) (PaymentProvider, error) {
+func GetPaymentProvider(typ string, clientId string, clientSecret string, host string, appCertificate string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string, clientId2 string) (PaymentProvider, error) {
 	if typ == "Alipay" {
 		newAlipayPaymentProvider, err := NewAlipayPaymentProvider(clientId, appCertificate, appPrivateKey, authorityPublicKey, authorityRootPublicKey)
 		if err != nil {
@@ -33,8 +33,7 @@ func GetPaymentProvider(typ string, clientId string, clientSecret string, host s
 	} else if typ == "GC" {
 		return NewGcPaymentProvider(clientId, clientSecret, host), nil
 	} else if typ == "WeChat Pay" {
-		// appId, mchId, mchCert, mchCertSerialNumber, apiV3Key, privateKey
-		newWechatPaymentProvider, err := NewWechatPaymentProvider(clientId2, clientId, appCertificate, certSerialNo, clientSecret, appPrivateKey)
+		newWechatPaymentProvider, err := NewWechatPaymentProvider(clientId, clientSecret, clientId2, appCertificate, appPrivateKey)
 		if err != nil {
 			return nil, err
 		}

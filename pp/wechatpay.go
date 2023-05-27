@@ -34,8 +34,8 @@ type WechatPaymentProvider struct {
 	appId    string
 }
 
-func NewWechatPaymentProvider(appId string, mchId string, cert string, mchCertSerialNumber string, apiV3Key string, privateKey string) (*WechatPaymentProvider, error) {
-	if appId == "" && mchId == "" && cert == "" && mchCertSerialNumber == "" && apiV3Key == "" && privateKey == "" {
+func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, mchCertSerialNumber string, privateKey string) (*WechatPaymentProvider, error) {
+	if appId == "" && mchId == "" && mchCertSerialNumber == "" && apiV3Key == "" && privateKey == "" {
 		return &WechatPaymentProvider{}, nil
 	}
 
