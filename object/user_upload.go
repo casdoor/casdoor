@@ -15,10 +15,11 @@
 package object
 
 import (
-	"github.com/casdoor/casdoor/util"
-	"github.com/casdoor/casdoor/xlsx"
 	"sort"
 	"strings"
+
+	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/casdoor/xlsx"
 )
 
 func getUserMap(owner string) map[string]*User {
@@ -50,7 +51,6 @@ func parseLineItemBool(line *[]string, i int) bool {
 }
 
 func parseListItem(lines *[]string, i int) []string {
-
 	if i >= len(*lines) {
 		return nil
 	}

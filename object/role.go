@@ -16,8 +16,9 @@ package object
 
 import (
 	"fmt"
-	"github.com/casdoor/casdoor/conf"
 	"strings"
+
+	"github.com/casdoor/casdoor/conf"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -174,6 +175,7 @@ func AddRoles(roles []*Role) bool {
 	}
 	return affected != 0
 }
+
 func AddRolesInBatch(roles []*Role) bool {
 	batchSize := conf.GetConfigBatchSize()
 

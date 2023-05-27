@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"fmt"
+
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )

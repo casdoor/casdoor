@@ -15,10 +15,11 @@
 package object
 
 import (
+	"strings"
+
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
-	"strings"
 )
 
 type Permission struct {
