@@ -193,7 +193,7 @@ func AddRolesInBatch(roles []*Role) bool {
 
 		tmp := roles[start:end]
 		// TODO: save to log instead of standard output
-		// fmt.Printf("Add roles: [%d - %d].\n", start, end)
+		// fmt.Printf("Add users: [%d - %d].\n", start, end)
 		if AddRoles(tmp) {
 			affected = true
 		}
