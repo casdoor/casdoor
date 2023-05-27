@@ -255,26 +255,6 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Select methods"), i18next.t("general:Select methods - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}}
-              options={[
-                {label: i18next.t("general:Closed"), value: "closed"},
-                {label: i18next.t("general:Select"), value: "select"},
-                {label: i18next.t("general:Input"), value: "input"},
-              ].map((item) => {
-                return Setting.getOption(item.label, item.value);
-              })}
-              value={this.state.organization.selectMethod ?? []}
-              onChange={(value => {
-                this.updateOrganizationField("selectMethod", value);
-              })} >
-            </Select>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("organization:Tags"), i18next.t("organization:Tags - Tooltip"))} :
           </Col>
           <Col span={22} >
