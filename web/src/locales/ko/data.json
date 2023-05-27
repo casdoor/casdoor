@@ -627,7 +627,7 @@
     "SMS account - Tooltip": "SMS 계정",
     "SMS sent successfully": "문자 메시지가 성공적으로 발송되었습니다",
     "SP ACS URL": "SP ACS URL",
-    "SP ACS URL - Tooltip": "SP ACS URL",
+    "SP ACS URL - Tooltip": "SP ACS URL - Tooltip",
     "SP Entity ID": "SP 개체 ID",
     "Scene": "장면",
     "Scene - Tooltip": "장면",
@@ -896,7 +896,7 @@
   },
   "pricing": {
     "Sub plans": "추가 플랜",
-    "Sub plans - Tooltip": "현재 가격 책정에 포함된 플랜",
+    "Sub plans  - Tooltip": "Plans included in the current pricing",
     "Has trial": "무료 체험 가능",
     "Has trial - Tooltip": "플랜 선택 후 체험 기간의 가용 여부",
     "Trial duration": "체험 기간",

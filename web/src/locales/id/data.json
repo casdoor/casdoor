@@ -731,7 +731,7 @@
     "Casdoor column": "Kolom Casdoor",
     "Column name": "Nama kolom",
     "Column type": "Tipe kolom",
-    "Database": "Database",
+    "Database": "Database (bahasa Indonesia)",
     "Database - Tooltip": "Nama basis data asli",
     "Database type": "Tipe Basis Data",
     "Database type - Tooltip": "Jenis database, mendukung semua database yang didukung oleh XORM, seperti MySQL, PostgreSQL, SQL Server, Oracle, SQLite, dan lain-lain.",
@@ -896,7 +896,7 @@
   },
   "pricing": {
     "Sub plans": "Rencana Tambahan",
-    "Sub plans - Tooltip": "Rencana yang termasuk dalam harga saat ini",
+    "Sub plans  - Tooltip": "Plans included in the current pricing",
     "Has trial": "Mempunyai periode percobaan",
     "Has trial - Tooltip": "Ketersediaan periode percobaan setelah memilih rencana",
     "Trial duration": "Durasi percobaan",

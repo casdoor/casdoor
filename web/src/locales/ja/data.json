@@ -219,7 +219,7 @@
     "ID - Tooltip": "ユニークなランダム文字列",
     "Is enabled": "可能になっています",
     "Is enabled - Tooltip": "使用可能かどうかを設定してください",
-    "LDAPs": "LDAPs",
+    "LDAPs": "LDAP",
     "LDAPs - Tooltip": "LDAPサーバー",
     "Languages": "言語",
     "Languages - Tooltip": "利用可能な言語",
@@ -314,7 +314,7 @@
     "{total} in total": "総計{total}"
   },
   "ldap": {
-    "Admin": "Admin",
+    "Admin": "管理者",
     "Admin - Tooltip": "LDAPサーバー管理者のCNまたはID",
     "Admin Password": "管理者パスワード",
     "Admin Password - Tooltip": "LDAPサーバーの管理者パスワード",
@@ -627,7 +627,7 @@
     "SMS account - Tooltip": "SMSアカウント",
     "SMS sent successfully": "SMSが正常に送信されました",
     "SP ACS URL": "SP ACS URL",
-    "SP ACS URL - Tooltip": "SP ACS URL",
+    "SP ACS URL - Tooltip": "SP ACS URL - ツールチップ",
     "SP Entity ID": "SPエンティティID",
     "Scene": "シーン",
     "Scene - Tooltip": "シーン",
@@ -896,7 +896,7 @@
   },
   "pricing": {
     "Sub plans": "追加プラン",
-    "Sub plans - Tooltip": "現在の価格設定に含まれるプラン",
+    "Sub plans  - Tooltip": "Plans included in the current pricing",
     "Has trial": "トライアル期間あり",
     "Has trial - Tooltip": "プラン選択後のトライアル期間の有無",
     "Trial duration": "トライアル期間の長さ",
