@@ -83,7 +83,7 @@
   },
   "organization": {
     "Only admin can modify the %s.": "仅允许管理员可以修改%s",
-    "The %s is immutable.": "%s是不可变的",
+    "The %s is immutable.": "%s 是不可变的",
     "Unknown modify rule %s.": "未知的修改规则: %s"
   },
   "provider": {
@@ -143,7 +143,7 @@
     "the user does not exist, please sign up first": "用户不存在，请先注册"
   },
   "webauthn": {
-    "Found no credentials for this user": "该用户没有WebAuthn凭据",
+    "Found no credentials for this user": "该用户没有 WebAuthn 凭据",
     "Please call WebAuthnSigninBegin first": "请先调用WebAuthnSigninBegin函数"
   }
 }
