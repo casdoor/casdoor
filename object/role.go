@@ -16,6 +16,8 @@ package object
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/conf"
+	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -158,6 +160,44 @@ func AddRole(role *Role) bool {
 	}
 
 	return affected != 0
+}
+
+func AddRoles(roles []*Role) bool {
+	if len(roles) == 0 {
+		return false
+	}
+	affected, err := adapter.Engine.Insert(roles)
+	if err != nil {
+		if !strings.Contains(err.Error(), "Duplicate entry") {
+			panic(err)
+		}
+	}
+	return affected != 0
+}
+func AddRolesInBatch(roles []*Role) bool {
+	batchSize := conf.GetConfigBatchSize()
+
+	if len(roles) == 0 {
+		return false
+	}
+
+	affected := false
+	for i := 0; i < (len(roles)-1)/batchSize+1; i++ {
+		start := i * batchSize
+		end := (i + 1) * batchSize
+		if end > len(roles) {
+			end = len(roles)
+		}
+
+		tmp := roles[start:end]
+		// TODO: save to log instead of standard output
+		// fmt.Printf("Add roles: [%d - %d].\n", start, end)
+		if AddRoles(tmp) {
+			affected = true
+		}
+	}
+
+	return affected
 }
 
 func DeleteRole(role *Role) bool {

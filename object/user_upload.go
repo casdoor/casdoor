@@ -17,6 +17,8 @@ package object
 import (
 	"github.com/casdoor/casdoor/util"
 	"github.com/casdoor/casdoor/xlsx"
+	"sort"
+	"strings"
 )
 
 func getUserMap(owner string) map[string]*User {
@@ -45,6 +47,27 @@ func parseLineItemInt(line *[]string, i int) int {
 
 func parseLineItemBool(line *[]string, i int) bool {
 	return parseLineItemInt(line, i) != 0
+}
+
+func parseListItem(lines *[]string, i int) []string {
+
+	if i >= len(*lines) {
+		return nil
+	}
+	line := (*lines)[i]
+	items := strings.Split(line, ";")
+	trimmedItems := make([]string, 0, len(items))
+
+	for _, item := range items {
+		trimmedItem := strings.TrimSpace(item)
+		if trimmedItem != "" {
+			trimmedItems = append(trimmedItems, trimmedItem)
+		}
+	}
+
+	sort.Strings(trimmedItems)
+
+	return trimmedItems
 }
 
 func UploadUsers(owner string, fileId string) bool {
