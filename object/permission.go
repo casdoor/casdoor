@@ -15,6 +15,9 @@
 package object
 
 import (
+	"strings"
+
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -186,6 +189,54 @@ func AddPermission(permission *Permission) bool {
 	}
 
 	return affected != 0
+}
+
+func AddPermissions(permissions []*Permission) bool {
+	if len(permissions) == 0 {
+		return false
+	}
+
+	affected, err := adapter.Engine.Insert(permissions)
+	if err != nil {
+		if !strings.Contains(err.Error(), "Duplicate entry") {
+			panic(err)
+		}
+	}
+
+	for _, permission := range permissions {
+		// add using for loop
+		if affected != 0 {
+			addGroupingPolicies(permission)
+			addPolicies(permission)
+		}
+	}
+	return affected != 0
+}
+
+func AddPermissionsInBatch(permissions []*Permission) bool {
+	batchSize := conf.GetConfigBatchSize()
+
+	if len(permissions) == 0 {
+		return false
+	}
+
+	affected := false
+	for i := 0; i < (len(permissions)-1)/batchSize+1; i++ {
+		start := i * batchSize
+		end := (i + 1) * batchSize
+		if end > len(permissions) {
+			end = len(permissions)
+		}
+
+		tmp := permissions[start:end]
+		// TODO: save to log instead of standard output
+		// fmt.Printf("Add Permissions: [%d - %d].\n", start, end)
+		if AddPermissions(tmp) {
+			affected = true
+		}
+	}
+
+	return affected
 }
 
 func DeletePermission(permission *Permission) bool {
