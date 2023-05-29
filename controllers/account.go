@@ -292,7 +292,12 @@ func (c *ApiController) Logout() {
 			return
 		}
 
-		affected, application, token := object.ExpireTokenByAccessToken(accessToken)
+		affected, application, token, err := object.ExpireTokenByAccessToken(accessToken)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		if !affected {
 			c.ResponseError(c.T("token:Token not found, invalid accessToken"))
 			return

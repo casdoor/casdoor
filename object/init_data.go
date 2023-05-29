@@ -387,12 +387,19 @@ func initDefinedSyncer(syncer *Syncer) {
 }
 
 func initDefinedToken(token *Token) {
-	existed := GetToken(token.GetId())
+	existed, err := GetToken(token.GetId())
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	token.CreatedTime = util.GetCurrentTime()
-	AddToken(token)
+	_, err = AddToken(token)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedWebhook(webhook *Webhook) {

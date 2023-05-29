@@ -32,7 +32,12 @@ func AutoSigninFilter(ctx *context.Context) {
 	accessToken := util.GetMaxLenStr(ctx.Input.Query("accessToken"), ctx.Input.Query("access_token"), parseBearerToken(ctx))
 
 	if accessToken != "" {
-		token := object.GetTokenByAccessToken(accessToken)
+		token, err := object.GetTokenByAccessToken(accessToken)
+		if err != nil {
+			responseError(ctx, err.Error())
+			return
+		}
+
 		if token == nil {
 			responseError(ctx, "Access token doesn't exist")
 			return
