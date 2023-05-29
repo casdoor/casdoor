@@ -297,6 +297,16 @@ func GetPermissionsByResource(resourceId string) ([]*Permission, error) {
 	return permissions, nil
 }
 
+func GetOrgPermissionsByUser(userId string) []*Permission {
+	permissions := []*Permission{}
+	err := adapter.Engine.Where("users like ? and resource_type = ?", "%"+userId+"%", "organization").Find(&permissions)
+	if err != nil {
+		panic(err)
+	}
+
+	return permissions
+}
+
 func GetPermissionsBySubmitter(owner string, submitter string) ([]*Permission, error) {
 	permissions := []*Permission{}
 	err := adapter.Engine.Desc("created_time").Find(&permissions, &Permission{Owner: owner, Submitter: submitter})

@@ -37,6 +37,7 @@ func (c *ApiController) GetGlobalUsers() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+	userId := c.GetSessionUsername()
 
 	if limit == "" || page == "" {
 		maskedUsers, err := object.GetMaskedUsers(object.GetGlobalUsers())
@@ -67,6 +68,7 @@ func (c *ApiController) GetGlobalUsers() {
 			return
 		}
 
+		users = object.GetFilteredUsers(users, userId)
 		c.ResponseOk(users, paginator.Nums())
 	}
 }
