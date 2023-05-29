@@ -17,7 +17,6 @@ package main
 import (
 	"flag"
 	"fmt"
-
 	"github.com/beego/beego"
 	"github.com/beego/beego/logs"
 	_ "github.com/beego/beego/session/redis"
@@ -28,9 +27,25 @@ import (
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/routers"
 	"github.com/casdoor/casdoor/util"
+	"os"
 )
 
 func main() {
+	// default built-in log configuration
+	logsConfig := `{"filename":"logs/casdoor.log","maxdays":99999,"perm":"0770"}`
+
+	// filename hardcoded as in object/adapter.go:35
+	b, err := os.ReadFile("../conf/log_config.json")
+
+	if err == nil {
+		logsConfig = string(b)
+	}
+
+	err = logs.SetLogger(logs.AdapterFile, logsConfig)
+	if err != nil {
+		panic(err)
+	}
+
 	createDatabase := flag.Bool("createDatabase", false, "true if you need Casdoor to create database")
 	flag.Parse()
 
@@ -73,10 +88,6 @@ func main() {
 	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
 	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
-	err := logs.SetLogger("file", `{"filename":"logs/casdoor.log","maxdays":99999,"perm":"0770"}`)
-	if err != nil {
-		panic(err)
-	}
 	port := beego.AppConfig.DefaultInt("httpport", 8000)
 	// logs.SetLevel(logs.LevelInformational)
 	logs.SetLogFuncCall(false)

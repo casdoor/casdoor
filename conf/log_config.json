@@ -1,0 +1,5 @@
+{
+  "filename": "logs/casdoor.log",
+  "maxdays": 99999,
+  "perm": "0770"
+}
