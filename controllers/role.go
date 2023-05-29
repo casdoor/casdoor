@@ -54,7 +54,7 @@ func (c *ApiController) GetRoles() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(count))
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		roles, err := object.GetPaginationRoles(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())

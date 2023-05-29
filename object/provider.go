@@ -108,14 +108,9 @@ func GetProviderCount(owner, field, value string) (int64, error) {
 	return session.Where("owner = ? or owner = ? ", "admin", owner).Count(&Provider{})
 }
 
-func GetGlobalProviderCount(field, value string) (int, error) {
+func GetGlobalProviderCount(field, value string) (int64, error) {
 	session := GetSession("", -1, -1, field, value, "", "")
-	count, err := session.Count(&Provider{})
-	if err != nil {
-		return int(count), err
-	}
-
-	return int(count), nil
+	return session.Count(&Provider{})
 }
 
 func GetProviders(owner string) ([]*Provider, error) {

@@ -92,7 +92,7 @@ func (c *ApiController) GetGlobleCerts() {
 			panic(err)
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(count))
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		certs, err := object.GetMaskedCerts(object.GetPaginationGlobalCerts(paginator.Offset(), limit, field, value, sortField, sortOrder))
 		if err != nil {
 			panic(err)

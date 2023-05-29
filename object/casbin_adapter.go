@@ -46,14 +46,9 @@ type CasbinAdapter struct {
 	Adapter *xormadapter.Adapter `xorm:"-" json:"-"`
 }
 
-func GetCasbinAdapterCount(owner, organization, field, value string) (int, error) {
+func GetCasbinAdapterCount(owner, organization, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&CasbinAdapter{Organization: organization})
-	if err != nil {
-		return int(count), err
-	}
-
-	return int(count), nil
+	return session.Count(&CasbinAdapter{Organization: organization})
 }
 
 func GetCasbinAdapters(owner string, organization string) ([]*CasbinAdapter, error) {

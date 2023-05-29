@@ -106,7 +106,7 @@ func (c *ApiController) GetGlobalProviders() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(count))
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		paginationGlobalProviders, err := object.GetPaginationGlobalProviders(paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())

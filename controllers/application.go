@@ -62,7 +62,7 @@ func (c *ApiController) GetApplications() {
 			panic(err)
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(count))
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		app, err := object.GetPaginationApplications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			panic(err)

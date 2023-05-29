@@ -63,14 +63,9 @@ func GetMaskedChats(chats []*Chat, errs ...error) ([]*Chat, error) {
 	return chats, nil
 }
 
-func GetChatCount(owner, field, value string) (int, error) {
+func GetChatCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Chat{})
-	if err != nil {
-		return int(count), err
-	}
-
-	return int(count), nil
+	return session.Count(&Chat{})
 }
 
 func GetChats(owner string) ([]*Chat, error) {

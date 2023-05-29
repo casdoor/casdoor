@@ -42,14 +42,9 @@ type Webhook struct {
 	IsEnabled      bool      `json:"isEnabled"`
 }
 
-func GetWebhookCount(owner, organization, field, value string) (int, error) {
+func GetWebhookCount(owner, organization, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Webhook{Organization: organization})
-	if err != nil {
-		return 0, err
-	}
-
-	return int(count), nil
+	return session.Count(&Webhook{Organization: organization})
 }
 
 func GetWebhooks(owner string, organization string) ([]*Webhook, error) {

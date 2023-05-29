@@ -36,14 +36,9 @@ type Role struct {
 	IsEnabled bool     `json:"isEnabled"`
 }
 
-func GetRoleCount(owner, field, value string) (int, error) {
+func GetRoleCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Role{})
-	if err != nil {
-		return 0, err
-	}
-
-	return int(count), nil
+	return session.Count(&Role{})
 }
 
 func GetRoles(owner string) ([]*Role, error) {

@@ -54,7 +54,7 @@ func (c *ApiController) GetModels() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(count))
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		models, err := object.GetPaginationModels(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())

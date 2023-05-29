@@ -32,14 +32,9 @@ type Model struct {
 	IsEnabled bool   `json:"isEnabled"`
 }
 
-func GetModelCount(owner, field, value string) (int, error) {
+func GetModelCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Model{})
-	if err != nil {
-		return int(count), err
-	}
-
-	return int(count), nil
+	return session.Count(&Model{})
 }
 
 func GetModels(owner string) ([]*Model, error) {

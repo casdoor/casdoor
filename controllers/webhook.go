@@ -55,7 +55,7 @@ func (c *ApiController) GetWebhooks() {
 			return
 		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(count))
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 
 		webhooks, err := object.GetPaginationWebhooks(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {

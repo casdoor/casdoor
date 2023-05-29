@@ -45,7 +45,7 @@ func (c *ApiController) GetTokens() {
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetTokenCount(owner, organization, field, value)))
+		paginator := pagination.SetPaginator(c.Ctx, limit, object.GetTokenCount(owner, organization, field, value))
 		tokens := object.GetPaginationTokens(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		c.ResponseOk(tokens, paginator.Nums())
 	}

@@ -91,14 +91,14 @@ type IntrospectionResponse struct {
 	Jti       string   `json:"jti,omitempty"`
 }
 
-func GetTokenCount(owner, organization, field, value string) int {
+func GetTokenCount(owner, organization, field, value string) int64 {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Token{Organization: organization})
 	if err != nil {
 		panic(err)
 	}
 
-	return int(count)
+	return count
 }
 
 func GetTokens(owner string, organization string) []*Token {

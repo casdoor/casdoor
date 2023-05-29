@@ -84,14 +84,9 @@ func GetPaginationCerts(owner string, offset, limit int, field, value, sortField
 	return certs, nil
 }
 
-func GetGlobalCertsCount(field, value string) (int, error) {
+func GetGlobalCertsCount(field, value string) (int64, error) {
 	session := GetSession("", -1, -1, field, value, "", "")
-	count, err := session.Count(&Cert{})
-	if err != nil {
-		return int(count), err
-	}
-
-	return int(count), nil
+	return session.Count(&Cert{})
 }
 
 func GetGlobleCerts() ([]*Cert, error) {
