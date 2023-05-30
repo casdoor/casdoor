@@ -24,26 +24,32 @@ type PaymentProvider interface {
 }
 
 func GetPaymentProvider(typ string, clientId string, clientSecret string, host string, appCertificate string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string, clientId2 string) (PaymentProvider, error) {
-	if typ == "Alipay" {
-		newAlipayPaymentProvider, err := NewAlipayPaymentProvider(clientId, appCertificate, appPrivateKey, authorityPublicKey, authorityRootPublicKey)
+	if typ == "Dummy" {
+		pp, err := NewDummyPaymentProvider()
 		if err != nil {
 			return nil, err
 		}
-		return newAlipayPaymentProvider, nil
+		return pp, nil
+	} else if typ == "Alipay" {
+		pp, err := NewAlipayPaymentProvider(clientId, appCertificate, appPrivateKey, authorityPublicKey, authorityRootPublicKey)
+		if err != nil {
+			return nil, err
+		}
+		return pp, nil
 	} else if typ == "GC" {
 		return NewGcPaymentProvider(clientId, clientSecret, host), nil
 	} else if typ == "WeChat Pay" {
-		newWechatPaymentProvider, err := NewWechatPaymentProvider(clientId, clientSecret, clientId2, appCertificate, appPrivateKey)
+		pp, err := NewWechatPaymentProvider(clientId, clientSecret, clientId2, appCertificate, appPrivateKey)
 		if err != nil {
 			return nil, err
 		}
-		return newWechatPaymentProvider, nil
+		return pp, nil
 	} else if typ == "PayPal" {
-		newPaypalPaymentProvider, err := NewPaypalPaymentProvider(clientId, clientSecret)
+		pp, err := NewPaypalPaymentProvider(clientId, clientSecret)
 		if err != nil {
 			return nil, err
 		}
-		return newPaypalPaymentProvider, nil
+		return pp, nil
 	}
 
 	return nil, nil

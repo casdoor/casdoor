@@ -210,6 +210,11 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 		ReturnUrl:          product.ReturnUrl,
 		State:              "Created",
 	}
+
+	if provider.Type == "Dummy" {
+		payment.State = "Paid"
+	}
+
 	affected, err := AddPayment(&payment)
 	if err != nil {
 		return "", err
