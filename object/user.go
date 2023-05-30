@@ -426,6 +426,20 @@ func GetMaskedUsers(users []*User, errs ...error) ([]*User, error) {
 	return users, nil
 }
 
+func GetFilteredUsers(users []*User, userId string) []*User {
+	if userId == "built-in/admin" {
+		return users
+	}
+	filteredUsers := make([]*User, 0, len(users))
+	orgNameMap := GetOrgnizationNameMap(userId)
+	for _, user := range users {
+		if orgNameMap[user.Owner] {
+			filteredUsers = append(filteredUsers, user)
+		}
+	}
+	return filteredUsers
+}
+
 func GetLastUser(owner string) (*User, error) {
 	user := User{Owner: owner}
 	existed, err := adapter.Engine.Desc("created_time", "id").Get(&user)

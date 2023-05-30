@@ -468,3 +468,17 @@ func (org *Organization) GetInitScore() (int, error) {
 		return strconv.Atoi(conf.GetConfigString("initScore"))
 	}
 }
+
+func GetOrgnizationNameMap(userId string) map[string]bool {
+	orgNameMap := map[string]bool{}
+	if userId != "" {
+		permissions := GetOrgPermissionsByUser(userId)
+		for _, permission := range permissions {
+			for _, resource := range permission.Resources {
+				orgNameMap[resource] = true
+			}
+		}
+	}
+
+	return orgNameMap
+}
