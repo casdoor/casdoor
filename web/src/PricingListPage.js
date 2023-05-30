@@ -33,7 +33,7 @@ class PricingListPage extends BaseListPage {
       createdTime: moment().format(),
       plans: [],
       displayName: `New Pricing - ${randomName}`,
-      hasTrial: true,
+      hasTrial: false,
       isEnabled: true,
       trialDuration: 14,
     };

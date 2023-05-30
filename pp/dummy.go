@@ -19,8 +19,7 @@ import (
 	"net/http"
 )
 
-type DummyPaymentProvider struct {
-}
+type DummyPaymentProvider struct{}
 
 func NewDummyPaymentProvider() (*DummyPaymentProvider, error) {
 	pp := &DummyPaymentProvider{}

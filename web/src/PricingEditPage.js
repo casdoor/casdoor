@@ -194,7 +194,7 @@ class PricingEditPage extends React.Component {
             {Setting.getLabel(i18next.t("pricing:Has trial"), i18next.t("pricing:Has trial - Tooltip"))} :
           </Col>
           <Col span={1} >
-            <Switch disabled={true} checked={this.state.pricing.hasTrial} onChange={checked => {
+            <Switch checked={this.state.pricing.hasTrial} onChange={checked => {
               this.updatePricingField("hasTrial", checked);
             }} />
           </Col>
@@ -286,7 +286,7 @@ class PricingEditPage extends React.Component {
   }
 
   renderPreview() {
-    const pricingUrl = `/select-plan/${this.state.pricing.name}`;
+    const pricingUrl = `/select-plan/${this.state.pricing.owner}/${this.state.pricing.name}`;
     return (
       <React.Fragment>
         <Col>
