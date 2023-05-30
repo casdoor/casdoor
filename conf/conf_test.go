@@ -121,7 +121,7 @@ func TestGetConfigLogs(t *testing.T) {
 	err := beego.LoadAppConfig("ini", "app.conf")
 	assert.Nil(t, err)
 	for _, scenery := range scenarios {
-		quota := GetConfigLogs()
+		quota := GetConfigString("logConfig")
 		assert.Equal(t, scenery.expected, quota)
 	}
 }

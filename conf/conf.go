@@ -140,7 +140,3 @@ func GetConfigRealDataSourceName(driverName string) string {
 	}
 	return dataSourceName
 }
-
-func GetConfigLogs() string {
-	return GetConfigString("logConfig")
-}
