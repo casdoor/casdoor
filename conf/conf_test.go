@@ -109,3 +109,19 @@ func TestGetConfigQuota(t *testing.T) {
 		assert.Equal(t, scenery.expected, quota)
 	}
 }
+
+func TestGetConfigLogs(t *testing.T) {
+	scenarios := []struct {
+		description string
+		expected    string
+	}{
+		{"Default log config", `{"filename": "logs/casdoor.log", "maxdays":99999, "perm":"0770"}`},
+	}
+
+	err := beego.LoadAppConfig("ini", "app.conf")
+	assert.Nil(t, err)
+	for _, scenery := range scenarios {
+		quota := GetConfigString("logConfig")
+		assert.Equal(t, scenery.expected, quota)
+	}
+}
