@@ -45,18 +45,18 @@ func (c *ApiController) GetGlobalUsers() {
 			panic(err)
 		}
 
-		c.Data["json"] = maskedUsers
+		c.Data["json"] = object.GetFilteredUsers(maskedUsers, userId)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetGlobalUserCount(field, value)
+		count, err := object.GetGlobalUserCount(field, value, userId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		users, err := object.GetPaginationGlobalUsers(paginator.Offset(), limit, field, value, sortField, sortOrder)
+		users, err := object.GetPaginationGlobalUsers(paginator.Offset(), limit, field, value, sortField, sortOrder, userId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -68,7 +68,6 @@ func (c *ApiController) GetGlobalUsers() {
 			return
 		}
 
-		users = object.GetFilteredUsers(users, userId)
 		c.ResponseOk(users, paginator.Nums())
 	}
 }

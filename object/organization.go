@@ -482,3 +482,12 @@ func GetOrgnizationNameMap(userId string) map[string]bool {
 
 	return orgNameMap
 }
+
+func GetOrgnizationNames(userId string) []string {
+	orgNameMap := GetOrgnizationNameMap(userId)
+	orgnizationNames := make([]string, len(orgNameMap))
+	for orgName := range orgNameMap {
+		orgnizationNames = append(orgnizationNames, orgName)
+	}
+	return orgnizationNames
+}

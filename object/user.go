@@ -191,8 +191,8 @@ type ManagedAccount struct {
 	SigninUrl   string `xorm:"varchar(200)" json:"signinUrl"`
 }
 
-func GetGlobalUserCount(field, value string) (int64, error) {
-	session := GetSession("", -1, -1, field, value, "", "")
+func GetGlobalUserCount(field, value, userId string) (int64, error) {
+	session := GetSessionByOwners(-1, -1, field, value, "", "", userId)
 	return session.Count(&User{})
 }
 
@@ -206,9 +206,9 @@ func GetGlobalUsers() ([]*User, error) {
 	return users, nil
 }
 
-func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
+func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOrder, userId string) ([]*User, error) {
 	users := []*User{}
-	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
+	session := GetSessionByOwners(offset, limit, field, value, sortField, sortOrder, userId)
 	err := session.Find(&users)
 	if err != nil {
 		return nil, err

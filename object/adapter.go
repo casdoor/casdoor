@@ -280,3 +280,28 @@ func GetSession(owner string, offset, limit int, field, value, sortField, sortOr
 	}
 	return session
 }
+
+func GetSessionByOwners(offset, limit int, field, value, sortField, sortOrder, userId string) *xorm.Session {
+	owners := GetOrgnizationNames(userId)
+	session := adapter.Engine.Prepare()
+	if offset != -1 && limit != -1 {
+		session.Limit(limit, offset)
+	}
+	if len(owners) > 0 && userId != "built-in/admin" {
+		session = session.In("owner", owners)
+	}
+	if field != "" && value != "" {
+		if filterField(field) {
+			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+		}
+	}
+	if sortField == "" || sortOrder == "" {
+		sortField = "created_time"
+	}
+	if sortOrder == "ascend" {
+		session = session.Asc(util.SnakeString(sortField))
+	} else {
+		session = session.Desc(util.SnakeString(sortField))
+	}
+	return session
+}
