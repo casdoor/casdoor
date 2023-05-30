@@ -30,8 +30,8 @@ type WechatPayNotifyResponse struct {
 }
 
 type WechatPaymentProvider struct {
-	ClientV3 *wechat.ClientV3
-	appId    string
+	Client *wechat.ClientV3
+	appId  string
 }
 
 func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, mchCertSerialNumber string, privateKey string) (*WechatPaymentProvider, error) {
@@ -51,7 +51,7 @@ func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, mchCe
 		return nil, err
 	}
 
-	pp.ClientV3 = clientV3.SetPlatformCert([]byte(platformCert), serialNo)
+	pp.Client = clientV3.SetPlatformCert([]byte(platformCert), serialNo)
 
 	return pp, nil
 }
@@ -71,7 +71,7 @@ func (pp *WechatPaymentProvider) Pay(providerName string, productName string, pa
 		bm.Set("currency", "CNY")
 	})
 
-	wxRsp, err := pp.ClientV3.V3TransactionNative(context.Background(), bm)
+	wxRsp, err := pp.Client.V3TransactionNative(context.Background(), bm)
 	if err != nil {
 		return "", err
 	}
@@ -89,13 +89,13 @@ func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, auth
 		panic(err)
 	}
 
-	cert := pp.ClientV3.WxPublicKey()
+	cert := pp.Client.WxPublicKey()
 	err = notifyReq.VerifySignByPK(cert)
 	if err != nil {
 		return "", "", 0, "", "", err
 	}
 
-	apiKey := string(pp.ClientV3.ApiV3Key)
+	apiKey := string(pp.Client.ApiV3Key)
 	result, err := notifyReq.DecryptCipherText(apiKey)
 	if err != nil {
 		return "", "", 0, "", "", err

@@ -38,6 +38,12 @@ func GetPaymentProvider(typ string, clientId string, clientSecret string, host s
 			return nil, err
 		}
 		return newWechatPaymentProvider, nil
+	} else if typ == "PayPal" {
+		newPaypalPaymentProvider, err := NewPaypalPaymentProvider(clientId, clientSecret)
+		if err != nil {
+			return nil, err
+		}
+		return newPaypalPaymentProvider, nil
 	}
 
 	return nil, nil

@@ -853,7 +853,7 @@ class ProviderEditPage extends React.Component {
           ) : null
         }
         {
-          this.state.provider.type === "WeChat Pay" ? (
+          (this.state.provider.type === "Alipay" || this.state.provider.type === "WeChat Pay") ? (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("general:Cert"), i18next.t("general:Cert - Tooltip"))} :
