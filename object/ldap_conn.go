@@ -255,8 +255,12 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 		uuids = append(uuids, user.Uuid)
 	}
 
-	organization := getOrganization("admin", owner)
-	ldap := GetLdap(ldapId)
+	organization, err := getOrganization("admin", owner)
+	if err != nil {
+		panic(err)
+	}
+
+	ldap, err := GetLdap(ldapId)
 
 	var dc []string
 	for _, basedn := range strings.Split(ldap.BaseDn, ",") {
@@ -275,7 +279,11 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 	tag := strings.Join(ou, ".")
 
 	for _, syncUser := range syncUsers {
-		existUuids := GetExistUuids(owner, uuids)
+		existUuids, err := GetExistUuids(owner, uuids)
+		if err != nil {
+			return nil, nil, err
+		}
+
 		found := false
 		if len(existUuids) > 0 {
 			for _, existUuid := range existUuids {
@@ -287,10 +295,19 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 		}
 
 		if !found {
-			score, _ := organization.GetInitScore()
+			score, err := organization.GetInitScore()
+			if err != nil {
+				return nil, nil, err
+			}
+
+			name, err := syncUser.buildLdapUserName()
+			if err != nil {
+				return nil, nil, err
+			}
+
 			newUser := &User{
 				Owner:       owner,
-				Name:        syncUser.buildLdapUserName(),
+				Name:        name,
 				CreatedTime: util.GetCurrentTime(),
 				DisplayName: syncUser.buildLdapDisplayName(),
 				Avatar:      organization.DefaultAvatar,
@@ -303,7 +320,11 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Ldap:        syncUser.Uuid,
 			}
 
-			affected := AddUser(newUser)
+			affected, err := AddUser(newUser)
+			if err != nil {
+				return nil, nil, err
+			}
+
 			if !affected {
 				failedUsers = append(failedUsers, syncUser)
 				continue
@@ -314,38 +335,38 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 	return existUsers, failedUsers, err
 }
 
-func GetExistUuids(owner string, uuids []string) []string {
+func GetExistUuids(owner string, uuids []string) ([]string, error) {
 	var existUuids []string
 
 	err := adapter.Engine.Table("user").Where("owner = ?", owner).Cols("ldap").
 		In("ldap", uuids).Select("DISTINCT ldap").Find(&existUuids)
 	if err != nil {
-		panic(err)
+		return existUuids, err
 	}
 
-	return existUuids
+	return existUuids, nil
 }
 
-func (ldapUser *LdapUser) buildLdapUserName() string {
+func (ldapUser *LdapUser) buildLdapUserName() (string, error) {
 	user := User{}
 	uidWithNumber := fmt.Sprintf("%s_%s", ldapUser.Uid, ldapUser.UidNumber)
 	has, err := adapter.Engine.Where("name = ? or name = ?", ldapUser.Uid, uidWithNumber).Get(&user)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	if has {
 		if user.Name == ldapUser.Uid {
-			return uidWithNumber
+			return uidWithNumber, nil
 		}
-		return fmt.Sprintf("%s_%s", uidWithNumber, randstr.Hex(6))
+		return fmt.Sprintf("%s_%s", uidWithNumber, randstr.Hex(6)), nil
 	}
 
 	if ldapUser.Uid != "" {
-		return ldapUser.Uid
+		return ldapUser.Uid, nil
 	}
 
-	return ldapUser.Cn
+	return ldapUser.Cn, nil
 }
 
 func (ldapUser *LdapUser) buildLdapDisplayName() string {

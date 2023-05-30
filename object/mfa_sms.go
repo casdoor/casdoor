@@ -100,7 +100,11 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 	}
 	user.MultiFactorAuths = append(user.MultiFactorAuths, mfa.Config)
 
-	affected := UpdateUser(user.GetId(), user, []string{"multi_factor_auths"}, user.IsAdminUser())
+	affected, err := UpdateUser(user.GetId(), user, []string{"multi_factor_auths"}, user.IsAdminUser())
+	if err != nil {
+		return err
+	}
+
 	if !affected {
 		return fmt.Errorf("failed to enable two factor authentication")
 	}

@@ -151,21 +151,24 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 	return nil
 }
 
-func getVerificationRecord(dest string) *VerificationRecord {
+func getVerificationRecord(dest string) (*VerificationRecord, error) {
 	var record VerificationRecord
 	record.Receiver = dest
 	has, err := adapter.Engine.Desc("time").Where("is_used = false").Get(&record)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	if !has {
-		return nil
+		return nil, nil
 	}
-	return &record
+	return &record, nil
 }
 
 func CheckVerificationCode(dest, code, lang string) *VerifyResult {
-	record := getVerificationRecord(dest)
+	record, err := getVerificationRecord(dest)
+	if err != nil {
+		panic(err)
+	}
 
 	if record == nil {
 		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:Code has not been sent yet!")}
@@ -188,17 +191,15 @@ func CheckVerificationCode(dest, code, lang string) *VerifyResult {
 	return &VerifyResult{VerificationSuccess, ""}
 }
 
-func DisableVerificationCode(dest string) {
-	record := getVerificationRecord(dest)
-	if record == nil {
+func DisableVerificationCode(dest string) (err error) {
+	record, err := getVerificationRecord(dest)
+	if record == nil || err != nil {
 		return
 	}
 
 	record.IsUsed = true
-	_, err := adapter.Engine.ID(core.PK{record.Owner, record.Name}).AllCols().Update(record)
-	if err != nil {
-		panic(err)
-	}
+	_, err = adapter.Engine.ID(core.PK{record.Owner, record.Name}).AllCols().Update(record)
+	return
 }
 
 func CheckSigninCode(user *User, dest, code, lang string) string {

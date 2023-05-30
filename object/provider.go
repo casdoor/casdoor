@@ -103,103 +103,93 @@ func GetMaskedProviders(providers []*Provider, isMaskEnabled bool) []*Provider {
 	return providers
 }
 
-func GetProviderCount(owner, field, value string) int {
+func GetProviderCount(owner, field, value string) (int64, error) {
 	session := GetSession("", -1, -1, field, value, "", "")
-	count, err := session.Where("owner = ? or owner = ? ", "admin", owner).Count(&Provider{})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Where("owner = ? or owner = ? ", "admin", owner).Count(&Provider{})
 }
 
-func GetGlobalProviderCount(field, value string) int {
+func GetGlobalProviderCount(field, value string) (int64, error) {
 	session := GetSession("", -1, -1, field, value, "", "")
-	count, err := session.Count(&Provider{})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Provider{})
 }
 
-func GetProviders(owner string) []*Provider {
+func GetProviders(owner string) ([]*Provider, error) {
 	providers := []*Provider{}
 	err := adapter.Engine.Where("owner = ? or owner = ? ", "admin", owner).Desc("created_time").Find(&providers, &Provider{})
 	if err != nil {
-		panic(err)
+		return providers, err
 	}
 
-	return providers
+	return providers, nil
 }
 
-func GetGlobalProviders() []*Provider {
+func GetGlobalProviders() ([]*Provider, error) {
 	providers := []*Provider{}
 	err := adapter.Engine.Desc("created_time").Find(&providers)
 	if err != nil {
-		panic(err)
+		return providers, err
 	}
 
-	return providers
+	return providers, nil
 }
 
-func GetPaginationProviders(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Provider {
+func GetPaginationProviders(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Provider, error) {
 	providers := []*Provider{}
 	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Where("owner = ? or owner = ? ", "admin", owner).Find(&providers)
 	if err != nil {
-		panic(err)
+		return providers, err
 	}
 
-	return providers
+	return providers, nil
 }
 
-func GetPaginationGlobalProviders(offset, limit int, field, value, sortField, sortOrder string) []*Provider {
+func GetPaginationGlobalProviders(offset, limit int, field, value, sortField, sortOrder string) ([]*Provider, error) {
 	providers := []*Provider{}
 	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&providers)
 	if err != nil {
-		panic(err)
+		return providers, err
 	}
 
-	return providers
+	return providers, nil
 }
 
-func getProvider(owner string, name string) *Provider {
+func getProvider(owner string, name string) (*Provider, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	provider := Provider{Name: name}
 	existed, err := adapter.Engine.Get(&provider)
 	if err != nil {
-		panic(err)
+		return &provider, err
 	}
 
 	if existed {
-		return &provider
+		return &provider, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetProvider(id string) *Provider {
+func GetProvider(id string) (*Provider, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getProvider(owner, name)
 }
 
-func getDefaultAiProvider() *Provider {
+func getDefaultAiProvider() (*Provider, error) {
 	provider := Provider{Owner: "admin", Category: "AI"}
 	existed, err := adapter.Engine.Get(&provider)
 	if err != nil {
-		panic(err)
+		return &provider, err
 	}
 
 	if !existed {
-		return nil
+		return nil, nil
 	}
 
-	return &provider
+	return &provider, nil
 }
 
 func GetWechatMiniProgramProvider(application *Application) *Provider {
@@ -212,16 +202,18 @@ func GetWechatMiniProgramProvider(application *Application) *Provider {
 	return nil
 }
 
-func UpdateProvider(id string, provider *Provider) bool {
+func UpdateProvider(id string, provider *Provider) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getProvider(owner, name) == nil {
-		return false
+	if p, err := getProvider(owner, name); err != nil {
+		return false, err
+	} else if p == nil {
+		return false, nil
 	}
 
 	if name != provider.Name {
 		err := providerChangeTrigger(name, provider.Name)
 		if err != nil {
-			return false
+			return false, nil
 		}
 	}
 
@@ -238,37 +230,41 @@ func UpdateProvider(id string, provider *Provider) bool {
 
 	affected, err := session.Update(provider)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddProvider(provider *Provider) bool {
+func AddProvider(provider *Provider) (bool, error) {
 	provider.Endpoint = util.GetEndPoint(provider.Endpoint)
 	provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
 
 	affected, err := adapter.Engine.Insert(provider)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteProvider(provider *Provider) bool {
+func DeleteProvider(provider *Provider) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{provider.Owner, provider.Name}).Delete(&Provider{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (p *Provider) getPaymentProvider() (pp.PaymentProvider, *Cert, error) {
 	cert := &Cert{}
 	if p.Cert != "" {
-		cert = getCert(p.Owner, p.Cert)
+		cert, err := getCert(p.Owner, p.Cert)
+		if err != nil {
+			return nil, nil, err
+		}
+
 		if cert == nil {
 			return nil, nil, fmt.Errorf("the cert: %s does not exist", p.Cert)
 		}
@@ -309,7 +305,11 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 	if isCurrentProvider == "true" {
 		return GetCaptchaProviderByOwnerName(applicationId, lang)
 	}
-	application := GetApplication(applicationId)
+	application, err := GetApplication(applicationId)
+	if err != nil {
+		return nil, err
+	}
+
 	if application == nil || len(application.Providers) == 0 {
 		return nil, fmt.Errorf(i18n.Translate(lang, "provider:Invalid application id"))
 	}

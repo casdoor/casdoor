@@ -37,13 +37,28 @@ func (c *ApiController) GetCerts() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedCerts(object.GetCerts(owner))
+		maskedCerts, err := object.GetMaskedCerts(object.GetCerts(owner))
+		if err != nil {
+			panic(err)
+		}
+
+		c.Data["json"] = maskedCerts
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetCertCount(owner, field, value)))
-		certs := object.GetMaskedCerts(object.GetPaginationCerts(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
+		count, err := object.GetCertCount(owner, field, value)
+		if err != nil {
+			panic(err)
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		certs, err := object.GetMaskedCerts(object.GetPaginationCerts(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
+		if err != nil {
+			panic(err)
+		}
+
 		c.ResponseOk(certs, paginator.Nums())
 	}
 }
@@ -61,13 +76,28 @@ func (c *ApiController) GetGlobleCerts() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedCerts(object.GetGlobleCerts())
+		maskedCerts, err := object.GetMaskedCerts(object.GetGlobleCerts())
+		if err != nil {
+			panic(err)
+		}
+
+		c.Data["json"] = maskedCerts
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGlobalCertsCount(field, value)))
-		certs := object.GetMaskedCerts(object.GetPaginationGlobalCerts(paginator.Offset(), limit, field, value, sortField, sortOrder))
+		count, err := object.GetGlobalCertsCount(field, value)
+		if err != nil {
+			panic(err)
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		certs, err := object.GetMaskedCerts(object.GetPaginationGlobalCerts(paginator.Offset(), limit, field, value, sortField, sortOrder))
+		if err != nil {
+			panic(err)
+		}
+
 		c.ResponseOk(certs, paginator.Nums())
 	}
 }
@@ -81,8 +111,12 @@ func (c *ApiController) GetGlobleCerts() {
 // @router /get-cert [get]
 func (c *ApiController) GetCert() {
 	id := c.Input().Get("id")
+	cert, err := object.GetCert(id)
+	if err != nil {
+		panic(err)
+	}
 
-	c.Data["json"] = object.GetMaskedCert(object.GetCert(id))
+	c.Data["json"] = object.GetMaskedCert(cert)
 	c.ServeJSON()
 }
 

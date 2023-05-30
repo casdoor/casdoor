@@ -57,7 +57,12 @@ func (c *ApiController) UploadUsers() {
 		return
 	}
 
-	affected := object.UploadUsers(owner, fileId)
+	affected, err := object.UploadUsers(owner, fileId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if affected {
 		c.ResponseOk()
 	} else {

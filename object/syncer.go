@@ -55,66 +55,61 @@ type Syncer struct {
 	Adapter *Adapter `xorm:"-" json:"-"`
 }
 
-func GetSyncerCount(owner, organization, field, value string) int {
+func GetSyncerCount(owner, organization, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Syncer{Organization: organization})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Syncer{Organization: organization})
 }
 
-func GetSyncers(owner string) []*Syncer {
+func GetSyncers(owner string) ([]*Syncer, error) {
 	syncers := []*Syncer{}
 	err := adapter.Engine.Desc("created_time").Find(&syncers, &Syncer{Owner: owner})
 	if err != nil {
-		panic(err)
+		return syncers, err
 	}
 
-	return syncers
+	return syncers, nil
 }
 
-func GetOrganizationSyncers(owner, organization string) []*Syncer {
+func GetOrganizationSyncers(owner, organization string) ([]*Syncer, error) {
 	syncers := []*Syncer{}
 	err := adapter.Engine.Desc("created_time").Find(&syncers, &Syncer{Owner: owner, Organization: organization})
 	if err != nil {
-		panic(err)
+		return syncers, err
 	}
 
-	return syncers
+	return syncers, nil
 }
 
-func GetPaginationSyncers(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Syncer {
+func GetPaginationSyncers(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) ([]*Syncer, error) {
 	syncers := []*Syncer{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&syncers, &Syncer{Organization: organization})
 	if err != nil {
-		panic(err)
+		return syncers, err
 	}
 
-	return syncers
+	return syncers, nil
 }
 
-func getSyncer(owner string, name string) *Syncer {
+func getSyncer(owner string, name string) (*Syncer, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	syncer := Syncer{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&syncer)
 	if err != nil {
-		panic(err)
+		return &syncer, err
 	}
 
 	if existed {
-		return &syncer
+		return &syncer, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetSyncer(id string) *Syncer {
+func GetSyncer(id string) (*Syncer, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getSyncer(owner, name)
 }
@@ -137,10 +132,12 @@ func GetMaskedSyncers(syncers []*Syncer) []*Syncer {
 	return syncers
 }
 
-func UpdateSyncer(id string, syncer *Syncer) bool {
+func UpdateSyncer(id string, syncer *Syncer) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getSyncer(owner, name) == nil {
-		return false
+	if s, err := getSyncer(owner, name); err != nil {
+		return false, err
+	} else if s == nil {
+		return false, nil
 	}
 
 	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
@@ -149,56 +146,66 @@ func UpdateSyncer(id string, syncer *Syncer) bool {
 	}
 	affected, err := session.Update(syncer)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	if affected == 1 {
-		addSyncerJob(syncer)
+		err = addSyncerJob(syncer)
+		if err != nil {
+			return false, err
+		}
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func updateSyncerErrorText(syncer *Syncer, line string) bool {
-	s := getSyncer(syncer.Owner, syncer.Name)
+func updateSyncerErrorText(syncer *Syncer, line string) (bool, error) {
+	s, err := getSyncer(syncer.Owner, syncer.Name)
+	if err != nil {
+		return false, err
+	}
+
 	if s == nil {
-		return false
+		return false, nil
 	}
 
 	s.ErrorText = s.ErrorText + line
 
 	affected, err := adapter.Engine.ID(core.PK{s.Owner, s.Name}).Cols("error_text").Update(s)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddSyncer(syncer *Syncer) bool {
+func AddSyncer(syncer *Syncer) (bool, error) {
 	affected, err := adapter.Engine.Insert(syncer)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	if affected == 1 {
-		addSyncerJob(syncer)
+		err = addSyncerJob(syncer)
+		if err != nil {
+			return false, err
+		}
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteSyncer(syncer *Syncer) bool {
+func DeleteSyncer(syncer *Syncer) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{syncer.Owner, syncer.Name}).Delete(&Syncer{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	if affected == 1 {
 		deleteSyncerJob(syncer)
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (syncer *Syncer) GetId() string {

@@ -66,8 +66,17 @@ func (c *ApiController) SendVerificationCode() {
 		}
 	}
 
-	application := object.GetApplication(vform.ApplicationId)
-	organization := object.GetOrganization(util.GetId(application.Owner, application.Organization))
+	application, err := object.GetApplication(vform.ApplicationId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	organization, err := object.GetOrganization(util.GetId(application.Owner, application.Organization))
+	if err != nil {
+		c.ResponseError(c.T(err.Error()))
+	}
+
 	if organization == nil {
 		c.ResponseError(c.T("check:Organization does not exist"))
 		return
@@ -77,12 +86,20 @@ func (c *ApiController) SendVerificationCode() {
 	// checkUser != "", means method is ForgetVerification
 	if vform.CheckUser != "" {
 		owner := application.Organization
-		user = object.GetUser(util.GetId(owner, vform.CheckUser))
+		user, err = object.GetUser(util.GetId(owner, vform.CheckUser))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	// mfaSessionData != nil, means method is MfaSetupVerification
 	if mfaSessionData := c.getMfaSessionData(); mfaSessionData != nil {
-		user = object.GetUser(mfaSessionData.UserId)
+		user, err = object.GetUser(mfaSessionData.UserId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	sendResp := errors.New("invalid dest type")
@@ -99,7 +116,12 @@ func (c *ApiController) SendVerificationCode() {
 				vform.Dest = user.Email
 			}
 
-			user = object.GetUserByEmail(organization.Name, vform.Dest)
+			user, err = object.GetUserByEmail(organization.Name, vform.Dest)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
 			if user == nil {
 				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 				return
@@ -113,7 +135,12 @@ func (c *ApiController) SendVerificationCode() {
 			}
 		}
 
-		provider := application.GetEmailProvider()
+		provider, err := application.GetEmailProvider()
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, remoteAddr, vform.Dest)
 	case object.VerifyTypePhone:
 		if vform.Method == LoginVerification || vform.Method == ForgetVerification {
@@ -121,7 +148,10 @@ func (c *ApiController) SendVerificationCode() {
 				vform.Dest = user.Phone
 			}
 
-			if user = object.GetUserByPhone(organization.Name, vform.Dest); user == nil {
+			if user, err = object.GetUserByPhone(organization.Name, vform.Dest); err != nil {
+				c.ResponseError(err.Error())
+				return
+			} else if user == nil {
 				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
 				return
 			}
@@ -140,7 +170,12 @@ func (c *ApiController) SendVerificationCode() {
 			vform.CountryCode = mfaProps.CountryCode
 		}
 
-		provider := application.GetSmsProvider()
+		provider, err := application.GetSmsProvider()
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		if phone, ok := util.GetE164Number(vform.Dest, vform.CountryCode); !ok {
 			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), vform.CountryCode))
 			return
@@ -213,7 +248,12 @@ func (c *ApiController) ResetEmailOrPhone() {
 	}
 
 	checkDest := dest
-	organization := object.GetOrganizationByUser(user)
+	organization, err := object.GetOrganizationByUser(user)
+	if err != nil {
+		c.ResponseError(c.T(err.Error()))
+		return
+	}
+
 	if destType == object.VerifyTypePhone {
 		if object.HasUserByField(user.Owner, "phone", dest) {
 			c.ResponseError(c.T("check:Phone already exists"))
@@ -260,16 +300,25 @@ func (c *ApiController) ResetEmailOrPhone() {
 	switch destType {
 	case object.VerifyTypeEmail:
 		user.Email = dest
-		object.SetUserField(user, "email", user.Email)
+		_, err = object.SetUserField(user, "email", user.Email)
 	case object.VerifyTypePhone:
 		user.Phone = dest
-		object.SetUserField(user, "phone", user.Phone)
+		_, err = object.SetUserField(user, "phone", user.Phone)
 	default:
 		c.ResponseError(c.T("verification:Unknown type"))
 		return
 	}
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
-	object.DisableVerificationCode(checkDest)
+	err = object.DisableVerificationCode(checkDest)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.ResponseOk()
 }
 
@@ -287,7 +336,11 @@ func (c *ApiController) VerifyCode() {
 
 	var user *object.User
 	if authForm.Name != "" {
-		user = object.GetUserByFields(authForm.Organization, authForm.Name)
+		user, err = object.GetUserByFields(authForm.Organization, authForm.Name)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	var checkDest string
@@ -302,7 +355,10 @@ func (c *ApiController) VerifyCode() {
 		}
 	}
 
-	if user = object.GetUserByFields(authForm.Organization, authForm.Username); user == nil {
+	if user, err = object.GetUserByFields(authForm.Organization, authForm.Username); err != nil {
+		c.ResponseError(err.Error())
+		return
+	} else if user == nil {
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(authForm.Organization, authForm.Username)))
 		return
 	}
@@ -321,7 +377,11 @@ func (c *ApiController) VerifyCode() {
 		c.ResponseError(result.Msg)
 		return
 	}
-	object.DisableVerificationCode(checkDest)
+	err = object.DisableVerificationCode(checkDest)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	c.SetSession("verifiedCode", authForm.Code)
 
 	c.ResponseOk()

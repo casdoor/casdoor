@@ -27,9 +27,9 @@ import (
 func TestProduct(t *testing.T) {
 	InitConfig()
 
-	product := GetProduct("admin/product_123")
-	provider := getProvider(product.Owner, "provider_pay_alipay")
-	cert := getCert(product.Owner, "cert-pay-alipay")
+	product, _ := GetProduct("admin/product_123")
+	provider, _ := getProvider(product.Owner, "provider_pay_alipay")
+	cert, _ := getCert(product.Owner, "cert-pay-alipay")
 	pProvider, err := pp.GetPaymentProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, cert.Certificate, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey, provider.ClientId2)
 	if err != nil {
 		panic(err)

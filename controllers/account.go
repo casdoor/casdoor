@@ -78,13 +78,23 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	application := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+	application, err := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if !application.EnableSignUp {
 		c.ResponseError(c.T("account:The application does not allow to sign up new account"))
 		return
 	}
 
-	organization := object.GetOrganization(util.GetId("admin", authForm.Organization))
+	organization, err := object.GetOrganization(util.GetId("admin", authForm.Organization))
+	if err != nil {
+		c.ResponseError(c.T(err.Error()))
+		return
+	}
+
 	msg := object.CheckUserSignup(application, organization, &authForm, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
@@ -111,7 +121,11 @@ func (c *ApiController) Signup() {
 
 	id := util.GenerateId()
 	if application.GetSignupItemRule("ID") == "Incremental" {
-		lastUser := object.GetLastUser(authForm.Organization)
+		lastUser, err := object.GetLastUser(authForm.Organization)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 
 		lastIdInt := -1
 		if lastUser != nil {
@@ -173,25 +187,47 @@ func (c *ApiController) Signup() {
 		}
 	}
 
-	affected := object.AddUser(user)
+	affected, err := object.AddUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if !affected {
 		c.ResponseError(c.T("account:Failed to add user"), util.StructToJson(user))
 		return
 	}
 
-	object.AddUserToOriginalDatabase(user)
+	err = object.AddUserToOriginalDatabase(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	if application.HasPromptPage() {
 		// The prompt page needs the user to be signed in
 		c.SetSessionUsername(user.GetId())
 	}
 
-	object.DisableVerificationCode(authForm.Email)
-	object.DisableVerificationCode(checkPhone)
+	err = object.DisableVerificationCode(authForm.Email)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = object.DisableVerificationCode(checkPhone)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	isSignupFromPricing := authForm.Plan != "" && authForm.Pricing != ""
 	if isSignupFromPricing {
-		object.Subscribe(organization.Name, user.Name, authForm.Plan, authForm.Pricing)
+		_, err = object.Subscribe(organization.Name, user.Name, authForm.Plan, authForm.Pricing)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	record := object.NewRecord(c.Ctx)
@@ -231,7 +267,11 @@ func (c *ApiController) Logout() {
 
 		c.ClearUserSession()
 		owner, username := util.GetOwnerAndNameFromId(user)
-		object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+		_, err := object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 
 		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
@@ -252,7 +292,12 @@ func (c *ApiController) Logout() {
 			return
 		}
 
-		affected, application, token := object.ExpireTokenByAccessToken(accessToken)
+		affected, application, token, err := object.ExpireTokenByAccessToken(accessToken)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		if !affected {
 			c.ResponseError(c.T("token:Token not found, invalid accessToken"))
 			return
@@ -272,7 +317,12 @@ func (c *ApiController) Logout() {
 			// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
 			owner, username := util.GetOwnerAndNameFromId(user)
 
-			object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+			_, err := object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
 			util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
 			c.Ctx.Redirect(http.StatusFound, fmt.Sprintf("%s?state=%s", strings.TrimRight(redirectUri, "/"), state))
@@ -290,6 +340,7 @@ func (c *ApiController) Logout() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-account [get]
 func (c *ApiController) GetAccount() {
+	var err error
 	user, ok := c.RequireSignedInUser()
 	if !ok {
 		return
@@ -297,20 +348,39 @@ func (c *ApiController) GetAccount() {
 
 	managedAccounts := c.Input().Get("managedAccounts")
 	if managedAccounts == "1" {
-		user = object.ExtendManagedAccountsWithUser(user)
+		user, err = object.ExtendManagedAccountsWithUser(user)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
-	object.ExtendUserWithRolesAndPermissions(user)
+	err = object.ExtendUserWithRolesAndPermissions(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	user.Permissions = object.GetMaskedPermissions(user.Permissions)
 	user.Roles = object.GetMaskedRoles(user.Roles)
 
-	organization := object.GetMaskedOrganization(object.GetOrganizationByUser(user))
+	organization, err := object.GetMaskedOrganization(object.GetOrganizationByUser(user))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	u, err := object.GetMaskedUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	resp := Response{
 		Status: "ok",
 		Sub:    user.Id,
 		Name:   user.Name,
-		Data:   object.GetMaskedUser(user),
+		Data:   u,
 		Data2:  organization,
 	}
 	c.Data["json"] = resp
@@ -391,7 +461,12 @@ func (c *ApiController) GetCaptcha() {
 
 	if captchaProvider != nil {
 		if captchaProvider.Type == "Default" {
-			id, img := object.GetCaptcha()
+			id, img, err := object.GetCaptcha()
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
 			c.ResponseOk(Captcha{Type: captchaProvider.Type, CaptchaId: id, CaptchaImage: img})
 			return
 		} else if captchaProvider.Type != "" {

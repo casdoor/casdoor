@@ -43,7 +43,10 @@ func ParseSamlResponse(samlResponse string, provider *Provider, host string) (st
 }
 
 func GenerateSamlRequest(id, relayState, host, lang string) (auth string, method string, err error) {
-	provider := GetProvider(id)
+	provider, err := GetProvider(id)
+	if err != nil {
+		return "", "", err
+	}
 	if provider.Category != "SAML" {
 		return "", "", fmt.Errorf(i18n.Translate(lang, "saml_sp:provider %s's category is not SAML"), provider.Name)
 	}
@@ -92,27 +95,33 @@ func buildSp(provider *Provider, samlResponse string, host string) (*saml2.SAMLS
 	}
 	if provider.EnableSignAuthnRequest {
 		sp.SignAuthnRequests = true
-		sp.SPKeyStore = buildSpKeyStore()
+		sp.SPKeyStore, err = buildSpKeyStore()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return sp, nil
 }
 
-func buildSpKeyStore() dsig.X509KeyStore {
+func buildSpKeyStore() (dsig.X509KeyStore, error) {
 	keyPair, err := tls.LoadX509KeyPair("object/token_jwt_key.pem", "object/token_jwt_key.key")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	return &dsig.TLSCertKeyStore{
 		PrivateKey:  keyPair.PrivateKey,
 		Certificate: keyPair.Certificate,
-	}
+	}, nil
 }
 
-func buildSpCertificateStore(provider *Provider, samlResponse string) (dsig.MemoryX509CertificateStore, error) {
+func buildSpCertificateStore(provider *Provider, samlResponse string) (certStore dsig.MemoryX509CertificateStore, err error) {
 	certEncodedData := ""
 	if samlResponse != "" {
-		certEncodedData = getCertificateFromSamlResponse(samlResponse, provider.Type)
+		certEncodedData, err = getCertificateFromSamlResponse(samlResponse, provider.Type)
+		if err != nil {
+			return
+		}
 	} else if provider.IdP != "" {
 		certEncodedData = provider.IdP
 	}
@@ -126,17 +135,18 @@ func buildSpCertificateStore(provider *Provider, samlResponse string) (dsig.Memo
 		return dsig.MemoryX509CertificateStore{}, err
 	}
 
-	certStore := dsig.MemoryX509CertificateStore{
+	certStore = dsig.MemoryX509CertificateStore{
 		Roots: []*x509.Certificate{idpCert},
 	}
 	return certStore, nil
 }
 
-func getCertificateFromSamlResponse(samlResponse string, providerType string) string {
+func getCertificateFromSamlResponse(samlResponse string, providerType string) (string, error) {
 	de, err := base64.StdEncoding.DecodeString(samlResponse)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
+
 	deStr := strings.Replace(string(de), "\n", "", -1)
 	tagMap := map[string]string{
 		"Aliyun IDaaS": "ds",
@@ -145,5 +155,5 @@ func getCertificateFromSamlResponse(samlResponse string, providerType string) st
 	tag := tagMap[providerType]
 	expression := fmt.Sprintf("<%s:X509Certificate>([\\s\\S]*?)</%s:X509Certificate>", tag, tag)
 	res := regexp.MustCompile(expression).FindStringSubmatch(deStr)
-	return res[1]
+	return res[1], nil
 }

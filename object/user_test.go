@@ -36,7 +36,7 @@ func updateUserColumn(column string, user *User) bool {
 func TestSyncAvatarsFromGitHub(t *testing.T) {
 	InitConfig()
 
-	users := GetGlobalUsers()
+	users, _ := GetGlobalUsers()
 	for _, user := range users {
 		if user.GitHub == "" {
 			continue
@@ -50,7 +50,7 @@ func TestSyncAvatarsFromGitHub(t *testing.T) {
 func TestSyncIds(t *testing.T) {
 	InitConfig()
 
-	users := GetGlobalUsers()
+	users, _ := GetGlobalUsers()
 	for _, user := range users {
 		if user.Id != "" {
 			continue
@@ -64,13 +64,16 @@ func TestSyncIds(t *testing.T) {
 func TestSyncHashes(t *testing.T) {
 	InitConfig()
 
-	users := GetGlobalUsers()
+	users, _ := GetGlobalUsers()
 	for _, user := range users {
 		if user.Hash != "" {
 			continue
 		}
 
-		user.UpdateUserHash()
+		err := user.UpdateUserHash()
+		if err != nil {
+			panic(err)
+		}
 		updateUserColumn("hash", user)
 	}
 }
@@ -92,7 +95,7 @@ func TestGetMaskedUsers(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetMaskedUsers(tt.args.users); !reflect.DeepEqual(got, tt.want) {
+			if got, _ := GetMaskedUsers(tt.args.users); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetMaskedUsers() = %v, want %v", got, tt.want)
 			}
 		})
@@ -102,7 +105,7 @@ func TestGetMaskedUsers(t *testing.T) {
 func TestGetUserByField(t *testing.T) {
 	InitConfig()
 
-	user := GetUserByField("built-in", "DingTalk", "test")
+	user, _ := GetUserByField("built-in", "DingTalk", "test")
 	if user != nil {
 		t.Logf("%+v", user)
 	} else {
@@ -115,7 +118,7 @@ func TestGetEmailsForUsers(t *testing.T) {
 
 	emailMap := map[string]int{}
 	emails := []string{}
-	users := GetUsers("built-in")
+	users, _ := GetUsers("built-in")
 	for _, user := range users {
 		if user.Email == "" {
 			continue

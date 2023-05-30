@@ -46,7 +46,12 @@ func (c *ApiController) MfaSetupInitiate() {
 	if MfaUtil == nil {
 		c.ResponseError("Invalid auth type")
 	}
-	user := object.GetUser(userId)
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if user == nil {
 		c.ResponseError("User doesn't exist")
 		return
@@ -105,14 +110,19 @@ func (c *ApiController) MfaSetupEnable() {
 	name := c.Ctx.Request.Form.Get("name")
 	authType := c.Ctx.Request.Form.Get("type")
 
-	user := object.GetUser(util.GetId(owner, name))
+	user, err := object.GetUser(util.GetId(owner, name))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if user == nil {
 		c.ResponseError("User doesn't exist")
 		return
 	}
 
 	twoFactor := object.GetMfaUtil(authType, nil)
-	err := twoFactor.Enable(c.Ctx, user)
+	err = twoFactor.Enable(c.Ctx, user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -136,7 +146,12 @@ func (c *ApiController) DeleteMfa() {
 	name := c.Ctx.Request.Form.Get("name")
 	userId := util.GetId(owner, name)
 
-	user := object.GetUser(userId)
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if user == nil {
 		c.ResponseError("User doesn't exist")
 		return
@@ -151,7 +166,12 @@ func (c *ApiController) DeleteMfa() {
 		}
 	}
 	user.MultiFactorAuths = mfaProps
-	object.UpdateUser(userId, user, []string{"multi_factor_auths"}, user.IsAdminUser())
+	_, err = object.UpdateUser(userId, user, []string{"multi_factor_auths"}, user.IsAdminUser())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.ResponseOk(user.MultiFactorAuths)
 }
 
@@ -170,7 +190,12 @@ func (c *ApiController) SetPreferredMfa() {
 	name := c.Ctx.Request.Form.Get("name")
 	userId := util.GetId(owner, name)
 
-	user := object.GetUser(userId)
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if user == nil {
 		c.ResponseError("User doesn't exist")
 		return
@@ -185,7 +210,11 @@ func (c *ApiController) SetPreferredMfa() {
 		}
 	}
 
-	object.UpdateUser(userId, user, []string{"multi_factor_auths"}, user.IsAdminUser())
+	_, err = object.UpdateUser(userId, user, []string{"multi_factor_auths"}, user.IsAdminUser())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	for i, mfaProp := range mfaProps {
 		mfaProps[i] = object.GetMaskedProps(mfaProp)

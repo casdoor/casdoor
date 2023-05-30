@@ -177,7 +177,9 @@ func StoreCasTokenForProxyTicket(token *CasAuthenticationSuccess, targetService,
 }
 
 func GenerateCasToken(userId string, service string) (string, error) {
-	if user := GetUser(userId); user != nil {
+	if user, err := GetUser(userId); err != nil {
+		return "", err
+	} else if user != nil {
 		authenticationSuccess := CasAuthenticationSuccess{
 			User: user.Name,
 			Attributes: &CasAttributes{
@@ -232,18 +234,31 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 		return "", "", fmt.Errorf("ticket %s found", ticket)
 	}
 
-	user := GetUser(userId)
+	user, err := GetUser(userId)
+	if err != nil {
+		return "", "", err
+	}
+
 	if user == nil {
 		return "", "", fmt.Errorf("user %s found", userId)
 	}
-	application := GetApplicationByUser(user)
+
+	application, err := GetApplicationByUser(user)
+	if err != nil {
+		return "", "", err
+	}
+
 	if application == nil {
 		return "", "", fmt.Errorf("application for user %s found", userId)
 	}
 
 	samlResponse := NewSamlResponse11(user, request.RequestID, host)
 
-	cert := getCertByApplication(application)
+	cert, err := getCertByApplication(application)
+	if err != nil {
+		return "", "", err
+	}
+
 	block, _ := pem.Decode([]byte(cert.Certificate))
 	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 	randomKeyStore := &X509Key{

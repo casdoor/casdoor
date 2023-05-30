@@ -61,7 +61,12 @@ func (c *ApiController) SendEmail() {
 	var provider *object.Provider
 	if emailForm.Provider != "" {
 		// called by frontend's TestEmailWidget, provider name is set by frontend
-		provider = object.GetProvider(util.GetId("admin", emailForm.Provider))
+		provider, err = object.GetProvider(util.GetId("admin", emailForm.Provider))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 	} else {
 		// called by Casdoor SDK via Client ID & Client Secret, so the used Email provider will be the application' Email provider or the default Email provider
 		var ok bool

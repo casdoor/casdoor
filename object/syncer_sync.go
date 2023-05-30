@@ -37,7 +37,7 @@ func (syncer *Syncer) syncUsers() {
 
 	var affiliationMap map[int]string
 	if syncer.AffiliationTable != "" {
-		_, affiliationMap = syncer.getAffiliationMap()
+		_, affiliationMap, err = syncer.getAffiliationMap()
 	}
 
 	newUsers := []*User{}
@@ -86,13 +86,19 @@ func (syncer *Syncer) syncUsers() {
 			}
 		}
 	}
-	AddUsersInBatch(newUsers)
+	_, err = AddUsersInBatch(newUsers)
+	if err != nil {
+		panic(err)
+	}
 
 	for _, user := range users {
 		id := user.Id
 		if _, ok := oUserMap[id]; !ok {
 			newOUser := syncer.createOriginalUserFromUser(user)
-			syncer.addUser(newOUser)
+			_, err = syncer.addUser(newOUser)
+			if err != nil {
+				panic(err)
+			}
 			fmt.Printf("New oUser: %v\n", newOUser)
 		}
 	}

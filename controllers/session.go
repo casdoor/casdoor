@@ -37,13 +37,29 @@ func (c *ApiController) GetSessions() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	owner := c.Input().Get("owner")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetSessions(owner)
+		sessions, err := object.GetSessions(owner)
+		if err != nil {
+			panic(err)
+		}
+
+		c.Data["json"] = sessions
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetSessionCount(owner, field, value)))
-		sessions := object.GetPaginationSessions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetSessionCount(owner, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		sessions, err := object.GetPaginationSessions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(sessions, paginator.Nums())
 	}
 }
@@ -58,7 +74,12 @@ func (c *ApiController) GetSessions() {
 func (c *ApiController) GetSingleSession() {
 	id := c.Input().Get("sessionPkId")
 
-	c.Data["json"] = object.GetSingleSession(id)
+	session, err := object.GetSingleSession(id)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Data["json"] = session
 	c.ServeJSON()
 }
 
@@ -132,7 +153,11 @@ func (c *ApiController) IsSessionDuplicated() {
 	id := c.Input().Get("sessionPkId")
 	sessionId := c.Input().Get("sessionId")
 
-	isUserSessionDuplicated := object.IsSessionDuplicated(id, sessionId)
+	isUserSessionDuplicated, err := object.IsSessionDuplicated(id, sessionId)
+	if err != nil {
+		panic(err)
+	}
+
 	c.Data["json"] = &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
 
 	c.ServeJSON()

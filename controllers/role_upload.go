@@ -41,7 +41,11 @@ func (c *ApiController) UploadRoles() {
 		return
 	}
 
-	affected := object.UploadRoles(owner, fileId)
+	affected, err := object.UploadRoles(owner, fileId)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+
 	if affected {
 		c.ResponseOk()
 	} else {

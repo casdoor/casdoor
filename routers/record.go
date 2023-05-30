@@ -43,7 +43,11 @@ func getUserByClientIdSecret(ctx *context.Context) string {
 		return ""
 	}
 
-	application := object.GetApplicationByClientId(clientId)
+	application, err := object.GetApplicationByClientId(clientId)
+	if err != nil {
+		panic(err)
+	}
+
 	if application == nil || application.ClientSecret != clientSecret {
 		return ""
 	}

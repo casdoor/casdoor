@@ -37,13 +37,28 @@ func (c *ApiController) GetPayments() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetPayments(owner)
+		payments, err := object.GetPayments(owner)
+		if err != nil {
+			panic(err)
+		}
+
+		c.Data["json"] = payments
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetPaymentCount(owner, field, value)))
-		payments := object.GetPaginationPayments(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetPaymentCount(owner, field, value)
+		if err != nil {
+			panic(err)
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		payments, err := object.GetPaginationPayments(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			panic(err)
+		}
+
 		c.ResponseOk(payments, paginator.Nums())
 	}
 }
@@ -62,7 +77,12 @@ func (c *ApiController) GetUserPayments() {
 	organization := c.Input().Get("organization")
 	user := c.Input().Get("user")
 
-	payments := object.GetUserPayments(owner, organization, user)
+	payments, err := object.GetUserPayments(owner, organization, user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.ResponseOk(payments)
 }
 
@@ -76,7 +96,12 @@ func (c *ApiController) GetUserPayments() {
 func (c *ApiController) GetPayment() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetPayment(id)
+	payment, err := object.GetPayment(id)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Data["json"] = payment
 	c.ServeJSON()
 }
 
@@ -177,7 +202,12 @@ func (c *ApiController) NotifyPayment() {
 func (c *ApiController) InvoicePayment() {
 	id := c.Input().Get("id")
 
-	payment := object.GetPayment(id)
+	payment, err := object.GetPayment(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	invoiceUrl, err := object.InvoicePayment(payment)
 	if err != nil {
 		c.ResponseError(err.Error())

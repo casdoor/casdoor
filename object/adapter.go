@@ -119,7 +119,7 @@ func (a *Adapter) close() {
 }
 
 func (a *Adapter) createTable() {
-	showSql, _ := conf.GetConfigBool("showSql")
+	showSql := conf.GetConfigBool("showSql")
 	a.Engine.ShowSQL(showSql)
 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")

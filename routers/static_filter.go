@@ -30,7 +30,7 @@ import (
 var (
 	oldStaticBaseUrl = "https://cdn.casbin.org"
 	newStaticBaseUrl = conf.GetConfigString("staticBaseUrl")
-	enableGzip, _    = conf.GetConfigBool("enableGzip")
+	enableGzip       = conf.GetConfigBool("enableGzip")
 )
 
 func StaticFilter(ctx *context.Context) {
