@@ -181,7 +181,7 @@ class PricingEditPage extends React.Component {
             {Setting.getLabel(i18next.t("pricing:Sub plans"), i18next.t("pricing:Sub plans - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select mode="tags" style={{width: "100%"}} value={this.state.pricing.plans}
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.pricing.plans}
               onChange={(value => {
                 this.updatePricingField("plans", value);
               })}
