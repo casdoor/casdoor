@@ -42,6 +42,10 @@ code {
   padding: 1px 8px !important;
 }
 
+.ant-table.ant-table-middle tbody > tr > td > ant-table-expanded-row-fixed {
+  margin: -2px -9px !important;
+}
+
 .ant-list-sm .ant-list-item {
   padding: 2px !important;
 }
