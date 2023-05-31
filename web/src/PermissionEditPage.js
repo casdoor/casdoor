@@ -74,9 +74,13 @@ class PermissionEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
-        this.setState({
-          users: res,
-        });
+        if (res.status === "ok") {
+          this.setState({
+            users: res.data,
+          });
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
       });
   }
 

@@ -39,13 +39,19 @@ func (c *ApiController) GetGlobalUsers() {
 	sortOrder := c.Input().Get("sortOrder")
 
 	if limit == "" || page == "" {
-		maskedUsers, err := object.GetMaskedUsers(object.GetGlobalUsers())
+		users, err := object.GetGlobalUsers()
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
-		c.Data["json"] = maskedUsers
-		c.ServeJSON()
+		users, err = object.GetMaskedUsers(users)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetGlobalUserCount(field, value)
@@ -88,13 +94,19 @@ func (c *ApiController) GetUsers() {
 	sortOrder := c.Input().Get("sortOrder")
 
 	if limit == "" || page == "" {
-		maskedUsers, err := object.GetMaskedUsers(object.GetUsers(owner))
+		users, err := object.GetMaskedUsers(object.GetUsers(owner))
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
-		c.Data["json"] = maskedUsers
-		c.ServeJSON()
+		users, err = object.GetMaskedUsers(users)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetUserCount(owner, field, value)
