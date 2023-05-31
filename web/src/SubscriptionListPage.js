@@ -140,7 +140,7 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("duration"),
       },
       {
-        title: i18next.t("subscription:Plan"),
+        title: i18next.t("general:Plan"),
         dataIndex: "plan",
         key: "plan",
         width: "140px",

@@ -188,7 +188,7 @@ class SubscriptionEditPage extends React.Component {
 
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("subscription:Plan"), i18next.t("subscription:Plan - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Plan"), i18next.t("general:Plan - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.subscription.plan} onChange={(value => {this.updateSubscriptionField("plan", value);})}
@@ -265,8 +265,8 @@ class SubscriptionEditPage extends React.Component {
               this.updateSubscriptionField("state", value);
             })}
             options={[
-              {value: "Approved", name: i18next.t("subscription:Approved")},
-              {value: "Pending", name: i18next.t("subscription:Pending")},
+              {value: "Approved", name: i18next.t("permission:Approved")},
+              {value: "Pending", name: i18next.t("permission:Pending")},
             ].map((item) => Setting.getOption(item.name, item.value))}
             />
           </Col>

@@ -166,7 +166,7 @@ class PlanEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("plan:PricePerMonth"), i18next.t("plan:PricePerMonth - Tooltip"))} :
+            {Setting.getLabel(i18next.t("plan:Price per month"), i18next.t("plan:Price per month - Tooltip"))} :
           </Col>
           <Col span={22} >
             <InputNumber value={this.state.plan.pricePerMonth} onChange={value => {
@@ -176,7 +176,7 @@ class PlanEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("plan:PricePerYear"), i18next.t("plan:PricePerYear - Tooltip"))} :
+            {Setting.getLabel(i18next.t("plan:Price per year"), i18next.t("plan:Price per year - Tooltip"))} :
           </Col>
           <Col span={22} >
             <InputNumber value={this.state.plan.pricePerYear} onChange={value => {
