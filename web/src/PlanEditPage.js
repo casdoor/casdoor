@@ -146,7 +146,7 @@ class PlanEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("role:Sub roles"), i18next.t("plan:Sub roles - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Role"), i18next.t("general:Role - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.plan.role} onChange={(value => {this.updatePlanField("role", value);})}
@@ -228,7 +228,7 @@ class PlanEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/plans");
           } else {
-            this.props.history.push(`/plan/${this.state.plan.owner}/${this.state.plan.name}`);
+            this.props.history.push(`/plans/${this.state.plan.owner}/${this.state.plan.name}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);

@@ -29,15 +29,14 @@ type Subscription struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-	Duration    int    `json:"duration"`
 
-	Description string `xorm:"varchar(100)" json:"description"`
-	Plan        string `xorm:"varchar(100)" json:"plan"`
-
-	StartDate time.Time `json:"startDate"`
-	EndDate   time.Time `json:"endDate"`
+	StartDate   time.Time `json:"startDate"`
+	EndDate     time.Time `json:"endDate"`
+	Duration    int       `json:"duration"`
+	Description string    `xorm:"varchar(100)" json:"description"`
 
 	User string `xorm:"mediumtext" json:"user"`
+	Plan string `xorm:"varchar(100)" json:"plan"`
 
 	IsEnabled   bool   `json:"isEnabled"`
 	Submitter   string `xorm:"varchar(100)" json:"submitter"`

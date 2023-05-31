@@ -43,7 +43,7 @@ class PlanListPage extends BaseListPage {
     PlanBackend.addPlan(newPlan)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/plan/${newPlan.owner}/${newPlan.name}`, mode: "add"});
+          this.props.history.push({pathname: `/plans/${newPlan.owner}/${newPlan.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -84,7 +84,7 @@ class PlanListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/plans/${text}`}>
+            <Link to={`/plans/${record.owner}/${record.name}`}>
               {text}
             </Link>
           );
@@ -138,11 +138,18 @@ class PlanListPage extends BaseListPage {
         ...this.getColumnSearchProps("pricePerYear"),
       },
       {
-        title: i18next.t("plan:Sub role"),
+        title: i18next.t("general:Role"),
         dataIndex: "role",
         key: "role",
         width: "140px",
         ...this.getColumnSearchProps("role"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/roles/${text}`}>
+              {text}
+            </Link>
+          );
+        },
       },
       {
         title: i18next.t("general:Is enabled"),
@@ -165,7 +172,7 @@ class PlanListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/plan/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/plans/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deletePlan(index)}

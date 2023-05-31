@@ -244,7 +244,7 @@ class PricingEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/pricings");
           } else {
-            this.props.history.push(`/pricing/${this.state.pricing.owner}/${this.state.pricing.name}`);
+            this.props.history.push(`/pricings/${this.state.pricing.owner}/${this.state.pricing.name}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
