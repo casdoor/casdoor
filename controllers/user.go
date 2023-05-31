@@ -517,3 +517,37 @@ func (c *ApiController) GetUserCount() {
 	c.Data["json"] = count
 	c.ServeJSON()
 }
+
+func (c *ApiController) GetGroupUsers() {
+	groupId := c.Input().Get("id")
+	limit := c.Input().Get("pageSize")
+	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
+
+	if limit == "" || page == "" {
+		users, err := object.GetGroupUsers(groupId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		c.ResponseOk(users)
+	} else {
+		limit := util.ParseInt(limit)
+		count, err := object.GetGroupUserCount(groupId, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		users, err := object.GetPaginationGroupUsers(groupId, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		c.ResponseOk(users, paginator.Nums())
+	}
+}

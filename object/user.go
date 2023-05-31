@@ -16,6 +16,7 @@ package object
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -77,6 +78,7 @@ type User struct {
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
+	Groups            []string `xorm:"varchar(1000)" json:"groups"`
 
 	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
@@ -266,6 +268,62 @@ func GetPaginationUsers(owner string, offset, limit int, field, value, sortField
 	}
 
 	return users, nil
+}
+
+func GetGroupUsers(id string) ([]*User, error) {
+	group := GetGroup(id)
+	if group == nil {
+		return nil, errors.New("group not found")
+	}
+
+	users := []*User{}
+	// UserGroupRelation store the relation between user and group, use join to query all users in the group. group.UserId is the foreign keys reference user. group.groupId is the foreign key reference group.
+	err := adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_owner = u.owner AND user_group_relation.user_name = u.name").
+		Where("user_group_relation.group_name = ?", group.Name).
+		Find(&users)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
+	owner, name := util.GetOwnerAndNameFromId(groupId)
+	group := getGroup(owner, name)
+	if group == nil {
+		return nil, errors.New("group not found")
+	}
+
+	users := []*User{}
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_owner = u.owner AND user_group_relation.user_name = u.name").
+		Where("user_group_relation.group_name = ?", group.Name).
+		Find(&users)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func GetGroupUserCount(groupId, field, value string) (int64, error) {
+	owner, name := util.GetOwnerAndNameFromId(groupId)
+	group := getGroup(owner, name)
+	if group == nil {
+		return 0, errors.New("group not found")
+	}
+	// users count in group
+	// UserGroupRelation store the relation between user and group, use join to query all users in the group. group.UserOwner and group.UserName are the foreign keys reference user. group.groupName and group.groupOwner is the foreign key reference group. can just count the group.groupName and group.groupOwner, need not query the users then count.
+	session := GetSession(owner, -1, -1, field, value, "", "")
+	count, err := session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_owner = u.owner AND user_group_relation.user_name = u.name").
+		Where("user_group_relation.group_name = ?", group.Name).
+		Count(&UserGroupRelation{})
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func getUser(owner string, name string) (*User, error) {
@@ -493,7 +551,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		columns = append(columns, "name", "email", "phone", "country_code")
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
+	affected, err := updateUser(oldUser, user, columns)
 	if err != nil {
 		return false, err
 	}
