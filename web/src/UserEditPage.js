@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Spin, Switch, Tag} from "antd";
+import * as GroupBackend from "./backend/GroupBackend";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -47,6 +48,7 @@ class UserEditPage extends React.Component {
       userName: props.userName !== undefined ? props.userName : props.match.params.userName,
       user: null,
       application: null,
+      groups: null,
       organizations: [],
       applications: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
@@ -61,6 +63,14 @@ class UserEditPage extends React.Component {
     this.getApplicationsByOrganization(this.state.organizationName);
     this.getUserApplication();
     this.setReturnUrl();
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.organizations.accountItems?.some((item) => {
+      return item.name === "Group" && item.visible;
+    })) {
+      this.getGroups();
+    }
   }
 
   getUser() {
@@ -101,6 +111,15 @@ class UserEditPage extends React.Component {
       .then((application) => {
         this.setState({
           application: application,
+        });
+      });
+  }
+
+  getGroups() {
+    GroupBackend.getGroups(this.state.owner)
+      .then((res) => {
+        this.setState({
+          groups: res.data,
         });
       });
   }
@@ -259,6 +278,21 @@ class UserEditPage extends React.Component {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
             </Select>
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Group") {
+      return (
+        <Row style={{marginTop: "10px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.owner} onChange={(value => {
+              this.updateUserField("owner", value);
+            })}
+            options={this.state.groups.map((group) => Setting.getOption(group.displayName, group.name))}
+            />
           </Col>
         </Row>
       );
