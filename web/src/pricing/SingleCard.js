@@ -44,7 +44,7 @@ class SingleCard extends React.Component {
 
           <div style={{textAlign: "left"}} className="px-10 mt-5">
             <span style={{fontWeight: 700, fontSize: "48px"}}>$ {plan.pricePerMonth}</span>
-            <span style={{fontSize: "18px", fontWeight: 600, color: "gray"}}>  {i18next.t("plan:per month")}</span>
+            <span style={{fontSize: "18px", fontWeight: 600, color: "gray"}}>  {i18next.t("plan:PerMonth")}</span>
           </div>
 
           <br />

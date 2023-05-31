@@ -27,7 +27,6 @@ class PricingPage extends React.Component {
     this.state = {
       classes: props,
       applications: null,
-      owner: props.owner ?? (props.match?.params?.owner ?? null),
       pricingName: (props.pricingName ?? props.match?.params?.pricingName) ?? null,
       pricing: props.pricing,
       plans: null,
@@ -79,7 +78,7 @@ class PricingPage extends React.Component {
       return;
     }
 
-    PricingBackend.getPricing(this.state.owner, pricingName)
+    PricingBackend.getPricing("built-in", pricingName)
       .then((result) => {
         this.setState({
           loading: false,

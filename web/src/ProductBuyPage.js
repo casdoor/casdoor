@@ -151,9 +151,7 @@ class ProductBuyPage extends React.Component {
 
   getPayButton(provider) {
     let text = provider.type;
-    if (provider.type === "Dummy") {
-      text = i18next.t("product:Dummy");
-    } else if (provider.type === "Alipay") {
+    if (provider.type === "Alipay") {
       text = i18next.t("product:Alipay");
     } else if (provider.type === "WeChat Pay") {
       text = i18next.t("product:WeChat Pay");

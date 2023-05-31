@@ -33,7 +33,7 @@ class PricingListPage extends BaseListPage {
       createdTime: moment().format(),
       plans: [],
       displayName: `New Pricing - ${randomName}`,
-      hasTrial: false,
+      hasTrial: true,
       isEnabled: true,
       trialDuration: 14,
     };
@@ -44,7 +44,7 @@ class PricingListPage extends BaseListPage {
     PricingBackend.addPricing(newPricing)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/pricings/${newPricing.owner}/${newPricing.name}`, mode: "add"});
+          this.props.history.push({pathname: `/pricing/${newPricing.owner}/${newPricing.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -85,7 +85,7 @@ class PricingListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/pricings/${record.owner}/${text}`}>
+            <Link to={`/pricing/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -120,7 +120,7 @@ class PricingListPage extends BaseListPage {
         title: i18next.t("general:Display name"),
         dataIndex: "displayName",
         key: "displayName",
-        // width: "170px",
+        width: "170px",
         sorter: true,
         ...this.getColumnSearchProps("displayName"),
       },
@@ -146,7 +146,7 @@ class PricingListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/pricings/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/pricing/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deletePricing(index)}
@@ -167,7 +167,7 @@ class PricingListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={pricings} rowKey="name" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content", y: 619}} columns={columns} dataSource={pricings} rowKey="name" size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Pricings")}&nbsp;&nbsp;&nbsp;&nbsp;

@@ -188,7 +188,7 @@ class RecordListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content", y: 619}} columns={columns} dataSource={records} rowKey="id" size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Records")}&nbsp;&nbsp;&nbsp;&nbsp;
