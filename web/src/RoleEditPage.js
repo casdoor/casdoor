@@ -141,7 +141,7 @@ class RoleEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub users"), i18next.t("role:Sub users - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select mode="tags" style={{width: "100%"}} value={this.state.role.users}
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.role.users}
               onChange={(value => {this.updateRoleField("users", value);})}
               options={this.state.users.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`))}
             />
@@ -152,7 +152,7 @@ class RoleEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub roles"), i18next.t("role:Sub roles - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.role.roles} onChange={(value => {this.updateRoleField("roles", value);})}
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.role.roles} onChange={(value => {this.updateRoleField("roles", value);})}
               options={this.state.roles.filter(role => (role.owner !== this.state.role.owner || role.name !== this.state.role.name)).map((role) => Setting.getOption(`${role.owner}/${role.name}`, `${role.owner}/${role.name}`))
               } />
           </Col>

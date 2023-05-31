@@ -564,7 +564,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Grant types"), i18next.t("application:Grant types - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: "100%"}}
+            <Select virtual={false} mode="multiple" style={{width: "100%"}}
               value={this.state.application.grantTypes}
               onChange={(value => {
                 this.updateApplicationField("grantTypes", value);
