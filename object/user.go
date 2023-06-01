@@ -34,7 +34,7 @@ const (
 type User struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	CreatedTime string `xorm:"varchar(100) index" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
 	Id                string   `xorm:"varchar(100) index" json:"id"`
@@ -208,7 +208,7 @@ func GetGlobalUsers() ([]*User, error) {
 
 func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
 	users := []*User{}
-	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
+	session := GetSessionForUser("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&users)
 	if err != nil {
 		return nil, err
@@ -258,7 +258,7 @@ func GetSortedUsers(owner string, sorter string, limit int) ([]*User, error) {
 
 func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
 	users := []*User{}
-	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	session := GetSessionForUser(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&users)
 	if err != nil {
 		return nil, err

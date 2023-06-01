@@ -24,7 +24,8 @@ type Migrator_1_314_0_PR_1841 struct{}
 func (*Migrator_1_314_0_PR_1841) IsMigrationNeeded() bool {
 	count, err := adapter.Engine.Where("password_type=?", "").Count(&User{})
 	if err != nil {
-		panic(err)
+		// table doesn't exist
+		return false
 	}
 
 	return count > 100

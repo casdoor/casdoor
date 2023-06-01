@@ -280,3 +280,44 @@ func GetSession(owner string, offset, limit int, field, value, sortField, sortOr
 	}
 	return session
 }
+
+func GetSessionForUser(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
+	session := adapter.Engine.Prepare()
+	if offset != -1 && limit != -1 {
+		session.Limit(limit, offset)
+	}
+	if owner != "" {
+		session = session.And("owner=?", owner)
+	}
+	if field != "" && value != "" {
+		if filterField(field) {
+			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
+		}
+	}
+	if sortField == "" || sortOrder == "" {
+		sortField = "created_time"
+	}
+
+	tableName := "user"
+	if offset == -1 {
+		if sortOrder == "ascend" {
+			session = session.Asc(util.SnakeString(sortField))
+		} else {
+			session = session.Desc(util.SnakeString(sortField))
+		}
+	} else {
+		if sortOrder == "ascend" {
+			session = session.Alias("a").
+				Join("INNER", []string{tableName, "b"}, "a.owner = b.owner and a.name = b.name").
+				Select("b.*").
+				Asc("a." + util.SnakeString(sortField))
+		} else {
+			session = session.Alias("a").
+				Join("INNER", []string{tableName, "b"}, "a.owner = b.owner and a.name = b.name").
+				Select("b.*").
+				Desc("a." + util.SnakeString(sortField))
+		}
+	}
+
+	return session
+}
