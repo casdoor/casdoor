@@ -78,6 +78,7 @@ class MessageListPage extends BaseListPage {
         dataIndex: "organization",
         key: "organization",
         width: "150px",
+        fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("organization"),
         render: (text, record, index) => {
@@ -119,7 +120,6 @@ class MessageListPage extends BaseListPage {
         dataIndex: "chat",
         key: "chat",
         width: "120px",
-        fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("chat"),
         render: (text, record, index) => {
@@ -135,7 +135,6 @@ class MessageListPage extends BaseListPage {
         dataIndex: "author",
         key: "author",
         width: "120px",
-        fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("author"),
         render: (text, record, index) => {
