@@ -22,20 +22,12 @@ import (
 type Migrator_1_314_0_PR_1841 struct{}
 
 func (*Migrator_1_314_0_PR_1841) IsMigrationNeeded() bool {
-	users := []*User{}
-
-	err := adapter.Engine.Table("user").Find(&users)
+	count, err := adapter.Engine.Where("password_type=?", "").Count(&User{})
 	if err != nil {
-		return false
+		panic(err)
 	}
 
-	for _, u := range users {
-		if u.PasswordType != "" {
-			return false
-		}
-	}
-
-	return true
+	return count > 100
 }
 
 func (*Migrator_1_314_0_PR_1841) DoMigration() *migrate.Migration {

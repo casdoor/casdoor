@@ -554,6 +554,10 @@ func AddUser(user *User) (bool, error) {
 		return false, nil
 	}
 
+	if user.PasswordType == "" && organization.PasswordType != "" {
+		user.PasswordType = organization.PasswordType
+	}
+
 	user.UpdateUserPassword(organization)
 
 	err = user.UpdateUserHash()
