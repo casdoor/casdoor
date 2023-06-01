@@ -82,6 +82,7 @@ class ChatListPage extends BaseListPage {
         dataIndex: "organization",
         key: "organization",
         width: "150px",
+        fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("organization"),
         render: (text, record, index) => {
@@ -165,7 +166,6 @@ class ChatListPage extends BaseListPage {
         dataIndex: "user1",
         key: "user1",
         width: "120px",
-        fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("user1"),
         render: (text, record, index) => {
@@ -181,7 +181,6 @@ class ChatListPage extends BaseListPage {
         dataIndex: "user2",
         key: "user2",
         width: "120px",
-        fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("user2"),
         render: (text, record, index) => {
