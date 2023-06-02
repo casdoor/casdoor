@@ -60,6 +60,7 @@ class UserListPage extends BaseListPage {
       IsForbidden: false,
       score: this.state.organization.initScore,
       isDeleted: false,
+      passwordChangeRequired: false,
       properties: {},
       signupApplication: "app-built-in",
     };

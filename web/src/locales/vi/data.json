@@ -801,6 +801,8 @@
     "Birthday - Tooltip": "Birthday - Tooltip",
     "Captcha Verify Failed": "Xác thực Captcha không thành công",
     "Captcha Verify Success": "Xác thực Captcha Thành công",
+    "Change password": "LOC: Change password",
+    "Change password - Tooltip": "LOC: The system will require the user to change the password after the next sign in",
     "Country code": "Mã quốc gia",
     "Country/Region": "Quốc gia / Vùng miền",
     "Country/Region - Tooltip": "Quốc gia hoặc khu vực",

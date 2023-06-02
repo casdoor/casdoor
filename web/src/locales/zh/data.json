@@ -801,6 +801,8 @@
     "Birthday - Tooltip": "Birthday - Tooltip",
     "Captcha Verify Failed": "验证码校验失败",
     "Captcha Verify Success": "验证码校验成功",
+    "Change password": "LOC: Change password",
+    "Change password - Tooltip": "LOC: The system will require the user to change the password after the next sign in",
     "Country code": "国家代码",
     "Country/Region": "国家/地区",
     "Country/Region - Tooltip": "国家或地区",

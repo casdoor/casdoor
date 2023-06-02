@@ -801,6 +801,8 @@
     "Birthday - Tooltip": "Birthday - Tooltip",
     "Captcha Verify Failed": "Gagal memverifikasi Captcha",
     "Captcha Verify Success": "Captcha Verifikasi Berhasil",
+    "Change password": "LOC: Change password",
+    "Change password - Tooltip": "LOC: The system will require the user to change the password after the next sign in",
     "Country code": "Kode negara",
     "Country/Region": "Negara/daerah",
     "Country/Region - Tooltip": "Negara atau wilayah",

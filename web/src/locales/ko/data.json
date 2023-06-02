@@ -801,6 +801,8 @@
     "Birthday - Tooltip": "Birthday - Tooltip",
     "Captcha Verify Failed": "캡차 검증 실패",
     "Captcha Verify Success": "캡차 검증 성공",
+    "Change password": "LOC: Change password",
+    "Change password - Tooltip": "LOC: The system will require the user to change the password after the next sign in",
     "Country code": "국가 코드",
     "Country/Region": "국가 / 지역",
     "Country/Region - Tooltip": "국가 또는 지역",

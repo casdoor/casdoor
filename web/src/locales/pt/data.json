@@ -799,6 +799,8 @@
   "Birthday - Tooltip": "Aniversário - Tooltip",
   "Captcha Verify Failed": "Falha na verificação de captcha",
   "Captcha Verify Success": "Verificação de captcha bem-sucedida",
+    "Change password": "LOC: Change password",
+    "Change password - Tooltip": "LOC: The system will require the user to change the password after the next sign in",
   "Country code": "Código do país",
   "Country/Region": "País/Região",
   "Country/Region - Tooltip": "País ou região",

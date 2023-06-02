@@ -293,6 +293,10 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		item := GetAccountItemByName("Is deleted", organization)
 		itemsChanged = append(itemsChanged, item)
 	}
+	if oldUser.PasswordChangeRequired != newUser.PasswordChangeRequired {
+		item := GetAccountItemByName("Change password", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
 
 	for i := range itemsChanged {
 		if pass, err := CheckAccountItemModifyRule(itemsChanged[i], isAdmin, lang); !pass {

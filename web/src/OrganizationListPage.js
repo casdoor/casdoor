@@ -69,6 +69,7 @@ class OrganizationListPage extends BaseListPage {
         {name: "Is global admin", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Is forbidden", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Is deleted", visible: true, viewRule: "Admin", modifyRule: "Admin"},
+        {name: "Change password", visible: true, viewRule: "Admin", modifyRule: "Admin"},
       ],
     };
   }

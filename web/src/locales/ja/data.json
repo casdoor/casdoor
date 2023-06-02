@@ -801,6 +801,8 @@
     "Birthday - Tooltip": "Birthday - Tooltip",
     "Captcha Verify Failed": "キャプチャ検証に失敗しました",
     "Captcha Verify Success": "キャプチャを確認しました。成功しました",
+    "Change password": "LOC: Change password",
+    "Change password - Tooltip": "LOC: The system will require the user to change the password after the next sign in",
     "Country code": "国番号",
     "Country/Region": "国/地域",
     "Country/Region - Tooltip": "国または地域",
