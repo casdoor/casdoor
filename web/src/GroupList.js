@@ -26,7 +26,7 @@ class GroupListPage extends BaseListPage {
   newGroup() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "admin", // this.props.account.applicationName,
+      owner: this.props.account.owner,
       name: `group_${randomName}`,
       createdTime: moment().format(),
       updatedTime: moment().format(),
@@ -42,7 +42,7 @@ class GroupListPage extends BaseListPage {
     GroupBackend.addGroup(newGroup)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/groups/${newGroup.name}`, mode: "add"});
+          this.props.history.push({pathname: `/groups/${newGroup.owner}/${newGroup.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -90,6 +90,21 @@ class GroupListPage extends BaseListPage {
         },
       },
       {
+        title: i18next.t("general:Organization"),
+        dataIndex: "owner",
+        key: "owner",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("owner"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
         title: i18next.t("general:Created time"),
         dataIndex: "createdTime",
         key: "createdTime",
@@ -103,7 +118,7 @@ class GroupListPage extends BaseListPage {
         title: i18next.t("general:Updated time"),
         dataIndex: "updatedTime",
         key: "updatedTime",
-        width: "15  0px",
+        width: "150px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -113,7 +128,7 @@ class GroupListPage extends BaseListPage {
         title: i18next.t("general:Display name"),
         dataIndex: "displayName",
         key: "displayName",
-        // width: '100px',
+        width: "100px",
         sorter: true,
         ...this.getColumnSearchProps("displayName"),
       },
@@ -152,7 +167,7 @@ class GroupListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/groups/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/groups/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteGroup(index)}
@@ -198,7 +213,7 @@ class GroupListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    GroupBackend.getGroups("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    GroupBackend.getGroups(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

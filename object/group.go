@@ -41,14 +41,14 @@ type Group struct {
 	IsEnabled bool `json:"isEnabled"`
 }
 
-func GetGroupCount(owner, field, value string) int {
+func GetGroupCount(owner, field, value string) int64 {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Group{})
 	if err != nil {
 		panic(err)
 	}
 
-	return int(count)
+	return count
 }
 
 func GetGroups(owner string) []*Group {

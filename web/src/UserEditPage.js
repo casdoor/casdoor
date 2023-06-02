@@ -66,10 +66,8 @@ class UserEditPage extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.state.organizations.accountItems?.some((item) => {
-      return item.name === "Group" && item.visible;
-    })) {
-      this.getGroups();
+    if (prevState.application !== this.state.application) {
+      this.getGroups(this.state.organizationName);
     }
   }
 
@@ -112,16 +110,24 @@ class UserEditPage extends React.Component {
         this.setState({
           application: application,
         });
+
+        this.setState({
+          isGroupsVisible: application.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
+        });
       });
   }
 
-  getGroups() {
-    GroupBackend.getGroups(this.state.owner)
-      .then((res) => {
-        this.setState({
-          groups: res.data,
+  getGroups(organizationName) {
+    if (this.state.isGroupsVisible) {
+      GroupBackend.getGroups(Setting.isAdminUser(this.props.account) ? "" : organizationName)
+        .then((res) => {
+          if (res.status === "ok") {
+            this.setState({
+              groups: res.data,
+            });
+          }
         });
-      });
+    }
   }
 
   setReturnUrl() {
@@ -273,6 +279,7 @@ class UserEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.owner} onChange={(value => {
               this.getApplicationsByOrganization(value);
               this.updateUserField("owner", value);
+              this.getGroups(value);
             })}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
@@ -281,17 +288,17 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
-    } else if (accountItem.name === "Group") {
+    } else if (accountItem.name === "Groups") {
       return (
         <Row style={{marginTop: "10px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Groups"), i18next.t("general:Groups - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.owner} onChange={(value => {
-              this.updateUserField("owner", value);
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} disabled={disabled} value={this.state.user.groups ?? []} onChange={(value => {
+              this.updateUserField("groups", value);
             })}
-            options={this.state.groups.map((group) => Setting.getOption(group.displayName, group.name))}
+            options={this.state.groups?.map((group) => Setting.getOption(group.displayName, group.id))}
             />
           </Col>
         </Row>

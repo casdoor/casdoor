@@ -15,6 +15,7 @@
 import React from "react";
 import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
 import * as GroupBackend from "./backend/GroupBackend";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import * as UserBackend from "./backend/UserBackend";
@@ -25,44 +26,63 @@ class GroupEditPage extends React.Component {
     this.state = {
       classes: props,
       groupName: props.match.params.groupName,
-      owner: props.match.params.owner ?? "admin",
+      organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       group: null,
       users: [],
       groups: [],
+      organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
   UNSAFE_componentWillMount() {
     this.getGroups();
+    this.getOrganizations();
     this.getUsers();
     this.getGroup();
   }
 
   getGroup() {
-    GroupBackend.getGroup(this.state.owner, this.state.groupName)
-      .then((group) => {
-        this.setState({
-          group: group,
-        });
+    GroupBackend.getGroup(this.state.organizationName, this.state.groupName)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            group: res.data,
+          });
+        }
       });
   }
 
   getUsers() {
-    UserBackend.getGroupUsers(this.getId({owner: this.state.owner, name: this.state.groupName}))
+    UserBackend.getGroupUsers(this.getId({owner: this.state.organizationName, name: this.state.groupName}))
       .then((res) => {
-        this.setState({
-          users: res,
-        });
+        if (res.status === "ok") {
+          this.setState({
+            users: res.data,
+          });
+        }
       });
   }
 
   getGroups() {
-    GroupBackend.getGroups(this.state.owner)
+    GroupBackend.getGroups(this.state.organizationName)
       .then((res) => {
-        this.setState({
-          groups: res.data,
-        });
+        if (res.status === "ok") {
+          this.setState({
+            groups: res.data,
+          });
+        }
+      });
+  }
+
+  getOrganizations() {
+    OrganizationBackend.getOrganizationNames("admin")
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            organizations: res.data,
+          });
+        }
       });
   }
 
@@ -100,6 +120,17 @@ class GroupEditPage extends React.Component {
       style={(Setting.isMobile()) ? {margin: "5px"} : {}}
       type="inner"
       >
+        <Row style={{marginTop: "10px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.group.owner}
+              onChange={(value => {this.updateGroupField("owner", value);})}
+              options={this.state.organizations.map((organization) => Setting.getOption(organization.name, organization.name))
+              } />
+          </Col>
+        </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
@@ -144,7 +175,8 @@ class GroupEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select style={{width: "100%"}}
-              options={this.state.groups.map((group) => ({label: group.displayName, value: group.name}))}
+              options={this.state.groups.filter((group) => group.name !== this.state.group.name)
+                .map((group) => ({label: group.displayName, value: group.name}))}
               value={this.state.group.parentGroupId} onChange={(value => {
                 this.updateGroupField("parentGroupId", value);
               }
@@ -167,7 +199,7 @@ class GroupEditPage extends React.Component {
 
   submitGroupEdit(willExist) {
     const group = Setting.deepCopy(this.state.group);
-    GroupBackend.updateGroup(this.state.owner, this.state.groupName, group)
+    GroupBackend.updateGroup(this.state.organizationName, this.state.groupName, group)
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
@@ -178,7 +210,7 @@ class GroupEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/groups");
           } else {
-            this.props.history.push(`/groups/${this.state.group.name}`);
+            this.props.history.push(`/groups/${this.state.group.owner}/${this.state.group.name}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);

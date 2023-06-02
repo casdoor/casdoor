@@ -15,6 +15,7 @@ package controllers
 
 import (
 	"encoding/json"
+
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -39,7 +40,7 @@ func (c *ApiController) GetGroups() {
 		c.ResponseOk(object.GetGroups(owner))
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGroupCount(owner, field, value)))
+		paginator := pagination.SetPaginator(c.Ctx, limit, object.GetGroupCount(owner, field, value))
 		groups := object.GetPaginationGroups(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		c.ResponseOk(groups, paginator.Nums())
 	}
@@ -55,8 +56,7 @@ func (c *ApiController) GetGroups() {
 func (c *ApiController) GetGroup() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetGroup(id)
-	c.ServeJSON()
+	c.ResponseOk(object.GetGroup(id))
 }
 
 // UpdateGroup
@@ -72,7 +72,6 @@ func (c *ApiController) UpdateGroup() {
 
 	var group object.Group
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &group)
-
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -116,6 +115,5 @@ func (c *ApiController) DeleteGroup() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteGroup(&group))
-	c.ServeJSON()
+	c.ResponseOk(wrapActionResponse(object.DeleteGroup(&group)))
 }

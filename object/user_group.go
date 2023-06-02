@@ -2,16 +2,15 @@ package object
 
 import (
 	"errors"
-	"github.com/xorm-io/core"
+
 	"github.com/xorm-io/xorm"
 )
 
 type UserGroupRelation struct {
-	UserId string `xorm:"varchar(100) notnull pk" json:"userId"`
+	UserId  string `xorm:"varchar(100) notnull pk" json:"userId"`
 	GroupId string `xorm:"varchar(100) notnull pk" json:"groupId"`
 
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
-	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
+	CreatedTime string `xorm:"created" json:"createdTime"`
 }
 
 func removeUserFromGroup(userId, groupId string) error {
@@ -34,18 +33,10 @@ func addUserToGroup(userId, groupId, groupType string) error {
 	return err
 }
 
-func updateUser(oldUser, user *User, columns []string) (int64, error) {
-	session := adapter.Engine.NewSession()
-	defer session.Close()
-
-	err := session.Begin()
-	if err != nil {
-		return 0, err
-	}
-
+func updateGroupRelation(session *xorm.Session, user *User) (int64, error) {
 	groupIds := user.Groups
 
-	physicalGroupCount, err := session.Where("type = ?", "physical").Count(Group{})
+	physicalGroupCount, err := session.Where("type = ?", "physical").In("id", user.Groups).Count(Group{})
 	if err != nil {
 		return 0, err
 	}
@@ -54,52 +45,22 @@ func updateUser(oldUser, user *User, columns []string) (int64, error) {
 	}
 
 	groups := []*Group{}
-	err = session.In("name", groupIds).Find(&groups)
+	err = session.In("id", groupIds).Find(&groups)
 	if err != nil {
 		return 0, err
 	}
-
-	groupMap := make(map[string]bool)
-	for _, group := range groups {
-		groupMap[group.Name] = true
-	}
-	for _, groupId := range groupIds {
-		if _, ok := groupMap[groupId]; !ok {
-			return 0, errors.New("groupIds not exist")
-		}
+	if len(groups) == 0 || len(groups) != len(groupIds) {
+		return 0, nil
 	}
 
-	affected, err := updateGroupRelation(session, oldUser.GetId(), user.GetId(), groupIds)
-	if err != nil {
-		session.Rollback()
-		return affected, err
-	}
-
-	// 更新用户信息
-	affected, err = session.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
-	if err != nil {
-		session.Rollback()
-		return affected, err
-	}
-
-	err = session.Commit()
-	if err != nil {
-		session.Rollback()
-		return 0, err
-	}
-
-	return affected, nil
-}
-
-func updateGroupRelation(session *xorm.Session, oldUserId, userId string, newGroupIds []string) (int64, error) {
-	_, err := session.Delete(&UserGroupRelation{UserId:oldUserId})
+	_, err = session.Delete(&UserGroupRelation{UserId: user.Id})
 	if err != nil {
 		return 0, err
 	}
 
 	relations := []*UserGroupRelation{}
-	for _, groupId := range newGroupIds {
-		relations = append(relations, &UserGroupRelation{UserId: userId, GroupId: groupId})
+	for _, group := range groups {
+		relations = append(relations, &UserGroupRelation{UserId: user.Id, GroupId: group.Id})
 	}
 	_, err = session.Insert(relations)
 	if err != nil {

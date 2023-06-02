@@ -281,7 +281,6 @@ func GetGroupUsers(id string) ([]*User, error) {
 	err := adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
 		Where("user_group_relation.group_id = ?", group.Id).
 		Find(&users)
-
 	if err != nil {
 		return nil, err
 	}
@@ -537,7 +536,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"owner", "display_name", "avatar",
 			"location", "address", "country_code", "region", "language", "affiliation", "title", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
 			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
-			"signin_wrong_times", "last_signin_wrong_time",
+			"signin_wrong_times", "last_signin_wrong_time", "groups",
 			"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
 			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "slack", "steam", "bilibili", "okta", "douyin", "line", "amazon",
 			"auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
@@ -557,6 +556,35 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	}
 
 	return affected != 0, nil
+}
+
+func updateUser(oldUser, user *User, columns []string) (int64, error) {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	session.Begin()
+
+	if util.ContainsString(columns, "groups") {
+		affected, err := updateGroupRelation(session, user)
+		if err != nil {
+			session.Rollback()
+			return affected, err
+		}
+	}
+
+	affected, err := session.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
+	if err != nil {
+		session.Rollback()
+		return affected, err
+	}
+
+	err = session.Commit()
+	if err != nil {
+		session.Rollback()
+		return 0, err
+	}
+
+	return affected, nil
 }
 
 func UpdateUserForAllFields(id string, user *User) (bool, error) {
