@@ -26,11 +26,12 @@ import (
 
 type Group struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk unique" json:"name"`
+	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
-	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
+	Id            string    `xorm:"varchar(100) not null index" json:"id"`
+	DisplayName   string    `xorm:"varchar(100)" json:"displayName"`
 	Manager       string    `xorm:"varchar(100)" json:"manager"`
 	ContactEmail  string    `xorm:"varchar(100)" json:"contactEmail"`
 	Type          string    `xorm:"varchar(100)" json:"type"`
@@ -110,6 +111,10 @@ func UpdateGroup(id string, group *Group) bool {
 }
 
 func AddGroup(group *Group) bool {
+	if group.Id == "" {
+		group.Id = util.GenerateId()
+	}
+
 	affected, err := adapter.Engine.Insert(group)
 	if err != nil {
 		panic(err)

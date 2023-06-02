@@ -278,8 +278,8 @@ func GetGroupUsers(id string) ([]*User, error) {
 
 	users := []*User{}
 	// UserGroupRelation store the relation between user and group, use join to query all users in the group. group.UserId is the foreign keys reference user. group.groupId is the foreign key reference group.
-	err := adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_owner = u.owner AND user_group_relation.user_name = u.name").
-		Where("user_group_relation.group_name = ?", group.Name).
+	err := adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
+		Where("user_group_relation.group_id = ?", group.Id).
 		Find(&users)
 
 	if err != nil {
@@ -298,8 +298,8 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 
 	users := []*User{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_owner = u.owner AND user_group_relation.user_name = u.name").
-		Where("user_group_relation.group_name = ?", group.Name).
+	err := session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
+		Where("user_group_relation.group_id = ?", group.Id).
 		Find(&users)
 	if err != nil {
 		return nil, err
@@ -315,10 +315,10 @@ func GetGroupUserCount(groupId, field, value string) (int64, error) {
 		return 0, errors.New("group not found")
 	}
 	// users count in group
-	// UserGroupRelation store the relation between user and group, use join to query all users in the group. group.UserOwner and group.UserName are the foreign keys reference user. group.groupName and group.groupOwner is the foreign key reference group. can just count the group.groupName and group.groupOwner, need not query the users then count.
+	// UserGroupRelation store the relation between user and group, use join to query all users in the group. can just count the group.groupName and group.groupOwner, need not query the users then count.
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_owner = u.owner AND user_group_relation.user_name = u.name").
-		Where("user_group_relation.group_name = ?", group.Name).
+	count, err := session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.owner").
+		Where("user_group_relation.group_id = ?", group.Id).
 		Count(&UserGroupRelation{})
 	if err != nil {
 		return 0, err
