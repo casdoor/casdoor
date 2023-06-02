@@ -287,7 +287,11 @@ func GetSessionForUser(owner string, offset, limit int, field, value, sortField,
 		session.Limit(limit, offset)
 	}
 	if owner != "" {
-		session = session.And("owner=?", owner)
+		if offset == -1 {
+			session = session.And("owner=?", owner)
+		} else {
+			session = session.And("a.owner=?", owner)
+		}
 	}
 	if field != "" && value != "" {
 		if filterField(field) {
