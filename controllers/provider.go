@@ -49,8 +49,7 @@ func (c *ApiController) GetProviders() {
 			panic(err)
 		}
 
-		c.Data["json"] = object.GetMaskedProviders(providers, isMaskEnabled)
-		c.ServeJSON()
+		c.ResponseOk(object.GetMaskedProviders(providers, isMaskEnabled))
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetProviderCount(owner, field, value)
@@ -96,8 +95,7 @@ func (c *ApiController) GetGlobalProviders() {
 			panic(err)
 		}
 
-		c.Data["json"] = object.GetMaskedProviders(globalProviders, isMaskEnabled)
-		c.ServeJSON()
+		c.ResponseOk(object.GetMaskedProviders(globalProviders, isMaskEnabled))
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetGlobalProviderCount(field, value)
@@ -138,8 +136,7 @@ func (c *ApiController) GetProvider() {
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedProvider(provider, isMaskEnabled)
-	c.ServeJSON()
+	c.ResponseOk(object.GetMaskedProvider(provider, isMaskEnabled))
 }
 
 // UpdateProvider
