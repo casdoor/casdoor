@@ -19,6 +19,9 @@ import "github.com/casdoor/casdoor/cred"
 func calculateHash(user *User) (string, error) {
 	syncer, err := getDbSyncerForUser(user)
 	if syncer == nil {
+		return "", nil
+	}
+	if err != nil {
 		return "", err
 	}
 

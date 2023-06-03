@@ -50,6 +50,9 @@ func getEnabledSyncerForOrganization(organization string) (*Syncer, error) {
 func AddUserToOriginalDatabase(user *User) error {
 	syncer, err := getEnabledSyncerForOrganization(user.Owner)
 	if syncer == nil {
+		return nil
+	}
+	if err != nil {
 		return err
 	}
 
@@ -66,6 +69,9 @@ func AddUserToOriginalDatabase(user *User) error {
 func UpdateUserToOriginalDatabase(user *User) error {
 	syncer, err := getEnabledSyncerForOrganization(user.Owner)
 	if syncer == nil {
+		return nil
+	}
+	if err != nil {
 		return err
 	}
 
