@@ -14,10 +14,7 @@
 
 package object
 
-import (
-	"errors"
-	"fmt"
-)
+import "fmt"
 
 func getDbSyncerForUser(user *User) (*Syncer, error) {
 	syncers, err := GetSyncers("admin")
@@ -41,17 +38,20 @@ func getEnabledSyncerForOrganization(organization string) (*Syncer, error) {
 
 	for _, syncer := range syncers {
 		if syncer.Organization == organization && syncer.IsEnabled {
-			syncer.initAdapter()
 			return syncer, nil
 		}
 	}
-	return nil, errors.New("no enabled syncer found")
+	return nil, nil
 }
 
 func AddUserToOriginalDatabase(user *User) error {
 	syncer, err := getEnabledSyncerForOrganization(user.Owner)
 	if err != nil {
 		return err
+	}
+
+	if syncer == nil {
+		return nil
 	}
 
 	updatedOUser := syncer.createOriginalUserFromUser(user)
@@ -68,6 +68,9 @@ func UpdateUserToOriginalDatabase(user *User) error {
 	syncer, err := getEnabledSyncerForOrganization(user.Owner)
 	if err != nil {
 		return err
+	}
+	if syncer == nil {
+		return nil
 	}
 
 	newUser, err := GetUser(user.GetId())
