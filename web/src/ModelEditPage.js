@@ -36,7 +36,6 @@ class ModelEditPage extends React.Component {
       model: null,
       organizations: [],
       users: [],
-      models: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -52,8 +51,6 @@ class ModelEditPage extends React.Component {
         this.setState({
           model: model,
         });
-
-        this.getModels(model.organization);
       });
   }
 
@@ -62,15 +59,6 @@ class ModelEditPage extends React.Component {
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
-        });
-      });
-  }
-
-  getModels(organizationName) {
-    ModelBackend.getModels(organizationName)
-      .then((res) => {
-        this.setState({
-          models: res,
         });
       });
   }
