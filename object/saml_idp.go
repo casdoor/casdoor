@@ -23,6 +23,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"time"
@@ -193,6 +194,10 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 	cert, err := getCertByApplication(application)
 	if err != nil {
 		return nil, err
+	}
+
+	if cert == nil {
+		return nil, errors.New("please set a cert for the application first")
 	}
 
 	block, _ := pem.Decode([]byte(cert.Certificate))
