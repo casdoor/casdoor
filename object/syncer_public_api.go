@@ -15,7 +15,6 @@
 package object
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -45,12 +44,12 @@ func getEnabledSyncerForOrganization(organization string) (*Syncer, error) {
 			return syncer, nil
 		}
 	}
-	return nil, errors.New("no enabled syncer found")
+	return nil, nil
 }
 
 func AddUserToOriginalDatabase(user *User) error {
 	syncer, err := getEnabledSyncerForOrganization(user.Owner)
-	if err != nil {
+	if syncer == nil {
 		return err
 	}
 
@@ -66,7 +65,7 @@ func AddUserToOriginalDatabase(user *User) error {
 
 func UpdateUserToOriginalDatabase(user *User) error {
 	syncer, err := getEnabledSyncerForOrganization(user.Owner)
-	if err != nil {
+	if syncer == nil {
 		return err
 	}
 
