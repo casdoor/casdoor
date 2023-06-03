@@ -107,7 +107,7 @@ func (syncer *Syncer) updateUser(user *OriginalUser) (bool, error) {
 	delete(m, syncer.TablePrimaryKey)
 	setString := syncer.getSqlSetStringFromMap(m)
 
-	sql := fmt.Sprintf("update %s set %s where %s = '%s'", syncer.getTable(), setString, syncer.TablePrimaryKey, pkValue)
+	sql := fmt.Sprintf("update %s set %s where %s = %s", syncer.getTable(), setString, syncer.TablePrimaryKey, pkValue)
 	res, err := syncer.Adapter.Engine.Exec(sql)
 	if err != nil {
 		return false, err
