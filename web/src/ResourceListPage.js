@@ -311,9 +311,11 @@ class ResourceListPage extends BaseListPage {
     this.setState({loading: true});
     ResourceBackend.getResources(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, this.props.account.name, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
+        this.setState({
+          loading: false,
+        });
         if (res.status === "ok") {
           this.setState({
-            loading: false,
             data: res.data,
             pagination: {
               ...params.pagination,
