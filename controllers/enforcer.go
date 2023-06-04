@@ -44,7 +44,15 @@ func (c *ApiController) Enforce() {
 	}
 
 	if permissionId != "" {
-		c.ResponseOk(object.Enforce(permissionId, &request))
+		enforceResult, err := object.Enforce(permissionId, &request)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		res := []bool{}
+		res = append(res, enforceResult)
+		c.ResponseOk(res)
 		return
 	}
 
@@ -69,7 +77,13 @@ func (c *ApiController) Enforce() {
 
 	res := []bool{}
 	for _, permission := range permissions {
-		res = append(res, object.Enforce(permission.GetId(), &request))
+		enforceResult, err := object.Enforce(permission.GetId(), &request)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		res = append(res, enforceResult)
 	}
 	c.ResponseOk(res)
 }
@@ -95,7 +109,15 @@ func (c *ApiController) BatchEnforce() {
 	}
 
 	if permissionId != "" {
-		c.ResponseOk(object.BatchEnforce(permissionId, &requests))
+		enforceResult, err := object.BatchEnforce(permissionId, &requests)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		res := [][]bool{}
+		res = append(res, enforceResult)
+		c.ResponseOk(res)
 		return
 	}
 
@@ -114,7 +136,13 @@ func (c *ApiController) BatchEnforce() {
 
 	res := [][]bool{}
 	for _, permission := range permissions {
-		res = append(res, object.BatchEnforce(permission.GetId(), &requests))
+		enforceResult, err := object.BatchEnforce(permission.GetId(), &requests)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		res = append(res, enforceResult)
 	}
 	c.ResponseOk(res)
 }

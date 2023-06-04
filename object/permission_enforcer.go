@@ -241,33 +241,29 @@ func removePolicies(permission *Permission) {
 
 type CasbinRequest = []interface{}
 
-func Enforce(permissionId string, request *CasbinRequest) bool {
+func Enforce(permissionId string, request *CasbinRequest) (bool, error) {
 	permission, err := GetPermission(permissionId)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	enforcer := getEnforcer(permission)
-
-	allow, err := enforcer.Enforce(*request...)
-	if err != nil {
-		panic(err)
-	}
-	return allow
+	return enforcer.Enforce(*request...)
 }
 
-func BatchEnforce(permissionId string, requests *[]CasbinRequest) []bool {
+func BatchEnforce(permissionId string, requests *[]CasbinRequest) ([]bool, error) {
 	permission, err := GetPermission(permissionId)
 	if err != nil {
-		panic(err)
+		res := []bool{}
+		for i := 0; i < len(*requests); i++ {
+			res = append(res, false)
+		}
+
+		return res, err
 	}
 
 	enforcer := getEnforcer(permission)
-	allow, err := enforcer.BatchEnforce(*requests)
-	if err != nil {
-		panic(err)
-	}
-	return allow
+	return enforcer.BatchEnforce(*requests)
 }
 
 func getAllValues(userId string, fn func(enforcer *casbin.Enforcer) []string) []string {
