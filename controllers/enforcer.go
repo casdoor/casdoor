@@ -24,22 +24,17 @@ import (
 // Enforce
 // @Title Enforce
 // @Tag Enforce API
-// @Description perform enforce
-// @Param   body    body   object.CasbinRequest  true   "casbin request"
+// @Description Call Casbin Enforce API
+// @Param   body    body   object.CasbinRequest  true   "Casbin request"
 // @Param   permissionId    query   string  false   "permission id"
-// @Param   modelId    query   string  false   "model id
-// @Param   resourceId    query   string  false   "resource id
+// @Param   modelId    query   string  false   "model id"
+// @Param   resourceId    query   string  false   "resource id"
 // @Success 200 {object} controllers.Response The Response object
 // @router /enforce [post]
 func (c *ApiController) Enforce() {
 	permissionId := c.Input().Get("permissionId")
 	modelId := c.Input().Get("modelId")
 	resourceId := c.Input().Get("resourceId")
-
-	if util.IsAllStringEmpty(permissionId, modelId, resourceId) {
-		c.ResponseError(c.T("general:Missing parameter"))
-		return
-	}
 
 	var request object.CasbinRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
@@ -53,24 +48,26 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
-	permissions := make([]*object.Permission, 0)
-	res := []bool{}
-
+	permissions := []*object.Permission{}
 	if modelId != "" {
 		owner, modelName := util.GetOwnerAndNameFromId(modelId)
 		permissions, err = object.GetPermissionsByModel(owner, modelName)
 		if err != nil {
-			c.ResponseError("Permissions for the model could not be found")
+			c.ResponseError(err.Error())
+			return
 		}
-	}
-
-	if resourceId != "" {
+	} else if resourceId != "" {
 		permissions, err = object.GetPermissionsByResource(resourceId)
 		if err != nil {
-			c.ResponseError("Permissions for the resource could not be found")
+			c.ResponseError(err.Error())
+			return
 		}
+	} else {
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
 	}
 
+	res := []bool{}
 	for _, permission := range permissions {
 		res = append(res, object.Enforce(permission.GetId(), &request))
 	}
@@ -80,45 +77,46 @@ func (c *ApiController) Enforce() {
 // BatchEnforce
 // @Title BatchEnforce
 // @Tag Enforce API
-// @Description perform enforce
-// @Param   body    body   object.CasbinRequest  true   "casbin request array"
+// @Description Call Casbin BatchEnforce API
+// @Param   body    body   object.CasbinRequest  true   "array of casbin requests"
 // @Param   permissionId    query   string  false   "permission id"
-// @Param   modelId    query   string  false   "model id
+// @Param   modelId    query   string  false   "model id"
 // @Success 200 {object} controllers.Response The Response object
 // @router /batch-enforce [post]
 func (c *ApiController) BatchEnforce() {
 	permissionId := c.Input().Get("permissionId")
 	modelId := c.Input().Get("modelId")
 
-	if util.IsAllStringEmpty(permissionId, modelId) {
-		c.ResponseError(c.T("general:Missing parameter"))
-		return
-	}
-
 	var requests []object.CasbinRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
 
 	if permissionId != "" {
 		c.ResponseOk(object.BatchEnforce(permissionId, &requests))
+		return
 	}
 
+	permissions := []*object.Permission{}
 	if modelId != "" {
 		owner, modelName := util.GetOwnerAndNameFromId(modelId)
-		permissions, err := object.GetPermissionsByModel(owner, modelName)
+		permissions, err = object.GetPermissionsByModel(owner, modelName)
 		if err != nil {
-			c.ResponseError("Permissions for the model could not be found")
+			c.ResponseError(err.Error())
+			return
 		}
-
-		res := [][]bool{}
-		for _, permission := range permissions {
-			res = append(res, object.BatchEnforce(permission.GetId(), &requests))
-		}
-
-		c.ResponseOk(res)
+	} else {
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
 	}
+
+	res := [][]bool{}
+	for _, permission := range permissions {
+		res = append(res, object.BatchEnforce(permission.GetId(), &requests))
+	}
+	c.ResponseOk(res)
 }
 
 func (c *ApiController) GetAllObjects() {
