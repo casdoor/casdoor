@@ -174,15 +174,6 @@ func IsStringsEmpty(strs ...string) bool {
 	return false
 }
 
-func IsAllStringEmpty(strs ...string) bool {
-	for _, str := range strs {
-		if len(str) != 0 {
-			return false
-		}
-	}
-	return true
-}
-
 func GetMaxLenStr(strs ...string) string {
 	m := 0
 	i := 0
