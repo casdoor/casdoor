@@ -777,6 +777,46 @@
                 "operationId": "ApiController.HandleOfficialAccountEvent"
             }
         },
+        "/api/batch-enforce": {
+            "post": {
+                "tags": [
+                    "Enforce API"
+                ],
+                "description": "perform enforce",
+                "operationId": "ApiController.BatchEnforce",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "casbin request array",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.CasbinRequest"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "permissionId",
+                        "description": "permission id",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "modelId",
+                        "description": "model id",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/buy-product": {
             "post": {
                 "tags": [
@@ -1384,6 +1424,52 @@
                 }
             }
         },
+        "/api/enforce": {
+            "post": {
+                "tags": [
+                    "Enforce API"
+                ],
+                "description": "perform enforce",
+                "operationId": "ApiController.Enforce",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "casbin request",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.CasbinRequest"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "permissionId",
+                        "description": "permission id",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "modelId",
+                        "description": "model id",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "resourceId",
+                        "description": "resource id",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/get-account": {
             "get": {
                 "tags": [
@@ -1948,6 +2034,35 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/object.Application"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-organization-names": {
+            "get": {
+                "tags": [
+                    "Organization API"
+                ],
+                "description": "get all organization names",
+                "operationId": "ApiController.GetOrganizationNames",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "owner",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Organization"
                             }
                         }
                     }
@@ -2826,7 +2941,6 @@
                         "in": "query",
                         "name": "id",
                         "description": "The id ( owner/name ) of the user",
-                        "required": true,
                         "type": "string"
                     },
                     {
@@ -3057,6 +3171,23 @@
                             "items": {
                                 "$ref": "#/definitions/object.Webhook"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/health": {
+            "get": {
+                "tags": [
+                    "System API"
+                ],
+                "description": "check if the system is live",
+                "operationId": "ApiController.Health",
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -4501,11 +4632,11 @@
         }
     },
     "definitions": {
-        "1183.0x1400042eb70.false": {
+        "1225.0xc0002e2ae0.false": {
             "title": "false",
             "type": "object"
         },
-        "1217.0x1400042eba0.false": {
+        "1260.0xc0002e2b10.false": {
             "title": "false",
             "type": "object"
         },
@@ -4554,10 +4685,10 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1183.0x1400042eb70.false"
+                    "$ref": "#/definitions/1225.0xc0002e2ae0.false"
                 },
                 "data2": {
-                    "$ref": "#/definitions/1217.0x1400042eba0.false"
+                    "$ref": "#/definitions/1260.0xc0002e2b10.false"
                 },
                 "msg": {
                     "type": "string"
@@ -4593,6 +4724,10 @@
         },
         "jose.JSONWebKey": {
             "title": "JSONWebKey",
+            "type": "object"
+        },
+        "object.\u0026{179844 0xc000a02f90 false}": {
+            "title": "\u0026{179844 0xc000a02f90 false}",
             "type": "object"
         },
         "object.AccountItem": {
@@ -4693,6 +4828,9 @@
                 "formCss": {
                     "type": "string"
                 },
+                "formCssMobile": {
+                    "type": "string"
+                },
                 "formOffset": {
                     "type": "integer",
                     "format": "int64"
@@ -4713,6 +4851,9 @@
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "orgChoiceMode": {
                     "type": "string"
                 },
                 "organization": {
@@ -4770,6 +4911,13 @@
                 "tokenFormat": {
                     "type": "string"
                 }
+            }
+        },
+        "object.CasbinRequest": {
+            "title": "CasbinRequest",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/object.\u0026{179844 0xc000a02f90 false}"
             }
         },
         "object.Cert": {
@@ -5008,6 +5156,18 @@
                 }
             }
         },
+        "object.MfaItem": {
+            "title": "MfaItem",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "rule": {
+                    "type": "string"
+                }
+            }
+        },
         "object.MfaProps": {
             "title": "MfaProps",
             "type": "object",
@@ -5189,6 +5349,12 @@
                 },
                 "masterPassword": {
                     "type": "string"
+                },
+                "mfaItems": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.MfaItem"
+                    }
                 },
                 "name": {
                     "type": "string"
@@ -5395,8 +5561,17 @@
                 "displayName": {
                     "type": "string"
                 },
+                "isEnabled": {
+                    "type": "boolean"
+                },
                 "name": {
                     "type": "string"
+                },
+                "options": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "owner": {
                     "type": "string"
@@ -5411,9 +5586,6 @@
                 },
                 "role": {
                     "type": "string"
-                },
-                "options": {
-                    "type": "array"
                 }
             }
         },
@@ -5735,6 +5907,9 @@
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "object": {
                     "type": "string"
                 },
                 "organization": {
@@ -6341,6 +6516,9 @@
                 "passwordSalt": {
                     "type": "string"
                 },
+                "passwordType": {
+                    "type": "string"
+                },
                 "patreon": {
                     "type": "string"
                 },
@@ -6503,6 +6681,9 @@
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "organization": {
                     "type": "string"
                 },
                 "phone": {
