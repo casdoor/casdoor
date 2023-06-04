@@ -21,10 +21,25 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+// Enforce
+// @Title Enforce
+// @Tag Enforce API
+// @Description perform enforce
+// @Param   body    body   object.CasbinRequest  true   "casbin request"
+// @Param   permissionId    query   string  false   "permission id"
+// @Param   modelId    query   string  false   "model id
+// @Param   resourceId    query   string  false   "resource id
+// @Success 200 {object} controllers.Response The Response object
+// @router /enforce [post]
 func (c *ApiController) Enforce() {
 	permissionId := c.Input().Get("permissionId")
 	modelId := c.Input().Get("modelId")
 	resourceId := c.Input().Get("resourceId")
+
+	if util.IsAllStringEmpty(permissionId, modelId, resourceId) {
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
+	}
 
 	var request object.CasbinRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
@@ -45,40 +60,56 @@ func (c *ApiController) Enforce() {
 		owner, modelName := util.GetOwnerAndNameFromId(modelId)
 		permissions, err = object.GetPermissionsByModel(owner, modelName)
 		if err != nil {
-			panic(err)
+			c.ResponseError("Permissions for the model could not be found")
 		}
-	} else {
+	}
+
+	if resourceId != "" {
 		permissions, err = object.GetPermissionsByResource(resourceId)
 		if err != nil {
-			panic(err)
+			c.ResponseError("Permissions for the resource could not be found")
 		}
 	}
 
 	for _, permission := range permissions {
 		res = append(res, object.Enforce(permission.GetId(), &request))
 	}
-	c.Data["json"] = res
-	c.ServeJSON()
+	c.ResponseOk(res)
 }
 
+// BatchEnforce
+// @Title BatchEnforce
+// @Tag Enforce API
+// @Description perform enforce
+// @Param   body    body   object.CasbinRequest  true   "casbin request array"
+// @Param   permissionId    query   string  false   "permission id"
+// @Param   modelId    query   string  false   "model id
+// @Success 200 {object} controllers.Response The Response object
+// @router /batch-enforce [post]
 func (c *ApiController) BatchEnforce() {
 	permissionId := c.Input().Get("permissionId")
 	modelId := c.Input().Get("modelId")
 
+	if util.IsAllStringEmpty(permissionId, modelId) {
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
+	}
+
 	var requests []object.CasbinRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
 	}
 
 	if permissionId != "" {
-		c.Data["json"] = object.BatchEnforce(permissionId, &requests)
-		c.ServeJSON()
-	} else {
+		c.ResponseOk(object.BatchEnforce(permissionId, &requests))
+	}
+
+	if modelId != "" {
 		owner, modelName := util.GetOwnerAndNameFromId(modelId)
 		permissions, err := object.GetPermissionsByModel(owner, modelName)
 		if err != nil {
-			panic(err)
+			c.ResponseError("Permissions for the model could not be found")
 		}
 
 		res := [][]bool{}
