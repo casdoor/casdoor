@@ -47,6 +47,10 @@ func InitConfig() {
 
 func InitAdapter() {
 	adapter = NewAdapter(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
+
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	tbMapper := core.NewPrefixMapper(core.SnakeMapper{}, tableNamePrefix)
+	adapter.Engine.SetTableMapper(tbMapper)
 }
 
 func CreateTables(createDatabase bool) {
@@ -121,10 +125,6 @@ func (a *Adapter) close() {
 func (a *Adapter) createTable() {
 	showSql := conf.GetConfigBool("showSql")
 	a.Engine.ShowSQL(showSql)
-
-	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	tbMapper := core.NewPrefixMapper(core.SnakeMapper{}, tableNamePrefix)
-	a.Engine.SetTableMapper(tbMapper)
 
 	err := a.Engine.Sync2(new(Organization))
 	if err != nil {
