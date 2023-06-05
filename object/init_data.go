@@ -14,7 +14,10 @@
 
 package object
 
-import "github.com/casdoor/casdoor/util"
+import (
+	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
+)
 
 type InitData struct {
 	Organizations []*Organization `json:"organizations"`
@@ -35,7 +38,12 @@ type InitData struct {
 }
 
 func InitFromFile() {
-	initData, err := readInitDataFromFile("./init_data.json")
+	initDataFile := conf.GetConfigString("initDataFile")
+	if initDataFile == "" {
+		return
+	}
+
+	initData, err := readInitDataFromFile(initDataFile)
 	if err != nil {
 		panic(err)
 	}
