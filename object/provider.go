@@ -225,8 +225,10 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 		session = session.Omit("client_secret2")
 	}
 
-	provider.Endpoint = util.GetEndPoint(provider.Endpoint)
-	provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
+	if provider.Type != "Keycloak" {
+		provider.Endpoint = util.GetEndPoint(provider.Endpoint)
+		provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
+	}
 
 	affected, err := session.Update(provider)
 	if err != nil {
