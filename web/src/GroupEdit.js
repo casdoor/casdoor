@@ -18,7 +18,6 @@ import * as GroupBackend from "./backend/GroupBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import * as UserBackend from "./backend/UserBackend";
 
 class GroupEditPage extends React.Component {
   constructor(props) {
@@ -36,10 +35,9 @@ class GroupEditPage extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
+    this.getGroup();
     this.getGroups();
     this.getOrganizations();
-    this.getUsers();
-    this.getGroup();
   }
 
   getGroup() {
@@ -48,17 +46,6 @@ class GroupEditPage extends React.Component {
         if (res.status === "ok") {
           this.setState({
             group: res.data,
-          });
-        }
-      });
-  }
-
-  getUsers() {
-    UserBackend.getGroupUsers(this.getId({owner: this.state.organizationName, name: this.state.groupName}))
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            users: res.data,
           });
         }
       });
@@ -105,6 +92,12 @@ class GroupEditPage extends React.Component {
     this.setState({
       group: group,
     });
+  }
+
+  getParentIdOptions() {
+    const groups = this.state.groups.filter((group) => group.id !== this.state.group.id);
+    groups.push({id: this.state.group.owner, displayName: this.state.group.owner});
+    return groups.map((group) => ({label: group.displayName, value: group.id}));
   }
 
   renderGroup() {
@@ -175,8 +168,7 @@ class GroupEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select style={{width: "100%"}}
-              options={this.state.groups.filter((group) => group.name !== this.state.group.name)
-                .map((group) => ({label: group.displayName, value: group.name}))}
+              options={this.getParentIdOptions()}
               value={this.state.group.parentGroupId} onChange={(value => {
                 this.updateGroupField("parentGroupId", value);
               }

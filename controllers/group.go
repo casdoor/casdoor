@@ -37,12 +37,29 @@ func (c *ApiController) GetGroups() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	if limit == "" || page == "" {
-		c.ResponseOk(object.GetGroups(owner))
+		groups, err := object.GetGroups(owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		} else {
+			c.ResponseOk(groups)
+		}
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, object.GetGroupCount(owner, field, value))
-		groups := object.GetPaginationGroups(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
-		c.ResponseOk(groups, paginator.Nums())
+		count, err := object.GetGroupCount(owner, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		groups, err := object.GetPaginationGroups(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		} else {
+			c.ResponseOk(groups, paginator.Nums())
+		}
 	}
 }
 
@@ -56,7 +73,12 @@ func (c *ApiController) GetGroups() {
 func (c *ApiController) GetGroup() {
 	id := c.Input().Get("id")
 
-	c.ResponseOk(object.GetGroup(id))
+	group, err := object.GetGroup(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+	} else {
+		c.ResponseOk(group)
+	}
 }
 
 // UpdateGroup

@@ -16,9 +16,6 @@ package object
 
 import (
 	"fmt"
-	"strings"
-
-	"github.com/casdoor/casdoor/conf"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -41,134 +38,106 @@ type Group struct {
 	IsEnabled bool `json:"isEnabled"`
 }
 
-func GetGroupCount(owner, field, value string) int64 {
+func GetGroupCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 	count, err := session.Count(&Group{})
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
-	return count
+	return count, nil
 }
 
-func GetGroups(owner string) []*Group {
+func GetGroups(owner string) ([]*Group, error) {
 	groups := []*Group{}
 	err := adapter.Engine.Desc("created_time").Find(&groups, &Group{Owner: owner})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return groups
+	return groups, nil
 }
 
-func GetPaginationGroups(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Group {
+func GetPaginationGroups(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Group, error) {
 	groups := []*Group{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&groups)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return groups
+	return groups, nil
 }
 
-func getGroup(owner string, name string) *Group {
+func getGroup(owner string, name string) (*Group, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	group := Group{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&group)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if existed {
-		return &group
+		return &group, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetGroup(id string) *Group {
+func GetGroup(id string) (*Group, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getGroup(owner, name)
 }
 
-func UpdateGroup(id string, group *Group) bool {
+func UpdateGroup(id string, group *Group) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	oldGroup := getGroup(owner, name)
+	oldGroup, err := getGroup(owner, name)
 	if oldGroup == nil {
-		return false
+		return false, err
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(group)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddGroup(group *Group) bool {
+func AddGroup(group *Group) (bool, error) {
 	if group.Id == "" {
 		group.Id = util.GenerateId()
 	}
 
 	affected, err := adapter.Engine.Insert(group)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddGroups(groups []*Group) bool {
+func AddGroups(groups []*Group) (bool, error) {
 	if len(groups) == 0 {
-		return false
+		return false, nil
 	}
 	affected, err := adapter.Engine.Insert(groups)
 	if err != nil {
-		if !strings.Contains(err.Error(), "Duplicate entry") {
-			panic(err)
-		}
+		return false, err
 	}
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddGroupsInBatch(groups []*Group) bool {
-	batchSize := conf.GetConfigBatchSize()
-
-	if len(groups) == 0 {
-		return false
-	}
-
-	affected := false
-	for i := 0; i < (len(groups)-1)/batchSize+1; i++ {
-		start := i * batchSize
-		end := (i + 1) * batchSize
-		if end > len(groups) {
-			end = len(groups)
-		}
-
-		tmp := groups[start:end]
-		// TODO: save to log instead of standard output
-		// fmt.Printf("Add users: [%d - %d].\n", start, end)
-		if AddGroups(tmp) {
-			affected = true
-		}
-	}
-
-	return affected
-}
-
-func DeleteGroup(group *Group) bool {
+func DeleteGroup(group *Group) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{group.Owner, group.Name}).Delete(&Group{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (group *Group) GetId() string {

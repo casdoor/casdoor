@@ -271,14 +271,14 @@ func GetPaginationUsers(owner string, offset, limit int, field, value, sortField
 }
 
 func GetGroupUsers(id string) ([]*User, error) {
-	group := GetGroup(id)
+	group, err := GetGroup(id)
 	if group == nil {
-		return nil, errors.New("group not found")
+		return nil, errors.New("group not found " + err.Error())
 	}
 
 	users := []*User{}
 	// UserGroupRelation store the relation between user and group, use join to query all users in the group. group.UserId is the foreign keys reference user. group.groupId is the foreign key reference group.
-	err := adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
+	err = adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
 		Where("user_group_relation.group_id = ?", group.Id).
 		Find(&users)
 	if err != nil {
@@ -290,14 +290,14 @@ func GetGroupUsers(id string) ([]*User, error) {
 
 func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
 	owner, name := util.GetOwnerAndNameFromId(groupId)
-	group := getGroup(owner, name)
+	group, err := getGroup(owner, name)
 	if group == nil {
-		return nil, errors.New("group not found")
+		return nil, errors.New("group not found " + err.Error())
 	}
 
 	users := []*User{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
+	err = session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
 		Where("user_group_relation.group_id = ?", group.Id).
 		Find(&users)
 	if err != nil {
@@ -309,9 +309,9 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 
 func GetGroupUserCount(groupId, field, value string) (int64, error) {
 	owner, name := util.GetOwnerAndNameFromId(groupId)
-	group := getGroup(owner, name)
+	group, err := getGroup(owner, name)
 	if group == nil {
-		return 0, errors.New("group not found")
+		return 0, errors.New("group not found " + err.Error())
 	}
 	// users count in group
 	// UserGroupRelation store the relation between user and group, use join to query all users in the group. can just count the group.groupName and group.groupOwner, need not query the users then count.
