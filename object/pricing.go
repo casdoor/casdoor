@@ -31,7 +31,6 @@ type Pricing struct {
 
 	Plans         []string `xorm:"mediumtext" json:"plans"`
 	IsEnabled     bool     `json:"isEnabled"`
-	HasTrial      bool     `json:"hasTrial"`
 	TrialDuration int      `json:"trialDuration"`
 	Application   string   `xorm:"varchar(100)" json:"application"`
 

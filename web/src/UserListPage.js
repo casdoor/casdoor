@@ -391,9 +391,11 @@ class UserListPage extends BaseListPage {
     if (this.props.match.params.organizationName === undefined) {
       (Setting.isAdminUser(this.props.account) ? UserBackend.getGlobalUsers(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) : UserBackend.getUsers(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
         .then((res) => {
+          this.setState({
+            loading: false,
+          });
           if (res.status === "ok") {
             this.setState({
-              loading: false,
               data: res.data,
               pagination: {
                 ...params.pagination,
@@ -410,20 +412,24 @@ class UserListPage extends BaseListPage {
               this.getOrganization(this.state.organizationName);
             }
           } else {
+
             if (Setting.isResponseDenied(res)) {
               this.setState({
-                loading: false,
                 isAuthorized: false,
               });
+            } else {
+              Setting.showMessage("error", res.msg);
             }
           }
         });
     } else {
       UserBackend.getUsers(this.props.match.params.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
         .then((res) => {
+          this.setState({
+            loading: false,
+          });
           if (res.status === "ok") {
             this.setState({
-              loading: false,
               data: res.data,
               pagination: {
                 ...params.pagination,
@@ -442,9 +448,10 @@ class UserListPage extends BaseListPage {
           } else {
             if (Setting.isResponseDenied(res)) {
               this.setState({
-                loading: false,
                 isAuthorized: false,
               });
+            } else {
+              Setting.showMessage("error", res.msg);
             }
           }
         });
