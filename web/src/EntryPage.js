@@ -29,6 +29,7 @@ import PromptPage from "./auth/PromptPage";
 import ResultPage from "./auth/ResultPage";
 import CasLogout from "./auth/CasLogout";
 import {authConfig} from "./auth/Auth";
+import ChangePasswordPage from "./auth/ChangePasswordPage";
 
 class EntryPage extends React.Component {
   constructor(props) {
@@ -103,6 +104,7 @@ class EntryPage extends React.Component {
           <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage {...this.props} application={this.state.application} type={"cas"} mode={"signin"} onUpdateApplication={onUpdateApplication} {...props} />);}} />
           <Route exact path="/select-plan/:pricingName" render={(props) => this.renderHomeIfLoggedIn(<PricingPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />)} />
+          <Route exact path="/change-password" render={(props) => {return (<ChangePasswordPage account={this.state.account} {...props} />);}} />
         </Switch>
       </div>
     );

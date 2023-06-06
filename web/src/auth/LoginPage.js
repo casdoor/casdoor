@@ -333,17 +333,6 @@ class LoginPage extends React.Component {
 
             if (responseType === "login") {
               if (res.msg === RequiredMfa) {
-                AuthBackend.getAccount().then((res) => {
-                  if (res.status === "ok") {
-                    const account = res.data;
-                    if (account.passwordChangeRequired) {
-                      Setting.goToLink("/changePassword");
-                    } else {
-                      account.organization = res.data2;
-                      this.onUpdateAccount(account);
-                    }
-                  }
-                });
                 Setting.goToLink(`/prompt/${this.getApplicationObj().name}?promptType=mfa`);
               } else {
                 Setting.showMessage("success", i18next.t("application:Logged in successfully"));

@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Button, Card, Col, Input, Row} from "antd";
-import * as Setting from "./Setting";
+import * as Setting from "../Setting";
 import i18next from "i18next";
 
 class ChangePasswordPage extends React.Component {
