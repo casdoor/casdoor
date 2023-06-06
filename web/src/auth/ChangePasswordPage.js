@@ -16,6 +16,7 @@ import React from "react";
 import {Button, Card, Col, Input, Row} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
+import * as ApplicationBackend from "../backend/ApplicationBackend";
 
 class ChangePasswordPage extends React.Component {
   constructor(props) {
@@ -23,12 +24,38 @@ class ChangePasswordPage extends React.Component {
     this.state = {
       classes: props,
       users: [],
+      applicationName: props.applicationName ?? props.match.params?.applicationName,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
-  UNSAFE_componentWillMount() {
-    // TODO:
+  componentDidMount() {
+    if (this.getApplicationObj() === undefined) {
+      if (this.state.applicationName !== undefined) {
+        this.getApplication();
+      } else {
+        Setting.showMessage("error", i18next.t("forget:Unknown forget type") + ": " + this.state.type);
+      }
+    }
+  }
+
+  getApplication() {
+    if (this.state.applicationName === undefined) {
+      return;
+    }
+
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
+      .then((application) => {
+        this.onUpdateApplication(application);
+      });
+  }
+
+  getApplicationObj() {
+    return this.props.application;
+  }
+
+  onUpdateApplication(application) {
+    this.props.onUpdateApplication(application);
   }
 
   renderChat() {
