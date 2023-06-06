@@ -239,8 +239,10 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 }
 
 func AddProvider(provider *Provider) (bool, error) {
-	provider.Endpoint = util.GetEndPoint(provider.Endpoint)
-	provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
+	if provider.Type != "Keycloak" {
+		provider.Endpoint = util.GetEndPoint(provider.Endpoint)
+		provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
+	}
 
 	affected, err := adapter.Engine.Insert(provider)
 	if err != nil {
