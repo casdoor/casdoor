@@ -295,6 +295,9 @@ func GetSessionForUser(owner string, offset, limit int, field, value, sortField,
 	}
 	if field != "" && value != "" {
 		if filterField(field) {
+			if offset != -1 {
+				field = fmt.Sprintf("a.%s", field)
+			}
 			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
 		}
 	}
