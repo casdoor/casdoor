@@ -27,6 +27,7 @@ type Model struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
+	Description string `xorm:"varchar(100)" json:"description"`
 
 	ModelText string `xorm:"mediumtext" json:"modelText"`
 	IsEnabled bool   `json:"isEnabled"`

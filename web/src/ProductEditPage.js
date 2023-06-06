@@ -54,9 +54,13 @@ class ProductEditPage extends React.Component {
   getPaymentProviders() {
     ProviderBackend.getProviders(this.props.account.owner)
       .then((res) => {
-        this.setState({
-          providers: res.filter(provider => provider.category === "Payment"),
-        });
+        if (res.status === "ok") {
+          this.setState({
+            providers: res.data.filter(provider => provider.category === "Payment"),
+          });
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
       });
   }
 

@@ -34,7 +34,7 @@ const (
 type User struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	CreatedTime string `xorm:"varchar(100) index" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
 	Id                string   `xorm:"varchar(100) index" json:"id"`
@@ -173,15 +173,16 @@ type User struct {
 }
 
 type Userinfo struct {
-	Sub         string `json:"sub"`
-	Iss         string `json:"iss"`
-	Aud         string `json:"aud"`
-	Name        string `json:"preferred_username,omitempty"`
-	DisplayName string `json:"name,omitempty"`
-	Email       string `json:"email,omitempty"`
-	Avatar      string `json:"picture,omitempty"`
-	Address     string `json:"address,omitempty"`
-	Phone       string `json:"phone,omitempty"`
+	Sub         string   `json:"sub"`
+	Iss         string   `json:"iss"`
+	Aud         string   `json:"aud"`
+	Name        string   `json:"preferred_username,omitempty"`
+	DisplayName string   `json:"name,omitempty"`
+	Email       string   `json:"email,omitempty"`
+	Avatar      string   `json:"picture,omitempty"`
+	Address     string   `json:"address,omitempty"`
+	Phone       string   `json:"phone,omitempty"`
+	Groups      []string `json:"groups,omitempty"`
 }
 
 type ManagedAccount struct {
@@ -208,7 +209,7 @@ func GetGlobalUsers() ([]*User, error) {
 
 func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
 	users := []*User{}
-	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
+	session := GetSessionForUser("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&users)
 	if err != nil {
 		return nil, err
@@ -258,7 +259,7 @@ func GetSortedUsers(owner string, sorter string, limit int) ([]*User, error) {
 
 func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
 	users := []*User{}
-	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	session := GetSessionForUser(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&users)
 	if err != nil {
 		return nil, err
@@ -554,6 +555,10 @@ func AddUser(user *User) (bool, error) {
 		return false, nil
 	}
 
+	if user.PasswordType == "" && organization.PasswordType != "" {
+		user.PasswordType = organization.PasswordType
+	}
+
 	user.UpdateUserPassword(organization)
 
 	err = user.UpdateUserHash()
@@ -678,6 +683,7 @@ func GetUserInfo(user *User, scope string, aud string, host string) *Userinfo {
 		resp.Name = user.Name
 		resp.DisplayName = user.DisplayName
 		resp.Avatar = user.Avatar
+		resp.Groups = []string{user.Owner}
 	}
 	if strings.Contains(scope, "email") {
 		resp.Email = user.Email

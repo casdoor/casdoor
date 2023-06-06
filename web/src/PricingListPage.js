@@ -33,9 +33,8 @@ class PricingListPage extends BaseListPage {
       createdTime: moment().format(),
       plans: [],
       displayName: `New Pricing - ${randomName}`,
-      hasTrial: false,
       isEnabled: true,
-      trialDuration: 14,
+      trialDuration: 7,
     };
   }
 
@@ -189,11 +188,13 @@ class PricingListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    PricingBackend.getPricings("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    PricingBackend.getPricings(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
+        this.setState({
+          loading: false,
+        });
         if (res.status === "ok") {
           this.setState({
-            loading: false,
             data: res.data,
             pagination: {
               ...params.pagination,
@@ -205,9 +206,10 @@ class PricingListPage extends BaseListPage {
         } else {
           if (Setting.isResponseDenied(res)) {
             this.setState({
-              loading: false,
               isAuthorized: false,
             });
+          } else {
+            Setting.showMessage("error", res.msg);
           }
         }
       });

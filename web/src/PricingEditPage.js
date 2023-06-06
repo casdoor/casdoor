@@ -190,21 +190,11 @@ class PricingEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("pricing:Has trial"), i18next.t("pricing:Has trial - Tooltip"))} :
-          </Col>
-          <Col span={1} >
-            <Switch checked={this.state.pricing.hasTrial} onChange={checked => {
-              this.updatePricingField("hasTrial", checked);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("pricing:Trial duration"), i18next.t("pricing:Trial duration - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber min={1} value={this.state.pricing.trialDuration} onChange={value => {
+            <InputNumber min={0} value={this.state.pricing.trialDuration} onChange={value => {
               this.updatePricingField("trialDuration", value);
             }} />
           </Col>

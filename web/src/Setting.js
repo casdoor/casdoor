@@ -683,7 +683,7 @@ export function getLanguageText(text) {
 }
 
 export function getLanguage() {
-  return i18next.language ?? Conf.DefaultLanguage;
+  return (i18next.language !== undefined && i18next.language !== null && i18next.language !== "" && i18next.language !== "null") ? i18next.language : Conf.DefaultLanguage;
 }
 
 export function setLanguage(language) {

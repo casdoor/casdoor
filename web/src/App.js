@@ -223,7 +223,7 @@ class App extends Component {
 
   setLanguage(account) {
     const language = account?.language;
-    if (language !== "" && language !== i18next.language) {
+    if (language !== null && language !== "" && language !== i18next.language) {
       Setting.setLanguage(language);
     }
   }
