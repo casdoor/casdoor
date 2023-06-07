@@ -108,10 +108,10 @@ func GetLanguage(language string) string {
 		return "en"
 	}
 
-	if len(language) < 2 {
+	if len(language) != 2 {
 		return "en"
 	} else {
-		return language[0:2]
+		return language
 	}
 }
 

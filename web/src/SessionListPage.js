@@ -55,10 +55,10 @@ class SessionListPage extends BaseListPage {
       {
         title: i18next.t("general:Organization"),
         dataIndex: "owner",
-        key: "organization",
+        key: "owner",
         width: "110px",
         sorter: true,
-        ...this.getColumnSearchProps("organization"),
+        ...this.getColumnSearchProps("owner"),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>

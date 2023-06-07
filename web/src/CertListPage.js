@@ -108,7 +108,7 @@ class CertListPage extends BaseListPage {
         key: "owner",
         width: "150px",
         sorter: true,
-        ...this.getColumnSearchProps("organization"),
+        ...this.getColumnSearchProps("owner"),
         render: (text, record, index) => {
           return (text !== "admin") ? text : i18next.t("provider:admin (Shared)");
         },
