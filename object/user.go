@@ -220,8 +220,20 @@ func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOr
 	return users, nil
 }
 
-func GetUserCount(owner, field, value string) (int64, error) {
+func GetUserCount(owner, field, value string, groupId string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
+
+	if groupId != "" {
+		group, err := getGroupById(groupId)
+		if group == nil {
+			return 0, errors.New("group not found " + err.Error())
+		}
+		// users count in group
+		return adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
+			Where("user_group_relation.group_id = ?", group.Id).
+			Count(&UserGroupRelation{})
+	}
+
 	return session.Count(&User{})
 }
 
@@ -259,25 +271,41 @@ func GetSortedUsers(owner string, sorter string, limit int) ([]*User, error) {
 	return users, nil
 }
 
-func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
+func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string, groupId string) ([]*User, error) {
 	users := []*User{}
+
+	if groupId != "" {
+		group, err := getGroupById(groupId)
+		if group == nil {
+			return nil, errors.New("group not found " + err.Error())
+		}
+
+		session := adapter.Engine.Prepare()
+		if offset != -1 && limit != -1 {
+			session.Limit(limit, offset)
+		}
+
+		err = session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
+			Where("user_group_relation.group_id = ?", group.Id).
+			Find(&users)
+		return users, err
+	}
+
 	session := GetSessionForUser(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&users)
 	if err != nil {
 		return nil, err
 	}
-
 	return users, nil
 }
 
-func GetGroupUsers(id string) ([]*User, error) {
-	group, err := GetGroup(id)
+func GetUsersByGroup(groupId string) ([]*User, error) {
+	group, err := getGroupById(groupId)
 	if group == nil {
 		return nil, errors.New("group not found " + err.Error())
 	}
 
 	users := []*User{}
-	// UserGroupRelation store the relation between user and group, use join to query all users in the group. group.UserId is the foreign keys reference user. group.groupId is the foreign key reference group.
 	err = adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
 		Where("user_group_relation.group_id = ?", group.Id).
 		Find(&users)
@@ -286,43 +314,6 @@ func GetGroupUsers(id string) ([]*User, error) {
 	}
 
 	return users, nil
-}
-
-func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
-	owner, name := util.GetOwnerAndNameFromId(groupId)
-	group, err := getGroup(owner, name)
-	if group == nil {
-		return nil, errors.New("group not found " + err.Error())
-	}
-
-	users := []*User{}
-	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err = session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
-		Where("user_group_relation.group_id = ?", group.Id).
-		Find(&users)
-	if err != nil {
-		return nil, err
-	}
-
-	return users, nil
-}
-
-func GetGroupUserCount(groupId, field, value string) (int64, error) {
-	owner, name := util.GetOwnerAndNameFromId(groupId)
-	group, err := getGroup(owner, name)
-	if group == nil {
-		return 0, errors.New("group not found " + err.Error())
-	}
-	// users count in group
-	// UserGroupRelation store the relation between user and group, use join to query all users in the group. can just count the group.groupName and group.groupOwner, need not query the users then count.
-	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.owner").
-		Where("user_group_relation.group_id = ?", group.Id).
-		Count(&UserGroupRelation{})
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
 }
 
 func getUser(owner string, name string) (*User, error) {
@@ -666,7 +657,7 @@ func AddUser(user *User) (bool, error) {
 		}
 	}
 
-	count, err := GetUserCount(user.Owner, "", "")
+	count, err := GetUserCount(user.Owner, "", "", "")
 	if err != nil {
 		return false, err
 	}

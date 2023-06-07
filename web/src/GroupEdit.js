@@ -36,7 +36,7 @@ class GroupEditPage extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.getGroup();
-    this.getGroups();
+    this.getGroups(this.state.organizationName);
     this.getOrganizations();
   }
 
@@ -51,8 +51,8 @@ class GroupEditPage extends React.Component {
       });
   }
 
-  getGroups() {
-    GroupBackend.getGroups(this.state.organizationName)
+  getGroups(organizationName) {
+    GroupBackend.getGroups(organizationName)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
@@ -119,7 +119,10 @@ class GroupEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.group.owner}
-              onChange={(value => {this.updateGroupField("owner", value);})}
+              onChange={(value => {
+                this.updateGroupField("owner", value);
+                this.getGroups(value);
+              })}
               options={this.state.organizations.map((organization) => Setting.getOption(organization.name, organization.name))
               } />
           </Col>

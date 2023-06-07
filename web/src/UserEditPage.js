@@ -119,7 +119,7 @@ class UserEditPage extends React.Component {
 
   getGroups(organizationName) {
     if (this.state.isGroupsVisible) {
-      GroupBackend.getGroups(Setting.isAdminUser(this.props.account) ? "" : organizationName)
+      GroupBackend.getGroups(organizationName)
         .then((res) => {
           if (res.status === "ok") {
             this.setState({
@@ -232,14 +232,6 @@ class UserEditPage extends React.Component {
 
     const isAdmin = Setting.isAdminUser(this.props.account);
 
-    // return (
-    //   <div>
-    //     {
-    //       JSON.stringify({accountItem: accountItem, isSelf: isSelf, isAdmin: isAdmin})
-    //     }
-    //   </div>
-    // )
-
     if (accountItem.viewRule === "Self") {
       if (!this.isSelfOrAdmin()) {
         return null;
@@ -296,9 +288,15 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="multiple" style={{width: "100%"}} disabled={disabled} value={this.state.user.groups ?? []} onChange={(value => {
+              if (this.state.groups?.filter(group => value.includes(group.id))
+                .filter(group => group.type === "physical").length > 1) {
+                Setting.showMessage("info", i18next.t("general:You can only select one physical group"));
+                return;
+              }
+
               this.updateUserField("groups", value);
             })}
-            options={this.state.groups?.map((group) => Setting.getOption(group.displayName, group.id))}
+            options={this.state.groups?.filter(group => group !== "").map((group) => Setting.getOption(group.displayName, group.id))}
             />
           </Col>
         </Row>
@@ -961,7 +959,12 @@ class UserEditPage extends React.Component {
     UserBackend.deleteUser(this.state.user)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push("/users");
+          const userListUrl = sessionStorage.getItem("userListUrl");
+          if (userListUrl !== null) {
+            this.props.history.push(userListUrl);
+          } else {
+            this.props.history.push("/users");
+          }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
         }

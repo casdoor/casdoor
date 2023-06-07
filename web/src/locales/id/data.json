@@ -1,4 +1,10 @@
 {
+  "Group": {
+    "Physical": "Physical",
+    "Superior group": "Superior group",
+    "Type": "Type",
+    "Virtual": "Virtual"
+  },
   "account": {
     "Chats & Messages": "Chats & Messages",
     "Logout": "Keluar",
@@ -218,6 +224,8 @@
     "Forget URL - Tooltip": "URL kustom untuk halaman \"Lupa kata sandi\". Jika tidak diatur, halaman \"Lupa kata sandi\" default Casdoor akan digunakan. Ketika diatur, tautan \"Lupa kata sandi\" pada halaman masuk akan diarahkan ke URL ini",
     "Found some texts still not translated? Please help us translate at": "Menemukan beberapa teks yang masih belum diterjemahkan? Tolong bantu kami menerjemahkan di",
     "Go to writable demo site?": "Pergi ke situs demo yang dapat ditulis?",
+    "Groups": "Groups",
+    "Groups - Tooltip": "Groups - Tooltip",
     "Home": "Rumah",
     "Home - Tooltip": "Halaman utama aplikasi",
     "ID": "ID",
@@ -300,6 +308,7 @@
     "Successfully added": "Berhasil ditambahkan",
     "Successfully deleted": "Berhasil dihapus",
     "Successfully saved": "Berhasil disimpan",
+    "Superior group - Tooltip": "Superior group - Tooltip",
     "Supported country codes": "Kode negara yang didukung",
     "Supported country codes - Tooltip": "Kode negara yang didukung oleh organisasi. Kode-kode ini dapat dipilih sebagai awalan saat mengirim kode verifikasi SMS",
     "Sure to delete": "Pasti untuk menghapus",
@@ -311,6 +320,8 @@
     "This is a read-only demo site!": "Ini adalah situs demo hanya untuk dibaca saja!",
     "Timestamp": "Waktu penanda waktu",
     "Tokens": "Token-token",
+    "Type": "Type",
+    "Type - Tooltip": "Type - Tooltip",
     "URL": "URL",
     "URL - Tooltip": "Tautan URL",
     "Up": "Ke atas",
@@ -323,8 +334,17 @@
     "Users": "Pengguna-pengguna",
     "Users under all organizations": "Pengguna di bawah semua organisasi",
     "Webhooks": "Webhooks",
+    "You can only select one physical group": "You can only select one physical group",
     "empty": "kosong",
     "{total} in total": "{total} secara keseluruhan"
+  },
+  "group": {
+    "Edit Group": "Edit Group",
+    "Group list": "Group list",
+    "New Group": "New Group",
+    "Physical": "Physical",
+    "Superior group": "Superior group",
+    "Virtual": "Virtual"
   },
   "ldap": {
     "Admin": "Admin",
@@ -539,8 +559,6 @@
     "Edit Pricing": "Edit Pricing",
     "Free": "Gratis",
     "Getting started": "Mulai",
-    "Has trial": "Mempunyai periode percobaan",
-    "Has trial - Tooltip": "Ketersediaan periode percobaan setelah memilih rencana",
     "New Pricing": "New Pricing",
     "Trial duration": "Durasi percobaan",
     "Trial duration - Tooltip": "Durasi periode percobaan",

@@ -36,12 +36,18 @@ func (c *ApiController) GetGroups() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+	withTree := c.Input().Get("withTree")
+
 	if limit == "" || page == "" {
 		groups, err := object.GetGroups(owner)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		} else {
+			if withTree == "true" {
+				c.ResponseOk(object.ConvertToTreeData(groups, owner))
+				return
+			}
 			c.ResponseOk(groups)
 		}
 	} else {

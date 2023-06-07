@@ -1,4 +1,10 @@
 {
+  "Group": {
+    "Physical": "Physical",
+    "Superior group": "Superior group",
+    "Type": "Type",
+    "Virtual": "Virtual"
+  },
   "account": {
     "Chats & Messages": "Chats & Messages",
     "Logout": "ログアウト",
@@ -218,6 +224,8 @@
     "Forget URL - Tooltip": "「パスワードをお忘れの場合」ページのカスタムURL。未設定の場合、デフォルトのCasdoor「パスワードをお忘れの場合」ページが使用されます。設定された場合、ログインページの「パスワードをお忘れの場合」リンクはこのURLにリダイレクトされます",
     "Found some texts still not translated? Please help us translate at": "まだ翻訳されていない文章が見つかりましたか？是非とも翻訳のお手伝いをお願いします",
     "Go to writable demo site?": "書き込み可能なデモサイトに移動しますか？",
+    "Groups": "Groups",
+    "Groups - Tooltip": "Groups - Tooltip",
     "Home": "ホーム",
     "Home - Tooltip": "アプリケーションのホームページ",
     "ID": "ID",
@@ -300,6 +308,7 @@
     "Successfully added": "正常に追加されました",
     "Successfully deleted": "正常に削除されました",
     "Successfully saved": "成功的に保存されました",
+    "Superior group - Tooltip": "Superior group - Tooltip",
     "Supported country codes": "サポートされている国コード",
     "Supported country codes - Tooltip": "組織でサポートされている国コード。これらのコードは、SMS認証コードのプレフィックスとして選択できます",
     "Sure to delete": "削除することが確実です",
@@ -311,6 +320,8 @@
     "This is a read-only demo site!": "これは読み取り専用のデモサイトです！",
     "Timestamp": "タイムスタンプ",
     "Tokens": "トークン",
+    "Type": "Type",
+    "Type - Tooltip": "Type - Tooltip",
     "URL": "URL",
     "URL - Tooltip": "URLリンク",
     "Up": "アップ",
@@ -323,8 +334,17 @@
     "Users": "ユーザー",
     "Users under all organizations": "すべての組織のユーザー",
     "Webhooks": "Webhooks",
+    "You can only select one physical group": "You can only select one physical group",
     "empty": "空",
     "{total} in total": "総計{total}"
+  },
+  "group": {
+    "Edit Group": "Edit Group",
+    "Group list": "Group list",
+    "New Group": "New Group",
+    "Physical": "Physical",
+    "Superior group": "Superior group",
+    "Virtual": "Virtual"
   },
   "ldap": {
     "Admin": "Admin",
@@ -539,8 +559,6 @@
     "Edit Pricing": "Edit Pricing",
     "Free": "無料",
     "Getting started": "はじめる",
-    "Has trial": "トライアル期間あり",
-    "Has trial - Tooltip": "プラン選択後のトライアル期間の有無",
     "New Pricing": "New Pricing",
     "Trial duration": "トライアル期間の長さ",
     "Trial duration - Tooltip": "トライアル期間の長さ",

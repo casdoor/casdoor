@@ -155,7 +155,7 @@ class GroupListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("parentGroupId"),
         render: (text, record, index) => {
-          return groups.filter((group) => group.name === text)[0]?.displayName;
+          return groups.filter((group) => group.id === text)[0]?.displayName;
         },
       },
       {
@@ -213,7 +213,7 @@ class GroupListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    GroupBackend.getGroups(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    GroupBackend.getGroups(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, false, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

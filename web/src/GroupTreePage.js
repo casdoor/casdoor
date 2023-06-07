@@ -12,29 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Tree, message} from "antd";
+import {Col, Row, Tree, message} from "antd";
+import i18next from "i18next";
 import React from "react";
 import * as GroupBackend from "./backend/GroupBackend";
-import * as UserBackend from "./backend/UserBackend";
-
-function convertToTreeData(groups, parentGroupId) {
-  const treeData = [];
-
-  for (const group of groups) {
-    if (group.parentGroupId === parentGroupId) {
-      const node = {
-        title: group.displayName,
-        key: group.id,
-      };
-      const children = convertToTreeData(groups, group.id);
-      if (children.length > 0) {
-        node.children = children;
-      }
-      treeData.push(node);
-    }
-  }
-  return treeData;
-}
+import OrganizationSelect from "./common/select/OrganizationSelect";
+import UserListPage from "./UserListPage";
 
 class GroupTreePage extends React.Component {
   constructor(props) {
@@ -43,29 +26,25 @@ class GroupTreePage extends React.Component {
       classes: props,
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       treeData: [],
+      selectedGroup: null,
     };
   }
 
   UNSAFE_componentWillMount() {
     this.getTreeData();
-    // this.getUsers();
+  }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.organizationName !== prevState.organizationName) {
+      this.getTreeData();
+    }
   }
 
   getTreeData() {
-    GroupBackend.getGroups(this.state.organizationName).then((res) => {
+    GroupBackend.getGroups(this.state.organizationName, true).then((res) => {
       if (res.status === "ok") {
-        const treeData = [
-          {
-            title: this.state.organizationName,
-            key: "0",
-            children: convertToTreeData(res.data, this.state.organizationName),
-          },
-        ];
-        // eslint-disable-next-line no-console
-        console.log(treeData);
         this.setState({
-          treeData: treeData,
+          treeData: res.data,
         });
       } else {
         message.error(res.msg);
@@ -73,39 +52,68 @@ class GroupTreePage extends React.Component {
     });
   }
 
-  getUsers(id) {
-    UserBackend.getGroupUsers(id)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            users: res.data,
-          });
-        }
-      });
-  }
-
-  render() {
+  renderTree() {
     const onSelect = (selectedKeys, info) => {
-      // eslint-disable-next-line no-console
-      console.log("selected", selectedKeys, info);
-    };
-    const onCheck = (checkedKeys, info) => {
-      // eslint-disable-next-line no-console
-      console.log("onCheck", checkedKeys, info);
+      this.setState({
+        selectedGroup: info.node,
+      });
     };
 
     if (this.state.treeData.length === 0) {
-      return null;
+      return (
+        <h3>{i18next.t("group:No group")}</h3>
+      );
     }
+
     return (
       <Tree
-        checkable
         defaultExpandedKeys={["0"]}
         defaultSelectedKeys={["0"]}
         onSelect={onSelect}
-        onCheck={onCheck}
         treeData={this.state.treeData}
       />
+    );
+  }
+
+  render() {
+    return (
+      <React.Fragment>
+        <Row>
+          <Col span={4}
+          >
+            <Row>
+              <Col span={24} style={{textAlign: "center"}}>
+                <OrganizationSelect
+                  initValue={this.state.organizationName}
+                  style={{width: "70%"}}
+                  onChange={(value) => {
+                    this.setState({
+                      organizationName: value,
+                      selectedGroup: null,
+                    });
+                  }}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24} style={{textAlign: "center"}}>
+                {this.state.treeData.length === 0 ? null : <h3>{i18next.t("group:Group list")}</h3>}
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24} style={{textAlign: "center"}}>
+                {this.renderTree()}
+              </Col>
+            </Row>
+          </Col>
+          <Col span={20}>
+            <UserListPage
+              organizationName={this.state.organizationName}
+              selectedGroup={this.state.selectedGroup !== null ? this.state.selectedGroup : null}
+              {...this.props} />
+          </Col>
+        </Row>
+      </React.Fragment>
     );
   }
 }

@@ -19,16 +19,14 @@ import * as OrganizationBackend from "../../backend/OrganizationBackend";
 import * as Setting from "../../Setting";
 
 function OrganizationSelect(props) {
-  const {onChange} = props;
+  const {onChange, initValue, style, onSelect} = props;
   const [organizations, setOrganizations] = React.useState([]);
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState(initValue);
 
   React.useEffect(() => {
     if (props.organizations === undefined) {
       getOrganizations();
     }
-    const initValue = organizations.length > 0 ? organizations[0] : "";
-    handleOnChange(initValue);
   }, []);
 
   const getOrganizations = () => {
@@ -36,6 +34,9 @@ function OrganizationSelect(props) {
       .then((res) => {
         if (res.status === "ok") {
           setOrganizations(res.data);
+          if (initValue === undefined) {
+            setValue(organizations.length > 0 ? organizations[0] : "");
+          }
         }
       });
   };
@@ -49,12 +50,12 @@ function OrganizationSelect(props) {
     <Select
       options={organizations.map((organization) => Setting.getOption(organization.name, organization.name))}
       virtual={false}
-      showSearch
       placeholder={i18next.t("login:Please select an organization")}
       value={value}
       onChange={handleOnChange}
-      filterOption={(input, option) => (option?.text ?? "").toLowerCase().includes(input.toLowerCase())}
-      {...props}
+      filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
+      style={style}
+      onSelect={onSelect}
     >
     </Select>
   );

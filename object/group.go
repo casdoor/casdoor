@@ -23,7 +23,7 @@ import (
 
 type Group struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	Name        string `xorm:"varchar(100) notnull pk unique" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
@@ -36,6 +36,12 @@ type Group struct {
 	Users         *[]string `xorm:"-" json:"users"`
 
 	IsEnabled bool `json:"isEnabled"`
+}
+
+type GroupNode struct {
+	Title    string       `json:"title"`
+	Key      string       `json:"key"`
+	Children []*GroupNode `json:"children,omitempty"`
 }
 
 func GetGroupCount(owner, field, value string) (int64, error) {
@@ -75,6 +81,24 @@ func getGroup(owner string, name string) (*Group, error) {
 	}
 
 	group := Group{Owner: owner, Name: name}
+	existed, err := adapter.Engine.Get(&group)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &group, nil
+	} else {
+		return nil, nil
+	}
+}
+
+func getGroupById(id string) (*Group, error) {
+	if id == "" {
+		return nil, nil
+	}
+
+	group := Group{Id: id}
 	existed, err := adapter.Engine.Get(&group)
 	if err != nil {
 		return nil, err
@@ -142,4 +166,23 @@ func DeleteGroup(group *Group) (bool, error) {
 
 func (group *Group) GetId() string {
 	return fmt.Sprintf("%s/%s", group.Owner, group.Name)
+}
+
+func ConvertToTreeData(groups []*Group, parentGroupId string) []*GroupNode {
+	treeData := []*GroupNode{}
+
+	for _, group := range groups {
+		if group.ParentGroupId == parentGroupId {
+			node := &GroupNode{
+				Title: group.DisplayName,
+				Key:   group.Id,
+			}
+			children := ConvertToTreeData(groups, group.Id)
+			if len(children) > 0 {
+				node.Children = children
+			}
+			treeData = append(treeData, node)
+		}
+	}
+	return treeData
 }

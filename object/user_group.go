@@ -11,26 +11,7 @@ type UserGroupRelation struct {
 	GroupId string `xorm:"varchar(100) notnull pk" json:"groupId"`
 
 	CreatedTime string `xorm:"created" json:"createdTime"`
-}
-
-func removeUserFromGroup(userId, groupId string) error {
-	_, err := adapter.Engine.Delete(&UserGroupRelation{UserId: userId, GroupId: groupId})
-	return err
-}
-
-func addUserToGroup(userId, groupId, groupType string) error {
-	if groupType == "physical" {
-		// 删除用户在其他实体组的记录
-		_, err := adapter.Engine.Delete(&UserGroupRelation{UserId: userId})
-		if err != nil {
-			return err
-		}
-	}
-
-	// 添加用户到新组
-	relation := &UserGroupRelation{UserId: userId, GroupId: groupId}
-	_, err := adapter.Engine.Insert(relation)
-	return err
+	UpdatedTime string `xorm:"updated" json:"updatedTime"`
 }
 
 func updateGroupRelation(session *xorm.Session, user *User) (int64, error) {

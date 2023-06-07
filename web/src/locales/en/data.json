@@ -1,4 +1,10 @@
 {
+  "Group": {
+    "Physical": "Physical",
+    "Superior group": "Superior group",
+    "Type": "Type",
+    "Virtual": "Virtual"
+  },
   "account": {
     "Chats & Messages": "Chats & Messages",
     "Logout": "Logout",
@@ -218,6 +224,8 @@
     "Forget URL - Tooltip": "Custom URL for the \"Forget password\" page. If not set, the default Casdoor \"Forget password\" page will be used. When set, the \"Forget password\" link on the login page will redirect to this URL",
     "Found some texts still not translated? Please help us translate at": "Found some texts still not translated? Please help us translate at",
     "Go to writable demo site?": "Go to writable demo site?",
+    "Groups": "Groups",
+    "Groups - Tooltip": "Groups - Tooltip",
     "Home": "Home",
     "Home - Tooltip": "Home page of the application",
     "ID": "ID",
@@ -300,6 +308,7 @@
     "Successfully added": "Successfully added",
     "Successfully deleted": "Successfully deleted",
     "Successfully saved": "Successfully saved",
+    "Superior group - Tooltip": "Superior group - Tooltip",
     "Supported country codes": "Supported country codes",
     "Supported country codes - Tooltip": "Country codes supported by the organization. These codes can be selected as a prefix when sending SMS verification codes",
     "Sure to delete": "Sure to delete",
@@ -311,6 +320,8 @@
     "This is a read-only demo site!": "This is a read-only demo site!",
     "Timestamp": "Timestamp",
     "Tokens": "Tokens",
+    "Type": "Type",
+    "Type - Tooltip": "Type - Tooltip",
     "URL": "URL",
     "URL - Tooltip": "URL link",
     "Up": "Up",
@@ -323,8 +334,17 @@
     "Users": "Users",
     "Users under all organizations": "Users under all organizations",
     "Webhooks": "Webhooks",
+    "You can only select one physical group": "You can only select one physical group",
     "empty": "empty",
     "{total} in total": "{total} in total"
+  },
+  "group": {
+    "Edit Group": "Edit Group",
+    "Group list": "Group list",
+    "New Group": "New Group",
+    "Physical": "Physical",
+    "Superior group": "Superior group",
+    "Virtual": "Virtual"
   },
   "ldap": {
     "Admin": "Admin",
@@ -539,8 +559,6 @@
     "Edit Pricing": "Edit Pricing",
     "Free": "Free",
     "Getting started": "Getting started",
-    "Has trial": "Has trial",
-    "Has trial - Tooltip": "Availability of the trial period after choosing a plan",
     "New Pricing": "New Pricing",
     "Trial duration": "Trial duration",
     "Trial duration - Tooltip": "Trial duration period",

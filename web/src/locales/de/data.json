@@ -1,4 +1,10 @@
 {
+  "Group": {
+    "Physical": "Physical",
+    "Superior group": "Superior group",
+    "Type": "Type",
+    "Virtual": "Virtual"
+  },
   "account": {
     "Chats & Messages": "Chats & Messages",
     "Logout": "Abmelden",
@@ -218,6 +224,8 @@
     "Forget URL - Tooltip": "Benutzerdefinierte URL für die \"Passwort vergessen\" Seite. Wenn nicht festgelegt, wird die standardmäßige Casdoor \"Passwort vergessen\" Seite verwendet. Wenn sie festgelegt ist, wird der \"Passwort vergessen\" Link auf der Login-Seite zu dieser URL umgeleitet",
     "Found some texts still not translated? Please help us translate at": "Haben Sie noch Texte gefunden, die nicht übersetzt wurden? Bitte helfen Sie uns beim Übersetzen",
     "Go to writable demo site?": "Gehe zur beschreibbaren Demo-Website?",
+    "Groups": "Groups",
+    "Groups - Tooltip": "Groups - Tooltip",
     "Home": "Zuhause",
     "Home - Tooltip": "Homepage der Anwendung",
     "ID": "ID",
@@ -300,6 +308,7 @@
     "Successfully added": "Erfolgreich hinzugefügt",
     "Successfully deleted": "Erfolgreich gelöscht",
     "Successfully saved": "Erfolgreich gespeichert",
+    "Superior group - Tooltip": "Superior group - Tooltip",
     "Supported country codes": "Unterstützte Ländercodes",
     "Supported country codes - Tooltip": "Ländercodes, die von der Organisation unterstützt werden. Diese Codes können als Präfix ausgewählt werden, wenn SMS-Verifizierungscodes gesendet werden",
     "Sure to delete": "Sicher zu löschen",
@@ -311,6 +320,8 @@
     "This is a read-only demo site!": "Dies ist eine schreibgeschützte Demo-Seite!",
     "Timestamp": "Zeitstempel",
     "Tokens": "Token",
+    "Type": "Type",
+    "Type - Tooltip": "Type - Tooltip",
     "URL": "URL",
     "URL - Tooltip": "URL-Link",
     "Up": "Oben",
@@ -323,8 +334,17 @@
     "Users": "Benutzer",
     "Users under all organizations": "Benutzer unter allen Organisationen",
     "Webhooks": "Webhooks",
+    "You can only select one physical group": "You can only select one physical group",
     "empty": "leere",
     "{total} in total": "Insgesamt {total}"
+  },
+  "group": {
+    "Edit Group": "Edit Group",
+    "Group list": "Group list",
+    "New Group": "New Group",
+    "Physical": "Physical",
+    "Superior group": "Superior group",
+    "Virtual": "Virtual"
   },
   "ldap": {
     "Admin": "Admin",
@@ -539,8 +559,6 @@
     "Edit Pricing": "Edit Pricing",
     "Free": "Kostenlos",
     "Getting started": "Loslegen",
-    "Has trial": "Testphase verfügbar",
-    "Has trial - Tooltip": "Verfügbarkeit der Testphase nach Auswahl eines Plans",
     "New Pricing": "New Pricing",
     "Trial duration": "Testphase Dauer",
     "Trial duration - Tooltip": "Dauer der Testphase",

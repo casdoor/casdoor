@@ -1,4 +1,10 @@
 {
+  "Group": {
+    "Physical": "Physical",
+    "Superior group": "Superior group",
+    "Type": "Type",
+    "Virtual": "Virtual"
+  },
   "account": {
     "Chats & Messages": "Chats & Messages",
     "Logout": "로그아웃",
@@ -218,6 +224,8 @@
     "Forget URL - Tooltip": "\"비밀번호를 잊어버렸을 경우\" 페이지에 대한 사용자 정의 URL. 설정되지 않은 경우 기본 Casdoor \"비밀번호를 잊어버렸을 경우\" 페이지가 사용됩니다. 설정된 경우 로그인 페이지의 \"비밀번호를 잊으셨나요?\" 링크는 이 URL로 리디렉션됩니다",
     "Found some texts still not translated? Please help us translate at": "아직 번역되지 않은 텍스트가 있나요? 번역에 도움을 주실 수 있나요?",
     "Go to writable demo site?": "쓰기 가능한 데모 사이트로 이동하시겠습니까?",
+    "Groups": "Groups",
+    "Groups - Tooltip": "Groups - Tooltip",
     "Home": "집",
     "Home - Tooltip": "어플리케이션 홈 페이지",
     "ID": "ID",
@@ -300,6 +308,7 @@
     "Successfully added": "성공적으로 추가되었습니다",
     "Successfully deleted": "성공적으로 삭제되었습니다",
     "Successfully saved": "성공적으로 저장되었습니다",
+    "Superior group - Tooltip": "Superior group - Tooltip",
     "Supported country codes": "지원되는 국가 코드들",
     "Supported country codes - Tooltip": "조직에서 지원하는 국가 코드입니다. 이 코드들은 SMS 인증 코드를 보낼 때 접두사로 선택할 수 있습니다",
     "Sure to delete": "삭제하시겠습니까?",
@@ -311,6 +320,8 @@
     "This is a read-only demo site!": "이것은 읽기 전용 데모 사이트입니다!",
     "Timestamp": "타임스탬프",
     "Tokens": "토큰",
+    "Type": "Type",
+    "Type - Tooltip": "Type - Tooltip",
     "URL": "URL",
     "URL - Tooltip": "URL 링크",
     "Up": "위로",
@@ -323,8 +334,17 @@
     "Users": "사용자들",
     "Users under all organizations": "모든 조직의 사용자",
     "Webhooks": "Webhooks",
+    "You can only select one physical group": "You can only select one physical group",
     "empty": "빈",
     "{total} in total": "총 {total}개"
+  },
+  "group": {
+    "Edit Group": "Edit Group",
+    "Group list": "Group list",
+    "New Group": "New Group",
+    "Physical": "Physical",
+    "Superior group": "Superior group",
+    "Virtual": "Virtual"
   },
   "ldap": {
     "Admin": "Admin",
@@ -539,8 +559,6 @@
     "Edit Pricing": "Edit Pricing",
     "Free": "무료",
     "Getting started": "시작하기",
-    "Has trial": "무료 체험 가능",
-    "Has trial - Tooltip": "플랜 선택 후 체험 기간의 가용 여부",
     "New Pricing": "New Pricing",
     "Trial duration": "체험 기간",
     "Trial duration - Tooltip": "체험 기간의 기간",
