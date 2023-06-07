@@ -104,7 +104,7 @@ class EntryPage extends React.Component {
           <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage {...this.props} application={this.state.application} type={"cas"} mode={"signin"} onUpdateApplication={onUpdateApplication} {...props} />);}} />
           <Route exact path="/select-plan/:pricingName" render={(props) => this.renderHomeIfLoggedIn(<PricingPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />)} />
-          <Route exact path="/change-password" render={(props) => <SelfChangePasswordPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />} />
+          <Route exact path="/change-password" render={(props) => this.renderLoginIfNotLoggedIn(<SelfChangePasswordPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
         </Switch>
       </div>
     );
