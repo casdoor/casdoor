@@ -13,10 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row} from "antd";
+import {Button, Col, Form, Input, Row} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
+import * as AuthBackend from "./AuthBackend";
+import CustomGithubCorner from "../common/CustomGithubCorner";
 
 class ChangePasswordPage extends React.Component {
   constructor(props) {
@@ -58,36 +60,160 @@ class ChangePasswordPage extends React.Component {
     this.props.onUpdateApplication(application);
   }
 
-  renderChat() {
+  onFinish(values) {
+    AuthBackend.setNewPassword(values)
+      .then((res) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("changePassword:Password successfully changed"));
+          const link = Setting.getFromLink();
+          Setting.goToLink(link);
+        } else {
+          Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+        }
+      });
+  }
+
+  onFinishFailed(values, errorFields, outOfDate) {
+    this.form.current.scrollToField(errorFields[0].name);
+  }
+
+  renderForm(application) {
     return (
-      <Card size="small" title={
-        <div>
-          {i18next.t("general:Password")}
-        </div>
-      } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
-        <Row style={{marginTop: "20px"}} >
-          <Col span={22}>
-            <Input.Password addonBefore={i18next.t("user:New Password")} placeholder={i18next.t("user:input password")} onChange={(e) => {}} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col span={22}>
-            <Input.Password addonBefore={i18next.t("user:Re-enter New")} placeholder={i18next.t("user:input password")} onChange={(e) => {}} />
-          </Col>
-        </Row>
-      </Card>
+      <Form
+        labelCol={{span: 8}}
+        wrapperCol={{span: 16}}
+        ref={this.form}
+        name="changePassword"
+        onFinish={(values) => this.onFinish(values)}
+        onFinishFailed={(errorInfo) => this.onFinishFailed(errorInfo.values, errorInfo.errorFields, errorInfo.outOfDate)}
+        initialValues={{
+          application: application.name,
+          organization: application.organization,
+        }}
+        size="large"
+        layout={Setting.isMobile() ? "vertical" : "horizontal"}
+        style={{width: Setting.isMobile() ? "300px" : "400px"}}
+      >
+        <Form.Item
+          name="application"
+          hidden={true}
+          rules={[
+            {
+              required: true,
+              message: "Please input your application!",
+            },
+          ]}
+        >
+        </Form.Item>
+        <Form.Item
+          name="organization"
+          hidden={true}
+          rules={[
+            {
+              required: true,
+              message: "Please input your organization!",
+            },
+          ]}
+        >
+        </Form.Item>
+        <Form.Item
+          name="currentPassword"
+          label={i18next.t("changePassword:Current password")}
+          rules={[
+            {
+              required: true,
+              min: 6,
+              message: i18next.t("changePassword:Please input your password, at least 6 characters!"),
+            },
+          ]}
+          hasFeedback
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          label={i18next.t("changePassword:New password")}
+          rules={[
+            {
+              required: true,
+              min: 6,
+              message: i18next.t("changePassword:Please input your password, at least 6 characters!"),
+            },
+          ]}
+          hasFeedback
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item
+          name="confirm"
+          label={i18next.t("changePassword:Re-enter new")}
+          dependencies={["password"]}
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: i18next.t("changePassword:Please confirm your password!"),
+            },
+            ({getFieldValue}) => ({
+              validator(rule, value) {
+                if (!value || getFieldValue("password") === value) {
+                  return Promise.resolve();
+                }
+
+                return Promise.reject(i18next.t("changePassword:Your confirmed password is inconsistent with the password!"));
+              },
+            }),
+          ]}
+        >
+          <Input.Password />
+        </Form.Item>
+
+        <Form.Item
+          wrapperCol={{span: 24}}>
+          <Button type="primary" htmlType="submit">
+            {i18next.t("changePassword:Change password")}
+          </Button>
+        </Form.Item>
+      </Form>
+
     );
   }
 
   render() {
+    const application = this.getApplicationObj();
+    if (application === undefined || application === null) {
+      return null;
+    }
+
     return (
-      <div>
-        <div style={{marginTop: "20px", marginLeft: "40px"}}>
-          <Button size="large">{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: "20px"}} type="primary" size="large">{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large">{i18next.t("general:Cancel")}</Button> : null}
+      <React.Fragment>
+        <CustomGithubCorner />
+        <div className="change-password-content" style={{boxShadow: Setting.isMobile() ? "none" : null}}>
+          {Setting.inIframe() || Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
+          {Setting.inIframe() || !Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCssMobile}} />}
+          <div className="login-panel" >
+            <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
+              <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
+            </div>
+            <div className="login-form">
+              {
+                Setting.renderHelmet(application)
+              }
+              {
+                Setting.renderLogo(application)
+              }
+              <h1 style={{fontSize: "28px", fontWeight: "400", marginTop: "10px", marginBottom: "40px"}}>{i18next.t("changePassword:Change password")}</h1>
+              <Row type="flex" justify="center" align="middle">
+                <Col span={16} style={{width: 600}}>
+                  {
+                    this.renderForm(application)
+                  }
+                </Col>
+              </Row>
+            </div>
+          </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }
