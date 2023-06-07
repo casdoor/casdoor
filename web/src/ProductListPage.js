@@ -100,7 +100,7 @@ class ProductListPage extends BaseListPage {
         key: "owner",
         width: "150px",
         sorter: true,
-        ...this.getColumnSearchProps("organization"),
+        ...this.getColumnSearchProps("owner"),
       },
       {
         title: i18next.t("general:Created time"),
