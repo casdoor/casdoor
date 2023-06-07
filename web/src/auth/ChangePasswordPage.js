@@ -25,9 +25,7 @@ class ChangePasswordPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      users: [],
       applicationName: props.applicationName ?? props.match.params?.applicationName,
-      mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
 
