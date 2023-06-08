@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import {Button, Col, Input, Modal, Row} from "antd";
-// import {CheckCircleOutlined, CloseCircleOutlined} from "@ant-design/icons";
 
 import i18next from "i18next";
 import React from "react";
@@ -27,8 +26,6 @@ export const PasswordModal = (props) => {
   const [oldPassword, setOldPassword] = React.useState("");
   const [newPassword, setNewPassword] = React.useState("");
   const [rePassword, setRePassword] = React.useState("");
-  // const [passwordValidation, setPasswordValidation] = React.useState("");
-  // const [passwordComplexOptionList] = React.useState("");
   const {user} = props;
   const {account} = props;
   function checkPasswordComplexOption(password, complexOptions) {

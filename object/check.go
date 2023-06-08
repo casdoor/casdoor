@@ -266,7 +266,7 @@ func CheckPasswordComplexOption(password string, complexOptions []string, lang s
 	for _, option := range complexOptions {
 		validateFunc, ok := validators[option]
 		if !ok {
-			// 处理验证函数不存在的情况
+			// Validate Function not defined
 			return i18n.Translate(lang, "passwordComplexOptions:InvalidOption")
 		}
 		pwdCheckRes := validateFunc(password)
