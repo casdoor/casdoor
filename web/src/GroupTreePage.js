@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Col, Row, Tree, message} from "antd";
-import i18next from "i18next";
+import {HolderOutlined, UsergroupAddOutlined} from "@ant-design/icons";
+import {Col, Empty, Row, Tree, message} from "antd";
 import React from "react";
 import * as GroupBackend from "./backend/GroupBackend";
 import OrganizationSelect from "./common/select/OrganizationSelect";
@@ -43,13 +43,24 @@ class GroupTreePage extends React.Component {
   getTreeData() {
     GroupBackend.getGroups(this.state.organizationName, true).then((res) => {
       if (res.status === "ok") {
+        const tree = res.data?.map(i => this.setTreeIcon(i));
         this.setState({
-          treeData: res.data,
+          treeData: tree,
         });
       } else {
         message.error(res.msg);
       }
     });
+  }
+
+  setTreeIcon(treeData) {
+    const haveChildren = Array.isArray(treeData.children) && treeData.children.length > 0;
+    return {
+      key: treeData.key,
+      title: treeData.title,
+      icon: treeData.type === "physical" ? <UsergroupAddOutlined /> : <HolderOutlined />,
+      children: haveChildren ? treeData.children.map(i => this.setTreeIcon(i)) : [],
+    };
   }
 
   renderTree() {
@@ -60,16 +71,16 @@ class GroupTreePage extends React.Component {
     };
 
     if (this.state.treeData.length === 0) {
-      return (
-        <h3>{i18next.t("group:No group")}</h3>
-      );
+      return <Empty />;
     }
 
     return (
       <Tree
         defaultExpandedKeys={["0"]}
         defaultSelectedKeys={["0"]}
+        defaultExpandAll={true}
         onSelect={onSelect}
+        showIcon={true}
         treeData={this.state.treeData}
       />
     );
@@ -85,7 +96,7 @@ class GroupTreePage extends React.Component {
               <Col span={24} style={{textAlign: "center"}}>
                 <OrganizationSelect
                   initValue={this.state.organizationName}
-                  style={{width: "70%"}}
+                  style={{width: "90%"}}
                   onChange={(value) => {
                     this.setState({
                       organizationName: value,
@@ -95,12 +106,7 @@ class GroupTreePage extends React.Component {
                 />
               </Col>
             </Row>
-            <Row>
-              <Col span={24} style={{textAlign: "center"}}>
-                {this.state.treeData.length === 0 ? null : <h3>{i18next.t("group:Group list")}</h3>}
-              </Col>
-            </Row>
-            <Row>
+            <Row style={{marginTop: 20}}>
               <Col span={24} style={{textAlign: "center"}}>
                 {this.renderTree()}
               </Col>

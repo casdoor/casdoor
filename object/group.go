@@ -41,6 +41,7 @@ type Group struct {
 type GroupNode struct {
 	Title    string       `json:"title"`
 	Key      string       `json:"key"`
+	Type     string       `json:"type"`
 	Children []*GroupNode `json:"children,omitempty"`
 }
 
@@ -176,6 +177,7 @@ func ConvertToTreeData(groups []*Group, parentGroupId string) []*GroupNode {
 			node := &GroupNode{
 				Title: group.DisplayName,
 				Key:   group.Id,
+				Type:  group.Type,
 			}
 			children := ConvertToTreeData(groups, group.Id)
 			if len(children) > 0 {

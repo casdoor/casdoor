@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Spin, Switch, Tag} from "antd";
+import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
 import * as GroupBackend from "./backend/GroupBackend";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -33,7 +33,7 @@ import PropertyTable from "./table/propertyTable";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 import {DeleteMfa} from "./backend/MfaBackend";
-import {CheckCircleOutlined} from "@ant-design/icons";
+import {CheckCircleOutlined, HolderOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import {SmsMfaType} from "./auth/MfaSetupPage";
 import * as MfaBackend from "./backend/MfaBackend";
 
@@ -290,14 +290,22 @@ class UserEditPage extends React.Component {
             <Select virtual={false} mode="multiple" style={{width: "100%"}} disabled={disabled} value={this.state.user.groups ?? []} onChange={(value => {
               if (this.state.groups?.filter(group => value.includes(group.id))
                 .filter(group => group.type === "physical").length > 1) {
-                Setting.showMessage("info", i18next.t("general:You can only select one physical group"));
+                Setting.showMessage("error", i18next.t("general:You can only select one physical group"));
                 return;
               }
 
               this.updateUserField("groups", value);
             })}
-            options={this.state.groups?.filter(group => group !== "").map((group) => Setting.getOption(group.displayName, group.id))}
-            />
+            >
+              {
+                this.state.groups?.map((group) => <Option key={group.id} value={group.id}>
+                  <Space>
+                    {group.type === "physical" ? <UsergroupAddOutlined /> : <HolderOutlined />}
+                    {group.displayName}
+                  </Space>
+                </Option>)
+              }
+            </Select>
           </Col>
         </Row>
       );
