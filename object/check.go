@@ -199,6 +199,79 @@ func CheckPassword(user *User, password string, lang string, options ...bool) st
 	}
 }
 
+type ValidatorFunc func(password string) string
+
+var (
+	regexLowerCase = regexp.MustCompile(`[a-z]`)
+	regexUpperCase = regexp.MustCompile(`[A-Z]`)
+	regexDigit     = regexp.MustCompile(`\d`)
+	regexSpecial   = regexp.MustCompile(`[!@#$%^&*]`)
+)
+
+var validators = map[string]ValidatorFunc{
+	/*
+		atLeast8: The password length must be greater than 8
+		aa123: The password must contain at least one lowercase letter, one uppercase letter, and one digit
+		specialChar: The password must contain at least one special character
+		noRepeat: The password must not contain any repeated characters
+	*/
+	"AtLeast8":    isValidOptionAtLeast8,
+	"Aa123":       isValidOptionAa123,
+	"SpecialChar": isValidOptionSpecialChar,
+	"NoRepeat":    isValidOptionNoRepeat,
+}
+
+func isValidOptionAtLeast8(password string) string {
+	if len(password) < 8 {
+		return "atLeast8"
+	}
+	return ""
+}
+
+func isValidOptionAa123(password string) string {
+	hasLowerCase := regexLowerCase.MatchString(password)
+	hasUpperCase := regexUpperCase.MatchString(password)
+	hasDigit := regexDigit.MatchString(password)
+
+	if !hasLowerCase || !hasUpperCase || !hasDigit {
+		return "aa123"
+	}
+	return ""
+}
+
+func isValidOptionSpecialChar(password string) string {
+	if !regexSpecial.MatchString(password) {
+		return "specialChar"
+	}
+	return ""
+}
+
+func isValidOptionNoRepeat(password string) string {
+	for i := 0; i < len(password)-1; i++ {
+		if password[i] == password[i+1] {
+			return "noRepeat"
+		}
+	}
+	return ""
+}
+
+func CheckPasswordComplexOption(password string, complexOptions []string, lang string) string {
+	if len(complexOptions) < 1 {
+		return ""
+	}
+	for _, option := range complexOptions {
+		validateFunc, ok := validators[option]
+		if !ok {
+			// 处理验证函数不存在的情况
+			return i18n.Translate(lang, "passwordComplexOptions:InvalidOption")
+		}
+		pwdCheckRes := validateFunc(password)
+		if pwdCheckRes != "" {
+			return i18n.Translate(lang, "passwordComplexOptions:"+pwdCheckRes)
+		}
+	}
+	return ""
+}
 func checkLdapUserPassword(user *User, password string, lang string) string {
 	ldaps := GetLdaps(user.Owner)
 	ldapLoginSuccess := false

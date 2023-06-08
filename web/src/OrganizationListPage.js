@@ -32,6 +32,7 @@ class OrganizationListPage extends BaseListPage {
       displayName: `New Organization - ${randomName}`,
       websiteUrl: "https://door.casdoor.com",
       favicon: `${Setting.StaticBaseUrl}/img/favicon.png`,
+      passwordComplexityOptions: [],
       passwordType: "plain",
       PasswordSalt: "",
       countryCodes: ["CN"],

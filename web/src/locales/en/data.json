@@ -311,7 +311,17 @@
     "Users under all organizations": "Users under all organizations",
     "Webhooks": "Webhooks",
     "empty": "empty",
-    "{total} in total": "{total} in total"
+    "{total} in total": "{total} in total",
+    "Password complexity options": "密码复杂度选项",
+    "Password complexity options - Tooltip": "组织中的成员的登录密码复杂度必须符合的规范"
+  },
+  "passwordComplexOptions": {
+    "AtLeast8": "The password must have at least 6 characters.",
+    "Aa123": "The password must contain at least one uppercase letter, one lowercase letter, and one digit.",
+    "SpecialChar": "The password must contain at least one special character.",
+    "NoRepeat": "The password must not contain any repeated characters.",
+
+    "InvalidOption": "Invalid Complex Option"
   },
   "ldap": {
     "Admin": "Admin",

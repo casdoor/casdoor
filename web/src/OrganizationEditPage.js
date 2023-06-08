@@ -163,6 +163,28 @@ class OrganizationEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Password complexity options"), i18next.t("general:Password complexity options - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select
+              virtual={false}
+              style={{width: "100%"}}
+              mode="multiple"
+              value={this.state.organization.passwordComplexityOptions}
+              onChange={(value => {
+                this.updateOrganizationField("passwordComplexOptions", value);
+              })}
+              options={[
+                {value: "AtLeast8", name: i18next.t("passwordComplexOptions:AtLeast8")},
+                {value: "Aa123", name: i18next.t("passwordComplexOptions:Aa123")},
+                {value: "SpecialChar", name: i18next.t("passwordComplexOptions:SpecialChar")},
+                {value: "NoRepeat", name: i18next.t("passwordComplexOptions:NoRepeat")},
+              ].map((item) => Setting.getOption(item.name, item.value))}
+            />
+          </Col>
+        </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Password type"), i18next.t("general:Password type - Tooltip"))} :

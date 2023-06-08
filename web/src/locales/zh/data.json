@@ -311,7 +311,17 @@
     "Users under all organizations": "所有组织里的用户",
     "Webhooks": "Webhooks",
     "empty": "无",
-    "{total} in total": "{total} 总计"
+    "{total} in total": "{total} 总计",
+    "Password complexity options": "密码复杂度选项",
+    "Password complexity options - Tooltip": "组织中的成员的登录密码复杂度必须符合的规范"
+  },
+  "passwordComplexOptions": {
+    "AtLeast8": "密码长度至少为8位",
+    "Aa123": "密码至少需要包含一个大写字母、一个小写字母和一个数字",
+    "SpecialChar": "密码必须包括特殊字符（如!@#$%^&*等）",
+    "NoRepeat": "密码不能包含连续字符",
+
+    "InvalidOption": "存在未定义复杂度选项"
   },
   "ldap": {
     "Admin": "管理员",
