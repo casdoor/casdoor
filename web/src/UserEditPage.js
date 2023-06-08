@@ -813,7 +813,7 @@ class UserEditPage extends React.Component {
           </Row>
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-              {Setting.getLabel(i18next.t("user:Log Out"), i18next.t("user:This will log this user out from every device he is currently logged in"))} :
+              {Setting.getLabel(i18next.t("user:Log Out"), i18next.t("user:Log Out - Tooltip"))} :
             </Col>
             <Col span={(Setting.isMobile()) ? 22 : 2} >
               <Button onClick={() => this.setState({isModalVisible: true})}>{i18next.t("user:Log Out of All Sessions")}</Button>
