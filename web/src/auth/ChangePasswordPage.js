@@ -120,8 +120,7 @@ class ChangePasswordPage extends React.Component {
           rules={[
             {
               required: true,
-              min: 6,
-              message: i18next.t("changePassword:Please input your password, at least 6 characters!"),
+              message: i18next.t("changePassword:Please input your old password"),
             },
           ]}
           hasFeedback

@@ -104,6 +104,7 @@
     "Current password": "Current password",
     "New password": "New password",
     "Re-enter new": "Re-enter new",
+    "Please input your old password": "Please input your old password",
     "Please input your password, at least 6 characters!": "Please input your password, at least 6 characters!",
     "Please confirm your password!": "Please confirm your password!",
     "Your confirmed password is inconsistent with the password!": "Your confirmed password is inconsistent with the password!",
