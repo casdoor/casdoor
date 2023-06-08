@@ -58,3 +58,11 @@ type AuthForm struct {
 	Plan    string `json:"plan"`
 	Pricing string `json:"pricing"`
 }
+
+type ChangePasswordForm struct {
+	Organization    string `json:"organization"`
+	Application     string `json:"application"`
+	CurrentPassword string `json:"currentPassword"`
+	Password        string `json:"password"`
+	Confirm         string `json:"confirm"`
+}

@@ -227,7 +227,7 @@ func isProxyProviderType(providerType string) bool {
 // @Param nonce     query    string  false nonce
 // @Param code_challenge_method   query    string  false code_challenge_method
 // @Param code_challenge          query    string  false code_challenge
-// @Param   form   body   controllers.AuthForm  true        "Login information"
+// @Param   form   body   form.AuthForm  true        "Login information"
 // @Success 200 {object} Response The Response object
 // @router /login [post]
 func (c *ApiController) Login() {
@@ -680,4 +680,67 @@ func (c *ApiController) GetCaptchaStatus() {
 		captchaEnabled = true
 	}
 	c.ResponseOk(captchaEnabled)
+}
+
+// ChangePassword ...
+// @Tag Login API
+// @Description change user's password
+// @Param   form   body   form.ChangePasswordForm  true        "Change password information"
+// @Success 200 {object} Response The Response object
+// @router /api/set-new-password [POST]
+func (c *ApiController) ChangePassword() {
+	resp := &Response{}
+
+	var changePasswordForm form.ChangePasswordForm
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &changePasswordForm)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	password := changePasswordForm.CurrentPassword
+	user, msg := object.CheckUserPassword(changePasswordForm.Organization, c.getCurrentUser().Name, password, c.GetAcceptLanguage(), false)
+
+	if msg != "" {
+		resp = &Response{Status: "error", Msg: msg}
+		c.Data["json"] = resp
+		c.ServeJSON()
+	} else {
+		if changePasswordForm.Confirm != changePasswordForm.Password {
+			resp = &Response{Status: "error", Msg: "Password doesn't match confirmation"}
+			c.Data["json"] = resp
+			c.ServeJSON()
+			return
+		}
+
+		c.ClearUserSession()
+		object.DeleteSessionId(util.GetSessionId(user.Owner, user.Name, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+
+		util.LogInfo(c.Ctx, "API: [%s] logged out", user.Name)
+
+		user.Password = changePasswordForm.Password
+		user.PasswordChangeRequired = false
+
+		organization := object.GetOrganizationByUser(user)
+		if organization == nil {
+			resp = &Response{Status: "error", Msg: "No organization found"}
+			c.Data["json"] = resp
+			c.ServeJSON()
+			return
+		}
+
+		user.UpdateUserPassword(organization)
+
+		user.UpdateUserHash()
+		user.PreHash = user.Hash
+
+		object.UpdateUser(user.GetId(), user, []string{"password", "password_change_required", "hash", "password_type", "pre_hash"}, false)
+
+		application := c.GetSessionApplication()
+		if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
+			c.ResponseOk(user)
+			return
+		}
+		c.ResponseOk(user, application.HomepageUrl)
+	}
 }
