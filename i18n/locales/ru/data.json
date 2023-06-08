@@ -10,6 +10,8 @@
     "Failed to create user, user information is invalid: %s": "Не удалось создать пользователя, информация о пользователе недействительна: %s",
     "Failed to login in: %s": "Не удалось войти в систему: %s",
     "Invalid token": "Недействительный токен",
+    "Password doesn't match confirmation" : "Пароль и подтверждение не совпадают",
+    "Password shouldn't be the same as old one" : "Пароль не должен совпадать с предыдущим",
     "State expected: %s, but got: %s": "Ожидался статус: %s, но получен: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Аккаунт провайдера: %s и имя пользователя: %s (%s) не существует и не может быть зарегистрирован через %%s, пожалуйста, используйте другой способ регистрации",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Аккаунт для провайдера: %s и имя пользователя: %s (%s) не существует и не может быть зарегистрирован как новый аккаунт. Пожалуйста, обратитесь в службу поддержки IT",

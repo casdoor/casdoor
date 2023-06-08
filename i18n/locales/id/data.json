@@ -10,6 +10,8 @@
     "Failed to create user, user information is invalid: %s": "Gagal membuat pengguna, informasi pengguna tidak valid: %s",
     "Failed to login in: %s": "Gagal masuk: %s",
     "Invalid token": "Token tidak valid",
+    "Password doesn't match confirmation" : "Kata sandi tidak cocok dengan konfirmasi",
+    "Password shouldn't be the same as old one" : "Kata sandi tidak boleh sama dengan yang lama",
     "State expected: %s, but got: %s": "Diharapkan: %s, tapi diperoleh: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Akun untuk penyedia: %s dan nama pengguna: %s (%s) tidak ada dan tidak diizinkan untuk mendaftar sebagai akun baru melalui %%s, silakan gunakan cara lain untuk mendaftar",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Akun untuk penyedia: %s dan nama pengguna: %s (%s) tidak ada dan tidak diizinkan untuk mendaftar sebagai akun baru, silakan hubungi dukungan IT Anda",

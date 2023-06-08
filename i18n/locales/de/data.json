@@ -10,6 +10,8 @@
     "Failed to create user, user information is invalid: %s": "Es konnte kein Benutzer erstellt werden, da die Benutzerinformationen ungültig sind: %s",
     "Failed to login in: %s": "Konnte nicht anmelden: %s",
     "Invalid token": "Ungültiges Token",
+    "Password doesn't match confirmation" : "Das Passwort stimmt nicht mit der Bestätigung überein",
+    "Password shouldn't be the same as old one" : "Das Passwort sollte nicht mit dem alten identisch sein",
     "State expected: %s, but got: %s": "Erwarteter Zustand: %s, aber erhalten: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Das Konto für den Anbieter: %s und Benutzernamen: %s (%s) existiert nicht und darf nicht über %%s als neues Konto erstellt werden. Bitte nutzen Sie einen anderen Weg, um sich anzumelden",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Das Konto für den Anbieter %s und Benutzernamen %s (%s) existiert nicht und es ist nicht erlaubt, ein neues Konto anzumelden. Bitte wenden Sie sich an Ihren IT-Support",
