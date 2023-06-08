@@ -100,6 +100,15 @@
     "Token format - Tooltip": "The format of access token",
     "You are unexpected to see this prompt page": "You are unexpected to see this prompt page"
   },
+  "changePassword": {
+    "Current password": "Current password",
+    "New password": "New password",
+    "Re-enter new": "Re-enter new",
+    "Please input your password, at least 6 characters!": "Please input your password, at least 6 characters!",
+    "Please confirm your password!": "Please confirm your password!",
+    "Your confirmed password is inconsistent with the password!": "Your confirmed password is inconsistent with the password!",
+    "Password successfully changed": "Password successfully changed"
+  },
   "cert": {
     "Bit size": "Bit size",
     "Bit size - Tooltip": "Secret key length",
