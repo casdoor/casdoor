@@ -28,7 +28,6 @@ import (
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/form"
-	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
@@ -681,73 +680,4 @@ func (c *ApiController) GetCaptchaStatus() {
 		captchaEnabled = true
 	}
 	c.ResponseOk(captchaEnabled)
-}
-
-// ChangePassword ...
-// @Tag Login API
-// @Description change user's password
-// @Param   form   body   form.ChangePasswordForm  true        "Change password information"
-// @Success 200 {object} Response The Response object
-// @router /api/set-new-password [POST]
-func (c *ApiController) ChangePassword() {
-	resp := &Response{}
-
-	var changePasswordForm form.ChangePasswordForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &changePasswordForm)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	lang := c.GetAcceptLanguage()
-	password := changePasswordForm.CurrentPassword
-	user, msg := object.CheckUserPassword(changePasswordForm.Organization, c.getCurrentUser().Name, password, lang, false)
-
-	if msg != "" {
-		resp = &Response{Status: "error", Msg: msg}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-	if changePasswordForm.Confirm != changePasswordForm.Password {
-		resp = &Response{Status: "error", Msg: i18n.Translate(lang, "auth:Password doesn't match confirmation")}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-	if changePasswordForm.CurrentPassword == changePasswordForm.Password {
-		resp = &Response{Status: "error", Msg: i18n.Translate(lang, "auth:Password shouldn't be the same as old one")}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-
-	organization := object.GetOrganizationByUser(user)
-	if organization == nil {
-		resp = &Response{Status: "error", Msg: i18n.Translate(lang, "check:Organization does not exist")}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-
-	c.ClearUserSession()
-	object.DeleteSessionId(util.GetSessionId(user.Owner, user.Name, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
-
-	util.LogInfo(c.Ctx, "API: [%s] logged out", user.Name)
-
-	user.Password = changePasswordForm.Password
-	user.PasswordChangeRequired = false
-	user.UpdateUserPassword(organization)
-
-	user.UpdateUserHash()
-	user.PreHash = user.Hash
-
-	object.UpdateUser(user.GetId(), user, []string{"password", "password_change_required", "hash", "password_type", "pre_hash"}, false)
-
-	application := c.GetSessionApplication()
-	if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
-		c.ResponseOk(user)
-	} else {
-		c.ResponseOk(user, application.HomepageUrl)
-	}
 }

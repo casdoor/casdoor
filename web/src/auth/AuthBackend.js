@@ -151,7 +151,7 @@ export function getCaptchaStatus(values) {
 }
 
 export function setNewPassword(values) {
-  return fetch(`${Setting.ServerUrl}/api/set-new-password`, {
+  return fetch(`${Setting.ServerUrl}/api/change-current-user-password`, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
